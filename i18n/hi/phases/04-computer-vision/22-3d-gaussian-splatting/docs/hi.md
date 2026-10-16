@@ -61,12 +61,13 @@ flowchart LR
 
 3 डी गॉसियन विश्व स्थिति में `mu`3D सह-विवर्तन के साथ `Sigma`स्क्रीन स्थिति पर एक 2D Gaussian के लिए परियोजनाओं `mu'`2D सह-विवर्तन के साथ `Sigma'`:
 
-```
-mu' = project(mu)
-Sigma' = J W Sigma W^T J^T          (2 x 2)
-
-W = viewing transform (rotation + translation of camera)
-J = Jacobian of the perspective projection at mu'
+```math
+\begin{aligned}
+\mu' &= \mathop{\mathrm{project}}(\mu) \\
+\Sigma' &= J W \Sigma W^T J^T \qquad (2 \times 2) \\[6pt]
+W &= \text{viewing transform (rotation + translation of camera)} \\
+J &= \text{Jacobian of the perspective projection at } \mu'
+\end{aligned}
 ```
 
 2D Gaussian के पदचिह्न एक दीर्घवृत्त है जिसका अक्षों के स्ववेक्टर हैं `Sigma'`उस दीर्घवृत्त के अंदर प्रत्येक पिक्सेल Gaussian के योगदान प्राप्त करता है, द्वारा भारित`exp(-0.5 * (p - mu')^T Sigma'^-1 (p - mu'))`. .
@@ -75,12 +76,13 @@ J = Jacobian of the perspective projection at mu'
 
 एक पिक्सेल के लिए, इसे कवर करने वाले गौसीयन को सामने से पीछे (या उल्टे सूत्र के साथ बराबर सामने से पीछे) क्रमबद्ध किया जाता है। 1980 के दशक के बाद से प्रत्येक अर्ध-पारदर्शी रास्टरर के समान समीकरण के साथ रंग का निर्माण किया गया हैः
 
-```
-C_pixel = sum_i alpha_i * T_i * c_i
-
-T_i = prod_{j < i} (1 - alpha_j)       transmittance up to i
-alpha_i = opacity_i * exp(-0.5 * d^T Sigma'^-1 d)   local contribution
-c_i = eval_SH(SH_i, view_direction)    view-dependent colour
+```math
+\begin{aligned}
+C_{\text{pixel}} &= \sum_i \alpha_i T_i c_i \\[6pt]
+T_i &= \prod_{j < i} (1 - \alpha_j) && \text{transmittance up to } i \\
+\alpha_i &= \text{opacity}_i \cdot \exp\left(-0.5 \, d^T \Sigma'^{-1} d\right) && \text{local contribution} \\
+c_i &= \mathop{\mathrm{eval\_SH}}(\text{SH}_i, \text{view\_direction}) && \text{view-dependent colour}
+\end{aligned}
 ```
 
 यह है**the same equation as NeRF's volumetric render**यह पहचान है कि क्यों दर्शाया गुणवत्ता मेल खाता है NeRF  दोनों एक ही चमक-क्षेत्र समीकरण एकीकृत कर रहे हैं।
@@ -97,7 +99,7 @@ c_i = eval_SH(SH_i, view_direction)    view-dependent colour
 - **Split**एक बड़े पैमाने पर गौशियन दो छोटे लोगों में विभाजित जब इसकी ग्रेडिएंट उच्च है  एक बड़ा गौशियन क्षेत्र में फिट होने के लिए बहुत चिकनी है।
 - **Prune**गौसीन जिनके अस्पष्टता एक सीमा से नीचे गिरती है  वे योगदान नहीं कर रहे हैं।
 
-घनत्व प्रत्येक N पुनरावृत्ति में चलता है। एक दृश्य आमतौर पर प्रशिक्षण के अंत में ~ 100k प्रारंभिक गौसी (एसएफएम बिंदुओं से बीज) से 1-5M तक बढ़ता है।
+घनत्व हर समय चलता है $N$एक दृश्य आमतौर पर प्रशिक्षण के अंत में ~ 100k प्रारंभिक गौसी (एसएफएम बिंदुओं से बीज) से 1-5M तक बढ़ता है।
 
 ### एक पैराग्राफ में गोलाकार सामंजस्य
 

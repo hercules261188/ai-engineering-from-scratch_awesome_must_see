@@ -87,10 +87,10 @@ flowchart LR
 
 ### पिक्सेल ग्रिड पर क्रॉस-एंट्रोपी
 
-सी वर्गों के साथ अर्थिक खंडन के लिए, मॉडल आउटपुट `(N, C, H, W)`. लक्ष्य है`(N, H, W)`क्रॉस-एंट्रोपी वर्गीकरण मामले के समान है, बस प्रत्येक स्थानिक स्थिति पर लागू किया जाता हैः
+के साथ अर्थिक विभाजन के लिए $C$वर्गों, मॉडल आउटपुट है `(N, C, H, W)`. लक्ष्य है`(N, H, W)`क्रॉस-एंट्रोपी वर्गीकरण मामले के समान है, बस प्रत्येक स्थानिक स्थिति पर लागू किया जाता हैः
 
-```
-Loss = mean over (n, h, w) of -log( softmax(logits[n, :, h, w])[target[n, h, w]] )
+```math
+\text{Loss} = \mathop{\mathrm{mean}}\limits_{(n, h, w)} \left[ -\log\left( \mathop{\mathrm{softmax}}(\text{logits}[n, :, h, w])[\text{target}[n, h, w]] \right) \right]
 ```
 
 `F.cross_entropy`PyTorch में इस आकार को मूल रूप से संभालता है. कोई पुनर्विकृति की आवश्यकता नहीं है.
@@ -101,17 +101,19 @@ Loss = mean over (n, h, w) of -log( softmax(logits[n, :, h, w])[target[n, h, w]]
 
 डस हानि प्रत्यक्ष रूप से भविष्यवाणी और वास्तविक मुखौटा के बीच ओवरलैप को अनुकूलित करके इस हल करता हैः
 
-```
-Dice(p, y) = 2 * sum(p * y) / (sum(p) + sum(y) + epsilon)
-Dice_loss = 1 - Dice
+```math
+\begin{aligned}
+\mathop{\mathrm{Dice}}(p, y) &= \frac{2 \sum (p \cdot y)}{\sum p + \sum y + \epsilon} \\
+\text{Dice}_{\text{loss}} &= 1 - \text{Dice}
+\end{aligned}
 ```
 
 कहाँ`p`एक वर्ग के लिए सिग्मोइड/सॉफ्टमैक्स संभावना मानचित्र है और `y`यह द्विआधारी आधार सत्य मुखौटा है। हानि शून्य है केवल जब ओवरलैप सही है। क्योंकि यह अनुपात आधारित है, वर्ग असंतुलन irrelevant है।
 
 अभ्यास में, **combined loss**:
 
-```
-L = L_cross_entropy + lambda * L_dice       (lambda ~ 1)
+```math
+L = L_{\text{cross\_entropy}} + \lambda \cdot L_{\text{dice}} \qquad (\lambda \approx 1)
 ```
 
 क्रॉस-एंट्रोपी प्रशिक्षण के शुरुआती चरण में स्थिर ग्रेडिएंट देती है; डैस प्रशिक्षण के पूंछ को वास्तव में मुखौटा के आकार से मेल खाने पर केंद्रित करता है। यह संयोजन चिकित्सा-छविकरण डिफ़ॉल्ट है और किसी भी वर्ग-असम संतुलित डेटासेट पर हराया जाना मुश्किल है।
@@ -120,7 +122,7 @@ L = L_cross_entropy + lambda * L_dice       (lambda ~ 1)
 
 - **Pixel accuracy** प्रतिशत पिक्सल सही ढंग से भविष्यवाणी की। सस्ता. वर्गीकरण में सटीकता के समान कारण के लिए असंतुलित डेटा पर टूट गया।
 - **IoU per class** प्रत्येक वर्ग के मुखौटे के लिए संघ पर चौराहे; वर्गों के बीच औसत = mIoU।
-- **Dice (F1 on pixels)** आईओयू के समान; `Dice = 2 * IoU / (1 + IoU)`चिकित्सा इमेजिंग डैस को पसंद करती है, ड्राइविंग समुदाय आईओयू को पसंद करता है; वे एकतरफा रूप से संबंधित हैं।
+- **Dice (F1 on pixels)** आईओयू के समान; $\text{Dice} = 2 \cdot \text{IoU} / (1 + \text{IoU})$चिकित्सा इमेजिंग डैस को पसंद करती है, ड्राइविंग समुदाय आईओयू को पसंद करता है; वे एकतरफा रूप से संबंधित हैं।
 - **Boundary F1** यह मापता है कि अनुमानित सीमाएं जमीन-सत्य सीमाओं के कितने करीब हैं, यहां तक कि छोटे बदलावों को दंडित करना।
 
 औसत आईओयू एक वर्ग को 15% पर छिपाता है जबकि नौ अन्य 85% पर हैं।
@@ -400,4 +402,4 @@ model = smp.Unet(
 - [U-Net: Convolutional Networks for Biomedical Image Segmentation (Ronneberger et al., 2015)](https://arxiv.org/abs/1505.04597) मूल कागज; प्रत्येक व्यक्ति का प्रतिलिपि बनाने का आंकड़ा पृष्ठ 2 पर है
 - [Fully Convolutional Networks (Long et al., 2015)](https://arxiv.org/abs/1411.4038) पेपर जो पहली बार विभाजन को एक अंत-से-अंत कन्वि समस्या बना दिया
 - [segmentation_models_pytorch](https://github.com/qubvel/segmentation_models.pytorch) उत्पादन खंडन के लिए संदर्भ; प्रत्येक मानक वास्तुकला प्लस प्रत्येक मानक हानि
-- [Lessons learned from training SOTA segmentation (kaggle.com competitions)](https://www.kaggle.com/code/iafoss/carvana-unet-pytorch) एक walkthrough क्यों TTA, छद्म लेबलिंग, और वर्ग वजन वास्तविक डेटा पर मायने रखते हैं
+- [iafoss, Unet34 submission with TTA (Kaggle notebook)](https://www.kaggle.com/code/iafoss/unet34-submission-tta-0-699-new-public-lb) वास्तविक खंडन प्रतियोगिता पर यू-नेट के लिए परीक्षण समय बढ़ाया जाना

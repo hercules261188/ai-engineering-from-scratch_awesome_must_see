@@ -54,8 +54,8 @@ flowchart LR
 
 ### औपचारिक रूप से त्रिभुज हानि
 
-```
-L = max(0, ||f(a) - f(p)||^2 - ||f(a) - f(n)||^2 + margin)
+```math
+L = \max\left(0, \lVert f(a) - f(p) \rVert^2 - \lVert f(a) - f(n) \rVert^2 + \text{margin}\right)
 ```
 
 लंगर खींचें `a`सकारात्मक के निकट `p`, नकारात्मक से दूर धक्का `n`, के साथ `margin`तीन-छवि संरचना किसी भी समानता क्रम के लिए सामान्यीकरण।
@@ -235,7 +235,7 @@ SOTA उदाहरण निकालने के लिए, नुस्ख�
 | Term | What people say | What it actually means |
 |------|----------------|----------------------|
 | Metric learning | "Shape the space" | Training an encoder so distances in its output space reflect a target similarity |
-| Triplet loss | "Pull and push" | L = max(0, d(a, p) - d(a, n) + margin); the canonical metric-learning loss |
+| Triplet loss | "Pull and push" | $L = \max(0, d(a, p) - d(a, n) + \text{margin})$; the canonical metric-learning loss |
 | Semi-hard mining | "Useful negatives" | Negatives further from the anchor than the positive but within margin; empirically the most informative |
 | Proxy-based loss | "Class prototypes" | One learned proxy per class; cross-entropy over similarity-to-proxies; no pair mining |
 | Recall@K | "Top-K hit rate" | Fraction of queries with at least one correct result in the top K |

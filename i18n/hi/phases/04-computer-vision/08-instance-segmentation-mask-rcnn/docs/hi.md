@@ -86,8 +86,8 @@ RoIAlign ने COCO पर AP मास्क को 3-4 अंक तक म�
 
 मास्क आर-सीएनएन के चार घाटे हैं जो एक साथ जोड़े गए हैंः
 
-```
-L = L_rpn_cls + L_rpn_box + L_box_cls + L_box_reg + L_mask
+```math
+L = L_{\text{rpn\_cls}} + L_{\text{rpn\_box}} + L_{\text{box\_cls}} + L_{\text{box\_reg}} + L_{\text{mask}}
 ```
 
 - `L_rpn_cls`,`L_rpn_box` आरपीएन प्रस्तावों के लिए वस्तुनिष्ठता + बॉक्स प्रतिगमन।

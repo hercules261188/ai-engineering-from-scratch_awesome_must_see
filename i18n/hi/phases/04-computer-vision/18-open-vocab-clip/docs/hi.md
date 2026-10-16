@@ -42,7 +42,7 @@ flowchart LR
 
 ### उद्देश्य
 
-N (छवि, कैप्शन) जोड़े के एक बैच को देखते हुए, एक NxN समानता मैट्रिक्स बनाएं। दोनों एन्कोडर को प्रशिक्षित करें ताकि विकर्ण (मिलते हुए जोड़े) में उच्च समानता हो और विकर्ण (गैर-मिलते) में कम समानता हो।
+$N$(छवि, कैप्शन) जोड़े, एक निर्माण $N \times N$समानता मैट्रिक्स. दोनों एन्कोडर को प्रशिक्षित करें ताकि विकर्ण (मिलते हुए जोड़े) में उच्च समानता हो और विकर्ण (गैर-मिलते) में कम समानता हो।
 
 ```
 sim_matrix = image_embeddings @ text_embeddings.T / tau
@@ -58,9 +58,11 @@ loss = (loss_i2t + loss_t2i) / 2
 
 सिगलिप (झाय एट अल., 2023) ने सॉफ्टमैक्स को प्रति जोड़ी सिग्मोइड से बदल दियाः
 
-```
-loss = mean over pairs of log(1 + exp(-y_ij * sim_ij))
-y_ij = +1 if matching, -1 otherwise
+```math
+\begin{aligned}
+\text{loss} &= \mathop{\mathrm{mean}}\limits_{\text{pairs}} \log\left(1 + \exp(-y_{ij} \cdot \text{sim}_{ij})\right) \\
+y_{ij} &= \begin{cases} +1 & \text{if matching} \\ -1 & \text{otherwise} \end{cases}
+\end{aligned}
 ```
 
 प्रति जोड़ी हानि CLIP द्वारा आवश्यक बैच स्तर के सामान्यीकरण को समाप्त करती है। SigLIP छोटे बैच आकार पर बेहतर ट्रेन करता है और समान डेटा पर CLIP से मेल खाता है या उससे अधिक होता है।
@@ -224,4 +226,4 @@ print(probs)
 - [CLIP: Learning Transferable Visual Models from Natural Language Supervision (Radford et al., 2021)](https://arxiv.org/abs/2103.00020)
 - [SigLIP: Sigmoid Loss for Language-Image Pre-Training (Zhai et al., 2023)](https://arxiv.org/abs/2303.15343)
 - [OpenCLIP](https://github.com/mlfoundations/open_clip) सामुदायिक कोडबेस
-- [DINOv2 vs CLIP vs MAE: a features comparison](https://huggingface.co/blog/dinov2) HF गाइड साथ-साथ उपयोग के मामले
+- [Oquab et al. (2023). DINOv2: Learning Robust Visual Features without Supervision](https://arxiv.org/abs/2304.07193) कागज, जिसमें CLIP और MAE शैली के मॉडल के मुकाबले विशेषता बेंचमार्क हैं

@@ -270,5 +270,5 @@ def compare_regimes():
 
 - [EfficientNet (Tan & Le, 2019)](https://arxiv.org/abs/1905.11946) कुशल वास्तुकला के लिए यौगिक स्केलिंग
 - [MobileNetV3 (Howard et al., 2019)](https://arxiv.org/abs/1905.02244) h-swish और squeeze-excite के साथ मोबाइल-प्रथम वास्तुकला
-- [A Practical Guide to TensorRT Optimization (NVIDIA)](https://developer.nvidia.com/blog/accelerating-model-inference-with-tensorrt-tips-and-best-practices-for-pytorch-users/) कागज में दर दरों को कैसे प्राप्त करें
+- [Accelerating Inference Up to 6x Faster in PyTorch with Torch-TensorRT (NVIDIA)](https://developer.nvidia.com/blog/accelerating-inference-up-to-6x-faster-in-pytorch-with-torch-tensorrt/) कागज में दर दरों को कैसे प्राप्त करें
 - [ONNX Runtime docs](https://onnxruntime.ai/docs/) क्वांटिसेशन, ग्राफ अनुकूलन, प्रदाता चयन

@@ -60,7 +60,7 @@ Resulting tokens:      (T / P_t) * (H / P_h) * (W / P_w) tokens
 
 स्थिति कोडिंग 3D हैः प्रति (t, h, w) निर्देशांक पर एक घूर्णन या सीखा एम्बेडिंग। ध्यान दिया जा सकता हैः
 
-- **Full joint** सभी टोकन सभी टोकन पर ध्यान देते हैं। O(N ^ 2) N टोकन के साथ। लंबे वीडियो के लिए प्रतिबंधित।
+- **Full joint** सभी टोकन सभी टोकन पर ध्यान दें। $O(N^2)$के साथ$N$लंबे वीडियो के लिए प्रतिबंधित.
 - **Divided** समय पर ध्यान देने का विकल्प (एक ही स्थानिक स्थिति, समय के साथः `(H*W) * T^2`) और स्थानिक ध्यान (एक ही समय चरण, अंतरिक्ष मेंः `T * (H*W)^2`) टाइमस्फॉर्मर और अधिकांश वीडियो डीटी द्वारा उपयोग किया जाता है।
 - **Window** स्थानीय विंडो में (t, h, w) । वीडियो स्विन द्वारा उपयोग किया जाता है।
 
@@ -213,7 +213,7 @@ class DividedAttentionBlock(nn.Module):
         return xs
 ```
 
-समय ध्यान समय के साथ प्रत्येक स्थानिक स्थिति के भीतर रहता है; स्थान ध्यान प्रत्येक फ्रेम के भीतर स्थानों के बीच रहता है। एक O((THW) ^2 के बजाय दो O(T^2 + (HW) ^2) संचालन। यह टाइमस्फॉर्म और हर आधुनिक वीडियो डीटी का मूल है।
+समय ध्यान समय के साथ प्रत्येक स्थानिक स्थिति के भीतर उपस्थित होता है; अंतरिक्ष ध्यान प्रत्येक फ्रेम के भीतर स्थानों के बीच उपस्थित होता है।$O(T^2 + (HW)^2)$एक के बजाय संचालन $O((THW)^2)$यह टाइमस्फॉर्मर और हर आधुनिक वीडियो डीटी का मूल है।
 
 ### चरण 4: एक छोटा वीडियो लिखें
 
@@ -286,7 +286,7 @@ print(f"output {tuple(out.shape)}")
 | World model | "Learned simulator" | A model that predicts future observations given state and action |
 | Video DiT | "Spacetime transformer" | Diffusion transformer with 3D patchification and divided attention |
 | Latent action | "Inferred control" | Discrete or continuous action latent inferred from frame pairs; used to condition next-frame generation |
-| Divided attention | "Time then space" | Two attention operations per block — across time then across space — to keep O(N^2) manageable |
+| Divided attention | "Time then space" | Two attention operations per block — across time then across space — to keep $O(N^2)$ manageable |
 | Object permanence | "Things stay real" | Scene property that video models must learn; classic failure mode on food, glassware |
 | FVD | "Fréchet Video Distance" | Video equivalent of FID; primary visual quality metric |
 | Inverse dynamics model | "Observations to actions" | Given (state, next state), output the action that connects them; closes robotics loop |

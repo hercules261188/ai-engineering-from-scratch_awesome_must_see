@@ -173,8 +173,8 @@ flowchart TB
 
 आरजीबी से ग्रे स्केल एक भारित राशि है, औसत नहीं, क्योंकि मानव आंख लाल या नीले रंग की तुलना में हरे रंग के प्रति अधिक संवेदनशील हैः
 
-```
-Y = 0.299 R + 0.587 G + 0.114 B       (ITU-R BT.601, the classic weights)
+```math
+Y = 0.299 R + 0.587 G + 0.114 B \qquad \text{(ITU-R BT.601, the classic weights)}
 ```
 
 ### पहलू अनुपात, आकार परिवर्तन और अंतराल
@@ -440,7 +440,7 @@ print(f"per-channel std:  {batch.std(dim=(0, 2, 3)).tolist()}")
 
 ## आगे पढ़ना
 
-- [Charles Poynton — A Guided Tour of Color Space](https://poynton.ca/PDFs/Guided_tour.pdf) रंगों की इतनी जगहें क्यों हैं और उनमें से प्रत्येक का महत्व कब है, इसका सबसे स्पष्ट तकनीकी उपचार
+- [Charles Poynton — A Guided Tour of Color Space](https://web.archive.org/web/20251220000525/https://poynton.ca/PDFs/Guided_tour.pdf) रंगों की इतनी जगहें क्यों हैं और उनमें से प्रत्येक का महत्व कब है, इसका सबसे स्पष्ट तकनीकी उपचार
 - [PyTorch Vision Transforms Docs](https://pytorch.org/vision/stable/transforms.html) आप वास्तव में उत्पादन में बनाने के लिए परिवर्तन के पूरे पाइपलाइन
 - [How JPEG Works (Colt McAnlis)](https://www.youtube.com/watch?v=F1kYBnY6mwg) क्रोमा सबसैंपलिंग, डीसीटी का एक तेज दृश्य दौरा, और क्यों जेपीईजी आरजीबी की बजाय YCbCr को कोड करता है
 - [ImageNet Preprocessing Conventions (torchvision models)](https://pytorch.org/vision/stable/models.html) सत्य का स्रोत `mean=[0.485, 0.456, 0.406]`और क्यों हर मॉडल चिड़ियाघर में यह उम्मीद है

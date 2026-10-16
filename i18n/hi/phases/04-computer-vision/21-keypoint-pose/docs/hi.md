@@ -50,8 +50,8 @@ flowchart LR
 
 पीछे हटने के बजाय `(x, y)`सीधे, भविष्यवाणी `H x W`एक Gaussian ब्लाब के साथ प्रत्येक कुंजी बिंदु के लिए गर्मी नक्शा सही स्थान पर केंद्रित.
 
-```
-target[k, y, x] = exp(-((x - cx_k)^2 + (y - cy_k)^2) / (2 sigma^2))
+```math
+\text{target}[k, y, x] = \exp\left(-\frac{(x - \mathit{cx}_k)^2 + (y - \mathit{cy}_k)^2}{2 \sigma^2}\right)
 ```
 
 निष्कर्ष पर, प्रत्येक हीटमैप का argmax पूर्वानुमानित कुंजी बिंदु स्थान है।

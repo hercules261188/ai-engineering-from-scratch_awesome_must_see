@@ -74,11 +74,13 @@ At each grid cell, every anchor emits (tx, ty, tw, th, obj, c_1, ..., c_C).
 
 कच्चे`tx, ty, tw, th`बॉक्स निर्देशांक नहीं हैं; वे प्रतिगमन लक्ष्य हैं जिन्हें ग्राफिंग से पहले परिवर्तित किया जाना हैः
 
-```
-centre x  = (sigmoid(tx) + cell_x) * stride
-centre y  = (sigmoid(ty) + cell_y) * stride
-width     = anchor_w * exp(tw)
-height    = anchor_h * exp(th)
+```math
+\begin{aligned}
+\text{centre } x &= (\sigma(t_x) + \text{cell}_x) \cdot \text{stride} \\
+\text{centre } y &= (\sigma(t_y) + \text{cell}_y) \cdot \text{stride} \\
+\text{width} &= \text{anchor}_w \cdot \exp(t_w) \\
+\text{height} &= \text{anchor}_h \cdot \exp(t_h)
+\end{aligned}
 ```
 
 `sigmoid`सेल के अंदर केंद्र के ऑफसेट रखता है। `exp`एक संकेत फ्लिप के बिना लंगर से मुक्त रूप से चौड़ाई पैमाने अनुमति देता है। `stride`यह डिकोडिंग चरण v2 के बाद से हर YOLO संस्करण में एक ही है।
@@ -87,11 +89,11 @@ height    = anchor_h * exp(th)
 
 दो बॉक्स के बीच डिटेक्शन की सार्वभौमिक समानता मीट्रिकः
 
-```
-IoU(A, B) = area(A intersect B) / area(A union B)
+```math
+\mathrm{IoU}(A, B) = \frac{\mathop{\mathrm{area}}(A \cap B)}{\mathop{\mathrm{area}}(A \cup B)}
 ```
 
-IoU = 1 का अर्थ है समान; IoU = 0 का अर्थ है कोई ओवरलैप नहीं। भविष्यवाणी और ग्राउंड-सत्य बॉक्स के बीच IoU वह है जो यह तय करता है कि क्या एक भविष्यवाणी सही सकारात्मक (आमतौर पर IoU >= 0.5) के रूप में गिना जाता है। दो भविष्यवाणियों के बीच IoU वह है जो NMS डिडप्लिकेट करने के लिए उपयोग करता है।
+$\mathrm{IoU} = 1$समान अर्थ; $\mathrm{IoU} = 0$भविष्यवाणी और मूल सत्य बॉक्स के बीच IoU यह तय करता है कि क्या एक भविष्यवाणी एक सच्ची सकारात्मक (आमतौर पर) के रूप में गिना जाता है$\mathrm{IoU} \ge 0.5$) दो भविष्यवाणियों के बीच IoU है कि NMS deduplicate करने के लिए उपयोग करता है।
 
 ### अधिकतम से बाहर दबाए जाने
 
@@ -113,11 +115,13 @@ NMS(boxes, scores, iou_threshold):
 
 YOLO हानि वजन के साथ तीन हानि जोड़ दिया जाता हैः
 
-```
-L = lambda_coord * L_box(pred, target, where obj=1)
-  + lambda_obj   * L_obj(pred, 1,     where obj=1)
-  + lambda_noobj * L_obj(pred, 0,     where obj=0)
-  + lambda_cls   * L_cls(pred, target, where obj=1)
+```math
+\begin{aligned}
+L = {} & \lambda_{\text{coord}} \cdot L_{\text{box}}(\text{pred}, \text{target}, \text{where obj}=1) \\
++ {} & \lambda_{\text{obj}} \cdot L_{\text{obj}}(\text{pred}, 1, \text{where obj}=1) \\
++ {} & \lambda_{\text{noobj}} \cdot L_{\text{obj}}(\text{pred}, 0, \text{where obj}=0) \\
++ {} & \lambda_{\text{cls}} \cdot L_{\text{cls}}(\text{pred}, \text{target}, \text{where obj}=1)
+\end{aligned}
 ```
 
 केवल उन कोशिकाओं में जो किसी वस्तु को शामिल करते हैं, वे बॉक्स-रिक्श और वर्गीकरण हानि में योगदान देते हैं। वस्तुओं के बिना कोशिकाएं केवल वस्तुत्व हानि में योगदान देती हैं (मॉडल को चुप रहने के लिए सिखा रही हैं) ।`lambda_noobj`आमतौर पर छोटा होता है (~0.5) क्योंकि कोशिकाओं का विशाल बहुमत खाली होता है और अन्यथा कुल हानि पर हावी होता है।

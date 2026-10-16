@@ -26,35 +26,32 @@
 
 ### आगे की प्रक्रिया
 
-एक तस्वीर लें `x_0`. एक छोटी मात्रा में गौसीन शोर जोड़ने के लिए प्राप्त करने के लिए .`x_1`. . और थोड़ी मात्रा जोड़ें प्राप्त करने के लिए .`x_2`. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .`x_T`शुद्ध गौसीय शोर से लगभग असंगत है।
+एक तस्वीर लें `x_0`. एक छोटी मात्रा में गौसीन शोर जोड़ने के लिए प्राप्त करने के लिए .`x_1`. . और थोड़ी मात्रा जोड़ें प्राप्त करने के लिए .`x_2`आगे बढ़ो .$T$`x_T`शुद्ध गौसीय शोर से लगभग असंगत है।
 
-```
-q(x_t | x_{t-1}) = N(x_t; sqrt(1 - beta_t) * x_{t-1},  beta_t * I)
+```math
+q(x_t \mid x_{t-1}) = \mathcal{N}\left(x_t; \sqrt{1 - \beta_t} \, x_{t-1}, \; \beta_t I\right)
 ```
 
-`beta_t`एक छोटा वेरिएंसी शेड्यूल है, जो आमतौर पर 0.0001 से 0.02 तक T=1000 चरणों पर रैखिक होता है। प्रत्येक चरण सिग्नल को थोड़ा छोटा करता है और नया शोर इंजेक्ट करता है।
+`beta_t`एक छोटी भिन्नता अनुसूची है, आमतौर पर 0.0001 से 0.02 तक रैखिक $T=1000$प्रत्येक कदम संकेत को थोड़ा छोटा करता है और नए शोर का इंजेक्शन देता है।
 
 ### बंद-रूप की छलांग
 
 एक समय में एक कदम शोर जोड़ने एक मार्कोव श्रृंखला है, लेकिन गणित तहः आप नमूना कर सकते हैं `x_t`सीधे `x_0`एक कदम में।
 
-```
-Define alpha_t = 1 - beta_t
-Define alpha_bar_t = prod_{s=1..t} alpha_s
-
-Then:
-  q(x_t | x_0) = N(x_t; sqrt(alpha_bar_t) * x_0,  (1 - alpha_bar_t) * I)
-
-Equivalently:
-  x_t = sqrt(alpha_bar_t) * x_0 + sqrt(1 - alpha_bar_t) * epsilon
-  where epsilon ~ N(0, I)
+```math
+\begin{aligned}
+&\text{Define } \alpha_t = 1 - \beta_t \\
+&\text{Define } \bar{\alpha}_t = \prod_{s=1}^{t} \alpha_s \\[6pt]
+&\text{Then: } q(x_t \mid x_0) = \mathcal{N}\left(x_t; \sqrt{\bar{\alpha}_t} \, x_0, \; (1 - \bar{\alpha}_t) I\right) \\[6pt]
+&\text{Equivalently: } x_t = \sqrt{\bar{\alpha}_t} \, x_0 + \sqrt{1 - \bar{\alpha}_t} \, \epsilon \quad \text{where } \epsilon \sim \mathcal{N}(0, I)
+\end{aligned}
 ```
 
 इस एकल समीकरण है कि फैलाव व्यावहारिक है का पूरा कारण है. प्रशिक्षण के दौरान आप एक यादृच्छिक चुनते हैं`t`, नमूना `x_t`सीधे `x_0`, और एक कदम में ट्रेन  पूरे मार्कोव श्रृंखला का अनुकरण करने की जरूरत नहीं है।
 
 ### उल्टा प्रक्रिया
 
-आगे की प्रक्रिया तय है। उल्टा प्रक्रिया `p(x_{t-1} | x_t)`विसारण मॉडल भविष्यवाणी नहीं करते हैं`x_{t-1}`सीधे; वे शोर की भविष्यवाणी `epsilon`चरण t में जोड़ा गया, और गणित से प्राप्त होता है `x_{t-1}`इससे।
+आगे की प्रक्रिया तय है। उल्टा प्रक्रिया `p(x_{t-1} | x_t)`विसारण मॉडल भविष्यवाणी नहीं करते हैं`x_{t-1}`सीधे; वे शोर की भविष्यवाणी `epsilon`चरण में जोड़ा $t$, और गणित से निकलता है `x_{t-1}`इससे।
 
 ```mermaid
 flowchart LR
@@ -79,7 +76,7 @@ flowchart LR
 प्रत्येक प्रशिक्षण चरण के लिएः
 
 1. एक असली छवि का नमूना `x_0`. .
-2. समय की एक पैमाना का नमूना `t`[1, T] से समान रूप से।
+2. समय की एक पैमाना का नमूना `t`$[1, T]$. .
 3. नमूना शोर `epsilon ~ N(0, I)`. .
 4. गणना `x_t = sqrt(alpha_bar_t) * x_0 + sqrt(1 - alpha_bar_t) * epsilon`. .
 5. भविष्यवाणी करें`epsilon_theta(x_t, t)`नेटवर्क के साथ।
@@ -103,7 +100,7 @@ return x_0
 
 ### क्यों 1000 कदम
 
-आगे की शोर अनुसूची का चयन किया जाता है ताकि प्रत्येक चरण में बस पर्याप्त शोर जोड़ा जाए ताकि रिवर्स चरण लगभग गौशियन हो। बहुत कम चरण और रिवर्स चरण गौशियन से दूर है, नेटवर्क इसे अच्छी तरह से मॉडल नहीं कर सकता है। बहुत अधिक चरण और नमूनाकरण कम लाभ के साथ महंगा हो जाता है। रैखिक अनुसूची के साथ T = 1000 डीडीपीएम डिफ़ॉल्ट है।
+आगे की शोर अनुसूची का चयन किया जाता है ताकि प्रत्येक चरण में बस पर्याप्त शोर जोड़ा जाए ताकि रिवर्स चरण लगभग गौशियन हो। बहुत कम कदम और रिवर्स चरण गौशियन से दूर है, नेटवर्क इसे अच्छी तरह से मॉडल नहीं कर सकता है। बहुत सारे कदम और नमूने लेने के साथ महंगा हो जाता है।$T=1000$एक रैखिक अनुसूची के साथ डीडीपीएम डिफ़ॉल्ट है।
 
 ### डीडीआईएम: 20 गुना तेजी से नमूनाकरण
 
@@ -313,14 +310,14 @@ scheduler = DDPMScheduler(num_train_timesteps=1000)
 
 | Term | What people say | What it actually means |
 |------|----------------|----------------------|
-| Forward process | "Add noise over time" | Fixed Markov chain that corrupts an image into Gaussian noise over T steps |
+| Forward process | "Add noise over time" | Fixed Markov chain that corrupts an image into Gaussian noise over $T$ steps |
 | Reverse process | "Denoise step by step" | Learned distribution that walks back from noise to image |
-| Epsilon prediction | "Predict the noise" | The training target: `epsilon_theta(x_t, t)` predicts the noise added at step t |
-| Beta schedule | "Noise amounts" | Sequence of T small variances that define how much noise enters per step |
-| alpha_bar_t | "Cumulative retain factor" | Product of (1 - beta_s) up to time t; bigger t means less signal left |
-| DDPM sampler | "Ancestral, stochastic" | Samples each x_{t-1} from its conditional Gaussian; 1000 steps |
+| Epsilon prediction | "Predict the noise" | The training target: `epsilon_theta(x_t, t)` predicts the noise added at step $t$ |
+| Beta schedule | "Noise amounts" | Sequence of $T$ small variances that define how much noise enters per step |
+| $\bar{\alpha}_t$ | "Cumulative retain factor" | Product of $(1 - \beta_s)$ up to time $t$; bigger $t$ means less signal left |
+| DDPM sampler | "Ancestral, stochastic" | Samples each $x_{t-1}$ from its conditional Gaussian; 1000 steps |
 | DDIM sampler | "Deterministic, fast" | Rewrites sampling as a deterministic ODE; 20-100 steps with similar quality |
-| Time conditioning | "Tell the model which t" | Sinusoidal embedding of t injected into the U-Net so it knows the noise level |
+| Time conditioning | "Tell the model which t" | Sinusoidal embedding of $t$ injected into the U-Net so it knows the noise level |
 
 ## आगे पढ़ना
 

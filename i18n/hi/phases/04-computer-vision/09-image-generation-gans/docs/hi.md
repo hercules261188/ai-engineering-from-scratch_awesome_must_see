@@ -9,7 +9,7 @@
 
 ## सीखने के लक्ष्य
 
-- जनरेटर और भेदभावकर्ता के बीच न्यूनतम खेल की व्याख्या करें और संतुलन p_model = p_data के अनुरूप क्यों है
+- जनरेटर और भेदभावकर्ता के बीच न्यूनतम खेल की व्याख्या करें और संतुलन का अनुरूप क्यों है $p_{\text{model}} = p_{\text{data}}$
 - PyTorch में एक DCGAN लागू करें और इसे 60 से कम लाइनों में सुसंगत 32x32 सिंथेटिक छवियों उत्पन्न करने के लिए प्राप्त करें
 - तीन मानक ट्रिक्स के साथ GAN प्रशिक्षण को स्थिर करेंः गैर-स saturating हानि, स्पेक्ट्रल मानदंड, TTUR (दो-टाइम-स्केल अपडेट नियम)
 - प्रशिक्षण वक्रों को पढ़ें जो मोड कोलप, ओस्किलेशन और भेदभाव-जीत-पूर्ण से स्वस्थ अभिसरण को अलग करते हैं
@@ -45,8 +45,8 @@ flowchart LR
 
 जी चाहता है कि डी गलत हो। डी सही होना चाहता है। औपचारिक रूप सेः
 
-```
-min_G max_D  E_x[log D(x)] + E_z[log(1 - D(G(z)))]
+```math
+\min_G \max_D \; \mathbb{E}_x[\log D(x)] + \mathbb{E}_z[\log(1 - D(G(z)))]
 ```
 
 दाएं से बाएं पढ़ेंः D वास्तविक पर सटीकता अधिकतम कर रहा है (`log D(real)`) और नकली (`log (1 - D(fake))`) छवियों. G नकली पर D की सटीकता को कम कर रहा है  वह चाहता है `D(G(z))`उच्च होने के लिए.
@@ -57,9 +57,11 @@ min_G max_D  E_x[log D(x)] + E_z[log(1 - D(G(z)))]
 
 उपरोक्त रूप संख्यात्मक रूप से अस्थिर है। प्रशिक्षण के शुरुआती समय में,`D(G(z))`हर नकली के लिए लगभग शून्य है, तो `log(1 - D(G(z)))`G के संबंध में गायब हो रहे gradients है. फिक्सः फ्लिप G का नुकसान.
 
-```
-L_D = -E_x[log D(x)] - E_z[log(1 - D(G(z)))]
-L_G = -E_z[log D(G(z))]                          # non-saturating
+```math
+\begin{aligned}
+L_D &= -\mathbb{E}_x[\log D(x)] - \mathbb{E}_z[\log(1 - D(G(z)))] \\
+L_G &= -\mathbb{E}_z[\log D(G(z))] \qquad \text{(non-saturating)}
+\end{aligned}
 ```
 
 अब कब`D(G(z))`जी का नुकसान बड़ा है और इसका ग्रेडिएंट सूचनात्मक है. हर आधुनिक जीएएन इस प्रकार के साथ ट्रेनों.
@@ -299,8 +301,8 @@ def build_sn_discriminator(img_channels=3, feat=64):
 |------|----------------|----------------------|
 | Generator (G) | "The draws-stuff net" | Maps noise to images; trained to fool the discriminator |
 | Discriminator (D) | "The critic" | Binary classifier; trained to distinguish real from generated images |
-| Minimax | "The game" | min over G, max over D of an adversarial loss; equilibrium is p_G = p_data |
-| Non-saturating loss | "The numerically sane version" | G's loss is -log(D(G(z))) instead of log(1 - D(G(z))) to avoid vanishing gradients early in training |
+| Minimax | "The game" | min over G, max over D of an adversarial loss; equilibrium is $p_G = p_{\text{data}}$ |
+| Non-saturating loss | "The numerically sane version" | G's loss is $-\log(D(G(z)))$ instead of $\log(1 - D(G(z)))$ to avoid vanishing gradients early in training |
 | Mode collapse | "Generator makes one thing" | G produces only a small subset of the data distribution; fix with SN, minibatch discrimination, or larger batch |
 | TTUR | "Two learning rates" | D learns faster than G, typically by a factor of 2-4; stabilises training |
 | Spectral norm | "1-Lipschitz layer" | A weight-normalisation that bounds each layer's Lipschitz constant; stops D from becoming arbitrarily steep |
