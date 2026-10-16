@@ -67,8 +67,8 @@ Três mecanismos fazem com que as pontuações de referência deixem de refletir
 
 A perplexidade mede o quão surpreendente um modelo é por uma sequência de tokens.
 
-```
-PPL = exp(-1/N * sum(log P(token_i | context)))
+```math
+\text{PPL} = \exp\left(-\frac{1}{N} \sum_i \log P(\text{token}_i \mid \text{context})\right)
 ```
 
 Uma perplexidade de 10 significa que o modelo é, em média, tão incerto quanto escolher uniformemente entre 10 opções em cada posição de token. Baixo é melhor. GPT-2 obtém uma perplexidade de ~30 no WikiText-103. GPT-3 obtém ~20. Llama 3 8B obtém ~7.
@@ -503,7 +503,7 @@ Também produz `outputs/skill-llm-evaluation.md`-- um quadro de decisão para es
 | MMLU | "The benchmark" | Massive Multitask Language Understanding -- 15,908 multiple choice questions across 57 subjects, saturated above 88% by 2025 |
 | HumanEval | "Code eval" | 164 Python function-completion problems from OpenAI, tests only isolated function generation |
 | SWE-bench | "Real coding eval" | 2,294 GitHub issues from 12 Python repos, measures end-to-end bug fixing including test generation |
-| Perplexity | "How confused the model is" | exp(-avg(log P(token_i given context))) -- lower means the model assigns higher probability to the actual tokens |
+| Perplexity | "How confused the model is" | $\exp(-\mathop{\mathrm{avg}}(\log P(\text{token}_i \text{ given context})))$ -- lower means the model assigns higher probability to the actual tokens |
 | ELO rating | "Chess ranking for models" | A relative skill rating computed from pairwise win/loss records, used by Chatbot Arena to rank 100+ models |
 | LLM-as-judge | "Using AI to grade AI" | A strong model scores a weaker model's outputs against a rubric, ~80% agreement with human judges at ~$0.01/judgment |
 | Data contamination | "The model saw the test" | Training data includes benchmark questions, inflating scores without improving real capability |
@@ -516,4 +516,4 @@ Também produz `outputs/skill-llm-evaluation.md`-- um quadro de decisão para es
 - [Hendrycks et al., 2021 -- "Measuring Massive Multitask Language Understanding"](https://arxiv.org/abs/2009.03300)- o artigo da MMLU, que continua a ser o ponto de referência mais citado para o LLM, apesar da sua saturação
 - [Chen et al., 2021 -- "Evaluating Large Language Models Trained on Code"](https://arxiv.org/abs/2107.03374)-- o artigo HumanEval da OpenAI, estabeleceu uma metodologia de avaliação da geração de código
 - [Zheng et al., 2023 -- "Judging LLM-as-a-Judge"](https://arxiv.org/abs/2306.05685)-- análise sistemática da utilização de LLM para avaliar LLM, incluindo as conclusões de viés de posição e viés de verbosidade
-- [LMSYS Chatbot Arena](https://chat.lmsys.org/)-- plataforma de comparação de modelos com crowdsourced com 2M+ votos, o ranking mais confiável do mundo real LLM
+- [Arena (formerly LMSYS Chatbot Arena)](https://arena.ai/leaderboard)-- plataforma de comparação de modelos com crowdsourced com 2M+ votos, o ranking mais confiável do mundo real LLM

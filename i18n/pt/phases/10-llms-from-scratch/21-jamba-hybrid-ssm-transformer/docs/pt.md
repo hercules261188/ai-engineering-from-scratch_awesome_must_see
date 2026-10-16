@@ -30,12 +30,14 @@ Esta lição lê os três artigos e produz o modelo mental para "escolher a rela
 
 Um modelo espacial de estado processa uma sequência `x_1, ..., x_N`através de um estado de tamanho fixo `h`- Não .
 
-```
-h_t = A h_{t-1} + B x_t
-y_t = C h_t
+```math
+\begin{aligned}
+h_t &= A h_{t-1} + B x_t \\
+y_t &= C h_t
+\end{aligned}
 ```
 
-A cada passo , o estado evolui através de uma dinâmica linear .`A`, toma entrada `B x_t`, e emite a saída `C h_t`- Não .`A, B, C`Observe a propriedade crítica: computação`y_t`necessidades só `h_{t-1}`E ...`x_t`Não antes .`x`A memória é constante, a inferência é O (1) por token.
+A cada passo , o estado evolui através de uma dinâmica linear .`A`, toma entrada `B x_t`, e emite a saída `C h_t`- Não .`A, B, C`Observe a propriedade crítica: computação`y_t`necessidades só `h_{t-1}`E ...`x_t`Não antes .`x`A memória é constante.$O(1)$por token.
 
 O truque para a qualidade de modelagem é a estrutura de`A`O S4 (Gu 2021) utilizou uma matriz altamente estruturada que podia ser avaliada de forma eficiente como uma longa convolução durante o treinamento.`A, B, C`O Mamba-2 (2024) simplificou ainda mais a estrutura. Mamba-3 (2026) adiciona complexidade em lugares específicos.
 

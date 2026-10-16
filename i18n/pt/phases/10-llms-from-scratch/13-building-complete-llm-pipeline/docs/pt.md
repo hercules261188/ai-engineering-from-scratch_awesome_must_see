@@ -249,7 +249,7 @@ Esta lição produz`outputs/skill-llm-pipeline-reviewer.md`. fornecer um manifes
 | Manifest | "The recipe file" | YAML or JSON describing pipeline version, seed, per-stage config, and gate thresholds — sufficient to replay a run |
 | Content-addressed | "By hash not name" | Artifacts stored by SHA-256 of their contents, so you can never confuse version A with version B |
 | Eval gate | "The ship criteria" | Numeric thresholds on benchmark metrics and safety scores that must pass before an artifact is marked shippable |
-| KL budget | "How far alignment drifted" | A cap on cumulative KL(policy || reference) across alignment stages, enforced as a gate |
+| KL budget | "How far alignment drifted" | A cap on cumulative $\mathrm{KL}(\text{policy} \Vert \text{reference})$ across alignment stages, enforced as a gate |
 | MFU | "How much of the GPU you used" | Model FLOPs Utilization — achieved FLOPs divided by theoretical peak. 40% is typical at 70B scale, 55% at 7B |
 | Rollback plan | "What we do when it breaks" | Pre-written set of actions per stage on failure: re-run, fall back, retrain with revised inputs |
 | Orchestrator | "The conductor" | The process that reads the manifest, dispatches stages, verifies hashes, halts on any contract violation |
@@ -264,4 +264,4 @@ Esta lição produz`outputs/skill-llm-pipeline-reviewer.md`. fornecer um manifes
 - [Kaplan et al., 2020 -- "Scaling Laws for Neural Language Models"](https://arxiv.org/abs/2001.08361)-- a relação de escalação original computação-parâmetros de dados
 - [Hoffmann et al., 2022 -- "Training Compute-Optimal Large Language Models (Chinchilla)"](https://arxiv.org/abs/2203.15556)-- a correcção para Kaplan que recalibrou os orçamentos modernos de dados
 - [PyTorch FSDP2 documentation](https://pytorch.org/docs/stable/fsdp.html)-- o primitivo de formação distribuído que substitui o FSDP1 no PyTorch 2.4+
-- [Weights & Biases LLM Reports](https://wandb.ai/site/llms)-- Manifestos reais e experimentos de rastreamento de saída para cursos de LLM de código aberto, úteis como modelos plagiáveis
+- [Weights & Biases LLM Reports](https://wandb.ai/site/solutions/llms/)-- Manifestos reais e experimentos de rastreamento de saída para cursos de LLM de código aberto, úteis como modelos plagiáveis

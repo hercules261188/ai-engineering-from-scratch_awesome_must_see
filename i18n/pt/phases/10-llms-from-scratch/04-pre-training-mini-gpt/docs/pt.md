@@ -141,13 +141,13 @@ graph LR
     style V fill:#1a1a2e,stroke:#0f3460,color:#fff
 ```
 
-A divisão por sqrt(d_k) -- sqrt(64) = 8 -- é escalar. Sem ele, os produtos de pontos crescem para vetores de alta dimensão, empurrando softmax para regiões onde os gradientes são quase zero. Esta foi uma das principais ideias no artigo original "Attenção é tudo que você precisa".
+A divisão por $\sqrt{d_k}$- Não .$\sqrt{64} = 8$Sem ele, os produtos de pontos crescem para vetores de alta dimensão, empurrando softmax para regiões onde os gradientes são quase zero.
 
 ### KV Cache: Por que a inferência é rápida
 
-Durante o treinamento, você processa toda a seqüência de uma só vez. Durante a inferência, você gera um token de cada vez. Sem otimização, gerar token N requer recomputar atenção para todos os tokens anteriores N-1. Isso é O(N^2) por token gerado, ou O(N^3) total para uma sequência de comprimento N.
+Durante o treinamento, você processa toda a sequência de uma só vez. Durante a inferência, você gera um token de cada vez. Sem otimização, gerando token.$N$Requer uma nova atenção para todos .$N-1$- Os tokens anteriores.$O(N^2)$por token gerado, ou $O(N^3)$Total para uma sequência de comprimento $N$- Não .
 
-O KV Cache resolve isto. Depois de calcular K e V para cada token, armazená-los. Ao gerar token N + 1, você só precisa calcular Q para o novo token e procurar o caché K e V de todos os tokens anteriores. Isto reduz o custo por token de O(N) para O(1) para o cálculo K e V. O cálculo da pontuação de atenção ainda é O ((N) porque você atende todas as posições anteriores, mas evita multiplicidades redundantes de matriz na entrada.
+KV Cache resolve isso. Depois de calcular K e V para cada token, armazená-los.$N+1$, você só precisa calcular Q para o novo token e procurar o caché K e V de todos os tokens anteriores. Isso reduz o custo por token de$O(N)$- Não .$O(1)$O cálculo da pontuação de atenção ainda é$O(N)$porque você atende todas as posições anteriores, mas evita multiplicidades redundantes de matriz na entrada.
 
 Para GPT-2 com 12 camadas e 12 cabeças, o cache KV armazena 2 (K + V) x 12 camadas x 12 cabeças x 64 dims = 18.432 valores por token. Para uma sequência de 1024 tokens, que é cerca de 75 MB em FP32. Para Llama 3 405B com 128 camadas, o cache KV para uma única sequência pode exceder 10 GB. É por isso que a inferência de contexto longo é limitada à memória.
 
@@ -211,7 +211,7 @@ O horário de aprendizagem é mais importante do que você poderia esperar. GPT-
 |-----------|-------|------------|
 | Token embeddings | (50257, 768) | 38,597,376 |
 | Position embeddings | (1024, 768) | 786,432 |
-| Per-block attention (W_q, W_k, W_v, W_out) | 4 x (768, 768) | 2,359,296 |
+| Per-block attention ($W_q, W_k, W_v, W_{\text{out}}$) | 4 x (768, 768) | 2,359,296 |
 | Per-block FFN (up + down) | (768, 3072) + (3072, 768) | 4,718,592 |
 | Per-block LayerNorms (2x) | 2 x 768 x 2 | 3,072 |
 | Final LayerNorm | 768 x 2 | 1,536 |
@@ -258,7 +258,7 @@ def attention(Q, K, V, mask=None):
     return weights @ V
 ```
 
-A implementação softmax subtrai o máximo antes de exponenciar. Sem isso, exp(large_number) supera em infinito. Este é um truque de estabilidade numérica que não altera a saída porque softmax(x - c) = softmax(x) para qualquer constante c.
+A implementação softmax subtrai o máximo antes de exponenciar. sem isso, exp(large_number) supera em infinito.$\mathop{\mathrm{softmax}}(x - c) = \mathop{\mathrm{softmax}}(x)$para qualquer constante $c$- Não .
 
 ### Passo 3: Atenção de várias cabeças
 
@@ -504,7 +504,7 @@ Esta lição produz`outputs/prompt-gpt-architecture-analyzer.md`-- um prompt que
 
 1. Modifique o modelo para usar 24 camadas e 16 cabeças em vez de 12/12. Conte os parâmetros. Como duplicar a profundidade compara-se ao duplicar a largura (dimensão de incorporação)?
 
-2. Implementar a função de ativação GELU (GELU(x) = x * 0.5 * (1 + erf(x / sqrt(2)))) e substituir o ReLU na rede de feedforward.
+2. Implementar a função de ativação GELU $(\mathop{\mathrm{GELU}}(x) = x \cdot 0.5 \cdot (1 + \mathop{\mathrm{erf}}(x / \sqrt{2})))$E substituir o ReLU na rede de feedforward.
 
 3. Adicione um cache KV à função de geração. Armazenar tensores K e V para cada camada após a primeira passagem para a frente, e reutilizar-os para tokens subsequentes. Medir a velocidade: gerar 200 tokens com e sem o cache e comparar o tempo do relógio de parede.
 
@@ -525,7 +525,7 @@ Esta lição produz`outputs/prompt-gpt-architecture-analyzer.md`-- um prompt que
 | Weight tying | "Sharing embeddings" | Using the same matrix for input token embeddings and the output projection head -- saves 38M params in GPT-2 |
 | Residual connection | "Skip connection" | Adding the input directly to the output of a sublayer (x + sublayer(x)) -- enables gradient flow in deep networks |
 | Layer normalization | "Normalizing activations" | Normalizing across the feature dimension to mean 0 and variance 1, with learnable scale and bias parameters |
-| Cross-entropy loss | "How wrong the predictions are" | -log(probability assigned to the correct next token), averaged over all positions -- the standard LLM training objective |
+| Cross-entropy loss | "How wrong the predictions are" | $-\log(\text{probability assigned to the correct next token})$, averaged over all positions -- the standard LLM training objective |
 
 ## Mais leitura
 

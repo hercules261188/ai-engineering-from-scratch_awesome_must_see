@@ -36,8 +36,8 @@ Deixe-me .`p(t)`ser a distribuição do esboço para o próximo símbolo dado al
 
 Deixe-me .`α`O valor de receção de cada token elaborado deve ser o valor esperado.`c = cost(draft) / cost(verifier)`O número esperado de tokens aceites por verificador a prazo é:
 
-```
-E[accepted] = (1 - α^(N+1)) / (1 - α)
+```math
+\mathbb{E}[\text{accepted}] = \frac{1 - \alpha^{N+1}}{1 - \alpha}
 ```
 
 O tempo total esperado de parede por token aceito é `(N * c + 1) / E[accepted]`Minimizar isso em relação a`N`E você tem o ponto de amor.`α = 0.8, c = 0.05`: óptimo `N`é de cerca de 57, velocidade é de 3,2×.`α = 0.95, c = 0.02`: óptimo `N`É cerca de 8×10, aceleração empurra 5×.
