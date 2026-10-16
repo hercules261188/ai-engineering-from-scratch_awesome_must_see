@@ -79,7 +79,7 @@ def encode_bpe(word, merges):
     return symbols
 ```
 
-Üretim uygulamalar, HF Tokenizers, öncelikli kuyruklarla birleşik sıra arama kullanır ve neredeyse doğrusal zamanda çalıştırılır.
+Saçma .$O(n \cdot \lvert \text{merges} \rvert)$. Üretim uygulamalar (tiktoken, HF Tokenizers) öncelikli kuyruklarla birleşme sıralamasını kullanır ve neredeyse doğrusal zamanda çalıştırılır.
 
 ### Adım 3: CezaSırası
 

@@ -36,7 +36,7 @@ Coreference çözünürlüğü, aynı gerçek dünya varlığına atıfta buluna
 **Architectures.**
 
 1. **Rule-based (Hobbs, 1978).**Yerim kurallarını kullanarak sözcük çözünürlüğü, güzel bir başlangıç, sözcüklerle çarpışmak şaşırtıcı derecede zor.
-2. **Mention-pair classifier.**Her iki isim için (m_i, m_j), daha çok isimlerin olup olmadığını tahmin edin.
+2. **Mention-pair classifier.**Her iki söz için .$(m_i, m_j)$- 2016'dan önceki standartlar, geçici kapanışla gruplandırılmış.
 3. **Mention-ranking.**Her bir anket için adayların öncesini sıralayın ( "öncesini yok" da dahil olmak üzere).
 4. **Span-based end-to-end (Lee et al., 2017).**Transformer kodlayıcı. Tüm adaylık alanlarını uzunluk kapısına kadar sayın. Notları belirtin. Her alan için öntemel olasılık tahmin edin. Açgözlülükle toplayın. Modern öntanımlı.
 5. **Generative (2024+).**LLM'yi başlatmak: "Bu metinde ve öncesinde bulunan her isimleri listele".

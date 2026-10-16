@@ -29,7 +29,7 @@ Bu ders, üçü için de içgüdü geliştirir ve hangisine ulaşmak için ne za
 
 2026 yılındaki uygulamalar:
 
-- **Outlines.**JSON Şema veya regex'i sonlu bir makineye birleştirir. Her token O(1) geçerli bir sonraki token arama alır. FSM tabanlı, bu yüzden geri dönüşlü şemalar düzeltme gerektirir.
+- **Outlines.**JSON Şema veya Regex'i sonlu bir makineye oluşturur.$O(1)$FSM tabanlı, bu yüzden geri dönüşlü sistemler düzeltilmelidir.
 - **XGrammar / llguidance.**Açıklama, bağlamsız dilbilgisi motorları. Rekürsiv JSON Şema'yı işleme. Yaklaşık sıfır dekodlama üst düzey. OpenAI 2025 yapılandırılmış çıkış uygulamasında yönlendirmeyi kabul etti.
 - **vLLM guided decoding.**İçeriye Eklenmiş`guided_json`- Evet .`guided_regex`- Evet .`guided_choice`- Evet .`guided_grammar`Süzler, XGrammar veya lm formatı uygulayıcı arka planları üzerinden.
 - **Instructor.**Pydantic tabanlı ambalaj herhangi bir LLM üzerinde. Validasyon başarısızlığı üzerine geri çalışır. Cross-provider, ancak logitleri değiştirmez  yeniden deneylere + yapılandırılmış çıkış-açıklama bilgileri isteklerine dayanır.
@@ -210,7 +210,7 @@ Refuse any design that puts `answer` or `decision` before reasoning fields. Refu
 |------|-----------------|-----------------------|
 | Constrained decoding | Force valid output | Mask invalid-token logits at every generation step. |
 | Logit processor | The thing that constrains | Function: `(logits, state) -> masked_logits`. |
-| FSM | Finite-state machine | Compiled grammar representation; O(1) valid-next-token lookup. |
+| FSM | Finite-state machine | Compiled grammar representation; $O(1)$ valid-next-token lookup. |
 | CFG | Context-free grammar | Grammar that handles recursion; slower but more expressive than FSM. |
 | Schema field order | Does it matter? | Yes — first field commits; always put reasoning before answer. |
 | Guided decoding | vLLM's name for it | Same concept, integrated into the inference server. |

@@ -41,8 +41,8 @@ prediction-game
 
 **N-gram probability:** `P(w_i | w_{i-n+1}, ..., w_{i-1})`- Düzelt .`n`(genellikle üç, dört gram için dört) Sayılardan hesaplayın:
 
-```text
-P(w | context) = count(context, w) / count(context)
+```math
+P(w \mid \text{context}) = \frac{\mathop{\mathrm{count}}(\text{context}, w)}{\mathop{\mathrm{count}}(\text{context})}
 ```
 
 **The zero-count problem.**Eğitimde görülmeyen herhangi bir n-gram, olasılık sıfır elde eder. Brown corpus üzerinde 2007 yılında yapılan bir çalışmada, 4 gramlı bir model bile eğitimde görülmemiş 4 gramın %30'unu elde ettiğini bulmuştur.
@@ -60,8 +60,8 @@ Kneser-Ney'in anlayışı derin. "San Francisco" da sıradan bir büyüklük. "F
 
 **Evaluation: perplexity.**Bir test setinde bir kelime başına ortalama negatif log olasılığının göstergesi. Daha düşük daha iyidir. 100'in karmaşıklığı, modelin 100 kelime arasında eşit seçtiği kadar karışık olduğu anlamına gelir.
 
-```text
-perplexity = exp(- (1/N) * Σ log P(w_i | context_i))
+```math
+\text{perplexity} = \exp\left(-\frac{1}{N} \sum_i \log P(w_i \mid \text{context}_i)\right)
 ```
 
 ```figure
