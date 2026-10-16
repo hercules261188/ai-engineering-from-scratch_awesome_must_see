@@ -30,7 +30,7 @@ Méthode (du blog et des documents de METR):
 
 1. Rassembler une suite de tâches allant de l'échelle minute à l'échelle horaire des temps d'expérience pour la réalisation.
 2. Exécutez le modèle sur chaque tâche; enregistrer le succès ou l'échec.
-3. Adaptation à une courbe logistique: P(succès) en fonction du temps d'achèvement log(expert).
+3. Régler une courbe logistique: $P(\text{success})$en fonction de $\log(\text{expert completion time})$- Je suis désolé .
 4. L'horizon est le temps d'expertise auquel P ((succès) = 0,5.
 
 La forme logistique est la bonne, car la capacité a généralement une relation croissante, qui approche le plateau avec la difficulté de la tâche. Le point 50% est un choix (peut être 10%, 90%); METR rapporte plusieurs seuils dans le document détaillé mais est en tête avec 50% car il est le plus intuitif.
@@ -79,7 +79,7 @@ a5-horizon-fit
 
 ## Utilisez-le
 
-`code/main.py`Il met en œuvre un ajustement logistique du succès des tâches par rapport au temps d'expert, étant donné un ensemble de résultats synthétiques. Il rapporte l'horizon de 50% (titre du METR), l'horizon de 10% (conservateur) et l'horizon de 90% (optimiste). Il démontre également les changements lorsque le taux de réussite est artificiellement gonflé par le jeu de contexte d'évaluation.
+`code/main.py`met en œuvre un ajustement logistique du succès des tâches par rapport à$\log(\text{expert time})$Il rapporte l'horizon de 50% (titre du METR), l'horizon de 10% (conservateur) et l'horizon de 90% (optimiste).
 
 ## La faire partir
 
