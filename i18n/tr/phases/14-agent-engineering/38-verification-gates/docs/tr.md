@@ -140,7 +140,6 @@ Kapı, çalışma masası akışının belirleyici kenarıdır.
 - [Type-Checked Compliance: Deterministic Guardrails (arXiv 2604.01483)](https://arxiv.org/pdf/2604.01483) Deterministik kapının üst sınırı olarak 4'ü eğil
 - [logi-cmd/agent-guardrails — merge gate spec](https://github.com/logi-cmd/agent-guardrails) kapsam + mutasyon testi kapıları
 - [Guardrails AI x MLflow](https://guardrailsai.com/blog/guardrails-mlflow) CI puanlayıcıları olarak belirleyici doğrulayıcılar
-- [Akira, Real-Time Guardrails for Agentic Systems](https://www.akira.ai/blog/real-time-guardrails-agentic-systems) Araç öncesi/sonra kapılar
 - Fase 14 · 27  hızlı enjeksiyon savunmaları (kapının karşılaşma çifti)
 - Fase 14 · 36  bu kapı tarafından yürürlüğe alınan kapsam sözleşmesi
 - Fase 14 · 37  geri bildirim kayıt bu kapı puanlar

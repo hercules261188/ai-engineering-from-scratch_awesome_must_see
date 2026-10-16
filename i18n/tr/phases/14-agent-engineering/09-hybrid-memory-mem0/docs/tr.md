@@ -32,7 +32,7 @@ Mem0 (arXiv:2504.19413, Nisan 2025)`add(text, user_id, metadata)`- ...
 
 1. Teksten aday gerçekleri çıkarmak (LLM yönlendirilmiş bir adım).
 2. Her faktörü semantik arama için vektör depolarına (kaynaklama) yazın.
-3. O(1) araması için her faktörü (user_id, fact_type, entity) tuşlanmış KV depoya yazın.
+3. Her faktörü klavye edilen KV depoya yaz (user_id, fact_type, entity) için $O(1)$- Arama.
 4. Her faktörü ilişki sorguları için yazı tipleri olarak grafik depolarına (Mem0g) yazın.
 
 - Evet .`search(query, user_id)`- ...

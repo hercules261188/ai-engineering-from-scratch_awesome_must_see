@@ -13,6 +13,7 @@
 - Şemaları, senaryoları ve şablonları sıkıştırın böylece yeni bir repo bilinen bir temel çizgiye sahip olur.
 - Paketi idempotently yere koyacak tek bir yükleme senaryounu ekleyin.
 - Her biri için kesikliği savunarak, pakete ne kalır ne de ne kalmaz karar verin.
+- Bir değerlendirmeci tarafından yeniden üretilebilecek kanıtlarla bir ajan yardımıyla depolama değişikliğini göster.
 
 ## Sorun
 
@@ -133,6 +134,78 @@ Her paket bir resept, her kurulum bir porsiyon.
 4. Bir ekle`lint_pack.py`Paketin çıkışında başarısız olur.`VERSION`- Topluğun kendi repo için bilgi kaynağına gönder.
 5. Bu paketle birlikte elden yuvarlanan bir masaüstüden hareket eden bir yolcu defteri yazarı.
 
+## Kariyer Uygulamaları: Bir Depolama Değişimi Göster
+
+Paketleme demo'su, montaj cihazının dosyaları çalıştıracağını ve ürettiğini kanıtlar. Bu, ajanınızın yeni bir görevi tamamlayabileceğini, oluşturulan kontrollerin bu görevi kanıtlayacağını veya dağıtılan bir sistemin çalıştığını kanıtlamaz.
+
+Sahip olduğunuz veya değiştirme izniniz olan bir depodaki küçük gerçek bir görevi seçin.
+
+Paketleme laboratuvarının dışında ayrı bir çalışma oturumunun bütçesi. Aşağıdaki bağlantılı kanıt şablonunu kendi işinizle kopyalanın.`learning-artifacts/`Kayıtlı şablonun referans malzemesi olarak saklanması ve paketlenmesi.
+
+### 1. Görev çerçevesini oluştur ve özerk seç
+
+Ders 43'ten görev çerçevesini ve ders 44'ten kanıt planını kullanın. Başlangıç incelemesini, gözlemlenebilir hedefi, hedef olmayanları, izin verilen yolları ve kabul kanıtı kaydetin. Davranışa ihtiyacı olan gerçek kullanıcıyı veya operatörü tanımlayın.
+
+İşlem modunu seçin: rehberlik adımları, kontrol noktası uygulanması veya sınırlı bir otonom çalıştırma.
+
+Bir ajanın bir tane ortaya çıkarması durumunda bir divar zaman bütçesi ve bir token veya maliyet limiti belirleyin.
+
+### 2. En küçük yararlı ortamı hazırlayın
+
+Uygun uygulamayı, çağrıda bulunmayı, test etmeyi ve yerel talimatları geri alın. Her kaynağın neden bağlamda yer aldığını ve hangi mevcut kanıtların eski bir notu geçersiz kılacağını kaydet. Öntanımlı olarak tüm deposu yüklemeyin.
+
+Her ilgili uzantı için bir açık seçim yapın: bir beceri tekrarlanabilir bir prosedür sağlar; bir MCP aracı erişim sağlar; bir kanca belirleyici bir kontrol yürütür; bir eklenti paketi yetenekleri. Bir uzantıyı yalnızca göreve ihtiyaç duyduğunda, çalışmasına izin veren en az izinle tutun.
+
+İtiraf ettiğiniz bir eklemin bağlamını veya bakım maliyetini kaydedin. Eski bir belleği veya talimatı yeniden kontrol edin, sonra bu kararı destekleyen kanıtlar olduğunda öğrencilerin sahip olduğu kurulumunuzda geri çekiniz veya değiştirin.
+
+### 3. Temel çizgiyi yakalayıp uygulayın
+
+Düzenleme yapmadan önce, en yakın mevcut kontrolü çalıştırın ve istenen davranışın mevcut durumunu gösterin. Komut, gözden geçirme, sonuç ve kanıt konumunu koruyun. Henüz bulunmayan bir özelliğin hala bir temel hatı vardır: gözlemlenen yanıt veya desteklenmeyen işlem kaydedilir.
+
+Bu nedenle, bir işçiyi görevlendirmeyi kabul ederek, görevli bir görevliyi görevlendirmeyi kabul ederek, görevli bir görevliyi görevli bir görevli olarak görevlendirmeyi kabul eder.
+
+### 4. Kanıtlara meydan okuyun
+
+Değişen yüzeyi gözlemleyen bir kanıt seçin. Bir UI için, hizmet edilen yolculuğu ilgili genişlikler üzerinde yeniden inşa edin ve inceleyin. Bir API için, istek ve serileşmiş yanıtı inceleyin. CLI için, oluşturulmuş komutu çalıştırın ve çıkış kodunu ve çıkışını kontrol edin. Görevinizin ihtiyaç duyduğu kontrolleri seçin ve sınırlarını açıklayın.
+
+Görev sözleşmesinden beklenen bir sonuç yazın, ajanın uygulamasından bağımsız olarak. Bir defter kopyasında geçersiz bir değer kabul etmek veya gerekli bir cevap alanını düşürmek gibi belirli bir yanlış sonuç girin. Aynı kabul kontrolünü yapın: bu nedenle başarısız olmalıdır.
+
+Eğer yeşil kalırsa, güvenmeden önce itirafı veya gözlemini güçlendirin. Doğru uygulamayı geri yükleyin ve başarılı bir şekilde tekrar çalıştırın. Her iki risit de tutun. Bir sözcük hatası veya bozuk test ayarı geri dönüşü tespit etmek olarak sayılmaz.
+
+Değişmiş testler dahil son farkı orijinal hedefe ve izin verilen yollara karşı değerlendirin. En zayıf kanıtı düzenlemeden mücadele etmesi için bir eşya veya ayrı bir değerlendirme oturumunu isteyin.
+
+### 5. Tekrar çalıştırma ve kurtarma
+
+Değiştirilmiş eserleri bir kullanımlık yerel veya sahnedeci ortamda çalıştırın.`local`- Evet .`staging`veya`live`Yerel bir prova yerel bir iddiayı destekler; bu egzersiz için üretim dağıtımına gerek yoktur.
+
+Görev ile ilgili bir başarısızlık sinyali, bir eşiği, bir gözlem penceresi ve bir sahibi seçin. Bu eşiği geçtikten sonra tepkiyi açıklayın. Deneme sırasında sinyalü güvenli bir şekilde tetikleyin ve gözlemlenen günlük, metrik veya tepkiyi tutun.
+
+Bilinen iyi bir eser için tekrar tekrar çalışın ve önceki davranışın restore edildiğini kontrol edin. Uygulanabilir olduğunda kalıcı verileri göz önünde bulundurun; tek başına ikili bir değişikliğin veri değişikliğini tersine çevirmeyebileceği anlamına gelmez. Doğrulama işlemlerini kaydetemediğiniz herhangi bir adım kaydetin.
+
+### 6. Bir sonraki koşuyu iyileştir ve teslim et
+
+Sonuçları, geçmiş zaman, mevcut kullanım verileri ve insan müdahaleleri dahil olmak üzere başlangıç çizgisiyle karşılaştırın.
+
+Bir test, küçük bir izin sınırı, otomasyon veya daha net bir örnek kullanılarak 46. dersi kullanarak bir gözlemlenmiş düzeltmeyi teşvik edin. Etkili kontrolü tekrarlayın. Geçici mutasyonları kaldırın ve son dalı, değiştirilen dosyaları, riskleri açın ve bir sonraki eylem sonraki oturum için açıkça bırakın.
+
+### Elsel inceleme rubrikası
+
+Değerlendirici kanıt dosyalarını incelesin ve en zayıf kabul kontrolünü tekrarlasın.`demonstrated`- Evet .`needs revision`veya`unverified`Bu gözlemlerin yerine doldurulmuş alanlar ve geçiş yapılmış ambalaj yazıları geçmez.
+
+| Dimension | Evidence the reviewer should challenge |
+|---|---|
+| Task and autonomy | Starting behavior, bounded goal, justified permissions, budget, and a usable stop rule |
+| Context and environment | Relevant sources, justified tool access, and a rechecked retirement decision |
+| Verification | Actual before/after behavior and a deliberate incorrect result that the same check rejects |
+| Review and operation | Inspected diff, independent challenge, labeled runtime observation, and rehearsed recovery |
+| Iteration and handoff | One verified improvement, honest limits, clean final state, and a reproducible next action |
+
+Kararını ver .`needs revision`Görev tamamlandığını iddia etmeden önce bulguları.`unverified`Portföy sınırlı bir görev hakkında mühendislik yargınızı gösterir; bir işe alma veya dağıtım garantisi değildir.
+
+## Nakliye edilen Sanatlı
+
+Yeniden kullanılabilir paketinizi ve tamamlanmış kopyalarınızı saklayın.[career-agent-evidence.md](https://github.com/rohitg00/ai-engineering-from-scratch/blob/main/phases/14-agent-engineering/42-agent-workbench-capstone/outputs/career-agent-evidence.md)Şablon görev çerçevesini, yürütme planını, çalışma zamanının risitlerini, incelemeyi, kurtarma provalarını ve teslimatını tek bir inceleme edilebilir vaka çalışmasına bağlar.
+
 ## Anahtar Terimler
 
 | Term | What people say | What it actually means |
@@ -150,7 +223,6 @@ Her paket bir resept, her kurulum bir porsiyon.
 - [Nx Blog, Teach Your AI Agent How to Work in a Monorepo](https://nx.dev/blog/nx-ai-agent-skills) 6 alet üzerinde tek kaynaklı jeneratör
 - [agents.md — the open spec](https://agents.md/) paketinizin yönlendirici neyi uygulamalı
 - [HKUDS/OpenHarness](https://github.com/HKUDS/OpenHarness) Paket eşdeğerinin referans uygulanması
-- [andrewgarst/agentic_harness](https://github.com/andrewgarst/agentic_harness) Evaluation Suite ile Redis desteklenmiş referans
 - [Augment Code, A good AGENTS.md is a model upgrade](https://www.augmentcode.com/blog/how-to-write-good-agents-dot-md-files) paket belgeler kaliteli çubuğu
 - [Anthropic, Effective harnesses for long-running agents](https://www.anthropic.com/engineering/effective-harnesses-for-long-running-agents)
 - [Anthropic, Harness design for long-running application development](https://www.anthropic.com/engineering/harness-design-long-running-apps)

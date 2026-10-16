@@ -214,7 +214,6 @@ Kitaplar, makaleler ve referans uygulamalar:
 - [preprints.org, Harness Engineering for Language Agents (March 2026)](https://www.preprints.org/manuscript/202603.1756) Kontrol / ajans / çalışma zamanı olarak akademik çerçeve
 - [walkinglabs/awesome-harness-engineering](https://github.com/walkinglabs/awesome-harness-engineering) Konekst, değerlendirme, gözlemlenebilirlik, orkestrasyon boyunca kurate edilmiş okuma listesi
 - [ai-boost/awesome-harness-engineering](https://github.com/ai-boost/awesome-harness-engineering) alternatif kurate listesi (üçergeleri, değerlendirmeler, bellek, MCP, izinler)
-- [andrewgarst/agentic_harness](https://github.com/andrewgarst/agentic_harness) Redis desteklenen bellek ve eval paketleri ile üretim hazır referans uygulaması
 - [HKUDS/OpenHarness](https://github.com/HKUDS/OpenHarness) İçeriye özel ajanla açık ajan harnası
 
 Hacker News'in fikir ayrılığı için okumaya değer bir makalesi var, konsensüs için değil:
