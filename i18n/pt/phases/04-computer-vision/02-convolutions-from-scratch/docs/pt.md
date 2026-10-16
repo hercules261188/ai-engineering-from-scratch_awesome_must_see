@@ -74,8 +74,8 @@ Essa fórmula é a única.**shared weights, locality, sliding window**O resto é
 
 Dado o tamanho espacial da entrada `H`, tamanho do núcleo `K`, empilhadeira`P`, passo `S`- Não .
 
-```
-H_out = floor( (H - K + 2P) / S ) + 1
+```math
+H_{\text{out}} = \left\lfloor \frac{H - K + 2P}{S} \right\rfloor + 1
 ```
 
 Lembrem-se disso, vão calcular dezenas de vezes por arquitetura.
@@ -88,7 +88,7 @@ Lembrem-se disso, vão calcular dezenas de vezes por arquitetura.
 | Pool 2x2 | 32 | 2 | 0 | 2 | 16 |
 | Large receptive field | 32 | 7 | 3 | 2 | 16 |
 
-"O mesmo enchimento" significa escolher P para que H_out == H quando S == 1. Para K ímpar, que é P = (K - 1) / 2. É por isso que os núcleos 3x3 dominam  eles são o menor núcleo ímpar que ainda tem um centro.
+"O mesmo enchimento" significa escolha.$P$Então ,$H_{\text{out}} = H$Quando ?$S = 1$- Para estranho .$K$, isto é ...$P = (K - 1) / 2$É por isso que os núcleos 3x3 dominam são o menor núcleo ímpar que ainda tem um centro.
 
 ### Padding
 

@@ -61,7 +61,7 @@ Todos os rastreadores clássicos usam um filtro Kalman no passo de previsão de 
 
 ### O algoritmo húngaro
 
-Dado um `M x N`A partir da data de execução, a matriz de custos (tracks x detections), encontrar a atribuição individual que minimiza o custo total.`1 - IoU(track_bbox, detection_bbox)`O tempo de execução é O(((M+N) ^3); para M, N até ~1000 é rápido o suficiente em Python via `scipy.optimize.linear_sum_assignment`- Não .
+Dado um `M x N`A partir da data de execução, a matriz de custos (tracks x detections), encontrar a atribuição individual que minimiza o custo total.`1 - IoU(track_bbox, detection_bbox)`O tempo de execução é de$O((M+N)^3)$Para $M, N$Até 1000 é rápido o suficiente em Python via `scipy.optimize.linear_sum_assignment`- Não .
 
 ### A ideia chave do ByteTrack
 

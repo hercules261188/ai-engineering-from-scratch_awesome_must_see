@@ -100,8 +100,8 @@ Para pequenos conjuntos de dados, uma única camada linear é geralmente suficie
 
 Uma versão mais suave do LR discriminativo usado em afinamentos modernos (BEiT, DINOv2, ViT-B). Em vez de agrupar camadas em fases, dar a cada camada um LR ligeiramente menor do que o acima:
 
-```
-lr_layer_k = base_lr * decay^(L - k)
+```math
+\text{lr\_layer}_k = \text{base\_lr} \cdot \text{decay}^{L - k}
 ```
 
 Com decomposição = 0,75 e L = 12 blocos de transformador, os primeiros blocos de trens em`0.75^11 ≈ 0.04x`É mais importante para transformer de tons finos do que para as CNNs, onde as LR agrupadas em estágio são geralmente suficientes.

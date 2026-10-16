@@ -26,35 +26,32 @@ Esta lição constrói o DDPM mínimo: ruído para frente, denoção para trás,
 
 ### O processo avançado
 
-Tome uma imagem .`x_0`Adicione uma pequena quantidade de ruído gaussiano para obter .`x_1`Adicione mais uma pequena quantidade para obter .`x_2`Continuem a andar até que ...`x_T`É quase indistinguível do ruído gaussiano puro.
+Tome uma imagem .`x_0`Adicione uma pequena quantidade de ruído gaussiano para obter .`x_1`Adicione mais uma pequena quantidade para obter .`x_2`- Continua .$T$Passo até `x_T`É quase indistinguível do ruído gaussiano puro.
 
-```
-q(x_t | x_{t-1}) = N(x_t; sqrt(1 - beta_t) * x_{t-1},  beta_t * I)
+```math
+q(x_t \mid x_{t-1}) = \mathcal{N}\left(x_t; \sqrt{1 - \beta_t} \, x_{t-1}, \; \beta_t I\right)
 ```
 
-`beta_t`É um cronograma de variância pequeno, tipicamente linear de 0,0001 a 0,02 sobre T=1000 passos.
+`beta_t`é um cronograma de variância pequeno, tipicamente linear de 0,0001 a 0,02 sobre $T=1000$Cada passo reduz ligeiramente o sinal e injeta um novo ruído.
 
 ### O salto fechado
 
 Adicionar ruído um passo a cada vez é uma cadeia de Markov, mas a matemática se dobra: você pode amostrar `x_t`directamente de`x_0`Em um passo.
 
-```
-Define alpha_t = 1 - beta_t
-Define alpha_bar_t = prod_{s=1..t} alpha_s
-
-Then:
-  q(x_t | x_0) = N(x_t; sqrt(alpha_bar_t) * x_0,  (1 - alpha_bar_t) * I)
-
-Equivalently:
-  x_t = sqrt(alpha_bar_t) * x_0 + sqrt(1 - alpha_bar_t) * epsilon
-  where epsilon ~ N(0, I)
+```math
+\begin{aligned}
+&\text{Define } \alpha_t = 1 - \beta_t \\
+&\text{Define } \bar{\alpha}_t = \prod_{s=1}^{t} \alpha_s \\[6pt]
+&\text{Then: } q(x_t \mid x_0) = \mathcal{N}\left(x_t; \sqrt{\bar{\alpha}_t} \, x_0, \; (1 - \bar{\alpha}_t) I\right) \\[6pt]
+&\text{Equivalently: } x_t = \sqrt{\bar{\alpha}_t} \, x_0 + \sqrt{1 - \bar{\alpha}_t} \, \epsilon \quad \text{where } \epsilon \sim \mathcal{N}(0, I)
+\end{aligned}
 ```
 
 Esta equação única é a razão pela qual a difusão é prática.`t`, amostra `x_t`directamente de`x_0`, e treinar em um passo  sem simulação da cadeia completa de Markov necessária.
 
 ### O processo inverso
 
-O processo avançado é fixo.`p(x_{t-1} | x_t)`Os modelos de difusão não prevêem a`x_{t-1}`direto; eles prevêem o ruído `epsilon`adicionado no passo t, e a matemática deriva `x_{t-1}`- Não.
+O processo avançado é fixo.`p(x_{t-1} | x_t)`Os modelos de difusão não prevêem a`x_{t-1}`direto; eles prevêem o ruído `epsilon`adicionado em passo $t$, e a matemática deriva`x_{t-1}`- Não.
 
 ```mermaid
 flowchart LR
@@ -79,7 +76,7 @@ flowchart LR
 Para cada etapa de formação:
 
 1. Amostra de uma imagem real .`x_0`- Não .
-2. Escolha um passo no tempo `t`uniformemente a partir de [1, T].
+2. Escolha um passo no tempo `t`uniformemente a partir de $[1, T]$- Não .
 3. Resumo de amostra`epsilon ~ N(0, I)`- Não .
 4. Computação`x_t = sqrt(alpha_bar_t) * x_0 + sqrt(1 - alpha_bar_t) * epsilon`- Não .
 5. Previsão`epsilon_theta(x_t, t)`com a rede.
@@ -103,7 +100,7 @@ A chave é que, embora a condicional inversa não seja conhecida em forma fechad
 
 ### Por que mil passos
 
-O cronograma de ruído para a frente é escolhido para que cada passo adicione apenas ruído suficiente para que o passo inverso seja quase gaussiano. Poucos passos e o passo inverso é longe de gaussiano, a rede não pode modelar bem. Passos demais e amostragem se tornam caros com ganho diminuindo. T = 1000 com um cronograma linear é o padrão DDPM.
+O cronograma de ruído para a frente é escolhido para que cada passo adicione apenas ruído suficiente para que o passo inverso seja quase gaussiano.$T=1000$com um cronograma linear é o padrão DDPM.
 
 ### DDIM: amostragem 20 vezes mais rápida
 
@@ -313,14 +310,14 @@ Esta lição produz:
 
 | Term | What people say | What it actually means |
 |------|----------------|----------------------|
-| Forward process | "Add noise over time" | Fixed Markov chain that corrupts an image into Gaussian noise over T steps |
+| Forward process | "Add noise over time" | Fixed Markov chain that corrupts an image into Gaussian noise over $T$ steps |
 | Reverse process | "Denoise step by step" | Learned distribution that walks back from noise to image |
-| Epsilon prediction | "Predict the noise" | The training target: `epsilon_theta(x_t, t)` predicts the noise added at step t |
-| Beta schedule | "Noise amounts" | Sequence of T small variances that define how much noise enters per step |
-| alpha_bar_t | "Cumulative retain factor" | Product of (1 - beta_s) up to time t; bigger t means less signal left |
-| DDPM sampler | "Ancestral, stochastic" | Samples each x_{t-1} from its conditional Gaussian; 1000 steps |
+| Epsilon prediction | "Predict the noise" | The training target: `epsilon_theta(x_t, t)` predicts the noise added at step $t$ |
+| Beta schedule | "Noise amounts" | Sequence of $T$ small variances that define how much noise enters per step |
+| $\bar{\alpha}_t$ | "Cumulative retain factor" | Product of $(1 - \beta_s)$ up to time $t$; bigger $t$ means less signal left |
+| DDPM sampler | "Ancestral, stochastic" | Samples each $x_{t-1}$ from its conditional Gaussian; 1000 steps |
 | DDIM sampler | "Deterministic, fast" | Rewrites sampling as a deterministic ODE; 20-100 steps with similar quality |
-| Time conditioning | "Tell the model which t" | Sinusoidal embedding of t injected into the U-Net so it knows the noise level |
+| Time conditioning | "Tell the model which t" | Sinusoidal embedding of $t$ injected into the U-Net so it knows the noise level |
 
 ## Mais leitura
 

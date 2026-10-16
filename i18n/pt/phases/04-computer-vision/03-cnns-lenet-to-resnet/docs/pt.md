@@ -72,7 +72,7 @@ stack:   conv 3x3 -> conv 3x3 -> pool 2x2
 repeat:  16 or 19 conv layers
 ```
 
-Dois convos 3x3 vêem a mesma área de entrada 5x5 como um convos 5x5 mas com menos parâmetros (2 * 9 * C^2 = 18C^2 vs 25 * C^2) e um ReLU extra entre eles. VGG transformou esta observação em uma arquitetura inteira. A simplicidade  um tipo de bloco, repetido  tornou-o o ponto de referência para tudo o que veio depois.
+Dois convos 3x3 vêem a mesma área de entrada 5x5 que um convos 5x5 mas com menos parâmetros ($2 \cdot 9 \cdot C^2 = 18C^2$- Não .$25 \cdot C^2$O VGG transformou esta observação em uma arquitetura inteira. A simplicidade  um tipo de bloco, repetido  tornou-o o ponto de referência para tudo o que veio depois.
 
 Custo: 138 milhões de parâmetros, lento em treino, caro na inferência.
 
@@ -120,9 +120,11 @@ O VGG funcionava em 19 camadas porque a norma de lote (publicada simultaneamente
 
 Ele, Zhang, Ren, Sun propuseram uma mudança que corrigisse tudo:
 
-```
-standard block:   y = F(x)
-residual block:   y = F(x) + x
+```math
+\begin{aligned}
+\text{standard block:} \quad & y = F(x) \\
+\text{residual block:} \quad & y = F(x) + x
+\end{aligned}
 ```
 
 O `+ x`significa que a camada pode sempre optar por não fazer nada conduzindo .`F(x)`A rede ResNet de 1.000 camadas é agora tão ruim quanto uma rede de 1 camada, porque cada bloco extra tem uma escotilha de escape trivial. Com essa garantia, o optimizador está disposto a tornar cada bloco * ligeiramente * útil  e ligeiramente útil, empilhado 100 vezes, é de última geração.

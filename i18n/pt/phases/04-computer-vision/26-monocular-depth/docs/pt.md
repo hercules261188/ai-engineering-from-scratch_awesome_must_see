@@ -83,11 +83,13 @@ Marigold (Ke et al., CVPR 2024) reformula a estimativa de profundidade como difu
 
 Para levantar um pixel `(u, v)`com profundidade`d`para um ponto 3D `(X, Y, Z)`em coordenadas de câmera:
 
-```
-fx, fy, cx, cy = camera intrinsics
-X = (u - cx) * d / fx
-Y = (v - cy) * d / fy
-Z = d
+```math
+\begin{aligned}
+f_x, f_y, c_x, c_y &= \text{camera intrinsics} \\
+X &= (u - c_x) \cdot d / f_x \\
+Y &= (v - c_y) \cdot d / f_y \\
+Z &= d
+\end{aligned}
 ```
 
 Intrínseca vem de metadados EXIF, um padrão de calibração ou um estimador intrínseco monocular (Perspective Fields, UniDepth). Sem intrínseca, você ainda pode render uma nuvem de pontos assumindo um princípio de 60 a 70 ° FOV e resolução moderada  utilizável para visualização, não para medição.
@@ -192,21 +194,21 @@ print(f"before align  absRel = {abs_rel_error(pred, gt):.3f}")
 print(f"after align   absRel = {abs_rel_error(aligned, gt):.3f}")
 ```
 
-### Passo 5: Profundidade Qualquer coisa V3 uso (referência)
+### Passo 5: Profundidade Qualquer coisa V2 uso (referência)
 
 ```python
-import torch
+import numpy as np
 from transformers import pipeline
 from PIL import Image
 
-pipe = pipeline(task="depth-estimation", model="LiheYoung/depth-anything-v2-large")
+pipe = pipeline(task="depth-estimation", model="depth-anything/Depth-Anything-V2-Large-hf")
 
 image = Image.open("street.jpg").convert("RGB")
 out = pipe(image)
 depth_np = np.array(out["depth"])
 ```
 
-Três linhas.`out["depth"]`é uma escala de cinza PIL; converter em numpy para matemática. Para Depth Anything V3 especificamente, troque o modelo id uma vez publicado; a API é inalterada.
+Três linhas.`out["depth"]`A profundidade qualquer 3 (Novembro 2025) não carga através deste gasoduto.`depth_anything_3`Pacote: `DepthAnything3.from_pretrained("depth-anything/DA3MONO-LARGE")`Carrega o modelo monócular relativo e `model.inference(images).depth`Retorna um `[N, H, W]`Array de profundidade.
 
 ## Usá-lo
 
@@ -246,7 +248,7 @@ Esta lição produz:
 | Monocular depth | "Single-image depth" | Depth estimation from one RGB frame, no stereo or LiDAR |
 | Relative depth | "Ordered depth" | Ordered z-values without real-world units |
 | Metric depth | "Absolute distance" | Depth in metres; requires calibration or a model trained with metric supervision |
-| AbsRel | "Absolute relative error" | Mean of |d_pred - d_gt| / d_gt; standard depth metric |
+| AbsRel | "Absolute relative error" | Mean of $\lvert d_{\text{pred}} - d_{\text{gt}} \rvert / d_{\text{gt}}$; standard depth metric |
 | Delta accuracy | "delta < 1.25" | Fraction of pixels with prediction within 25% of ground truth |
 | Pinhole camera | "fx, fy, cx, cy" | The camera model used to lift (u, v, d) to (X, Y, Z) |
 | DPT | "Dense Prediction Transformer" | The conv-based decoder used on top of frozen ViT encoders for depth |

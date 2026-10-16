@@ -86,8 +86,8 @@ Apresenta a máscara de 28x28 para o tamanho original da proposta para produzir 
 
 Mas R-CNN tem quatro perdas adicionadas:
 
-```
-L = L_rpn_cls + L_rpn_box + L_box_cls + L_box_reg + L_mask
+```math
+L = L_{\text{rpn\_cls}} + L_{\text{rpn\_box}} + L_{\text{box\_cls}} + L_{\text{box\_reg}} + L_{\text{mask}}
 ```
 
 - `L_rpn_cls`- Não .`L_rpn_box` objectividade + regressão de caixa para as propostas de RPN.

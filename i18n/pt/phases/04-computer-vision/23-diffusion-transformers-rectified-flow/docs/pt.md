@@ -59,8 +59,8 @@ O DDPM define o processo avançado como um SDE barulhento onde `x_t`O inverso ap
 
 O fluxo retificado define um **straight-line**Interpolação entre dados limpos e ruído puro:
 
-```
-x_t = (1 - t) * x_0 + t * epsilon,     t in [0, 1]
+```math
+x_t = (1 - t) \, x_0 + t \, \epsilon, \qquad t \in [0, 1]
 ```
 
 Treinar uma rede para prever a velocidade .`v_theta(x_t, t) = epsilon - x_0` a direcção para a frente ao longo da trajetória retreta, desde dados limpos até ruído (`dx_t/dt`O resultado da ODE é muito mais próximo de uma linha reta, por isso são necessários menos passos de integração para a amostragem.
@@ -338,7 +338,7 @@ Esta lição produz:
 | DiT | "Diffusion transformer" | Transformer that replaces the U-Net as the diffusion denoiser; operates on patchified latents |
 | AdaLN | "Adaptive layer norm" | Timestep/text conditioning via learned scale, shift, gate applied after LayerNorm; standard in every modern DiT |
 | MMDiT | "Multi-modal DiT (SD3)" | Separate weight streams for text and image tokens that share a joint self-attention |
-| Single-stream / double-stream | "FLUX trick" | First N blocks double-stream (separate weights per modality), later blocks single-stream (concat + shared weights) for efficiency |
+| Single-stream / double-stream | "FLUX trick" | First $N$ blocks double-stream (separate weights per modality), later blocks single-stream (concat + shared weights) for efficiency |
 | Rectified flow | "Straight-line noise-to-data" | Linear interpolation between data and noise; network predicts velocity; fewer ODE steps needed at inference |
 | Velocity target | "epsilon - x_0" | The regression target in rectified flow; points from clean data to noise |
 | CFG guidance | "classifier-free guidance" | Mix conditional and unconditional predictions; still used in rectified-flow models |

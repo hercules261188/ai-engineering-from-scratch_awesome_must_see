@@ -61,12 +61,13 @@ Cinco passos, todos GPU-friendly, sem consulta MLP por pixel, um único RTX 3080
 
 O Gaussiano 3D em posição mundial .`mu`com covariância 3D `Sigma`projetos para um Gaussian 2D em posição de tela `mu'`com covariância 2D `Sigma'`- Não .
 
-```
-mu' = project(mu)
-Sigma' = J W Sigma W^T J^T          (2 x 2)
-
-W = viewing transform (rotation + translation of camera)
-J = Jacobian of the perspective projection at mu'
+```math
+\begin{aligned}
+\mu' &= \mathop{\mathrm{project}}(\mu) \\
+\Sigma' &= J W \Sigma W^T J^T \qquad (2 \times 2) \\[6pt]
+W &= \text{viewing transform (rotation + translation of camera)} \\
+J &= \text{Jacobian of the perspective projection at } \mu'
+\end{aligned}
 ```
 
 A pegada do Gaussian 2D é uma elipse cujos eixos são os próprios vetores de `Sigma'`Cada pixel dentro dessa elipse recebe a contribuição de Gaussian, ponderada por`exp(-0.5 * (p - mu')^T Sigma'^-1 (p - mu'))`- Não .
@@ -75,12 +76,13 @@ A pegada do Gaussian 2D é uma elipse cujos eixos são os próprios vetores de `
 
 Para um pixel, os gaussianos que o cobrem são classificados de frente para frente (ou equivalente frente para trás com fórmula invertida).
 
-```
-C_pixel = sum_i alpha_i * T_i * c_i
-
-T_i = prod_{j < i} (1 - alpha_j)       transmittance up to i
-alpha_i = opacity_i * exp(-0.5 * d^T Sigma'^-1 d)   local contribution
-c_i = eval_SH(SH_i, view_direction)    view-dependent colour
+```math
+\begin{aligned}
+C_{\text{pixel}} &= \sum_i \alpha_i T_i c_i \\[6pt]
+T_i &= \prod_{j < i} (1 - \alpha_j) && \text{transmittance up to } i \\
+\alpha_i &= \text{opacity}_i \cdot \exp\left(-0.5 \, d^T \Sigma'^{-1} d\right) && \text{local contribution} \\
+c_i &= \mathop{\mathrm{eval\_SH}}(\text{SH}_i, \text{view\_direction}) && \text{view-dependent colour}
+\end{aligned}
 ```
 
 Isto é ...**the same equation as NeRF's volumetric render**A identidade é por isso que a qualidade de renderização coincide com a NeRF  ambos estão integrando a mesma equação de campo de radiação.
@@ -97,7 +99,7 @@ Um conjunto fixo de Gaussianos não pode cobrir uma cena complexa.
 - **Split**um gaussiano de grande escala em dois menores quando seu gradiente é alto  um grande gaussiano é muito liso para caber na região.
 - **Prune**Gaussians cuja opacidade cai abaixo de um limiar  eles não estão contribuindo.
 
-A densificação é executada em todas as iterações N. Uma cena normalmente cresce de ~ 100k Gaussians iniciais (sementados a partir de pontos SfM) para 1-5M no final do treinamento.
+A densificação é constante .$N$Uma cena normalmente cresce de ~ 100k Gaussians iniciais (sementados a partir de pontos SfM) para 1-5M no final do treinamento.
 
 ### Harmonicas esféricas num único parágrafo
 

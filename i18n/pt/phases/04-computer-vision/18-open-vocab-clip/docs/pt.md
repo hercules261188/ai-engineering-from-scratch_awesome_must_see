@@ -42,7 +42,7 @@ Ambos os codificadores terminam com uma projeção linear para a mesma dimensão
 
 ### O objectivo
 
-Dado um lote de pares N (imagem, legenda), construa uma matriz de semelhança NxN. Treine ambos os codificadores para que a diagonal (pares correspondentes) tenha alta semelhança e os fora-diagonais (não correspondentes) tenham baixa semelhança.
+Dado um lote de$N$(imagem, legenda) pares, construir um $N \times N$Matriz de semelhança. Treinar ambos os codificadores para que a diagonal (pares de correspondência) tenha alta semelhança e as fora-diagonais (não correspondentes) tenham baixa semelhança.
 
 ```
 sim_matrix = image_embeddings @ text_embeddings.T / tau
@@ -58,9 +58,11 @@ Simétrica porque tanto a recuperação de imagem a texto como de texto a imagem
 
 SigLIP (Zhai et al., 2023) substituiu o softmax por sigmoide por par:
 
-```
-loss = mean over pairs of log(1 + exp(-y_ij * sim_ij))
-y_ij = +1 if matching, -1 otherwise
+```math
+\begin{aligned}
+\text{loss} &= \mathop{\mathrm{mean}}\limits_{\text{pairs}} \log\left(1 + \exp(-y_{ij} \cdot \text{sim}_{ij})\right) \\
+y_{ij} &= \begin{cases} +1 & \text{if matching} \\ -1 & \text{otherwise} \end{cases}
+\end{aligned}
 ```
 
 A perda por par elimina a normalização de nível de lote que a CLIP requer.
@@ -224,4 +226,4 @@ Esta lição produz:
 - [CLIP: Learning Transferable Visual Models from Natural Language Supervision (Radford et al., 2021)](https://arxiv.org/abs/2103.00020)
 - [SigLIP: Sigmoid Loss for Language-Image Pre-Training (Zhai et al., 2023)](https://arxiv.org/abs/2303.15343)
 - [OpenCLIP](https://github.com/mlfoundations/open_clip) base de código comunitária
-- [DINOv2 vs CLIP vs MAE: a features comparison](https://huggingface.co/blog/dinov2) Guia de uso de HF com casos de uso lado a lado
+- [Oquab et al. (2023). DINOv2: Learning Robust Visual Features without Supervision](https://arxiv.org/abs/2304.07193) o papel, com referências de características em relação aos modelos CLIP e MAE

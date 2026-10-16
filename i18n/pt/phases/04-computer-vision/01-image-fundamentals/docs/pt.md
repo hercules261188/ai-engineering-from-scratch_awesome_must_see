@@ -173,8 +173,8 @@ Para a maioria das redes modernas, alimentamos RGB.
 
 A escala de cinza da RGB é uma soma ponderada, não uma média, porque o olho humano é mais sensível ao verde do que ao vermelho ou ao azul:
 
-```
-Y = 0.299 R + 0.587 G + 0.114 B       (ITU-R BT.601, the classic weights)
+```math
+Y = 0.299 R + 0.587 G + 0.114 B \qquad \text{(ITU-R BT.601, the classic weights)}
 ```
 
 ### Relação de aspeto, redimensionamento e interpolação
@@ -440,7 +440,7 @@ Esta lição produz:
 
 ## Mais leitura
 
-- [Charles Poynton — A Guided Tour of Color Space](https://poynton.ca/PDFs/Guided_tour.pdf) o tratamento técnico mais claro de por que existem tantos espaços de cores e quando cada um deles importa
+- [Charles Poynton — A Guided Tour of Color Space](https://web.archive.org/web/20251220000525/https://poynton.ca/PDFs/Guided_tour.pdf) o tratamento técnico mais claro de por que existem tantos espaços de cores e quando cada um deles importa
 - [PyTorch Vision Transforms Docs](https://pytorch.org/vision/stable/transforms.html) o conjunto completo de transformações que você realmente compor em produção
 - [How JPEG Works (Colt McAnlis)](https://www.youtube.com/watch?v=F1kYBnY6mwg) uma visão acentuada da submuestragem de croma, DCT, e por que o JPEG codifica YCbCr em vez de RGB
 - [ImageNet Preprocessing Conventions (torchvision models)](https://pytorch.org/vision/stable/models.html) a fonte da verdade para `mean=[0.485, 0.456, 0.406]`E porque é que todos os modelos no zoológico esperam isso?

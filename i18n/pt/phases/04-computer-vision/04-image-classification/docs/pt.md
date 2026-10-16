@@ -52,18 +52,20 @@ Cada linha neste loop é onde um bug pode viver.`model(x).softmax()`As aumentas 
 
 Um classificador produz `C`números por imagem chamados logits. Aplicando softmax, eles são convertidos em uma distribuição de probabilidade:
 
-```
-softmax(z)_i = exp(z_i) / sum_j exp(z_j)
+```math
+\mathop{\mathrm{softmax}}(z)_i = \frac{\exp(z_i)}{\sum_j \exp(z_j)}
 ```
 
 A entropia cruzada mede a probabilidade de registro negativo da classe correta:
 
-```
-CE(z, y) = -log( softmax(z)_y )
-        = -z_y + log( sum_j exp(z_j) )
+```math
+\begin{aligned}
+\mathrm{CE}(z, y) &= -\log\left( \mathop{\mathrm{softmax}}(z)_y \right) \\
+&= -z_y + \log\left( \sum_j \exp(z_j) \right)
+\end{aligned}
 ```
 
-A forma à direita é a numéricamente estável (log-sum-exp).`nn.CrossEntropyLoss`A aplicação de softmax por si mesmo é quase sempre um erro.
+A forma à direita é a numéricamente estável (log-sum-exp).`nn.CrossEntropyLoss`A aplicação de softmax em primeiro lugar é quase sempre um erro  você calcula $\log(\mathop{\mathrm{softmax}}(\mathop{\mathrm{softmax}}(z)))$, uma quantidade sem sentido.
 
 ### Por que a ampliação funciona
 
@@ -105,7 +107,7 @@ Um primo de confusão, em vez de treinar contra o`[0, 0, 1, 0, 0]`, treno contra
 A precisão agregada esconde desequilíbrio. Um classificador binário de 90 a 10 que sempre prevê a classe majoritária pontua 90%.
 
 - **Per-class accuracy** um número por classe; imediatamente aparece categorias com baixo desempenho.
-- **Confusion matrix** Gradeira C x C com linha i col j = contagem de classe verdadeira i prevista como classe j; a diagonal é correta, os fora-diagonais são onde o seu modelo vive.
+- **Confusion matrix**- Não .$C \times C$Grade com linha $i$Col.$j$= contagem de classe verdadeira $i$Previsto como classe .$j$A diagonal é correta, as fora-diagonais são onde o modelo vive.
 - **Top-1 / Top-5** se a classe correta está nas previsões de 1 ou 5 melhores; Top-5 importa para a ImageNet porque classes como "Norwich Terrier" vs "Norfolk Terrier" são genuinamente ambíguas.
 - **Calibration (ECE)** uma previsão de confiança de 0,8 consegue ser correta 80% do tempo? redes modernas são sistematicamente excessivamente confiantes; corrigir com escala de temperatura ou suavização de rótulos.
 

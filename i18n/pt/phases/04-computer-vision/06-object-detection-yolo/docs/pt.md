@@ -74,11 +74,13 @@ Os detectores modernos geralmente usam FPN com diferentes conjuntos de âncoras 
 
 O cru`tx, ty, tw, th`Não são coordenadas de caixa; são alvos de regressão a transformar antes do desenho:
 
-```
-centre x  = (sigmoid(tx) + cell_x) * stride
-centre y  = (sigmoid(ty) + cell_y) * stride
-width     = anchor_w * exp(tw)
-height    = anchor_h * exp(th)
+```math
+\begin{aligned}
+\text{centre } x &= (\sigma(t_x) + \text{cell}_x) \cdot \text{stride} \\
+\text{centre } y &= (\sigma(t_y) + \text{cell}_y) \cdot \text{stride} \\
+\text{width} &= \text{anchor}_w \cdot \exp(t_w) \\
+\text{height} &= \text{anchor}_h \cdot \exp(t_h)
+\end{aligned}
 ```
 
 `sigmoid`mantém os deslocamentos centrais dentro da célula. `exp`permite que a escala de largura livre da âncora sem um sinal de virar. `stride`Esta etapa de decodificação é a mesma em todas as versões do YOLO desde v2.
@@ -87,11 +89,11 @@ height    = anchor_h * exp(th)
 
 Metrica de semelhança universal de detecção entre duas caixas:
 
-```
-IoU(A, B) = area(A intersect B) / area(A union B)
+```math
+\mathrm{IoU}(A, B) = \frac{\mathop{\mathrm{area}}(A \cap B)}{\mathop{\mathrm{area}}(A \cup B)}
 ```
 
-IoU = 1 significa idêntico; IoU = 0 significa que não há sobreposição. IoU entre a previsão e a caixa de verdade base é o que decide se uma previsão conta como um verdadeiro positivo (tipicamente IoU > = 0,5).
+$\mathrm{IoU} = 1$significa idêntico; $\mathrm{IoU} = 0$O valor de uma previsão é o valor da quantidade de valores que a mesma representa.$\mathrm{IoU} \ge 0.5$O IoU entre duas previsões é o que o NMS usa para deduplicar.
 
 ### Repressão não máxima
 
@@ -113,11 +115,13 @@ Limite de detecção de objetos: 0,45 para detecção de objetos.`soft-NMS`- Nã
 
 A perda de YOLO é três perdas adicionadas com pesos:
 
-```
-L = lambda_coord * L_box(pred, target, where obj=1)
-  + lambda_obj   * L_obj(pred, 1,     where obj=1)
-  + lambda_noobj * L_obj(pred, 0,     where obj=0)
-  + lambda_cls   * L_cls(pred, target, where obj=1)
+```math
+\begin{aligned}
+L = {} & \lambda_{\text{coord}} \cdot L_{\text{box}}(\text{pred}, \text{target}, \text{where obj}=1) \\
++ {} & \lambda_{\text{obj}} \cdot L_{\text{obj}}(\text{pred}, 1, \text{where obj}=1) \\
++ {} & \lambda_{\text{noobj}} \cdot L_{\text{obj}}(\text{pred}, 0, \text{where obj}=0) \\
++ {} & \lambda_{\text{cls}} \cdot L_{\text{cls}}(\text{pred}, \text{target}, \text{where obj}=1)
+\end{aligned}
 ```
 
 As células sem objetos contribuem apenas para a perda de objetosidade (ensinar o modelo a ficar em silêncio). `lambda_noobj`É geralmente pequeno (~0,5) porque a grande maioria das células está vazia e, de outra forma, dominaria a perda total.

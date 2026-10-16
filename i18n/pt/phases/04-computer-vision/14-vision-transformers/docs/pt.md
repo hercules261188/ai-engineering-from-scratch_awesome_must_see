@@ -97,7 +97,7 @@ Os primeiros transformadores utilizados após o período de LN (`x = LN(x + subl
 
 - 16x16 patches -> 196 tokens, padrão.
 - 32x32 patches -> 49 tokens, mais rápido mas com menor resolução.
-- 8x8 patches -> 784 tokens, mais finos mas O ((n^2) atenção custa escamas mal.
+- 8x8 patches -> 784 tokens, mais fino mas $O(n^2)$A atenção custa muito.
 
 Patches maiores = menos tokens = mais rápido, mas menos detalhes espaciais. SwinV2 usa patches 4x4 em janelas hierárquicas.
 
