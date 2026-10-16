@@ -43,11 +43,10 @@ w = [1, 0, -2]    -- a 3D vector
 
 ### 矩阵:数字网
 
-矩阵是一个二维格格. 列和列.一个m x n矩阵有m列和n列.
+矩阵是一个二维格,行列和列.$m \times n$矩阵有$m$排列和$n$列表
 
-```
-A = | 1  2  3 |     -- 2x3 matrix (2 rows, 3 columns)
-    | 4  5  6 |
+```math
+A = \begin{bmatrix} 1 & 2 & 3 \\ 4 & 5 & 6 \end{bmatrix} \quad \text{2x3 matrix (2 rows, 3 columns)}
 ```
 
 在神经网络中,重量矩阵将输入向量转化为输出向量.一个有784个输入和128个输出的层使用 128x784的重量矩阵.
@@ -83,16 +82,14 @@ Inner dimensions: 784 = 784  -- valid
 
 按元素的角度,乘以相匹配的位置.
 
-```
-| 1  2 |   | 5  6 |   | 5  12 |
-| 3  4 | * | 7  8 | = | 21 32 |
+```math
+\begin{bmatrix} 1 & 2 \\ 3 & 4 \end{bmatrix} * \begin{bmatrix} 5 & 6 \\ 7 & 8 \end{bmatrix} = \begin{bmatrix} 5 & 12 \\ 21 & 32 \end{bmatrix}
 ```
 
 矩阵乘法:列和列的点产量.内面尺寸必须匹配.
 
-```
-| 1  2 |   | 5  6 |   | 1*5+2*7  1*6+2*8 |   | 19  22 |
-| 3  4 | @ | 7  8 | = | 3*5+4*7  3*6+4*8 | = | 43  50 |
+```math
+\begin{bmatrix} 1 & 2 \\ 3 & 4 \end{bmatrix} @ \begin{bmatrix} 5 & 6 \\ 7 & 8 \end{bmatrix} = \begin{bmatrix} 1 \cdot 5 + 2 \cdot 7 & 1 \cdot 6 + 2 \cdot 8 \\ 3 \cdot 5 + 4 \cdot 7 & 3 \cdot 6 + 4 \cdot 8 \end{bmatrix} = \begin{bmatrix} 19 & 22 \\ 43 & 50 \end{bmatrix}
 ```
 
 不同的操作,不同的结果,不同的规则.
@@ -325,6 +322,14 @@ print(matrix + bias)
 
 3. **Build a two-layer network.**通过使用您的矩阵类 (没有NumPy),创建一个两个层神经网络:输入 (3) ->隐藏 (4) ->输出 (2). 启动随机权重,运行前进传递,并验证所有形状是正确的.
 
+### 暗示
+
+**Exercise 1.**乘以`A @ A.inverse_2x2()`对于三个矩阵,并将每个细胞与内部的身份进行比较.`1e-9`. 对 0 的确定量为数的矩阵,例如 [[1, 2], [2, 4]], `inverse_2x2`增加一个`ValueError`结果是这样的.
+
+**Exercise 2.**计算3x3配因子矩阵,将其转换为获得相应,然后将每个细胞分为`determinant()`查看看吧`A @ A_inv`给出了身份,每个细胞都匹配.`np.linalg.inv(A)`在`1e-9`现在,我们要去.
+
+**Exercise 3.**在乘以之前,写出每个矩阵的形状: `W1`是4x3和`W2`像在`demo_neural_network_layer`输入3x1必须提供4x1隐藏向量和2x1输出.
+
 ## 关键词
 
 | Term | What people say | What it actually means |
@@ -332,7 +337,7 @@ print(matrix + bias)
 | Vector | "An arrow" | An ordered list of numbers. In AI: a point in high-dimensional space. |
 | Matrix | "A table of numbers" | A linear transformation. It maps vectors from one space to another. |
 | Matrix multiply | "Just multiply the numbers" | Dot products between every row of the first matrix and every column of the second. Order matters. |
-| Transpose | "Flip it" | Swap rows and columns. Turns an m x n matrix into n x m. Critical in backpropagation. |
+| Transpose | "Flip it" | Swap rows and columns. Turns an $m \times n$ matrix into $n \times m$. Critical in backpropagation. |
 | Determinant | "Some number from the matrix" | Measures how much the matrix scales area (2D) or volume (3D). Zero means the transformation crushes a dimension. |
 | Inverse | "Undo the matrix" | The matrix that reverses the transformation. Only exists when the determinant is not zero. |
 | Identity matrix | "The boring matrix" | The matrix equivalent of multiplying by 1. Used in residual connections (ResNets). |

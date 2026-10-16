@@ -26,7 +26,7 @@
 
 ### 曲的集合
 
-集合 S 是曲的,如果在 S 中的任何两个点,它们之间的线段也完全位于 S 中.
+一套$S$形,如果在任何两个点中$S$它们之间的线段也完全在$S$现在,我们要去.
 
 | Convex sets | Not convex |
 |---|---|
@@ -34,12 +34,12 @@
 | **Triangle**: same property holds for all interior points | **Donut/annulus**: the hole means some line segments leave the set |
 | The line segment between any two points stays within the set | The line segment between some pairs of points exits the set |
 
-形式测试:对于任何S中的x,y点和任何[0,1]中的t点,点 tx + (1-t)y也在S中.
+官方测试:任何点$x, y$在$S$任何一个$t \in [0, 1]$关于这个问题$tx + (1-t)y$现在,$S$现在,我们要去.
 
 曲集合的例子:
-- 一条线,一片平面,全部是R^n
+- 一条线,一架飞机,所有$\mathbb{R}^n$
 - 球 (圆,球,超球)
-- 半空间: {x: a^T x <= b}
+- 一个半空间:$\lbrace x : a^T x \le b \rbrace$
 - 任何数量的曲集合的交叉点
 
 无的集合的例子:
@@ -49,10 +49,10 @@
 
 ### 曲函数
 
-如果其域是一个曲的集合,则函数 f 凸,并且对于其域内的任何两个点 x,y 和 [0, 1] 中的任何t:
+函数$f$如果其域是一个曲的集合,并且为任何两个点$x, y$在其领域和任何$t \in [0, 1]$其他:
 
-```
-f(tx + (1-t)y) <= t*f(x) + (1-t)*f(y)
+```math
+f(tx + (1-t)y) \le t f(x) + (1-t) f(y)
 ```
 
 几何:图表上的任何两个点之间的线段位于图表上或图表上.
@@ -64,26 +64,26 @@ f(tx + (1-t)y) <= t*f(x) + (1-t)*f(y)
 | **Local minima** | Every local minimum is the global minimum | Multiple local minima may exist at different heights |
 
 常见的曲函数:
--  () = x^2 (抛物线)
-- 没有任何其他方法可以做到.
--  (x) = e^x (指数式)
--  () =最大 () () ()
-- 对于 x > 0 (负号)
-- 任何线性函数 f ((x) = a^T x + b (形和形)
+- $f(x) = x^2$现在,我们要去做什么?
+- $f(x) = \lvert x \rvert$(绝对值)
+- $f(x) = e^x$它们的数量
+- $f(x) = \max(0, x)$它们是的.
+- $f(x) = -\log(x)$为了$x > 0$没有任何其他方法.
+- 任何线性函数$f(x) = a^T x + b$形和形
 
 ### 曲度测试
 
 实践测试,从最简单到最严格.
 
-**Test 1: Second derivative test (1D).**如果 f'(x) >=0为所有 x,则 f是凸.
+**Test 1: Second derivative test (1D).**如果$f''(x) \ge 0$对于所有人$x$现在$f$形的.
 
-- 形的形.
-- 对于x < 0,不曲.
-- 形的形.
+- $f(x) = x^2$其他$f''(x) = 2 \ge 0$曲的.
+- $f(x) = x^3$其他$f''(x) = 6x$没有任何.$x < 0$没有曲的.
+- $f(x) = e^x$其他$f''(x) = e^x > 0$曲的.
 
-**Test 2: Hessian test (multivariate).**如果Hessian矩阵H(x) 为所有x的正半定义,则f是凸.Hessian是第二部分衍生物的矩阵.
+**Test 2: Hessian test (multivariate).**如果Hessian矩阵$H(x)$对于所有人来说,是正面的半确定的.$x$现在$f$赫西亚系是第二部分衍生物的矩阵.
 
-**Test 3: Definition test.**直接检查不等式 f(tx + (1-t) y) <= t*f(x) + (1-t) *f(y). 对于衍生值难以计算的函数来说有用.
+**Test 3: Definition test.**检查不平等$f(tx + (1-t)y) \le t f(x) + (1-t) f(y)$直接. 对于衍生值难以计算的函数有用.
 
 ### 为什么曲性很重要
 
@@ -129,20 +129,22 @@ graph LR
 
 ### 赫西亚矩阵
 
-函数f:R^n -> R的Hessian H是第二部分衍生物的n x n矩阵.
+赫西亚人$H$函数的$f: \mathbb{R}^n \to \mathbb{R}$是什么?$n \times n$部分衍生品的二次矩阵.
 
+```math
+H_{ij} = \frac{\partial^2 f}{\partial x_i \, \partial x_j}
 ```
-H[i][j] = d^2 f / (dx_i dx_j)
-```
 
-对于 f ((x, y) = x^2 + 3xy + y^2:
+为了$f(x, y) = x^2 + 3xy + y^2$其他:
 
-```
-df/dx = 2x + 3y       d^2f/dx^2 = 2      d^2f/dxdy = 3
-df/dy = 3x + 2y       d^2f/dydx = 3      d^2f/dy^2 = 2
-
-H = [ 2  3 ]
-    [ 3  2 ]
+```math
+\begin{gathered}
+\begin{aligned}
+\frac{\partial f}{\partial x} &= 2x + 3y & \frac{\partial^2 f}{\partial x^2} &= 2 & \frac{\partial^2 f}{\partial x \, \partial y} &= 3 \\
+\frac{\partial f}{\partial y} &= 3x + 2y & \frac{\partial^2 f}{\partial y \, \partial x} &= 3 & \frac{\partial^2 f}{\partial y^2} &= 2
+\end{aligned} \\[8pt]
+H = \begin{bmatrix} 2 & 3 \\ 3 & 2 \end{bmatrix}
+\end{gathered}
 ```
 
 赫西亚人告诉你关于曲线:
@@ -151,18 +153,17 @@ H = [ 2  3 ]
 - 混合标志:座点 (在某些方向上,在其他方向下)
 - 零自值:在该方向平 (退化)
 
-为了曲性,赫西亚必须在任何地方都是正半确的 (所有本值 >= 0),而不仅仅是在一个点.
+为了曲性,赫西亚必须是正面半确式 (所有本值$\ge 0$) 在任何地方,而不是在一个地方.
 
 ### 牛顿的方法
 
 渐进式下降使用第一级信息 (梯度).牛顿的方法使用第二级信息 (赫西式).它适应当前点的方形近似,直接跳到那个方形的最小.
 
-```
-Update rule:
-  x_new = x - H^(-1) * gradient
-
-Compare to gradient descent:
-  x_new = x - lr * gradient
+```math
+\begin{aligned}
+\text{Update rule:} \quad & x_{\text{new}} = x - H^{-1} \cdot \text{gradient} \\
+\text{Compare to gradient descent:} \quad & x_{\text{new}} = x - \text{lr} \cdot \text{gradient}
+\end{aligned}
 ```
 
 牛顿的方法将规模学习速度取代为反向赫西式. 这自动调整了基于本地曲线的步骤大小和方向.
@@ -190,14 +191,14 @@ graph TD
 - 规模变异性 (不管你如何参数问题,都能工作)
 
 缺点:
-- 计算Hessian成本 O ^2) 存储和 O ^3) 倒换
-- 对于一个数百万重量的神经网络,即10^12的输入和10^18的操作
+- 计算赫西安成本$O(n^2)$记忆力和$O(n^3)$转换
+- 对于一个拥有100万重量的神经网络,$10^{12}$报名$10^{18}$运营
 - 对于深度学习来说不实用
 
 ### 限制优化
 
-无限制优化:将 f ((x) 最小化在所有x 上.
-限制优化:尽量减少 f ((x) 受到限制.
+无限制优化:尽量减少$f(x)$在所有地方$x$现在,我们要去.
+限制优化:尽量减少$f(x)$受到限制.
 
 实际问题有限制.你想尽量降低成本,但预算有限.你想尽量减少错误,但模型的复杂性有限.
 
@@ -216,22 +217,24 @@ graph LR
 
 拉格兰奇乘法将一个限制的问题转化为一个不受限制的问题.
 
-问题:将 f  x 减至 g  x = 0 值.
+问题: 减少$f(x)$根据$g(x) = 0$现在,我们要去.
 
-解决方案:引入一个新的变量 (拉格兰奇乘法 lambda) 并解决无限制的问题:
+解决方案:引入一个新的变量 (拉格兰奇乘法) $\lambda$) 并解决无限制的问题:
 
-```
-L(x, lambda) = f(x) + lambda * g(x)
-```
-
-在溶液中,L的梯度为零:
-
-```
-dL/dx = df/dx + lambda * dg/dx = 0
-dL/dlambda = g(x) = 0
+```math
+L(x, \lambda) = f(x) + \lambda g(x)
 ```
 
-几何直觉:在限制最小时,f的梯度必须与限制g的梯度平行.如果它们不平行,你可以沿着限制表面移动,进一步减少f.
+在溶液中, $L$只有零
+
+```math
+\begin{aligned}
+\frac{\partial L}{\partial x} &= \frac{\partial f}{\partial x} + \lambda \frac{\partial g}{\partial x} = 0 \\
+\frac{\partial L}{\partial \lambda} &= g(x) = 0
+\end{aligned}
+```
+
+几何直觉:在限制最小的时,$f$必须与压力梯度平行$g$如果它们不平行,你可以沿着制表面移动,$f$更多的.
 
 ```mermaid
 graph LR
@@ -240,39 +243,41 @@ graph LR
     S --- C["At the solution, gradient of f is parallel to gradient of g"]
 ```
 
-举个例子:最小化f(x,y) =x^2 + y^2 归属于x + y = 1.
+举个例子: 减少$f(x,y) = x^2 + y^2$根据$x + y = 1$现在,我们要去.
 
+```math
+\begin{aligned}
+L &= x^2 + y^2 + \lambda(x + y - 1) \\[4pt]
+\frac{\partial L}{\partial x} &= 2x + \lambda = 0 \implies x = -\lambda/2 \\
+\frac{\partial L}{\partial y} &= 2y + \lambda = 0 \implies y = -\lambda/2 \\
+\frac{\partial L}{\partial \lambda} &= x + y - 1 = 0 \\[4pt]
+&\text{From first two: } x = y \\
+&\text{Substituting: } 2x = 1, \text{ so } x = y = 0.5, \ \lambda = -1
+\end{aligned}
 ```
-L = x^2 + y^2 + lambda(x + y - 1)
 
-dL/dx = 2x + lambda = 0  =>  x = -lambda/2
-dL/dy = 2y + lambda = 0  =>  y = -lambda/2
-dL/dlambda = x + y - 1 = 0
-
-From first two: x = y
-Substituting: 2x = 1, so x = y = 0.5, lambda = -1
-```
-
-线 x + y = 1 的最接近原点是 (0.5,0.5).
+线上最接近的地方$x + y = 1$来源是$(0.5, 0.5)$现在,我们要去.
 
 ### 卡卡特条件
 
 卡鲁什-库恩-图克条件将拉格兰奇乘法扩展到不平等的限制.
 
-问题:以 g_i(x) <= 0 为 i = 1, ..., m 减小 f  x.
+问题: 减少$f(x)$根据$g_i(x) \le 0$为了$i = 1, \ldots, m$现在,我们要去.
 
  KKT条件 (为了最佳效果而必要):
 
-```
-1. Stationarity:    df/dx + sum(lambda_i * dg_i/dx) = 0
-2. Primal feasibility:  g_i(x) <= 0  for all i
-3. Dual feasibility:    lambda_i >= 0  for all i
-4. Complementary slackness:  lambda_i * g_i(x) = 0  for all i
+```math
+\begin{aligned}
+&\text{1. Stationarity:} && \frac{\partial f}{\partial x} + \sum_i \lambda_i \frac{\partial g_i}{\partial x} = 0 \\
+&\text{2. Primal feasibility:} && g_i(x) \le 0 \quad \text{for all } i \\
+&\text{3. Dual feasibility:} && \lambda_i \ge 0 \quad \text{for all } i \\
+&\text{4. Complementary slackness:} && \lambda_i \, g_i(x) = 0 \quad \text{for all } i
+\end{aligned}
 ```
 
-补充性宽松性是关键的见解:限制是活跃的 (g_i = 0,解决方案位于边界) 或乘法是零 (限制并不重要).一个不影响解决方案的限制是 lambda = 0.
+补充的惰是关键的见解:$g_i = 0$没有任何限制,但没有影响解决方案的限制是$\lambda = 0$现在,我们要去.
 
-支持向量是限制活动的数据点 (lambda > 0).所有其他数据点都有 lambda = 0,不会影响决策边界.
+支持向量是限制活动的数据点 ($\lambda > 0$) 所有其他数据点都具有$\lambda = 0$没有影响决策的边界.
 
 ### 规范化作为限制优化
 
@@ -280,25 +285,27 @@ Substituting: 2x = 1, so x = y = 0.5, lambda = -1
 
 **L2 regularization (Ridge):**
 
+```math
+\begin{aligned}
+&\text{minimize } \text{Loss}(w) \text{ subject to } \lVert w \rVert^2 \le t \\[4pt]
+&\text{Equivalent unconstrained form:} \\
+&\text{minimize } \text{Loss}(w) + \lambda \lVert w \rVert^2
+\end{aligned}
 ```
-minimize  Loss(w)  subject to  ||w||^2 <= t
 
-Equivalent unconstrained form:
-minimize  Loss(w) + lambda * ||w||^2
-```
-
-限制的不变在不变^2 <= t定义一个球 (圆在2D,球3D).解决方案是输入轮首先触摸这个球.
+限制$\lVert w \rVert^2 \le t$解决方案是输入轮首先触及这个球的地方.
 
 **L1 regularization (LASSO):**
 
+```math
+\begin{aligned}
+&\text{minimize } \text{Loss}(w) \text{ subject to } \lVert w \rVert_1 \le t \\[4pt]
+&\text{Equivalent unconstrained form:} \\
+&\text{minimize } \text{Loss}(w) + \lambda \lVert w \rVert_1
+\end{aligned}
 ```
-minimize  Loss(w)  subject to  ||w||_1 <= t
 
-Equivalent unconstrained form:
-minimize  Loss(w) + lambda * ||w||_1
-```
-
-限制的定义是钻石 (转形2D方形).
+限制$\lVert w \rVert_1 \le t$定义钻石 (二维旋转方形).
 
 | Property | L2 constraint (circle) | L1 constraint (diamond) |
 |---|---|---|
@@ -315,11 +322,13 @@ minimize  Loss(w) + lambda * ||w||_1
 
 拉格兰基双重函数:
 
-```
-Primal: minimize f(x) subject to g(x) <= 0
-Lagrangian: L(x, lambda) = f(x) + lambda * g(x)
-Dual function: d(lambda) = min_x L(x, lambda)
-Dual problem: maximize d(lambda) subject to lambda >= 0
+```math
+\begin{aligned}
+&\text{Primal:} && \text{minimize } f(x) \text{ subject to } g(x) \le 0 \\
+&\text{Lagrangian:} && L(x, \lambda) = f(x) + \lambda g(x) \\
+&\text{Dual function:} && d(\lambda) = \min_x L(x, \lambda) \\
+&\text{Dual problem:} && \text{maximize } d(\lambda) \text{ subject to } \lambda \ge 0
+\end{aligned}
 ```
 
 为什么二元性很重要:
@@ -346,7 +355,7 @@ Replace x_i^T x_j with K(x_i, x_j) to get the kernel trick.
 
 **Most local minima are good enough.**在高维度空间中,随机关键点 (梯度为零) 绝大多数是车点,而不是本地最小值.存在的少数本地最小值往往接近全球最小值.当参数空间有数百万维度时,陷入一个可怕的本地最小值极不可能.
 
-**Saddle points, not local minima, are the real obstacle.**在一个具有 n 参数的函数中,点具有正面和负面曲线方向的混合.对于高维度的随机关键点,所有 n 个体值的正面 (本地最小) 概率大约为 2 ^ - n.几乎所有关键点都是点.SGD 的噪音有助于逃脱它们.
+**Saddle points, not local minima, are the real obstacle.**在一个函数中$n$对于高维度的随机关键点,所有的概率是$n$实际值是正值的 (本地最小值)$2^{-n}$几乎所有的关键点都是车点.
 
 **Overparameterization smooths the landscape.**网络比训练示例更多的参数,更平滑,更连接的损失表面.更广泛的网络具有较少的恶性本地最小值.这与直觉相反,但经验一致.
 
@@ -365,21 +374,21 @@ Replace x_i^T x_j with K(x_i, x_j) to get the kernel trick.
 
 对于大型模型来说,纯牛顿的方法是不实用的.
 
-**L-BFGS (Limited-memory BFGS):**通过使用最后的 m 梯度差异,接近逆赫西安.需要O(mn) 记忆而不是O(n^2).对高达 ~ 10,000 个参数的问题很好.用于经典ML (物流回归,CRF) 但不是深度学习.
+**L-BFGS (Limited-memory BFGS):**通过使用最后的 $m$需要的$O(mn)$记忆而不是$O(n^2)$适用于高达10,000参数的问题.用于经典ML (物流回归,CRF),但不是深度学习.
 
 **Natural gradient:**根据Fisher的数据测量,Fisher的数据测量对数据测量进行了测量,并将数据测量进行测量.
 
-**Hessian-free optimization:**使用结合梯度来解决Hx = g,而没有形成H.只需要Hessian向量产品,通过自动分化可以在O ((n) 时间计算.
+**Hessian-free optimization:**使用结合梯度来解决$Hx = g$没有形成.$H$只有需要Hessian向量产量,可以在$O(n)$通过自动分化进行时间.
 
 **Diagonal approximations:**亚当的第二个时刻是赫西亚人的斜角近似.AdaHessian通过哈辛森估计器使用实际的赫西亚斜角元素扩展这一点.
 
 | Method | Memory | Per-step cost | When to use |
 |--------|--------|--------------|-------------|
-| Gradient descent | O(n) | O(n) | Baseline, large models |
-| Newton's method | O(n^2) | O(n^3) | Small convex problems |
-| L-BFGS | O(mn) | O(mn) | Medium convex problems |
-| Adam | O(n) | O(n) | Deep learning default |
-| K-FAC | O(n) | O(n) per layer | Research, large-batch training |
+| Gradient descent | $O(n)$ | $O(n)$ | Baseline, large models |
+| Newton's method | $O(n^2)$ | $O(n^3)$ | Small convex problems |
+| L-BFGS | $O(mn)$ | $O(mn)$ | Medium convex problems |
+| Adam | $O(n)$ | $O(n)$ | Deep learning default |
+| K-FAC | $O(n)$ | $O(n)$ per layer | Research, large-batch training |
 
 ```figure
 convex-vs-nonconvex
@@ -516,15 +525,27 @@ print(f"Support vectors: {svm.n_support_}")
 
 ## 运动
 
-1. **Convexity gallery.**使用检查器测试这些曲性函数: f(x) = x^4, f(x) = sin(x), f(x,y) = x^2 + y^2, f(x,y) = x*y, f(x) = max(x, 0).解释为什么每个结果都有意义.
+1. **Convexity gallery.**使用检查器测试这些函数以查看曲度: $f(x) = x^4$现在$f(x) = \sin(x)$现在$f(x,y) = x^2 + y^2$现在$f(x,y) = xy$现在$f(x) = \max(x, 0)$解释为什么每个结果都是有意义的.
 
-2. **Newton vs gradient descent race.**运行两个方法从起点 (10,10) 运行 f ((x,y) = 50*x^2 + y^2 . 每个方法需要多少步骤才能达到损失 < 1e-10?当条件数 (最大至最小的赫西安自值的比例) 增加时,梯度下降发生什么?
+2. **Newton vs gradient descent race.**运行两个方法$f(x,y) = 50x^2 + y^2$从起点开始$(10, 10)$变 gradient 降低发生什么,当条件数量 (最大至最小的赫西安自值比例) 增加时?
 
-3. **Lagrange multiplier geometry.**尽量减少f ((x,y) = (x-3)^2 + (y-3)^2以 x + 2y = 4为主. 通过检查f的梯度是否与溶液上的g的梯度平行,验证解决方案.
+3. **Lagrange multiplier geometry.**减少$f(x,y) = (x-3)^2 + (y-3)^2$根据$x + 2y = 4$检查溶液的向率$f$与梯相对$g$在解决方案.
 
-4. **Regularization constraint.**实现L1限制优化:最小化 (x-3)^2 + (y-2)^2 归属于 ┃x ┃ + ┃y ┃ <= 1. 显示解决方案有一个坐标等于零 (钻石限制的差).
+4. **Regularization constraint.**实现L1限制优化:尽量减少$(x-3)^2 + (y-2)^2$根据$\lvert x \rvert + \lvert y \rvert \le 1$显示溶液有一个坐标等于零 (钻石约束的差).
 
 5. **Hessian eigenvalue analysis.**计算Rosenbrock函数的Hessian在 (1,1) 和 (-1,1).计算两个点的自值.自值告诉你关于最小与远离的曲线?
+
+### 暗示
+
+**Exercise 1.**在跑步之前,预测每一个结果.`check_convexity`,在一个维度,看看标志$f''(x)$两个维度,看看赫西亚的本值.$f(x,y) = xy$检查器必须报告它不是曲的.
+
+**Exercise 2.**电话`optimize_gd`其他`newtons_method`向和向的向$f$对于梯度下降,学习率必须低于$2/100$由于$50x^2$它们的含量$y$方向移动缓慢. 重复$100x^2$然后再数几步.
+
+**Exercise 3.**使用`lagrange_solve`随着$g(x,y) = x + 2y - 4$在答案上,查看.$x + 2y = 4$现在,$\nabla f = (2(x-3), 2(y-3))$是一个乘法$\nabla g = (1, 2)$现在,我们要去.
+
+**Exercise 4.**没有限制的最小值 (3, 2) 在钻石之外,所以答案在钻石的边界上. 使用预测梯度下降:采取梯度步骤,然后投射回$\lvert x \rvert + \lvert y \rvert \le 1$检查结果是否满足平等的限制,并将其与`demo_regularization_geometry`现在,我们要去.
+
+**Exercise 5.**电话`rosenbrock_hessian`在每一个点,然后将结果传递给`hessian_eigenvalues_2d`在 (1, 1) 时,两个自值值都是正值的,它们的比率非常大,所以谷口在一方向窄而另一方向平坦.
 
 ## 关键词
 
@@ -543,7 +564,7 @@ print(f"Support vectors: {svm.n_support_}")
 | Complementary slackness | At the solution, either a constraint is active or its multiplier is zero. Never both nonzero |
 | Duality | Every constrained problem has a companion dual problem. For convex problems, both have the same optimal value |
 | Strong duality | Primal and dual optimal values are equal. Holds for convex problems satisfying Slater's condition |
-| L-BFGS | Approximate second-order method that stores the last m gradient differences instead of the full Hessian |
+| L-BFGS | Approximate second-order method that stores the last $m$ gradient differences instead of the full Hessian |
 | Saddle point | A point where the gradient is zero but it is a minimum in some directions and a maximum in others |
 | Overparameterization | Using more parameters than training examples. Smooths the loss landscape and reduces bad local minima |
 

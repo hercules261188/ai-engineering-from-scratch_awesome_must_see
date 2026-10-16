@@ -9,7 +9,7 @@
 
 ## 学习目标
 
-- 计算常见ML函数的数值和分析衍生物 (x^2,sigmoid,跨)
+- 计算常见 ML函数的数值和分析衍生值 ($x^2$体,体,体
 - 实现从零开始降梯度,以减少1D和2D中的损失函数
 - 导出线性回归模型的梯度,并通过手动重量更新训练它
 - 解释赫西矩阵,泰勒系列近似和它们与优化方法的联系
@@ -24,59 +24,58 @@
 
 ### 导数是什么?
 
-衍生值测量变化速度.对于函数 y = f(x,衍生值 f'(x) 告诉你:如果你推出 x 微小的数量, y 变化多少?
+衍生品衡量变化率.$y = f(x)$衍生品$f'(x)$告诉你:如果你推$x$钱的小量,$y$改变?
 
 几何学上,衍生品是线在某个点上的斜率.
 
-**f(x) = x^2:**
+**$f(x) = x^2$:**
 
-| x | f(x) | f'(x) (slope) |
+| $x$ | $f(x)$ | $f'(x)$ (slope) |
 |---|------|---------------|
 | 0 | 0    | 0 (flat, at the bottom) |
 | 1 | 1    | 2 |
 | 2 | 4    | 4 (tangent line slope at this point) |
 | 3 | 9    | 6 |
 
-在 x=2 时,斜率是 4. 如果把 x 移动到右边, y 增加了4倍左右.在 x=0,斜率是 0.
+在$x=2$如果移动,$x$稍微向右,$y$增加了4倍左右.$x=0$向是0. 你在碗底部.
 
 官方定义:
 
-```
-f'(x) = lim   f(x + h) - f(x)
-        h->0  -----------------
-                     h
+```math
+f'(x) = \lim_{h \to 0} \frac{f(x + h) - f(x)}{h}
 ```
 
-在代码中,你跳过了极限,只使用一个非常小的h.
+在代码中,你跳过了极限,只用一个非常小的$h$这就是数字衍生.
 
 ### 部分衍生品:一次性变量
 
 实际函数有很多输入.神经网络损失取决于数千个权重. 一个部分衍生物保持除一个变量以外的所有变量是恒定的,然后取出与那个变量相对于的衍生物.
 
-```
-f(x, y) = x^2 + 3xy + y^2
-
-df/dx = 2x + 3y     (treat y as a constant)
-df/dy = 3x + 2y     (treat x as a constant)
+```math
+\begin{aligned}
+f(x, y) &= x^2 + 3xy + y^2 \\[4pt]
+\frac{\partial f}{\partial x} &= 2x + 3y \quad \text{(treat } y \text{ as a constant)} \\
+\frac{\partial f}{\partial y} &= 3x + 2y \quad \text{(treat } x \text{ as a constant)}
+\end{aligned}
 ```
 
 如果我推出这只重量,损失会如何改变?
 
 ### 梯度:所有部分衍生物的向量
 
-梯度将每个部分衍生物集成成一个向量.对于函数 f ((x, y, z),梯度是:
+渐变将每个部分衍生物集成成一个向量.$f(x, y, z)$向是:
 
-```
-grad f = [ df/dx, df/dy, df/dz ]
+```math
+\nabla f = \left[ \frac{\partial f}{\partial x}, \frac{\partial f}{\partial y}, \frac{\partial f}{\partial z} \right]
 ```
 
 梯指向最的升方向.
 
-**Contour plot of f(x,y) = x^2 + y^2:**
+**Contour plot of $f(x,y) = x^2 + y^2$:**
 
 函数形成一个碗形状,以圆为轮线.最小值为 (0, 0).
 
-| Point | grad f | -grad f (descent direction) |
+| Point | $\nabla f$ | $-\nabla f$ (descent direction) |
 |-------|--------|----------------------------|
 | (1, 1) | [2, 2] (points uphill, away from minimum) | [-2, -2] (points downhill, toward minimum) |
 | (0, 0) | [0, 0] (flat, at the minimum) | [0, 0] |
@@ -85,7 +84,7 @@ grad f = [ df/dx, df/dy, df/dz ]
 
 ### 优化的联系
 
-训练一个神经网络是优化.你有一个损失函数 L ((w1, w2, ..., wn) 测量模型是多么错误.你想尽量减少它.
+训练神经网络是优化.$L(w_1, w_2, \ldots, w_n)$模型是多么错误的,你想尽量减少.
 
 ```
 Gradient descent update rule:
@@ -102,7 +101,7 @@ For every weight:
 
 **Loss landscape (1D slice):**
 
-损失函数 L ((w) 随着w重量的变化,形成一个曲,具有峰值和谷口.
+损失函数$L(w)$形成一个曲线,峰值和谷口作为重量.$w$它们的数量有所不同.
 
 | Feature | Description |
 |---------|-------------|
@@ -116,9 +115,9 @@ For every weight:
 
 计算衍生值有两种方法.
 
-分析:手动应用计算规则.为 f  x = x^2,衍生式是 f  x = 2x. 正确.快.
+分析:手动应用计算规则.$f(x) = x^2$导数是$f'(x) = 2x$确切,快速.
 
-计算 f ((x+h) 和 f ((x-h) 为一个小 h,然后使用差异.
+计算 计算 计算 计算 计算$f(x+h)$其他$f(x-h)$为了一个小的$h$然后使用差异.
 
 ```
 Numerical (central difference):
@@ -148,7 +147,7 @@ f(x) = ln(x)   f'(x) = 1/x     Cross-entropy loss
 f(x) = 1/(1+e^-x)  f'(x) = f(x)(1-f(x))   Sigmoid activation
 ```
 
-对于 f ((x) = x^2:
+为了$f(x) = x^2$其他:
 
 ```
 f(x) = x^2    f'(x) = 2x
@@ -161,7 +160,7 @@ f(x) = x^2    f'(x) = 2x
    2    4       4      slope tilts right (increasing)
 ```
 
-对于 f(w) = wx + b 与 x=3, b=1:
+为了$f(w) = wx + b$随着$x=3$现在$b=1$其他:
 
 ```
 f(w) = 3w + 1    f'(w) = 3
@@ -189,17 +188,16 @@ Example: y = (3x + 1)^2
 
 梯度告诉你斜率,赫西亚式告诉你曲率.
 
-赫西亚式是二级部分衍生物的矩阵.对于函数 f ((x1, x2, ..., xn),赫西亚式的输入 (i, j) 是:
+对于函数,Hessian是二级部分衍生物的矩阵.$f(x_1, x_2, \ldots, x_n)$进入$(i, j)$赫西亚语是:
 
-```
-H[i][j] = d^2f / (dx_i * dx_j)
+```math
+H_{ij} = \frac{\partial^2 f}{\partial x_i \, \partial x_j}
 ```
 
-对于2变量函数 f ((x,y):
+对于一个2变量函数$f(x, y)$其他:
 
-```
-H = | d^2f/dx^2    d^2f/dxdy |
-    | d^2f/dydx    d^2f/dy^2 |
+```math
+H = \begin{bmatrix} \dfrac{\partial^2 f}{\partial x^2} & \dfrac{\partial^2 f}{\partial x \, \partial y} \\[8pt] \dfrac{\partial^2 f}{\partial y \, \partial x} & \dfrac{\partial^2 f}{\partial y^2} \end{bmatrix}
 ```
 
 **What the Hessian tells you at a critical point (where gradient = 0):**
@@ -210,7 +208,7 @@ H = | d^2f/dx^2    d^2f/dxdy |
 | Negative definite (all eigenvalues < 0) | Local maximum | Bowl pointing down |
 | Indefinite (mixed eigenvalues) | Saddle point | Horse saddle shape |
 
-**Example:**f(x,y) = x^2 - y^2 (一个车函数)
+**Example:** $f(x, y) = x^2 - y^2$(车功能)
 
 ```
 df/dx = 2x       df/dy = -2y
@@ -223,7 +221,7 @@ Eigenvalues: 2 and -2 (one positive, one negative)
 --> Saddle point at (0, 0)
 ```
 
-比较 f ((x, y) = x^2 + y^2 (一个碗):
+比较$f(x, y) = x^2 + y^2$子,子,子,子,子,子,子,子,子,子,子,子,子,子,子,子,子.
 
 ```
 H = | 2  0 |
@@ -237,22 +235,24 @@ Eigenvalues: 2 and 2 (both positive)
 
 牛顿的方法使用赫西式来采取比梯度下降更好的优化步骤.
 
-```
-Newton's update:    w_new = w_old - H^(-1) * gradient
-Gradient descent:   w_new = w_old - lr * gradient
+```math
+\begin{aligned}
+\text{Newton's update:} \quad & w_{\text{new}} = w_{\text{old}} - H^{-1} \cdot \text{gradient} \\
+\text{Gradient descent:} \quad & w_{\text{new}} = w_{\text{old}} - \text{lr} \cdot \text{gradient}
+\end{aligned}
 ```
 
 牛顿的方法更快地接近,因为赫西式"再加速度"的梯度 - - 方向得到更小的步骤,平方向得到更大的步骤.
 
-对于一个具有N参数的神经网络,赫西亚式是N xN.一个拥有100万参数的模型需要一个1万亿参数的矩阵.
+捕获:用于一个与$N$设法,赫西亚是$N \times N$模型需要一个万参数的矩阵,所以我们使用了近似.
 
 | Method | What it uses | Cost | Convergence |
 |--------|-------------|------|-------------|
-| Gradient descent | First derivatives only | O(N) per step | Slow (linear) |
-| Newton's method | Full Hessian | O(N^3) per step | Fast (quadratic) |
-| L-BFGS | Approximate Hessian from gradient history | O(N) per step | Medium (superlinear) |
-| Adam | Per-parameter adaptive rates (diagonal Hessian approx) | O(N) per step | Medium |
-| Natural gradient | Fisher information matrix (statistical Hessian) | O(N^2) per step | Fast |
+| Gradient descent | First derivatives only | $O(N)$ per step | Slow (linear) |
+| Newton's method | Full Hessian | $O(N^3)$ per step | Fast (quadratic) |
+| L-BFGS | Approximate Hessian from gradient history | $O(N)$ per step | Medium (superlinear) |
+| Adam | Per-parameter adaptive rates (diagonal Hessian approx) | $O(N)$ per step | Medium |
+| Natural gradient | Fisher information matrix (statistical Hessian) | $O(N^2)$ per step | Fast |
 
 在实践中,亚当是深度学习的默认优化器.它通过追踪每参数的运行平均和梯度变化,便宜地接近二级信息.
 
@@ -260,17 +260,17 @@ Gradient descent:   w_new = w_old - lr * gradient
 
 任何平滑函数可以通过多项式在本地进行近似:
 
-```
-f(x + h) = f(x) + f'(x)*h + (1/2)*f''(x)*h^2 + (1/6)*f'''(x)*h^3 + ...
+```math
+f(x + h) = f(x) + f'(x)\,h + \frac{1}{2} f''(x)\,h^2 + \frac{1}{6} f'''(x)\,h^3 + \cdots
 ```
 
-接近的方法越好,但只有在 x 点附近.
+接近的方法越好,但只有在点附近.$x$现在,我们要去.
 
 **Why Taylor series matter for ML:**
 
-- **First-order Taylor = gradient descent.**当你使用 f(x + h) ~ f(x) + f'(x) *h,你正在做一个线性近似.渐进下降将这个线性模型最小化,选择h = -lr * f'(x.
+- **First-order Taylor = gradient descent.**当您使用时$f(x + h) \approx f(x) + f'(x) h$渐进下降将这个线性模型最小化.$h = -\text{lr} \cdot f'(x)$现在,我们要去.
 
-- **Second-order Taylor = Newton's method.**使用 f(x + h) ~ f(x) + f'(x) *h + (1/2) *f'(x) *h^2,你得到一个方形模型.最小化它会得到 h = -f'(x) /f'(x) - 牛顿的步骤.
+- **Second-order Taylor = Newton's method.**使用$f(x + h) \approx f(x) + f'(x) h + \frac{1}{2} f''(x) h^2$通过最小化,我们可以得到一个方形模型.$h = -f'(x)/f''(x)$- - 牛顿的步骤.
 
 - **Loss function design.**它们的Taylor扩展是很好的. 这不是意外. 流的损失使得优化可以预测.
 
@@ -291,28 +291,36 @@ Higher orders          Finer structure     Rarely used in ML
 
 在ML中,你很少手动计算整体,
 
-**Probability.**对于密度p(x的连续随机变量:
+**Probability.**对于一个连续的随机变量,$p(x)$其他:
+
+```math
+P(a < X < b) = \int_a^b p(x) \, dx
 ```
-P(a < X < b) = integral from a to b of p(x) dx
-```
-在a和b之间的概率密度曲线下的区域是该范围的降落概率.
+
+之间的概率密度曲线下的区域$a$其他$b$它们的降落率是
 
 **Expected value.**根据概率权重的平均结果:
+
+```math
+\mathbb{E}[f(X)] = \int f(x) \, p(x) \, dx
 ```
-E[f(X)] = integral of f(x) * p(x) dx
-```
+
 预期的数据分布损失是不可或缺的.
 
 **KL divergence.**测量两种分布的不同程度:
+
+```math
+\mathrm{KL}(p \,\|\, q) = \int p(x) \log \frac{p(x)}{q(x)} \, dx
 ```
-KL(p || q) = integral of p(x) * log(p(x) / q(x)) dx
-```
+
 在 VAEs,知识蒸和贝叶斯推理中使用.
 
 **Normalization constants.**在贝叶斯推理中:
+
+```math
+p(w \mid \text{data}) = \frac{p(\text{data} \mid w) \, p(w)}{\int p(\text{data} \mid w) \, p(w) \, dw}
 ```
-p(w | data) = p(data | w) * p(w) / integral of p(data | w) * p(w) dw
-```
+
 变量值是所有可能参数值的整体. 它通常是难以解决的,这就是为什么我们使用MCMC和变量推理等近似.
 
 | Integral concept | Where it appears in ML |
@@ -353,16 +361,16 @@ graph RL
 
 当函数将向量映射到向量 (如神经网络层),其衍生物是矩阵. 雅可比安包含每个输出和每个输入的每个部分衍生物.
 
-对于f:R^n ->R^m,雅可比亚J是一个m x n矩阵:
+为了$f: \mathbb{R}^n \to \mathbb{R}^m$杰科比人$J$是一个$m \times n$矩阵:
 
-| | x1 | x2 | ... | xn |
+| | $x_1$ | $x_2$ | ... | $x_n$ |
 |---|---|---|---|---|
-| f1 | df1/dx1 | df1/dx2 | ... | df1/dxn |
-| f2 | df2/dx1 | df2/dx2 | ... | df2/dxn |
+| $f_1$ | $\partial f_1/\partial x_1$ | $\partial f_1/\partial x_2$ | ... | $\partial f_1/\partial x_n$ |
+| $f_2$ | $\partial f_2/\partial x_1$ | $\partial f_2/\partial x_2$ | ... | $\partial f_2/\partial x_n$ |
 | ... | ... | ... | ... | ... |
-| fm | dfm/dx1 | dfm/dx2 | ... | dfm/dxn |
+| $f_m$ | $\partial f_m/\partial x_1$ | $\partial f_m/\partial x_2$ | ... | $\partial f_m/\partial x_n$ |
 
-对于神经网络,你不会手动计算Jacobians. PyTorch处理它. 但知道它存在,有助于你理解后延伸的形状:如果一个层映射R^n到R^m,它的Jacobian是m x n.梯度通过这个矩阵的转移流向后.
+对于神经网络,你不会手动计算Jacobians. PyTorch处理它. 但知道它存在,有助于你理解背部传播的形状:如果一个层绘图$\mathbb{R}^n$为了$\mathbb{R}^m$哥比亚人是$m \times n$梯度通过这个矩阵的转移向后流.
 
 ### 为什么这对神经网络很重要
 
@@ -445,7 +453,7 @@ for step in range(20):
     print(f"step {step:2d}  x={x:8.4f}  f(x)={x**2:10.6f}")
 ```
 
-从x=5开始,每个步骤都接近x=0 (最小).
+开始于$x=5$每一步都会走得更近$x=0$(最低限度)
 
 ### 步骤4: 2D函数上的渐进下降
 
@@ -531,7 +539,7 @@ for h in [0.1, 0.5, 1.0, 2.0]:
     print(f"h={h:.1f}  sin(h)={true_val:.4f}  order1={t1:.4f}  order2={t2:.4f}")
 ```
 
-接近x0=0, sin(x) ~ x (第一级泰勒).对小h来说,近似非常好,但对大h来说,分解.这就是为什么梯度下降在小学习率下最好工作的原因 - - 每一步都假设线性近似是准确的.
+接近$x_0=0$现在$\sin(x) \approx x$对于小小的情况来说,$h$但它会被破碎.$h$这就是为什么梯度下降最适合小学习率 - - 每一步都假设线性近似是准确的.
 
 ### 步骤8:为什么这对神经网络很重要
 
@@ -600,9 +608,17 @@ print(f"Learned: y = {w:.2f}x + {b:.2f}")
 
 ## 运动
 
-1. 实施`numerical_second_derivative(f, x)`使用`numerical_derivative`检查到x^3的第二个衍生值在x=2是12.
-2. 使用梯度下降,找到最小的f ((x,y) = (x - 3) ^2 + (y + 1) ^2.从 (0, 0) 开始.答案应该接近 (3, - 1).
-3. 增加动力在梯度下降循环:保持一个速度向量,积累过去梯度.比较与和没有动力的趋同速度在f ((x) = x^4 - 3x^2.
+1. 实施`numerical_second_derivative(f, x)`使用`numerical_derivative`检查第二个衍生值的$x^3$在$x=2$现在,我们要做什么?
+2. 使用梯度下降来找到最小值$f(x, y) = (x - 3)^2 + (y + 1)^2$开始从$(0, 0)$答案应该与$(3, -1)$现在,我们要去.
+3. 增加动力在梯度下降循环:保持一个速度向量,积累过去梯度.$f(x) = x^4 - 3x^2$现在,我们要去.
+
+### 暗示
+
+**Exercise 1.**定义一个回来的助手`numerical_derivative(f, x)`让那个助手去`numerical_derivative`如果结果很,请使用更大的步骤,如`h=1e-4`对于两个调用;$x=2$必须接近12个.
+
+**Exercise 2.**写下梯度$(2(x - 3), 2(y + 1))$或使用`numerical_gradient`打电话`gradient_descent_nd`其他$(0, 0)$每10步印出一个点,必须向前移动.$(3, -1)$损失必须降到接近0.
+
+**Exercise 3.**保持速度`v`更新如下`v = momentum * v - lr * grad`然后添加`v`为了`x`计算每个方法需要达到接近0的梯度的步骤;最低值为 $x = \pm\sqrt{1.5} \approx \pm 1.225$现在,我们要去.
 
 ## 关键词
 
@@ -613,12 +629,12 @@ print(f"Learned: y = {w:.2f}x + {b:.2f}")
 | Gradient | "Direction of steepest ascent" | A vector of all partial derivatives. Points in the direction that increases the function fastest. |
 | Gradient descent | "Go downhill" | Subtract the gradient (times a learning rate) from the parameters to reduce the loss. The core of neural network training. |
 | Learning rate | "Step size" | A scalar that controls how big each gradient descent step is. Too large: diverge. Too small: converge slowly. |
-| Chain rule | "Multiply the derivatives" | The rule for differentiating composed functions: df/dx = df/dg * dg/dx. The mathematical basis of backpropagation. |
+| Chain rule | "Multiply the derivatives" | The rule for differentiating composed functions: $\frac{df}{dx} = \frac{df}{dg} \cdot \frac{dg}{dx}$. The mathematical basis of backpropagation. |
 | Jacobian | "Matrix of derivatives" | When a function maps vectors to vectors, the Jacobian is the matrix of all partial derivatives of outputs with respect to inputs. |
 | Numerical derivative | "Finite differences" | Approximating a derivative by evaluating the function at two nearby points and computing the slope between them. |
 | Backpropagation | "Reverse-mode autodiff" | Computing gradients layer by layer from output to input using the chain rule. How neural networks learn. |
 | Hessian | "Matrix of second derivatives" | The matrix of all second-order partial derivatives. Describes the curvature of a function. Positive definite Hessian at a critical point means local minimum. |
-| Taylor series | "Polynomial approximation" | Approximating a function near a point using its derivatives: f(x+h) ~ f(x) + f'(x)h + (1/2)f''(x)h^2 + ... The basis for understanding why gradient descent and Newton's method work. |
+| Taylor series | "Polynomial approximation" | Approximating a function near a point using its derivatives: $f(x+h) \approx f(x) + f'(x)h + \frac{1}{2}f''(x)h^2 + \cdots$ The basis for understanding why gradient descent and Newton's method work. |
 | Integral | "Area under the curve" | The accumulation of a quantity over a range. In ML, integrals define probabilities, expected values, and KL divergence. |
 
 ## 进一步阅读

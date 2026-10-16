@@ -24,7 +24,7 @@
 
 ### 事件,样本空间和可能性
 
-样本空间 S 是所有可能的结果的集合.事件是样本空间的子集.概率将事件映射到0到1之间的数字.
+样本空间$S$概率是对0到1之间的数量的事件映射.
 
 ```
 Coin flip:
@@ -37,15 +37,15 @@ Single die roll:
 ```
 
 概率的定义有三个定理:
-1. 对于任何事件 A, P(A) >= 0
-2. 总是发生了一些事情.
-3. P(A或B) = P(A) + P(B) A和B既不能发生
+1. $P(A) \ge 0$任何事件$A$
+2. $P(S) = 1$(总是发生什么事)
+3. $P(A \text{ or } B) = P(A) + P(B)$什么时候$A$其他$B$两者都不可能发生
 
 其他一切 (贝斯定理,期望,分布) 都来自于这些三个规则.
 
 ### 条件可能和独立性
 
-根据B的概率,B的概率是 A 的概率.
+$P(A \mid B)$是 概率$A$考虑到$B$发生了.
 
 ```
 P(A|B) = P(A and B) / P(B)
@@ -58,9 +58,11 @@ Example: deck of cards
 
 两个事件是独立的,当知道一个对另一个什么都不告诉你:
 
-```
-Independent:   P(A|B) = P(A)
-Equivalent to: P(A and B) = P(A) * P(B)
+```math
+\begin{aligned}
+\text{Independent:} \quad & P(A \mid B) = P(A) \\
+\text{Equivalent to:} \quad & P(A \text{ and } B) = P(A) \cdot P(B)
+\end{aligned}
 ```
 
 钱是独立的,没有替换的卡是没有的.
@@ -98,27 +100,33 @@ integral from -inf to +inf of f(x) dx = 1
 
 **Bernoulli:**一个试验,两个结果.
 
-```
-P(X = 1) = p
-P(X = 0) = 1 - p
-Mean = p,  Variance = p(1-p)
+```math
+\begin{aligned}
+P(X = 1) &= p \\
+P(X = 0) &= 1 - p \\
+\text{Mean} = p, &\quad \text{Variance} = p(1-p)
+\end{aligned}
 ```
 
-**Categorical:**模型多类分类 (软最大输出).
+**Categorical:**一次审判,$k$模型多类分类 (软最大输出).
 
-```
-P(X = i) = p_i,  where sum of p_i = 1
-Example: P(cat) = 0.7,  P(dog) = 0.2,  P(bird) = 0.1
+```math
+\begin{aligned}
+& P(X = i) = p_i, \quad \text{where } \textstyle\sum_i p_i = 1 \\
+& \text{Example: } P(\text{cat}) = 0.7, \quad P(\text{dog}) = 0.2, \quad P(\text{bird}) = 0.1
+\end{aligned}
 ```
 
 **Uniform:**随机初始化.
 
-```
-Discrete: P(X = k) = 1/n for k in {1, ..., n}
-Continuous: f(x) = 1/(b-a) for x in [a, b]
+```math
+\begin{aligned}
+\text{Discrete:} \quad & P(X = k) = 1/n \text{ for } k \in \lbrace 1, \ldots, n \rbrace \\
+\text{Continuous:} \quad & f(x) = 1/(b-a) \text{ for } x \in [a, b]
+\end{aligned}
 ```
 
-**Normal (Gaussian):**通过平均 (mu) 和变量 (sigma^2) 参数化.
+**Normal (Gaussian):**曲线. 参数为平均值 ($\mu$) 和变化 ($\sigma^2$)
 
 ```
 f(x) = (1 / sqrt(2*pi*sigma^2)) * exp(-(x - mu)^2 / (2*sigma^2))
@@ -131,45 +139,51 @@ Standard normal: mu = 0, sigma = 1
 
 **Poisson:**模型事件率.
 
-```
-P(X = k) = (lambda^k * e^(-lambda)) / k!
-Mean = lambda,  Variance = lambda
+```math
+\begin{aligned}
+P(X = k) &= \frac{\lambda^k e^{-\lambda}}{k!} \\
+\text{Mean} = \lambda, &\quad \text{Variance} = \lambda
+\end{aligned}
 ```
 
 ### 预期价值和变化
 
 预期值是中值结果.
 
-```
-Discrete:   E[X] = sum of x_i * P(X = x_i)
-Continuous: E[X] = integral of x * f(x) dx
+```math
+\begin{aligned}
+\text{Discrete:} \quad & \mathbb{E}[X] = \sum_i x_i \, P(X = x_i) \\
+\text{Continuous:} \quad & \mathbb{E}[X] = \int x \, f(x) \, dx
+\end{aligned}
 ```
 
 变量量分布在平均值周围.
 
-```
-Var(X) = E[(X - E[X])^2] = E[X^2] - (E[X])^2
-Standard deviation = sqrt(Var(X))
+```math
+\begin{aligned}
+\mathrm{Var}(X) &= \mathbb{E}[(X - \mathbb{E}[X])^2] = \mathbb{E}[X^2] - (\mathbb{E}[X])^2 \\
+\text{Standard deviation} &= \sqrt{\mathrm{Var}(X)}
+\end{aligned}
 ```
 
 在ML中,预期值显示为损失函数 (数据分布平均损失).变化告诉你模型稳定性.梯度的高变化意味着噪音训练.
 
 ### 联合和边际分销
 
-联合分布 P ((X,Y) 描述两个随机变量.
+共同分配$P(X, Y)$描述两个随机变量.
 
-联合PMF的例子 (X = 天气,Y =雨):
+联合 PMF 例子 ($X$气候$Y$子
 
-| | Y=0 (no umbrella) | Y=1 (umbrella) | Marginal P(X) |
+| | $Y=0$ (no umbrella) | $Y=1$ (umbrella) | Marginal $P(X)$ |
 |---|---|---|---|
-| X=0 (sun) | 0.40 | 0.10 | P(X=0) = 0.50 |
-| X=1 (rain) | 0.05 | 0.45 | P(X=1) = 0.50 |
-| **Marginal P(Y)** | P(Y=0) = 0.45 | P(Y=1) = 0.55 | 1.00 |
+| $X=0$ (sun) | 0.40 | 0.10 | $P(X=0) = 0.50$ |
+| $X=1$ (rain) | 0.05 | 0.45 | $P(X=1) = 0.50$ |
+| **Marginal $P(Y)$** | $P(Y=0) = 0.45$ | $P(Y=1) = 0.55$ | 1.00 |
 
 边际分布总结了其他变量:
 
-```
-P(X = x) = sum over all y of P(X = x, Y = y)
+```math
+P(X = x) = \sum_{y} P(X = x, Y = y)
 ```
 
 上面表中的行列和列总数是边缘值.
@@ -196,23 +210,27 @@ This works for ANY starting distribution.
 
 几率是数值问题,多次乘以几率的数值,
 
-```
-P(sentence) = P(word1) * P(word2) * ... * P(word_n)
-            = 0.01 * 0.003 * 0.02 * ...
-            -> 0.0 (underflow after ~30 terms)
+```math
+\begin{aligned}
+P(\text{sentence}) &= P(\text{word}_1) \cdot P(\text{word}_2) \cdot \ldots \cdot P(\text{word}_n) \\
+&= 0.01 \cdot 0.003 \cdot 0.02 \cdot \ldots \\
+&\to 0.0 \quad \text{(underflow after } \sim 30 \text{ terms)}
+\end{aligned}
 ```
 
 乘法变成了加算.
 
-```
-log P(sentence) = log P(word1) + log P(word2) + ... + log P(word_n)
-                = -4.6 + -5.8 + -3.9 + ...
-                -> finite number (no underflow)
+```math
+\begin{aligned}
+\log P(\text{sentence}) &= \log P(\text{word}_1) + \log P(\text{word}_2) + \ldots + \log P(\text{word}_n) \\
+&= -4.6 + -5.8 + -3.9 + \ldots \\
+&\to \text{finite number (no underflow)}
+\end{aligned}
 ```
 
 规则:
-- 标签: 标签: 标签: 标签:
-- 记录概率总是 <= 0 (因为 0 < P <= 1)
+- $\log(a \cdot b) = \log(a) + \log(b)$
+- 记录概率总是$\le 0$(自从$0 < P \le 1$)
 - 更多负面 = 可能性较小
 - 交叉缩损失是正确类的负记录概率
 
@@ -430,24 +448,34 @@ print(f"Log-softmax: {log_probs}")
 
 4. 写一个函数,以记录概率列表,返回最有可能的序列,总记录概率和相当的原始概率. 用50字的句子测试,每个字的概率为0.01.
 
+### 暗示
+
+**Exercise 1.**画`u`均的分配和回报$-\ln(1 - u) / \lambda$检查样本平均值是否接近$1/\lambda$并且后续的历史图片$\lambda e^{-\lambda x}$现在,我们要去.
+
+**Exercise 2.**填写一个6x6表,每个细胞是概率,所有的细胞的总和是1,然后调用`joint_to_marginals`使用`check_independence`只有当每个细胞等于其两个边缘的乘法时, dice才是独立的.
+
+**Exercise 3.**申请`softmax`子和子$-\ln$结果必须接近0.421,这是值`nn.CrossEntropyLoss`给出相同的标志和目标.
+
+**Exercise 4.**对于50个字的概率是0.01,总数必须是$50 \ln(0.01) \approx -230.26$并且原始概率是$10^{-100}$现在,我们要去.
+
 ## 关键词
 
 | Term | What people say | What it actually means |
 |------|----------------|----------------------|
-| Sample space | "All the possibilities" | The set S of every possible outcome of an experiment |
+| Sample space | "All the possibilities" | The set $S$ of every possible outcome of an experiment |
 | PMF | "The probability function" | A function that gives the exact probability of each discrete outcome, summing to 1 |
 | PDF | "The probability curve" | A density function for continuous variables. Integrate it over an interval to get probability |
-| Conditional probability | "Probability given something" | P(A\|B) = P(A and B) / P(B). The foundation of Bayesian thinking and Bayes' theorem |
-| Independence | "They don't affect each other" | P(A and B) = P(A) * P(B). Knowing one event tells you nothing about the other |
+| Conditional probability | "Probability given something" | $P(A \mid B) = P(A \text{ and } B) / P(B)$. The foundation of Bayesian thinking and Bayes' theorem |
+| Independence | "They don't affect each other" | $P(A \text{ and } B) = P(A) \cdot P(B)$. Knowing one event tells you nothing about the other |
 | Expected value | "The average" | The probability-weighted sum of all outcomes. The loss function is an expected value |
 | Variance | "How spread out" | The expected squared deviation from the mean. High variance = noisy, unstable estimates |
-| Normal distribution | "The bell curve" | f(x) = (1/sqrt(2*pi*sigma^2)) * exp(-(x-mu)^2/(2*sigma^2)). Appears everywhere due to the CLT |
+| Normal distribution | "The bell curve" | $f(x) = (1/\sqrt{2\pi\sigma^2}) \cdot \exp(-(x-\mu)^2/(2\sigma^2))$. Appears everywhere due to the CLT |
 | Central Limit Theorem | "Averages become normal" | The mean of many independent samples converges to a normal distribution regardless of the source |
-| Joint distribution | "Two variables together" | P(X, Y) describes the probability of every combination of X and Y outcomes |
-| Marginal distribution | "Sum out the other variable" | P(X) = sum_y P(X, Y). Recovers one variable's distribution from the joint |
-| Log probability | "Log of the probability" | log P(x). Turns products into sums, preventing numerical underflow in long sequences |
-| Softmax | "Turn scores into probabilities" | softmax(z_i) = exp(z_i) / sum(exp(z_j)). Maps real-valued logits to a valid probability distribution |
-| Cross-entropy | "The loss function" | -sum(p_true * log(p_predicted)). Measures how different two distributions are. Lower is better |
+| Joint distribution | "Two variables together" | $P(X, Y)$ describes the probability of every combination of $X$ and $Y$ outcomes |
+| Marginal distribution | "Sum out the other variable" | $P(X) = \sum_y P(X, Y)$. Recovers one variable's distribution from the joint |
+| Log probability | "Log of the probability" | $\log P(x)$. Turns products into sums, preventing numerical underflow in long sequences |
+| Softmax | "Turn scores into probabilities" | $\text{softmax}(z_i) = \exp(z_i) / \sum_j \exp(z_j)$. Maps real-valued logits to a valid probability distribution |
+| Cross-entropy | "The loss function" | $-\sum p_{\text{true}} \cdot \log(p_{\text{predicted}})$. Measures how different two distributions are. Lower is better |
 | Logits | "Raw model outputs" | Unnormalized scores before softmax. Named after the logistic function |
 | Sampling | "Drawing random values" | Generating values according to a probability distribution. How models generate output |
 

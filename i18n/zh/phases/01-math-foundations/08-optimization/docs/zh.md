@@ -38,8 +38,8 @@ minimize L(w) where:
 
 简单的优化器.计算损失的梯度与每个重量相比. 移动每个重量在其梯度的相反方向. 根据学习速度测量步骤.
 
-```
-w = w - lr * gradient
+```math
+w = w - \text{lr} \cdot \text{gradient}
 ```
 
 这就是整个算法,一个行.
@@ -94,9 +94,11 @@ graph LR
 
 尼拉梯度下降只看着当前梯度.如果梯度扎 (在狭窄的山谷中很常见),进展是缓慢的.动力通过积累过去梯度到速度术语来解决这一问题.
 
-```
-v = beta * v + gradient
-w = w - lr * v
+```math
+\begin{aligned}
+v &= \beta \cdot v + \text{gradient} \\
+w &= w - \text{lr} \cdot v
+\end{aligned}
 ```
 
 类似:一个滚滚下坡.它不会在每一次碰撞中停止或重新启动.它在一致的方向上增强速度,减缓振荡.
@@ -124,17 +126,17 @@ graph TD
 
 根据体重的数据,
 
-1. 第一个时刻 (m):渐变的运行平均值 (如动力)
-2. 第二时刻 (v):正方梯度的运行平均 (梯度大小)
+1. 首先 ($m$):渐变的运行平均值 (如动力)
+2. 第二次 ($v$):二次梯度的运行平均 (梯度大小)
 
-```
-m = beta1 * m + (1 - beta1) * gradient
-v = beta2 * v + (1 - beta2) * gradient^2
-
-m_hat = m / (1 - beta1^t)    bias correction
-v_hat = v / (1 - beta2^t)    bias correction
-
-w = w - lr * m_hat / (sqrt(v_hat) + epsilon)
+```math
+\begin{aligned}
+m &= \beta_1 \cdot m + (1 - \beta_1) \cdot \text{gradient} \\
+v &= \beta_2 \cdot v + (1 - \beta_2) \cdot \text{gradient}^2 \\[4pt]
+\hat{m} &= m / (1 - \beta_1^t) \quad \text{bias correction} \\
+\hat{v} &= v / (1 - \beta_2^t) \quad \text{bias correction} \\[4pt]
+w &= w - \text{lr} \cdot \hat{m} / (\sqrt{\hat{v}} + \epsilon)
+\end{aligned}
 ```
 
 通过`sqrt(v_hat)`对于小小的度,每一个度都会得到一个适应性学习率.
@@ -149,14 +151,14 @@ w = w - lr * m_hat / (sqrt(v_hat) + epsilon)
 
 | Schedule | Formula | Use case |
 |----------|---------|----------|
-| Step decay | lr = lr * factor every N epochs | Simple, manual control |
-| Exponential decay | lr = lr_0 * decay^t | Smooth reduction |
-| Cosine annealing | lr = lr_min + 0.5 * (lr_max - lr_min) * (1 + cos(pi * t / T)) | Transformers, modern training |
+| Step decay | $\text{lr} = \text{lr} \cdot \text{factor}$ every $N$ epochs | Simple, manual control |
+| Exponential decay | $\text{lr} = \text{lr}_0 \cdot \text{decay}^t$ | Smooth reduction |
+| Cosine annealing | $\text{lr} = \text{lr} _{\min} + 0.5 \cdot (\text{lr} _{\max} - \text{lr} _{\min}) \cdot (1 + \cos(\pi t / T))$ | Transformers, modern training |
 | Warmup + decay | Linear ramp up, then decay | Large models, prevents early instability |
 
 ### 形与非形
 
-曲函数有一个最小值.渐进式下降总是找到它.`f(x) = x^2`形的.
+曲函数有一个最小值.渐进式下降总是找到它.$f(x) = x^2$形的.
 
 网络损失功能是非形的.它们有许多本地最小值,车点和平面区域.
 
@@ -205,8 +207,8 @@ gradient-descent
 
 罗森布洛克函数是经典的优化基准.其最小值在 (1, 1) 处于一个狭窄的曲线谷中,很容易找到,但很难跟踪.
 
-```
-f(x, y) = (1 - x)^2 + 100 * (y - x^2)^2
+```math
+f(x, y) = (1 - x)^2 + 100 \cdot (y - x^2)^2
 ```
 
 ```python
@@ -351,9 +353,19 @@ scheduler = torch.optim.lr_scheduler.CosineAnnealingLR(adam, T_max=100)
 
 2. **Momentum comparison.**运行SGD在Rosenbrock函数上运行动力值 [0.0,0.5,0.9,0.99]. 随着每一步追踪损失.哪个动力值最快收缩?哪个超行?
 
-3. **Saddle point escape.**定义函数`f(x, y) = x^2 - y^2`开始于0.01,0.01. 比较尼拉GD,SGD与动力以及亚当的行为.哪个逃离点?
+3. **Saddle point escape.**定义函数$f(x, y) = x^2 - y^2$开始于0.01,0.01. 比较尼拉GD,SGD与动力以及亚当的行为.哪个逃离点?
 
 4. **Implement learning rate decay.**添加一个指数式衰变时间表到 GradientDescent 类:`lr = lr_0 * 0.999^step`根据罗森布洛克函数的与不衰变相似性.
+
+### 暗示
+
+**Exercise 1.**绕学习率,创造一个`GradientDescent(lr=...)`给每一个人,然后把它传递给`optimize`随着`rosenbrock`其他`rosenbrock_gradient`走向的走向显示了增长或变得损失`nan`最低限度为$(1, 1)$损失为0.
+
+**Exercise 2.**创建`SGDMomentum(momentum=m)`根据每一步的值,并记录损失.`find_convergence_step`为了比较速度, 寻找上下的损失,
+
+**Exercise 3.**写下梯度$(2x, -2y)$然后从 (0.01,0.01) 运行三个优化器.$y$每100步,逃离的优化器就是一个$\lvert y \rvert$长大了.
+
+**Exercise 4.**存储`lr_0`子里有一个步骤计数器.`GradientDescent`计算`lr = lr_0 * 0.999 ** step`在里面`step`打印学习率在步骤0和步骤1000;`lr_0`现在,$0.37 \times \text{lr}_0$现在,我们要去.
 
 ## 关键词
 
@@ -365,7 +377,7 @@ scheduler = torch.optim.lr_scheduler.CosineAnnealingLR(adam, T_max=100)
 | SGD | "Random sampling" | Stochastic gradient descent. Compute gradient on a random subset instead of the full dataset. Almost always means mini-batch SGD in practice. |
 | Mini-batch | "A chunk of data" | A small subset of training data (32-256 samples) used to estimate the gradient. Balances speed and gradient accuracy. |
 | Adam | "The default optimizer" | Adaptive Moment Estimation. Tracks per-weight running averages of gradients and squared gradients to give each weight its own learning rate. |
-| Bias correction | "Fix the cold start" | Adam's first and second moments are initialized to zero. Bias correction divides by (1 - beta^t) to compensate during early steps. |
+| Bias correction | "Fix the cold start" | Adam's first and second moments are initialized to zero. Bias correction divides by $(1 - \beta^t)$ to compensate during early steps. |
 | Learning rate schedule | "Change lr over time" | A function that adjusts the learning rate during training. Large steps early, small steps late. |
 | Convex function | "One valley" | A function where any local minimum is the global minimum. Gradient descent always finds it. Neural network losses are not convex. |
 | Saddle point | "Flat but not a minimum" | A point where the gradient is zero but it is a minimum in some directions and a maximum in others. Common in high dimensions. |

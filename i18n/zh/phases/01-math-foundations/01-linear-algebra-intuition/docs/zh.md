@@ -32,7 +32,7 @@
 |---|---|-------|
 | 3 | 2 | The vector points from origin (0,0) to (3, 2) on the plane |
 
-矢量有3^2 +2^2) =3^3 () 向上向右.
+矢量有大小$\sqrt{3^2 + 2^2} = \sqrt{13}$向右,向右.
 
 在人工智能中,向量代表了一切:
 - 一个词 → 768 个数字的向量 (其"含义"在嵌入空间中)
@@ -71,19 +71,20 @@ graph LR
 
 两个向量的点乘法告诉你它们是多么相似.
 
-```
-a · b = a₁×b₁ + a₂×b₂ + ... + aₙ×bₙ
-
-Same direction:      a · b > 0  (similar)
-Perpendicular:       a · b = 0  (unrelated)
-Opposite direction:  a · b < 0  (dissimilar)
+```math
+\begin{aligned}
+a \cdot b &= a_1 \times b_1 + a_2 \times b_2 + \cdots + a_n \times b_n \\[4pt]
+\text{Same direction:} \quad a \cdot b &> 0 \quad \text{(similar)} \\
+\text{Perpendicular:} \quad a \cdot b &= 0 \quad \text{(unrelated)} \\
+\text{Opposite direction:} \quad a \cdot b &< 0 \quad \text{(dissimilar)}
+\end{aligned}
 ```
 
 这就是搜索引擎,推系统和RAG的工作方式 - - 找到高点产品的向量.
 
 ### 线性独立性
 
-如果集合中没有向量可以被写成其他向量的组合,则向量是线性独立的.如果v1,v2,v3是独立的,则它们跨越3D空间.如果一个是其他向量的组合,则它们只跨越平面.
+如果集合中没有向量可以被写成其他向量的组合,则向量是线性独立的.$v_1, v_2, v_3$如果一个是其他两个的组合,它们只跨越一个平面.
 
 为什么对人工智能很重要:你的特征矩阵应该有线性独立的列.如果两个特征完全相连 (线性依赖),模型无法区分它们的效果.这导致回归的多线性 - - 重量矩阵变得不稳定,小输入变化产生了野蛮的输出波动.
 
@@ -95,7 +96,7 @@ v2 = [0, 1, 0]
 v3 = [2, 1, 0]   # v3 = 2*v1 + v2
 ```
 
-v1和 v2是独立的,既不是一个尺度乘数,也不是一个结合的.但是 v3 = 2*v1 + v2,所以 {v1, v2, v3} 是一个依赖的集合.这些三个向量都位于xy平面.不管你如何结合它们,你不能达到 [0, 0, 1].你有三个向量,但只有两个自由维度.
+$v_1$其他$v_2$它们是独立的,也不是一个规模乘数,也不是一个相结合的.$v_3 = 2 v_1 + v_2$现在,$\lbrace v_1, v_2, v_3 \rbrace$它们是一个依赖集合.这三个向量都位于xy平面.不管你如何结合它们,你不能达到 [0, 0, 1].你有三个向量,但只有两个自由维度.
 
 在数据集中:如果 feature_3 = 2*feature_1 + feature_2,添加 feature_3给模型提供了零新信息.更糟糕的是,它使正常方程单一 - 对于权重没有唯一的解决方案.
 
@@ -105,15 +106,15 @@ v1和 v2是独立的,既不是一个尺度乘数,也不是一个结合的.但是
 
 3D空间的标准基础是 {[1,0,0], [0,1,0], [0,0,1]}.但在3D中任何三个独立向量都构成一个有效的基础.
 
-矩阵的排名 = 线性独立列数 = 线性独立列数.如果排名 < min(列, cols),矩阵是排名不足的.这意味着:
+矩阵的排名 = 线性独立列数 = 线性独立列数.$\text{rank} < \min(\text{rows}, \text{cols})$它们的数值是不够的.
 - 系统有无限多的解决方案 (或没有)
 - 信息在转变中丢失
 - 矩阵不能倒车
 
 | Situation | Rank | What it means for ML |
 |-----------|------|---------------------|
-| Full rank (rank = min(m, n)) | Maximum possible | Unique least-squares solution exists. Model is well-conditioned. |
-| Rank deficient (rank < min(m, n)) | Below maximum | Features are redundant. Infinitely many weight solutions. Regularization needed. |
+| Full rank $(\text{rank} = \min(m, n))$ | Maximum possible | Unique least-squares solution exists. Model is well-conditioned. |
+| Rank deficient $(\text{rank} < \min(m, n))$ | Below maximum | Features are redundant. Infinitely many weight solutions. Regularization needed. |
 | Rank 1 | 1 | Every column is a scaled copy of one vector. All data lies on a line. |
 | Near rank-deficient (small singular values) | Numerically low | Matrix is ill-conditioned. Tiny input noise causes large output changes. Use SVD truncation or ridge regression. |
 
@@ -121,11 +122,11 @@ v1和 v2是独立的,既不是一个尺度乘数,也不是一个结合的.但是
 
 投影向量**a**在向量上**b**给出了**a**方向**b**其他:
 
-```
-proj_b(a) = (a dot b / b dot b) * b
+```math
+\mathop{\mathrm{proj}}_b(a) = \frac{a \cdot b}{b \cdot b} \, b
 ```
 
-剩余 (a - proj_b(a)) 垂直于b.这种直角分解是最小平方的配件的基础.
+剩余的$(a - \mathop{\mathrm{proj}}_b(a))$垂直于$b$形分解是最小方形的基础.
 
 在ML中,投影在任何地方:
 - 线性回归将从观测到列空间的距离降至最低 - - 解决方案是投影
@@ -143,9 +144,9 @@ graph LR
     end
 ```
 
-**Example:**其他类型的子
+**Example:** $a = [3, 4]$现在$b = [1, 0]$
 
-其他类型的产品:
+$\mathop{\mathrm{proj}}_b(a) = (3 \cdot 1 + 4 \cdot 0) / (1 \cdot 1 + 0 \cdot 0) \cdot [1, 0] = 3 \cdot [1, 0] = [3, 0]$
 
 投影下降了y元件.这是其最简单的形式的维度减少 - - 抛弃你不关心的方向.
 
@@ -447,6 +448,20 @@ print(f"d(dot)/dx = {x.grad}")
 4. 检查Gram-Schmidt输出是否真的正规:检查每个对都有点产量0和每个向量都有大小1
 5. 创建一个3x3矩阵,排名 2. 通过 验证`rank()`然后解释列的几何对象.
 6. 投向向量 [1,2,3] 到 [1,1,1].结果的几何表现是什么?
+
+### 暗示
+
+**Exercise 1.**开始从`cosine_similarity`现在,我们可以把这个值保持在 -1 到 1 之间,然后把弧线的正方体,然后将射线数转换为度.`Vector([1, 0])`其他`Vector([0, 1])`给出90和一个向量本身给出0.
+
+**Exercise 2.**放两个尺度因子在2x2矩阵的角角上,把0放到其他两个细胞中. [1, 1]的结果必须是 [2, 3].
+
+**Exercise 3.**计算5个向量 (10对) 的每对的共数相似性,并保持最大值.首先用向量对抗自己来检查循环,该循环必须给出1.
+
+**Exercise 4.**使用`gram_schmidt`在三个独立的向量上,然后计算`dot`对于每对和`magnitude`对于每个向量.`1e-9`由于浮点没有准确的零.
+
+**Exercise 5.**让第三行或列是前两行的总和,这样一个方向重复. `rank()`必须返回2,然后列跨越一个平面通过原始.
+
+**Exercise 6.**计算规模$\frac{a \cdot b}{b \cdot b}$并且乘以$b$通过它,或呼叫`project_onto`检查剩下的东西$a$减小投影具有点乘法为0 与 [1,1, 1].
 
 ## 关键词
 

@@ -30,24 +30,24 @@
 
 根据第六课,你已经知道条件概率是:
 
-```
-P(A|B) = P(A and B) / P(B)
+```math
+P(A \mid B) = \frac{P(A \text{ and } B)}{P(B)}
 ```
 
 并且对称:
 
+```math
+P(B \mid A) = \frac{P(A \text{ and } B)}{P(A)}
 ```
-P(B|A) = P(A and B) / P(A)
-```
 
-两个表达式都有相同的数值:P(A和B). 设置它们为等,然后重新排列:
+两个表达式都有相同的数值:$P(A \text{ and } B)$给它们平衡,然后重新安排:
 
-```
-P(A and B) = P(A|B) * P(B) = P(B|A) * P(A)
-
-Therefore:
-
-P(A|B) = P(B|A) * P(A) / P(B)
+```math
+\begin{aligned}
+P(A \text{ and } B) &= P(A \mid B) \cdot P(B) = P(B \mid A) \cdot P(A) \\[4pt]
+&\text{Therefore:} \\[4pt]
+P(A \mid B) &= \frac{P(B \mid A) \cdot P(A)}{P(B)}
+\end{aligned}
 ```
 
 这就是贝叶斯定理,四个量,一个方程.
@@ -56,35 +56,35 @@ P(A|B) = P(B|A) * P(A) / P(B)
 
 | Part | Name | What it means |
 |------|------|---------------|
-| P(A\|B) | Posterior | Your updated belief about A after seeing evidence B |
-| P(B\|A) | Likelihood | How probable the evidence B is if A is true |
-| P(A) | Prior | Your belief about A before seeing any evidence |
-| P(B) | Evidence | Total probability of seeing B under all possibilities |
+| $P(A \mid B)$ | Posterior | Your updated belief about $A$ after seeing evidence $B$ |
+| $P(B \mid A)$ | Likelihood | How probable the evidence $B$ is if $A$ is true |
+| $P(A)$ | Prior | Your belief about $A$ before seeing any evidence |
+| $P(B)$ | Evidence | Total probability of seeing $B$ under all possibilities |
 
-证据术语P(B) 作为一个正常化.你可以用总概率定律扩展它:
+证据的期限$P(B)$通过使用总概率法来扩展它:
 
-```
-P(B) = P(B|A) * P(A) + P(B|not A) * P(not A)
+```math
+P(B) = P(B \mid A) \cdot P(A) + P(B \mid \text{not } A) \cdot P(\text{not } A)
 ```
 
 ### 医疗检测的例子
 
 检测结果是99%准确的 (检测结果是99%的病人,结果是1%的错误阳性).
 
-```
-P(sick)          = 0.0001     (prior: disease is rare)
-P(positive|sick) = 0.99       (likelihood: test catches it)
-P(positive|healthy) = 0.01    (false positive rate)
-
-P(positive) = P(positive|sick) * P(sick) + P(positive|healthy) * P(healthy)
-            = 0.99 * 0.0001 + 0.01 * 0.9999
-            = 0.000099 + 0.009999
-            = 0.010098
-
-P(sick|positive) = P(positive|sick) * P(sick) / P(positive)
-                 = 0.99 * 0.0001 / 0.010098
-                 = 0.0098
-                 = 0.98%
+```math
+\begin{aligned}
+P(\text{sick}) &= 0.0001 \quad \text{(prior: disease is rare)} \\
+P(\text{positive} \mid \text{sick}) &= 0.99 \quad \text{(likelihood: test catches it)} \\
+P(\text{positive} \mid \text{healthy}) &= 0.01 \quad \text{(false positive rate)} \\[6pt]
+P(\text{positive}) &= P(\text{positive} \mid \text{sick}) \cdot P(\text{sick}) + P(\text{positive} \mid \text{healthy}) \cdot P(\text{healthy}) \\
+&= 0.99 \cdot 0.0001 + 0.01 \cdot 0.9999 \\
+&= 0.000099 + 0.009999 \\
+&= 0.010098 \\[6pt]
+P(\text{sick} \mid \text{positive}) &= P(\text{positive} \mid \text{sick}) \cdot P(\text{sick}) / P(\text{positive}) \\
+&= 0.99 \cdot 0.0001 / 0.010098 \\
+&= 0.0098 \\
+&= 0.98\%
+\end{aligned}
 ```
 
 医生们说,如果病情很少,即使是精确的测试也会产生虚假阳性.
@@ -93,18 +93,18 @@ P(sick|positive) = P(positive|sick) * P(sick) / P(positive)
 
 你收到一封包含"彩票"的电子邮件.
 
-```
-P(spam)                = 0.3      (30% of email is spam)
-P("lottery"|spam)      = 0.05     (5% of spam emails contain "lottery")
-P("lottery"|not spam)  = 0.001    (0.1% of legitimate emails contain "lottery")
-
-P("lottery") = 0.05 * 0.3 + 0.001 * 0.7
-             = 0.015 + 0.0007
-             = 0.0157
-
-P(spam|"lottery") = 0.05 * 0.3 / 0.0157
-                  = 0.955
-                  = 95.5%
+```math
+\begin{aligned}
+P(\text{spam}) &= 0.3 \quad \text{(30\% of email is spam)} \\
+P(\text{"lottery"} \mid \text{spam}) &= 0.05 \quad \text{(5\% of spam emails contain "lottery")} \\
+P(\text{"lottery"} \mid \text{not spam}) &= 0.001 \quad \text{(0.1\% of legitimate emails contain "lottery")} \\[6pt]
+P(\text{"lottery"}) &= 0.05 \cdot 0.3 + 0.001 \cdot 0.7 \\
+&= 0.015 + 0.0007 \\
+&= 0.0157 \\[6pt]
+P(\text{spam} \mid \text{"lottery"}) &= 0.05 \cdot 0.3 / 0.0157 \\
+&= 0.955 \\
+&= 95.5\%
+\end{aligned}
 ```
 
 一个字将概率从30%转移到95.5%. 一个真正的垃圾邮件过器同时应用百度百度单词.
@@ -113,58 +113,56 @@ P(spam|"lottery") = 0.05 * 0.3 / 0.0157
 
 简单的贝耶斯将这一点扩展到多个特征,假设所有特征都在给类别的条件下独立:
 
-```
-P(class | feature_1, feature_2, ..., feature_n)
-  = P(class) * P(feature_1|class) * P(feature_2|class) * ... * P(feature_n|class)
-    / P(feature_1, feature_2, ..., feature_n)
+```math
+P(\text{class} \mid \text{feature}_1, \text{feature}_2, \ldots, \text{feature}_n) = \frac{P(\text{class}) \cdot P(\text{feature}_1 \mid \text{class}) \cdot P(\text{feature}_2 \mid \text{class}) \cdots P(\text{feature}_n \mid \text{class})}{P(\text{feature}_1, \text{feature}_2, \ldots, \text{feature}_n)}
 ```
 
 单词出现并不独立 ("新"和"纽约"相关).但这种假设在实践中非常有效,因为分类器只需要排名类,而不是产生校准概率.
 
 由于所有类的分母是相同的,所以你可以跳过它,
 
-```
-score(class) = P(class) * product of P(feature_i | class)
+```math
+\text{score}(\text{class}) = P(\text{class}) \cdot \prod_i P(\text{feature}_i \mid \text{class})
 ```
 
 选择最高分的班级.
 
 ### 极限概率估计 (MLE)
 
-如何从训练数据中获得P (特征性) 类?
+你怎么得到了?$P(\text{feature} \mid \text{class})$根据训练数据?
 
-```
-P("free"|spam) = (number of spam emails containing "free") / (total spam emails)
+```math
+P(\text{"free"} \mid \text{spam}) = \frac{\text{number of spam emails containing "free"}}{\text{total spam emails}}
 ```
 
 现在,我们要选择最可能的参数值, 并且要最大化概率函数,
 
 问题:如果一个词在训练中从来没有出现在垃圾邮件中,MLE给它一个可能性是零.一个未见的词会杀死整个产品.
 
-```
-P(word|class) = (count(word, class) + 1) / (total_words_in_class + vocabulary_size)
+```math
+P(\text{word} \mid \text{class}) = \frac{\text{count}(\text{word}, \text{class}) + 1}{\text{total\_words\_in\_class} + \text{vocabulary\_size}}
 ```
 
 增加1个数量,确保没有可能性是零的.
 
 ### 后期最大 (MAP)
 
-们需要了解到哪些参数可以最大化数据参数的 P ?
+们需要什么参数才能达到最大的水平?$P(\text{data} \mid \text{parameters})$现在,我们要去.
 
-图表问:什么参数可以最大化P 参数在数据中)?
+图表问: 什么参数最大化$P(\text{parameters} \mid \text{data})$现在,我们要去.
 
 根据贝叶斯定理:
 
-```
-P(parameters|data) proportional to P(data|parameters) * P(parameters)
+```math
+P(\text{parameters} \mid \text{data}) \propto P(\text{data} \mid \text{parameters}) \cdot P(\text{parameters})
 ```
 
 图为""的定位,即""的定位,即""的定位,即""的定位.
 
 | Estimation | Optimizes | ML equivalent |
 |------------|-----------|---------------|
-| MLE | P(data\|params) | Unregularized training |
-| MAP | P(data\|params) * P(params) | L2 / L1 regularization |
+| MLE | $P(\text{data} \mid \text{params})$ | Unregularized training |
+| MAP | $P(\text{data} \mid \text{params}) \cdot P(\text{params})$ | L2 / L1 regularization |
 
 ### 贝叶斯人与频率主义者:实际的区别
 
@@ -189,7 +187,7 @@ P(parameters|data) proportional to P(data|parameters) * P(parameters)
 
 **Priors are regularization.**对于重量来说,一个高斯式先例是L2规律化.一个拉普莱斯式先例是L1.每次你添加一个规律化术语,你就会做一个贝耶斯式声明,你预计的参数值是什么.
 
-**Posteriors are uncertainty.**贝耶斯方法给出了分布:"我认为P(spam) 在0.8到0.95之间.
+**Posteriors are uncertainty.**贝耶斯方法给出了分布:"我认为$P(\text{spam})$平均值为0.8至0.95".
 
 **Bayes updates are online learning.**当你的模型看到新的数据时,它会逐步更新自己的信念,而不是从头开始重新训练.
 
@@ -345,26 +343,28 @@ for msg, pred in zip(test_messages, predictions):
 
 | Likelihood | Conjugate Prior | Posterior | Example |
 |-----------|----------------|-----------|---------|
-| Bernoulli | Beta(a, b) | Beta(a + successes, b + failures) | Coin flip bias estimation |
-| Normal (known variance) | Normal(mu_0, sigma_0) | Normal(weighted mean, smaller variance) | Sensor calibration |
-| Poisson | Gamma(a, b) | Gamma(a + sum of counts, b + n) | Modeling arrival rates |
-| Multinomial | Dirichlet(alpha) | Dirichlet(alpha + counts) | Topic modeling, language models |
+| Bernoulli | $\text{Beta}(a, b)$ | $\text{Beta}(a + \text{successes}, b + \text{failures})$ | Coin flip bias estimation |
+| Normal (known variance) | $\text{Normal}(\mu_0, \sigma_0)$ | Normal(weighted mean, smaller variance) | Sensor calibration |
+| Poisson | $\text{Gamma}(a, b)$ | $\text{Gamma}(a + \text{sum of counts}, b + n)$ | Modeling arrival rates |
+| Multinomial | $\text{Dirichlet}(\alpha)$ | $\text{Dirichlet}(\alpha + \text{counts})$ | Topic modeling, language models |
 
 没有结合前数,你需要蒙特卡罗样本或变化推理来接近后方.
 
-贝塔分布是实践中最常见的结合式先.贝塔 (a,b) 表示你对概率参数的信念.平均值是/(a+b).a+b越大,分布就越集中 (自信).
+实际上,Beta分布是最常见的结合式前. $\text{Beta}(a, b)$平均值是$a/(a+b)$越大$a+b$分布越集中 (更有信心).
 
 贝塔前的特殊情况:
-- 您对参数没有意见.
-- 测量量量是0.5的.
-- 测量参数是小的.
+- $\text{Beta}(1, 1)$您对参数没有意见.
+- $\text{Beta}(10, 10)$您坚信参数接近0.5.
+- $\text{Beta}(1, 10)$参数是小的.
 
 更新规则非常简单:
 
-```
-Prior:     Beta(a, b)
-Data:      s successes, f failures
-Posterior: Beta(a + s, b + f)
+```math
+\begin{aligned}
+\text{Prior:} \quad & \text{Beta}(a, b) \\
+\text{Data:} \quad & s \text{ successes}, f \text{ failures} \\
+\text{Posterior:} \quad & \text{Beta}(a + s, b + f)
+\end{aligned}
 ```
 
 没有整体,没有样本,只是加算.
@@ -376,19 +376,19 @@ Posterior: Beta(a + s, b + f)
 具体例子:估计硬币是否公平.
 
 **Day 1: No data yet.**
-首先,Beta 1, 1,是统一的前任.
+开始$\text{Beta}(1, 1)$没有任何意见.
 - 前平均:0.5
 - 预先是平面的 [0, 1]
 
 **Day 2: Observe 7 heads, 3 tails.**
-后面 = 贝塔 (Beta) 1 + 7, 1 + 3) = 贝塔 (Beta) 8, 4)
-- 后期平均值: 8/12 = 0.667
+$\text{Posterior} = \text{Beta}(1 + 7, 1 + 3) = \text{Beta}(8, 4)$
+- 后期平均值:$8/12 = 0.667$
 - 证据表明,硬币偏向头部
 
 **Day 3: Observe 5 more heads, 5 more tails.**
 现在用昨天的后面作为今天的前面.
-后面 = 贝塔 ((8 + 5, 4 + 5) = 贝塔 ((13, 9)
-- 后期平均值: 13/22 = 0.591
+$\text{Posterior} = \text{Beta}(8 + 5, 4 + 5) = \text{Beta}(13, 9)$
+- 后期平均值:$13/22 = 0.591$
 - 根据新的平衡数据,估计将重回0.5
 
 ```mermaid
@@ -398,7 +398,7 @@ graph LR
     C -->|"5H, 5T"| D["Posterior 2<br/>Beta(13,9)<br/>mean = 0.59"]
 ```
 
-测量顺序并不重要.Beta(1,1) 一次更新了所有12个头和8个尾,结果是Beta(13,9) - - 同样的结果.序列更新和批量更新是数学上相当的.但序列更新让你在每一步都能做出决定,而不需要存储原始数据.
+观察的顺序并不重要.$\text{Beta}(1,1)$更新了12个头和8个尾,同时给出了$\text{Beta}(13, 9)$顺序更新和批量更新是数学上相当的. 但顺序更新让你在每一步都能做出决定,而不需要存储原始数据.
 
 这就是生产ML系统的在线学习的基础. 普森对盗进行样本取,增量推系统和流动异性检测器都使用这种模式.
 
@@ -410,14 +410,14 @@ graph LR
 
 贝耶斯 A/B 测试:
 
-1. **Prior.**开始与Beta(1,1) 对两个变体.
+1. **Prior.**开始$\text{Beta}(1, 1)$对于两种变体,没有先前的偏好.
 2. **Data.**选择A: 1000个浏览中50个点击,选择B: 1000个浏览中65个点击.
 3. **Posteriors.**
-   - 答:Beta(1 + 50,1 + 950) =Beta(51,951).平均值 =0.051
-   - 平均值为0.066
-4. **Decision.**计算P ((B>A) -- B的真实转换率比A的可能性更高.
+   - 答: $\text{Beta}(1 + 50, 1 + 950) = \text{Beta}(51, 951)$平均值 = 0.051
+   - $\text{Beta}(1 + 65, 1 + 935) = \text{Beta}(66, 936)$平均值 = 0.066
+4. **Decision.**计算$P(B > A)$-- B 的真实转换率比 A 的更高的可能性.
 
-分析计算P (B) >A) 很难,但蒙特卡罗使得它很微不足道:
+计算$P(B > A)$分析上很难,但蒙特卡罗却让它很平凡.
 
 ```
 1. Draw 100,000 samples from Beta(51, 951)  -> samples_A
@@ -425,7 +425,7 @@ graph LR
 3. P(B > A) = fraction of samples where B > A
 ```
 
-如果P(B > A) >0.95,你将运送B变体.如果它在0.05到0.95之间,你会继续收集数据.如果P(B > A) <0.05,你将运送A变体.
+如果$P(B > A) > 0.95$如果它在0.05到0.95之间,你继续收集数据.$P(B > A) < 0.05$您的船只变量A.
 
 频率A/B测试的优势:
 - 你得到了直接的概率声明:"有97%的机会B更好"
@@ -435,40 +435,50 @@ graph LR
 
 | Aspect | Frequentist A/B | Bayesian A/B |
 |--------|----------------|--------------|
-| Output | p-value | P(B > A) |
+| Output | p-value | $P(B > A)$ |
 | Interpretation | "How surprising is this data if A=B?" | "How likely is B better than A?" |
 | Early stopping | Inflates false positives | Safe at any point (given a well-chosen prior and correctly specified model) |
 | Prior knowledge | Not used | Encoded as Beta prior |
-| Decision rule | p < 0.05 | P(B > A) > threshold |
+| Decision rule | $p < 0.05$ | $P(B > A) > \text{threshold}$ |
 
 ## 运动
 
-1. **Multiple tests.**一个患者在独立测试中检测得两次阳性 (两者都99%准确,病例在1万中1).两次测试后,P(病是什么?使用第一次测试后者作为第二次测试的前者.
+1. **Multiple tests.**独立测试中,患者检测得两次阳性 (两者都99%准确,病例在1万中1).$P(\text{sick})$试验后,使用后面的后面,作为前面的第二次试验.
 
 2. **Smoothing impact.**运行垃圾邮件分类器,以0.01,0.1,1.0,和10.0的平滑值运行.顶级词概率如何改变?平滑=0和只出现在子中的词发生了什么?
 
-3. **Add features.**扩展NaiveBayes类,以同时使用短/长的消息长度作为单词数量的功能. 从训练数据中估计P(short的时代垃圾) 和P(short的时代,然后将其折叠成预测分数.
+3. **Add features.**扩展NaiveBayes 类,以使消息长度 (短/长) 作为单词数量的功能. 估计$P(\text{short} \mid \text{spam})$其他$P(\text{short} \mid \text{ham})$根据训练数据,将其折叠成预测分数.
 
-4. **MAP by hand.**根据观察到的数据 (7个头10个币),使用Beta(2,2) 预先计算偏差的MAP估计,并将其与MLE估计 (7/10) 进行比较.
+4. **MAP by hand.**根据观察到的数据 (7个头在10个币中),使用一个$\text{Beta}(2,2)$之前.与MLE估计相比 ($7/10$)
+
+### 暗示
+
+**Exercise 1.**电话`bayes`检测1后,再用后方作为前方. `sequential_bayes(prior, likelihood, false_positive_rate, 2)`必须提供相同的值,接近0.5.
+
+**Exercise 2.**创建一个`NaiveBayes(smoothing=s)`对于每个值,将其训练在相同的数据上,`top_words`通过平滑0,一个从来没有出现在垃圾邮件中的字得到了0的概率,所以它的日志没有定义.
+
+**Exercise 3.**计算多少短短的垃圾邮件和便,按每个类的消息数量进行分数,并将该比例的日志添加到分数中`predict`检查每个类的两个概率的总数为1.
+
+**Exercise 4.**通过一个$\text{Beta}(\alpha, \beta)$之前,MAP估计是$\frac{h + \alpha - 1}{n + \alpha + \beta - 2}$放进去$h = 7$现在$n = 10$;结果必须在MLE (0.7) 和之前模式 (0.5) 之间.
 
 ## 关键词
 
 | Term | What people say | What it actually means |
 |------|----------------|----------------------|
-| Prior | "My initial guess" | P(hypothesis) before observing evidence. In ML: the regularization term. |
-| Likelihood | "How well the data fits" | P(evidence\|hypothesis). How probable the observed data is under a specific hypothesis. |
-| Posterior | "My updated belief" | P(hypothesis\|evidence). The prior multiplied by the likelihood, then normalized. |
-| Evidence | "The normalizing constant" | P(data) across all hypotheses. Ensures the posterior sums to 1. |
+| Prior | "My initial guess" | $P(\text{hypothesis})$ before observing evidence. In ML: the regularization term. |
+| Likelihood | "How well the data fits" | $P(\text{evidence} \mid \text{hypothesis})$. How probable the observed data is under a specific hypothesis. |
+| Posterior | "My updated belief" | $P(\text{hypothesis} \mid \text{evidence})$. The prior multiplied by the likelihood, then normalized. |
+| Evidence | "The normalizing constant" | $P(\text{data})$ across all hypotheses. Ensures the posterior sums to 1. |
 | Naive Bayes | "That simple text classifier" | A classifier that assumes features are independent given the class. Works well despite the false assumption. |
 | Laplace smoothing | "Add-one smoothing" | Adding a small count to every feature to prevent zero probabilities from unseen data. |
-| MLE | "Just use the frequencies" | Choose parameters that maximize P(data\|parameters). No prior. Can overfit with small data. |
-| MAP | "MLE with a prior" | Choose parameters that maximize P(data\|parameters) * P(parameters). Equivalent to regularized MLE. |
-| Log-probability | "Work in log space" | Using log(P) instead of P to avoid floating-point underflow when multiplying many small numbers. |
+| MLE | "Just use the frequencies" | Choose parameters that maximize $P(\text{data} \mid \text{parameters})$. No prior. Can overfit with small data. |
+| MAP | "MLE with a prior" | Choose parameters that maximize $P(\text{data} \mid \text{parameters}) \cdot P(\text{parameters})$. Equivalent to regularized MLE. |
+| Log-probability | "Work in log space" | Using $\log(P)$ instead of $P$ to avoid floating-point underflow when multiplying many small numbers. |
 | False positive | "A wrong alarm" | The test says positive, but the true state is negative. Drives the base rate fallacy. |
 
 ## 进一步阅读
 
 - [3Blue1Brown: Bayes' theorem](https://www.youtube.com/watch?v=HZGCoVF3YvM)- 视觉解释与医疗检测示例
-- [Stanford CS229: Generative Learning Algorithms](https://cs229.stanford.edu/notes2022fall/cs229-notes2.pdf)- 简单的贝尔斯及其与歧视性模式的联系
+- [Stanford CS229: Generative Learning Algorithms](https://cs229.stanford.edu/main_notes.pdf)- 简单的贝尔斯及其与歧视性模式的联系
 - [Think Bayes](https://greenteapress.com/wp/think-bayes/)- 免费书,贝耶斯统计数据,使用Python代码
 - [scikit-learn Naive Bayes](https://scikit-learn.org/stable/modules/naive_bayes.html)-生产实施情况以及每种变体使用时间

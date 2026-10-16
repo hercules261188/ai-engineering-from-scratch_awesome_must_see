@@ -28,10 +28,10 @@
 
 什么不太可能发生,它带有更多信息. 一个硬币登陆头? 不奇怪. 抽奖胜利?
 
-具有p概率的事件的信息内容为:
+具有概率的事件的信息内容$p$是:
 
-```
-I(x) = -log(p(x))
+```math
+I(x) = -\log(p(x))
 ```
 
 运用日志基础2给你比特,运用自然日志给你纳茨.
@@ -50,98 +50,104 @@ Certain event      1.0            0.0
 
 透是分布的所有可能结果中所预期的惊喜.
 
-```
-H(P) = -sum( p(x) * log(p(x)) )  for all x
+```math
+H(P) = -\sum_{x} p(x) \log(p(x))
 ```
 
 公平硬币对二进制变量具有最大的进化值:1位.偏见硬币 (99%头) 的进化值低:0.08位.你已经知道会发生什么,所以每次翻转几乎什么都不告诉你.
 
-```
-Fair coin:    H = -(0.5 * log2(0.5) + 0.5 * log2(0.5)) = 1.0 bit
-Biased coin:  H = -(0.99 * log2(0.99) + 0.01 * log2(0.01)) = 0.08 bits
+```math
+\begin{aligned}
+\text{Fair coin:} \quad & H = -(0.5 \log_2(0.5) + 0.5 \log_2(0.5)) = 1.0 \text{ bit} \\
+\text{Biased coin:} \quad & H = -(0.99 \log_2(0.99) + 0.01 \log_2(0.01)) = 0.08 \text{ bits}
+\end{aligned}
 ```
 
 透是指分布中不可减小的不确定性.
 
 ### 交叉透 (你每天使用的损失功能)
 
-交叉透量度是平均惊喜的,当你使用分布Q来编码实际来自分布P的事件时.
+通过分布来测量平均惊喜$Q$编码实际来自分发的事件$P$现在,我们要去.
 
+```math
+H(P, Q) = -\sum_{x} p(x) \log(q(x))
 ```
-H(P, Q) = -sum( p(x) * log(q(x)) )  for all x
-```
 
-是你模型的预测.如果Q与P完美匹配,交叉为.任何不匹配都会使它变得更大.
+$P$标签是真正的分布.$Q$现在,我们可以看到一个模型的预测.$Q$匹配$P$完全,交叉值等于值.任何不匹配都会使它变得更大.
 
-在分类中,P是一个单热向量 (真实类别的概率为 1,其他的一切都是0).这简化了交叉缩为:
+在分类中,$P$是一个热向量 (真类的概率是 1,其他所有都是0). 这简化了交叉缩为:
 
-```
-H(P, Q) = -log(q(true_class))
+```math
+H(P, Q) = -\log(q(\text{true\_class}))
 ```
 
 它们是对类别的整个交叉缩损失公式.
 
 ### 基因分歧 (分布之间的距离)
 
-基因分离量测量使用Q而不是P给你带来了多大的额外惊喜.
+分量测量使用的额外惊喜量$Q$没有$P$现在,我们要去.
 
-```
-D_KL(P || Q) = sum( p(x) * log(p(x) / q(x)) )  for all x
-             = H(P, Q) - H(P)
+```math
+\begin{aligned}
+D_{KL}(P \,\|\, Q) &= \sum_{x} p(x) \log(p(x) / q(x)) \\
+&= H(P, Q) - H(P)
+\end{aligned}
 ```
 
 交叉缩是缩加上KL分离.因为正确分布的缩在训练过程中是恒定的,减少交叉缩就等于减少KL分离.你正在推动模型的分布向正确分布.
 
- KL分离不对称:D_KL(P  Q) !=D_KL(Q  P).它不是真正的距离指标.
+ KL分离不对称: $D_{KL}(P \Vert Q) \ne D_{KL}(Q \Vert P)$这不是真正的距离指标.
 
 ### 互通信息
 
 相互信息衡量知道一个变量告诉你关于另一个变量的程度.
 
-```
-I(X; Y) = H(X) - H(X|Y)
-        = H(X) + H(Y) - H(X, Y)
+```math
+\begin{aligned}
+I(X; Y) &= H(X) - H(X \mid Y) \\
+&= H(X) + H(Y) - H(X, Y)
+\end{aligned}
 ```
 
-如果X和Y是独立的,互通信息是零的.知道一个对另一个什么都不告诉你.如果它们完全相关,互通信息等于任何变量的.
+如果$X$其他$Y$它们是独立的,相互信息是零的.知道一个对另一个什么都不告诉你.如果它们完全相关,相互信息等于任何变量的.
 
 在特征选择中,特征与目标之间的互通信息很高,意味着特征是有用的.
 
 ### 条件性
 
-测量了观察X后对Y的不确定性.
+$H(Y \mid X)$衡量有关目前存在多少不确定性$Y$在你观察之后$X$现在,我们要去.
 
-```
-H(Y|X) = H(X,Y) - H(X)
+```math
+H(Y \mid X) = H(X,Y) - H(X)
 ```
 
 两种极端:
-- 如果X完全确定Y,那么H(Y 则X) = 0.知道X消除了Y的所有不确定性.
-- 如果X对Y没有告诉你什么,那么H(YX的说法) =H(Y).知道X根本不会减少你的不确定性.
+- 如果$X$完全决定了$Y$现在$H(Y \mid X) = 0$知道$X$消除了关于$Y$举个例子:$X$温度在摄氏度$Y$温度在法氏度.
+- 如果$X$没有告诉你什么.$Y$现在$H(Y \mid X) = H(Y)$知道$X$没有任何减少你的不确定性.$X$钱,钱$Y$未来的天气.
 
-条件性透总是非负,从来不超过H(Y):
+条件性透总是非负的,永远不会超过.$H(Y)$其他:
 
+```math
+0 \le H(Y \mid X) \le H(Y)
 ```
-0 <= H(Y|X) <= H(Y)
-```
 
-在机器学习中,决定树中出现了条件的透.在每个分区时,算法选择了最小化H(Y) 的X特征 - - 消除了Y标签的最不确定性.
+在机器学习中,决定树中出现了条件性透.$X$这将减少$H(Y \mid X)$-- 消除标签的最不确定性$Y$现在,我们要去.
 
 ### 关联
 
- (X,Y) 是 X 和 Y 的联合分布的.
+$H(X,Y)$是 共同分布的进化值$X$其他$Y$我们一起.
 
-```
-H(X,Y) = -sum sum p(x,y) * log(p(x,y))   for all x, y
+```math
+H(X,Y) = -\sum_{x} \sum_{y} p(x,y) \log(p(x,y))
 ```
 
 关键属性:
 
-```
-H(X,Y) <= H(X) + H(Y)
+```math
+H(X,Y) \le H(X) + H(Y)
 ```
 
-如果 X 和 Y 具有独立性,则同等性存在.如果它们共享信息,则联合体积比单个体积少. "缺失"的体积是完全相互信息.
+平等是当$X$其他$Y$它们是独立的.如果它们分享信息,关联的 entropies 比单个 entropies 的总和少. "缺失"的 entropies 正是相互的信息.
 
 ```mermaid
 graph TD
@@ -167,50 +173,52 @@ graph TD
 ```
 
 关系:
-- , =  + 
--  () =  () -  () =  () -  ()
-- , =+
+- $H(X,Y) = H(X) + H(Y \mid X) = H(Y) + H(X \mid Y)$
+- $I(X;Y) = H(X) - H(X \mid Y) = H(Y) - H(Y \mid X)$
+- $H(X,Y) = H(X) + H(Y) - I(X;Y)$
 
 ### 互通信息 (深入潜水)
 
-相互信息 I  X  Y) 量化了知道一个变量有多大程度上减少了对另一个变量的不确定性.
+相互信息$I(X;Y)$量化了知道一个变量会减少对另一个变量的不确定性.
 
-```
-I(X;Y) = H(X) - H(X|Y)
-       = H(Y) - H(Y|X)
-       = H(X) + H(Y) - H(X,Y)
-       = sum sum p(x,y) * log(p(x,y) / (p(x) * p(y)))
+```math
+\begin{aligned}
+I(X;Y) &= H(X) - H(X \mid Y) \\
+&= H(Y) - H(Y \mid X) \\
+&= H(X) + H(Y) - H(X,Y) \\
+&= \sum_{x} \sum_{y} p(x,y) \log\left(\frac{p(x,y)}{p(x) \, p(y)}\right)
+\end{aligned}
 ```
 
 性能:
-- 总是输出 0 信息,因为观察到东西.
-- 如果和Y是独立的,
-- 它们是对称的,而不是KL差距.
-- 一个变量与自己分享所有信息.
+- $I(X;Y) \ge 0$通过观察,你永远不会失去信息.
+- $I(X;Y) = 0$如果和只有如果$X$其他$Y$它们是独立的.
+- $I(X;Y) = I(Y;X)$它是对称的,与KL差异不同.
+- $I(X;X) = H(X)$一个变量与自己分享所有信息.
 
 **Mutual information for feature selection.**在ML中,你需要有关目标的信息功能.互通信息为你提供了原则性地排名功能的方式:
 
-1. 对于每个特征 X_i,计算I(X_i;Y) 时,Y是目标变量.
+1. 对于每一个特征$X_i$计算$I(X_i; Y)$在哪里$Y$是目标变量.
 2. 根据MI分数的排名.
-3. 保持上部的K特征.
+3. 保持顶部$k$其他功能
 
 这适用于任何功能与目标之间的关系--线性,非线性,单调,或者不.
 
 | Method | Detects | Computational cost | Handles categorical? |
 |--------|---------|-------------------|---------------------|
-| Pearson correlation | Linear relationships | O(n) | No |
-| Spearman correlation | Monotonic relationships | O(n log n) | No |
-| Mutual information | Any statistical dependency | O(n log n) with binning | Yes |
+| Pearson correlation | Linear relationships | $O(n)$ | No |
+| Spearman correlation | Monotonic relationships | $O(n \log n)$ | No |
+| Mutual information | Any statistical dependency | $O(n \log n)$ with binning | Yes |
 
 ### 标签滑滑和交叉透
 
 标准分类使用硬目标: [0, 0, 1, 0].真正类得到概率 1,其他所有得到0.标签平滑取代这些软目标:
 
-```
-soft_target = (1 - epsilon) * hard_target + epsilon / num_classes
+```math
+\text{soft\_target} = (1 - \epsilon) \cdot \text{hard\_target} + \epsilon / \text{num\_classes}
 ```
 
-具有epsilon = 0.1 和4类:
+随着$\epsilon = 0.1$其他类型:
 - 强度目标: [0, 0, 1, 0]
 - 软目标: [0.025,0.025,0.925,0.025]
 
@@ -224,8 +232,8 @@ soft_target = (1 - epsilon) * hard_target + epsilon / num_classes
 
 标签滑滑的交叉缩损失变为:
 
-```
-L = (1 - epsilon) * CE(hard_target, prediction) + epsilon * H_uniform(prediction)
+```math
+L = (1 - \epsilon) \cdot \text{CE}(\text{hard\_target}, \text{prediction}) + \epsilon \cdot H_{\text{uniform}}(\text{prediction})
 ```
 
 第二个术语惩罚了远非统一的预测,
@@ -236,12 +244,14 @@ L = (1 - epsilon) * CE(hard_target, prediction) + epsilon * H_uniform(prediction
 
 **Information theory view.**通过使用模型的分布而不是真正的分布来测量你浪费多少位.
 
-**Maximum likelihood view.**对于真实类 y_i 的N训练样本:
+**Maximum likelihood view.**为了$N$实类的培训样本$y_i$其他:
 
-```
-Likelihood     = product( q(y_i) )
-Log-likelihood = sum( log(q(y_i)) )
-Negative log-likelihood = -sum( log(q(y_i)) )
+```math
+\begin{aligned}
+\text{Likelihood} &= \prod_i q(y_i) \\
+\text{Log-likelihood} &= \sum_i \log(q(y_i)) \\
+\text{Negative log-likelihood} &= -\sum_i \log(q(y_i))
+\end{aligned}
 ```
 
 减少交叉缩 = 最大化训练数据的可能性.
@@ -258,15 +268,17 @@ log base e   -> nats      (machine learning convention)
 log base 10  -> hartleys  (rarely used)
 ```
 
-根据PyTorch和TensorFlow的默认使用自然日志 (nats).
+子$1/\ln(2)$默认情况下 PyTorch 和 TensorFlow 使用自然日志 (nats).
 
 ### 困惑
 
 杂度是交叉透的指数,它告诉你模型不确定的同样可能的实际数量.
 
-```
-Perplexity = 2^H(P,Q)   (if using bits)
-Perplexity = e^H(P,Q)   (if using nats)
+```math
+\begin{aligned}
+\text{Perplexity} &= 2^{H(P,Q)} \quad \text{(if using bits)} \\
+\text{Perplexity} &= e^{H(P,Q)} \quad \text{(if using nats)}
+\end{aligned}
 ```
 
 语言模型中50个难以理解的模特,平均是像必须从50个可能的下一个代币中均地选择一样困惑.
@@ -445,19 +457,29 @@ print(f"KL div:     {np_kl_divergence(true, pred):.4f} nats")
 
 2. 一个模型输出对真类型的样本的 logits [5.0, 2.0, 0.5] 1. 手动计算交叉缩损失,然后用你的 `cross_entropy_loss`什么地址会产生零损失?
 
-3. 证明KL分离不对称. 选择两个分布 P 和 Q,计算D_KL_P  Q) 和DL  Q  P).解释为什么它们不同.
+3. 显示KL分离不对称.$P$其他$Q$计算$D_{KL}(P \Vert Q)$其他$D_{KL}(Q \Vert P)$解释他们为什么不同.
 
 4. 构建一个函数,计算一个符号预测序列的困难. 给出 (true_token_index, predicted_logits) 对的列表,返回序列的困难.
+
+### 暗示
+
+**Exercise 1.**电话`entropy`结果必须是$\log_2 26 \approx 4.70$实际的字母频率不均,所以它们的值一定较低.
+
+**Exercise 2.**计算`softmax`子的子,$-\ln$分析结果的概率在指数1上,并与`cross_entropy_loss(1, logits)`只有当类1的逻辑比其他两个大得多时,损失才接近0
+
+**Exercise 3.**例如,使用两个不同形状的小分布.$P = [0.9, 0.1]$其他$Q = [0.5, 0.5]$打电话`kl_divergence`两种值必须不同,因为每个方向的分量与分数不同.
+
+**Exercise 4.**对于每一对,计算`cross_entropy_loss(true_token_index, predicted_logits)`通过一个字母,`perplexity`查看统一的记录.$V$标记: 必须是$V$现在,我们要去.
 
 ## 关键词
 
 | Term | What people say | What it actually means |
 |------|----------------|----------------------|
-| Information content | "Surprise" | The number of bits (or nats) needed to encode an event: -log(p) |
+| Information content | "Surprise" | The number of bits (or nats) needed to encode an event: $-\log(p)$ |
 | Entropy | "Randomness" | The average surprise across all outcomes of a distribution. Measures irreducible uncertainty. |
-| Cross-entropy | "The loss function" | Average surprise when using model distribution Q to encode events from true distribution P. |
-| KL divergence | "Distance between distributions" | Extra bits wasted by using Q instead of P. Equals cross-entropy minus entropy. Not symmetric. |
-| Mutual information | "How related are X and Y" | Reduction in uncertainty about X from knowing Y. Zero means independent. |
+| Cross-entropy | "The loss function" | Average surprise when using model distribution $Q$ to encode events from true distribution $P$. |
+| KL divergence | "Distance between distributions" | Extra bits wasted by using $Q$ instead of $P$. Equals cross-entropy minus entropy. Not symmetric. |
+| Mutual information | "How related are X and Y" | Reduction in uncertainty about $X$ from knowing $Y$. Zero means independent. |
 | Softmax | "Turn logits into probabilities" | Exponentiate and normalize. Maps any real-valued vector to a valid probability distribution. |
 | Perplexity | "How confused the model is" | Exponential of cross-entropy. The effective vocabulary size the model is choosing from at each step. |
 | Bits | "Shannon's unit" | Information measured with log base 2. One bit resolves one fair coin flip. |

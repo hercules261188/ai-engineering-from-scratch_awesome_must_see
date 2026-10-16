@@ -9,7 +9,7 @@
 
 ## 学习目标
 
-- 通过功率代实现SVD并解释U,Sigma和V^T的几何意义
+- 通过功率反复实现SVD并解释其几何意义$U$现在$\Sigma$其他$V^T$
 - 应用缩短的SVD用于图像压缩,并测量压缩比与重建错误
 - 通过SVD计算摩尔-罗斯伪逆转,以解决过度确定最小平方的系统
 - 连接SVD与PCA,推系统 (隐藏因素) 和 NLP中的隐藏语义分析
@@ -26,17 +26,14 @@
 
 每个矩阵,不管形状,都在连续执行三个操作:旋转,规模,旋转.
 
-```
-A = U * Sigma * V^T
-
-      m x n     m x m    m x n    n x n
-     (any)    (rotate)  (scale)  (rotate)
+```math
+\underset{\substack{m \times n \\ \text{(any)}}}{A} = \underset{\substack{m \times m \\ \text{(rotate)}}}{U} \cdot \underset{\substack{m \times n \\ \text{(scale)}}}{\Sigma} \cdot \underset{\substack{n \times n \\ \text{(rotate)}}}{V^T}
 ```
 
-根据任何矩阵A,SVD将其计算为:
-- 输入空间中的向量 (n维)
-- 沿每个轴的西格马尺度 (延伸或压缩)
-- 转换成输出空间 (m维)
+根据任何矩阵$A$染病因子:
+- $V^T$输入空间中的向量旋转 ($n$它们是个"尺寸"
+- $\Sigma$沿每个轴的尺度 (伸缩或压缩)
+- $U$转换结果到输出空间 ($m$它们是个"尺寸"
 
 ```mermaid
 graph LR
@@ -44,35 +41,35 @@ graph LR
     B -->|"U\n(rotate)"| C["Output space (m-dim)\nRotated to output\norientation"]
 ```
 
-现在,我们可以用这个方法来看看.我们给SVD一个矩阵.它告诉你:"这个矩阵取一个输入球,首先用V^T旋转它,然后用Sigma拉伸它到一个圆,然后用U旋转圆.
+现在,我们可以把它看成这样.你给SVD一个矩阵.它告诉你:"这个矩阵取一个输入球,首先旋转它.$V^T$然后将它伸成一个圆.$\Sigma$圆形的旋转速度为$U$单一值是圆轴的长度.
 
 ### 完全的分解
 
-对于形状m x n的矩阵A:
+对于一个矩阵$A$具有形状$m \times n$其他:
 
+```math
+\begin{aligned}
+& A = U \cdot \Sigma \cdot V^T \\[6pt]
+& \text{where:} \\
+& \quad U \text{ is } m \times m, \text{ orthogonal } (U^T U = I) \\
+& \quad \Sigma \text{ is } m \times n, \text{ diagonal (singular values on the diagonal)} \\
+& \quad V \text{ is } n \times n, \text{ orthogonal } (V^T V = I) \\[6pt]
+& \text{The singular values } \sigma_1 \ge \sigma_2 \ge \cdots \ge \sigma_r > 0 \\
+& \text{where } r = \mathop{\mathrm{rank}}(A)
+\end{aligned}
 ```
-A = U * Sigma * V^T
 
-where:
-  U     is m x m, orthogonal (U^T U = I)
-  Sigma is m x n, diagonal (singular values on the diagonal)
-  V     is n x n, orthogonal (V^T V = I)
-
-The singular values sigma_1 >= sigma_2 >= ... >= sigma_r > 0
-where r = rank(A)
-```
-
-号的列称为左单向量.V的列称为右单向量.Sigma的角角输入称为单向值.它们总是非负的,通常以降低顺序排序.
+列中的列$U$列的列是左单向量.$V$它们被称为正方单向量.$\Sigma$它们总是非负值,通常以下降顺序排序.
 
 ### 左单向量,单向值,右单向量
 
 任何SVD的组件都有不同的几何意义.
 
-**Right singular vectors (columns of V):**这些构成输入空间 (R^n) 的正规基础.它们是矩阵在输入空间中的方向,它们将输出空间中的正方形方向映射到正方形方向.
+**Right singular vectors (columns of $V$):**这些构成输入空间的正规基础 ($\mathbb{R}^n$它们是输入空间中的方向,矩阵将输出空间中的直角方向映射到地图上.
 
-**Singular values (diagonal of Sigma):**它们是扩展因子.第1单数值告诉你矩阵在第1右单数向量上延伸多少向量.
+**Singular values (diagonal of $\Sigma$):**它们是扩展因子.第1单数值告诉你矩阵在第1右单数向量上延伸多少向量.
 
-**Left singular vectors (columns of U):**这些构成输出空间 (R^m) 的正规基础.第1左单向量是输出空间中的方向,其中第1右单向量落地 (扩展后).
+**Left singular vectors (columns of $U$):**这些构成输出空间的正规基础 ($\mathbb{R}^m$) 左第十一个单向量是输出空间中的方向,其中右第十一个单向量落地 (扩展后).
 
 它们之间的关系:
 
@@ -98,20 +95,20 @@ The full matrix is the sum of r such matrices, where r is the rank.
 
 这种形式是低级近似的基础.每个术语增加一个结构层.第一术语捕捉到单个最重要的模式.第二个捕捉到下一个最重要的模式.
 
-```
-Rank-1 approx:    A_1 = sigma_1 * u_1 * v_1^T
-                  (captures the dominant pattern)
-
-Rank-2 approx:    A_2 = sigma_1 * u_1 * v_1^T + sigma_2 * u_2 * v_2^T
-                  (captures the two most important patterns)
-
-Rank-k approx:    A_k = sum of top k terms
-                  (optimal by the Eckart-Young theorem)
+```math
+\begin{aligned}
+\text{Rank-1 approx:} \quad & A_1 = \sigma_1 u_1 v_1^T \\
+& \text{(captures the dominant pattern)} \\[6pt]
+\text{Rank-2 approx:} \quad & A_2 = \sigma_1 u_1 v_1^T + \sigma_2 u_2 v_2^T \\
+& \text{(captures the two most important patterns)} \\[6pt]
+\text{Rank-}k\text{ approx:} \quad & A_k = \text{sum of top } k \text{ terms} \\
+& \text{(optimal by the Eckart-Young theorem)}
+\end{aligned}
 ```
 
 ### 关于自己的组成的关系
 
- A 的单一值和向量直接来自 A^T A 和 A^T 的 eigen值和 eigenvectors.
+单个值和向量$A$直接来自自值和自向量$A^T A$其他$A A^T$现在,我们要去.
 
 ```
 A^T A = V * Sigma^T * U^T * U * Sigma * V^T
@@ -135,41 +132,41 @@ So:
 
 这种联系告诉你三个东西:
 1. 单独值总是真实且非负 (它们是正半定义矩阵的自值的平方根).
-2. 您可以通过A^T A的自定义组合计算SVD,但这将条件数乘以平方,从而失去数值精度.
-3. 当A是正方形和对称正半确时,SVD和自体组合是相同的.
+2. 通过自己的组成计算SVD$A^T A$专用SVD算法避免这种情况.
+3. 什么时候$A$平方和对称正半定义,SVD和自成组合是相同的.
 
 ### 缩短的SVD:低级近似
 
-埃卡特-年轻-米尔斯基定理指出,最好的A级 k近似 (在弗罗贝尼斯和光谱规范中) 通过保持只有顶级k单数值及其相应的向量来获得:
+埃卡特-年轻-米尔斯基定理说,最好的$\text{rank-}k$接近$A$(在弗罗贝尼斯和光谱标准中) 只有保持顶部$k$单个值及其相应的向量:
 
+```math
+\begin{aligned}
+& A_k = U_k \cdot \Sigma_k \cdot V_k^T \\[6pt]
+& \text{where:} \\
+& \quad U_k \text{ is } m \times k \quad \text{(first } k \text{ columns of } U\text{)} \\
+& \quad \Sigma_k \text{ is } k \times k \quad \text{(top-left } k \times k \text{ block of } \Sigma\text{)} \\
+& \quad V_k \text{ is } n \times k \quad \text{(first } k \text{ columns of } V\text{)} \\[6pt]
+& \text{Approximation error} = \sigma_{k+1} \quad \text{(in spectral norm)} \\
+& \text{Approximation error} = \sqrt{\sigma_{k+1}^2 + \cdots + \sigma_r^2} \quad \text{(in Frobenius norm)}
+\end{aligned}
 ```
-A_k = U_k * Sigma_k * V_k^T
 
-where:
-  U_k     is m x k  (first k columns of U)
-  Sigma_k is k x k  (top-left k x k block of Sigma)
-  V_k     is n x k  (first k columns of V)
-
-Approximation error = sigma_{k+1}  (in spectral norm)
-                    = sqrt(sigma_{k+1}^2 + ... + sigma_r^2)  (in Frobenius norm)
-```
-
-这不仅仅是"一个好的"近似. 它可能是最好的可能的接近级 k. 没有其他级 k矩阵接近A.
+这不仅仅是"好"的近似,而且是最好的可能的阶级近似.$k$没有其他.$\text{rank-}k$矩阵接近了$A$现在,我们要去.
 
 | Component | Relative magnitude | Kept in rank-3 approx? |
 |-----------|-------------------|------------------------|
-| sigma_1 | Largest | Yes |
-| sigma_2 | Large | Yes |
-| sigma_3 | Medium-large | Yes |
-| sigma_4 | Medium | No (error) |
-| sigma_5 | Medium-small | No (error) |
-| sigma_6 | Small | No (error) |
-| sigma_7 | Very small | No (error) |
-| sigma_8 | Tiny | No (error) |
+| $\sigma_1$ | Largest | Yes |
+| $\sigma_2$ | Large | Yes |
+| $\sigma_3$ | Medium-large | Yes |
+| $\sigma_4$ | Medium | No (error) |
+| $\sigma_5$ | Medium-small | No (error) |
+| $\sigma_6$ | Small | No (error) |
+| $\sigma_7$ | Very small | No (error) |
+| $\sigma_8$ | Tiny | No (error) |
 
-保持上方3:A_3捕获了最大的三个单一值.错误 =剩余值 (sigma_4到 sigma_8).
+保持前三.$A_3$错误 = 剩余值 ($\sigma_4$通过$\sigma_8$)
 
-如果单数值快速衰退,一个小的 k 捕捉到矩阵的大部分.如果它们慢慢衰退,矩阵没有低级结构.
+如果单一值迅速衰退,$k$如果它们慢慢衰退,那么矩阵没有低级结构.
 
 ### 使用SVD压缩图像
 
@@ -211,9 +208,9 @@ SVD with rank k:
 观念:这个评级矩阵的排名低.用户没有完全独立的品味.有几种隐藏因素 (行动与戏剧,旧与新,脑与内心) 解释了大多数偏好.
 
 对于 (填充) 评级矩阵的SVD,将其分解为:
-- U:隐藏因素空间中的用户配置文件
-- 值:每个隐形因素的重要性
-- :潜伏因素空间中的电影配置文件
+- $U$: 隐藏因素空间中的用户配置文件
+- $\Sigma$:每个隐形因素的重要性
+- $V^T$: 潜伏因素空间中的电影配置文件
 
 用户预测电影的评级是用户个人资料的点数量和电影的个人资料 (按单数值权重).低级近似填写缺失的条目.
 
@@ -253,23 +250,23 @@ After SVD with rank k=2:
 
 | Component | Magnitude | Type |
 |-----------|-----------|------|
-| sigma_1 | Very large | Signal |
-| sigma_2 | Large | Signal |
-| sigma_3 | Medium | Signal |
-| sigma_4 | Near zero | Negligible |
-| sigma_5 | Near zero | Negligible |
+| $\sigma_1$ | Very large | Signal |
+| $\sigma_2$ | Large | Signal |
+| $\sigma_3$ | Medium | Signal |
+| $\sigma_4$ | Near zero | Negligible |
+| $\sigma_5$ | Near zero | Negligible |
 
 **Noisy signal singular values (noise adds to all):**
 
 | Component | Magnitude | Type |
 |-----------|-----------|------|
-| sigma_1 | Very large | Signal |
-| sigma_2 | Large | Signal |
-| sigma_3 | Medium | Signal |
-| sigma_4 | Small | Noise |
-| sigma_5 | Small | Noise |
-| sigma_6 | Small | Noise |
-| sigma_7 | Small | Noise |
+| $\sigma_1$ | Very large | Signal |
+| $\sigma_2$ | Large | Signal |
+| $\sigma_3$ | Medium | Signal |
+| $\sigma_4$ | Small | Noise |
+| $\sigma_5$ | Small | Noise |
+| $\sigma_6$ | Small | Noise |
+| $\sigma_7$ | Small | Noise |
 
 ```mermaid
 graph TD
@@ -283,7 +280,7 @@ graph TD
 
 ### 通过SVD进行伪逆转
 
-摩尔-罗斯伪逆向A+将矩阵逆向将用于非正方形和单一矩阵.SVD使得计算很简单.
+摩尔-罗斯伪逆转$A^+$计算的过程是微小的.
 
 ```
 If A = U * Sigma * V^T, then:
@@ -299,7 +296,7 @@ For A (m x n):      A+ is (n x m)
 For Sigma (m x n):  Sigma+ is (n x m)
 ```
 
-如果 Ax = b 没有准确的解决方案 (过于确定系统),那么x = A+ b 是最小的正方形解决方案 (最小化了不x - b 时时).
+假相反对应可以解决最小方形问题.$Ax = b$没有确切的解决方案 (过于确定的系统),$x = A^+ b$是最小平方的解决方案 (最小化)$\lVert Ax - b \rVert$)
 
 ```
 Overdetermined system (more equations than unknowns):
@@ -317,7 +314,7 @@ Overdetermined system (more equations than unknowns):
 
 ### 数字稳定性优势
 
-计算A^T A的自成组合,方乘以单数值 (A^T A的自成值是sigma_i^2).
+计算自己的组成$A^T A$方数是单个值 (自值值的$A^T A$是$\sigma_i^2$这将条件数方成方,增加数值错误.
 
 ```
 Example:
@@ -332,7 +329,7 @@ Example:
                            (6 extra digits of precision lost)
 ```
 
-现代SVD算法 (Golub-Kahan双诊断) 直接在A上工作,从来没有形成A^TA.`np.linalg.svd(A)`现在`np.linalg.eig(A.T @ A)`现在,我们要去.
+现代SVD算法 (Golub-Kahan双诊断) 直接运行在$A$没有形成$A^T A$这就是为什么你应该总是喜欢`np.linalg.svd(A)`现在`np.linalg.eig(A.T @ A)`现在,我们要去.
 
 ### 连接到PCA
 
@@ -368,7 +365,7 @@ svd-rank-reconstruction
 
 ### 步骤1:使用功率代使用从零开始的SVD
 
-想法:要找到最大的单数值及其向量,使用A^T A (或A A^T) 的功率反复.然后,将矩阵减值,并重复下一个单数值.
+设想:找到最大的单数值及其向量,$A^T A$(或$A A^T$然后,将矩阵放空,然后重复下一个单数值.
 
 ```python
 import numpy as np
@@ -513,7 +510,7 @@ julia svd.jl
 
 ## 运动
 
-1. 执行从零开始的全SVD,而不使用功率代. 相反,计算A^T A的自成组合,以获得V和单一值,然后计算U =A V Sigma^{-1}.与你的功率代版本和NumPy进行数值准确度比较.
+1. 没有使用功率代,从零开始实现全SVD.$A^T A$为了得到$V$然后计算.$U = A V \Sigma^{-1}$根据电源代版本和NumPy进行比较.
 
 2. 输入一个真实的灰度图像 (或将其转换为灰度图像).将其压缩在排列1,5,10,25和50等.
 
@@ -521,23 +518,35 @@ julia svd.jl
 
 4. 创建一个100x50的文档术语矩阵,包含3个合成主题.每个主题都有5个相关的术语.添加噪音.应用SVD并验证前3个单一值比其余值大得多.将文档项目进入3D隐形空间,并检查来自同一主题集群的文档.
 
-5. 生成一个清洁的低级矩阵 (排名3,大小50x40) 并在不同水平上添加高斯噪音 (sigma = 0.1, 0.5, 1.0, 2.0).对于每个噪音水平,通过扫描k从1到40来找到最佳的切割级别,并测量清洁矩阵的重建错误.绘制最佳k如何随噪音水平变化.
+5. 产生一个清洁的低级矩阵 (级别3,尺寸50x40) 并在不同水平增加高斯噪音 ($\sigma$对于每个噪音水平,通过扫描查找最佳的切断级别.$k$测量清洁矩阵的重建错误.$k$噪音水平的变化.
+
+### 暗示
+
+**Exercise 1.**计算$A^T A$得到其本值和本向量`np.linalg.eigh`单个值是本值的平方根; 检查$U \Sigma V^T$修建$A$并且将错误与`svd_from_scratch`其他`np.linalg.svd`现在,我们要去.
+
+**Exercise 2.**电话`truncated_svd`对于每个级别,重建图像`reconstruct`,使用`compression_ratio(m, n, k)`随着排列的增长,相对错误必须下降,
+
+**Exercise 3.**填写列中值,然后重建一个3级近似的`truncated_svd`其他`reconstruct`测量结果:计算在评级范围之外的预测,并在已知细胞中打印最大的变化.一个3级近似不能保证任何属性,所以如果需要有效的评级,则将预测缩小到范围.
+
+**Exercise 4.**给每个主题一个包含5个词的区块,其文件的数量很高,然后添加小噪音.打印单一值:第3个必须比第4个大得多.然后按主题染色3D坐标,并检查每个主题是否形成一个组.
+
+**Exercise 5.**让清洁矩阵成50x3和3x40随机矩阵的产量,然后为每一个添加噪音$\sigma$对于每一个$k$们的位$k$通过清洁的矩阵进行重建; 期望最好的$k$低噪音的3点,高噪音的3点较小.
 
 ## 关键词
 
 | Term | What people say | What it actually means |
 |------|----------------|----------------------|
-| SVD | "Factor any matrix" | Decompose A into U Sigma V^T where U and V are orthogonal and Sigma is diagonal with non-negative entries. Works for any matrix of any shape. |
-| Singular value | "How important this component is" | The i-th diagonal entry of Sigma. Measures how much the matrix stretches along the i-th principal direction. Always non-negative, sorted in decreasing order. |
-| Left singular vector | "Output direction" | A column of U. The direction in output space that the i-th right singular vector maps to (after scaling by sigma_i). |
-| Right singular vector | "Input direction" | A column of V. The direction in input space that the matrix maps to the i-th left singular vector (after scaling by sigma_i). |
-| Truncated SVD | "Low-rank approximation" | Keep only the top k singular values and their vectors. Produces the provably best rank-k approximation to the original matrix (Eckart-Young theorem). |
+| SVD | "Factor any matrix" | Decompose $A$ into $U \Sigma V^T$ where $U$ and $V$ are orthogonal and $\Sigma$ is diagonal with non-negative entries. Works for any matrix of any shape. |
+| Singular value | "How important this component is" | The $i$-th diagonal entry of $\Sigma$. Measures how much the matrix stretches along the i-th principal direction. Always non-negative, sorted in decreasing order. |
+| Left singular vector | "Output direction" | A column of $U$. The direction in output space that the $i$-th right singular vector maps to (after scaling by $\sigma_i$). |
+| Right singular vector | "Input direction" | A column of $V$. The direction in input space that the matrix maps to the $i$-th left singular vector (after scaling by $\sigma_i$). |
+| Truncated SVD | "Low-rank approximation" | Keep only the top $k$ singular values and their vectors. Produces the provably best $\text{rank-}k$ approximation to the original matrix (Eckart-Young theorem). |
 | Rank | "True dimensionality" | The number of non-zero singular values. Tells you how many independent directions the matrix actually uses. |
-| Pseudoinverse | "Generalized inverse" | V Sigma+ U^T. Inverts non-zero singular values, leaves zeros as zeros. Solves least-squares problems for non-square or singular matrices. |
-| Condition number | "How sensitive to errors" | sigma_max / sigma_min. A large condition number means small input changes cause large output changes. SVD reveals this directly. |
+| Pseudoinverse | "Generalized inverse" | $V \Sigma^+ U^T$. Inverts non-zero singular values, leaves zeros as zeros. Solves least-squares problems for non-square or singular matrices. |
+| Condition number | "How sensitive to errors" | $\sigma_{\max} / \sigma_{\min}$. A large condition number means small input changes cause large output changes. SVD reveals this directly. |
 | Latent factor | "Hidden variable" | A dimension in the low-rank space discovered by SVD. In recommendations, a latent factor might correspond to genre preference. In NLP, it might correspond to a topic. |
 | Frobenius norm | "Total matrix size" | Square root of the sum of squared entries. Equals the square root of the sum of squared singular values. Used to measure approximation error. |
-| Eckart-Young theorem | "SVD gives the best compression" | For any target rank k, the truncated SVD minimizes the approximation error over all possible rank-k matrices. |
+| Eckart-Young theorem | "SVD gives the best compression" | For any target rank $k$, the truncated SVD minimizes the approximation error over all possible $\text{rank-}k$ matrices. |
 | Power iteration | "Find the biggest eigenvector" | Repeatedly multiply a random vector by the matrix and normalize. Converges to the eigenvector with the largest eigenvalue. The building block of many SVD algorithms. |
 
 ## 进一步阅读

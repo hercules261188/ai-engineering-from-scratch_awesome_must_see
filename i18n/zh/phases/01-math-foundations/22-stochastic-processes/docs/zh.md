@@ -9,7 +9,7 @@
 
 ## 学习目标
 
-- 模拟1D和2D随机行走,并验证移动的平方
+- 模拟1D和2D随机走路,验证$\sqrt{n}$移动规模
 - 通过自己的组合计算它静止分布
 - 实施Metropoolis-Hastings MCMC和Langevin动态,用于从目标分布中采样
 - 将前方扩散过程连接到布朗运动,并解释反向过程如何生成数据
@@ -38,9 +38,9 @@
 
 开始从位置0.每一步,抛一个公平的硬币.头部:右 (+1).尾部:左 (-1).
 
-随着 n 步骤,你的位置是 n 随机+/-1值的总和.预期位置是 0 (步行是无偏见的).但预期距离从原点增长为 sqrt(n).
+在之后$n$步骤,你的位置是总数$n$随机$\pm 1$预期位置为0 (步行是无偏见的).$\sqrt{n}$现在,我们要去.
 
-这与直觉相反.步行是公平的 - - 没有任何方向的漂移.但随着时间的推移,它从开始的地方越来越远. n 步骤后的标准偏差是 sqrt(n.
+走路是公平的,没有任何方向的漂移.但随着时间的推移,它从开始的地方越来越远.$n$步骤是$\sqrt{n}$现在,我们要去.
 
 ```
 Step 0:  Position = 0
@@ -51,33 +51,33 @@ Step 100: Expected distance from origin ~ 10 (sqrt(100))
 Step 10000: Expected distance from origin ~ 100 (sqrt(10000))
 ```
 
-**In 2D**步行的速度在一个小时内,步行的速度在一个小时内,步行的速度在一个小时内,步行的速度在一个小时内,步行的速度在一个小时内,步行的速度在一个小时内,步行的速度在一个小时内,步行的速度在一个小时内,步行的速度在一个小时内,步行的速度在一个小时内,步行的速度在一个小时内,步行的速度在一个小时内,步行的速度在一个小时内,步行的速度在一个小时内,步行的速度在一个小时内,步行的速度在一个小时内,步行的速度在一个小时内,步行的速度在一个小时内,步行的速度在一个小时内,步行的速度在一个小时内,步行的速度在一个小时内,步行的速度在一个小时内,步行的速度在一个小时内,步行的速度在一个小时内,步行的速度在一个小时内,步行的速度在一个小时内,步行的速度在一个小时内.
+**In 2D**走上,下,左,右,等等的概率.$\sqrt{n}$距离从原点的距离. 路径追踪一个类似碎片的模式.
 
-**Why sqrt(n)?**每一步都是 +1 或 -1 且概率均等. n 步骤后,位置 S_n = X_1 + X_2 + ... + X_n 每一步 X_i 为 +/-1. 每一步的变量为 1,步骤是独立的,所以 Var(S_n) = n.标准偏差 = sqrt(n.
+**Why $\sqrt{n}$?**每一步都是+1或-1的等等概率.$n$步骤,位置$S_n = X_1 + X_2 + \cdots + X_n$在哪里$X_i$是$\pm 1$每一步的差异是1,并且步骤是独立的,所以$\mathop{\mathrm{Var}}(S_n) = n$标准偏差 = $\sqrt{n}$根据中央极限定理,$S_n / \sqrt{n}$转移到标准正常分布.
 
-这种平方 (n) 尺度在 ML 中显示到处. SGD 噪声尺度为1/sqrt(批量尺寸). 嵌入尺寸尺度为 sqrt(d). 平方根是独立随机加算的签名.
+这里$\sqrt{n}$标量显示在 ML 中各处. SGD噪音尺度为1/sqrt(批量_尺寸). 嵌入尺寸尺度为$\sqrt{d}$平方根是独立随机加量的签名.
 
-**Connection to Brownian motion.**随着 n 进入无限,步行将趋于布朗运动 B(t) - 一个连续时间过程,B(t) 通常分布在平均0和变量 t.
+**Connection to Brownian motion.**随机散步,用步骤尺寸.$1/\sqrt{n}$其他$n$按时间单位的步骤.$n$走向无限,走向布朗运动.$B(t)$-- 一个持续时间的过程,$B(t)$通常分布为 0 的平均值和变量$t$现在,我们要去.
 
 布朗运动是扩散的数学基础. 它模拟了液体中的粒子的随机摇摆,股价的波动,
 
-**Gambler's ruin.**随机步行者从位置 k开始,吸收屏障在 0 和 N. 达到 N 在 0 之前的概率是多少? 公平步行: P(reach N) = k/N. 这令人惊的简单和优雅. 它与马丁加尔理论相连 - - 公平随机步行是马丁加尔 (预期未来值 = 现值).
+**Gambler's ruin.**随机步行者开始在位置$k$吸收阻隔在0和$N$达到的概率是多少?$N$在0之前?$P(\text{reach } N) = k/N$这种方法非常简单,优雅. 它与马丁加尔理论相连. 公平的随机走路是马丁加尔 (预期未来值=当前值).
 
 ### 马科夫链
 
 马科夫链是一个系统,根据固定概率,状态之间过渡.关键属性:下一个状态只取决于当前状态,而不是历史.
 
-```
-P(X_{t+1} = j | X_t = i, X_{t-1} = ...) = P(X_{t+1} = j | X_t = i)
-```
-
-这就是马科夫的属性. 这意味着你可以用过渡矩阵P来描述整个动态:
-
-```
-P[i][j] = probability of going from state i to state j
+```math
+P(X_{t+1} = j \mid X_t = i, X_{t-1} = \ldots) = P(X_{t+1} = j \mid X_t = i)
 ```
 
-每一行P的数值为1 (你必须去某个地方).
+这就是马科夫的属性. 这意味着你可以用过渡矩阵来描述整个动态.$P$其他:
+
+```math
+P[i][j] = \text{probability of going from state } i \text{ to state } j
+```
+
+每一行$P$总数为1 (你必须去某个地方).
 
 **Example -- Weather:**
 
@@ -89,7 +89,7 @@ P = [[0.7, 0.1, 0.2],    (if sunny: 70% sunny, 10% rainy, 20% cloudy)
      [0.4, 0.2, 0.4]]    (if cloudy: 40% sunny, 20% rainy, 40% cloudy)
 ```
 
-开始在任何状态.经过许多转变,状态分布趋于静止分布 pi,其中 pi * P = pi.这是 P 的左自向量,自值 1.
+经过许多过渡,状态分布趋于静止分布.$\pi$在哪里$\pi P = \pi$这就是左边的自向量$P$具有自值1.
 
 对于天气链,静止分布是 [0.55,0.18,0.27] -- 长期来看,它在55%,不管是什么状态开始,
 
@@ -108,8 +108,8 @@ graph LR
 
 **Computing the stationary distribution.**两种方法:
 
-1. **Power method**并且在一个小组中,它可以通过 P 乘以 P 乘以 P.
-2. **Eigenvalue method**求出 P 的左自向量与 eigenvalue 1. 这就是 P^T 的自向量与 eigenvalue 1.
+1. **Power method**:乘以任何最初的分布$P$经过足够的代,它会相近.
+2. **Eigenvalue method**求左自向量$P$具有自值1的自值向量.$P^T$具有自值1.
 
 两种方法都要求链接满足缩条件.
 
@@ -119,63 +119,63 @@ graph LR
 
 机器人机器人机器人机器人机器人机器人机器人机器人机器人机器人机器人机器人机器人机器人机器人机器人机器人机器人机器人机器人机器人机器人机器人机器人机器人机器人机器人机器人机器人机器人机器人机器人机器人机器人机器人机器人机器人机器人机器人机器人机器人机器人机器人机器人机器人机器人机器人机器人机器人机器人机器人机器人机器人机器人机器人机器人机器人机器人机器人机器人机器人机器人机器人机器人机器人机器人机器人机器人机器人机器人机器人机器人机器人机器人机器人机器人机器人机器人机器人机器人机器人机器人机器人机器人机器人机器人机器人机器人机器人机器人机器人机器人机器人机器
 
-**Absorbing states.**吸收状态是吸收的,如果你进入它,你永远不会离开 (P[i][i] = 1).吸收马科夫链模型过程与终端状态 - 一场结束的游戏,一个客户,一个,一个符号序列,
+**Absorbing states.**一个状态是吸收的,如果你进入它,你永远不会离开 ($P[i][i] = 1$吸收马科夫链的模型过程, 终端状态 - - 一场游戏结束,一个客户,一个符号序列,
 
-**Mixing time.**位分布"接近"链程的步骤有多少? 形式上,位距离的变化距离总数下降到某个门以下.快速混合 = 需要几步.P的光谱差距 (1减下第二大自值) 控制了混合时间.更大的差距 = 快速混合.
+**Mixing time.**位数: 位数: 位数: 位数: 位数: 位数: 位数: 位数: 位数: 位数: 位数: 位数: 位数: 位数: 位数: 位数: 位数: 位数: 位数: 位数: 位数: 位数: 位数: 位数: 位数: 位数: 位数: 位数: 位数: 位数: 位数: 位数: 位数: 位数: 位数: 位数: 位数: 位数: 位数: 位数: 位数: 位数: 位数: 位数: 位数: 位数: 位数: 位数: 位数: 位数: 位数: 位数: 位数: 位数: 位数:$P$混合时间控制 (减小第二大自值). 较大的差距 =更快的混合.
 
 ### 与语言模型的连接
 
 语言模型中的代币生成大约是马科夫过程.鉴于当前的背景,模型输出了下一个代币的分布.温度控制了敏度:
 
-```
-P(token_i) = exp(logit_i / temperature) / sum(exp(logit_j / temperature))
+```math
+P(\text{token}_i) = \frac{\exp(\text{logit}_i / \text{temperature})}{\sum_j \exp(\text{logit}_j / \text{temperature})}
 ```
 
 - 温度=1.0:标准分布
 - 温度 < 1.0:更 (更确定性)
 - 温度 > 1.0:平坦 (更随机)
-- 温度 -> 0: argmax (贪)
+- 温度$\to 0$鱼类:
 
-顶k样本抽取量缩小到k最有可能的代币.顶p (核)样本抽取量缩小到其累计概率超过p的最小的代币组.这两者都修改了马科夫过渡概率.
+顶部的样本抽取到$k$顶点p (核) 样本采集将缩小到最小的代币组,其累计概率超过$p$两者都修改了马科夫过渡概率.
 
 ### 布朗运动
 
-随机走路的连续时间限制.位置B(t) 有三个属性:
-1. 子
-2. B(t) - B(s) 通常分布为平均0和变量 t - s (为 t > s)
+随机走路的持续时间限制.$B(t)$有三个特性:
+1. $B(0) = 0$
+2. $B(t) - B(s)$通常分布为 0 的平均值和变量$t - s$(为$t > s$)
 3. 不重叠间隔的增长是独立的
 
 布朗运动是连续的,但在任何地方都无法区分,它在每个尺度上都会摇摆.
 
 在单独的模拟中,你将布朗运动 приблизи为:
 
-```
-B(t + dt) = B(t) + sqrt(dt) * z,    where z ~ N(0, 1)
+```math
+B(t + dt) = B(t) + \sqrt{dt} \, z, \quad \text{where } z \sim \mathcal{N}(0, 1)
 ```
 
-平方度是重要的.它来自于对随机行走的中央限定理.
+其他$\sqrt{dt}$根据"中央极限定理"来说,
 
 ### 兰杰文动力学
 
-渐进式下降发现函数的最小值. 朗杰文动态发现概率分布与 exp ((-U ((x) /T) 比例,U是能量函数,T是温度.
+代下降发现函数的最小值. 兰杰文动态发现概率分布是与$\exp(-U(x)/T)$在哪里$U$是一个能量函数,$T$温度是
 
-```
-x_{t+1} = x_t - dt * gradient(U(x_t)) + sqrt(2 * T * dt) * z_t
+```math
+x_{t+1} = x_t - dt \, \nabla U(x_t) + \sqrt{2 T \, dt} \, z_t
 ```
 
 两种力量对粒子作用:
-1. **Gradient force**(-dt *梯度(U)):向低能量推进 (如梯度下降)
-2. **Random force**按在随机方向 (探索)
+1. **Gradient force**($-dt \cdot \nabla U$):向低能量推进 (如梯度下降)
+2. **Random force**($\sqrt{2T dt} \cdot z$):随机方向推 (探测)
 
-在温度T=0时,这是纯梯度下降.在高温时,它几乎是随机走路.在正确的温度下,粒子探索能量景观,并在低能区域花更多时间.
+在温度下$T = 0$在高温下,它几乎是随机的步行.在正确的温度下,粒子探索能量景观,并在低能量的地区花更多时间.
 
 **Connection to diffusion models.**扩散模型的前进过程是:
 
-```
-x_t = sqrt(alpha_t) * x_{t-1} + sqrt(1 - alpha_t) * noise
+```math
+x_t = \sqrt{\alpha_t} \, x_{t-1} + \sqrt{1 - \alpha_t} \cdot \text{noise}
 ```
 
-现在,我们可以看到一个数据的音,然后我们可以看到一个数据的音.
+通过一个马科夫链,它逐渐将数据与噪音混合在一起.$x_T$只是纯粹的高斯噪音.
 
 反向过程--从噪音回到数据-- 也是一种马科夫链,但它的过渡概率是由神经网络学习的.
 
@@ -195,27 +195,27 @@ graph LR
 
 ### 马科夫链蒙特卡罗
 
-有时你需要从分布 p ((x) 中样本,你可以评估 (到一个常数),但不能直接从样本.贝耶斯后层是经典的例子 - - 你知道概率乘以前面,但正常化常数是难以解决的.
+有时你需要从一个分布中取样$p(x)$贝耶斯后层是经典的例子 - - 你知道概率乘以前面,但正常化常数是难以解决的.
 
-**Metropolis-Hastings**构建一个马科夫链,其静止分布为p(x):
+**Metropolis-Hastings**构建一个马科夫链,其静止分布是$p(x)$其他:
 
-1. 从某个位置开始 x
-2. 提出一个新的立场x'从一个提案分布Q(x' 则x)
-3. 计算接受率: a(x') * Q(x 便x') / (p(x) * Q(x'便x))
-4. 接受x'与概率min ((1,a).否则保持在x.
+1. 开始从某个位置.$x$
+2. 提出一个新职位$x'$根据提案分发的结果$Q(x' \mid x)$
+3. 计算接受率: $a = p(x') Q(x \mid x') / (p(x) Q(x' \mid x))$
+4. 接受$x'$没有任何可能的$\min(1, a)$否则,你就在$x$现在,我们要去.
 5. 复制.
 
-如果Q是对称,例如,Q(x' (便x) =Q(x (便x') =N(x, sigma^2)),比率简化为a =p(x') /p(x.
+如果$Q$是对称 (例如,$Q(x' \mid x) = Q(x \mid x') = \mathcal{N}(x, \sigma^2){}$),比率简化为$a = p(x') / p(x)$只有概率的比率,正常化常数取消.
 
-由于这种情况,在很小的条件下,链接可以保证将与p ((x) 融合.但如果提案太小 (随机走路) 或太大 (高拒绝),则趋同可能会缓慢.调整提案是MCMC的艺术.
+链接的转移将保证到$p(x)$对于这些问题,我们必须要注意,在温和的条件下,但如果提案太小 (随机步行) 或太大 (高拒绝),则趋向可能会缓慢.
 
-**Why it works.**接受比率确保了详细的平衡:在x'上移动到x'的概率等于在x'上移动到x的概率.详细的平衡意味着p(x) 是链的静止分布.所以,经过足够的步骤,样本来自p(x.
+**Why it works.**接受率确保了详细的平衡:$x$现在,我们要去$x'$占到的概率是$x'$现在,我们要去$x$详细的平衡意味着$p(x)$并且在我们看到的样本中,$p(x)$现在,我们要去.
 
 **Practical considerations:**
-- **Burn-in**链接需要时间才能从起点到达静止分布.
-- **Thinning**保持每一个k-th样本以减少自动相关性.
+- **Burn-in**丢掉第一条$N$链接需要时间从起点到达静止分布.
+- **Thinning**保持每一个$k$减少自动相关性.
 - **Multiple chains**它们在不同的起点上运行多个链.
-- **Acceptance rate**对于高斯的d维度提案,最佳接受率约为23% (Roberts & Rosenthal, 2001).
+- **Acceptance rate**对于Gaussian的提案$d$由于其尺寸,最佳接受率约为23% (Roberts & Rosenthal,2001).
 
 ### 人工智能中的断过程
 
@@ -260,7 +260,7 @@ def random_walk_2d(n_steps, seed=None):
     return x, y
 ```
 
-1D走路存储累计的总和.每个步骤是 +1 或 -1. n步骤后,位置是总和.变异与 n 增长线性,所以标准偏差增长为 sqrt(n.
+后面的步骤是+1或-1$n$变量增长线性与 变量增长线性与 变量增长$n$标准偏差的增长率是$\sqrt{n}$现在,我们要去.
 
 ### 步骤2:马科夫链
 
@@ -294,7 +294,7 @@ class MarkovChain:
         return np.abs(stationary)
 ```
 
-静止分布是 P 的左自向量,具有自值 1. 我们通过计算 P^T 的自向量 (转换左自向量为右自向量) 找到它.
+静止分布是左自向量$P$我们通过计算 的自向量来找到它.$P^T$(转换左自向向向向向向向向向向向向向向向向向向向向向向向).
 
 ### 步骤3: 兰杰文动态
 
@@ -310,7 +310,7 @@ def langevin_dynamics(grad_U, x0, dt, temperature, n_steps, seed=None):
     return np.array(trajectory)
 ```
 
-渐变将x推向低能量.噪音防止它住.在平衡时,样本分布与ex ((-U ((x) /温度相比例).
+梯度推$x$声防止着. 在平衡时,样本分布是相对的$\exp(-U(x)/\text{temperature})$现在,我们要去.
 
 ### 第四步:大都会 - 忙
 
@@ -363,7 +363,7 @@ for _ in range(100):
 print(f"Stationary distribution: {np.round(distribution, 4)}")
 ```
 
-乘以P重复初始分布. 经过足够的代,它与您开始的位置不论相近的静止分布.这是寻找主导左自向量的功率方法.
+乘以最初的分布$P$它们在一个直径中,可以在一个直径中进行一个直径,然后在一个直径中,它可以在一个直径中进行一个直径.
 
 ### 与实际框架的联系
 
@@ -409,14 +409,14 @@ print(f"Approximate mixing time: {1/spectral_gap:.1f} steps")
 
 扩散模型值得特别关注.DDPM (Ho et al., 2020) 定义了前进马科夫链:
 
-```
-q(x_t | x_{t-1}) = N(x_t; sqrt(1-beta_t) * x_{t-1}, beta_t * I)
+```math
+q(x_t \mid x_{t-1}) = \mathcal{N}\left(x_t; \sqrt{1-\beta_t} \, x_{t-1}, \beta_t I\right)
 ```
 
-在T步骤后,x_T是大约N(0,I).反向过程由一个神经网络进行参数,预测噪音:
+在哪里$\beta_t$之后,我们会看到一个杂的时间表.$T$步骤$x_T$平均值$\mathcal{N}(0, I)$逆转过程由一个预测噪音的神经网络进行参数:
 
-```
-p_theta(x_{t-1} | x_t) = N(x_{t-1}; mu_theta(x_t, t), sigma_t^2 * I)
+```math
+p_\theta(x_{t-1} \mid x_t) = \mathcal{N}\left(x_{t-1}; \mu_\theta(x_t, t), \sigma_t^2 I\right)
 ```
 
 了解马科夫链意味着理解如何和为什么扩散模型生成数据.
@@ -427,15 +427,27 @@ p_theta(x_{t-1} | x_t) = N(x_{t-1}; mu_theta(x_t, t), sigma_t^2 * I)
 
 ## 运动
 
-1. **Simulate 1000 random walks of 10000 steps.**图表最终位置分布. 验证它是大约高斯式的,平均值为0和标准偏差为10000) = 100.
+1. **Simulate 1000 random walks of 10000 steps.**图表最终位置分布. 验证它是大约Gaussian的平均0和标准偏差.$\sqrt{10000} = 100$现在,我们要去.
 
 2. **Build a text generator using a Markov chain.**训练一个小的体积:每一个词,数过关到下一个词. 构建过关矩阵. 通过从链中采样生成新的句子.
 
 3. **Implement simulated annealing**使用Metropoles-Hastings. 开始在高温 (几乎接受一切) 并且逐渐冷却 (只接受改进). 使用它来找到一个具有多个本地最小的函数的最小值.
 
-4. **Compare Langevin dynamics at different temperatures.**采样从双井潜力 U(x) = (x^2 - 1)^2.在低温下,样本集成在一个井.在高温下,它们分散在两处.找到链接混合的关键温度.
+4. **Compare Langevin dynamics at different temperatures.**采样来自双井潜力$U(x) = (x^2 - 1)^2$在低温下,样品集成在一个井.在高温下,它们在两处都传播.找到连锁在井之间混合的关键温度.
 
 5. **Implement the forward diffusion process.**开始使用1维信号 (例如,鼻波).通过线性噪音时间表逐步增加噪音100步以上. 显示信号如何降低到纯噪音. 然后实施一个简单的指标,扭转这个过程 (即使是简单的,只会减去估计的噪音).
+
+### 暗示
+
+**Exercise 1.**电话`random_walk_1d(10000, seed=i)`检查平均值接近0;标准偏差接近100;最后位置约有68%在 -100到100之间.
+
+**Exercise 2.**计算每个单词对,然后把每个行分为其总数,使每个行加起来为1. 传输矩阵到`MarkovChain(transition_matrix, state_names)`打电话`simulate`检查你输出中的每一对单词都在体内出现.
+
+**Exercise 3.**接受一个更糟糕的点,有可能性.$\exp(-\Delta / T)$并且乘以$T$测试一个你知道的最小值的函数,然后检查你的答案与一个细节的网格搜索.
+
+**Exercise 4.**梯度是$4x(x^2 - 1)$所以把它传给`langevin_dynamics(grad_U, x0, dt, temperature, n_steps)`门在$x = 0$号的高度为1,所以计算出标志的频率.$x$温度从0.05到1的变化,并寻找温度,
+
+**Exercise 5.**电话`diffusion_forward(signal, 100)`计算$\bar{\alpha}$作为产品的最后一步$(1 - \beta_t)$如果$\bar{\alpha}$信号还不是纯噪音,所以提高`beta_end`首先用真实的噪音测试你的标机.$(x_t - \sqrt{1 - \bar{\alpha}_t} \epsilon)/\sqrt{\bar{\alpha}_t}$必须回复原始信号.
 
 ## 关键词
 
@@ -443,9 +455,9 @@ p_theta(x_{t-1} | x_t) = N(x_{t-1}; mu_theta(x_t, t), sigma_t^2 * I)
 |------|----------------|----------------------|
 | Random walk | "Coin-flip movement" | A process where position changes by random increments at each step |
 | Markov property | "Memoryless" | The future depends only on the present state, not on the history |
-| Transition matrix | "The probability table" | P[i][j] = probability of moving from state i to state j |
-| Stationary distribution | "The long-run average" | The distribution pi where pi*P = pi -- the chain's equilibrium |
-| Brownian motion | "Random jiggling" | The continuous-time limit of a random walk, B(t) ~ N(0, t) |
+| Transition matrix | "The probability table" | $P[i][j]$ = probability of moving from state $i$ to state $j$ |
+| Stationary distribution | "The long-run average" | The distribution $\pi$ where $\pi P = \pi$ -- the chain's equilibrium |
+| Brownian motion | "Random jiggling" | The continuous-time limit of a random walk, $B(t) \sim \mathcal{N}(0, t)$ |
 | Langevin dynamics | "Gradient descent with noise" | Update rule that combines deterministic gradient and random perturbation |
 | MCMC | "Walking toward the target" | Constructing a Markov chain whose stationary distribution is the one you want |
 | Metropolis-Hastings | "Propose and accept/reject" | MCMC algorithm that uses acceptance ratios to ensure convergence |

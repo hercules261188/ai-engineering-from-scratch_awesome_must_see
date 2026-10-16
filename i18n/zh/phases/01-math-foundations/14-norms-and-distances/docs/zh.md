@@ -28,14 +28,14 @@
 
 ### 标准:测量向量大小
 
-标准测量向量的"大小".两个向量的每一个距离函数都可以作为它们的差异的标准写成: d(a, b) =a - b) 时时.
+一个标准测量向量的"大小".两个向量的每一个距离函数都可以作为它们的差异的标准写成:$d(a, b) = \lVert a - b \rVert$所以理解规范,就是理解距离.
 
 ### 标准 (曼哈顿距离)
 
 标准L1总结了所有组件的绝对值.
 
-```
-||x||_1 = |x_1| + |x_2| + ... + |x_n|
+```math
+\lVert x \rVert_1 = |x_1| + |x_2| + \cdots + |x_n|
 ```
 
 它被称为曼哈顿距离,因为它测量你在城市网格上走多远,
@@ -54,7 +54,7 @@ On a grid, you walk 3 blocks east and 4 blocks north.
 - 当你想要强度到异常值 (一个巨大的差异不主导)
 - 特性选择问题 (L1规律化促进稀疏性)
 
-连接到L1调整:1加到你的损失函数 (Lasso) 处罚绝对重值的总和.这将小重量推到完全零,执行自动特征选择.L1处罚在重量空间中创造了钻石形状的限制区域,钻石的角落位于某些重量为零的轴上.
+连接到L1规律化 (Lasso):添加$\lVert w \rVert_1$由于 L1 函数的输出,它将对绝对重量值的总和进行处罚. 这将小重量推到完全零,执行自动的特征选择. L1 函数在重量空间中创造了钻石状的限制区域,钻石的角落位于某些重量为零的轴上.
 
 连接到损失函数:平均绝对错误 (MAE) 是预测和目标之间的平均L1距离.它将所有错误线性地处罚,使其与MSE相比强到异常.
 
@@ -62,11 +62,11 @@ On a grid, you walk 3 blocks east and 4 blocks north.
 
 标准是直线距离,正方根是正方体组件的总数.
 
-```
-||x||_2 = sqrt(x_1^2 + x_2^2 + ... + x_n^2)
+```math
+\lVert x \rVert_2 = \sqrt{x_1^2 + x_2^2 + \cdots + x_n^2}
 ```
 
-这就是你在几何课中学到的距离.
+达哥拉斯在"达哥拉斯"中学到的距离是这样.$n$尺寸.
 
 ```
 Point A = (1, 1)
@@ -83,24 +83,26 @@ The straight line, cutting diagonally through the grid.
 - 物理距离 (空间数据,传感器读数)
 - 像素级的图像相似性
 
-连接到L2调整化 (Ridge):添加到不2^w 输出__2的函数将大重量处罚.就像L1,它不会把重量推到零.它将所有重量比例缩小到零.L2的惩罚创造了圆形的限制区域,因此轴上没有角落.重量变得小,但很少是完全零.
+连接到L2规则化 (Ridge): 添加$\lVert w \rVert_2^2$由于 L1 压力是很大的,所以它不会把重量推到零.它会把所有重量推到零. L2 压力会产生圆形的限制区域,所以轴上没有角落.重量变得小,但很少是完全零.
 
 连接到损失函数:平均平方错误 (MSE) 是 L2 距离的平均平方.
 
-```
-MAE (L1 loss):  |y - y_hat|         Linear penalty. Robust to outliers.
-MSE (L2 loss):  (y - y_hat)^2       Quadratic penalty. Sensitive to outliers.
+```math
+\begin{aligned}
+\text{MAE (L1 loss):} \quad & |y - \hat{y}| && \text{Linear penalty. Robust to outliers.} \\
+\text{MSE (L2 loss):} \quad & (y - \hat{y})^2 && \text{Quadratic penalty. Sensitive to outliers.}
+\end{aligned}
 ```
 
 ### 标准:一般家庭
 
 L1和L2是Lp标准的特殊案例:
 
-```
-||x||_p = (|x_1|^p + |x_2|^p + ... + |x_n|^p)^(1/p)
+```math
+\lVert x \rVert_p = (|x_1|^p + |x_2|^p + \cdots + |x_n|^p)^{1/p}
 ```
 
-不同值的p产生不同形状的"单体球" (所有点在距离原点1的集合):
+不同值$p$产生不同形状的"单体球" (距离原点1处的所有点集合):
 
 ```
 p=1:    Diamond shape      (corners on axes)
@@ -111,19 +113,20 @@ p=inf:  Square/hypercube   (flat sides along axes)
 
 ### 无限度标准 (切比什夫距离)
 
-随着p接近无限,Lp标准将趋于最大绝对组件.
+作为$p$接近无限时,Lp标准将趋于最大绝对组件.
 
-```
-||x||_inf = max(|x_1|, |x_2|, ..., |x_n|)
+```math
+\lVert x \rVert_\infty = \max(|x_1|, |x_2|, \ldots, |x_n|)
 ```
 
 两个点之间的距离由它们最不同的地方决定.
 
-```
-Point A = (1, 1)
-Point B = (4, 5)
-
-L-inf distance = max(|4-1|, |5-1|) = max(3, 4) = 4
+```math
+\begin{aligned}
+\text{Point } A &= (1, 1) \\
+\text{Point } B &= (4, 5) \\[6pt]
+L_\infty \text{ distance} &= \max(|4-1|, |5-1|) = \max(3, 4) = 4
+\end{aligned}
 ```
 
 什么时候使用L-无限:
@@ -135,19 +138,20 @@ L-inf distance = max(|4-1|, |5-1|) = max(3, 4) = 4
 
 两向量之间的角度,不考虑它们的大小.
 
-```
-cos_sim(a, b) = (a . b) / (||a||_2 * ||b||_2)
+```math
+\text{cos\_sim}(a, b) = \frac{a \cdot b}{\lVert a \rVert_2 \, \lVert b \rVert_2}
 ```
 
 它从 -1 (相反方向) 到 +1 (相同方向).垂直向量具有 0 的共数相似性.
 
 位距离将其转换为距离:位距离 = 1 -位相似性. 这从0 (相同的方向) 到2 (相反的方向).
 
-```
-a = (1, 0)    b = (1, 1)
-
-cos_sim = (1*1 + 0*1) / (1 * sqrt(2)) = 1/sqrt(2) = 0.707
-cos_dist = 1 - 0.707 = 0.293
+```math
+\begin{aligned}
+& a = (1, 0) \qquad b = (1, 1) \\[6pt]
+& \text{cos\_sim} = \frac{1 \cdot 1 + 0 \cdot 1}{1 \cdot \sqrt{2}} = \frac{1}{\sqrt{2}} = 0.707 \\
+& \text{cos\_dist} = 1 - 0.707 = 0.293
+\end{aligned}
 ```
 
 为什么Cosine主导NLP和嵌入式:在文本中,文档长度不应该影响相似性. 关于猫的文件是比其他关于猫的文件长两倍的文件仍然应该是"相似的". 两个文件的词分布相同,但长度不同,指向相同方向,得到了1.0的相似性.
@@ -162,16 +166,17 @@ cos_dist = 1 - 0.707 = 0.293
 
 两个向量的点乘法是:
 
-```
-a . b = a_1*b_1 + a_2*b_2 + ... + a_n*b_n
-      = ||a|| * ||b|| * cos(angle)
+```math
+\begin{aligned}
+a \cdot b &= a_1 b_1 + a_2 b_2 + \cdots + a_n b_n \\
+&= \lVert a \rVert \, \lVert b \rVert \cos(\text{angle})
+\end{aligned}
 ```
 
 两种大小均可正常化时,当两个向量都已经单元均可正常化时 (大小=1),点数和点数相似性是相同的.
 
-```
-If ||a|| = 1 and ||b|| = 1:
-    a . b = cos(angle between a and b)
+```math
+\text{If } \lVert a \rVert = 1 \text{ and } \lVert b \rVert = 1: \quad a \cdot b = \cos(\text{angle between } a \text{ and } b)
 ```
 
 当它们不同时:点产品包含大小信息.一个大小的向量获得更高的点产品分数.在某些检索系统中,这很重要,你希望"受欢迎"项目排名更高.大小作为隐含的质量或重要性信号.
@@ -197,13 +202,13 @@ Both agree on direction, but dot product also reflects magnitude.
 
 马哈拉诺比距离对数据的共变结构负责.
 
-```
-d_M(x, y) = sqrt((x - y)^T * S^(-1) * (x - y))
+```math
+d_M(x, y) = \sqrt{(x - y)^T S^{-1} (x - y)}
 ```
 
-在此,S是数据的共变矩阵.
+在哪里$S$是数据的共变矩阵.
 
-直观:马哈拉诺比斯距离首先调解和正常化数据 (白化),然后计算了转换空间中的L2距离.如果S是身份矩阵 (不调整,单元变异特征),马哈拉诺比斯距离将降低到尤克利德距离.
+直观:马哈拉诺比距离首先调解和正常化数据 (白化),然后计算在转换空间中的L2距离.$S$是身份矩阵 (不相关,单元变异特征),马哈拉诺比距离减少到尤克利德距离.
 
 ```
 Example: height and weight are correlated.
@@ -225,8 +230,8 @@ because it accounts for the height-weight correlation.
 
 杰卡德的相似度测量重叠了两个组.
 
-```
-J(A, B) = |A intersect B| / |A union B|
+```math
+J(A, B) = \frac{|A \cap B|}{|A \cup B|}
 ```
 
 距离从0 (没有重叠) 到1 (相同的集合).
@@ -263,7 +268,7 @@ sittin -> sitting (insert g)
 Edit distance = 3
 ```
 
-通过动态编程计算.填写一个矩阵,输入 (i, j) 是字符串 A 的第一个 i 字符和字符串 B 的第一个 j 字符之间的编辑距离.
+通过动态编程进行计算.填写一个矩阵$(i, j)$是第一个编辑距离之间的距离$i$字符串A和第一个字符串$j$字符串B的字符.
 
 ```
         ""  s  i  t  t  i  n  g
@@ -286,20 +291,20 @@ Edit distance = 3
 
  KL 分差是如何不同于另一个概率分布的测量. 这在第09课中涵盖,但它属于这个讨论,因为人们使用它作为一个"距离",尽管它不是一个.
 
-```
-D_KL(P || Q) = sum(p(x) * log(p(x) / q(x)))
+```math
+D_{KL}(P \,\|\, Q) = \sum_x p(x) \log\frac{p(x)}{q(x)}
 ```
 
 关键属性:KL差距不是对称.
 
-```
-D_KL(P || Q) != D_KL(Q || P)
+```math
+D_{KL}(P \,\|\, Q) \ne D_{KL}(Q \,\|\, P)
 ```
 
 这意味着它不符合距离指标的基本要求. 它也不满足三角形不平等. 它是差距,而不是距离.
 
-前进 KL (D_KL(P  Q)) 是"寻找意义":Q试图涵盖P的所有模式.
-逆 KL (D_KL(Q 时 P)) 是"模式寻找":Q 专注于P的单个模式.
+前进 KL $(D_{KL}(P \Vert Q))$是"寻找意义": $Q$试图涵盖所有模式$P$现在,我们要去.
+逆转KL$(D_{KL}(Q \Vert P))$是"模式搜索": $Q$专注于一个模式$P$现在,我们要去.
 
 当你看到KL分离时:
 - 向前的向前的向前的向
@@ -311,14 +316,14 @@ D_KL(P || Q) != D_KL(Q || P)
 
 瓦斯斯特恩的距离测量了转换一个概率分布到另一个所需的最小"工作".想象它是:如果一个分布是泥土堆,另一个是洞,你需要移动多少泥土,到底要走多远?
 
-```
-W(P, Q) = inf over all transport plans gamma of E[d(x, y)]
+```math
+W(P, Q) = \inf_{\gamma} \mathbb{E}[d(x, y)] \quad \text{(over all transport plans } \gamma\text{)}
 ```
 
 对于1D分布,它简化为累积分布函数的绝对差异的整体:
 
-```
-W_1(P, Q) = integral |CDF_P(x) - CDF_Q(x)| dx
+```math
+W_1(P, Q) = \int |\text{CDF}_P(x) - \text{CDF}_Q(x)| \, dx
 ```
 
 瓦斯斯特林为什么重要:
@@ -353,7 +358,7 @@ Wasserstein gives a meaningful gradient. KL does not.
 | Set overlap (tags, categories) | Jaccard | Data is naturally set-valued, not vectorial |
 | String matching | Edit distance | Operations map to human editing intuition |
 | Outlier detection | Mahalanobis | Accounts for feature correlations and scales |
-| Comparing distributions | KL divergence | Measures information lost by using Q instead of P |
+| Comparing distributions | KL divergence | Measures information lost by using $Q$ instead of $P$ |
 | GAN training | Wasserstein | Provides gradients even when distributions do not overlap |
 | Embeddings (vector DB) | Cosine or dot product | Embeddings are trained to encode meaning in direction |
 | Recommendation | Dot product | Magnitude can encode popularity or confidence |
@@ -404,7 +409,7 @@ Elastic Net:                  loss + lambda_1 * ||w||_1 + lambda_2 * ||w||_2^2
 
 每个距离函数都意味着一个最近邻居搜索问题:给出查询点,在数据集中找到最接近的点.
 
-对于大数据集,这太慢. 对于大数据集,这太慢.
+最接近的邻居搜索是$O(n \cdot d)$根据数据集中的查询$n$其他问题$d$对于大型数据集来说,这太慢了.
 
 接近近邻 (ANN) 算法以小的精度进行交易,
 
@@ -469,7 +474,7 @@ print(f"Similarities: {similarities[top_k]}")
 
 ## 运动
 
-1. 计算 (1, 2, 3) 和 (4, 0, 6) 之间的 L1, L2 和 L-无限距离. 检查 L-inf <= L2 <= L1 对于任何一对点都适用. 证明为什么这个顺序是保证的.
+1. 计算 (1, 2, 3) 和 (4, 0, 6) 之间的 L1, L2 和 L-无限距离.$L_\infty \le L_2 \le L_1$证明为什么这个订单是保证的.
 
 2. 创建两个向量,其中的相似性是很高 (> 0.9) 但L2距离是很大 (> 10). 几何解释发生了什么. 然后创建两个向量,其中的相似性是很小 (< 0.3) 但L2距离是很小 (< 0.5).
 
@@ -479,6 +484,18 @@ print(f"Similarities: {similarities[top_k]}")
 
 5. 实现 MinHash 实现近似Jaccard相似性.生成100个随机集合,计算所有对的精确Jaccard,并使用 50,100和200个哈希函数与 MinHash近似相比较.绘制近似错误.
 
+### 暗示
+
+**Exercise 1.**变量向量为 (-3, 2, -3),所以计算该向量的三个规范`l1_norm`现在`l2_norm`其他`linf_norm`为了证明,比较最大的$\lvert d_i \rvert$并且将总数与绝对值的总数的正方形进行比较.
+
+**Exercise 2.**对于第二个案例,使用两个短的向量,在不同方向指向的来源附近,然后检查两个条件.`cosine_similarity`其他`l2_distance`现在,我们要去.
+
+**Exercise 3.**电话`find_nearest_neighbor(query, dataset, distance_fn)`每个人的一次`l1_distance`现在`l2_distance`现在`cosine_distance`其他`mahalanobis_distance`现在,我们要去.`demo_different_neighbors`显示数据集,其中的数据表不同,所以先读一下,然后改变点,直到四个答案都不同.
+
+**Exercise 4.**写出每个分布的累计总和,然后加上两个累计总量的绝对差异.`wasserstein_1d(p, q)`并且解释了更大的值,
+
+**Exercise 5.**对于每个哈希函数,集合的 MinHash签名是其元素的最小哈希值,并且两个集合得到相同的最小值值的哈希函数的比例估计其Jaccard相似性.`jaccard_similarity`错误应该大致是$1/\sqrt{k}$为了$k$值函数
+
 ## 关键词
 
 | Term | What people say | What it actually means |
@@ -486,15 +503,15 @@ print(f"Similarities: {similarities[top_k]}")
 | Norm | "Size of a vector" | A function that maps a vector to a non-negative scalar, satisfying triangle inequality, absolute homogeneity, and zero only for the zero vector |
 | L1 norm | "Manhattan distance" | Sum of absolute component values. Produces sparsity in optimization. Robust to outliers |
 | L2 norm | "Euclidean distance" | Square root of sum of squared components. The straight-line distance in Euclidean space |
-| Lp norm | "Generalized norm" | The p-th root of the sum of p-th powers of absolute components. L1 and L2 are special cases |
-| L-infinity norm | "Max norm" or "Chebyshev distance" | The maximum absolute component value. The limit of Lp as p approaches infinity |
+| Lp norm | "Generalized norm" | The $p$-th root of the sum of $p$-th powers of absolute components. L1 and L2 are special cases |
+| L-infinity norm | "Max norm" or "Chebyshev distance" | The maximum absolute component value. The limit of Lp as $p$ approaches infinity |
 | Cosine similarity | "Angle between vectors" | Dot product normalized by both magnitudes. Ranges from -1 to +1. Ignores vector length |
 | Cosine distance | "1 minus cosine similarity" | Converts cosine similarity to a distance. Ranges from 0 to 2 |
 | Dot product | "Unnormalized cosine" | Sum of component-wise products. Equals cosine similarity times both magnitudes |
 | Mahalanobis distance | "Correlation-aware distance" | L2 distance in a space that has been whitened (decorrelated and normalized) using the data covariance matrix |
 | Jaccard similarity | "Set overlap" | Size of intersection divided by size of union. For sets, not vectors |
 | Edit distance | "Levenshtein distance" | Minimum insertions, deletions, and substitutions to transform one string into another |
-| KL divergence | "Distance between distributions" | Not a true distance (not symmetric). Measures extra bits from using Q to encode P |
+| KL divergence | "Distance between distributions" | Not a true distance (not symmetric). Measures extra bits from using $Q$ to encode $P$ |
 | Wasserstein distance | "Earth mover's distance" | Minimum work to transport mass from one distribution to another. A true metric |
 | Approximate nearest neighbor | "ANN search" | Algorithms (HNSW, LSH, IVF) that find approximately closest points much faster than exact search |
 | HNSW | "The vector DB algorithm" | Hierarchical Navigable Small World graph. Multi-layer graph for fast approximate nearest neighbor search |

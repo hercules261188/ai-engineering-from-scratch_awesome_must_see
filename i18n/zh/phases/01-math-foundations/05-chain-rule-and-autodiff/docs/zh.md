@@ -28,29 +28,31 @@
 
 ### 链条规则
 
-如果`y = f(g(x))`产品的衍生品`y`关于`x`是:
+如果$y = f(g(x))$产品的衍生品$y$关于$x$是:
 
-```
-dy/dx = dy/dg * dg/dx = f'(g(x)) * g'(x)
+```math
+\frac{dy}{dx} = \frac{dy}{dg} \cdot \frac{dg}{dx} = f'(g(x)) \cdot g'(x)
 ```
 
 通过链接的衍生品,每个链接都会贡献其本地衍生品.
 
-举个例子:`y = sin(x^2)`
+举个例子:$y = \sin(x^2)$
 
-```
-g(x) = x^2       g'(x) = 2x
-f(g) = sin(g)     f'(g) = cos(g)
-
-dy/dx = cos(x^2) * 2x
+```math
+\begin{aligned}
+g(x) &= x^2 \qquad & g'(x) &= 2x \\
+f(g) &= \sin(g) \qquad & f'(g) &= \cos(g) \\[4pt]
+\frac{dy}{dx} &= \cos(x^2) \cdot 2x
+\end{aligned}
 ```
 
 对于更深层次的作曲,链接延伸到:
 
-```
-y = f(g(h(x)))
-
-dy/dx = f'(g(h(x))) * g'(h(x)) * h'(x)
+```math
+\begin{aligned}
+y &= f(g(h(x))) \\[4pt]
+\frac{dy}{dx} &= f'(g(h(x))) \cdot g'(h(x)) \cdot h'(x)
+\end{aligned}
 ```
 
 网络中的每个层都是这个链中的一个环节.
@@ -88,7 +90,7 @@ graph TD
 
 通过图表应用链条有两种方法.
 
-**Forward mode**通过计算,它可以将其运用到`dx/dx = 1`只有一个输入,而且输出量很少.
+**Forward mode**通过计算,它可以将其运用到$dx/dx = 1$只有一个输入,而且输出量很少.
 
 ```
 Forward mode: seed dx/dx = 1, propagate forward
@@ -98,7 +100,7 @@ Forward mode: seed dx/dx = 1, propagate forward
   y = sin(a)  (dy/dx = cos(a) * da/dx = cos(4) * 4 = -2.615)
 ```
 
-**Reverse mode**开始于输出,然后拉向后梯度.`dy/dy = 1`并且通过每个操作反向传播.
+**Reverse mode**开始于输出,然后拉向后梯度.$dy/dy = 1$并且通过每个操作反向传播.
 
 ```
 Reverse mode: seed dy/dy = 1, propagate backward
@@ -112,12 +114,12 @@ Reverse mode: seed dy/dy = 1, propagate backward
 
 | Mode | Seed | Direction | Best when |
 |------|------|-----------|-----------|
-| Forward | `dx_i/dx_i = 1` | Input to output | Few inputs, many outputs |
-| Reverse | `dy/dy = 1` | Output to input | Many inputs, few outputs (neural nets) |
+| Forward | $dx_i/dx_i = 1$ | Input to output | Few inputs, many outputs |
+| Reverse | $dy/dy = 1$ | Output to input | Many inputs, few outputs (neural nets) |
 
 ### 双数字前进模式
 
-双数模式可以以优雅的方式实现.`a + b*epsilon`在哪里`epsilon^2 = 0`现在,我们要去.
+双数模式可以以优雅的方式实现.$a + b\epsilon$在哪里$\epsilon^2 = 0$现在,我们要去.
 
 ```
 Dual number: (value, derivative)
@@ -236,7 +238,7 @@ class Value:
             v._backward()
 ```
 
-拓类别确保每个节点的梯度在扩散到其子女之前得到充分计算.
+拓类型确保每个节点的梯度在扩散到其子女之前得到充分计算.$dy/dy = 1$)
 
 ### 步骤4:为完整的发动机提供更多操作
 
@@ -300,11 +302,11 @@ class Value:
 | Operation | Backward rule | Used in |
 |-----------|--------------|---------|
 | `__sub__` | Reuses add + neg | Loss computation (pred - target) |
-| `__pow__` | n * x^(n-1) | Polynomial activations, MSE (error^2) |
+| `__pow__` | $n \cdot x^{n-1}$ | Polynomial activations, MSE ($\text{error}^2$) |
 | `__truediv__` | Reuses mul + pow(-1) | Normalization, learning rate scaling |
-| `exp` | exp(x) * upstream | Softmax, log-likelihood |
-| `log` | (1/x) * upstream | Cross-entropy loss, log probabilities |
-| `tanh` | (1 - tanh^2) * upstream | Classic activation function |
+| `exp` | $\exp(x) \cdot \text{upstream}$ | Softmax, log-likelihood |
+| `log` | $(1/x) \cdot \text{upstream}$ | Cross-entropy loss, log probabilities |
+| `tanh` | $(1 - \tanh^2) \cdot \text{upstream}$ | Classic activation function |
 
 聪明的部分:`__sub__`其他`__truediv__`它们可以免费获得正确的梯度,因为链条规则通过底层的加/多/操作构成.
 
@@ -489,13 +491,23 @@ print(f"df/dc = {c.grad}")  #  1.0
 
 ## 运动
 
-1. 加入`__pow__`运行到值类,以便您计算`x ** n`检查一下`d/dx(x^3)`在`x=2`相当于`12.0`现在,我们要去.
+1. 加入`__pow__`运行到值类,以便您计算`x ** n`检查一下$\frac{d}{dx}(x^3)$在$x=2$相当于`12.0`现在,我们要去.
 
-2. 加入`tanh`检查一下`tanh'(0) = 1`其他`tanh'(2) = 0.0707`现在,我们要做什么?
+2. 加入`tanh`检查一下$\tanh'(0) = 1$其他$\tanh'(2) = 0.0707$现在,我们要做什么?
 
 3. 构建一个单个神经元的计算图:`y = relu(w1*x1 + w2*x2 + b)`计算五个梯度,并对 PyTorch 进行验证.
 
 4. 实现前进模式自动调用使用双号码.`Dual`检查它与反向模式发动机相同的衍生品.
+
+### 暗示
+
+**Exercise 1.** `Value`已经定义了`__pow__`阅读它`_backward`确认它适用$n x^{n-1}$运行 运行 运行`x = Value(2.0)`现在`y = x ** 3`现在`y.backward()`其他`x.grad`必须是12.0.
+
+**Exercise 2.**使用$\tanh'(x) = 1 - \tanh(x)^2$在`_backward`检查自己的有限差异:$\frac{\tanh(x + h) - \tanh(x - h)}{2h}$必须同意$x = 0$其他$x = 2$现在,我们要去.
+
+**Exercise 3.**建设`w1*x1 + w2*x2 + b`其他`Value`应用物体`relu`打电话`backward`在与 PyTorch 进行比较之前,请手动检查:`relu`向的向是正的`w1`相当于`x1`如果是负,则所有五个梯度都是0.
+
+**Exercise 4.**存储一个值和一个衍生值在每个值中`Dual`使用产品规则$(a, a')(b, b') = (ab, a'b + ab')$输入的结果与分数1进行比较.`x.grad`转向模式的发动机,用于相同的功能.
 
 ## 关键词
 
@@ -506,13 +518,13 @@ print(f"df/dc = {c.grad}")  #  1.0
 | Forward mode | "Push derivatives forward" | Autodiff that propagates derivatives from inputs to outputs. One pass per input variable. |
 | Reverse mode | "Backpropagation" | Autodiff that propagates gradients from outputs to inputs. One pass per output variable. |
 | Autograd | "Automatic gradients" | A system that records operations on values, builds a graph, and computes exact gradients via the chain rule |
-| Dual numbers | "Value plus derivative" | Numbers of the form a + b*epsilon (epsilon^2 = 0) that carry derivative information through arithmetic |
+| Dual numbers | "Value plus derivative" | Numbers of the form $a + b\epsilon$ ($\epsilon^2 = 0$) that carry derivative information through arithmetic |
 | Topological sort | "Dependency order" | Ordering graph nodes so every node comes after all its dependencies. Required for correct gradient propagation. |
 | Gradient accumulation | "Add, don't replace" | When a value feeds into multiple operations, its gradient is the sum of all incoming gradient contributions |
 | Dynamic graph | "Define by run" | A computation graph rebuilt on every forward pass, allowing Python control flow inside models (PyTorch style) |
 | Gradient checking | "Numerical verification" | Comparing autodiff gradients against numerical finite-difference gradients to verify correctness. Essential for debugging. |
 | MLP | "Multi-layer perceptron" | A neural network with one or more hidden layers of neurons. Each neuron computes a weighted sum plus bias, then applies an activation function. |
-| Neuron | "Weighted sum + activation" | The basic unit: output = activation(w1*x1 + w2*x2 + ... + b). The weights and bias are learnable parameters. |
+| Neuron | "Weighted sum + activation" | The basic unit: $\text{output} = \text{activation}(w_1 x_1 + w_2 x_2 + \cdots + b)$. The weights and bias are learnable parameters. |
 
 ## 进一步阅读
 

@@ -38,9 +38,9 @@ Dimension    Avg distance ratio (max/min between random points)
 1000         ~1.02
 ```
 
-**Volume concentrates in corners.**对于一个在d维度的单元超立方体,则有2d角.在100维度,几乎所有的体积都在角落里,远离中心.数据点蔓延到边缘,你的模型在内部饥饿数据.
+**Volume concentrates in corners.**一个单位的超立方体$d$尺寸有$2^d$角落. 在100个维度,几乎所有的音量都在角落里,远离中心. 数据点蔓延到边缘,你的模型渴望内部的数据.
 
-**You need exponentially more data.**为了保持相同的样本密度,从2D到20D需要10^18倍的数据.你永远没有足够的.减少尺寸使数据密度恢复到可操作的东西.
+**You need exponentially more data.**为了保持相同的样本密度,从2D到20D需要$10^{18}$减少尺寸将数据密度带来可行的东西.
 
 ### 查找重要的方向
 
@@ -88,7 +88,7 @@ PC4          0.89          0.089              0.925
 
 1. **Threshold.**保持足够的组件,以解释90-95%的差异.
 2. **Elbow method.**图解各组件的变化. 寻找一个急剧的降落.
-3. **Downstream performance.**测量模型的精度,最好的精度是任何高原.
+3. **Downstream performance.**扫描 扫描 扫描$k$测量模型的精度.$k$任何地方都会有准确度.
 
 ### 保护社区
 
@@ -101,7 +101,7 @@ t-分布式静态邻居嵌入式 (t-SNE) 设计用于可视化.它将高维度�
 - 不同的运行产生不同的布局.
 - 困难参数控制了需要考虑多少邻居 (典型范围:5-50).
 - 输出中的集群之间的距离并不重要.
-- 默认情况下,在大型数据集上速度很慢.
+- 对于大数据集来说,速度很慢.$O(n^2)$默认的.
 
 ### 快速,更好的全球结构
 
@@ -135,27 +135,27 @@ UMAP在高维空间中构建一个重量图 ("模糊的拓表现") 然后找到�
 核心PCA将PCA应用到一个高维功能空间中,由一个核心函数引发,而没有明确计算该空间中的坐标.这是核心技巧 - - 基于SVM的想法.
 
 算法:
-1. 计算内核矩阵K,K_ij = k(x_i,x_j)
+1. 计算内核矩阵$K$在哪里$K_{ij} = k(x_i, x_j)$
 2. 核心矩阵中心在功能空间中
 3. 组建中心核矩阵
-4. 顶部的自向量 (以1/sqrt(自值值) 进行测量
+4. 顶部的自向量 (按 尺度进行扩展)$1/\sqrt{\text{eigenvalue}}$) 是预测
 
 常见的内核函数:
 
 | Kernel | Formula | Good for |
 |--------|---------|----------|
-| RBF (Gaussian) | exp(-gamma * \|\|x - y\|\|^2) | Most nonlinear data, smooth manifolds |
-| Polynomial | (x . y + c)^d | Polynomial relationships |
-| Sigmoid | tanh(alpha * x . y + c) | Neural network-like mappings |
+| RBF (Gaussian) | $\exp(-\gamma \lVert x - y \rVert^2)$ | Most nonlinear data, smooth manifolds |
+| Polynomial | $(x \cdot y + c)^d$ | Polynomial relationships |
+| Sigmoid | $\tanh(\alpha x \cdot y + c)$ | Neural network-like mappings |
 
 什么时候使用内核PCA与标准PCA:
 
 | Criterion | Standard PCA | Kernel PCA |
 |-----------|-------------|------------|
 | Data structure | Linear subspace | Nonlinear manifold |
-| Speed | O(min(n^2 d, d^2 n)) | O(n^2 d + n^3) |
+| Speed | $O(\min(n^2 d, d^2 n))$ | $O(n^2 d + n^3)$ |
 | Interpretability | Components are linear combinations of features | Components lack direct feature interpretation |
-| Scalability | Works on millions of samples | Kernel matrix is n x n, memory-limited |
+| Scalability | Works on millions of samples | Kernel matrix is $n \times n$, memory-limited |
 | Reconstruction | Direct inverse transform | Requires pre-image approximation |
 
 经典例子:二维的集中圆.两个点圈,一个在另一个内.标准的PCA都投射在同一线上 - - 无用于分类.一个RBF内核的核心PCA将内圆和外圆映射到不同的区域,使它们线性分离.
@@ -165,22 +165,24 @@ UMAP在高维空间中构建一个重量图 ("模糊的拓表现") 然后找到�
 你压缩了784个维度到50个.
 
 测量重建错误:
-1. 项目数据到 k 尺寸: X_reduced = X @ W_k
-2. 复制:X_hat =X_reduced @ W_k^T
-3. 计算MSE:平均 - X_hat) ^2)
+1. 项目数据$k$尺寸:$X_{\text{reduced}} = X W_k$
+2. 重建:$\hat{X} = X_{\text{reduced}} W_k^T$
+3. 计算MSE: $\text{mean}((X - \hat{X})^2)$
 
 对于PCA,重建错误与解释变异有清晰关系:
 
-```
-Reconstruction error = sum of eigenvalues NOT included
-Total variance = sum of ALL eigenvalues
-Fraction lost = (sum of dropped eigenvalues) / (sum of all eigenvalues)
+```math
+\begin{aligned}
+\text{Reconstruction error} &= \text{sum of eigenvalues NOT included} \\
+\text{Total variance} &= \text{sum of ALL eigenvalues} \\
+\text{Fraction lost} &= \frac{\text{sum of dropped eigenvalues}}{\text{sum of all eigenvalues}}
+\end{aligned}
 ```
 
 解释的各组件的变异比为:
 
-```
-explained_ratio_k = eigenvalue_k / sum(all eigenvalues)
+```math
+\text{explained\_ratio}_k = \frac{\text{eigenvalue}_k}{\sum \text{all eigenvalues}}
 ```
 
 图表对组件数量的累积解释变异,给出了"肘部"曲线.
@@ -188,7 +190,7 @@ explained_ratio_k = eigenvalue_k / sum(all eigenvalues)
 - 累计变异超过你的门 (通常是0.90或0.95)
 - 下游任务执行平原
 
-复制错误除了选择k之外,还有用.你可以使用它来检测异常:具有高重建错误的样本是不适合学习子空间的异常值.这是生产系统中基于PCA的异常检测的基础.
+复制错误是不仅仅是选择的.$k$您可以使用它用于异常检测:具有高重建错误的样本是不适合学习的子空间的异常值.这是生产系统基于PCA的异常检测的基础.
 
 ```figure
 pca-axes
@@ -353,6 +355,14 @@ for k in [10, 30, 50, 100, 200]:
 
 3. 采用50个特征的数据集,只有5个是信息性的 (生成一个具有`sklearn.datasets.make_classification`) 应用PCA并检查解释的变异曲线是否正确地识别数据实际上是五维的.
 
+### 暗示
+
+**Exercise 1.**阅读`inverse_transform`在`PCA`计算 计算 计算 计算 计算 计算 `reconstruction_error`对于 10, 50 和 200 个组件,随着组件数量增加,错误必须减少.
+
+**Exercise 2.**适合`sklearn.manifold.TSNE`只有变化.`perplexity`并且使用相同的方法`random_state`低度看待少数邻居,所以预期小小紧密群体;高度看待更多邻居,所以预期更大,更平滑的群体.
+
+**Exercise 3.**电话`make_classification(n_features=50, n_informative=5, n_redundant=45)`适合`PCA`随着一个线性变量的变化, 变量变量变量变量变量变量变量变量变量变量变量变量变量变量变量变量变量变量变量变量变量变量变量变量变量变量变量变量变量变量变量变量变量变量变量变量变量变量变量变量变量变量变量变量变量变量变量变量变量变量变量变量变量变量变量变量变量变量变量变量变量变量变量变量变量变量变量变量变量变量变量变量变量变量变量变量变量变量变量变量变量变量变量变量变量变量变量变量变量变量变量变量变量变量变量变量变量变量变量变量变量变量变量变量变量变量变量变量变量变量变量变量变量变量变量变量变量变量变量变量变量变量变量变量变量变量变量变量变量变量变量变量变量变量变量变量变量变量变量变量变量变量变量变量变量变量变量变量变量变量变量变量变量变量变化变量变化变化变量变量变量变量变量变量变化变化变化变量变量变化变化变化变化变化变化变化变化变化变化变化变化变化变化变化变化变化变化变化变化变化变化变化变化变化变化变化变化变化变化变化变化变化变化变化变化变化变化变化变化变化变化变化变化变化变化变化变化变化变化变化变化变化变化变化变化变化变化变化变化变化变化变化变化变化变化变化变化变化变化变化变化变化变化变化变化变化变化变化变`n_redundant=0`其他45个特征是独立的噪音,曲线不会平坦.
+
 ## 关键词
 
 | Term | What people say | What it actually means |
@@ -360,8 +370,8 @@ for k in [10, 30, 50, 100, 200]:
 | Curse of dimensionality | "Too many features" | Distances, volumes, and data density all behave counterintuitively as dimensions grow. Models need exponentially more data to compensate. |
 | PCA | "Reduce dimensions" | Rotate your coordinate system so the axes align with the directions of maximum variance, then drop the low-variance axes. |
 | Principal component | "An important direction" | An eigenvector of the covariance matrix. The direction in feature space along which the data varies most. |
-| Explained variance ratio | "How much info this component has" | The fraction of total variance captured by one principal component. Sum the top k ratios to see how much k components preserve. |
-| Covariance matrix | "How features correlate" | A symmetric matrix where entry (i,j) measures how feature i and feature j move together. Diagonal entries are individual variances. |
+| Explained variance ratio | "How much info this component has" | The fraction of total variance captured by one principal component. Sum the top $k$ ratios to see how much $k$ components preserve. |
+| Covariance matrix | "How features correlate" | A symmetric matrix where entry $(i,j)$ measures how feature $i$ and feature $j$ move together. Diagonal entries are individual variances. |
 | t-SNE | "That cluster plot" | A nonlinear method that maps high-dimensional data to 2D by preserving pairwise neighborhood probabilities. Good for visualization, not for preprocessing. |
 | UMAP | "Faster t-SNE" | A nonlinear method based on topological data analysis. Preserves both local and some global structure. Scales better than t-SNE. |
 | Perplexity | "A t-SNE knob" | Controls the effective number of neighbors each point considers. Low perplexity focuses on very local structure. High perplexity captures broader patterns. |

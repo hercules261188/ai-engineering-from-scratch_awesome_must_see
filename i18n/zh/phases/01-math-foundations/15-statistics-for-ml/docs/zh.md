@@ -44,7 +44,7 @@ Mode:   most frequent value
         Useful for categorical data. For continuous data, rarely informative.
 ```
 
-平均值是平衡点.中位数是半途线.当它们分离时,你的分布是偏差的.收入分布有平均值 >>中位数 (从亿万富翁中右偏差).训练期间的损失分布通常有平均值 <<中位数 (从轻松样本中左偏差).
+平均值是平衡点.中位数是半途线.当它们分离时,你的分布是偏差的.收入分布有$\text{mean} \gg \text{median}$经过培训期间的损失分布通常会有$\text{mean} \ll \text{median}$(从轻松的样本中左侧偏差).
 
 **Measures of spread**答案是"数据分布多大?"
 
@@ -75,14 +75,16 @@ For latency monitoring:
 
 在ML中,你关心推断延迟,预测信心分布和理解错误分布的百分比.一个平均错误低但可怕的P99错误的模型可能对安全关键应用来说是无用的.
 
-**Sample vs population statistics.**计算一个样本的差异时,除以 (n-1) 而不是 (n-1).这是贝塞尔的纠正.它弥补了样本的平均值不是真正的人口平均值的事实.在命名器中,你系统地低估了真正的差异.在 (n-1) 时,估计是无偏见的.
+**Sample vs population statistics.**在计算样本的差异时,分为 $(n-1)$没有$n$这就是贝塞尔的纠正,它补偿了你样本平均值不是真正的人口平均值.$n$在指数中,你系统地低估了真正的差异.$(n-1)$估计是无偏见的.
 
-```
-Population variance: sigma^2 = (1/N) * sum((x_i - mu)^2)
-Sample variance:     s^2     = (1/(n-1)) * sum((x_i - x_bar)^2)
+```math
+\begin{aligned}
+\text{Population variance:} \quad \sigma^2 &= \frac{1}{N} \sum (x_i - \mu)^2 \\
+\text{Sample variance:} \quad s^2 &= \frac{1}{n-1} \sum (x_i - \bar{x})^2
+\end{aligned}
 ```
 
-实际上:如果n是大 (成千上万个样本),差异是微不足道的.如果n是小 (成千上万个样本),它很重要.
+在实践中:如果$n$虽然数量不高,但如果数量不高,$n$虽然它很小 (数十个样本),但它很重要.
 
 ### 相关性:变量如何一起移动
 
@@ -100,7 +102,7 @@ r =  0:  no linear relationship (but there might be a nonlinear one!)
 Range: [-1, 1]
 ```
 
-皮尔森假设这种关系是线性,两个变量都大致正常分布.它对异常值敏感.一个极端点可以从0.1拖到0.9拉 r.
+皮尔森假设这种关系是线性,两个变量都大致正常分布.它对异常值敏感.一个极端点可以拖动$r$它们的数量从0.1到0.9
 
 **Spearman rank correlation**措施单调的联系:
 
@@ -139,7 +141,7 @@ Cov(X, Y) < 0:  when X increases, Y tends to decrease
 Cov(X, Y) = 0:  no linear co-movement
 ```
 
-对于d特征,共变矩阵C是一个d x d矩阵,其中C[i][j] =Cov(feature_i, feature_j).对角值输入C[i][i]是每个特征的变化.
+为了$d$特性,共变矩阵$C$是一个$d \times d$矩阵$C[i][j] = \mathop{\mathrm{Cov}}(\text{feature}_i, \text{feature}_j)$斜面的输入$C[i][i]$它们的不同性.
 
 ```
 C = | Var(x1)      Cov(x1,x2)  Cov(x1,x3) |
@@ -155,7 +157,7 @@ Properties:
 
 **Connection to PCA.**实际上,在一个对比数组中,一个对比数组的位置是个对比数组. PCA 自身构成了共变矩阵.自向量是主要的组件 (最大变异的方向).自值值告诉你每个组件捕获多少变异.这正是10课程所涵盖的,但现在你看到了为什么共变矩阵是分解的正确东西:它编码了你数据中的所有对对线关系.
 
-**Connection to correlation.**相关性矩阵是标准化变量 (每个变量以其标准偏差分为) 的共变矩阵.相对性正常化共变,因此所有值都在 [-1, 1] 中下降.
+**Connection to correlation.**相关性矩阵是标准化变量 (每个变量以其标准偏差分为) 的共变矩阵.$[-1, 1]$现在,我们要去.
 
 ### 假设测试
 
@@ -205,10 +207,11 @@ is a 95% probability the true mean is in this specific interval.
 
 **One-sample t-test:**人口平均值与假设值不同吗?
 
-```
-t = (x_bar - mu_0) / (s / sqrt(n))
-
-degrees of freedom = n - 1
+```math
+\begin{aligned}
+t &= \frac{\bar{x} - \mu_0}{s / \sqrt{n}} \\[4pt]
+\text{degrees of freedom} &= n - 1
+\end{aligned}
 ```
 
 **Two-sample t-test (independent):**两个群体的意思是不同的吗?
@@ -297,19 +300,20 @@ engineering cost of deploying a new model.
 
 **Effect size**量化了不同程度,不论样本大小如何:
 
-```
-Cohen's d = (mean_1 - mean_2) / pooled_std
-
-d = 0.2:  small effect
-d = 0.5:  medium effect
-d = 0.8:  large effect
+```math
+\begin{aligned}
+\text{Cohen's } d &= \frac{\text{mean}_1 - \text{mean}_2}{\text{pooled\_std}} \\[4pt]
+d &= 0.2: \quad \text{small effect} \\
+d &= 0.5: \quad \text{medium effect} \\
+d &= 0.8: \quad \text{large effect}
+\end{aligned}
 ```
 
 总是报告p值和效果大小.p值告诉你是否有真正的差异.效果大小告诉你是否重要.
 
 ### 多种比较问题
 
-如果在alpha=0.05时测试20个东西,你会预期1个假阳性,即使没有什么是真实的.
+假设是很重要的,但如果你测试20个东西,$\alpha = 0.05$假阳性,即使没有什么是真实的.
 
 ```
 P(at least one false positive) = 1 - (1 - alpha)^m
@@ -320,7 +324,7 @@ P(false positive) = 1 - 0.95^20 = 0.64
 You have a 64% chance of at least one false positive.
 ```
 
-**Bonferroni correction:**分别对试验数量的阿尔法.
+**Bonferroni correction:**分开$\alpha$根据测试数量.
 
 ```
 Adjusted alpha = alpha / m = 0.05 / 20 = 0.0025
@@ -417,11 +421,11 @@ Kruskal-Wallis:     compares multiple groups (replaces ANOVA)
 - More statistical power (better at detecting real differences)
 ```
 
-在ML实验中,通常有小的 n (5或10个跨验证折叠),因此像威尔科森签名等级的非参数测试通常比t测试更合适.
+在ML实验中,你通常有小的$n$由于这些测试的结果,通常会比t测试更适合.
 
 ### 中央限度定理:实际含义
 
-根据CLT的说法,样品的分布平均接近正常分布,随着n的增长,
+根据CLT的说法,样本的分布平均接近正常分布,$n$尽管人口分布不相同,但
 
 ```
 If X_1, X_2, ..., X_n are iid with mean mu and variance sigma^2:
@@ -473,7 +477,7 @@ For highly skewed distributions, you might need n >= 100.
 
 9. **Assuming independence when data is not independent.**医疗图像来自同一患者,同一文件的多句话.
 
-10. **P-hacking.**在试验中,我们可以尝试不同的测试,子集或排除标准,直到我们得到p <0.05.
+10. **P-hacking.**试试不同的测试,子集,或排斥标准,直到你得到$p < 0.05$结果是搜索的文物.
 
 ## 建立它
 
@@ -484,7 +488,7 @@ For highly skewed distributions, you might need n >= 100.
 3. **Hypothesis tests**(一个样本的t测试,两个样本的t测试,四方的chi测试)
 4. **Bootstrap confidence intervals**(对于任何统计数据,不需要假设)
 5. **A/B test simulator**(生成数据,测试,检查I类和II类错误)
-6. **Statistical vs practical significance demo**(显示大 n 让一切变得"重要")
+6. **Statistical vs practical significance demo**(显示出那么大的$n$让一切都"重要")
 
 只有使用`math`其他`random`没有,没有.
 
@@ -501,7 +505,7 @@ f3-bootstrap-resample
 | Standard deviation | Square root of variance. Measures spread in original units. |
 | Percentile | Value below which a given percentage of data falls. |
 | IQR | Interquartile range. Q3 minus Q1. The spread of the middle 50%. |
-| Pearson correlation | Measures linear association between two variables. Range [-1, 1]. |
+| Pearson correlation | Measures linear association between two variables. Range $[-1, 1]$. |
 | Spearman correlation | Measures monotonic association using ranks. |
 | Covariance matrix | Matrix of pairwise covariances between all features. |
 | Null hypothesis | Default assumption of no effect or no difference. |

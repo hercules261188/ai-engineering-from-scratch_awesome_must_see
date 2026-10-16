@@ -45,7 +45,7 @@ graph LR
 
 ### 转动
 
-通过角度旋转,保持距离和角落完整. 它沿着圆弧移动每个点.
+两维旋转以角$\theta$它保持距离和角度完整, 沿着圆弧移动每个点.
 
 ```mermaid
 graph LR
@@ -66,18 +66,12 @@ graph LR
 
 在3D中,你旋转一个轴,每个轴都有自己的旋转矩阵:
 
-```
-Rz(theta) = | cos  -sin  0 |     Rotate around z-axis
-            | sin   cos  0 |     (x-y plane spins, z stays)
-            |  0     0   1 |
-
-Rx(theta) = | 1   0     0    |   Rotate around x-axis
-            | 0  cos  -sin   |   (y-z plane spins, x stays)
-            | 0  sin   cos   |
-
-Ry(theta) = |  cos  0  sin |     Rotate around y-axis
-            |   0   1   0  |     (x-z plane spins, y stays)
-            | -sin  0  cos |
+```math
+\begin{aligned}
+R_z(\theta) &= \begin{bmatrix} \cos\theta & -\sin\theta & 0 \\ \sin\theta & \cos\theta & 0 \\ 0 & 0 & 1 \end{bmatrix} \quad \text{Rotate around z-axis (x-y plane spins, z stays)} \\[6pt]
+R_x(\theta) &= \begin{bmatrix} 1 & 0 & 0 \\ 0 & \cos\theta & -\sin\theta \\ 0 & \sin\theta & \cos\theta \end{bmatrix} \quad \text{Rotate around x-axis (y-z plane spins, x stays)} \\[6pt]
+R_y(\theta) &= \begin{bmatrix} \cos\theta & 0 & \sin\theta \\ 0 & 1 & 0 \\ -\sin\theta & 0 & \cos\theta \end{bmatrix} \quad \text{Rotate around y-axis (x-z plane spins, y stays)}
+\end{aligned}
 ```
 
 ### 规模化
@@ -123,8 +117,8 @@ graph LR
 ```
 
 切割矩阵:
-- `Shx = [[1, k], [0, 1]]`转变 x 乘以 k * y
-- `Shy = [[1, 0], [k, 1]]`转变为 y 乘以 k * x
+- `Shx = [[1, k], [0, 1]]`班级$x$通过$k \cdot y$
+- `Shy = [[1, 0], [k, 1]]`班级$y$通过$k \cdot x$
 
 ### 思考
 
@@ -196,7 +190,7 @@ Eigenvector [1, -1] with eigenvalue 1:
 
 ### 自身组成
 
-如果矩阵具有 n 线性独立的自向量,则可以分解:
+如果一个矩阵有$n$具有线性独立的自向量,可分解:
 
 ```
 A = V @ D @ V^(-1)
@@ -210,7 +204,7 @@ This says: rotate into eigenvector coordinates, scale along each axis, rotate ba
 
 ### 为什么自有价值很重要
 
-**PCA.**变量矩阵的自向量是主要组件.自值值告诉你每个组件捕获多少变量.按自值排序,保持顶部k,你有维度减少.
+**PCA.**根据本值进行排序,保持顶部的值.$k$它们的尺寸是多少?
 
 **Stability.**在复发网络和动态系统中,大小 > 1 的自值导致输出爆炸.大小 < 1 导致它们消失.这是一个句子中所述的消失/爆炸梯度问题.
 
@@ -309,7 +303,7 @@ print(f"Same? {result1 == result2}")
 
 ### 步骤3:自动值从零开始 (2x2)
 
-对于2x2矩阵`[[a, b], [c, d]]`个性化方程的自值解法:`lambda^2 - (a+d)*lambda + (ad - bc) = 0`现在,我们要去.
+对于2x2矩阵`[[a, b], [c, d]]`个性化方程的自值解法:$\lambda^2 - (a+d)\lambda + (ad - bc) = 0$现在,我们要去.
 
 ```python
 def eigenvalues_2x2(matrix):
@@ -443,6 +437,14 @@ print(f"Rotate 90 around x: {np.round(rotated_x, 4)}")
 
 3. 创建一个三变的组合 (旋转30度,以 [1.5,0.8] 缩小,切割 kx=0.3) 并将其应用于圆形排列的8个点. 打印前后坐标.计算复合矩阵的确定量,并验证它等于单个确定量的产量.
 
+### 暗示
+
+**Exercise 1.**申请`rotation_2d`现在`scaling_2d`其他`shearing_2d`在每一个角落里`mat_vec_mul`为了旋转,计算前后四边长和两边 diagonal;每个必须保持相同.
+
+**Exercise 2.**写出特征方程$\lambda^2 - (\text{trace})\lambda + \det = 0$检查两个值是否加到痕迹 (7) 和乘以定数 (10),然后比较`eigenvalues_2x2`其他`np.linalg.eigvals`现在,我们要去.
+
+**Exercise 3.**构建三个矩阵,`shearing_2d(0.3, 0)`为了切割,乘以`mat_mul`在申请顺序中,并将结果应用到8个点.$(\cos\theta, \sin\theta)$旋转的定量为1,切割的定量为1,所以`det_2x2`必须等于$1.5 \times 0.8 = 1.2$现在,我们要去.
+
 ## 关键词
 
 | Term | What people say | What it actually means |
@@ -454,9 +456,9 @@ print(f"Rotate 90 around x: {np.round(rotated_x, 4)}")
 | Composition | "Do two things" | Multiplying transformation matrices to chain operations. Order matters: B @ A means apply A first, then B. |
 | Eigenvector | "Special direction" | A direction that the matrix only scales, never rotates. The transformation's fingerprint. |
 | Eigenvalue | "How much it stretches" | The scalar factor by which the matrix scales its eigenvector. Can be negative (flip) or complex (rotation). |
-| Eigendecomposition | "Break the matrix apart" | Writing a matrix as V @ D @ V^(-1), separating it into its fundamental scaling directions and magnitudes. |
+| Eigendecomposition | "Break the matrix apart" | Writing a matrix as $V D V^{-1}$, separating it into its fundamental scaling directions and magnitudes. |
 | Determinant | "A single number from a matrix" | The factor by which the transformation scales area (2D) or volume (3D). Zero means the transformation is irreversible. |
-| Characteristic equation | "Where eigenvalues come from" | det(A - lambda * I) = 0. The polynomial whose roots are the eigenvalues. |
+| Characteristic equation | "Where eigenvalues come from" | $\det(A - \lambda I) = 0$. The polynomial whose roots are the eigenvalues. |
 
 ## 进一步阅读
 

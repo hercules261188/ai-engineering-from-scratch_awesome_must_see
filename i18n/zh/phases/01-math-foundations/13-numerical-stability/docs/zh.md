@@ -96,7 +96,7 @@ Relative error: 19.2%
 
 在ML中,这发生在你:
 
-- 计算大平均数据的差异: `E[x^2] - E[x]^2`当E[x]大时
+- 计算大平均数据的差异: $\mathbb{E}[x^2] - \mathbb{E}[x]^2$什么时候$\mathbb{E}[x]$是大
 - 减去几乎相同的日志概率
 - 用太小的石计算有限差异梯度
 
@@ -141,20 +141,22 @@ log(1e-46) = -inf        (input underflowed to 0, then log(0) = -inf)
 
 技巧是,在指数化之前,减去最大值.
 
-```
-log(sum(exp(x_i))) = max(x) + log(sum(exp(x_i - max(x))))
+```math
+\log\left(\sum_i \exp(x_i)\right) = \max(x) + \log\left(\sum_i \exp(x_i - \max(x))\right)
 ```
 
 为什么这有效:减去后`max(x)`它们的最大指数是`exp(0) = 1`总数至少是1个,所以总数至少是1个,`log(1) = 0`没有下流到`-inf`现在,我们可以.
 
 证据:
 
-```
-log(sum(exp(x_i)))
-= log(sum(exp(x_i - c + c)))                    (add and subtract c)
-= log(sum(exp(x_i - c) * exp(c)))               (exp(a+b) = exp(a)*exp(b))
-= log(exp(c) * sum(exp(x_i - c)))               (factor out exp(c))
-= c + log(sum(exp(x_i - c)))                    (log(a*b) = log(a) + log(b))
+```math
+\begin{aligned}
+& \log\left(\sum_i \exp(x_i)\right) \\
+&= \log\left(\sum_i \exp(x_i - c + c)\right) && \text{(add and subtract } c\text{)} \\
+&= \log\left(\sum_i \exp(x_i - c) \cdot \exp(c)\right) && (\exp(a+b) = \exp(a) \cdot \exp(b)) \\
+&= \log\left(\exp(c) \cdot \sum_i \exp(x_i - c)\right) && \text{(factor out } \exp(c)\text{)} \\
+&= c + \log\left(\sum_i \exp(x_i - c)\right) && (\log(a \cdot b) = \log(a) + \log(b))
+\end{aligned}
 ```
 
 设置`c = max(x)`并且消除了过剩.
@@ -170,8 +172,8 @@ log(sum(exp(x_i)))
 
 软max将 logits转换为概率:
 
-```
-softmax(x_i) = exp(x_i) / sum(exp(x_j))
+```math
+\mathop{\mathrm{softmax}}(x_i) = \frac{\exp(x_i)}{\sum_j \exp(x_j)}
 ```
 
 如果没有这个技巧, [100, 101, 102] 的号会导致过:
@@ -242,18 +244,18 @@ math.isfinite(x)    # True if x is neither nan nor inf
 
 集中差异公式:
 
-```
-df/dx ~= (f(x + h) - f(x - h)) / (2h)
+```math
+\frac{df}{dx} \approx \frac{f(x + h) - f(x - h)}{2h}
 ```
 
-这就是O ^2精确,远比前进差异好`(f(x+h) - f(x)) / h`只有O(h)
+这是$O(h^2)$它们的准确性远远高于前进差异.$(f(x+h) - f(x)) / h$这只是$O(h)$现在,我们要去.
 
-选择h:太大,近似是错误的. 取消太小,灾难性的取消破坏了答案. `h = 1e-5`为了`1e-7`,这是典型的.
+选择$h$由于太小,太大,太差,太大,太大,太大,太大,太大,太大,太大,太大,太大,太大,太大,太大,太大,太大,太大,太大,太大,太大,太大,太大,太大,太大,太大,太大,太大,太大,太大,太大,太大,太大,太大,太大,太大,太大,太大,太大,太大,太大,太大,太大,太大,太大,太大,太大,太大,太大,太大,太大,太大,太大,太大,太大,太大,太大,太大,太大,太大,太大,太大,太大,太大,太大,太大,太大,太大,太大,太大,太大,太大,太大,太大,太大,太大,太大,太大,太大,太大,太大,太大,太大,太大,太大,太大,太大,太大,太多,太多,太多,太多,太多.`h = 1e-5`为了`1e-7`,这是典型的.
 
 检查:计算分析和数值梯度之间的相对差异.
 
-```
-relative_error = |grad_analytical - grad_numerical| / max(|grad_analytical|, |grad_numerical|, 1e-8)
+```math
+\text{relative\_error} = \frac{\lvert \text{grad}_{\text{analytical}} - \text{grad}_{\text{numerical}} \rvert}{\max(\lvert \text{grad}_{\text{analytical}} \rvert, \lvert \text{grad}_{\text{numerical}} \rvert, 10^{-8})}
 ```
 
 基本规则:
@@ -289,7 +291,7 @@ relative_error = |grad_analytical - grad_numerical| / max(|grad_analytical|, |gr
 5. Net effect: same update, but no underflow
 ```
 
-动态损失扩展自动调整规模因子.从一个大值开始 (65536).如果梯度过量到`inf`如果N步骤没有过,那么加倍.
+动态损失扩展自动调整规模因子.从一个大值开始 (65536).如果梯度过量到`inf`减半一半.$N$步骤没有过度过来,加倍.
 
 ### 球16对球16:为什么球16赢得训练
 
@@ -350,8 +352,8 @@ Layer 50: values in [0, inf]
 
 在每个层次的正常化更新和重新扩展激活:
 
-```
-LayerNorm(x) = (x - mean(x)) / (std(x) + epsilon) * gamma + beta
+```math
+\mathop{\mathrm{LayerNorm}}(x) = \frac{x - \mathop{\mathrm{mean}}(x)}{\mathop{\mathrm{std}}(x) + \epsilon} \cdot \gamma + \beta
 ```
 
 其他`epsilon`通过所有激活相同时,它可以防止零分.`gamma`其他`beta`让网络恢复任何需要的规模.
@@ -568,7 +570,7 @@ check_tensor("ugly", [1.0, float('inf'), 3.0])
 
 ## 运动
 
-1. **Catastrophic cancellation.**通过简单公式计算[1000000.0, 1000001.0, 1000002.0]的差异`E[x^2] - E[x]^2`然后使用韦尔福德的在线算法计算它.
+1. **Catastrophic cancellation.**通过简单公式计算[1000000.0, 1000001.0, 1000002.0]的差异$\mathbb{E}[x^2] - \mathbb{E}[x]^2$然后使用韦尔福德的在线算法计算它.
 
 2. **Precision hunt.**找到最小的正值 float32 `x`这样.`1.0 + x == 1.0`这就是机器的epsilon. 检查它匹配.`numpy.finfo(numpy.float32).eps`现在,我们要去.
 
@@ -578,17 +580,29 @@ check_tensor("ugly", [1.0, float('inf'), 3.0])
 
 5. **Loss scaling experiment.**模拟训练使用 float16:在范围 [1e-9, 1e-3] 中创建随机梯度,转换为 float16,并测量什么分数变为零.然后应用损失规模 (乘以1024),转换为 float16,重新扩展,再次测量零分数.
 
+### 暗示
+
+**Exercise 1.**转换三个值为`np.float32`在你把它们平衡之前,然后打电话`variance_naive`其他`welford_variance`接近一个值$10^{12}$在 float32 中,距离大于 1,所以预计天真结果远离0.6667和Welford结果接近.
+
+**Exercise 2.**开始`x = np.float32(1.0)`减半一半,`np.float32(1.0) + x != np.float32(1.0)`按 float32 存储每个值,然后比较最后一个值,`numpy.finfo(numpy.float32).eps`现在,$2^{-23}$现在,我们要去.
+
+**Exercise 3.**预测每一个答案.$n$平等的价值$c$结果是$c + \ln n$对于一个大值,结果接近于这个值.对于接近 -1000的值,结果接近$-1000 + \ln n$在`logsumexp_naive`收益`-inf`因为每个指数向下流到0.
+
+**Exercise 4.**为了$y = Wx + b$没有人能得到$L$向的梯度$W$是上游梯度的外部产物,$x$缩损失的函数$W$打电话`numerical_gradient`通过两个结果`check_gradient`现在,我们要去.
+
+**Exercise 5.**通过日志尺度进行测量`10 ** np.random.uniform(-9, -3, n)`转化为`np.float16`. Float16不能保持值在大约以下$6 \times 10^{-8}$预计在扩展之前,大约四分之一的值将变为零,
+
 ## 关键词
 
 | Term | What people say | What it actually means |
 |------|----------------|----------------------|
 | IEEE 754 | "The float standard" | International standard defining binary floating point formats, rounding rules, and special values (inf, nan). Every modern CPU and GPU implements it. |
-| Machine epsilon | "The precision limit" | The smallest value e such that 1.0 + e != 1.0 in a given float format. For float32, it is about 1.19e-7. |
+| Machine epsilon | "The precision limit" | The smallest value $e$ such that $1.0 + e \ne 1.0$ in a given float format. For float32, it is about 1.19e-7. |
 | Catastrophic cancellation | "Precision loss from subtraction" | When subtracting nearly equal floating point numbers, significant digits cancel and rounding noise dominates the result. |
 | Overflow | "Number too big" | A result exceeds the maximum representable value and becomes inf. exp(89) overflows float32. |
 | Underflow | "Number too small" | A result is closer to zero than the smallest representable positive number and becomes 0.0. exp(-104) underflows float32. |
-| Log-sum-exp trick | "Subtract the max first" | Computing log(sum(exp(x))) by factoring out exp(max(x)) to prevent overflow and underflow. Used in softmax, cross-entropy, and log-probability math. |
-| Stable softmax | "Softmax that does not explode" | Subtracting max(logits) before exponentiating. Numerically identical result, no overflow possible. |
+| Log-sum-exp trick | "Subtract the max first" | Computing $\log(\sum \exp(x))$ by factoring out $\exp(\max(x))$ to prevent overflow and underflow. Used in softmax, cross-entropy, and log-probability math. |
+| Stable softmax | "Softmax that does not explode" | Subtracting $\max(\text{logits})$ before exponentiating. Numerically identical result, no overflow possible. |
 | Gradient checking | "Verify your backprop" | Comparing analytical gradients from backpropagation against numerical gradients from finite differences to catch implementation bugs. |
 | Mixed precision | "Float16 forward, float32 backward" | Using lower-precision floats for speed-critical operations and higher-precision floats for numerically sensitive operations. Typical speedup is 2-3x. |
 | Loss scaling | "Prevent gradient underflow" | Multiplying the loss by a large constant before backprop so gradients stay in float16's representable range, then dividing by the same constant before weight updates. |
@@ -596,7 +610,7 @@ check_tensor("ugly", [1.0, float('inf'), 3.0])
 | Gradient clipping | "Cap the gradient norm" | Scaling the gradient vector so its norm does not exceed a threshold. Prevents exploding gradients from ruining weights. |
 | NaN | "Not a Number" | Special float value from undefined operations (0/0, inf-inf, sqrt(-1)). Propagates through all subsequent arithmetic. |
 | Inf | "Infinity" | Special float value from overflow or division by zero. Can combine to produce NaN (inf - inf, inf * 0). |
-| Numerical gradient | "Brute force derivative" | Approximating a derivative by evaluating f(x+h) and f(x-h) and dividing by 2h. Slow but reliable for verification. |
+| Numerical gradient | "Brute force derivative" | Approximating a derivative by evaluating $f(x+h)$ and $f(x-h)$ and dividing by $2h$. Slow but reliable for verification. |
 
 ## 进一步阅读
 
