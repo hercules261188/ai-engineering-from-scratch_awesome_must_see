@@ -937,24 +937,24 @@ if __name__ == "__main__":
 ### गूगलः सुरक्षा सेटिंग्स के साथ जुड़वां
 
 ```python
-# import google.generativeai as genai
+# from google import genai
+# from google.genai import types
 #
-# genai.configure(api_key="your-key")
+# client = genai.Client()
 #
-# model = genai.GenerativeModel(
-#     "gemini-1.5-pro",
-#     system_instruction="You are a technical analyst. Be precise and cite sources.",
-#     generation_config=genai.GenerationConfig(
+# response = client.models.generate_content(
+#     model="gemini-3.8-flash",
+#     contents="Compare PostgreSQL and MySQL for write-heavy workloads.",
+#     config=types.GenerateContentConfig(
+#         system_instruction="You are a technical analyst. Be precise and cite sources.",
 #         temperature=0.3,
 #         max_output_tokens=2048,
 #     ),
 # )
-#
-# response = model.generate_content("Compare PostgreSQL and MySQL for write-heavy workloads.")
 # print(response.text)
 ```
 
-Gemini सिस्टम निर्देशों को मॉडल कॉन्फ़िगरेशन के हिस्से के रूप में संसाधित करता है, संदेश के रूप में नहीं। 2M टोकन संदर्भ विंडो का मतलब है कि आप बड़े पैमाने पर कुछ शॉट उदाहरण सेट शामिल कर सकते हैं जो GPT-4o या क्लाउड में फिट नहीं होंगे।
+Gemini सिस्टम निर्देशों को मॉडल कॉन्फ़िगरेशन के हिस्से के रूप में संसाधित करता है, संदेश के रूप में नहीं। 1M टोकन संदर्भ विंडो का मतलब है कि आप बड़े पैमाने पर कुछ शॉट उदाहरण सेट शामिल कर सकते हैं जो GPT-4o के 128K विंडो में फिट नहीं होंगे।
 
 ### प्रदाता-अज्ञानी प्रम्प्ट टेम्पलेट
 
@@ -1023,6 +1023,6 @@ Gemini सिस्टम निर्देशों को मॉडल कॉ
 - [Wei et al., 2022 -- "Chain-of-Thought Prompting Elicits Reasoning in Large Language Models"](https://arxiv.org/abs/2201.11903)-- आधारभूत पेपर जो दिखाता है कि "चरण-दर-चरण सोचें" तर्क कार्य पर एलएलएम की सटीकता में 10-40% की वृद्धि करता है
 - [Zamfirescu-Pereira et al., 2023 -- "Why Johnny Can't Prompt"](https://arxiv.org/abs/2304.13529)-- शोध कैसे गैर-विशेषज्ञों शीघ्र इंजीनियरिंग के साथ संघर्ष करते हैं और क्या करता है प्रभावी संकेत
 - [Shin et al., 2023 -- "Prompt Engineering a Prompt Engineer"](https://arxiv.org/abs/2311.05661)-- स्वचालित रूप से संकेतों को अनुकूलित करने के लिए LLM का उपयोग करना, मेटा-प्रॉम्प्टिंग की नींव
-- [LMSYS Chatbot Arena](https://chat.lmsys.org/)-- LLM की प्रत्यक्ष अंधे तुलना जहां आप मॉडल के बीच एक ही संकेत का परीक्षण कर सकते हैं और किस प्रतिक्रिया को बेहतर है पर वोट कर सकते हैं
+- [Arena (formerly LMSYS Chatbot Arena)](https://arena.ai/)-- LLM की प्रत्यक्ष अंधे तुलना जहां आप मॉडल के बीच एक ही संकेत का परीक्षण कर सकते हैं और किस प्रतिक्रिया को बेहतर है पर वोट कर सकते हैं
 - [DAIR.AI Prompt Engineering Guide](https://www.promptingguide.ai/)-- उदाहरणों के साथ शीघ्र तकनीक की एक विस्तृत सूची (शून्य-शॉट, कुछ-शॉट, CoT, ReAct, आत्म-समरूपता); संदर्भ प्रैक्टिशनर व्यापक "प्रॉम्प्ट इंजीनियरिंग" सतह के लिए उपयोग करते हैं।
-- [Anthropic prompt library](https://docs.anthropic.com/en/prompt-library)-- उपयोग के मामले के अनुसार संकलित, ज्ञात-अच्छी सूचनाएं; उत्पादन में जहाज के संरचनात्मक पैटर्न दिखाता है।
+- [Claude prompting best practices](https://platform.claude.com/docs/en/build-with-claude/prompt-engineering/claude-prompting-best-practices)-- मानवतावादी के निर्देश पर शीघ्र संरचना, काम उदाहरणों के साथ. यह पहले शीघ्र पुस्तकालय की जगह ले ली.

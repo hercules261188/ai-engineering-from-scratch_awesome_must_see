@@ -438,22 +438,20 @@ def tree_of_thought_solve(question, client, model, breadth=3, depth=3):
 
 ```python
 def solve_with_escalation(question, examples, client, model):
-    system, user = build_cot_prompt(question, examples)
-    single_response = call_llm(client, model, system, user, temperature=0.0)
-    single_answer = extract_answer(single_response)
+    single_answer, _ = few_shot_cot_solve(question, examples, client, model)
 
     sc_answer, confidence, _, _ = self_consistency_solve(
         question, examples, client, model, n_samples=5
     )
 
-    if confidence >= 0.8:
+    if confidence >= 0.8 and single_answer == sc_answer:
         return sc_answer, "self_consistency", confidence
 
     tot_answer, _ = tree_of_thought_solve(question, client, model)
     return tot_answer, "tree_of_thought", None
 ```
 
-एस्केलेशन लॉजिकः सबसे पहले सस्ते (सिंगल CoT) की कोशिश करें. यदि आत्म-समर्पण विश्वास 0.8 से नीचे है (5 नमूनों में से 4 से कम सहमत), ToT पर चढ़ें. यह लागत और सटीकता को संतुलित करता है - अधिकांश समस्याओं को सस्ते में हल किया जाता है, कठिन समस्याओं को अधिक गणना मिलती है।
+बढ़ते तर्कः पहले सस्ते (एक सीओटी) की कोशिश करें। एक एकल निर्धारक पथ कोई मतदाता नहीं देता है, इसलिए इसकी गुणवत्ता जांच सहमति हैः तापमान-0 उत्तर का नमूना पथों से बहुमत उत्तर से मेल लेना चाहिए। यदि यह नहीं है, या यदि आत्म-समर्पण विश्वास 0.8 से नीचे है (पांच नमूनों में से 4 से कम सहमत हैं), तो ToT पर बढ़ें। यह लागत और सटीकता को संतुलित करता है -- अधिकांश समस्याओं को सस्ते में हल किया जाता है, कठिन समस्याओं को अधिक गणना मिलती है।
 
 ## इसका प्रयोग करें
 

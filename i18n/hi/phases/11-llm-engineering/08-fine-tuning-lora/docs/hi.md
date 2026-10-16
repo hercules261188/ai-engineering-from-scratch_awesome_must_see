@@ -11,7 +11,7 @@
 ## सीखने के लक्ष्य
 
 - एक पूर्व प्रशिक्षित मॉडल की ध्यान परतों में निम्न श्रेणी के एडाप्टर मैट्रिक्स (ए और बी) इंजेक्ट करके LoRA लागू करें
-- LoRA बनाम पूर्ण सूक्ष्म-ट्यूनिंग की पैरामीटर बचत की गणना करेंः d_model आयामों के साथ रैंक r d2 के बजाय 2*r*d पैरामीटर को ट्रेन करता है
+- LoRA बनाम पूर्ण ठीक-ट्यूनिंग की पैरामीटर बचत की गणना करेंः रैंक $r$के साथ$d_{\text{model}}$आयामों की ट्रेनें $2 \cdot r \cdot d$ के बजाय पैरामीटर$d^2$
 - उपभोक्ता जीपीयू मेमोरी में फिट होने के लिए QLoRA (4-बिट क्वांटिज़्ड बेस + LoRA एडाप्टर) का उपयोग करके एक मॉडल को ठीक से समायोजित करें
 - लोर्र वजन को तैनाती के लिए मूल मॉडल में वापस मिलाएं और एडाप्टर के साथ और बिना अनुमानित गति की तुलना करें
 
@@ -37,21 +37,21 @@ Llama 3 70B के लिए यह मापें और संख्या ab
 
 यहाँ गणित है. एक मानक रैखिक परत गणना करता हैः
 
-```
+```math
 y = Wx
 ```
 
-जहां W एक d_out x d_in मैट्रिक्स है. 4096x4096 ध्यान प्रक्षेपण के लिए, यह 16,777,216 पैरामीटर है.
+कहाँ$W$है $d_{\text{out}} \times d_{\text{in}}$एक 4096 x 4096 ध्यान प्रक्षेपण के लिए, यह 16,777,216 पैरामीटर है।
 
-लोरा W को जमे हुए और एक निम्न श्रेणी का विघटन जोड़ता हैः
+लोरा फ्रीज करता है $W$और एक निम्न श्रेणी का विघटन जोड़ता हैः
 
-```
+```math
 y = Wx + BAx
 ```
 
-जहां B (d_out x r) और A (r x d_in) है। रैंक r d से बहुत छोटा है - आमतौर पर 8, 16 या 32.
+कहाँ$B$है $(d_{\text{out}} \times r)$और $A$है $(r \times d_{\text{in}})$. रैंक$r$$d$-- आमतौर पर 8, 16 या 32।
 
-4096x4096 परत पर r=16 के लिएः
+के लिए$r=16$4096x4096 परत परः
 - मूल मापदंडः 4096 x 4096 = 16,777,216
 - लोरा पैरामीटरः (4096 x 16) + (16 x 4096) = 65,536 + 65,536 = 131,072
 - कटौती: 131,072 / 16,777,216 = 0.78%
@@ -76,18 +76,18 @@ A को एक यादृच्छिक गौशियन के साथ 
 
 ### स्केलिंग फैक्टरः अल्फा
 
-लोरा एक स्केलिंग कारक अल्फा पेश करता है जो नियंत्रित करता है कि निम्न श्रेणी के अपडेट आउटपुट को कितना प्रभावित करता हैः
+लोरा एक स्केलिंग कारक पेश करता है $\alpha$जो नियंत्रित करता है कि निम्न श्रेणी के अपडेट से आउटपुट कितना प्रभावित होता हैः
 
-```
-y = Wx + (alpha / r) * BAx
+```math
+y = Wx + \frac{\alpha}{r} \cdot BAx
 ```
 
-जब अल्फा = आर, स्केलिंग 1x है। जब अल्फा = 2r (सामान्य डिफ़ॉल्ट), स्केलिंग 2x है। यह हाइपरपैरामीटर मूल सीखने की दर से स्वतंत्र रूप से LoRA पथ की सीखने की दर को नियंत्रित करता है।
+कब$\alpha = r$, स्केलिंग 1x है. जब $\alpha = 2r$(सामान्य डिफ़ॉल्ट) स्केलिंग 2x है। यह हाइपरपरमैटर मूल सीखने की दर से स्वतंत्र रूप से LoRA पथ की सीखने की दर को नियंत्रित करता है।
 
 व्यावहारिक मार्गदर्शनः
-- अल्फा = 2 * रैंक एक आम सामुदायिक सम्मेलन है (मूल पेपर में प्रयोग किया गया अल्फा = रैंक अधिकांश प्रयोगों में)
-- अल्फा = रैंक 1x स्केलिंग देता है, संरक्षित लेकिन स्थिर
-- उच्च अल्फा का अर्थ है प्रति चरण बड़े अपडेट, जो अभिसरण को गति दे सकता है या अस्थिरता पैदा कर सकता है
+- $\alpha = 2 \cdot \text{rank}$एक सामान्य सामुदायिक सम्मेलन (उपयोगी मूल कागज)$\alpha = \text{rank}$अधिकांश प्रयोगों में)
+- $\alpha = \text{rank}$1x स्केलिंग देता है, संरक्षित लेकिन स्थिर
+- उच्चतर $\alpha$प्रत्येक चरण के लिए बड़े अपडेट का अर्थ है, जो अभिसरण को गति दे सकता है या अस्थिरता पैदा कर सकता है
 
 ### लोरा को कहाँ लागू किया जाए
 
@@ -104,7 +104,7 @@ y = Wx + (alpha / r) * BAx
 
 ### रैंक चयन
 
-रैंक r अनुकूलन की अभिव्यक्तिशीलता को नियंत्रित करता हैः
+रैंक$r$अनुकूलन की अभिव्यक्तिशीलता को नियंत्रित करता हैः
 
 | Rank | Trainable Params (per layer) | Best For |
 |------|---------------------------|----------|
@@ -115,7 +115,7 @@ y = Wx + (alpha / r) * BAx
 | 64 | 524,288 | Diminishing returns for most tasks |
 | 128 | 1,048,576 | Rarely justified |
 
-ह्यू और अन्य ने दिखाया कि r=4 पहले से ही सरल कार्यों के लिए अनुकूलन के अधिकांश को कैप्चर करता है। r=8 और r=16 व्यवहार में सबसे आम विकल्प हैं। r=64 से परे जाना शायद ही कभी गुणवत्ता में सुधार करता है और लोरा के मेमोरी लाभ को खोना शुरू कर देता है।
+हु और अन्य ने यह दिखाया $r=4$पहले से ही सरल कार्यों के लिए अनुकूलन का अधिकांश कब्जा करता है। $r=8$और $r=16$यह सबसे आम विकल्प है।$r=64$कम ही गुणवत्ता में सुधार होता है और लोरा का मेमोरी लाभ खोना शुरू होता है।
 
 ### QLoRA: 4-बिट क्वांटिज़ेशन + लोरा
 
@@ -148,7 +148,7 @@ QLoRA तीन तकनीकी योगदान देता हैः
 | QLoRA r=16 (NF4) | 47.5 | 6.61 | 13.4 |
 | QLoRA r=64 (NF4) | 48.1 | 6.70 | 14.2 |
 
-आर = 16 पर लोरा अधिकांश बेंचमार्क पर पूर्ण ठीक-ठाक के 1% के भीतर है। आर = 16 पर क्यूलोरा एक प्रतिशत का एक और अंश खो देता है। आर = 64 पर क्यूलोरा अनिवार्य रूप से 90% कम मेमोरी का उपयोग करते हुए पूर्ण ठीक-ठाक से मेल खाता है।
+लोरा $r=16$अधिकांश बेंचमार्क पर पूर्ण सूक्ष्म समायोजन के 1% के भीतर है।$r=16$एक प्रतिशत का एक और अंश खो देता है।$r=64$अनिवार्य रूप से पूर्ण सूक्ष्म-ट्यूनिंग के साथ मेल खाता है जबकि 90% कम स्मृति का उपयोग करता है।
 
 ### वास्तविक दुनिया की लागत
 
@@ -183,7 +183,7 @@ QLoRA तीन तकनीकी योगदान देता हैः
 
 1. **Keep them separate**: बेस मॉडल लोड करें, शीर्ष पर एडाप्टर लोड करें। विभिन्न कार्यों के लिए स्विच एडाप्टर। इस तरह आप एक बेस मॉडल से कई बारीक-ट्यून वैरिएंट की सेवा करते हैं।
 
-2. **Merge them permanently**: गणना W' = W + (alpha/r) * BA और एक नए पूर्ण मॉडल के रूप में परिणाम सहेजें. विलय मॉडल मूल के समान आकार है. कोई निष्कर्ष ओवरहेड नहीं है. कोई एडाप्टर प्रबंधित करने के लिए नहीं है.
+2. **Merge them permanently**: गणना $W' = W + (\alpha/r) \cdot BA$और परिणाम को एक नए पूर्ण मॉडल के रूप में सहेजें. विलय मॉडल मूल के समान आकार है. कोई निष्कर्ष ओवरहेड. कोई एडाप्टर प्रबंधित करने के लिए.
 
 कई कार्यों (ग्राहक सहायता एडाप्टर, कोड एडाप्टर, अनुवाद एडाप्टर) को पूरा करने के लिए, उन्हें अलग रखें। एक ही विशेष मॉडल को तैनात करने के लिए, एकजुट करें।
 
@@ -531,11 +531,11 @@ model.save_pretrained("./lora-adapter")
 | LoRA | "Efficient fine-tuning" | Low-Rank Adaptation: freeze base weights, train two small matrices A and B whose product approximates the full weight update |
 | QLoRA | "Fine-tune on a laptop" | Quantized LoRA: load the base model in 4-bit NF4, train LoRA adapters in fp16 on top, enabling 7B fine-tuning in 6GB VRAM |
 | Rank (r) | "How much the model can learn" | The inner dimension of the A and B matrices; controls expressiveness vs. parameter count |
-| Alpha | "LoRA learning rate" | Scaling factor applied to the LoRA output; alpha/r scales the adaptation's contribution to the final output |
+| Alpha | "LoRA learning rate" | Scaling factor applied to the LoRA output; $\alpha/r$ scales the adaptation's contribution to the final output |
 | NF4 | "4-bit quantization" | Normal Float 4: a 4-bit data type with quantization levels at normal distribution quantiles, optimal for neural network weights |
 | Adapter | "The small trained part" | The LoRA A and B matrices saved as a separate file (10-100MB), loadable on top of any copy of the base model |
 | Target modules | "Which layers to LoRA" | The specific linear layers (q_proj, v_proj, etc.) where LoRA adapters are injected |
-| Merging | "Bake it in" | Computing W + (alpha/r) * BA and replacing the original weight, eliminating the adapter overhead at inference |
+| Merging | "Bake it in" | Computing $W + (\alpha/r) \cdot BA$ and replacing the original weight, eliminating the adapter overhead at inference |
 | Paged optimizers | "Don't OOM during training" | Offloading optimizer states (Adam momentum, variance) to CPU when GPU memory is exhausted |
 | Catastrophic forgetting | "Fine-tuning broke everything else" | When updating all weights causes the model to lose previously learned capabilities |
 

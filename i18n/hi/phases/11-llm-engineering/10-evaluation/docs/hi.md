@@ -856,7 +856,7 @@ promptfoo शून्य से मूल्यांकन पाइपला�
 - [DeepEval Documentation](https://docs.confident-ai.com)-- 14+ मेट्रिक्स के साथ पायथन-नेटिव मूल्यांकन ढांचे, पायटेस्ट एकीकरण, और भ्रम का पता लगाने
 - [Braintrust Eval Guide](https://www.braintrust.dev/docs)-- प्रयोगों का पालन, स्कोरिंग फ़ंक्शंस और डेटासेट प्रबंधन के साथ उत्पादन मूल्यांकन मंच
 - [Ribeiro et al., 2020 -- "Beyond Accuracy: Behavioral Testing of NLP Models with CheckList"](https://arxiv.org/abs/2005.04118)-- LLM मूल्यांकन के लिए लागू व्यवस्थित व्यवहार परीक्षण पद्धति (न्यूनतम कार्यक्षमता, अपरिवर्तनीयता, दिशात्मक अपेक्षाएं)
-- [LMSYS Chatbot Arena](https://chat.lmsys.org)-- लाइव मानव मूल्यांकन मंच जहां उपयोगकर्ता मॉडल आउटपुट पर वोट करते हैं, LLM के लिए सबसे बड़ा जोड़ी तुलना डेटा सेट
+- [Arena (formerly LMSYS Chatbot Arena)](https://arena.ai/)-- लाइव मानव मूल्यांकन मंच जहां उपयोगकर्ता मॉडल आउटपुट पर वोट करते हैं, LLM के लिए सबसे बड़ा जोड़ी तुलना डेटा सेट
 - [Es et al., "RAGAS: Automated Evaluation of Retrieval Augmented Generation" (EACL 2024 demo)](https://arxiv.org/abs/2309.15217)-- आरएजी के लिए संदर्भ मुक्त माप (निष्ठा, उत्तर प्रासंगिकता, संदर्भ सटीकता/हला); मूल्यांकन पैटर्न जो लेबलर के बिना प्रोड करने के लिए स्केल करता है।
 - [Liu et al., "G-Eval: NLG Evaluation using GPT-4 with Better Human Alignment" (EMNLP 2023)](https://arxiv.org/abs/2303.16634)-- विचार श्रृंखला + एक न्यायाधीश प्रोटोकॉल के रूप में फॉर्म भरना; माप और पूर्वाग्रह परिणाम हर न्यायाधीश-निर्माता की जरूरत है।
 - [Hugging Face LLM Evaluation Guidebook](https://huggingface.co/spaces/OpenEvals/evaluation-guidebook)-- ओपन एलएलएम लीडरबोर्ड को बनाए रखने वाली टीम द्वारा डेटा प्रदूषण, मीट्रिक चयन और पुनरुत्पादनशीलता पर व्यावहारिक सलाह दी जाती है।

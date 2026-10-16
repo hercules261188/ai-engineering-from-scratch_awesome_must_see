@@ -182,6 +182,7 @@ mx-tool-call-loop
 एक रजिस्ट्री बनाएं जो टूल परिभाषाओं और उनके कार्यान्वयन को संग्रहीत करता है। प्रत्येक टूल में एक JSON स्कीमा परिभाषा (जो मॉडल देखता है) और एक पायथन फ़ंक्शन (जो आपका कोड निष्पादित करता है) होता है।
 
 ```python
+import ast
 import json
 import math
 import time
@@ -290,10 +291,18 @@ def read_file(path):
 def run_code(code, language="python"):
     if language != "python":
         return {"error": True, "message": f"Language '{language}' not supported. Only 'python' is available."}
-    forbidden = ["import os", "import sys", "import subprocess", "exec(", "eval(", "__import__", "open("]
-    for pattern in forbidden:
-        if pattern in code:
-            return {"error": True, "message": f"Forbidden operation: {pattern}", "code": "SECURITY_VIOLATION"}
+    try:
+        tree = ast.parse(code)
+    except SyntaxError as e:
+        return {"error": True, "message": f"SyntaxError: {e}", "code": "SYNTAX_ERROR"}
+    unsafe_names = {"exec", "eval", "compile", "__import__", "open", "globals", "locals", "vars", "getattr", "setattr", "delattr"}
+    for node in ast.walk(tree):
+        if isinstance(node, (ast.Import, ast.ImportFrom)):
+            return {"error": True, "message": "Forbidden operation: import is not allowed", "code": "SECURITY_VIOLATION"}
+        if isinstance(node, ast.Attribute) and node.attr.startswith("__") and node.attr.endswith("__"):
+            return {"error": True, "message": "Forbidden operation: dunder attribute access is not allowed", "code": "SECURITY_VIOLATION"}
+        if isinstance(node, ast.Name) and node.id in unsafe_names:
+            return {"error": True, "message": f"Forbidden operation: {node.id} is not allowed", "code": "SECURITY_VIOLATION"}
     try:
         local_vars = {}
         exec(code, {"__builtins__": {"print": print, "range": range, "len": len, "str": str, "int": int, "float": float, "list": list, "dict": dict, "sum": sum, "min": min, "max": max, "abs": abs, "round": round, "sorted": sorted, "enumerate": enumerate, "zip": zip, "map": map, "filter": filter, "math": math}}, local_vars)
@@ -302,6 +311,8 @@ def run_code(code, language="python"):
     except Exception as e:
         return {"error": True, "message": f"{type(e).__name__}: {e}"}
 ```
+
+एक सबस्ट्रिंग ब्लॉकलिस्ट कोड को पाठ के रूप में पढ़ता है, इसलिए यह स्ट्रिंग मैच के शाब्दिक रूप से नहीं लिखता है। कोड को सिंटैक्स ट्री में पार्स करने और इसे चलाने से गार्ड अस्वीकार कर देता है `import`बयान, डंडर विशेषता पहुँच (द `__class__`और `__globals__`(अर्थात्, यह एक प्रकार का है) और असुरक्षित नामों को संरचना के आधार पर लिखा जाता है। फिर भी, इसे एक शिक्षण फ़िल्टर के रूप में देखें, वास्तविक सीमा नहीं। प्रक्रिया में कोई भी गार्ड अनुवादक को उस कोड के साथ साझा करता है जिसे वह चलाता है, और एक निश्चित कॉल करने वाला अभी भी पहुंच योग्य वस्तुओं को पा सकता है। उत्पादन प्रणाली एक अलग प्रक्रिया या कंटेनर (एक उपप्रक्रिया के साथ छोड़ दिया विशेषाधिकार, gVisor, फायरक्रैकर, या एक होस्ट कोड रनर) में अविश्वसनीय कोड चलाता है, जहां एक भागने वाला हमलावर को आपकी सेवा के बजाय एक फेंकने वाले बॉक्स में लैंड करता है।
 
 ### चरण 3: सभी उपकरण पंजीकृत करें
 
@@ -328,7 +339,7 @@ def register_all_tools():
         read_file,
     )
     register_tool(
-        "run_code", "Execute Python code in a sandboxed environment. Set a 'result' variable to return output.",
+        "run_code", "Run a small Python snippet behind a static-analysis guard and a restricted interpreter. This is a teaching filter, not real isolation. Set a 'result' variable to return output.",
         {"type": "object", "properties": {"code": {"type": "string", "description": "Python code to execute"}, "language": {"type": "string", "enum": ["python"], "description": "Programming language"}}, "required": ["code"]},
         run_code,
     )

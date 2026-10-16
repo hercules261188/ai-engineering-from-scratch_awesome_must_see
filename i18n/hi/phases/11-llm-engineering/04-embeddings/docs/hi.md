@@ -100,20 +100,20 @@ MTEB (मॉसिव टेक्स्ट एम्बेडिंग बे�
 
 **Cosine similarity**: दो वेक्टरों के बीच कोण का कोसिन। -1 (उपरोक्त) से 1 (समान दिशा) तक। परिमाण को अनदेखा करता है - 10 शब्द वाक्य और 500 शब्द के दस्तावेज़ को 1.0 स्कोर कर सकते हैं यदि वे एक ही दिशा में इंगित करते हैं। यह उपयोग के मामलों के 90% के लिए डिफ़ॉल्ट है।
 
-```
-cosine_sim(a, b) = dot(a, b) / (||a|| * ||b||)
+```math
+\mathop{\mathrm{cosine\_sim}}(a, b) = \frac{\mathop{\mathrm{dot}}(a, b)}{\lVert a \rVert \cdot \lVert b \rVert}
 ```
 
 **Dot product**: दो वेक्टरों का कच्चा आंतरिक उत्पाद। वेक्टरों को सामान्यीकृत करने पर कॉसिन की समानता के समान (इकाई लंबाई) । गणना करने के लिए तेज़। ओपनएआई के एम्बेडमेंट सामान्यीकृत हैं, इसलिए डॉट उत्पाद और कॉसिन एक ही रैंकिंग देते हैं।
 
-```
-dot(a, b) = sum(a_i * b_i)
+```math
+\mathop{\mathrm{dot}}(a, b) = \sum_i a_i b_i
 ```
 
 **Euclidean (L2) distance**: वेक्टर स्थान में सीधी रेखा की दूरी। छोटा = अधिक समान। परिमाण अंतर के प्रति संवेदनशील। उपयोग करें जब अंतरिक्ष में पूर्ण स्थिति महत्वपूर्ण है, न कि केवल दिशा।
 
-```
-L2(a, b) = sqrt(sum((a_i - b_i)^2))
+```math
+\mathop{\mathrm{L2}}(a, b) = \sqrt{\sum_i (a_i - b_i)^2}
 ```
 
 किस समय उपयोग किया जाएः
@@ -134,7 +134,7 @@ L2(a, b) = sqrt(sum((a_i - b_i)^2))
 2. शीर्ष परतें दुर्लभ हैं - दूरस्थ समूहों के बीच लंबी दूरी की कनेक्शन
 3. नीचे की परतें घनी हैं - निकटवर्ती वेक्टरों के बीच बारीक-अमल कनेक्शन
 4. खोज शीर्ष परत से शुरू होती है, लालच से परिष्कृत करने के लिए नीचे जाती है
-5. O(log n) समय में O(n के बजाय लगभग शीर्ष-k परिणाम देता है
+5.  में शीर्ष-के परिणामों के करीब लौटाता है$O(\log n)$समय के बजाय $O(n)$
 
 HNSW बड़ी गति के लिए एक छोटी सटीकता हानि (आमतौर पर 95-99% याद) का व्यापार करता है। 10 मिलियन वेक्टर पर, क्रूर बल सेकंड लेता है। HNSW मिलीसेकंड लेता है।
 
@@ -491,7 +491,7 @@ embeddings = model.encode(["semantic search query", "another document"])
 | Embedding | "Text to numbers" | A dense vector where geometric proximity encodes semantic similarity |
 | Word2Vec | "The OG embedding" | 2013 model that learned word vectors by predicting context words; proved vector arithmetic encodes meaning |
 | Cosine similarity | "How similar are two vectors" | Cosine of the angle between vectors; 1 = identical direction, 0 = orthogonal, -1 = opposite |
-| HNSW | "Fast vector search" | Hierarchical Navigable Small World graph -- multi-layer structure enabling O(log n) approximate nearest neighbor search |
+| HNSW | "Fast vector search" | Hierarchical Navigable Small World graph -- multi-layer structure enabling $O(\log n)$ approximate nearest neighbor search |
 | Bi-encoder | "Embed separately, compare fast" | Encodes query and document independently into vectors; enables pre-computation and fast retrieval |
 | Cross-encoder | "Slow but accurate reranker" | Processes query-document pair jointly through the full model; higher accuracy, no pre-computation |
 | Matryoshka embeddings | "Truncatable vectors" | Embeddings trained so the first N dimensions capture the most important information, enabling variable-size storage |
