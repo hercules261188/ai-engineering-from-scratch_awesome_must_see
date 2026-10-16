@@ -57,7 +57,7 @@ La moyenne ITL diminue avec le décode spécifique. P99 peut empirer si vous ne 
 
 ### Lorsque l'Eagle-3 est déjà déployé
 
-Google a déployé le décoding spéculatif dans AI Overviews en 2025 (même qualité, réponse plus rapide). vLLM V1 vaisseaux `speculative_config`comme l'interface documentée; le décoding spéculatif GPU N-gramme dans V1 est la variante compatible avec le pré-remplissage en morceaux. SGLang prend en charge EAGLE-3 comme le chemin de projet recommandé pour les charges de travail lourdes de préfixes.
+Google a déployé le décoding spéculatif dans AI Overviews en 2025 (même qualité, réponse plus rapide). vLLM V1 vaisseaux `speculative_config`SGLang prend en charge EAGLE-3 comme voie de projet recommandée pour les charges de travail lourdes.
 
 ### - Je ne peux pas faire de calcul.
 
@@ -68,7 +68,7 @@ Accélération attendue: `S(alpha, K) = (1 + K*alpha) / (1 + verify_overhead)`- 
 - Génération hors ligne de série 1, où la latence n'a pas d'importance.
 - Les résultats sont très courts (moins de 50 jetons).
 - Des domaines spécialisés sans chef de projet.
-- vLLM v0.18.0 plus le décode des spécifications du modèle de projet plus `--enable-chunked-prefill`Cette combinaison ne se compile pas. L'exception documentée est le décode de spécifications de la GPU N-gramme dans V1.
+- Assumant que chaque paire de fonctionnalités est composée. Vérifiez la matrice de compatibilité vLLM pour votre version: v0.18.0 marque le décoding spéculatif compatible avec le pré-remplissage en morceaux.
 
 ```figure
 mx-speculative-tree
@@ -86,7 +86,7 @@ Cette leçon produit `outputs/skill-eagle3-rollout.md`. Compte tenu d'un modèle
 
 1. On court .`code/main.py`À K=5, quelle alpha vous faut pour une accélération de 2x ? Pour une accélération de 3x ?
 2. Imaginez que le trafic de production divise 70% le chat général, 30% le code. Le chat général atteint alpha 0.7 avec EAGLE-3 formé sur ShareGPT; le code atteint alpha 0.4.
-3. Lisez le VLLM `speculative_config`Nommer les trois modes (modèle de projet, EAGLE, N-gramme) et lequel est compatible avec le pré-remplissage en morceaux.
+3. Lisez le VLLM `speculative_config`Nommer les trois modes (modèle de projet, EAGLE, N-gramme) et vérifier les caractéristiques de chacun composé dans votre version vLLM.
 4. Vous voyez une baisse moyenne de l'ITL de 25% après avoir activé EAGLE-3 mais P99 ITL a augmenté de 15%.
 5. Comptez le coût de mémoire de la tête de projet EAGLE-3 pour Llama 3.3 70B. Comment se compare-t-il à l'exécution de Llama 3.2 1B comme un projet classique?
 

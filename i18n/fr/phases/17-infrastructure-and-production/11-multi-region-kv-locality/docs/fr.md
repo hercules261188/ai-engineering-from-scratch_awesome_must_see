@@ -30,7 +30,7 @@ Le service de LLM multi-régions est un problème de cache, un problème de rout
 
 La requête arrive avec un prompt. Le routeur hashes le préfixe (disons, les 512 premiers jetons); il demande à chaque réplique " avez-vous ce préfixe mis en cache ? " Les répliques publient des événements de cache KV sur un pub / sous-canal alors qu'elles allouent et évacuent des blocs. Le routeur choisit la réplique avec le match, passe à un coupe-coupe basé sur GPU util si personne ne le fait.
 
-**vLLM Router**(Rust, 2026 production-stack): souscrit à `kv.cache.block_added`événements, maintient un index de réplication de préfixe hash →, routes avec O(1) recherche. passe à la plus faible profondeur de file d'attente quand aucune correspondance.
+**vLLM Router**(Rust, 2026 production-stack): souscrit à `kv.cache.block_added`événements, maintient un préfixe-hash → réplique index, routes avec $O(1)$Il tombe à la plus petite profondeur de file d'attente quand il n'y a pas de match.
 
 **llm-d router**: le même schéma, Kubernetes natif. Publie des événements via l'API ControlPlane.
 

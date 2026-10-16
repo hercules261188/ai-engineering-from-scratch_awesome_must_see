@@ -12,7 +12,7 @@
 - Expliquez PagedAttention comme un allocateur de cache KV: blocs, tables de blocs, et pourquoi la fragmentation reste inférieure à 4% à la charge de production.
 - Diagramme de la séquence continue au niveau de l'itération: comment les séquences terminées quittent le lot et les nouvelles se joignent sans se vider.
 - Décrire le pré-remplissage en morceaux dans une phrase et nommer la métrique de latence qu'elle protège (indice: c'est la queue TTFT, pas le débit moyen).
-- Nommez le 2026 vLLM v0.18.0 gotcha qui mord les équipes permettant chaque optimisation à la fois.
+- Vérifiez une combinaison de fonctionnalités vLLM par rapport à la matrice de compatibilité de votre version avant d'activer chaque optimisation à la fois.
 
 ## Le problème
 
@@ -56,9 +56,9 @@ Les trois caractéristiques se prennent l'une l'autre. PagedAttention donne au p
 
 Vous n'avez pas besoin de connaître chaque drapeau, vous devez savoir ce que le planificateur optimise: un bon produit en fonction du budget du bloc KV, soumis à la découpe de pré-remplissage en morceaux.
 
-### Le 2026 v0.18.0 vous a obtenu
+### Vérifiez la matrice de compatibilité
 
-Dans vLLM v0.18.0 vous ne pouvez pas combiner `--enable-chunked-prefill`avec décoding spéculatif de modèle de projet (`--speculative-model`) L'exception documentée est le décoding spéculatif de GPU N-gramme dans le planificateur V1. Les équipes qui déploient chaque drapeau sans lire les notes de sortie ont une erreur de démarrage, pas une régression douce. Si votre gain spéculatif valait la peine de permettre le pré-remplissage en morceaux, revenez au choix  la bonne réponse en 2026 est souvent EAGLE-3 sans pré-remplissage en morceaux, pas un modèle de projet plus pré-remplissage en morceaux qui ne compile pas.
+Vérifiez chaque combinaison de fonctionnalités contre la matrice de compatibilité pour votre version exacte de vLLM avant de les activer toutes à la fois, car ce qui compose les modifications entre les versions. Dans la version 0.18.0, la matrice de fonctionnalités marque le décoding spéculatif comme compatible avec le pré-remplissage et le préfixe en détail en morceaux, et la page de décoding spéculatif énumère deux incompatibilités connues: le parallélisme du pipeline à travers la version 0.15.0, et la spéculation du modèle de projet à travers la version 0.10.0. Pour le projet de méthode lui-même, la méthode par défaut de 2026 est souvent EAGLE-3 (`"method": "eagle3"`), couverte par la phase 17 · 05.
 
 ### Les chiffres que vous devriez vous rappeler
 
@@ -131,7 +131,7 @@ Cette leçon produit `outputs/skill-vllm-scheduler-reader.md`. Compte tenu de la
 | TTFT | "first token time" | Prefill + queue + network; dominated by prefill at long prompts |
 | ITL | "inter-token latency" | Time between consecutive decode tokens; dominated by batch size |
 | Goodput | "throughput that meets SLO" | Tokens/sec where every request still hit TTFT and ITL targets |
-| V1 scheduler | "the new scheduler" | vLLM's 2026 scheduler; N-gram spec decode is the chunked-prefill-compatible path |
+| V1 scheduler | "the new scheduler" | vLLM's 2026 scheduler; runs continuous batching with chunked prefill |
 | `--gpu-memory-utilization` | "the memory knob" | Fraction of HBM reserved for KV blocks after weights and activations |
 
 ## Pour en savoir plus
