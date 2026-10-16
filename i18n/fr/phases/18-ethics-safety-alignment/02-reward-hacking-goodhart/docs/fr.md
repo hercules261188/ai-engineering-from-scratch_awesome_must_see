@@ -28,9 +28,11 @@ La formule originale de Goodhart: "Quand une mesure devient une cible, elle cess
 
 Gao et coll. donnent une forme fonctionnelle.`d = sqrt(KL(pi || pi_init))`- Je vous en prie .`R_proxy(d)`être une récompense de proxy et `R_gold(d)`Je veux dire, une récompense en or.
 
-```
-R_proxy(d) = alpha * d - beta_proxy * d^2
-R_gold(d)  = alpha * d - beta_gold  * d^2
+```math
+\begin{aligned}
+R_{\text{proxy}}(d) &= \alpha d - \beta_{\text{proxy}} d^2 \\
+R_{\text{gold}}(d) &= \alpha d - \beta_{\text{gold}} d^2
+\end{aligned}
 ```
 
 avec `beta_gold > beta_proxy`Les deux montent de zéro KL, les deux atteignent leur sommet, le sommet d'or est plus proche de l'origine.`d`L'écart entre le proxy-or est identique dans le prélèvement de prélèvements de BON, PPO et SFT-to-best.

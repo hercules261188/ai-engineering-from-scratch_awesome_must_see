@@ -32,8 +32,8 @@ Ce que la SFT vous donne: le modèle répond maintenant aux questions au lieu de
 
 Pour chaque prompt, prenez l'échantillon des compléments K du modèle SFT. Un étiqueteur les classe.`y_w`était préféré à `y_l`- Le numéro de la liste:
 
-```
-L_RM = -log sigmoid(r(x, y_w) - r(x, y_l))
+```math
+L_{\text{RM}} = -\log \sigma\big(r(x, y_w) - r(x, y_l)\big)
 ```
 
 C'est la perte de préférence par paire Bradley-Terry. Le RM est généralement initialement défini à partir du modèle SFT avec la tête LM remplacée par une tête escalare.
@@ -44,8 +44,8 @@ Les modèles de récompense sont petits: 6B suffisait pour le 175B InstructGPT. 
 
 Définir l'objectif:
 
-```
-J(pi) = E_{x~D, y~pi(.|x)} [ r(x, y) ] - beta * KL(pi(.|x) || pi_SFT(.|x))
+```math
+J(\pi) = \mathbb{E}_{x \sim D,\, y \sim \pi(\cdot \mid x)} \big[ r(x, y) \big] - \beta \, \mathrm{KL}\big(\pi(\cdot \mid x) \,\|\, \pi_{\text{SFT}}(\cdot \mid x)\big)
 ```
 
 Le terme KL est conservé.`pi`Sans elle, l'optimisateur trouve des exemples contradictoires  des chaînes qui marquent bien sous le RM parce que le RM ne les a jamais vus, pas parce que les humains les préfèrent réellement.
@@ -56,8 +56,8 @@ Le coefficient KL `beta`trop bas: piratage de la récompense trop élevé: aucun
 
 Après la RLHF, le modèle est préféré par les humains mais régresse sur les critères de référence standard (SQuAD, HellaSwag, DROP). Ouyang et al. appellent cela la taxe d'alignement et le fixent avec PPO-ptx: mélangez les gradients pré-entraînement dans l'objectif de RL afin que le modèle n'oublie pas comment effectuer des tâches en aval pour lesquelles il n'a jamais été récompensé.
 
-```
-J_ptx(pi) = J(pi) + gamma * E_{x~D_pretrain} [ log pi(x) ]
+```math
+J_{\text{ptx}}(\pi) = J(\pi) + \gamma \, \mathbb{E}_{x \sim D_{\text{pretrain}}} \big[ \log \pi(x) \big]
 ```
 
 Le PPO-ptx est devenu standard. Anthropic, DeepMind et Meta utilisent tous une variante.
@@ -84,7 +84,7 @@ al-instruct-pipeline
 À quoi regarder:
 
 - Trajectorie de récompense avec `beta = 0.1`contre`beta = 0.0`- Je suis désolé .
-- L'éducation et la formation sont des aspects essentiels de la formation.
+- $\mathrm{KL}(\pi \Vert \pi_{\text{SFT}})$sur les étapes d'entraînement.
 - Répartition finale des actions par rapport à la préférence de l'étiquetage.
 
 ## La faire partir
@@ -109,7 +109,7 @@ Cette leçon produit `outputs/skill-instructgpt-explainer.md`. Une description d
 |------|-----------------|------------------------|
 | SFT | "instruction tuning" | Stage 1: cross-entropy fine-tune on prompt-response pairs |
 | Reward model | "the RM" | Scalar regressor over (prompt, response) trained with Bradley-Terry on pairwise labels |
-| Bradley-Terry | "pairwise preference loss" | -log sigmoid(r_w - r_l); reduces pairwise ranking to binary classification |
+| Bradley-Terry | "pairwise preference loss" | $-\log \sigma(r_w - r_l)$; reduces pairwise ranking to binary classification |
 | KL penalty | "the regularizer" | `beta * KL(pi \|\| pi_SFT)` — keeps the RL policy near the SFT anchor |
 | PPO-ptx | "PPO with pretraining mix" | Adds a fraction of pre-training log-likelihood to the PPO objective to offset the alignment tax |
 | Alignment tax | "the RLHF regression" | Post-RLHF drop on standard benchmarks that RLHF did not target |

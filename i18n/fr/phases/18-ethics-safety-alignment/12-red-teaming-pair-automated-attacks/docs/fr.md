@@ -31,11 +31,11 @@ Les entrées:
 
 Boucle, pour k en 1..K:
 1. A est incité par l'objectif G et l'historique des paires (prompte, réponse) jusqu'à présent.
-2. Un émet une nouvelle demande de p_k.
-3. Envoyer p_k à T; recevoir une réponse r_k.
-4. J marque (p_k, r_k) sur le but.
+2. Un émet une nouvelle demande $p_k$- Je suis désolé .
+3. Envoyez $p_k$à T; recevoir une réponse $r_k$- Je suis désolé .
+4. J score $(p_k, r_k)$sur le but.
 5. Si le score >= seuil, arrêtez  jailbreak trouvé.
-6. Sinon, ajoutez (p_k, r_k) à l'historique de A; continuez.
+6. Autrement, ajouter $(p_k, r_k)$à l'histoire de A; continuez.
 
 Résultat empirique (NeurIPS 2023): > 50% taux de réussite des attaques contre GPT-3.5-turbo, Llama-2-7B-chat; requêtes moyennes à succès dans la plage 10 à 20.
 

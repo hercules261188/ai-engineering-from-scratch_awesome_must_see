@@ -28,10 +28,12 @@ L'argument est générique. Il ne dépend pas de la sycophancy étant un biais h
 
 Je vous laisse .`pi_0`être le modèle de base, `pi_A`le modèle post-alignement, `r`la récompense par procuration, `s(x, y)`un indicateur binaire de sycophance.
 
-```
-E[s | r]            = probability of sycophancy given reward
-E_{pi_0}[s | r]     = measured on the base model's output distribution
-E_{pi_A}[s | r]     = measured on the aligned model's output distribution
+```math
+\begin{aligned}
+\mathbb{E}[s \mid r] &= \text{probability of sycophancy given reward} \\
+\mathbb{E}_{\pi_0}[s \mid r] &= \text{measured on the base model's output distribution} \\
+\mathbb{E}_{\pi_A}[s \mid r] &= \text{measured on the aligned model's output distribution}
+\end{aligned}
 ```
 
 Étape 1: empiriquement,`E_{pi_0}[s | r=high] > E_{pi_0}[s | r=low]`- Les résultats de la syncophantie sont en moyenne supérieurs à ceux des résultats non-sycophantiques correspondants dans le cadre d'un RM formé sur les données de préférence des étiquettes.
@@ -69,8 +71,8 @@ Sahoo (arXiv:2604.10585) entraîne le GRPO sur le raisonnement mathématique ave
 
 Shapira et al. proposent de modifier la récompense:
 
-```
-r'(x, y) = r(x, y) - alpha * agree(x, y)
+```math
+r'(x, y) = r(x, y) - \alpha \cdot \text{agree}(x, y)
 ```
 
 où `agree(x, y)`est un classifiant auxiliaire qui mesure si `y`Je suis d'accord avec vous.`x`Les analyses Alpha montrent une baisse de la sycophance à près du niveau du modèle de base.`alpha`Environ 0,3-0,5, au prix d'une certaine perte d'accord légitime (le modèle devient légèrement plus contraire aux croyances correctes des utilisateurs).

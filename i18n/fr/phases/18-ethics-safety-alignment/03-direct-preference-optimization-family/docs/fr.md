@@ -18,20 +18,20 @@
 
 L'objectif du RLHF (leçon 1) est le suivant:
 
-```
-max_pi E_{x,y~pi} [ r(x, y) ] - beta * KL(pi || pi_ref)
+```math
+\max_{\pi} \; \mathbb{E}_{x, y \sim \pi} \big[ r(x, y) \big] - \beta \, \mathrm{KL}(\pi \,\|\, \pi_{\text{ref}})
 ```
 
 a un optimum connu:
 
-```
-pi*(y|x) = (1/Z(x)) * pi_ref(y|x) * exp(r(x, y) / beta)
+```math
+\pi^*(y \mid x) = \frac{1}{Z(x)} \, \pi_{\text{ref}}(y \mid x) \exp\!\left(\frac{r(x, y)}{\beta}\right)
 ```
 
 Ainsi, la récompense est implicitement définie par le rapport entre la politique optimale et la référence:
 
-```
-r(x, y) = beta * log(pi*(y|x) / pi_ref(y|x)) + beta * log Z(x)
+```math
+r(x, y) = \beta \log \frac{\pi^*(y \mid x)}{\pi_{\text{ref}}(y \mid x)} + \beta \log Z(x)
 ```
 
 Remplacez cela par la probabilité de préférence Bradley-Terry et la fonction de partition .`Z(x)`annuler parce que cela dépend uniquement de `x`. Ce qui reste, c'est une perte dans les paramètres de politique seulement  pas besoin de modèle de récompense.
@@ -42,11 +42,11 @@ La dérive: la dérive suppose que l'optimal est atteignable, les données de pr
 
 ### DPO (Rafailov et coll., 2023)
 
-```
-L_DPO = -log sigmoid(
-  beta * log(pi(y_w | x) / pi_ref(y_w | x))
-  - beta * log(pi(y_l | x) / pi_ref(y_l | x))
-)
+```math
+L_{\text{DPO}} = -\log \sigma\!\left(
+  \beta \log \frac{\pi(y_w \mid x)}{\pi_{\text{ref}}(y_w \mid x)}
+  - \beta \log \frac{\pi(y_l \mid x)}{\pi_{\text{ref}}(y_l \mid x)}
+\right)
 ```
 
 Qu'est-ce qui peut aller mal ?
@@ -59,8 +59,8 @@ Qu'est-ce qui peut aller mal ?
 
 L'optimisation des préférences d'identité remplace le log-sigmoid par une carte d'identité sur la probabilité de préférence.
 
-```
-L_IPO = (log(pi(y_w | x) / pi_ref(y_w | x)) - log(pi(y_l | x) / pi_ref(y_l | x)) - 1/(2 beta))^2
+```math
+L_{\text{IPO}} = \left( \log \frac{\pi(y_w \mid x)}{\pi_{\text{ref}}(y_w \mid x)} - \log \frac{\pi(y_l \mid x)}{\pi_{\text{ref}}(y_l \mid x)} - \frac{1}{2\beta} \right)^2
 ```
 
 La marge est délimitée par `1/(2 beta)`- La force de préférence et l'écart entre les récompenses implicites sont proportionnels.
@@ -69,8 +69,8 @@ La marge est délimitée par `1/(2 beta)`- La force de préférence et l'écart 
 
 L'optimisation Kahneman-Tversky réduit entièrement la structure parallèle.
 
-```
-v(x, y) = sigma(beta * log(pi(y|x) / pi_ref(y|x)) - z_ref)
+```math
+v(x, y) = \sigma\!\left(\beta \log \frac{\pi(y \mid x)}{\pi_{\text{ref}}(y \mid x)} - z_{\text{ref}}\right)
 ```
 
 Les données de l'entreprise sont utilisées pour les données de l'entreprise, mais elles sont utilisées pour les données de l'entreprise.
@@ -79,12 +79,12 @@ Les données de l'entreprise sont utilisées pour les données de l'entreprise, 
 
 L'optimisation des préférences simple aligne le signal d'entraînement avec la génération.
 
-```
-L_SimPO = -log sigmoid(
-  (beta / |y_w|) * log pi(y_w | x)
-  - (beta / |y_l|) * log pi(y_l | x)
-  - gamma
-)
+```math
+L_{\text{SimPO}} = -\log \sigma\!\left(
+  \frac{\beta}{|y_w|} \log \pi(y_w \mid x)
+  - \frac{\beta}{|y_l|} \log \pi(y_l \mid x)
+  - \gamma
+\right)
 ```
 
 avec une marge `gamma`La normalisation de la longueur élimine l'incitation à exploiter le mode d'échec du biais de longueur du DPO (plus long `y_w`donne un écart plus grand entre les logs et les probes par construction).
@@ -93,9 +93,11 @@ avec une marge `gamma`La normalisation de la longueur élimine l'incitation à e
 
 L'optimisation des préférences par rapport aux cotes ajoute un terme de préférence à la probabilité de log négatif standard de la FFT:
 
-```
-L_ORPO = L_NLL(y_w) + lambda * L_OR
-L_OR = -log sigmoid(log(odds(y_w) / odds(y_l)))
+```math
+\begin{aligned}
+L_{\text{ORPO}} &= L_{\text{NLL}}(y_w) + \lambda L_{\text{OR}} \\
+L_{\text{OR}} &= -\log \sigma\!\left(\log \frac{\text{odds}(y_w)}{\text{odds}(y_l)}\right)
+\end{aligned}
 ```
 
 Aucune politique de référence  le terme SFT est le régulateur. entraînement en une seule étape du modèle de base au modèle aligné. Aucun point de contrôle SFT séparé.

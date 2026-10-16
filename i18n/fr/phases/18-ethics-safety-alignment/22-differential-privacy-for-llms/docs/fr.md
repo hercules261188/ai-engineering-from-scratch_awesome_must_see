@@ -22,8 +22,11 @@ Les LLM mémorisent. Carlini et coll. 2021 ont montré que les modèles de langa
 
 ### (ε, δ) - confidentialité différentielle
 
-Un algorithme randomisé M est (ε, δ) -DP si pour deux ensembles de données différents dans un exemple et un événement S:
-P(M(D) dans S) <= e^ε * P(M(D') dans S) + δ.
+Un algorithme aléatoire .$M$est $(\varepsilon, \delta)$-DP si pour deux ensembles de données différents dans un exemple et un événement $S$- Le numéro de la liste:
+
+```math
+P(M(D) \in S) \le e^{\varepsilon} \cdot P(M(D') \in S) + \delta.
+```
 
 Interprétation: la distribution de sortie est assez proche (paramétrisée par ε) pour que la contribution d'un seul individu ne puisse être déduite de manière fiable, sauf avec probabilité δ.
 
@@ -33,7 +36,7 @@ Abadi et coll. 2016. La recette standard:
 1. Prenez un mini lot.
 2. Compute les gradients par exemple.
 3. Cliquez chaque gradient par exemple à un seuil C.
-4. Sumer les gradients coupés et ajouter le bruit gaussien avec std σ * C.
+4. Sumer les gradients coupés et ajouter le bruit gaussien avec std $\sigma \cdot C$- Je suis désolé .
 5. Utilisez la somme bruyante pour mettre à jour les paramètres.
 
 Le coût de la protection de la vie privée est suivi par un comptable (comptable de Moments, comptable de Rényi DP). Les valeurs ε rapportées dans la littérature LLM varient considérablement selon le modèle de menace, la sensibilité des données et la cible d'utilité; il n'y a pas de défaut universellement "sécurisé" ε. Les exemples publiés couvrent environ ε ≈ 110 dans certains paramètres de formation LLM, mais ce sont des exemples illustratifs  non recommandés. Le bas ε nécessite généralement plus de bruit et peut augmenter la perte d'utilité.
@@ -84,9 +87,9 @@ Cette leçon produit `outputs/skill-dp-audit.md`. Compte tenu de la revendicatio
 
 ## Exercices
 
-1. On court .`code/main.py`.Soufler σ dans {0,5, 1.0, 2.0} et signaler le compromis de précision (ε, δ).
+1. On court .`code/main.py`- Le balayage .$\sigma \in \lbrace 0.5, 1.0, 2.0 \rbrace$Les données de l'entreprise doivent être fournies à l'aide de l'analyse de la valeur de l'entreprise et doivent être fournies à l'aide de l'analyse de la valeur de l'entreprise.
 
-2. Mettre en œuvre une insertion canarienne et un test de perte de journaux. Mesurer le taux de détection avant et après DP-SGD à σ = 1.0.
+2. Mettre en œuvre une insertion canarienne et un test de perte de journaux.$\sigma = 1.0$- Je suis désolé .
 
 3. Lisez Nasr et coll. 2025 sur l'extraction de données de formation. Pourquoi le succès de l'extraction ne s'effondre pas sous la moyenne ε?
 
