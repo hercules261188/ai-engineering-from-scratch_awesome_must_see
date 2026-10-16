@@ -41,21 +41,23 @@ graph LR
 
 ### Démission
 
-La technique de régulation la plus simple avec l'interprétation la plus élégante.
+La technique de régulation la plus simple avec l'interprétation la plus élégante.$p$- Je suis désolé .
 
+```math
+\text{output} = \text{activation}(z) \cdot \text{mask} \quad \text{where }\text{mask}[i] \sim \text{Bernoulli}(1 - p)
 ```
-output = activation(z) * mask    where mask[i] ~ Bernoulli(1 - p)
-```
 
-Avec p = 0,5, la moitié des neurones sont zéro à chaque passage vers l'avant. Le réseau doit apprendre des représentations redondantes parce qu'il ne peut pas prédire quels neurones seront disponibles. Cela empêche la co-adaptation - les neurones apprennent à compter sur d'autres neurones spécifiques étant présents.
+Avec $p = 0.5$Le réseau doit apprendre des représentations redondantes parce qu'il ne peut pas prédire quels neurones seront disponibles. Cela empêche la co-adaptation - les neurones apprennent à compter sur d'autres neurones spécifiques étant présents.
 
-L'interprétation de l'ensemble: un réseau avec N neurones et un dérapagement crée 2^N sous-réseaux possibles (chaque combinaison de neurones qui sont allumés ou désactivés). La formation avec abandon entraîne approximativement tous les sous-réseaux 2^N simultanément, chacun sur différents mini-parties. Au moment de l'essai, vous utilisez tous les neurones (sans déraillement) et étalonnez les résultats de (1 - p) pour correspondre à la valeur attendue pendant l'entraînement. Cela équivaut à la moyenne des prédictions de 2^N sous-réseaux -- un ensemble massif d'un seul modèle.
+L'interprétation de l'ensemble: un réseau avec $N$Les neurones et le décrochage créent$2^N$Les réseaux de formation sont des réseaux de formation de formation de formation.$2^N$Les sous-réseaux sont simultanément utilisés sur différents mini-parts.$(1 - p)$La moyenne des prévisions de formation est de$2^N$sous-réseaux -- un ensemble massif d'un seul modèle.
 
 En pratique, l'évolutivité est appliquée au cours de la formation au lieu des essais (dérapagement inversé):
 
-```
-During training:  output = activation(z) * mask / (1 - p)
-During testing:   output = activation(z)   (no change needed)
+```math
+\begin{aligned}
+\text{During training:} \quad & \text{output} = \text{activation}(z) \cdot \text{mask} / (1 - p) \\
+\text{During testing:} \quad & \text{output} = \text{activation}(z) \quad \text{(no change needed)}
+\end{aligned}
 ```
 
 C'est plus propre parce que le code de test n'a pas besoin de savoir du tout sur le décrochage.
@@ -66,15 +68,15 @@ Taux de défaillance: p = 0,1 pour les transformateurs, p = 0,5 pour les MLP, p 
 
 Ajoutez la magnitude carrée de tous les poids à la perte:
 
-```
-total_loss = task_loss + (lambda / 2) * sum(w_i^2)
+```math
+\text{total\_loss} = \text{task\_loss} + \frac{\lambda}{2} \sum_i w_i^2
 ```
 
-Le gradient du terme de régularisation est lambda * w. Cela signifie que à chaque étape, chaque poids est réduit vers zéro d'une fraction proportionnelle à sa taille.
+Le gradient du terme de régularisation est $\lambda w$Cela signifie que à chaque étape, chaque poids est réduit vers zéro par une fraction proportionnelle à son magnitude.
 
 Pourquoi cela aide à la généralisation: les modèles sur-adaptés ont tendance à avoir de grands poids qui amplifient le bruit dans les données de formation.
 
-L'hyperparamètre lambda contrôle la résistance.
+Le $\lambda$L'hyperparamètre contrôle la résistance.
 
 - 0,01 pour AdamW sur les transformateurs
 - 1e-4 pour SGD sur les chaînes de télévision
@@ -88,16 +90,18 @@ Normalizer la sortie de chaque couche sur le mini-batch avant de le passer à la
 
 Pour un mini-batch d'activations à une couche:
 
-```
-mu = (1/B) * sum(x_i)           (batch mean)
-sigma^2 = (1/B) * sum((x_i - mu)^2)   (batch variance)
-x_hat = (x_i - mu) / sqrt(sigma^2 + eps)   (normalize)
-y = gamma * x_hat + beta        (scale and shift)
+```math
+\begin{aligned}
+\mu &= \frac{1}{B} \sum_i x_i && \text{(batch mean)} \\
+\sigma^2 &= \frac{1}{B} \sum_i (x_i - \mu)^2 && \text{(batch variance)} \\
+\hat{x} &= \frac{x_i - \mu}{\sqrt{\sigma^2 + \epsilon}} && \text{(normalize)} \\
+y &= \gamma \hat{x} + \beta && \text{(scale and shift)}
+\end{aligned}
 ```
 
 Gamma et bêta sont des paramètres apprenables qui permettent au réseau de désamorcer la normalisation si c'est optimal. Sans eux, vous forceriez chaque couche de sortie à être une variante unitaire zéro moyenne, ce qui pourrait ne pas être ce que le réseau veut.
 
-**Training vs inference split:**Pendant l'entraînement, mu et sigma proviennent du mini-batch actuel. Pendant l'inférence, vous utilisez des moyennes de course accumulées pendant l'entraînement (média mobile exponentielle avec momentum = 0,1, ce qui signifie 90% ancien + 10% nouveau).
+**Training vs inference split:**Pendant la formation, $\mu$et $\sigma$Les résultats obtenus sont basés sur le mini-batch actuel.
 
 Pourquoi BatchNorm fonctionne est toujours débattu. Le document original prétendait qu'il réduisait le "changement de covariate interne" (la distribution des entrées de couches changeant à mesure que les couches antérieures se mettent à jour). Santurkar et al. (2018) a montré que cette explication est erronée. La raison réelle: BatchNorm rend le paysage des pertes plus lisse. Les gradients sont plus prédictifs, les constantes de Lipschitz sont plus petites, et l'optimisateur peut prendre de plus grands pas en toute sécurité. C'est pourquoi BatchNorm vous permet d'utiliser des taux d'apprentissage plus élevés et de converger plus rapidement.
 
@@ -107,14 +111,16 @@ BatchNorm a une limitation fondamentale: il dépend des statistiques de lot. Ave
 
 Normalement, les caractéristiques doivent être normalisées au lieu de toutes les caractéristiques du lot.
 
-```
-mu = (1/D) * sum(x_j)           (feature mean)
-sigma^2 = (1/D) * sum((x_j - mu)^2)   (feature variance)
-x_hat = (x_j - mu) / sqrt(sigma^2 + eps)
-y = gamma * x_hat + beta
+```math
+\begin{aligned}
+\mu &= \frac{1}{D} \sum_j x_j && \text{(feature mean)} \\
+\sigma^2 &= \frac{1}{D} \sum_j (x_j - \mu)^2 && \text{(feature variance)} \\
+\hat{x} &= \frac{x_j - \mu}{\sqrt{\sigma^2 + \epsilon}} \\
+y &= \gamma \hat{x} + \beta
+\end{aligned}
 ```
 
-D est la dimension de la fonction. Chaque échantillon est normalisé indépendamment - sans dépendance de la taille du lot. C'est pourquoi les transformateurs utilisent LayerNorm au lieu de BatchNorm. Les séquences ont des longueurs variables, les tailles de lot sont souvent petites (ou 1 pendant la génération), et le calcul est identique entre la formation et l'inférence.
+$D$Chaque échantillon est normalisé indépendamment - sans dépendance de la taille du lot. C'est pourquoi les transformateurs utilisent LayerNorm au lieu de BatchNorm. Les séquences ont des longueurs variables, les tailles de lot sont souvent petites (ou 1 pendant la génération), et le calcul est identique entre l'entraînement et l'inférence.
 
 LayerNorm dans les transformateurs est appliqué après chaque bloc d'auto-attention et chaque bloc de transfert (Post-LN) ou avant eux (Pre-LN, plus stable pour l'entraînement).
 
@@ -122,9 +128,11 @@ LayerNorm dans les transformateurs est appliqué après chaque bloc d'auto-atten
 
 LayerNorm sans soustraction moyenne. Proposée par Zhang & Sennrich (2019).
 
-```
-rms = sqrt((1/D) * sum(x_j^2))
-y = gamma * x / rms
+```math
+\begin{aligned}
+\text{rms} &= \sqrt{\frac{1}{D} \sum_j x_j^2} \\
+y &= \gamma \cdot \frac{x}{\text{rms}}
+\end{aligned}
 ```
 
 C'est tout. Pas de calcul moyen, pas de paramètre bêta. L'observation: le recentrage (soustraction moyenne) dans LayerNorm contribue très peu aux performances du modèle, mais coûte calcul.
@@ -515,8 +523,8 @@ Cette leçon donne:
 |------|----------------|----------------------|
 | Overfitting | "Model memorized the data" | When a model's training performance significantly exceeds its test performance, indicating it learned noise rather than signal |
 | Regularization | "Preventing overfitting" | Any technique that constrains model complexity to improve generalization: dropout, weight decay, normalization, augmentation |
-| Dropout | "Random neuron deletion" | Zeroing random neurons during training with probability p, forcing redundant representations; equivalent to training an ensemble |
-| Weight decay | "L2 penalty" | Shrinking all weights toward zero by subtracting lambda * w at each step; penalizes complexity through weight magnitude |
+| Dropout | "Random neuron deletion" | Zeroing random neurons during training with probability $p$, forcing redundant representations; equivalent to training an ensemble |
+| Weight decay | "L2 penalty" | Shrinking all weights toward zero by subtracting $\lambda w$ at each step; penalizes complexity through weight magnitude |
 | Batch normalization | "Normalize per batch" | Normalizing layer outputs across the batch dimension using batch statistics during training and running averages during inference |
 | Layer normalization | "Normalize per sample" | Normalizing across features within each sample; batch-independent, used in transformers where batch size varies |
 | RMSNorm | "LayerNorm without the mean" | Root mean square normalization; drops the mean subtraction from LayerNorm for 10% speedup with equal accuracy |

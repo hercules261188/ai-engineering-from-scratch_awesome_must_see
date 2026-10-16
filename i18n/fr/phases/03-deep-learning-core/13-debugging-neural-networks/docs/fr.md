@@ -90,14 +90,14 @@ Comparer vos gradients analytiques (de l'arrière-prop) aux gradients numérique
 
 Gradient numérique pour paramètre `w`- Le numéro de la liste:
 
-```
-grad_numerical = (loss(w + eps) - loss(w - eps)) / (2 * eps)
+```math
+\text{grad\_numerical} = \frac{\text{loss}(w + \text{eps}) - \text{loss}(w - \text{eps})}{2 \cdot \text{eps}}
 ```
 
 Métrique de l'accord (différence relative):
 
-```
-rel_diff = |grad_analytical - grad_numerical| / max(|grad_analytical|, |grad_numerical|, 1e-8)
+```math
+\text{rel\_diff} = \frac{\lvert \text{grad\_analytical} - \text{grad\_numerical} \rvert}{\max(\lvert \text{grad\_analytical} \rvert, \lvert \text{grad\_numerical} \rvert, 10^{-8})}
 ```
 
 Si vous`rel_diff < 1e-5`: correct. si`rel_diff > 1e-3`C'est presque certainement un insecte.

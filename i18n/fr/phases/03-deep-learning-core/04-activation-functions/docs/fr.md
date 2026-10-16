@@ -16,7 +16,7 @@
 
 ## Le problème
 
-L'étape de deux transformations linéaires: y = W2 ((W1x + b1) + b2. Élargir: y = W2W1x + W2b1 + b2. C'est juste y = Ax + c - une transformation linéaire unique. Peu importe le nombre de couches linéaires que vous empilerez, le résultat s'effondre à une matrice multipliée. Votre réseau de 100 couches a la même puissance de représentation qu'une seule couche.
+L' empilage de deux transformations linéaires: $y = W_2(W_1 x + b_1) + b_2$- Élargissez-le:$y = W_2 W_1 x + W_2 b_1 + b_2$- C'est juste que...$y = Ax + c$- une seule transformation linéaire. Peu importe combien de couches linéaires vous empiler, le résultat s'effondre à une matrice multipliée. Votre réseau de 100 couches a la même puissance de représentation qu'une seule couche.
 
 Ce n'est pas une curiosité théorique. Cela signifie qu'un réseau linéaire profond ne peut littéralement pas apprendre XOR, ne peut pas classer un ensemble de données spirale, ne peut pas reconnaître un visage. Sans fonctions d'activation, la profondeur est une illusion.
 
@@ -26,52 +26,58 @@ Les fonctions d'activation brisent la linéarité. Ils déforment la sortie de c
 
 ### Pourquoi la non-linéarité est nécessaire
 
-La multiplication de matrice est composable. Multiplier un vecteur par la matrice A puis la matrice B est identique à la multiplication par AB. Cela signifie que l'empilage de dix couches linéaires est mathématiquement équivalent à une couche linéaire avec une grande matrice. Tous ces paramètres, toute cette profondeur - gaspillé. Vous avez besoin de quelque chose pour briser la chaîne. C'est ce que font les fonctions d'activation.
+La multiplication de matrice est composable.$A$puis la matrice $B$est identique à la multiplication par $AB$Cela signifie que l'empilage de dix couches linéaires est mathématiquement équivalent à une couche linéaire avec une grande matrice. Tous ces paramètres, toute cette profondeur -- gaspillés. Vous avez besoin de quelque chose pour briser la chaîne. C'est ce que font les fonctions d'activation.
 
-Voici la preuve. Une couche linéaire compute f ((x) = Wx + b.
+Voici la preuve, une couche linéaire compute.$f(x) = Wx + b$- La deuxième pile:
 
-```
-Layer 1: h = W1 * x + b1
-Layer 2: y = W2 * h + b2
+```math
+\begin{aligned}
+\text{Layer 1:} \quad h &= W_1 x + b_1 \\
+\text{Layer 2:} \quad y &= W_2 h + b_2
+\end{aligned}
 ```
 
 Le substitut:
 
-```
-y = W2 * (W1 * x + b1) + b2
-y = (W2 * W1) * x + (W2 * b1 + b2)
-y = A * x + c
-```
-
-Une couche. Insérer une activation non linéaire g() entre les couches:
-
-```
-h = g(W1 * x + b1)
-y = W2 * h + b2
+```math
+\begin{aligned}
+y &= W_2 (W_1 x + b_1) + b_2 \\
+y &= (W_2 W_1) x + (W_2 b_1 + b_2) \\
+y &= A x + c
+\end{aligned}
 ```
 
-Le réseau peut représenter des fonctions non linéaires. Chaque couche supplémentaire avec une activation ajoute une capacité de représentation.
+Une couche. Insérez une activation non linéaire $g()$entre les couches:
+
+```math
+\begin{aligned}
+h &= g(W_1 x + b_1) \\
+y &= W_2 h + b_2
+\end{aligned}
+```
+
+Maintenant, la substitution est cassée.$W_2 g(W_1 x + b_1) + b_2$Le réseau peut représenter des fonctions non linéaires. chaque couche supplémentaire avec une activation ajoute une capacité de représentation.
 
 ### Sigmoïde
 
 La fonction d'activation originale pour les réseaux neuronaux.
 
-```
-sigmoid(x) = 1 / (1 + e^(-x))
+```math
+\text{sigmoid}(x) = \frac{1}{1 + e^{-x}}
 ```
 
 Range de sortie: (0, 1). Légide, différenciable, correspondant à un nombre réel à une valeur semblable à la probabilité.
 
 Le dérivé:
 
-```
-sigmoid'(x) = sigmoid(x) * (1 - sigmoid(x))
+```math
+\text{sigmoid}'(x) = \text{sigmoid}(x) \cdot (1 - \text{sigmoid}(x))
 ```
 
-La valeur maximale de cette dérivée est de 0,25, se produisant à x = 0. En rétroviseur, les gradients se multiplient à travers les couches.
+La valeur maximale de ce dérivé est de 0,25 et se produit à $x = 0$En reverse propagation, les gradients se multiplient à travers les couches.
 
-```
-0.25^10 = 0.000000953674
+```math
+0.25^{10} = 0.000000953674
 ```
 
 Moins d'un millionième du signal original. C'est le problème de la dégradation qui disparaît. Les gradients dans les premières couches deviennent si petits que les poids se mettent à peine à jour. Le réseau semble apprendre - la perte diminue dans les couches ultérieures - mais les premières couches sont gelées. Les réseaux sigmoïdes profonds ne s'entraînent tout simplement pas.
@@ -82,33 +88,32 @@ Problème supplémentaire: les sorties sigmoïdes sont toujours positives (0 à 
 
 La version centrée du sigmoïde.
 
-```
-tanh(x) = (e^x - e^(-x)) / (e^x + e^(-x))
+```math
+\tanh(x) = \frac{e^x - e^{-x}}{e^x + e^{-x}}
 ```
 
 Range de sortie: (-1, 1). Centré sur zéro, ce qui élimine le problème du zigzag.
 
 Le dérivé:
 
-```
-tanh'(x) = 1 - tanh(x)^2
+```math
+\tanh'(x) = 1 - \tanh(x)^2
 ```
 
-La dérivée maximale est de 1,0 à x = 0 - quatre fois mieux que le sigmoïde. Mais le problème du gradient de disparition existe toujours. Pour les grandes entrées positives ou négatives, la dérivée approche de zéro. Dix couches écrasent encore le gradient, seulement moins agressivement.
+La dérivé maximale est de 1,0 à $x = 0$Mais le problème du gradient disparaissant existe toujours. Pour les grandes entrées positives ou négatives, la dérivé approche de zéro.
 
 ### La révolution
 
 L'unité linéaire rectifiée. Popularisée pour l'apprentissage en profondeur par Nair et Hinton en 2010 (la fonction elle-même remonte à l'œuvre de Fukushima de 1969), elle a tout changé.
 
-```
-relu(x) = max(0, x)
+```math
+\text{relu}(x) = \max(0, x)
 ```
 
-La dérivée est trivialement simple:
+Range de sortie: $[0, \infty)$La dérivé est trivialement simple:
 
-```
-relu'(x) = 1  if x > 0
-            0  if x <= 0
+```math
+\text{relu}'(x) = \begin{cases} 1 & \text{if } x > 0 \\ 0 & \text{if } x \le 0 \end{cases}
 ```
 
 Aucun gradient de disparition pour les entrées positives. Le gradient est exactement 1, passé directement. C'est pourquoi les réseaux profonds sont devenus entraînables - ReLU préserve la magnitude du gradient à travers les couches.
@@ -119,25 +124,24 @@ Mais il y a un mode d'échec: le problème des neurones morts. Si l'entrée pond
 
 Le remède le plus simple pour les neurones morts.
 
-```
-leaky_relu(x) = x        if x > 0
-                alpha * x if x <= 0
+```math
+\text{leaky\_relu}(x) = \begin{cases} x & \text{if } x > 0 \\ \alpha x & \text{if } x \le 0 \end{cases}
 ```
 
-Là où l'alpha est une petite constante, généralement 0,01. Le côté négatif a une petite pente au lieu de zéro, de sorte que les neurones morts reçoivent toujours un signal de gradient et peuvent se remettre.
+Où ?$\alpha$Le côté négatif a une petite pente au lieu de zéro, donc les neurones morts reçoivent toujours un signal de gradient et peuvent se remettre.
 
 ### GELU: Le défaut moderne
 
 Unité linéaire d'erreur Gaussian. Introducé par Hendrycks et Gimpel en 2016.
 
-```
-gelu(x) = x * Phi(x)
+```math
+\text{gelu}(x) = x \cdot \Phi(x)
 ```
 
-où Phi ((x) est la fonction de distribution cumulée de la distribution normale standard.
+Où ?$\Phi(x)$est la fonction de distribution cumulée de la distribution normale standard.
 
-```
-gelu(x) ~= 0.5 * x * (1 + tanh(sqrt(2/pi) * (x + 0.044715 * x^3)))
+```math
+\text{gelu}(x) \approx 0.5 \cdot x \cdot \left(1 + \tanh\left(\sqrt{2/\pi} \cdot (x + 0.044715 \cdot x^3)\right)\right)
 ```
 
 GELU est lisse partout, permet de petites valeurs négatives (contrairement à ReLU qui clipe dur à zéro), et a une interprétation probabiliste: il pèse chaque entrée par la probabilité qu'elle soit positive sous une distribution gaussienne. Ce gateage lisse surpasse ReLU dans les architectures de transformateurs car il fournit un meilleur débit de gradient et évite le problème des neurones morts entièrement.
@@ -146,11 +150,11 @@ GELU est lisse partout, permet de petites valeurs négatives (contrairement à R
 
 L'activation auto-arrêtée découverte par Ramachandran et coll. en 2017 par la recherche automatisée.
 
-```
-swish(x) = x * sigmoid(x)
+```math
+\text{swish}(x) = x \cdot \text{sigmoid}(x)
 ```
 
-Swish est formellement x * sigmoid (x). Google l'a découvert par la recherche automatisée sur l'espace des fonctions d'activation -- un réseau neural qui conçoit des parties de réseaux neuraux.
+Swish est officiellement $x \cdot \text{sigmoid}(x)$Google l'a découvert par la recherche automatisée sur l'espace des fonctions d'activation -- un réseau neural qui conçoit des parties de réseaux neuraux.
 
 Comme GELU, il est lisse, non monotonique et permet de petites valeurs négatives. La différence est subtile: Swish utilise sigmoid pour le gateage tandis que GELU utilise le CDF gaussien.
 
@@ -158,8 +162,8 @@ Comme GELU, il est lisse, non monotonique et permet de petites valeurs négative
 
 Non utilisé dans les couches cachées. Softmax convertit un vecteur de scores bruts (logits) en une distribution de probabilité.
 
-```
-softmax(x_i) = e^(x_i) / sum(e^(x_j) for all j)
+```math
+\text{softmax}(x_i) = \frac{e^{x_i}}{\sum_j e^{x_j}}
 ```
 
 Chaque sortie est comprise entre 0 et 1. Toutes les sorties s'ajoutent à 1. Cela en fait l'activation finale standard pour la classification multi-classe. La logite la plus grande obtient la plus grande probabilité, mais contrairement à argmax, softmax est différenciable et préserve des informations sur la confiance relative.
@@ -500,11 +504,11 @@ Cette leçon donne:
 
 ## Exercices
 
-1. Implémenter le paramétrage paramétrique (PReLU) où la pente négative alpha est un paramètre apprenable.
+1. Implémenter la RELP paramétrique (RELP) lorsque la pente négative $\alpha$C'est un paramètre appréciable.
 
 2. Exécutez l'expérience de gradient de disparition avec 50 couches au lieu de 10. Tracer la magnitude à chaque couche pour sigmoïde, tanh, ReLU et GELU. À quelle couche le signal de chaque activation atteint effectivement zéro?
 
-3. Implémenter l'ELU (Unité linéaire exponentielle): elu(x) = x si x > 0, alpha * (e^x - 1) si x <= 0. Comparer son taux de neurones morts à ReLU sur le même réseau.
+3. Mettre en œuvre l' ELU (unité linéaire exponentielle): $\text{elu}(x) = x$si $x \gt 0$- Je suis là .$\alpha (e^x - 1)$si $x \le 0$Comparer son taux de neurones morts à ReLU sur le même réseau.
 
 4. Construisez un "moniteur de santé de gradient" qui fonctionne pendant l'entraînement: à chaque époque, calculez la magnitude moyenne du gradient de chaque couche.
 
@@ -518,12 +522,12 @@ Cette leçon donne:
 | Vanishing gradient | "Gradients disappear in deep networks" | Gradients shrink exponentially through layers when the activation's derivative is less than 1, making early layers untrainable |
 | Exploding gradient | "Gradients blow up" | Gradients grow exponentially through layers when the effective multiplier exceeds 1, causing unstable training |
 | Dead neuron | "A neuron that stopped learning" | A ReLU neuron whose input is permanently negative, producing zero output and zero gradient |
-| Sigmoid | "Squishes values to 0-1" | The logistic function 1/(1+e^-x), historically important but causes vanishing gradients in deep networks |
-| ReLU | "Clips negatives to zero" | max(0, x) -- the activation that made deep learning practical by preserving gradient magnitude |
+| Sigmoid | "Squishes values to 0-1" | The logistic function $1/(1+e^{-x})$, historically important but causes vanishing gradients in deep networks |
+| ReLU | "Clips negatives to zero" | $\max(0, x)$ -- the activation that made deep learning practical by preserving gradient magnitude |
 | GELU | "The transformer activation" | Gaussian Error Linear Unit, a smooth activation that weights inputs by their probability of being positive |
-| Swish/SiLU | "Self-gated ReLU" | x * sigmoid(x), discovered through automated search, used in EfficientNet |
+| Swish/SiLU | "Self-gated ReLU" | $x \cdot \text{sigmoid}(x)$, discovered through automated search, used in EfficientNet |
 | Softmax | "Turns scores into probabilities" | Normalizes a vector of logits into a probability distribution where all values are in (0,1) and sum to 1 |
-| Leaky ReLU | "ReLU that doesn't die" | max(alpha*x, x) where alpha is small (0.01), preventing dead neurons by allowing small negative gradients |
+| Leaky ReLU | "ReLU that doesn't die" | $\max(\alpha x, x)$ where $\alpha$ is small (0.01), preventing dead neurons by allowing small negative gradients |
 | Saturation | "The flat part of sigmoid" | Regions where an activation's derivative approaches zero, blocking gradient flow |
 | Logit | "The raw score before softmax" | The unnormalized output of the final layer before applying softmax or sigmoid |
 

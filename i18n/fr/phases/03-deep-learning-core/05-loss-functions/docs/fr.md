@@ -30,8 +30,8 @@ Cela devient pire. Dans l'apprentissage autosuffisant, vous n'avez même pas d'�
 
 Le paramètre de régression. Comptez la différence carrée entre la prédiction et la cible, moyenne sur tous les échantillons.
 
-```
-MSE = (1/n) * sum((y_pred - y_true)^2)
+```math
+\text{MSE} = \frac{1}{n} \sum (y_{\text{pred}} - y_{\text{true}})^2
 ```
 
 Pourquoi le quadratage est important: il pénalise les erreurs importantes quadratiquement. Une erreur de 2 coûte 4 fois plus qu'une erreur de 1. Une erreur de 10 coûte 100 fois. Cela rend MSE sensible aux valeurs anormales - une seule prédiction très erronée domine la perte.
@@ -40,8 +40,8 @@ Numéros réels: si votre modèle prédit les prix des logements et est déduit 
 
 Le gradient de l'ESM par rapport à une prédiction est le suivant:
 
-```
-dMSE/dy_pred = (2/n) * (y_pred - y_true)
+```math
+\frac{\partial \text{MSE}}{\partial y_{\text{pred}}} = \frac{2}{n} (y_{\text{pred}} - y_{\text{true}})
 ```
 
 L'erreur est linéaire. Les erreurs plus importantes ont des gradients plus grands. C'est une fonctionnalité de régression (les grandes erreurs nécessitent de grandes corrections) et un bug pour la classification (vous voulez pénaliser les réponses incorrectes en toute confiance de manière exponentielle, pas linéaire).
@@ -52,31 +52,31 @@ La fonction de perte pour la classification. Enracinée dans la théorie de l'in
 
 **Binary Cross-Entropy (BCE):**
 
-```
-BCE = -(y * log(p) + (1 - y) * log(1 - p))
+```math
+\text{BCE} = -\left(y \log(p) + (1 - y) \log(1 - p)\right)
 ```
 
-Là où y est l'étiquette vraie (0 ou 1) et p est la probabilité prévue.
+Où ?$y$est l'étiquette vraie (0 ou 1) et $p$est la probabilité prévue.
 
-Pourquoi -log(p) fonctionne: lorsque le vrai label est 1 et que vous prédisez p = 0,99, la perte est -log(0,99) = 0,01. Lorsque vous prédisez p = 0,01, la perte est -log(0,01) = 4,6. Cette différence de 460x est la raison pour laquelle l'entropie croisée fonctionne.
+Pourquoi ?$-\log(p)$fonctionne: lorsque l'étiquette vraie est 1 et que vous prédisez $p = 0.99$, la perte est $-\log(0.99) = 0.01$- Quand vous prédisez$p = 0.01$, la perte est $-\log(0.01) = 4.6$Cette différence de 460 fois est la raison pour laquelle l'entropie croisée fonctionne.
 
 Le gradient raconte la même histoire:
 
-```
-dBCE/dp = -(y/p) + (1-y)/(1-p)
+```math
+\frac{\partial \text{BCE}}{\partial p} = -\frac{y}{p} + \frac{1-y}{1-p}
 ```
 
-Lorsque y = 1 et p est proche de zéro, le gradient est -1/p qui approche l'infini négatif. Le modèle reçoit un signal énorme pour corriger son erreur.
+Quand ?$y = 1$et $p$est proche de zéro, le gradient est $-1/p$Le modèle reçoit un signal énorme pour corriger son erreur.$p$Le gradient est minuscule, il est déjà correct, rien à corriger.
 
 **Categorical Cross-Entropy:**
 
 Pour la classification multi-classe avec des cibles codées uniques.
 
-```
-CCE = -sum(y_i * log(p_i))
+```math
+\text{CCE} = -\sum_i y_i \log(p_i)
 ```
 
-Seule la classe vraie contribue à la perte (parce que toutes les autres y_i sont zéro). Si il y a 10 classes et que la classe correcte obtient la probabilité de 0,1 (d'une devinette aléatoire), la perte est -log(0.1) = 2.3.
+Seule la vraie classe contribue à la perte (car toutes les autres$y_i$Si il y a 10 classes et la bonne classe obtient la probabilité de 0.1 (guessing aléatoire), la perte est $-\log(0.1) = 2.3$Si la bonne classe obtient une probabilité de 0,9, la perte est $-\log(0.9) = 0.105$Le modèle apprend à concentrer la masse de probabilité sur la bonne réponse.
 
 ### Pourquoi l'ESM ne peut pas être classé
 
@@ -96,19 +96,19 @@ graph TD
     C3 -->|"CE gradient<br/>explodes near<br/>wrong answer"| Fast["Fast correction"]
 ```
 
-Les gradients de MSE s'appliquent lorsque les prédictions sont proches de 0 ou 1 (en raison de la saturation du sigmoïde).
+Les gradients de l'ESM s'appliquent lorsque les prédictions sont proches de 0 ou 1 (en raison de la saturation sigmoïde).$-\log$annule les régions plates du sigmoïde, donnant des gradients forts exactement là où ils sont le plus nécessaires.
 
 ### Légalisation des étiquettes
 
 Les étiquettes standard de l'étiquette "c'est 100% classe 3 et 0% tout le reste" sont très fortes.
 
-```
-smooth_label = (1 - alpha) * one_hot + alpha / num_classes
+```math
+\text{smooth\_label} = (1 - \alpha) \cdot \text{one\_hot} + \frac{\alpha}{\text{num\_classes}}
 ```
 
-Avec alpha = 0,1 et 10 classes: au lieu de [0, 0, 1, 0, ...], la cible devient [0, 01, 0, 01, 0, 91, 0, 01, ...].
+Avec $\alpha = 0.1$et 10 classes: au lieu de [0, 0, 1, 0, ...], la cible devient [0,01, 0,01, 0,91, 0,01, ...].
 
-Pourquoi cela fonctionne: un modèle qui tente de produire exactement 1,0 à travers un softmax doit pousser les logits à l'infini. Cela provoque une trop grande confiance, nuit à la généralisation et rend le modèle fragile pour le changement de distribution.
+Pourquoi cela fonctionne: un modèle qui tente de produire exactement 1,0 à travers un softmax doit pousser les logits à l'infini. Cela provoque une trop grande confiance, nuit à la généralisation et rend le modèle fragile pour le changement de distribution.$\alpha = 0.1$Les modèles GPT et la plupart des modèles modernes utilisent un lubrifiant d'étiquette ou son équivalent.
 
 ### Perte de contraste
 
@@ -118,20 +118,20 @@ Pas d'étiquettes, pas de classes, juste des paires d'entrées et la question: s
 
 Prenez une image. Créez deux vues augmentées de celle-ci (croûte, rotation, vibration de couleur). Ce sont les "pares positives" - elles devraient avoir des embrasements similaires. Chaque autre image du lot forme une "parée négative" - elles devraient avoir des embrasements différents.
 
-```
-L = -log(exp(sim(z_i, z_j) / tau) / sum(exp(sim(z_i, z_k) / tau)))
+```math
+L = -\log \frac{\exp(\text{sim}(z_i, z_j) / \tau)}{\sum_k \exp(\text{sim}(z_i, z_k) / \tau)}
 ```
 
-Là où sim() est la similitude cosine, z_i et z_j sont la paire positive, la somme est au-dessus de tous les négatifs, et tau (température) contrôle la façon dont la distribution est nette.
+Où ?$\text{sim}()$est la similitude cosine, $z_i$et $z_j$sont la paire positive, la somme est sur tous les négatifs, et $\tau$La température inférieure = négatif plus dur = séparation plus agressive.
 
-Les nombres réels: la taille du lot 256 signifie 255 négatifs par paire positive. La température tau = 0,07 (SimCLR par défaut). La perte ressemble à un softmax sur les similitudes - il veut que la similitude de la paire positive soit la plus élevée parmi toutes les 256 options.
+Numéros réels: taille de lot 256 signifie 255 négatifs par paire positive.$\tau = 0.07$(SimCLR par défaut). La perte ressemble à un softmax sur les similitudes - il veut que la similitude de la paire positive soit la plus élevée parmi les 256 options.
 
 **Triplet Loss:**
 
 Prend trois entrées: ancrage, positif (même classe), négatif (classe différente).
 
-```
-L = max(0, d(anchor, positive) - d(anchor, negative) + margin)
+```math
+L = \max\left(0, d(\text{anchor}, \text{positive}) - d(\text{anchor}, \text{negative}) + \text{margin}\right)
 ```
 
 La marge (typiquement 0,2-1.0) impose un écart minimum entre les distances positives et négatives. Si le négatif est déjà assez loin, la perte est nulle - pas de gradient, pas de mise à jour. Cela rend l'entraînement efficace mais nécessite une extraction minutieuse des triplets (choisir des négatifs durs qui sont proches de l'ancre).
@@ -140,14 +140,14 @@ La marge (typiquement 0,2-1.0) impose un écart minimum entre les distances posi
 
 Pour les ensembles de données déséquilibrés. L'entropie croisée standard traite tous les exemples correctement classés de manière égale.
 
-```
-FL = -alpha * (1 - p_t)^gamma * log(p_t)
+```math
+\text{FL} = -\alpha (1 - p_t)^\gamma \log(p_t)
 ```
 
-Lorsque p_t est la probabilité prédite de la classe vraie et que la gamma contrôle la mise au point. Avec gamma = 0, c'est une entropie croisée standard. Avec gamma = 2 (la valeur par défaut):
+Où ?$p_t$est la probabilité prédite de la classe vraie et $\gamma$Il contrôle la mise au point.$\gamma = 0$C'est une entropie croisée standard.$\gamma = 2$(le défaut):
 
-- Exemple simple (p_t = 0,9): poids = (0,1) ^2 = 0,01.
-- Exemple dur (p_t = 0,1): poids = (0,9) ^2 = 0,81.
+- Exemple simple ($p_t = 0.9$): poids $= (0.1)^2 = 0.01$- Il a été effectivement ignoré.
+- Exemple difficile ($p_t = 0.1$): poids $= (0.9)^2 = 0.81$- Le signal de dégradation.
 
 La perte de focale a été introduite par Lin et coll. pour la détection d'objets, où 99% des régions candidates sont de fond (négatifs faciles).
 
@@ -213,7 +213,7 @@ def mse_gradient(predictions, targets):
 
 ### Étape 2: Entropie croisée binaire
 
-Le problème log(0) est réel. Si le modèle prédit exactement 0 pour un exemple positif, log(0) = infini négatif.
+Le problème log ((0) est réel. Si le modèle prédit exactement 0 pour un exemple positif, $\log(0) = -\infty$- Le coup de coupe empêche ça.
 
 ```python
 import math
@@ -425,15 +425,15 @@ Cette leçon donne:
 
 ## Exercices
 
-1. Implémenter la perte de Huber (perte L1 lisse), qui est MSE pour les petites erreurs et MAE pour les grandes erreurs.
+1. Implémenter la perte Huber (perte L1 lisse), qui est MSE pour les petites erreurs et MAE pour les grandes erreurs.$y = \sin(x)$avec MSE vs Huber lorsque 5% des objectifs de formation ont ajouté du bruit aléatoire (outliers).
 
-2. Ajouter la perte de focus à la boucle d'entraînement de classification binaire. Créer un ensemble de données déséquilibré (90% classe 0, 10% classe 1). Comparer la perte de focus standard BCE vs. (gamma=2) sur le rappel de classe minoritaire après 200 époques.
+2. Ajouter la perte de focus à la boucle d'entraînement de classification binaire.$\gamma = 2$Il est important de noter que les pays de l'Union européenne ont déjà adopté des mesures de réintégration des classes minoritaires après 200 époques.
 
 3. Implémenter la perte de triplets avec l'exploitation négative semi-dure. Générer des données d'intégration 2D pour 5 classes. Pour chaque ancrage, trouver le négatif le plus dur qui est encore plus loin que le positif (semi-dure). Comparer la convergence à la sélection aléatoire de triplets.
 
 4. Exécutez la comparaison MSE vs entropie croisée, mais suivez les magnitudes de gradient à chaque couche pendant l'entraînement.
 
-5. Mettre en œuvre la perte de divergence KL et vérifier que la réduction de la KL ((true des choses prédites) donne les mêmes gradients que l'entropie croisée lorsque la réelle distribution est un-chaud.
+5. Mettre en œuvre la perte de divergence KL et vérifier que la réduction est minimale $\mathrm{KL}(\text{true} \Vert \text{predicted})$Il donne les mêmes gradients que l'entropie croisée lorsque la vraie distribution est un-chaud.
 
 ## Les termes clés
 
@@ -441,12 +441,12 @@ Cette leçon donne:
 |------|----------------|----------------------|
 | Loss function | "How wrong the model is" | A differentiable function mapping predictions and targets to a scalar that the optimizer minimizes |
 | MSE | "Average squared error" | Mean of squared differences between predictions and targets; penalizes large errors quadratically |
-| Cross-entropy | "The classification loss" | Measures divergence between predicted probability distribution and true distribution using -log(p) |
-| Binary cross-entropy | "BCE" | Cross-entropy for two classes: -(y*log(p) + (1-y)*log(1-p)) |
+| Cross-entropy | "The classification loss" | Measures divergence between predicted probability distribution and true distribution using $-\log(p)$ |
+| Binary cross-entropy | "BCE" | Cross-entropy for two classes: $-(y \log(p) + (1-y) \log(1-p))$ |
 | Label smoothing | "Softening the targets" | Replacing hard 0/1 targets with soft values (e.g., 0.1/0.9) to prevent overconfidence and improve generalization |
 | Contrastive loss | "Pull together, push apart" | A loss that learns representations by making similar pairs close and dissimilar pairs far in embedding space |
 | InfoNCE | "The CLIP/SimCLR loss" | Normalized temperature-scaled cross-entropy over similarity scores; treats contrastive learning as classification |
-| Focal loss | "The imbalanced data fix" | Cross-entropy weighted by (1-p_t)^gamma to down-weight easy examples and focus on hard ones |
+| Focal loss | "The imbalanced data fix" | Cross-entropy weighted by $(1-p_t)^\gamma$ to down-weight easy examples and focus on hard ones |
 | Triplet loss | "Anchor-positive-negative" | Pushes anchor closer to positive than negative by at least a margin in embedding space |
 | Temperature | "Sharpness knob" | A scalar divisor on logits/similarities that controls how peaked the resulting distribution is; lower = sharper |
 

@@ -38,40 +38,40 @@ Mais le "champ" n'est pas suffisant. L'échelle de la chance détermine si le r�
 
 Considérez une seule couche avec des entrées fan_in:
 
-```
-z = w1*x1 + w2*x2 + ... + w_n*x_n
-```
-
-Si chaque poids wi est tiré d'une distribution avec variance Var(w) et chaque entrée xi a variance Var(x), la variance de sortie est:
-
-```
-Var(z) = fan_in * Var(w) * Var(x)
+```math
+z = w_1 x_1 + w_2 x_2 + \cdots + w_n x_n
 ```
 
-Si Var(w) = 1 et fan_in = 512, la variance de sortie est 512x la variance d'entrée. Après 10 couches: 512 ^ 10 = 1,2e27. Votre signal a explosé.
+Si chaque poids $w_i$est tiré d'une distribution avec variance $\mathrm{Var}(w)$et chaque entrée $x_i$a une variance $\mathrm{Var}(x)$, la variance de sortie est:
 
-Si Var ((w) = 0,001, la variance de sortie se réduit de 0,001 * 512 = 0,512 par couche. Après 10 couches: 0,512^10 = 0,00013. Votre signal a disparu.
+```math
+\mathrm{Var}(z) = \text{fan}_{\text{in}} \cdot \mathrm{Var}(w) \cdot \mathrm{Var}(x)
+```
 
-L'objectif: choisir Var(w) afin que Var(z) = Var(x). La magnitude du signal reste constante à travers les couches.
+Si vous$\mathrm{Var}(w) = 1$et $\text{fan}_{\text{in}} = 512$, la variance de sortie est 512x la variance d'entrée.$512^{10} = 1.2 \times 10^{27}$Votre signal a explosé.
+
+Si vous$\mathrm{Var}(w) = 0.001$, la variance de sortie se réduit de $0.001 \cdot 512 = 0.512$par couche. Après 10 couches: $0.512^{10} = 0.00013$Votre signal a disparu.
+
+L' objectif: choisir $\mathrm{Var}(w)$Alors ...$\mathrm{Var}(z) = \mathrm{Var}(x)$La magnitude du signal reste constante à travers les couches.
 
 ### L'initialisation Xavier/Glorot
 
 Glorot et Bengio (2010) ont dérivé la solution pour les activations sigmoïdes et tanh.
 
-```
-Var(w) = 2 / (fan_in + fan_out)
+```math
+\mathrm{Var}(w) = \frac{2}{\text{fan}_{\text{in}} + \text{fan}_{\text{out}}}
 ```
 
 Dans la pratique, les poids sont tirés de:
 
-```
-w ~ Uniform(-limit, limit)  where limit = sqrt(6 / (fan_in + fan_out))
+```math
+w \sim \text{Uniform}(-\text{limit}, \text{limit}) \quad \text{where } \text{limit} = \sqrt{\frac{6}{\text{fan}_{\text{in}} + \text{fan}_{\text{out}}}}
 ```
 
 ou
 
-```
-w ~ Normal(0, sqrt(2 / (fan_in + fan_out)))
+```math
+w \sim \text{Normal}\left(0, \sqrt{\frac{2}{\text{fan}_{\text{in}} + \text{fan}_{\text{out}}}}\right)
 ```
 
 Cela fonctionne parce que le sigmoïde et le tanh sont à peu près linéaires près de zéro, où vivent des activations correctement initiales.
@@ -82,27 +82,27 @@ La réLU tue la moitié des sorties (tout ce qui est négatif devient zéro). Le
 
 He et al. (2015) ont ajusté la formule:
 
-```
-Var(w) = 2 / fan_in
+```math
+\mathrm{Var}(w) = \frac{2}{\text{fan}_{\text{in}}}
 ```
 
 Les poids sont tirés de:
 
-```
-w ~ Normal(0, sqrt(2 / fan_in))
+```math
+w \sim \text{Normal}\left(0, \sqrt{\frac{2}{\text{fan}_{\text{in}}}}\right)
 ```
 
-Le facteur 2 compense le fait que ReLU réduise à zéro la moitié des activations. Sans lui, le signal se réduit de ~ 0,5 fois par couche. Avec 50 couches: 0,5^50 = 8,8e-16.
+Le facteur 2 compense le fait que ReLU réduise à zéro la moitié des activations. Sans lui, le signal se rétrécit de ~ 0,5 fois par couche.$0.5^{50} = 8.8 \times 10^{-16}$Kaiming init empêche cela.
 
 ### Initialisation du transformateur
 
 GPT-2 introduit un modèle différent. Les connexions résiduelles ajoutent la sortie de chaque sous-couche à son entrée:
 
-```
-x = x + sublayer(x)
+```math
+x = x + \text{sublayer}(x)
 ```
 
-Chaque addition augmente la variance. Avec N couches résiduelles, la variance augmente proportionnellement à N. GPT-2 élève le poids des couches résiduelles par 1/sqrt(2N), où N est le nombre de couches. Cela maintient la magnitude du signal accumulé stable.
+Chaque addition augmente la variance.$N$Les couches résiduelles, la variance augmente proportionnellement à $N$. Le GPT-2 évalue les poids des couches résiduelles en $1/\sqrt{2N}$Où ?$N$Le nombre de couches qui maintient la magnitude du signal accumulé stable.
 
 Llama 3 (405B paramètres, 126 couches) utilise un schéma similaire. Sans cette mise à l'échelle, le flux résiduel augmenterait sans limites à travers 126 couches d'attention et de blocs de flux.
 
@@ -341,7 +341,7 @@ nn.init.zeros_(layer.bias)
 
 Quand vous appelez`nn.Linear(512, 256)`C'est pourquoi la plupart des réseaux simples " fonctionnent " - PyTorch a déjà fait le bon choix. Mais quand vous construisez des architectures personnalisées ou allez plus profondément que 20 couches, vous devez comprendre ce qui se passe et potentiellement annuler la défaillance.
 
-Pour les transformateurs, les modèles HuggingFace gèrent généralement l'initialisation dans leur`_init_weights`La mise en œuvre de GPT-2 étalonne les projections résiduelles par 1/sqrt ((N). Si vous construisez un transformateur à partir de zéro, vous devez ajouter cela vous-même.
+Pour les transformateurs, les modèles HuggingFace gèrent généralement l'initialisation dans leur`_init_weights`La mise en œuvre du GPT-2 étalonne les projections résiduelles en $1/\sqrt{N}$Si vous construisez un transformateur à partir de zéro, vous devez ajouter cela vous-même.
 
 ## La faire partir
 
@@ -350,13 +350,13 @@ Cette leçon donne:
 
 ## Exercices
 
-1. Ajouter l'initialisation LeCun (Var = 1/fan_in, conçu pour l'activation SELU). Exécuter l'expérience de 50 couches avec LeCun init + tanh et comparer à Xavier + tanh.
+1. Ajouter l' initialization LeCun ($\mathrm{Var} = 1/\text{fan}_{\text{in}}$Exécutez l'expérience de 50 couches avec LeCun init + tanh et comparez à Xavier + tanh.
 
-2. Mettre en œuvre l'échelle résiduelle GPT-2: multipliez la sortie de chaque couche par 1/sqrt ((2*N) avant d'ajouter au flux résiduel.
+2. Mettre en œuvre l' écaillage résiduel GPT-2: multiplier la production de chaque couche par $1/\sqrt{2N}$Avant d'ajouter au flux résiduel, utilisez 50 couches avec ou sans mise à l'échelle, mesurez la vitesse de croissance de la magnitude résiduelle.
 
 3. Créer une fonction "initial health check" qui prend les dimensions de couche d'un réseau et le type d'activation, puis recommande la bonne initialisation et met en garde si l'initial actuel va causer des problèmes.
 
-4. Exécutez l'expérience avec fan_in = 16 vs fan_in = 1024. Xavier et Kaiming s'adaptent à fan_in, mais l'initial aléatoire ne le fait pas. Montrez comment l'écart entre "fonctionne" et "sort" s'élargit avec les couches plus grandes.
+4. Exécutez l' expérience avec $\text{fan} _{\text{in}} = 16$contre$\text{fan} _{\text{in}} = 1024$Xavier et Kaiming s'adaptent au fan_in, mais l'initial aléatoire ne le fait pas. Montrez comment l'écart entre "fonctionne" et "sort" s'élargit avec les couches plus grandes.
 
 5. Implémenter une initialisation orthogonale (générer une matrice aléatoire, calculer son SVD, utiliser la matrice orthogonale U).
 
@@ -368,10 +368,10 @@ Cette leçon donne:
 | Symmetry breaking | "Make neurons different" | Using random initialization to ensure neurons learn distinct features instead of computing identical functions |
 | Fan-in | "Number of inputs to a neuron" | The number of incoming connections, which determines how input variance accumulates in the weighted sum |
 | Fan-out | "Number of outputs from a neuron" | The number of outgoing connections, relevant for maintaining gradient variance during backpropagation |
-| Xavier/Glorot init | "The sigmoid initialization" | Var(w) = 2/(fan_in + fan_out), designed to preserve variance through sigmoid and tanh activations |
-| Kaiming/He init | "The ReLU initialization" | Var(w) = 2/fan_in, accounts for ReLU zeroing half the activations |
+| Xavier/Glorot init | "The sigmoid initialization" | $\mathrm{Var}(w) = 2/(\text{fan} _{\text{in}} + \text{fan} _{\text{out}})$, designed to preserve variance through sigmoid and tanh activations |
+| Kaiming/He init | "The ReLU initialization" | $\mathrm{Var}(w) = 2/\text{fan}_{\text{in}}$, accounts for ReLU zeroing half the activations |
 | Variance propagation | "How signals grow or shrink through layers" | The mathematical analysis of how activation variance changes layer by layer based on weight scale |
-| Residual scaling | "GPT-2's init trick" | Scaling residual connection weights by 1/sqrt(2N) to prevent variance growth through N transformer layers |
+| Residual scaling | "GPT-2's init trick" | Scaling residual connection weights by $1/\sqrt{2N}$ to prevent variance growth through $N$ transformer layers |
 | Dead network | "Nothing trains" | A network where poor initialization causes all gradients to be zero or all activations to saturate |
 | Exploding activations | "Values go to infinity" | When weight variance is too high, causing activation magnitudes to grow exponentially through layers |
 

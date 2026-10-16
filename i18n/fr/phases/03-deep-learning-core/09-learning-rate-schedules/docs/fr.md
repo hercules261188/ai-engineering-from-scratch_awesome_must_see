@@ -30,8 +30,8 @@ Vous devez comprendre les horaires car les paramètres par défaut ne fonctionne
 
 Le plus simple, choisissez un numéro, utilisez-le pour chaque étape.
 
-```
-lr(t) = lr_0
+```math
+\text{lr}(t) = \text{lr}_0
 ```
 
 Il est très peu optimal. Il est soit trop élevé pour la fin de l'entraînement (oscillation autour du minimum) ou trop bas pour le début (computation gaspillée sur de minuscules pas). Fonctionne bien pour les petits modèles et le débogage. Un choix terrible pour tout ce qui entraîne plus d'une heure.
@@ -40,11 +40,11 @@ Il est très peu optimal. Il est soit trop élevé pour la fin de l'entraînemen
 
 L'approche de la vieille école de l'ère ResNet: réduire le taux d'apprentissage d'un facteur (généralement 10 fois) à des époques fixes.
 
-```
-lr(t) = lr_0 * gamma^(floor(epoch / step_size))
+```math
+\text{lr}(t) = \text{lr}_0 \cdot \gamma^{\lfloor \text{epoch} / \text{step\_size} \rfloor}
 ```
 
-Là où gamma = 0,1 et step_size = 30, lr diminue de 10 fois toutes les 30 époques. ResNet-50 a utilisé ceci -- lr = 0,1, diminue de 10 fois aux époques 30, 60 et 90.
+Où ?$\gamma = 0.1$et step_size = 30 signifie: lr diminue de 10 fois toutes les 30 époques. ResNet-50 a utilisé ceci -- lr = 0,1, diminue de 10 fois aux époques 30, 60 et 90.
 
 Le problème: les points de déclin optimaux dépendent de l'ensemble de données et de l'architecture. Passez à un autre problème et vous devez réajuster le moment de la chute. Les transitions sont brusques - la perte peut augmenter lorsque le taux change soudainement.
 
@@ -52,24 +52,24 @@ Le problème: les points de déclin optimaux dépendent de l'ensemble de donnée
 
 Décomposition douce du taux d'apprentissage maximum au minimum, suivant une courbe cosine:
 
+```math
+\text{lr}(t) = \text{lr}_{\min} + 0.5 \cdot (\text{lr}_{\max} - \text{lr}_{\min}) \cdot \left(1 + \cos\left(\frac{\pi t}{T}\right)\right)
 ```
-lr(t) = lr_min + 0.5 * (lr_max - lr_min) * (1 + cos(pi * t / T))
-```
 
-Où t est l'étape actuelle et T est le nombre total d'étapes.
+Où ?$t$est l'étape actuelle et $T$est le nombre total d'étapes.
 
-À t=0, le terme cossin est 1, donc lr = lr_max. À t=T, le terme cossin est -1, donc lr = lr_min. La décomposition est douce au début, s'accélère au milieu, et devient douce à nouveau près de la fin.
+À $t=0$, le terme cosine est 1, donc $\text{lr} = \text{lr} _{\max}$À la .$t=T$, le terme cosine est -1, donc $\text{lr} = \text{lr} _{\min}$La décomposition est douce au début, accélère au milieu, et devient douce à nouveau vers la fin.
 
-C'est la norme par défaut pour la plupart des séances d'entraînement modernes. Aucun hyperparamètre à régler au-delà de lr_max et lr_min. La forme cosine correspond à l'observation empirique que la plupart de l'apprentissage se produit au milieu de l'entraînement - vous voulez des tailles raisonnables de pas pendant cette période critique.
+C'est le paramètre par défaut pour la plupart des séances d'entraînement modernes.$\text{lr} _{\max}$et $\text{lr} _{\min}$La forme cosine correspond à l'observation empirique que la plupart de l'apprentissage se produit au milieu de l'entraînement -- vous voulez des dimensions raisonnables de pas pendant cette période critique.
 
 ### Pourquoi commencer petit
 
 Adam et d'autres optimisateurs adaptatifs maintiennent des estimations en cours de moyenne de gradient et de variance. À l'étape 0, ces estimations sont initiales à zéro. Les premières mises à jour de gradient sont basées sur des statistiques de déchets. Si votre taux d'apprentissage est élevé pendant cette période, le modèle prend des mesures énormes et mal dirigées.
 
-Warmup corrige cela. Commencez par un petit taux d'apprentissage (souvent lr_max / warmup_steps ou même zéro) et rampez linéairement à lr_max au cours des premières étapes N. Au moment où vous atteignez le taux d'apprentissage complet, les statistiques d'Adam se sont stabilisées.
+Warmup corrige cela. Commencez par un petit taux d'apprentissage (souvent lr_max / warmup_steps ou même zéro) et rampez linéairement jusqu'à $\text{lr}_{\max}$sur la première $N$Quand vous atteignez le taux d'apprentissage complet, les statistiques d'Adam se sont stabilisées.
 
-```
-lr(t) = lr_max * (t / warmup_steps)     for t < warmup_steps
+```math
+\text{lr}(t) = \text{lr}_{\max} \cdot \frac{t}{\text{warmup\_steps}} \quad \text{for } t < \text{warmup\_steps}
 ```
 
 Le réchauffement typique: 1 à 5% des étapes d'entraînement totales. Llama 3 entraîné pour environ 1,8 billions de jetons et réchauffé pour 2000 étapes. GPT-3 réchauffé plus de 375 millions de jetons.
@@ -398,13 +398,13 @@ Cette leçon donne:
 
 ## Exercices
 
-1. Implémentation de décomposition exponentielle: lr(t) = lr_0 * gamma^t où gamma = 0,999.
+1. Implémenter une décomposition exponentielle: $\text{lr}(t) = \text{lr}_0 \cdot \gamma^t$où $\gamma = 0.999$Comparer avec l'anneillage cosine sur le jeu de données de cercle.
 
 2. Mettre en œuvre le test de la plage de fréquence d'apprentissage (Leslie Smith): entraîner pour quelques centaines de pas tout en augmentant exponentiellement la LR de 1e-7 à 1.
 
 3. Travailler avec chauffage + cosine mais varier la durée de chauffage: 0%, 1%, 5%, 10%, 20% des étapes totales.
 
-4. Appliquer l'anneillage cosine avec redémarrage chaud (RGCS): réinitialiser le taux d'apprentissage à lr_max à chaque étape T et recommencer à se décomposer.
+4. Implémentation de l' anneillage cosine avec redémarrage chaud (RGDS): réinitialiser le taux d' apprentissage à $\text{lr}_{\max}$chaque fois$T$Comparer avec le cosine standard sur une longue course d'entraînement.
 
 5. Construire un "chirurgien de calendrier" qui surveille la perte d'entraînement et passe automatiquement de la réchauffement au cosine lorsque la perte se stabilise, et réduit l'irr si la perte se développe trop longtemps.
 
@@ -414,12 +414,12 @@ Cette leçon donne:
 |------|----------------|----------------------|
 | Learning rate | "How fast the model learns" | The scalar that multiplies the gradient to determine the parameter update size |
 | Schedule | "Change the LR over time" | A function that maps training step to learning rate, designed to optimize convergence |
-| Warmup | "Start with a small LR" | Linearly ramping the LR from near-zero to the target value over the first N steps to stabilize optimizer statistics |
-| Cosine annealing | "Smooth LR decay" | Decreasing the LR following a cosine curve from lr_max to lr_min over training |
+| Warmup | "Start with a small LR" | Linearly ramping the LR from near-zero to the target value over the first $N$ steps to stabilize optimizer statistics |
+| Cosine annealing | "Smooth LR decay" | Decreasing the LR following a cosine curve from $\text{lr} _{\max}$ to $\text{lr} _{\min}$ over training |
 | Step decay | "Drop LR at milestones" | Multiplying the LR by a factor (usually 0.1) at fixed epoch intervals |
 | 1cycle policy | "Up then down" | Leslie Smith's method of ramping LR up then down in a single cycle for faster convergence |
 | LR range test | "Find the best learning rate" | Training briefly while increasing LR to find the value where loss starts diverging |
-| Cosine with warm restarts | "Reset and repeat" | Periodically resetting the LR to lr_max and decaying again (SGDR) |
+| Cosine with warm restarts | "Reset and repeat" | Periodically resetting the LR to $\text{lr} _{\max}$ and decaying again (SGDR) |
 | Eta min | "The floor for the LR" | The minimum learning rate that the schedule decays to |
 | Peak learning rate | "The maximum LR" | The highest LR reached during training, typically after warmup |
 

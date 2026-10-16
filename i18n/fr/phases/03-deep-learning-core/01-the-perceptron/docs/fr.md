@@ -26,7 +26,7 @@ Comprendre le perceptron signifie comprendre ce que signifie réellement "appren
 
 ### Un neurone, une décision
 
-Un perceptron prend n entrées, multiplie chacune par un poids, les résume, ajoute un biais et transmet le résultat à travers une fonction d'activation.
+Un perceptron prend .$n$les entrées, multiplie chacune par un poids, les résume, ajoute un biais, et passe le résultat à travers une fonction d'activation.
 
 ```mermaid
 graph LR
@@ -38,11 +38,10 @@ graph LR
     step --> out["output (0 or 1)"]
 ```
 
-La fonction étape est brutale: si la somme pondérée plus le biais est >= 0, sortie 1.
+La fonction étape est brutale: si la somme pondérée plus le biais est $\ge 0$, sortie 1. Sinon, sortie 0.
 
-```
-step(z) = 1  if z >= 0
-           0  if z < 0
+```math
+\text{step}(z) = \begin{cases} 1 & \text{if } z \ge 0 \\ 0 & \text{if } z < 0 \end{cases}
 ```
 
 Il s'agit d'un classifiant linéaire. Les poids et les biais définissent une ligne (ou un hyperplane dans des dimensions plus élevées) qui divise l'espace d'entrée en deux régions.
@@ -80,7 +79,7 @@ For each training example (x, y_true):
     bias = bias + learning_rate * error
 ```
 
-Si la prédiction est correcte, l'erreur = 0, rien ne change. Si elle prévoit 0 mais devrait être 1, les poids augmentent. Si elle prévoit 1 mais devrait être 0, les poids diminuent. Le taux d'apprentissage contrôle la taille de chaque ajustement.
+Si la prédiction est correcte,$\text{error} = 0$Si elle prévoit 0 mais devrait être 1, les poids augmentent. si elle prévoit 1 mais devrait être 0, les poids diminuent. Le taux d'apprentissage contrôle la taille de chaque ajustement.
 
 ### Le problème de la XOR
 
@@ -213,7 +212,7 @@ C'est la preuve qu'un seul perceptron ne peut pas apprendre XOR.
 
 ### Étape 4: Résoudre XOR avec deux couches
 
-Le truc: XOR = (x1 ou x2) ET NON (x1 ET x2). Combinez trois percepteurs:
+Le truc:$\text{XOR} = (x_1 \text{ OR } x_2) \text{ AND NOT } (x_1 \text{ AND } x_2)$Combinez trois percepteurs:
 
 ```mermaid
 graph LR
@@ -359,7 +358,7 @@ Cette leçon donne:
 ## Exercices
 
 1. Exercer un perceptron sur une passerelle NAND (la passerelle universelle - tout circuit logique peut être construit à partir de NAND).
-2. Modifiez la classe Perceptron pour suivre la limite de décision (w1*x1 + w2*x2 + b = 0) à chaque époque.
+2. Modifier la classe Perceptron pour suivre la limite de décision ($w_1 x_1 + w_2 x_2 + b = 0$En plus de la formation, les élèves doivent être informés de la façon dont la ligne se déplace pendant l'entraînement.
 3. Construire un perceptron à 3 entrées qui ne sort 1 que lorsque au moins 2 des 3 entrées sont 1 (une fonction de vote majoritaire).
 
 ## Les termes clés
@@ -372,7 +371,7 @@ Cette leçon donne:
 | Activation function | "The thing that squishes values" | A function applied after the weighted sum - step function for perceptrons, sigmoid/ReLU for modern networks |
 | Linearly separable | "You can draw a line between them" | A dataset where a single hyperplane can perfectly separate the classes |
 | XOR problem | "The thing perceptrons can't do" | Proof that single-layer networks cannot learn non-linearly-separable functions |
-| Decision boundary | "Where the classifier switches" | The hyperplane w*x + b = 0 that divides input space into two classes |
+| Decision boundary | "Where the classifier switches" | The hyperplane $w \cdot x + b = 0$ that divides input space into two classes |
 | Multi-layer perceptron | "A real neural network" | Perceptrons stacked in layers, where each layer's output feeds the next layer's input |
 
 ## Pour en savoir plus

@@ -26,7 +26,7 @@ La propagation en arrière résout ceci. Un passage vers l'avant, un passage ver
 
 ### La règle de la chaîne, appliquée aux réseaux
 
-Vous avez vu la règle de la chaîne dans la phase 01, leçon 05. Rapide résumé: si y = f(g(x)), alors dy/dx = f'(g(x)) * g'(x. Vous multipliez les dérivés le long de la chaîne.
+Vous avez vu la règle de la chaîne dans la phase 01, leçon 05.$y = f(g(x))$Alors ...$\frac{dy}{dx} = f'(g(x)) \cdot g'(x)$Vous multipliez les dérivés le long de la chaîne.
 
 Dans un réseau neuronal, la "chaîne" est la séquence d'opérations de l'entrée à la perte. Chaque couche applique des poids, ajoute des biais, passe par une activation. La fonction de perte compare la sortie finale à la cible. La répartition arrière suit cette chaîne vers l'arrière, calculant comment chaque opération a contribué à l'erreur.
 
@@ -45,9 +45,9 @@ graph LR
     y["target"] --> loss
 ```
 
-Passage vers l'avant: les valeurs circulent de gauche à droite. x et w produisent z1 = w*x. Ajoutez b pour obtenir z2. Sigmoid donne l'activation a. Comparer a à cible y en utilisant la fonction de perte.
+Passage vers l'avant: les valeurs circulent de gauche à droite. $x$et $w$produits $z_1 = w x$- Ajouter$b$Pour obtenir$z_2$Sigmoid donne une activation .$a$- Comparer$a$à cibler $y$en utilisant la fonction de perte.
 
-Passage à l'envers: les gradients circulent de droite à gauche. Commencez par dL/da (comme la perte change avec l'activation). Multipliez par da/dz2 (dérivé sigmoïde). Cela donne dL/dz2. Divisez en dL/db (qui est égal à dL/dz2, puisque z2 = z1 + b) et dL/dz1.
+Passage en arrière: les gradients coulent de droite à gauche.$\partial L/\partial a$(comment les pertes changent avec l' activation).$\partial a/\partial z_2$(Dérivé sigmoïde).$\partial L/\partial z_2$- Ils se sont divisés .$\partial L/\partial b$(qui équivaut à $\partial L/\partial z_2$, depuis $z_2 = z_1 + b$) et $\partial L/\partial z_1$- Alors ...$\partial L/\partial w = \partial L/\partial z_1 \cdot x$et $\partial L/\partial x = \partial L/\partial z_1 \cdot w$- Je suis désolé .
 
 Chaque nœud du graphique a une tâche pendant le passage en arrière: prendre le gradient venant d'en haut, multiplier par sa dérivée locale, et le transmettre vers le bas.
 
@@ -84,7 +84,7 @@ graph RL
     L1 -- "dL/dz1 = dL/da1 * sigmoid'(z1)" --> I["Input"]
 ```
 
-À chaque couche, le gradient est multiplié par le dérivé sigmoïde. Le dérivé sigmoïde est un * (1 - a), qui se dégage à 0,25 (lorsque a = 0,5).
+À chaque couche, le gradient est multiplié par la dérivée sigmoïde.$a(1 - a)$, qui est maximale à 0,25 (lorsque $a = 0.5$La profondeur de la gradiente est de trois couches, le gradient est multiplié par au plus.$0.25^3 = 0.0156$Dix couches de profondeur:$0.25^{10} = 0.000001$- Je suis désolé .
 
 ### Des gradients qui disparaissent
 
@@ -102,32 +102,35 @@ C'est pourquoi les réseaux sigmoïdes profonds sont presque impossibles à entr
 
 ### Dériver les gradients pour un réseau à deux couches
 
-Mathématiques concrètes pour un réseau avec une entrée x, une couche cachée avec un sigmoïde, une couche de sortie avec un sigmoïde et une perte MSE.
+Mathématiques concrètes pour un réseau avec entrée $x$, couche cachée avec sigmoïde, couche de sortie avec sigmoïde, et perte de MSE.
 
 Pass avant:
-```
-z1 = W1 * x + b1
-a1 = sigmoid(z1)
-z2 = W2 * a1 + b2
-a2 = sigmoid(z2)
-L = (a2 - y)^2
+
+```math
+\begin{aligned}
+z_1 &= W_1 x + b_1 \\
+a_1 &= \text{sigmoid}(z_1) \\
+z_2 &= W_2 a_1 + b_2 \\
+a_2 &= \text{sigmoid}(z_2) \\
+L &= (a_2 - y)^2
+\end{aligned}
 ```
 
 Pass en arrière (application étape par étape de la règle de la chaîne):
-```
-dL/da2 = 2(a2 - y)
-da2/dz2 = a2 * (1 - a2)
-dL/dz2 = dL/da2 * da2/dz2 = 2(a2 - y) * a2 * (1 - a2)
 
-dL/dW2 = dL/dz2 * a1
-dL/db2 = dL/dz2
-
-dL/da1 = dL/dz2 * W2
-da1/dz1 = a1 * (1 - a1)
-dL/dz1 = dL/da1 * da1/dz1
-
-dL/dW1 = dL/dz1 * x
-dL/db1 = dL/dz1
+```math
+\begin{aligned}
+\frac{\partial L}{\partial a_2} &= 2(a_2 - y) \\
+\frac{\partial a_2}{\partial z_2} &= a_2 (1 - a_2) \\
+\frac{\partial L}{\partial z_2} &= \frac{\partial L}{\partial a_2} \cdot \frac{\partial a_2}{\partial z_2} = 2(a_2 - y) \cdot a_2 (1 - a_2) \\[6pt]
+\frac{\partial L}{\partial W_2} &= \frac{\partial L}{\partial z_2} \cdot a_1 \\
+\frac{\partial L}{\partial b_2} &= \frac{\partial L}{\partial z_2} \\[6pt]
+\frac{\partial L}{\partial a_1} &= \frac{\partial L}{\partial z_2} \cdot W_2 \\
+\frac{\partial a_1}{\partial z_1} &= a_1 (1 - a_1) \\
+\frac{\partial L}{\partial z_1} &= \frac{\partial L}{\partial a_1} \cdot \frac{\partial a_1}{\partial z_1} \\[6pt]
+\frac{\partial L}{\partial W_1} &= \frac{\partial L}{\partial z_1} \cdot x \\
+\frac{\partial L}{\partial b_1} &= \frac{\partial L}{\partial z_1}
+\end{aligned}
 ```
 
 Chaque gradient est le produit des dérivés locaux tracés à partir de la perte.
@@ -185,9 +188,9 @@ def __mul__(self, other):
     return out
 ```
 
-Pour l'addition: d(a+b)/da = 1, d(a+b)/db = 1. Ainsi, les deux entrées obtiennent directement le gradient de la sortie.
+Pour ajout: $\partial(a+b)/\partial a = 1$- Je suis là .$\partial(a+b)/\partial b = 1$Donc les deux entrées obtiennent directement le gradient de la sortie.
 
-Pour la multiplication: d(a*b)/da = b, d(a*b)/db = a. Chaque entrée obtient la valeur de l'autre fois le gradient de sortie.
+Pour la multiplication: $\partial(ab)/\partial a = b$- Je suis là .$\partial(ab)/\partial b = a$Chaque entrée obtient la valeur de l'autre fois le gradient de sortie.
 
 Le `+=`Une valeur peut être utilisée dans plusieurs opérations. son gradient est la somme des gradients de tous les chemins.
 
@@ -209,7 +212,7 @@ def sigmoid(self):
     return out
 ```
 
-Le dérivé sigmoïde: sigmoïde ((x) * (1 - sigmoïde ((x)). Nous avons calculé sigmoïde ((x) = s pendant le passage vers l'avant.
+Dérivé sigmoïde: $\text{sigmoid}(x) \cdot (1 - \text{sigmoid}(x))$- On a calculé .$\text{sigmoid}(x) = s$- Pas de travail supplémentaire.
 
 ```python
 def mse_loss(predicted, target):
@@ -217,7 +220,7 @@ def mse_loss(predicted, target):
     return diff * diff
 ```
 
-MSE pour une seule sortie: (prévisible - cible) ^ 2. Nous exprimons la soustraction en addition avec une valeur négative.
+MSE pour une seule sortie: $(\text{predicted} - \text{target})^2$Nous exprimons la soustraction comme addition avec une valeur négative.
 
 ### Étape 4: Passage en arrière
 
@@ -241,7 +244,7 @@ def backward(self):
         v._backward()
 ```
 
-Commencez par la perte (gradient = 1.0, puisque dL/dL = 1).`_backward`Elle pousse les gradients à ses enfants.
+Commencez par la perte (gradient = 1.0, puisque $dL/dL = 1$) Marchez en arrière à travers le graphique trié.`_backward`Elle pousse les gradients à ses enfants.
 
 ### Étape 5: Couche et réseau
 
@@ -301,7 +304,7 @@ class Network:
             p.grad = 0.0
 ```
 
-Un neurone prend les entrées, calcule la somme pondérée + le biais et applique le sigmoïde.`parameters()`La méthode recueille toutes les valeurs appréciables afin que nous puissions les mettre à jour.
+Un neurone prend les entrées, calcule la somme pondérée + biais, et applique sigmoïde.$\sqrt{2/n_{\text{inputs}}}$Une couche est une liste de neurones.`parameters()`La méthode recueille toutes les valeurs appréciables afin que nous puissions les mettre à jour.
 
 ### Étape 6: Train sur XOR
 
@@ -439,9 +442,9 @@ Cette leçon donne:
 
 ## Exercices
 
-1. Ajouter un `__sub__`La méthode de la classe de valeur (a - b = a + (-1 * b)).`__neg__`La méthode de calcul de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur est est est est la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur est est est est est est est est est est est de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur est est est est est est est est est est est est est est est est est est est de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de
+1. Ajouter un `__sub__`méthode de la classe de valeur $(a - b = a + (-1 \cdot b))$- Alors mettez en œuvre une`__neg__`La méthode de calcul de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur est est est est est est est de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur est est est est est est est est est est est est est est est est de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur est est est est est est est est est est est est est est est est est est est est est est de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de$(a - b)^2$- Je suis désolé .
 
-2. Ajouter un `relu`La méthode de la valeur (exécution max ((0, x), dérivé est 1 si x > 0, alors 0).
+2. Ajouter un `relu`méthode à la valeur (sortie $\max(0, x)$, dérivé est 1 si $x \gt 0$Remplacez le sigmoïde par le relou dans les couches cachées et entraînez à nouveau sur XOR. Comparer la vitesse de convergence. Vous devriez voir un entraînement plus rapide - ceci prévisualise la leçon 04.
 
 3. La mise en œuvre d'une `__pow__`La méthode de la valeur pour les puissances entières.`mse_loss`avec un bon`(predicted - target) ** 2`Expression. Vérifiez que les gradients correspondent à l'implémentation originale.
 
@@ -453,14 +456,14 @@ Cette leçon donne:
 
 | Term | What people say | What it actually means |
 |------|----------------|----------------------|
-| Backpropagation | "The network learns" | An algorithm that computes dL/dw for every weight by applying the chain rule backward through the computational graph |
+| Backpropagation | "The network learns" | An algorithm that computes $\partial L/\partial w$ for every weight by applying the chain rule backward through the computational graph |
 | Computational graph | "The network structure" | A directed acyclic graph where nodes are operations and edges carry values (forward) and gradients (backward) |
-| Chain rule | "Multiply the derivatives" | If y = f(g(x)), then dy/dx = f'(g(x)) * g'(x) -- the mathematical foundation of backpropagation |
+| Chain rule | "Multiply the derivatives" | If $y = f(g(x))$, then $\frac{dy}{dx} = f'(g(x)) \cdot g'(x)$ -- the mathematical foundation of backpropagation |
 | Gradient | "The direction of steepest ascent" | The partial derivative of the loss with respect to a parameter -- tells you how to change that parameter to reduce the loss |
 | Vanishing gradient | "Deep networks don't learn" | Gradients shrink exponentially as they propagate through layers with saturating activations like sigmoid |
 | Forward pass | "Running the network" | Computing the output from inputs by sequentially applying each layer's operations and storing intermediate values |
 | Backward pass | "Computing gradients" | Traversing the computational graph in reverse, accumulating gradients at each node using the chain rule |
-| Learning rate | "How fast it learns" | A scalar that controls the step size when updating weights: w_new = w_old - lr * gradient |
+| Learning rate | "How fast it learns" | A scalar that controls the step size when updating weights: $w_{\text{new}} = w_{\text{old}} - \text{lr} \cdot \text{gradient}$ |
 | Topological sort | "The right order" | An ordering of graph nodes where each node appears after all nodes it depends on -- ensures gradients are fully accumulated before propagation |
 | Autograd | "Automatic differentiation" | A system that builds computational graphs during forward computation and automatically computes gradients -- what PyTorch's engine does |
 
