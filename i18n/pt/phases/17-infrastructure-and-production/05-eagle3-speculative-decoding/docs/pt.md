@@ -57,7 +57,7 @@ O P99 pode piorar se você não sintonizar. Os projetos rejeitados desencadeiam 
 
 ### Se o EAGLE-3 já estiver implantado
 
-O Google implementou a descodificação especulativa em AI Overviews em 2025 (a mesma qualidade, resposta mais rápida).`speculative_config`como a interface documentada; a descodificação especulativa da GPU de N-gram em V1 é a variante compatível com preenchimento em pedaços. SGLang suporta EAGLE-3 como o caminho de projeto recomendado para cargas de trabalho pesadas de prefixos.
+O Google implementou a descodificação especulativa em AI Overviews em 2025 (a mesma qualidade, resposta mais rápida).`speculative_config`A SGLang suporta a EAGLE-3 como o caminho de projeto recomendado para cargas de trabalho pesadas de prefixos.
 
 ### - Matemática de equilíbrio numa linha.
 
@@ -68,7 +68,7 @@ A aceleração prevista: `S(alpha, K) = (1 + K*alpha) / (1 + verify_overhead)`- 
 - Geração offline de lote 1, onde a latência não importa.
 - Os resultados são muito curtos (menos de 50 tokens).
 - Domínios especializados sem um chefe de recrutamento treinado.
-- vLLM v0.18.0 + código de especificações do modelo de projeto + `--enable-chunked-prefill`Esta combinação não compila. A exceção documentada é o N-gram GPU especificação decodificação em V1.
+- Assumindo que cada par de recursos compõe. Verifique a matriz de compatibilidade vLLM para a sua versão: v0.18.0 marca a descodificação especulativa compatível com preenchimento em pedaços.
 
 ```figure
 mx-speculative-tree
@@ -86,7 +86,7 @@ Esta lição produz`outputs/skill-eagle3-rollout.md`. Tendo em conta um modelo-a
 
 1. Corra .`code/main.py`Em K=5, qual alfa você precisa para um 2x aceleração? para um 3x aceleração?
 2. Imagine que o tráfego de produção divide 70% de chat geral, 30% de código. Chat geral atinge alfa 0,7 com EAGLE-3 treinado no ShareGPT; código atinge alfa 0,4. O que é alfa misturado e o código de especificação é net-positivo?
-3. Leia o VLLM `speculative_config`A documentação: nomear os três modos (modelo de projeto, EAGLE, N-gram) e qual é compatível com preenchimento em pedaços.
+3. Leia o VLLM `speculative_config`A documentação. Nomear os três modos (modelo de rascunho, EAGLE, N-gram) e verificar quais são as características de cada um composto em sua versão vLLM.
 4. Veja a baixa média do ITL de 25% depois de habilitar a EAGLE-3, mas o P99 ITL subiu 15%.
 5. Calcule o custo de memória da cabeça de projeto EAGLE-3 para Llama 3.3 70B. Como se compara a executar Llama 3.2 1B como um projeto clássico?
 

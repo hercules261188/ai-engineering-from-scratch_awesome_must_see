@@ -30,7 +30,7 @@ O serviço de LLM multi-regional é um problema de cache, um problema de roteame
 
 O roteador seleciona o replicador com a correspondência, fazendo com que o seu dispositivo seja usado para fazer a correção de dados.
 
-**vLLM Router**(Rust, 2026 production stack): subscribe a `kv.cache.block_added`eventos, mantém um índice de réplica prefixo-hash →, rotas com O(1) busca.
+**vLLM Router**(Rust, 2026 production stack): subscribe a `kv.cache.block_added`eventos, mantém um índice de prefixo-hash → réplica, rotas com $O(1)$Caem até à menor profundidade da fila quando não há correspondência.
 
 **llm-d router**O mesmo padrão, Kubernetes nativo. Publica eventos através da API ControlPlane.
 

@@ -125,6 +125,6 @@ Esta lição produz`outputs/skill-cold-start-planner.md`- Tendo em conta o SLA, 
 - [Modal — Cold start performance](https://modal.com/docs/guide/cold-start) Os valores de referência e a arquitetura dos pontos de controlo publicados pela Modal.
 - [AWS Bottlerocket](https://github.com/bottlerocket-os/bottlerocket) padrão de imagem de volume de dados pré-seeded.
 - [NVIDIA Run:ai Model Streamer](https://github.com/run-ai/runai-model-streamer) Pesos de sobreposição de carga com configuração de cálculo.
-- [Baseten — Cold-start mitigation](https://www.baseten.co/blog/cold-start-mitigation/) Manual de jogo de pré- aquecimento.
+- [Baseten — Cold starts](https://docs.baseten.co/deployment/autoscaling/cold-starts) Manual de jogo de pré- aquecimento.
 - [ServerlessLLM paper (USENIX OSDI'24)](https://www.usenix.org/conference/osdi24/presentation/fu) Projeto de carga em camadas.
 - [NVIDIA — Disaggregated LLM Inference on Kubernetes](https://developer.nvidia.com/blog/deploying-disaggregated-llm-inference-workloads-on-kubernetes/) migração ao vivo para as instalações desagregadas.
