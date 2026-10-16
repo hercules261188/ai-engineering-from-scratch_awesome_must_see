@@ -30,7 +30,7 @@ Metodología (desde el blog y los artículos de METR):
 
 1. Recoger una suite de tareas que abarca de la escala de minutos a la escala de horas de los tiempos de finalización experto.
 2. Ejecutar el modelo en cada tarea; registrar el éxito o el fracaso.
-3. Aplicar una curva logística: P(éxito) como función del tiempo de finalización log(experto).
+3. Encuentra una curva logística: $P(\text{success})$como función de $\log(\text{expert completion time})$¿ Qué ?
 4. El horizonte es el tiempo experto en el que P (sucesión) = 0,5.
 
 La forma logística-ajuste es la correcta porque la capacidad generalmente tiene una relación creciente, que se acerca a la meseta con la dificultad de la tarea. El punto del 50% es una opción (podría ser 10%, 90%); METR informa múltiples umbrales en el documento detallado, pero lidera con el 50% porque es el más intuitivo.
@@ -79,7 +79,7 @@ a5-horizon-fit
 
 ## Usalo
 
-`code/main.py`Implementa un ajuste logístico de éxito de tarea vs tiempo de experto, dado un conjunto de resultados sintéticos. Informó el 50% horizonte (título de METR), el 10% horizonte (conservador) y el 90% horizonte (optimista). También demuestra qué cambios se producen cuando la tasa de éxito es inflada artificialmente por juegos de contexto de evaluación.
+`code/main.py`Implementa un ajuste logístico de la tarea-éxito vs $\log(\text{expert time})$El estudio de la evaluación de los resultados de la evaluación de contexto muestra los cambios que se producen cuando la tasa de éxito se infla artificialmente por el juego de contexto de evaluación.
 
 ## Envío
 

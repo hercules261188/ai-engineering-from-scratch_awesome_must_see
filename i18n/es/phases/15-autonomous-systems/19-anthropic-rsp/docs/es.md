@@ -100,6 +100,6 @@ a5-rsp-ladder
 
 - [Anthropic — Responsible Scaling Policy v3.0](https://anthropic.com/responsible-scaling-policy/rsp-v3-0) la política completa de 32 páginas.
 - [Anthropic — RSP v3.0 announcement](https://www.anthropic.com/news/responsible-scaling-policy-v3) resumen de los cambios de v2.
-- [Anthropic — Frontier Safety Roadmap](https://www.anthropic.com/research/frontier-safety) documento permanente vinculado a partir de RSP v3.0.
-- [Anthropic — Risk Report: Claude Opus 4.6](https://www.anthropic.com/research/risk-report-claude-opus-4-6) retrospectiva del modelo fronterizo actual.
+- [Anthropic — Frontier Safety Roadmap](https://www.anthropic.com/responsible-scaling-policy/roadmap) documento permanente vinculado a partir de RSP v3.0.
+- [Anthropic — Risk Report: February 2026](https://www.anthropic.com/feb-2026-risk-report) retrospectiva sobre Claude Opus 4.6, el modelo fronterizo en su publicación.
 - [Anthropic — Measuring agent autonomy in practice](https://www.anthropic.com/research/measuring-agent-autonomy) conecta AI R&D-4 a la autonomía medida.
