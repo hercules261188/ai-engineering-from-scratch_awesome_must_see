@@ -16,7 +16,7 @@
 
 ## O problema
 
-O seu modelo de aumento de gradiente tem uma taxa de aprendizagem, número de árvores, profundidade máxima, min amostras por folha, sub-muestra proporção e coluna proporção de amostras. Isso é seis hiperparâmetros. Se cada um tem 5 valores razoáveis, a grade tem 5 ^ 6 = 15.625 combinações. Treinamento cada leva 10 segundos. Isso é 43 horas de computação para testá-los todos.
+O seu modelo de aumento de gradiente tem uma taxa de aprendizagem, número de árvores, profundidade máxima, min amostras por folha, sub-mostras proporção e coluna de amostra proporção.$5^6 = 15{,}625$Cada treinamento leva 10 segundos, 43 horas de tempo para tentar todos.
 
 A pesquisa de rede é a abordagem óbvia e a pior em escala. A pesquisa aleatória faz melhor com menos computação. A otimização bayesiana faz ainda melhor aprendendo com avaliações passadas. Sabendo qual estratégia usar e quais hiperparâmetros realmente importam, economiza dias de tempo de GPU desperdiçado.
 
@@ -31,7 +31,7 @@ Os parâmetros são aprendidos durante o treinamento (pesos, preconceitos, limia
 | Learning rate | Step size per update | 0.001 to 1.0 |
 | Number of trees/epochs | How long to train | 10 to 10,000 |
 | Max depth | Model complexity | 1 to 30 |
-| Regularization (lambda) | Overfitting prevention | 0.0001 to 100 |
+| Regularization ($\lambda$) | Overfitting prevention | 0.0001 to 100 |
 | Batch size | Gradient estimation noise | 16 to 512 |
 | Dropout rate | Fraction of neurons dropped | 0.0 to 0.5 |
 
@@ -125,7 +125,7 @@ A taxa de aprendizagem é quase sempre o hiperparâmetro mais importante.
 | Scheduler | Formula | When to use |
 |-----------|---------|-------------|
 | Step decay | Multiply by 0.1 every N epochs | Classic CNN training |
-| Cosine annealing | lr * 0.5 * (1 + cos(pi * t / T)) | Modern default |
+| Cosine annealing | $\text{lr} \cdot 0.5 \cdot (1 + \cos(\pi t / T))$ | Modern default |
 | Warmup + decay | Linear increase then cosine decay | Transformers |
 | One-cycle | Increase then decrease over one cycle | Fast convergence |
 | Reduce on plateau | Reduce by factor when metric stalls | Safe default |

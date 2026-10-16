@@ -26,36 +26,36 @@ Não se trata apenas de problemas simples. A regressão linear é usada em siste
 
 ### O Modelo
 
-A regressão linear assume uma relação linear entre entrada (x) e saída (y):
+A regressão linear assume uma relação linear entre as entradas ($x$) e de produção ($y$):
 
-```
+```math
 y = wx + b
 ```
 
-- `w`(peso/inclinação): quanto a y muda quando x aumenta em 1
-- `b`(bias/intercepção): o valor de y quando x = 0
+- `w`(peso/inclinação): quanto $y$alterações quando $x$Aumentos de 1
+- `b`(bias/intercepção): o valor de $y$Quando ?$x = 0$
 
 Para entradas múltiplas (funções), este se estende a:
 
-```
-y = w1*x1 + w2*x2 + ... + wn*xn + b
+```math
+y = w_1 x_1 + w_2 x_2 + \cdots + w_n x_n + b
 ```
 
-Ou em forma vetorial: `y = w^T * x + b`
+Ou em forma vetorial: $y = w^T x + b$
 
-O objetivo: encontrar os valores de w e b que tornem o y previsto o mais próximo possível do y real em todos os exemplos de treinamento.
+O objectivo: encontrar os valores de $w$E ...$b$que fazem o previsto.$y$O mais próximo possível da realidade $y$- a formação de todos os exemplos.
 
 ### A função custo (erro quadrado médio)
 
 Como medir "o mais próximo possível"? Você precisa de um único número que capte o quão errados suas previsões são. A escolha mais comum é o erro médio quadrado (MSE):
 
-```
-MSE = (1/n) * sum((y_predicted - y_actual)^2)
+```math
+\text{MSE} = \frac{1}{n} \sum (y_{\text{predicted}} - y_{\text{actual}})^2
 ```
 
 Por que quadrado? Duas razões. Primeiro, penaliza erros grandes mais do que pequenos erros (um erro de 10 é 100 vezes pior do que um erro de 1, não 10x). Segundo, a função quadrada é lisa e diferenciável em todos os lugares, o que torna a otimização direta.
 
-A função custo cria uma superfície. Para um único peso w e bias b, a superfície MSE parece uma tigela (um paraboloide convexo).
+A função custo cria uma superfície para um único peso.$w$e preconceito$b$A superfície do MSE parece uma tigela (uma paraboloide convexa).
 
 ### Descenso gradual
 
@@ -74,18 +74,22 @@ flowchart TD
 
 Os gradientes dizem duas coisas: qual a direção para mover cada parâmetro e quanto mover.
 
-Para MSE com y_hat = wx + b:
+Para MSE com $\hat{y} = wx + b$- Não .
 
-```
-dMSE/dw = (2/n) * sum((y_hat - y) * x)
-dMSE/db = (2/n) * sum(y_hat - y)
+```math
+\begin{aligned}
+\frac{\partial \text{MSE}}{\partial w} &= \frac{2}{n} \sum (\hat{y} - y) \, x \\
+\frac{\partial \text{MSE}}{\partial b} &= \frac{2}{n} \sum (\hat{y} - y)
+\end{aligned}
 ```
 
 A regra de actualização:
 
-```
-w = w - learning_rate * dMSE/dw
-b = b - learning_rate * dMSE/db
+```math
+\begin{aligned}
+w &= w - \text{learning\_rate} \cdot \frac{\partial \text{MSE}}{\partial w} \\
+b &= b - \text{learning\_rate} \cdot \frac{\partial \text{MSE}}{\partial b}
+\end{aligned}
 ```
 
 A taxa de aprendizagem controla o tamanho do passo. Muito grande: você ultrapassa o mínimo e diverge. Muito pequeno: o treinamento leva para sempre. Valores iniciais típicos: 0,01, 0,001 ou 0,0001.
@@ -94,18 +98,18 @@ A taxa de aprendizagem controla o tamanho do passo. Muito grande: você ultrapas
 
 Para regressão linear especificamente, há uma fórmula direta que dá os pesos ótimos sem qualquer iteração:
 
-```
-w = (X^T * X)^(-1) * X^T * y
+```math
+w = (X^T X)^{-1} X^T y
 ```
 
-Isso inverte uma matriz para resolver para w em um passo. Funciona perfeitamente para pequenos conjuntos de dados. Para grandes conjuntos de dados (milhões de linhas ou milhares de características), a descida de gradiente é preferida porque a inversão da matriz é O(n^3) no número de características.
+Isto inverte uma matriz para resolver.$w$Para grandes conjuntos de dados (milhões de linhas ou milhares de características), a descida de gradiente é preferida porque a inversão de matriz é$O(n^3)$No número de características.
 
 ### Regressão Linear Multipla
 
 Com múltiplas características, o modelo se torna:
 
-```
-y = w1*x1 + w2*x2 + ... + wn*xn + b
+```math
+y = w_1 x_1 + w_2 x_2 + \cdots + w_n x_n + b
 ```
 
 Tudo funciona da mesma forma: MSE é a função de custo, descida de gradiente atualiza todos os pesos simultaneamente. A única diferença é que você está montando um hiperplano em vez de uma linha.
@@ -116,36 +120,38 @@ A escalação de características importa aqui. Se uma característica varia de 
 
 E se a relação não for linear? Você ainda pode usar regressão linear criando características polinômias:
 
-```
-y = w1*x + w2*x^2 + w3*x^3 + b
+```math
+y = w_1 x + w_2 x^2 + w_3 x^3 + b
 ```
 
-Isto ainda é regressão "linear" porque o modelo é linear nos pesos (w1, w2, w3).
+Esta continua a ser regressão "linear" porque o modelo é linear nos pesos ($w_1, w_2, w_3$O que é que você está a fazer ?$x$- Não .
 
 Polinômios de grau superior podem caber curvas mais complexas, mas correm o risco de sobreajustar. Um polinômio de grau 10 passará por todos os pontos de um conjunto de dados de 10 pontos, mas prevê mal sobre novos dados.
 
 ### R-Correção quadrada
 
-O MSE diz-lhe o quão errado você está, mas o número depende da escala de y. R-quadrado (R^2) dá uma medida independente da escala:
+O MSE diz-lhe o quão errado está, mas o número depende da escala de$y$. R-quadrado ($R^2$) dá uma medida independente de escala:
 
-```
-R^2 = 1 - (sum of squared residuals) / (sum of squared deviations from mean)
-    = 1 - SS_res / SS_tot
+```math
+\begin{aligned}
+R^2 &= 1 - \frac{\text{sum of squared residuals}}{\text{sum of squared deviations from mean}} \\
+&= 1 - \frac{SS_{\text{res}}}{SS_{\text{tot}}}
+\end{aligned}
 ```
 
-- R^2 = 1,0: previsões perfeitas
-- R^2 = 0,0: o modelo não é melhor do que prever a média cada vez
-- R^2 < 0,0: o modelo é pior do que prever a média
+- $R^2 = 1.0$: previsões perfeitas
+- $R^2 = 0.0$O modelo não é melhor do que prever a média a cada vez
+- $R^2 < 0.0$O modelo é pior do que prever a média
 
 ### Previsão de regularização (regressão de Ridge)
 
 Quando você tem muitos recursos, o modelo pode overfit atribuindo grandes pesos.
 
-```
-Cost = MSE + lambda * sum(w_i^2)
+```math
+\text{Cost} = \text{MSE} + \lambda \sum w_i^2
 ```
 
-O termo penalidade desencoraja grandes pesos. O lambda hiperparâmetro controla a troca: lambda mais alta significa pesos menores e mais regularização. Isto é abordado em profundidade em uma lição posterior.
+O termo penalidade desencoraja pesos grandes.$\lambda$Controla a compensação: maior $\lambda$Mas, por enquanto, sabe que existe e por que ajuda.
 
 ```figure
 linear-regression-fit
@@ -520,24 +526,24 @@ Esta lição produz:
 ## Exercícios
 
 1. Implementar descida de gradiente de lote, descida de gradiente estocástico (SGD) e descida de gradiente de mini lote. Compare a velocidade de convergência no mesmo conjunto de dados. Qual converge mais rápido? Qual tem a curva de custo mais suave?
-2. Gerar dados a partir de uma função cúbica (y = ax^3 + bx^2 + cx + d + ruído). Polinômios de graus 1, 3 e 10. Compare treinamento R^2 e teste R^2.
-3. Implementar a regressão de Lasso (regularização L1: penalidade * soma alfa em direção = i i i i i i i i)). Treinar os dados de habitação de várias características. Comparar quais pesos vão para zero vs Ridge. Por que L1 produz soluções escassas enquanto L2 não?
+2. Gerar dados a partir de uma função cúbica ($y = ax^3 + bx^2 + cx + d + \text{noise}$O que é o que se passa com os polínomos de grau 1, 3 e 10 ?$R^2$e teste$R^2$Até que ponto o sobreajuste se torna óbvio?
+3. Implementar regressão de Lasso (regularização L1: $\text{penalty} = \alpha \sum \lvert w_i \rvert$A primeira é a de um sistema de soluções de soluções de soluções de soluções de soluções de soluções de soluções de soluções de soluções de soluções de soluções de soluções de soluções de soluções de soluções de soluções de soluções de soluções de soluções de soluções de soluções de soluções de soluções de soluções de soluções de soluções de soluções de soluções de soluções de soluções de soluções de soluções de soluções de soluções de soluções de soluções de soluções de soluções de soluções de soluções de soluções de soluções de soluções de soluções de soluções de soluções de soluções de soluções de soluções de soluções de soluções de soluções de soluções de soluções de soluções de soluções de soluções de soluções de soluções de soluções de soluções de soluções de soluções de soluções de soluções de soluções de soluções de soluções de soluções de soluções de soluções de soluções de soluções de soluções de soluções de soluções de soluções de soluções de soluções de soluções de soluções de soluções de soluções de soluções de soluções de soluções de soluções de soluções de soluções de soluções de soluções de soluções de soluções de soluções de soluções de soluções de soluções de soluções de soluções de soluções de soluções de soluções de soluções de soluções de soluções de soluções de soluções de soluções de soluções de soluções de soluções de soluções de soluções de soluções de soluções de soluções de soluções de soluções de soluções de soluções de soluções de soluções de soluções de soluções de soluções de soluções de soluções de soluções de soluções de soluções de soluções de soluções de soluções de soluções de soluções de soluções de soluções de soluções de soluções de soluções de soluções de soluções de soluções de soluções de soluções de soluções de soluções de soluções de soluções de soluções de soluções de soluções de soluções de soluções de soluções de soluções de soluções de soluções de soluções de soluções de soluções de soluções de soluções de soluções de soluções de soluções de soluções de solu
 
 ## Termos-chave
 
 | Term | What people say | What it actually means |
 |------|----------------|----------------------|
-| Linear regression | "Draw a line through data" | Find weight w and bias b that minimize the sum of squared differences between wx+b and actual y values |
+| Linear regression | "Draw a line through data" | Find weight $w$ and bias $b$ that minimize the sum of squared differences between $wx+b$ and actual $y$ values |
 | Cost function | "How bad the model is" | A function that maps model parameters to a single number measuring prediction error, which optimization minimizes |
-| Mean squared error | "Average of squared errors" | (1/n) * sum of (predicted - actual)^2, penalizing large errors disproportionately |
+| Mean squared error | "Average of squared errors" | $\frac{1}{n} \sum (\text{predicted} - \text{actual})^2$, penalizing large errors disproportionately |
 | Gradient descent | "Walk downhill" | Iteratively adjust parameters in the direction that reduces the cost function, using partial derivatives |
 | Learning rate | "Step size" | A scalar that controls how much parameters change per gradient descent step |
-| Normal equation | "Solve it directly" | The closed-form solution w = (X^T X)^-1 X^T y that gives optimal weights without iteration |
-| R-squared | "How good the fit is" | The fraction of variance in y explained by the model, ranging from negative infinity to 1.0 |
+| Normal equation | "Solve it directly" | The closed-form solution $w = (X^T X)^{-1} X^T y$ that gives optimal weights without iteration |
+| R-squared | "How good the fit is" | The fraction of variance in $y$ explained by the model, ranging from negative infinity to 1.0 |
 | Feature scaling | "Make features comparable" | Transforming features to similar ranges (e.g., zero mean, unit variance) so gradient descent converges faster |
 | Regularization | "Penalize complexity" | Adding a term to the cost function that shrinks weights, preventing overfitting |
-| Ridge regression | "L2 regularization" | Linear regression with a penalty of lambda * sum(w_i^2) added to MSE |
-| Polynomial regression | "Fitting curves with linear math" | Linear regression on polynomial features (x, x^2, x^3, ...), still linear in the weights |
+| Ridge regression | "L2 regularization" | Linear regression with a penalty of $\lambda \sum w_i^2$ added to MSE |
+| Polynomial regression | "Fitting curves with linear math" | Linear regression on polynomial features ($x, x^2, x^3, \ldots$), still linear in the weights |
 | Overfitting | "Memorizing training data" | Using a model so complex that it fits noise in training data and fails on new data |
 
 ## Mais leitura

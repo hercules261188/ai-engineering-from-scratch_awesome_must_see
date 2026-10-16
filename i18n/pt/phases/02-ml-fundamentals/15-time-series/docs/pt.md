@@ -91,8 +91,8 @@ Uma série temporal é estacionária se suas propriedades estatísticas (média,
 
 **How to fix:**Diferenciamento: em vez de modelar os valores brutos, modelar a mudança entre os valores consecutivos:
 
-```
-diff[t] = value[t] - value[t-1]
+```math
+\text{diff}[t] = \text{value}[t] - \text{value}[t-1]
 ```
 
 Se uma rodada de diferenciação não faz com que a série fique estacionária, aplique-a novamente (diferença de segunda ordem).
@@ -109,7 +109,7 @@ A série original tinha uma tendência quadrática. A primeira diferenciação t
 
 ### Autocorrelação
 
-A autocorrelação mede o quanto um valor no tempo t correlaciona com o valor no tempo t-k (pasos k no passado).
+Autocorrelação mede o valor de um valor a tempo $t$correlaciona com o valor em tempo $t-k$($k$A função de autocorrelação (ACF) traça esta correlação para cada atraso.$k$- Não .
 
 **ACF tells you:**
 - Se o ACF cair para zero após o lag 5, os valores de mais de 5 passos atrás são irrelevantes.
@@ -142,7 +142,7 @@ Características adicionais que você pode criar:
 
 **How many lags?**Use a função de autocorrelação. Se o ACF for significativo até 10 lag, use pelo menos 10 lags. Se houver estacionalidade semanal, inclua lag 7 (e possivelmente 14).
 
-**The target alignment trap.**Quando se criam características de lag, o objetivo deve ser o valor no tempo t, e todas as características devem usar valores no tempo t-1 ou antes. Se você accidentalmente incluir o valor no tempo t como uma característica, você tem um preditor perfeito - e um modelo completamente inútil. Este é o bug mais comum na engenharia de características de séries temporais.
+**The target alignment trap.**Ao criar características de lag, o objetivo deve ser o valor no momento $t$, e todas as características devem utilizar valores a tempo $t-1$Se você acidentalmente incluir o valor em tempo$t$Como característica, temos um preditor perfeito - e um modelo completamente inútil. Este é o bug mais comum na engenharia de características de séries temporais.
 
 ### Validação de avanço
 
@@ -178,8 +178,8 @@ flowchart TD
 ```
 
 Validação de avanço:
-1. Traçar dados até o tempo t
-2. Previsão no tempo t+1 (ou t+1 a t+k para várias etapas)
+1. Treinar dados atualizados $t$
+2. Previnha a tempo .$t+1$(ou $t+1$- Não .$t+k$para várias etapas)
 3. Deslizar a janela para a frente
 4. Repitação
 
@@ -191,11 +191,11 @@ Cada teste contém apenas dados que vêm após todos os dados de treinamento. N�
 
 ARIMA é o modelo clássico de séries temporais.
 
-- **AR (Autoregressive):**Prevê-lo a partir de valores passados.
-- **I (Integrated):**Diferenciamento para obter estacionalidade.
-- **MA (Moving Average):**Previsão a partir de erros de previsão passados.
+- **AR (Autoregressive):**Previsão a partir de valores passados.$p$- Os valores.
+- **I (Integrated):**Diferenciamento para atingir estacionalidade.$d$Rondas de diferenciação.
+- **MA (Moving Average):**Previsão a partir de erros de previsão passados.$q$- Os erros.
 
-ARIMA ((p, d, q) combina os três.
+ARIMA ((p, d, q) combina os três.$p$- Não .$d$- Não .$q$Baseado na análise ACF/PACF ou na busca automatizada (auto-ARIMA).
 
 Não vamos implementar o ARIMA do zero - requer otimização numérica que está além do escopo desta lição. A principal ideia é entender o que cada componente faz para que você possa interpretar os resultados do ARIMA e saber quando usá-lo.
 
@@ -217,7 +217,7 @@ A previsão de um passo prevê um passo de frente.
 
 **Recursive (iterated):**Previnha um passo à frente, use a previsão como entrada para o próximo passo. É simples, mas os erros se acumulam - cada previsão usa a previsão anterior, por isso os erros são compostos.
 
-**Direct:**Treinar um modelo separado para cada horizonte. O modelo-1 prevê t+1, o modelo-5 prevê t+5. Não há acumulação de erros, mas cada modelo tem menos amostras de treinamento e não compartilham informações.
+**Direct:**Treinar um modelo separado para cada horizonte.$t+1$, o Modelo-5 prevê .$t+5$Não há acumulação de erros, mas cada modelo tem menos amostras de formação e não compartilham informações.
 
 **Multi-output:**Treinar um modelo que sai todos os horizontes simultaneamente. Compartilha informações através de horizontes, mas requer um modelo que suporta múltiplas saídas (ou uma função de perda personalizada).
 
@@ -228,7 +228,7 @@ Para a maioria dos problemas práticos, comece com o recursivo para horizontes c
 | Mistake | Why it happens | How to fix |
 |---------|---------------|-----------|
 | Random train/test split | Habit from standard ML | Use walk-forward or temporal split |
-| Using future features | Feature at time t included by mistake | Audit every feature for temporal alignment |
+| Using future features | Feature at time $t$ included by mistake | Audit every feature for temporal alignment |
 | Overfitting to seasonality | Model memorizes calendar patterns | Hold out a full seasonal cycle in the test set |
 | Ignoring scale changes | Revenue doubles but patterns stay | Model percentage change instead of absolute |
 | Too many lag features | "More history is better" | Use ACF to determine relevant lags |
@@ -386,7 +386,7 @@ print(f"Mean score: {scores.mean():.4f} +/- {scores.std():.4f}")
 
 A previsão de séries temporais usa métricas de regressão, mas com contexto consciente do tempo:
 
-- **MAE (Mean Absolute Error):**"Em média, as previsões estão desfeitas em 3,2 graus".
+- **MAE (Mean Absolute Error):**Medida de $\lvert y_{\text{true}} - y_{\text{pred}} \rvert$"Em média, as previsões estão desfeitas em 3,2 graus".
 - **RMSE (Root Mean Squared Error):**Raiz quadrada do erro quadrado médio. Penaliza erros grandes mais do que MAE. Use quando erros grandes são piores do que muitos erros pequenos.
 - **MAPE (Mean Absolute Percentage Error):**Média de erro / verdadeiro_valor = 100. Independente de escala, útil para comparação entre diferentes séries. Mas indefinido quando os valores verdadeiros são zero.
 - **Naive baseline comparison:**Sempre compare com linhas de base simples. A linha de base sazonal ingênua prevê o valor de um período anterior (ontem, na semana passada).
@@ -444,10 +444,10 @@ Se o seu modelo de ML de fantasia perde para a linha de base sazonal ingênua, v
 | Term | What people say | What it actually means |
 |------|----------------|----------------------|
 | Stationarity | "The stats don't change over time" | A series whose mean, variance, and autocorrelation structure are constant over time |
-| Differencing | "Subtract consecutive values" | Computing y[t] - y[t-1] to remove trends and achieve stationarity |
+| Differencing | "Subtract consecutive values" | Computing $y[t] - y[t-1]$ to remove trends and achieve stationarity |
 | Autocorrelation (ACF) | "How a series correlates with itself" | The correlation between a time series and a lagged copy of itself, as a function of the lag |
-| Partial autocorrelation (PACF) | "Direct correlation only" | Autocorrelation at lag k after removing the effect of all shorter lags |
-| Lag features | "Past values as inputs" | Using y[t-1], y[t-2], ..., y[t-k] as features to predict y[t] |
+| Partial autocorrelation (PACF) | "Direct correlation only" | Autocorrelation at lag $k$ after removing the effect of all shorter lags |
+| Lag features | "Past values as inputs" | Using $y[t-1], y[t-2], \ldots, y[t-k]$ as features to predict $y[t]$ |
 | Walk-forward validation | "Time-respecting cross-validation" | Evaluation where training data always precedes test data chronologically |
 | ARIMA | "The classic time series model" | AutoRegressive Integrated Moving Average: combines past values (AR), differencing (I), and past errors (MA) |
 | Seasonality | "Repeating calendar patterns" | Regular, predictable cycles in a time series tied to calendar periods (daily, weekly, yearly) |

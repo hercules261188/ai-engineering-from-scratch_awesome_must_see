@@ -51,7 +51,7 @@ Os números brutos raramente estão prontos para o modelo.
 
 **Binning:**Converte valores contínuos em categorias. Útil quando a relação entre característica e objetivo é não linear, mas gradual (por exemplo, grupos etários).
 
-**Polynomial features:**Cria termos x^2, x^3, x1*x2. permite que os modelos lineares capturem relações não lineares ao custo de mais características.
+**Polynomial features:**Cria .$x^2$- Não .$x^3$- Não .$x_1 x_2$Os modelos lineares capturam relações não lineares ao custo de mais características.
 
 ### Características categorias
 
@@ -69,10 +69,12 @@ Os modelos precisam de números, as categorias precisam de codificação.
 
 **TF-IDF:**O termo frequência-inversa frequência de documento. Pese palavras por quão únicas são em documentos. palavras comuns como "o" ganham baixo peso. palavras raras e distintas ganham alto peso.
 
-```
-TF(word, doc) = count(word in doc) / total words in doc
-IDF(word) = log(total docs / docs containing word)
-TF-IDF = TF * IDF
+```math
+\begin{aligned}
+\text{TF}(\text{word}, \text{doc}) &= \frac{\text{count(word in doc)}}{\text{total words in doc}} \\
+\text{IDF}(\text{word}) &= \log \frac{\text{total docs}}{\text{docs containing word}} \\
+\text{TF-IDF} &= \text{TF} \cdot \text{IDF}
+\end{aligned}
 ```
 
 ### Valores perdidos
@@ -87,7 +89,7 @@ Os dados reais têm buracos.
 
 ### Interação de Características
 
-Às vezes, a relação está na combinação. "Alto" e "peso" sozinhos são menos preditivos do que "BMI = peso / altura^2". As interações de características multiplicam o espaço de características, por isso use o conhecimento de domínio para escolher os certos.
+Às vezes, a relação é na combinação. "Alto" e "peso" sozinhos são menos preditivos do que $\text{BMI} = \text{weight} / \text{height}^2$Interações de recursos multiplicam o espaço de recursos, então use o conhecimento de domínio para escolher os certos.
 
 ### Seleção de características
 

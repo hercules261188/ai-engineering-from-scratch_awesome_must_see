@@ -81,11 +81,11 @@ flowchart TB
     Fold5 --> R
 ```
 
-1. Dividir os dados em folhas de tamanho igual a K
-2. Para cada dobra, empenhe-se nas dobras K-1 e valida-se na dobra restante
-3. Mediana das pontuações de validação K
+1. Dividir os dados em $K$Pelas de tamanho igual
+2. Para cada dobra, o trem continua.$K-1$dobrar e validar no resto da dobrar
+3. - Meia de$K$pontuações de validação
 
-K=5 ou K=10 são escolhas padrão. Cada ponto de dados é usado para validação exatamente uma vez. A pontuação média é uma estimativa mais estável do que qualquer divisão única.
+$K=5$ou $K=10$Cada ponto de dados é usado para validação exatamente uma vez.
 
 **Stratified K-fold**A distribuição de classes em cada dobra é preservada. Se o seu conjunto de dados for 70% classe A e 30% classe B, cada dobra terá aproximadamente a mesma proporção.
 
@@ -100,18 +100,18 @@ K=5 ou K=10 são escolhas padrão. Cada ponto de dados é usado para validação
 
 A partir desta matriz, todas as outras métricas seguem:
 
-- **Accuracy**= (TP + TN) / (TP + TN + FP + FN). Fração de previsões corretas.
-- **Precision**= TP / (TP + FP). De todas as coisas previstas positivas, quantas foram realmente?
-- **Recall**(sensibilidade) = TP / (TP + FN). De todos os positivos reais, quantos capturamos?
-- **F1 score**= 2 * precisão * recall / (precisão + recall).
+- **Accuracy**- Não .$(TP + TN) / (TP + TN + FP + FN)$Fração de previsões corretas, enganando quando as classes estão desequilibradas.
+- **Precision**- Não .$TP / (TP + FP)$. De todas as coisas previstas positivas, quantas foram realmente?
+- **Recall**(sensibilidade) = $TP / (TP + FN)$- de todos os positivos reais, quantos capturamos?
+- **F1 score**- Não .$2 \cdot \text{precision} \cdot \text{recall} / (\text{precision} + \text{recall})$- Meio harmonioso de precisão e de recall.
 - **AUC-ROC**Área sob a curva de características operacionais do receptor. Descreve a taxa positiva verdadeira vs taxa positiva falsa em vários limiares de classificação. AUC = 0,5 significa adivinhação aleatória, AUC = 1,0 significa separação perfeita.
 
 ### Metricas de regressão
 
-- **MSE**(Erro quadrado médio) = mean((y_true - y_pred) ^ 2). Penaliza erros grandes quadraticamente.
-- **RMSE**(Erro quadrado da raiz) = sqrt(MSE). As mesmas unidades que a variável alvo. É mais fácil de interpretar do que MSE.
-- **MAE**(Mediante Erro Absoluto) = média de erro (y_true - y_pred = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
-- **R-squared**= 1 - SS_res / SS_tot, onde SS_res = soma((y_true - y_pred) ^2) e SS_tot = soma(((y_true - y_mean) ^2). Fração de variância explicada pelo modelo. R^2 = 1,0 é perfeito. R^2 = 0,0 significa que o modelo não é melhor do que sempre prever a média. R^2 pode ser negativo se o modelo for pior que a média.
+- **MSE**(Erro quadrado médio) = $\text{mean}((y_{\text{true}} - y_{\text{pred}})^2)$Penaliza erros quadráticos, sensíveis a valores fora da linha.
+- **RMSE**(Erro de raiz média quadrada) = $\sqrt{\text{MSE}}$- As mesmas unidades da variável alvo, mais fácil de interpretar do que a MSE.
+- **MAE**(Erro Absoluto Médio) = $\text{mean}(\lvert y_{\text{true}} - y_{\text{pred}} \rvert)$Tratam todos os erros linearmente, mais robustos a excepcionais do que os MSE.
+- **R-squared**- Não .$1 - SS_{\text{res}} / SS_{\text{tot}}$, onde$SS_{\text{res}} = \sum (y_{\text{true}} - y_{\text{pred}})^2$E ...$SS_{\text{tot}} = \sum (y_{\text{true}} - y_{\text{mean}})^2$. Fracção da variância explicada pelo modelo. $R^2 = 1.0$É perfeito.$R^2 = 0.0$O modelo não é melhor do que sempre prever a média.$R^2$Pode ser negativo se o modelo for pior que a média.
 
 ### Curvas de aprendizagem
 
@@ -664,10 +664,10 @@ Esta lição produz:
 |------|----------------|----------------------|
 | Overfitting | "Memorizing the training data" | The model captures noise in the training data, performing well on training but poorly on unseen data |
 | Cross-validation | "Testing on different subsets" | Systematically rotating which portion of data is used for validation, averaging results across all rotations |
-| Precision | "How many predicted positives are correct" | TP / (TP + FP): the fraction of positive predictions that are actually positive |
-| Recall | "How many actual positives we found" | TP / (TP + FN): the fraction of actual positives that were correctly identified |
+| Precision | "How many predicted positives are correct" | $TP / (TP + FP)$: the fraction of positive predictions that are actually positive |
+| Recall | "How many actual positives we found" | $TP / (TP + FN)$: the fraction of actual positives that were correctly identified |
 | AUC-ROC | "How well the model separates classes" | The area under the curve of true positive rate vs false positive rate across all thresholds, from 0.5 (random) to 1.0 (perfect) |
-| R-squared | "How much variance is explained" | 1 - (sum of squared residuals / total sum of squares): the fraction of target variance captured by the model |
+| R-squared | "How much variance is explained" | $1 - (\text{sum of squared residuals} / \text{total sum of squares})$: the fraction of target variance captured by the model |
 | Data leakage | "The model cheated" | Using information during training that would not be available at prediction time, leading to optimistic evaluation |
 | Learning curve | "How performance changes with more data" | A plot of training and validation scores vs training set size, revealing underfitting or overfitting |
 | Stratified split | "Keeping class ratios balanced" | Splitting data so each subset has the same proportion of each class as the full dataset |

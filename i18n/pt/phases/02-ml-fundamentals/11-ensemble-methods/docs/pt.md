@@ -24,10 +24,10 @@ Os métodos de montagem fazem exatamente isso. Eles são a técnica mais confiá
 
 ### Por que os grupos trabalham
 
-Suponha que tenha N classificadores independentes, cada um com precisão p > 0,5.
+Suponha que tenha .$N$Classificadores independentes, cada um com precisão $p > 0.5$A maioria dos votos é correta:
 
-```
-P(majority correct) = sum over k > N/2 of C(N,k) * p^k * (1-p)^(N-k)
+```math
+P(\text{majority correct}) = \sum_{k > N/2} \binom{N}{k} p^k (1-p)^{N-k}
 ```
 
 Para 21 classificadores, cada um com 60% de precisão, a precisão da maioria dos votos é de cerca de 74%. Com 101 classificadores, ele sobe para 84%. Os erros são cancelados quando os modelos cometem erros diferentes.
@@ -132,7 +132,7 @@ O aumento do gradiente generaliza o aumento para funções de perda arbitrárias
 3. Final prediction: F_T(x)
 ```
 
-Para perda de erro quadrado, os pseudo-resíduos são apenas os resíduos reais: `r_i = y_i - F_{t-1}(x_i)`Cada árvore corresponde literalmente aos erros do conjunto anterior.
+Para perda de erro quadrado, os pseudo-resíduos são apenas os resíduos reais: $r_i = y_i - F_{t-1}(x_i)$Cada árvore corresponde literalmente aos erros do conjunto anterior.
 
 A taxa de aprendizagem (reduzimento) controla o quanto cada árvore contribui.
 
@@ -349,7 +349,7 @@ Esta lição produz`outputs/prompt-ensemble-selector.md`- um prompt que ajuda a 
 ## Mais leitura
 
 - [Schapire & Freund: Boosting: Foundations and Algorithms](https://mitpress.mit.edu/9780262526036/)- O livro dos criadores da AdaBoost
-- [Friedman: Greedy Function Approximation: A Gradient Boosting Machine (2001)](https://statweb.stanford.edu/~jhf/ftp/trebst.pdf)- o papel de aumento de gradiente original
+- [Friedman: Greedy Function Approximation: A Gradient Boosting Machine (2001)](https://doi.org/10.1214/aos/1013203451)- o papel de aumento de gradiente original
 - [Chen & Guestrin: XGBoost (2016)](https://arxiv.org/abs/1603.02754)-- o papel XGBoost
 - [Wolpert: Stacked Generalization (1992)](https://www.sciencedirect.com/science/article/abs/pii/S0893608005800231)- o papel de empilhamento original
 - [scikit-learn Ensemble Methods](https://scikit-learn.org/stable/modules/ensemble.html)-- referência prática

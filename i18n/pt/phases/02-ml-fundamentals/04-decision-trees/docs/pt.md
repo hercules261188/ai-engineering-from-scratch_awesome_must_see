@@ -48,10 +48,8 @@ Em cada nó, temos um conjunto de amostras. Queremos dividir-los para que os nó
 
 **Gini impurity**Messa a probabilidade de uma amostra escolhida aleatoriamente ser classificada erroneamente se for rotulada de acordo com a distribuição de classes nesse nó.
 
-```
-Gini(S) = 1 - sum(p_k^2)
-
-where p_k is the proportion of class k in set S.
+```math
+\text{Gini}(S) = 1 - \sum_k p_k^2 \quad \text{where } p_k \text{ is the proportion of class } k \text{ in set } S.
 ```
 
 Para um nó puro (todos uma classe), Gini = 0. Para uma divisão binária com classes 50/50, Gini = 0.5.
@@ -64,8 +62,8 @@ Gini = 1 - (0.6^2 + 0.4^2) = 1 - (0.36 + 0.16) = 0.48
 
 **Entropy**Método de avaliação de dados e de dados de um nó.
 
-```
-Entropy(S) = -sum(p_k * log2(p_k))
+```math
+\text{Entropy}(S) = -\sum_k p_k \log_2(p_k)
 ```
 
 Para um nó puro, entropia = 0. Para uma divisão binária 50/50, entropia = 1.0.
@@ -81,20 +79,21 @@ Entropy = -(0.6 * log2(0.6) + 0.4 * log2(0.4))
 
 **Information gain**é a redução da impureza (entropia ou Gini) após a separação.
 
-```
-IG(S, feature, threshold) = Impurity(S) - weighted_avg(Impurity(S_left), Impurity(S_right))
-
-where the weights are the proportions of samples in each child.
+```math
+\begin{aligned}
+& IG(S, \text{feature}, \text{threshold}) = \text{Impurity}(S) - \text{weighted\_avg}(\text{Impurity}(S_{\text{left}}), \text{Impurity}(S_{\text{right}})) \\[4pt]
+& \text{where the weights are the proportions of samples in each child.}
+\end{aligned}
 ```
 
 O algoritmo ganancioso em cada nó: tente todas as características e todos os limites possíveis. Escolha o par (função, limite) que maximiza o ganho de informações.
 
 ### Como funciona a separação
 
-Para um conjunto de dados com n características e m amostras no nó corrente:
+Para um conjunto de dados com $n$características e $m$amostras no nó corrente:
 
-1. Para cada característica j (j = 1 a n):
-   - Classificar as amostras por característica j
+1. Para cada característica $j$($j = 1$- Não .$n$):
+   - Ordenar as amostras por características $j$
    - Tente cada ponto médio entre valores distintos consecutivos como um limiar
    - Calcular o ganho de informação para cada limiar
 2. Selecionar a característica e o limiar com o maior ganho de informações
@@ -109,7 +108,7 @@ Sem condições de parada, a árvore cresce até que cada folha seja pura (uma a
 
 **Pre-pruning**para a árvore antes de crescer completamente:
 - Profundeza máxima: parar de se dividir quando a árvore atingir uma profundidade definida
-- Práticas de análise de dados e de dados
+- Práticas mínimas por folha: parar se um nó tiver menos de $k$amostras
 - Ganhamento mínimo de informações: parar se a melhor divisão melhorar a impureza em menos de um limiar
 - Núcleos de folhas máximos: limite o número total de folhas
 
@@ -125,8 +124,8 @@ Para regressão, a previsão de folha é a média dos valores-alvo nessa folha.
 
 **Variance reduction**Substitui o ganho de informações:
 
-```
-VR(S, feature, threshold) = Var(S) - weighted_avg(Var(S_left), Var(S_right))
+```math
+VR(S, \text{feature}, \text{threshold}) = \text{Var}(S) - \text{weighted\_avg}(\text{Var}(S_{\text{left}}), \text{Var}(S_{\text{right}}))
 ```
 
 Escolha a divisão que reduz a variância mais. A árvore divide o espaço de entrada em regiões e prevê uma constante (a média) em cada região.
@@ -155,7 +154,7 @@ Duas fontes de aleatoriedade tornam as árvores diversas:
 
 **Bagging (bootstrap aggregating):**Cada árvore é treinada em uma amostra de bootstrap, uma amostra aleatória com substituição dos dados de treinamento. Cerca de 63% das amostras originais aparecem em cada bootstrap (o resto são amostras fora do saco que podem ser usadas para validação).
 
-**Feature randomization:**Em cada divisão, apenas um subconjunto aleatório de características é considerado. Para classificação, o padrão é sqrt(n_features). Para regressão, n_features/3. Isso impede que todas as árvores se dividam na mesma característica dominante.
+**Feature randomization:**Em cada divisão, apenas um subconjunto aleatório de características é considerado.$\sqrt{n_{\text{features}}}$Para regressão,$n_{\text{features}}/3$Isto impede que todas as árvores se dividam no mesmo aspecto dominante.
 
 A principal ideia: a média de muitas árvores descorreladas reduz a variância sem aumentar o viés. Cada árvore individual pode ser mediocre.
 
@@ -165,9 +164,8 @@ As florestas aleatórias fornecem naturalmente pontuações de importância das 
 
 **Mean Decrease in Impurity (MDI):**Para cada característica, soma a redução total de impureza em todas as árvores e todos os nós onde essa característica é usada.
 
-```
-importance(feature_j) = sum over all nodes where feature_j is used:
-    (n_samples_at_node / n_total_samples) * impurity_decrease
+```math
+\text{importance}(\text{feature}_j) = \sum_{\text{nodes where feature}_j \text{ is used}} \frac{n_{\text{samples at node}}}{n_{\text{total samples}}} \cdot \text{impurity\_decrease}
 ```
 
 Isto é rápido (computado durante o treinamento), mas tendencioso em direção a características e características de alta cardinalidade com muitos pontos de divisão possíveis.
@@ -444,7 +442,7 @@ Esta lição produz`outputs/prompt-tree-interpreter.md`-- um prompt que interpre
 
 1. Treinar uma árvore de decisão única em um conjunto de dados 2D com 3 classes. Traçar manualmente as divisões e desenhar os limites de decisão retangular. Compare os limites em max_depth=2 vs max_depth=10.
 
-2. Implemente a divisão de redução de variância para árvores de regressão. Gerencie y = sin(x) + ruído para 200 pontos e ajuste a sua árvore de regressão. Planeje as previsões constantes da árvore contra a curva verdadeira.
+2. Implementar divisão de redução de variância para árvores de regressão.$y = \sin(x) + \text{noise}$Para 200 pontos e se encaixar na árvore de regressão.
 
 3. Construir uma floresta aleatória com 1, 5, 10, 50 e 200 árvores. Planejar a precisão de treinamento e testar a precisão versus o número de árvores. Observe que a precisão de teste planícies, mas não diminui (forestas resistem ao excesso de montagem).
 

@@ -56,12 +56,12 @@ K é o único hiperparâmetro.
 
 | K | Behavior |
 |---|----------|
-| K = 1 | Decision boundary follows every point. Zero training error. High variance. Overfits |
+| $K = 1$ | Decision boundary follows every point. Zero training error. High variance. Overfits |
 | Small K (3-5) | Sensitive to local structure. Can capture complex boundaries |
 | Large K | Smoother boundaries. More robust to noise. May underfit |
-| K = N | Predicts the majority class for every point. Maximum bias |
+| $K = N$ | Predicts the majority class for every point. Maximum bias |
 
-Um ponto de partida comum é K = sqrt(N) para um conjunto de dados de N pontos.
+Um ponto de partida comum é $K = \sqrt{N}$para um conjunto de dados de $N$Use K ímpar para classificação binária para evitar laços.
 
 ```mermaid
 graph LR
@@ -83,32 +83,33 @@ A função de distância define o que significa "quase". Diferentes métricas pr
 
 **L2 (Euclidean)**É o padrão.
 
-```
-d(a, b) = sqrt(sum((a_i - b_i)^2))
+```math
+d(a, b) = \sqrt{\sum_i (a_i - b_i)^2}
 ```
 
 Sensível à escala de características. Sempre padronize características antes de usar L2 com KNN.
 
 **L1 (Manhattan)**A diferença de um ponto de vista de um ponto de vista de um ponto de vista de outro ponto é a diferença de um ponto de vista de outro ponto de vista de um ponto de vista de outro ponto de vista de um ponto de vista de outro ponto de vista de outro ponto de vista de outro ponto.
 
-```
-d(a, b) = sum(|a_i - b_i|)
+```math
+d(a, b) = \sum_i \lvert a_i - b_i \rvert
 ```
 
 **Cosine distance**O que é essencial para o texto e a incorporação de dados.
 
-```
-d(a, b) = 1 - (a . b) / (||a|| * ||b||)
+```math
+d(a, b) = 1 - \frac{a \cdot b}{\lVert a \rVert \, \lVert b \rVert}
 ```
 
-**Minkowski**generaliza L1 e L2 com o parâmetro p.
+**Minkowski**generaliza L1 e L2 com parâmetro $p$- Não .
 
-```
-d(a, b) = (sum(|a_i - b_i|^p))^(1/p)
-
-p=1: Manhattan
-p=2: Euclidean
-p->inf: Chebyshev (max absolute difference)
+```math
+\begin{aligned}
+& d(a, b) = \left( \sum_i \lvert a_i - b_i \rvert^p \right)^{1/p} \\[6pt]
+& p=1\text{: Manhattan} \\
+& p=2\text{: Euclidean} \\
+& p \to \infty\text{: Chebyshev (max absolute difference)}
+\end{aligned}
 ```
 
 Qual métrica a utilizar depende dos dados:
@@ -127,14 +128,15 @@ O KNN padrão dá o mesmo peso a todos os vizinhos K. Mas um vizinho na distânc
 
 **Distance-weighted KNN**pesa cada vizinho inversamente pela distância:
 
+```math
+\begin{aligned}
+& \text{weight}_i = \frac{1}{\text{distance}_i + \epsilon} \\[6pt]
+& \text{For classification: weighted vote} \\
+& \text{For regression: weighted average} = \frac{\sum_i w_i y_i}{\sum_i w_i}
+\end{aligned}
 ```
-weight_i = 1 / (distance_i + epsilon)
 
-For classification: weighted vote
-For regression:     weighted average = sum(w_i * y_i) / sum(w_i)
-```
-
-O epsilon impede a divisão por zero quando um ponto de consulta corresponde exatamente a um ponto de treinamento.
+O $\epsilon$previne a divisão por zero quando um ponto de consulta corresponde exatamente a um ponto de treinamento.
 
 A KNN ponderada é menos sensível à escolha de K porque os vizinhos distantes contribuem muito pouco, independentemente.
 
@@ -162,7 +164,7 @@ Consequência prática: o KNN funciona bem até cerca de 20 a 50 característica
 
 ### Árvores KD: busca rápida do vizinho mais próximo
 
-A força bruta KNN calcula a distância da consulta a cada ponto de treinamento. Isto é O(n * d) por consulta. Para grandes conjuntos de dados, isso é muito lento.
+A força bruta KNN calcula a distância da consulta a cada ponto de treinamento.$O(n \cdot d)$Para grandes conjuntos de dados, isto é muito lento.
 
 Uma árvore KD divide recursivamente o espaço ao longo de eixos de características.
 
@@ -178,7 +180,7 @@ graph TD
 
 Para encontrar o vizinho mais próximo, atravesse a árvore até a folha que contém a consulta, depois retrocede e verifique as partições vizinhas apenas se elas puderem conter pontos mais próximos.
 
-Tempo médio de consulta: O(log n) para dimensões baixas. Mas os árvores KD degradam para O(n) em dimensões altas (d > 20) porque o retrocesso elimina cada vez menos ramos.
+Tempo médio de consulta: $O(\log n)$Mas as árvores KD degradam para$O(n)$em dimensões altas ($d > 20$O processo de retrocidação elimina cada vez menos ramos.
 
 ### Árvores de bola: melhor para dimensões moderadas
 
@@ -197,8 +199,8 @@ A KNN é um aprendiz preguiçoso: não funciona no tempo de treinamento e tudo f
 
 | Aspect | Lazy (KNN) | Eager (SVM, neural net) |
 |--------|------------|------------------------|
-| Training time | O(1) just store data | O(n * epochs) |
-| Prediction time | O(n * d) per query | O(d) or O(parameters) |
+| Training time | $O(1)$ just store data | $O(n \cdot \text{epochs})$ |
+| Prediction time | $O(n \cdot d)$ per query | $O(d)$ or $O(\text{parameters})$ |
 | Memory at prediction | Store entire training set | Store model parameters only |
 | Adapts to new data | Add points instantly | Retrain the model |
 | Decision boundary | Implicit, computed on the fly | Explicit, fixed after training |
@@ -213,12 +215,12 @@ Aprender preguiçoso é ideal quando:
 
 Em vez de votar em maioria, o KNN para regressão media os valores-alvo dos vizinhos K.
 
-```
-prediction = (1/K) * sum(y_i for i in K nearest neighbors)
-
-Or with distance weighting:
-prediction = sum(w_i * y_i) / sum(w_i)
-where w_i = 1 / distance_i
+```math
+\begin{aligned}
+& \text{prediction} = \frac{1}{K} \sum_{i \in K \text{ nearest neighbors}} y_i \\[6pt]
+& \text{Or with distance weighting:} \\
+& \text{prediction} = \frac{\sum_i w_i y_i}{\sum_i w_i} \quad \text{where } w_i = \frac{1}{\text{distance}_i + \epsilon}
+\end{aligned}
 ```
 
 A regressão KNN produz previsões de constante por peça (ou suave por peça com ponderação).
@@ -345,7 +347,7 @@ distances, indices = index.search(query_vectors, k=5)
 
 ## Exercícios
 
-1. Implementar a classificação KNN em um conjunto de dados 2D com 3 classes. Desenhar o limite de decisão para K=1, K=5, K=15, e K=N. Observar a transição de sobre-ajustamento para infraajustamento.
+1. Implementar a classificação KNN num conjunto de dados 2D com 3 classes.$K=1$- Não .$K=5$- Não .$K=15$, e $K=N$Observar a transição da sobre-ajustamento para a infra-ajustamento.
 
 2. Gerar 1000 pontos aleatórios em 2, 5, 10, 50, 100 e 500 dimensões. Para cada dimensão, calcular a relação da distância parista máxima à distância parista mínima.
 
@@ -353,7 +355,7 @@ distances, indices = index.search(query_vectors, k=5)
 
 4. Implementar uma árvore KD e medir tempo de consulta vs força bruta para conjuntos de dados de 1k, 10k e 100k pontos em 2D, 10D e 50D. Em que dimensão a árvore KD deixa de ser mais rápida do que a força bruta?
 
-5. Construa um regressor KNN ponderado para y = sin(x) + ruído. Compare-o com KNN não ponderado para K = 3, 10, 30. Mostre que a ponderação produz previsões mais suaves, especialmente para grandes K.
+5. Construir um regressor KNN ponderado para $y = \sin(x) + \text{noise}$Compará-lo com o KNN não ponderado para$K=3, 10, 30$Mostrar que a ponderação produz previsões mais suaves, especialmente para grandes K.
 
 ## Termos-chave
 
@@ -363,14 +365,14 @@ distances, indices = index.search(query_vectors, k=5)
 | Lazy learning | No computation at training time. All work happens at prediction time. KNN is the canonical example |
 | Eager learning | Heavy computation at training time to build a compact model. Most ML algorithms are eager |
 | Curse of dimensionality | In high dimensions, distances converge and neighborhoods expand to cover most of the space, making KNN ineffective |
-| KD-tree | Binary tree that recursively partitions space along feature axes. O(log n) queries in low dimensions |
+| KD-tree | Binary tree that recursively partitions space along feature axes. $O(\log n)$ queries in low dimensions |
 | Ball tree | Tree of nested hyperspheres. Works better than KD-trees in moderate dimensions (up to ~50) |
 | Weighted KNN | Neighbors weighted inversely by distance. Closer neighbors have more influence on the prediction |
 | Feature scaling | Normalizing features to comparable ranges. Required for distance-based methods like KNN |
 | Majority vote | Classification by counting which class is most common among K neighbors |
-| Brute force search | Computing distance to every training point. O(n*d) per query. Exact but slow for large n |
+| Brute force search | Computing distance to every training point. $O(n \cdot d)$ per query. Exact but slow for large $n$ |
 | Approximate nearest neighbor | Algorithms (HNSW, LSH, IVF) that find approximately nearest points much faster than exact search |
-| Voronoi diagram | The partition of space where each region contains all points closer to one training point than any other. K=1 KNN produces Voronoi boundaries |
+| Voronoi diagram | The partition of space where each region contains all points closer to one training point than any other. $K=1$ KNN produces Voronoi boundaries |
 
 ## Mais leitura
 

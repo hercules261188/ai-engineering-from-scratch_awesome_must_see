@@ -35,25 +35,27 @@ Considere um conjunto de dados com 1000 amostras: 990 negativas, 10 positivas. U
 | Actually Positive | 0 (TP) | 10 (FN) |
 | Actually Negative | 0 (FP) | 990 (TN) |
 
-Precuração = (0 + 990) / 1000 = 99,0%
+```math
+\text{Accuracy} = (0 + 990) / 1000 = 99.0\%
+```
 
 O modelo detecta zero fraudes, zero doenças, zero defeitos, mas a precisão diz 99%.
 
 ### Melhores métricas
 
-**Precision**= TP / (TP + FP). De tudo marcado como positivo, quantos são realmente?
+**Precision**- Não .$\text{TP} / (\text{TP} + \text{FP})$De tudo que é marcado como positivo, quantos são realmente?
 
-**Recall**= TP / (TP + FN). De tudo o que realmente é positivo, quantos capturamos?
+**Recall**- Não .$\text{TP} / (\text{TP} + \text{FN})$De tudo o que é positivo, quantos capturamos?
 
-**F1 Score**= 2 * precisão * recall / (precisão + recall). A média harmônica. Penaliza um desequilíbrio extremo entre precisão e recall mais do que a média aritmética.
+**F1 Score**- Não .$2 \cdot \text{precision} \cdot \text{recall} / (\text{precision} + \text{recall})$O meio armônico penaliza o desequilíbrio extremo entre precisão e recall mais do que o meio aritmético.
 
-**F-beta Score**= (1 + beta^2) * precisão * recall / (beta^2 * precisão + recall). Quando beta > 1, a recall é mais importante. Quando beta < 1, a precisão é mais importante. F2 é comum na detecção de fraude (a falta de fraude é pior do que um falso alarme).
+**F-beta Score**- Não .$(1 + \beta^2) \cdot \text{precision} \cdot \text{recall} / (\beta^2 \cdot \text{precision} + \text{recall})$Quando ?$\beta > 1$Quando é que o recordo é mais importante.$\beta < 1$A F2 é comum na detecção de fraude (a falta de fraude é pior do que um falso alarme).
 
 **AUPRC**(Área sob a curva de recall de precisão). Como AUC-ROC, mas mais informativo para dados desequilibrados. Um classificador aleatório tem AUPRC igual à taxa de classe positiva (não 0,5 como ROC). Isso torna as melhorias mais fáceis de ver.
 
-**Matthews Correlation Coefficient**= (TP * TN - FP * FN) / sqrt((TP+FP)(TP+FN)(TN+FP)(TN+FN)). Intervalo de -1 a +1. Dá uma pontuação alta apenas quando o modelo faz bem em ambas as classes. Equilibrado mesmo quando as classes são de tamanhos muito diferentes.
+**Matthews Correlation Coefficient**- Não .$(\text{TP} \cdot \text{TN} - \text{FP} \cdot \text{FN}) / \sqrt{(\text{TP}+\text{FP})(\text{TP}+\text{FN})(\text{TN}+\text{FP})(\text{TN}+\text{FN})}$. varia de -1 a +1. dá uma pontuação elevada apenas quando o modelo faz bem em ambas as classes.
 
-Para o modelo "sempre prever negativo" acima: precisão = 0/0 (indefinido, muitas vezes definido em 0), recall = 0/10 = 0, F1 = 0, MCC = 0.
+Para o modelo "sempre prever negativo" acima: $\text{precision} = 0/0$(indefinido, muitas vezes definido em 0), $\text{recall} = 0/10 = 0$- Não .$\text{F1} = 0$- Não .$\text{MCC} = 0$Estas métricas identificam corretamente o modelo como inútil.
 
 ### O Pipeline de Dados Desbalançados
 
@@ -79,9 +81,9 @@ A sobre-análise aleatória duplica as amostras minoritárias existentes.
 
 O SMOTE cria novas amostras sintéticas de minorias que são plausíveis mas não cópias.
 
-1. Para cada amostra de minoria x, encontre os seus vizinhos mais próximos entre outras amostras de minoria
+1. Para cada amostra minoritária $x$, encontrar o seu$k$vizinhos mais próximos entre outras amostras de minorias
 2. Escolha um vizinho aleatoriamente
-3. Crie uma nova amostra no segmento de linha entre x e esse vizinho
+3. Criar uma nova amostra no segmento de linha entre $x$E aquele vizinho
 
 A fórmula: `new_sample = x + random(0, 1) * (neighbor - x)`
 
@@ -137,24 +139,24 @@ flowchart LR
 Em vez de alterar os dados, alterar a forma como o modelo trata os erros.
 
 Para um problema binário com 950 amostras negativas e 50 amostras positivas:
-- Peso para classe negativa = n_samplas / (2 * n_negativo) = 1000 / (2 * 950) = 0,526
-- Peso para classe positiva = n_samplas / (2 * n_positivo) = 1000 / (2 * 50) = 10,0
+- Peso para classe negativa = $n_{\text{samples}} / (2 \cdot n_{\text{negative}}) = 1000 / (2 \cdot 950) = 0.526$
+- Peso para classe positiva = $n_{\text{samples}} / (2 \cdot n_{\text{positive}}) = 1000 / (2 \cdot 50) = 10.0$
 
 A classe positiva tem 19 vezes o peso. classificar mal uma amostra positiva custa tanto quanto classificar mal 19 amostras negativas. O modelo é forçado a prestar atenção à classe minoritária.
 
 Na regressão logística, isso modifica a função de perda:
 
-```
-weighted_loss = -sum(w_i * [y_i * log(p_i) + (1-y_i) * log(1-p_i)])
+```math
+\text{weighted\_loss} = -\sum \bigl( w_i \cdot [y_i \log(p_i) + (1-y_i) \log(1-p_i)] \bigr)
 ```
 
-onde w_i depende da classe da amostra i.
+onde$w_i$depende da classe da amostra $i$- Não .
 
 Os pesos de classe são matematicamente equivalentes ao excesso de amostragem na expectativa, mas sem criar novos pontos de dados.
 
 ### Apontação do limiar
 
-A maioria dos classificadores produz uma probabilidade. O limiar padrão é 0,5: se P ((positivo) >= 0,5, prevê positivo. Mas 0,5 é arbitrário. Quando as classes são desequilibradas, o limiar ideal geralmente é muito menor.
+A maioria dos classificadores emitem uma probabilidade. O limiar padrão é 0,5: se $P(\text{positive}) \ge 0.5$Quando as classes estão desequilibradas, o limiar ideal é geralmente muito menor.
 
 O processo:
 1. Treinar um modelo
@@ -172,7 +174,7 @@ flowchart LR
     E --> F[Use in Production]
 ```
 
-Um modelo pode emitir P ((fraude) = 0,15 para uma transação fraudulenta. No limiar 0,5, isso é classificado como não fraude. No limiar 0,10, é corretamente capturado. A calibração de probabilidade importa menos do que a classificação - desde que a fraude obtenha probabilidades maiores do que não-fraude, existe um limiar que as separa.
+Um modelo pode produzir$P(\text{fraud}) = 0.15$A diferença entre o valor de uma transação fraudulenta e o valor de uma transação fraudulenta é que, no limiar de 0,5, esta é classificada como não fraudulenta. No limiar de 0,10, é corretamente capturada. A calibração de probabilidade importa menos do que a classificação - desde que a probabilidade de fraude seja maior do que a de não fraude, existe um limiar que as separa.
 
 ### Aprendizagem sensível aos custos
 
@@ -180,8 +182,8 @@ Generalização dos pesos de classe. Em vez de custos uniformes, atribuir custos
 
 | | Predict Positive | Predict Negative |
 |--|---|---|
-| Actually Positive | 0 (correct) | C_FN = 100 |
-| Actually Negative | C_FP = 1 | 0 (correct) |
+| Actually Positive | 0 (correct) | $C_{\text{FN}} = 100$ |
+| Actually Negative | $C_{\text{FP}} = 1$ | 0 (correct) |
 
 O modelo otimiza o custo total, não o número total de erros.
 

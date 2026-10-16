@@ -54,23 +54,24 @@ High variance (overfitting):
 
 ### A decomposição
 
-Para qualquer ponto x, o erro de previsão esperado sob perda quadrada se decompõe exatamente:
+Para qualquer ponto .$x$, o erro de previsão esperado em perda quadrada se decompõe exatamente:
 
+```math
+\begin{aligned}
+& \text{Expected Error} = \text{Bias}^2 + \text{Variance} + \text{Irreducible Noise} \\[6pt]
+& \text{where:} \\
+& \quad \text{Bias}^2 = (\mathbb{E}[\hat{f}(x)] - f(x))^2 \\
+& \quad \text{Variance} = \mathbb{E}[(\hat{f}(x) - \mathbb{E}[\hat{f}(x)])^2] \\
+& \quad \text{Noise} = \mathbb{E}[(y - f(x))^2] \quad (\sigma^2)
+\end{aligned}
 ```
-Expected Error = Bias^2 + Variance + Irreducible Noise
 
-where:
-  Bias^2   = (E[f_hat(x)] - f(x))^2
-  Variance = E[(f_hat(x) - E[f_hat(x)])^2]
-  Noise    = E[(y - f(x))^2]             (sigma^2)
-```
+- $f(x)$é a função verdadeira
+- $\hat{f}(x)$é a previsão do seu modelo
+- $\mathbb{E}[\ldots]$é a expectativa sobre diferentes conjuntos de formação
+- $y$é a etiqueta observada (função verdadeira mais ruído)
 
-- `f(x)`é a função verdadeira
-- `f_hat(x)`é a previsão do seu modelo
-- `E[...]`é a expectativa sobre diferentes conjuntos de formação
-- `y`é a etiqueta observada (função verdadeira mais ruído)
-
-O termo ruído é irredutível. Nenhum modelo pode fazer melhor do que sigma^2 em dados ruidosos.
+O termo ruído é irredutível.$\sigma^2$O seu trabalho é encontrar o equilíbrio certo entre$\text{bias}^2$e variação.
 
 ### Complicidade do modelo vs erro
 
@@ -131,9 +132,9 @@ Porque é que isto acontece? No limiar de interpolação, o modelo tem capacidad
 
 | Regime | Parameters vs Samples | Behavior |
 |--------|----------------------|----------|
-| Underparameterized | p << n | Classical tradeoff applies |
-| Interpolation threshold | p ~ n | Variance peaks, test error spikes |
-| Overparameterized | p >> n | Implicit regularization kicks in, test error drops |
+| Underparameterized | $p \ll n$ | Classical tradeoff applies |
+| Interpolation threshold | $p \sim n$ | Variance peaks, test error spikes |
+| Overparameterized | $p \gg n$ | Implicit regularization kicks in, test error drops |
 
 Para fins práticos: se estiver a utilizar redes neurais ou grandes conjuntos de árvores, não se detenha no limiar de interpolação. Ou permaneça bem abaixo dele (com regularização explícita) ou ultrapasse-o. O pior lugar para estar é bem no limiar.
 
@@ -180,7 +181,7 @@ Os métodos conjuntos são a ferramenta mais prática para combater a variância
 
 **Bagging (Bootstrap Aggregating)**O estudo de forma geral, que tem como objetivo a análise de dados de treinamento, faz com que os modelos sejam treinados em diferentes amostras de bootstrap dos dados de treinamento, e depois medias suas previsões.
 
-Por que funciona matematicamente: se você mediar N previsões independentes, cada uma com variância sigma^2, a variância da média é sigma^2 / N. Os modelos não são verdadeiramente independentes (todos eles veem dados semelhantes), então a redução é menor que 1/N, mas ainda é substancial.
+Por que funciona matematicamente: se você média $N$Previsões independentes, cada uma com variação $\sigma^2$, a variância da média é $\sigma^2 / N$Os modelos não são verdadeiramente independentes (todos eles veem dados similares), por isso a redução é menor que $1/N$Mas ainda é substancial.
 
 **Boosting**O Boosting é um sistema de estimulação de dados que reduz o viés através da construção de modelos sequencialmente, onde cada novo modelo se concentra nos erros do conjunto até agora.
 
@@ -306,10 +307,10 @@ variance = np.mean(predictions.var(axis=0))
 total_error = np.mean(np.mean((predictions - y_true) ** 2, axis=1))
 ```
 
-- `mean_pred`é estimada a partir de amostras de arranque
+- `mean_pred`É o que é$\mathbb{E}[\hat{f}(x)]$Estimados a partir de amostras de arranque
 - `bias_sq`é a diferença quadrada entre a previsão média e a verdade
 - `variance`é a espalha média das previsões entre as amostras de bootstrap
-- `total_error`Deve ser aproximadamente igual a desvio^2 + variância + ruído
+- `total_error`deve ser aproximadamente igual $\text{bias}^2 + \text{variance} + \text{noise}$
 
 ### Passo 4: Curvas de Aprendizagem
 
@@ -440,7 +441,7 @@ Esta lição produz: `outputs/prompt-model-diagnostics.md`
 
 2. Aumentar o tamanho do conjunto de treinamento de 30 para 300. Como isso afeta o componente de variância?
 
-3. Adicionar regularização L2 (regressão de Ridge) ao experimento. Para um polinômio de alto grau fixo (grado 15), varrer lambda de 0 para 100.
+3. Adicione a regularização L2 (regressão de Ridge) ao experimento. Para um polinômio fixo de alto grau (grado 15), varra lambda de 0 para 100.$\text{bias}^2$e variação como funções de lambda.
 
 4. Modificar a função verdadeira de um polinômio para `sin(x)`Como é que a decomposição de variação de viés muda?
 

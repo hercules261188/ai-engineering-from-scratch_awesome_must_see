@@ -176,7 +176,7 @@ flowchart LR
 
 O conjunto de testes é sagrado. Você olha para ele exatamente uma vez. Se você continuar ajustando seu modelo com base no desempenho do teste, você está treinando efetivamente no conjunto de testes e seus números relatados não têm significado.
 
-Para pequenos conjuntos de dados, use a validação cruzada k-fold: divida os dados em k partes, treine em partes k-1, valida na parte restante, gire e obtenha resultados médios.
+Para pequenos conjuntos de dados, use a validação cruzada k-fold: divide os dados em $k$Peças, comboio em$k-1$As partes, validar na parte restante, girar e resultados médios.
 
 ### O super-ajustamento vs. o sub-ajustamento
 
@@ -242,9 +242,9 @@ Este é o quadro matemático por trás do sobreajuste e do subajuste.
 | Just right | Medium | Medium | Good generalization |
 | Too high (degree-20 polynomial for 10 points) | Low | High | Overfitting |
 
-Erro total = Bias^2 + Variância + Ruído irredutível
+$\text{Total error} = \text{Bias}^2 + \text{Variance} + \text{Irreducible noise}$
 
-Não se pode reduzir o ruído irredutível (é aleatoriedade nos próprios dados).
+Não se pode reduzir o ruído irredutível (é aleatoriedade nos próprios dados).$\text{bias}^2 + \text{variance}$- Minimizado.
 
 ### Não há teorema do almoço livre
 
