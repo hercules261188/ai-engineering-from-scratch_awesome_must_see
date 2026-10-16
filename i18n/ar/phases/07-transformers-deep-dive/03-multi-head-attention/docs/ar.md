@@ -11,7 +11,7 @@
 
 رأس الانتباه الذاتي واحد يحسب ماتريسكة الانتباه. هذه المصفوفة تسجل نوعًا واحدًا من العلاقات  عادةً ما تكون تلك التي تقلل من الخسارة على أي إشارة تدريبية. إذا كان بياناتك تتضمن اتفاقًا موضوعيًا ومفعولًا ومشاركة إشارة ، وتحديثًا طويلًا ، وتقطيعًا نحويًا متصلبًا معًا ، فإن رأس واحد يضعهم في توزيع واحد ذو غاية ضعيفة ويخسر نصف الإشارة.
 
-التحدي من ورقة Vaswani 2017: تشغيل العديد من وظائف الاهتمام بالتوازي ، كل منها مع توقعات Q ، K ، V الخاصة به ، وتحديد الخروج. تعمل كل رأس في فرعية صغيرة من الأبعاد `d_model / n_heads`.الفقرات الكلية تبقى نفسها .تزداد الطاقة التعبيرية
+التحدي من ورقة Vaswani 2017: تشغيل العديد من وظائف الاهتمام بالتوازي ، كل منها مع توقعات Q ، K ، V الخاصة به ، وتحديد الخروج. تعمل كل رأس في فرعية صغيرة من الأبعاد $d_{\text{model}} / n_{\text{heads}}$.الفقرات الكلية تبقى نفسها .تزداد الطاقة التعبيرية
 
 الاهتمام متعدد الرؤوس هو الاختيار الافتراضي لكل محول في السفن 2026. الحجة الوحيدة حول * كم عدد الرؤوس * وما إذا كانت المفاتيح والقيم تشارك التنبؤات (التأمل المجموعي، التأمل المتعدد، التأمل المتعدد الرؤوس).
 
@@ -19,7 +19,7 @@
 
 ![Multi-head attention splits, attends, concatenates](../assets/multi-head-attention.svg)
 
-**Split.**خذ`X`من الشكل`(N, d_model)`. مشروع إلى Q، K، V كل من الشكل `(N, d_model)`. إعادة التغيير إلى`(N, n_heads, d_head)`أين`d_head = d_model / n_heads`. نقل إلى`(n_heads, N, d_head)`. . .
+**Split.**خذ`X`من الشكل`(N, d_model)`. مشروع إلى Q، K، V كل من الشكل `(N, d_model)`. إعادة التغيير إلى`(N, n_heads, d_head)`أين$d_{\text{head}} = d_{\text{model}} / n_{\text{heads}}$. نقل إلى`(n_heads, N, d_head)`. . .
 
 **Attend in parallel.**أطلقوا على نطاق واسع النقطة المنتجة الاهتمام داخل كل رأس.`(N, d_head)`.ال رؤوس تعمل على مختلف الفضاء الفرعي من الإدراج ولا تتحدث أبدا خلال حساب الاهتمام نفسه.
 
@@ -36,7 +36,7 @@
 | Grouped-query (GQA) | N | G (e.g. N/8) | Llama 2 70B, Llama 3+, Qwen 2+, Mistral |
 | Multi-head latent (MLA) | N | compressed to low-rank | DeepSeek-V2, V3 |
 
-GQA هي الاختيار الافتراضي الحديث لأنه يقلل من ذاكرة KV-Cache بمعدل `N/G`بينما تحافظ على الجودة الكاملة تقريبا. MLA يذهب أبعد من ذلك عن طريق ضغط K / V في مساحة غامضة، ثم التنبؤ مرة أخرى في وقت الحساب  تكلف FLOPs، ويحفظ الكثير من الذاكرة.
+GQA هي الاختيار الافتراضي الحديث لأنه يقلل من ذاكرة KV-Cache بمعدل $N/G$بينما تحافظ على الجودة الكاملة تقريبا. MLA يذهب أبعد من ذلك عن طريق ضغط K / V في مساحة غامضة، ثم التنبؤ مرة أخرى في وقت الحساب  تكلف FLOPs، ويحفظ الكثير من الذاكرة.
 
 ```figure
 multihead-split
@@ -129,7 +129,7 @@ out = scaled_dot_product_attention(q, k, v, is_causal=True, enable_gqa=True)
 | Large (~1B) | 2048 | 16 | 128 |
 | Frontier (~70B) | 8192 | 64 | 128 |
 
-`d_head`تقريباً دائماً يصل إلى 64 أو 128. إنها وحدة كمية رأس واحد يمكنه "رؤية". انخفض إلى أقل من 32 و تبدأ الرؤوس في محاربة عامل التوسع`sqrt(d_head)`إضافة إلى إضافة إضافية إلى 256 و تفقد ميزة "الكثير من المتخصصين الصغار".
+`d_head`تقريباً دائماً يصل إلى 64 أو 128. إنها وحدة كمية رأس واحد يمكنه "رؤية". انخفض إلى أقل من 32 و تبدأ الرؤوس في محاربة عامل التوسع$\sqrt{d_{\text{head}}}$إضافة إلى إضافة إضافية إلى 256 و تفقد ميزة "الكثير من المتخصصين الصغار".
 
 ## أرسله
 
@@ -145,7 +145,7 @@ out = scaled_dot_product_attention(q, k, v, is_causal=True, enable_gqa=True)
 
 | Term | What people say | What it actually means |
 |------|-----------------|-----------------------|
-| Head | "A single attention circuit" | One Q/K/V projection of dimension `d_head = d_model / n_heads` with its own attention matrix. |
+| Head | "A single attention circuit" | One Q/K/V projection of dimension $d_{\text{head}} = d_{\text{model}} / n_{\text{heads}}$ with its own attention matrix. |
 | d_head | "Head dimension" | Per-head hidden width; almost always 64 or 128 in production. |
 | Split / combine | "Reshape tricks" | `(N, d_model) ↔ (n_heads, N, d_head)` reshape+transpose around attention. |
 | W_o | "Output projection" | `(d_model, d_model)` matrix applied after concatenating heads; where heads mix. |

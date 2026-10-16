@@ -25,13 +25,13 @@
 
 ![RNN sequential compute vs Transformer parallel attention](../assets/rnn-vs-transformer.svg)
 
-**Recurrence as a bottleneck.**الحسابات الـ RNN `h_t = f(h_{t-1}, x_t)`كل خطوة تعتمد على الخطوة السابقة لا يمكنك الحساب`h_5`قبل ذلك`h_4`على أجهزة المعالجة المعالجة المعالجة الحديثة مع أكثر من 10،000 نواة متوازية، هذا يضيع 99٪ من السيليكون على تسلسل طويل.
+**Recurrence as a bottleneck.**الحسابات الـ RNN $h_t = f(h_{t-1}, x_t)$كل خطوة تعتمد على الخطوة السابقة لا يمكنك الحساب$h_5$قبل ذلك$h_4$على أجهزة المعالجة المعالجة المعالجة الحديثة مع أكثر من 10،000 نواة متوازية، هذا يضيع 99٪ من السيليكون على تسلسل طويل.
 
-**Attention as a broadcast.**حسابات الاهتمام الذاتي`output_i = sum_j(a_ij * v_j)`لكل زوج`(i, j)`المصفوفة الاهتمامية بأكملها تعتمد على المصفوفة المكتسبة واحدة لا تتوقف أي خطوة على الخطوة الأخرى
+**Attention as a broadcast.**حسابات الاهتمام الذاتي`output_i = sum_j(a_ij * v_j)`لكل زوج$(i, j)$المصفوفة الاهتمامية بأكملها تعتمد على المصفوفة المكتسبة واحدة لا تتوقف أي خطوة على الخطوة الأخرى
 
-**The speedup is not a constant.**هذا هو الفرق بين`O(N)`عمق تسلسلي و`O(1)`عمق سلسلة. في الممارسة العملية، المحولات تدرب 510 × أسرع في كل عصر على الأجهزة المقابلة عند N = 512, والفجوة تتوسع مع طول التسلسل حتى تضرب `O(N²)`جدار الذاكرة للاهتمام (الذي صارته Flash Attention لاحقاً  انظر الدروس 12).
+**The speedup is not a constant.**هذا هو الفرق بين$O(N)$عمق تسلسلي و$O(1)$عمق سلسلة. في الممارسة العملية، المحولات تدرب 510 × أسرع في كل عصر على الأجهزة المقابلة عند N = 512, والفجوة تتوسع مع طول التسلسل حتى تضرب $O(N^2)$جدار الذاكرة للاهتمام (الذي صارته Flash Attention لاحقاً  انظر الدروس 12).
 
-**What transformers cost.**نطاقات الذاكرة الاهتمام مثل`O(N²)`بالنسبة للسياق 2K، حسناً. بالنسبة للسياق 128K، تحتاج إلى نوافذ زلقة، استنتاجات RoPE، فلاش انتباه الطلاء، أو المتغيرات الانتباه الخطية.`O(N)`في كل من الوقت والذاكرة، المحولات تتداول الوقت مقابل الذاكرة ثم تستعيد الوقت من خلال التوازي.
+**What transformers cost.**نطاقات الذاكرة الاهتمام مثل$O(N^2)$بالنسبة للسياق 2K، حسناً. بالنسبة للسياق 128K، تحتاج إلى نوافذ زلقة، استنتاجات RoPE، فلاش انتباه الطلاء، أو المتغيرات الانتباه الخطية.$O(N)$في كل من الوقت والذاكرة، المحولات تتداول الوقت مقابل الذاكرة ثم تستعيد الوقت من خلال التوازي.
 
 **The inductive bias shift.**يفترض RNNs الموقع والجدد. يتصور المحولون شيئاً  كل زوج مرشح للاهتمام. لهذا السبب يحتاج المحولون إلى المزيد من البيانات للتدريب بشكل جيد ولكن يتوسع بعد أن يحصلوا عليه. تشينشيلا (2022) رسمياً هذا: مع إعطاء رموز كافية ، يتغلب المحول دائمًا على RNN من عدد المعلمات المتساوية.
 
@@ -58,7 +58,7 @@ def attention_style(xs):
     return sum(xs) / len(xs)  # every x is independent
 ```
 
-نحن نقوم بتوقيت كل من على تسلسلات تصل إلى 100،000 عنصر. نسخة RNN هي O(N) ومركز واحد من نظام التشغيل المركزي. حتى في بيثون النقي، فإن تخفيض النمط الاهتمام يضرب على طول ≥ 1000 لأن بيثون `sum()`يتم تنفيذها في C وتكرارها دون تكلفة المترجم لكل خطوة.
+نحن نضع كلتا على تسلسلات تصل إلى 100،000 عنصر.$O(N)$حتى في بيثون النقي، تخفيض النمط الاهتمام يضربه على طول ≥ 1000 لأن بيثون `sum()`يتم تنفيذها في C وتكرارها دون تكلفة المترجم لكل خطوة.
 
 ### الخطوة الثانية: احتساب العمليات النظرية
 
@@ -66,7 +66,7 @@ def attention_style(xs):
 
 ### الخطوة الثالثة: التوسع التجريبي على تسلسلات طويلة
 
-نقوم بطبع جدول زمني يجعل الفجوة O(N) مرئية. على جهاز كمبيوتر محمول 2026 Mac، التسلسلات تحت 1000 عنصر سريعة جدًا لقياسها. تسلسلات من 100,000 تظهر مسحًا خطيًا نظيفًا. قم بتقييم ذلك إلى محول 16,384 رمز مع مساوية LSTM 12 طبقة وسترى لماذا كان ساعة الجدار التدريبية مقصوداً في عام 2016.
+نقوم بطبع جدول زمني يجعل$O(N)$فجوة مرئية. على جهاز كمبيوتر محمول 2026 Mac، تسلسلات تحت 1000 عنصر سريعة جدا لقياسها. تسلسلات من 100,000 تظهر مسح خطي نظيف. مقياس ذلك إلى محول 16,384 رمز مع 12 طبقة LSTM مكافئ ويمكنك أن ترى لماذا التدريب ساعة الحائط كان مقاتلا في عام 2016.
 
 ## استخدمها
 
@@ -79,7 +79,7 @@ def attention_style(xs):
 | Edge device with no matmul accelerator | Depthwise-separable RNN still wins on FLOPs/watt |
 | Anything else (training, batched inference, context up to 128K) | Transformer |
 
-النماذج الفضائية للدولة (SSM) مثل Mamba هي أساسا RNNs مع المعلمات المهيكلة التي تعطيهم أفضل من كليهما: `O(N)`دراسة الذاكرة التشخيصية، التدريب الموازي عن طريق التشخيص الانتقائي. يعيدون 90% من جودة المحول مع تحسين مقياس السياق الطويل. في عام 2026 تعالج معظم المختبرات الحدودية نماذج محولة SSM + محولات (مثل جامبا، سامبا)  لا تموت التكرار، إنه مكون.
+النماذج الفضائية للدولة (SSM) مثل Mamba هي أساسا RNNs مع المعلمات المهيكلة التي تعطيهم أفضل من كليهما: $O(N)$دراسة الذاكرة التشخيصية، التدريب الموازي عن طريق التشخيص الانتقائي. يعيدون 90% من جودة المحول مع تحسين مقياس السياق الطويل. في عام 2026 تعالج معظم المختبرات الحدودية نماذج محولة SSM + محولات (مثل جامبا، سامبا)  لا تموت التكرار، إنه مكون.
 
 ## أرسله
 
@@ -97,11 +97,11 @@ def attention_style(xs):
 |------|-----------------|-----------------------|
 | Recurrence | "RNNs are sequential" | Computation where step `t` depends on step `t-1`, forcing serial execution along the time axis. |
 | Serial depth | "How deep the graph is" | Longest chain of dependent ops; bounds wall-clock even on infinite hardware. |
-| Attention | "Let tokens look at each other" | Weighted sum `sum_j a_ij v_j` where `a_ij` comes from a similarity score between positions i and j. |
+| Attention | "Let tokens look at each other" | Weighted sum $\sum_j a_{ij} v_j$ where $a_{ij}$ comes from a similarity score between positions $i$ and $j$. |
 | Context window | "How much the model sees" | Number of positions an attention layer can take as input; quadratic memory cost scales here. |
 | Inductive bias | "Assumptions baked into the architecture" | Prior about what the data looks like; CNNs assume translation invariance, RNNs assume recency. |
 | State-space model | "RNN with algebra behind it" | Recurrence parameterized for parallel training via structured state-space matrices. |
-| Quadratic bottleneck | "Why context costs so much" | Attention memory = `O(N²)` in sequence length; Flash Attention hides the constants, not the scaling. |
+| Quadratic bottleneck | "Why context costs so much" | Attention memory = $O(N^2)$ in sequence length; Flash Attention hides the constants, not the scaling. |
 
 ## المزيد من القراءة
 

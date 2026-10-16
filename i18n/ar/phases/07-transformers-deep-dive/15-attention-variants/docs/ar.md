@@ -9,11 +9,11 @@
 
 ## المشكلة
 
-تكاليف الاهتمام الكامل`O(N²)`الذاكرة و`O(N²)`الحساب في طول التسلسل. بالنسبة لـ 128K-context Llama 3 70B الذي هو 16 مليار إدخال الاهتمام في كل طبقة، × 80 طبقة. الاهتمام الفلاشي (درس 12) يخفي`O(N²)`ذاكرة التفعيل ولكن لا تغير التكلفة الحسابية  كل رمز لا يزال يشارك في كل رمز آخر.
+تكاليف الاهتمام الكامل$O(N^2)$الذاكرة و$O(N^2)$الحساب في طول التسلسل. بالنسبة لـ 128K-context Llama 3 70B الذي هو 16 مليار إدخال الاهتمام في كل طبقة، × 80 طبقة. الاهتمام الفلاشي (درس 12) يخفي$O(N^2)$ذاكرة التفعيل ولكن لا تغير التكلفة الحسابية  كل رمز لا يزال يشارك في كل رمز آخر.
 
 ثلاث فئات من المتغيرات تغير توبولوجي المصفوفة الاهتمام نفسها:
 
-1. **Sliding window attention (SWA).**كل رمز يحتفظ بنفذة ثابتة من الجيران، وليس المقبل الكامل.`O(N · W)`أين`W`(جيمما 2/3، أول طبقات (ميسرال 7ب، (في-3-لونغ
+1. **Sliding window attention (SWA).**كل رمز يحتفظ بنفذة ثابتة من الجيران، وليس المقبل الكامل.$O(N \cdot W)$أين$W$(جيمما 2/3، أول طبقات (ميسرال 7ب، (في-3-لونغ
 2. **Sparse / block attention.**فقط أزواج مختارة`(i, j)`والباقي يضطرون إلى زيرو الوزن. Longformer، BigBird، OpenAI محول نادر.
 3. **Differential attention.**قم بحساب خرائط اهتمامين مع توقعات Q / K منفصلة ، وقل واحدة من الأخرى. يقتل "مصهر الاهتمام" الذي ينزف الوزن إلى الرموز القليلة الأولى. تحويل DIFF من مايكروسوفت (2024).
 
@@ -23,7 +23,7 @@
 
 ### مراقبة النافذة المنزلقة (SWA)
 
-كل استفسار في الموقف`i`يشارك فقط في المواقف في `[i - W, i]`(المتوسط السريع) أو `[i - W/2, i + W/2]`(مباشرة) الوهم خارج النافذة الحصول`-inf`في المصفوفة
+كل استفسار في الموقف$i$يشارك فقط في المواقف في $[i - W, i]$(المتوسط السريع) أو $[i - W/2, i + W/2]$(مباشرة) الوهم خارج النافذة الحصول$-\infty$في المصفوفة
 
 ```
 full causal:           sliding window (W=4):
@@ -39,17 +39,17 @@ positions 0-7          positions 0-7, W=4
 7 | x x x x x x x x  7 |          x x x x
 ```
 
-لأجل`N = 8192`و`W = 1024`، المصفوفة النتيجة لديها 1024 × 8192 صفوف غير صفر في التوقعات  خفض 8 ×.
+لأجل$N = 8192$و$W = 1024$، المصفوفة النتيجة لديها 1024 × 8192 صفوف غير صفر في التوقعات  خفض 8 ×.
 
-**KV cache shrinks with SWA.**فقط الأخيرة`W`يجب الاحتفاظ بطباقات K و V لكل طبقة. بالنسبة لتنظيم Gemma-3-ish (1024 نافذة ، سياق 128K) ، ينخفض cache KV 128 ×.
+**KV cache shrinks with SWA.**فقط الأخيرة$W$يجب الاحتفاظ بطباقات K و V لكل طبقة. بالنسبة لتنظيم Gemma-3-ish (1024 نافذة ، سياق 128K) ، ينخفض cache KV 128 ×.
 
-**Quality cost.**محولات SWA فقط تكافح مع الاسترداد على المدى الطويل. التحدي: التخلي عن طبقات SWA مع طبقات الاهتمام الكامل. Gemma 3 تستخدم 5:1 SWA: عالمية. استخدم Mistral 7B كومة SWA السببية حيث "تدفق الأمام" المعلومات من خلال نوافذ تتداخل  كل طبقة تمديد المجال الاستقبلي الفعال من قبل `W`، وبعد ذلك`L`الطبقات التي يمكن أن يشاركها النموذج`L × W`الرد على الرمز
+**Quality cost.**محولات SWA فقط تكافح مع الاسترداد على المدى الطويل. التحدي: التخلي عن طبقات SWA مع طبقات الاهتمام الكامل. Gemma 3 تستخدم 5:1 SWA: عالمية. استخدم Mistral 7B كومة SWA السببية حيث "تدفق الأمام" المعلومات من خلال نوافذ تتداخل  كل طبقة تمديد المجال الاستقبلي الفعال من قبل $W$، وبعد ذلك`L`الطبقات التي يمكن أن يشاركها النموذج`L × W`الرد على الرمز
 
 ### الاهتمام القليل / الحظر
 
 اختر واحد`N × N`نمط التنقل قبل الزمن ثلاثة أشكال قائمة:
 
-- **Local + strided (OpenAI sparse transformer).**إعتني بالآخرين`W`الرموز الإلكترونية`stride`-الرمز الأول قبل ذلك، يلتقط على حد سواء المحلي والطويل المدى`O(N · sqrt(N))`الحساب
+- **Local + strided (OpenAI sparse transformer).**إعتني بالآخرين$W$الرموز الإلكترونية`stride`-الرمز الأول قبل ذلك، يلتقط على حد سواء المحلي والطويل المدى$O(N \cdot \sqrt{N})$الحساب
 - **Longformer / BigBird.**نافذة محلية + مجموعة صغيرة من الرموز العالمية (مثل `[CLS]`) التي تشتمل على الجميع و تشتمل على الجميع + روابط عشوائية.
 - **Native Sparse Attention (DeepSeek, 2025).**تعلم أي كتلة من `(Q, K)`المادة، تخطي بلاك الصفر على مستوى النواة
 
@@ -61,13 +61,15 @@ positions 0-7          positions 0-7, W=4
 
 الاهتمام المختلفة يصلح هذا عن طريق الحوسبة**two**خرائط الاهتمام والخصم:
 
-```
-A1 = softmax(Q1 K1^T / √d)
-A2 = softmax(Q2 K2^T / √d)
-DiffAttn = (A1 - λ · A2) V
+```math
+\begin{aligned}
+A_1 &= \mathop{\mathrm{softmax}}(Q_1 K_1^T / \sqrt{d}) \\
+A_2 &= \mathop{\mathrm{softmax}}(Q_2 K_2^T / \sqrt{d}) \\
+\text{DiffAttn} &= (A_1 - \lambda \cdot A_2) V
+\end{aligned}
 ```
 
-أين`λ`هو مقياس تعلم (عادة 0.50.8). A1 يلتقط أوزان المحتوى الحقيقي؛ A2 يلتقط الغسالة. الاخصاب يلغي الغسالة، يعيد توزيع الوزن إلى الرموز ذات الصلة.
+أين$\lambda$هو مقياس تعلم (عادة 0.50.8). A1 يلتقط أوزان المحتوى الحقيقي؛ A2 يلتقط الغسالة. الاخصاب يلغي الغسالة، يعيد توزيع الوزن إلى الرموز ذات الصلة.
 
 النتائج المعلنة (مايكروسوفت 2024): 510% أقل تعقيدًا، 1.52 × أكثر فترة من السياق الفعلي في نفس الطول المدرب، استرداد إبرة أكثر حدة في كومة الشوفان.
 
@@ -75,12 +77,12 @@ DiffAttn = (A1 - λ · A2) V
 
 | Variant | Compute | KV cache | Quality vs full | Production use |
 |---------|---------|----------|-----------------|----------------|
-| Full attention | O(N²) | O(N) per layer | baseline | every model's default layer |
-| SWA (window 1024) | O(N·W) | O(W) per layer | -0.1 ppl, good with global layers | Gemma 2/3, Phi-3-Long |
-| Local + strided sparse | O(N·√N) | mixed | similar to SWA | OpenAI sparse transformer, Longformer |
-| BigBird (local + global + random) | O(N) approx | mixed | matches full at 2× context | early long-context BERT |
-| Native Sparse (DeepSeek-V3.2) | O(N · active fraction) | O(N) | within 0.05 ppl | DeepSeek-V3.2, 2025 |
-| Differential | O(2·N²) | O(2N) | -5 to -10% ppl | DIFF Transformer, early 2026 models |
+| Full attention | $O(N^2)$ | $O(N)$ per layer | baseline | every model's default layer |
+| SWA (window 1024) | $O(N \cdot W)$ | $O(W)$ per layer | -0.1 ppl, good with global layers | Gemma 2/3, Phi-3-Long |
+| Local + strided sparse | $O(N \cdot \sqrt{N})$ | mixed | similar to SWA | OpenAI sparse transformer, Longformer |
+| BigBird (local + global + random) | $O(N)$ approx | mixed | matches full at 2× context | early long-context BERT |
+| Native Sparse (DeepSeek-V3.2) | $O(N \cdot \text{active fraction})$ | $O(N)$ | within 0.05 ppl | DeepSeek-V3.2, 2025 |
+| Differential | $O(2 \cdot N^2)$ | $O(2N)$ | -5 to -10% ppl | DIFF Transformer, early 2026 models |
 
 ```figure
 gqa-kv-sharing
@@ -142,7 +144,7 @@ def diff_attention(Q1, K1, Q2, K2, V, lam):
 
 ### الخطوة 5: حجم مخزن KV
 
-طبع حجم الاحتفاظ بالمتخزن لكل طبقة في `N = 131072`في كل فاركس، فإن الفاركسات المختلفة والتي تصل إلى 10 × 100 ×، وتضاعف الفواركس، وتدفع فاتورة الذاكرة بشكل واعي.
+طبع حجم الاحتفاظ بالمتخزن لكل طبقة في $N = 131072$في كل فاركس، فإن الفاركسات المختلفة والتي تصل إلى 10 × 100 ×، وتضاعف الفواركس، وتدفع فاتورة الذاكرة بشكل واعي.
 
 ## استخدمها
 
@@ -185,17 +187,17 @@ out = flex_attention(q, k, v, block_mask=mask)
 1. **Easy.**أركض`code/main.py`. تأكد من الـ SWA في`window=4`يُصفر كل شيء خارج الرموز الأربعة الأخيرة في كل صف.`window=n`يعيد التفكير في الاهتمام السببي الكامل بشكل متطابق
 2. **Medium.**تنفيذ SWA السببية مع `window=1024`على رأس الحجر الرئيسي للدرس 07، تدريب على 1000 خطوة على Tinyshakespeare. كم يتراجع فقدان القيمة مقابل الاهتمام الكامل؟ كم تنخفض الذكريات الذكرية الذكية الذكية الذكية الذكية؟
 3. **Hard.**تنفيذ مزيج من طبقات 5: 1 على النمط Gemma-3 (5 SWA ، 1 عالمية) في نموذج الحجر النهائي. مقارنة خسارة الذاكرة وجميع جنيات الجودة ضد خطوط أساس SWA النقية والعالمية النقية عند الموازنة.
-4. **Hard.**تنفيذ الاهتمام المختلف مع المتعلمين`λ`لكل شخص. تدريب على مهمة استرداد اصطناعية (إبرة واحدة، 2000 جهاز إشتت). قياس دقة الاسترداد مقابل خط أساسية للاهتمام الواحد عند المعلمات المقابلة.
+4. **Hard.**تنفيذ الاهتمام المختلف مع المتعلمين$\lambda$لكل شخص. تدريب على مهمة استرداد اصطناعية (إبرة واحدة، 2000 جهاز إشتت). قياس دقة الاسترداد مقابل خط أساسية للاهتمام الواحد عند المعلمات المقابلة.
 
 ## الشروط الرئيسية
 
 | Term | What people say | What it actually means |
 |------|-----------------|-----------------------|
-| Sliding window attention (SWA) | "Local attention" | Each query attends to its last `W` tokens; KV cache shrinks to `O(W)`. |
-| Effective receptive field | "How far back the model sees" | In an `L`-layer SWA stack with window `W`, up to `L × W` tokens. |
+| Sliding window attention (SWA) | "Local attention" | Each query attends to its last $W$ tokens; KV cache shrinks to $O(W)$. |
+| Effective receptive field | "How far back the model sees" | In an $L$-layer SWA stack with window $W$, up to $L \times W$ tokens. |
 | Longformer / BigBird | "Local + global + random" | Sparse patterns with a few always-attending global tokens; early long-context approach. |
 | Native Sparse Attention | "DeepSeek's kernel trick" | Learn block-level sparsity; skip zero blocks at the kernel level while keeping quality. |
-| Differential attention | "Two maps, one subtracts" | DIFF Transformer: subtract a learned `λ` times a second attention map from the first to cancel attention sinks. |
+| Differential attention | "Two maps, one subtracts" | DIFF Transformer: subtract a learned $\lambda$ times a second attention map from the first to cancel attention sinks. |
 | Attention sink | "Weight bleeds to token 0" | Softmax normalization forces rows to sum to 1; uninformative queries dump weight on position 0. |
 | FlexAttention | "Mask-as-Python" | PyTorch 2.5+ API that compiles arbitrary mask functions into FlashAttention-shape kernels. |
 | Layer type mix | "5:1 SWA-to-global" | Interleave sparse and full attention layers in a stack to keep quality at lower memory. |

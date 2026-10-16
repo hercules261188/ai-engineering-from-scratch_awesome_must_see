@@ -29,25 +29,25 @@
 
 الحساب المسبق لمصفوفة ثابتة `PE`من الشكل`(max_len, d_model)`:
 
-```
-PE[pos, 2i]   = sin(pos / 10000^(2i / d_model))
-PE[pos, 2i+1] = cos(pos / 10000^(2i / d_model))
+```math
+\begin{aligned}
+PE_{(pos, 2i)} &= \sin\left(pos / 10000^{2i / d_{\text{model}}}\right) \\
+PE_{(pos, 2i+1)} &= \cos\left(pos / 10000^{2i / d_{\text{model}}}\right)
+\end{aligned}
 ```
 
 إذن`X' = X + PE[:N]`كل بعد هو سينوسيد في تردد مختلف. يتعلم النموذج قراءة الموقف من نمط المرحلة. يفشل خارج`max_len`: لا شيء أخبر النموذج بما يحدث في الموقف 2048 عندما رأى فقط المواقع 02047.
 
 ### (ROPE)
 
-قم بتدوير متجهات Q و K (ليس منشغلات) لزوج من الأبعاد `(2i, 2i+1)`:
+قم بتدوير متجهات Q و K (ليس منشغلات) لزوج من الأبعاد $(2i, 2i+1)$:
 
-```
-[q'_2i    ]   [ cos(pos·θ_i)  -sin(pos·θ_i) ] [q_2i   ]
-[q'_2i+1  ] = [ sin(pos·θ_i)   cos(pos·θ_i) ] [q_2i+1 ]
-
-θ_i = base^(-2i / d_head),  base = 10000 by default
+```math
+\begin{bmatrix} q'_{2i} \\ q'_{2i+1} \end{bmatrix} = \begin{bmatrix} \cos(pos \cdot \theta_i) & -\sin(pos \cdot \theta_i) \\ \sin(pos \cdot \theta_i) & \cos(pos \cdot \theta_i) \end{bmatrix} \begin{bmatrix} q_{2i} \\ q_{2i+1} \end{bmatrix}
+\qquad \theta_i = \text{base}^{-2i / d_{\text{head}}}, \quad \text{base} = 10000 \text{ by default}
 ```
 
-تطبيق نفس التناوب على المفاتيح مع الموقف `pos_k`. منتج النقطة`q'_m · k'_n`يصبح وظيفة `(m - n)`وحدها، هذا هو:**the attention score depends only on the relative distance**على الرغم من أن الدوران كان مُفتوحاً من المواقع المطلقة
+تطبيق نفس التناوب على المفاتيح مع الموقف `pos_k`. منتج النقطة$q'_m \cdot k'_n$يصبح وظيفة $(m - n)$وحدها، هذا هو:**the attention score depends only on the relative distance**على الرغم من أن الدوران كان مُفتوحاً من المواقع المطلقة
 
 تمديد (ROPE): `base`يمكن أن يتم قياسها (NTK-وعي، YaRN، LongRoPE) لاستقطابها إلى سياقات أطول دون إعادة التدريب. تمتد Llama 3 من 8K إلى 128K السياق بهذه الطريقة.
 
@@ -55,11 +55,11 @@ PE[pos, 2i+1] = cos(pos / 10000^(2i / d_model))
 
 تفوت خدعة التثبيت، تحيز الاهتمام يسجل مباشرة:
 
-```
-attn_score[i, j] = (q_i · k_j) / √d  -  m_h · |i - j|
+```math
+\text{attn\_score}[i, j] = \frac{q_i \cdot k_j}{\sqrt{d}} - m_h \cdot |i - j|
 ```
 
-أين`m_h`هو منحدر محدد للرأس (مثل `1 / 2^(8·h/H)`تُعزز الرموز القريبة؛ وتُعاقب الرموز البعيدة. لا تكلفة وقت التدريب. يظهر الورقة أن الاستخراج الطويل يتجاوز السينوسيدال ويطابق روبي على طوله المُدرب الأصلي.
+أين$m_h$هو منحدر محدد للرأس (مثل $1 / 2^{8h/H}$تُعزز الرموز القريبة؛ وتُعاقب الرموز البعيدة. لا تكلفة وقت التدريب. يظهر الورقة أن الاستخراج الطويل يتجاوز السينوسيدال ويطابق روبي على طوله المُدرب الأصلي.
 
 ### ماذا تختار في عام 2026
 
@@ -113,7 +113,7 @@ def apply_rope(x, pos, base=10000):
     return out
 ```
 
-الحاسم: تطبيق نفس الوظيفة على Q في الموقف `m`و (ك) في الموقف`n`إن منتجهم يلتقط`cos((m-n)·θ_i)`العامل على كل زوج من أزواج الإحداثيات
+الحاسم: تطبيق نفس الوظيفة على Q في الموقف $m$و (ك) في الموقف$n$إن منتجهم يلتقط$\cos((m-n) \cdot \theta_i)$العامل على كل زوج من أزواج الإحداثيات
 
 ### الخطوة الثالثة: منحدرات و تحيزات ALiBi
 
@@ -168,7 +168,7 @@ model = AutoModel.from_pretrained("meta-llama/Llama-3.2-3B")
 | Positional encoding | "Tells attention about order" | Any signal added to embeddings or attention that encodes position. |
 | Sinusoidal | "The original one" | `sin/cos` at geometric frequencies added to embeddings; doesn't extrapolate. |
 | RoPE | "Rotary embeddings" | Rotate Q, K by position-dependent angle; dot product encodes relative distance. |
-| ALiBi | "Linear bias trick" | Add `-m·\|i-j\|` to attention scores; no embedding needed, great extrapolation. |
+| ALiBi | "Linear bias trick" | Add $-m \cdot \lvert i-j \rvert$ to attention scores; no embedding needed, great extrapolation. |
 | base | "RoPE's knob" | The frequency scaler in RoPE; increase to extend context at inference. |
 | NTK-aware | "A RoPE scaling trick" | Rescale `base` so high-frequency dims aren't squeezed when context expands. |
 | YaRN | "The fancy one" | Per-dimension interpolation+extrapolation that preserves attention entropy. |

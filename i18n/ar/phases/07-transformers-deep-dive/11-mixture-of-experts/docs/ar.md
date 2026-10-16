@@ -11,7 +11,7 @@
 
 فلوفات محولات كثيفة عند الاستنتاج يساوي عدد المعايير (مرة 2 للخطوة الأمامية). قم بتقييم نموذج كثيف وتدفع كل رمز كامل الفاتورة. بحلول عام 2024 كان الحدود تضرب جدار الحساب: لتكون أكثر ذكاءً ، كنت بحاجة إلى المزيد من فلوفات لكل رمز.
 
-خليط الخبراء يقطع هذا الرابط.`E`خبراء مستقلين + جهاز توجيه يختار`k`خبراء لكل رمز. مجموع المعايير = `E × FFN_size`. المعلمات النشطة لكل رمز = `k × FFN_size`. تشكيل عام 2026: `E=256`،`k=8`. مقياسات تخزين مع`E`، حساب مقياس مع `k`. . .
+خليط الخبراء يقطع هذا الرابط.$E$خبراء مستقلين + جهاز توجيه يختار$k$خبراء لكل رمز. مجموع المعايير = $E \times \text{FFN size}$. المعلمات النشطة لكل رمز = $k \times \text{FFN size}$. تشكيل عام 2026: $E=256$،$k=8$. مقياسات تخزين مع$E$، حساب مقياس مع $k$. . .
 
 الحدود 2026 هي تقريبا تماما MoE: DeepSeek-V3 (671B إجمالي / 37B نشط) ، Mixtral 8×22B ، Qwen2.5-MoE ، Llama 4 ، Kimi K2 ، gpt-oss. على قائمة تحليل الاصطناعي المستقلة ، أفضل 10 نماذج مفتوحة المصدر هي جميعًا MoE.
 
@@ -46,7 +46,7 @@ h = h + sum_{e in top_k}(
 إذا قام الجهاز بتسجيل 90% من الرموز عبر الخبير 3 ، فإن الخبراء الآخرين يضيعون
 
 1. **Auxiliary load-balancing loss**إضافة عقوبة متناسبة مع التباين في استخدام الخبراء يعمل، ولكن يضيف مُعدل فائض و إشارة تراجعة ثانية.
-2. **Expert capacity + token dropping**كل معالج عمل على الأكثر`C × N/E`الوهم، الوهم المفرط يخطو الطبقة، يؤذي الجودة.
+2. **Expert capacity + token dropping**كل معالج عمل على الأكثر$C \times N/E$الوهم، الوهم المفرط يخطو الطبقة، يؤذي الجودة.
 3. **Auxiliary-loss-free balancing**(DeepSeek-V3). إضافة تحيز تعلم لكل خبير الذي يغير اختيار الموجّه أعلى-ك. يتم تحديث التحيز خارج خسارة التدريب. لا جريمة على الهدف الرئيسي. فتح كبير 2024.
 
 نهج DeepSeek-V3: بعد كل خطوة تدريبية، لكل خبير، تحقق ما إذا كان استخدامها فوق الهدف أو أقل منه.`±γ`. استخدامات اختيار`scores + bias`الاحتمالات الخبيرة المستخدمة في إغلاق البوابات هي الخام`scores`غير متغيرة، تفصل التوجيه عن التعبير
@@ -59,7 +59,7 @@ h = h + sum_{e in top_k}(
 
 كلاسيكية (GShard، Switch): كل خبير واسع مثل FFN كامل. `E`صغيرة (864) ، `k`هو صغير (12).
 
-الحديثات الحميدة الحمقى (DeepSeek-V3، Qwen-MoE): كل خبير أصغر (1/8 حجم FFN). `E`هو كبير (256+) ، `k`أكبر (8+) نفس مجموع المعايير، ولكن الجمعيات تتحرك بسرعة أكبر. `C(256, 8) = 400 trillion`ويمكن أن يكون هناك "خبراء" لكل رمز، حيث ترتفع الجودة، والخمول يبقى ثابتًا.
+الحديثات الحميدة الحمقى (DeepSeek-V3، Qwen-MoE): كل خبير أصغر (1/8 حجم FFN). $E$هو كبير (256+) ، $k$أكبر (8+) نفس مجموع المعايير، ولكن الجمعيات تتحرك بسرعة أكبر. $\binom{256}{8} \approx 400$تريليون "خبراء" محتملين لكل رمز، الجودة ترتفع، وتبقى التأخير ثابتة.
 
 ### ملف التكلفة
 
@@ -159,7 +159,7 @@ model = AutoModelForCausalLM.from_pretrained("mistralai/Mixtral-8x22B-v0.1")
 | Auxiliary-loss-free | "DeepSeek-V3's trick" | Balance via per-expert bias on the router's selection only; no extra gradient. |
 | Shared expert | "Always on" | Extra expert through which every token passes; captures common knowledge. |
 | Expert parallelism | "Shard by expert" | Distribute different experts to different GPUs; route tokens across the network. |
-| Sparsity | "Active params < total params" | The ratio `k × expert_size / (E × expert_size)`; 37/671 ≈ 5.5% for DeepSeek-V3. |
+| Sparsity | "Active params < total params" | The ratio $k \times \text{expert size} / (E \times \text{expert size})$; 37/671 ≈ 5.5% for DeepSeek-V3. |
 
 ## المزيد من القراءة
 

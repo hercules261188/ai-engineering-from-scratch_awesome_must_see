@@ -23,14 +23,13 @@ GPT-1 (2018) ، GPT-2 (2019), GPT-3 (2020), GPT-4 (2023), GPT-5 (2025), كلود
 
 ### القناع
 
-نظراً لسلسلة من الطول`N`، بناء`N × N`المصفوفة:
+نظراً لسلسلة من الطول$N$، بناء$N \times N$المصفوفة:
 
-```
-M[i, j] = 0       if j <= i
-M[i, j] = -inf    if j > i
+```math
+M_{ij} = \begin{cases} 0 & \text{if } j \le i \\ -\infty & \text{if } j > i \end{cases}
 ```
 
-إضافة`M`إلى درجات الاهتمام الخام قبل softmax. `exp(-inf) = 0`كل صف من المصفوفة الاهتمام هي توزيع الاحتمالات على المواقع السابقة فقط.
+إضافة`M`إلى درجات الاهتمام الخام قبل softmax. $\exp(-\infty) = 0$كل صف من المصفوفة الاهتمام هي توزيع الاحتمالات على المواقع السابقة فقط.
 
 تكلفة التنفيذ: واحد `torch.tril()`وقت الحساب: نانو ثانية تأثير على الميدان: كل شيء
 
@@ -38,7 +37,7 @@ M[i, j] = -inf    if j > i
 
 عادة ما يتم عرض القناع كشلاء مقبض على الاهتمام. قم بتشغيل الاستنتج في الاتجاه الآخر ويتوقف عن أن يكون غامضًا: الاهتمام هو التطور الثالث للمستقبل المتوسط ، والثلاثي هو حدود الحلقة من ذلك المتوسط ، مكتوبة كمصفوفة.
 
-**Stage 1 — prefix average.**أهم خلاصة سببية من التسلسل: الموقف`i`يصبح متوسط المواقف`0…i`كحلقة، هذا هو`out[i] = X[:i+1].mean(0)`نفس الحساب هو مضاعفة المصفوفة واحدة. خذ المصفوفة الثلاثية السفلية من الأعداد، وقسم كل سطر بحسب عددها، مضاعفة:
+**Stage 1 — prefix average.**أهم خلاصة سببية من التسلسل: الموقف$i$يصبح متوسط المواقف$0 \ldots i$كحلقة، هذا هو`out[i] = X[:i+1].mean(0)`نفس الحساب هو مضاعفة المصفوفة واحدة. خذ المصفوفة الثلاثية السفلية من الأعداد، وقسم كل سطر بحسب عددها، مضاعفة:
 
 ```python
 import numpy as np
@@ -48,7 +47,7 @@ A = A / A.sum(axis=1, keepdims=True)
 out = A @ X
 ```
 
-الصف `i`من`A`هو`[1/(i+1), …, 1/(i+1), 0, …, 0]`الصفر فوق المقاطع هي السببية لم يتم إخفاء أي شيء عن المستقبل، لم يكن المستقبل في المجموع.
+الصف $i$من$A$هو$[1/(i+1), \ldots, 1/(i+1), 0, \ldots, 0]$الصفر فوق المقاطع هي السببية لم يتم إخفاء أي شيء عن المستقبل، لم يكن المستقبل في المجموع.
 
 **Stage 2 — learned weights.**متوسط متساوي يعامل كل رمز سابق على قدم المساواة. استبدل تلك مع ماتريكس النتيجة المتعلمة`S`. الآن الصفوف لم تعد تعد مجموعة إلى واحد من خلال البناء ، لذلك قم بتطبيع كل سطر مع softmax بدلاً من تقسيمها بالعد. softmax لا ينتج أبداً صفرًا دقيقًا ، مما يكسر الصلة العاملة  ما لم تذهب النتائج المستقبلية إلى `-inf`، لأن`exp(-inf) = 0`:
 
@@ -166,7 +165,7 @@ print(tok.decode(out[0]))
 
 تحت القبو`generate()`يقوم بتشغيل المخطط الأمامي ، ويسحب علامات الموقف النهائي ، ويأخذ عينات من الرمز التالي ، ويضيفها ، ويكرر. كل كومة استنتاج LLM الإنتاجية (vLLM ، TensorRT-LLM ، llama.cpp ، Ollama ، MLX) تنفذ نفس الحلقة مع تحسين ثقيل  prefill المكونة ، الإعداد المستمر ، KV cache paging ، فك التخمين المضاربة.
 
-**GPT vs BERT, one line each:**توقعات GPT `P(x_t | x_{<t})`. برت يتوقع`P(x_masked | x_unmasked)`الخسارة تحدد ما إذا كان النموذج يمكن أن تولد.
+**GPT vs BERT, one line each:**توقعات GPT $P(x_t \mid x_{<t})$. برت يتوقع$P(x_{\text{masked}} \mid x_{\text{unmasked}})$الخسارة تحدد ما إذا كان النموذج يمكن أن تولد.
 
 ## أرسله
 
@@ -186,8 +185,8 @@ print(tok.decode(out[0]))
 | Next-token prediction | "The loss" | Cross-entropy of the model's distribution against the true next token at every position. |
 | Autoregressive | "Generate one at a time" | Feed output back as input; parallelism only during training, not during generation. |
 | Logits | "Pre-softmax scores" | Raw output of the LM head before softmax; sampling happens on these. |
-| Temperature | "Creativity knob" | Divide logits by T; T→0 = greedy, T→∞ = uniform. |
-| Top-p | "Nucleus sampling" | Truncate distribution to smallest set summing to ≥p; sample from what remains. |
+| Temperature | "Creativity knob" | Divide logits by $T$; $T \to 0$ = greedy, $T \to \infty$ = uniform. |
+| Top-p | "Nucleus sampling" | Truncate distribution to smallest set summing to $\ge p$; sample from what remains. |
 | Min-p | "Better than top-p" | Keep tokens where `p ≥ min_p × max_p`; adapts cutoff to sharpness of distribution. |
 | Speculative decoding | "Draft + verify" | Cheap model proposes N tokens; big model verifies in parallel. |
 | Teacher forcing | "Training trick" | During training, feed the true previous token, not the model's prediction. Standard for every seq2seq LM. |

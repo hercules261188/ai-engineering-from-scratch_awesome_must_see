@@ -11,7 +11,7 @@
 
 - تنفيذ الاهتمام الذاتي للمنتج النقطي على نطاق واسع من الصفر باستخدام NumPy فقط ، بما في ذلك استفسارات / مفتاح / تقديرات القيمة والجمع الموزن لـ softmax
 - بناء طبقة الاهتمام متعددة الرؤوس التي تقسم الرؤوس، وحساب الاهتمام المتوازي، وتجمع النتائج
-- تتبع كيفية استيعاب ماتريكية الاهتمام علاقات رمزية وشرح لماذا تحديد النطاق ب sqrt(d_k) يمنع التشبث المكثف
+- تتبع كيفية استيعاب ماتريكس الاهتمام العلاقات الرمزية وشرح لماذا التوسع$\sqrt{d_k}$يمنع الشبعة من الـ softmax
 - تطبيق التخفيض العوجي لتحويل الاهتمام الثنائي الاتجاه إلى الاهتمام التراجعي (على شكل المُعزل)
 
 ## المشكلة
@@ -109,10 +109,10 @@ attention-matrix
 
 ### لماذا النطاق؟
 
-إن منتجات النقاط تنمو مع الأبعاد dk. إذا dk = 64, يمكن أن تكون منتجات النقاط في نطاق العشرات، مما يدفع softmax إلى مناطق حيث تختفي التراجع.
+منتجات النقاط تنمو مع الأبعاد$d_k$إذا$d_k = 64$يمكن أن تكون منتجات النقاط في نطاق العشرات، مما يدفع الـ softmax إلى المناطق التي تختفي فيها التدرج.$\sqrt{d_k}$. . .
 
-```
-Scaled scores = (Q @ K^T) / sqrt(dk)
+```math
+\text{Scaled scores} = \frac{Q K^T}{\sqrt{d_k}}
 ```
 
 هذا يبقي القيم في نطاق حيث softmax ينتج تراجعات مفيدة.
@@ -159,8 +159,8 @@ flowchart LR
 
 الصيغة في سطر واحد:
 
-```
-Attention(Q, K, V) = softmax( Q @ K^T / sqrt(dk) ) @ V
+```math
+\text{Attention}(Q, K, V) = \mathop{\mathrm{softmax}}\left( \frac{Q K^T}{\sqrt{d_k}} \right) V
 ```
 
 ```figure
@@ -302,7 +302,7 @@ print(f"\nAttn weights (averaged over heads):")
 print(attn_weights[0].detach().numpy().round(3))
 ```
 
-الفرق الرئيسي: توجه الرأس المتعدد يعمل على وظائف الاهتمام المتعددة بالتوازي ، كل منها مع توقعات Q ، K ، V الخاصة به من الحجم dk = d_model / n_heads ، ثم يجمع النتائج. وهذا يسمح للنموذج بالانتباه إلى أنواع العلاقة المختلفة في وقت واحد.
+الفرق الرئيسي: الاهتمام متعدد الرؤوس يعمل وظائف الاهتمام المتوازية، كل منها مع توقعات Q، K، V الخاصة به من الحجم $d_k = d_{\text{model}} / n_{\text{heads}}$و بعد ذلك تقوم بتحديد النتائج، وهذا يسمح للنموذج بالانتباه إلى أنواع العلاقات المختلفة في نفس الوقت.
 
 ## أرسله
 
@@ -322,7 +322,7 @@ print(attn_weights[0].detach().numpy().round(3))
 | Query (Q) | "The question vector" | A learned projection of the input that represents what information this token is looking for |
 | Key (K) | "The label vector" | A learned projection that represents what information this token contains, matched against queries |
 | Value (V) | "The content vector" | A learned projection carrying the actual information that gets aggregated based on attention scores |
-| Scaled dot-product attention | "The attention formula" | softmax(QK^T / sqrt(dk)) @ V - scaling prevents softmax saturation in high dimensions |
+| Scaled dot-product attention | "The attention formula" | $\mathop{\mathrm{softmax}}(QK^T / \sqrt{d_k}) V$ - scaling prevents softmax saturation in high dimensions |
 | Self-attention | "The token looks at itself and others" | Attention where Q, K, V all come from the same sequence, letting every position attend to every other position |
 | Attention weights | "How much focus" | A probability distribution over positions, produced by softmax over scaled dot products |
 | Multi-head attention | "Parallel attention" | Running multiple attention functions with different projections, then concatenating results for richer representations |
