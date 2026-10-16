@@ -27,42 +27,46 @@
 
 ابدأ من نموذج برادلي تيري`x`و إكمالان`y_w`(مختار) و `y_l`(مرفوض) ، احتمال الإنسان يفضل`y_w`هو
 
-```text
-P(y_w > y_l | x) = sigmoid( r(x, y_w) - r(x, y_l) )
+```math
+P(y_w > y_l \mid x) = \sigma\big( r(x, y_w) - r(x, y_l) \big)
 ```
 
 أين`r`هو وظيفة مكافأة خفية`r`من الاختيارات، ثم تدريب سياسة `pi`لتحقيق أقصى قدر ممكن من`r`مع مرساة KL:
 
-```text
-max_pi   E_{x, y~pi} [ r(x, y) ] - beta * KL(pi || pi_ref)
+```math
+\max_{\pi} \; \mathbb{E}_{x, y \sim \pi} \big[ r(x, y) \big] - \beta \, \mathrm{KL}(\pi \,\|\, \pi_{\text{ref}})
 ```
 
 ولاحظ استنتاج DPO أن السياسة المثلى`pi*`في هذا الهدف، يكون الشكل مغلقًا من حيث`r`:
 
-```text
-pi*(y | x) = (1/Z(x)) * pi_ref(y | x) * exp( r(x, y) / beta )
+```math
+\pi^*(y \mid x) = \frac{1}{Z(x)} \, \pi_{\text{ref}}(y \mid x) \exp\!\left( \frac{r(x, y)}{\beta} \right)
 ```
 
 إعادة ترتيب`r`:
 
-```text
-r(x, y) = beta * ( log pi*(y | x) - log pi_ref(y | x) ) + beta * log Z(x)
+```math
+r(x, y) = \beta \big( \log \pi^*(y \mid x) - \log \pi_{\text{ref}}(y \mid x) \big) + \beta \log Z(x)
 ```
 
 - نعم`log Z(x)`المصطلح هو نفسها لكلتا`y_w`و`y_l`(يعتمد على`x`لا ، لا`y`), لذلك فإنه يلغي عند حساب الفرق في الاختلافات:
 
-```text
-r(x, y_w) - r(x, y_l) = beta * ( log pi_theta(y_w|x) - log pi_ref(y_w|x)
-                                - log pi_theta(y_l|x) + log pi_ref(y_l|x) )
+```math
+\begin{aligned}
+r(x, y_w) - r(x, y_l) = \beta \big( &\log \pi_\theta(y_w \mid x) - \log \pi_{\text{ref}}(y_w \mid x) \\
+&- \log \pi_\theta(y_l \mid x) + \log \pi_{\text{ref}}(y_l \mid x) \big)
+\end{aligned}
 ```
 
 استبدل في برادلي تيري sigmoid واخذ احتمالات السجل السلبي على أزواج التفضيل:
 
-```text
-L_DPO(theta) = - E_{(x, y_w, y_l)} [
-  log sigmoid( beta * ( log pi_theta(y_w|x) - log pi_ref(y_w|x)
-                       - log pi_theta(y_l|x) + log pi_ref(y_l|x) ) )
-]
+```math
+\begin{aligned}
+L_{\text{DPO}}(\theta) = -\mathbb{E}_{(x, y_w, y_l)} \Big[
+  \log \sigma\big( \beta \big( &\log \pi_\theta(y_w \mid x) - \log \pi_{\text{ref}}(y_w \mid x) \\
+  &- \log \pi_\theta(y_l \mid x) + \log \pi_{\text{ref}}(y_l \mid x) \big) \big)
+\Big]
+\end{aligned}
 ```
 
 هذه هي الخسارة. إنها سيقمويدا على مستوى مستوى واحد على سبيل المثال ، محسوبة من أربعة احتمالات سجل. لا نموذج مكافأة منفصل. لا PPO. لا وجود لمفهوم KL في الخسارة. يتم احتواء قيود KL في مشتق الشكل المغلق.
@@ -87,8 +91,8 @@ flowchart LR
 
 فحص عقل مفيد قبل أي تدريب.`log pi_theta(y_w | x)`:
 
-```text
-d L_DPO / d log pi_theta(y_w | x) = - beta * (1 - sigmoid(z))
+```math
+\frac{\partial L_{\text{DPO}}}{\partial \log \pi_\theta(y_w \mid x)} = -\beta \big(1 - \sigma(z)\big)
 ```
 
 أين`z`هذا هو الحجة إلى sigmoid. هذا سلبي للجميع`z`ويعني: زيادة احتمالية التسجيل في السياسة من الانتهاء المختار يقلل من الخسارة.`log pi_theta(y_l | x)`إيجابي: زيادة احتمالية الرفض الزراعي يزيد من الخسارة. التدريب يدفع المختار إلى الأعلى والمنرفض إلى أسفل. الإشارة تجمد؛ لا تتحرك.

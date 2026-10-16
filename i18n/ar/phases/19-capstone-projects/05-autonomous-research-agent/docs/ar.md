@@ -156,4 +156,4 @@ $ ai-scientist run --seed "attention sparsity in sub-1B transformers" --budget 3
 - [LangGraph documentation](https://langchain-ai.github.io/langgraph/) طبقة تشكيل المرجعية
 - [Semantic Scholar Graph API](https://api.semanticscholar.org/) البحث في الأدب
 - [E2B sandboxes](https://e2b.dev)عزل تجربة مرجعية
-- [NeurIPS reviewer guidelines](https://neurips.cc/Conferences/2026/Reviewer-Guidelines) الرسم الذي يرمزه مجموعة المراجعة
+- [NeurIPS reviewer guidelines](https://neurips.cc/Conferences/2026/ReviewerGuidelines) الرسم الذي يرمزه مجموعة المراجعة

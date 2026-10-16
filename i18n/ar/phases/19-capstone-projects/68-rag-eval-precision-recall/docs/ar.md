@@ -182,7 +182,7 @@ python3 code/main.py
 - باكلي، فورهيز، "تقييم استقرار تدابير التقييم"، SIGIR 2000 - ورقة قائمة حول قياسات التصنيف
 - جارفيلين، كيكالينين، "تقييم تقنيات IR على أساس المكاسب المتراكمة" - ورقة nDCG
 - [Ragas: Automated Evaluation of RAG Pipelines](https://docs.ragas.io)
-- [Anthropic, Evaluating RAG](https://www.anthropic.com/news/evaluating-rag)
+- [Anthropic, Introducing Contextual Retrieval](https://www.anthropic.com/engineering/contextual-retrieval)- تسجل استرداد مع 1 - recall@20
 - المرحلة 11 الدروس 10 - أساسيات إطار التقييم
 - المرحلة 19 دروس 64-67 - المكونات التي تم تقييمها هنا
 - المرحلة 19 الدروس 69 - خط الأنابيب من نهاية إلى نهاية هذه الدرجات التقييم

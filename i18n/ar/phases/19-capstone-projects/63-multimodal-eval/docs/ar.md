@@ -49,15 +49,14 @@ flowchart TB
 
 ### (BLEU-4)
 
-```text
-BLEU-4 = BP * exp(mean(log p1, log p2, log p3, log p4))
+```math
+\text{BLEU-4} = \text{BP} \cdot \exp\big(\text{mean}(\log p_1, \log p_2, \log p_3, \log p_4)\big)
 ```
 
 أين`p_n`هو دقة n-gram المعدلة (عدد المقطوع من n-grams المولودة التي تظهر في أي مرجع، مقسمة على مجموع n-grams المولودة) ، و `BP`هو عقوبة قصيرة:
 
-```text
-BP = 1                if generated length > reference length
-   = exp(1 - r/g)     otherwise, where r is reference length and g is generated
+```math
+\text{BP} = \begin{cases} 1 & \text{if generated length} > \text{reference length} \\ \exp(1 - r/g) & \text{otherwise, where } r \text{ is reference length and } g \text{ is generated} \end{cases}
 ```
 
 مطلوب التسهيل في عينات صغيرة حيث بعض`p_n`هو صفر. يستخدم التنفيذ "طريقة 1" (إضافة 1 إلى العداد والاسم لجميع العد الصفر) ، والتي هي الأمان المتبقي لنظم القليل العد.

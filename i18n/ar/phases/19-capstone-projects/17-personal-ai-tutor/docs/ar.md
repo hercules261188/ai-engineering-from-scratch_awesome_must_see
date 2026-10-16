@@ -151,7 +151,7 @@ learner: "6"
 
 - [Khanmigo (Khan Academy)](https://www.khanmigo.ai) المستهلك المرجعي المعلم K-12
 - [Duolingo Max](https://blog.duolingo.com/duolingo-max/) معلم تعليم اللغة المرجعية
-- [Google LearnLM / Gemini for Education](https://blog.google/technology/google-deepmind/learnlm) نموذج مرجعية مضيف
+- [Google LearnLM / Gemini for Education](https://blog.google/products-and-platforms/products/education/google-learnlm-gemini-generative-ai/) نموذج مرجعية مضيف
 - [Quizlet Q-Chat](https://quizlet.com) إشارة بديلة
 - [Synthesis Tutor](https://www.synthesis.com) إشارة بدء العمل
 - [FSRS algorithm](https://github.com/open-spaced-repetition/fsrs4anki) مُخطط للجدول المتفاصل
