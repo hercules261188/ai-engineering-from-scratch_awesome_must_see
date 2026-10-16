@@ -32,8 +32,8 @@ Lo que el SFT le da: el modelo ahora responde preguntas en lugar de continuarlas
 
 Para cada respuesta rápida, muestra los completos de K del modelo SFT. Un etiquetador los clasifica. Entrenar un modelo de recompensa que califique cualquier par de respuesta rápida para que, para pares donde `y_w`era preferido por encima de `y_l`¿Qué es esto ?
 
-```
-L_RM = -log sigmoid(r(x, y_w) - r(x, y_l))
+```math
+L_{\text{RM}} = -\log \sigma\big(r(x, y_w) - r(x, y_l)\big)
 ```
 
 Esta es la pérdida de preferencia en pareja Bradley-Terry. La RM generalmente se inicializa desde el modelo SFT con la cabeza LM reemplazada por una cabeza escalar.
@@ -44,8 +44,8 @@ Los modelos de recompensas son pequeños: 6B fue suficiente para el 175B Instruc
 
 Definir el objetivo:
 
-```
-J(pi) = E_{x~D, y~pi(.|x)} [ r(x, y) ] - beta * KL(pi(.|x) || pi_SFT(.|x))
+```math
+J(\pi) = \mathbb{E}_{x \sim D,\, y \sim \pi(\cdot \mid x)} \big[ r(x, y) \big] - \beta \, \mathrm{KL}\big(\pi(\cdot \mid x) \,\|\, \pi_{\text{SFT}}(\cdot \mid x)\big)
 ```
 
 Maximizar con PPO. El término KL mantiene`pi`Sin él, el optimizador encuentra ejemplos adversarios  cuerdas que obtienen un puntaje alto por debajo del RM porque el RM nunca los vio, no porque los humanos realmente los prefieren.
@@ -56,8 +56,8 @@ El coeficiente KL `beta`Es el hiperparámetro RLHF más importante. Demasiado ba
 
 Después de la RLHF, el modelo es preferido por los humanos pero se regresa en los puntos de referencia estándar (SQuAD, HellaSwag, DROP). Ouyang et al. llaman esto el impuesto de alineación y lo fijan con PPO-ptx: mezclan los gradientes pre-entrenamiento en el objetivo de RL para que el modelo no olvide cómo hacer tareas en el torrente inferior por las que nunca fue recompensado.
 
-```
-J_ptx(pi) = J(pi) + gamma * E_{x~D_pretrain} [ log pi(x) ]
+```math
+J_{\text{ptx}}(\pi) = J(\pi) + \gamma \, \mathbb{E}_{x \sim D_{\text{pretrain}}} \big[ \log \pi(x) \big]
 ```
 
 PPO-ptx se convirtió en estándar. Anthropic, DeepMind y Meta todos usan alguna variante.
@@ -84,7 +84,7 @@ al-instruct-pipeline
 Qué ver:
 
 - Trayectoria de recompensas con `beta = 0.1`- ¿ Qué ?`beta = 0.0`¿ Qué ?
-- El programa de formación se desarrolla en el marco de la formación.
+- $\mathrm{KL}(\pi \Vert \pi_{\text{SFT}})$sobre los pasos de entrenamiento.
 - Distribución final de la acción en comparación con la preferencia de etiquetador.
 
 ## Envío
@@ -109,7 +109,7 @@ Esta lección produce`outputs/skill-instructgpt-explainer.md`. Dado una descripc
 |------|-----------------|------------------------|
 | SFT | "instruction tuning" | Stage 1: cross-entropy fine-tune on prompt-response pairs |
 | Reward model | "the RM" | Scalar regressor over (prompt, response) trained with Bradley-Terry on pairwise labels |
-| Bradley-Terry | "pairwise preference loss" | -log sigmoid(r_w - r_l); reduces pairwise ranking to binary classification |
+| Bradley-Terry | "pairwise preference loss" | $-\log \sigma(r_w - r_l)$; reduces pairwise ranking to binary classification |
 | KL penalty | "the regularizer" | `beta * KL(pi \|\| pi_SFT)` — keeps the RL policy near the SFT anchor |
 | PPO-ptx | "PPO with pretraining mix" | Adds a fraction of pre-training log-likelihood to the PPO objective to offset the alignment tax |
 | Alignment tax | "the RLHF regression" | Post-RLHF drop on standard benchmarks that RLHF did not target |

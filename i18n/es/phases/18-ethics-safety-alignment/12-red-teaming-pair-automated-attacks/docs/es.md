@@ -31,11 +31,11 @@ Las entradas:
 
 Loop, para k en 1..K:
 1. A se incita con el objetivo G y el historial de pares (prompto, respuesta) hasta ahora.
-2. Una emite una nueva llamada p_k.
-3. Envía p_k a T; recibe respuesta r_k.
-4. J marca (p_k, r_k) en el gol.
+2. Una emite una nueva señal .$p_k$¿ Qué ?
+3. Envía$p_k$a T; recibir respuesta $r_k$¿ Qué ?
+4. J puntuaciones $(p_k, r_k)$en el gol.
 5. Si el puntaje >= umbral, detenga el jailbreak encontrado.
-6. Si no, añadir (p_k, r_k) a la historia de A; continuar.
+6. Otras, añadir$(p_k, r_k)$A. a la historia; continúa.
 
 Resultado empírico (NeurIPS 2023): >50% de tasa de éxito de ataque contra GPT-3.5-turbo, Llama-2-7B-chat; consultas promedio de éxito en el rango de 10 a 20.
 

@@ -18,20 +18,20 @@
 
 El objetivo del RLHF (lección 1):
 
-```
-max_pi E_{x,y~pi} [ r(x, y) ] - beta * KL(pi || pi_ref)
+```math
+\max_{\pi} \; \mathbb{E}_{x, y \sim \pi} \big[ r(x, y) \big] - \beta \, \mathrm{KL}(\pi \,\|\, \pi_{\text{ref}})
 ```
 
 tiene un óptimo conocido:
 
-```
-pi*(y|x) = (1/Z(x)) * pi_ref(y|x) * exp(r(x, y) / beta)
+```math
+\pi^*(y \mid x) = \frac{1}{Z(x)} \, \pi_{\text{ref}}(y \mid x) \exp\!\left(\frac{r(x, y)}{\beta}\right)
 ```
 
 Así que la recompensa se define implícitamente por la relación entre la política óptima y la referencia:
 
-```
-r(x, y) = beta * log(pi*(y|x) / pi_ref(y|x)) + beta * log Z(x)
+```math
+r(x, y) = \beta \log \frac{\pi^*(y \mid x)}{\pi_{\text{ref}}(y \mid x)} + \beta \log Z(x)
 ```
 
 Substituir esto en la probabilidad de preferencia Bradley-Terry y la función de partición `Z(x)`cancela porque depende sólo de`x`. Lo que queda es una pérdida en los parámetros de la política solamente  no se necesita un modelo de recompensa.
@@ -42,11 +42,11 @@ La arrugas: la derivación asume que el óptimo es alcanzable, los datos de pref
 
 ### DPO (Rafailov y otros, 2023)
 
-```
-L_DPO = -log sigmoid(
-  beta * log(pi(y_w | x) / pi_ref(y_w | x))
-  - beta * log(pi(y_l | x) / pi_ref(y_l | x))
-)
+```math
+L_{\text{DPO}} = -\log \sigma\!\left(
+  \beta \log \frac{\pi(y_w \mid x)}{\pi_{\text{ref}}(y_w \mid x)}
+  - \beta \log \frac{\pi(y_l \mid x)}{\pi_{\text{ref}}(y_l \mid x)}
+\right)
 ```
 
 ¿Qué puede salir mal?
@@ -59,8 +59,8 @@ L_DPO = -log sigmoid(
 
 La optimización de preferencias de identidad reemplaza el log-sigmoid con un mapeo de identidad en la probabilidad de preferencias. La pérdida se convierte en un error cuadrado en un objetivo limitado:
 
-```
-L_IPO = (log(pi(y_w | x) / pi_ref(y_w | x)) - log(pi(y_l | x) / pi_ref(y_l | x)) - 1/(2 beta))^2
+```math
+L_{\text{IPO}} = \left( \log \frac{\pi(y_w \mid x)}{\pi_{\text{ref}}(y_w \mid x)} - \log \frac{\pi(y_l \mid x)}{\pi_{\text{ref}}(y_l \mid x)} - \frac{1}{2\beta} \right)^2
 ```
 
 El margen está limitado por `1/(2 beta)`La fuerza de preferencia y la brecha implícita de recompensa son proporcionales.
@@ -69,8 +69,8 @@ El margen está limitado por `1/(2 beta)`La fuerza de preferencia y la brecha im
 
 La optimización Kahneman-Tversky elimina completamente la estructura pareja. Dado una salida única etiquetada y una señal binaria "deseable" o "indeseable", se asigna a una utilidad de teoría de prospectos:
 
-```
-v(x, y) = sigma(beta * log(pi(y|x) / pi_ref(y|x)) - z_ref)
+```math
+v(x, y) = \sigma\!\left(\beta \log \frac{\pi(y \mid x)}{\pi_{\text{ref}}(y \mid x)} - z_{\text{ref}}\right)
 ```
 
 El beneficio: puede utilizar datos sin pareja, que es mucho más abundante.
@@ -79,12 +79,12 @@ El beneficio: puede utilizar datos sin pareja, que es mucho más abundante.
 
 Optimización de preferencias sencillas alinea la señal de entrenamiento con la generación. Eliminar la política de referencia por completo y normalizar la probabilidad de registro por longitud:
 
-```
-L_SimPO = -log sigmoid(
-  (beta / |y_w|) * log pi(y_w | x)
-  - (beta / |y_l|) * log pi(y_l | x)
-  - gamma
-)
+```math
+L_{\text{SimPO}} = -\log \sigma\!\left(
+  \frac{\beta}{|y_w|} \log \pi(y_w \mid x)
+  - \frac{\beta}{|y_l|} \log \pi(y_l \mid x)
+  - \gamma
+\right)
 ```
 
 con un margen `gamma`La normalización de longitud elimina el incentivo para explotar el modo de falla de la longitud-bias del DPO (más largo `y_w`da una brecha mayor de registro-prob por construcción).
@@ -93,9 +93,11 @@ con un margen `gamma`La normalización de longitud elimina el incentivo para exp
 
 Optimización de preferencias de probabilidades-ratio añade un término de preferencia a la probabilidad de registro negativo de SFT estándar:
 
-```
-L_ORPO = L_NLL(y_w) + lambda * L_OR
-L_OR = -log sigmoid(log(odds(y_w) / odds(y_l)))
+```math
+\begin{aligned}
+L_{\text{ORPO}} &= L_{\text{NLL}}(y_w) + \lambda L_{\text{OR}} \\
+L_{\text{OR}} &= -\log \sigma\!\left(\log \frac{\text{odds}(y_w)}{\text{odds}(y_l)}\right)
+\end{aligned}
 ```
 
 No hay política de referencia  el término SFT es el regulador. Entrenamiento en una sola etapa desde el modelo base al modelo alineado. No hay punto de control separado SFT.

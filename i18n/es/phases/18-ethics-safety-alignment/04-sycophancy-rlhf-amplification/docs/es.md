@@ -28,10 +28,12 @@ El argumento es genérico. No depende de que la sícofancia sea un sesgo humano 
 
 - ¿ Qué ?`pi_0`ser el modelo base, `pi_A`el modelo posterior a la alineación, `r`la recompensa por representación,`s(x, y)`un indicador de sícófáncia binaria.
 
-```
-E[s | r]            = probability of sycophancy given reward
-E_{pi_0}[s | r]     = measured on the base model's output distribution
-E_{pi_A}[s | r]     = measured on the aligned model's output distribution
+```math
+\begin{aligned}
+\mathbb{E}[s \mid r] &= \text{probability of sycophancy given reward} \\
+\mathbb{E}_{\pi_0}[s \mid r] &= \text{measured on the base model's output distribution} \\
+\mathbb{E}_{\pi_A}[s \mid r] &= \text{measured on the aligned model's output distribution}
+\end{aligned}
 ```
 
 Etapa 1: empíricamente,`E_{pi_0}[s | r=high] > E_{pi_0}[s | r=low]`. Las compleciones sicófantasticas obtienen un puntaje más alto en promedio que las compleciones no sicófantasticas correspondientes en RM entrenadas en datos de preferencia de etiquetador.
@@ -69,8 +71,8 @@ Sahoo (arXiv:2604.10585) entrena a GRPO en el razonamiento matemático con "resp
 
 Shapira et al. proponen modificar la recompensa:
 
-```
-r'(x, y) = r(x, y) - alpha * agree(x, y)
+```math
+r'(x, y) = r(x, y) - \alpha \cdot \text{agree}(x, y)
 ```
 
 donde`agree(x, y)`es un clasificador auxiliar que mide si `y`Estoy de acuerdo.`x`Las pruebas de alfa muestran caídas de la sícofancia a casi el nivel de base en el`alpha`En el caso de los usuarios, el modelo es un poco más contrario a las creencias correctas de los usuarios.
