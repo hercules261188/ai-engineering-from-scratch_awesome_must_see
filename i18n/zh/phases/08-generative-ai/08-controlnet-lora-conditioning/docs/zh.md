@@ -39,15 +39,15 @@ features += weight_a * control_a(depth) + weight_b * control_b(pose)
 
 ### 劳拉 (Hu等,2021年)
 
-对于任何线性层`W ∈ R^{d×d}`在模型中,结`W`加入一个低级别的三角形:
+对于任何线性层$W \in \mathbb{R}^{d \times d}$在模型中,结$W$加入一个低级别的三角形:
 
+```math
+W' = W + \Delta W, \quad \Delta W = B A, \quad A \in \mathbb{R}^{r \times d}, \quad B \in \mathbb{R}^{d \times r}
 ```
-W' = W + ΔW,  ΔW = B @ A,  A ∈ R^{r×d},  B ∈ R^{d×r}
-```
 
-随着`r << d`排名4-16是注意力标准,排名64-128是重型细调.`2 · d · r`没有`d²`为了 SDXL 的关注`d=640`现在`r=16`整个模型中:LoRA通常是20-200MB与基 5GB相比.
+随着$r \ll d$排名4-16是注意力标准,排名64-128是重型细调.$2 \cdot d \cdot r$没有$d^2$为了 SDXL 的关注$d=640$现在$r=16$整个模型中:LoRA通常是20-200MB与基 5GB相比.
 
-在推断下,你可以扩展LORA:`W' = W + α · B @ A`现在,我们要去.`α = 0.5-1.5`许多LoRA的堆积量是加上性的 (通常警告的是它们以非线性方式相互作用).
+在推断下,你可以扩展LORA:$W' = W + \alpha \cdot B A$现在,我们要去.$\alpha = 0.5\text{-}1.5$许多LoRA的堆积量是加上性的 (通常警告的是它们以非线性方式相互作用).
 
 ### 适应器 (Ye et al., 2023)
 
@@ -74,7 +74,7 @@ v4-controlnet-zero
 
 `code/main.py`在1-D上模拟两个机制:
 
-1. **LoRA.**预训练的线性层`W`结它,训练一个低级的`B @ A`这样.`W + BA`显示出它是什么?`r = 1`足以学习一个级-1的纠正.
+1. **LoRA.**预训练的线性层$W$结它,训练一个低级的$BA$这样.$W + BA$显示出它是什么?$r = 1$足以学习一个级-1的纠正.
 
 2. **ControlNet-lite.**预测器"结结结基础"和"侧网络"读取额外信号.侧网络的输出由一个可学习的尺度器启动到零 (我们的零-conv版本). 训练和观察门升.
 
@@ -98,11 +98,11 @@ h = base(x) + gated
 
 ## 陷
 
-- **Over-scaling LoRAs.** `α = 2`或`α = 3`果是一个常见的"强化"黑客,`α ≤ 1.5`现在,我们要去.
+- **Over-scaling LoRAs.** $\alpha = 2$或$\alpha = 3$果是一个常见的"强化"黑客,$\alpha \le 1.5$现在,我们要去.
 - **ControlNet weight conflict.**使用Pose ControlNet在重量1.0和深度控制网在重量1.0通常过分.重量总量≈1.0是安全默认的.
 - **LoRA on the wrong base.**由于注意力尺寸不匹配,SDXL LoRA在SD 1.5上默默无闻.
 - **Textual Inversion drift.**通过一个检查点训练的代币,在另一个检查点上漂移得很差.
-- **LoRA weight-merging and storage.**您可以将LoRA入基模型重量中,以更快地推断 (没有运行时间的增加),但您失去了扩展能力`α`保持两种版本.
+- **LoRA weight-merging and storage.**您可以将LoRA入基模型重量中,以更快地推断 (没有运行时间的增加),但您失去了扩展能力$\alpha$保持两种版本.
 
 ## 用它
 
@@ -125,7 +125,7 @@ h = base(x) + gated
 
 1. **Easy.**在`code/main.py`根据" 洛拉"的排名`r`在哪个级别的 LoRA 完全匹配到一个级别-2的目标三角形?
 2. **Medium.**训练两个不同的LoRA在两个目标转换. 加载它们在一起,显示它们的增量相互作用. 相互作用什么时候会打破线性?
-3. **Hard.**使用扩散器堆叠:SDXL-base + Canny-ControlNet (重量0.8) +风格LoRA (α 0.8) + IP-Adapter (重量0.6).随着堆叠重量变化,测量FID-vs-prompt-adhesion trade-off.
+3. **Hard.**使用扩散器堆:SDXL-base + Canny-ControlNet (重量0.8) +一种风格LoRA ($\alpha$根据堆重量变化,测量FID与即时合规性交换.
 
 ## 关键词
 
@@ -133,9 +133,9 @@ h = base(x) + gated
 |------|-----------------|-----------------------|
 | ControlNet | "Spatial control" | Cloned encoder + zero-conv skips; reads a conditioning image. |
 | Zero convolution | "Starts as identity" | 1×1 conv initialized to zero; ControlNet starts as no-op. |
-| LoRA | "Low-rank adapter" | `W + B @ A`, `r << d`; 100x fewer params than a full fine-tune. |
+| LoRA | "Low-rank adapter" | $W + BA$, $r \ll d$; 100x fewer params than a full fine-tune. |
 | rank r | "The knob" | LoRA compression; 4-16 typical, 64+ for heavy personalization. |
-| α | "LoRA strength" | Runtime scaling of the LoRA delta. |
+| $\alpha$ | "LoRA strength" | Runtime scaling of the LoRA delta. |
 | IP-Adapter | "Reference image" | Small image-conditioning adapter via CLIP-image tokens. |
 | DreamBooth | "Full subject fine-tune" | Train the full model on ~30 images of a subject. |
 | Textual Inversion | "New token" | Learn a new word embedding only; legacy, mostly replaced. |
@@ -144,7 +144,7 @@ h = base(x) + gated
 
 实际的文字到图像SaaS在同一基点上服务数百个LoRA和几十个ControlNets.服务问题看起来非常像LLM多租金 (生产文献涵盖了LLM案例在连续批量和LoRAX / S-LoRA下):
 
-- **Hot-swap LoRAs, do not merge.**合并`W' = W + α·B·A`入基底,每步推断速度大约3-5%,但结.`α`保持LORA在VRAM中作为R级的海域;扩散器暴露`pipe.load_lora_weights()`其他`pipe.set_adapters([...], adapter_weights=[...])`交换成本是`2 · d · r · num_layers` MB 尺度,次分.
+- **Hot-swap LoRAs, do not merge.**合并$W' = W + \alpha \cdot B \cdot A$入基底,每步推断速度大约3-5%,但结.$\alpha$保持LORA在VRAM中作为R级的海域;扩散器暴露`pipe.load_lora_weights()`其他`pipe.set_adapters([...], adapter_weights=[...])`交换成本是`2 · d · r · num_layers` MB 尺度,次分.
 - **ControlNet as a second attention lane.**克隆编码器与基层并行运行.重量1.0的两个控制网 = 每步额外的两个前进传递,而不是一个合并传递.批量大小的头部空间四旋翼下降.每步的预算为1.5x.
 - **Quantized LoRAs too.**如果您量化了基数 (见课07号,Flux在8GB),LoRA三角形也可以清洁地量化到8位或4位.
 

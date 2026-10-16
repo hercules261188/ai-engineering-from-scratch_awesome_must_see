@@ -9,9 +9,9 @@
 
 ## 问题
 
-起的过程是从 起的步骤到步行.`N(0, I)`现在我们要回来数据分布.DDIM将其分解成20-50个确定性步骤.你想要少的步骤理想情况下是一个.阻者是,解决反向过程的ODE是硬的;路径是曲线的.
+起的过程是从 起的步骤到步行.$\mathcal{N}(0, I)$现在我们要回来数据分布.DDIM将其分解成20-50个确定性步骤.你想要少的步骤理想情况下是一个.阻者是,解决反向过程的ODE是硬的;路径是曲线的.
 
-如果您可以训练模型,使噪音到数据的路径是*直线*,`t=1`为了`t=0`流量匹配直接构建这个:定义直线插射从`x_1 ∼ N(0, I)`为了`x_0 ∼ data`引进一个向量场`v_θ(x, t)`为了匹配其时间衍生值,在推断中集成.
+如果您可以训练模型,使噪音到数据的路径是*直线*,$t=1$为了$t=0$流量匹配直接构建这个:定义直线插射从$x_1 \sim \mathcal{N}(0, I)$为了$x_0 \sim \text{data}$引进一个向量场$v_\theta(x, t)$为了匹配其时间衍生值,在推断中集成.
 
 修改流程 (Liu 2022) 进一步:通过重新流程程序反复直线路径,从而产生逐步接近线性ODE. 经过两次重新流程反复,一个2步样本器与50步DDPM质量相匹配.
 
@@ -23,41 +23,41 @@
 
 定义:
 
-```
-x_t = t · x_1 + (1 - t) · x_0,   t ∈ [0, 1]
-```
-
-在哪里`x_0 ~ data`其他`x_1 ~ N(0, I)`沿着直线的时间衍生值是恒定的:
-
-```
-dx_t / dt = x_1 - x_0
+```math
+x_t = t \cdot x_1 + (1 - t) \cdot x_0, \quad t \in [0, 1]
 ```
 
-定义一个神经向量场`v_θ(x_t, t)`并且将其训练成与此衍生品相匹配:
+在哪里$x_0 \sim \text{data}$其他$x_1 \sim \mathcal{N}(0, I)$沿着直线的时间衍生值是恒定的:
 
-```
-L = E_{x_0, x_1, t} || v_θ(x_t, t) - (x_1 - x_0) ||²
+```math
+\frac{dx_t}{dt} = x_1 - x_0
 ```
 
-这是**conditional flow matching**培训是无模拟的:你永远不会打开ODE.`(x_0, x_1, t)`后退.
+定义一个神经向量场$v_\theta(x_t, t)$并且将其训练成与此衍生品相匹配:
+
+```math
+L = \mathbb{E}_{x_0, x_1, t} \left\lVert v_\theta(x_t, t) - (x_1 - x_0) \right\rVert^2
+```
+
+这是**conditional flow matching**培训是无模拟的:你永远不会打开ODE.$(x_0, x_1, t)$后退.
 
 ### 采样
 
 在推断时,将学习的向量场 *倒退* 集成在时间中:
 
-```
-x_{t-Δt} = x_t - Δt · v_θ(x_t, t)
+```math
+x_{t-\Delta t} = x_t - \Delta t \cdot v_\theta(x_t, t)
 ```
 
-开始`x_1 ~ N(0, I)`到,到.`t=0`现在,我们要去.
+开始$x_1 \sim \mathcal{N}(0, I)$到,到.$t=0$现在,我们要去.
 
 ### 调整流量 (Liu 2022)
 
-直线流程是有效的,但学习的路径是不直接的,因为很多`x_0`现在,我们可以将它们映射到同一位置.`x_1`调整流的反流步骤:
+直线流程是有效的,但学习的路径是不直接的,因为很多$x_0$现在,我们可以把它映射到同一面.$x_1$调整流的反流步骤:
 
-1. 列车流量模型v_1随机对接.
-2. 样本N对`(x_1, x_0)`通过将v_1从`x_1`在它着陆之前`x_0`现在,我们要去.
-3. 由于对现在是"ODE-匹配",所以它们之间的直线插件是真正平坦的.
+1. 列车流量模型$v_1$随机对配.
+2. 样本N对$(x_1, x_0)$通过集成$v_1$其他$x_1$在它着陆之前$x_0$现在,我们要去.
+3. 列车$v_2$由于这些对现在是"ODE-匹配",它们之间的直线插件是真正平坦的.
 4. 复制.
 
 在实践中,两次反流代将你带到近线性,使得2-4步推断.SDXL-Turbo,SD3-Turbo,LCM都是蒸的流量匹配模型.
@@ -72,7 +72,7 @@ x_{t-Δt} = x_t - Δt · v_θ(x_t, t)
 
 ## 流量匹配与DPM 确切的连接
 
-流量与高斯定条件路径相匹配是散 *具有特定的噪音时间表*.`x_t = α(t) x_0 + σ(t) x_1`时间表和流量匹配恢复了斯特拉托尼维奇修改的扩散`v = α'·x_0 - σ'·x_1`两者对高斯路径的代数式等价.
+流量与高斯定条件路径相匹配是散 *具有特定的噪音时间表*.$x_t = \alpha(t) x_0 + \sigma(t) x_1$时间表和流量匹配恢复了斯特拉托尼维奇修改的扩散$v = \alpha' \cdot x_0 - \sigma' \cdot x_1$两者对高斯路径的代数式等价.
 
 流量匹配增加了什么:目标的清晰度 (平坦的速度),更清洁的损失,以及使用非高斯人插件进行实验的许可.
 
@@ -82,7 +82,7 @@ normalizing-flow
 
 ## 建立它
 
-`code/main.py`实现1D流量匹配在两个模式的高斯混合物上.`v_θ(x, t)`在推断时,将1,2,4和20个艾勒步骤整合起来,并比较样品质量.
+`code/main.py`实现1D流量匹配在两个模式的高斯混合物上.$v_\theta(x, t)$在推断时,将1,2,4和20个艾勒步骤整合起来,并比较样品质量.
 
 ### 步骤1:训练失败
 
@@ -115,10 +115,10 @@ def sample(net, num_steps):
 
 ## 陷
 
-- **Time parameterization.**流量匹配用途`t ∈ [0, 1]`随着`t=0`在数据上,`t=1`声. 声.`t ∈ [0, T]`随着`t=0`在数据上,`t=T`报纸总是错误的.
+- **Time parameterization.**流量匹配用途$t \in [0, 1]$随着$t=0$在数据上,$t=1$声. 声.$t \in [0, T]$随着$t=0$在数据上,$t=T$报纸总是错误的.
 - **Schedule choice.**修改流程的直线是"流量匹配时间表",但可以使用共数或逻辑正常t样本 (SD3这样做) 来获得更好的规模覆盖.
 - **Reflow cost.**通过一个数据集,我们可以通过一个数据集,然后再进行一个数据集.
-- **Classifier-free guidance still applies.**只是在线性组合中换 ε为 v: `v_cfg = (1+w) v_cond - w v_uncond`现在,我们要去.
+- **Classifier-free guidance still applies.**换一个.$\epsilon$为了$v$在线性组合中: $v_{\text{cfg}} = (1+w) v_{\text{cond}} - w v_{\text{uncond}}$现在,我们要去.
 
 ## 用它
 
@@ -140,21 +140,21 @@ def sample(net, num_steps):
 ## 运动
 
 1. **Easy.**跑步`code/main.py`并且比较1步对20步的MSE对真实数据分布.
-2. **Medium.**换成制服`t`采样到logit-normal (集中采样在t中).模型质量有没有改善?
-3. **Hard.**实现一个反流代:通过整合第一种模型生成对 (x_0, x_1) 组,对对进行第二种模型训练,并比较1步样品质量.
+2. **Medium.**换成制服$t$采样到logit-normal (集中采样在t中).模型质量有没有改善?
+3. **Hard.**执行一次反流代:生成对$(x_0, x_1)$通过整合第一种模型,将第二种模型训练在对子上,并进行一步的样品质量比较.
 
 ## 关键词
 
 | Term | What people say | What it actually means |
 |------|-----------------|-----------------------|
-| Flow matching | "Straight-line diffusion" | Train `v_θ(x, t)` to match `x_1 - x_0` along an interpolant. |
+| Flow matching | "Straight-line diffusion" | Train $v_\theta(x, t)$ to match $x_1 - x_0$ along an interpolant. |
 | Rectified flow | "Reflow" | Iterative procedure that straightens learned flows. |
-| Velocity field | "v_θ" | Output of the model — the direction to move `x_t`. |
-| Straight-line interpolant | "The path" | `x_t = (1-t)·x_0 + t·x_1`; trivial target derivative. |
+| Velocity field | "v_θ" | Output of the model — the direction to move $x_t$. |
+| Straight-line interpolant | "The path" | $x_t = (1-t) \cdot x_0 + t \cdot x_1$; trivial target derivative. |
 | Euler sampler | "1st order ODE solver" | Simplest integrator; works well when paths are straight. |
-| Logit-normal t | "SD3 sampling" | Concentrate `t` sampling toward mid-values where gradients are strongest. |
-| Consistency distillation | "1-step sampler" | Train a student to map any `x_t` directly to `x_0`. |
-| CFG with velocity | "v-CFG" | `v_cfg = (1+w) v_cond - w v_uncond`; same trick, new variable. |
+| Logit-normal t | "SD3 sampling" | Concentrate $t$ sampling toward mid-values where gradients are strongest. |
+| Consistency distillation | "1-step sampler" | Train a student to map any $x_t$ directly to $x_0$. |
+| CFG with velocity | "v-CFG" | $v_{\text{cfg}} = (1+w) v_{\text{cond}} - w v_{\text{uncond}}$; same trick, new variable. |
 
 ## 产品注释:Flux.1-schnell的流量最快
 

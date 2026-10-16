@@ -26,13 +26,13 @@
 果和其他产品
 
 1. 提取Inception-v3功能 (2048-D) 对于N真实图像和N生成的图像.
-2. 按一个高斯人对每个池:计算平均值`μ_r, μ_g`及共变性`Σ_r, Σ_g`现在,我们要去.
-3. 子`||μ_r - μ_g||² + Tr(Σ_r + Σ_g - 2 · (Σ_r · Σ_g)^0.5)`现在,我们要去.
+2. 按一个高斯人对每个池:计算平均值$\mu_r, \mu_g$及共变性$\Sigma_r, \Sigma_g$现在,我们要去.
+3. $\text{FID} = \lVert \mu_r - \mu_g \rVert^2 + \mathop{\mathrm{Tr}}\left(\Sigma_r + \Sigma_g - 2 \cdot (\Sigma_r \cdot \Sigma_g)^{0.5}\right)$现在,我们要去.
 
 解释:特征空间中的两个多变量高素之间的弗雷切距离.
 
 失效模式:
-- **Biased on small N.**平均FID为特征分布小N低估了共差,给出虚假低FID.总是使用N ≥ 10,000.
+- **Biased on small N.**平均值为特征分布的平方小N低估了变量,给出了虚假的低FID.$N \ge 10{,}000$现在,我们要去.
 - **Inception-dependent.**开始-v3 在 ImageNet 上进行了训练.远离 ImageNet 的域名 (面孔,艺术,文本图像) 产生无意义的 FID. 使用域名特定的特征提取器.
 - **Gaming.**过度适应初始前,没有改善视觉质量.
 

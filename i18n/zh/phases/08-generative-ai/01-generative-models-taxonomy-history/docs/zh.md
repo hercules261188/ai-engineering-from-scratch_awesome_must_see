@@ -9,9 +9,9 @@
 
 ## 问题
 
-产生型号只能做一个工作:从某种未知的分布中获取的训练样本`p_data(x)`面孔,句子,MIDI文件,蛋白质结构,如果你眼,所有这些都是相同的问题.
+产生型号只能做一个工作:从某种未知的分布中获取的训练样本$p_{\text{data}}(x)$面孔,句子,MIDI文件,蛋白质结构,如果你眼,所有这些都是相同的问题.
 
-问题是,`p_data`它们在一个空间里存在数百万个维度 (一个512x512 RGB图像是786k维度),样本坐落在一个薄型的多元体内,你只能得到10M的例子.
+问题是,$p_{\text{data}}$它们在一个空间里存在数百万个维度 (一个512x512 RGB图像是786k维度),样本坐落在一个薄型的多元体内,你只能得到10M的例子.
 
 知道每个家庭都会做出什么妥协,就能告诉你,为什么它在某些任务上胜利,而在其他任务上崩.
 
@@ -19,13 +19,13 @@
 
 ![Five families of generative models — taxonomy by what they model](../assets/taxonomy.svg)
 
-**1. Explicit density, tractable.**写下`log p(x)`它们是可以实际评估的.`p(x) = ∏ p(x_i | x_<i)`正常化流量 (RealNVP,Glow) 构建`p(x)`优点:精确的可能性,清洁的训练损失. 缺点:自行降低推理是序列 (长序列的缓慢),流需要可逆的架构 (建筑限制).
+**1. Explicit density, tractable.**写下$\log p(x)$它们是可以实际评估的.$p(x) = \prod_i p(x_i \mid x_{<i})$正常化流量 (RealNVP,Glow) 构建$p(x)$优点:精确的可能性,清洁的训练损失. 缺点:自行降低推理是序列 (长序列的缓慢),流需要可逆的架构 (建筑限制).
 
-**2. Explicit density, approximate.**绑定`log p(x)`通过在下面 (ELBO) 进行优化,并优化边界.VAE (Kingma 2013) 使用一个变化后背的编码解码器. 扩散模型 (DDPM, Ho 2020) 训练一个暗示器,隐含优化一个权重的ELBO. 扩散是2026年占主导地位的图像,视频和3D脊柱.
+**2. Explicit density, approximate.**绑定$\log p(x)$通过在下面 (ELBO) 进行优化,并优化边界.VAE (Kingma 2013) 使用一个变化后背的编码解码器. 扩散模型 (DDPM, Ho 2020) 训练一个暗示器,隐含优化一个权重的ELBO. 扩散是2026年占主导地位的图像,视频和3D脊柱.
 
-**3. Implicit density.**完全跳过密度;学习一个发电机`G(z)`产品的样本和差异性`D(x)`简单的GAN (Goodfellow 2014). 快速推断 (一次前进通过),但在训练期间不稳定. 风格GAN 1/2/3即使在2026年仍然是固定域光现实主义的最先进状态.
+**3. Implicit density.**完全跳过密度;学习一个发电机$G(z)$产品的样本和差异性$D(x)$简单的GAN (Goodfellow 2014). 快速推断 (一次前进通过),但在训练期间不稳定. 风格GAN 1/2/3即使在2026年仍然是固定域光现实主义的最先进状态.
 
-**4. Score-based / continuous-time.**了解木材密度的梯度`∇_x log p(x)`和埃尔蒙 (2019) 显示,分数匹配将扩散扩散到SDE.流量匹配 (Lipman 2023) 是2024-2026年的热度:无模拟训练,更直线路,比DDPM快4-10倍的样本采集.稳定扩散3,流量,音频工艺2都使用流量匹配.
+**4. Score-based / continuous-time.**了解木材密度的梯度$\nabla_x \log p(x)$和埃尔蒙 (2019) 显示,分数匹配将扩散扩散到SDE.流量匹配 (Lipman 2023) 是2024-2026年的热度:无模拟训练,更直线路,比DDPM快4-10倍的样本采集.稳定扩散3,流量,音频工艺2都使用流量匹配.
 
 **5. Token-based autoregressive over discrete codes.**通过VQ-VAE或残余量化器将高模数数据压缩到单独代币的短序列中,然后使用变压器来模拟代币序列.Parti,MuseNet,AudioLM,VALL-E,Sora的补丁代币器都使用此.这是桶1加上学习代币器.
 
@@ -53,7 +53,7 @@
 在阅读方法部分之前,当新生成模型纸出现时,请回答这五个问题.
 
 1. **What is being modeled?**像素,隐藏,分离代币,3D高西安,网格,波形?
-2. **Is the density explicit or implicit?**他们写下了吗?`log p(x)`现在,我们要去.
+2. **Is the density explicit or implicit?**他们写下了吗?$\log p(x)$现在,我们要去.
 3. **Sampling: one-shot or iterative?**反复式意味着推断速度较慢; 一次射击通常意味着反向性或蒸性.
 4. **Conditioning: unconditional, class, text, image, pose?**这决定了损失和建筑架构.
 5. **Evaluation: FID, CLIP score, IS, human preference, task accuracy?**每个人都知道故障模式 (见14课).
@@ -90,7 +90,7 @@ implicit (nearest-sample gen): 20 new samples printed, no p(x)
 | Text-to-video | Diffusion Transformer + flow matching | Sora, Veo 2, Kling. |
 | Speech + music | Token-based AR (AudioLM, VALL-E, MusicGen) or flow matching (AudioCraft 2) | Discrete tokens scale cheaply. |
 | 3D scenes | Gaussian Splatting fit, diffusion prior | 3D-GS for reconstruction, diffusion for novel-view. |
-| Density estimation (no sampling) | Flows | Only family with exact `log p(x)`. |
+| Density estimation (no sampling) | Flows | Only family with exact $\log p(x)$. |
 | Simulation / physics | Flow matching, score SDE | Straight-line paths, smooth vector fields. |
 
 ## 运送它
@@ -109,11 +109,11 @@ implicit (nearest-sample gen): 20 new samples printed, no p(x)
 
 | Term | What people say | What it actually means |
 |------|-----------------|-----------------------|
-| Generative model | "It makes new stuff" | Learns a sampler for `p_data(x)`, optionally exposes `log p(x)`. |
-| Explicit density | "You can evaluate it" | Model provides a closed-form or tractable `log p(x)`. |
-| Implicit density | "GAN-style" | Only a sampler — no way to evaluate `p(x)` of a given point. |
-| ELBO | "Evidence lower bound" | A tractable lower bound on `log p(x)`; VAEs and diffusion optimize it. |
-| Score | "Gradient of log-density" | `∇_x log p(x)`; diffusion and SDE models learn this field. |
+| Generative model | "It makes new stuff" | Learns a sampler for $p_{\text{data}}(x)$, optionally exposes $\log p(x)$. |
+| Explicit density | "You can evaluate it" | Model provides a closed-form or tractable $\log p(x)$. |
+| Implicit density | "GAN-style" | Only a sampler — no way to evaluate $p(x)$ of a given point. |
+| ELBO | "Evidence lower bound" | A tractable lower bound on $\log p(x)$; VAEs and diffusion optimize it. |
+| Score | "Gradient of log-density" | $\nabla_x \log p(x)$; diffusion and SDE models learn this field. |
 | Manifold hypothesis | "Data lives on a surface" | High-dim data concentrates on a low-dim manifold; why dimensionality reduction works. |
 | Autoregressive | "Predict the next piece" | Factorize joint as product of conditionals. |
 | Latent | "Compressed code" | Low-dim representation from which a decoder can reconstruct the input. |

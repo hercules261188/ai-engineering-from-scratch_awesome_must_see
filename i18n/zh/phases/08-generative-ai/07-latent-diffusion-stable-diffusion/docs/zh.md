@@ -21,9 +21,9 @@
 
 **Two stages, separately trained.**
 
-1. **Stage 1 — VAE.**编码器`E(x) → z`解码器`D(z) → x`目标压缩:每个空间轴的下样本8倍 +调整道,使得潜伏总量为像素数量的1/16分之一.`z`由于我们不需要精确的样本`z`经常被训练,以对抗的损失,所以解码的图像是敏的.
+1. **Stage 1 — VAE.**编码器$E(x) \to z$解码器$D(z) \to x$目标压缩:每个空间轴的下样本8倍 +调整道,使得潜伏总量为像素数量的1/16分之一.$z$由于我们不需要精确的样本$z$经常被训练,以对抗的损失,所以解码的图像是敏的.
 
-2. **Stage 2 — diffusion on `z`.**治疗`z = E(x_real)`训练一个U-Net (或DIT) 进行击`z_t`结果: 样本`z_0`通过传播,然后`x = D(z_0)`现在,我们要去.
+2. **Stage 2 — diffusion on $z$.**治疗$z = E(x_{\text{real}})$训练一个U-Net (或DIT) 进行击$z_t$结果: 样本$z_0$通过传播,然后$x = D(z_0)$现在,我们要去.
 
 **Text conditioning.**另外两个组件:一个结的文本编码器 (SD 1.x 的CLIP-L,SD 2/XL 的CLIP-L+OpenCLIP-G,SD 3 的T5-XXL 和Flux).`[Q = image features, K = V = text tokens]`标记是文字影响图像的唯一方式.
 
@@ -58,21 +58,21 @@ def encode(x):    return x * 0.5          # toy "compression" to smaller scale
 def decode(z):    return z * 2.0
 ```
 
-对于教学来说,这个线性地图足以表明传播运作在`z`没有关心原始数据空间.
+对于教学来说,这个线性地图足以表明传播运作在$z$没有关心原始数据空间.
 
 ### 步骤2: 扩散在`z`- 空间
 
-网络看到的数据是`z = E(x)`在抽样后`z_0`解码`D(z_0)`现在,我们要去.
+网络看到的数据是$z = E(x)$在抽样后$z_0$解码$D(z_0)$现在,我们要去.
 
 ### 步骤3:无分类器的指导
 
-在训练期间, 10% 的时间放下课标 (用零代币代替).`ε_cond`其他`ε_uncond`接下来:
+在训练期间, 10% 的时间放下课标 (用零代币代替).$\epsilon_{\text{cond}}$其他$\epsilon_{\text{uncond}}$接下来:
 
 ```python
 eps_cfg = (1 + w) * eps_cond - w * eps_uncond
 ```
 
-`w = 0`=没有指导 (完全多样性),`w = 3`   `w = 7+`和/过度.
+$w = 0$=没有指导 (完全多样性),$w = 3$   $w = 7+$和/过度.
 
 ### 步骤4:文本调节 (概念,不是代码)
 
@@ -90,7 +90,7 @@ h = h + CrossAttention(Q=h, K=text_embed, V=text_embed)
 - **Text encoder silently wrong.** SD3需要 T5-XXL 具有128 个代币,而回归到CLIP 只有损失.`use_t5=True`或是快速的忠诚坑.
 - **Mixing latent spaces.**SDXL,SD3,Flux都使用不同的VAE. SDXL隐藏器训练的LoRA不会在SD3上工作.
 - **CFG too high.** `w > 10`色的图像,以多样性为代价,`w = 3-7`现在,我们要去.
-- **Negative prompts leaking.**空负提示变成零符号;填写的负提示变成了 `ε_uncond`它们不同,有些管道默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默
+- **Negative prompts leaking.**空负提示变成零符号;填写的负提示变成了 $\epsilon_{\text{uncond}}$它们不同,有些管道默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默默
 
 ## 用它
 
@@ -111,7 +111,7 @@ h = h + CrossAttention(Q=h, K=text_embed, V=text_embed)
 
 ## 运动
 
-1. **Easy.**跑步`code/main.py`带着指导`w ∈ {0, 1, 3, 7, 15}`按类别记录平均样本.`w`类型的意思是否超出了实际数据的意思?
+1. **Easy.**跑步`code/main.py`带着指导$w \in \lbrace 0, 1, 3, 7, 15 \rbrace$按类别记录平均样本.$w$类型的意思是否超出了实际数据的意思?
 2. **Medium.**换取一个TANH-MLP编码器/解码器对,重建损失.重新训练扩散新潜伏.样品质量有没有改变?
 3. **Hard.**设置一个真正的稳定射推理,使用射器:负载 `sdxl-base`现在切换到 ,然后再切换到`sdxl-turbo`描述了什么发生了变化以及为什么.
 
@@ -121,8 +121,8 @@ h = h + CrossAttention(Q=h, K=text_embed, V=text_embed)
 |------|-----------------|-----------------------|
 | First stage | "The VAE" | Trained encoder/decoder pair; compresses 512² to 64². |
 | Second stage | "The U-Net" | Diffusion model over the latent space. |
-| CFG | "Guidance scale" | `(1+w)·ε_cond - w·ε_uncond`; tunes conditioning strength. |
-| Null token | "Empty prompt embed" | Unconditional embed used for `ε_uncond`. |
+| CFG | "Guidance scale" | $(1+w) \cdot \epsilon_{\text{cond}} - w \cdot \epsilon_{\text{uncond}}$; tunes conditioning strength. |
+| Null token | "Empty prompt embed" | Unconditional embed used for $\epsilon_{\text{uncond}}$. |
 | Cross-attention | "How text gets in" | Each U-Net block attends to text tokens as K and V. |
 | DiT | "Diffusion Transformer" | Replace U-Net with a transformer over latent patches; scales better. |
 | MMDiT | "Multi-modal DiT" | SD3's architecture: text and image streams with joint attention. |

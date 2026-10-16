@@ -21,7 +21,7 @@
 
 ### 视频显示器
 
-需要一个**multi-scale discrete tokenizer**对于图像x,它产生了一系列逐渐高分辨率的代币网:
+需要一个**multi-scale discrete tokenizer**为了一个图像$x$它们产生了逐步高分辨率的代币网的序列:
 
 ```
 x -> encoder -> latent f
@@ -31,13 +31,13 @@ f -> tokenize at 2x2: token grid z_2 of shape (2, 2)
 f -> tokenize at (H/p)x(W/p): token grid z_K of shape (H/p, W/p)
 ```
 
-每个z_k 使用相同的代码簿 (典型尺寸4096-16384). 每个尺度的代码化不独立.
+每个$z_k$采用相同的代码簿 (典型尺寸4096-16384). 每个尺度的代码化不独立它是训练有素的,使每个尺度的残余积合起来重建$f$其他:
 
-```
-f ≈ upsample(embed(z_1), target_size) + ... + upsample(embed(z_K), target_size)
+```math
+f \approx \mathop{\mathrm{upsample}}(\mathop{\mathrm{embed}}(z_1), \text{target\_size}) + \cdots + \mathop{\mathrm{upsample}}(\mathop{\mathrm{embed}}(z_K), \text{target\_size})
 ```
 
-这是一个**residual VQ**解码器取出所有规模嵌入式的总和,生成图像.
+这是一个**residual VQ**变量.$k$捕捉了什么尺度$1 \ldots k-1$解码器将所有规模嵌入式的总和,生成图像.
 
 许多规模的VQ代码符号器一次训练 (如VQGAN) 然后冷.所有生成工作都由上部的自动降低模型完成.
 
@@ -50,9 +50,9 @@ f ≈ upsample(embed(z_1), target_size) + ... + upsample(embed(z_K), target_size
 [START, z_1 tokens, z_2 tokens, z_3 tokens, ..., z_K tokens]
 ```
 
-位置嵌入式将在尺度内编码规模指数和空间位置. 注意是因果的规模顺序:在尺度 k,位置 (i, j) 可以关注所有在尺度 1..k的代币和在尺度 k本身的代币,在任何在尺度内顺序使用的之前 (VAR使用固定位置注意,没有在尺度内因果关系,在尺度内所有的位置都是平行预测的).
+位置嵌入式编码了尺度指数和尺度内的空间位置.注意力是因果的尺度顺序:尺度的代币$k$位置$(i, j)$可以在尺度上关注所有代币$1 \ldots k$并且对规模的代币$k$它们本身在任何使用的内尺度顺序中都出现得更早 (VAR使用固定位置注意力,没有内尺度因果关系,在尺度内的所有位置都被平行预测).
 
-训练损失:在每个级别 k,预测给所有前级代币的代币 z_k. 离散的VQ代码上的交叉缩损失.除"序列"之外,与GPT相同的结构现在是规模结构化的.
+培训损失:每一个规模$k$预测标志$z_k$根据前面的代码,VQ代码的交叉缩损失.除了"序列"之外,GPT的结构现在是规模结构化的.
 
 ### 世代
 
@@ -66,7 +66,7 @@ decode: f = sum of embed-and-upsample scales 1..K
 image = VAE_decoder(f)
 ```
 
-对于K=10尺度,生成是10个变压器前进传递.每个传递均以平行方式产生其整个尺度.对于256x256图像,这大约是10个传递与DiT的28-50相比.
+为了$K = 10$对于一个256x256图像来说,这大约是10个传递与DiT的28-50相比.
 
 ### 为什么下一个规模胜过下一个代币
 
@@ -127,7 +127,7 @@ gx-var-next-scale
 | Multi-scale VQ tokenizer | "Residual VQ" | VQ-VAE that produces K token grids of increasing resolution, with decoder summing all scales |
 | Scale k | "Pyramid level k" | One of K resolution levels, from 1x1 at k=1 up to (H/p)x(W/p) at k=K |
 | Parallel-within-scale | "One forward per scale" | All tokens at scale k are predicted in one transformer pass, not autoregressively |
-| Causal-across-scales | "Scale-ordered attention" | Token at scale k can attend to all of scales 1..k but not scales k+1..K |
+| Causal-across-scales | "Scale-ordered attention" | Token at scale $k$ can attend to all of scales $1 \ldots k$ but not scales $k+1 \ldots K$ |
 | Residual VQ | "Additive tokenization" | Each scale's tokens encode the residual left by lower scales; decoder sums all scale embeddings |
 | VAR scaling law | "Image GPT scaling" | FID follows a predictable power law in compute, like language models' perplexity |
 | HART | "Hybrid VAR + text" | Text-conditional VAR variant combining MaskGIT-style iterative decoding with VAR's scale structure |

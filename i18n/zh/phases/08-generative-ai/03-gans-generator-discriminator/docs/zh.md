@@ -11,12 +11,12 @@
 
 由于它们的MSE解码器损失是*平均*图像的最佳,而许多可信数字的平均值是模糊的数字.你想要一个损失,以奖励*可信性*,而不是像素智能接近任何一个目标.可信性没有封闭形式.你必须学习它.
 
-善良的想法:训练一个分类器`D(x)`让一个发电机训练一个发电机.`G(z)`愚蠢`D`输出信号`G`是什么都不一样`D`现在的信号是:`G`如果两个网络融合,`G`没有写下数据的分布.`log p(x)`现在,我们要去.
+善良的想法:训练一个分类器$D(x)$让一个发电机训练一个发电机.$G(z)$愚蠢$D$输出信号$G$是什么都不一样$D$现在的信号是:$G$如果两个网络融合,$G$没有写下数据的分布.`log p(x)`现在,我们要去.
 
 这是一场对抗训练.数学是一场最小级游戏:
 
-```
-min_G max_D  E_real[log D(x)] + E_fake[log(1 - D(G(z)))]
+```math
+\min_G \max_D \; \mathbb{E}_{\text{real}}[\log D(x)] + \mathbb{E}_{\text{fake}}[\log(1 - D(G(z)))]
 ```
 
 2026年,GAN不再是SOTA生成器 (扩散和流量匹配吞了那冠).但StyleGAN 2/3仍然是有史以来出货的最尖的面型,GAN歧视器被用于扩散训练中的感知损失,而对抗训练支持快速的1步蒸 (SDXL-Turbo,SD3-Turbo,LCM) 允许您出货实时扩散.
@@ -25,20 +25,20 @@ min_G max_D  E_real[log D(x)] + E_fake[log(1 - D(G(z)))]
 
 ![GAN training: generator and discriminator in minimax](../assets/gan.svg)
 
-**Generator `G(z)`.**绘制一个噪音向量`z ~ N(0, I)`给一个样本`x̂`电脑系统的电脑系统.
+**Generator $G(z)$.**绘制一个噪音向量$z \sim \mathcal{N}(0, I)$给一个样本$\hat{x}$电脑系统的电脑系统.
 
-**Discriminator `D(x)`.**绘制一个样本的échar概率 (或分数).真 → 1,假 → 0.
+**Discriminator $D(x)$.**绘制一个样本的échar概率 (或分数).真 → 1,假 → 0.
 
 **Loss.**两次交替更新:
 
-- **Train `D`:** `loss_D = -[ log D(x) + log(1 - D(G(z))) ]`双向交叉值在真=1,假=0.
-- **Train `G`:** `loss_G = -log D(G(z))`这是Goodfellow使用的 *不和的*形式 (原始`log(1 - D(G(z)))`化和杀死梯度时`D`对于其他国家,
+- **Train $D$:** $\text{loss}_D = -[ \log D(x) + \log(1 - D(G(z))) ]$双向交叉值在真=1,假=0.
+- **Train $G$:** $\text{loss}_G = -\log D(G(z))$这是Goodfellow使用的 *不和的*形式 (原始$\log(1 - D(G(z)))$化和杀死梯度时$D$对于其他国家,
 
-**Training loop.**一步走`D`现在,我们要做一个好事.`G`复制.
+**Training loop.**一步走$D$现在,我们要做一个好事.$G$复制.
 
-**Why it works.**如果`G`非常合适`p_data`现在`D`没有机会, 没有机会, 没有机会.`G`没有任何梯度,平衡.
+**Why it works.**如果$G$非常合适$p_{\text{data}}$现在$D$没有机会, 没有机会, 没有机会.$G$没有任何梯度,平衡.
 
-**Why it breaks.**模式崩 (`G`找到一个模式`D`它们的度变化,`D`学习得太快,`log D`培训不稳定性 (学习率,批量,任何东西).
+**Why it breaks.**模式崩 ($G$找到一个模式$D$它们的度变化,$D$学习得太快,$\log D$培训不稳定性 (学习率,批量,任何东西).
 
 ## 让GAN工作的变体
 
@@ -63,7 +63,7 @@ gan-minimax
 
 ### 步骤1:不和损失
 
-瓦尼莉的好友失去了`log(1 - D(G(z)))`在这个时候,G的梯度基本上是零  G不能改善.非和形式`-log D(G(z))`它们在D自信时爆炸,给G一个强烈的信号.
+瓦尼莉的好友失去了$\log(1 - D(G(z)))$在这个时候,G的梯度基本上是零  G不能改善.非和形式$-\log D(G(z))$它们在D自信时爆炸,给G一个强烈的信号.
 
 ```python
 def g_loss(d_fake):
@@ -130,7 +130,7 @@ if step % 200 == 0:
 ## 运动
 
 1. **Easy.**跑步`code/main.py`根据股票设置.`D_LR = 5 * G_LR`几快G的损失会崩到恒定?
-2. **Medium.**取代Goodfellow BCE损失的WGAN损失: `loss_D = E[D(fake)] - E[D(real)]`现在`loss_G = -E[D(fake)]`子 D 的重量到`[-0.01, 0.01]`训练是否更稳定?
+2. **Medium.**取代Goodfellow BCE损失的WGAN损失: $\text{loss}_D = \mathbb{E}[D(\text{fake})] - \mathbb{E}[D(\text{real})]$现在$\text{loss}_G = -\mathbb{E}[D(\text{fake})]$子 D 的重量到`[-0.01, 0.01]`训练是否更稳定?
 3. **Hard.**扩展1D示例到2D数据 (环上混合8个高西安).追踪发电机在1k,5k,10k步骤中捕获了8种模式中的多少种.实施微批次差异和重新测量.
 
 ## 关键词
@@ -139,8 +139,8 @@ if step % 200 == 0:
 |------|-----------------|-----------------------|
 | Generator | "G" | Noise-to-sample network, `G: z → x̂`. |
 | Discriminator | "D" | Classifier `D: x → [0, 1]`, real vs fake. |
-| Minimax | "The game" | `min_G max_D` of a joint objective. |
-| Non-saturating loss | "The fix" | Use `-log D(G(z))` for G instead of `log(1 - D(G(z)))`. |
+| Minimax | "The game" | $\min_G \max_D$ of a joint objective. |
+| Non-saturating loss | "The fix" | Use $-\log D(G(z))$ for G instead of $\log(1 - D(G(z)))$. |
 | Mode collapse | "G memorized one thing" | Generator produces few distinct outputs despite diverse data. |
 | WGAN | "Wasserstein" | Replace BCE with Earth-Mover distance + gradient penalty; smoother gradient. |
 | Spectral norm | "Lipschitz trick" | Constrain D's weight norms to bound its slope; stabilizes training. |
@@ -150,7 +150,7 @@ if step % 200 == 0:
 
 在生产-推理文献词汇中,一个GAN有:
 
-- **No prefill, no decode stages.**一个单身的`G(z)`预测时间:
+- **No prefill, no decode stages.**一个单身的$G(z)$预测时间:
 - **No KV-cache pressure.**只有重量,批量量由激活内存限制,而不是缓存.
 - **Trivial continuous batching.**由于每个请求都采用相同的固定FLOP,因此在服务器的目标占用量上静态批量通常是最佳的.
 
