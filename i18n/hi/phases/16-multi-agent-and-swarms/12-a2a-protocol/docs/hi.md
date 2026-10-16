@@ -17,24 +17,52 @@ A2A उस कॉल के लिए सार्वभौमिक वाय�
 
 ### चार तत्व
 
-**Agent Card.** पर JSON दस्तावेज़`/.well-known/agent.json`एजेंट का वर्णन करनाः नाम, कौशल, अंत बिंदु, समर्थित मोडलिटीज, लेखक आवश्यकताएं। कार्ड पढ़ने से पता चलता है।
+**Agent Card.** पर JSON दस्तावेज़`/.well-known/agent-card.json`एजेंट का वर्णन करनाः नाम, कौशल, `supportedInterfaces`(अंत बिंदु URL, प्रोटोकॉल बाध्यकारी, प्रोटोकॉल संस्करण), डिफ़ॉल्ट इनपुट और आउटपुट मीडिया प्रकार, और auth आवश्यकताओं (`securitySchemes`और `securityRequirements`) कार्ड पढ़कर पता चलता है।
 
+```http
+GET /.well-known/agent-card.json HTTP/1.1
+Host: agent.example.com
 ```
-GET https://agent.example.com/.well-known/agent.json
-→ {
-    "name": "code-review-agent",
-    "skills": ["review-python", "review-typescript"],
-    "endpoints": {
-      "tasks": "https://agent.example.com/tasks"
+
+```json
+{
+  "name": "code-review-agent",
+  "description": "Reviews Python and TypeScript code.",
+  "version": "1.0.0",
+  "supportedInterfaces": [
+    {
+      "url": "https://agent.example.com",
+      "protocolBinding": "HTTP+JSON",
+      "protocolVersion": "1.0"
+    }
+  ],
+  "capabilities": {"streaming": false, "pushNotifications": false},
+  "securitySchemes": {
+    "bearer": {"httpAuthSecurityScheme": {"scheme": "Bearer"}}
+  },
+  "securityRequirements": [{"schemes": {"bearer": {"list": []}}}],
+  "defaultInputModes": ["text/plain", "application/json"],
+  "defaultOutputModes": ["application/json"],
+  "skills": [
+    {
+      "id": "review-python",
+      "name": "Review Python",
+      "description": "Reviews Python code.",
+      "tags": ["code-review", "python"]
     },
-    "auth": {"type": "bearer"},
-    "modalities": ["text", "structured"]
-  }
+    {
+      "id": "review-typescript",
+      "name": "Review TypeScript",
+      "description": "Reviews TypeScript code.",
+      "tags": ["code-review", "typescript"]
+    }
+  ]
+}
 ```
 
-**Task.**कार्य की इकाई. जीवन चक्र के साथ एक असिनक्रोनस, राज्यपूर्ण वस्तुः `submitted → working → completed / failed / canceled`. एक ग्राहक एक कार्य भेजता है, सर्वेक्षण करता है या अद्यतन के लिए सदस्यता लेता है।
+**Task.**कार्य की इकाई. जीवन चक्र के साथ एक असिनक्रोनस, राज्यपूर्ण वस्तुः `TASK_STATE_SUBMITTED`→ `TASK_STATE_WORKING`→ `TASK_STATE_COMPLETED`/`TASK_STATE_FAILED`/`TASK_STATE_CANCELED`. एक क्लाइंट संदेश भेजता है, सर्वर कार्य बनाता है, और क्लाइंट सर्वेक्षण या अद्यतन के लिए सदस्यता लेता है.
 
-**Artifact.**एक कार्य द्वारा उत्पन्न परिणाम प्रकार। पाठ, संरचित JSON, छवि, वीडियो, ऑडियो। कलाकृतियों को टाइप किया जाता है ताकि विभिन्न मोडलिटी प्रथम श्रेणी हैं।
+**Artifact.**किसी कार्य द्वारा उत्पन्न परिणाम प्रकार। पाठ, संरचित JSON, छवि, वीडियो, ऑडियो। कलाकृतियों को टाइप किया जाता हैः प्रत्येक भाग में एक `text`,`raw`,`url`या `data`और अपने नाम कर सकते हैं `mediaType`, तो विभिन्न मोडलिटीज प्रथम श्रेणी हैं।
 
 **Opaque lifecycle.**A2A * कैसे * रिमोट एजेंट कार्य को हल करता है निर्धारित नहीं करता है। क्लाइंट राज्य संक्रमण और कलाकृतियों को देखता है; कार्यान्वयन किसी भी ढांचे का उपयोग करने के लिए स्वतंत्र है।
 
@@ -47,29 +75,33 @@ GET https://agent.example.com/.well-known/agent.json
 
 ### खोज प्रवाह
 
-```
-Client                     Agent server
-  ├──GET /.well-known/agent.json──>
-  <──Agent Card JSON─────────────
-  ├──POST /tasks {skill, input}──>
-  <──201 task_id, state=submitted
-  ├──GET /tasks/{id}──────────────>
-  <──state=working, 42% done──────
-  ├──GET /tasks/{id}──────────────>
-  <──state=completed, artifacts──
+```mermaid
+sequenceDiagram
+    participant C as Client
+    participant S as Agent server
+    C->>S: GET /.well-known/agent-card.json
+    S-->>C: Agent Card JSON
+    C->>S: POST /message:send (returnImmediately)
+    S-->>C: task, TASK_STATE_SUBMITTED
+    C->>S: GET /tasks/{id}
+    S-->>C: TASK_STATE_WORKING
+    C->>S: GET /tasks/{id}
+    S-->>C: TASK_STATE_COMPLETED, artifacts
 ```
 
-या स्ट्रीमिंग के साथः SSE सदस्यता के लिए `/tasks/{id}/events`पुश अद्यतन के लिए.
+ये HTTP + JSON बाध्यकारी मार्ग हैं, और प्रत्येक अनुरोध में `A2A-Version: 1.0`. डिफ़ॉल्ट रूप से `SendMessage`जब तक कार्य एक टर्मिनल या बाधित स्थिति तक नहीं पहुंचता, तब तक ब्लॉक करता है, इसलिए एक सर्वेक्षण ग्राहक सेट करता है `configuration.returnImmediately`तुरंत काम वापस पाने के लिए।
+
+या स्ट्रीमिंग के साथः `POST /message:stream`सर्वर-Send Events (a ) को लौटाता है`task`पहले, फिर `statusUpdate`और `artifactUpdate`घटनाओं) तथा `/tasks/{id}:subscribe`कार्य समाप्ति स्थिति तक पहुँचने पर धारा बंद हो जाती है; कोई `final`ध्वज।
 
 ### लेखक
 
 A2A तीन आम पैटर्न का समर्थन करता हैः
 
-- **Bearer token** OAuth2 या अस्पष्ट।
-- **mTLS** पारस्परिक टीएलएस; संगठन एक दूसरे के लिए पहचान साबित करते हैं।
-- **Signed requests** हेमैक पेलोड पर।
+- **Bearer token**: OAuth2 या अस्पष्ट (`httpAuthSecurityScheme`या `oauth2SecurityScheme`) ।
+- **mTLS**: आपसी टीएलएस; संगठन एक दूसरे के साथ पहचान साबित करते हैं (`mtlsSecurityScheme`) ।
+- **API key**: एक हेडर, क्वेरी पैरामीटर या कुकी में एक कुंजी (`apiKeySecurityScheme`) ।
 
-एजेंट कार्ड में लेखक घोषित किया गया है; ग्राहक पता लगाते हैं और अनुपालन करते हैं।
+एजेंट कार्ड में लेखक घोषित किया गया हैः`securitySchemes`प्रत्येक योजना का नाम और `securityRequirements`ग्राहक को पता लगाना और उनका पालन करना चाहिए।
 
 ### अप्रैल 2026 तक 150 से अधिक संगठन
 
@@ -104,17 +136,17 @@ sw-agent-card-discovery
 
 ## इसे बनाओ
 
-`code/main.py``http.server`और JSON. सर्वरः
+`code/main.py``http.server`और JSON, पर 1.0 HTTP + JSON बंधन. सर्वरः
 
-- उजागर करता है`/.well-known/agent.json`,
-- स्वीकार करता है `POST /tasks`,
+- उजागर करता है`/.well-known/agent-card.json`,
+- स्वीकार करता है `POST /message:send`,
 - कार्य स्थिति का प्रबंधन करता है,
 - पर कलाकृतियों को लौटाता है `GET /tasks/{id}`. .
 
 ग्राहक:
 
 - एजेंट कार्ड लाता है,
-- एक कार्य प्रस्तुत करता है,
+- संदेश भेजता है `returnImmediately`,
 - मतदान पूरा होने तक,
 - कलाकृतियों को पढ़ता है।
 
@@ -134,8 +166,8 @@ python3 code/main.py
 
 चेकलिस्टः
 
-- **Pin the spec version.**A2A अभी भी विकसित हो रहा है; एजेंट कार्ड प्रोटोकॉल संस्करण घोषित करना चाहिए।
-- **Idempotent task creation.**दोहरी प्रस्तुतियाँ (नेटवर्क री-ट्रेस) एक कार्य उत्पन्न करना चाहिए।
+- **Pin the spec version.**A2A अभी भी विकसित हो रहा है; हर `supportedInterfaces`प्रविष्टि अपनी घोषणा करती है `protocolVersion`, और ग्राहकों को भेजने के लिए`A2A-Version: 1.0`. .
+- **Idempotent task creation.**दोहरी प्रस्तुतियों (नेटवर्क री-ट्राय) को एक कार्य उत्पन्न करना चाहिए।`messageId`. .
 - **Artifact schemas.**एजेंट द्वारा लौटाए गए आकारों की घोषणा करें; उपभोक्ताओं को सत्यापित करना चाहिए।
 - **Rate limits + auth.**A2A सार्वजनिक है; मानक वेब सुरक्षा लागू करें।
 - **Dead-letter for failed tasks.**आवर्ती विफलता प्रकारों के लिए समय के साथ पैटर्न की जांच करें।
@@ -143,8 +175,8 @@ python3 code/main.py
 ## व्यायाम
 
 1. दौड़ें`code/main.py`. पुष्टि करें कि ग्राहक सर्वर की खोज करता है और सही कलाकृतियों प्राप्त करता है.
-2. सर्वर में एक दूसरा कौशल जोड़ें (जैसे, "संक्षेप में") एजेंट कार्ड को अपडेट करें। एक क्लाइंट लिखें जो कार्य प्रकार के आधार पर कौशल का चयन करता है।
-3. SSE स्ट्रीमिंग एंडपॉइंट को लागू करें: `/tasks/{id}/events`ग्राहक को अलग से क्या करने की जरूरत है?
+2. सर्वर में एक दूसरा कौशल जोड़ें (जैसे, "संक्षेप में") एजेंट कार्ड को अपडेट करें। एक क्लाइंट लिखें जो कार्य प्रकार के आधार पर कौशल का चयन करता है। एक 1.0 अनुरोध में कोई कौशल क्षेत्र नहीं है, इसलिए सर्वर संदेश भागों पर मार्ग बनाता है।
+3. कार्यान्वयन`POST /message:stream`: उत्तर सर्वर-सेंड इवेंट्स (a `task`पहले, फिर `statusUpdate`ग्राहक को अलग से क्या करने की आवश्यकता है?
 4. A2A विनिर्देश पढ़ें (https://a2a-protocol.org/latest/specification/) तीन चीजों की पहचान करें जो इस डेमो में लागू नहीं किए जाते हैं।
 5. A2A (एजेंट कार्ड डिस्कवरी) की तुलना MCP (सर्वर-साइड क्षमता सूची के माध्यम से) से करें`listTools`) स्वयं-वर्णन एजेंटों और क्षमता परीक्षण के बीच क्या अंतर है?
 
@@ -153,17 +185,18 @@ python3 code/main.py
 | Term | What people say | What it actually means |
 |------|----------------|------------------------|
 | A2A | "Agent-to-agent" | Peer protocol for agents to call other agents across systems. Google 2025. |
-| Agent Card | "The agent's business card" | JSON at `/.well-known/agent.json` describing skills, endpoints, auth. |
+| Agent Card | "The agent's business card" | JSON at `/.well-known/agent-card.json` describing skills, `supportedInterfaces`, auth. |
 | Task | "The unit of work" | Async stateful object with a lifecycle; artifacts produced on completion. |
 | Artifact | "The result" | Typed output: text, structured JSON, image, video, audio. First-class media. |
 | Opaque lifecycle | "How it's solved is the agent's business" | Client sees state transitions; server is free to choose framework/tools. |
-| Discovery | "Finding the agent" | `GET /.well-known/agent.json` returns the card. |
+| Discovery | "Finding the agent" | `GET /.well-known/agent-card.json` returns the card. |
 | MCP vs A2A | "Tools vs peers" | MCP: vertical agent ↔ tool. A2A: horizontal agent ↔ agent. |
 | ACP / ANP / NLIP | "Sibling protocols" | Adjacent specs; A2A is the most-adopted 2026. |
 
 ## आगे पढ़ना
 
 - [A2A specification](https://a2a-protocol.org/latest/specification/) कैनोनिक विनिर्देश
+- [A2A v1.0.1 release](https://github.com/a2aproject/A2A/tree/v1.0.1): टैग `docs/specification.md`और `specification/a2a.proto`यह सबक निम्नलिखित है
 - [Google Developers Blog — A2A announcement](https://developers.googleblog.com/en/a2a-a-new-era-of-agent-interoperability/) अप्रैल 2025 लॉन्च की तारीख
 - [A2A GitHub repo](https://github.com/a2aproject/A2A) संदर्भ कार्यान्वयन और एसडीके
 - [Liu et al. — A Survey of Agent Interoperability Protocols](https://arxiv.org/html/2505.02279v1) एमसीपी, एसीपी, ए2ए, एएनपी तुलना

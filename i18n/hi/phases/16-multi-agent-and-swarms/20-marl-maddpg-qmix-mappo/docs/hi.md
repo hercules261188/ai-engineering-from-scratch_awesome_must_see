@@ -44,8 +44,8 @@ critic update:   TD on Q_i(x, a_1..n) given next-state joint estimate
 
 केवल सहकारी। वैश्विक पुरस्कार प्रति एजेंट क्यू-मूल्यों के एक एकांत समारोह का योग हैः
 
-```
-Q_tot(tau, a) = f(Q_1(tau_1, a_1), ..., Q_n(tau_n, a_n)),   df/dQ_i >= 0
+```math
+Q_{\text{tot}}(\tau, a) = f\big(Q_1(\tau_1, a_1), \ldots, Q_n(\tau_n, a_n)\big), \quad \frac{\partial f}{\partial Q_i} \ge 0
 ```
 
 एकांतता गारंटी `argmax_a Q_tot`प्रत्येक एजेंट द्वारा चुना जा सकता है`argmax_{a_i} Q_i`स्वतंत्र रूप से।**exactly the decentralized execution property**प्रशिक्षण के समय, एक मिश्रण नेटवर्क उत्पादन करता है`Q_tot`प्रति एजेंट Qs से।

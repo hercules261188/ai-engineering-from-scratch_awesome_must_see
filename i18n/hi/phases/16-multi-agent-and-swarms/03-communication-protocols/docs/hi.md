@@ -72,7 +72,7 @@ sequenceDiagram
 ### ए2ए (एजेंट2एजेंट प्रोटोकॉल)
 
 **Created by:**गूगल (अब लिनक्स फाउंडेशन के तहत `lf.a2a.v1`)
-**Spec version:**1.0.0
+**Spec version:**1.0.1
 **Problem:**स्वायत्त एजेंट कैसे सहयोग करते हैं, बातचीत करते हैं और एक दूसरे को कार्य सौंपते हैं?
 
 A2A के लिए प्रोटोकॉल है**peer-to-peer agent collaboration**. जहां एमसीपी एक एजेंट को उपकरण से जोड़ता है, ए2ए एक एजेंट को अन्य एजेंटों से जोड़ता है। प्रत्येक एजेंट एक **Agent Card**एक प्रसिद्ध यूआरएल पर, और अन्य एजेंटों को पता लगाने, बातचीत करने और उसे कार्य सौंपने के लिए।
@@ -87,8 +87,8 @@ sequenceDiagram
     Client->>Remote: GET /.well-known/agent-card.json
     Remote-->>Client: Agent Card (skills, modes, security)
 
-    Client->>Remote: POST /message:send
-    Remote-->>Client: Task (submitted/working)
+    Client->>Remote: POST /message:send (returnImmediately)
+    Remote-->>Client: Task (TASK_STATE_SUBMITTED or TASK_STATE_WORKING)
 
     alt Polling
         Client->>Remote: GET /tasks/{id}
@@ -97,7 +97,7 @@ sequenceDiagram
         Client->>Remote: POST /message:stream
         Remote-->>Client: SSE: statusUpdate
         Remote-->>Client: SSE: artifactUpdate
-        Remote-->>Client: SSE: completed
+        Remote-->>Client: SSE: statusUpdate TASK_STATE_COMPLETED, stream closes
     end
 ```
 
@@ -157,36 +157,36 @@ sequenceDiagram
       }
     }
   },
-  "security": [{ "bearer": [] }]
+  "securityRequirements": [{ "schemes": { "bearer": { "list": [] } } }]
 }
 ```
 
 ध्यान देने योग्य महत्वपूर्ण बातेंः
 - **Skills**एक ग्राहक एजेंट इस तरह से तय करता है कि क्या यह रिमोट एजेंट अपने अनुरोध को संभाल सकता है।
 - **supportedInterfaces**एक एकल एजेंट JSON-RPC, REST, और gRPC एक साथ बोल सकता है।
-- **Security**ग्राहक को एक भी अनुरोध करने से पहले ही पता है कि उसे किस लेखक की आवश्यकता है।
+- **Security**कार्ड में निर्मित हैः `securitySchemes`प्रत्येक योजना का नाम और `securityRequirements`ग्राहक को एक भी अनुरोध करने से पहले ही पता है कि उसे किस लेखक की आवश्यकता है।
 
 #### कार्य जीवन चक्र
 
-कार्य ए 2 ए में काम की मूल इकाई हैं। वे परिभाषित राज्यों के माध्यम से चलते हैंः
+कार्य A2A में काम की मूल इकाई हैं। वे परिभाषित राज्यों के माध्यम से चलते हैं (चित्रण `TASK_STATE_`प्रत्येक राज्य द्वारा तार पर ले जाने वाला पूर्वावलोकन):
 
 ```mermaid
 stateDiagram-v2
-    [*] --> submitted
-    submitted --> working
-    working --> input_required: needs more info
-    input_required --> working: client sends data
-    working --> completed: success
-    working --> failed: error
-    working --> canceled: client cancels
-    submitted --> rejected: agent declines
+    [*] --> SUBMITTED
+    SUBMITTED --> WORKING
+    WORKING --> INPUT_REQUIRED: needs more info
+    INPUT_REQUIRED --> WORKING: client sends data
+    WORKING --> COMPLETED: success
+    WORKING --> FAILED: error
+    WORKING --> CANCELED: client cancels
+    SUBMITTED --> REJECTED: agent declines
 
-    completed --> [*]
-    failed --> [*]
-    canceled --> [*]
-    rejected --> [*]
+    COMPLETED --> [*]
+    FAILED --> [*]
+    CANCELED --> [*]
+    REJECTED --> [*]
 
-    note right of completed
+    note right of COMPLETED
         Terminal states are immutable.
         Follow-ups create new tasks
         within the same contextId.
@@ -212,7 +212,7 @@ stateDiagram-v2
 
 A2A JSON-RPC 2.0 का उपयोग करता है। यहाँ एक असली संदेश विनिमय कैसा दिखता हैः
 
-**Client sends a task:**
+**Client sends a message:**
 ```json
 {
   "jsonrpc": "2.0",
@@ -269,16 +269,16 @@ A2A JSON-RPC 2.0 का उपयोग करता है। यहाँ ए�
 **Streaming via SSE:**
 ```text
 POST /message:stream HTTP/1.1
-Content-Type: application/json
+Content-Type: application/a2a+json
 A2A-Version: 1.0
 
-data: {"task":{"id":"task-123","status":{"state":"TASK_STATE_WORKING"}}}
+data: {"task":{"id":"task-123","contextId":"ctx-123","status":{"state":"TASK_STATE_WORKING"}}}
 
-data: {"statusUpdate":{"taskId":"task-123","status":{"state":"TASK_STATE_WORKING","message":{"role":"ROLE_AGENT","parts":[{"text":"Searching documentation..."}]}}}}
+data: {"statusUpdate":{"taskId":"task-123","contextId":"ctx-123","status":{"state":"TASK_STATE_WORKING","message":{"messageId":"msg-002","role":"ROLE_AGENT","parts":[{"text":"Searching documentation..."}]}}}}
 
-data: {"artifactUpdate":{"taskId":"task-123","artifact":{"artifactId":"art-1","parts":[{"text":"partial findings..."}]},"append":true,"lastChunk":false}}
+data: {"artifactUpdate":{"taskId":"task-123","contextId":"ctx-123","artifact":{"artifactId":"art-1","parts":[{"text":"partial findings..."}]},"append":true,"lastChunk":false}}
 
-data: {"statusUpdate":{"taskId":"task-123","status":{"state":"TASK_STATE_COMPLETED"}}}
+data: {"statusUpdate":{"taskId":"task-123","contextId":"ctx-123","status":{"state":"TASK_STATE_COMPLETED"}}}
 ```
 
 ### एसीपी (एजेंट संचार प्रोटोकॉल)
@@ -612,12 +612,12 @@ swarm-message-bus
 ```typescript
 import crypto from "node:crypto";
 
-type MessageRole = "user" | "agent";
+type MessageRole = "ROLE_USER" | "ROLE_AGENT";
 
 type MessagePart =
-  | { kind: "text"; text: string }
-  | { kind: "data"; data: unknown; mediaType: string }
-  | { kind: "file"; name: string; url: string; mediaType: string };
+  | { text: string }
+  | { data: unknown; mediaType: string }
+  | { url: string; filename: string; mediaType: string };
 
 type TrajectoryEntry = {
   reasoning: string;
@@ -651,11 +651,11 @@ function createMessage(
 }
 
 function textMessage(role: MessageRole, text: string): AgentMessage {
-  return createMessage(role, [{ kind: "text", text }]);
+  return createMessage(role, [{ text }]);
 }
 ```
 
-ध्यान दें: `MessagePart`यह मल्टीमोडल (टेक्स्ट, संरचित डेटा, फाइलें) है, जैसे वास्तविक A2A और ACP विनिर्देश। `TrajectoryEntry`इस प्रकार, एसीपी के ट्रैकटोरियामेटाडेटा से मेल खाने वाली तर्क श्रृंखला को कैप्चर करता है।
+ध्यान दें: `MessagePart`यह बहुआयामी (पाठ, संरचित डेटा, फ़ाइलें) है, जैसे वास्तविक A2A और ACP विनिर्देशों की तरह।`text`,`data`या `url`) यह बताता है कि भाग क्या है; कोई नहीं है `kind`टैग.`TrajectoryEntry`इस प्रकार, एसीपी के ट्रैकटोरियामेटाडेटा से मेल खाने वाली तर्क श्रृंखला को कैप्चर करता है।
 
 ### चरण 2: ए2ए एजेंट कार्ड और रजिस्ट्री
 
@@ -671,11 +671,17 @@ type Skill = {
   outputModes: string[];
 };
 
+type AgentInterface = {
+  url: string;
+  protocolBinding: string;
+  protocolVersion: string;
+};
+
 type AgentCard = {
   name: string;
   description: string;
   version: string;
-  url: string;
+  supportedInterfaces: AgentInterface[];
   capabilities: {
     streaming: boolean;
     pushNotifications: boolean;
@@ -724,20 +730,20 @@ class AgentRegistry {
 
 ```typescript
 type TaskState =
-  | "submitted"
-  | "working"
-  | "input-required"
-  | "auth-required"
-  | "completed"
-  | "failed"
-  | "canceled"
-  | "rejected";
+  | "TASK_STATE_SUBMITTED"
+  | "TASK_STATE_WORKING"
+  | "TASK_STATE_INPUT_REQUIRED"
+  | "TASK_STATE_AUTH_REQUIRED"
+  | "TASK_STATE_COMPLETED"
+  | "TASK_STATE_FAILED"
+  | "TASK_STATE_CANCELED"
+  | "TASK_STATE_REJECTED";
 
 const TERMINAL_STATES: TaskState[] = [
-  "completed",
-  "failed",
-  "canceled",
-  "rejected",
+  "TASK_STATE_COMPLETED",
+  "TASK_STATE_FAILED",
+  "TASK_STATE_CANCELED",
+  "TASK_STATE_REJECTED",
 ];
 
 type TaskStatus = {
@@ -761,13 +767,14 @@ type Task = {
 };
 
 type TaskEvent =
-  | { kind: "statusUpdate"; taskId: string; status: TaskStatus }
+  | { statusUpdate: { taskId: string; status: TaskStatus } }
   | {
-      kind: "artifactUpdate";
-      taskId: string;
-      artifact: Artifact;
-      append: boolean;
-      lastChunk: boolean;
+      artifactUpdate: {
+        taskId: string;
+        artifact: Artifact;
+        append: boolean;
+        lastChunk: boolean;
+      };
     };
 
 type TaskHandler = (
@@ -799,22 +806,22 @@ class TaskManager {
     if (!handler) {
       const task = this.createTask(contextId);
       task.status = {
-        state: "rejected",
+        state: "TASK_STATE_REJECTED",
         timestamp: Date.now(),
-        message: textMessage("agent", `No handler for ${agentName}`),
+        message: textMessage("ROLE_AGENT", `No handler for ${agentName}`),
       };
       return task;
     }
 
     const task = this.createTask(contextId);
     task.history.push(message);
-    task.status = { state: "submitted", timestamp: Date.now() };
+    task.status = { state: "TASK_STATE_SUBMITTED", timestamp: Date.now() };
 
     this.processTask(task, handler, message).catch((err) => {
       task.status = {
-        state: "failed",
+        state: "TASK_STATE_FAILED",
         timestamp: Date.now(),
-        message: textMessage("agent", String(err)),
+        message: textMessage("ROLE_AGENT", String(err)),
       };
     });
     return task;
@@ -827,11 +834,9 @@ class TaskManager {
   cancelTask(taskId: string): boolean {
     const task = this.tasks.get(taskId);
     if (!task || TERMINAL_STATES.includes(task.status.state)) return false;
-    task.status = { state: "canceled", timestamp: Date.now() };
+    task.status = { state: "TASK_STATE_CANCELED", timestamp: Date.now() };
     this.emit(taskId, {
-      kind: "statusUpdate",
-      taskId,
-      status: task.status,
+      statusUpdate: { taskId, status: task.status },
     });
     return true;
   }
@@ -840,7 +845,7 @@ class TaskManager {
     const task: Task = {
       id: crypto.randomUUID(),
       contextId: contextId ?? crypto.randomUUID(),
-      status: { state: "submitted", timestamp: Date.now() },
+      status: { state: "TASK_STATE_SUBMITTED", timestamp: Date.now() },
       artifacts: [],
       history: [],
     };
@@ -853,42 +858,39 @@ class TaskManager {
     handler: TaskHandler,
     message: AgentMessage
   ) {
-    task.status = { state: "working", timestamp: Date.now() };
+    task.status = { state: "TASK_STATE_WORKING", timestamp: Date.now() };
     this.emit(task.id, {
-      kind: "statusUpdate",
-      taskId: task.id,
-      status: task.status,
+      statusUpdate: { taskId: task.id, status: task.status },
     });
 
     try {
       for await (const event of handler(task, message)) {
         if (TERMINAL_STATES.includes(task.status.state)) break;
 
-        if (event.kind === "statusUpdate") {
-          task.status = event.status;
+        if ("statusUpdate" in event) {
+          task.status = event.statusUpdate.status;
         }
-        if (event.kind === "artifactUpdate") {
+        if ("artifactUpdate" in event) {
+          const update = event.artifactUpdate;
           const existing = task.artifacts.find(
-            (a) => a.id === event.artifact.id
+            (a) => a.id === update.artifact.id
           );
-          if (existing && event.append) {
-            existing.parts.push(...event.artifact.parts);
+          if (existing && update.append) {
+            existing.parts.push(...update.artifact.parts);
           } else {
-            task.artifacts.push(event.artifact);
+            task.artifacts.push(update.artifact);
           }
         }
         this.emit(task.id, event);
       }
     } catch (err) {
       task.status = {
-        state: "failed",
+        state: "TASK_STATE_FAILED",
         timestamp: Date.now(),
-        message: textMessage("agent", String(err)),
+        message: textMessage("ROLE_AGENT", String(err)),
       };
       this.emit(task.id, {
-        kind: "statusUpdate",
-        taskId: task.id,
-        status: task.status,
+        statusUpdate: { taskId: task.id, status: task.status },
       });
     }
   }
@@ -901,7 +903,7 @@ class TaskManager {
 }
 ```
 
-यह वास्तविक A2A कार्य जीवन चक्र को लागू करता हैः प्रस्तुत, काम, इनपुट-आवश्यक, टर्मिनल राज्य। हैंडलर असिनक्रोनस जनरेटर हैं जो SSE स्ट्रीमिंग मॉडल से मेल खाने वाली घटनाओं (स्थिति अपडेट और आर्टिफैक्ट टुकड़े) का उत्पादन करते हैं।
+यह वास्तविक A2A कार्य जीवन चक्र को लागू करता हैः `TASK_STATE_SUBMITTED`,`TASK_STATE_WORKING`,`TASK_STATE_INPUT_REQUIRED`हैंडलर्स असिनक्रोनस जनरेटर है कि उत्पादन`statusUpdate`और `artifactUpdate`घटनाओं, SSE धारा ले जाता है के समान लपेटें।
 
 ### चरण 4: एसीपी-शैली लेखा परीक्षा पथ
 
@@ -1231,7 +1233,13 @@ async function protocolDemo() {
     name: "researcher",
     description: "Searches and summarizes findings",
     version: "1.0.0",
-    url: "https://researcher.local/a2a/v1",
+    supportedInterfaces: [
+      {
+        url: "https://researcher.local/a2a/v1",
+        protocolBinding: "JSONRPC",
+        protocolVersion: "1.0",
+      },
+    ],
     capabilities: { streaming: true, pushNotifications: false },
     defaultInputModes: ["text/plain"],
     defaultOutputModes: ["text/plain", "application/json"],
@@ -1250,7 +1258,13 @@ async function protocolDemo() {
     name: "coder",
     description: "Writes code from specs",
     version: "1.0.0",
-    url: "https://coder.local/a2a/v1",
+    supportedInterfaces: [
+      {
+        url: "https://coder.local/a2a/v1",
+        protocolBinding: "JSONRPC",
+        protocolVersion: "1.0",
+      },
+    ],
     capabilities: { streaming: false, pushNotifications: false },
     defaultInputModes: ["text/plain", "application/json"],
     defaultOutputModes: ["text/plain"],
@@ -1275,9 +1289,13 @@ async function protocolDemo() {
     "researcher",
     async function* (task, message) {
       yield {
-        kind: "statusUpdate" as const,
-        taskId: task.id,
-        status: { state: "working" as const, timestamp: Date.now() },
+        statusUpdate: {
+          taskId: task.id,
+          status: {
+            state: "TASK_STATE_WORKING" as const,
+            timestamp: Date.now(),
+          },
+        },
       };
 
       researchTrajectory.push({
@@ -1302,41 +1320,45 @@ async function protocolDemo() {
       });
 
       yield {
-        kind: "artifactUpdate" as const,
-        taskId: task.id,
-        artifact: {
-          id: crypto.randomUUID(),
-          name: "research-results",
-          parts: [
-            {
-              kind: "data" as const,
-              data: {
-                findings: [
-                  "React 19 compiler auto-memoizes components",
-                  "No more manual useMemo/useCallback needed",
-                  "Compiler runs at build time, not runtime",
-                ],
-                sources: ["react.dev/blog/react-19"],
+        artifactUpdate: {
+          taskId: task.id,
+          artifact: {
+            id: crypto.randomUUID(),
+            name: "research-results",
+            parts: [
+              {
+                data: {
+                  findings: [
+                    "React 19 compiler auto-memoizes components",
+                    "No more manual useMemo/useCallback needed",
+                    "Compiler runs at build time, not runtime",
+                  ],
+                  sources: ["react.dev/blog/react-19"],
+                },
+                mediaType: "application/json",
               },
-              mediaType: "application/json",
-            },
-          ],
+            ],
+          },
+          append: false,
+          lastChunk: true,
         },
-        append: false,
-        lastChunk: true,
       };
 
       yield {
-        kind: "statusUpdate" as const,
-        taskId: task.id,
-        status: { state: "completed" as const, timestamp: Date.now() },
+        statusUpdate: {
+          taskId: task.id,
+          status: {
+            state: "TASK_STATE_COMPLETED" as const,
+            timestamp: Date.now(),
+          },
+        },
       };
     }
   );
 
   auditRunner.registerAgent("researcher", async () => ({
     output: [
-      textMessage("agent", "React 19 compiler auto-memoizes components"),
+      textMessage("ROLE_AGENT", "React 19 compiler auto-memoizes components"),
     ],
     trajectory: researchTrajectory,
   }));
@@ -1366,7 +1388,7 @@ async function protocolDemo() {
   );
 
   console.log("\n2. Identity Verification (ANP)");
-  const message = textMessage("user", "Research React 19 compiler features");
+  const message = textMessage("ROLE_USER", "Research React 19 compiler features");
   const signature = signPayload(coderIdentity, message.id);
   const verified = identityRegistry.verify(
     coderIdentity.did,
@@ -1428,7 +1450,7 @@ protocolDemo().catch((err) => {
 
 **Schema drift.**एजेंट ए एक एजेंट कार्ड विज्ञापन प्रकाशित करता है `application/json`आउटपुट. लेकिन JSON योजना संस्करणों के बीच बदलता है. एजेंट बी पुराने प्रारूप को विश्लेषण करता है और कचरा प्राप्त करता है. फिक्सः संस्करण अपने कौशल और आउटपुट योजनाओं. ए 2 ए विनिर्देश समर्थन करता है `version`एजेंट कार्ड्स पर इस कारण से.
 
-**State machine violations.**एक एजेंट हैंडल एक `completed`घटना, फिर अधिक कलाकृतियों को उत्पन्न करने की कोशिश करता है। कार्य अपरिवर्तनीय है। आपका कोड चुपचाप अद्यतन छोड़ देता है या फेंक देता है। ठीकः उत्पन्न करने से पहले टर्मिनल स्थिति की जांच करें। `TaskManager`उपरोक्त के साथ यह लागू करता है `break`टर्मिनल राज्यों के बाद।
+**State machine violations.**एक एजेंट हैंडल एक `TASK_STATE_COMPLETED`स्थिति अद्यतन, फिर अधिक कलाकृतियों को उत्पन्न करने की कोशिश करता है। कार्य अपरिवर्तनीय है। आपका कोड चुपचाप अद्यतन छोड़ देता है या फेंक देता है। ठीकः उत्पन्न करने से पहले टर्मिनल की स्थिति की जांच करें। `TaskManager`उपरोक्त के साथ यह लागू करता है `break`टर्मिनल राज्यों के बाद।
 
 **Trust resolution failures.**एजेंट ए एजेंट बी के डीआईडी की पुष्टि करने की कोशिश करता है, लेकिन एजेंट बी का डोमेन डाउन है। डीआईडी दस्तावेज़ नहीं लाया जा सकता है। क्या आप खोलने में विफल रहते हैं (अनवीरीफाई किए गए एजेंटों को स्वीकार करते हैं) या बंद करने में विफल रहते हैं (सब कुछ अस्वीकार करते हैं)? एएनपी कम से कम विश्वास के सिद्धांत के साथ बंद करने में विफल रहने की सिफारिश करता है।
 
@@ -1505,7 +1527,7 @@ graph TD
 
 ## आगे पढ़ना
 
-- [Google A2A specification](https://github.com/google/A2A)-- आधिकारिक विनिर्देश और SDKs (v1.0.0, लिनक्स फाउंडेशन)
+- [Google A2A specification](https://github.com/google/A2A)-- आधिकारिक विनिर्देश और SDKs (v1.0.1, लिनक्स फाउंडेशन)
 - [IBM/BeeAI ACP specification](https://github.com/i-am-bee/acp)-- एजेंट रन और ट्रैकटोरिया मेटाडेटा के लिए ओपनएपीआई 3.1 विनिर्देश
 - [Agent Network Protocol](https://github.com/agent-network-protocol/AgentNetworkProtocol)-- डीआईडी आधारित पहचान, ई2ईई, मेटा प्रोटोकॉल बातचीत
 - [Model Context Protocol docs](https://modelcontextprotocol.io/)-- एंथ्रोपिक के एमसीपी विनिर्देश (चरण 13 में शामिल)

@@ -61,8 +61,8 @@ LLM प्रणाली के लिए यह महत्वपूर्ण
 
 DID-बाउंड प्रतिष्ठा स्कोर पुष्टि योगदान से जमा होता है। एक सरल अद्यतन नियमः
 
-```
-rep(i, t+1) = alpha * rep(i, t) + (1 - alpha) * contribution_quality(i, t)
+```math
+\text{rep}(i, t+1) = \alpha \cdot \text{rep}(i, t) + (1 - \alpha) \cdot \text{contribution\_quality}(i, t)
 ```
 
 क्षय कारक के साथ `alpha`1. प्रतिष्ठाः
