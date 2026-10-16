@@ -41,8 +41,8 @@ prediction-game
 
 **N-gram probability:** `P(w_i | w_{i-n+1}, ..., w_{i-1})`- إصلاح`n`(عادة 3 للاستعمال الثلاثي، 4 للاستعمال الثلاثي)
 
-```text
-P(w | context) = count(context, w) / count(context)
+```math
+P(w \mid \text{context}) = \frac{\mathop{\mathrm{count}}(\text{context}, w)}{\mathop{\mathrm{count}}(\text{context})}
 ```
 
 **The zero-count problem.**أي ن-جرام لا يظهر في التدريب يحصل على احتمال صفر. وجدت دراسة عام 2007 على برون كوربوس أن حتى نموذج 4 جرام كان لديه 30٪ من 4 جرام غير مرئية في التدريب. لا يمكنك تقييم على أي نص حقيقي دون تسطيع.
@@ -60,8 +60,8 @@ P(w | context) = count(context, w) / count(context)
 
 **Evaluation: perplexity.**معدل احتمالات السجل السلبي المتوسط لكل كلمة على مجموعة اختبار مستمرة. أقل هو أفضل. معدل الارتباك من 100 يعني أن النموذج مشوش كما سيكون اختيار متساوية بين 100 كلمة.
 
-```text
-perplexity = exp(- (1/N) * Σ log P(w_i | context_i))
+```math
+\text{perplexity} = \exp\left(-\frac{1}{N} \sum_i \log P(w_i \mid \text{context}_i)\right)
 ```
 
 ```figure

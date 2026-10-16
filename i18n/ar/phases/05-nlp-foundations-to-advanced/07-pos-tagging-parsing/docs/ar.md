@@ -80,8 +80,8 @@ def predict_mft(tokens, word_best, default_tag):
 
 نموذج احتمال المشترك للانتظام:
 
-```
-P(tags, words) = prod P(tag_i | tag_{i-1}) * P(word_i | tag_i)
+```math
+P(\text{tags}, \text{words}) = \prod_i P(\text{tag}_i \mid \text{tag}_{i-1}) \cdot P(\text{word}_i \mid \text{tag}_i)
 ```
 
 الجداول الثانية: احتمالات الانتقال (التسمية مع التسمية السابقة) ، احتمالات الانبعاث (التسمية مع الكلمة). تقدير كل من العد مع تسطيح لابلاس. فك مع Viterbi (برمجة ديناميكية على شبكة التسمية).
