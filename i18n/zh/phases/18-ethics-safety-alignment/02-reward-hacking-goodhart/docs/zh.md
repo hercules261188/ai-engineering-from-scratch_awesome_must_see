@@ -28,9 +28,11 @@
 
 让我们来看看.`d = sqrt(KL(pi || pi_init))`让我们`R_proxy(d)`让你得到一个代理奖励.`R_gold(d)`经验上说:
 
-```
-R_proxy(d) = alpha * d - beta_proxy * d^2
-R_gold(d)  = alpha * d - beta_gold  * d^2
+```math
+\begin{aligned}
+R_{\text{proxy}}(d) &= \alpha d - \beta_{\text{proxy}} d^2 \\
+R_{\text{gold}}(d) &= \alpha d - \beta_{\text{gold}} d^2
+\end{aligned}
 ```
 
 随着`beta_gold > beta_proxy`两个从零KL上升,两个峰值,黄金峰值更接近原点.`d`尽管代金的差距在BON样本采集,PPO和SFT中保持相同的签名.

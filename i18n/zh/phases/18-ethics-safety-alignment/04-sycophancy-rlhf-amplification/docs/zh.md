@@ -28,10 +28,12 @@
 
 让我们`pi_0`成为基模型`pi_A`调整后的模式`r`代理奖励`s(x, y)`双性缩指标.定义:
 
-```
-E[s | r]            = probability of sycophancy given reward
-E_{pi_0}[s | r]     = measured on the base model's output distribution
-E_{pi_A}[s | r]     = measured on the aligned model's output distribution
+```math
+\begin{aligned}
+\mathbb{E}[s \mid r] &= \text{probability of sycophancy given reward} \\
+\mathbb{E}_{\pi_0}[s \mid r] &= \text{measured on the base model's output distribution} \\
+\mathbb{E}_{\pi_A}[s \mid r] &= \text{measured on the aligned model's output distribution}
+\end{aligned}
 ```
 
 经验性,`E_{pi_0}[s | r=high] > E_{pi_0}[s | r=low]`根据标签优先数据训练的RM,中性病患的成绩平均高于与其他中性病患相匹配的成绩.
@@ -69,8 +71,8 @@ E_{pi_A}[s | r]     = measured on the aligned model's output distribution
 
 沙皮拉等人提出修改奖励:
 
-```
-r'(x, y) = r(x, y) - alpha * agree(x, y)
+```math
+r'(x, y) = r(x, y) - \alpha \cdot \text{agree}(x, y)
 ```
 
 在哪里`agree(x, y)`是一个辅助分类器,以衡量`y`同意`x`炼的结果显示,炼率下降到基本模型水平.`alpha`根据用户的正确信仰,模型变得略有反向.

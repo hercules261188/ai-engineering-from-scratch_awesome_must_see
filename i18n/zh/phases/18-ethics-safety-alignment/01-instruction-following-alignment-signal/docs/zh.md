@@ -32,8 +32,8 @@
 
 对于每一个提示,从SFT模型中样本K完成.一个标签符排名它们.训练一个奖励模型,该模型将任何提示响应对进行分数,以便,对于`y_w`现在,我觉得我更喜欢`y_l`其他:
 
-```
-L_RM = -log sigmoid(r(x, y_w) - r(x, y_l))
+```math
+L_{\text{RM}} = -\log \sigma\big(r(x, y_w) - r(x, y_l)\big)
 ```
 
 这就是布拉德利-特里对偏好损失.RM通常从SFT模型开始,LM头被 Skalar头取代.
@@ -44,8 +44,8 @@ L_RM = -log sigmoid(r(x, y_w) - r(x, y_l))
 
 定义目标:
 
-```
-J(pi) = E_{x~D, y~pi(.|x)} [ r(x, y) ] - beta * KL(pi(.|x) || pi_SFT(.|x))
+```math
+J(\pi) = \mathbb{E}_{x \sim D,\, y \sim \pi(\cdot \mid x)} \big[ r(x, y) \big] - \beta \, \mathrm{KL}\big(\pi(\cdot \mid x) \,\|\, \pi_{\text{SFT}}(\cdot \mid x)\big)
 ```
 
 通过PPO最大化.KL术语保持.`pi`没有它,优化器会找到对立的例子 弦在RM下得分高,因为RM从来没有看到它们,而不是因为人类实际上更喜欢它们.
@@ -56,8 +56,8 @@ J(pi) = E_{x~D, y~pi(.|x)} [ r(x, y) ] - beta * KL(pi(.|x) || pi_SFT(.|x))
 
 欧阳等人称之为"配合税",并用PPO-ptx来解决这一问题:将预训练梯度混合到RL目标中,使模型不会忘记如何完成下游任务,它从未获得奖励.
 
-```
-J_ptx(pi) = J(pi) + gamma * E_{x~D_pretrain} [ log pi(x) ]
+```math
+J_{\text{ptx}}(\pi) = J(\pi) + \gamma \, \mathbb{E}_{x \sim D_{\text{pretrain}}} \big[ \log \pi(x) \big]
 ```
 
 博是个标准的平台,而人类,深思维和Meta都使用了一些变体.
@@ -84,7 +84,7 @@ al-instruct-pipeline
 什么要看:
 
 - 奖励轨迹`beta = 0.1`其他`beta = 0.0`现在,我们要去.
-- 对于培训阶段.
+- $\mathrm{KL}(\pi \Vert \pi_{\text{SFT}})$对于训练阶段.
 - 与标签优先级相比,最终行动分布.
 
 ## 运送它
@@ -109,7 +109,7 @@ al-instruct-pipeline
 |------|-----------------|------------------------|
 | SFT | "instruction tuning" | Stage 1: cross-entropy fine-tune on prompt-response pairs |
 | Reward model | "the RM" | Scalar regressor over (prompt, response) trained with Bradley-Terry on pairwise labels |
-| Bradley-Terry | "pairwise preference loss" | -log sigmoid(r_w - r_l); reduces pairwise ranking to binary classification |
+| Bradley-Terry | "pairwise preference loss" | $-\log \sigma(r_w - r_l)$; reduces pairwise ranking to binary classification |
 | KL penalty | "the regularizer" | `beta * KL(pi \|\| pi_SFT)` — keeps the RL policy near the SFT anchor |
 | PPO-ptx | "PPO with pretraining mix" | Adds a fraction of pre-training log-likelihood to the PPO objective to offset the alignment tax |
 | Alignment tax | "the RLHF regression" | Post-RLHF drop on standard benchmarks that RLHF did not target |
