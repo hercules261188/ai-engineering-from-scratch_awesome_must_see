@@ -39,15 +39,15 @@ features += weight_a * control_a(depth) + weight_b * control_b(pose)
 
 ### Los Estados miembros pueden adoptar medidas de seguridad en el marco de la aplicación de la presente Directiva.
 
-Para cualquier capa lineal `W ∈ R^{d×d}`en el modelo, congelación `W`y añadir un delta de bajo rango:
+Para cualquier capa lineal $W \in \mathbb{R}^{d \times d}$en el modelo, congelación $W$y añadir un delta de bajo rango:
 
+```math
+W' = W + \Delta W, \quad \Delta W = B A, \quad A \in \mathbb{R}^{r \times d}, \quad B \in \mathbb{R}^{d \times r}
 ```
-W' = W + ΔW,  ΔW = B @ A,  A ∈ R^{r×d},  B ∈ R^{d×r}
-```
 
-con`r << d`.Rango 4-16 es estándar para la atención, rango 64-128 para las tonas finas pesadas.`2 · d · r`en lugar de`d²`. para la atención de SDXL con `d=640`¿ Qué ?`r=16`Por ejemplo, el modelo de la base de 5GB es de 20-200 MB.
+con$r \ll d$.Rango 4-16 es estándar para la atención, rango 64-128 para las tonas finas pesadas.$2 \cdot d \cdot r$en lugar de$d^2$. para la atención de SDXL con $d=640$¿ Qué ?$r=16$Por ejemplo, el modelo de la base de 5GB es de 20-200 MB.
 
-En la inferencia se puede escalar la LoRA: `W' = W + α · B @ A`- ¿ Qué ?`α = 0.5-1.5`Los LRA múltiples se apilan de forma aditiva (con la advertencia habitual de que interactúan de manera no lineal).
+En la inferencia se puede escalar la LoRA: $W' = W + \alpha \cdot B A$- ¿ Qué ?$\alpha = 0.5\text{-}1.5$Los LRA múltiples se apilan de forma aditiva (con la advertencia habitual de que interactúan de manera no lineal).
 
 ### Adaptador IP (Ye et al., 2023)
 
@@ -74,7 +74,7 @@ v4-controlnet-zero
 
 `code/main.py`simula los dos mecanismos en 1-D:
 
-1. **LoRA.**Una capa lineal preentrenada .`W`- Congelarlo. Entrenar a un bajo rango.`B @ A`Es así .`W + BA`coincide con una capa lineal objetivo. Muestre que`r = 1`es suficiente para aprender una corrección de rango 1 perfectamente.
+1. **LoRA.**Una capa lineal preentrenada .$W$- Congelarlo. Entrenar a un bajo rango.$BA$Es así .$W + BA$coincide con una capa lineal objetivo. Muestre que$r = 1$es suficiente para aprender una corrección de rango 1 perfectamente.
 
 2. **ControlNet-lite.**Un predictor de "base congelada" y una "red lateral" que lee una señal adicional. La salida de la red lateral está bloqueada por un escalar aprendizaje inicializado a cero (nuestra versión de cero-conv). Entren y vigila la rampa de la puerta hacia arriba.
 
@@ -98,11 +98,11 @@ En el paso 0 la salida es idéntica a la base.`gate`lentamente, sin una deriva c
 
 ## Las trampas
 
-- **Over-scaling LoRAs.** `α = 2`o `α = 3`es un hack común "hacerlo más fuerte" que produce resultados demasiado estilizados / rotos.`α ≤ 1.5`¿ Qué ?
+- **Over-scaling LoRAs.** $\alpha = 2$o $\alpha = 3$es un hack común "hacerlo más fuerte" que produce resultados demasiado estilizados / rotos.$\alpha \le 1.5$¿ Qué ?
 - **ControlNet weight conflict.**Usar una Pose ControlNet con peso 1.0 y una Depth ControlNet con peso 1.0 generalmente se sobrepone.
 - **LoRA on the wrong base.**Los SDXL LoRA no se operan en silencio en SD 1.5 porque las dimensiones de atención no coinciden.
 - **Textual Inversion drift.**Los tokens entrenados en un puesto de control se desplazan mal en otro.
-- **LoRA weight-merging and storage.**Puedes hornear un LoRA en los pesos del modelo base para inferir más rápido (sin adición de tiempo de ejecución), pero pierdes la capacidad de escalar `α`Mantenga ambas versiones.
+- **LoRA weight-merging and storage.**Puedes hornear un LoRA en los pesos del modelo base para inferir más rápido (sin adición de tiempo de ejecución), pero pierdes la capacidad de escalar $\alpha$Mantenga ambas versiones.
 
 ## Usalo
 
@@ -125,7 +125,7 @@ Salva .`outputs/skill-sd-toolkit-composer.md`. La habilidad toma una tarea (acti
 
 1. **Easy.**En el`code/main.py`, varían el rango de la LoRA `r`¿En qué rango el LoRA coincide exactamente con un delta objetivo de rango 2?
 2. **Medium.**Entrenar dos LoRAs separadas en dos transformaciones de objetivo. cargarlos juntos y mostrar su interacción aditiva. ¿Cuándo la interacción rompe la linealidad?
-3. **Hard.**Utilice difusores para apilar: SDXL-base + Canny-ControlNet (peso 0.8) + un estilo LoRA (α 0.8) + IP-Adaptador (peso 0.6).
+3. **Hard.**Utilice difusores para apilar: SDXL-base + Canny-ControlNet (peso 0,8) + un estilo LoRA ($\alpha$0.8) + IP-Adapter (peso 0.6). Medir el compromiso entre FID y adhesión inmediata a medida que los pesos de la pila varían.
 
 ## Términos clave
 
@@ -133,9 +133,9 @@ Salva .`outputs/skill-sd-toolkit-composer.md`. La habilidad toma una tarea (acti
 |------|-----------------|-----------------------|
 | ControlNet | "Spatial control" | Cloned encoder + zero-conv skips; reads a conditioning image. |
 | Zero convolution | "Starts as identity" | 1×1 conv initialized to zero; ControlNet starts as no-op. |
-| LoRA | "Low-rank adapter" | `W + B @ A`, `r << d`; 100x fewer params than a full fine-tune. |
+| LoRA | "Low-rank adapter" | $W + BA$, $r \ll d$; 100x fewer params than a full fine-tune. |
 | rank r | "The knob" | LoRA compression; 4-16 typical, 64+ for heavy personalization. |
-| α | "LoRA strength" | Runtime scaling of the LoRA delta. |
+| $\alpha$ | "LoRA strength" | Runtime scaling of the LoRA delta. |
 | IP-Adapter | "Reference image" | Small image-conditioning adapter via CLIP-image tokens. |
 | DreamBooth | "Full subject fine-tune" | Train the full model on ~30 images of a subject. |
 | Textual Inversion | "New token" | Learn a new word embedding only; legacy, mostly replaced. |
@@ -144,7 +144,7 @@ Salva .`outputs/skill-sd-toolkit-composer.md`. La habilidad toma una tarea (acti
 
 Un SaaS de texto a imagen real sirve a cientos de LoRA y una docena de ControlNets en el mismo punto de control base. El problema de servicio se parece mucho a la LLM multi-tenancy (la literatura de producción cubre el caso de LLM bajo lotes continuos y LoRAX / S-LoRA):
 
-- **Hot-swap LoRAs, do not merge.**Fusión`W' = W + α·B·A`en la base da ~ 3-5% más rápido por paso de inferencia pero se congela `α`Mantenga los LRA calientes en VRAM como deltas de rango; los difusores exponen`pipe.load_lora_weights()`¿ Qué es eso ?`pipe.set_adapters([...], adapter_weights=[...])`El costo de cambio es el `2 · d · r · num_layers`Peso  en escala de MB, subsegundo.
+- **Hot-swap LoRAs, do not merge.**Fusión$W' = W + \alpha \cdot B \cdot A$en la base da ~ 3-5% más rápido por paso de inferencia pero se congela $\alpha$Mantenga los LRA calientes en VRAM como deltas de rango; los difusores exponen`pipe.load_lora_weights()`¿ Qué es eso ?`pipe.set_adapters([...], adapter_weights=[...])`El costo de cambio es el `2 · d · r · num_layers`Peso  en escala de MB, subsegundo.
 - **ControlNet as a second attention lane.**El codificador clonado funciona en paralelo con la base. Dos ControlNets con peso 1.0 cada uno = dos pases adicionales hacia adelante por paso, no un pasado fusionado. El tamaño del batch se reduce cuadráticamente. Presupuesto para ~ 1.5 × costo de paso por ControlNet activo.
 - **Quantized LoRAs too.**Si cuantificó la base (ver Lección 07, Flux en 8GB), el delta LoRA también cuantifica limpiamente a 8 bits o 4 bits.
 

@@ -11,12 +11,12 @@
 
 Los VAEs producen muestras borrosas porque su pérdida de decodificador MSE es Bayes-óptima para la imagen * media *  y la media de muchos dígitos plausibles es un dígito borroso. Quieres una pérdida que recompensen * plausibilidad*, no la proximidad de un objetivo en forma de píxel. No hay forma cerrada para la plausibilidad. Tienes que aprenderlo.
 
-La idea de Goodfellow: entrenar un clasificador `D(x)`Para distinguir imágenes reales de falsas.`G(z)`para engañar .`D`. La señal de pérdida para `G`¿ Qué es lo que sea ?`D`Ahora, la señal se actualiza como`G`Mejoras, perseguir un objetivo en movimiento.`G`ha aprendido la distribución de datos sin escribirlo nunca.`log p(x)`¿ Qué ?
+La idea de Goodfellow: entrenar un clasificador $D(x)$Para distinguir imágenes reales de falsas.$G(z)$para engañar .$D$. La señal de pérdida para $G$¿ Qué es lo que sea ?$D$Ahora, la señal se actualiza como$G$Mejoras, perseguir un objetivo en movimiento.$G$ha aprendido la distribución de datos sin escribirlo nunca.`log p(x)`¿ Qué ?
 
 Esto es entrenamiento adversario.
 
-```
-min_G max_D  E_real[log D(x)] + E_fake[log(1 - D(G(z)))]
+```math
+\min_G \max_D \; \mathbb{E}_{\text{real}}[\log D(x)] + \mathbb{E}_{\text{fake}}[\log(1 - D(G(z)))]
 ```
 
 En 2026 los GAN ya no son el generador de SOTA (la difusión y el flujo de coincidencia comieron esa corona). Pero StyleGAN 2/3 sigue siendo los modelos de cara más afilados jamás enviados, los discriminadores GAN se utilizan como *perdidas perceptuales* en el entrenamiento de difusión, y el entrenamiento adversario potencia las destilaciones rápidas de 1 paso (SDXL-Turbo, SD3-Turbo, LCM) que le permiten enviar difusión en tiempo real.
@@ -25,20 +25,20 @@ En 2026 los GAN ya no son el generador de SOTA (la difusión y el flujo de coinc
 
 ![GAN training: generator and discriminator in minimax](../assets/gan.svg)
 
-**Generator `G(z)`.**Mapas de un vector de ruido `z ~ N(0, I)`a una muestra `x̂`Una red en forma de decodificador (contenido o transpuesto).
+**Generator $G(z)$.**Mapas de un vector de ruido $z \sim \mathcal{N}(0, I)$a una muestra $\hat{x}$Una red en forma de decodificador (contenido o transpuesto).
 
-**Discriminator `D(x)`.**Mapas de una muestra a una probabilidad escalar (o puntaje). Real → 1, falso → 0.
+**Discriminator $D(x)$.**Mapas de una muestra a una probabilidad escalar (o puntaje). Real → 1, falso → 0.
 
 **Loss.**Dos actualizaciones alternativas:
 
-- **Train `D`:** `loss_D = -[ log D(x) + log(1 - D(G(z))) ]`Entropia binaria cruzada en real=1, falso=0.
-- **Train `G`:** `loss_G = -log D(G(z))`Esta es la forma no saturante utilizada por Goodfellow (original)`log(1 - D(G(z)))`saturado y mata los gradientes cuando `D`es seguro).
+- **Train $D$:** $\text{loss}_D = -[ \log D(x) + \log(1 - D(G(z))) ]$Entropia binaria cruzada en real=1, falso=0.
+- **Train $G$:** $\text{loss}_G = -\log D(G(z))$Esta es la forma no saturante utilizada por Goodfellow (original)$\log(1 - D(G(z)))$saturado y mata los gradientes cuando $D$es seguro).
 
-**Training loop.**Un paso de `D`, un paso de `G`Repito.
+**Training loop.**Un paso de $D$, un paso de $G$Repito.
 
-**Why it works.**Si ...`G`Se ajusta perfectamente .`p_data`, entonces`D`No puede hacer mejor que el azar y las salidas 0.5 en todas partes; `G`No tiene más gradiente.
+**Why it works.**Si ...$G$Se ajusta perfectamente .$p_{\text{data}}$, entonces$D$No puede hacer mejor que el azar y las salidas 0.5 en todas partes; $G$No tiene más gradiente.
 
-**Why it breaks.**Collapso de modo (`G`encuentra un modo `D`No puedo clasificarlo y lo acuñar para siempre), desvanecimiento de gradiente (`D`Aprende demasiado rápido y `log D`El programa de formación de los jóvenes de edad avanzada (SET) se ha desarrollado en el ámbito de la formación.
+**Why it breaks.**Collapso de modo ($G$encuentra un modo $D$No puedo clasificarlo y lo acuñar para siempre), desvanecimiento de gradiente ($D$Aprende demasiado rápido y $\log D$El programa de formación de los jóvenes de edad avanzada (SET) se ha desarrollado en el ámbito de la formación.
 
 ## Variantes que hicieron que funcionaran las GAN
 
@@ -63,7 +63,7 @@ gan-minimax
 
 ### Paso 1: pérdida no saturante
 
-La pérdida de la vainilla Goodfellow .`log(1 - D(G(z)))`se eleva a 0 cuando D clasifica el falso de G como falso con alta confianza. En ese punto el gradiente para G es básicamente cero  G no puede mejorar.`-log D(G(z))`tiene la asintoto opuesta: explota cuando D está seguro, dando a G una señal fuerte.
+La pérdida de la vainilla Goodfellow .$\log(1 - D(G(z)))$se eleva a 0 cuando D clasifica el falso de G como falso con alta confianza. En ese punto el gradiente para G es básicamente cero  G no puede mejorar.$-\log D(G(z))$tiene la asintoto opuesta: explota cuando D está seguro, dando a G una señal fuerte.
 
 ```python
 def g_loss(d_fake):
@@ -130,7 +130,7 @@ Salva .`outputs/skill-gan-debugger.md`. Skill toma una ejecución GAN fallida (c
 ## Los ejercicios
 
 1. **Easy.**- ¿ Qué ?`code/main.py`con las configuraciones de acciones.`D_LR = 5 * G_LR`¿A qué velocidad se derrumba la pérdida de G a una constante?
-2. **Medium.**Substituir la pérdida de Goodfellow BCE por la pérdida de WGAN: `loss_D = E[D(fake)] - E[D(real)]`¿ Qué ?`loss_G = -E[D(fake)]`, y clip de D los pesos a `[-0.01, 0.01]`¿El entrenamiento es más estable?
+2. **Medium.**Substituir la pérdida de Goodfellow BCE por la pérdida de WGAN: $\text{loss}_D = \mathbb{E}[D(\text{fake})] - \mathbb{E}[D(\text{real})]$¿ Qué ?$\text{loss}_G = -\mathbb{E}[D(\text{fake})]$, y clip de D los pesos a `[-0.01, 0.01]`¿El entrenamiento es más estable?
 3. **Hard.**Extenda el ejemplo de 1D a datos 2D (mezcla de 8 Gaussians en un anillo). Rastrear cuántos de los 8 modos que el generador captura en los pasos 1k, 5k, 10k. Implementar la discriminación de minipartidos y volver a medir.
 
 ## Términos clave
@@ -139,8 +139,8 @@ Salva .`outputs/skill-gan-debugger.md`. Skill toma una ejecución GAN fallida (c
 |------|-----------------|-----------------------|
 | Generator | "G" | Noise-to-sample network, `G: z → x̂`. |
 | Discriminator | "D" | Classifier `D: x → [0, 1]`, real vs fake. |
-| Minimax | "The game" | `min_G max_D` of a joint objective. |
-| Non-saturating loss | "The fix" | Use `-log D(G(z))` for G instead of `log(1 - D(G(z)))`. |
+| Minimax | "The game" | $\min_G \max_D$ of a joint objective. |
+| Non-saturating loss | "The fix" | Use $-\log D(G(z))$ for G instead of $\log(1 - D(G(z)))$. |
 | Mode collapse | "G memorized one thing" | Generator produces few distinct outputs despite diverse data. |
 | WGAN | "Wasserstein" | Replace BCE with Earth-Mover distance + gradient penalty; smoother gradient. |
 | Spectral norm | "Lipschitz trick" | Constrain D's weight norms to bound its slope; stabilizes training. |
@@ -150,7 +150,7 @@ Salva .`outputs/skill-gan-debugger.md`. Skill toma una ejecución GAN fallida (c
 
 Los GAN ya no ganan en la calidad de la muestra para la generación de dominio abierto, pero todavía ganan en el costo de inferencia.
 
-- **No prefill, no decode stages.**Un solo .`G(z)`TTFT ≈ latencia total.
+- **No prefill, no decode stages.**Un solo .$G(z)$TTFT ≈ latencia total.
 - **No KV-cache pressure.**El tamaño del lote está limitado por la memoria de activación, no por el caché.
 - **Trivial continuous batching.**Como cada solicitud requiere los mismos FLOPs fijos, un lote estático en la ocupación de destino del servidor es generalmente óptimo.
 

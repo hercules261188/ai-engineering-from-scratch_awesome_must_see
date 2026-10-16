@@ -9,9 +9,9 @@
 
 ## El problema
 
-Un modelo generativo hace un trabajo: muestra de formación dada extraída de una distribución desconocida `p_data(x)`Las caras, las frases, los archivos MIDI, las estructuras de proteínas, todo el mismo problema si miras con los ojos.
+Un modelo generativo hace un trabajo: muestra de formación dada extraída de una distribución desconocida $p_{\text{data}}(x)$Las caras, las frases, los archivos MIDI, las estructuras de proteínas, todo el mismo problema si miras con los ojos.
 
-El problema es que ...`p_data`Si el modelo de un modelo generativo es un modelo generativo, es un compromiso que cambia un problema difícil por otro ligeramente menos difícil.
+El problema es que ...$p_{\text{data}}$Si el modelo de un modelo generativo es un modelo generativo, es un compromiso que cambia un problema difícil por otro ligeramente menos difícil.
 
 Cinco familias han sobrevivido en los últimos doce años. Saber qué compromiso hace cada familia nos dice por qué gana en algunas tareas y se derrumba en otras.
 
@@ -19,13 +19,13 @@ Cinco familias han sobrevivido en los últimos doce años. Saber qué compromiso
 
 ![Five families of generative models — taxonomy by what they model](../assets/taxonomy.svg)
 
-**1. Explicit density, tractable.**Escriba .`log p(x)`Los modelos autoregresivos (PixelCNN, WaveNet, GPT) factorizan`p(x) = ∏ p(x_i | x_<i)`. Normalización de los flujos (RealNVP, Glow)`p(x)`Pro: probabilidad exacta, pérdida de entrenamiento limpia. Con: inferencia autorregresista es secuencial (lento para secuencias largas), los flujos necesitan arquitecturas invertibles (arquitectónicamente restrictivas).
+**1. Explicit density, tractable.**Escriba .$\log p(x)$Los modelos autoregresivos (PixelCNN, WaveNet, GPT) factorizan$p(x) = \prod_i p(x_i \mid x_{<i})$. Normalización de los flujos (RealNVP, Glow)$p(x)$Pro: probabilidad exacta, pérdida de entrenamiento limpia. Con: inferencia autorregresista es secuencial (lento para secuencias largas), los flujos necesitan arquitecturas invertibles (arquitectónicamente restrictivas).
 
-**2. Explicit density, approximate.**Enlazado`log p(x)`Los modelos de difusión (DDPM, Ho 2020) entrenan un denoizador que optimiza implícitamente un ELBO ponderado. La difusión es la columna vertebral dominante de la imagen, el video y la 3D en 2026.
+**2. Explicit density, approximate.**Enlazado$\log p(x)$Los modelos de difusión (DDPM, Ho 2020) entrenan un denoizador que optimiza implícitamente un ELBO ponderado. La difusión es la columna vertebral dominante de la imagen, el video y la 3D en 2026.
 
-**3. Implicit density.**Salta la densidad por completo; aprende un generador `G(z)`que produce muestras y un discriminador `D(x)`GANs (Goodfellow 2014). Rápido en la inferencia (un pase hacia adelante) pero notoriamente inestable durante el entrenamiento. StyleGAN 1/2/3 sigue siendo el estado de la técnica para el fotorrealismo de dominio fijo (caras, dormitorios) incluso en 2026.
+**3. Implicit density.**Salta la densidad por completo; aprende un generador $G(z)$que produce muestras y un discriminador $D(x)$GANs (Goodfellow 2014). Rápido en la inferencia (un pase hacia adelante) pero notoriamente inestable durante el entrenamiento. StyleGAN 1/2/3 sigue siendo el estado de la técnica para el fotorrealismo de dominio fijo (caras, dormitorios) incluso en 2026.
 
-**4. Score-based / continuous-time.**Aprenda el gradiente de la densidad de troncos `∇_x log p(x)`Song & Ermon (2019) mostró que la coincidencia de puntajes generaliza la difusión a una SDE. La coincidencia de flujo (Lipman 2023) es la calidez 2024-2026: entrenamiento sin simulación, caminos más recta, muestreo 4-10 veces más rápido que DDPM.
+**4. Score-based / continuous-time.**Aprenda el gradiente de la densidad de troncos $\nabla_x \log p(x)$Song & Ermon (2019) mostró que la coincidencia de puntajes generaliza la difusión a una SDE. La coincidencia de flujo (Lipman 2023) es la calidez 2024-2026: entrenamiento sin simulación, caminos más recta, muestreo 4-10 veces más rápido que DDPM.
 
 **5. Token-based autoregressive over discrete codes.**Compresar datos de alto tamaño con un VQ-VAE o cuantificador residual en una secuencia corta de tokens discretos, luego usar un transformador para modelar la secuencia de tokens. Parti, MuseNet, AudioLM, VALL-E, el tokenizer de parches de Sora todos usan esto. Este es balde 1 más un tokenizer aprendido.
 
@@ -53,7 +53,7 @@ Cinco familias han sobrevivido en los últimos doce años. Saber qué compromiso
 Cuando se produzca un nuevo modelo generativo, responda a estas cinco preguntas antes de leer la sección de métodos.
 
 1. **What is being modeled?**¿Pixels, latences, tokens discretos, Gaussians 3D, redes, formas de onda?
-2. **Is the density explicit or implicit?**¿ Se escriben ?`log p(x)`¿ Qué ?
+2. **Is the density explicit or implicit?**¿ Se escriben ?$\log p(x)$¿ Qué ?
 3. **Sampling: one-shot or iterative?**Iterativo significa inferencia más lenta; un tiro generalmente significa adversario o destilado.
 4. **Conditioning: unconditional, class, text, image, pose?**Esto determina la pérdida y el andamio de la arquitectura.
 5. **Evaluation: FID, CLIP score, IS, human preference, task accuracy?**Cada uno tiene modos de fallo conocidos (véase la Lección 14).
@@ -90,7 +90,7 @@ Nota: las dos primeras te permiten preguntar "¿qué probabilidades tiene este p
 | Text-to-video | Diffusion Transformer + flow matching | Sora, Veo 2, Kling. |
 | Speech + music | Token-based AR (AudioLM, VALL-E, MusicGen) or flow matching (AudioCraft 2) | Discrete tokens scale cheaply. |
 | 3D scenes | Gaussian Splatting fit, diffusion prior | 3D-GS for reconstruction, diffusion for novel-view. |
-| Density estimation (no sampling) | Flows | Only family with exact `log p(x)`. |
+| Density estimation (no sampling) | Flows | Only family with exact $\log p(x)$. |
 | Simulation / physics | Flow matching, score SDE | Straight-line paths, smooth vector fields. |
 
 ## Envío
@@ -109,11 +109,11 @@ La habilidad toma una descripción de tarea y resultados: (1) qué familia utili
 
 | Term | What people say | What it actually means |
 |------|-----------------|-----------------------|
-| Generative model | "It makes new stuff" | Learns a sampler for `p_data(x)`, optionally exposes `log p(x)`. |
-| Explicit density | "You can evaluate it" | Model provides a closed-form or tractable `log p(x)`. |
-| Implicit density | "GAN-style" | Only a sampler — no way to evaluate `p(x)` of a given point. |
-| ELBO | "Evidence lower bound" | A tractable lower bound on `log p(x)`; VAEs and diffusion optimize it. |
-| Score | "Gradient of log-density" | `∇_x log p(x)`; diffusion and SDE models learn this field. |
+| Generative model | "It makes new stuff" | Learns a sampler for $p_{\text{data}}(x)$, optionally exposes $\log p(x)$. |
+| Explicit density | "You can evaluate it" | Model provides a closed-form or tractable $\log p(x)$. |
+| Implicit density | "GAN-style" | Only a sampler — no way to evaluate $p(x)$ of a given point. |
+| ELBO | "Evidence lower bound" | A tractable lower bound on $\log p(x)$; VAEs and diffusion optimize it. |
+| Score | "Gradient of log-density" | $\nabla_x \log p(x)$; diffusion and SDE models learn this field. |
 | Manifold hypothesis | "Data lives on a surface" | High-dim data concentrates on a low-dim manifold; why dimensionality reduction works. |
 | Autoregressive | "Predict the next piece" | Factorize joint as product of conditionals. |
 | Latent | "Compressed code" | Low-dim representation from which a decoder can reconstruct the input. |

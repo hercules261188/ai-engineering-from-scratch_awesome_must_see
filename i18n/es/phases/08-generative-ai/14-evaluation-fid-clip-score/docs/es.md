@@ -26,13 +26,13 @@ También verá: IS (puntuación de inicio, en gran parte retirado), KID, CMMD, I
 Heusel et al. (2017).
 
 1. Extraer las características de Inception-v3 (2048-D) para N imágenes reales y N generadas.
-2. Encaja un gaussiano en cada piscina: media de cálculo `μ_r, μ_g`y la covarianza `Σ_r, Σ_g`¿ Qué ?
-3. FID = `||μ_r - μ_g||² + Tr(Σ_r + Σ_g - 2 · (Σ_r · Σ_g)^0.5)`¿ Qué ?
+2. Encaja un gaussiano en cada piscina: media de cálculo $\mu_r, \mu_g$y la covarianza $\Sigma_r, \Sigma_g$¿ Qué ?
+3. $\text{FID} = \lVert \mu_r - \mu_g \rVert^2 + \mathop{\mathrm{Tr}}\left(\Sigma_r + \Sigma_g - 2 \cdot (\Sigma_r \cdot \Sigma_g)^{0.5}\right)$¿ Qué ?
 
 Interpretación: distancia de Fréchet entre dos Gaussianos multivariados en el espacio de características.
 
 Modo de falla:
-- **Biased on small N.**FID es el cuadrado medio sobre la distribución de características  pequeña N subestima la covarianza, da falsamente bajo FID. Siempre use N ≥ 10,000.
+- **Biased on small N.**FID es el cuadrado medio sobre la distribución de características  pequeño N subestima la covarianza, da falsamente bajo FID. Siempre use $N \ge 10{,}000$¿ Qué ?
 - **Inception-dependent.**Inception-v3 fue entrenado en ImageNet. Los dominios lejos de ImageNet (cara, arte, imágenes de texto) producen FID sin sentido.
 - **Gaming.**El sobreajuste al previo de inicio da un bajo FID sin mejoría de la calidad visual.
 
