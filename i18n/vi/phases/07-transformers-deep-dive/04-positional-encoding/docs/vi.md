@@ -29,25 +29,25 @@ Tính đến năm 2026, hầu hết các mô hình mở biên giới đều sử
 
 Lập trước một matrix cố định `PE`hình dạng`(max_len, d_model)`- Có thể là:
 
-```
-PE[pos, 2i]   = sin(pos / 10000^(2i / d_model))
-PE[pos, 2i+1] = cos(pos / 10000^(2i / d_model))
+```math
+\begin{aligned}
+PE_{(pos, 2i)} &= \sin\left(pos / 10000^{2i / d_{\text{model}}}\right) \\
+PE_{(pos, 2i+1)} &= \cos\left(pos / 10000^{2i / d_{\text{model}}}\right)
+\end{aligned}
 ```
 
 Vậy thì`X' = X + PE[:N]`Mỗi chiều là một hình âm ở tần số khác nhau. mô hình học cách đọc vị trí từ mô hình pha.`max_len`: không có gì cho mô hình biết điều gì xảy ra ở vị trí 2048 khi nó chỉ thấy vị trí 02047.
 
 ### RoPE
 
-Chuyển các vector Q và K (không phải nhúng).`(2i, 2i+1)`- Có thể là:
+Chuyển các vector Q và K (không phải nhúng).$(2i, 2i+1)$- Có thể là:
 
-```
-[q'_2i    ]   [ cos(pos·θ_i)  -sin(pos·θ_i) ] [q_2i   ]
-[q'_2i+1  ] = [ sin(pos·θ_i)   cos(pos·θ_i) ] [q_2i+1 ]
-
-θ_i = base^(-2i / d_head),  base = 10000 by default
+```math
+\begin{bmatrix} q'_{2i} \\ q'_{2i+1} \end{bmatrix} = \begin{bmatrix} \cos(pos \cdot \theta_i) & -\sin(pos \cdot \theta_i) \\ \sin(pos \cdot \theta_i) & \cos(pos \cdot \theta_i) \end{bmatrix} \begin{bmatrix} q_{2i} \\ q_{2i+1} \end{bmatrix}
+\qquad \theta_i = \text{base}^{-2i / d_{\text{head}}}, \quad \text{base} = 10000 \text{ by default}
 ```
 
-Lấy cùng một xoay vào các phím với vị trí `pos_k`. sản phẩm điểm `q'_m · k'_n`trở thành một chức năng của `(m - n)`Chỉ riêng mình.**the attention score depends only on the relative distance**Mặc dù quay được khóa khỏi vị trí tuyệt đối.
+Lấy cùng một xoay vào các phím với vị trí `pos_k`. sản phẩm điểm $q'_m \cdot k'_n$trở thành một chức năng của $(m - n)$Chỉ riêng mình.**the attention score depends only on the relative distance**Mặc dù quay được khóa khỏi vị trí tuyệt đối.
 
 Lợi ích của RoPE: `base`Llama 3 mở rộng từ 8K đến 128K theo cách này.
 
@@ -55,11 +55,11 @@ Lợi ích của RoPE: `base`Llama 3 mở rộng từ 8K đến 128K theo cách 
 
 Trượt qua thủ thuật nhúng vào.
 
-```
-attn_score[i, j] = (q_i · k_j) / √d  -  m_h · |i - j|
+```math
+\text{attn\_score}[i, j] = \frac{q_i \cdot k_j}{\sqrt{d}} - m_h \cdot |i - j|
 ```
 
-Ở đâu `m_h`là một đường ngốc cụ thể cho đầu (ví dụ `1 / 2^(8·h/H)`Các token gần hơn được tăng cường; các token xa bị phạt. Không có chi phí thời gian đào tạo.
+Ở đâu $m_h$là một đường ngốc cụ thể cho đầu (ví dụ $1 / 2^{8h/H}$Các token gần hơn được tăng cường; các token xa bị phạt. Không có chi phí thời gian đào tạo.
 
 ### Những gì để chọn vào năm 2026
 
@@ -113,7 +113,7 @@ def apply_rope(x, pos, base=10000):
     return out
 ```
 
-Quan trọng: áp dụng cùng một hàm cho Q tại vị trí `m`và K ở vị trí `n`Sản phẩm của họ có thể nhận được một`cos((m-n)·θ_i)`chú ý học được vị trí tương đối miễn phí.
+Quan trọng: áp dụng cùng một hàm cho Q tại vị trí $m$và K ở vị trí $n$Sản phẩm của họ có thể nhận được một$\cos((m-n) \cdot \theta_i)$chú ý học được vị trí tương đối miễn phí.
 
 ### Bước 3: Cột độ và thiên vị của ALiBi
 
@@ -168,7 +168,7 @@ Nhìn xem`outputs/skill-positional-encoding-picker.md`. Kỹ năng chọn một 
 | Positional encoding | "Tells attention about order" | Any signal added to embeddings or attention that encodes position. |
 | Sinusoidal | "The original one" | `sin/cos` at geometric frequencies added to embeddings; doesn't extrapolate. |
 | RoPE | "Rotary embeddings" | Rotate Q, K by position-dependent angle; dot product encodes relative distance. |
-| ALiBi | "Linear bias trick" | Add `-m·\|i-j\|` to attention scores; no embedding needed, great extrapolation. |
+| ALiBi | "Linear bias trick" | Add $-m \cdot \lvert i-j \rvert$ to attention scores; no embedding needed, great extrapolation. |
 | base | "RoPE's knob" | The frequency scaler in RoPE; increase to extend context at inference. |
 | NTK-aware | "A RoPE scaling trick" | Rescale `base` so high-frequency dims aren't squeezed when context expands. |
 | YaRN | "The fancy one" | Per-dimension interpolation+extrapolation that preserves attention entropy. |

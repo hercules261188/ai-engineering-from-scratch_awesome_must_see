@@ -11,7 +11,7 @@
 
 FLOPs của một biến thể dày đặc khi suy luận bằng số parameter của nó (nói 2 cho chuyển tiếp phía trước). Scale lên một mô hình dày đặc và mỗi token trả phí đầy đủ. Đến năm 2024 biên giới đã đâm vào một bức tường tính toán: để có ý nghĩa thông minh hơn, bạn cần tăng trưởng theo tỉ lệ tăng FLOPs cho mỗi token.
 
-Sự kết hợp của các chuyên gia phá vỡ mối liên kết này.`E`các chuyên gia độc lập + một bộ định tuyến chọn `k`Các chuyên gia cho mỗi token.`E × FFN_size`. Các tham số hoạt động cho mỗi token = `k × FFN_size`. Tự cấu hình điển hình năm 2026: `E=256`- `k=8`. Scales lưu trữ với `E`, tính toán các quy mô với `k`- Tôi không biết.
+Sự kết hợp của các chuyên gia phá vỡ mối liên kết này.$E$các chuyên gia độc lập + một bộ định tuyến chọn $k$Các chuyên gia cho mỗi token.$E \times \text{FFN size}$. Các tham số hoạt động cho mỗi token = $k \times \text{FFN size}$. Tự cấu hình điển hình năm 2026: $E=256$- $k=8$. Scales lưu trữ với $E$, tính toán các quy mô với $k$- Tôi không biết.
 
 Biên giới 2026 gần như hoàn toàn là MoE: DeepSeek-V3 (671B tổng / 37B hoạt động), Mixtral 8×22B, Qwen2.5-MoE, Llama 4, Kimi K2, gpt-oss.
 
@@ -46,7 +46,7 @@ Mỗi chuyên gia là một FFN độc lập (thường là SwiGLU).`k`chuyên g
 Nếu router đưa 90% mã thông qua Expert 3, các chuyên gia khác chết đói.
 
 1. **Auxiliary load-balancing loss**(Switch Transformer, Mixtral). Thêm một hình phạt tương xứng với sự khác biệt trong việc sử dụng chuyên gia.
-2. **Expert capacity + token dropping**(Switch sớm). Mỗi chuyên gia quá trình tối đa`C × N/E`token; token quá tải bỏ qua lớp.
+2. **Expert capacity + token dropping**(Switch sớm). Mỗi chuyên gia quá trình tối đa$C \times N/E$token; token quá tải bỏ qua lớp.
 3. **Auxiliary-loss-free balancing**(DeepSeek-V3). Thêm một sự thiên vị được học theo chuyên gia thay đổi lựa chọn top-k của router. Bias được cập nhật bên ngoài sự mất tập. Không có hình phạt về mục tiêu chính.
 
 Phương pháp của DeepSeek-V3: sau mỗi bước đào tạo, cho mỗi chuyên gia, kiểm tra xem việc sử dụng nó có trên hoặc dưới mục tiêu.`±γ`. Sử dụng lựa chọn `scores + bias`Các xác suất chuyên gia được sử dụng để gài là nguyên liệu`scores`Không thay đổi.
@@ -59,7 +59,7 @@ DeepSeek-V2/V3 cũng chia các chuyên gia thành *shared* và *routed*. Mỗi t
 
 Classic MoE (GShard, Switch): mỗi chuyên gia rộng như một FFN đầy đủ. `E`là nhỏ (864), `k`là nhỏ (12).
 
-MoE hạt mỏng hiện đại (DeepSeek-V3, Qwen-MoE): mỗi chuyên gia nhỏ hơn (1/8 kích thước FFN). `E`là lớn (256+), `k`là lớn hơn (8+). cùng số tham số tổng thể, nhưng kết hợp quy mô nhanh hơn nhiều. `C(256, 8) = 400 trillion`có thể có "người chuyên gia" cho mỗi token chất lượng tăng lên, độ trễ vẫn ổn định.
+MoE hạt mỏng hiện đại (DeepSeek-V3, Qwen-MoE): mỗi chuyên gia nhỏ hơn (1/8 kích thước FFN). $E$là lớn (256+), $k$là lớn hơn (8+). cùng số tham số tổng thể, nhưng kết hợp quy mô nhanh hơn nhiều. $\binom{256}{8} \approx 400$có thể có hàng nghìn tỷ "người chuyên gia" cho mỗi token chất lượng tăng lên, thời gian trễ vẫn ổn định.
 
 ### Tương tự chi phí
 
@@ -159,7 +159,7 @@ Nhìn xem`outputs/skill-moe-configurator.md`. Kỹ năng chọn E, k, và chia s
 | Auxiliary-loss-free | "DeepSeek-V3's trick" | Balance via per-expert bias on the router's selection only; no extra gradient. |
 | Shared expert | "Always on" | Extra expert through which every token passes; captures common knowledge. |
 | Expert parallelism | "Shard by expert" | Distribute different experts to different GPUs; route tokens across the network. |
-| Sparsity | "Active params < total params" | The ratio `k × expert_size / (E × expert_size)`; 37/671 ≈ 5.5% for DeepSeek-V3. |
+| Sparsity | "Active params < total params" | The ratio $k \times \text{expert size} / (E \times \text{expert size})$; 37/671 ≈ 5.5% for DeepSeek-V3. |
 
 ## Đọc thêm
 

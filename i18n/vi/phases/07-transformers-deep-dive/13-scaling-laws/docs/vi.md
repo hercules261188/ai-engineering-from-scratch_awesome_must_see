@@ -30,22 +30,24 @@ Hoffmann et al. (2022), đào tạo một gia đình mô hình nhỏ gọi là C
 
 Từ tờ Chinchilla, mất mát là sau:
 
-```
-L(N, D) = A / N^α + B / D^β + E
+```math
+L(N, D) = \frac{A}{N^\alpha} + \frac{B}{D^\beta} + E
 ```
 
-- `N`= các tham số (không bao gồm).
-- `D`= token đào tạo.
-- `α ≈ 0.34`- `β ≈ 0.28`(cứu độ đối xứng).
-- `E ≈ 1.69`, mức tối đa mất mát không thể giảm.
-- `A ≈ 406`- `B ≈ 411`- Tôi không biết.
+- $N$= các tham số (không bao gồm).
+- $D$= token đào tạo.
+- $\alpha \approx 0.34$- $\beta \approx 0.28$(cứu độ đối xứng).
+- $E \approx 1.69$, mức tối đa mất mát không thể giảm.
+- $A \approx 406$- $B \approx 411$- Tôi không biết.
 
-Hai thuật ngữ giao dịch với nhau khi bạn mở rộng quy mô.`N`ở tính toán cố định (C = 6ND) và giải quyết:
+Hai thuật ngữ giao dịch với nhau khi bạn mở rộng quy mô.$N$với tính toán cố định ($C = 6ND$) và giải quyết:
 
-```
-N_opt ≈ 0.6 × (C/6)^0.5
-D_opt ≈ 0.6 × (C/6)^0.5
-D_opt / N_opt ≈ 20
+```math
+\begin{aligned}
+N_{\text{opt}} &\approx 0.6 \times (C/6)^{0.5} \\
+D_{\text{opt}} &\approx 0.6 \times (C/6)^{0.5} \\
+D_{\text{opt}} / N_{\text{opt}} &\approx 20
+\end{aligned}
 ```
 
 Tính tối ưu tính toán: 20 token cho mỗi tham số.
@@ -90,7 +92,7 @@ scaling-laws
 
 ## Hãy xây dựng nó
 
-Nhìn xem`code/main.py`Chúng ta thực hiện phương trình mất mát của Chinchilla và giải quyết cho tính toán tối ưu`(N, D)`trong mỗi số các ngân sách tính toán.
+Nhìn xem`code/main.py`Chúng ta thực hiện phương trình mất mát của Chinchilla và giải quyết cho tính toán tối ưu$(N, D)$trong mỗi số các ngân sách tính toán.
 
 ### Bước 1: mất Chinchilla
 
@@ -99,11 +101,11 @@ def chinchilla_loss(N, D, A=406.4, B=410.7, alpha=0.34, beta=0.28, E=1.69):
     return A / N ** alpha + B / D ** beta + E
 ```
 
-Hình ảnh`L`như một đường viền trên `(N, D)`ở mức cố định `C = 6ND`Tìm tối thiểu.
+Hình ảnh$L$như một đường viền trên $(N, D)$ở mức cố định $C = 6ND$Tìm tối thiểu.
 
 ### Bước 2: Biên giới tối ưu tính toán
 
-Đối với ngân sách tính toán từ `1e17`đến`1e25`FLOPs, tìm `(N, D)`giảm thiểu thiệt hại theo quy định của:`6ND = C`- Kiểm tra tỷ lệ`D/N ≈ 20`- Tôi không biết.
+Đối với ngân sách tính toán từ `1e17`đến`1e25`FLOPs, tìm $(N, D)$giảm thiểu thiệt hại theo quy định của:$6ND = C$- Kiểm tra tỷ lệ$D/N \approx 20$- Tôi không biết.
 
 ### Bước 3: chi phí quá trình đào tạo
 
@@ -133,9 +135,9 @@ Nhìn xem`outputs/skill-training-budget-estimator.md`- Nghề chọn kỹ năng`
 
 ## Các bài tập
 
-1. **Easy.**Đi chạy`code/main.py`- Bác in Chinchilla tối ưu`(N, D)`cho ngân sách tính toán `1e20`- `1e22`- `1e24`So sánh với cái bàn mô hình thực.
-2. **Medium.**Thực hiện đường cong mất tích như hàm của máy tính Hoffmann.`log10(C)`Để xác định khi nào luật pháp dự đoán chúng ta cần`>10^28`FLOPs cho việc giảm 0,1 lần nữa trong sự chuyển động.
-3. **Hard.**Đáp ứng luật quy mô của riêng bạn trên 5 mô hình nhỏ (100K đến 10M params) được đào tạo trên cùng một tập dữ liệu.`α`và `E`Các tác giả của anh phù hợp với những tác giả được công bố như thế nào?
+1. **Easy.**Đi chạy`code/main.py`- Bác in Chinchilla tối ưu$(N, D)$cho ngân sách tính toán `1e20`- `1e22`- `1e24`So sánh với cái bàn mô hình thực.
+2. **Medium.**Thực hiện đường cong mất tích như hàm của máy tính Hoffmann.`log10(C)`Để xác định khi nào luật pháp dự đoán chúng ta cần$>10^{28}$FLOPs cho việc giảm 0,1 lần nữa trong sự chuyển động.
+3. **Hard.**Đáp ứng luật quy mô của riêng bạn trên 5 mô hình nhỏ (100K đến 10M params) được đào tạo trên cùng một tập dữ liệu.$\alpha$và $E$Các tác giả của anh phù hợp với những tác giả được công bố như thế nào?
 
 ## Các điều khoản chính
 
@@ -146,7 +148,7 @@ Nhìn xem`outputs/skill-training-budget-estimator.md`- Nghề chọn kỹ năng`
 | Compute (C) | "FLOPs spent" | Approximately `6 × N × D` for a standard transformer. |
 | Chinchilla-optimal | "D/N ≈ 20" | Ratio that minimizes loss per FLOP of pretraining. |
 | Over-training | "Past Chinchilla" | Spend extra training FLOPs to save inference FLOPs; D/N >> 20. |
-| Irreducible loss | "The floor" | The `E` term in the scaling law; the entropy of the data itself. |
+| Irreducible loss | "The floor" | The $E$ term in the scaling law; the entropy of the data itself. |
 | Emergent capability | "Sudden jumps at scale" | Often a scorer artifact; continuous loss is smooth. |
 | Effective compute | "Training-efficiency multiplier" | Better data / optimizer / architecture multiplies how far a FLOP goes. |
 

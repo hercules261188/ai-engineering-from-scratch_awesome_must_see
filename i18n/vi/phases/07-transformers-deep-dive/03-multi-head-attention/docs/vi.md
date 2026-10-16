@@ -11,7 +11,7 @@
 
 Một đầu tự chú ý đơn lẻ tính toán một matrix chú ý. Matrix đó nắm bắt một loại mối quan hệ  thường là một mối quan hệ giảm thiểu tổn thất trên bất kỳ tín hiệu đào tạo nào. Nếu dữ liệu của bạn có sự đồng thuận đối tượng-tên, tham chiếu đồng, bài phát biểu dài và phân đoạn ngữ pháp tất cả được dính vào nhau, một đầu đơn lẻ bôi chúng thành một phân phối tối đa mềm duy nhất và mất một nửa tín hiệu.
 
-Sự cố từ bài báo Vaswani năm 2017: chạy một số chức năng chú ý song song, mỗi chức năng có dự đoán Q, K, V của riêng mình, và kết nối các đầu ra.`d_model / n_heads`- Tỷ lệ tổng số vẫn không thay đổi.
+Sự cố từ bài báo Vaswani năm 2017: chạy một số chức năng chú ý song song, mỗi chức năng có dự đoán Q, K, V của riêng mình, và kết nối các đầu ra.$d_{\text{model}} / n_{\text{heads}}$- Tỷ lệ tổng số vẫn không thay đổi.
 
 Sự chú ý đa đầu là mặc định của mọi bộ biến đổi trong 2026 tàu. Vấn đề duy nhất là về * bao nhiêu đầu và liệu các phím và giá trị có chia sẻ dự đoán (Thăm tâm nhóm, Thăm tâm đa câu hỏi, Thăm tâm trần trần đa đầu).
 
@@ -19,7 +19,7 @@ Sự chú ý đa đầu là mặc định của mọi bộ biến đổi trong 2
 
 ![Multi-head attention splits, attends, concatenates](../assets/multi-head-attention.svg)
 
-**Split.**Nhận đi`X`hình dạng`(N, d_model)`. Dự án đến Q, K, V mỗi hình dạng `(N, d_model)`- Tái tạo lại`(N, n_heads, d_head)`nơi `d_head = d_model / n_heads`- Chuyển vào`(n_heads, N, d_head)`- Tôi không biết.
+**Split.**Nhận đi`X`hình dạng`(N, d_model)`. Dự án đến Q, K, V mỗi hình dạng `(N, d_model)`- Tái tạo lại`(N, n_heads, d_head)`nơi $d_{\text{head}} = d_{\text{model}} / n_{\text{heads}}$- Chuyển vào`(n_heads, N, d_head)`- Tôi không biết.
 
 **Attend in parallel.**Điệu suất điểm-đánh giá trong mỗi đầu.`(N, d_head)`Các đầu hoạt động trên các vùng phụ khác nhau của việc nhúng và không bao giờ nói chuyện trong quá trình tính toán sự chú ý.
 
@@ -36,7 +36,7 @@ Sự chú ý đa đầu là mặc định của mọi bộ biến đổi trong 2
 | Grouped-query (GQA) | N | G (e.g. N/8) | Llama 2 70B, Llama 3+, Qwen 2+, Mistral |
 | Multi-head latent (MLA) | N | compressed to low-rank | DeepSeek-V2, V3 |
 
-GQA là mặc định hiện đại bởi vì nó cắt giảm bộ nhớ cache KV bằng một nhân tố của `N/G`MLA đi xa hơn bằng cách nén K/V vào một không gian ẩn, sau đó chiếu lại vào thời gian tính toán  chi phí FLOPs, tiết kiệm nhiều bộ nhớ hơn.
+GQA là mặc định hiện đại bởi vì nó cắt giảm bộ nhớ cache KV bằng một nhân tố của $N/G$MLA đi xa hơn bằng cách nén K/V vào một không gian ẩn, sau đó chiếu lại vào thời gian tính toán  chi phí FLOPs, tiết kiệm nhiều bộ nhớ hơn.
 
 ```figure
 multihead-split
@@ -129,7 +129,7 @@ out = scaled_dot_product_attention(q, k, v, is_causal=True, enable_gqa=True)
 | Large (~1B) | 2048 | 16 | 128 |
 | Frontier (~70B) | 8192 | 64 | 128 |
 
-`d_head`Hầu như luôn luôn hạ cánh ở 64 hoặc 128. Đó là đơn vị của một đầu có thể "xem".`sqrt(d_head)`; đi trên 256 và bạn sẽ mất lợi ích "nhiều chuyên gia nhỏ".
+`d_head`Hầu như luôn luôn hạ cánh ở 64 hoặc 128. Đó là đơn vị của một đầu có thể "xem".$\sqrt{d_{\text{head}}}$; đi trên 256 và bạn sẽ mất lợi ích "nhiều chuyên gia nhỏ".
 
 ## Chuyển nó
 
@@ -145,7 +145,7 @@ Nhìn xem`outputs/skill-mha-configurator.md`. Kỹ năng này khuyến cáo số
 
 | Term | What people say | What it actually means |
 |------|-----------------|-----------------------|
-| Head | "A single attention circuit" | One Q/K/V projection of dimension `d_head = d_model / n_heads` with its own attention matrix. |
+| Head | "A single attention circuit" | One Q/K/V projection of dimension $d_{\text{head}} = d_{\text{model}} / n_{\text{heads}}$ with its own attention matrix. |
 | d_head | "Head dimension" | Per-head hidden width; almost always 64 or 128 in production. |
 | Split / combine | "Reshape tricks" | `(N, d_model) ↔ (n_heads, N, d_head)` reshape+transpose around attention. |
 | W_o | "Output projection" | `(d_model, d_model)` matrix applied after concatenating heads; where heads mix. |

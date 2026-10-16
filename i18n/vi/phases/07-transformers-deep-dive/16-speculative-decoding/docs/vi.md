@@ -9,7 +9,7 @@
 
 ## Vấn đề
 
-Một mẫu 70B LLM lấy một token mất ~ 30 ms trên một H100. Một mô hình dự thảo 3B mất ~ 3 ms. Nếu chúng ta để dự thảo 3B 5 token trước, sau đó chạy 70B * một lần * để xác minh tất cả 5, tổng là `5×3 + 30 = 45 ms`cho tối đa 5 token được chấp nhận  so với `5×30 = 150 ms`Đó là mức độ giải mã đầu cơ đầy đủ: trao đổi một lượng nhỏ bộ nhớ GPU bổ sung (chương trình dự thảo) cho độ trễ giải mã thấp hơn 24x.
+Một mẫu 70B LLM lấy một token mất ~ 30 ms trên một H100. Một mô hình dự thảo 3B mất ~ 3 ms. Nếu chúng ta để dự thảo 3B 5 token trước, sau đó chạy 70B * một lần * để xác minh tất cả 5, tổng là $5 \times 3 + 30 = 45$ms cho tối đa 5 token được chấp nhận  so với `5×30 = 150 ms`Đó là mức độ giải mã đầu cơ đầy đủ: trao đổi một lượng nhỏ bộ nhớ GPU bổ sung (chương trình dự thảo) cho độ trễ giải mã thấp hơn 24x.
 
 Trù này phải bảo vệ phân phối. Tiêu chuẩn lấy mẫu dự đoán, được đưa ra bởi Leviathan et al. (2023) và bởi Chen et al. đồng thời, đảm bảo rằng chuỗi đầu ra là **identically distributed**Không có sự thỏa hiệp về chất lượng, chỉ nhanh hơn.
 
@@ -26,30 +26,30 @@ Mỗi sản xuất kết luận xếp chồng vào năm 2026 tàu dự đoán gi
 
 ### Các thuật toán cốt lõi
 
-Với một người xác minh `M_q`và một bản thảo rẻ hơn `M_p`- Có thể là:
+Với một người xác minh $M_q$và một bản thảo rẻ hơn $M_p$- Có thể là:
 
-1. Để `x_1..x_k`là tiền tố đã được giải mã.
-2. **Draft**: sử dụng `M_p`để tự lập lập đề xuất `d_{k+1}, d_{k+2}, ..., d_{k+N}`với dự thảo xác suất `p_1..p_N`- Tôi không biết.
-3. **Verify in parallel**: chạy `M_q`Một lần nữa `x_1..x_k, d_{k+1}, ..., d_{k+N}`, nhận xác minh xác suất `q_1..q_{N+1}`cho các vị trí `k+1..k+N+1`- Tôi không biết.
-4. **Accept/reject each draft token left to right**: cho mỗi `i`, chấp nhận với khả năng`min(1, q_i(d_i) / p_i(d_i))`- Tôi không biết.
-5. Khi bị từ chối lần đầu tiên tại vị trí `j`: mẫu `t_j`từ phân phối "bỏ còn" `(q_j - p_j)_+`Tất cả các bản thảo sau đó`j`được loại bỏ.
-6. Về việc chấp nhận tất cả`N`: mẫu một token thêm `t_{N+1}`từ `q_{N+1}`(tương hiệu tiền thưởng miễn phí).
+1. Để $x_1 \ldots x_k$là tiền tố đã được giải mã.
+2. **Draft**: sử dụng $M_p$để tự lập lập đề xuất $d_{k+1}, d_{k+2}, \ldots, d_{k+N}$với dự thảo xác suất $p_1 \ldots p_N$- Tôi không biết.
+3. **Verify in parallel**: chạy $M_q$Một lần nữa $x_1 \ldots x_k, d_{k+1}, \ldots, d_{k+N}$, nhận xác minh xác suất $q_1 \ldots q_{N+1}$cho các vị trí $k+1 \ldots k+N+1$- Tôi không biết.
+4. **Accept/reject each draft token left to right**: cho mỗi $i$, chấp nhận với khả năng$\min(1, q_i(d_i) / p_i(d_i))$- Tôi không biết.
+5. Khi bị từ chối lần đầu tiên tại vị trí $j$: mẫu $t_j$từ phân phối "bỏ còn" $(q_j - p_j)_+$Tất cả các bản thảo sau đó$j$được loại bỏ.
+6. Về việc chấp nhận tất cả$N$: mẫu một token thêm $t_{N+1}$từ $q_{N+1}$(tương hiệu tiền thưởng miễn phí).
 
-Trù phân phối dư là cái nhìn toán học giữ cho sản phẩm được phân phối chính xác như thể `M_q`đã lấy mẫu từ đầu.
+Trù phân phối dư là cái nhìn toán học giữ cho sản phẩm được phân phối chính xác như thể $M_q$đã lấy mẫu từ đầu.
 
 ### Điều gì quyết định tốc độ
 
-Để `α`= tỷ lệ chấp nhận dự kiến cho mỗi dự án token.`c`= tỷ lệ chi phí dự thảo đối với kiểm tra viên.
+Để $\alpha$= tỷ lệ chấp nhận dự kiến cho mỗi dự án token.$c$= tỷ lệ chi phí dự thảo đối với kiểm tra viên.
 
 - Thế hệ ngây thơ sẽ gọi 1 mẫu lớn cho mỗi token.
-- Tiêu chuẩn cho 1 cuộc gọi lớn mỗi tháng`(1 - α^{N+1}) / (1 - α) ≈ 1/(1-α)`token khi `α`cao.
+- Tiêu chuẩn cho 1 cuộc gọi lớn mỗi tháng$(1 - \alpha^{N+1}) / (1 - \alpha) \approx 1/(1-\alpha)$token khi $\alpha$cao.
 
-Quy tắc điển hình của thằng bé`α = 0.75`và `N = 5`: 3 lần ít hơn các cuộc gọi lớn mô hình. chi phí dự thảo là 5 lần rẻ. Tổng đồng hồ tường giảm ~ 2,5 lần.
+Quy tắc điển hình của thằng bé$\alpha = 0.75$và $N = 5$: 3 lần ít hơn các cuộc gọi lớn mô hình. chi phí dự thảo là 5 lần rẻ. Tổng đồng hồ tường giảm ~ 2,5 lần.
 
-**α depends on:**
+**$\alpha$ depends on:**
 
-- Đề án tương ứng tốt với xác minh.
-- Chiến lược giải mã: dự thảo tham lam chống lại xác minh tham lam: cao α. Tiêu chuẩn lấy mẫu: khó để phù hợp; chấp nhận giảm.
+- Làm thế nào để dự thảo gần gũi với xác minh.$\alpha$đáng kể.
+- Chiến lược giải mã. Dự thảo tham lam chống lại xác minh tham lam: cao $\alpha$- Tiêu chuẩn nhiệt độ: khó để phù hợp; chấp nhận giảm.
 - Loại nhiệm vụ: Mã và kết quả cấu trúc chấp nhận nhiều hơn (đáng dự đoán); viết sáng tạo dạng tự do chấp nhận ít hơn.
 
 ### Medusa  Dự thảo không có mô hình dự thảo
@@ -76,9 +76,9 @@ EAGLE-3 (2025) đã thêm tìm kiếm cây trên các tiếp tục ứng cử vi
 
 ### Vũ vẹ KV
 
-Các nguồn cấp dữ liệu xác minh `N`dự thảo mã thông báo vào xác minh trong một lần đi trước. Điều này mở rộng bộ nhớ cache KV của xác minh bởi `N`Nếu một số bản thảo bị từ chối, bạn phải xoay bộ nhớ cache trở lại chiều dài tiền tố được chấp nhận.
+Các nguồn cấp dữ liệu xác minh $N$dự thảo mã thông báo vào xác minh trong một lần đi trước. Điều này mở rộng bộ nhớ cache KV của xác minh bởi $N$Nếu một số bản thảo bị từ chối, bạn phải xoay bộ nhớ cache trở lại chiều dài tiền tố được chấp nhận.
 
-Các thực hiện sản xuất (vLLM's `--speculative-model`- Thử xử lý với các bộ đệm KV.
+Các thực hiện sản xuất (vLLM's `--speculative-config`- Thử xử lý với các bộ đệm KV.
 
 ```figure
 draft-verify-tokens
@@ -160,14 +160,11 @@ Sản xuất:
 ```bash
 # vLLM with EAGLE
 vllm serve meta-llama/Llama-3.1-70B-Instruct \
-    --speculative-model /models/llama-3.1-eagle-70b \
-    --speculative-draft-tensor-parallel-size 1 \
-    --num-speculative-tokens 5
+    --speculative-config '{"method": "eagle", "model": "/models/llama-3.1-eagle-70b", "draft_tensor_parallel_size": 1, "num_speculative_tokens": 5}'
 
 # vLLM with vanilla draft model
 vllm serve meta-llama/Llama-3.1-70B-Instruct \
-    --speculative-model meta-llama/Llama-3.2-1B-Instruct \
-    --num-speculative-tokens 5
+    --speculative-config '{"method": "draft_model", "model": "meta-llama/Llama-3.2-1B-Instruct", "num_speculative_tokens": 5}'
 ```
 
 TensorRT-LLM có con đường Medusa nhanh nhất từ giữa năm 2026. `faster-whisper`bao trùm mã hóa giả định cho Whisper-large với một bản thảo nhỏ.
@@ -184,7 +181,7 @@ TensorRT-LLM có con đường Medusa nhanh nhất từ giữa năm 2026. `faste
 **When NOT to spec-decode:**
 
 - Tạo ra 1-5 token, tổng chi phí thống trị.
-- Tiêu chuẩn mẫu sáng tạo / nhiệt độ cao (α giảm).
+- Tiêu chuẩn thử nghiệm nhiệt độ cao ($\alpha$(đáng nhỏ).
 - Việc triển khai bị hạn chế trong bộ nhớ (chương trình dự thảo thêm VRAM).
 
 ## Chuyển nó
@@ -194,7 +191,7 @@ Nhìn xem`outputs/skill-spec-decode-picker.md`Kỹ năng chọn một chiến l�
 ## Các bài tập
 
 1. **Easy.**Đi chạy`code/main.py`. xác nhận phân phối mã thông báo đầu cơ phù hợp với phân phối mẫu trực tiếp của người xác minh trên 50.000 mã thông báo trong chi-quad p > 0,05.
-2. **Medium.**Tốc độ nhanh hóa (tốc hiệu cho mô hình lớn tiến) như một hàm của `N`cho `α = 0.5, 0.7, 0.85`- Định vị tối ưu `N`cho mỗi α. (Công báo: dự kiến token cho mỗi cuộc gọi xác minh = `(1 - α^{N+1}) / (1 - α)`.)
+2. **Medium.**Tốc độ nhanh hóa (tốc hiệu cho mô hình lớn tiến) như một hàm của $N$cho $\alpha = 0.5, 0.7, 0.85$- Định vị tối ưu $N$cho mỗi $\alpha$. (Công báo: dự kiến token cho mỗi cuộc gọi xác minh = $(1 - \alpha^{N+1}) / (1 - \alpha)$.)
 3. **Hard.**Thực hiện một Medusa nhỏ: lấy GPT đá cuối từ Bài học 14, thêm 3 đầu LM bổ sung dự đoán các vị trí t + 2, t + 3, t + 4. Tập luyện trên Tinyshakespeare với một mất nhiều đầu chung. So sánh tỷ lệ chấp nhận so với một bản thảo vanilla được tạo bằng cách cắt giảm mô hình tương tự.
 4. **Hard.**Thực hiện rollback: bắt đầu với một dự trữ dự trữ KV tiền đề 10 token, cấp dữ liệu 5 dự thảo token, mô phỏng từ chối ở vị trí 3. Kiểm tra đọc cache của bạn phù hợp với " dự thảo + 2 dự thảo được chấp nhận đầu tiên" ở lần lặp tiếp theo.
 
@@ -204,7 +201,7 @@ Nhìn xem`outputs/skill-spec-decode-picker.md`Kỹ năng chọn một chiến l�
 |------|-----------------|-----------------------|
 | Draft model | "The cheap one" | A smaller model that proposes candidate tokens; usually 10–50× cheaper than the verifier. |
 | Verifier | "The big one" | The target model whose distribution we preserve; runs once per speculative step. |
-| Acceptance rate (α) | "How often the draft is right" | Per-token probability that the verifier accepts the draft. 0.7–0.9 typical. |
+| Acceptance rate ($\alpha$) | "How often the draft is right" | Per-token probability that the verifier accepts the draft. 0.7–0.9 typical. |
 | Residual distribution | "The rejection fallback" | `(q - p)_+` normalized; sampling from this on rejection preserves the verifier's distribution. |
 | Bonus token | "The free one" | When all N drafts accepted, sample one more from the verifier's next-step distribution. |
 | Medusa | "Draft-less speculative" | Multiple LM heads on the verifier predict positions t+1..t+k in parallel. |

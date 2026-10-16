@@ -23,14 +23,13 @@ GPT-1 (2018), GPT-2 (2019), GPT-3 (2020), GPT-4 (2023), GPT-5 (2025), Claude, Ll
 
 ### Mặt nạ
 
-Với một chuỗi dài `N`, xây dựng một `N × N`Matrix:
+Với một chuỗi dài $N$, xây dựng một $N \times N$Matrix:
 
-```
-M[i, j] = 0       if j <= i
-M[i, j] = -inf    if j > i
+```math
+M_{ij} = \begin{cases} 0 & \text{if } j \le i \\ -\infty & \text{if } j > i \end{cases}
 ```
 
-Thêm `M`cho điểm chú ý nguyên chất trước softmax. `exp(-inf) = 0`, vì vậy các vị trí che giấu đóng góp trọng lượng không. mỗi hàng của ma trận chú ý là phân phối xác suất trên các vị trí trước đó chỉ.
+Thêm `M`cho điểm chú ý nguyên chất trước softmax. $\exp(-\infty) = 0$, vì vậy các vị trí che giấu đóng góp trọng lượng không. mỗi hàng của ma trận chú ý là phân phối xác suất trên các vị trí trước đó chỉ.
 
 Chi phí thực hiện: 1 `torch.tril()`Tiếng gọi, thời gian tính toán: nanoseconds, tác động trên trường: mọi thứ.
 
@@ -38,7 +37,7 @@ Chi phí thực hiện: 1 `torch.tril()`Tiếng gọi, thời gian tính toán: 
 
 Mặt nạ thường được trình bày như một vá được gắn vào sự chú ý. Tiến dẫn theo hướng khác và nó không còn bí ẩn: sự chú ý là sự tinh tế thứ ba của một trung bình tiền tố, và tam giác là ranh giới vòng lặp của trung bình đó, được viết như một matrix.
 
-**Stage 1 — prefix average.**Kết luận nguyên nhân ngu ngốc nhất của một chuỗi: vị trí`i`trở thành trung bình của các vị trí `0…i`Như một vòng lặp, đó là`out[i] = X[:i+1].mean(0)`- cùng một tính toán là một số tử liệu nhân. lấy một số tử liệu ba góc dưới của một, chia mỗi hàng bằng số lượng của nó, nhân:
+**Stage 1 — prefix average.**Kết luận nguyên nhân ngu ngốc nhất của một chuỗi: vị trí$i$trở thành trung bình của các vị trí $0 \ldots i$Như một vòng lặp, đó là`out[i] = X[:i+1].mean(0)`- cùng một tính toán là một số tử liệu nhân. lấy một số tử liệu ba góc dưới của một, chia mỗi hàng bằng số lượng của nó, nhân:
 
 ```python
 import numpy as np
@@ -48,7 +47,7 @@ A = A / A.sum(axis=1, keepdims=True)
 out = A @ X
 ```
 
-Đường `i`của `A`là `[1/(i+1), …, 1/(i+1), 0, …, 0]`Những con số 0 trên đường viền là nguyên nhân. Không có gì về tương lai được che giấu; tương lai không bao giờ là tổng.
+Đường $i$của $A$là $[1/(i+1), \ldots, 1/(i+1), 0, \ldots, 0]$Những con số 0 trên đường viền là nguyên nhân. Không có gì về tương lai được che giấu; tương lai không bao giờ là tổng.
 
 **Stage 2 — learned weights.**Một trung bình đồng nhất xử lý mọi token trước đây như là tương đương. Thay thế những người với một số điểm học được .`S`. Bây giờ các hàng không còn cộng với một bằng cách xây dựng, vì vậy bình thường hóa mỗi hàng bằng Softmax thay vì chia bằng số. Softmax không bao giờ đưa ra một số không chính xác, điều này phá vỡ tính nhân quả  trừ khi điểm số trong tương lai đi vào như `-inf`, bởi vì`exp(-inf) = 0`- Có thể là:
 
@@ -166,7 +165,7 @@ print(tok.decode(out[0]))
 
 Dưới cái nắp,`generate()`chạy chuyển tiếp về phía trước, kéo các logit vị trí cuối cùng, lấy mẫu mã thông báo tiếp theo, thêm nó và lặp lại. Mỗi đống suy luận LLM sản xuất (vLLM, TensorRT-LLM, llama.cpp, Ollama, MLX) thực hiện cùng một vòng lặp với tối ưu hóa nặng  prefill batch, batching liên tục, KV cache paging, giải mã suy đoán.
 
-**GPT vs BERT, one line each:**GPT dự đoán `P(x_t | x_{<t})`BERT dự đoán`P(x_masked | x_unmasked)`. Khối thối quyết định liệu mô hình có thể tạo ra.
+**GPT vs BERT, one line each:**GPT dự đoán $P(x_t \mid x_{<t})$BERT dự đoán$P(x_{\text{masked}} \mid x_{\text{unmasked}})$. Khối thối quyết định liệu mô hình có thể tạo ra.
 
 ## Chuyển nó
 
@@ -186,8 +185,8 @@ Nhìn xem`outputs/skill-sampling-tuner.md`. Kỹ năng chọn các tham số l�
 | Next-token prediction | "The loss" | Cross-entropy of the model's distribution against the true next token at every position. |
 | Autoregressive | "Generate one at a time" | Feed output back as input; parallelism only during training, not during generation. |
 | Logits | "Pre-softmax scores" | Raw output of the LM head before softmax; sampling happens on these. |
-| Temperature | "Creativity knob" | Divide logits by T; T→0 = greedy, T→∞ = uniform. |
-| Top-p | "Nucleus sampling" | Truncate distribution to smallest set summing to ≥p; sample from what remains. |
+| Temperature | "Creativity knob" | Divide logits by $T$; $T \to 0$ = greedy, $T \to \infty$ = uniform. |
+| Top-p | "Nucleus sampling" | Truncate distribution to smallest set summing to $\ge p$; sample from what remains. |
 | Min-p | "Better than top-p" | Keep tokens where `p ≥ min_p × max_p`; adapts cutoff to sharpness of distribution. |
 | Speculative decoding | "Draft + verify" | Cheap model proposes N tokens; big model verifies in parallel. |
 | Teacher forcing | "Training trick" | During training, feed the true previous token, not the model's prediction. Standard for every seq2seq LM. |

@@ -25,13 +25,13 @@ Kết quả thống trị mọi phương thức vào năm 2026. Ngôn ngữ (GPT
 
 ![RNN sequential compute vs Transformer parallel attention](../assets/rnn-vs-transformer.svg)
 
-**Recurrence as a bottleneck.**Một RNN tính toán `h_t = f(h_{t-1}, x_t)`Mỗi bước phụ thuộc vào bước trước.`h_5`trước đây`h_4`Trên các GPU hiện đại với hơn 10.000 lõi song song, điều này lãng phí 99% silicon trên một chuỗi dài.
+**Recurrence as a bottleneck.**Một RNN tính toán $h_t = f(h_{t-1}, x_t)$Mỗi bước phụ thuộc vào bước trước.$h_5$trước đây$h_4$Trên các GPU hiện đại với hơn 10.000 lõi song song, điều này lãng phí 99% silicon trên một chuỗi dài.
 
-**Attention as a broadcast.**- Lưu ý về sự chú ý của chính mình`output_i = sum_j(a_ij * v_j)`cho mỗi cặp `(i, j)`cả nxn sự chú ý của các bộ viền chứa trong một loạt các matmul. không bước phụ thuộc vào một bước khác. GPUs thích nó.
+**Attention as a broadcast.**- Lưu ý về sự chú ý của chính mình`output_i = sum_j(a_ij * v_j)`cho mỗi cặp $(i, j)$cả nxn sự chú ý của các bộ viền chứa trong một loạt các matmul. không bước phụ thuộc vào một bước khác. GPUs thích nó.
 
-**The speedup is not a constant.**Đó là sự khác biệt giữa `O(N)`độ sâu hàng loạt và`O(1)`Trong thực tế, các bộ biến chuyển tập luyện nhanh hơn 510x mỗi thời đại trên phần cứng phù hợp ở N=512, và khoảng cách mở rộng theo chiều dài chuỗi cho đến khi bạn chạm vào `O(N²)`tường bộ nhớ của sự chú ý (mà Flash Attention sau đó sửa chữa  xem Bài học 12).
+**The speedup is not a constant.**Đó là sự khác biệt giữa $O(N)$độ sâu hàng loạt và$O(1)$Trong thực tế, các bộ biến chuyển tập luyện nhanh hơn 510x mỗi thời đại trên phần cứng phù hợp ở N=512, và khoảng cách mở rộng theo chiều dài chuỗi cho đến khi bạn chạm vào $O(N^2)$tường bộ nhớ của sự chú ý (mà Flash Attention sau đó sửa chữa  xem Bài học 12).
 
-**What transformers cost.**Tăng cường bộ nhớ chú ý như `O(N²)`Đối với bối cảnh 2K, tốt. Đối với bối cảnh 128K, bạn cần cửa sổ trượt, ngoại phân RoPE, flash chú ý, hoặc biến thể chú ý tuyến tính.`O(N)`trong cả thời gian và trí nhớ; những người biến đổi đổi thời gian với trí nhớ và sau đó giành lại thời gian thông qua sự song song.
+**What transformers cost.**Tăng cường bộ nhớ chú ý như $O(N^2)$Đối với bối cảnh 2K, tốt. Đối với bối cảnh 128K, bạn cần cửa sổ trượt, ngoại phân RoPE, flash chú ý, hoặc biến thể chú ý tuyến tính.$O(N)$trong cả thời gian và trí nhớ; những người biến đổi đổi thời gian với trí nhớ và sau đó giành lại thời gian thông qua sự song song.
 
 **The inductive bias shift.**RNN giả định địa phương và tính gần đây. Các biến thể không giả định gì  mỗi cặp là ứng cử viên để chú ý. Đó là lý do tại sao các biến thể cần nhiều dữ liệu hơn để đào tạo tốt nhưng mở rộng hơn khi họ có nó. Chinchilla (2022) đã chính thức hóa điều này: nếu có đủ token, một biến thể luôn đánh bại một RNN với số lượng tham số bằng nhau.
 
@@ -58,7 +58,7 @@ def attention_style(xs):
     return sum(xs) / len(xs)  # every x is independent
 ```
 
-Chúng ta có thời gian cả hai trên chuỗi lên đến 100.000 yếu tố. phiên bản RNN là O(N) và một ống dẫn CPU duy nhất. Ngay cả trong Python tinh khiết, sự giảm kiểu chú ý vượt qua nó ở độ dài ≥ 1.000 vì Python `sum()`được thực hiện bằng C và lặp lại mà không có chi phí thông dịch viên trên mỗi bước.
+Chúng ta có thể ghi lại thời gian của cả hai trên chuỗi lên đến 100.000 yếu tố.$O(N)$Ngay cả trong Python tinh khiết, sự giảm độ tập trung vượt qua nó ở độ dài ≥ 1.000 bởi vì Python `sum()`được thực hiện bằng C và lặp lại mà không có chi phí thông dịch viên trên mỗi bước.
 
 ### Bước 2: tính toán các hoạt động lý thuyết
 
@@ -66,7 +66,7 @@ Cả hai thuật toán đều thêm N. Sự khác biệt là * độ sâu phụ 
 
 ### Bước 3: quy mô thực nghiệm trên các chuỗi dài
 
-Chúng tôi in một bảng thời gian làm cho khoảng cách O(N) hiển thị. Trên máy tính xách tay Mac 2026, các chuỗi dưới 1.000 yếu tố quá nhanh để đo. Các chuỗi 100.000 cho thấy quét tuyến tính sạch. Đánh giá đó đến một biến đổi 16,384 token với tương đương LSTM 12 lớp và bạn thấy tại sao tập tường đồng hồ là một chất chặn trong năm 2016.
+Chúng tôi in một bảng thời gian làm cho $O(N)$Trong máy tính xách tay Mac 2026, các chuỗi dưới 1.000 yếu tố quá nhanh để đo. Các chuỗi 100.000 cho thấy một quét tuyến tính sạch. Đánh giá điều đó đến một biến thể mã thông báo 16,384 với một tương đương LSTM 12 tầng và bạn thấy tại sao tập luyện đồng hồ tường là một chất chặn trong năm 2016.
 
 ## Sử dụng nó
 
@@ -79,7 +79,7 @@ Khi nào để chọn một RNN vào năm 2026:
 | Edge device with no matmul accelerator | Depthwise-separable RNN still wins on FLOPs/watt |
 | Anything else (training, batched inference, context up to 128K) | Transformer |
 
-Các mô hình không gian nhà nước (SSM) như Mamba về cơ bản là RNN với các tham số cấu trúc cho họ tốt nhất của cả hai: `O(N)`Tự do học tập của các nhà khoa học đã được thực hiện trong các năm nay, và các nhà khoa học đã được nghiên cứu về các phương pháp học học.
+Các mô hình không gian nhà nước (SSM) như Mamba về cơ bản là RNN với các tham số cấu trúc cho họ tốt nhất của cả hai: $O(N)$Tự do học tập của các nhà khoa học đã được thực hiện trong các năm nay, và các nhà khoa học đã được nghiên cứu về các phương pháp học học.
 
 ## Chuyển nó
 
@@ -97,11 +97,11 @@ Nhìn xem`outputs/skill-architecture-picker.md`. Kỹ năng chọn một kiến 
 |------|-----------------|-----------------------|
 | Recurrence | "RNNs are sequential" | Computation where step `t` depends on step `t-1`, forcing serial execution along the time axis. |
 | Serial depth | "How deep the graph is" | Longest chain of dependent ops; bounds wall-clock even on infinite hardware. |
-| Attention | "Let tokens look at each other" | Weighted sum `sum_j a_ij v_j` where `a_ij` comes from a similarity score between positions i and j. |
+| Attention | "Let tokens look at each other" | Weighted sum $\sum_j a_{ij} v_j$ where $a_{ij}$ comes from a similarity score between positions $i$ and $j$. |
 | Context window | "How much the model sees" | Number of positions an attention layer can take as input; quadratic memory cost scales here. |
 | Inductive bias | "Assumptions baked into the architecture" | Prior about what the data looks like; CNNs assume translation invariance, RNNs assume recency. |
 | State-space model | "RNN with algebra behind it" | Recurrence parameterized for parallel training via structured state-space matrices. |
-| Quadratic bottleneck | "Why context costs so much" | Attention memory = `O(N²)` in sequence length; Flash Attention hides the constants, not the scaling. |
+| Quadratic bottleneck | "Why context costs so much" | Attention memory = $O(N^2)$ in sequence length; Flash Attention hides the constants, not the scaling. |
 
 ## Đọc thêm
 

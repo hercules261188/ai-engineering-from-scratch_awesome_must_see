@@ -9,13 +9,13 @@
 
 ## Vấn đề
 
-Một máy giải mã tự động thâm nhập ngu ngốc có thể làm được `O(N²)`làm việc để tạo ra `N`token: ở mỗi bước nó tính lại sự chú ý trên tiền đề đầy đủ. Đối với một phản ứng 4K-token là 16M các hoạt động chú ý, hầu hết chúng là dư thừa. Mỗi trạng thái ẩn của một tiền đề token là xác định khi được tính toán.
+Một máy giải mã tự động thâm nhập ngu ngốc có thể làm được $O(N^2)$làm việc để tạo ra $N$token: ở mỗi bước nó tính lại sự chú ý trên tiền đề đầy đủ. Đối với một phản ứng 4K-token là 16M các hoạt động chú ý, hầu hết chúng là dư thừa. Mỗi trạng thái ẩn của một tiền đề token là xác định khi được tính toán.
 
 Ngoài ra, sự chú ý tự động di chuyển rất nhiều dữ liệu. Sự chú ý tiêu chuẩn hiện thực hóa một matrix điểm số N×N, đầu ra mềm dẻo N×d, đầu ra cuối cùng N×d đọc và viết quá nhiều cho HBM. Đối với N≥2K, sự chú ý bị ràng buộc trong bộ nhớ trước khi nó trở thành FLOP. Các hạt nhân chú ý cổ điển sử dụng GPU hiện đại ít hơn 410×.
 
 Hai cách tối ưu hóa, cả hai từ Dao et al., đã đẩy suy luận biên giới từ "nước từ" sang "nhanh":
 
-1. **KV cache.**lưu trữ các vector K và V của mỗi token tiền tố. sự chú ý của mỗi token mới là một truy vấn so với các khóa được lưu trữ trong cache.`O(N²)`đến`O(N)`mỗi bước thế hệ.
+1. **KV cache.**lưu trữ các vector K và V của mỗi token tiền tố. sự chú ý của mỗi token mới là một truy vấn so với các khóa được lưu trữ trong cache.$O(N^2)$đến$O(N)$mỗi bước thế hệ.
 2. **Flash Attention.**Đặt máy tính chú ý để các n×N matrix đầy đủ không bao giờ chạm vào HBM. Tất cả các softmax + matmul xảy ra trong SRAM. 24× tốc độ đồng hồ tường trên A100; 510× trên H100 với FP8.
 
 Đến năm 2026, cả hai đều phổ biến. Mỗi đống suy luận sản xuất (vLLM, TensorRT-LLM, SGLang, llama.cpp) giả định chúng.
@@ -84,7 +84,7 @@ for each block of Q (tile size ~128 × 128):
     write O_tile to HBM
 ```
 
-Một chuyến HBM mỗi tấm.`O(N²)`đến`O(N)`. Pass ngược tính lại một số giá trị từ pass phía trước thay vì lưu trữ chúng  một bộ nhớ khác giành chiến thắng.
+Một chuyến HBM mỗi tấm.$O(N^2)$đến$O(N)$. Pass ngược tính lại một số giá trị từ pass phía trước thay vì lưu trữ chúng  một bộ nhớ khác giành chiến thắng.
 
 **Numerical trick.**Tăng tốc độ hoạt động của softmax`(max, sum)`Phân tích không phải là một cách gần gũi  Flash Attention tính toán đầu ra bit giống hệt với sự chú ý tiêu chuẩn (modulo fp16 không liên quan).
 
@@ -126,8 +126,8 @@ flash-attention-memory
 
 Nhìn xem`code/main.py`Chúng tôi thực hiện:
 
-1. Một kẻ ngây thơ .`O(N²)`decoder tăng trưởng.
-2. A `O(N)`KV-cache decoder.
+1. Một kẻ ngây thơ .$O(N^2)$decoder tăng trưởng.
+2. A $O(N)$KV-cache decoder.
 3. Một Softmax được làm bằng gạch mô phỏng thuật toán chạy tối đa của Flash Attention.
 
 ### Bước 1: KV cache
@@ -174,7 +174,7 @@ Khả năng phát ra bit giống nhau với `softmax(qK) V`trong một lần ch�
 
 ### Bước 3: So sánh mã hóa ngây thơ so với mã hóa được lưu trữ trong caching trên thế hệ 100 token
 
-- Lưu ý các hoạt động chú ý.`O(N²)`= 5050. `O(N)`Mã in cả hai.
+- Lưu ý các hoạt động chú ý.$O(N^2)$= 5050. $O(N)$Mã in cả hai.
 
 ## Sử dụng nó
 

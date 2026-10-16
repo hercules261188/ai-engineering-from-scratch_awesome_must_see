@@ -9,11 +9,11 @@
 
 ## Vấn đề
 
-Chi phí chăm sóc đầy đủ `O(N²)`trí nhớ và`O(N²)`tính toán theo chiều dài chuỗi. Đối với một Llama 3 70B 128K-context là 16 tỷ lần chú ý mỗi lớp, nhân 80 lớp.`O(N²)`Memory kích hoạt nhưng không thay đổi chi phí toán học  mỗi token vẫn phục vụ cho mỗi token khác.
+Chi phí chăm sóc đầy đủ $O(N^2)$trí nhớ và$O(N^2)$tính toán theo chiều dài chuỗi. Đối với một Llama 3 70B 128K-context là 16 tỷ lần chú ý mỗi lớp, nhân 80 lớp.$O(N^2)$Memory kích hoạt nhưng không thay đổi chi phí toán học  mỗi token vẫn phục vụ cho mỗi token khác.
 
 Ba lớp biến thể thay đổi topology của bản thân ma trận chú ý:
 
-1. **Sliding window attention (SWA).**Mỗi token sẽ được xem xét bởi một cửa sổ hàng xóm, không phải là tiền tố đầy đủ.`O(N · W)`nơi `W`Gemma 2/3, Mistral 7B, Phi-3-Long.
+1. **Sliding window attention (SWA).**Mỗi token sẽ được xem xét bởi một cửa sổ hàng xóm, không phải là tiền tố đầy đủ.$O(N \cdot W)$nơi $W$Gemma 2/3, Mistral 7B, Phi-3-Long.
 2. **Sparse / block attention.**Chỉ có các cặp được chọn `(i, j)`Đánh giá số điểm, phần còn lại bị buộc phải giảm trọng lượng. Longformer, BigBird, OpenAI thâm hụt.
 3. **Differential attention.**Xét hai bản đồ chú ý với các dự đoán Q / K riêng biệt, trừ một từ một. Tử "trọn trọng tâm" làm chảy máu trọng lượng vào vài token đầu tiên. DIFF Transformer của Microsoft (2024).
 
@@ -23,7 +23,7 @@ Các mô hình biên giới 2026 thường trộn lẫn chúng: hầu hết các
 
 ### Chú ý cửa sổ trượt (SWA)
 
-Mỗi truy vấn ở vị trí `i`chỉ tham gia vào các vị trí trong `[i - W, i]`(SWA nguyên nhân) hoặc `[i - W/2, i + W/2]`(trong hai hướng) Các token bên ngoài cửa sổ nhận được`-inf`trong số số điểm.
+Mỗi truy vấn ở vị trí $i$chỉ tham gia vào các vị trí trong $[i - W, i]$(SWA nguyên nhân) hoặc $[i - W/2, i + W/2]$(trong hai hướng) Các token bên ngoài cửa sổ nhận được$-\infty$trong số số điểm.
 
 ```
 full causal:           sliding window (W=4):
@@ -39,17 +39,17 @@ positions 0-7          positions 0-7, W=4
 7 | x x x x x x x x  7 |          x x x x
 ```
 
-Vì `N = 8192`và `W = 1024`, các số điểm tử liệu có 1024 × 8192 không bằng 0 hàng trong kỳ vọng  một giảm 8 ×.
+Vì $N = 8192$và $W = 1024$, các số điểm tử liệu có 1024 × 8192 không bằng 0 hàng trong kỳ vọng  một giảm 8 ×.
 
-**KV cache shrinks with SWA.**Chỉ là cuối cùng thôi`W`Các token của K và V cần phải được giữ cho mỗi lớp. Đối với cấu hình Gemma-3-ish (1024 cửa sổ, ngữ cảnh 128K), bộ nhớ cache KV giảm 128x.
+**KV cache shrinks with SWA.**Chỉ là cuối cùng thôi$W$Các token của K và V cần phải được giữ cho mỗi lớp. Đối với cấu hình Gemma-3-ish (1024 cửa sổ, ngữ cảnh 128K), bộ nhớ cache KV giảm 128x.
 
-**Quality cost.**Các bộ chuyển đổi chỉ có SWA gặp khó khăn với việc lấy lại tầm xa. Giải pháp: để lại các lớp SWA với các lớp tập trung đầy đủ. Gemma 3 sử dụng 5:1 SWA: toàn cầu. Mistral 7B sử dụng một đống SWA nguyên nhân nơi thông tin "thường chảy về phía trước" thông qua các cửa sổ chồng chéo  mỗi lớp mở rộng lĩnh vực tiếp nhận hiệu quả bằng 5`W`, và sau đó`L`các lớp mà mô hình có thể tham dự `L × W`Đồ tín hiệu trở lại.
+**Quality cost.**Các bộ chuyển đổi chỉ có SWA gặp khó khăn với việc lấy lại tầm xa. Giải pháp: để lại các lớp SWA với các lớp tập trung đầy đủ. Gemma 3 sử dụng 5:1 SWA: toàn cầu. Mistral 7B sử dụng một đống SWA nguyên nhân nơi thông tin "thường chảy về phía trước" thông qua các cửa sổ chồng chéo  mỗi lớp mở rộng lĩnh vực tiếp nhận hiệu quả bằng 5$W$, và sau đó`L`các lớp mà mô hình có thể tham dự `L × W`Đồ tín hiệu trở lại.
 
 ### Sự chú ý thâm hụt / ngăn chặn
 
 Chọn một `N × N`Mô hình thắt lưng trước thời gian.
 
-- **Local + strided (OpenAI sparse transformer).**Hãy chờ đợi người cuối cùng`W`token cộng với mỗi `stride`-Thiết hiệu trước đó.`O(N · sqrt(N))`tính toán.
+- **Local + strided (OpenAI sparse transformer).**Hãy chờ đợi người cuối cùng$W$token cộng với mỗi `stride`-Thiết hiệu trước đó.$O(N \cdot \sqrt{N})$tính toán.
 - **Longformer / BigBird.**Cửa sổ địa phương + một bộ nhỏ các token toàn cầu (ví dụ `[CLS]`) được tham gia bởi tất cả mọi người và được tham gia bởi tất cả mọi người + liên kết ngẫu nhiên.
 - **Native Sparse Attention (DeepSeek, 2025).**Tìm hiểu những khối nào của `(Q, K)`- Vấn đề, bỏ qua các khối không ở cấp độ hạt nhân.
 
@@ -61,13 +61,15 @@ Sự chú ý thường xuyên có một vấn đề "thủy bỏ sự chú ý": 
 
 Sự chú ý khác biệt khắc phục điều này bằng cách tính toán **two**Bản đồ chú ý và trừ:
 
-```
-A1 = softmax(Q1 K1^T / √d)
-A2 = softmax(Q2 K2^T / √d)
-DiffAttn = (A1 - λ · A2) V
+```math
+\begin{aligned}
+A_1 &= \mathop{\mathrm{softmax}}(Q_1 K_1^T / \sqrt{d}) \\
+A_2 &= \mathop{\mathrm{softmax}}(Q_2 K_2^T / \sqrt{d}) \\
+\text{DiffAttn} &= (A_1 - \lambda \cdot A_2) V
+\end{aligned}
 ```
 
-nơi `λ`là một scalar được học (thường là 0.50.8). A1 nắm bắt trọng lượng nội dung thực; A2 nắm bắt trục. Phục trừ hủy trục, phân bổ trọng lượng cho các token liên quan.
+nơi $\lambda$là một scalar được học (thường là 0.50.8). A1 nắm bắt trọng lượng nội dung thực; A2 nắm bắt trục. Phục trừ hủy trục, phân bổ trọng lượng cho các token liên quan.
 
 Kết quả được báo cáo (Microsoft 2024): 510% độ bối rối thấp hơn, bối cảnh hiệu quả dài hơn 1,52x với cùng độ dài được đào tạo, lấy lại kim cương trong đống cỏ sắc hơn.
 
@@ -75,12 +77,12 @@ Kết quả được báo cáo (Microsoft 2024): 510% độ bối rối thấp h
 
 | Variant | Compute | KV cache | Quality vs full | Production use |
 |---------|---------|----------|-----------------|----------------|
-| Full attention | O(N²) | O(N) per layer | baseline | every model's default layer |
-| SWA (window 1024) | O(N·W) | O(W) per layer | -0.1 ppl, good with global layers | Gemma 2/3, Phi-3-Long |
-| Local + strided sparse | O(N·√N) | mixed | similar to SWA | OpenAI sparse transformer, Longformer |
-| BigBird (local + global + random) | O(N) approx | mixed | matches full at 2× context | early long-context BERT |
-| Native Sparse (DeepSeek-V3.2) | O(N · active fraction) | O(N) | within 0.05 ppl | DeepSeek-V3.2, 2025 |
-| Differential | O(2·N²) | O(2N) | -5 to -10% ppl | DIFF Transformer, early 2026 models |
+| Full attention | $O(N^2)$ | $O(N)$ per layer | baseline | every model's default layer |
+| SWA (window 1024) | $O(N \cdot W)$ | $O(W)$ per layer | -0.1 ppl, good with global layers | Gemma 2/3, Phi-3-Long |
+| Local + strided sparse | $O(N \cdot \sqrt{N})$ | mixed | similar to SWA | OpenAI sparse transformer, Longformer |
+| BigBird (local + global + random) | $O(N)$ approx | mixed | matches full at 2× context | early long-context BERT |
+| Native Sparse (DeepSeek-V3.2) | $O(N \cdot \text{active fraction})$ | $O(N)$ | within 0.05 ppl | DeepSeek-V3.2, 2025 |
+| Differential | $O(2 \cdot N^2)$ | $O(2N)$ | -5 to -10% ppl | DIFF Transformer, early 2026 models |
 
 ```figure
 gqa-kv-sharing
@@ -142,7 +144,7 @@ Trong mã, chúng tôi so sánh bản đồ nhiệt độ tập trung-thấm c�
 
 ### Bước 5: KV cache kích thước
 
-Bác kích thước cache trên mỗi lớp ở `N = 131072`cho mỗi biến thể. SWA và biến thể hiếm giảm 10100x. Differential đôi. Biết toán bộ nhớ của bạn một cách ý thức.
+Bác kích thước cache trên mỗi lớp ở $N = 131072$cho mỗi biến thể. SWA và biến thể hiếm giảm 10100x. Differential đôi. Biết toán bộ nhớ của bạn một cách ý thức.
 
 ## Sử dụng nó
 
@@ -185,17 +187,17 @@ Nhìn xem`outputs/skill-attention-variant-picker.md`. Khả năng chọn một t
 1. **Easy.**Đi chạy`code/main.py`- Kiểm tra SWA tại `window=4`- Đánh giá tất cả ngoài 4 token cuối cùng mỗi hàng.`window=n`tái tạo sự chú ý nguyên nhân đầy đủ theo bit-tương tự.
 2. **Medium.**Thực hiện SWA nguyên nhân với `window=1024`Đọc 1000 bước trên Tinyshakespeare, giảm giá trị giảm giá bằng cách giảm sự chú ý?
 3. **Hard.**Thực hiện một hỗn hợp lớp 5:1 kiểu Gemma-3 (5 SWA, 1 toàn cầu) trong mô hình đá cuối. So sánh chất lượng mất mát, bộ nhớ và sản xuất so với đường cơ sở SWA thuần khiết và đường cơ sở toàn cầu thuần khiết ở các tham số phù hợp.
-4. **Hard.**Thực hiện sự chú ý khác biệt với một người học `λ`mỗi người. đào tạo về một nhiệm vụ lấy lại tổng hợp (một kim, 2.000 máy phân tâm). đo độ chính xác lấy lại so với một đường cơ sở chú ý duy nhất ở các tham số phù hợp.
+4. **Hard.**Thực hiện sự chú ý khác biệt với một người học $\lambda$mỗi người. đào tạo về một nhiệm vụ lấy lại tổng hợp (một kim, 2.000 máy phân tâm). đo độ chính xác lấy lại so với một đường cơ sở chú ý duy nhất ở các tham số phù hợp.
 
 ## Các điều khoản chính
 
 | Term | What people say | What it actually means |
 |------|-----------------|-----------------------|
-| Sliding window attention (SWA) | "Local attention" | Each query attends to its last `W` tokens; KV cache shrinks to `O(W)`. |
-| Effective receptive field | "How far back the model sees" | In an `L`-layer SWA stack with window `W`, up to `L × W` tokens. |
+| Sliding window attention (SWA) | "Local attention" | Each query attends to its last $W$ tokens; KV cache shrinks to $O(W)$. |
+| Effective receptive field | "How far back the model sees" | In an $L$-layer SWA stack with window $W$, up to $L \times W$ tokens. |
 | Longformer / BigBird | "Local + global + random" | Sparse patterns with a few always-attending global tokens; early long-context approach. |
 | Native Sparse Attention | "DeepSeek's kernel trick" | Learn block-level sparsity; skip zero blocks at the kernel level while keeping quality. |
-| Differential attention | "Two maps, one subtracts" | DIFF Transformer: subtract a learned `λ` times a second attention map from the first to cancel attention sinks. |
+| Differential attention | "Two maps, one subtracts" | DIFF Transformer: subtract a learned $\lambda$ times a second attention map from the first to cancel attention sinks. |
 | Attention sink | "Weight bleeds to token 0" | Softmax normalization forces rows to sum to 1; uninformative queries dump weight on position 0. |
 | FlexAttention | "Mask-as-Python" | PyTorch 2.5+ API that compiles arbitrary mask functions into FlashAttention-shape kernels. |
 | Layer type mix | "5:1 SWA-to-global" | Interleave sparse and full attention layers in a stack to keep quality at lower memory. |

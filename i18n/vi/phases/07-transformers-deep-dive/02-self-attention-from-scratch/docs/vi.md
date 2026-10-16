@@ -11,7 +11,7 @@
 
 - Thực hiện việc tự chú ý sản phẩm điểm quy mô từ đầu chỉ sử dụng NumPy, bao gồm dự đoán truy vấn/t chìa khóa/ giá trị và tổng cân đối với softmax
 - Xây dựng một lớp chú ý nhiều đầu chia các đầu, tính toán chú ý song song và kết quả kết nối
-- Theo dõi cách mà các mô hình chú ý nắm bắt các mối quan hệ token và giải thích tại sao việc quy mô bằng sqrt(d_k) ngăn chặn sự bão hòa softmax
+- Theo dõi cách mà các mô hình chú ý nắm bắt các mối quan hệ token và giải thích lý do tại sao quy mô bởi $\sqrt{d_k}$ngăn ngừa bão hòa softmax
 - Sử dụng sự che giấu nguyên nhân để chuyển đổi sự chú ý hai chiều thành sự chú ý tự động (tương tự giải mã)
 
 ## Vấn đề
@@ -109,10 +109,10 @@ attention-matrix
 
 ### Tại sao có quy mô?
 
-Các sản phẩm chấm tăng trưởng với kích thước dk. Nếu dk = 64, các sản phẩm chấm có thể nằm trong phạm vi mười, đẩy softmax vào các vùng mà gradient biến mất.
+Các sản phẩm chấm tăng trưởng với kích thước $d_k$Nếu$d_k = 64$, các sản phẩm điểm có thể nằm trong phạm vi hàng chục, đẩy softmax vào các khu vực mà gradient biến mất.$\sqrt{d_k}$- Tôi không biết.
 
-```
-Scaled scores = (Q @ K^T) / sqrt(dk)
+```math
+\text{Scaled scores} = \frac{Q K^T}{\sqrt{d_k}}
 ```
 
 Điều này giữ các giá trị trong phạm vi mà softmax tạo ra gradient hữu ích.
@@ -159,8 +159,8 @@ flowchart LR
 
 Công thức trong một dòng:
 
-```
-Attention(Q, K, V) = softmax( Q @ K^T / sqrt(dk) ) @ V
+```math
+\text{Attention}(Q, K, V) = \mathop{\mathrm{softmax}}\left( \frac{Q K^T}{\sqrt{d_k}} \right) V
 ```
 
 ```figure
@@ -302,7 +302,7 @@ print(f"\nAttn weights (averaged over heads):")
 print(attn_weights[0].detach().numpy().round(3))
 ```
 
-Sự khác biệt chính: sự chú ý đa đầu chạy nhiều chức năng chú ý song song, mỗi chức năng có dự đoán Q, K, V của riêng mình với kích thước dk = d_model / n_head, sau đó kết quả kết nối. Điều này cho phép mô hình chú ý đến các loại mối quan hệ khác nhau cùng một lúc.
+Sự khác biệt chính: sự chú ý nhiều đầu chạy nhiều chức năng chú ý song song, mỗi với dự đoán riêng của mình về kích thước Q, K, V $d_k = d_{\text{model}} / n_{\text{heads}}$, sau đó kết nối kết quả. Điều này cho phép mô hình chú ý đến các loại mối quan hệ khác nhau cùng một lúc.
 
 ## Chuyển nó
 
@@ -322,7 +322,7 @@ Bài học này mang lại:
 | Query (Q) | "The question vector" | A learned projection of the input that represents what information this token is looking for |
 | Key (K) | "The label vector" | A learned projection that represents what information this token contains, matched against queries |
 | Value (V) | "The content vector" | A learned projection carrying the actual information that gets aggregated based on attention scores |
-| Scaled dot-product attention | "The attention formula" | softmax(QK^T / sqrt(dk)) @ V - scaling prevents softmax saturation in high dimensions |
+| Scaled dot-product attention | "The attention formula" | $\mathop{\mathrm{softmax}}(QK^T / \sqrt{d_k}) V$ - scaling prevents softmax saturation in high dimensions |
 | Self-attention | "The token looks at itself and others" | Attention where Q, K, V all come from the same sequence, letting every position attend to every other position |
 | Attention weights | "How much focus" | A probability distribution over positions, produced by softmax over scaled dot products |
 | Multi-head attention | "Parallel attention" | Running multiple attention functions with different projections, then concatenating results for richer representations |
