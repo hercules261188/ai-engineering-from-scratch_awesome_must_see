@@ -141,13 +141,13 @@ graph LR
     style V fill:#1a1a2e,stroke:#0f3460,color:#fff
 ```
 
-La división por sqrt(d_k) -- sqrt(64) = 8 -- es escalar. Sin ella, los productos de puntos crecen para vectores de alta dimensión, empujando la softmax a regiones donde los gradientes son casi cero. Esta fue una de las ideas clave en el documento original "Attención es todo lo que necesitas".
+La división por $\sqrt{d_k}$- ¿ Qué ?$\sqrt{64} = 8$Sin él, los productos de puntos crecen para vectores de alta dimensión, empujando la suavidad máxima a regiones donde los gradientes son casi cero. Esta fue una de las ideas clave en el documento original "Attención es todo lo que necesitas".
 
 ### KV Cache: Por qué la inferencia es rápida
 
-Durante el entrenamiento, procesas toda la secuencia a la vez. Durante la inferencia, generas un token a la vez. Sin optimización, generar un token N requiere recomputar la atención para todos los tokens anteriores N-1.
+Durante el entrenamiento, procesas toda la secuencia a la vez. Durante la inferencia, generas un token a la vez. Sin optimización, generas un token.$N$Requiere una nueva atención para todos .$N-1$Los tokens anteriores.$O(N^2)$por token generado, o $O(N^3)$total para una secuencia de longitud $N$¿ Qué ?
 
-KV Cache resuelve esto. Después de calcular K y V para cada token, almacenalos. Al generar el token N + 1, sólo necesita calcular Q para el nuevo token y buscar el caché K y V de todos los tokens anteriores. Esto reduce el costo por token de O(N) a O(1) para el cálculo de K y V. El cálculo de la puntuación de atención sigue siendo O(N) porque se atienden a todas las posiciones anteriores, pero se evitan multiplicidades redundantes de matriz en la entrada.
+KV Cache resuelve esto. Después de calcular K y V para cada token, almacenarlos.$N+1$, sólo tiene que calcular Q para el nuevo token y buscar el caché K y V de todos los tokens anteriores. Esto reduce el costo por token de$O(N)$¿ Qué ?$O(1)$El cálculo de la puntuación de atención es todavía $O(N)$porque usted atenta a todas las posiciones anteriores, pero evita multiplicidades redundantes de matriz en la entrada.
 
 Para GPT-2 con 12 capas y 12 capas, el caché KV almacena 2 (K + V) x 12 capas x 12 capas x 64 dims = 18.432 valores por token. Para una secuencia de 1024 tokens, es aproximadamente 75 MB en FP32. Para Llama 3 405B con 128 capas, el caché KV para una sola secuencia puede superar los 10 GB. Esta es la razón por la cual la inferencia de contexto largo está limitada a la memoria.
 
@@ -211,7 +211,7 @@ El horario de tasa de aprendizaje es más importante de lo que se podría espera
 |-----------|-------|------------|
 | Token embeddings | (50257, 768) | 38,597,376 |
 | Position embeddings | (1024, 768) | 786,432 |
-| Per-block attention (W_q, W_k, W_v, W_out) | 4 x (768, 768) | 2,359,296 |
+| Per-block attention ($W_q, W_k, W_v, W_{\text{out}}$) | 4 x (768, 768) | 2,359,296 |
 | Per-block FFN (up + down) | (768, 3072) + (3072, 768) | 4,718,592 |
 | Per-block LayerNorms (2x) | 2 x 768 x 2 | 3,072 |
 | Final LayerNorm | 768 x 2 | 1,536 |
@@ -258,7 +258,7 @@ def attention(Q, K, V, mask=None):
     return weights @ V
 ```
 
-La implementación de softmax restará el máximo antes de exponenciar. Sin esto, exp(large_number) se sobreflage a infinito. Este es un truco de estabilidad numérica que no cambia la salida porque softmax(x - c) = softmax(x) para cualquier constante c.
+La implementación softmax restará el máximo antes de exponenciar. sin esto, exp(large_number) se sobreflage a infinito. Este es un truco de estabilidad numérica que no cambia la salida porque $\mathop{\mathrm{softmax}}(x - c) = \mathop{\mathrm{softmax}}(x)$para cualquier constante $c$¿ Qué ?
 
 ### Paso 3: Atención por múltiples cabezas
 
@@ -504,7 +504,7 @@ Esta lección produce`outputs/prompt-gpt-architecture-analyzer.md`-- un prompt q
 
 1. Modificar el modelo para utilizar 24 capas y 16 cabezas en lugar de 12/12. Cuente los parámetros. ¿Cómo se compara el duplicado de profundidad con el duplicado de ancho (dimensión de incorporación)?
 
-2. Implemente la función de activación GELU (GELU(x) = x * 0.5 * (1 + erf(x / sqrt(2)))) y reemplace la ReLU en la red de retroalimentación.
+2. Implementar la función de activación de GELU $(\mathop{\mathrm{GELU}}(x) = x \cdot 0.5 \cdot (1 + \mathop{\mathrm{erf}}(x / \sqrt{2})))$Ejecutar un entrenamiento de 500 pasos con cada activación y comparar la pérdida final.
 
 3. Añadir una caché KV a la función de generación. Almacenar los tensores K y V para cada capa después del primer paso hacia adelante, y reutilizarlos para los tokens posteriores. Medir la velocidad: generar 200 tokens con y sin la caché y comparar el tiempo del reloj de pared.
 
@@ -525,7 +525,7 @@ Esta lección produce`outputs/prompt-gpt-architecture-analyzer.md`-- un prompt q
 | Weight tying | "Sharing embeddings" | Using the same matrix for input token embeddings and the output projection head -- saves 38M params in GPT-2 |
 | Residual connection | "Skip connection" | Adding the input directly to the output of a sublayer (x + sublayer(x)) -- enables gradient flow in deep networks |
 | Layer normalization | "Normalizing activations" | Normalizing across the feature dimension to mean 0 and variance 1, with learnable scale and bias parameters |
-| Cross-entropy loss | "How wrong the predictions are" | -log(probability assigned to the correct next token), averaged over all positions -- the standard LLM training objective |
+| Cross-entropy loss | "How wrong the predictions are" | $-\log(\text{probability assigned to the correct next token})$, averaged over all positions -- the standard LLM training objective |
 
 ## Leer más
 

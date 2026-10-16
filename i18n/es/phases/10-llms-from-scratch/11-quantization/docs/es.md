@@ -42,11 +42,11 @@ INT8:  [1 sign] [7 value]                   = 8  bits (uniform steps)
 INT4:  [1 sign] [3 value]                   = 4  bits (16 levels total)
 ```
 
-**FP32**El entrenamiento se realizó exclusivamente en FP32. Todavía se aplica para la acumulación (sumas corrientes durante la multiplicación de matrices).
+**FP32**23 bits de mantissa le dan aproximadamente 7 dígitos decimales de precisión.$1.2 \times 10^{-38}$¿ Qué ?$3.4 \times 10^{38}$El entrenamiento se realizó exclusivamente en el PQ32.
 
 **FP16**El exponente se reduce a 5 bits, reduciendo el rango dramáticamente (valor máximo ~65,504). Esto es bueno para pesas (que se agrupan cerca de cero) pero peligroso para las activaciones y gradientes que pueden aumentar durante el entrenamiento.
 
-**BF16**(Brain Float 16) mantiene el exponente de 8 bits de FP32 pero reduce la mantissa a 7 bits. El mismo rango que el FP32, menos precisión que el FP16. Google lo diseñó específicamente para el aprendizaje profundo. La intuición: el rango es más importante que la precisión para las redes neuronales. Un gradiente de 10^-20 que se subfluye a cero en FP16 sobrevive en BF16. Un peso de 0.07342 que ronda a 0.0734 en BF16 es lo suficientemente cerca. Cada carrera de entrenamiento moderna utiliza BF16 o una mezcla de BF16/FP32.
+**BF16**(Brain Float 16) mantiene el exponente de 8 bits de FP32 pero reduce la mantissa a 7 bits.$10^{-20}$El peso de 0,07342 que ronda a 0,0734 en BF16 es lo suficientemente cercano.
 
 **FP8**Se utiliza para pesas y activaciones durante la inferencia. Se utiliza E5M2 (5 exponente, 2 mantissa) para gradientes durante el entrenamiento donde el rango importa más que la precisión. La inferencia FP8 en las GPU H100 logra una velocidad del 30-50% con una pérdida de calidad insignificante.
 
@@ -773,59 +773,73 @@ if __name__ == "__main__":
 
 ## Usalo
 
-### Cuantización con AutoGPTQ
+### Cuantización con GPTQModel
 
 ```python
-# pip install auto-gptq transformers
-# from auto_gptq import AutoGPTQForCausalLM, BaseQuantizeConfig
-# from transformers import AutoTokenizer
+# pip install gptqmodel
+# from gptqmodel import GPTQConfig, GPTQModel
 #
 # model_id = "meta-llama/Llama-3.1-8B"
-# quantize_config = BaseQuantizeConfig(
-#     bits=4,
-#     group_size=128,
-#     desc_act=False,
+# quant_config = GPTQConfig(bits=4, group_size=128)
+#
+# model = GPTQModel.load(model_id, quant_config)
+# model.quantize(calibration_texts[:128], batch_size=1)
+# model.save("llama-8b-gptq-int4")
+```
+
+### Cuantificación a AWQ con compresor LLM
+
+```python
+# pip install llmcompressor
+# from transformers import AutoModelForCausalLM, AutoTokenizer
+# from llmcompressor import oneshot
+# from llmcompressor.modifiers.quantization import QuantizationModifier
+# from llmcompressor.modifiers.transform.awq import AWQModifier
+#
+# model_id = "meta-llama/Llama-3.1-8B"
+# model = AutoModelForCausalLM.from_pretrained(model_id)
+# tokenizer = AutoTokenizer.from_pretrained(model_id)
+#
+# recipe = [
+#     AWQModifier(duo_scaling="both"),
+#     QuantizationModifier(ignore=["lm_head"], scheme="W4A16_ASYM", targets=["Linear"]),
+# ]
+# oneshot(
+#     model=model,
+#     dataset="perfectblend",
+#     splits="train[:512]",
+#     recipe=recipe,
+#     max_seq_length=512,
+#     num_calibration_samples=256,
 # )
-#
-# tokenizer = AutoTokenizer.from_pretrained(model_id)
-# model = AutoGPTQForCausalLM.from_pretrained(model_id, quantize_config)
-#
-# calibration = [tokenizer(t, return_tensors="pt") for t in calibration_texts[:128]]
-# model.quantize(calibration)
-# model.save_quantized("llama-8b-gptq-int4")
+# model.save_pretrained("llama-8b-awq-int4", save_compressed=True)
+# tokenizer.save_pretrained("llama-8b-awq-int4")
 ```
 
-### Cuantización con AutoAWQ
-
-```python
-# pip install autoawq
-# from awq import AutoAWQForCausalLM
-# from transformers import AutoTokenizer
-#
-# model_id = "meta-llama/Llama-3.1-8B"
-# model = AutoAWQForCausalLM.from_pretrained(model_id)
-# tokenizer = AutoTokenizer.from_pretrained(model_id)
-#
-# model.quantize(tokenizer, quant_config={"zero_point": True, "q_group_size": 128, "w_bit": 4})
-# model.save_quantized("llama-8b-awq-int4")
-```
+AutoGPTQ y AutoAWQ, las herramientas originales para estos dos métodos, se archivan.
 
 ### Convertir a GGUF
 
 ```bash
-# pip install llama-cpp-python
-# python convert_hf_to_gguf.py meta-llama/Llama-3.1-8B --outtype q4_k_m --outfile llama-8b-q4km.gguf
-# llama-server -m llama-8b-q4km.gguf -c 4096 -ngl 99
+# git clone https://github.com/ggml-org/llama.cpp
+# cmake -S llama.cpp -B llama.cpp/build && cmake --build llama.cpp/build --config Release
+# pip install -r llama.cpp/requirements.txt
+# hf download meta-llama/Llama-3.1-8B --local-dir Llama-3.1-8B
+# python llama.cpp/convert_hf_to_gguf.py Llama-3.1-8B --outtype f16 --outfile llama-8b-f16.gguf
+# llama.cpp/build/bin/llama-quantize llama-8b-f16.gguf llama-8b-q4km.gguf Q4_K_M
+# llama.cpp/build/bin/llama-server -m llama-8b-q4km.gguf -c 4096 -ngl 99
 ```
+
+El convertidor no tiene salida K-quant (`--outtype`acepta`f32`¿ Qué ?`f16`¿ Qué ?`bf16`¿ Qué ?`q8_0`¿ Qué ?`tq1_0`¿ Qué ?`tq2_0`, o`auto`), así que `llama-quantize`produce el archivo Q4_K_M.
 
 ### Servicio de modelos cuantizados
 
 ```python
 # pip install vllm
-# vllm serve model-awq --quantization awq --dtype half --max-model-len 8192
+# vllm serve llama-8b-awq-int4 --max-model-len 8192
 ```
 
-vLLM admite nativamente los modelos AWQ y GPTQ. Maneja la descuantificación durante la multiplicación de matrices y utiliza la atención pagada para la caché KV. Para FP8 en H100, añadir `--dtype float8_e4m3fn`¿ Qué ?
+vLLM admite nativamente los modelos AWQ y GPTQ y lee el método de cuantificación desde la configuración del punto de control, por lo que no `--quantization`Se necesita bandera. Se encarga de la desquantización durante la multiplicación de matriz y utiliza la atención pagada para la caché KV. Para FP8 en H100, añadir `--quantization fp8_per_tensor`para cuantificar los pesos de un puesto de control de 16 bits en el momento de carga.
 
 ## Envío
 

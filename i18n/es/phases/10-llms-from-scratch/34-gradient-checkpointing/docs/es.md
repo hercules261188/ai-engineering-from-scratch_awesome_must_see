@@ -37,13 +37,13 @@ Ejemplo: Transformador de 32 capas dividido en 32 segmentos de 1 capa cada uno.
 - Memoria: 32 entradas de capas (pequeñas) vs 32 * (volumen de activación por capas) (enorme).
 - Computación adicional: 1 paso más adelante por segmento, es decir, ~33% más FLOPs hacia adelante en total (ya que el retroceso es 2 veces hacia adelante, el paso completo se convierte en 1 + 1 + 2 = 4 unidades en lugar de 1 + 2 = 3).
 
-Esta es la receta original de Chen et al. 2016: un punto de control cada `sqrt(L)`Para L=64, eso es 8 puntos de control.
+Esta es la receta original de Chen et al. 2016: un punto de control cada `sqrt(L)`Las capas para equilibrar memoria y computación.$L=64$, eso es 8 puestos de control.
 
 ### Control selectivo (Korthikanti 2022)
 
 No todas las activaciones cuestan lo mismo.`B*L*L*heads`La activación oculta de FFN es `B*L*4d`Para secuencias largas, el softmax domina.
 
-El control selectivo mantiene las activaciones baratas para almacenar (proyecciones lineales, residuos) y recalcula sólo las costosas (atención).
+El control selectivo mantiene las activaciones baratas para almacenar (proyecciones lineales, residuos) y recalcula sólo las costosas (atención).$O(L^2)$¿Qué es eso?
 
 Megatron-Core implementa esto como recomputo de activación "selectiva".
 
@@ -293,8 +293,8 @@ Esta lección produce`outputs/prompt-activation-recompute-policy.md` un prompt q
 | Block checkpointing | "Coarse-grained" | Checkpoint whole transformer blocks; largest granularity |
 | FLOP overhead | "The compute tax" | Extra FLOPs per step = (recompute FLOPs) / (fwd + bwd FLOPs); 33% naive, 5% selective |
 | Activation offload | "Ship to CPU" | Move activations to CPU RAM across forward->backward; alternative to recompute |
-| sqrt-L rule | "The classical optimum" | For uniform-cost layers, optimal checkpoint spacing is sqrt(L) layers |
-| Attention-softmax volume | "The O(L^2) problem" | L^2 * heads * batch floats; dominates activation memory at long contexts |
+| sqrt-L rule | "The classical optimum" | For uniform-cost layers, optimal checkpoint spacing is $\sqrt{L}$ layers |
+| Attention-softmax volume | "The O(L^2) problem" | $L^2 \cdot \text{heads} \cdot \text{batch}$ floats; dominates activation memory at long contexts |
 
 ## Leer más
 
@@ -303,4 +303,4 @@ Esta lección produce`outputs/prompt-activation-recompute-policy.md` un prompt q
 - [Pudipeddi et al., 2020 -- "Training Large Neural Networks with Constant Memory using a New Execution Algorithm"](https://arxiv.org/abs/2002.05645)-- enfoque alternativo de memoria constante mediante rematerialización en modo inverso
 - [Ren et al., 2021 -- "ZeRO-Offload: Democratizing Billion-Scale Model Training"](https://arxiv.org/abs/2101.06840)-- descarga de activación a escala
 - [PyTorch torch.utils.checkpoint docs](https://pytorch.org/docs/stable/checkpoint.html)-- la API estándar
-- [Megatron-Core activation recomputation documentation](https://docs.nvidia.com/nemo-framework/user-guide/latest/nemotoolkit/features/memory_optimizations.html)-- modos selectivos, completos y bloqueados
+- [Megatron Bridge activation recomputation documentation](https://docs.nvidia.com/nemo/megatron-bridge/latest/training/activation-recomputation.html)-- modos selectivos, completos y bloqueados

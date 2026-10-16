@@ -80,8 +80,8 @@ Los datos de entrenamiento son pares de preferencias humanas. Para cada respuest
 
 La función de pérdida utiliza el modelo Bradley-Terry de preferencias pares:
 
-```
-loss = -log(sigmoid(reward(preferred) - reward(rejected)))
+```math
+\text{loss} = -\log\big(\mathop{\mathrm{sigmoid}}(\text{reward}(\text{preferred}) - \text{reward}(\text{rejected}))\big)
 ```
 
 Esta es la ecuación clave.`sigmoid(reward(A) - reward(B))`da la probabilidad de que la respuesta A sea preferida a la respuesta B. La pérdida empuja el modelo de recompensa a asignar una puntuación más alta a la respuesta preferida.
@@ -96,8 +96,8 @@ En RLHF, el "ambiente" es el modelo de recompensa, el "agente" es el modelo de l
 
 El objetivo:
 
-```
-maximize: E[R(prompt, response)] - beta * KL(policy || reference)
+```math
+\text{maximize:} \quad \mathbb{E}[R(\text{prompt}, \text{response})] - \beta \cdot \mathrm{KL}(\text{policy} \,\|\, \text{reference})
 ```
 
 El primer término empuja al modelo a generar respuestas de alta recompensa.
@@ -110,7 +110,7 @@ El primer término empuja al modelo a generar respuestas de alta recompensa.
 
 La penalidad de KL dice: puedes mejorar, pero no puedes convertirte en un modelo completamente diferente. Mantente cerca de la versión SFT, que ya era razonable.
 
-**InstructGPT numbers:**El entrenamiento de PPO utilizó lr=1.5e-5, coeficiente KL beta=0.02, 256K episodios (pares de respuesta rápida) y 4 épocas de PPO por lote.
+**InstructGPT numbers:**El entrenamiento de PPO utilizado lr=1.5e-5, coeficiente KL $\beta=0.02$La serie de RLHF de la serie de GPUs de la serie de la serie de la serie de la serie de la serie de la serie de la serie de la serie de la serie de la serie de la serie de la serie de la serie de la serie de la serie de la serie de la serie de la serie de la serie de la serie de la serie de la serie de la serie de la serie de la serie de la serie de la serie de la serie de la serie de la serie de la serie de la serie de la serie de la serie de la serie de la serie de la serie de la serie de la serie de la serie de la serie de la serie de la serie de la serie de la serie de la serie de la serie de la serie de la serie de la serie de la serie de la serie de la serie de la serie de la serie de la serie de la serie de la serie de la serie de la serie de la serie de la serie de la serie de la serie de la serie de la serie de la serie de la serie de la serie de la serie de la serie de la serie de la serie de la serie de la serie de la serie de la serie de la serie de la serie de la serie de la serie de la serie de la serie de la serie de la serie de la serie de la serie de la serie de la serie de la serie de la serie de la serie de la serie de la serie de la serie de la serie de la serie de la serie de la serie de la serie de la serie de la serie de la serie de la serie de la serie de la serie de la serie de la serie de la serie de la serie de la serie de la serie de la serie de la serie de la serie de la serie de la serie de la serie de la serie de la serie de serie de la serie de la serie de serie de la serie de serie de serie de la serie de serie de serie de serie de serie de serie de serie de serie de serie de serie de serie de serie de serie de serie de serie de serie de serie de serie de serie de serie de serie de serie de serie de serie de serie de serie de serie de serie de serie de serie de serie de serie de serie de serie de serie de serie de serie de serie de serie de serie de serie de serie de serie de serie de serie de serie de serie de serie de serie de serie de serie de serie de serie de serie de serie de serie de serie de serie de serie de
 
 ```mermaid
 graph LR
@@ -133,12 +133,14 @@ graph LR
 
 ### El objetivo de la PPO en detalle
 
-PPO utiliza un "objetivo sustitutivo recortado" para evitar actualizaciones excesivamente grandes. La relación entre la nueva política y las probabilidades de la política antigua se reduce al rango [1 - epsilon, 1 + epsilon], donde epsilon es típicamente 0.2.
+El PPO utiliza un "objetivo sustitutivo reducido" para evitar actualizaciones excesivamente grandes.$[1 - \epsilon, 1 + \epsilon]$, donde $\epsilon$es típicamente 0.2.
 
-```
-ratio = pi_new(action | state) / pi_old(action | state)
-clipped_ratio = clip(ratio, 1 - epsilon, 1 + epsilon)
-loss = -min(ratio * advantage, clipped_ratio * advantage)
+```math
+\begin{aligned}
+\text{ratio} &= \pi_{\text{new}}(\text{action} \mid \text{state}) / \pi_{\text{old}}(\text{action} \mid \text{state}) \\
+\text{clipped\_ratio} &= \mathop{\mathrm{clip}}(\text{ratio}, 1 - \epsilon, 1 + \epsilon) \\
+\text{loss} &= -\min(\text{ratio} \cdot \text{advantage}, \text{clipped\_ratio} \cdot \text{advantage})
+\end{aligned}
 ```
 
 La función de ventaja estima cuánto mejor es la respuesta actual en comparación con la calidad esperada.
@@ -606,9 +608,9 @@ Esta lección produce`outputs/prompt-reward-model-designer.md`-- una instrucció
 
 3. Simula el hacking de recompensas. Crea un modelo de recompensa que da altas puntuaciones a las respuestas largas (recompensa = len(respuesta) / 100). ejecuta PPO con este modelo de recompensa defectuoso y observa el modelo de política que genera resultados cada vez más largos y repetitivos. Luego añada una penalidad KL de 0.1 y muestre que evita el comportamiento degenerado.
 
-4. Implemente una recompensa multi-objetivo. Entrenar dos modelos de recompensa - uno para la utilidad y otro para la concisión. Combinarlos como R = 0,7 * R_helpful + 0,3 * R_concise. Muestre que el objetivo combinado produce respuestas que son útiles y concisas, evitando la trampa de verbosidad de una sola recompensa de utilidad.
+4. Implemente una recompensa multi-objetivo. Entrenar dos modelos de recompensa - uno para la utilidad y otro para la concisión. Combinarlos como$R = 0.7 \cdot R_{\text{helpful}} + 0.3 \cdot R_{\text{concise}}$.Mostrar que el objetivo combinado produce respuestas que son útiles y concisas, evitando la trampa de verbosidad de una única recompensa de utilidad.
 
-5. Compare diferentes coeficientes KL. ejecuta PPO con beta=0.001 (demasiado bajo, hacking de recompensa), beta=0.02 (estándar) y beta=0.5 (demasiado alto, sin aprendizaje).
+5. Compare diferentes coeficientes KL. ejecuta PPO con $\beta=0.001$(demasiado bajo, hackeo de recompensas), $\beta=0.02$(estándar), y $\beta=0.5$Traza la curva de recompensa y la curva de KL para cada uno.$\beta=0.02$La carrera debe mostrar una mejora constante de la recompensa con KL limitado.
 
 ## Términos clave
 
@@ -616,10 +618,10 @@ Esta lección produce`outputs/prompt-reward-model-designer.md`-- una instrucció
 |------|----------------|----------------------|
 | RLHF | "Training with human feedback" | Reinforcement Learning from Human Feedback: a three-stage pipeline (SFT, reward model, PPO) that optimizes language model outputs using human preference signals |
 | Reward model | "A model that scores responses" | A transformer with a scalar output head, trained on pairwise human preferences using the Bradley-Terry loss |
-| Bradley-Terry | "The comparison model" | A probabilistic model where P(A > B) = sigmoid(score(A) - score(B)), converting pairwise preferences into a consistent scoring function |
+| Bradley-Terry | "The comparison model" | A probabilistic model where $P(A > B) = \mathop{\mathrm{sigmoid}}(\text{score}(A) - \text{score}(B))$, converting pairwise preferences into a consistent scoring function |
 | PPO | "The RL algorithm" | Proximal Policy Optimization: updates the policy to maximize reward while clipping the update magnitude to prevent instability |
 | KL divergence | "How different two distributions are" | A measure of the difference between the policy model's token distribution and the reference model's -- used as a penalty to prevent reward hacking |
-| KL penalty | "The leash on the model" | Beta * KL(policy \|\| reference) subtracted from the reward signal -- prevents the policy from diverging too far from the SFT checkpoint |
+| KL penalty | "The leash on the model" | $\beta \cdot \mathrm{KL}(\text{policy} \Vert \text{reference})$ subtracted from the reward signal -- prevents the policy from diverging too far from the SFT checkpoint |
 | Reward hacking | "Gaming the reward" | When the policy finds degenerate high-reward outputs by exploiting weaknesses in the reward model instead of genuinely improving |
 | Preference pair | "Which is better, A or B?" | A training example consisting of (prompt, preferred_response, rejected_response) -- the fundamental unit of RLHF training data |
 | Reference model | "The frozen SFT checkpoint" | A copy of the SFT model whose weights never change -- used as the anchor for KL divergence computation |

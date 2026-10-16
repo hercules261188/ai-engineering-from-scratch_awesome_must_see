@@ -30,12 +30,14 @@ Esta lección lee los tres artículos y produce el modelo mental para "garanse l
 
 Un modelo espacial de estado procesa una secuencia `x_1, ..., x_N`a través de un estado de tamaño fijo `h`¿Qué es esto ?
 
-```
-h_t = A h_{t-1} + B x_t
-y_t = C h_t
+```math
+\begin{aligned}
+h_t &= A h_{t-1} + B x_t \\
+y_t &= C h_t
+\end{aligned}
 ```
 
-En cada paso el estado evoluciona a través de una dinámica lineal `A`, toma información `B x_t`, y emite la salida `C h_t`- ¿ Qué ?`A, B, C`No se puede aprender.`y_t`sólo necesita`h_{t-1}`y `x_t`, no antes .`x`La memoria es constante. La inferencia es O  1 por token.
+En cada paso el estado evoluciona a través de una dinámica lineal `A`, toma información `B x_t`, y emite la salida `C h_t`- ¿ Qué ?`A, B, C`No se puede aprender.`y_t`sólo necesita`h_{t-1}`y `x_t`, no antes .`x`La memoria es constante, la inferencia es constante.$O(1)$por símbolo.
 
 El truco para la calidad de la modelación es la estructura de`A`. S4 (Gu 2021) utilizó una matriz altamente estructurada que podía evaluarse de manera eficiente como una larga convolución durante el entrenamiento.`A, B, C`Mamba-2 (2024) simplificó aún más la estructura. Mamba-3 (2026) reaparece la complejidad en lugares específicos.
 

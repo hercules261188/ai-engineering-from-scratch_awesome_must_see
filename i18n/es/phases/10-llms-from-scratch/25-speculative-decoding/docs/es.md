@@ -53,8 +53,8 @@ donde`(p - q)+`En el caso de los proyectos de investigación, el objetivo de la 
 
 Si la tasa de aceptación a nivel de tokens del modelo de proyecto es `α`, los tokens esperados producidos por cada pase de destino es:
 
-```
-E[tokens] = (1 - α^{K+1}) / (1 - α)        # K = draft length, α in [0, 1]
+```math
+\mathbb{E}[\text{tokens}] = \frac{1 - \alpha^{K+1}}{1 - \alpha} \qquad K = \text{draft length}, \ \alpha \in [0, 1]
 ```
 
 En el`α = 0.8, K = 4`¿ Qué es esto ?`(1 - 0.8^5)/(1 - 0.8) = 3.36`Los precios de los precios de los productos de la Unión Europea son de un nivel de interés de la Unión Europea.`cost_q * K + cost_p`(K proyectos de pasos más una verificación de objetivo).`cost_p >> cost_q * K`la relación de aceleración es `3.36× / 1 = 3.36×`en el rendimiento.
@@ -162,9 +162,9 @@ def speculative_step(p_target, q_draft, K, temperature=1.0):
 
 ## Usalo
 
-- **vLLM**y **SGLang**Descifrado especulativo de primera clase.`--speculative_model`¿ Qué ?`--num_speculative_tokens`. EL ESPIRO-2/3 apoyo a través de la `--spec_decoding_algorithm eagle`bandera.
+- **vLLM**y **SGLang**En el VLLM, pasa `--speculative-config`un objeto JSON con `method`¿ Qué ?`model`, y `num_speculative_tokens`; EAGLE-3 es `"method": "eagle3"`¿ Qué ?
 - **NVIDIA TensorRT-LLM**apoya los árboles Medusa y Eagle nativo.
-- **Reference draft models**¿ Qué es esto ?`Qwen/Qwen3-0.6B-spec`(proyectos para el Qwen3-32B), `meta-llama/Llama-3.2-1B-Instruct-spec`(proyectos para el 70B).
+- **Reference draft models**¿ Qué es esto ?`Qwen/Qwen3-0.6B`(proyectos para el Qwen3-32B), `meta-llama/Llama-3.2-1B-Instruct`(proyectos de Llama 3.x 70B).
 - **Medusa heads**(Cai et al. 2024, "Medusa: Simple LLM Inference Acceleration Framework with Multiple Decoding Heads"): en lugar de un modelo de proyecto, añadir K heads de predicción paralela al objetivo mismo.
 
 ## Envío
@@ -175,7 +175,7 @@ Esta lección produce`outputs/skill-speculative-tuning.md` una habilidad que per
 
 1. Implemente la regla exacta de rechazo y verifique empíricamente.`speculative_decode`y mediante muestreo objetivo simple; calcular la distancia de TV entre las dos distribuciones de salida. Debe ser < 0,01.
 
-2. Calcule la fórmula de aceleración.`α`y `K`En el gráfico de los tokens esperados por objetivo-ahead.
+2. Calcule la fórmula de aceleración.`α`y `K`, gráfico de tokens esperados por objetivo-avance.$K$por$\alpha \in \lbrace 0.5, 0.7, 0.9 \rbrace$¿ Qué ?
 
 3. Entrenar un pequeño borrador. Toma un objetivo de 124M GPT-2 y destila un borrador de 30M GPT-2 en 100M tokens con pérdida KL.`α`En el texto retrasado.
 

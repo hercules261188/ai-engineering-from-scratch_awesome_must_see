@@ -36,8 +36,8 @@ Una buena versión vale 2 veces más velocidad que una versión barata. EAGLE, E
 
 - ¿ Qué ?`α`Se calcula que el valor de la moneda de mercado de la moneda de mercado es el valor de la moneda de mercado de la moneda de mercado de la moneda de mercado de la moneda de mercado de la moneda de mercado de la moneda de mercado de la moneda de la Unión.`c = cost(draft) / cost(verifier)`El número esperado de tokens aceptados por verificador a plazo es:
 
-```
-E[accepted] = (1 - α^(N+1)) / (1 - α)
+```math
+\mathbb{E}[\text{accepted}] = \frac{1 - \alpha^{N+1}}{1 - \alpha}
 ```
 
 El tiempo total esperado de pared por token aceptado es `(N * c + 1) / E[accepted]`Minimizar eso con respecto a`N`Y obtienes el punto dulce.`α = 0.8, c = 0.05`: óptimo `N`Es alrededor de 57, velocidad es 3.2x.`α = 0.95, c = 0.02`: óptimo `N`es alrededor de 8×10, la aceleración empuja 5×.

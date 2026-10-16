@@ -28,8 +28,8 @@ El DIFF V1 tenía tres problemas que lo mantuvieron fuera de las tuberías de pr
 
 Para una consulta `q`y llaves `K = [k_1, ..., k_N]`, los pesos de atención son:
 
-```
-w_i = exp(q . k_i / sqrt(d)) / sum_j exp(q . k_j / sqrt(d))
+```math
+w_i = \frac{\exp(q \cdot k_i / \sqrt{d})}{\sum_j \exp(q \cdot k_j / \sqrt{d})}
 ```
 
 No , no .`w_i`es siempre cero.`k_i`no tiene nada que ver con `q`, el resultado `q . k_i`no es 0  fluctúa alrededor de cero con la varianza `||q||^2 / d`Después de la normalización de softmax, cada token no relacionado todavía contribuye.`O(1/N)`La contribución total de los tokens no relacionados es `O((N-1)/N) = O(1)` no una pequeña cantidad.
@@ -38,17 +38,19 @@ Lo que el modelo quiere es algo como un top-k duro: alto peso en tokens coincide
 
 ### La idea de diferencia
 
-Divide las proyecciones Q y K de cada cabeza en dos: Q = (Q_1, Q_2) y K = (K_1, K_2).
+Divide las proyecciones de Q y K de cada cabeza en dos: $Q = (Q_1, Q_2)$y $K = (K_1, K_2)$Computa dos mapas de atención:
 
-```
-A_1 = softmax(Q_1 K_1^T / sqrt(d))
-A_2 = softmax(Q_2 K_2^T / sqrt(d))
+```math
+\begin{aligned}
+A_1 &= \mathop{\mathrm{softmax}}(Q_1 K_1^T / \sqrt{d}) \\
+A_2 &= \mathop{\mathrm{softmax}}(Q_2 K_2^T / \sqrt{d})
+\end{aligned}
 ```
 
 Producción:
 
-```
-DiffAttn = (A_1 - lambda * A_2) V
+```math
+\mathop{\mathrm{DiffAttn}} = (A_1 - \lambda \cdot A_2) V
 ```
 
 La subtracción anula cualquier distribución de ruido que comparten los dos mapas. Si ambos mapas tienen un peso aproximadamente uniforme en los 127k tokens no relacionados (que, a partir de una inicialización aleatoria, lo harán), los otros se anulan. La señal  peso máximo en los pocos tokens realmente relevantes  solo se anula si aparece en ambos mapas a la misma magnitud, lo que no ocurre una vez que el modelo se muestre.
@@ -63,7 +65,7 @@ Piensa en dos micrófonos ruidosos que graban la misma voz. Ambos recogen el alt
 
 V1 mantuvo el conteo de parámetros igual al de la línea de base Transformer. Para obtener dos consultas por cabeza redujo a la mitad la dimensión de la cabeza. Eso costó la expresividad de la cabeza y  más dolorosamente  redujo a la mitad el caché de valor por cabeza. Decode tuvo que cargar el caché de valor dos veces por paso (una vez por rama softmax). Resultado: decodificar más lento que la línea de base a pesar de la cantidad de parámetros coincidentes.
 
-V2 duplica el número de cabezas de consulta y mantiene las cabezas de KV iguales (prestando parámetros de la proyección ascendente). La dimensión de la cabeza se mantiene igual a la línea de base. Después de la restancia, la dimensión adicional se proyecta hacia abajo para que coincida con la proyección O_W de la línea de base de Transformer. Tres cosas suceden a la vez:
+V2 duplica el número de cabezas de consulta y mantiene las cabezas de KV iguales (prestando parámetros de la proyección ascendente). La dimensión de la cabeza se mantiene igual a la línea de base. Después de la restancia, la dimensión adicional se proyecta hacia abajo para que coincida con la línea de base del Transformer $O_W$Tres cosas suceden a la vez:
 
 1. La velocidad de decodificación coincide con la línea de base (la caché de KV se carga una vez).
 2. FlashAttention se ejecuta sin cambios (no hay núcleo personalizado).
@@ -139,8 +141,8 @@ Construye una secuencia sintética de longitud 1024. Coloque el signo en una pos
 Dado un config (oculto = 4096, cabezas = 32, d_head = 128), imprime:
 
 - Transformador de línea de base: Q, K, V de cada tamaño `hidden * hidden`, MLP en 4 * oculto.
-- DIFF V1: Q, K de cada tamaño `hidden * hidden`, tamaño V `hidden * hidden`(sin cambios), cabeza tenue a la mitad internamente.`lambda`Parámetros (todas las cabezas * d_todas las cabezas)).
-- DIFF V2: tamaño Q `2 * hidden * hidden`, tamaño K `hidden * hidden`, tamaño V `hidden * hidden`Extra tenue proyectado hacia abajo antes de O_W. Agrega lo mismo `lambda`los parámetros.
+- DIFF V1: Q, K de cada tamaño `hidden * hidden`, tamaño V `hidden * hidden`(sin cambios), cabeza tenue a la mitad internamente.`lambda`Parámetros $(O(\text{heads} \cdot d_{\text{head}}))$¿ Qué ?
+- DIFF V2: tamaño Q `2 * hidden * hidden`, tamaño K `hidden * hidden`, tamaño V `hidden * hidden`Extra tenue proyectado hacia abajo antes .$O_W$. Agrega lo mismo .`lambda`los parámetros.
 
 El juguete mide el coste de parámetros adicionales para V2 (aproximadamente `hidden * hidden`extra por bloque de atención) y imprime.
 
@@ -182,8 +184,8 @@ Esta lección produce`outputs/skill-diff-attention-integrator.md`. Dado una arqu
 
 | Term | What people say | What it actually means |
 |------|----------------|------------------------|
-| Differential attention | "Two softmaxes minus each other" | Split Q, K into two halves, compute two softmax maps, subtract the second (scaled by lambda) from the first, then multiply by V |
-| Noise floor | "The non-zero tail of softmax" | The O(1/N) weight softmax puts on every unrelated token, which sums to O(1) across long contexts |
+| Differential attention | "Two softmaxes minus each other" | Split Q, K into two halves, compute two softmax maps, subtract the second (scaled by $\lambda$) from the first, then multiply by V |
+| Noise floor | "The non-zero tail of softmax" | The $O(1/N)$ weight softmax puts on every unrelated token, which sums to $O(1)$ across long contexts |
 | lambda | "The subtraction scale" | Per-head learnable scalar parameterized as `exp(lq1.lk1) - exp(lq2.lk2) + lambda_init`; can be negative |
 | DIFF V1 | "The ICLR 2025 version" | Original Differential Transformer; halves head dim to preserve parameter count, needs custom kernel, slower decode |
 | DIFF V2 | "The January 2026 fix" | Doubles Q heads keeping KV heads; matches baseline decode speed and works with FlashAttention |

@@ -52,8 +52,8 @@ Todo lo demás (hora de aprendizaje, mezcla de datos, tamaño de lote, longitud 
 
 LayerNorm restará la media, dividida por std, escalas y cambios.
 
-```
-RMSNorm(x) = x / sqrt(mean(x^2) + eps) * gamma
+```math
+\mathop{\mathrm{RMSNorm}}(x) = \frac{x}{\sqrt{\mathop{\mathrm{mean}}(x^2) + \epsilon}} \cdot \gamma
 ```
 
 Ninguna subtracción media. Ningún sesgo. Un matmul menos por token. Zhang y Sennrich (2019) argumentaron que coincide con LayerNorm en la traducción automática mientras es un 10% más rápido.
@@ -78,8 +78,8 @@ Cada Llama, Mistral, Qwen, DeepSeek y Gemma utiliza RoPE. Gemma 2 utiliza un hí
 
 La MLP de GPT-2 es `x -> gelu(xW1 + b1) -> (...)W2 + b2`. SwiGLU (Shazeer 2020) sustituye la activación por un producto cerrado:
 
-```
-SwiGLU(x) = (xW1) * sigmoid(xW1) * xV
+```math
+\mathop{\mathrm{SwiGLU}}(x) = (xW_1) \cdot \mathop{\mathrm{sigmoid}}(xW_1) \cdot xV
 ```
 
 Dos proyecciones en paralelo en lugar de una, cerradas por la activación Swish. Empiricamente más fuerte en la perplejidad por parámetro. Llama 2 lo adoptó, todos lo siguieron. El tamaño oculto del MLP se establece generalmente para que el número total de parámetros coincida con el MLP denso original: si se utilizó GPT-2 `ff_dim = 4 * hidden`, SwiGLU utiliza `ff_dim = (2/3) * 4 * hidden = 8/3 * hidden`¿ Qué ?
@@ -90,7 +90,7 @@ Se utilizó el GPT-2 **Multi-Head Attention (MHA)**Cada cabeza tiene su propia p
 
 **Multi-Query Attention (MQA, Shazeer 2019)**El modelo de K-head tiene un K y un V en todas las cabezas. Cortar el cache de KV por num_heads, que es una reducción de 12 a 32 veces en un modelo típico.
 
-**Grouped-Query Attention (GQA, Ainslie et al. 2023)**es el punto medio: los grupos G de cabezas Q comparten una K y una V. Llama 3 8B utiliza GQA con 32 cabezas Q y 8 cabezas KV (G=8), por lo que la caché KV se reduce 4x frente a la MHA completa.
+**Grouped-Query Attention (GQA, Ainslie et al. 2023)**es el punto medio: $G$Los grupos de cabezas Q comparten una K y una V. Llama 3 8B utiliza GQA con 32 cabezas Q y 8 cabezas KV ($G=8$), por lo que el caché KV se reduce 4x frente a la MHA completa.
 
 **Multi-Head Latent Attention (MLA, DeepSeek 2024)**El sistema de búsqueda de datos de base de datos de base de datos de base de datos de base de datos de base de datos de base de datos de base de datos de base de datos de base de datos de base de datos de base de datos de base de datos de base de datos de base de datos de base de datos de base de datos de base de datos de base de datos de base de datos de base de datos de base de datos de base de datos de base de datos de base de datos de base de datos de base de datos de base de datos de base de datos de base de datos de base de datos de base de datos de base de datos de base de datos de base de datos de base de datos de base de datos de base de datos de base de datos de base de datos de base de datos de datos de base de datos de base de datos de datos de base de datos de base de datos de datos de base de datos de datos de base de datos de datos de base de datos de base de datos de datos de base de datos de datos de base de datos de datos de base de datos de datos de base de datos de datos de datos de base de datos de datos de datos de base de datos de datos de datos de datos de base de datos de datos de datos de datos de datos de base de datos de datos de datos de datos de datos de base de datos de datos de datos de datos de datos de datos de datos de datos de base de datos de datos de datos de datos de datos de datos de datos de datos de datos de base de datos de datos de datos de datos de datos de datos de datos de datos de datos de datos de datos de datos de datos de datos de datos de datos de datos de datos de base de datos de datos de datos de datos de datos de datos de datos de datos de datos de datos de datos de datos de datos de datos de datos de datos de datos de datos de datos de datos de datos de datos de datos de datos de datos de datos de datos de datos de datos de datos de datos de datos de datos de datos de datos de datos de datos de datos de datos de datos de datos de datos de datos de datos de datos de datos de datos de datos de datos de datos de datos de datos de datos de datos de datos de datos de datos de datos de datos de datos de datos de datos de datos de datos de datos de datos de datos de datos de datos de datos de datos de datos de datos de datos de datos de datos
 
@@ -154,6 +154,7 @@ Aquí está la mesa que hace todo este concreto.
 | Qwen 2.5 72B | 2024 | 72B | 72B | RMSNorm | SwiGLU | RoPE (YaRN) | GQA (64/8) | no | 128k |
 | DeepSeek V2 236B | 2024 | 236B | 21B | RMSNorm | SwiGLU | RoPE | MLA | yes (160 experts, top-6) | 128k |
 | DeepSeek V3 | 2024 | 671B | 37B | RMSNorm | SwiGLU | RoPE | MLA | yes (256 experts, top-8) | 128k |
+| Spark-X2.5 4B | 2026 | 4.1B | 4.1B | RMSNorm | GeGLU | RoPE + sliding (3:1) | GQA (16/4), gated output | no | 1M |
 
 Escanear las columnas. RMSNorm es universal. SwiGLU o su primo GeGLU es universal. RoPE es universal. GQA es universal por encima de 7B excepto cuando se sustituye por MLA. MoE es el diferenciador en el extremo superior.
 
@@ -176,6 +177,12 @@ Configuración de Llama 3 8B:
 ```
 
 Cada campo corresponde a algo que ya ha implementado.
+Configuras más recientes agregan algunos campos que cambian la aritmética, así que la calculadora
+Leerlos cuando están presentes:
+
+- `head_dim`: se establece explícitamente cuando no lo es `hidden_size / num_attention_heads`Gemma 29B ha escondido 3584 y 16 cabezas pero ...`head_dim`256, así que su proyección Q es 3584 x 4096, no cuadrado.
+- `tie_word_embeddings`El Llama 3 8B no se une, que es un parámetro de 525M que se pierde si solo se cuenta la incorporación una vez.
+- `layer_types`y `sliding_window`: que cubren el contexto completo y que sólo cubren los últimos tokens W.
 
 - `hidden_size`: dimensiones de incorporación.
 - `intermediate_size`: tamaño MLP oculto (3.5x oculto -- matemáticas SwiGLU).
@@ -212,6 +219,15 @@ Llama 3 8B en contexto 128k, BF16, cabeza_dim = oculta / num_heads = 128:
 
 Los pesos de 8B son 16 GB en BF16. La caché KV para una sola secuencia de 128k es mayor que los pesos. Esta es la presión de memoria que impulsa la investigación de cuantización de la caché GQA, MLA y KV.
 
+La fórmula asume que cada capa almacena toda la secuencia. Una capa de ventana deslizante solo necesita siempre los últimos tokens W, por lo que para los modelos híbridos la suma se ejecuta por capa:
+
+```
+kv_cache = 2 * num_kv_heads * head_dim * bytes_per_element
+           * (full_layers * max_seq_len + sliding_layers * min(W, max_seq_len))
+```
+
+Spark-X2.5 4B tiene tres capas de ventanas deslizantes ($W = 512$En su contexto de 1M-token que es de aproximadamente 38,7 GB (36 GiB) por secuencia en BF16. si todas las 36 capas almacenaran en caché el contexto completo sería de 154,6 GB (144 GiB). Las capas completas cargan casi todo el costo, por lo que la relación de capas completas a las capas deslizantes es el número que se lee primero en un modelo de contexto largo.
+
 ### Cuando cada modelo gana
 
 - **Single 80GB GPU, no MoE**Llama 3 8B, Mistral 7B, Gemma 2 9B. Fácil de servir, herramientas amplias.
@@ -219,6 +235,7 @@ Los pesos de 8B son 16 GB en BF16. La caché KV para una sola secuencia de 128k 
 - **Biggest open capability, accept MoE complexity**: DeepSeek V3, Mixtral 8x22B. Mejor capacidad por FLOP activo.
 - **Long-context needs**: Llama 3 (128k con escala RoPE), DeepSeek (avantage MLA).
 - **Low-latency serving**: Gemma 2 9B (ventana deslizante corta el cálculo de contexto largo).
+- **Long context on a small memory budget**: modelos híbridos de ventanas correderas como Spark-X2.5 4B, donde sólo una cuarta parte de las capas pagan por el contexto completo.
 
 ```figure
 rmsnorm-vs-layernorm
@@ -237,13 +254,17 @@ config = {
 }
 ```
 
-El script recorre el campo de arquitectura por campo, calcula los parámetros para la incorporación, la atención (con reducción de GQA), MLP (con expansión SwiGLU), las normas de capas y la cabeza. Luego calcula el caché KV en la longitud del contexto indicada y imprime un resumen.
+El guión recorre el campo de arquitectura por campo, calcula los parámetros para la incorporación, la atención (con reducción de GQA y una `head_dim`Cuando la configuración establece uno), MLP (con expansión SwiGLU o GeGLU), normas de capas y la cabeza LM cuando no está vinculada a la incorporación. Luego calcula el caché KV en la longitud del contexto indicada, capa por capa para que las capas de ventanas deslizantes se encuentren en su ventana, y imprime un resumen.
+
+Para los modelos densos los totales coinciden con el parámetro publicado cuenta exactamente: Llama 3 8B sale a 8.030.261.248, Gemma 2 9B a 9.241.705.984, y Spark-X2.5 4B a 4.112.079.360. Qwen 2.5 72B está fuera por 819,200, que es el ejercicio 1.
 
 ¿ Qué ?`code/main.py`para la ejecución.
 
 ## Usalo
 
 ejecuta la calculadora en las configuraciones de Llama 3 8B, Mistral 7B, Mixtral 8x7B y DeepSeek V3 agrupadas en el guión. Compara las averías de parámetros. Observe que los modelos de MoE tienen un recuento total de parámetros que empequeñece a los modelos densos pero un recuento de parámetros activos que a menudo es menor. Observe que la caché KV de DeepSeek V3 es menor que la de Llama 3 405B a pesar de tener más parámetros totales - es decir, MLA en acción.
+
+Luego, comparar Gemma 2 9B y Spark-X2.5 4B. Para ambos, el guión imprime el caché KV que realmente necesita y el caché KV que necesitaría si cada capa fuera plena atención. Gemma 2 se alterna 1:1 en un contexto de 8k, por lo que el ahorro es modesto. Spark-X2.5 va 3:1 con una ventana de 512 tokens en 1M, por lo que el ahorro es 4x.
 
 Luego conecte una configuración para cualquier modelo que tenga localmente, lea el resumen y decida si se ajusta a su GPU.
 
@@ -275,7 +296,7 @@ Esta lección produce`outputs/skill-open-model-picker.md`. Dado un objetivo de i
 | MoE | "Sparse experts" | Mixture of Experts: N MLPs per block, router picks top-k per token — huge total params, small active params |
 | Top-k routing | "Pick k experts per token" | The router computes a score per expert and activates the k highest — typical k is 2 (Mixtral) to 8 (DeepSeek) |
 | YaRN | "Stretch RoPE" | Yet another RoPE extension — interpolates rotary angles to extend context from 8k to 128k+ at inference time |
-| Sliding-window attention | "Don't attend to everything" | Each token attends only to the last W tokens — caps attention cost at O(W) per token, used in Gemma 2 and early Mistral |
+| Sliding-window attention | "Don't attend to everything" | Each token attends only to the last $W$ tokens — caps attention cost at $O(W)$ per token, used in Gemma 2 and early Mistral |
 | Active params | "What runs per token" | For MoE models, the parameter count that sees a forward pass per token (much smaller than total params) — governs per-token FLOPs |
 
 ## Leer más
