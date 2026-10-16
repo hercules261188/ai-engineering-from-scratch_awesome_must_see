@@ -42,7 +42,7 @@
 
 ### عينة عشوائية موحدة
 
-تبدأ كل طريقة أخذ العينات هنا. مولد عدد عشوائي موحد ينتج قيم في [0, 1) حيث كل فاصل فرعي من طول متساو لديه احتمال متساو.
+كل طريقة أخذ العينات تبدأ هنا. مولد عدد عشوائي متساوي ينتج قيم في$[0, 1)$حيث كل فاصل فرعي مساوٍ لعدد مساوٍ لديه احتمال مساوٍ.
 
 ```
 U ~ Uniform(0, 1)
@@ -54,7 +54,7 @@ Properties:
   Var(U) = 1/12
 ```
 
-لنقل عينات بشكل متساوي من مجموعة منفصلة من n عناصر، تولد U وعودة الأرض ((n * U). لنقل عينات من مجموعة مستمرة [a، b]، حساب a + (b - a) * U.
+ليعمل عينة متساوية من مجموعة منفصلة من$n$المواد، توليد $U$و العودة$\lfloor n U \rfloor$. لإجراء عينة من نطاق مستمر $[a, b]$، الحساب$a + (b - a) U$. . .
 
 المفهوم الرئيسي: عدد عشوائي موحد واحد يحتوي بالضبط على كمية مناسبة من الاختيارات عشوائية لإنتاج عينة واحدة من أي توزيع. الحيلة هي العثور على التحول الصحيح.
 
@@ -72,7 +72,7 @@ Properties:
   F maps the real line to [0, 1]
 ```
 
-يخطط CDF العكسية الاحتمالات إلى القيم. إذا كان U ~ متوحدة ((0, 1), ثم X = F_inverse(U) يتبع التوزيع المستهدف.
+المعدل المقابل CDF يرسم احتمالات مرة أخرى إلى القيم.$U \sim \text{Uniform}(0, 1)$، ثم$X = F^{-1}(U)$يتبع التوزيع المستهدف.
 
 ```
 Algorithm:
@@ -98,9 +98,9 @@ Since (1 - U) and U have the same distribution:
   x = -ln(u) / lambda
 ```
 
-هذا يعمل بشكل مثالي عندما يمكنك كتابة F_inverse في شكل مغلق. بالنسبة للتوزيع الطبيعي، لا يوجد CDF المعاكس المغلق، لذلك نستخدم طرق أخرى (Box-Muller، أو التقريب الرقمي).
+هذا يعمل بشكل مثالي عندما يمكنك كتابة$F^{-1}$في شكل مغلق. بالنسبة للتوزيع الطبيعي، لا يوجد CDF المعاكس المغلق، لذلك نستخدم طرق أخرى (بوكس-مولر، أو التقريب الرقمي).
 
-**Discrete version:**بالنسبة للتوزيعات المفصلة، قم ببناء CDF كجمع تجمعي، وخلق U، واكتشف المؤشر الأول حيث يتجاوز المبلغ الجمعي U. هكذا `sample_categorical`العمل في الدروس 06.
+**Discrete version:**بالنسبة للتوزيعات المفصلة، قم ببناء CDF ككمية تجميعية،$U$، و العثور على المؤشر الأول حيث يتجاوز المبلغ الإجمالي $U$هكذا`sample_categorical`العمل في الدروس 06.
 
 ### الرفض عن عينات
 
@@ -120,15 +120,15 @@ Algorithm:
 Acceptance rate = 1/M
 ```
 
-كلما كانت M المرتبطة أقوى، كلما كان معدل القبول أعلى. في الأبعاد المنخفضة (1-3) ، فإن أخذ العينات ينجح بشكل جيد. في الأبعاد العالية، ينخفض معدل القبول بشكل متكامل لأن معظم حجم المقترح يتم رفضه. هذا هو لعنة الأبعاد لخفض العينات.
+كلما كانت الحدود أكثر صرامة$M$في الأبعاد المنخفضة (1-3) ، يعمل أخذ العينات بشكل جيد. في الأبعاد العالية، ينخفض معدل القبول بشكل متسارع لأن معظم حجم المقترح يتم رفضه. هذا هو لعنة الأبعاد لامتثال العينات.
 
-**Example: sampling from a truncated normal.**استخدم اقتراحًا متوحدًا على النطاق المختصر. الغلاف M هو أقصى عدد من PDF العادي في هذا النطاق.
+**Example: sampling from a truncated normal.**استخدم اقتراحًا موحدًا على النطاق المختصر.$M$هو أقصى عدد من PDF العادي في هذه النطاق.
 
-**Example: sampling from a semicircle.**اقترح بشكل متساوي في مستطيل الحدود. اقبل إذا سقطت النقطة داخل نصف الدائرة. هكذا يقوم مونت كارلو بحساب pi: معدل القبول يساوي نسبة المساحة pi/4.
+**Example: sampling from a semicircle.**اقترح بشكل متساوي في مستطيل الحدود. اقبل إذا سقطت النقطة داخل نصف الدائرة. هكذا يقوم مونت كارلو بحساب$\pi$: معدل قبول يساوي نسبة المساحة $\pi/4$. . .
 
 ### أهمية أخذ العينات
 
-في بعض الأحيان لا تحتاج إلى عينات من التوزيع الهدف p(x. تحتاج إلى تقدير التوقعات تحت p(x) ، ولديك عينات من التوزيع المختلف q(x).
+في بعض الأحيان لا تحتاج إلى عينات من التوزيع المستهدف $p(x)$يجب أن تقيم توقعاتك تحت$p(x)$، و لديك عينات من توزيع مختلف$q(x)$. . .
 
 ```
 Goal: estimate E_p[f(x)] = integral of f(x) * p(x) dx
@@ -143,12 +143,12 @@ Estimator:
   E_p[f(x)] ~ (1/N) * sum(f(x_i) * w(x_i))    where x_i ~ q(x)
 ```
 
-هذا أمر حاسم في التعلم التمهيدي. في PPO (تحسين السياسة القريبة) ، يمكنك جمع المسارات تحت سياسة قديمة pi_old ولكن تريد تحسين سياسة جديدة pi_new. الوزن الأهمية هو pi_new a a) / pi_old a) . PPO يزيل هذه الوزن لمنع السياسة الجديدة من الانحراف بعيدا جدا عن القديمة.
+هذا أمر حاسم في التعلم التمويلي. في PPO (التحسين السياسة القريبة) ، تقوم بتجميع المسارات تحت سياسة قديمة $\pi_{\text{old}}$ولكن يريدون تحسين سياسة جديدة$\pi_{\text{new}}$. الوزن المهم هو$\pi_{\text{new}}(a \mid s) / \pi_{\text{old}}(a \mid s)$ويقلل (بي بي أو) هذه الأوزان لمنع السياسة الجديدة من الانحراف عن السياسة القديمة
 
-يعتمد اختلاف تقدير الأهمية على مدى تشابه q ل p. إذا كان q مختلفًا جدًا عن p ، فإن بعض العينات تحصل على وزنات هائلة وتهيمن على التقدير. يتم تقسيم العينات الأهمية المتطبقة الذاتية بمجموع الوزن لتقليل هذه المشكلة:
+تغير تقدير الأهمية في أخذ العينات يعتمد على مدى شباهته$q$هو ل$p$إذا$q$هو مختلف جدا عن$p$يُقسم أخذ العينات بأهمية ذاتية بمجموع الأوزان لتقليل هذه المشكلة:
 
-```
-E_p[f(x)] ~ sum(w_i * f(x_i)) / sum(w_i)
+```math
+\mathbb{E}_p[f(x)] \approx \frac{\sum_i w_i \, f(x_i)}{\sum_i w_i}
 ```
 
 ### تقدير مونتي كارلو
@@ -186,7 +186,7 @@ Variance of the estimator = Var(f(X)) / N
 
 ### سلسلة ماركوف مونتي كارلو (MCMC): متروبوليس-هستنغز
 
-يقوم MCMC ببناء سلسلة ماركوف التي يكون توزيعها ثابتًا توزيع الهدف p(x. بعد خطوات كافية ، تكون عينات من السلسلة (تقريبًا) عينات من p(x.
+إن المكرسية تقوم ببناء سلسلة ماركوف التي يُعتبر توزيعها ثابت هو توزيعها المستهدف$p(x)$بعد خطوات كافية، يتم أخذ عينات من السلسلة (تقريبًا)$p(x)$. . .
 
 ```
 Target: p(x)  (known up to a normalizing constant)
@@ -205,13 +205,13 @@ Metropolis-Hastings algorithm:
   4. Return remaining samples
 ```
 
-بالنسبة للقترحات التناظرية (q(x' منخفضة) = q(x منخفضة) ، يسهل النسبة إلى p(x') / p(x. هذا هو خوارزمية متروبوليس الأصلية.
+بالنسبة للمقترحات التوافقية $(q(x' \mid x) = q(x \mid x'))$، يسهل النسبة إلى $p(x')/p(x)$هذا هو خوارزمية "ميتروبوليس" الأصلية
 
-**Why it works.**قانون القبول يضمن التوازن التفصيلي: احتمال وجود في x والانتقال إلى x' يساوي احتمال وجود في x' والانتقال إلى x. التوازن التفصيلي يعني أن p ((x) هو التوزيع الثابت للسلسلة.
+**Why it works.**قاعدة القبول تضمن التوازن التفصيلي: احتمال وجود$x$ونتحرك إلى$x'$يساوي احتمال وجودها في$x'$ونتحرك إلى$x$التوازن المفصل يعني أن$p(x)$هو توزيع ثابت للسلسلة.
 
 **Practical considerations:**
 - الحرق: إلقاء العينات المبكرة قبل أن تصل السلسلة إلى التوازن
-- التخفيف: احتفظ بكل عينة ك-ث لتقليل التنسيق الذاتي
+- التثني: احتفظ بكل$k$- العينة الثالثة لتقليل التواصل الذاتي
 - نطاق المقترحات: صغير جداً وتتحرك السلسلة ببطء (قبول كبير، استكشاف بطيء) ؛ كبير جداً ويتم رفض معظم المقترحات (قليل القبول، عالق في مكانه)
 - معدل قبول المثالي لمقترح غوسسي في الأبعاد العالية هو حوالي 0.234
 
@@ -230,7 +230,7 @@ Algorithm:
     Sample x_d^{t+1} ~ p(x_d | x_1^{t+1}, x_2^{t+1}, ..., x_{d-1}^{t+1})
 ```
 
-عينة غيبز تتطلب أن تتمكن من العينة من كل توزيع مشروط p ((x_i √ x_{-i}) هذا بسيط للعديد من النماذج:
+أخذ العينات من (غيبز) يتطلب أن تتمكن من أخذ العينات من كل توزيع مشروط$p(x_i \mid x_{-i})$هذا بسيط بالنسبة للعديد من النماذج
 - شبكات بايزية: تتبع الشروط من هيكل الرسم البياني
 - مخليطات غوسيان: الشروط هي غوسيانية
 - نماذج الإيزينغ: مشروط كل دورة يعتمد فقط على جيرانه
@@ -241,7 +241,7 @@ Algorithm:
 
 ### عينة درجة الحرارة (مستخدمة في الـ LLM)
 
-النماذج اللغوية تنطلق اللوجيتز z_1، ..., z_V لكل رمز في المفردات. تحويل Softmax هذه إلى احتمالات.
+النماذج اللغوية تسجيلات الإخراج $z_1, \ldots, z_V$للكل رمز في المفردات. Softmax تحويل هذه إلى احتمالات.
 
 ```
 p_i = exp(z_i / T) / sum(exp(z_j / T))
@@ -253,20 +253,20 @@ T < 1.0: sharpens the distribution (more confident, less diverse)
 T > 1.0: flattens the distribution (less confident, more diverse)
 ```
 
-**Why it works.**تقسيم اللوجيت بـ T < 1 يضخم الاختلافات بين اللوجيت. إذا z_1 = 2 و z_2 = 1 ، فإن القسم بـ T = 0.5 يعطي z_1/T = 4 و z_2/T = 2 ، مما يجعل الفجوة أكبر. بعد softmax ، يحصل رمز الأعلى من اللوجيت على حصة أكبر بكثير.
+**Why it works.**تقسيم اللوغات$T < 1$يضخم الاختلافات بين اللوجيتات.$z_1 = 2$و$z_2 = 1$، تقسيمها بـ $T = 0.5$يعطي$z_1/T = 4$و$z_2/T = 2$بعد softmax، أعلى علامة التخمين يحصل على حصة أكبر بكثير.
 
 **In practice:**
-- T = 0.0: فك الفاحشة، أفضل للأسئلة والإجابات الفعلية
-- T = 0.3-0.7: مبتكر قليلاً، جيد لتوليد الرمز
-- T = 0.7-1.0: متوازنة، جيدة للحوار العام
-- T = 1.0-1.5: الكتابة الإبداعية، استفجار الأفكار
-- T > 1.5: عشوائية متزايدة، نادرا ما تكون مفيدة
+- $T = 0.0$: تشفير طموح، أفضل للقوال والإجابات الفعلية
+- $T = 0.3\text{-}0.7$: مبتكر قليلاً، جيد لتوليد الرموز
+- $T = 0.7\text{-}1.0$: متوازنة، جيدة للحوار العام
+- $T = 1.0\text{-}1.5$: الكتابة الإبداعية، استفجار الأفكار
+- $T > 1.5$: بشكل متزايد عشوائية، نادرا ما تكون مفيدة
 
 الحرارة لا تغير أي رموز ممكنة. إنها تغير كتلة الاحتمال المخصصة لكل رمزا.
 
 ### عينة من أعلى
 
-يقتصر أخذ العينات من أعلى مستوى على مجموعة المرشحين إلى رموز k ذات أكبر احتمالات، ثم يعيد التطبيع وعينات من تلك المجموعة المقيدة.
+الاختبار العريض يقتصر على المرشح المحدد إلى $k$الوهم مع أعلى احتمالات، ثم تجدد طبيعة ومعينة من تلك مجموعة مقيدة.
 
 ```
 Algorithm:
@@ -281,11 +281,11 @@ k = V:  no filtering (standard sampling)
 k = 40: typical setting, removes long tail of unlikely tokens
 ```
 
-تُمنع (توب-ك) النموذج من اختيار رموز غير محتملة للغاية (التخطيطات، الحماقة) الموجودة في الذيل الطويل لتوزيع المفردات. المشكلة: يتم تحديد (ك) بغض النظر عن السياق. عندما يكون النموذج واثقًا (وهناك رمزاً واحداً لديه احتمال بنسبة 95%) ، لا يزال (ك = 40) يسمح بـ 39 بديلاً. عندما يكون النموذج غير مؤكد (تم توزيع الاحتمال على 1000 رمزاً) ، يقطع (ك = 40) الخيارات المثقة.
+تُمنع (توب-ك) النموذج من اختيار رموز غير محتملة للغاية (خطأ، سخافة) الموجودة في ذيل طويل من توزيع المفردات. المشكلة: $k$يتم تحديدها بغض النظر عن السياق. عندما يكون النموذج واثقًا (وهناك رمز واحد لديه احتمال بنسبة 95%) ، $k = 40$لا يزال يسمح بـ 39 بديلاً. عندما يكون النموذج غير مؤكد (الاحتمال ينشر على 1000 رمز) ، $k = 40$يقطع الخيارات المثيرة للصدق
 
 ### عينة من أعلى (النواة)
 
-يعدل أخذ العينات من أعلى p بشكل ديناميكي حجم مجموعة المرشحين. بدلاً من الاحتفاظ بأعداد ثابتة من الرموز، فإنه يحتفظ بأصغر مجموعة من الرموز التي تتجاوز احتمالها التراكمي p.
+يعدل أخذ العينات من أعلى النقاط بشكل ديناميكي حجم مجموعة المرشحين. بدلاً من الاحتفاظ بأعداد ثابتة من الرموز، فإنه يحتفظ بأصغر مجموعة من الرموز التي تتجاوز احتمالها التراكمي $p$. . .
 
 ```
 Algorithm:
@@ -335,13 +335,13 @@ Reparameterized sampling:
   Gradients flow through mu and sigma.
 ```
 
-هذا يعمل لأن N  mu, sigma^2) لديه نفس التوزيع مثل mu + sigma * N  0, 1). المفهوم الرئيسي: نقل العشوائية إلى مصدر خالي من المعلمات (epsilon) ، ثم تعبير العينة كتحويل قابل للتفريق للمعلمات.
+هذا يعمل لأن$\mathcal{N}(\mu, \sigma^2)$يمتلك نفس التوزيع$\mu + \sigma \cdot \mathcal{N}(0, 1)$. المعلومات الرئيسية: نقل العشوائية إلى مصدر خالي من المعلمات ($\epsilon$ثم تعبر عن العينة كتحويل قابل للتفريق للمعلمات.
 
 **In the VAE training loop:**
-1. إنخراجات المُخترف mu و log ((sigma^2) لكل مدخل
-2. عينة إيبسيلون ~ N(0, 1)
-3. الحساب z = mu + sigma * epsilon
-4. فك تشفير z لإعادة بناء المدخل
+1. خروجيات تشفير$\mu$و$\log(\sigma^2)$لكل مدخل
+2. العينة$\epsilon \sim \mathcal{N}(0, 1)$
+3. الحساب$z = \mu + \sigma \epsilon$
+4. فك الرمز$z$لإعادة بناء المدخل
 5. التنشر إلى الوراء من خلال الخطوات 4، 3، 2، 1 (محتمل لأن الخطوة 3 يمكن تفاصيلها)
 
 بدون خدعة إعادة التقييم، لا يمكن تدريب VAEs مع التنشر الخلفي القياسي. هذه البصيرة الوحيدة جعلت VAEs عملية.
@@ -413,7 +413,7 @@ For piecewise-constant functions, stratified sampling is exact.
 
 ### الاتصال مع نماذج التوزيع
 
-تقوم نماذج الانتشار بتوليد الصور من خلال عملية أخذ العينات. عملية التقدم تضيف ضجيج غوسي إلى صورة على T خطوات حتى يصبح ضجيج نقي. يتعلم العملية العكسية التخفيض، استعادة الصورة الأصلية خطوة بخطوة.
+النماذج التفريغية تولد الصور من خلال عملية أخذ العينات.$T$تتعلم العملية العكسية التخريب، وتستعيد الصورة الأصلية خطوة بخطوة.
 
 ```
 Forward process (known):
@@ -431,7 +431,7 @@ Reverse process (learned):
 
 الارتباط مع الأساليب في هذا الدروس:
 - كل خطوة إعلانية تستخدم خدعة إعادة التقييم (ضوضاء العينات، تطبيق تحويل تحديد)
-- جدول الضوضاء {alpha_t} يسيطر على شكل من أشكال التخفيف في درجة الحرارة
+- جدول الضوضاء$\lbrace \alpha_t \rbrace$يسيطر على شكل من أشكال التخفيف في درجة الحرارة
 - التدريب يستخدم تقدير مونت كارلو لتقريب ELBO (دليل الحد السفلي)
 - أخذ العينات من الأجداد في نماذج التوزيع هو سلسلة ماركوف (كل خطوة تعتمد فقط على الحالة الحالية)
 
@@ -457,7 +457,7 @@ def sample_exponential_inverse_cdf(lam):
     return -math.log(u) / lam
 ```
 
-توليد 10،000 عينات تعريضية وتحقق من المتوسط هو 1/lambda.
+إنشاء 10،000 عينات تعريفة وتحقق من المتوسط هو $1/\lambda$. . .
 
 ### الخطوة الثانية: أخذ العينات من الرفض
 
@@ -484,7 +484,7 @@ def importance_sampling_estimate(f, target_pdf, proposal_pdf, proposal_sample, n
     return total / n
 ```
 
-تقدير E[X^2] تحت التوزيع الطبيعي باستخدام اقتراح موحد. مقارنة مع الإجابة المعروفة (mu^2 + sigma^2).
+تقدير$\mathbb{E}[X^2]$في حالة توزيع طبيعي باستخدام اقتراح موحد.$\mu^2 + \sigma^2$)
 
 ### الخطوة الرابعة: تقدير مونت كارلو لـ pi
 
@@ -642,37 +642,49 @@ print(f"Sampled token index: {token}")
 
 ## التمارين
 
-1. قم بتنفيذ عكس عينة CDF لتوزيع كوشي. يكون CDF F(x) = 0.5 + arctan(x) / pi. قم بتوليد 10,000 عينة و رسم رسم اللوحة النسائية ضد PDF الحقيقي. لاحظ الذيل الثقيل (القييمات المتطرفة بعيدة عن المركز).
+1. تنفيذ عكس عينة CDF للتوزيع كوشي.$F(x) = 0.5 + \arctan(x)/\pi$. توليد 10،000 عينات و رسم رسم اللوحة النسخية ضد PDF الحقيقي. لاحظ الذيل الثقيل (القييمات المتطرفة بعيدا عن المركز).
 
 2. استخدم عينة الرفض لتوليد العينات من توزيع بيتا ((2, 5) باستخدام اقتراح موحد ((0, 1). رسم العينات المقبولة ضد PDF بيتا الحقيقي. ما هو معدل القبول النظري؟
 
-3. تقدير تكامل sin ((x) من 0 إلى pi باستخدام مونت كارلو مع 1,000، 10,000، و 100,000 عينات. مقارنة الخطأ في كل مستوى. التحقق من أن مقياس الخطأ O(1/sqrt(N)).
+3. تقدير الكاملة من $\sin(x)$من 0 إلى $\pi$استخدام مونت كارلو مع 1000، 10000، و100000 عينات. مقارنة الخطأ في كل مستوى. التحقق من أن الخطأ مقياسات مثل$O(1/\sqrt{N})$. . .
 
-4. تنفيذ Metropolis-Hastings لنقل العينات من توزيع ثنائي الأبعاد p ((x, y) متناسبة مع exp ((-(x^2 * y^2 + x^2 + y^2 - 8*x - 8*y) / 2). رسم العينات ومسار السلسلة. التجربة مع مختلف الانحرافات القياسية المقترحة.
+4. تنفيذ Metropolis-Hastings لنقل العينات من توزيع ثنائي الأبعاد $p(x, y)$متناسبة مع$\exp(-(x^2 y^2 + x^2 + y^2 - 8x - 8y) / 2)$- رسم العينات ومسار السلسلة التجربة مع مختلف الانحرافات القياسية المقترحة.
 
 5. قم ببناء عرض كامل لتوليد النص: مع إعطاء المفردات من 10 كلمات مع علامات التسجيل، قم بتوليد تسلسلات من 20 رمز باستخدام (أ) الفلسفة، (ب) درجة الحرارة = 0.7، (ج) أعلى-ك = 3، (د) أعلى-ب = 0.9 . قم بمقارنة تنوع الخروج عبر 5 أداء.
+
+### إشارات
+
+**Exercise 1.**حل$u = F(x)$لـ$x$، مما يعطي$x = \tan(\pi(u - 0.5))$تحقق من أن متوسط العينة قريب من 0 وأن حوالي 6% من العينات لديها$\lvert x \rvert > 10$، وهو$1 - (2/\pi)\arctan(10)$. . .
+
+**Exercise 2.**كثافة بيتا ((2, 5) هي $30x(1-x)^4$. اعثر على أعلى قيمته في وضع$x = 1/5$واستخدم هذا القيمة$M$في`rejection_sample`. معدل قبول النظرية هو$1/M$، لذا قارنه مع جزء من المقترحات التي تقبلينها
+
+**Exercise 3.**القيمة الدقيقة هي 2 اتصل`monte_carlo_integral(math.sin, 0, math.pi, n)`لكل واحد$n$وكرر كل جولة مع عدة بذور$n$ينمو بمعدل 10 ، يجب أن ينخفض متوسط الخطأ بنحو $\sqrt{10} \approx 3.2$. . .
+
+**Exercise 4.**اكتب سجل الهدف، وهو$-(x^2 y^2 + x^2 + y^2 - 8x - 8y)/2$، ومرّها إلى`metropolis_hastings_2d`- سجل معدل قبول كل اقتراح من الانحرافات القياسية: قيمة صغيرة جدا تقبل كل خطوة تقريباً ولكن تتحرك ببطء، وتقبل قيمة كبيرة جداً كل خطوة تقريباً.
+
+**Exercise 5.**تشفير الطمع يأخذ مؤشر أكبر التسجيل في كل خطوة.`temperature_sample`،`top_k_sample`و`top_p_sample`يجب أن يعطي الجشع نفس التسلسل في جميع الرحلات الخمسة، لذلك احتساب التسلسلات المختلفة لكل طريقة لقياس التنوع.
 
 ## الشروط الرئيسية
 
 | Term | What people say | What it actually means |
 |------|----------------|----------------------|
 | Sampling | "Drawing random values" | Generating values according to a probability distribution. The mechanism behind all generative AI |
-| Uniform distribution | "All equally likely" | Every value in [a, b] has equal probability density 1/(b-a). The starting point for all sampling methods |
-| Inverse CDF | "Probability transform" | F_inverse(U) converts a uniform sample into a sample from any distribution with known CDF. Exact and efficient |
+| Uniform distribution | "All equally likely" | Every value in $[a, b]$ has equal probability density $1/(b-a)$. The starting point for all sampling methods |
+| Inverse CDF | "Probability transform" | $F^{-1}(U)$ converts a uniform sample into a sample from any distribution with known CDF. Exact and efficient |
 | Rejection sampling | "Propose and accept/reject" | Generate from a simple proposal, accept with probability proportional to target/proposal ratio. Exact but wastes samples |
-| Importance sampling | "Reweight samples" | Estimate expectations under p(x) using samples from q(x) by weighting each sample by p(x)/q(x). Core to PPO in RL |
-| Monte Carlo | "Average random samples" | Approximate integrals as sample averages. Error O(1/sqrt(N)) regardless of dimension |
+| Importance sampling | "Reweight samples" | Estimate expectations under $p(x)$ using samples from $q(x)$ by weighting each sample by $p(x)/q(x)$. Core to PPO in RL |
+| Monte Carlo | "Average random samples" | Approximate integrals as sample averages. Error $O(1/\sqrt{N})$ regardless of dimension |
 | MCMC | "Random walk that converges" | Construct a Markov chain whose stationary distribution is the target. Metropolis-Hastings is the foundational algorithm |
 | Metropolis-Hastings | "Accept uphill, sometimes downhill" | Propose moves, accept based on density ratio. Detailed balance ensures convergence to target distribution |
 | Gibbs sampling | "One variable at a time" | Update each variable from its conditional distribution holding others fixed. 100% acceptance rate |
-| Temperature | "Confidence knob" | Divides logits by T before softmax. T<1 sharpens (more confident), T>1 flattens (more diverse) |
-| Top-k sampling | "Keep the k best" | Zero out all but the k highest-probability tokens, renormalize, sample. Fixed candidate set size |
-| Nucleus sampling (top-p) | "Keep the probable ones" | Keep the smallest set of tokens whose cumulative probability exceeds p. Adaptive candidate set size |
-| Reparameterization trick | "Move randomness outside" | Write z = mu + sigma * epsilon where epsilon ~ N(0,1). Makes sampling differentiable. Essential for VAE training |
+| Temperature | "Confidence knob" | Divides logits by $T$ before softmax. $T<1$ sharpens (more confident), $T>1$ flattens (more diverse) |
+| Top-k sampling | "Keep the k best" | Zero out all but the $k$ highest-probability tokens, renormalize, sample. Fixed candidate set size |
+| Nucleus sampling (top-p) | "Keep the probable ones" | Keep the smallest set of tokens whose cumulative probability exceeds $p$. Adaptive candidate set size |
+| Reparameterization trick | "Move randomness outside" | Write $z = \mu + \sigma \epsilon$ where $\epsilon \sim \mathcal{N}(0,1)$. Makes sampling differentiable. Essential for VAE training |
 | Gumbel-Softmax | "Soft categorical sampling" | Differentiable approximation to categorical sampling using Gumbel noise + softmax with temperature |
 | Stratified sampling | "Forced coverage" | Divide sample space into strata, sample from each. Always lower variance than naive Monte Carlo |
 | Burn-in | "Warm-up period" | Initial MCMC samples discarded before the chain reaches its stationary distribution |
-| Detailed balance | "Reversibility condition" | p(x) * T(x->y) = p(y) * T(y->x). Sufficient condition for p to be the stationary distribution of a Markov chain |
+| Detailed balance | "Reversibility condition" | $p(x) T(x \to y) = p(y) T(y \to x)$. Sufficient condition for $p$ to be the stationary distribution of a Markov chain |
 | Diffusion sampling | "Iterative denoising" | Generate data by starting from noise and applying learned denoising steps. Each step is a conditional sampling operation |
 
 ## المزيد من القراءة

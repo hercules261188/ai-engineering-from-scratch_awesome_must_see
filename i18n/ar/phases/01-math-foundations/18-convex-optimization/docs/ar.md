@@ -26,7 +26,7 @@
 
 ### مجموعات متواصلة
 
-مجموعة S متواصلة إذا كان لكل نقطتين في S، فإن قطاع الخط بينها يقع أيضاً بالكامل في S.
+مجموعة$S$هو متواصل إذا كان لأي نقطتين في $S$، وقطاع الخط بينهم يقع تماما في$S$. . .
 
 | Convex sets | Not convex |
 |---|---|
@@ -34,12 +34,12 @@
 | **Triangle**: same property holds for all interior points | **Donut/annulus**: the hole means some line segments leave the set |
 | The line segment between any two points stays within the set | The line segment between some pairs of points exits the set |
 
-الاختبار الرسمي: بالنسبة لأي نقاط x و y في S وأي t في [0, 1] ، فإن نقطة tx + (1-t) y هي أيضا في S.
+الاختبار الرسمي: لأي نقطة$x, y$في$S$و أيّة$t \in [0, 1]$، النقطة$tx + (1-t)y$هو أيضا في $S$. . .
 
 أمثلة على مجموعات متواصلة:
-- خط، طائرة، كل R^n
+- خط، طائرة، كل شيء$\mathbb{R}^n$
 - كرة (حلقة، كرة، هائبرسفيرة)
-- نصف مساحة: {x: a^T x <= b}
+- نصف الفضاء:$\lbrace x : a^T x \le b \rbrace$
 - التقاطع لأي عدد من مجموعات الملتوية
 
 أمثلة على مجموعات غير متواصلة:
@@ -49,10 +49,10 @@
 
 ### وظائف متواصلة
 
-وظيفة f متواصلة إذا كانت مجالها مجموعة متواصلة وبالنسبة لأي نقطتين x و y في مجالها وكل t في [0, 1]:
+وظيفة$f$هو متواصل إذا كان مجالها هو مجموعة متواصلة و لأي نقطتين $x, y$في مجالها و أي$t \in [0, 1]$:
 
-```
-f(tx + (1-t)y) <= t*f(x) + (1-t)*f(y)
+```math
+f(tx + (1-t)y) \le t f(x) + (1-t) f(y)
 ```
 
 جغرافيا: القطاع الخطوي بين أي نقطتين على الرسم البياني يقع فوق أو على الرسم البياني.
@@ -64,26 +64,26 @@ f(tx + (1-t)y) <= t*f(x) + (1-t)*f(y)
 | **Local minima** | Every local minimum is the global minimum | Multiple local minima may exist at different heights |
 
 الوظائف الملتوية المشتركة:
-- f(x) = x^2 (المقارنة)
-- f(x) = ‬‬‬‬‬‬‬‬‬‬‬‬‬‬‬‬‬‬‬‬‬‬‬‬‬‬‬‬‬‬‬‬‬‬‬‬‬‬‬‬‬‬‬‬‬‬‬‬‬‬‬‬‬‬‬‬‬‬‬‬‬‬‬‬‬‬‬‬‬‬‬‬‬‬‬‬‬‬‬‬‬‬‬‬‬‬‬‬‬‬‬‬‬‬‬‬‬‬‬‬‬‬‬‬‬‬‬‬‬‬‬‬‬‬‬‬‬‬‬‬‬‬‬‬‬‬‬‬‬‬‬‬‬‬‬‬‬‬‬‬‬‬‬‬‬‬‬‬‬‬‬‬‬‬‬‬‬‬‬‬‬‬‬‬‬‬‬‬‬‬‬‬‬‬‬‬‬‬‬‬‬‬‬‬‬‬‬‬‬‬‬‬‬‬‬‬‬‬‬‬‬‬‬‬‬‬‬‬‬‬‬‬‬‬‬‬‬‬‬‬‬‬‬‬‬‬‬‬‬‬‬‬‬‬‬‬‬‬‬‬‬‬‬‬‬‬‬‬‬‬‬‬‬‬‬‬‬‬‬‬‬‬‬‬‬‬‬‬‬‬‬‬‬‬‬‬‬‬‬‬‬‬‬‬‬‬‬‬‬‬‬‬‬‬‬‬‬‬‬‬‬‬‬‬‬‬‬‬‬‬‬‬‬‬‬‬‬‬‬‬‬‬‬‬‬‬‬‬‬‬‬‬‬‬‬‬‬‬‬‬‬‬‬‬‬‬‬‬‬‬‬‬‬‬‬‬‬‬‬‬‬‬‬‬‬‬‬‬‬‬‬‬‬‬‬‬‬‬‬‬‬‬‬‬‬‬‬‬‬‬‬‬‬‬‬‬‬‬‬‬‬‬‬‬‬‬‬‬‬‬‬‬‬‬‬‬‬‬‬‬‬‬‬‬‬‬‬‬‬‬‬‬‬‬‬‬‬‬‬‬‬‬‬‬‬‬‬‬‬‬‬‬‬‬‬‬‬‬‬‬‬‬‬‬‬‬‬‬‬‬‬‬‬‬‬‬‬‬‬‬‬‬‬‬‬‬‬‬‬‬‬‬‬‬‬‬‬‬‬‬‬‬‬‬
-- f(x) = e^x (معدل)
-- f(x) = max(0, x) (ReLU، على الرغم من قطعة خطية)
-- f(x) = -log(x) لـ x > 0 (سجل سلبي)
-- أي وظيفة خطية f ((x) = a^T x + b (كلاً متواصلة ومعقبة)
+- $f(x) = x^2$(مثل)
+- $f(x) = \lvert x \rvert$(قيمة مطلقة)
+- $f(x) = e^x$(معدل)
+- $f(x) = \max(0, x)$(المركز الرئيسي، على الرغم من قطعة خطية)
+- $f(x) = -\log(x)$لـ$x > 0$(سجل سلبي)
+- أي وظيفة خطية $f(x) = a^T x + b$(ملتوي ومتوت)
 
 ### اختبار التخثر
 
 ثلاثة اختبارات عملية، من أسهل إلى أكثر صرامة.
 
-**Test 1: Second derivative test (1D).**إذا f'(x) >= 0 لجميع x، ثم f هو متواصل.
+**Test 1: Second derivative test (1D).**إذا$f''(x) \ge 0$للجميع$x$، ثم$f$هو مخروط.
 
-- f(x) = x^2: f'(x) = 2 >= 0. مخروط.
-- f(x) = x^3: f''(x) = 6x. سلبي ل x < 0. ليس متواضع.
-- f(x) = e^x: f'(x) = e^x > 0. مخطط.
+- $f(x) = x^2$: $f''(x) = 2 \ge 0$-مُتَوَجِّه
+- $f(x) = x^3$: $f''(x) = 6x$- سلبي$x < 0$ليس مخروطاً
+- $f(x) = e^x$: $f''(x) = e^x > 0$-مُتَوَجِّه
 
-**Test 2: Hessian test (multivariate).**إذا كانت المصفوفة الهسسي H(x) نصف محددة إيجابية لجميع x ، فهي مخففة. المصفوفة الهسسي هي المصفوفة الثانية من المشتقات الجزئية.
+**Test 2: Hessian test (multivariate).**إذا كانت المصفوفة الهسسيّة$H(x)$هو إيجابي نصف محدد للجميع$x$، ثم$f$هو مخروط. هي ماريخ المشتقات الجزئية الثانية.
 
-**Test 3: Definition test.**تحقق من عدم المساواة f(tx + (1-t) y) <= t*f(x) + (1-t) *f(y) مباشرة. مفيد للعملات التي يصعب حساب المشتقات.
+**Test 3: Definition test.**تحقق من عدم المساواة$f(tx + (1-t)y) \le t f(x) + (1-t) f(y)$مباشرة. مفيد للعمل حيث المشتقات صعبة الحساب.
 
 ### لماذا الارتباط مهم
 
@@ -129,20 +129,22 @@ graph LR
 
 ### المصفوفة الهيسي
 
-H H H من وظيفة f: R^n -> R هي المصفوفة n x n من المشتقات الجزئية الثانية.
+الهيسيين $H$من وظيفة $f: \mathbb{R}^n \to \mathbb{R}$هل هو$n \times n$المصفوفة من المشتقات الجزئية الثانية.
 
+```math
+H_{ij} = \frac{\partial^2 f}{\partial x_i \, \partial x_j}
 ```
-H[i][j] = d^2 f / (dx_i dx_j)
-```
 
-بالنسبة f ((x, y) = x^2 + 3xy + y^2:
+لأجل$f(x, y) = x^2 + 3xy + y^2$:
 
-```
-df/dx = 2x + 3y       d^2f/dx^2 = 2      d^2f/dxdy = 3
-df/dy = 3x + 2y       d^2f/dydx = 3      d^2f/dy^2 = 2
-
-H = [ 2  3 ]
-    [ 3  2 ]
+```math
+\begin{gathered}
+\begin{aligned}
+\frac{\partial f}{\partial x} &= 2x + 3y & \frac{\partial^2 f}{\partial x^2} &= 2 & \frac{\partial^2 f}{\partial x \, \partial y} &= 3 \\
+\frac{\partial f}{\partial y} &= 3x + 2y & \frac{\partial^2 f}{\partial y \, \partial x} &= 3 & \frac{\partial^2 f}{\partial y^2} &= 2
+\end{aligned} \\[8pt]
+H = \begin{bmatrix} 2 & 3 \\ 3 & 2 \end{bmatrix}
+\end{gathered}
 ```
 
 "الهيسي" يخبرك عن التوتر:
@@ -151,18 +153,17 @@ H = [ 2  3 ]
 - علامات مختلطة: نقطة السرير (تلتوي في بعض الاتجاهات، وتتوي في بعضها)
 - القيمة الفردية الصفرة: مسطحة في هذا الاتجاه (تدهور)
 
-بالنسبة للخسّة، يجب أن يكون الهيسيّان شبه محدّدًا إيجابيًا (جميع القيم الخاصة >= 0) في كل مكان، وليس فقط في نقطة واحدة.
+لتحقيق التخفيف، يجب أن يكون الهيسيان إيجابي شبه محدد (جميع القيم الخاصة $\ge 0$) في كل مكان، وليس فقط في نقطة واحدة.
 
 ### طريقة نيوتن
 
 يستخدم طريقة نيوتن معلومات من النظام الثاني (الهيسيان). يتناسب مع تقريب مربع في النقطة الحالية ويقفز مباشرة إلى الحد الأدنى من ذلك التربيعي.
 
-```
-Update rule:
-  x_new = x - H^(-1) * gradient
-
-Compare to gradient descent:
-  x_new = x - lr * gradient
+```math
+\begin{aligned}
+\text{Update rule:} \quad & x_{\text{new}} = x - H^{-1} \cdot \text{gradient} \\
+\text{Compare to gradient descent:} \quad & x_{\text{new}} = x - \text{lr} \cdot \text{gradient}
+\end{aligned}
 ```
 
 طريقة نيوتن تحل محل معدل التعلم المتعدد بالهسيان المعاكس. هذا يعدل تلقائيًا حجم الخطوة والاتجاه بناءً على التوتر المحلي.
@@ -190,14 +191,14 @@ graph TD
 - متغير النطاق (يعمل بغض النظر عن كيفية تعريف المشكلة)
 
 الإعاقة:
-- الحسابات الهسسي تكلفة O  n^2) الذاكرة و O  n^3) للعكس
-- بالنسبة لشبكة عصبية ذات 1 مليون وزن، وهذا هو 10^12 إدخالات و 10^18 عمليات
+- حساب التكاليف الهسية $O(n^2)$الذاكرة و$O(n^3)$لتحويل
+- لشبكة عصبية مع مليون وزن، وهذا هو $10^{12}$الإدخالات و$10^{18}$العمليات
 - غير مميز للتعلم العميق
 
 ### التحسين المحدود
 
-التحسين غير المقيد: تقليل f ((x) على جميع x.
-التحسين المحدود: تقليل f ((x) مع مراعاة القيود.
+التحسين غير المقيد: تقليل $f(x)$على كل شيء$x$. . .
+التحسين المحدود: تقليل $f(x)$تخضع لقيود
 
 المشكلة الحقيقية لها قيود تريد تقليل التكلفة ولكن ميزانيتك محدودة تريد تقليل الأخطاء ولكن تعقييد النموذج محدود
 
@@ -216,22 +217,24 @@ graph LR
 
 طريقة مضاعفات لاغرانج تحويل مشكلة مقيدة إلى مشكلة غير مقيدة.
 
-المشكلة: تقليل f ((x) مع حكم g ((x) = 0.
+المشكلة: تقليل$f(x)$تخضع لـ$g(x) = 0$. . .
 
-الحل: إدخال متغير جديد (لامبدا مضاعف لاغرانج) وحل مشكلة غير مقيدة:
+الحل: إدخال متغير جديد (مضاعف لاغرانج $\lambda$) وحل المشكلة غير المحدودة:
 
-```
-L(x, lambda) = f(x) + lambda * g(x)
-```
-
-في الحل، تراجع L هو صفر:
-
-```
-dL/dx = df/dx + lambda * dg/dx = 0
-dL/dlambda = g(x) = 0
+```math
+L(x, \lambda) = f(x) + \lambda g(x)
 ```
 
-الحد الأدنى المحدود، يجب أن يكون تراجع f متوازياً مع تراجع g. إذا لم تكن متوازية، يمكنك التحرك على طول سطح القيود وتقليل f أكثر.
+عند الحل، تراجع $L$هو صفر:
+
+```math
+\begin{aligned}
+\frac{\partial L}{\partial x} &= \frac{\partial f}{\partial x} + \lambda \frac{\partial g}{\partial x} = 0 \\
+\frac{\partial L}{\partial \lambda} &= g(x) = 0
+\end{aligned}
+```
+
+الحد الأدنى المحدود، تراجع $f$يجب أن تكون متوازية مع تراجع القيود $g$إذا لم تكن متوازية، يمكنك التحرك على طول سطح القيود وتقليل$f$-إلى أبعد من ذلك
 
 ```mermaid
 graph LR
@@ -240,39 +243,41 @@ graph LR
     S --- C["At the solution, gradient of f is parallel to gradient of g"]
 ```
 
-مثال: تقليل f ((x,y) = x^2 + y^2 مع عرض x + y = 1.
+مثال: تقليل$f(x,y) = x^2 + y^2$تخضع لـ$x + y = 1$. . .
 
+```math
+\begin{aligned}
+L &= x^2 + y^2 + \lambda(x + y - 1) \\[4pt]
+\frac{\partial L}{\partial x} &= 2x + \lambda = 0 \implies x = -\lambda/2 \\
+\frac{\partial L}{\partial y} &= 2y + \lambda = 0 \implies y = -\lambda/2 \\
+\frac{\partial L}{\partial \lambda} &= x + y - 1 = 0 \\[4pt]
+&\text{From first two: } x = y \\
+&\text{Substituting: } 2x = 1, \text{ so } x = y = 0.5, \ \lambda = -1
+\end{aligned}
 ```
-L = x^2 + y^2 + lambda(x + y - 1)
 
-dL/dx = 2x + lambda = 0  =>  x = -lambda/2
-dL/dy = 2y + lambda = 0  =>  y = -lambda/2
-dL/dlambda = x + y - 1 = 0
-
-From first two: x = y
-Substituting: 2x = 1, so x = y = 0.5, lambda = -1
-```
-
-أقرب نقطة على الخط x + y = 1 إلى الأصل هي (0.5، 0.5).
+أقرب نقطة على الخط$x + y = 1$إلى المنشأ هو $(0.5, 0.5)$. . .
 
 ### شروط الـ KKT
 
 ظروف كاروش-كوهن-توكر تمتد مضاعفات لاجرنج إلى قيود عدم المساواة.
 
-المشكلة: تقليل f  x) تحت ضوء g  i  x) <= 0 بالنسبة i = 1 ، ..., m.
+المشكلة: تقليل$f(x)$تخضع لـ$g_i(x) \le 0$لـ$i = 1, \ldots, m$. . .
 
 ظروف KKT (التي تكون ضرورية لتحقيق التكمل الأمثل):
 
-```
-1. Stationarity:    df/dx + sum(lambda_i * dg_i/dx) = 0
-2. Primal feasibility:  g_i(x) <= 0  for all i
-3. Dual feasibility:    lambda_i >= 0  for all i
-4. Complementary slackness:  lambda_i * g_i(x) = 0  for all i
+```math
+\begin{aligned}
+&\text{1. Stationarity:} && \frac{\partial f}{\partial x} + \sum_i \lambda_i \frac{\partial g_i}{\partial x} = 0 \\
+&\text{2. Primal feasibility:} && g_i(x) \le 0 \quad \text{for all } i \\
+&\text{3. Dual feasibility:} && \lambda_i \ge 0 \quad \text{for all } i \\
+&\text{4. Complementary slackness:} && \lambda_i \, g_i(x) = 0 \quad \text{for all } i
+\end{aligned}
 ```
 
-التباطل التكميلي هو المفهوم الرئيسي: إما أن القيود نشطة (g_i = 0 ، يجلس الحل على الحدود) أو أن المضاعف هو صفر (لا يهم القيود). القيود التي لا تؤثر على الحل لديها lambda = 0.
+التباطل المكمل هو المفهوم الرئيسي: إما أن القيود نشطة ($g_i = 0$، يقع الحل على الحدود) أو المضاعف هو صفر (القيود لا يهم).$\lambda = 0$. . .
 
-ظروف KKT هي مركزية لـ SVM. المتجهات الداعمة هي نقاط البيانات التي يكون فيها القيود نشطًا (lambda > 0). جميع نقاط البيانات الأخرى لها lambda = 0 ولا تؤثر على حدود القرار.
+ظروف كيكت هي المركزية لسي.إف.إم. المتجهات الداعمة هي نقاط البيانات التي يكون فيها القيود نشطا ($\lambda > 0$كل نقاط البيانات الأخرى لديها$\lambda = 0$ولا تؤثر على حدود القرار
 
 ### التنظيم كتحسين محدود
 
@@ -280,25 +285,27 @@ Substituting: 2x = 1, so x = y = 0.5, lambda = -1
 
 **L2 regularization (Ridge):**
 
+```math
+\begin{aligned}
+&\text{minimize } \text{Loss}(w) \text{ subject to } \lVert w \rVert^2 \le t \\[4pt]
+&\text{Equivalent unconstrained form:} \\
+&\text{minimize } \text{Loss}(w) + \lambda \lVert w \rVert^2
+\end{aligned}
 ```
-minimize  Loss(w)  subject to  ||w||^2 <= t
 
-Equivalent unconstrained form:
-minimize  Loss(w) + lambda * ||w||^2
-```
-
-القيود في الاضطرابات <= t يحدد كرة (حلقة في 2D، كرة 3D). الحل هو حيث تلمس خطوط الخسارة هذه الكرة أولا.
+القيود$\lVert w \rVert^2 \le t$يحدد الكرة (حلقة في 2D، كرة في 3D). الحل هو حيث أن خطوط الخسارة تلمس هذه الكرة أولا.
 
 **L1 regularization (LASSO):**
 
+```math
+\begin{aligned}
+&\text{minimize } \text{Loss}(w) \text{ subject to } \lVert w \rVert_1 \le t \\[4pt]
+&\text{Equivalent unconstrained form:} \\
+&\text{minimize } \text{Loss}(w) + \lambda \lVert w \rVert_1
+\end{aligned}
 ```
-minimize  Loss(w)  subject to  ||w||_1 <= t
 
-Equivalent unconstrained form:
-minimize  Loss(w) + lambda * ||w||_1
-```
-
-القيود التي لا يمكن أن تكون لها <= t تعريف الماس (مربع مدرج في 2D).
+القيود$\lVert w \rVert_1 \le t$يحدد الماس (الرابع المدوّر في 2D).
 
 | Property | L2 constraint (circle) | L1 constraint (diamond) |
 |---|---|---|
@@ -315,11 +322,13 @@ minimize  Loss(w) + lambda * ||w||_1
 
 وظيفة لاجرنجية مزدوجة:
 
-```
-Primal: minimize f(x) subject to g(x) <= 0
-Lagrangian: L(x, lambda) = f(x) + lambda * g(x)
-Dual function: d(lambda) = min_x L(x, lambda)
-Dual problem: maximize d(lambda) subject to lambda >= 0
+```math
+\begin{aligned}
+&\text{Primal:} && \text{minimize } f(x) \text{ subject to } g(x) \le 0 \\
+&\text{Lagrangian:} && L(x, \lambda) = f(x) + \lambda g(x) \\
+&\text{Dual function:} && d(\lambda) = \min_x L(x, \lambda) \\
+&\text{Dual problem:} && \text{maximize } d(\lambda) \text{ subject to } \lambda \ge 0
+\end{aligned}
 ```
 
 لماذا الثنائيات مهمة:
@@ -346,7 +355,7 @@ Replace x_i^T x_j with K(x_i, x_j) to get the kernel trick.
 
 **Most local minima are good enough.**في المساحات العالية الأبعاد، النقاط الحرجة العشوائية (حيث يكون التراجع صفر) هي نقاط القيادة بشكل ساحق، وليس الحد الأدنى المحلي. القليل من الحد الأدنى المحلي الموجودة تميل إلى أن يكون لها قيم الخسارة القريبة من الحد الأدنى العالمي. فمن غير المرجح للغاية أن تكون عالقة في الحد الأدنى المحلي الفظيع عندما يكون مساحة المعلمات مليوني أبعاد.
 
-**Saddle points, not local minima, are the real obstacle.**في وظيفة مع n معايير، نقطة السرير لديها مزيج من اتجاهات التوتر الإيجابية والسلبية. بالنسبة لمكانة حرجة عشوائية في أبعاد عالية، فإن احتمال أن تكون جميع القيم الخاصة n إيجابية (الأقل من المحلي) هو حوالي 2 ^ - n. تقريبا جميع النقاط الحرجة هي نقاط السرير. ضجيج SGD يساعد على تفاديهم.
+**Saddle points, not local minima, are the real obstacle.**في وظيفة مع$n$في المعلمات، نقطة السرير لديها مزيج من اتجاهات التوتر الإيجابية والسلبية. بالنسبة لمكان حرج عشوائي في أبعاد عالية، احتمال جميع $n$القيم الخاصة تكون إيجابية (الأدنى المحلي) تقريبًا $2^{-n}$تقريباً كل النقاط الحرجة هي نقاط السرير ضوضاء المراقبة تساعد على الهروب منها
 
 **Overparameterization smooths the landscape.**شبكات ذات ملامح أكثر من أمثلة التدريب لديها أسطح الخسارة أكثر سلاسة، والمزيد من الاتصال. شبكات أوسع لديها أدنى الحد الأدنى المحلي السيئ. هذا غير بديهي ولكن ثابت تجريبيا.
 
@@ -365,21 +374,21 @@ Replace x_i^T x_j with K(x_i, x_j) to get the kernel trick.
 
 طريقة نيوتن النقية غير عملية للنماذج الكبيرة. العديد من التقارير تجعل المعلومات من الدرجة الثانية قابلة للاستخدام.
 
-**L-BFGS (Limited-memory BFGS):**تقترب من الهسسيان العكسي باستخدام آخر m اختلافات تراجيع. يتطلب O(mn) الذاكرة بدلا من O(n^2). يعمل بشكل جيد للمشاكل التي تصل إلى ~ 10,000 ملامح. يستخدم في ML الكلاسيكية (التراجع اللوجستي ، CRFs) ولكن ليس التعلم العميق.
+**L-BFGS (Limited-memory BFGS):**يقترب من الـ Hessian المُعكس باستخدام آخر $m$الاختلافات في التراجع.$O(mn)$الذاكرة بدلاً من$O(n^2)$يعمل بشكل جيد للمشاكل التي تصل إلى ~ 10,000 ملامح. يستخدم في ML الكلاسيكية (التراجع اللوجستي ، CRFs) ولكن ليس التعلم العميق.
 
 **Natural gradient:**يستخدم مصفوفة معلومات فيشر (الهيسيان المتوقع من احتمالات التسجيل) بدلاً من المصفوفة المعتادة. هذا يعطي حساب لجيومétrي توزيعات الاحتمالات. K-FAC (Kronecker-Factored Approximate Curvature) يقترب من مصفوفة فيشر كمنتج كروينكر ، مما يجعلها عملية للشبكات العصبية.
 
-**Hessian-free optimization:**يستخدم التراجع المشترك لحل Hx = g دون أن تشكل H. يتطلب فقط منتجات المتجهة الهسسي، والتي يمكن تحديدها في وقت O ((n) عن طريق التمييز الآلي.
+**Hessian-free optimization:**يستخدم التراجع المشترك لحل$Hx = g$دون أن تتشكل أبداً$H$. فقط يتطلب محولات متجهة هيسيان، والتي يمكن حسابها في $O(n)$الوقت عن طريق التمييز الآلي.
 
 **Diagonal approximations:**اللحظة الثانية لآدم هي تقارب متقطع مع متقطع هيسيان. يمتد AdaHessian هذا باستخدام عناصر متقطع هيسيان الفعلية عبر مقياس هاتشينسون.
 
 | Method | Memory | Per-step cost | When to use |
 |--------|--------|--------------|-------------|
-| Gradient descent | O(n) | O(n) | Baseline, large models |
-| Newton's method | O(n^2) | O(n^3) | Small convex problems |
-| L-BFGS | O(mn) | O(mn) | Medium convex problems |
-| Adam | O(n) | O(n) | Deep learning default |
-| K-FAC | O(n) | O(n) per layer | Research, large-batch training |
+| Gradient descent | $O(n)$ | $O(n)$ | Baseline, large models |
+| Newton's method | $O(n^2)$ | $O(n^3)$ | Small convex problems |
+| L-BFGS | $O(mn)$ | $O(mn)$ | Medium convex problems |
+| Adam | $O(n)$ | $O(n)$ | Deep learning default |
+| K-FAC | $O(n)$ | $O(n)$ per layer | Research, large-batch training |
 
 ```figure
 convex-vs-nonconvex
@@ -516,15 +525,27 @@ print(f"Support vectors: {svm.n_support_}")
 
 ## التمارين
 
-1. **Convexity gallery.**اختبر هذه الوظائف من أجل التخفيف باستخدام المحقق: f(x) = x^4, f(x) = sin(x), f(x,y) = x^2 + y^2, f(x,y) = x*y, f(x) = max(x, 0). شرح لماذا كل نتيجة منطقية.
+1. **Convexity gallery.**اختبر هذه الوظائف لتحديد الارتباط باستخدام المحقق: $f(x) = x^4$،$f(x) = \sin(x)$،$f(x,y) = x^2 + y^2$،$f(x,y) = xy$،$f(x) = \max(x, 0)$اشرح لماذا كل نتيجة لها معنى
 
-2. **Newton vs gradient descent race.**قم بتشغيل كلا الطرق على f ((x,y) = 50*x^2 + y^2 من نقطة البداية (10, 10). كم عدد الخطوات التي تحتاجها كل واحدة لتحقيق الخسارة < 1e-10؟ ماذا يحدث للنحو التنحدر عندما يزداد عدد الحالة (النسبة من أكبر إلى أصغر قيمة خاصة هيسيان) ؟
+2. **Newton vs gradient descent race.**أستخدم كلا الطرقين$f(x,y) = 50x^2 + y^2$من نقطة البداية$(10, 10)$كم خطوة تحتاج كل واحد للوصول إلى الخسارة < 1e-10؟ ماذا يحدث لسقوط التراجع عند زيادة عدد الحالة (النسبة من أكبر إلى أصغر قيمة خاصة هيسسي) ؟
 
-3. **Lagrange multiplier geometry.**الحد الأدنى من f ((x,y) = (x-3)^2 + (y-3)^2 تخضع لـ x + 2y = 4. التحقق من الحل عن طريق التحقق من أن تراجع f متوازيا مع تراجع g في الحل.
+3. **Lagrange multiplier geometry.**تقليل$f(x,y) = (x-3)^2 + (y-3)^2$تخضع لـ$x + 2y = 4$التحقق من الحل عن طريق التحقق من أن تراجع$f$هو متوازي مع تراجع $g$في الحل
 
-4. **Regularization constraint.**تنفيذ تحسين مقيد L1: تقليل (x-3)^2 + (y-2)^2 موضوعًا لـ ‬x ‬ ‬ ‬ ‬ ‬ ‬ ‬ ‬ ‬ ‬ ‬ ‬ ‬ ‬ ‬ ‬ ‬ ‬ ‬ ‬ ‬ ‬ ‬ ‬ ‬ ‬ ‬ ‬ ‬ ‬ ‬ ‬ ‬ ‬ ‬ ‬ ‬ ‬ ‬ ‬ ‬ ‬ ‬ ‬ ‬ ‬ ‬ ‬ ‬ ‬ ‬ ‬ ‬ ‬ ‬ ‬ ‬ ‬ ‬ ‬ ‬ ‬ ‬ ‬ ‬ ‬ ‬ ‬ ‬ ‬ ‬ ‬ ‬ ‬ ‬ ‬ ‬ ‬ ‬ ‬ ‬ ‬ ‬ ‬ ‬ ‬ ‬ ‬ ‬ ‬ ‬ ‬ ‬ ‬ ‬ ‬ ‬ ‬ ‬ ‬ ‬ ‬ ‬ ‬ ‬ ‬ ‬ ‬ ‬ ‬ ‬ ‬ ‬ ‬ ‬ ‬ ‬ ‬ ‬ ‬ ‬ ‬ ‬ ‬ ‬ ‬ ‬ ‬ ‬ ‬ ‬ ‬ ‬ ‬ ‬ ‬ ‬ ‬ ‬ ‬ ‬ ‬ ‬ ‬ ‬ ‬ ‬ ‬ ‬ ‬ ‬ ‬ ‬ ‬ ‬ ‬ ‬ ‬ ‬ ‬ ‬ ‬ ‬ ‬ ‬ ‬ ‬ ‬ ‬ ‬ ‬ ‬ ‬ ‬ ‬ ‬ ‬ ‬ ‬ ‬ ‬ ‬ ‬ ‬ ‬ ‬ ‬ ‬ ‬ ‬ ‬ ‬ ‬ ‬ ‬ ‬ ‬ ‬ ‬ ‬ ‬ ‬ ‬ ‬ ‬ ‬ ‬ ‬ ‬ ‬ ‬ ‬ ‬ ‬ ‬ ‬ ‬ ‬ ‬ ‬ ‬ ‬ ‬ ‬ ‬ ‬ ‬ ‬ ‬ ‬ ‬ ‬ ‬ ‬ ‬ ‬ ‬ ‬ ‬ 
+4. **Regularization constraint.**تنفيذ التحسينات المحدودة لـ L1: تقليل$(x-3)^2 + (y-2)^2$تخضع لـ$\lvert x \rvert + \lvert y \rvert \le 1$. إظهار أن الحل لديه إحداثيات تساوي الصفر (المتناثرة من قيود الماس).
 
 5. **Hessian eigenvalue analysis.**احسب Hessian من وظيفة روزنبروك في (1,1) و (-1,1). احسب القيم الخاصة في كلا النقاط. ماذا تخبرك القيم الخاصة عن التوتر في الحد الأدنى مقابل بعيدا عنه؟
+
+### إشارات
+
+**Exercise 1.**توقع كل نتيجة قبل أن تهرب`check_convexity`: في بعد واحد، انظر إلى علامة$f''(x)$في ابعدين، انظر إلى القيم الخاصة لـ Hessian.$f(x,y) = xy$، والهسسي لديها قيم خاصة 1 و -1, لذلك يجب على المحقق الإبلاغ عن أنه ليس متواضع.
+
+**Exercise 2.**اتصل`optimize_gd`و`newtons_method`مع التراجع والهسسي $f$طريقة نيوتن تحل مربع في خطوة واحدة. لتنزيل التراجع، يجب أن يكون معدل التعلم أقل من $2/100$بسبب$50x^2$المفهوم، لذلك $y$اتجاه يتحرك ببطء. كرر مع $100x^2$و أعد الخطوات مرة أخرى
+
+**Exercise 3.**استخدام`lagrange_solve`مع$g(x,y) = x + 2y - 4$عند الإجابة، تحقق من ذلك$x + 2y = 4$و هذا$\nabla f = (2(x-3), 2(y-3))$هو مضاعف من$\nabla g = (1, 2)$. . .
+
+**Exercise 4.**الحد الأدنى غير المقيد (3, 2) خارج الماس، لذلك الجواب على حدودها. استخدم انخفاض تراجعي مشروع: اتخاذ خطوة تراجعي، ثم إلقاء العودة على $\lvert x \rvert + \lvert y \rvert \le 1$تحقق من أن النتيجة تلبي القيود مع المساواة ومقارنة مع`demo_regularization_geometry`. . .
+
+**Exercise 5.**اتصل`rosenbrock_hessian`في كل نقطة ونقل النتيجة إلى`hessian_eigenvalues_2d`عند (1, 1) ، كل من القيم الخاصة إيجابية ونسبةهم كبيرة جدا، لذلك الوادي ضيق في اتجاه واحد وسط في الآخر. مقارنة هذا النسبة مع النسبة في (-1, 1).
 
 ## الشروط الرئيسية
 
@@ -543,7 +564,7 @@ print(f"Support vectors: {svm.n_support_}")
 | Complementary slackness | At the solution, either a constraint is active or its multiplier is zero. Never both nonzero |
 | Duality | Every constrained problem has a companion dual problem. For convex problems, both have the same optimal value |
 | Strong duality | Primal and dual optimal values are equal. Holds for convex problems satisfying Slater's condition |
-| L-BFGS | Approximate second-order method that stores the last m gradient differences instead of the full Hessian |
+| L-BFGS | Approximate second-order method that stores the last $m$ gradient differences instead of the full Hessian |
 | Saddle point | A point where the gradient is zero but it is a minimum in some directions and a maximum in others |
 | Overparameterization | Using more parameters than training examples. Smooths the loss landscape and reduces bad local minima |
 

@@ -96,7 +96,7 @@ Relative error: 19.2%
 
 هذا هو خطأ نسبي 19% من خصم واحد. في ML، يحدث هذا كلما كنت:
 
-- الحساب المتباينات من البيانات مع متوسط كبير: `E[x^2] - E[x]^2`عندما يكون E[x] كبير
+- الحساب المتباينات من البيانات مع متوسط كبير: $\mathbb{E}[x^2] - \mathbb{E}[x]^2$متى$\mathbb{E}[x]$كبيرة
 - إزالة احتمالات التسجيل المتساوية تقريباً
 - احسب تراجع الفرق المحدودة مع إيبسيلون صغير جدا
 
@@ -141,20 +141,22 @@ log(1e-46) = -inf        (input underflowed to 0, then log(0) = -inf)
 
 الخدعة: خصم القيمة القصوى قبل أن تعبر.
 
-```
-log(sum(exp(x_i))) = max(x) + log(sum(exp(x_i - max(x))))
+```math
+\log\left(\sum_i \exp(x_i)\right) = \max(x) + \log\left(\sum_i \exp(x_i - \max(x))\right)
 ```
 
 لماذا هذا يعمل: بعد الحد `max(x)`، أكبر مؤشر هو`exp(0) = 1`لا يمكن تجاوزها. على الأقل تعبير واحد في الجملة هو 1، لذلك الجملة هي على الأقل 1، و`log(1) = 0`لا تدفق إلى`-inf`هو ممكن.
 
 دليل:
 
-```
-log(sum(exp(x_i)))
-= log(sum(exp(x_i - c + c)))                    (add and subtract c)
-= log(sum(exp(x_i - c) * exp(c)))               (exp(a+b) = exp(a)*exp(b))
-= log(exp(c) * sum(exp(x_i - c)))               (factor out exp(c))
-= c + log(sum(exp(x_i - c)))                    (log(a*b) = log(a) + log(b))
+```math
+\begin{aligned}
+& \log\left(\sum_i \exp(x_i)\right) \\
+&= \log\left(\sum_i \exp(x_i - c + c)\right) && \text{(add and subtract } c\text{)} \\
+&= \log\left(\sum_i \exp(x_i - c) \cdot \exp(c)\right) && (\exp(a+b) = \exp(a) \cdot \exp(b)) \\
+&= \log\left(\exp(c) \cdot \sum_i \exp(x_i - c)\right) && \text{(factor out } \exp(c)\text{)} \\
+&= c + \log\left(\sum_i \exp(x_i - c)\right) && (\log(a \cdot b) = \log(a) + \log(b))
+\end{aligned}
 ```
 
 المجموعة`c = max(x)`ويتم القضاء على الزحام
@@ -170,8 +172,8 @@ log(sum(exp(x_i)))
 
 Softmax تحويل المواقع إلى احتمالات:
 
-```
-softmax(x_i) = exp(x_i) / sum(exp(x_j))
+```math
+\mathop{\mathrm{softmax}}(x_i) = \frac{\exp(x_i)}{\sum_j \exp(x_j)}
 ```
 
 بدون الحيلة، تسبب التسجيلات من [100، 101, 102] التجاوز:
@@ -242,18 +244,18 @@ math.isfinite(x)    # True if x is neither nan nor inf
 
 صيغة الفرق المركزية:
 
-```
-df/dx ~= (f(x + h) - f(x - h)) / (2h)
+```math
+\frac{df}{dx} \approx \frac{f(x + h) - f(x - h)}{2h}
 ```
 
-هذا هو O ((h^2) دقيق، أفضل بكثير من الفرق إلى الأمام `(f(x+h) - f(x)) / h`وهو فقط O(h).
+هذا هو$O(h^2)$دقيق، أفضل بكثير من الفرق إلى الأمام $(f(x+h) - f(x)) / h$الذي هو فقط $O(h)$. . .
 
-اختيار h: كبير جداً و التقريب خاطئ. إلغاء صغير جداً و كارثياً يدمّر الإجابة. `h = 1e-5`إلى`1e-7`هو نموذجي
+الاختيار$h$: كبيرة جداً و التقريب خاطئ. التخليص الصغير جداً و الكارثة يدمّر الإجابة. `h = 1e-5`إلى`1e-7`هو نموذجي
 
 التحقق: حساب الفرق النسبي بين التراجع التحليلي والرقمي.
 
-```
-relative_error = |grad_analytical - grad_numerical| / max(|grad_analytical|, |grad_numerical|, 1e-8)
+```math
+\text{relative\_error} = \frac{\lvert \text{grad}_{\text{analytical}} - \text{grad}_{\text{numerical}} \rvert}{\max(\lvert \text{grad}_{\text{analytical}} \rvert, \lvert \text{grad}_{\text{numerical}} \rvert, 10^{-8})}
 ```
 
 قواعد الإبهام:
@@ -289,7 +291,7 @@ relative_error = |grad_analytical - grad_numerical| / max(|grad_analytical|, |gr
 5. Net effect: same update, but no underflow
 ```
 
-يعدل مقياس الخسارة الديناميكي عامل المقياس تلقائيًا. تبدأ بقيمة كبيرة (65536). إذا تجاوز التدفقات إلى `inf`إذا تمر خطوات N دون تجاوز، اضعفها
+يعدل مقياس الخسارة الديناميكي عامل المقياس تلقائيًا. تبدأ بقيمة كبيرة (65536). إذا تجاوز التدفقات إلى `inf`، نصفها$N$الخطوات تمر دون إفراط، مضاعفة.
 
 ### (bfloat16 vs float16: لماذا (bfloat16) يفوز بالتدريب
 
@@ -350,8 +352,8 @@ Layer 50: values in [0, inf]
 
 التطبيع والتحديثات وإعادة تنشيطات في كل طبقة:
 
-```
-LayerNorm(x) = (x - mean(x)) / (std(x) + epsilon) * gamma + beta
+```math
+\mathop{\mathrm{LayerNorm}}(x) = \frac{x - \mathop{\mathrm{mean}}(x)}{\mathop{\mathrm{std}}(x) + \epsilon} \cdot \gamma + \beta
 ```
 
 - نعم`epsilon`(عادة 1e-5) يمنع الانقسام عن طريق الصفر عندما تكون جميع التفعيلات متطابقة.`gamma`و`beta`دع الشبكة تعيد أي نطاق يحتاجه.
@@ -568,7 +570,7 @@ check_tensor("ugly", [1.0, float('inf'), 3.0])
 
 ## التمارين
 
-1. **Catastrophic cancellation.**احسب التباين [1000000.0، 1000001.0، 1000002.0] باستخدام الصيغة البديلة `E[x^2] - E[x]^2`ثم احسبها باستخدام خوارزمية ويلفورد على الانترنت. مقارنة الأخطاء ضد التباين الحقيقي (0.6667).
+1. **Catastrophic cancellation.**احسب التباين [1000000.0، 1000001.0، 1000002.0] باستخدام الصيغة البديلة $\mathbb{E}[x^2] - \mathbb{E}[x]^2$ثم احسبها باستخدام خوارزمية ويلفورد على الانترنت. مقارنة الأخطاء ضد التباين الحقيقي (0.6667).
 
 2. **Precision hunt.**العثور على أصغر قيمة إيجابية في float32 `x`مثل هذا`1.0 + x == 1.0`هذا هو آلة إيبسيلون، تأكد من أنها تتطابق`numpy.finfo(numpy.float32).eps`. . .
 
@@ -578,17 +580,29 @@ check_tensor("ugly", [1.0, float('inf'), 3.0])
 
 5. **Loss scaling experiment.**محاكاة التدريب مع float16: إنشاء تراجع عشوائي في النطاق [1e-9, 1e-3] ، وتحويل إلى float16 ، وقياس ما هي الكسور التي تصبح صفراً. ثم تطبيق مقياس الخسارة (تضاعف ب 1024) ، وتحويل إلى float16 ، وتقليل مقياسها ، وقياس الكسور الصفر مرة أخرى.
 
+### إشارات
+
+**Exercise 1.**حول القيم الثلاثة مع `np.float32`قبل أن تُربطهم، ثم اتصل`variance_naive`و`welford_variance`قيمة قريبة$10^{12}$في float32 لديه مسافة أكبر بكثير من 1، لذلك تتوقع النتيجة البديلة أن تكون بعيدة عن 0.6667 والنتيجة ويلفورد أن تكون قريبة.
+
+**Exercise 2.**ابدأ بـ`x = np.float32(1.0)`و نصفها بينما `np.float32(1.0) + x != np.float32(1.0)`. احتفظ بكل قيمة في float32 ، ثم مقارنة القيمة الأخيرة التي تغيرت المبلغ مع `numpy.finfo(numpy.float32).eps`، وهو$2^{-23}$. . .
+
+**Exercise 3.**توقع كل إجابة أولاً$n$قيم متساوية $c$النتيجة هي$c + \ln n$. بالنسبة لقيمة كبيرة واحدة، فإن النتيجة قريبة من تلك القيمة. بالنسبة لقيم قريبة من -1000، فإن النتيجة قريبة $-1000 + \ln n$، بينما`logsumexp_naive`العائدات`-inf`لأن كل تعريض ينخفض إلى 0.
+
+**Exercise 4.**لأجل$y = Wx + b$مع خسارة$L$، التراجع ل$W$هو المنتج الخارجي من التدفق الصعودي و $x$. إغلف الخسارة كعمل من المسطح$W$، اتصل`numerical_gradient`، ونقل كلا النتائج إلى`check_gradient`. . .
+
+**Exercise 5.**عينة من الحجم على مقياس سجل مع `10 ** np.random.uniform(-9, -3, n)`ويتحول مع`np.float16`. لا يمكن لـ Float16 أن تبقي القيم أقل من حوالي $6 \times 10^{-8}$، لذلك تتوقع أن يكون حوالي ربع القيم صفر قبل أن تتحكم في الحجم و تقريبا لا بعد أن تضرب 1024
+
 ## الشروط الرئيسية
 
 | Term | What people say | What it actually means |
 |------|----------------|----------------------|
 | IEEE 754 | "The float standard" | International standard defining binary floating point formats, rounding rules, and special values (inf, nan). Every modern CPU and GPU implements it. |
-| Machine epsilon | "The precision limit" | The smallest value e such that 1.0 + e != 1.0 in a given float format. For float32, it is about 1.19e-7. |
+| Machine epsilon | "The precision limit" | The smallest value $e$ such that $1.0 + e \ne 1.0$ in a given float format. For float32, it is about 1.19e-7. |
 | Catastrophic cancellation | "Precision loss from subtraction" | When subtracting nearly equal floating point numbers, significant digits cancel and rounding noise dominates the result. |
 | Overflow | "Number too big" | A result exceeds the maximum representable value and becomes inf. exp(89) overflows float32. |
 | Underflow | "Number too small" | A result is closer to zero than the smallest representable positive number and becomes 0.0. exp(-104) underflows float32. |
-| Log-sum-exp trick | "Subtract the max first" | Computing log(sum(exp(x))) by factoring out exp(max(x)) to prevent overflow and underflow. Used in softmax, cross-entropy, and log-probability math. |
-| Stable softmax | "Softmax that does not explode" | Subtracting max(logits) before exponentiating. Numerically identical result, no overflow possible. |
+| Log-sum-exp trick | "Subtract the max first" | Computing $\log(\sum \exp(x))$ by factoring out $\exp(\max(x))$ to prevent overflow and underflow. Used in softmax, cross-entropy, and log-probability math. |
+| Stable softmax | "Softmax that does not explode" | Subtracting $\max(\text{logits})$ before exponentiating. Numerically identical result, no overflow possible. |
 | Gradient checking | "Verify your backprop" | Comparing analytical gradients from backpropagation against numerical gradients from finite differences to catch implementation bugs. |
 | Mixed precision | "Float16 forward, float32 backward" | Using lower-precision floats for speed-critical operations and higher-precision floats for numerically sensitive operations. Typical speedup is 2-3x. |
 | Loss scaling | "Prevent gradient underflow" | Multiplying the loss by a large constant before backprop so gradients stay in float16's representable range, then dividing by the same constant before weight updates. |
@@ -596,7 +610,7 @@ check_tensor("ugly", [1.0, float('inf'), 3.0])
 | Gradient clipping | "Cap the gradient norm" | Scaling the gradient vector so its norm does not exceed a threshold. Prevents exploding gradients from ruining weights. |
 | NaN | "Not a Number" | Special float value from undefined operations (0/0, inf-inf, sqrt(-1)). Propagates through all subsequent arithmetic. |
 | Inf | "Infinity" | Special float value from overflow or division by zero. Can combine to produce NaN (inf - inf, inf * 0). |
-| Numerical gradient | "Brute force derivative" | Approximating a derivative by evaluating f(x+h) and f(x-h) and dividing by 2h. Slow but reliable for verification. |
+| Numerical gradient | "Brute force derivative" | Approximating a derivative by evaluating $f(x+h)$ and $f(x-h)$ and dividing by $2h$. Slow but reliable for verification. |
 
 ## المزيد من القراءة
 

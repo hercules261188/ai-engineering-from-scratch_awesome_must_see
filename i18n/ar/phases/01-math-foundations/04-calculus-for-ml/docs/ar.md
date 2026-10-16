@@ -9,7 +9,7 @@
 
 ## أهداف التعلم
 
-- محاسبة المشتقات العددية والتحليلية للعملات المشتركة للطاقة المعدنية (x^2, sigmoid, cross-entropy)
+- الحساب المشتقات الرقمية والتحليلية للعملات المشتركة للطاقة المعدنية ($x^2$(التي تُستخدم في التشغيل)
 - تنفيذ انخفاض التدرج من الصفر لتقليل وظيفة الخسارة في 1D و 2D
 - استنباط تراجع النموذج الخطوي وتدريبها عن طريق تحديثات الوزن اليدوية
 - شرح المصفوفة الهسسيّة، مقربات سلسلة تايلور، وربطها بأساليب التحسين
@@ -24,59 +24,58 @@
 
 ### ما هو المشتق؟
 
-المشتقات تقيس معدل التغيير. بالنسبة لـ y = f(x) ، فإن المشتقات f'(x) تخبرك: إذا قمت بتشغيل x بمقدار صغير، كم يغير؟
+المشتقات تقيس معدل التغيير.$y = f(x)$، المشتق$f'(x)$يخبرك: إذا دفعت$x$بكمية صغيرة، كم هو$y$تغيير؟
 
 من الناحية الجيموترية، المشتق هي ميل الخط المتعلق في نقطة.
 
-**f(x) = x^2:**
+**$f(x) = x^2$:**
 
-| x | f(x) | f'(x) (slope) |
+| $x$ | $f(x)$ | $f'(x)$ (slope) |
 |---|------|---------------|
 | 0 | 0    | 0 (flat, at the bottom) |
 | 1 | 1    | 2 |
 | 2 | 4    | 4 (tangent line slope at this point) |
 | 3 | 9    | 6 |
 
-عند x=2، فإن الميل هو 4 إذا حركت x قليلا إلى اليمين، يزيد من حوالي 4 مرات هذا المبلغ. عند x=0، الميل هو 0. أنت في أسفل الصحن.
+في$x=2$، المنحدر هو 4 إذا تحرك$x$قليلاً إلى اليمين$y$يزيد من حوالي أربع مرات هذا المبلغ.$x=0$،المهد هو 0 أنت في أسفل الوعاء.
 
 التعريف الرسمي:
 
-```
-f'(x) = lim   f(x + h) - f(x)
-        h->0  -----------------
-                     h
+```math
+f'(x) = \lim_{h \to 0} \frac{f(x + h) - f(x)}{h}
 ```
 
-في الرمز، تخطي الحد وتستخدم فقط h صغير جدا. هذا هو المشتق الرقمي.
+في الرمز، أنت تخطي الحد و فقط استخدام صغير جدا $h$هذا هو المشتق الرقمي
 
 ### المشتقات الجزئية: متغير واحد في كل مرة
 
 المواد الحقيقية لديها العديد من المدخلات. فقدان الشبكة العصبية يعتمد على آلاف الوزن. المشتق جزئي يحتفظ جميع المتغيرات ثابتة باستثناء واحدة، ثم يأخذ المشتق فيما يتعلق بذلك واحد.
 
-```
-f(x, y) = x^2 + 3xy + y^2
-
-df/dx = 2x + 3y     (treat y as a constant)
-df/dy = 3x + 2y     (treat x as a constant)
+```math
+\begin{aligned}
+f(x, y) &= x^2 + 3xy + y^2 \\[4pt]
+\frac{\partial f}{\partial x} &= 2x + 3y \quad \text{(treat } y \text{ as a constant)} \\
+\frac{\partial f}{\partial y} &= 3x + 2y \quad \text{(treat } x \text{ as a constant)}
+\end{aligned}
 ```
 
 كل مشتق جزئي يجيب: إذا دفعت فقط هذا الوزن واحد، كيف يتغير الخسارة؟
 
 ### المتحدر: متجه لجميع المشتقات الجزئية
 
-الجدار يجمع كل مشتق جزئي إلى متجه واحد. بالنسبة للعمل f ((x، y، z) ، الجدار هو:
+الدرجة الجانبية تجمع كل مشتق جزئي في متجه واحد.$f(x, y, z)$، المرجع هو:
 
-```
-grad f = [ df/dx, df/dy, df/dz ]
+```math
+\nabla f = \left[ \frac{\partial f}{\partial x}, \frac{\partial f}{\partial y}, \frac{\partial f}{\partial z} \right]
 ```
 
 يُحدّد التسلّل في اتجاه صعود أكثر خطورة، لتحقيق الحدّ الأدنى من وظيفة، اذهب في الاتجاه المعاكس.
 
-**Contour plot of f(x,y) = x^2 + y^2:**
+**Contour plot of $f(x,y) = x^2 + y^2$:**
 
 تشكل الوظيفة شكل وعاء مع دائرات مركزة كخطوط شكل. الحد الأدنى هو (0, 0).
 
-| Point | grad f | -grad f (descent direction) |
+| Point | $\nabla f$ | $-\nabla f$ (descent direction) |
 |-------|--------|----------------------------|
 | (1, 1) | [2, 2] (points uphill, away from minimum) | [-2, -2] (points downhill, toward minimum) |
 | (0, 0) | [0, 0] (flat, at the minimum) | [0, 0] |
@@ -85,7 +84,7 @@ grad f = [ df/dx, df/dy, df/dz ]
 
 ### الارتباط مع التحسين
 
-تدريب شبكة عصبية هو تحسين. لديك وظيفة الخسارة L ((w1، w2، ..., wn) التي تقيس مدى خطأ النموذج. تريد تقليل ذلك.
+تدريب شبكة عصبية هو التحسين. لديك وظيفة الخسارة.$L(w_1, w_2, \ldots, w_n)$هذا يُقيس مدى خطأ النموذج.
 
 ```
 Gradient descent update rule:
@@ -102,7 +101,7 @@ For every weight:
 
 **Loss landscape (1D slice):**
 
-تُشكّل وظيفة الخسارة L ((w) منحنى مع القمم والوعيّات مع تغير الوزن w.
+وظيفة الخسارة$L(w)$يشكّل منحنى مع القمم والوعي كوزن $w$يختلف
 
 | Feature | Description |
 |---------|-------------|
@@ -116,9 +115,9 @@ For every weight:
 
 هناك طريقتان لحساب مشتق
 
-التحليلي: تطبيق قواعد الحساب يدويا. بالنسبة f  x) = x^2, المشتق هي f  x) = 2x. بالضبط. سريع.
+التحليلي: تطبيق قواعد الحساب يدويا.$f(x) = x^2$، المشتق هي$f'(x) = 2x$بالضبط، بسرعة
 
-عددي: تقريري باستخدام التعريف. حساب f ((x+h) و f ((x-h) لـ h صغير، ثم استخدام الفرق.
+العدد: تقريري باستخدام التعريف. الحساب $f(x+h)$و$f(x-h)$لفترة صغيرة$h$، ثم استخدم الفرق
 
 ```
 Numerical (central difference):
@@ -148,7 +147,7 @@ f(x) = ln(x)   f'(x) = 1/x     Cross-entropy loss
 f(x) = 1/(1+e^-x)  f'(x) = f(x)(1-f(x))   Sigmoid activation
 ```
 
-بالنسبة f ((x) = x^2:
+لأجل$f(x) = x^2$:
 
 ```
 f(x) = x^2    f'(x) = 2x
@@ -161,7 +160,7 @@ f(x) = x^2    f'(x) = 2x
    2    4       4      slope tilts right (increasing)
 ```
 
-بالنسبة f(w) = wx + b مع x=3، b=1:
+لأجل$f(w) = wx + b$مع$x=3$،$b=1$:
 
 ```
 f(w) = 3w + 1    f'(w) = 3
@@ -189,17 +188,16 @@ Example: y = (3x + 1)^2
 
 المرتفعات تخبرك بالمهد، والحسية تخبرك بالمنعطف
 
-المادية الهسسي هي المصفوفة من المشتقات الجزئية من النظام الثاني. بالنسبة للعمل f ((x1، x2، ..., xn) ، فإن مدخل (i، j) من المادية الهسسي هو:
+المثبتات الجزئية من النظام الثاني هي المصفوفة.$f(x_1, x_2, \ldots, x_n)$, دخول$(i, j)$من الهيسي هو:
 
-```
-H[i][j] = d^2f / (dx_i * dx_j)
+```math
+H_{ij} = \frac{\partial^2 f}{\partial x_i \, \partial x_j}
 ```
 
-لـ 2 متغيرات f ((x، y):
+لـ وظيفة متغيرة$f(x, y)$:
 
-```
-H = | d^2f/dx^2    d^2f/dxdy |
-    | d^2f/dydx    d^2f/dy^2 |
+```math
+H = \begin{bmatrix} \dfrac{\partial^2 f}{\partial x^2} & \dfrac{\partial^2 f}{\partial x \, \partial y} \\[8pt] \dfrac{\partial^2 f}{\partial y \, \partial x} & \dfrac{\partial^2 f}{\partial y^2} \end{bmatrix}
 ```
 
 **What the Hessian tells you at a critical point (where gradient = 0):**
@@ -210,7 +208,7 @@ H = | d^2f/dx^2    d^2f/dxdy |
 | Negative definite (all eigenvalues < 0) | Local maximum | Bowl pointing down |
 | Indefinite (mixed eigenvalues) | Saddle point | Horse saddle shape |
 
-**Example:**f(x, y) = x^2 - y^2 (عمل السرير)
+**Example:** $f(x, y) = x^2 - y^2$(عمل في السرير)
 
 ```
 df/dx = 2x       df/dy = -2y
@@ -223,7 +221,7 @@ Eigenvalues: 2 and -2 (one positive, one negative)
 --> Saddle point at (0, 0)
 ```
 
-مقارنة مع f ((x, y) = x^2 + y^2 (وعاء):
+مقارنة مع$f(x, y) = x^2 + y^2$(قوطة):
 
 ```
 H = | 2  0 |
@@ -237,22 +235,24 @@ Eigenvalues: 2 and 2 (both positive)
 
 تستخدم طريقة نيوتن خطوات التحسين الأفضل من تراجع التراجع. بدلاً من اتباع التنحى فحسب، فإنها تأخذ بعين الاعتبار منحنى:
 
-```
-Newton's update:    w_new = w_old - H^(-1) * gradient
-Gradient descent:   w_new = w_old - lr * gradient
+```math
+\begin{aligned}
+\text{Newton's update:} \quad & w_{\text{new}} = w_{\text{old}} - H^{-1} \cdot \text{gradient} \\
+\text{Gradient descent:} \quad & w_{\text{new}} = w_{\text{old}} - \text{lr} \cdot \text{gradient}
+\end{aligned}
 ```
 
 طريقة نيوتن تتقارب أسرع لأن "إعادة تقييم" هيسيان التدفق -- الاتجاهات الرافية تحصل على خطوات أصغر، الاتجاهات المسطحة تحصل على خطوات أكبر.
 
-المشكلة: لشبكة عصبية مع N المعلمات، هي Hessian N x N. نموذج مع 1 مليون المعلمات سوف تحتاج إلى 1 تريليون مدخل المصفوفة. وهذا هو السبب في أننا نستخدم التقارير.
+الصيد: لشبكة عصبية مع$N$المعلمات، هي Hessian هو$N \times N$نموذج مع مليون ملامح يحتاج إلى 1 تريليون مدخل المصفوفة. لهذا السبب نستخدم التقارير.
 
 | Method | What it uses | Cost | Convergence |
 |--------|-------------|------|-------------|
-| Gradient descent | First derivatives only | O(N) per step | Slow (linear) |
-| Newton's method | Full Hessian | O(N^3) per step | Fast (quadratic) |
-| L-BFGS | Approximate Hessian from gradient history | O(N) per step | Medium (superlinear) |
-| Adam | Per-parameter adaptive rates (diagonal Hessian approx) | O(N) per step | Medium |
-| Natural gradient | Fisher information matrix (statistical Hessian) | O(N^2) per step | Fast |
+| Gradient descent | First derivatives only | $O(N)$ per step | Slow (linear) |
+| Newton's method | Full Hessian | $O(N^3)$ per step | Fast (quadratic) |
+| L-BFGS | Approximate Hessian from gradient history | $O(N)$ per step | Medium (superlinear) |
+| Adam | Per-parameter adaptive rates (diagonal Hessian approx) | $O(N)$ per step | Medium |
+| Natural gradient | Fisher information matrix (statistical Hessian) | $O(N^2)$ per step | Fast |
 
 في الممارسة العملية، آدم هو المحسن الافتراضي للتعلم العميق. إنه يقترب من المعلومات من الدرجة الثانية بأسعار رخيصة عن طريق تتبع المتوسط الجاري وتباين التدرج لكل پیرامتر.
 
@@ -260,17 +260,17 @@ Gradient descent:   w_new = w_old - lr * gradient
 
 يمكن تقريب أي وظيفة سلاسة محليا عن طريق الكتلة:
 
-```
-f(x + h) = f(x) + f'(x)*h + (1/2)*f''(x)*h^2 + (1/6)*f'''(x)*h^3 + ...
+```math
+f(x + h) = f(x) + f'(x)\,h + \frac{1}{2} f''(x)\,h^2 + \frac{1}{6} f'''(x)\,h^3 + \cdots
 ```
 
-كلما تضيف المزيد من المصطلحات، كلما كانت التقريبات أفضل -- ولكن فقط بالقرب من النقطة x.
+كلما تضيف المزيد من المصطلحات، كلما كانت التقارير أفضل -- ولكن فقط بالقرب من النقطة$x$. . .
 
 **Why Taylor series matter for ML:**
 
-- **First-order Taylor = gradient descent.**عندما تستخدم f(x + h) ~ f(x) + f'(x) *h، فإنك تقوم بتقريب خطي. يقلل التنزل التدريجي هذا النموذج الخطي للاختيار h = -lr * f'(x.
+- **First-order Taylor = gradient descent.**عندما تستخدم$f(x + h) \approx f(x) + f'(x) h$إنّك تقوم بتقريب خطيّ، إنّ التنحى التدريجيّ يقلل من هذا النموذج الخطيّ للاختيار$h = -\text{lr} \cdot f'(x)$. . .
 
-- **Second-order Taylor = Newton's method.**باستخدام f(x + h) ~ f(x) + f'(x) *h + (1/2) *f'(x) *h^2 ، تحصل على نموذج مربع. تحد من ذلك يمنح h = -f'(x) / f'(x) -- خطوة نيوتن.
+- **Second-order Taylor = Newton's method.**استخدام$f(x + h) \approx f(x) + f'(x) h + \frac{1}{2} f''(x) h^2$، تحصل على نموذج مربع. تقليل ذلك يعطي$h = -f'(x)/f''(x)$خطوة نيوتن
 
 - **Loss function design.**إن MSE و entropy متسطّة، مما يعني أنّ توسعاتها Taylor تتصرف بشكل جيد. هذه ليست حادثة. الخسائر السلسة تجعل التكيفّيّة قابلة للتنبؤ.
 
@@ -291,28 +291,36 @@ Higher orders          Finer structure     Rarely used in ML
 
 في ML، نادراً ما تقوم بحساب التكاملات يدوياً، لكن المفهوم موجود في كل مكان:
 
-**Probability.**بالنسبة لمتغير عشوائي مستمر مع كثافة p ((x):
+**Probability.**بالنسبة لمتغير عشوائي مستمر مع كثافة $p(x)$:
+
+```math
+P(a < X < b) = \int_a^b p(x) \, dx
 ```
-P(a < X < b) = integral from a to b of p(x) dx
-```
-المساحة تحت منحنى كثافة الاحتمال بين a و b هي احتمال الهبوط في هذا النطاق.
+
+المساحة تحت منحنى كثافة الاحتمال بين $a$و$b$هو احتمال الهبوط في تلك النطاق.
 
 **Expected value.**النتيجة المتوسطة الموزعة بالاحتمال:
+
+```math
+\mathbb{E}[f(X)] = \int f(x) \, p(x) \, dx
 ```
-E[f(X)] = integral of f(x) * p(x) dx
-```
+
 الخسارة المتوقعة على توزيع البيانات هي جزء لا يتجزأ. التدريب يقلل من التقريب التجريبي لهذا.
 
 **KL divergence.**تقيس مدى اختلاف توزيعين:
+
+```math
+\mathrm{KL}(p \,\|\, q) = \int p(x) \log \frac{p(x)}{q(x)} \, dx
 ```
-KL(p || q) = integral of p(x) * log(p(x) / q(x)) dx
-```
+
 يستخدم في VAEs، نزيف المعرفة، والإستنتاج البايسي.
 
 **Normalization constants.**في استنتاج بايزي:
+
+```math
+p(w \mid \text{data}) = \frac{p(\text{data} \mid w) \, p(w)}{\int p(\text{data} \mid w) \, p(w) \, dw}
 ```
-p(w | data) = p(data | w) * p(w) / integral of p(data | w) * p(w) dw
-```
+
 المعاد هو جزء متكامل على جميع قيم المعلمات المحتملة. غالبا ما يكون غير قابلة للتحدي، وهذا هو السبب في أننا نستخدم التقريبات مثل MCMC والإستنتاج المتغير.
 
 | Integral concept | Where it appears in ML |
@@ -353,16 +361,16 @@ graph RL
 
 عندما تقوم وظيفة بتخريط متجه إلى متجه (مثل طبقة شبكة عصبية) ، فإن مشتقها هو المصفوفة. يحتوي جيكوبيان على كل مشتق جزئي لكل خروج فيما يتعلق بكل مدخل.
 
-بالنسبة إلى f: R^n -> R^m، فإن J Jacobian هو ماتريكس m x n:
+لأجل$f: \mathbb{R}^n \to \mathbb{R}^m$، الـ (جاكوبيان)$J$هو$m \times n$المصفوفة:
 
-| | x1 | x2 | ... | xn |
+| | $x_1$ | $x_2$ | ... | $x_n$ |
 |---|---|---|---|---|
-| f1 | df1/dx1 | df1/dx2 | ... | df1/dxn |
-| f2 | df2/dx1 | df2/dx2 | ... | df2/dxn |
+| $f_1$ | $\partial f_1/\partial x_1$ | $\partial f_1/\partial x_2$ | ... | $\partial f_1/\partial x_n$ |
+| $f_2$ | $\partial f_2/\partial x_1$ | $\partial f_2/\partial x_2$ | ... | $\partial f_2/\partial x_n$ |
 | ... | ... | ... | ... | ... |
-| fm | dfm/dx1 | dfm/dx2 | ... | dfm/dxn |
+| $f_m$ | $\partial f_m/\partial x_1$ | $\partial f_m/\partial x_2$ | ... | $\partial f_m/\partial x_n$ |
 
-لن تقوم بحساب الجيكوبيانات يدوياً لشبكات العصبية. يديرها بيتورش. ولكن معرفة وجودها تساعدك على فهم الأشكال في الانتشار الخلفي: إذا كانت الطبقة تقوم بتخطيط R^n إلى R^m، فإن جيكوبيانها m x n. يتدفق التدفق الخلفي عبر نقل هذه المصفوفة.
+لن تقوم بحساب الـ "جاكوبيانز" يدوياً لشبكات عصبية. بيتورش يتعامل معها. لكن معرفة وجودها تساعدك على فهم الأشكال في الانتشار الخلفي: إذا كانت الطبقة تخطيط$\mathbb{R}^n$إلى$\mathbb{R}^m$، هو جاكوبيان هو$m \times n$. التراجع يتدفق إلى الوراء من خلال نقل هذه المصفوفة
 
 ### لماذا هذا مهم للشبكات العصبية
 
@@ -445,7 +453,7 @@ for step in range(20):
     print(f"step {step:2d}  x={x:8.4f}  f(x)={x**2:10.6f}")
 ```
 
-بدءا من x=5، كل خطوة تتحرك أقرب إلى x=0 (الأقل).
+بدءاً من$x=5$كل خطوة تقترب من$x=0$(الأقل)
 
 ### الخطوة الرابعة: انخفاض درجي على وظيفة 2D
 
@@ -531,7 +539,7 @@ for h in [0.1, 0.5, 1.0, 2.0]:
     print(f"h={h:.1f}  sin(h)={true_val:.4f}  order1={t1:.4f}  order2={t2:.4f}")
 ```
 
-قريب من x0=0, sin(x) ~ x (تايلور من الدرجة الأولى). التقريب ممتاز ل h صغير ولكن ينفصل ل h كبير. هذا هو السبب في أن تراجع التراجع يعمل بشكل أفضل مع معدلات التعلم الصغيرة - كل خطوة يفترض التقريب الخطي دقيق.
+قريبة$x_0=0$،$\sin(x) \approx x$(تايلور من الدرجة الأولى) التقريب ممتاز للصغار$h$لكن يتحطم للكبير$h$هذا هو السبب في أن تراجع التراجع يعمل بشكل أفضل مع معدلات التعلم الصغيرة - كل خطوة يفترض التقريب الخطي هو دقيق.
 
 ### الخطوة الثامنة: لماذا هذا مهم لشبكة عصبية
 
@@ -600,9 +608,17 @@ print(f"Learned: y = {w:.2f}x + {b:.2f}")
 
 ## التمارين
 
-1. تنفيذ`numerical_second_derivative(f, x)`استخدام `numerical_derivative`ثاني مشتق من x^3 عند x=2 هو 12.
-2. استخدم نسبة تراجع التراجع لتحديد الحد الأدنى من f ((x, y) = (x - 3) ^ 2 + (y + 1) ^ 2. تبدأ من (0, 0). يجب أن تتحلى الإجابة إلى (3, -1).
-3. إضافة الزخم إلى حلقة هبوط التدرج: الحفاظ على متجه السرعة الذي يتراكم في التدرج السابق. مقارنة سرعة التقارب مع ودون الزخم على f ((x) = x^4 - 3x^2.
+1. تنفيذ`numerical_second_derivative(f, x)`استخدام `numerical_derivative`اتصل مرتين. تحقق من أن المشتق الثاني من $x^3$في$x=2$هو 12
+2. استخدم النزول المتحرك للعثور على الحد الأدنى من$f(x, y) = (x - 3)^2 + (y + 1)^2$ابدأ من$(0, 0)$يجب أن تتحرك الإجابة إلى$(3, -1)$. . .
+3. إضافة الزخم إلى حلقة هبوط التدرج: الحفاظ على متجه السرعة الذي يتراكم في التدرج السابق. مقارنة سرعة التقارب مع ودون الزخم على $f(x) = x^4 - 3x^2$. . .
+
+### إشارات
+
+**Exercise 1.**تعريف المساعد الذي يعود`numerical_derivative(f, x)`ومرّ هذا المساعد إلى`numerical_derivative`مرة أخرى. إذا كان النتيجة ضجة، استخدم خطوة أكبر مثل `h=1e-4`لكلتا الاتصالات .$x=2$يجب أن يكون قريب من 12
+
+**Exercise 2.**اكتب التراجع$(2(x - 3), 2(y + 1))$أو استخدام`numerical_gradient`، و اتصل`gradient_descent_nd`من$(0, 0)$. طبع النقطة كل 10 خطوات ، يجب أن تتحرك نحو$(3, -1)$والخسارة يجب أن تنخفض إلى ما يقرب من 0.
+
+**Exercise 3.**حافظ على السرعة`v`, تحديثها على`v = momentum * v - lr * grad`، ثم أضف`v`إلى`x`. عد الخطوات التي يحتاجها كل طريقة للوصول إلى تراجع قريب من 0 ؛ الحد الأدنى هو $x = \pm\sqrt{1.5} \approx \pm 1.225$. . .
 
 ## الشروط الرئيسية
 
@@ -613,12 +629,12 @@ print(f"Learned: y = {w:.2f}x + {b:.2f}")
 | Gradient | "Direction of steepest ascent" | A vector of all partial derivatives. Points in the direction that increases the function fastest. |
 | Gradient descent | "Go downhill" | Subtract the gradient (times a learning rate) from the parameters to reduce the loss. The core of neural network training. |
 | Learning rate | "Step size" | A scalar that controls how big each gradient descent step is. Too large: diverge. Too small: converge slowly. |
-| Chain rule | "Multiply the derivatives" | The rule for differentiating composed functions: df/dx = df/dg * dg/dx. The mathematical basis of backpropagation. |
+| Chain rule | "Multiply the derivatives" | The rule for differentiating composed functions: $\frac{df}{dx} = \frac{df}{dg} \cdot \frac{dg}{dx}$. The mathematical basis of backpropagation. |
 | Jacobian | "Matrix of derivatives" | When a function maps vectors to vectors, the Jacobian is the matrix of all partial derivatives of outputs with respect to inputs. |
 | Numerical derivative | "Finite differences" | Approximating a derivative by evaluating the function at two nearby points and computing the slope between them. |
 | Backpropagation | "Reverse-mode autodiff" | Computing gradients layer by layer from output to input using the chain rule. How neural networks learn. |
 | Hessian | "Matrix of second derivatives" | The matrix of all second-order partial derivatives. Describes the curvature of a function. Positive definite Hessian at a critical point means local minimum. |
-| Taylor series | "Polynomial approximation" | Approximating a function near a point using its derivatives: f(x+h) ~ f(x) + f'(x)h + (1/2)f''(x)h^2 + ... The basis for understanding why gradient descent and Newton's method work. |
+| Taylor series | "Polynomial approximation" | Approximating a function near a point using its derivatives: $f(x+h) \approx f(x) + f'(x)h + \frac{1}{2}f''(x)h^2 + \cdots$ The basis for understanding why gradient descent and Newton's method work. |
 | Integral | "Area under the curve" | The accumulation of a quantity over a range. In ML, integrals define probabilities, expected values, and KL divergence. |
 
 ## المزيد من القراءة

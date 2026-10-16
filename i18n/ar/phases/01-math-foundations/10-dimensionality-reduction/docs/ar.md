@@ -38,9 +38,9 @@ Dimension    Avg distance ratio (max/min between random points)
 1000         ~1.02
 ```
 
-**Volume concentrates in corners.**إنّه من المفترض أن يكون هناك كوب واحد في أبعاد d لديه زوايا 2^d. في 100 أبعاد، يكون كلّ الحجم تقريباً في الزوايا، بعيداً عن المركز.
+**Volume concentrates in corners.**وحدة هيبروكوب في$d$الأبعاد$2^d$في 100 بعد، كل الكمية تقريباً في الزوايا، بعيدة عن المركز. نقاط البيانات تنتشر إلى الحواف ونماذجك جائعة للبيانات في الداخل.
 
-**You need exponentially more data.**للحفاظ على نفس كثافة العينات في الفضاء، الانتقال من 2D إلى 20D يعني أنك بحاجة إلى 10^18 مرات أكثر من البيانات. أنت لا تملك أبدا ما يكفي. تقليل الأبعاد يعيد كثافة البيانات إلى شيء يمكن العمل عليه.
+**You need exponentially more data.**للحفاظ على نفس كثافة العينات في الفضاء، الذهاب من 2D إلى 20D يعني أنك بحاجة $10^{18}$وذلك في الوقت الذي لا يكون فيه الكثير من البيانات. لا يوجد لديك ما يكفي. تقليل الأبعاد يعيد كثافة البيانات إلى شيء يمكن عمله.
 
 ### الـ "PCA": العثور على الاتجاهات التي تهم
 
@@ -88,7 +88,7 @@ PC4          0.89          0.089              0.925
 
 1. **Threshold.**احتفظ بما يكفي من المكونات لتفسير 90-95% من التباين.
 2. **Elbow method.**-أوضح الخطة التباين لكل عنصر، ابحث عن انقطاع حاد
-3. **Downstream performance.**استخدموا الـ PCA كـ معالجة مسبقة، قموا بتسحيب الـ k وقاس دقة النموذج، أفضل الـ k هو حيثما تكون مستوى الدقة.
+3. **Downstream performance.**استخدموا الـ PCA كـ معالجة مسبقة.$k$ويقيس دقة النموذج الخاص بك.$k$هو أينما كانت المرتفعات الدقة.
 
 ### الحفاظ على الأحياء
 
@@ -101,7 +101,7 @@ PC4          0.89          0.089              0.925
 - مستقيم، أداء مختلف ينتج ترتيب مختلف
 - تعين ملامح الارتباك كم عدد الجيران الذين يجب النظر إليهم (المدى النموذجي: 5-50).
 - المسافات بين المجموعات في الخروج ليست ذات معنى. فقط المجموعات نفسها هي ذات معنى.
-- بطيئة على مجموعات بيانات كبيرة.
+- بطيئة على مجموعات بيانات كبيرة. $O(n^2)$بطبيعة الحال
 
 ### الـ UMAP: هيكل عالمي أسرع وأفضل
 
@@ -135,27 +135,27 @@ PC4          0.89          0.089              0.925
 يطبق PCA في الكرّة PCA في مساحة ميزات عالية الأبعاد التي تُحثّر من خلال وظيفة الكرّة، دون حساب مُباشر للمساويات في تلك المساحة. هذه هي خدعة الكرّة -- نفس الفكرة وراء SVMs.
 
 الخوارزمية:
-1. احسب ماتريكيس النواة K حيث K_ij = k(x_i, x_j)
+1. احسب ماتريسكة النواة$K$أين$K_{ij} = k(x_i, x_j)$
 2. مركز ماتريكيز النواة في مساحة الميزات
 3. Eigendecompose المصفوفة المركزية النواة
-4. العوامل الخاصة العليا (مقياسها بال1 / مربع ((قيمة خاصة)) هي التنبؤات
+4. الجهاز الخاص العلوي (مقياسه ب $1/\sqrt{\text{eigenvalue}}$) هي التوقعات
 
 وظائف النواة المشتركة:
 
 | Kernel | Formula | Good for |
 |--------|---------|----------|
-| RBF (Gaussian) | exp(-gamma * \|\|x - y\|\|^2) | Most nonlinear data, smooth manifolds |
-| Polynomial | (x . y + c)^d | Polynomial relationships |
-| Sigmoid | tanh(alpha * x . y + c) | Neural network-like mappings |
+| RBF (Gaussian) | $\exp(-\gamma \lVert x - y \rVert^2)$ | Most nonlinear data, smooth manifolds |
+| Polynomial | $(x \cdot y + c)^d$ | Polynomial relationships |
+| Sigmoid | $\tanh(\alpha x \cdot y + c)$ | Neural network-like mappings |
 
 متى تستخدم PCA النووية مقابل PCA القياسية:
 
 | Criterion | Standard PCA | Kernel PCA |
 |-----------|-------------|------------|
 | Data structure | Linear subspace | Nonlinear manifold |
-| Speed | O(min(n^2 d, d^2 n)) | O(n^2 d + n^3) |
+| Speed | $O(\min(n^2 d, d^2 n))$ | $O(n^2 d + n^3)$ |
 | Interpretability | Components are linear combinations of features | Components lack direct feature interpretation |
-| Scalability | Works on millions of samples | Kernel matrix is n x n, memory-limited |
+| Scalability | Works on millions of samples | Kernel matrix is $n \times n$, memory-limited |
 | Reconstruction | Direct inverse transform | Requires pre-image approximation |
 
 المثال الكلاسيكي: الدوائر المركزة في 2D. حلقين من النقاط، واحد داخل الآخر. PCA القياسية تنشر كليهما على نفس الخط -- غير مفيد للتصنيف. الكرني PCA مع كرني RBF يرسم الدائرة الداخلية والدائرة الخارجية إلى مناطق مختلفة، مما يجعلها قابلة للفصل بشكل خطي.
@@ -165,22 +165,24 @@ PC4          0.89          0.089              0.925
 كم هو جيد تقليل الأبعاد الخاص بك؟ ضغطت 784 أبعاد إلى 50 ماذا فقدت؟
 
 قياس خطأ إعادة الإعمار:
-1. بيانات المشروع إلى أبعاد k: X_reduced = X @ W_k
-2. إعادة الإعمار: X_hat = X_reduced @ W_k^T
-3. الحساب MSE: متوسط (((X - X_hat) ^2)
+1. بيانات المشروع إلى $k$الأبعاد: $X_{\text{reduced}} = X W_k$
+2. إعادة بناء:$\hat{X} = X_{\text{reduced}} W_k^T$
+3. الحسابات:$\text{mean}((X - \hat{X})^2)$
 
 بالنسبة لـ PCA، فإن خطأ إعادة الإعمار له علاقة نظيفة بالاختلاف الموضح:
 
-```
-Reconstruction error = sum of eigenvalues NOT included
-Total variance = sum of ALL eigenvalues
-Fraction lost = (sum of dropped eigenvalues) / (sum of all eigenvalues)
+```math
+\begin{aligned}
+\text{Reconstruction error} &= \text{sum of eigenvalues NOT included} \\
+\text{Total variance} &= \text{sum of ALL eigenvalues} \\
+\text{Fraction lost} &= \frac{\text{sum of dropped eigenvalues}}{\text{sum of all eigenvalues}}
+\end{aligned}
 ```
 
 نسبة التباين الموضحة لكل مكون هي:
 
-```
-explained_ratio_k = eigenvalue_k / sum(all eigenvalues)
+```math
+\text{explained\_ratio}_k = \frac{\text{eigenvalue}_k}{\sum \text{all eigenvalues}}
 ```
 
 تخطيط التباين التراكمي الموضح ضد عدد المكونات يعطيك منحنى "المقدمة".
@@ -188,7 +190,7 @@ explained_ratio_k = eigenvalue_k / sum(all eigenvalues)
 - يتجاوز التباين التراكمي عتبة (عادة 0.90 أو 0.95)
 - مستوى أداء المهام في النهر
 
-خطأ إعادة الإعمار مفيد أكثر من اختيار k. يمكنك استخدامه للكشف عن الطرفين: العينات التي لديها خطأ إعادة الإعمار مرتفع هي غير متساوية لا تناسب الفضاء الفرعي المكتشف. هذه هي أساس الكشف عن الطرفين القائم على PCA في أنظمة الإنتاج.
+خطأ إعادة الإعمار مفيد أكثر من اختيار$k$يمكنك استخدامها للكشف عن الانحرافات: العينات ذات خطأ إعادة التكوين مرتفع هي منخفضة التي لا تناسب الفضاء الفرعي المتعلم. هذا هو أساس الكشف عن الانحرافات القائمة على PCA في أنظمة الإنتاج.
 
 ```figure
 pca-axes
@@ -353,6 +355,14 @@ for k in [10, 30, 50, 100, 200]:
 
 3. خذ مجموعة بيانات ذات 50 ميزة حيث 5 فقط من المعلومات (إنشاء واحدة مع `sklearn.datasets.make_classification`تطبيق PCA وتحقق من ما إذا كان منحنى التباين الموضح يحدد بشكل صحيح أن البيانات هي فعلياً خمسة أبعاد.
 
+### إشارات
+
+**Exercise 1.**اقرأ`inverse_transform`في`PCA`فئة و تناسب نموذج واحد لكل عدد من المكونات.`reconstruction_error`للصيغ 10، 50 و 200، يجب أن ينخفض الخطأ مع نمو عدد المكونات.
+
+**Exercise 2.**مناسبة`sklearn.manifold.TSNE`ثلاث مرات على نفس الجمع الفرعي ، تغير فقط `perplexity`، واستخدم نفسها`random_state`. الارتباك المنخفض ينظر إلى عدد قليل من الجيران، لذلك توقع مجموعات صغيرة ضيقة؛ الارتباك الكبير ينظر إلى المزيد من الجيران، لذلك توقع مجموعات أكبر، أكثر سلاسة.
+
+**Exercise 3.**اتصل`make_classification(n_features=50, n_informative=5, n_redundant=45)`، مناسبة`PCA`وطباعة التباين التراكمي الموضح. الميزات الزائدة هي مزيجات خطية من المعلومات، لذلك ال منحنى يصل إلى ما يقرب من 1.0 في 5 مكونات. ثم حاول `n_redundant=0`: الـ45 الخصائص الأخرى هي ضوضاء مستقلة، والحرف لا يسطح.
+
 ## الشروط الرئيسية
 
 | Term | What people say | What it actually means |
@@ -360,8 +370,8 @@ for k in [10, 30, 50, 100, 200]:
 | Curse of dimensionality | "Too many features" | Distances, volumes, and data density all behave counterintuitively as dimensions grow. Models need exponentially more data to compensate. |
 | PCA | "Reduce dimensions" | Rotate your coordinate system so the axes align with the directions of maximum variance, then drop the low-variance axes. |
 | Principal component | "An important direction" | An eigenvector of the covariance matrix. The direction in feature space along which the data varies most. |
-| Explained variance ratio | "How much info this component has" | The fraction of total variance captured by one principal component. Sum the top k ratios to see how much k components preserve. |
-| Covariance matrix | "How features correlate" | A symmetric matrix where entry (i,j) measures how feature i and feature j move together. Diagonal entries are individual variances. |
+| Explained variance ratio | "How much info this component has" | The fraction of total variance captured by one principal component. Sum the top $k$ ratios to see how much $k$ components preserve. |
+| Covariance matrix | "How features correlate" | A symmetric matrix where entry $(i,j)$ measures how feature $i$ and feature $j$ move together. Diagonal entries are individual variances. |
 | t-SNE | "That cluster plot" | A nonlinear method that maps high-dimensional data to 2D by preserving pairwise neighborhood probabilities. Good for visualization, not for preprocessing. |
 | UMAP | "Faster t-SNE" | A nonlinear method based on topological data analysis. Preserves both local and some global structure. Scales better than t-SNE. |
 | Perplexity | "A t-SNE knob" | Controls the effective number of neighbors each point considers. Low perplexity focuses on very local structure. High perplexity captures broader patterns. |

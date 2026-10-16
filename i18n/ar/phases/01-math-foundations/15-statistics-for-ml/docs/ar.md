@@ -44,7 +44,7 @@ Mode:   most frequent value
         Useful for categorical data. For continuous data, rarely informative.
 ```
 
-متوسط هو نقطة التوازن. متوسط هو علامة نصف الطريق. عندما تختلف، يتم تحويل التوزيع الخاص بك. توزيع الدخل لديه متوسط >> المتوسط (التوجه اليميني من المليارديرين). توزيع الخسائر أثناء التدريب غالبا ما يكون متوسط << المتوسط (التوجه اليسرى من عينات سهلة).
+المتوسط هو نقطة التوازن المتوسط هو علامة نصف الطريق عندما تختلف توزيعك مشوه توزيع الدخل لديه$\text{mean} \gg \text{median}$(الجهة اليمنى من المليارديرات) توزيع الخسائر أثناء التدريب غالبا ما يكون$\text{mean} \ll \text{median}$(الجهة اليسرى من عينات سهلة).
 
 **Measures of spread**الإجابة على "كم توزيع البيانات؟"
 
@@ -75,14 +75,16 @@ For latency monitoring:
 
 في ML، تهتم بالرسومات للتخفيف من الإستنتاج، وتوزيعات الثقة التنبؤية، وتوزيعات الخطأ الفهمية. قد يكون نموذجًا ذو متوسط ضئيل ولكن خطأ P99 رهيب غير مفيد للتطبيقات الحرجة للسلامة.
 
-**Sample vs population statistics.**عند حساب التباين من عينة، قم بتقسيم (n-1) بدلاً من (n-1). هذا تصحيح بيسل. فإنه يعوض عن حقيقة أن متوسط عينتك ليس متوسط السكان الحقيقي. مع n في المسمي، فإنك تقليل التباين الحقيقي بشكل منهجي. مع (n-1) ، التقدير غير متحيز.
+**Sample vs population statistics.**عند حساب التباين من عينة، تقسيمها ب $(n-1)$بدلاً من$n$هذا تصحيح (بيسل) ، إنه يعوض حقيقة أن متوسط العينة ليس متوسط السكان الحقيقي$n$في المُعادل، أنت تقليل بشكل منهجي التباين الحقيقي.$(n-1)$، التقدير غير متحيز
 
-```
-Population variance: sigma^2 = (1/N) * sum((x_i - mu)^2)
-Sample variance:     s^2     = (1/(n-1)) * sum((x_i - x_bar)^2)
+```math
+\begin{aligned}
+\text{Population variance:} \quad \sigma^2 &= \frac{1}{N} \sum (x_i - \mu)^2 \\
+\text{Sample variance:} \quad s^2 &= \frac{1}{n-1} \sum (x_i - \bar{x})^2
+\end{aligned}
 ```
 
-في الممارسة العملية: إذا كان n كبيرًا (ألف عينات) ، فإن الفرق ضئيل. إذا كان n صغيرًا (عشرات العينات) ، فهو مهم.
+في الممارسة العملية: إذا$n$إذا كان حجمها كبير (ألف عينة) ، فإن الفرق ضئيل.$n$هو صغير (العشرات من العينات) ، هو مهم.
 
 ### التواصل: كيف تتحرك المتغيرات معًا
 
@@ -100,7 +102,7 @@ r =  0:  no linear relationship (but there might be a nonlinear one!)
 Range: [-1, 1]
 ```
 
-يفترض بيرسون أن العلاقة خطية وكلا المتغيرات موزعة بشكل طبيعي تقريبًا. هو حساسًا للمخالفات. نقطة متطرفة واحدة يمكن أن تسحب r من 0.1 إلى 0.9.
+يفترض بيرسون أن العلاقة خطية وكلا المتغيرات موزعة بشكل طبيعي تقريبًا. هو حساسًا للمخالفات. نقطة متطرفة واحدة يمكن أن تسحب$r$من 0.1 إلى 0.9.
 
 **Spearman rank correlation**تدابير الربط المتوحد:
 
@@ -139,7 +141,7 @@ Cov(X, Y) < 0:  when X increases, Y tends to decrease
 Cov(X, Y) = 0:  no linear co-movement
 ```
 
-بالنسبة لميزات d، فإن المصفوفة C هي المصفوفة d x d حيث C[i][j] = Cov(feature_i، feature_j). الإدخالات المقطعية C[i][i] هي المتغيرات لكل ميزة.
+لأجل$d$الميزات، المصفوفة التغيرات $C$هو$d \times d$المصفوفة حيث $C[i][j] = \mathop{\mathrm{Cov}}(\text{feature}_i, \text{feature}_j)$. إدخالات الأفقية$C[i][i]$هي اختلافات كل سمة.
 
 ```
 C = | Var(x1)      Cov(x1,x2)  Cov(x1,x3) |
@@ -155,7 +157,7 @@ Properties:
 
 **Connection to PCA.**يجمع PCA نفسه المصفوفة التباينية. المتجهات الخاصة هي المكونات الرئيسية (اتجاهات أقصى اختلاف). القيم الخاصة تخبرك كم التباينية التي يتقاطعها كل مكون. هذا بالضبط ما تغطيه الدروس 10 ، ولكن الآن ترى لماذا هو المصفوفة التباينية هو الشيء الصحيح للتفكك: فهو يرمز جميع العلاقات الخطية المتزاوجة في بياناتك.
 
-**Connection to correlation.**المصفوفة التواصل هي المصفوفة التواصلية المتغيرات المعيارية (كل منها مقسمة عن طريق انحرافها القياسي). التواصل يطبق التواصلية بحيث تسقط جميع القيم في [-1, 1].
+**Connection to correlation.**المصفوفة التواصل هي المصفوفة التواصلية المتغيرات المعيارية (كل منها مقسمة عن طريق انحرافها القياسي).$[-1, 1]$. . .
 
 ### اختبار الفرضية
 
@@ -205,10 +207,11 @@ is a 95% probability the true mean is in this specific interval.
 
 **One-sample t-test:**هل متوسط السكان مختلف عن القيمة المفترضة؟
 
-```
-t = (x_bar - mu_0) / (s / sqrt(n))
-
-degrees of freedom = n - 1
+```math
+\begin{aligned}
+t &= \frac{\bar{x} - \mu_0}{s / \sqrt{n}} \\[4pt]
+\text{degrees of freedom} &= n - 1
+\end{aligned}
 ```
 
 **Two-sample t-test (independent):**هل المجموعتين تعنيان مختلفان؟
@@ -297,19 +300,20 @@ engineering cost of deploying a new model.
 
 **Effect size**يحدد مقدار الفرق، بغض النظر عن حجم العينة:
 
-```
-Cohen's d = (mean_1 - mean_2) / pooled_std
-
-d = 0.2:  small effect
-d = 0.5:  medium effect
-d = 0.8:  large effect
+```math
+\begin{aligned}
+\text{Cohen's } d &= \frac{\text{mean}_1 - \text{mean}_2}{\text{pooled\_std}} \\[4pt]
+d &= 0.2: \quad \text{small effect} \\
+d &= 0.5: \quad \text{medium effect} \\
+d &= 0.8: \quad \text{large effect}
+\end{aligned}
 ```
 
 دائماً أبلغ كل من قيمة p وحجم التأثير. قيمة p تخبرك إذا كان الفرق حقيقي. حجم التأثير يخبرك إذا كان يهم.
 
 ### مشكلة مقارنة متعددة
 
-عندما تختبر العديد من الفرضيات، بعضها سيكون "مهم" بالصدفة. إذا اختبرت 20 شيء عند ألفا = 0.05, تتوقع 1 إيجابية كاذبة حتى عندما لا شيء حقيقي.
+عندما تختبر العديد من الفرضيات، بعضها سيكون "مهم" بالصدفة.$\alpha = 0.05$، أنت تتوقع 1 إيجابية كاذبة حتى عندما لا شيء حقيقي.
 
 ```
 P(at least one false positive) = 1 - (1 - alpha)^m
@@ -320,7 +324,7 @@ P(false positive) = 1 - 0.95^20 = 0.64
 You have a 64% chance of at least one false positive.
 ```
 
-**Bonferroni correction:**تقسيم ألفا على عدد الاختبارات
+**Bonferroni correction:**تقسيم$\alpha$من خلال عدد الاختبارات
 
 ```
 Adjusted alpha = alpha / m = 0.05 / 20 = 0.0025
@@ -417,11 +421,11 @@ Kruskal-Wallis:     compares multiple groups (replaces ANOVA)
 - More statistical power (better at detecting real differences)
 ```
 
-في تجارب ML، عادة ما يكون لديك n صغيرة (5 أو 10 طوابق التحقق المتقاطع) ، لذلك الاختبارات غير المعلمية مثل Wilcoxon الموقع المرتبة غالبا ما تكون أكثر ملاءمة من الاختبارات t.
+في تجارب ML، عادة ما يكون لديك صغيرة $n$(مختبرات التحقق من الصلاحية المتقاطعة 5 أو 10 مرات) ، لذلك غالبا ما تكون الاختبارات غير المعلمية مثل الاختبارات الموقعة لـ Wilcoxon أكثر ملاءمة من الاختبارات التالية.
 
 ### نظرية الحد المركزي: الآثار العملية
 
-ويقول CLT أن توزيع العينات يقترب من توزيع طبيعي مع نمو n، بغض النظر عن توزيع السكان الأساسي.
+ويقول المكتب التنفيذي للعمليات أن توزيع العينات يقترب من توزيع طبيعي$n$ينمو، بغض النظر عن التوزيع الأساسي للسكان.
 
 ```
 If X_1, X_2, ..., X_n are iid with mean mu and variance sigma^2:
@@ -473,7 +477,7 @@ For highly skewed distributions, you might need n >= 100.
 
 9. **Assuming independence when data is not independent.**صور طبية من نفس المريض، جمل عدة من نفس الوثيقة.
 
-10. **P-hacking.**تجربة اختبارات مختلفة أو مجموعات فرعية أو معايير استبعاد حتى تحصل على p < 0.05. النتيجة هي أثرية للبحث.
+10. **P-hacking.**تجربة اختبارات مختلفة، مجموعات فرعية، أو معايير الإقصاء حتى تحصل$p < 0.05$النتيجة هي أثرية من البحث
 
 ## بناءها
 
@@ -484,7 +488,7 @@ For highly skewed distributions, you might need n >= 100.
 3. **Hypothesis tests**(اختبار الـ T من عينة واحدة، اختبار الـ T من عينتين، اختبار الـ Chi-squared)
 4. **Bootstrap confidence intervals**(لمعرفة أي إحصاءات، لا حاجة إلى افتراضات)
 5. **A/B test simulator**(إنتاج البيانات، واختبار، التحقق من أخطاء النوع الأول والنوع الثاني)
-6. **Statistical vs practical significance demo**(ويعرض أن n الكبير يجعل كل شيء "مهم")
+6. **Statistical vs practical significance demo**(تظهر ذلك الكبير $n$يجعل كل شيء "مهمة")
 
 كل شيء من الصفر، باستخدام فقط`math`و`random`لا شقق ولا شقق
 
@@ -501,7 +505,7 @@ f3-bootstrap-resample
 | Standard deviation | Square root of variance. Measures spread in original units. |
 | Percentile | Value below which a given percentage of data falls. |
 | IQR | Interquartile range. Q3 minus Q1. The spread of the middle 50%. |
-| Pearson correlation | Measures linear association between two variables. Range [-1, 1]. |
+| Pearson correlation | Measures linear association between two variables. Range $[-1, 1]$. |
 | Spearman correlation | Measures monotonic association using ranks. |
 | Covariance matrix | Matrix of pairwise covariances between all features. |
 | Null hypothesis | Default assumption of no effect or no difference. |

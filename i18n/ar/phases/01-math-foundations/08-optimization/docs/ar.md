@@ -38,8 +38,8 @@ minimize L(w) where:
 
 أسهل محفزات. حساب تراجع الخسارة فيما يتعلق بكل وزن. تحريك كل وزن في الاتجاه المعاكس لتراجعها. مقياس الخطوة من خلال معدل التعلم.
 
-```
-w = w - lr * gradient
+```math
+w = w - \text{lr} \cdot \text{gradient}
 ```
 
 هذا هو الخوارزمية بأكملها خط واحد
@@ -94,9 +94,11 @@ graph LR
 
 ينظر نزول تراجع نسبة الفانيلا فقط إلى تراجع الحالي. إذا كان تراجع الزيغزاج (شائع في الوادي الضيقة) ، فإن التقدم بطيء. يصلح الزخم هذا عن طريق تراكم تراجع الماضي في معنى السرعة.
 
-```
-v = beta * v + gradient
-w = w - lr * v
+```math
+\begin{aligned}
+v &= \beta \cdot v + \text{gradient} \\
+w &= w - \text{lr} \cdot v
+\end{aligned}
 ```
 
 التشابه: كرة تتدحرج أسفل التلال. لا تتوقف وتبدأ مرة أخرى في كل ضربة. إنها تبني السرعة في اتجاهات متسقة وتخفف التذبذب.
@@ -124,17 +126,17 @@ graph TD
 
 آدم (تقدير اللحظة التكيفية) يتتبع شيئين لكل وزن:
 
-1. اللحظة الأولى (م): المتوسط الجاري للمحافظات (مثل الزخم)
-2. اللحظة الثانية (v): المتوسط الجاري للمراحل المربعة (حجم المراحل)
+1. اللحظة الأولى ($m$): متوسط متسارع للدرجات (مثل الزخم)
+2. اللحظة الثانية ($v$): متوسط الجاري من التراجعين في المربع (حجم التراجع)
 
-```
-m = beta1 * m + (1 - beta1) * gradient
-v = beta2 * v + (1 - beta2) * gradient^2
-
-m_hat = m / (1 - beta1^t)    bias correction
-v_hat = v / (1 - beta2^t)    bias correction
-
-w = w - lr * m_hat / (sqrt(v_hat) + epsilon)
+```math
+\begin{aligned}
+m &= \beta_1 \cdot m + (1 - \beta_1) \cdot \text{gradient} \\
+v &= \beta_2 \cdot v + (1 - \beta_2) \cdot \text{gradient}^2 \\[4pt]
+\hat{m} &= m / (1 - \beta_1^t) \quad \text{bias correction} \\
+\hat{v} &= v / (1 - \beta_2^t) \quad \text{bias correction} \\[4pt]
+w &= w - \text{lr} \cdot \hat{m} / (\sqrt{\hat{v}} + \epsilon)
+\end{aligned}
 ```
 
 التقسيم من قبل`sqrt(v_hat)`والوزن ذو تراجعات كبيرة يتم تقسيمه بأعداد كبيرة (خطوة فعالة صغيرة). والوزن ذو تراجعات صغيرة يتم تقسيمه بأعداد صغيرة (خطوة فعالة كبيرة). كل وزن يحصل على معدل تعلمه التكيفي الخاص به.
@@ -149,14 +151,14 @@ w = w - lr * m_hat / (sqrt(v_hat) + epsilon)
 
 | Schedule | Formula | Use case |
 |----------|---------|----------|
-| Step decay | lr = lr * factor every N epochs | Simple, manual control |
-| Exponential decay | lr = lr_0 * decay^t | Smooth reduction |
-| Cosine annealing | lr = lr_min + 0.5 * (lr_max - lr_min) * (1 + cos(pi * t / T)) | Transformers, modern training |
+| Step decay | $\text{lr} = \text{lr} \cdot \text{factor}$ every $N$ epochs | Simple, manual control |
+| Exponential decay | $\text{lr} = \text{lr}_0 \cdot \text{decay}^t$ | Smooth reduction |
+| Cosine annealing | $\text{lr} = \text{lr} _{\min} + 0.5 \cdot (\text{lr} _{\max} - \text{lr} _{\min}) \cdot (1 + \cos(\pi t / T))$ | Transformers, modern training |
 | Warmup + decay | Linear ramp up, then decay | Large models, prevents early instability |
 
 ### الملتوية مقابل غير الملتوية
 
-وظيفة متواصلة لديها الحد الأدنى. التراجع التدريجي دائما يجد ذلك.`f(x) = x^2`هو مخروط.
+وظيفة متواصلة لديها الحد الأدنى. التراجع التدريجي دائما يجد ذلك.$f(x) = x^2$هو مخروط.
 
 وظائف فقدان الشبكة العصبية غير متواصلة. لديها العديد من الحد الأدنى المحليين ، نقاط القيادة ، والمناطق السطحية.
 
@@ -205,8 +207,8 @@ gradient-descent
 
 وظيفة روزنبروك هي مقياس تحسين كلاسيكي. يقع الحد الأدنى عند (1, 1) داخل وادي منحني ضيق يسهل العثور عليه ولكن من الصعب اتباعه.
 
-```
-f(x, y) = (1 - x)^2 + 100 * (y - x^2)^2
+```math
+f(x, y) = (1 - x)^2 + 100 \cdot (y - x^2)^2
 ```
 
 ```python
@@ -351,9 +353,19 @@ scheduler = torch.optim.lr_scheduler.CosineAnnealingLR(adam, T_max=100)
 
 2. **Momentum comparison.**قم بتشغيل SGD مع قيم الزخم [0.0، 0.5، 0.9، 0.99] على وظيفة روزنبروك. تتبع الخسارة في كل خطوة. أي قيمة الزخم تتقارب أسرع؟ أي تخطي؟
 
-3. **Saddle point escape.**تحديد الوظيفة `f(x, y) = x^2 - y^2`(نقطة السرير في الأصل). تبدأ من (0.01, 0.01). مقارن كيف يتصرف الفانيليا GD، SGD مع الزخم، و آدم. أي يفر من نقطة السرير؟
+3. **Saddle point escape.**تحديد الوظيفة $f(x, y) = x^2 - y^2$(نقطة السرير في الأصل). تبدأ من (0.01, 0.01). مقارن كيف يتصرف الفانيليا GD، SGD مع الزخم، و آدم. أي يفر من نقطة السرير؟
 
 4. **Implement learning rate decay.**إضافة جدول للتحلل المتعرض للفئة GradientDescent: `lr = lr_0 * 0.999^step`مقارنة التقارب مع ودون التدهور على وظيفة روزنبروك.
+
+### إشارات
+
+**Exercise 1.**إزالة معدلات التعلم، إنشاء`GradientDescent(lr=...)`لكل واحد، ونقلها إلى`optimize`مع`rosenbrock`و`rosenbrock_gradient`. إدارة التي تختلف تظهر خسارة التي تنمو أو تصبح`nan`الحد الأدنى هو $(1, 1)$مع خسارة 0.
+
+**Exercise 2.**إخلق`SGDMomentum(momentum=m)`لكل قيمة و سجل الخسارة بعد كل خطوة.`find_convergence_step`لمقارنة السرعة، والبحث عن الخسائر التي تذهب صعودا وهبوطا للعثور على تجاوز.
+
+**Exercise 3.**اكتب التراجع$(2x, -2y)$و تشغيل المحفزات الثلاثة من (0.01, 0.01). طبع $y$كل 100 خطوة: المحسن الذي يفر هو واحد حيث $\lvert y \rvert$يزداد حجمها
+
+**Exercise 4.**التخزين`lr_0`ومركز العداد`GradientDescent`و الحساب`lr = lr_0 * 0.999 ** step`داخل`step`. طبع معدل التعلم في الخطوة 0 و الخطوة 1000؛ يجب أن ينخفض من `lr_0`إلى حوالي$0.37 \times \text{lr}_0$. . .
 
 ## الشروط الرئيسية
 
@@ -365,7 +377,7 @@ scheduler = torch.optim.lr_scheduler.CosineAnnealingLR(adam, T_max=100)
 | SGD | "Random sampling" | Stochastic gradient descent. Compute gradient on a random subset instead of the full dataset. Almost always means mini-batch SGD in practice. |
 | Mini-batch | "A chunk of data" | A small subset of training data (32-256 samples) used to estimate the gradient. Balances speed and gradient accuracy. |
 | Adam | "The default optimizer" | Adaptive Moment Estimation. Tracks per-weight running averages of gradients and squared gradients to give each weight its own learning rate. |
-| Bias correction | "Fix the cold start" | Adam's first and second moments are initialized to zero. Bias correction divides by (1 - beta^t) to compensate during early steps. |
+| Bias correction | "Fix the cold start" | Adam's first and second moments are initialized to zero. Bias correction divides by $(1 - \beta^t)$ to compensate during early steps. |
 | Learning rate schedule | "Change lr over time" | A function that adjusts the learning rate during training. Large steps early, small steps late. |
 | Convex function | "One valley" | A function where any local minimum is the global minimum. Gradient descent always finds it. Neural network losses are not convex. |
 | Saddle point | "Flat but not a minimum" | A point where the gradient is zero but it is a minimum in some directions and a maximum in others. Common in high dimensions. |

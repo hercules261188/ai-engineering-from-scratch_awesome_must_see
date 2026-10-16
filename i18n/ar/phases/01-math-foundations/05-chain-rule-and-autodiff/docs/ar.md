@@ -28,29 +28,31 @@
 
 ### قاعدة السلسلة
 
-إذا`y = f(g(x))`، مشتقة من `y`فيما يتعلق بـ`x`هو:
+إذا$y = f(g(x))$، مشتقة من $y$فيما يتعلق بـ$x$هو:
 
-```
-dy/dx = dy/dg * dg/dx = f'(g(x)) * g'(x)
+```math
+\frac{dy}{dx} = \frac{dy}{dg} \cdot \frac{dg}{dx} = f'(g(x)) \cdot g'(x)
 ```
 
 ضرب المشتقات على طول السلسلة كل وصلة تساهم بمشتقاتها المحلية
 
-مثال:`y = sin(x^2)`
+مثال:$y = \sin(x^2)$
 
-```
-g(x) = x^2       g'(x) = 2x
-f(g) = sin(g)     f'(g) = cos(g)
-
-dy/dx = cos(x^2) * 2x
+```math
+\begin{aligned}
+g(x) &= x^2 \qquad & g'(x) &= 2x \\
+f(g) &= \sin(g) \qquad & f'(g) &= \cos(g) \\[4pt]
+\frac{dy}{dx} &= \cos(x^2) \cdot 2x
+\end{aligned}
 ```
 
 بالنسبة للمكونات العميقة، تمتد السلسلة:
 
-```
-y = f(g(h(x)))
-
-dy/dx = f'(g(h(x))) * g'(h(x)) * h'(x)
+```math
+\begin{aligned}
+y &= f(g(h(x))) \\[4pt]
+\frac{dy}{dx} &= f'(g(h(x))) \cdot g'(h(x)) \cdot h'(x)
+\end{aligned}
 ```
 
 كل طبقة في شبكة عصبية هي ربطة واحدة في هذه السلسلة.
@@ -88,7 +90,7 @@ graph TD
 
 هناك طريقتان لتطبيق قاعدة السلسلة من خلال الرسم البياني.
 
-**Forward mode**يبدأ في المدخلات ويضغط على المشتقات إلى الأمام.`dx/dx = 1`ويتكاثر خلال كل عملية، جيد عندما يكون لديك عدد قليل من المدخلات و الكثير من المخرجات
+**Forward mode**يبدأ في المدخلات ويضغط على المشتقات إلى الأمام.$dx/dx = 1$ويتكاثر خلال كل عملية، جيد عندما يكون لديك عدد قليل من المدخلات و الكثير من المخرجات
 
 ```
 Forward mode: seed dx/dx = 1, propagate forward
@@ -98,7 +100,7 @@ Forward mode: seed dx/dx = 1, propagate forward
   y = sin(a)  (dy/dx = cos(a) * da/dx = cos(4) * 4 = -2.615)
 ```
 
-**Reverse mode**يبدأ في الخروج ويرفع التراجع إلى الوراء.`dy/dy = 1`و ينتشر من خلال كل عملية بالعكس. جيد عندما يكون لديك الكثير من المدخلات و عدد قليل من المخرجات.
+**Reverse mode**يبدأ في الخروج ويرفع التراجع إلى الوراء.$dy/dy = 1$و ينتشر من خلال كل عملية بالعكس. جيد عندما يكون لديك الكثير من المدخلات و عدد قليل من المخرجات.
 
 ```
 Reverse mode: seed dy/dy = 1, propagate backward
@@ -112,12 +114,12 @@ Reverse mode: seed dy/dy = 1, propagate backward
 
 | Mode | Seed | Direction | Best when |
 |------|------|-----------|-----------|
-| Forward | `dx_i/dx_i = 1` | Input to output | Few inputs, many outputs |
-| Reverse | `dy/dy = 1` | Output to input | Many inputs, few outputs (neural nets) |
+| Forward | $dx_i/dx_i = 1$ | Input to output | Few inputs, many outputs |
+| Reverse | $dy/dy = 1$ | Output to input | Many inputs, few outputs (neural nets) |
 
 ### أرقام مزدوجة لنظام التقدم
 
-يمكن تنفيذ وضع الأمام بشكل أروع مع أرقام مزدوجة.`a + b*epsilon`أين`epsilon^2 = 0`. . .
+يمكن تنفيذ وضع الأمام بشكل أروع مع أرقام مزدوجة.$a + b\epsilon$أين$\epsilon^2 = 0$. . .
 
 ```
 Dual number: (value, derivative)
@@ -236,7 +238,7 @@ class Value:
             v._backward()
 ```
 
-التنظيم التوبولوجي يضمن حساب تراجع كل عقدة بشكل كامل قبل أن ينتشر إلى أطفالها. تراجع البذور هو 1.0 (dy / dy = 1).
+التنظيم التوبولوجي يضمن حساب تراجع كل عقدة بشكل كامل قبل أن ينتشر إلى أطفالها.$dy/dy = 1$)
 
 ### الخطوة الرابعة: المزيد من العمليات لمحرك كامل
 
@@ -300,11 +302,11 @@ class Value:
 | Operation | Backward rule | Used in |
 |-----------|--------------|---------|
 | `__sub__` | Reuses add + neg | Loss computation (pred - target) |
-| `__pow__` | n * x^(n-1) | Polynomial activations, MSE (error^2) |
+| `__pow__` | $n \cdot x^{n-1}$ | Polynomial activations, MSE ($\text{error}^2$) |
 | `__truediv__` | Reuses mul + pow(-1) | Normalization, learning rate scaling |
-| `exp` | exp(x) * upstream | Softmax, log-likelihood |
-| `log` | (1/x) * upstream | Cross-entropy loss, log probabilities |
-| `tanh` | (1 - tanh^2) * upstream | Classic activation function |
+| `exp` | $\exp(x) \cdot \text{upstream}$ | Softmax, log-likelihood |
+| `log` | $(1/x) \cdot \text{upstream}$ | Cross-entropy loss, log probabilities |
+| `tanh` | $(1 - \tanh^2) \cdot \text{upstream}$ | Classic activation function |
 
 الجزء الذكي:`__sub__`و`__truediv__`يتم تعريفها من حيث العمليات الحالية. فإنها تحصل على تراجعات صحيحة مجانا لأن قاعدة السلسلة تتكون من خلال العمليات الأساسية إضافة / مول / بو.
 
@@ -489,13 +491,23 @@ print(f"df/dc = {c.grad}")  #  1.0
 
 ## التمارين
 
-1. إضافة`__pow__`إلى فئة القيمة حتى تتمكن من الحساب`x ** n`تأكد من ذلك`d/dx(x^3)`في`x=2`متساوية`12.0`. . .
+1. إضافة`__pow__`إلى فئة القيمة حتى تتمكن من الحساب`x ** n`تأكد من ذلك$\frac{d}{dx}(x^3)$في$x=2$متساوية`12.0`. . .
 
-2. إضافة`tanh`كعمل تنشيط. تحقق من ذلك`tanh'(0) = 1`و`tanh'(2) = 0.0707`(تقريب)
+2. إضافة`tanh`كعمل تنشيط. تحقق من ذلك$\tanh'(0) = 1$و$\tanh'(2) = 0.0707$(تقريب)
 
 3. بناء الرسم البياني الحسابي لنورون واحد:`y = relu(w1*x1 + w2*x2 + b)`قم بحساب كلّ الخمسة من التدرج وتحقق من "بيتورش".
 
 4. تنفيذ التشغيل الذاتي في وضع التقدم باستخدام أرقام مزدوجة.`Dual`و التحقق من أنه يعطي نفس المشتقات مثل محركك في وضع العكس.
+
+### إشارات
+
+**Exercise 1.** `Value`يحدد بالفعل`__pow__`. اقرأها`_backward`و تأكيد ذلك ينطبق$n x^{n-1}$إلى التسلسل المقبل.`x = Value(2.0)`،`y = x ** 3`،`y.backward()`.`x.grad`يجب أن يكون 12.0.
+
+**Exercise 2.**استخدام$\tanh'(x) = 1 - \tanh(x)^2$في`_backward`تحقق من الفرق المحدد الخاص بك:$\frac{\tanh(x + h) - \tanh(x - h)}{2h}$يجب أن توافق على$x = 0$و$x = 2$. . .
+
+**Exercise 3.**بناء`w1*x1 + w2*x2 + b`من`Value`المواد، تطبيق `relu`، و اتصل`backward`قبل مقارنة مع PyTorch، تحقق يدوياً: إذا كانت المدخلات`relu`هو إيجابي، التراجع ل`w1`متساوية`x1`إذا كان سلبي، فإن كل الخمسة تراجعات هي 0.
+
+**Exercise 4.**تخزين قيمة ومشتقة في كل `Dual`، واستخدام قاعدة المنتج $(a, a')(b, b') = (ab, a'b + ab')$للضرب: زر المدخل مع مشتقة 1 ومقارنة النتيجة مع `x.grad`من محرك الوضع العكسي لنفس الوظيفة.
 
 ## الشروط الرئيسية
 
@@ -506,13 +518,13 @@ print(f"df/dc = {c.grad}")  #  1.0
 | Forward mode | "Push derivatives forward" | Autodiff that propagates derivatives from inputs to outputs. One pass per input variable. |
 | Reverse mode | "Backpropagation" | Autodiff that propagates gradients from outputs to inputs. One pass per output variable. |
 | Autograd | "Automatic gradients" | A system that records operations on values, builds a graph, and computes exact gradients via the chain rule |
-| Dual numbers | "Value plus derivative" | Numbers of the form a + b*epsilon (epsilon^2 = 0) that carry derivative information through arithmetic |
+| Dual numbers | "Value plus derivative" | Numbers of the form $a + b\epsilon$ ($\epsilon^2 = 0$) that carry derivative information through arithmetic |
 | Topological sort | "Dependency order" | Ordering graph nodes so every node comes after all its dependencies. Required for correct gradient propagation. |
 | Gradient accumulation | "Add, don't replace" | When a value feeds into multiple operations, its gradient is the sum of all incoming gradient contributions |
 | Dynamic graph | "Define by run" | A computation graph rebuilt on every forward pass, allowing Python control flow inside models (PyTorch style) |
 | Gradient checking | "Numerical verification" | Comparing autodiff gradients against numerical finite-difference gradients to verify correctness. Essential for debugging. |
 | MLP | "Multi-layer perceptron" | A neural network with one or more hidden layers of neurons. Each neuron computes a weighted sum plus bias, then applies an activation function. |
-| Neuron | "Weighted sum + activation" | The basic unit: output = activation(w1*x1 + w2*x2 + ... + b). The weights and bias are learnable parameters. |
+| Neuron | "Weighted sum + activation" | The basic unit: $\text{output} = \text{activation}(w_1 x_1 + w_2 x_2 + \cdots + b)$. The weights and bias are learnable parameters. |
 
 ## المزيد من القراءة
 

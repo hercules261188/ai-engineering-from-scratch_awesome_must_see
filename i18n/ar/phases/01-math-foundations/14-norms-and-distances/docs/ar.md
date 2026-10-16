@@ -28,14 +28,14 @@
 
 ### المعايير: قياس حجم المتجه
 
-يُقيس النمط "حجم" المتجه. يمكن كتابة كل وظيفة مسافة بين متجهين كنمط لفرقتهم: d(a، b) = a - b)
+يُقيس القاعدة "حجم" المتجه. يمكن كتابة كل وظيفة مسافة بين متجهين كقاعدة اختلافهما: $d(a, b) = \lVert a - b \rVert$لذا فهم المعايير هو فهم المسافات
 
 ### L1 نورم (مسافة مانهاتن)
 
 المعيار L1 يجمع القيم المطلقة لجميع المكونات.
 
-```
-||x||_1 = |x_1| + |x_2| + ... + |x_n|
+```math
+\lVert x \rVert_1 = |x_1| + |x_2| + \cdots + |x_n|
 ```
 
 يُسمى مسافة مانهاتن لأنه يقيس مدى المشي على شبكة مدينة حيث يمكنك فقط التحرك على طول المحاور. لا يوجد شوارع.
@@ -54,7 +54,7 @@ On a grid, you walk 3 blocks east and 4 blocks north.
 - عندما تريد قوة إلى مستويات خارجية (ففرق واحد ضخم لا يهيمن)
 - مشاكل في اختيار الميزات (تعزيز التنظيم L1 يُعزز النقطة)
 
-اتصال إلى L1 تنظيم: إضافة إلى معدل الخسارة يضيف مجموع قيم الوزن المطلق. هذا يدفع الوزن الصغير إلى الصفر بالضبط، وتقوم باختيار الميزات تلقائيًا. تعتبر معدل L1 منطقة قيودية شكل الماس في مساحة الوزن، وتقع زوايا الماس على المحاور التي يكون فيها بعض الوزن صفرًا.
+الاتصال بتنظيم L1 (Lasso): إضافة $\lVert w \rVert_1$لـ L1 العقوبة تخلق مناطق قيودية على شكل الماس في مساحة الوزن، وتقع زوايا الماس على المحاور حيث بعض الوزن صفر.
 
 اتصال بـ وظائف الخسارة: متوسط الخطأ المطلق (MAE) هو متوسط مسافة L1 بين التنبؤات والهدف. فإنه يعاقب جميع الأخطاء بشكل خطي ، مما يجعلها قوية إلى مستويات خارجية مقارنة مع MSE.
 
@@ -62,11 +62,11 @@ On a grid, you walk 3 blocks east and 4 blocks north.
 
 القاعدة L2 هي المسافة المستقيمة الجذر التربيعي من مجموع المكونات التربيعية
 
-```
-||x||_2 = sqrt(x_1^2 + x_2^2 + ... + x_n^2)
+```math
+\lVert x \rVert_2 = \sqrt{x_1^2 + x_2^2 + \cdots + x_n^2}
 ```
 
-هذه المسافة التي تعلمتها في صف الهندسة فيثاغوراس في n أبعاد
+هذه المسافة التي تعلمتها في صف الهندسة$n$الأبعاد
 
 ```
 Point A = (1, 1)
@@ -83,24 +83,26 @@ The straight line, cutting diagonally through the grid.
 - المسافات الجسدية (بيانات المكان، قراءات المستشعرين)
 - تشابه الصورة على مستوى البيكسل
 
-اتصال إلى L2 تنظيم: إضافة Unww      إلى وظيفة الخسارة يعاقب الوزن الكبير. مثل L1 ، فإنه لا يدفع الوزن إلى الصفر. فإنه يقلل من جميع الوزن نحو الصفر بشكل متناسب. يعطي عقوبة L2 مناطق قيود دائرية ، لذلك لا توجد زوايا على المحاور. الوزن يصبح صغيرًا ولكن نادرا ما يكون بالضبط الصفر.
+الاتصال بتنظيم L2 (Ridge): إضافة $\lVert w \rVert_2^2$فعلى عكس L1 ، لا تدفع الوزن إلى الصفر. إنها تقلص جميع الوزن نحو الصفر بشكل متناسب. تعتبر الجزء L2 منطقة قيود دائرية ، لذلك لا توجد زوايا على المحاور. تصبح الوزن صغيرة ولكن نادرا ما تكون صفرة تمامًا.
 
 اتصال إلى وظائف الخسارة: متوسط الخطأ التربيعي (MSE) هو متوسط المسافات التربيعية L2. يعاقب التربيع الأخطاء الكبيرة بشكل أكبر من الأخطاء الصغيرة.
 
-```
-MAE (L1 loss):  |y - y_hat|         Linear penalty. Robust to outliers.
-MSE (L2 loss):  (y - y_hat)^2       Quadratic penalty. Sensitive to outliers.
+```math
+\begin{aligned}
+\text{MAE (L1 loss):} \quad & |y - \hat{y}| && \text{Linear penalty. Robust to outliers.} \\
+\text{MSE (L2 loss):} \quad & (y - \hat{y})^2 && \text{Quadratic penalty. Sensitive to outliers.}
+\end{aligned}
 ```
 
 ### القواعد: العائلة العامة
 
 L1 و L2 هي حالات خاصة من معيار Lp:
 
-```
-||x||_p = (|x_1|^p + |x_2|^p + ... + |x_n|^p)^(1/p)
+```math
+\lVert x \rVert_p = (|x_1|^p + |x_2|^p + \cdots + |x_n|^p)^{1/p}
 ```
 
-قيم مختلفة من p تنتج "كرات الوحدة" ذات شكل مختلف (مجموعة من جميع النقاط على مسافة 1 من المنشأ):
+قيم مختلفة من$p$تنتج "كرات الوحدة" ذات شكل مختلف (مجموعة من جميع النقاط على مسافة 1 من المنشأ):
 
 ```
 p=1:    Diamond shape      (corners on axes)
@@ -111,19 +113,20 @@ p=inf:  Square/hypercube   (flat sides along axes)
 
 ### معايير اللانهاية (مسافة تشيبيشيف)
 
-عندما تقترب p من اللانهاية، فإن معايير Lp تتقارب إلى أقصى مكون مطلق.
+كـ$p$يقترب من اللانهاية، فإن معايير Lp تتقارب إلى أقصى مكون مطلق.
 
-```
-||x||_inf = max(|x_1|, |x_2|, ..., |x_n|)
+```math
+\lVert x \rVert_\infty = \max(|x_1|, |x_2|, \ldots, |x_n|)
 ```
 
 المسافة بين نقطتين تحدد الأبعاد الوحيدة التي تختلف فيها أكثر. يتم تجاهل جميع الأبعاد الأخرى.
 
-```
-Point A = (1, 1)
-Point B = (4, 5)
-
-L-inf distance = max(|4-1|, |5-1|) = max(3, 4) = 4
+```math
+\begin{aligned}
+\text{Point } A &= (1, 1) \\
+\text{Point } B &= (4, 5) \\[6pt]
+L_\infty \text{ distance} &= \max(|4-1|, |5-1|) = \max(3, 4) = 4
+\end{aligned}
 ```
 
 متى تستخدم L- Infinity:
@@ -135,19 +138,20 @@ L-inf distance = max(|4-1|, |5-1|) = max(3, 4) = 4
 
 تقيس تشابه الكوزين زاوية بين متجهين، دون تجاهل حجمهم.
 
-```
-cos_sim(a, b) = (a . b) / (||a||_2 * ||b||_2)
+```math
+\text{cos\_sim}(a, b) = \frac{a \cdot b}{\lVert a \rVert_2 \, \lVert b \rVert_2}
 ```
 
 يمتد من -1 (الجهات المعاكسة) إلى +1 (المثل). المتجهات المرتفعة لها تشابه كوزين 0.
 
 المسافة الكوسينية تحويلها إلى مسافة: cosine_distance = 1 - cosine_similarity. هذا يتراوح من 0 (الجهة المماثلة) إلى 2 (الجهة المعاكسة).
 
-```
-a = (1, 0)    b = (1, 1)
-
-cos_sim = (1*1 + 0*1) / (1 * sqrt(2)) = 1/sqrt(2) = 0.707
-cos_dist = 1 - 0.707 = 0.293
+```math
+\begin{aligned}
+& a = (1, 0) \qquad b = (1, 1) \\[6pt]
+& \text{cos\_sim} = \frac{1 \cdot 1 + 0 \cdot 1}{1 \cdot \sqrt{2}} = \frac{1}{\sqrt{2}} = 0.707 \\
+& \text{cos\_dist} = 1 - 0.707 = 0.293
+\end{aligned}
 ```
 
 لماذا يهيمن الكوسين على النمط النووي والإدمج: في النص، لا ينبغي أن يؤثر طول الوثيقة على التشابه. وثيقة عن القطط التي هي أطول مرتين من وثيقة أخرى عن القطط يجب أن تكون "مماثلة". وثائق مع نفس توزيع الكلمات ولكن طول مختلف يندرج في نفس الاتجاه ويصبح تشابه كوسين 1.0.
@@ -162,16 +166,17 @@ cos_dist = 1 - 0.707 = 0.293
 
 نسبة النقاط من متجهين هي:
 
-```
-a . b = a_1*b_1 + a_2*b_2 + ... + a_n*b_n
-      = ||a|| * ||b|| * cos(angle)
+```math
+\begin{aligned}
+a \cdot b &= a_1 b_1 + a_2 b_2 + \cdots + a_n b_n \\
+&= \lVert a \rVert \, \lVert b \rVert \cos(\text{angle})
+\end{aligned}
 ```
 
 تشابه الكوزين هو نسبة نقطة تمت عاديلها من قبل كلا الكبرى. عندما يكون كل من المتجهين بالفعل عاديًا وحدة (الكم = 1) ، فإن نسبة نقطة ومشابهة الكوزين متطابقة.
 
-```
-If ||a|| = 1 and ||b|| = 1:
-    a . b = cos(angle between a and b)
+```math
+\text{If } \lVert a \rVert = 1 \text{ and } \lVert b \rVert = 1: \quad a \cdot b = \cos(\text{angle between } a \text{ and } b)
 ```
 
 عندما تختلف: نقطة المنتج يتضمن معلومات عن الكبيرة. يتم الحصول على متجه مع أكبر حجم نسبة أكبر من النقاط. هذا يهم في بعض أنظمة الاسترداد حيث تريد العناصر "الشعبية" لتصنيف أعلى. يعمل الكبيرة كإشارة ضمنية للجودة أو الأهمية.
@@ -197,13 +202,13 @@ Both agree on direction, but dot product also reflects magnitude.
 
 المسافة المحالونوبية تعتبر هيكل التباين للبيانات.
 
-```
-d_M(x, y) = sqrt((x - y)^T * S^(-1) * (x - y))
+```math
+d_M(x, y) = \sqrt{(x - y)^T S^{-1} (x - y)}
 ```
 
-حيث S هو ماتريكيس التباين للبيانات.
+أين$S$هو ماتريكيس التباين من البيانات.
 
-بصورة بديهية: مسافة مهالانوبيس تُحلل أولاً وتطبيع البيانات (البيضاء) ، ثم تقوم بحساب مسافة L2 في هذا الفضاء المحول. إذا كان S هو المصفوفة الهوية (غير متواصلة ، ميزات التباين الوحدية) ، فإن مسافة مهالانوبيس تقل إلى مسافة أوكليديان.
+بصورة بديهية: مسافة ماهالانوبي تُحلل أولاً وتطبيع البيانات (البيضاء) ، ثم تقوم بحساب مسافة L2 في هذا الفضاء المتحول.$S$هو المصفوفة الهوية (غير مرتبطة، ميزات التباين الوحدية) ، فمدى مهالانوبي يقلل إلى مسافة أوكليدي.
 
 ```
 Example: height and weight are correlated.
@@ -225,8 +230,8 @@ because it accounts for the height-weight correlation.
 
 تدابير تشابه جاكارد تتداخل بين مجموعتين.
 
-```
-J(A, B) = |A intersect B| / |A union B|
+```math
+J(A, B) = \frac{|A \cap B|}{|A \cup B|}
 ```
 
 يمتد من 0 (لا تخطي) إلى 1 (مجموعات متطابقة). مسافة جاكارد = 1 - تشابه جاكارد.
@@ -263,7 +268,7 @@ sittin -> sitting (insert g)
 Edit distance = 3
 ```
 
-حاسوب باستخدام البرمجة الديناميكية. ملء المصفوفة حيث يدخل (i, j) هو المسافة التحرير بين أول حرف i من السطر A والأول حرف j من السطر B.
+حاسوب باستخدام البرمجة الديناميكية. ملء المصفوفة حيث يدخل $(i, j)$هو المسافة بين المحرر الأول $i$حرفات سلسلة A والاولى $j$حرفات سلسلة B
 
 ```
         ""  s  i  t  t  i  n  g
@@ -286,20 +291,20 @@ Edit distance = 3
 
 يُقيّم اختلاف KL كيف يختلف توزيع الاحتمالات من التوزيع الآخر. تم تغطيته في الدروس 09, ولكنه ينتمي إلى هذه المناقشة لأن الناس يستخدمونها كـ "مسافة" على الرغم من أنها ليست واحدة.
 
-```
-D_KL(P || Q) = sum(p(x) * log(p(x) / q(x)))
+```math
+D_{KL}(P \,\|\, Q) = \sum_x p(x) \log\frac{p(x)}{q(x)}
 ```
 
 الخصية الحرجة: الاختلاف KL ليس متناغمًا.
 
-```
-D_KL(P || Q) != D_KL(Q || P)
+```math
+D_{KL}(P \,\|\, Q) \ne D_{KL}(Q \,\|\, P)
 ```
 
 هذا يعني أنه يفشل في متطلبات الأساسية لمقاييس المسافة. كما أنه لا يلبي عدم المساواة الثلاثية. إنه تباين، وليس مسافة.
 
-KL المقبلة (D_KL(P موضة Q)) هي "البحث عن المعنى": يحاول Q تغطية جميع أنواع P.
-KL العكسية (D_KL(Q موضة P)) هي "البحث عن الوضع": تركز Q على وضع واحد من P.
+إلى الأمام$(D_{KL}(P \Vert Q))$هو "البحث عن المعنى": $Q$يحاول تغطية جميع أنواع$P$. . .
+عكس KL $(D_{KL}(Q \Vert P))$هو "بحث عن الوضع": $Q$يركز على طريقة واحدة من$P$. . .
 
 عندما ترى انعكاسات ك.إل:
 - VAEs (مصطلح KL في ELBO يدفع التوزيع الخفية نحو سابقة)
@@ -311,14 +316,14 @@ KL العكسية (D_KL(Q موضة P)) هي "البحث عن الوضع": ترك
 
 يُقيس مسافة واسستيرين الحد الأدنى من "العمل" اللازم لتحويل توزيع الاحتمالات إلى آخر. فكر في ذلك: إذا كان توزيع واحد كومة من التراب والآخر هو ثقب، كم من التراب يجب أن تتحرك إلى أي مدى؟
 
-```
-W(P, Q) = inf over all transport plans gamma of E[d(x, y)]
+```math
+W(P, Q) = \inf_{\gamma} \mathbb{E}[d(x, y)] \quad \text{(over all transport plans } \gamma\text{)}
 ```
 
 بالنسبة للتوزيعات الـ 1D، فإنه يسهل إلى التكامل الفرق المطلق من وظائف التوزيع التراكمية:
 
-```
-W_1(P, Q) = integral |CDF_P(x) - CDF_Q(x)| dx
+```math
+W_1(P, Q) = \int |\text{CDF}_P(x) - \text{CDF}_Q(x)| \, dx
 ```
 
 لماذا يهم (واسترين):
@@ -353,7 +358,7 @@ Wasserstein gives a meaningful gradient. KL does not.
 | Set overlap (tags, categories) | Jaccard | Data is naturally set-valued, not vectorial |
 | String matching | Edit distance | Operations map to human editing intuition |
 | Outlier detection | Mahalanobis | Accounts for feature correlations and scales |
-| Comparing distributions | KL divergence | Measures information lost by using Q instead of P |
+| Comparing distributions | KL divergence | Measures information lost by using $Q$ instead of $P$ |
 | GAN training | Wasserstein | Provides gradients even when distributions do not overlap |
 | Embeddings (vector DB) | Cosine or dot product | Embeddings are trained to encode meaning in direction |
 | Recommendation | Dot product | Magnitude can encode popularity or confidence |
@@ -404,7 +409,7 @@ Elastic Net:                  loss + lambda_1 * ||w||_1 + lambda_2 * ||w||_2^2
 
 كل وظيفة مسافة تشير إلى مشكلة بحث القريب القريب: مع إعطاء نقطة استفسار، العثور على أقرب نقاط في مجموعة بيانات.
 
-أفقًا ، فإن أفقًا من البحث عن الجار هو O(n * d) لكل استفسار في مجموعة بيانات من نقاط n مع d الأبعاد. بالنسبة لمجموعات بيانات كبيرة ، هذا بطيء جدًا.
+أقرب جيران بالتحديد$O(n \cdot d)$لكل استفسار في مجموعة بيانات $n$النقاط مع $d$بالنسبة لمجموعات بيانات كبيرة، هذا بطيء جدا.
 
 تحديدات القريبة القريبة (ANN) تتداول كمية صغيرة من الدقة لتحقيق مكاسب كبيرة في السرعة:
 
@@ -469,7 +474,7 @@ print(f"Similarities: {similarities[top_k]}")
 
 ## التمارين
 
-1. احسب مسافات L1، L2، و L- لا نهاية لها بين (1, 2, 3) و (4, 0, 6). تحقق أن L-inf <= L2 <= L1 دائمًا ينطبق على أي زوج من النقاط. أثبت لماذا يضمن هذا التسلسل.
+1. احسب مسافات L1، L2، و L- لا نهاية لها بين (1, 2, 3) و (4, 0, 6). تحقق من$L_\infty \le L_2 \le L_1$دائماً ما يحافظ على أي زوج من النقاط إثبات لماذا هذا التنظيم مضمون
 
 2. قم بإنشاء متجهين حيث تكون شباهة الكوسين عالية (> 0.9) ولكن المسافة L2 كبيرة (> 10). شرح بشكل هندسي ما يحدث. ثم قم بإنشاء متجهين حيث تكون شباهة الكوسين منخفضة (< 0.3) ولكن المسافة L2 صغيرة (< 0.5).
 
@@ -479,6 +484,18 @@ print(f"Similarities: {similarities[top_k]}")
 
 5. تنفيذ MinHash لتحقيق شبيهة جاكارد التقريبي. توليد 100 مجموعة عشوائية، وحساب جاكارد الدقيق لجميع الأزواج، ومقارنة مع تقريبي MinHash باستخدام وظائف 50، 100 و200 الهاش. رسم الخطأ التقريب.
 
+### إشارات
+
+**Exercise 1.**وكتور الفرق هو (-3, 2, -3), لذلك احسب القواعد الثلاثة لهذا الجهاز`l1_norm`،`l2_norm`و`linf_norm`. لإثبات، مقارنة أكبر$\lvert d_i \rvert$مع مجموع المربعات، ومقارنة مجموع المربعات مع مربع مجموع القيم المطلقة.
+
+**Exercise 2.**يُجاهل التشابه الكوزيني الطول، لذلك ابدأ بمتوترين يندرجون في نفس الاتجاه تقريباً وجعل واحد منهم أطول بكثير. في الحالة الثانية، استخدم متوترين قصيرين بالقرب من المنشأ يندرجون في اتجاهات مختلفة، ثم تحقق من كلا الشرطين باستخدام `cosine_similarity`و`l2_distance`. . .
+
+**Exercise 3.**اتصل`find_nearest_neighbor(query, dataset, distance_fn)`مرة واحدة لكل واحد`l1_distance`،`l2_distance`،`cosine_distance`و`mahalanobis_distance`. .`demo_different_neighbors`يظهر مجموعة بيانات حيث لا تتفق المقاييس، لذا اقرأها أولاً ثم تغير النقاط حتى تختلف جميع الإجابات الأربعة.
+
+**Exercise 4.**اكتب المجموع الإجمالي لكل توزيع، ثم أضف الاختلافات المطلقة للجميعين الإجماليين. تحقق من نتائج كل من اليدين مع `wasserstein_1d(p, q)`ثم شرح القيمة الأكبر بمدى مسافة مساحة الاحتمال يجب أن تتحرك.
+
+**Exercise 5.**لكل وظيفة هش، فإن توقيع MinHash لمجموعة هو الحد الأدنى من قيمة هش على عناصرها، والجزء من وظائف هش حيث تحصل مجموعتان على نفس الحد الأدنى تقديرات تشابه جاكارد. مقارنة كل تقدير مع `jaccard_similarity`يجب أن يكون الخطأ تقريباً$1/\sqrt{k}$لـ$k$وظائف الهمش
+
 ## الشروط الرئيسية
 
 | Term | What people say | What it actually means |
@@ -486,15 +503,15 @@ print(f"Similarities: {similarities[top_k]}")
 | Norm | "Size of a vector" | A function that maps a vector to a non-negative scalar, satisfying triangle inequality, absolute homogeneity, and zero only for the zero vector |
 | L1 norm | "Manhattan distance" | Sum of absolute component values. Produces sparsity in optimization. Robust to outliers |
 | L2 norm | "Euclidean distance" | Square root of sum of squared components. The straight-line distance in Euclidean space |
-| Lp norm | "Generalized norm" | The p-th root of the sum of p-th powers of absolute components. L1 and L2 are special cases |
-| L-infinity norm | "Max norm" or "Chebyshev distance" | The maximum absolute component value. The limit of Lp as p approaches infinity |
+| Lp norm | "Generalized norm" | The $p$-th root of the sum of $p$-th powers of absolute components. L1 and L2 are special cases |
+| L-infinity norm | "Max norm" or "Chebyshev distance" | The maximum absolute component value. The limit of Lp as $p$ approaches infinity |
 | Cosine similarity | "Angle between vectors" | Dot product normalized by both magnitudes. Ranges from -1 to +1. Ignores vector length |
 | Cosine distance | "1 minus cosine similarity" | Converts cosine similarity to a distance. Ranges from 0 to 2 |
 | Dot product | "Unnormalized cosine" | Sum of component-wise products. Equals cosine similarity times both magnitudes |
 | Mahalanobis distance | "Correlation-aware distance" | L2 distance in a space that has been whitened (decorrelated and normalized) using the data covariance matrix |
 | Jaccard similarity | "Set overlap" | Size of intersection divided by size of union. For sets, not vectors |
 | Edit distance | "Levenshtein distance" | Minimum insertions, deletions, and substitutions to transform one string into another |
-| KL divergence | "Distance between distributions" | Not a true distance (not symmetric). Measures extra bits from using Q to encode P |
+| KL divergence | "Distance between distributions" | Not a true distance (not symmetric). Measures extra bits from using $Q$ to encode $P$ |
 | Wasserstein distance | "Earth mover's distance" | Minimum work to transport mass from one distribution to another. A true metric |
 | Approximate nearest neighbor | "ANN search" | Algorithms (HNSW, LSH, IVF) that find approximately closest points much faster than exact search |
 | HNSW | "The vector DB algorithm" | Hierarchical Navigable Small World graph. Multi-layer graph for fast approximate nearest neighbor search |

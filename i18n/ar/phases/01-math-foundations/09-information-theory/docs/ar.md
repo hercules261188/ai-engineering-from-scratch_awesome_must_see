@@ -28,10 +28,10 @@
 
 عندما يحدث شيء غير محتمل، يحمل المزيد من المعلومات رأس العملة الهبوط؟ ليس مفاجئاً. ربح في اليانصيب؟ مفاجئاً جداً.
 
-محتوى المعلومات في حدث مع احتمال p هو:
+محتوى المعلومات عن حدث مع احتمال $p$هو:
 
-```
-I(x) = -log(p(x))
+```math
+I(x) = -\log(p(x))
 ```
 
 استخدام القاعدة الثانية يمنحك البط، استخدام القاعدة الطبيعية يمنحك الناتس، نفس الفكرة، وحدات مختلفة.
@@ -50,98 +50,104 @@ Certain event      1.0            0.0
 
 الانتروبيا هي المفاجأة المتوقعة على جميع النتائج المحتملة للتوزيع.
 
-```
-H(P) = -sum( p(x) * log(p(x)) )  for all x
+```math
+H(P) = -\sum_{x} p(x) \log(p(x))
 ```
 
 العملة العادلة لديها أقصى قدر من الإنتروبيّة لمتغير ثنائيّ: 1 بت. العملة المتحيزة (99% من الرأس) لديها انتروبيّة منخفضة: 0.08 بت. أنت تعرف ما سيحدث بالفعل، لذلك كلّ إصطفاء لا يخبرك تقريباً بشيء.
 
-```
-Fair coin:    H = -(0.5 * log2(0.5) + 0.5 * log2(0.5)) = 1.0 bit
-Biased coin:  H = -(0.99 * log2(0.99) + 0.01 * log2(0.01)) = 0.08 bits
+```math
+\begin{aligned}
+\text{Fair coin:} \quad & H = -(0.5 \log_2(0.5) + 0.5 \log_2(0.5)) = 1.0 \text{ bit} \\
+\text{Biased coin:} \quad & H = -(0.99 \log_2(0.99) + 0.01 \log_2(0.01)) = 0.08 \text{ bits}
+\end{aligned}
 ```
 
 إنتروبيا تقيس عدم اليقين غير القابل للتقليل في التوزيع لا يمكنك الضغط تحت ذلك
 
 ### التشغيل المتقاطع (العمل الذي تستخدمه كل يوم)
 
-القياس المتقاطع للاندروبي يقيس متوسط المفاجأة عندما تستخدم التوزيع Q لتشفير الأحداث التي تأتي في الواقع من التوزيع P.
+القياس المتقاطع للاندروبي يقيس متوسط المفاجأة عند استخدام التوزيع$Q$لتشفير الأحداث التي تأتي في الواقع من التوزيع$P$. . .
 
+```math
+H(P, Q) = -\sum_{x} p(x) \log(q(x))
 ```
-H(P, Q) = -sum( p(x) * log(q(x)) )  for all x
-```
 
-P هو التوزيع الحقيقي (الملفات). Q هو التنبؤات الخاصة بنموذجك. إذا تطابق Q P بشكل مثالي، فإن الإنتروبي المتقاطع يساوي الإنتروبي. أي عدم مطابق يزيد من ذلك.
+$P$هو التوزيع الحقيقي (التسميات).$Q$هو توقعات النموذج الخاص بك.$Q$المزاد$P$تماماً، الإنتروبيّة المتقاطعة تساوي الإنتروبيّة. أيّة خلافات تجعلها أكبر.
 
-في التصنيف، P هو متجه واحد حار (الفئة الحقيقية لديها احتمال 1، كل شيء آخر 0). هذا يسهل التقاطع إلى:
+في التصنيف$P$هو متجه واحد حار (الفئة الحقيقية لديها احتمال 1 ، كل شيء آخر 0). هذا يسهل التقاطع إلى:
 
-```
-H(P, Q) = -log(q(true_class))
+```math
+H(P, Q) = -\log(q(\text{true\_class}))
 ```
 
 هذه هي الصيغة الكاملة للخسارة المتقاطعة للإنتروبيا للتصنيف.
 
 ### التباين (بين التوزيعات)
 
-يُقيّم اختلاف KL كم من المفاجأة الإضافية تحصل عليها من استخدام Q بدلاً من P.
+تُقيّم تباين KL كم من المفاجأة الإضافية تحصل عليها من استخدامها$Q$بدلاً من$P$. . .
 
-```
-D_KL(P || Q) = sum( p(x) * log(p(x) / q(x)) )  for all x
-             = H(P, Q) - H(P)
+```math
+\begin{aligned}
+D_{KL}(P \,\|\, Q) &= \sum_{x} p(x) \log(p(x) / q(x)) \\
+&= H(P, Q) - H(P)
+\end{aligned}
 ```
 
 إن الانتروبيا المتقاطعة هي الانتروبيا بالإضافة إلى الانتشار KL. بما أن الانتروبيا من التوزيع الحقيقي ثابتة أثناء التدريب، فإن تقليل الانتروبيا المتقاطعة هو نفس تقليل الانتشار KL. أنت تدفع توزيع نموذجك نحو التوزيع الحقيقي.
 
-الاختلاف KL ليس متناغم: D_KL(P  Q) != D_KL(Q  P).
+الاختلاف في KL ليس متناغم: $D_{KL}(P \Vert Q) \ne D_{KL}(Q \Vert P)$إنها ليست مقياس مسافة حقيقي
 
 ### المعلومات المتبادلة
 
 المعلومات المتبادلة تقيس ما الذي يخبرك به معرفة متغير واحد عن الآخر.
 
-```
-I(X; Y) = H(X) - H(X|Y)
-        = H(X) + H(Y) - H(X, Y)
+```math
+\begin{aligned}
+I(X; Y) &= H(X) - H(X \mid Y) \\
+&= H(X) + H(Y) - H(X, Y)
+\end{aligned}
 ```
 
-إذا كانت X و Y مستقلة، فإن المعلومات المتبادلة هي صفر. معرفة واحدة لا تخبرك بأي شيء عن الأخرى. إذا كانت متقاربة تمامًا، فإن المعلومات المتبادلة تساوي إطار أي من المتغيرات.
+إذا$X$و$Y$إذا كانت المعلومات المتبادلة هي نفسها، فالمعلومات المتبادلة هي صفر. معرفة واحدة لا تخبرك شيئا عن الأخرى. إذا كانت متقاربة تماما، المعلومات المتبادلة تساوي الانتروبيا من أي متغير.
 
 في اختيار الميزات، تعني المعلومات المتبادلة العالية بين الميزة والهدف أن الميزة مفيدة.
 
 ### الإنتروبي المشروط
 
-H(Y في X) يقيس كم من عدم اليقين يبقى حول Y بعد مشاهدة X.
+$H(Y \mid X)$يُقيّم مدى عدم اليقين المتبقي حول$Y$بعد أن تلاحظ$X$. . .
 
-```
-H(Y|X) = H(X,Y) - H(X)
+```math
+H(Y \mid X) = H(X,Y) - H(X)
 ```
 
 هناك شيئان متطرفان
-- إذا كان X يحدد تماما Y، ثم H(Y X) = 0. معرفة X يزيل كل عدم اليقين حول Y. المثال: X = درجة حرارة في سيلسييوس، Y = درجة حرارة في فارينهايت.
-- إذا لم يخبرك X أي شيء عن Y، فإن H(YX من دون) = H(Y). معرفة X لا تقلل من عدم اليقين على الإطلاق.
+- إذا$X$يحدد تماما$Y$، ثم$H(Y \mid X) = 0$- معرفتها$X$يزيل كل عدم اليقين حول$Y$. مثال: $X$= درجة حرارة في سيلسيوس$Y$= درجة حرارة في فوهرنغايت
+- إذا$X$لا تخبرك شيئاً عن$Y$، ثم$H(Y \mid X) = H(Y)$- معرفتها$X$لا تقلل من عدم اليقين على الإطلاق.$X$= إعادة العملة،$Y$= الطقس غداً.
 
-إنتروبيا مشروطة هي دائما غير سلبية ولا تتجاوز H(Y):
+الإنتروبي المشروط هو دائما غير سلبي ولا يتجاوز أبدا$H(Y)$:
 
+```math
+0 \le H(Y \mid X) \le H(Y)
 ```
-0 <= H(Y|X) <= H(Y)
-```
 
-في التعلم الآلي، تظهر الإنتروبي المشروط في أشجار القرار. في كل انقسام، يختار الخوارزمي ميزة X التي تقلل من H(Y) - وهي ميزة تبتعد عن أكثر عدم اليقين حول علامة Y.
+في التعلم الآلي، تظهر الإنتروبي المشروط في أشجار القرار. في كل انقسام، يختار الخوارزمية ميزة $X$هذا يقلل من$H(Y \mid X)$-- الميزة التي تزيل أكثر عدم اليقين حول العلامة التجارية$Y$. . .
 
 ### الإنتروبي المشترك
 
-H ((X,Y) هي الانتروبيا من التوزيع المشترك ل X و Y معا.
+$H(X,Y)$هو الانتروبيا من التوزيع المشترك من $X$و$Y$معاً
 
-```
-H(X,Y) = -sum sum p(x,y) * log(p(x,y))   for all x, y
+```math
+H(X,Y) = -\sum_{x} \sum_{y} p(x,y) \log(p(x,y))
 ```
 
 الخصائص الرئيسية:
 
-```
-H(X,Y) <= H(X) + H(Y)
+```math
+H(X,Y) \le H(X) + H(Y)
 ```
 
-إن المساواة تنطبق عندما تكون X و Y مستقلين. إذا شاركوا المعلومات، فإن الانتروبيا المشتركة أقل من مجموع الانتروبيات الفردية. إنتروبيا "المفقودة" هي بالضبط المعلومات المتبادلة.
+المساواة تحافظ عندما$X$و$Y$إن كانت المعلومات مشتركة، فإن الانتروبيا المشتركة أقل من مجموع الانتروبيات الفردية. إنتروبيا "المفقودة" هي بالضبط المعلومات المتبادلة.
 
 ```mermaid
 graph TD
@@ -167,50 +173,52 @@ graph TD
 ```
 
 العلاقات:
-- H(X,Y) = H(X) + H(Y أن يكون X) = H(Y) + H(X أن يكون
-- (X;Y) = H(X) - H(IX
-- H(X,Y) = H(X) + H(Y) - I(X;Y)
+- $H(X,Y) = H(X) + H(Y \mid X) = H(Y) + H(X \mid Y)$
+- $I(X;Y) = H(X) - H(X \mid Y) = H(Y) - H(Y \mid X)$
+- $H(X,Y) = H(X) + H(Y) - I(X;Y)$
 
 ### المعلومات المتبادلة (التعمق العميق)
 
-المعلومات المتبادلة I(X;Y) تعدد كمية معرفة متغير واحد تقلل من عدم اليقين حول الآخر.
+المعلومات المتبادلة $I(X;Y)$يحدد مقدار معرفة متغير واحد يقلل من عدم اليقين حول الآخر.
 
-```
-I(X;Y) = H(X) - H(X|Y)
-       = H(Y) - H(Y|X)
-       = H(X) + H(Y) - H(X,Y)
-       = sum sum p(x,y) * log(p(x,y) / (p(x) * p(y)))
+```math
+\begin{aligned}
+I(X;Y) &= H(X) - H(X \mid Y) \\
+&= H(Y) - H(Y \mid X) \\
+&= H(X) + H(Y) - H(X,Y) \\
+&= \sum_{x} \sum_{y} p(x,y) \log\left(\frac{p(x,y)}{p(x) \, p(y)}\right)
+\end{aligned}
 ```
 
 الخصائص:
-- I ((X;Y) >= 0 دائماً. لا تفقد المعلومات من خلال ملاحظة شيء.
-- I(X;Y) = 0 إذا و فقط إذا X و Y مستقلين.
-- I(X;Y) = I(Y;X) هو متماثل، على عكس الانحراف KL.
-- I  X) = H  X) المتغير يشارك كل معلوماته مع نفسه.
+- $I(X;Y) \ge 0$لا تفقد المعلومات من خلال ملاحظة شيء
+- $I(X;Y) = 0$إذا و فقط إذا$X$و$Y$هي مستقلة.
+- $I(X;Y) = I(Y;X)$إنها متطابقة، على عكس اختلاف ك.إل.
+- $I(X;X) = H(X)$. المتغير يشارك كل معلوماته مع نفسه.
 
 **Mutual information for feature selection.**في ML، تريد ميزات تكون موثوقة حول الهدف. المعلومات المتبادلة تعطيك طريقة مبدئية لتصنيف الميزات:
 
-1. لكل ميزة X_i، احسب I(X_i؛ Y) حيث Y هو المتغير المستهدف.
+1. لكل ميزة$X_i$، الحساب$I(X_i; Y)$أين$Y$هو المتغير المستهدف.
 2. صفوف الدرجة حسب درجة MI
-3. أبقوا أجزاء الـ "ك" العليا
+3. أبقوا على القمة$k$الميزات
 
 هذا يعمل على أي علاقة بين الميزة والهدف -- خطية أو غير خطية أو متوحدة أو لا. التواصل يلتقط العلاقات الخطية فقط.
 
 | Method | Detects | Computational cost | Handles categorical? |
 |--------|---------|-------------------|---------------------|
-| Pearson correlation | Linear relationships | O(n) | No |
-| Spearman correlation | Monotonic relationships | O(n log n) | No |
-| Mutual information | Any statistical dependency | O(n log n) with binning | Yes |
+| Pearson correlation | Linear relationships | $O(n)$ | No |
+| Spearman correlation | Monotonic relationships | $O(n \log n)$ | No |
+| Mutual information | Any statistical dependency | $O(n \log n)$ with binning | Yes |
 
 ### التسمم والانتروبيا المتقاطعة
 
 التصنيف القياسي يستخدم أهداف صعبة: [0, 0, 1, 0]. يصبح الفئة الحقيقية احتمالية 1, كل شيء آخر يحصل على 0.
 
-```
-soft_target = (1 - epsilon) * hard_target + epsilon / num_classes
+```math
+\text{soft\_target} = (1 - \epsilon) \cdot \text{hard\_target} + \epsilon / \text{num\_classes}
 ```
 
-مع الـ (إيبسلون) = 0.1 و 4 فئات:
+مع$\epsilon = 0.1$و 4 فئات:
 - الهدف الصعب: [0، 0، 1، 0]
 - الهدف الناعم: [0.025, 0.025, 0.925, 0.025]
 
@@ -224,8 +232,8 @@ soft_target = (1 - epsilon) * hard_target + epsilon / num_classes
 
 الخسارة المتقاطعة للاندروبي مع تسهيل العلامات تصبح:
 
-```
-L = (1 - epsilon) * CE(hard_target, prediction) + epsilon * H_uniform(prediction)
+```math
+L = (1 - \epsilon) \cdot \text{CE}(\text{hard\_target}, \text{prediction}) + \epsilon \cdot H_{\text{uniform}}(\text{prediction})
 ```
 
 المفهوم الثاني يعاقب التنبؤات التي هي بعيدة عن الموحدة -- التنظيم المباشر على الثقة.
@@ -236,12 +244,14 @@ L = (1 - epsilon) * CE(hard_target, prediction) + epsilon * H_uniform(prediction
 
 **Information theory view.**القياس المتقاطع للاندروبي يقيّم كم البيت الذي تُهدر به باستخدام توزيع النموذج بدلاً من التوزيع الحقيقي.
 
-**Maximum likelihood view.**بالنسبة لنموذجات التدريب N مع فئات صحيحة y_i:
+**Maximum likelihood view.**لأجل$N$عينات التدريب مع فئات حقيقية $y_i$:
 
-```
-Likelihood     = product( q(y_i) )
-Log-likelihood = sum( log(q(y_i)) )
-Negative log-likelihood = -sum( log(q(y_i)) )
+```math
+\begin{aligned}
+\text{Likelihood} &= \prod_i q(y_i) \\
+\text{Log-likelihood} &= \sum_i \log(q(y_i)) \\
+\text{Negative log-likelihood} &= -\sum_i \log(q(y_i))
+\end{aligned}
 ```
 
 هذه الخط الأخير هو فقدان الانتروبيا المتقاطعة. تقليل الانتروبيا المتقاطعة = زيادة احتمالات بيانات التدريب تحت نموذجك.
@@ -258,15 +268,17 @@ log base e   -> nats      (machine learning convention)
 log base 10  -> hartleys  (rarely used)
 ```
 
-1 نات = 1/ln(2) بيت = 1.4427 بيت. PyTorch و TensorFlow تستخدم السجل الطبيعي (ناتس) حسب الاختيار.
+1 نات = $1/\ln(2)$بيت = 1.4427 بيت. PyTorch و TensorFlow تستخدم السجل الطبيعي (ناتس) بشكل افتراضي.
 
 ### الارتباك
 
 الارتباك هو معدل التقاطع بين النواحي، وهو ما يخبرك عن عدد الفعال من الخيارات المحتملة على قدم المساواة
 
-```
-Perplexity = 2^H(P,Q)   (if using bits)
-Perplexity = e^H(P,Q)   (if using nats)
+```math
+\begin{aligned}
+\text{Perplexity} &= 2^{H(P,Q)} \quad \text{(if using bits)} \\
+\text{Perplexity} &= e^{H(P,Q)} \quad \text{(if using nats)}
+\end{aligned}
 ```
 
 نموذج اللغة مع تعقيد 50 هو، في المتوسط، كما الخلط كما لو كان عليه اختيار بشكل متساوٍ من 50 رمزا ممكنة التالية. أقل هو أفضل.
@@ -445,19 +457,29 @@ print(f"KL div:     {np_kl_divergence(true, pred):.4f} nats")
 
 2. النموذج يخرج علامات [5.0، 2.0، 0.5] لعينة ذات الفئة الحقيقية 1. حساب الخسارة المتقاطعة للاندروبي يدويا، ثم التحقق من مع `cross_entropy_loss`أي منطقة ستعطى صفر الخسارة؟
 
-3. أظهر أن الاختلاف KL ليس متماثلًا. اختر توزيعين P و Q وحسب D_K_K  Q) و DL  Q  P). شرح لماذا تختلفان.
+3. أظهر أن الاختلاف KL ليس متماثلًا. اختر توزيعين$P$و$Q$و الحساب$D_{KL}(P \Vert Q)$و$D_{KL}(Q \Vert P)$اشرح لماذا تختلفان
 
 4. قم ببناء وظيفة تحسب الارتباك لسلسلة من التنبؤات الرمزية. مع إعطاء قائمة من (true_token_index، predicted_logits) أزواج، أعيد الارتباك لسلسلة.
+
+### إشارات
+
+**Exercise 1.**اتصل`entropy`مع 26 احتمالات متساوية .$\log_2 26 \approx 4.70$الترددات الحقيقية للحروف ليست متساوية، لذا يجب أن تكون الإنتروبيات معهم أقل.
+
+**Exercise 2.**الحساب`softmax`من المخطوطات، ثم $-\ln$من احتمالية في المؤشر 1، و مقارنة مع `cross_entropy_loss(1, logits)`يجب أن تكون كلتا الثانية قريبة من 3.06، فإن الخسارة تقترب من 0 فقط عندما يكون المنطق للدرجة 1 أكبر بكثير من الثانية الأخرى.
+
+**Exercise 3.**استخدم توزيعين صغيرين بأشكال مختلفة، على سبيل المثال $P = [0.9, 0.1]$و$Q = [0.5, 0.5]$، و اتصل`kl_divergence`يجب أن تختلف القيمتان، لأن كل اتجاه يوزن نسبة التسجيل من خلال توزيع مختلف.
+
+**Exercise 4.**لكل زوج، الحساب `cross_entropy_loss(true_token_index, predicted_logits)`، خذ المتوسط، ونقله إلى`perplexity`تحقق من المواصفات الموحدة$V$الـ " توكنز ": يجب أن تكون الـ " الـ "$V$. . .
 
 ## الشروط الرئيسية
 
 | Term | What people say | What it actually means |
 |------|----------------|----------------------|
-| Information content | "Surprise" | The number of bits (or nats) needed to encode an event: -log(p) |
+| Information content | "Surprise" | The number of bits (or nats) needed to encode an event: $-\log(p)$ |
 | Entropy | "Randomness" | The average surprise across all outcomes of a distribution. Measures irreducible uncertainty. |
-| Cross-entropy | "The loss function" | Average surprise when using model distribution Q to encode events from true distribution P. |
-| KL divergence | "Distance between distributions" | Extra bits wasted by using Q instead of P. Equals cross-entropy minus entropy. Not symmetric. |
-| Mutual information | "How related are X and Y" | Reduction in uncertainty about X from knowing Y. Zero means independent. |
+| Cross-entropy | "The loss function" | Average surprise when using model distribution $Q$ to encode events from true distribution $P$. |
+| KL divergence | "Distance between distributions" | Extra bits wasted by using $Q$ instead of $P$. Equals cross-entropy minus entropy. Not symmetric. |
+| Mutual information | "How related are X and Y" | Reduction in uncertainty about $X$ from knowing $Y$. Zero means independent. |
 | Softmax | "Turn logits into probabilities" | Exponentiate and normalize. Maps any real-valued vector to a valid probability distribution. |
 | Perplexity | "How confused the model is" | Exponential of cross-entropy. The effective vocabulary size the model is choosing from at each step. |
 | Bits | "Shannon's unit" | Information measured with log base 2. One bit resolves one fair coin flip. |

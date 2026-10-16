@@ -9,7 +9,7 @@
 
 ## أهداف التعلم
 
-- تنفيذ SVD عبر تكرار الطاقة وتفسير المعنى الهندسي ل U، Sigma، و V^T
+- تنفيذ SVD عبر تكرار الطاقة وتفسير المعنى الهندسي من $U$،$\Sigma$و$V^T$
 - تطبيق SVD المقطوعة لضغط الصورة وقياس نسبة الضغط مقابل خطأ إعادة الإعمار
 - احسب مستوى "مور-بنروز" من خلال "SVD" لحل أنظمة أقل مربعات
 - ربط SVD إلى PCA، وأنظمة التوصيات (عوامل متخفية) ، والتحليل النيمي المتخفية في NLP
@@ -26,17 +26,14 @@
 
 كل ماتريكس، بغض النظر عن الشكل، تقوم بعمليات ثلاث في التسلسل: تدور، وتحجم، وتدور.
 
-```
-A = U * Sigma * V^T
-
-      m x n     m x m    m x n    n x n
-     (any)    (rotate)  (scale)  (rotate)
+```math
+\underset{\substack{m \times n \\ \text{(any)}}}{A} = \underset{\substack{m \times m \\ \text{(rotate)}}}{U} \cdot \underset{\substack{m \times n \\ \text{(scale)}}}{\Sigma} \cdot \underset{\substack{n \times n \\ \text{(rotate)}}}{V^T}
 ```
 
-في أي ماتريكس A، فإن SVD يعدلها إلى:
-- V^T يدور المتجهات في مساحة المدخل (n-dimensional)
-- مقياسات سيغما على طول كل محور (ممتد أو مضغوطات)
-- U يدور النتيجة في مساحة الخروج (m-dimensional)
+مع أي ماتريكس $A$، و سد يعتبر ذلك في:
+- $V^T$يدور المتجهات في مساحة المدخل ($n$-بعد)
+- $\Sigma$المقاييس على طول كل محور (ممتد أو مضغوطات)
+- $U$يدور النتيجة في مساحة الخروج ($m$-بعد)
 
 ```mermaid
 graph LR
@@ -44,35 +41,35 @@ graph LR
     B -->|"U\n(rotate)"| C["Output space (m-dim)\nRotated to output\norientation"]
 ```
 
-فكري به بهذه الطريقة. تسلم SVD ماتريكس. فإنه يقول لك: "تأخذ هذه المصفوفة كرة من المدخلات، أولا تدورها ب V^T، ثم تمددها إلى التخميس من خلال Sigma، ثم تدور التخميس من خلال U". القيم الفردية هي أطوال محور التخميس.
+فكري بالأمر بهذه الطريقة. تقوم بتقديم المصفوفة إلى SVD. وتقول لك: "تأخذ هذه المصفوفة كرة من المدخلات، وتدورها أولاً$V^T$ثم تمدّها إلى أليبسوسيد$\Sigma$، ثم يدور الاليبسوسيد$U$." القيم الفردية هي أطوال محور البناية.
 
 ### التفكك الكامل
 
-بالنسبة لمصفوفة A ذات الشكل m x n:
+لـ ماتريكس$A$مع شكل$m \times n$:
 
+```math
+\begin{aligned}
+& A = U \cdot \Sigma \cdot V^T \\[6pt]
+& \text{where:} \\
+& \quad U \text{ is } m \times m, \text{ orthogonal } (U^T U = I) \\
+& \quad \Sigma \text{ is } m \times n, \text{ diagonal (singular values on the diagonal)} \\
+& \quad V \text{ is } n \times n, \text{ orthogonal } (V^T V = I) \\[6pt]
+& \text{The singular values } \sigma_1 \ge \sigma_2 \ge \cdots \ge \sigma_r > 0 \\
+& \text{where } r = \mathop{\mathrm{rank}}(A)
+\end{aligned}
 ```
-A = U * Sigma * V^T
 
-where:
-  U     is m x m, orthogonal (U^T U = I)
-  Sigma is m x n, diagonal (singular values on the diagonal)
-  V     is n x n, orthogonal (V^T V = I)
-
-The singular values sigma_1 >= sigma_2 >= ... >= sigma_r > 0
-where r = rank(A)
-```
-
-يطلق على أعمدة U متجهات مفردة اليسارية. يطلق على أعمدة V متجهات مفردة يمينية. يطلق على إدخالات خطافية Sigma قيم مفردة. وهي دائمًا غير سلبية وتقوم بتنظيمها بشكل تقليدي في ترتيب ينخفض.
+عمودات $U$يُسمى المتجهات المتفردة اليسرى.$V$يُدعى المتجهات المتوحدة اليمنى.$\Sigma$تسمى القيم الفردية. وهي دائما غير سلبية وتقوم بتنظيمها بشكل تقليدي في ترتيب متناقص.
 
 ### المتجهات الفردية اليسرى، القيم الفردية، المتجهات الفردية اليمنى
 
 كل مكون من SVD له معنى هندسي متميز.
 
-**Right singular vectors (columns of V):**هذه تشكل أساسًا أوثنورمالًا لمرحلة المدخل (R^n). وهي الاتجاهات في مساحة المدخل التي تقوم المصفوفة بتخطيطها إلى الاتجاهات المثبتة في مساحة الخروج. فكر في هذه الجهازات كنظام التنسيق الطبيعي للمجال.
+**Right singular vectors (columns of $V$):**هذه تشكل أساسًا طبيعيًا للأماكن المدخولية ($\mathbb{R}^n$(). هي الاتجاهات في مساحة المدخل التي تقوم المصفوفة بتخطيطها إلى الاتجاهات المباشرة في مساحة الخروج. فكر في هذه الاتجاهات كنظام التنسيق الطبيعي للمجال.
 
-**Singular values (diagonal of Sigma):**هذه هي عوامل التوسع. القيمة الفردية الثانية تخبرك كم تمتد المصفوفة المتجهات على طول المتجهة الفردية الثانية اليمنى. القيمة الفردية من الصفر تعني أن المصفوفة تحطم هذا الاتجاه بالكامل.
+**Singular values (diagonal of $\Sigma$):**هذه هي عوامل التوسع. القيمة الفردية الثانية تخبرك كم تمتد المصفوفة المتجهات على طول المتجهة الفردية الثانية اليمنى. القيمة الفردية من الصفر تعني أن المصفوفة تحطم هذا الاتجاه بالكامل.
 
-**Left singular vectors (columns of U):**هذه تشكل أساسًا عاديًا للفضاء الخارجي (R^m). المتجه الفردي الأيسر هو الاتجاه في الفضاء الخارجي حيث يقع المتجه الفردي الأيمن الأيادي (بعد التوسع).
+**Left singular vectors (columns of $U$):**هذه تشكل أساسًا طبيعيًا للأماكن الخارجة ($\mathbb{R}^m$). المتجه الفردي الأيسر الثاني هو الاتجاه في مساحة الخروج حيث يتراجع المتجه الفردي الأيمن الثاني (بعد التوسع).
 
 العلاقة بينهما:
 
@@ -98,20 +95,20 @@ The full matrix is the sum of r such matrices, where r is the rank.
 
 هذا النموذج هو أساس التقريب منخفض الرتب. كل عبارة يضيف طبقة واحدة من الهيكل. العبارة الأولى تسجل نمط واحد أهم. الثانية تسجل الأهم التالي. وهكذا. تقسيم هذا المبلغ يمنحك أفضل تقريب ممكن في أي صف معين.
 
-```
-Rank-1 approx:    A_1 = sigma_1 * u_1 * v_1^T
-                  (captures the dominant pattern)
-
-Rank-2 approx:    A_2 = sigma_1 * u_1 * v_1^T + sigma_2 * u_2 * v_2^T
-                  (captures the two most important patterns)
-
-Rank-k approx:    A_k = sum of top k terms
-                  (optimal by the Eckart-Young theorem)
+```math
+\begin{aligned}
+\text{Rank-1 approx:} \quad & A_1 = \sigma_1 u_1 v_1^T \\
+& \text{(captures the dominant pattern)} \\[6pt]
+\text{Rank-2 approx:} \quad & A_2 = \sigma_1 u_1 v_1^T + \sigma_2 u_2 v_2^T \\
+& \text{(captures the two most important patterns)} \\[6pt]
+\text{Rank-}k\text{ approx:} \quad & A_k = \text{sum of top } k \text{ terms} \\
+& \text{(optimal by the Eckart-Young theorem)}
+\end{aligned}
 ```
 
 ### العلاقة مع التكوين الخاص
 
-SVD و Eigendecomposition مرتبطة بعمق. القيم والمتجهات الفردية ل A تأتي مباشرة من القيم والمتجهات الخاصة A^T A و A^T.
+إن SVD و Eigendecomposition مرتبطة بعمق.$A$تأتي مباشرة من القيم الخاصة والمتجهات الخاصة$A^T A$و$A A^T$. . .
 
 ```
 A^T A = V * Sigma^T * U^T * U * Sigma * V^T
@@ -135,41 +132,41 @@ So:
 
 هذا الاتصال يخبرك بثلاث أشياء:
 1. القيم الفردية هي دائما حقيقية وغير سلبية (إنها جذور مربعة من القيم الخاصة للمصفوفة شبه محددة إيجابية).
-2. يمكنك حساب SVD عن طريق التكوين الخاص من A^T A، ولكن هذا يربع رقم الحالة وفقد الدقة الرقمية.
-3. عندما يكون A مربعًا ويمثل إيجابيًا شبه محددًا ، فإن SVD و Eigendecomposition هما نفس الشيء.
+2. يمكنك حساب SVD عن طريق التكوين الخاص من$A^T A$لكن هذا يربع رقم الحالة و يفقد دقة الرقمية. خوارزميات SVD المخصصة تتجنب هذا.
+3. متى$A$هو مربع ومتوازي الإيجابي شبه محدد، SVD و Eigenende Komposition هي نفس الشيء.
 
 ### التقريبات المتقصرة: تقريب منخفض
 
-يذكر نظرية إيكارت-يونغ-ميرسكي أن أفضل تقارب من صفوف k إلى A (في كل من قاعدة فروبينيوس والطيفية) يتم الحصول عليه عن طريق الحفاظ على القيم الفردية العليا فقط ومتجهاتها المقابلة:
+نظرية إيكارت يونغ ميرسكي تقول أن أفضل$\text{rank-}k$التقريب إلى $A$(في كل من فروبينيوس والمعايير الطيفية) يتم الحصول عليها عن طريق الحفاظ على الجزء العلوي فقط $k$القيم الفردية والمتجهات المقابلة لها:
 
+```math
+\begin{aligned}
+& A_k = U_k \cdot \Sigma_k \cdot V_k^T \\[6pt]
+& \text{where:} \\
+& \quad U_k \text{ is } m \times k \quad \text{(first } k \text{ columns of } U\text{)} \\
+& \quad \Sigma_k \text{ is } k \times k \quad \text{(top-left } k \times k \text{ block of } \Sigma\text{)} \\
+& \quad V_k \text{ is } n \times k \quad \text{(first } k \text{ columns of } V\text{)} \\[6pt]
+& \text{Approximation error} = \sigma_{k+1} \quad \text{(in spectral norm)} \\
+& \text{Approximation error} = \sqrt{\sigma_{k+1}^2 + \cdots + \sigma_r^2} \quad \text{(in Frobenius norm)}
+\end{aligned}
 ```
-A_k = U_k * Sigma_k * V_k^T
 
-where:
-  U_k     is m x k  (first k columns of U)
-  Sigma_k is k x k  (top-left k x k block of Sigma)
-  V_k     is n x k  (first k columns of V)
-
-Approximation error = sigma_{k+1}  (in spectral norm)
-                    = sqrt(sigma_{k+1}^2 + ... + sigma_r^2)  (in Frobenius norm)
-```
-
-هذا ليس مجرد تقريب "جيد". إنه من المحتمل أن يكون أفضل تقريب ممكن لدرجة k. لا توجد ماتريكس أخرى من الدرجة k أقرب إلى A.
+هذه ليست مجرد تقارب "جيد" ، بل هي على الأرجح أفضل تقارب ممكن للرتب$k$لا يوجد آخر$\text{rank-}k$المصفوفة أقرب إلى$A$. . .
 
 | Component | Relative magnitude | Kept in rank-3 approx? |
 |-----------|-------------------|------------------------|
-| sigma_1 | Largest | Yes |
-| sigma_2 | Large | Yes |
-| sigma_3 | Medium-large | Yes |
-| sigma_4 | Medium | No (error) |
-| sigma_5 | Medium-small | No (error) |
-| sigma_6 | Small | No (error) |
-| sigma_7 | Very small | No (error) |
-| sigma_8 | Tiny | No (error) |
+| $\sigma_1$ | Largest | Yes |
+| $\sigma_2$ | Large | Yes |
+| $\sigma_3$ | Medium-large | Yes |
+| $\sigma_4$ | Medium | No (error) |
+| $\sigma_5$ | Medium-small | No (error) |
+| $\sigma_6$ | Small | No (error) |
+| $\sigma_7$ | Very small | No (error) |
+| $\sigma_8$ | Tiny | No (error) |
 
-الحفاظ على أعلى 3: A_3 يلتقط أكبر ثلاثة قيم فردية. الخطأ = القيم المتبقية (sigma_4 إلى sigma_8).
+أبقوا أعلى ثلاثة$A_3$يحتوي على أكبر ثلاثة قيم فردية. الخطأ = القيم المتبقية ($\sigma_4$من خلال$\sigma_8$)
 
-إذا كانت القيم الفردية تتحلل بسرعة، فإن k الصغير يستولى على معظم المصفوفة. إذا كانت تتحلل ببطء، فإن المصفوفة لا تملك بنية منخفضة الرتب.
+إذا كانت القيم الفردية تتحلل بسرعة،$k$إذا تدهور ببطء، فإن المصفوفة لا تملك بنية منخفضة.
 
 ### ضغط الصورة مع SVD
 
@@ -211,9 +208,9 @@ SVD with rank k:
 الفكرة: هذه المصفوفة المصفوفة لديها رتبة منخفضة. لا يمتلك المستخدمون ذوق مستقل تماما. هناك عدد قليل من العوامل الخفية (العمل مقابل الدراما، القديم مقابل الجديد، الدماغ مقابل الدموية) التي تفسر معظم الاختيارات.
 
 يزرق SVD على ماتريك التصنيفات (المملئة) إلى:
-- U: ملفات المستخدم في الفضاء المتخفي
-- إشارة: أهمية كل عامل متخفي
-- V^T: ملفات الفيلم في الفضاء المتخفي
+- $U$: ملفات المستخدم في الفضاء المتخفي
+- $\Sigma$: أهمية كل عامل متخفي
+- $V^T$: ملفات الفيلم في الفضاء المتخفي
 
 تصنيف المستخدم المتوقع لفيلم هو نسبة نقطة من ملف الشخصية المستخدم مع ملف الشخصية الفيلم (موزنًا بقيم فردية). يملأ التقريب المنخفض المرتبة الإدخالات المفقودة.
 
@@ -253,23 +250,23 @@ After SVD with rank k=2:
 
 | Component | Magnitude | Type |
 |-----------|-----------|------|
-| sigma_1 | Very large | Signal |
-| sigma_2 | Large | Signal |
-| sigma_3 | Medium | Signal |
-| sigma_4 | Near zero | Negligible |
-| sigma_5 | Near zero | Negligible |
+| $\sigma_1$ | Very large | Signal |
+| $\sigma_2$ | Large | Signal |
+| $\sigma_3$ | Medium | Signal |
+| $\sigma_4$ | Near zero | Negligible |
+| $\sigma_5$ | Near zero | Negligible |
 
 **Noisy signal singular values (noise adds to all):**
 
 | Component | Magnitude | Type |
 |-----------|-----------|------|
-| sigma_1 | Very large | Signal |
-| sigma_2 | Large | Signal |
-| sigma_3 | Medium | Signal |
-| sigma_4 | Small | Noise |
-| sigma_5 | Small | Noise |
-| sigma_6 | Small | Noise |
-| sigma_7 | Small | Noise |
+| $\sigma_1$ | Very large | Signal |
+| $\sigma_2$ | Large | Signal |
+| $\sigma_3$ | Medium | Signal |
+| $\sigma_4$ | Small | Noise |
+| $\sigma_5$ | Small | Noise |
+| $\sigma_6$ | Small | Noise |
+| $\sigma_7$ | Small | Noise |
 
 ```mermaid
 graph TD
@@ -283,7 +280,7 @@ graph TD
 
 ### الاختلافات السوداء عبر SVD
 
-يُعمّل "مور-بنروز" الجهاز السودوي A+ عكس المصفوفة إلى المصفوفات غير المربعية والوحيدة. يجعلها SVD محاسبة بسيطة.
+"المركز المضاد "مور - بينروز$A^+$يُعمّل عكس المصفوفة إلى المصفوفات غير المربعية والفردية.
 
 ```
 If A = U * Sigma * V^T, then:
@@ -299,7 +296,7 @@ For A (m x n):      A+ is (n x m)
 For Sigma (m x n):  Sigma+ is (n x m)
 ```
 
-يحلّ المُضاد السودويّ مشاكل أقلّ المربعات. إذا لم يكن لدى Ax = b حلّ دقيق (نظامٍ مُعَدّدٍ) ، فإنّ x = A+ b هو حلّ أقلّ المربعات (يُقلّل من أنّها تعتبر أقلّ المربعات).
+إنّ الكون السودوي يحلّ مشاكل أقلّ مربعات$Ax = b$لا يوجد حل دقيق (نظام محدد جدا) ، ثم $x = A^+ b$هو حل أقل مربعات (يقلل $\lVert Ax - b \rVert$)
 
 ```
 Overdetermined system (more equations than unknowns):
@@ -317,7 +314,7 @@ Overdetermined system (more equations than unknowns):
 
 ### مزايا الاستقرار الرقمي
 
-الحساب الخاص بتكوين A^T A مربع القيم الفردية (قيمات A^T A الخاصة هي sigma_i^2). هذا مربع عدد الحالة، وتعزيز الأخطاء العددية.
+الحسابات الخاصة بتكوين $A^T A$يربع القيم الفردية (قيم المملكة الخاصة)$A^T A$هل هي$\sigma_i^2$هذا يربع رقم الحالة، مما يزيد من الأخطاء الرقمية.
 
 ```
 Example:
@@ -332,7 +329,7 @@ Example:
                            (6 extra digits of precision lost)
 ```
 
-الخوارزميات الحديثة SVD (Golub-Kahan بيدiagonalization) تعمل مباشرة على A، أبدا تشكيل A^T A. هذا هو السبب في أنك يجب دائما تفضيل `np.linalg.svd(A)`- لقد انتهت`np.linalg.eig(A.T @ A)`. . .
+تعمل خوارزميات SVD الحديثة (الوجبات الثنائية من Golub-Kahan) مباشرة على $A$، لا تتشكل أبداً$A^T A$لهذا يجب أن تفضل دائماً`np.linalg.svd(A)`- لقد انتهت`np.linalg.eig(A.T @ A)`. . .
 
 ### اتصال مع PCA
 
@@ -368,7 +365,7 @@ svd-rank-reconstruction
 
 ### الخطوة 1: SVD من الصفر باستخدام التكرار الطاقة
 
-الفكرة: للعثور على أكبر قيمة فردية ومجهراتها، استخدم التكرار القوى على A^T A (أو A^T). ثم تخفيف المصفوفة وتكرر للقيمة الفردية التالية.
+الفكرة: للعثور على أكبر قيمة فردية ومجهراتها، استخدم التكرار القوى على $A^T A$(أو $A A^T$) ثم تخفف المصفوفة وتكرر للقيمة الفردية التالية.
 
 ```python
 import numpy as np
@@ -513,7 +510,7 @@ julia svd.jl
 
 ## التمارين
 
-1. قم بتنفيذ SVD الكامل من الصفر دون استخدام التكرار القوي. بدلاً من ذلك ، احسب التكوين الخاص A^T A للحصول على V والقيم الفردية ، ثم احسب U = A V Sigma^{-1}. قارن دقة العددية مع إصدار التكرار القوي الخاص بك ومع NumPy.
+1. تنفيذ SVD كامل من الصفر دون استخدام التكرار القوى. بدلا من ذلك، حساب التكوين الخاص من $A^T A$للحصول على$V$والقيم الفردية، ثم الحساب$U = A V \Sigma^{-1}$. مقارنة الدقة الرقمية مع إصدار التكرار القوى الخاص بك ومع NumPy.
 
 2. تحميل صورة حقيقية على نطاق الرمادي (أو تحويل واحدة إلى نطاق الرمادي). ضغطها على الصفوف 1، 5، 10، 25، 50، 100. لكل صف، احسب نسبة الضغط والخطأ النسبي. العثور على الصف الذي يصبح الصورة مقبولة بصريا.
 
@@ -521,23 +518,35 @@ julia svd.jl
 
 4. قم بإنشاء ماتريكية 100 × 50 من المستندات المختلفة مع 3 مواضيع اصطناعية. لكل موضوع 5 مصطلحات مرتبطة. أضف الضوضاء. تطبيق SVD وتحقق من أن القيم الثلاثة الأولى من الفردية أكبر بكثير من البقية. مشروع المستندات في الفضاء الخاطئ 3D وتحقق من أن المستندات من نفس مجموعة الموضوع معا.
 
-5. قم بتوليد ماتريكس منخفضة الصفحة النظيفة (الصفحة 3 ، حجم 50x40) واضافة ضجيج غوسيان في مستويات مختلفة (سيغما = 0.1 ، 0.5 ، 1.0 ، 2.0). لكل مستوى ضجيج ، العثور على درجة التقطيع الأمثل عن طريق مسح k من 1 إلى 40 وقياس خطأ إعادة الإعمار ضد المصفحة النظيفة. رسم كيف يتغير k الأمثل مع مستوى الضجيج.
+5. إنشاء صفة منخفضة صفوف (صفوف 3، حجم 50x40) وإضافة ضجيج غوسيان في مستويات مختلفة ($\sigma$= 0.1، 0.5، 1.0، 2.0) لكل مستوى ضجيج، العثور على المرتبة المثلى من التقطيع عن طريق مسح $k$من 1 إلى 40 و قياس خطأ إعادة الإعمار ضد المصفوفة النظيفة. رسم كيفية المثالي $k$تغيرات مع مستوى الضوضاء.
+
+### إشارات
+
+**Exercise 1.**الحساب$A^T A$، الحصول على قيمها الخاصة والمتجهات الخاصة مع `np.linalg.eigh`والقيم الفردية هي الجذور المربعة للقيم الخاصة، تحقق من ذلك$U \Sigma V^T$إعادة البناء$A$و مقارنة الخطأ مع`svd_from_scratch`و`np.linalg.svd`. . .
+
+**Exercise 2.**اتصل`truncated_svd`لكل صف، أعيد بناء الصورة`reconstruct`، واستخدامها`compression_ratio(m, n, k)`الخطأ النسبي يجب أن ينخفض مع نمو الصف، والصف الأول حيث لا ترى بلاك واضح هو الجواب.
+
+**Exercise 3.**قم بتسجيل الخلايا المفقودة، وملئها بمعدل الصف، ثم أعيد بناء مقربة من الصف 3 مع `truncated_svd`و`reconstruct`ثم قياس النتيجة: احتساب التنبؤات خارج نطاق التصنيف، وتطبيق أكبر تغيير في خلية معروفة. مقربة 3 رتبة لا تضمن أي من الممتلكات، لذلك قص التنبؤات إلى النطاق إذا كنت بحاجة إلى تصنيفات صالحة.
+
+**Exercise 4.**أعط كل موضوع كتلة من 5 تعبيرات مع أعداد عالية لمستنداته ، ثم أضف ضجيجًا صغيرًا. طبع القيم الفردية: يجب أن تكون 3 الأولى أكبر بكثير من 4 . ثم ألون إحداثيات 3D حسب الموضوع وتحقق من أن كل موضوع يشكل مجموعة واحدة.
+
+**Exercise 5.**قم بتحويل المصفوفة النظيفة إلى نسبة 50x3 و 3x40 المصفوفة عشوائية، ثم أضف الضجيج لكل منها $\sigma$لكل واحد$k$، مقارنة الرتب$k$إعادة بناء مع المصفوفة النظيفة ، توقع أفضل $k$قرب 3 لضوضاء منخفضة وأصغر لضوضاء عالية.
 
 ## الشروط الرئيسية
 
 | Term | What people say | What it actually means |
 |------|----------------|----------------------|
-| SVD | "Factor any matrix" | Decompose A into U Sigma V^T where U and V are orthogonal and Sigma is diagonal with non-negative entries. Works for any matrix of any shape. |
-| Singular value | "How important this component is" | The i-th diagonal entry of Sigma. Measures how much the matrix stretches along the i-th principal direction. Always non-negative, sorted in decreasing order. |
-| Left singular vector | "Output direction" | A column of U. The direction in output space that the i-th right singular vector maps to (after scaling by sigma_i). |
-| Right singular vector | "Input direction" | A column of V. The direction in input space that the matrix maps to the i-th left singular vector (after scaling by sigma_i). |
-| Truncated SVD | "Low-rank approximation" | Keep only the top k singular values and their vectors. Produces the provably best rank-k approximation to the original matrix (Eckart-Young theorem). |
+| SVD | "Factor any matrix" | Decompose $A$ into $U \Sigma V^T$ where $U$ and $V$ are orthogonal and $\Sigma$ is diagonal with non-negative entries. Works for any matrix of any shape. |
+| Singular value | "How important this component is" | The $i$-th diagonal entry of $\Sigma$. Measures how much the matrix stretches along the i-th principal direction. Always non-negative, sorted in decreasing order. |
+| Left singular vector | "Output direction" | A column of $U$. The direction in output space that the $i$-th right singular vector maps to (after scaling by $\sigma_i$). |
+| Right singular vector | "Input direction" | A column of $V$. The direction in input space that the matrix maps to the $i$-th left singular vector (after scaling by $\sigma_i$). |
+| Truncated SVD | "Low-rank approximation" | Keep only the top $k$ singular values and their vectors. Produces the provably best $\text{rank-}k$ approximation to the original matrix (Eckart-Young theorem). |
 | Rank | "True dimensionality" | The number of non-zero singular values. Tells you how many independent directions the matrix actually uses. |
-| Pseudoinverse | "Generalized inverse" | V Sigma+ U^T. Inverts non-zero singular values, leaves zeros as zeros. Solves least-squares problems for non-square or singular matrices. |
-| Condition number | "How sensitive to errors" | sigma_max / sigma_min. A large condition number means small input changes cause large output changes. SVD reveals this directly. |
+| Pseudoinverse | "Generalized inverse" | $V \Sigma^+ U^T$. Inverts non-zero singular values, leaves zeros as zeros. Solves least-squares problems for non-square or singular matrices. |
+| Condition number | "How sensitive to errors" | $\sigma_{\max} / \sigma_{\min}$. A large condition number means small input changes cause large output changes. SVD reveals this directly. |
 | Latent factor | "Hidden variable" | A dimension in the low-rank space discovered by SVD. In recommendations, a latent factor might correspond to genre preference. In NLP, it might correspond to a topic. |
 | Frobenius norm | "Total matrix size" | Square root of the sum of squared entries. Equals the square root of the sum of squared singular values. Used to measure approximation error. |
-| Eckart-Young theorem | "SVD gives the best compression" | For any target rank k, the truncated SVD minimizes the approximation error over all possible rank-k matrices. |
+| Eckart-Young theorem | "SVD gives the best compression" | For any target rank $k$, the truncated SVD minimizes the approximation error over all possible $\text{rank-}k$ matrices. |
 | Power iteration | "Find the biggest eigenvector" | Repeatedly multiply a random vector by the matrix and normalize. Converges to the eigenvector with the largest eigenvalue. The building block of many SVD algorithms. |
 
 ## المزيد من القراءة

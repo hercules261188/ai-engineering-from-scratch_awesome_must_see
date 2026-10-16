@@ -45,7 +45,7 @@ graph LR
 
 ### التناوب
 
-تدور ثنائي الأبعاد عن طريق الزاوية تثا تبقي المسافات والزوايا سليمة.
+-دورة ثنائية الأبعاد بالزاوية$\theta$يحتفظ بالمسافات والزوايا سليمة.
 
 ```mermaid
 graph LR
@@ -66,18 +66,12 @@ graph LR
 
 في 3D، تدور حول محور. كل محور لديه ماتريسك التناوب الخاص به:
 
-```
-Rz(theta) = | cos  -sin  0 |     Rotate around z-axis
-            | sin   cos  0 |     (x-y plane spins, z stays)
-            |  0     0   1 |
-
-Rx(theta) = | 1   0     0    |   Rotate around x-axis
-            | 0  cos  -sin   |   (y-z plane spins, x stays)
-            | 0  sin   cos   |
-
-Ry(theta) = |  cos  0  sin |     Rotate around y-axis
-            |   0   1   0  |     (x-z plane spins, y stays)
-            | -sin  0  cos |
+```math
+\begin{aligned}
+R_z(\theta) &= \begin{bmatrix} \cos\theta & -\sin\theta & 0 \\ \sin\theta & \cos\theta & 0 \\ 0 & 0 & 1 \end{bmatrix} \quad \text{Rotate around z-axis (x-y plane spins, z stays)} \\[6pt]
+R_x(\theta) &= \begin{bmatrix} 1 & 0 & 0 \\ 0 & \cos\theta & -\sin\theta \\ 0 & \sin\theta & \cos\theta \end{bmatrix} \quad \text{Rotate around x-axis (y-z plane spins, x stays)} \\[6pt]
+R_y(\theta) &= \begin{bmatrix} \cos\theta & 0 & \sin\theta \\ 0 & 1 & 0 \\ -\sin\theta & 0 & \cos\theta \end{bmatrix} \quad \text{Rotate around y-axis (x-z plane spins, y stays)}
+\end{aligned}
 ```
 
 ### التوسع
@@ -123,8 +117,8 @@ graph LR
 ```
 
 المصفوفات المقطوعة:
-- `Shx = [[1, k], [0, 1]]`تحويلات x من k * y
-- `Shy = [[1, 0], [k, 1]]`تحويلات y من k * x
+- `Shx = [[1, k], [0, 1]]`النقبات$x$من$k \cdot y$
+- `Shy = [[1, 0], [k, 1]]`النقبات$y$من$k \cdot x$
 
 ### التفكير
 
@@ -196,7 +190,7 @@ Eigenvector [1, -1] with eigenvalue 1:
 
 ### التكوين الخاص
 
-إذا كانت المصفوفة لديها n متجهات خاصة مستقلة خطيا، يمكن تفكيكها:
+إذا كانت المصفوفة لديها$n$المتجهات ذاتية مستقلة خطيا، يمكن تفكيكها:
 
 ```
 A = V @ D @ V^(-1)
@@ -210,7 +204,7 @@ This says: rotate into eigenvector coordinates, scale along each axis, rotate ba
 
 ### لماذا قيمها الخاصة مهمة
 
-**PCA.**المتجهات الخاصة للمصفوفة التغيرات هي المكونات الرئيسية. القيم الخاصة تخبرك كم التباين كل مكون يلتقط. فرز حسب القيمة الخاصة، والحفاظ على الجزء العلوي k، ولديك خفض الأبعاد.
+**PCA.**المتجهات الخاصة للمصفوفة التغيرات هي المكونات الرئيسية. القيم الخاصة تخبرك كم التباين الذي يحتوي عليه كل مكون. قم بتصنيفها حسب القيمة الخاصة، وابق العلوي $k$، و لديك انخفاض الابعاد
 
 **Stability.**في الشبكات المتكررة والأنظمة الديناميكية، تسبب القيم الخاصة ذات الحجم > 1 انفجار المخرجات. الحجم < 1 يسبب اختفاءها. هذه هي مشكلة التهاب/انفجار التدفق الموضح في جملة واحدة.
 
@@ -309,7 +303,7 @@ print(f"Same? {result1 == result2}")
 
 ### الخطوة الثالثة: القيم الخاصة من الصفر (2x2)
 
-لـ 2 × 2 المصفوفة`[[a, b], [c, d]]`، القيم الخاصة تحل المعادلة المميزة: `lambda^2 - (a+d)*lambda + (ad - bc) = 0`. . .
+لـ 2 × 2 المصفوفة`[[a, b], [c, d]]`، القيم الخاصة تحل المعادلة المميزة: $\lambda^2 - (a+d)\lambda + (ad - bc) = 0$. . .
 
 ```python
 def eigenvalues_2x2(matrix):
@@ -443,6 +437,14 @@ print(f"Rotate 90 around x: {np.round(rotated_x, 4)}")
 
 3. قم بإنشاء تركيبة من ثلاثة تحويلات (تحول 30 درجة، وتحقيق مقياس [1.5، 0.8، وتقطع مع kx=0.3) وتطبيقها على 8 نقاط مرتبة في دائرة. طبع قبل وبعد الإحداثيات. احسب معين المصفوفة المكونة وتحقق من أنها تساوي نسبة معينة من المعينات الفردية.
 
+### إشارات
+
+**Exercise 1.**التطبيق`rotation_2d`،`scaling_2d`و`shearing_2d`إلى كل زاوية مع `mat_vec_mul`. لدورة، حساب 4 أطوال الجانب والشوارع قبل وبعد كل واحد يجب أن يبقى نفسه.
+
+**Exercise 2.**اكتب المعادلة المميزة$\lambda^2 - (\text{trace})\lambda + \det = 0$و تحل ذلك. تحقق من أن قيمك اثنين يصل إلى العثر (7) و مضاعفة إلى العامل (10) ، ثم مقارنة مع `eigenvalues_2x2`و`np.linalg.eigvals`. . .
+
+**Exercise 3.**بناء المصفوفات الثلاثة، مع `shearing_2d(0.3, 0)`للقشرة، مضاعفة مع `mat_mul`في ترتيب التطبيق، وتطبيق النتيجة على 8 نقاط $(\cos\theta, \sin\theta)$. الدوران لديه معين 1 والقشرة لديها معين 1 ، لذلك `det_2x2`يجب أن تكون مساوية$1.5 \times 0.8 = 1.2$. . .
+
 ## الشروط الرئيسية
 
 | Term | What people say | What it actually means |
@@ -454,9 +456,9 @@ print(f"Rotate 90 around x: {np.round(rotated_x, 4)}")
 | Composition | "Do two things" | Multiplying transformation matrices to chain operations. Order matters: B @ A means apply A first, then B. |
 | Eigenvector | "Special direction" | A direction that the matrix only scales, never rotates. The transformation's fingerprint. |
 | Eigenvalue | "How much it stretches" | The scalar factor by which the matrix scales its eigenvector. Can be negative (flip) or complex (rotation). |
-| Eigendecomposition | "Break the matrix apart" | Writing a matrix as V @ D @ V^(-1), separating it into its fundamental scaling directions and magnitudes. |
+| Eigendecomposition | "Break the matrix apart" | Writing a matrix as $V D V^{-1}$, separating it into its fundamental scaling directions and magnitudes. |
 | Determinant | "A single number from a matrix" | The factor by which the transformation scales area (2D) or volume (3D). Zero means the transformation is irreversible. |
-| Characteristic equation | "Where eigenvalues come from" | det(A - lambda * I) = 0. The polynomial whose roots are the eigenvalues. |
+| Characteristic equation | "Where eigenvalues come from" | $\det(A - \lambda I) = 0$. The polynomial whose roots are the eigenvalues. |
 
 ## المزيد من القراءة
 
