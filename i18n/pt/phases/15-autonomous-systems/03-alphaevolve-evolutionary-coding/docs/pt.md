@@ -58,7 +58,7 @@ A solução no AlphaEvolve: enviar um avaliador que o LLM nunca viu, com insumos
 
 O LLM pode produzir modificações compilaveis e semânticamente plausíveis. Uma mutação aleatória GA em um arquivo Python de 2000 linhas quase sempre produz erros de sintaxe. O LLM também concentra a pesquisa em bairros plausíveis (mudança de uma função, não bytes aleatórios), o que reduz drasticamente as chamadas de avaliador desperdiçadas.
 
-O avaliador, por sua vez, capta as confabulações do LLM. Os LLM afirmarão com confiança que uma função "é O(n log n) no limite" quando é realmente O ((n^2); um benchmark de relógio de parede resolve a questão.
+O avaliador, por sua vez, capta as confabulações do LLM.$O(n \log n)$No limite" quando é realmente $O(n^2)$A questão é resolvida por um indicador de referência do relógio de parede.
 
 ### Onde o AlphaEvolve se encaixa na pilha de fronteira
 

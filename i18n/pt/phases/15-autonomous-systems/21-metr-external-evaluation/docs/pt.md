@@ -30,7 +30,7 @@ Metodologia (do blog e artigos da METR):
 
 1. Coletar uma suíte de tarefas que abrange de minutos a horas de tempo de conclusão de peritos. Suites atuais: HCAST (180+ tarefas), RE-Bench (71 tarefas), SWAA.
 2. Execute o modelo em cada tarefa; registar sucesso ou fracasso.
-3. Aplicar uma curva logística: P ((sucesso) como função do tempo de conclusão log ((experto).
+3. Aplique uma curva logística: $P(\text{success})$como função de $\log(\text{expert completion time})$- Não .
 4. O horizonte é o tempo de expertos em que P ((sucesso) = 0,5.
 
 A forma logística-ajustamento é a certa porque a capacidade geralmente tem uma relação crescente, aproximando-se do planalto com a dificuldade da tarefa. O ponto de 50% é uma escolha (poderia ser 10%, 90%); METR relata vários limiares no papel detalhado, mas lidera com 50% porque é o mais intuitivo.
@@ -79,7 +79,7 @@ a5-horizon-fit
 
 ## Usá-lo
 
-`code/main.py`Implementa um ajuste logístico de sucesso de tarefa vs log(experto tempo), dado um conjunto de resultados sintéticos. Relata o horizonte de 50% (título do METR), 10% horizonte (conservador) e 90% horizonte (optimista). Também demonstra quais são as mudanças quando a taxa de sucesso é artificialmente inflada por jogos de conteúdo de avaliação.
+`code/main.py`Implementa um ajuste logístico de sucesso de tarefa versus$\log(\text{expert time})$O METR apresenta o horizonte de 50% (título do METR), 10% (conservador) e 90% (optimista).
 
 ## Envia-o
 
