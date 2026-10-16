@@ -38,40 +38,40 @@ Nhưng "thình tự" không đủ. * quy mô * của sự ngẫu nhiên xác đ�
 
 Hãy xem xét một lớp duy nhất với đầu vào fan_in:
 
-```
-z = w1*x1 + w2*x2 + ... + w_n*x_n
-```
-
-Nếu mỗi trọng lượng wi được rút ra từ phân bố với sự biến động Var(w) và mỗi input xi có sự biến động Var(x), sự biến động đầu ra là:
-
-```
-Var(z) = fan_in * Var(w) * Var(x)
+```math
+z = w_1 x_1 + w_2 x_2 + \cdots + w_n x_n
 ```
 
-Nếu Var(w) = 1 và fan_in = 512, sự biến động đầu ra là 512x sự biến động đầu vào. Sau 10 lớp: 512 ^ 10 = 1.2e27. tín hiệu của bạn đã nổ ra.
+Nếu mỗi trọng lượng$w_i$được rút ra từ phân bố với sự biến đổi $\mathrm{Var}(w)$và mỗi đầu vào$x_i$có sự khác biệt $\mathrm{Var}(x)$, sự khác biệt đầu ra là:
 
-Nếu Var ((w) = 0,001, sự biến động đầu ra sẽ giảm 0,001 * 512 = 0,512 cho mỗi lớp. Sau 10 lớp: 0.512 ^ 10 = 0,00013. tín hiệu của bạn đã biến mất.
+```math
+\mathrm{Var}(z) = \text{fan}_{\text{in}} \cdot \mathrm{Var}(w) \cdot \mathrm{Var}(x)
+```
 
-Mục tiêu: chọn Var(w) để Var(z) = Var(x). Độ lớn tín hiệu vẫn không đổi trên các lớp.
+Nếu$\mathrm{Var}(w) = 1$và $\text{fan}_{\text{in}} = 512$, sự biến động đầu ra là 512x sự biến động đầu vào. Sau 10 lớp: $512^{10} = 1.2 \times 10^{27}$- tín hiệu của anh đã nổ ra.
+
+Nếu$\mathrm{Var}(w) = 0.001$, sự khác biệt đầu ra giảm xuống $0.001 \cdot 512 = 0.512$mỗi lớp. Sau 10 lớp: $0.512^{10} = 0.00013$- tín hiệu của anh đã biến mất.
+
+Mục tiêu: chọn$\mathrm{Var}(w)$Vậy là$\mathrm{Var}(z) = \mathrm{Var}(x)$Tầm sóng tín hiệu vẫn không đổi giữa các lớp.
 
 ### Xavier/Glorot khởi tạo
 
 Glorot and Bengio (2010) đã lấy giải pháp cho các hoạt động sigmoid và tanh. Để giữ sự khác biệt liên tục trong cả đường đi về phía trước và ngược:
 
-```
-Var(w) = 2 / (fan_in + fan_out)
+```math
+\mathrm{Var}(w) = \frac{2}{\text{fan}_{\text{in}} + \text{fan}_{\text{out}}}
 ```
 
 Trong thực tế, trọng lượng được lấy từ:
 
-```
-w ~ Uniform(-limit, limit)  where limit = sqrt(6 / (fan_in + fan_out))
+```math
+w \sim \text{Uniform}(-\text{limit}, \text{limit}) \quad \text{where } \text{limit} = \sqrt{\frac{6}{\text{fan}_{\text{in}} + \text{fan}_{\text{out}}}}
 ```
 
 hoặc:
 
-```
-w ~ Normal(0, sqrt(2 / (fan_in + fan_out)))
+```math
+w \sim \text{Normal}\left(0, \sqrt{\frac{2}{\text{fan}_{\text{in}} + \text{fan}_{\text{out}}}}\right)
 ```
 
 Điều này hoạt động bởi vì sigmoid và tanh gần như tuyến tính gần bằng không, nơi hoạt động được khởi động đúng cách sống.
@@ -82,27 +82,27 @@ ReLU tiêu diệt một nửa các đầu ra (tất cả mọi thứ tiêu cực
 
 He et al. (2015) đã điều chỉnh công thức:
 
-```
-Var(w) = 2 / fan_in
+```math
+\mathrm{Var}(w) = \frac{2}{\text{fan}_{\text{in}}}
 ```
 
 Các trọng lượng được lấy từ:
 
-```
-w ~ Normal(0, sqrt(2 / fan_in))
+```math
+w \sim \text{Normal}\left(0, \sqrt{\frac{2}{\text{fan}_{\text{in}}}}\right)
 ```
 
-Tỷ lệ 2 bù đắp cho ReLU làm nạc một nửa các hoạt động. Nếu không có nó, tín hiệu thu hẹp khoảng 0,5x cho mỗi lớp. Với 50 lớp: 0,5^50 = 8,8e-16. Kaiming init ngăn chặn điều này.
+Tỷ lệ 2 bù đắp cho ReLU làm không một nửa các hoạt động. Nếu không có nó, tín hiệu thu hẹp khoảng 0,5x cho mỗi lớp. Với 50 lớp:$0.5^{50} = 8.8 \times 10^{-16}$Kaiming init ngăn chặn điều này.
 
 ### Tạo ra Transformer
 
 GPT-2 đã đưa ra một mô hình khác. Các kết nối dư thừa thêm đầu ra của mỗi tầng phụ vào đầu vào của nó:
 
-```
-x = x + sublayer(x)
+```math
+x = x + \text{sublayer}(x)
 ```
 
-Mỗi sự bổ sung làm tăng sự biến động. Với N lớp dư thừa, sự biến động tăng tương ứng với N. GPT-2 quy mô trọng lượng của các lớp dư bằng 1/sqrt(2N), nơi N là số lượng các lớp. Điều này giữ cho cường độ tín hiệu tích lũy ổn định.
+Mỗi sự bổ sung tăng sự khác biệt.$N$các lớp dư thừa, sự khác biệt tăng tương ứng với $N$. GPT-2 quy mô trọng lượng của các lớp dư bằng $1/\sqrt{2N}$, nơi $N$là số lớp. Điều này giữ cho cường độ tín hiệu tích lũy ổn định.
 
 Llama 3 (405B tham số, 126 lớp) sử dụng một kế hoạch tương tự. Nếu không có quy mô này, dòng dư sẽ phát triển không giới hạn thông qua 126 lớp chú ý và các khối chuyển tiếp.
 
@@ -341,7 +341,7 @@ nn.init.zeros_(layer.bias)
 
 Khi anh gọi`nn.Linear(512, 256)`PyTorch mặc định là Kaiming Uniform Initialisation. Đó là lý do tại sao hầu hết các mạng đơn giản "chỉ làm việc" - PyTorch đã đưa ra sự lựa chọn đúng đắn. Nhưng khi bạn xây dựng kiến trúc tùy chỉnh hoặc đi sâu hơn 20 lớp, bạn cần phải hiểu những gì đang xảy ra và có khả năng thay thế mặc định.
 
-Đối với các bộ biến đổi, các mô hình HuggingFace thường xử lý khởi tạo trong các mô hình của họ.`_init_weights`phương pháp. GPT-2 thực hiện quy mô dự đoán dư bằng 1/sqrt ((N). Nếu bạn đang xây dựng một biến thể từ đầu, bạn cần phải thêm nó vào chính mình.
+Đối với các bộ biến đổi, các mô hình HuggingFace thường xử lý khởi tạo trong các mô hình của họ.`_init_weights`Phương pháp: GPT-2 thực hiện quy mô dự đoán dư lượng vào năm$1/\sqrt{N}$Nếu bạn đang xây dựng một biến thể từ đầu, bạn cần phải tự thêm vào nó.
 
 ## Chuyển nó
 
@@ -350,13 +350,13 @@ Bài học này mang lại:
 
 ## Các bài tập
 
-1. Thêm khởi tạo LeCun (Var = 1/fan_in, được thiết kế để kích hoạt SELU).
+1. Thêm khởi tạo LeCun ($\mathrm{Var} = 1/\text{fan}_{\text{in}}$Lên thử nghiệm 50 lớp với LeCun init + tanh và so sánh với Xavier + tanh.
 
-2. Thực hiện quy mô dư thừa GPT-2: nhân đầu ra của mỗi lớp bằng 1/sqrt(2 *N) trước khi thêm vào dòng dư thừa.
+2. Thực hiện quy mô dư lượng GPT-2: nhân sản lượng của mỗi lớp bằng $1/\sqrt{2N}$Trước khi thêm vào dòng dư thừa. chạy 50 lớp với và không quy mô, đo tốc độ lớn dư thừa tăng lên.
 
 3. Tạo một chức năng " kiểm tra sức khỏe init" lấy kích thước lớp và loại kích hoạt của mạng, sau đó khuyến cáo khởi tạo đúng và cảnh báo nếu init hiện tại sẽ gây ra vấn đề.
 
-4. Tiến hành thí nghiệm với fan_in = 16 vs fan_in = 1024. Xavier và Kaiming thích nghi với fan_in, nhưng không.
+4. Thực hiện thí nghiệm với $\text{fan} _{\text{in}} = 16$vs $\text{fan} _{\text{in}} = 1024$Xavier và Kaiming thích nghi với fan_in, nhưng init ngẫu nhiên không.
 
 5. Thực hiện khởi tạo trực giác (tạo ra một dải ngẫu nhiên, tính toán SVD của nó, sử dụng dải ngẫu nhiên U). So sánh với Kaiming cho các mạng ReLU ở 50 lớp.
 
@@ -368,10 +368,10 @@ Bài học này mang lại:
 | Symmetry breaking | "Make neurons different" | Using random initialization to ensure neurons learn distinct features instead of computing identical functions |
 | Fan-in | "Number of inputs to a neuron" | The number of incoming connections, which determines how input variance accumulates in the weighted sum |
 | Fan-out | "Number of outputs from a neuron" | The number of outgoing connections, relevant for maintaining gradient variance during backpropagation |
-| Xavier/Glorot init | "The sigmoid initialization" | Var(w) = 2/(fan_in + fan_out), designed to preserve variance through sigmoid and tanh activations |
-| Kaiming/He init | "The ReLU initialization" | Var(w) = 2/fan_in, accounts for ReLU zeroing half the activations |
+| Xavier/Glorot init | "The sigmoid initialization" | $\mathrm{Var}(w) = 2/(\text{fan} _{\text{in}} + \text{fan} _{\text{out}})$, designed to preserve variance through sigmoid and tanh activations |
+| Kaiming/He init | "The ReLU initialization" | $\mathrm{Var}(w) = 2/\text{fan}_{\text{in}}$, accounts for ReLU zeroing half the activations |
 | Variance propagation | "How signals grow or shrink through layers" | The mathematical analysis of how activation variance changes layer by layer based on weight scale |
-| Residual scaling | "GPT-2's init trick" | Scaling residual connection weights by 1/sqrt(2N) to prevent variance growth through N transformer layers |
+| Residual scaling | "GPT-2's init trick" | Scaling residual connection weights by $1/\sqrt{2N}$ to prevent variance growth through $N$ transformer layers |
 | Dead network | "Nothing trains" | A network where poor initialization causes all gradients to be zero or all activations to saturate |
 | Exploding activations | "Values go to infinity" | When weight variance is too high, causing activation magnitudes to grow exponentially through layers |
 

@@ -41,21 +41,23 @@ graph LR
 
 ### Thất vả
 
-Kỹ thuật điều chỉnh đơn giản nhất với cách giải thích thanh lịch nhất.
+Kỹ thuật điều chỉnh đơn giản nhất với cách giải thích thanh lịch nhất.$p$- Tôi không biết.
 
+```math
+\text{output} = \text{activation}(z) \cdot \text{mask} \quad \text{where }\text{mask}[i] \sim \text{Bernoulli}(1 - p)
 ```
-output = activation(z) * mask    where mask[i] ~ Bernoulli(1 - p)
-```
 
-Với p = 0,5, một nửa các tế bào thần kinh được phân định ở mỗi bước đi về phía trước. Mạng phải học các biểu diễn dư thừa vì nó không thể dự đoán được các tế bào thần kinh nào sẽ có sẵn. Điều này ngăn chặn sự thích nghi chung - các tế bào thần kinh học để dựa vào các tế bào thần kinh khác cụ thể hiện diện.
+Với $p = 0.5$, một nửa các tế bào thần kinh được phân định ở mỗi bước đi phía trước. mạng phải học các biểu diễn dư thừa vì nó không thể dự đoán được các tế bào thần kinh nào sẽ có sẵn. Điều này ngăn chặn sự thích nghi chung - các tế bào thần kinh học để dựa vào các tế bào thần kinh khác cụ thể hiện diện.
 
-Giải thích tập hợp: một mạng với N neuron và dropup tạo ra 2^N các mạng phụ có thể (mỗi kết hợp của các neuron được bật hoặc tắt). Việc đào tạo với việc bỏ học khoảng đào tạo tất cả các mạng phụ 2^N cùng một lúc, mỗi mạng trên các lô nhỏ khác nhau. Vào thời điểm thử nghiệm, bạn sử dụng tất cả các tế bào thần kinh (không bỏ) và đo lượng sản lượng bằng (1 - p) để phù hợp với giá trị mong đợi trong quá trình đào tạo. Điều này tương đương với trung bình dự đoán của 2^N mạng phụ -- một tập hợp lớn từ một mô hình duy nhất.
+Việc giải thích tập thể: một mạng lưới với $N$Tâm thần kinh và sự bỏ học tạo ra $2^N$các mạng phụ có thể (mỗi kết hợp của các tế bào thần kinh được bật hoặc tắt).$2^N$Các mạng phụ cùng một lúc, mỗi mạng trên các bộ phận nhỏ khác nhau.$(1 - p)$để phù hợp với giá trị dự kiến trong quá trình đào tạo.$2^N$các mạng phụ -- một tập hợp lớn từ một mô hình duy nhất.
 
 Trong thực tế, quy mô được áp dụng trong quá trình đào tạo thay vì thử nghiệm (trừ bỏ ngược):
 
-```
-During training:  output = activation(z) * mask / (1 - p)
-During testing:   output = activation(z)   (no change needed)
+```math
+\begin{aligned}
+\text{During training:} \quad & \text{output} = \text{activation}(z) \cdot \text{mask} / (1 - p) \\
+\text{During testing:} \quad & \text{output} = \text{activation}(z) \quad \text{(no change needed)}
+\end{aligned}
 ```
 
 Đây là sạch hơn bởi vì mã thử nghiệm không cần biết về việc bỏ học.
@@ -66,15 +68,15 @@ Tỷ lệ mặc định: p = 0,1 đối với các biến đổi, p = 0,5 đối
 
 Thêm kích thước vuông của tất cả các trọng lượng cho mất mát:
 
-```
-total_loss = task_loss + (lambda / 2) * sum(w_i^2)
+```math
+\text{total\_loss} = \text{task\_loss} + \frac{\lambda}{2} \sum_i w_i^2
 ```
 
-Tiêu chuẩn của thuật ngữ quy định là lambda * w. Điều này có nghĩa là ở mỗi bước, mỗi trọng lượng được thu nhỏ về phía không bằng một phần tương xứng với quy mô của nó. trọng lượng lớn bị phạt nhiều hơn. Mô hình được đẩy đến các giải pháp mà không có trọng lượng duy nhất thống trị.
+Độ gradient của thuật ngữ quy định là $\lambda w$Điều này có nghĩa là ở mỗi bước, mỗi trọng lượng được thu hẹp về phía không bằng một phần tương xứng với quy mô của nó. trọng lượng lớn bị phạt nhiều hơn. mô hình được đẩy đến các giải pháp mà không có trọng lượng duy nhất thống trị.
 
 Tại sao điều này giúp tổng quát: các mô hình overfit có xu hướng có trọng lượng lớn làm tăng tiếng ồn trong dữ liệu đào tạo.
 
-Các siêu tham số lambda kiểm soát sức mạnh.
+- $\lambda$Hyperparameter kiểm soát sức mạnh.
 
 - 0,01 cho AdamW trên các bộ biến áp
 - 1e-4 cho SGD trên CNN
@@ -88,16 +90,18 @@ Tiêu chuẩn hóa đầu ra của mỗi lớp trên mini-batch trước khi chu
 
 Đối với một loạt hoạt động nhỏ ở một số lớp:
 
-```
-mu = (1/B) * sum(x_i)           (batch mean)
-sigma^2 = (1/B) * sum((x_i - mu)^2)   (batch variance)
-x_hat = (x_i - mu) / sqrt(sigma^2 + eps)   (normalize)
-y = gamma * x_hat + beta        (scale and shift)
+```math
+\begin{aligned}
+\mu &= \frac{1}{B} \sum_i x_i && \text{(batch mean)} \\
+\sigma^2 &= \frac{1}{B} \sum_i (x_i - \mu)^2 && \text{(batch variance)} \\
+\hat{x} &= \frac{x_i - \mu}{\sqrt{\sigma^2 + \epsilon}} && \text{(normalize)} \\
+y &= \gamma \hat{x} + \beta && \text{(scale and shift)}
+\end{aligned}
 ```
 
 Gamma và beta là các tham số có thể học được cho phép mạng hủy bỏ bình thường hóa nếu đó là tối ưu. Nếu không có chúng, bạn sẽ buộc mỗi lớp đầu ra là không trung bình đơn vị biến thể, mà có thể không phải là những gì mạng muốn.
 
-**Training vs inference split:**Trong khi tập luyện, mu và sigma đến từ mini-batch hiện tại. Trong khi suy luận, bạn sử dụng trung bình chạy tích lũy trong khi tập luyện (tỷ lệ trung bình di động theo động lực = 0,1, nghĩa là 90% cũ + 10% mới).
+**Training vs inference split:**Trong quá trình đào tạo,$\mu$và $\sigma$được từ các bộ mini hiện tại. Trong khi suy luận, bạn sử dụng trung bình chạy tích lũy trong quá trình đào tạo (tỷ lệ trung bình di động theo động lực = 0,1, nghĩa là 90% cũ + 10% mới).
 
 Tại sao BatchNorm hoạt động vẫn còn tranh luận. Bài báo ban đầu tuyên bố nó làm giảm "sự thay đổi nội bộ" (khác định các đầu vào lớp thay đổi khi các lớp trước đó cập nhật). Santurkar et al. (2018) cho thấy lời giải thích này là sai. Lý do thực sự: BatchNorm làm cho cảnh thất bại mượt mà hơn. Các gradient là dự đoán hơn, các định vị Lipschitz nhỏ hơn, và người tối ưu hóa có thể thực hiện các bước lớn hơn một cách an toàn. Đó là lý do tại sao BatchNorm cho phép bạn sử dụng tỷ lệ học tập cao hơn và hội tụ nhanh hơn.
 
@@ -107,14 +111,16 @@ BatchNorm có một hạn chế cơ bản: nó phụ thuộc vào số liệu th
 
 Tiêu chuẩn hóa qua các tính năng thay vì trên toàn bộ lô.
 
-```
-mu = (1/D) * sum(x_j)           (feature mean)
-sigma^2 = (1/D) * sum((x_j - mu)^2)   (feature variance)
-x_hat = (x_j - mu) / sqrt(sigma^2 + eps)
-y = gamma * x_hat + beta
+```math
+\begin{aligned}
+\mu &= \frac{1}{D} \sum_j x_j && \text{(feature mean)} \\
+\sigma^2 &= \frac{1}{D} \sum_j (x_j - \mu)^2 && \text{(feature variance)} \\
+\hat{x} &= \frac{x_j - \mu}{\sqrt{\sigma^2 + \epsilon}} \\
+y &= \gamma \hat{x} + \beta
+\end{aligned}
 ```
 
-D là chiều tính năng. Mỗi mẫu được bình thường hóa độc lập - không phụ thuộc vào kích thước lô. Đây là lý do tại sao các bộ biến áp sử dụng LayerNorm thay vì BatchNorm. Các chuỗi có chiều dài thay đổi, kích thước lô thường nhỏ (hoặc 1 trong quá trình sản xuất), và tính toán là giống nhau giữa đào tạo và suy luận.
+$D$là chiều tính năng. Mỗi mẫu được bình thường hóa độc lập - không phụ thuộc vào kích thước lô. Đây là lý do tại sao các bộ biến áp sử dụng LayerNorm thay vì BatchNorm. Các chuỗi có chiều dài thay đổi, kích thước lô thường nhỏ (hoặc 1 trong quá trình sản xuất), và tính toán là giống nhau giữa đào tạo và suy luận.
 
 LayerNorm trong các biến thể được áp dụng sau mỗi khối tự chú ý và mỗi khối chuyển tiếp (Post-LN), hoặc trước chúng (Pre-LN, ổn định hơn cho đào tạo).
 
@@ -122,9 +128,11 @@ LayerNorm trong các biến thể được áp dụng sau mỗi khối tự chú
 
 LayerNorm mà không có sự trừ trung bình.
 
-```
-rms = sqrt((1/D) * sum(x_j^2))
-y = gamma * x / rms
+```math
+\begin{aligned}
+\text{rms} &= \sqrt{\frac{1}{D} \sum_j x_j^2} \\
+y &= \gamma \cdot \frac{x}{\text{rms}}
+\end{aligned}
 ```
 
 Đó là nó. Không tính toán trung bình, không tham số beta. quan sát: tái trung tâm (từ trừ trung bình) trong LayerNorm đóng góp rất ít cho hiệu suất của mô hình, nhưng chi phí tính toán.
@@ -515,8 +523,8 @@ Bài học này mang lại:
 |------|----------------|----------------------|
 | Overfitting | "Model memorized the data" | When a model's training performance significantly exceeds its test performance, indicating it learned noise rather than signal |
 | Regularization | "Preventing overfitting" | Any technique that constrains model complexity to improve generalization: dropout, weight decay, normalization, augmentation |
-| Dropout | "Random neuron deletion" | Zeroing random neurons during training with probability p, forcing redundant representations; equivalent to training an ensemble |
-| Weight decay | "L2 penalty" | Shrinking all weights toward zero by subtracting lambda * w at each step; penalizes complexity through weight magnitude |
+| Dropout | "Random neuron deletion" | Zeroing random neurons during training with probability $p$, forcing redundant representations; equivalent to training an ensemble |
+| Weight decay | "L2 penalty" | Shrinking all weights toward zero by subtracting $\lambda w$ at each step; penalizes complexity through weight magnitude |
 | Batch normalization | "Normalize per batch" | Normalizing layer outputs across the batch dimension using batch statistics during training and running averages during inference |
 | Layer normalization | "Normalize per sample" | Normalizing across features within each sample; batch-independent, used in transformers where batch size varies |
 | RMSNorm | "LayerNorm without the mean" | Root mean square normalization; drops the mean subtraction from LayerNorm for 10% speedup with equal accuracy |

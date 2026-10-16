@@ -143,11 +143,11 @@ Các khối xây dựng chính:
 
 | Module | What it does | Parameters |
 |--------|-------------|------------|
-| nn.Linear(in, out) | Wx + b | in*out + out |
+| nn.Linear(in, out) | $Wx + b$ | in*out + out |
 | nn.Conv2d(in_ch, out_ch, k) | 2D convolution | in_ch*out_ch*k*k + out_ch |
 | nn.BatchNorm1d(features) | Normalize activations | 2 * features |
 | nn.Dropout(p) | Random zeroing | 0 |
-| nn.ReLU() | max(0, x) | 0 |
+| nn.ReLU() | $\max(0, x)$ | 0 |
 | nn.GELU() | Gaussian error linear | 0 |
 | nn.Embedding(vocab, dim) | Lookup table | vocab * dim |
 | nn.LayerNorm(dim) | Per-sample normalization | 2 * dim |
@@ -356,7 +356,7 @@ class MNISTModel(nn.Module):
 
 Lớp đầu ra tạo ra 10 logit nguyên liệu (một trong mỗi chữ số). Không có softmax -- `CrossEntropyLoss`xử lý nội bộ.
 
-Số lượng tham số: 784*256 + 256 + 256*128 + 128 + 128*10 + 10 = 235.146.
+Số lượng tham số: $784 \cdot 256 + 256 + 256 \cdot 128 + 128 + 128 \cdot 10 + 10 = 235{,}146$GPT-2 nhỏ có 124m, nó sẽ chạy trong vài giây.
 
 ### Bước 3: Lòng huấn luyện
 

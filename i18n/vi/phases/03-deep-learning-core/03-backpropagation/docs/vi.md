@@ -26,7 +26,7 @@ Phân tích ngược giải quyết vấn đề này. Một bước đi về ph�
 
 ### Quy tắc chuỗi, áp dụng cho các mạng
 
-Bạn đã thấy quy tắc chuỗi trong giai đoạn 01, Bài học 05. Kết luận nhanh: nếu y = f(g(x)), thì dy/dx = f'(g(x)) * g'(x. Bạn nhân các dẫn xuất dọc theo chuỗi.
+Bạn đã thấy quy tắc chuỗi trong giai đoạn 01, Bài học 05.$y = f(g(x))$, sau đó $\frac{dy}{dx} = f'(g(x)) \cdot g'(x)$Bạn nhân các dẫn xuất dọc theo chuỗi.
 
 Trong một mạng thần kinh, "thống chuỗi" là chuỗi các hoạt động từ đầu vào đến mất. Mỗi lớp áp dụng trọng lượng, thêm thiên vị, đi qua một hoạt động.
 
@@ -45,9 +45,9 @@ graph LR
     y["target"] --> loss
 ```
 
-Chuyển về phía trước: giá trị chảy từ trái sang phải. x và w tạo ra z1 = w*x. Thêm b để có z2. Sigmoid cho hoạt động a. So sánh a với mục tiêu y bằng hàm mất.
+Chuyển về phía trước: giá trị chảy từ trái sang phải. $x$và $w$sản phẩm$z_1 = w x$Thêm vào$b$để có được$z_2$Sigmoid cho phép kích hoạt$a$- So sánh$a$để nhắm mục tiêu $y$sử dụng hàm mất.
 
-Trở về phía sau: gradient chảy từ bên phải sang bên trái. Bắt đầu bằng dL/da (như mất mát thay đổi với kích hoạt). nhân bằng da/dz2 (tái dẫn sigmoid). Điều đó cho dL/dz2. chia thành dL/db (tương đương dL/dz2, vì z2 = z1 + b) và dL/dz1.
+Chuyển ngược: gradient chảy từ phải sang trái.$\partial L/\partial a$(cách mất thay đổi với kích hoạt).$\partial a/\partial z_2$(trái dẫn sigmoid).$\partial L/\partial z_2$- Chia thành 2 .$\partial L/\partial b$(Điều này bằng với $\partial L/\partial z_2$, kể từ khi$z_2 = z_1 + b$) và $\partial L/\partial z_1$- Vậy thì$\partial L/\partial w = \partial L/\partial z_1 \cdot x$và $\partial L/\partial x = \partial L/\partial z_1 \cdot w$- Tôi không biết.
 
 Mỗi nút trong biểu đồ có một công việc trong quá trình đi ngược: lấy gradient từ trên, nhân bằng dẫn xuất địa phương của nó, và truyền xuống.
 
@@ -84,7 +84,7 @@ graph RL
     L1 -- "dL/dz1 = dL/da1 * sigmoid'(z1)" --> I["Input"]
 ```
 
-Ở mỗi lớp, gradient được nhân bằng dẫn xuất sigmoid. dẫn xuất sigmoid là * (1 - a), đạt mức tối đa 0,25 (khi a = 0,5). Ba lớp sâu, gradient được nhân bằng tối đa 0,25 ^ 3 = 0,0156.
+Ở mỗi lớp, gradient được nhân bằng dẫn xuất sigmoid.$a(1 - a)$, cao nhất là 0,25 (khi$a = 0.5$). Ba lớp sâu, độ nghiêng đã được nhân lên tối đa $0.25^3 = 0.0156$- Mười tầng sâu:$0.25^{10} = 0.000001$- Tôi không biết.
 
 ### Các gradient biến mất
 
@@ -102,32 +102,35 @@ After 10 layers:  gradient * 0.25^10 = 0.000001x original
 
 ### Thuộc dẫn các gradient cho một mạng lưới hai lớp
 
-Khóa toán cụ thể cho một mạng với đầu vào x, lớp ẩn với sigmoid, lớp đầu ra với sigmoid và mất MSE.
+Khóa toán cụ thể cho một mạng với đầu vào $x$, lớp ẩn với sigmoid, lớp xuất với sigmoid, và mất MSE.
 
 Nhận tiền:
-```
-z1 = W1 * x + b1
-a1 = sigmoid(z1)
-z2 = W2 * a1 + b2
-a2 = sigmoid(z2)
-L = (a2 - y)^2
+
+```math
+\begin{aligned}
+z_1 &= W_1 x + b_1 \\
+a_1 &= \text{sigmoid}(z_1) \\
+z_2 &= W_2 a_1 + b_2 \\
+a_2 &= \text{sigmoid}(z_2) \\
+L &= (a_2 - y)^2
+\end{aligned}
 ```
 
 Chuyển ngược (nói quy tắc chuỗi từng bước):
-```
-dL/da2 = 2(a2 - y)
-da2/dz2 = a2 * (1 - a2)
-dL/dz2 = dL/da2 * da2/dz2 = 2(a2 - y) * a2 * (1 - a2)
 
-dL/dW2 = dL/dz2 * a1
-dL/db2 = dL/dz2
-
-dL/da1 = dL/dz2 * W2
-da1/dz1 = a1 * (1 - a1)
-dL/dz1 = dL/da1 * da1/dz1
-
-dL/dW1 = dL/dz1 * x
-dL/db1 = dL/dz1
+```math
+\begin{aligned}
+\frac{\partial L}{\partial a_2} &= 2(a_2 - y) \\
+\frac{\partial a_2}{\partial z_2} &= a_2 (1 - a_2) \\
+\frac{\partial L}{\partial z_2} &= \frac{\partial L}{\partial a_2} \cdot \frac{\partial a_2}{\partial z_2} = 2(a_2 - y) \cdot a_2 (1 - a_2) \\[6pt]
+\frac{\partial L}{\partial W_2} &= \frac{\partial L}{\partial z_2} \cdot a_1 \\
+\frac{\partial L}{\partial b_2} &= \frac{\partial L}{\partial z_2} \\[6pt]
+\frac{\partial L}{\partial a_1} &= \frac{\partial L}{\partial z_2} \cdot W_2 \\
+\frac{\partial a_1}{\partial z_1} &= a_1 (1 - a_1) \\
+\frac{\partial L}{\partial z_1} &= \frac{\partial L}{\partial a_1} \cdot \frac{\partial a_1}{\partial z_1} \\[6pt]
+\frac{\partial L}{\partial W_1} &= \frac{\partial L}{\partial z_1} \cdot x \\
+\frac{\partial L}{\partial b_1} &= \frac{\partial L}{\partial z_1}
+\end{aligned}
 ```
 
 Mỗi gradient là sản phẩm của các phái sinh địa phương được theo dõi từ khi mất.
@@ -185,9 +188,9 @@ def __mul__(self, other):
     return out
 ```
 
-Để thêm: d(a+b) /da = 1, d(a+b) /db = 1. Vì vậy cả hai đầu vào nhận được gradient đầu ra trực tiếp.
+Để bổ sung: $\partial(a+b)/\partial a = 1$- $\partial(a+b)/\partial b = 1$Vì vậy cả hai đầu vào nhận được gradient đầu ra trực tiếp.
 
-Đối với nhân: d(a*b) /da = b, d(a*b) /db = a. Mỗi đầu vào nhận được giá trị của người khác nhân gradient đầu ra.
+Để nhân: $\partial(ab)/\partial a = b$- $\partial(ab)/\partial b = a$Mỗi đầu vào nhận được giá trị của các khác nhân độ đầu ra.
 
 - `+=`là quan trọng. Một giá trị có thể được sử dụng trong nhiều hoạt động. gradient của nó là tổng số gradient từ tất cả các con đường.
 
@@ -209,7 +212,7 @@ def sigmoid(self):
     return out
 ```
 
-Tiến hóa Sigmoid: sigmoid(x) * (1 - sigmoid(x)). Chúng tôi tính toán sigmoid(x) = s trong quá trình chuyển tiếp về phía trước. Sử dụng lại. Không có công việc bổ sung.
+Diviệt của Sigmoid: $\text{sigmoid}(x) \cdot (1 - \text{sigmoid}(x))$Chúng tôi đã tính toán$\text{sigmoid}(x) = s$- Không cần thêm công việc.
 
 ```python
 def mse_loss(predicted, target):
@@ -217,7 +220,7 @@ def mse_loss(predicted, target):
     return diff * diff
 ```
 
-MSE cho một đầu ra duy nhất: (được dự đoán - mục tiêu) ^ 2. Chúng ta thể hiện trừ như là cộng với một giá trị bị phủ nhận.
+MSE cho một sản lượng duy nhất: $(\text{predicted} - \text{target})^2$Chúng ta thể hiện trừ như là cộng với một giá trị bị phủ nhận.
 
 ### Bước 4: Đi ngược
 
@@ -241,7 +244,7 @@ def backward(self):
         v._backward()
 ```
 
-Bắt đầu từ mất (đường độ = 1.0, vì dL / dL = 1). Đi ngược qua biểu đồ sắp xếp.`_backward`đẩy gradient lên con cái của nó.
+Bắt đầu từ lỗ (nhiều điểm = 1.0, vì $dL/dL = 1$Đi ngược qua biểu đồ sắp xếp.`_backward`đẩy gradient lên con cái của nó.
 
 ### Bước 5: Lớp và mạng lưới
 
@@ -301,7 +304,7 @@ class Network:
             p.grad = 0.0
 ```
 
-Một Neuron lấy đầu vào, tính toán tổng số trọng lượng + thiên vị, và áp dụng sigmoid. Tỷ lệ khởi đầu trọng lượng bằng sqrt(2/n_input) để ngăn ngừa bão hòa sigmoid trong các mạng sâu hơn. Một Layer là một danh sách Neuron. Một Network là một danh sách các Layer.`parameters()`phương pháp thu thập tất cả các giá trị có thể học được để chúng ta có thể cập nhật chúng.
+Một Neuron lấy đầu vào, tính toán tổng cộng + thiên vị trọng lượng, và áp dụng sigmoid.$\sqrt{2/n_{\text{inputs}}}$để ngăn chặn sự bão hòa của sigmoid trong các mạng sâu hơn. Một lớp là một danh sách của Neurons.`parameters()`phương pháp thu thập tất cả các giá trị có thể học được để chúng ta có thể cập nhật chúng.
 
 ### Bước 6: Đào trên XOR
 
@@ -439,9 +442,9 @@ Bài học này mang lại:
 
 ## Các bài tập
 
-1. Thêm một `__sub__`phương pháp để lớp giá trị (a - b = a + (-1 * b)). Sau đó thực hiện a `__neg__`Phương pháp kiểm tra rằng các gradient là chính xác bằng cách so sánh với tính toán thủ công cho một biểu thức đơn giản như (a - b) ^ 2.
+1. Thêm một `__sub__`phương pháp cho lớp giá trị $(a - b = a + (-1 \cdot b))$Sau đó thực hiện một`__neg__`Phương pháp kiểm tra rằng các gradient là chính xác bằng cách so sánh với tính toán thủ công cho một biểu thức đơn giản như $(a - b)^2$- Tôi không biết.
 
-2. Thêm một `relu`phương pháp để Value (output max ((0, x), dẫn xuất là 1 nếu x > 0, thì 0). Thay thế sigmoid bằng relu trong các lớp ẩn và tập trên XOR một lần nữa. So sánh tốc độ hội tụ. Bạn nên xem đào tạo nhanh hơn - đây là xem trước Bài học 04.
+2. Thêm một `relu`phương pháp để Value (output $\max(0, x)$, phái sinh là 1 nếu $x \gt 0$Thay thế sigmoid bằng relu trong các lớp ẩn và tập trên XOR một lần nữa. So sánh tốc độ hội tụ. Bạn nên thấy tập luyện nhanh hơn - đây là xem trước bài học 04.
 
 3. Thực hiện một`__pow__`Phương pháp về giá trị cho các quyền số nguyên. Sử dụng nó để thay thế `mse_loss`với một đúng `(predicted - target) ** 2`biểu hiện. kiểm tra gradient phù hợp với thực hiện ban đầu.
 
@@ -453,14 +456,14 @@ Bài học này mang lại:
 
 | Term | What people say | What it actually means |
 |------|----------------|----------------------|
-| Backpropagation | "The network learns" | An algorithm that computes dL/dw for every weight by applying the chain rule backward through the computational graph |
+| Backpropagation | "The network learns" | An algorithm that computes $\partial L/\partial w$ for every weight by applying the chain rule backward through the computational graph |
 | Computational graph | "The network structure" | A directed acyclic graph where nodes are operations and edges carry values (forward) and gradients (backward) |
-| Chain rule | "Multiply the derivatives" | If y = f(g(x)), then dy/dx = f'(g(x)) * g'(x) -- the mathematical foundation of backpropagation |
+| Chain rule | "Multiply the derivatives" | If $y = f(g(x))$, then $\frac{dy}{dx} = f'(g(x)) \cdot g'(x)$ -- the mathematical foundation of backpropagation |
 | Gradient | "The direction of steepest ascent" | The partial derivative of the loss with respect to a parameter -- tells you how to change that parameter to reduce the loss |
 | Vanishing gradient | "Deep networks don't learn" | Gradients shrink exponentially as they propagate through layers with saturating activations like sigmoid |
 | Forward pass | "Running the network" | Computing the output from inputs by sequentially applying each layer's operations and storing intermediate values |
 | Backward pass | "Computing gradients" | Traversing the computational graph in reverse, accumulating gradients at each node using the chain rule |
-| Learning rate | "How fast it learns" | A scalar that controls the step size when updating weights: w_new = w_old - lr * gradient |
+| Learning rate | "How fast it learns" | A scalar that controls the step size when updating weights: $w_{\text{new}} = w_{\text{old}} - \text{lr} \cdot \text{gradient}$ |
 | Topological sort | "The right order" | An ordering of graph nodes where each node appears after all nodes it depends on -- ensures gradients are fully accumulated before propagation |
 | Autograd | "Automatic differentiation" | A system that builds computational graphs during forward computation and automatically computes gradients -- what PyTorch's engine does |
 

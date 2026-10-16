@@ -75,8 +75,8 @@ Mỗi tế bào thần kinh làm ba điều:
 
 Cho đến nay, kích hoạt là sigmoid:
 
-```
-sigmoid(z) = 1 / (1 + e^(-z))
+```math
+\text{sigmoid}(z) = \frac{1}{1 + e^{-z}}
 ```
 
 Sigmoid đúc bất kỳ số nào vào phạm vi (0, 1). Các đầu vào tích cực lớn đẩy về phía 1. Các đầu vào tiêu cực lớn đẩy về phía 0.
@@ -99,9 +99,11 @@ graph TD
 
 Ở mỗi lớp, ba hoạt động xảy ra theo trình tự:
 
-```
-z = W * input + b       (linear transformation)
-a = sigmoid(z)           (activation)
+```math
+\begin{aligned}
+z &= W \cdot \text{input} + b \quad \text{(linear transformation)} \\
+a &= \text{sigmoid}(z) \quad \text{(activation)}
+\end{aligned}
 ```
 
 Khả năng xuất phát từ một lớp trở thành đầu vào cho lớp tiếp theo. Đó là toàn bộ chuyển tiếp về phía trước.
@@ -112,13 +114,13 @@ Các chiều kích theo dõi là kỹ năng sửa lỗi quan trọng nhất tron
 
 | Step | Operation | Dimensions | Result Shape |
 |------|-----------|------------|-------------|
-| Input | x | -- | (2,) |
-| Hidden linear | W1 * x + b1 | W1: (3, 2), b1: (3,) | (3,) |
-| Hidden activation | sigmoid(z1) | -- | (3,) |
-| Output linear | W2 * h + b2 | W2: (1, 3), b2: (1,) | (1,) |
-| Output activation | sigmoid(z2) | -- | (1,) |
+| Input | $x$ | -- | (2,) |
+| Hidden linear | $W_1 x + b_1$ | $W_1$: (3, 2), $b_1$: (3,) | (3,) |
+| Hidden activation | $\text{sigmoid}(z_1)$ | -- | (3,) |
+| Output linear | $W_2 h + b_2$ | $W_2$: (1, 3), $b_2$: (1,) | (1,) |
+| Output activation | $\text{sigmoid}(z_2)$ | -- | (1,) |
 
-Quy tắc: khối lượng tử liệu W ở lớp k có hình dạng (neurons_in_layer_k, neurons_in_layer_k_minus_1).
+Quy tắc: khối lượng matrix $W$ở lớp $k$có hình dạng (neurons_in_layer_k, neurons_in_layer_k_minus_1). Các hàng phù hợp với lớp hiện tại. Cột phù hợp với lớp trước. Nếu các hình dạng không xếp hàng, bạn có một lỗi.
 
 ### Định lý thuyết tiếp cận phổ quát
 
@@ -168,7 +170,7 @@ Cẹp đến [-500, 500] ngăn chặn quá tải. `math.exp(500)`là lớn nhưn
 
 ### Bước 2: lớp lớp
 
-Hoạt động quan trọng nhất trong tất cả các học tập sâu là nhân số tử liệu. Mỗi lớp, mỗi đầu chú ý, mỗi bước đi về phía trước - nó là các matmuls tất cả các cách xuống. Một lớp tuyến tính lấy một vector đầu vào, nhân nó bằng một matrix trọng lượng, và thêm một vector thiên vị: y = Wx + b.
+Hoạt động quan trọng nhất trong tất cả các học tập sâu là nhân số tử liệu. Mỗi lớp, mỗi đầu chú ý, mỗi bước đi về phía trước - nó là các matmuls tất cả các cách xuống. Một lớp tuyến tính lấy một vector đầu vào, nhân nó bằng một matrix trọng lượng, và thêm một vector thiên vị:$y = Wx + b$Một phương trình đơn đó là 90% tính toán trong một mạng thần kinh.
 
 Một lớp chứa một khối lượng tử liệu và một vector thiên vị. phương pháp tiến của nó lấy một vector đầu vào và trả lại đầu ra hoạt động.
 
@@ -204,7 +206,7 @@ Các khối lượng tử liệu có hình dạng (n_neurons, n_inputs). Mỗi h
 
 ### Bước 3: Đội lớp mạng
 
-Một mạng là một danh sách các lớp. Các đường đi trước liên kết chúng: đầu ra của lớp k cung cấp vào lớp k + 1.
+Một mạng là một danh sách các lớp. Các đường đi trước chuỗi chúng: đầu ra của lớp $k$$k+1$- Tôi không biết.
 
 ```python
 class Network:
@@ -346,11 +348,11 @@ Sử dụng nó khi bạn cần quyết định bao nhiêu lớp, bao nhiêu t�
 | Hidden layer | "The middle part" | Any layer between input and output whose values are not directly observed in the data |
 | Multi-layer network | "A deep neural network" | Layers of neurons stacked sequentially, where each layer's output feeds the next layer's input |
 | Activation function | "The nonlinearity" | A function applied after the linear transformation that introduces curves into the decision boundary |
-| Sigmoid | "The S-curve" | sigma(z) = 1/(1+e^(-z)), squashes any real number to (0,1), smooth and differentiable everywhere |
-| Weight matrix | "The parameters" | A matrix W of shape (current_layer_neurons, previous_layer_neurons) containing learnable connection strengths |
+| Sigmoid | "The S-curve" | $\sigma(z) = 1/(1+e^{-z})$, squashes any real number to (0,1), smooth and differentiable everywhere |
+| Weight matrix | "The parameters" | A matrix $W$ of shape (current_layer_neurons, previous_layer_neurons) containing learnable connection strengths |
 | Bias vector | "The offset" | A vector added after the matrix multiply that lets neurons activate even when all inputs are zero |
 | Universal approximation | "Neural nets can learn anything" | A single hidden layer with enough neurons can approximate any continuous function -- but "enough" can mean billions |
-| Linear transformation | "The matrix multiply step" | z = W * x + b, the computation before activation, which maps inputs to a new space |
+| Linear transformation | "The matrix multiply step" | $z = W x + b$, the computation before activation, which maps inputs to a new space |
 | Decision boundary | "Where the classifier switches" | The surface in input space where the network output crosses the classification threshold |
 
 ## Đọc thêm

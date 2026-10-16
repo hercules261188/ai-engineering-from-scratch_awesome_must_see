@@ -26,7 +26,7 @@ Hiểu perceptron có nghĩa là hiểu "làm học" thực sự có nghĩa là 
 
 ### Một Neuron, một quyết định
 
-Một perceptron lấy n đầu vào, nhân mỗi lần bằng trọng lượng, tổng hợp chúng, thêm một thiên vị và truyền kết quả thông qua một chức năng kích hoạt.
+Một perceptron sẽ lấy$n$đầu vào, nhân mỗi lần bằng trọng lượng, tổng hợp chúng, thêm một sự thiên vị, và truyền kết quả thông qua một chức năng kích hoạt.
 
 ```mermaid
 graph LR
@@ -38,11 +38,10 @@ graph LR
     step --> out["output (0 or 1)"]
 ```
 
-Chức năng bước là tàn bạo: nếu tổng cộng cộng cộng với sự thiên vị được cân nhắc là >= 0, đầu ra 1. Nếu không, đầu ra là 0.
+Chức năng bước là tàn bạo: nếu tổng cộng cộng cộng với thiên vị được cân nhắc là $\ge 0$, đầu ra 1. Nếu không, đầu ra 0.
 
-```
-step(z) = 1  if z >= 0
-           0  if z < 0
+```math
+\text{step}(z) = \begin{cases} 1 & \text{if } z \ge 0 \\ 0 & \text{if } z < 0 \end{cases}
 ```
 
 Đây là một phân loại tuyến tính. trọng lượng và thiên vị xác định một đường (hoặc siêu phẳng ở các chiều cao hơn) chia không gian đầu vào thành hai khu vực.
@@ -80,7 +79,7 @@ For each training example (x, y_true):
     bias = bias + learning_rate * error
 ```
 
-Nếu dự đoán là đúng, lỗi = 0, không có gì thay đổi. Nếu dự đoán 0 nhưng phải là 1, trọng lượng tăng lên. Nếu dự đoán 1 nhưng phải là 0, trọng lượng giảm xuống. Tốc độ học tập kiểm soát mức độ lớn của mỗi điều chỉnh.
+Nếu dự đoán là đúng,$\text{error} = 0$Nếu nó dự đoán 0 nhưng phải là 1, trọng lượng tăng lên. Nếu nó dự đoán 1 nhưng phải là 0, trọng lượng giảm. Tốc độ học tập kiểm soát mức độ lớn của mỗi điều chỉnh.
 
 ### Vấn đề XOR
 
@@ -213,7 +212,7 @@ for inputs, expected in xor_data:
 
 ### Bước 4: Giải quyết XOR bằng hai lớp
 
-Trù: XOR = (x1 OR x2) Và KHÔNG (x1 AND x2). Kết hợp ba perceptron:
+Trù:$\text{XOR} = (x_1 \text{ OR } x_2) \text{ AND NOT } (x_1 \text{ AND } x_2)$Kết hợp ba perceptron:
 
 ```mermaid
 graph LR
@@ -359,7 +358,7 @@ Bài học này mang lại:
 ## Các bài tập
 
 1. Đào tạo một perceptron trên một cổng NAND (cổng phổ quát - bất kỳ mạch logic nào có thể được xây dựng từ NAND).
-2. Thay đổi lớp Perceptron để theo dõi ranh giới quyết định (w1*x1 + w2*x2 + b = 0) tại mỗi thời kỳ. Bác in cách đường thay đổi trong quá trình đào tạo trên cổng AND.
+2. Thay đổi lớp Perceptron để theo dõi ranh giới quyết định ($w_1 x_1 + w_2 x_2 + b = 0$(văn) trong mỗi thời đại. in cách đường chuyển động trong quá trình đào tạo trên cổng AND.
 3. Xây dựng một perceptron 3 đầu vào chỉ phát ra 1 khi ít nhất 2 trong 3 đầu vào là 1 (một hàm số phiếu đa số).
 
 ## Các điều khoản chính
@@ -372,7 +371,7 @@ Bài học này mang lại:
 | Activation function | "The thing that squishes values" | A function applied after the weighted sum - step function for perceptrons, sigmoid/ReLU for modern networks |
 | Linearly separable | "You can draw a line between them" | A dataset where a single hyperplane can perfectly separate the classes |
 | XOR problem | "The thing perceptrons can't do" | Proof that single-layer networks cannot learn non-linearly-separable functions |
-| Decision boundary | "Where the classifier switches" | The hyperplane w*x + b = 0 that divides input space into two classes |
+| Decision boundary | "Where the classifier switches" | The hyperplane $w \cdot x + b = 0$ that divides input space into two classes |
 | Multi-layer perceptron | "A real neural network" | Perceptrons stacked in layers, where each layer's output feeds the next layer's input |
 
 ## Đọc thêm

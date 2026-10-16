@@ -16,7 +16,7 @@
 
 ## Vấn đề
 
-Lắp 2 chuyển đổi tuyến tính: y = W2 ((W1x + b1) + b2. mở rộng nó: y = W2W1x + W2b1 + b2. Đó chỉ là y = Ax + c - một chuyển đổi tuyến tính đơn lẻ. Bất kể bạn xếp hàng bao nhiêu lớp tuyến tính, kết quả sẽ sụp đổ thành một số tử liệu nhân. Mạng 100 lớp của bạn có sức mạnh đại diện giống như một lớp đơn.
+Lắp xếp hai biến đổi tuyến tính: $y = W_2(W_1 x + b_1) + b_2$- Thúc lên:$y = W_2 W_1 x + W_2 b_1 + b_2$- Chỉ là...$y = Ax + c$-- một biến đổi tuyến tính duy nhất. Bất kể bạn xếp hàng bao nhiêu lớp tuyến tính, kết quả sẽ sụp đổ thành một matrix nhân.
 
 Đây không phải là một sự tò mò lý thuyết. Nó có nghĩa là một mạng lưới tuyến tính sâu không thể học XOR, không thể phân loại một tập dữ liệu xoắn ốc, không thể nhận ra một khuôn mặt.
 
@@ -26,52 +26,58 @@ Các chức năng kích hoạt phá vỡ tính tuyến tính. Chúng biến dạ
 
 ### Tại sao không tuyến tính là cần thiết
 
-Tỷ lệ nhân tử liệu là hợp thể. Tỷ lệ nhân một vector bằng số tử liệu A sau đó là số tử liệu B giống nhau với số nhân bằng AB. Điều này có nghĩa là xếp hàng mười lớp tuyến tính bằng một lớp tuyến tính với một số tử liệu lớn. Tất cả các tham số đó, tất cả chiều sâu đó - lãng phí. Bạn cần một cái gì đó để phá vỡ chuỗi. Đó là những gì các chức năng kích hoạt làm.
+Tỷ lệ nhân tử liệu là hợp thể.$A$sau đó là matrix$B$là giống nhau với nhân bằng $AB$Điều này có nghĩa là xếp hàng 10 lớp tuyến tính bằng một lớp tuyến tính với một matrix lớn. Tất cả các tham số đó, tất cả độ sâu đó - lãng phí. Bạn cần một cái gì đó để phá vỡ chuỗi. Đó là những gì các chức năng kích hoạt làm.
 
-Đây là bằng chứng. Một lớp tuyến tính tính toán f ((x) = Wx + b. Dòng hai:
+Đây là bằng chứng. Một lớp tuyến tính tính toán.$f(x) = Wx + b$- Cột hai:
 
-```
-Layer 1: h = W1 * x + b1
-Layer 2: y = W2 * h + b2
+```math
+\begin{aligned}
+\text{Layer 1:} \quad h &= W_1 x + b_1 \\
+\text{Layer 2:} \quad y &= W_2 h + b_2
+\end{aligned}
 ```
 
 Thay thế:
 
-```
-y = W2 * (W1 * x + b1) + b2
-y = (W2 * W1) * x + (W2 * b1 + b2)
-y = A * x + c
-```
-
-Một lớp. Nhập một kích hoạt không tuyến tính g() giữa các lớp:
-
-```
-h = g(W1 * x + b1)
-y = W2 * h + b2
+```math
+\begin{aligned}
+y &= W_2 (W_1 x + b_1) + b_2 \\
+y &= (W_2 W_1) x + (W_2 b_1 + b_2) \\
+y &= A x + c
+\end{aligned}
 ```
 
-Bây giờ thay thế bị phá vỡ. W2 * g(W1 * x + b1) + b2 không thể được giảm xuống thành một chuyển đổi tuyến tính duy nhất. Mạng có thể đại diện cho các chức năng phi tuyến tính. Mỗi lớp bổ sung với một kích hoạt thêm dung lượng đại diện.
+Một lớp. Nhập một kích hoạt không tuyến tính $g()$giữa các lớp:
+
+```math
+\begin{aligned}
+h &= g(W_1 x + b_1) \\
+y &= W_2 h + b_2
+\end{aligned}
+```
+
+Giờ thì sự thay thế bị phá vỡ.$W_2 g(W_1 x + b_1) + b_2$không thể được giảm xuống thành một chuyển đổi tuyến tính duy nhất. Mạng có thể đại diện cho các chức năng phi tuyến tính. Mỗi lớp bổ sung với một kích hoạt thêm khả năng đại diện.
 
 ### Sigmoid
 
 chức năng kích hoạt ban đầu cho mạng thần kinh.
 
-```
-sigmoid(x) = 1 / (1 + e^(-x))
+```math
+\text{sigmoid}(x) = \frac{1}{1 + e^{-x}}
 ```
 
 Phạm vi sản xuất: (0, 1). Dẻo, phân biệt, lập bản đồ bất kỳ số thực nào với giá trị tương tự như xác suất.
 
 Các dẫn xuất:
 
-```
-sigmoid'(x) = sigmoid(x) * (1 - sigmoid(x))
+```math
+\text{sigmoid}'(x) = \text{sigmoid}(x) \cdot (1 - \text{sigmoid}(x))
 ```
 
-Giá trị tối đa của phái sinh này là 0,25, xảy ra ở x = 0. Trong sự lan rộng ngược, gradient nhân qua các lớp.
+Giá trị tối đa của phái sinh này là 0,25, xảy ra ở $x = 0$Trong sự lan rộng ngược, gradient nhân qua các lớp.
 
-```
-0.25^10 = 0.000000953674
+```math
+0.25^{10} = 0.000000953674
 ```
 
 Chỉ dưới một triệu phần trăm của tín hiệu ban đầu. Đây là vấn đề biến mất của gradient. Các gradient ở các lớp ban đầu trở nên nhỏ đến nỗi trọng lượng hầu như không cập nhật. Mạng dường như học hỏi - mất mát giảm ở các lớp sau đó - nhưng các lớp đầu tiên bị đóng băng. Mạng sigmoid sâu đơn giản là không tập luyện.
@@ -82,33 +88,32 @@ Vấn đề bổ sung: các đầu ra sigmoid luôn tích cực (0 đến 1), c�
 
 Phiên bản trung tâm của sigmoid.
 
-```
-tanh(x) = (e^x - e^(-x)) / (e^x + e^(-x))
+```math
+\tanh(x) = \frac{e^x - e^{-x}}{e^x + e^{-x}}
 ```
 
 Phạm vi sản xuất: (-1, 1). Trung tâm không, loại bỏ vấn đề zig-zag.
 
 Các dẫn xuất:
 
-```
-tanh'(x) = 1 - tanh(x)^2
+```math
+\tanh'(x) = 1 - \tanh(x)^2
 ```
 
-Tiến dẫn tối đa là 1.0 ở x = 0 - tốt hơn bốn lần so với sigmoid. Nhưng vấn đề gradient biến mất vẫn tồn tại. Đối với đầu vào tích cực hoặc tiêu cực lớn, dẫn dẫn gần bằng không. Mười lớp vẫn đập nghiền gradient, ít hơn một cách hung hăng.
+Tái dẫn tối đa là 1.0 tại $x = 0$Nhưng vấn đề gradient biến mất vẫn tồn tại. Đối với các đầu vào tích cực hoặc tiêu cực lớn, dẫn xuất gần bằng không. 10 lớp vẫn đập nghiền gradient, ít hơn một cách hung hăng.
 
 ### ReLU: Sự đột phá
 
 Định hướng đơn vị tuyến tính được phổ biến cho việc học sâu bởi Nair và Hinton vào năm 2010 (các chức năng tự nó có từ công việc năm 1969 của Fukushima), nó đã thay đổi mọi thứ.
 
-```
-relu(x) = max(0, x)
+```math
+\text{relu}(x) = \max(0, x)
 ```
 
-Phạm vi đầu ra: [0, vô hạn).
+Phạm vi sản xuất: $[0, \infty)$. Phản xuất là đơn giản:
 
-```
-relu'(x) = 1  if x > 0
-            0  if x <= 0
+```math
+\text{relu}'(x) = \begin{cases} 1 & \text{if } x > 0 \\ 0 & \text{if } x \le 0 \end{cases}
 ```
 
 Không có gradient biến mất cho các đầu vào tích cực. gradient chính xác là 1, đi thẳng qua. Đó là lý do tại sao các mạng sâu trở nên có thể đào tạo - ReLU giữ lại độ lớn gradient trên các lớp.
@@ -119,25 +124,24 @@ Nhưng có một chế độ thất bại: vấn đề của các tế bào th�
 
 Cách đơn giản nhất để chữa trị cho các tế bào thần kinh chết.
 
-```
-leaky_relu(x) = x        if x > 0
-                alpha * x if x <= 0
+```math
+\text{leaky\_relu}(x) = \begin{cases} x & \text{if } x > 0 \\ \alpha x & \text{if } x \le 0 \end{cases}
 ```
 
-Ở đó alpha là một liên tục nhỏ, thường là 0.01. Mặt tiêu cực có một độ nghiêng nhỏ thay vì không, vì vậy các tế bào thần kinh chết vẫn nhận được tín hiệu gradient và có thể phục hồi.
+Ở đâu $\alpha$là một liên tục nhỏ, thường là 0.01. Mặt tiêu cực có một độ nghiêng nhỏ thay vì không, vì vậy các tế bào thần kinh chết vẫn nhận được tín hiệu gradient và có thể phục hồi.
 
 ### GELU: Sự cố hiện đại
 
 Gaussian Error Linear Unit. Được giới thiệu bởi Hendrycks và Gimpel vào năm 2016.
 
-```
-gelu(x) = x * Phi(x)
+```math
+\text{gelu}(x) = x \cdot \Phi(x)
 ```
 
-Phi ((x) là hàm phân phối tích lũy của phân bố bình thường tiêu chuẩn.
+Ở đâu $\Phi(x)$là hàm phân phối tích lũy của phân phối bình thường tiêu chuẩn.
 
-```
-gelu(x) ~= 0.5 * x * (1 + tanh(sqrt(2/pi) * (x + 0.044715 * x^3)))
+```math
+\text{gelu}(x) \approx 0.5 \cdot x \cdot \left(1 + \tanh\left(\sqrt{2/\pi} \cdot (x + 0.044715 \cdot x^3)\right)\right)
 ```
 
 GELU là mượt mà ở mọi nơi, cho phép các giá trị tiêu cực nhỏ (không giống như ReLU mà cắt cứng đến không), và có một cách giải thích xác suất: nó cân nhắc mỗi đầu vào bằng cách xác định khả năng nó tích cực dưới phân bố Gaussian.
@@ -146,11 +150,11 @@ GELU là mượt mà ở mọi nơi, cho phép các giá trị tiêu cực nhỏ
 
 Tự kích hoạt được phát hiện bởi Ramachandran et al. vào năm 2017 thông qua tìm kiếm tự động.
 
-```
-swish(x) = x * sigmoid(x)
+```math
+\text{swish}(x) = x \cdot \text{sigmoid}(x)
 ```
 
-Swish chính thức là x * sigmoid ((x). Google phát hiện ra nó thông qua tìm kiếm tự động trên không gian chức năng kích hoạt -- một mạng thần kinh thiết kế các phần của mạng thần kinh.
+Swish chính thức là $x \cdot \text{sigmoid}(x)$Google phát hiện ra nó thông qua việc tự động tìm kiếm trên không gian chức năng kích hoạt -- một mạng lưới thần kinh thiết kế các phần của mạng lưới thần kinh.
 
 Giống như GELU, nó mịn, không đơn điệu và cho phép các giá trị tiêu cực nhỏ. Sự khác biệt là tinh tế: Swish sử dụng sigmoid để cổng trong khi GELU sử dụng Gaussian CDF. Trong thực tế, hiệu suất gần giống nhau. Swish được sử dụng trong EfficientNet và một số mô hình thị giác. GELU thống trị trong mô hình ngôn ngữ.
 
@@ -158,8 +162,8 @@ Giống như GELU, nó mịn, không đơn điệu và cho phép các giá trị
 
 Không được sử dụng trong các lớp ẩn. Softmax chuyển đổi một vector của điểm số thô (logits) thành phân bố xác suất.
 
-```
-softmax(x_i) = e^(x_i) / sum(e^(x_j) for all j)
+```math
+\text{softmax}(x_i) = \frac{e^{x_i}}{\sum_j e^{x_j}}
 ```
 
 Mỗi đầu ra là từ 0 đến 1. Tất cả các đầu ra tổng cộng đến 1. Điều này làm cho nó trở thành kích hoạt cuối cùng tiêu chuẩn cho phân loại đa lớp. Logit lớn nhất có xác suất cao nhất, nhưng không giống như argmax, softmax có thể phân biệt và bảo tồn thông tin về sự tin cậy tương đối.
@@ -500,11 +504,11 @@ Bài học này mang lại:
 
 ## Các bài tập
 
-1. Thực hiện Parametric ReLU (PReLU) nơi độ nghiêng âm alpha là một tham số có thể học được. Đọc nó trên bộ dữ liệu vòng tròn và so sánh với cố định Leaky ReLU.
+1. Thực hiện Parametric ReLU (PReLU) khi độ nghiêng âm $\alpha$là một tham số có thể học được. Tập nó trên bộ dữ liệu vòng tròn và so sánh với cố định Leaky ReLU.
 
 2. Thực hiện thí nghiệm gradient biến mất với 50 lớp thay vì 10. Chụp quy mô tại mỗi lớp cho sigmoid, tanh, ReLU và GELU. Ở lớp nào tín hiệu của mỗi kích hoạt hiệu quả đạt đến không?
 
-3. Thực hiện ELU (Exponential Linear Unit): elu(x) = x nếu x > 0, alpha * (e^x - 1) nếu x <= 0. So sánh tốc độ của các tế bào thần kinh chết với ReLU trên cùng một mạng.
+3. Thực hiện ELU (Exponential Linear Unit): $\text{elu}(x) = x$Nếu$x \gt 0$- $\alpha (e^x - 1)$Nếu$x \le 0$So sánh tỷ lệ tế bào thần kinh chết của nó với ReLU trên cùng một mạng.
 
 4. Xây dựng một "chân sát sức khỏe gradient" chạy trong thời gian đào tạo: tại mỗi thời kỳ, tính toán độ lớn gradient trung bình ở mỗi lớp. In một cảnh báo khi gradient của bất kỳ lớp nào giảm xuống dưới 0,001 hoặc vượt quá 100.
 
@@ -518,12 +522,12 @@ Bài học này mang lại:
 | Vanishing gradient | "Gradients disappear in deep networks" | Gradients shrink exponentially through layers when the activation's derivative is less than 1, making early layers untrainable |
 | Exploding gradient | "Gradients blow up" | Gradients grow exponentially through layers when the effective multiplier exceeds 1, causing unstable training |
 | Dead neuron | "A neuron that stopped learning" | A ReLU neuron whose input is permanently negative, producing zero output and zero gradient |
-| Sigmoid | "Squishes values to 0-1" | The logistic function 1/(1+e^-x), historically important but causes vanishing gradients in deep networks |
-| ReLU | "Clips negatives to zero" | max(0, x) -- the activation that made deep learning practical by preserving gradient magnitude |
+| Sigmoid | "Squishes values to 0-1" | The logistic function $1/(1+e^{-x})$, historically important but causes vanishing gradients in deep networks |
+| ReLU | "Clips negatives to zero" | $\max(0, x)$ -- the activation that made deep learning practical by preserving gradient magnitude |
 | GELU | "The transformer activation" | Gaussian Error Linear Unit, a smooth activation that weights inputs by their probability of being positive |
-| Swish/SiLU | "Self-gated ReLU" | x * sigmoid(x), discovered through automated search, used in EfficientNet |
+| Swish/SiLU | "Self-gated ReLU" | $x \cdot \text{sigmoid}(x)$, discovered through automated search, used in EfficientNet |
 | Softmax | "Turns scores into probabilities" | Normalizes a vector of logits into a probability distribution where all values are in (0,1) and sum to 1 |
-| Leaky ReLU | "ReLU that doesn't die" | max(alpha*x, x) where alpha is small (0.01), preventing dead neurons by allowing small negative gradients |
+| Leaky ReLU | "ReLU that doesn't die" | $\max(\alpha x, x)$ where $\alpha$ is small (0.01), preventing dead neurons by allowing small negative gradients |
 | Saturation | "The flat part of sigmoid" | Regions where an activation's derivative approaches zero, blocking gradient flow |
 | Logit | "The raw score before softmax" | The unnormalized output of the final layer before applying softmax or sigmoid |
 
