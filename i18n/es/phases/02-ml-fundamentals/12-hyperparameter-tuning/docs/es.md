@@ -16,7 +16,7 @@
 
 ## El problema
 
-El modelo de aumento de gradiente tiene una tasa de aprendizaje, número de árboles, profundidad máxima, muestras min por hoja, ratio de submuestras y proporción de muestras de columnas. Eso es seis hiperparámetros. Si cada uno tiene 5 valores razonables, la cuadrícula tiene 5^6 = 15.625 combinaciones.
+El modelo de aumento de gradiente tiene una tasa de aprendizaje, número de árboles, profundidad máxima, min muestras por hoja, ratio de submuestras y proporción de muestras de columna.$5^6 = 15{,}625$Cada entrenamiento toma 10 segundos, es 43 horas de computación para probarlos todos.
 
 La búsqueda de red es el enfoque obvio y el peor a escala. La búsqueda aleatoria funciona mejor con menos computación. La optimización bayesiana funciona aún mejor aprendiendo de evaluaciones pasadas. Saber qué estrategia usar y qué hiperparámetros realmente importan, ahorra días de tiempo de GPU desperdiciado.
 
@@ -31,7 +31,7 @@ Los parámetros se aprenden durante el entrenamiento (pesos, sesgos, umbrales di
 | Learning rate | Step size per update | 0.001 to 1.0 |
 | Number of trees/epochs | How long to train | 10 to 10,000 |
 | Max depth | Model complexity | 1 to 30 |
-| Regularization (lambda) | Overfitting prevention | 0.0001 to 100 |
+| Regularization ($\lambda$) | Overfitting prevention | 0.0001 to 100 |
 | Batch size | Gradient estimation noise | 16 to 512 |
 | Dropout rate | Fraction of neurons dropped | 0.0 to 0.5 |
 
@@ -125,7 +125,7 @@ La velocidad de aprendizaje es casi siempre el hiperparámetro más importante.
 | Scheduler | Formula | When to use |
 |-----------|---------|-------------|
 | Step decay | Multiply by 0.1 every N epochs | Classic CNN training |
-| Cosine annealing | lr * 0.5 * (1 + cos(pi * t / T)) | Modern default |
+| Cosine annealing | $\text{lr} \cdot 0.5 \cdot (1 + \cos(\pi t / T))$ | Modern default |
 | Warmup + decay | Linear increase then cosine decay | Transformers |
 | One-cycle | Increase then decrease over one cycle | Fast convergence |
 | Reduce on plateau | Reduce by factor when metric stalls | Safe default |

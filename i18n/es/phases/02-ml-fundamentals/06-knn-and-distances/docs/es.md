@@ -56,12 +56,12 @@ K es el único hiperparámetro.
 
 | K | Behavior |
 |---|----------|
-| K = 1 | Decision boundary follows every point. Zero training error. High variance. Overfits |
+| $K = 1$ | Decision boundary follows every point. Zero training error. High variance. Overfits |
 | Small K (3-5) | Sensitive to local structure. Can capture complex boundaries |
 | Large K | Smoother boundaries. More robust to noise. May underfit |
-| K = N | Predicts the majority class for every point. Maximum bias |
+| $K = N$ | Predicts the majority class for every point. Maximum bias |
 
-Un punto de partida común es K = sqrt(N) para un conjunto de datos de N puntos.
+Un punto de partida común es $K = \sqrt{N}$para un conjunto de datos de $N$Use K impar para la clasificación binaria para evitar vínculos.
 
 ```mermaid
 graph LR
@@ -83,32 +83,33 @@ La función de distancia define lo que significa "cerca". Diferentes métricas p
 
 **L2 (Euclidean)**es el estándar.
 
-```
-d(a, b) = sqrt(sum((a_i - b_i)^2))
+```math
+d(a, b) = \sqrt{\sum_i (a_i - b_i)^2}
 ```
 
 Sensitivo a la escala de características. Siempre estandarice las características antes de usar L2 con KNN.
 
 **L1 (Manhattan)**La diferencia de la diferencia de la diferencia de la diferencia de la diferencia de la diferencia de la diferencia de la diferencia de la diferencia de la diferencia de la diferencia de la diferencia de la diferencia de la diferencia de la diferencia de la diferencia de la diferencia de la diferencia de la diferencia de la diferencia de la diferencia de la diferencia de la diferencia de la diferencia de la diferencia de la diferencia de la diferencia de la diferencia de la diferencia de la diferencia de la diferencia de la diferencia de la diferencia de la diferencia de la diferencia de la diferencia de la diferencia de la diferencia de la diferencia de la diferencia de la diferencia de la diferencia de la diferencia de la diferencia de la diferencia de la diferencia de la diferencia de la diferencia de la diferencia de la diferencia de la diferencia de la diferencia de la diferencia de la diferencia de la diferencia de la diferencia de la diferencia de la diferencia de la diferencia de la diferencia de la diferencia de la diferencia de la diferencia de la diferencia de la diferencia de la diferencia de la diferencia de la diferencia de la diferencia de la diferencia de la diferencia de la diferencia de la diferencia de la diferencia de la diferencia de la diferencia de la diferencia de la diferencia de la diferencia de la diferencia de la diferencia de la diferencia de la diferencia de la diferencia de la diferencia de la diferencia de la diferencia de la diferencia de la diferencia de la diferencia de la diferencia de la diferencia de la diferencia de la diferencia de la diferencia de la diferencia de la diferencia de la diferencia de la diferencia de la diferencia de la diferencia de la diferencia de la diferencia de la diferencia de la diferencia de la diferencia de la diferencia de la diferencia de la diferencia de la diferencia de la diferencia de la diferencia de la diferencia de la diferencia de la diferencia de la diferencia de la diferencia de la diferencia de la diferencia de la diferencia de la diferencia de la diferencia de la diferencia de la diferencia de la diferencia de la diferencia de la diferencia de la diferencia de la diferencia de la diferencia de la diferencia de la diferencia de la diferencia de la diferencia de la diferencia de la diferencia de la diferencia de la diferencia de la diferencia de la diferencia de la diferencia de la diferencia de la diferencia de la diferencia de la diferencia de la diferencia de la diferencia de la diferencia de la diferencia de la diferencia de la diferencia de la diferencia de la diferencia de la diferencia de la diferencia de la diferencia de la diferencia de la diferencia de la diferencia de la diferencia de la diferencia de la diferencia de la diferencia de la diferencia de la diferencia de la diferencia de la diferencia de la diferencia de la diferencia de la diferencia de
 
-```
-d(a, b) = sum(|a_i - b_i|)
+```math
+d(a, b) = \sum_i \lvert a_i - b_i \rvert
 ```
 
 **Cosine distance**El tamaño de la imagen es esencial para el texto y la incorporación de datos.
 
-```
-d(a, b) = 1 - (a . b) / (||a|| * ||b||)
+```math
+d(a, b) = 1 - \frac{a \cdot b}{\lVert a \rVert \, \lVert b \rVert}
 ```
 
-**Minkowski**generaliza L1 y L2 con el parámetro p.
+**Minkowski**generaliza L1 y L2 con parámetro $p$¿ Qué ?
 
-```
-d(a, b) = (sum(|a_i - b_i|^p))^(1/p)
-
-p=1: Manhattan
-p=2: Euclidean
-p->inf: Chebyshev (max absolute difference)
+```math
+\begin{aligned}
+& d(a, b) = \left( \sum_i \lvert a_i - b_i \rvert^p \right)^{1/p} \\[6pt]
+& p=1\text{: Manhattan} \\
+& p=2\text{: Euclidean} \\
+& p \to \infty\text{: Chebyshev (max absolute difference)}
+\end{aligned}
 ```
 
 La métrica que se utilice depende de los datos:
@@ -127,14 +128,15 @@ El KNN estándar da el mismo peso a todos los vecinos de K. Pero un vecino a dis
 
 **Distance-weighted KNN**Pese a cada vecino inversamente por distancia:
 
+```math
+\begin{aligned}
+& \text{weight}_i = \frac{1}{\text{distance}_i + \epsilon} \\[6pt]
+& \text{For classification: weighted vote} \\
+& \text{For regression: weighted average} = \frac{\sum_i w_i y_i}{\sum_i w_i}
+\end{aligned}
 ```
-weight_i = 1 / (distance_i + epsilon)
 
-For classification: weighted vote
-For regression:     weighted average = sum(w_i * y_i) / sum(w_i)
-```
-
-El epsilon evita la división por cero cuando un punto de consulta coincide exactamente con un punto de entrenamiento.
+El $\epsilon$evita la división por cero cuando un punto de consulta coincide exactamente con un punto de entrenamiento.
 
 El KNN ponderado es menos sensible a la elección de K porque los vecinos distantes contribuyen muy poco independientemente.
 
@@ -162,7 +164,7 @@ Consecuencia práctica: KNN funciona bien hasta unas 20 a 50 características. M
 
 ### Árboles KD: búsqueda rápida del vecino más cercano
 
-La fuerza bruta KNN calcula la distancia de la consulta a cada punto de entrenamiento.
+La fuerza bruta KNN calcula la distancia desde la consulta hasta cada punto de entrenamiento.$O(n \cdot d)$Para grandes conjuntos de datos, esto es demasiado lento.
 
 Un árbol KD particiona recursivamente el espacio a lo largo de los ejes de características.
 
@@ -178,7 +180,7 @@ graph TD
 
 Para encontrar al vecino más cercano, cruza el árbol hasta la hoja que contiene la consulta, luego retrocede y compruebe las particiones vecinas sólo si pueden contener puntos más cercanos.
 
-Tiempo medio de consulta: O(log n) para dimensiones bajas. Pero los árboles KD se degradan a O(n) en dimensiones altas (d > 20) porque el retroceso elimina cada vez menos ramas.
+Tiempo medio de consulta: $O(\log n)$Pero los árboles de KD se degradan a$O(n)$en altas dimensiones ($d > 20$) porque el retroceso elimina cada vez menos ramas.
 
 ### Árboles de bolas: mejor para dimensiones moderadas
 
@@ -197,8 +199,8 @@ KNN es un aprendiz perezoso: no funciona en el tiempo de entrenamiento y todo fu
 
 | Aspect | Lazy (KNN) | Eager (SVM, neural net) |
 |--------|------------|------------------------|
-| Training time | O(1) just store data | O(n * epochs) |
-| Prediction time | O(n * d) per query | O(d) or O(parameters) |
+| Training time | $O(1)$ just store data | $O(n \cdot \text{epochs})$ |
+| Prediction time | $O(n \cdot d)$ per query | $O(d)$ or $O(\text{parameters})$ |
 | Memory at prediction | Store entire training set | Store model parameters only |
 | Adapts to new data | Add points instantly | Retrain the model |
 | Decision boundary | Implicit, computed on the fly | Explicit, fixed after training |
@@ -213,12 +215,12 @@ El aprendizaje perezoso es ideal cuando:
 
 En lugar de votar por mayoría, KNN para la regresión promedia los valores objetivo de los vecinos K.
 
-```
-prediction = (1/K) * sum(y_i for i in K nearest neighbors)
-
-Or with distance weighting:
-prediction = sum(w_i * y_i) / sum(w_i)
-where w_i = 1 / distance_i
+```math
+\begin{aligned}
+& \text{prediction} = \frac{1}{K} \sum_{i \in K \text{ nearest neighbors}} y_i \\[6pt]
+& \text{Or with distance weighting:} \\
+& \text{prediction} = \frac{\sum_i w_i y_i}{\sum_i w_i} \quad \text{where } w_i = \frac{1}{\text{distance}_i + \epsilon}
+\end{aligned}
 ```
 
 La regresión KNN produce predicciones de pieza constante (o pieza suave con ponderación). No puede extrapolar más allá del rango de los datos de entrenamiento.
@@ -345,7 +347,7 @@ distances, indices = index.search(query_vectors, k=5)
 
 ## Los ejercicios
 
-1. Implemente la clasificación KNN en un conjunto de datos 2D con 3 clases. Traza el límite de decisión para K=1, K=5, K=15, y K=N. Observe la transición de sobreajuste a insuficiencia.
+1. Implementar la clasificación KNN en un conjunto de datos 2D con 3 clases.$K=1$¿ Qué ?$K=5$¿ Qué ?$K=15$, y $K=N$Observar la transición de sobreajuste a insuficiencia.
 
 2. Generar 1000 puntos aleatorios en 2, 5, 10, 50, 100, y 500 dimensiones. Para cada dimensión, calcular la relación de la distancia paritaria máxima a la distancia paritaria mínima.
 
@@ -353,7 +355,7 @@ distances, indices = index.search(query_vectors, k=5)
 
 4. Implemente un árbol KD y mide el tiempo de consulta frente a la fuerza bruta para conjuntos de datos de 1k, 10k y 100k puntos en 2D, 10D y 50D. ¿En qué dimensión el árbol KD deja de ser más rápido que la fuerza bruta?
 
-5. Construir un regresor KNN ponderado para y = sin(x) + ruido. Compararlo con KNN sin peso para K=3, 10, 30. Muestre que la ponderación produce predicciones más suaves, especialmente para grandes K.
+5. Construir un regresor KNN ponderado para $y = \sin(x) + \text{noise}$. Compare con KNN sin peso para$K=3, 10, 30$.Muestran que la ponderación produce predicciones más suaves, especialmente para grandes K.
 
 ## Términos clave
 
@@ -363,14 +365,14 @@ distances, indices = index.search(query_vectors, k=5)
 | Lazy learning | No computation at training time. All work happens at prediction time. KNN is the canonical example |
 | Eager learning | Heavy computation at training time to build a compact model. Most ML algorithms are eager |
 | Curse of dimensionality | In high dimensions, distances converge and neighborhoods expand to cover most of the space, making KNN ineffective |
-| KD-tree | Binary tree that recursively partitions space along feature axes. O(log n) queries in low dimensions |
+| KD-tree | Binary tree that recursively partitions space along feature axes. $O(\log n)$ queries in low dimensions |
 | Ball tree | Tree of nested hyperspheres. Works better than KD-trees in moderate dimensions (up to ~50) |
 | Weighted KNN | Neighbors weighted inversely by distance. Closer neighbors have more influence on the prediction |
 | Feature scaling | Normalizing features to comparable ranges. Required for distance-based methods like KNN |
 | Majority vote | Classification by counting which class is most common among K neighbors |
-| Brute force search | Computing distance to every training point. O(n*d) per query. Exact but slow for large n |
+| Brute force search | Computing distance to every training point. $O(n \cdot d)$ per query. Exact but slow for large $n$ |
 | Approximate nearest neighbor | Algorithms (HNSW, LSH, IVF) that find approximately nearest points much faster than exact search |
-| Voronoi diagram | The partition of space where each region contains all points closer to one training point than any other. K=1 KNN produces Voronoi boundaries |
+| Voronoi diagram | The partition of space where each region contains all points closer to one training point than any other. $K=1$ KNN produces Voronoi boundaries |
 
 ## Leer más
 

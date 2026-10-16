@@ -28,15 +28,15 @@ Los SVM se conectan directamente a la Fase 1: la optimización es convexa (lecci
 
 ### El clasificador de margen máximo
 
-Dados datos linealmente separables con etiquetas y_i en {-1, +1} y vectores de características x_i, queremos un hiperplano w^T x + b = 0 que separe las clases.
+Dados datos linealmente separables con etiquetas $y_i \in \lbrace -1, +1 \rbrace$y vectores de características $x_i$, queremos un hiperplano .$w^T x + b = 0$que separa las clases.
 
-La distancia de un punto x_i al hiperplano es:
+La distancia de un punto$x_i$a la hiperplanas es:
 
+```math
+\text{distance} = \frac{\lvert w^T x_i + b \rvert}{\lVert w \rVert}
 ```
-distance = |w^T x_i + b| / ||w||
-```
 
-Para un punto correctamente clasificado: y_i * (w^T x_i + b) > 0. El margen es el doble de la distancia del hiperplano al punto más cercano en ambos lados.
+Para un punto correctamente clasificado: $y_i (w^T x_i + b) > 0$El margen es el doble de la distancia del hiperplano al punto más cercano en ambos lados.
 
 ```mermaid
 graph LR
@@ -51,19 +51,23 @@ graph LR
 
 El problema de optimización:
 
-```
-maximize    2 / ||w||     (the margin width)
-subject to  y_i * (w^T x_i + b) >= 1  for all i
-```
-
-Igualmente (minimizar las condiciones de la producción es más fácil de optimizar):
-
-```
-minimize    (1/2) ||w||^2
-subject to  y_i * (w^T x_i + b) >= 1  for all i
+```math
+\begin{aligned}
+\text{maximize} \quad & \frac{2}{\lVert w \rVert} \quad \text{(the margin width)} \\
+\text{subject to} \quad & y_i (w^T x_i + b) \ge 1 \quad \text{for all } i
+\end{aligned}
 ```
 
-Este es un programa cuadrático convexo. Tiene una solución global única. Los puntos de datos que se encuentran exactamente en los límites del margen (donde y_i * (w^T x_i + b) = 1) son los vectores de soporte. Son los únicos puntos que determinan el límite de decisión. Mueve o elimine cualquier punto de vector no de soporte, y el límite no cambia.
+Igualmente (minimizando $\lVert w \rVert^2$es más fácil de optimizar):
+
+```math
+\begin{aligned}
+\text{minimize} \quad & \frac{1}{2} \lVert w \rVert^2 \\
+\text{subject to} \quad & y_i (w^T x_i + b) \ge 1 \quad \text{for all } i
+\end{aligned}
+```
+
+Este es un programa cuadrático convexo. Tiene una solución global única. Los puntos de datos que se encuentran exactamente en los límites de margen (donde $y_i (w^T x_i + b) = 1$Los puntos de apoyo son los vectores de apoyo. Son los únicos puntos que determinan el límite de decisión.
 
 ### Vectores de apoyo: los pocos críticos
 
@@ -85,30 +89,32 @@ El número de vectores de soporte también da un límite en el error de generali
 
 Los datos reales rara vez son perfectamente separables. Algunos puntos pueden estar en el lado equivocado del límite, o dentro del margen.
 
-```
-minimize    (1/2) ||w||^2 + C * sum(xi_i)
-subject to  y_i * (w^T x_i + b) >= 1 - xi_i
-            xi_i >= 0  for all i
+```math
+\begin{aligned}
+\text{minimize} \quad & \frac{1}{2} \lVert w \rVert^2 + C \sum_i \xi_i \\
+\text{subject to} \quad & y_i (w^T x_i + b) \ge 1 - \xi_i \\
+& \xi_i \ge 0 \quad \text{for all } i
+\end{aligned}
 ```
 
-La variable de flexibilidad xi_i mide la cantidad de puntos i que violan el margen.
+La variable de lacer $\xi_i$mide cuánto punto $i$Viola el margen. $C$controla el comercio:
 
-| C value | Behavior |
+| $C$ value | Behavior |
 |---------|----------|
-| Large C | Penalizes violations heavily. Narrow margin, fewer misclassifications. Overfits |
-| Small C | Allows more violations. Wide margin, more misclassifications. Underfits |
+| Large $C$ | Penalizes violations heavily. Narrow margin, fewer misclassifications. Overfits |
+| Small $C$ | Allows more violations. Wide margin, more misclassifications. Underfits |
 
-C es la fuerza de regularización, invertida. C mayor = menos regularización. C menor = más regularización.
+$C$es la fuerza de regularización, invertida.$C$= menos regularización.$C$= más regularización.
 
 ### Perdida de colmillos: función de pérdida de SVM
 
 El SVM de margen blando se puede reescribir como una optimización sin restricciones:
 
-```
-minimize    (1/2) ||w||^2 + C * sum(max(0, 1 - y_i * (w^T x_i + b)))
+```math
+\text{minimize} \quad \frac{1}{2} \lVert w \rVert^2 + C \sum_i \max(0, 1 - y_i (w^T x_i + b))
 ```
 
-El término max(0, 1 - y_i * f(x_i)) es la pérdida de bisagra. Es cero cuando el punto está clasificado correctamente y más allá del margen. Es lineal cuando el punto está dentro del margen o está mal clasificado.
+El término $\max(0, 1 - y_i f(x_i))$Es la pérdida de bisagra. Es cero cuando el punto está clasificado correctamente y más allá del margen. Es lineal cuando el punto está dentro del margen o está mal clasificado.
 
 ```
 Hinge loss for a single point:
@@ -130,9 +136,11 @@ Linear penalty when y*f(x) < 1.
 
 Comparar con pérdida logística (regresón logística):
 
-```
-Hinge:     max(0, 1 - y*f(x))          Hard cutoff at margin
-Logistic:  log(1 + exp(-y*f(x)))        Smooth, never exactly zero
+```math
+\begin{aligned}
+\text{Hinge:} \quad & \max(0, 1 - y f(x)) && \text{Hard cutoff at margin} \\
+\text{Logistic:} \quad & \log(1 + \exp(-y f(x))) && \text{Smooth, never exactly zero}
+\end{aligned}
 ```
 
 La pérdida de colchones produce soluciones escasas (solo los vectores de soporte tienen una contribución no cero). La pérdida logística utiliza todos los puntos de datos. Esto hace que los SVM sean más eficientes en la memoria en el tiempo de predicción.
@@ -141,36 +149,40 @@ La pérdida de colchones produce soluciones escasas (solo los vectores de soport
 
 Puede entrenar un SVM lineal utilizando la descenda de gradiente en la pérdida de bisagra más la regularización L2, sin resolver el QP restringido:
 
+```math
+\begin{aligned}
+& L(w, b) = \frac{\lambda}{2} \lVert w \rVert^2 + \frac{1}{n} \sum_i \max(0, 1 - y_i (w^T x_i + b)) \\[6pt]
+& \text{Gradient with respect to } w\text{:} \\
+& \quad \text{If } y_i (w^T x_i + b) \ge 1\text{:} \quad \frac{\partial L}{\partial w} = \lambda w \\
+& \quad \text{If } y_i (w^T x_i + b) < 1\text{:} \quad \frac{\partial L}{\partial w} = \lambda w - y_i x_i \\[6pt]
+& \text{Gradient with respect to } b\text{:} \\
+& \quad \text{If } y_i (w^T x_i + b) \ge 1\text{:} \quad \frac{\partial L}{\partial b} = 0 \\
+& \quad \text{If } y_i (w^T x_i + b) < 1\text{:} \quad \frac{\partial L}{\partial b} = -y_i
+\end{aligned}
 ```
-L(w, b) = (lambda/2) * ||w||^2 + (1/n) * sum(max(0, 1 - y_i * (w^T x_i + b)))
 
-Gradient with respect to w:
-  If y_i * (w^T x_i + b) >= 1:  dL/dw = lambda * w
-  If y_i * (w^T x_i + b) < 1:   dL/dw = lambda * w - y_i * x_i
-
-Gradient with respect to b:
-  If y_i * (w^T x_i + b) >= 1:  dL/db = 0
-  If y_i * (w^T x_i + b) < 1:   dL/db = -y_i
-```
-
-Esto se llama la formulación primaria. Se ejecuta en O(n * d) por época, donde n es el número de muestras y d es el número de características. Para datos grandes, escasos y de alta dimensión (clasificación de texto), esto es rápido.
+Esto se llama la formulación primaria.$O(n \cdot d)$por época, donde $n$es el número de muestras y $d$Para los datos grandes, escasos y de alta dimensión (clasificación de texto), esto es rápido.
 
 ### La doble formulación y el truco del núcleo
 
 El dual Lagrangiano del problema de SVM (de la lección de la fase 1, condiciones de KKT) es:
 
-```
-maximize    sum(alpha_i) - (1/2) * sum_ij(alpha_i * alpha_j * y_i * y_j * (x_i . x_j))
-subject to  0 <= alpha_i <= C
-            sum(alpha_i * y_i) = 0
+```math
+\begin{aligned}
+\text{maximize} \quad & \sum_i \alpha_i - \frac{1}{2} \sum_{i,j} \alpha_i \alpha_j y_i y_j (x_i \cdot x_j) \\
+\text{subject to} \quad & 0 \le \alpha_i \le C \\
+& \sum_i \alpha_i y_i = 0
+\end{aligned}
 ```
 
-El dual solo implica productos de puntos x_i. x_j entre los puntos de datos. Esta es la clave. reemplaza cada producto de puntos con una función del núcleo K(x_i, x_j) y el SVM puede aprender límites no lineales sin calcular nunca la transformación explícitamente.
+El doble sólo implica productos de puntos $x_i \cdot x_j$Esto es la clave de la información.$K(x_i, x_j)$y el SVM puede aprender límites no lineales sin calcular la transformación explícitamente.
 
-```
-Linear kernel:      K(x, z) = x . z
-Polynomial kernel:  K(x, z) = (x . z + c)^d
-RBF (Gaussian):     K(x, z) = exp(-gamma * ||x - z||^2)
+```math
+\begin{aligned}
+\text{Linear kernel:} \quad & K(x, z) = x \cdot z \\
+\text{Polynomial kernel:} \quad & K(x, z) = (x \cdot z + c)^d \\
+\text{RBF (Gaussian):} \quad & K(x, z) = \exp(-\gamma \lVert x - z \rVert^2)
+\end{aligned}
 ```
 
 El núcleo RBF mapea los datos en un espacio de dimensiones infinitas. Los puntos que están cerca en el espacio de entrada tienen un valor del núcleo cerca de 1.
@@ -186,20 +198,22 @@ graph LR
     A -->|"Kernel trick<br>K(x,z) = phi(x).phi(z)"| B
 ```
 
-El truco del núcleo calcula el producto de puntos en el espacio de alta dimensión sin llegar allí. Para el núcleo polinómico de grado d en dimensiones D, el espacio de características explícito tiene dimensiones O(D^d). Pero K(x, z) se calcula en tiempo O(D).
+El truco del núcleo calcula el producto de puntos en el espacio de alta dimensión sin llegar allí.$d$En el$D$dimensiones, el espacio de características explícitas tiene $O(D^d)$Las dimensiones.$K(x, z)$se calcula en $O(D)$¿Qué es el tiempo?
 
 ### MPS para regresión (MPS)
 
-El vector de apoyo regresión se ajusta a un tubo de ancho epsilon alrededor de los datos. los puntos dentro del tubo tienen pérdida cero. los puntos fuera del tubo se penalizan linealmente.
+Vektor de apoyo Regressión se ajusta a un tubo de ancho $\epsilon$Los puntos dentro del tubo tienen pérdida cero.
 
-```
-minimize    (1/2) ||w||^2 + C * sum(xi_i + xi_i*)
-subject to  y_i - (w^T x_i + b) <= epsilon + xi_i
-            (w^T x_i + b) - y_i <= epsilon + xi_i*
-            xi_i, xi_i* >= 0
+```math
+\begin{aligned}
+\text{minimize} \quad & \frac{1}{2} \lVert w \rVert^2 + C \sum_i (\xi_i + \xi_i^*) \\
+\text{subject to} \quad & y_i - (w^T x_i + b) \le \epsilon + \xi_i \\
+& (w^T x_i + b) - y_i \le \epsilon + \xi_i^* \\
+& \xi_i, \xi_i^* \ge 0
+\end{aligned}
 ```
 
-El parámetro epsilon controla el ancho del tubo. tubo más ancho = menos vectores de soporte = ajuste más suave. tubo más estrecho = más vectores de soporte = ajuste más estrecho.
+El $\epsilon$El parámetro controla el ancho del tubo. tubo más amplio = menos vectores de soporte = ajuste más suave. tubo más estrecho = más vectores de soporte = ajuste más apretado.
 
 ### Por qué los SVM perdieron al aprendizaje profundo (y cuando todavía ganan)
 
@@ -208,7 +222,7 @@ Los SVM dominaron el aprendizaje de aprendizaje desde finales de la década de 1
 | Factor | SVMs | Deep learning |
 |--------|------|---------------|
 | Feature engineering | Requires it | Learns features |
-| Scalability | O(n^2) to O(n^3) for kernel | O(n) per epoch with SGD |
+| Scalability | $O(n^2)$ to $O(n^3)$ for kernel | $O(n)$ per epoch with SGD |
 | Image/text/audio | Needs handcrafted features | Learns from raw data |
 | Large datasets (>100k) | Slow | Scales well |
 | GPU acceleration | Limited benefit | Massive speedup |
@@ -324,9 +338,9 @@ print(f"Accuracy: {clf.score(X_test, y_test):.4f}")
 print(f"Support vectors: {clf['svm'].n_support_}")
 ```
 
-Importante: siempre escalar sus características antes de entrenar a un SVM. Los SVM son sensibles a las magnitudes de las características porque el margen depende de las características no escaladas, y distorsionan la geometría.
+Importante: siempre haga escala de sus características antes de entrenar a un SVM. Los SVM son sensibles a las magnitudes de las características porque el margen depende de$\lVert w \rVert$, y las características no escaladas distorsionan la geometría.
 
-Para conjuntos de datos grandes, utilice `LinearSVC`(formulación primaria, O(n) por época) en lugar de `SVC`(formación doble, O(n^2) a O ((n^3)):
+Para conjuntos de datos grandes, utilice `LinearSVC`(formación primaria, $O(n)$por época) en lugar de `SVC`(dupla formulación, $O(n^2)$¿ Qué ?$O(n^3){}$):
 
 ```python
 from sklearn.svm import LinearSVC
@@ -341,13 +355,13 @@ clf = Pipeline([
 
 1. Generar un conjunto de datos linealmente separable en 2D. Entrenar su LinearSVM e identificar los vectores de soporte. Verificar que los vectores de soporte son los puntos más cercanos al límite de decisión.
 
-2. Varia C de 0,001 a 1000 en un conjunto de datos ruidosos. Trazar el límite de decisión para cada valor C. Observe la transición de margen amplio (incorrección) a margen estrecho (overfitting).
+2. Varios .$C$En un conjunto de datos ruidosos, el límite de decisión para cada uno de los dos puntos es el de 0,001 a 1000.$C$Observe la transición de un margen amplio (incorrección) a un margen estrecho (overfitting).
 
 3. Crear un conjunto de datos donde los límites de las clases son circulares (no lineales). Mostrar que un SVM lineal falla. Compute la matriz del núcleo RBF y mostrar que las clases se vuelven separables en el espacio de características inducido por el núcleo.
 
 4. Compare pérdida de bisagra con pérdida logística en el mismo conjunto de datos. Entrenar un SVM lineal y regresión logística. Cuente cuántos puntos de entrenamiento contribuyen al límite de decisión de cada modelo (vectores de apoyo con todos los puntos).
 
-5. Implemente SVR (pérdida insensitiva a la epsilon). Ajuste a y = sin(x) + ruido. Traza el tubo de epsilon alrededor de las predicciones y resalte los vectores de soporte (puntos fuera del tubo).
+5. Implemente SVR (perdida insensitiva a la epsilona).$y = \sin(x) + \text{noise}$. Trazar el tubo de epsilon alrededor de las predicciones y resaltar los vectores de apoyo (puntos fuera del tubo).
 
 ## Términos clave
 
@@ -355,16 +369,16 @@ clf = Pipeline([
 |------|----------------------|
 | Support vectors | The training points closest to the decision boundary. The only points that determine the hyperplane |
 | Margin | The distance between the decision boundary and the nearest support vectors. SVMs maximize this |
-| Hinge loss | max(0, 1 - y*f(x)). Zero when correctly classified and outside the margin. Linear penalty otherwise |
-| C parameter | Trade-off between margin width and classification errors. Large C = narrow margin, small C = wide margin |
+| Hinge loss | $\max(0, 1 - y f(x))$. Zero when correctly classified and outside the margin. Linear penalty otherwise |
+| C parameter | Trade-off between margin width and classification errors. Large $C$ = narrow margin, small $C$ = wide margin |
 | Soft margin | SVM formulation that allows margin violations via slack variables. Handles non-separable data |
 | Kernel trick | Computing dot products in a high-dimensional feature space without explicitly mapping to that space |
-| Linear kernel | K(x, z) = x . z. Equivalent to standard dot product. For linearly separable data |
-| RBF kernel | K(x, z) = exp(-gamma * \|\|x-z\|\|^2). Maps to infinite dimensions. Learns any smooth boundary |
-| Polynomial kernel | K(x, z) = (x . z + c)^d. Maps to a feature space of polynomial combinations |
+| Linear kernel | $K(x, z) = x \cdot z$. Equivalent to standard dot product. For linearly separable data |
+| RBF kernel | $K(x, z) = \exp(-\gamma \Vert x-z \Vert^2)$. Maps to infinite dimensions. Learns any smooth boundary |
+| Polynomial kernel | $K(x, z) = (x \cdot z + c)^d$. Maps to a feature space of polynomial combinations |
 | Dual formulation | Reformulation of the SVM problem that depends only on dot products between data points. Enables kernels |
 | SVR | Support Vector Regression. Fits an epsilon-tube around the data. Points inside the tube have zero loss |
-| Slack variables | xi_i: measures how much a point violates the margin. Zero for correctly classified points outside margin |
+| Slack variables | $\xi_i$: measures how much a point violates the margin. Zero for correctly classified points outside margin |
 | Maximum margin | The principle of choosing the hyperplane that maximizes the distance to the nearest points of each class |
 
 ## Leer más

@@ -81,11 +81,11 @@ flowchart TB
     Fold5 --> R
 ```
 
-1. Dividir los datos en pliegues de K de tamaño igual
-2. Para cada pliegue, entren en los pliegues K-1 y validen en el resto de pliegues
-3. Promedio de los puntajes de validación K
+1. Dividir los datos en $K$Pultos de tamaño igual
+2. Para cada doble, el tren sigue.$K-1$se plega y se valida en el plegado restante
+3. El promedio de $K$puntuaciones de validación
 
-K=5 o K=10 son opciones estándar. Cada punto de datos se utiliza para la validación exactamente una vez. La puntuación promedio es una estimación más estable que cualquier división única.
+$K=5$o $K=10$Cada punto de datos se utiliza para la validación exactamente una vez.
 
 **Stratified K-fold**Si el conjunto de datos es 70% clase A y 30% clase B, cada doble tendrá aproximadamente la misma proporción. Esto es importante para conjuntos de datos desequilibrados donde una división aleatoria podría poner todas las muestras minoritarias en un solo doble.
 
@@ -100,18 +100,18 @@ K=5 o K=10 son opciones estándar. Cada punto de datos se utiliza para la valida
 
 A partir de esta matriz, todas las otras métricas siguen:
 
-- **Accuracy**= (TP + TN) / (TP + TN + FP + FN). Fracción de predicciones correctas.
-- **Precision**= TP / (TP + FP). De todas las cosas predicidas positivas, ¿cuántas en realidad eran?
-- **Recall**(sensibilidad) = TP / (TP + FN). De todos los positivos reales, ¿cuántos hemos capturado?
-- **F1 score**= 2 * precisión * recall / (precisión + recall).
+- **Accuracy**¿ Qué es esto ?$(TP + TN) / (TP + TN + FP + FN)$Fracción de predicciones correctas, engañosas cuando las clases están desequilibradas.
+- **Precision**¿ Qué es esto ?$TP / (TP + FP)$¿Cuántas cosas se predijeron positivas? ¿Cuántas en realidad?
+- **Recall**(sensibilidad) = $TP / (TP + FN)$¿Cuántos de los positivos reales hemos detectado?
+- **F1 score**¿ Qué es esto ?$2 \cdot \text{precision} \cdot \text{recall} / (\text{precision} + \text{recall})$- Medios armónicos de precisión y recuerdo.
 - **AUC-ROC**Área bajo la curva de características operativas del receptor. muestra la tasa positiva verdadera vs tasa positiva falsa en varios umbrales de clasificación. AUC = 0.5 significa adivinar al azar, AUC = 1.0 significa separación perfecta.
 
 ### Metricas de regresión
 
-- **MSE**(Erro cuadrado medio) = medio((y_true - y_pred) ^ 2). Penaliza errores grandes cuadráticamente.
-- **RMSE**(Erro medio cuadrado de raíz) = sqrt(MSE). Las mismas unidades que la variable objetivo.
-- **MAE**(Medio de error absoluto) = medio de error (y_true - y_pred = error). Trata todos los errores linealmente.
-- **R-squared**= 1 - SS_res / SS_tot, donde SS_res = suma((y_true - y_pred) ^2) y SS_tot = suma(((y_true - y_mean) ^2). Fracción de variación explicada por el modelo. R^2 = 1,0 es perfecto. R^2 = 0.0 significa que el modelo no es mejor que siempre predecir la media. R^2 puede ser negativo si el modelo es peor que la media.
+- **MSE**(Erro cuadrado medio) = $\text{mean}((y_{\text{true}} - y_{\text{pred}})^2)$- Penaliza los errores grandes en forma cuadrática.
+- **RMSE**(Erro de la raíz media cuadrada) = $\sqrt{\text{MSE}}$Las mismas unidades que la variable objetivo, más fácil de interpretar que el MSE.
+- **MAE**(Erro absoluto medio) = $\text{mean}(\lvert y_{\text{true}} - y_{\text{pred}} \rvert)$Tratará todos los errores de manera lineal, más robusta a excepcionales que el MSE.
+- **R-squared**¿ Qué es esto ?$1 - SS_{\text{res}} / SS_{\text{tot}}$, donde $SS_{\text{res}} = \sum (y_{\text{true}} - y_{\text{pred}})^2$y $SS_{\text{tot}} = \sum (y_{\text{true}} - y_{\text{mean}})^2$. Fracción de variación explicada por el modelo. $R^2 = 1.0$Es perfecto.$R^2 = 0.0$significa que el modelo no es mejor que siempre predecir la media. $R^2$puede ser negativo si el modelo es peor que la media.
 
 ### Curvas de aprendizaje
 
@@ -664,10 +664,10 @@ Esta lección produce:
 |------|----------------|----------------------|
 | Overfitting | "Memorizing the training data" | The model captures noise in the training data, performing well on training but poorly on unseen data |
 | Cross-validation | "Testing on different subsets" | Systematically rotating which portion of data is used for validation, averaging results across all rotations |
-| Precision | "How many predicted positives are correct" | TP / (TP + FP): the fraction of positive predictions that are actually positive |
-| Recall | "How many actual positives we found" | TP / (TP + FN): the fraction of actual positives that were correctly identified |
+| Precision | "How many predicted positives are correct" | $TP / (TP + FP)$: the fraction of positive predictions that are actually positive |
+| Recall | "How many actual positives we found" | $TP / (TP + FN)$: the fraction of actual positives that were correctly identified |
 | AUC-ROC | "How well the model separates classes" | The area under the curve of true positive rate vs false positive rate across all thresholds, from 0.5 (random) to 1.0 (perfect) |
-| R-squared | "How much variance is explained" | 1 - (sum of squared residuals / total sum of squares): the fraction of target variance captured by the model |
+| R-squared | "How much variance is explained" | $1 - (\text{sum of squared residuals} / \text{total sum of squares})$: the fraction of target variance captured by the model |
 | Data leakage | "The model cheated" | Using information during training that would not be available at prediction time, leading to optimistic evaluation |
 | Learning curve | "How performance changes with more data" | A plot of training and validation scores vs training set size, revealing underfitting or overfitting |
 | Stratified split | "Keeping class ratios balanced" | Splitting data so each subset has the same proportion of each class as the full dataset |

@@ -48,10 +48,8 @@ En cada nodo, tenemos un conjunto de muestras. Queremos dividirlos para que los 
 
 **Gini impurity**mide la probabilidad de que una muestra seleccionada al azar se clasifique erróneamente si se etiquetara de acuerdo con la distribución de clases en ese nodo.
 
-```
-Gini(S) = 1 - sum(p_k^2)
-
-where p_k is the proportion of class k in set S.
+```math
+\text{Gini}(S) = 1 - \sum_k p_k^2 \quad \text{where } p_k \text{ is the proportion of class } k \text{ in set } S.
 ```
 
 Para un nodo puro (todos una clase), Gini = 0. Para una división binaria con clases 50/50, Gini = 0.5.
@@ -64,8 +62,8 @@ Gini = 1 - (0.6^2 + 0.4^2) = 1 - (0.36 + 0.16) = 0.48
 
 **Entropy**mide el contenido de información (desorden) en un nodo.
 
-```
-Entropy(S) = -sum(p_k * log2(p_k))
+```math
+\text{Entropy}(S) = -\sum_k p_k \log_2(p_k)
 ```
 
 Para un nodo puro, entropía = 0. Para una división binaria 50/50, entropía = 1.0.
@@ -81,20 +79,21 @@ Entropy = -(0.6 * log2(0.6) + 0.4 * log2(0.4))
 
 **Information gain**es la reducción de la impureza (entropía o Gini) después de una división.
 
-```
-IG(S, feature, threshold) = Impurity(S) - weighted_avg(Impurity(S_left), Impurity(S_right))
-
-where the weights are the proportions of samples in each child.
+```math
+\begin{aligned}
+& IG(S, \text{feature}, \text{threshold}) = \text{Impurity}(S) - \text{weighted\_avg}(\text{Impurity}(S_{\text{left}}), \text{Impurity}(S_{\text{right}})) \\[4pt]
+& \text{where the weights are the proportions of samples in each child.}
+\end{aligned}
 ```
 
 El codicioso algoritmo en cada nodo: prueba todas las características y todos los umbrales posibles. Elige el par (función, umbra) que maximiza la ganancia de información.
 
 ### Cómo funciona la división
 
-Para un conjunto de datos con n características y m muestras en el nodo actual:
+Para un conjunto de datos con $n$características y $m$muestras en el nodo actual:
 
-1. Para cada característica j (j = 1 a n):
-   - Se clasifican las muestras por función j
+1. Para cada característica $j$(El artículo$j = 1$¿ Qué ?$n$):
+   - Ordenar las muestras por características $j$
    - Prueba cada punto medio entre valores distintos consecutivos como umbral
    - Calcule la ganancia de información para cada umbral
 2. Seleccione la característica y el umbral con el mayor aumento de información
@@ -109,7 +108,7 @@ Sin condiciones de detención, el árbol crece hasta que cada hoja es pura (una 
 
 **Pre-pruning**detiene el árbol antes de que crezca completamente:
 - Profundidad máxima: dejar de dividirse cuando el árbol alcance una profundidad fija
-- Muestras mínimas por hoja: detenerse si un nodo tiene menos de k muestras
+- Muestras mínimas por hoja: detenerse si un nodo tiene menos de $k$muestras
 - Obtención mínima de información: detenerse si la mejor división mejora la impureza en menos de un umbral
 - Núdulos de hojas máximos: limite el número total de hojas
 
@@ -125,8 +124,8 @@ Para la regresión, la predicción de hoja es la media de los valores objetivo e
 
 **Variance reduction**sustituye la información obtenida:
 
-```
-VR(S, feature, threshold) = Var(S) - weighted_avg(Var(S_left), Var(S_right))
+```math
+VR(S, \text{feature}, \text{threshold}) = \text{Var}(S) - \text{weighted\_avg}(\text{Var}(S_{\text{left}}), \text{Var}(S_{\text{right}}))
 ```
 
 Seleccione la división que reduce más la varianza. El árbol particiona el espacio de entrada en regiones y predice una constante (la media) en cada región.
@@ -155,7 +154,7 @@ Dos fuentes de aleatoriedad hacen que los árboles sean diversos:
 
 **Bagging (bootstrap aggregating):**Cada árbol se entrena en una muestra de arranque, una muestra aleatoria con reemplazo de los datos de entrenamiento. Aproximadamente el 63% de las muestras originales aparecen en cada arranque (el resto son muestras fuera de bolsa que se pueden usar para la validación).
 
-**Feature randomization:**En cada división, solo se considera un subconjunto aleatorio de características. Para la clasificación, el predeterminado es sqrt(n_features). Para la regresión, n_features/3. Esto evita que todos los árboles se dividan en la misma característica dominante.
+**Feature randomization:**En cada división, solo se considera un subconjunto aleatorio de características.$\sqrt{n_{\text{features}}}$Para la regresión,$n_{\text{features}}/3$Esto evita que todos los árboles se dividan en la misma característica dominante.
 
 La clave: el promedio de muchos árboles descorrelados reduce la varianza sin aumentar el sesgo.
 
@@ -165,9 +164,8 @@ Los bosques aleatorios proporcionan naturalmente puntuaciones de importancia de 
 
 **Mean Decrease in Impurity (MDI):**Para cada característica, suma la reducción total de impurezas en todos los árboles y todos los nodos donde se utiliza esa característica.
 
-```
-importance(feature_j) = sum over all nodes where feature_j is used:
-    (n_samples_at_node / n_total_samples) * impurity_decrease
+```math
+\text{importance}(\text{feature}_j) = \sum_{\text{nodes where feature}_j \text{ is used}} \frac{n_{\text{samples at node}}}{n_{\text{total samples}}} \cdot \text{impurity\_decrease}
 ```
 
 Esto es rápido (computado durante el entrenamiento) pero sesgado hacia características de alta cardinalidad y características con muchos puntos de división posibles.
@@ -444,7 +442,7 @@ Esta lección produce`outputs/prompt-tree-interpreter.md`-- un prompt que interp
 
 1. Traen un árbol de decisión en un conjunto de datos 2D con 3 clases. Trace manualmente las divisiones y dibuja los límites de decisión rectangulares. Compara los límites en max_depth=2 vs max_depth=10.
 
-2. Implemente la división de reducción de varianza para árboles de regresión. Generar y = sin(x) + ruido para 200 puntos y ajustar su árbol de regresión. Trazar las predicciones de la árbol pieza-constante contra la curva verdadera.
+2. Implementar la división de reducción de varianza para árboles de regresión.$y = \sin(x) + \text{noise}$y se ajustan a su árbol de regresión.
 
 3. Construir un bosque aleatorio con 1, 5, 10, 50 y 200 árboles. Plantear la precisión de entrenamiento y probar la precisión frente al número de árboles. Observe que la precisión de prueba es meseta pero no disminuye (los bosques resisten a la sobreposición).
 

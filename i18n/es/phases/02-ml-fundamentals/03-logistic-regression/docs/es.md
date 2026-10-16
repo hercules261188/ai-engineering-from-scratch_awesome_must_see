@@ -18,7 +18,7 @@
 
 Si quieres predecir si un tumor es maligno o benigno dada su tamaño, intenta una regresión lineal. Da resultados como 0.3 o 1.7 o -0.5. ¿Qué significan? ¿Es 1.7 "muy maligno"? ¿Es -0.5 "muy benigno"? La regresión lineal da resultados sin límites. La clasificación necesita probabilidades limitadas entre 0 y 1, y una decisión clara: sí o no.
 
-La regresión logística resuelve esto. Toma la misma combinación lineal (wx + b) y la pasa a través de la función sigmoide, que aplasta cualquier número en el rango (0, 1). La salida es una probabilidad. Establece un umbral (generalmente 0,5) y toma una decisión.
+La regresión logística resuelve esto.$wx + b$En el caso de los números de probabilidad, el resultado es una probabilidad.
 
 Este es uno de los algoritmos más utilizados en la práctica. A pesar de su nombre, la regresión logística es un algoritmo de clasificación, no un algoritmo de regresión. El nombre proviene de la función logística (sigmoide) que utiliza.
 
@@ -44,22 +44,22 @@ La clasificación necesita una función que:
 
 La función sigmoide hace exactamente esto:
 
-```
-sigmoid(z) = 1 / (1 + e^(-z))
+```math
+\sigma(z) = \frac{1}{1 + e^{-z}}
 ```
 
 Propiedades:
-- Cuando z es grande y positivo, sigmoid(z) se acerca a 1
-- Cuando z es grande y negativo, sigmoid(z) se acerca a 0
-- Cuando z = 0, sigmoid(z) = 0,5
+- ¿ Cuándo ?$z$es grande y positivo,$\sigma(z)$enfoques 1
+- ¿ Cuándo ?$z$es grande y negativo,$\sigma(z)$los enfoques 0
+- ¿ Cuándo ?$z = 0$¿ Qué ?$\sigma(z) = 0.5$
 - La salida siempre está entre 0 y 1
 - La función es suave y diferenciable en todas partes
 
-La derivada tiene una forma conveniente: sigmoid'(z) = sigmoid(z) * (1 - sigmoid(z)). Esto hace que el cálculo de gradientes sea eficiente.
+La derivada tiene una forma conveniente: $\sigma'(z) = \sigma(z) (1 - \sigma(z))$Esto hace que el cálculo de gradientes sea eficiente.
 
 ### Regresión logística = Modelo lineal + sigmoide
 
-El modelo calcula z = wx + b (el mismo que la regresión lineal), luego aplica sigmoide:
+El modelo calcula $z = wx + b$(igual que la regresión lineal), luego se aplica sigmoide:
 
 ```mermaid
 flowchart LR
@@ -70,21 +70,21 @@ flowchart LR
     D -->|No| N[Predict 0]
 ```
 
-La salida p se interpreta como P ((y=1\x), la probabilidad de que la entrada pertenece a la clase 1. El límite de decisión es donde wx + b = 0, lo que hace que la salida sigmoide sea exactamente 0.5.
+La salida $p$se interpreta como $P(y=1 \mid x)$, la probabilidad de que la entrada pertenece a la clase 1. El límite de decisión es donde $wx + b = 0$, que hace que la salida sigmoide exactamente 0,5.
 
 ### Perdida de entropía cruzada binaria
 
 No se puede utilizar MSE para la regresión logística. MSE con sigmoide crea una superficie de costos no convexa con muchos mínimos locales.
 
-```
-Loss = -(1/n) * sum(y * log(p) + (1-y) * log(1-p))
+```math
+\text{Loss} = -\frac{1}{n} \sum \left( y \log(p) + (1-y) \log(1-p) \right)
 ```
 
 Por qué funciona esto:
-- Cuando y=1 y p es cerca de 1: log(1) = 0, por lo que la pérdida es cerca de 0 (correcto, bajo costo)
-- Cuando y=1 y p está cerca de 0: log(0) se acerca al infinito negativo, por lo que la pérdida es enorme (erróneo, alto costo)
-- Cuando y=0 y p está cerca de 0: log(1) = 0, por lo que la pérdida está cerca de 0 (correcto, bajo costo)
-- Cuando y=0 y p está cerca de 1: log(0) se acerca al infinito negativo, por lo que la pérdida es enorme (erróneo, alto costo)
+- ¿ Cuándo ?$y=1$y $p$es cerca de 1: $\log(1) = 0$, por lo que la pérdida es cerca de 0 (correcto, bajo costo)
+- ¿ Cuándo ?$y=1$y $p$es cerca de 0: $\log(0)$se acerca al infinito negativo, por lo que la pérdida es enorme (erróneo, alto costo)
+- ¿ Cuándo ?$y=0$y $p$es cerca de 0: $\log(1) = 0$, por lo que la pérdida es cerca de 0 (correcto, bajo costo)
+- ¿ Cuándo ?$y=0$y $p$es cerca de 1: $\log(0)$se acerca al infinito negativo, por lo que la pérdida es enorme (erróneo, alto costo)
 
 Esta función de pérdida es convexa para la regresión logística, garantizando un mínimo global único.
 
@@ -92,12 +92,14 @@ Esta función de pérdida es convexa para la regresión logística, garantizando
 
 Los gradientes para la entropía binaria cruzada con sigmoides tienen una forma limpia:
 
-```
-dL/dw = (1/n) * sum((p - y) * x)
-dL/db = (1/n) * sum(p - y)
+```math
+\begin{aligned}
+\frac{\partial L}{\partial w} &= \frac{1}{n} \sum (p - y) \, x \\
+\frac{\partial L}{\partial b} &= \frac{1}{n} \sum (p - y)
+\end{aligned}
 ```
 
-Estos se ven idénticos a los gradientes de regresión lineal. La diferencia es que p = sigmoid(wx + b) en lugar de p = wx + b. El sigmoid introduce la no linealidad, pero la regla de actualización de gradientes permanece la misma.
+Estos se ven idénticos a los gradientes de regresión lineal.$p = \sigma(wx + b)$en lugar de$p = wx + b$El sigmoide introduce la no linealidad, pero la regla de actualización de gradientes sigue siendo la misma.
 
 ```mermaid
 flowchart TD
@@ -114,29 +116,29 @@ flowchart TD
 
 Para una entrada 2D (dos características), el límite de decisión es la línea donde:
 
-```
-w1*x1 + w2*x2 + b = 0
+```math
+w_1 x_1 + w_2 x_2 + b = 0
 ```
 
 Los puntos de un lado se clasifican como 1, los puntos del otro lado como 0. La regresión logística siempre produce un límite de decisión lineal. Si necesitas un límite curvo, añades características polinómicas o utilizas un modelo no lineal.
 
 ### Clasificación de clases múltiples con Softmax
 
-La regresión logística binaria maneja dos clases. Para las clases k, utilice la función softmax:
+La regresión logística binaria maneja dos clases.$k$las clases, utilizar la función softmax:
 
-```
-softmax(z_i) = e^(z_i) / sum(e^(z_j) for all j)
+```math
+\text{softmax}(z_i) = \frac{e^{z_i}}{\sum_j e^{z_j}}
 ```
 
-Cada clase tiene su propio vector de peso. El modelo calcula una puntuación z_i para cada clase, luego softmax convierte las puntuaciones en probabilidades que suman a 1.
+Cada clase tiene su propio vector de peso.$z_i$para cada clase, entonces softmax convierte las puntuaciones en probabilidades que suman a 1. La clase prevista es la que tiene la mayor probabilidad.
 
 La función de pérdida se convierte en entropía cruzada categórica:
 
-```
-Loss = -(1/n) * sum(sum(y_k * log(p_k)))
+```math
+\text{Loss} = -\frac{1}{n} \sum \sum_k y_k \log(p_k)
 ```
 
-donde y_k es 1 para la clase verdadera y 0 para todas las demás (codrando de una sola calidez).
+donde$y_k$es 1 para la clase verdadera y 0 para todas las demás (codrando de una sola caliente).
 
 ### Metricas de evaluación
 
@@ -150,18 +152,18 @@ Para un conjunto de datos con 95% negativo y 5% positivo, un modelo que siempre 
 | Actually Negative | False Positive (FP) | True Negative (TN) |
 
 **Precision**De todos los positivos previstos, ¿cuántos son realmente positivos?
-```
-Precision = TP / (TP + FP)
+```math
+\text{Precision} = \frac{TP}{TP + FP}
 ```
 
 **Recall**(Sensibilidad): De todos los positivos reales, ¿cuántos hemos capturado?
-```
-Recall = TP / (TP + FN)
+```math
+\text{Recall} = \frac{TP}{TP + FN}
 ```
 
 **F1 Score**: Medios armónicos de precisión y recuerdo.
-```
-F1 = 2 * (Precision * Recall) / (Precision + Recall)
+```math
+F_1 = 2 \cdot \frac{\text{Precision} \cdot \text{Recall}}{\text{Precision} + \text{Recall}}
 ```
 
 Cuándo priorizar:
@@ -504,7 +506,7 @@ Esta lección produce:
 
 ## Los ejercicios
 
-1. Generar un conjunto de datos que no sea linealmente separable (por ejemplo, dos círculos concéntricos). Entrenar la regresión logística y observar su falla. Luego añadir características polinómicas (x1^2, x2^2, x1*x2) y entrenar de nuevo. Muestre que la precisión mejora.
+1. Generar un conjunto de datos que no sea linealmente separable (por ejemplo, dos círculos concéntricos).$x_1^2, x_2^2, x_1 x_2$En el caso de los vehículos de alta velocidad, el sistema de transporte de vehículos de alta velocidad puede ser de una manera más rápida.
 2. Implemente una matriz de confusión de varias clases para el modelo softmax de 3 clases. Computa precisión por clase y recuerda. ¿Cuál clase es más difícil de clasificar?
 3. Construir una curva ROC desde cero. Para 100 valores de umbral de 0 a 1, calcular la tasa positiva verdadera y la tasa positiva falsa. Calcular la AUC (zona debajo de la curva) utilizando la regla trapezoidal.
 
@@ -513,14 +515,14 @@ Esta lección produce:
 | Term | What people say | What it actually means |
 |------|----------------|----------------------|
 | Logistic regression | "Regression for classification" | A linear model followed by a sigmoid function that outputs class probabilities |
-| Sigmoid function | "The S-curve" | The function 1/(1+e^(-z)) that maps any real number to the range (0, 1) |
-| Binary cross-entropy | "Log loss" | The loss function -[y*log(p) + (1-y)*log(1-p)] that penalizes confident wrong predictions severely |
+| Sigmoid function | "The S-curve" | The function $1/(1+e^{-z})$ that maps any real number to the range (0, 1) |
+| Binary cross-entropy | "Log loss" | The loss function $-[y \log(p) + (1-y) \log(1-p)]$ that penalizes confident wrong predictions severely |
 | Decision boundary | "The dividing line" | The surface where the model's output probability equals 0.5, separating predicted classes |
 | Softmax | "Multi-class sigmoid" | A function that converts a vector of scores into probabilities that sum to 1 |
-| Precision | "How many selected are relevant" | TP / (TP + FP), the fraction of positive predictions that are actually positive |
-| Recall | "How many relevant are selected" | TP / (TP + FN), the fraction of actual positives that the model correctly identifies |
-| F1 score | "Balanced accuracy" | The harmonic mean of precision and recall: 2*P*R / (P+R) |
+| Precision | "How many selected are relevant" | $TP / (TP + FP)$, the fraction of positive predictions that are actually positive |
+| Recall | "How many relevant are selected" | $TP / (TP + FN)$, the fraction of actual positives that the model correctly identifies |
+| F1 score | "Balanced accuracy" | The harmonic mean of precision and recall: $2PR / (P+R)$ |
 | Confusion matrix | "The error breakdown" | A table showing TP, TN, FP, FN counts for each class pair |
 | Threshold | "The cutoff" | The probability value above which the model predicts class 1 (default 0.5, tunable) |
-| One-hot encoding | "Binary columns for categories" | Representing class k as a vector of zeros with a 1 at position k |
-| Categorical cross-entropy | "Multi-class log loss" | The extension of binary cross-entropy to k classes using one-hot encoded labels |
+| One-hot encoding | "Binary columns for categories" | Representing class $k$ as a vector of zeros with a 1 at position $k$ |
+| Categorical cross-entropy | "Multi-class log loss" | The extension of binary cross-entropy to $k$ classes using one-hot encoded labels |

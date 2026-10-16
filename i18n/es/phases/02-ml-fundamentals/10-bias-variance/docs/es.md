@@ -54,23 +54,24 @@ High variance (overfitting):
 
 ### La descomposición
 
-Para cualquier punto x, el error de predicción esperado bajo pérdida cuadrada se descompone exactamente:
+Para cualquier punto .$x$, el error de predicción esperado bajo pérdida cuadrada se descompone exactamente:
 
+```math
+\begin{aligned}
+& \text{Expected Error} = \text{Bias}^2 + \text{Variance} + \text{Irreducible Noise} \\[6pt]
+& \text{where:} \\
+& \quad \text{Bias}^2 = (\mathbb{E}[\hat{f}(x)] - f(x))^2 \\
+& \quad \text{Variance} = \mathbb{E}[(\hat{f}(x) - \mathbb{E}[\hat{f}(x)])^2] \\
+& \quad \text{Noise} = \mathbb{E}[(y - f(x))^2] \quad (\sigma^2)
+\end{aligned}
 ```
-Expected Error = Bias^2 + Variance + Irreducible Noise
 
-where:
-  Bias^2   = (E[f_hat(x)] - f(x))^2
-  Variance = E[(f_hat(x) - E[f_hat(x)])^2]
-  Noise    = E[(y - f(x))^2]             (sigma^2)
-```
+- $f(x)$es la función verdadera
+- $\hat{f}(x)$es la predicción de su modelo
+- $\mathbb{E}[\ldots]$es la expectativa sobre diferentes conjuntos de formación
+- $y$es la etiqueta observada (función real más ruido)
 
-- `f(x)`es la función verdadera
-- `f_hat(x)`es la predicción de su modelo
-- `E[...]`es la expectativa sobre diferentes conjuntos de formación
-- `y`es la etiqueta observada (función real más ruido)
-
-El término ruido es irreducible. Ningún modelo puede hacer mejor que sigma^2 en datos ruidosos. Su trabajo es encontrar el equilibrio correcto entre el sesgo^2 y la varianza.
+El término ruido es irreducible.$\sigma^2$Su trabajo es encontrar el equilibrio correcto entre$\text{bias}^2$y la variación.
 
 ### Complejidad del modelo frente a error
 
@@ -131,9 +132,9 @@ Observaciones clave sobre el doble descenso:
 
 | Regime | Parameters vs Samples | Behavior |
 |--------|----------------------|----------|
-| Underparameterized | p << n | Classical tradeoff applies |
-| Interpolation threshold | p ~ n | Variance peaks, test error spikes |
-| Overparameterized | p >> n | Implicit regularization kicks in, test error drops |
+| Underparameterized | $p \ll n$ | Classical tradeoff applies |
+| Interpolation threshold | $p \sim n$ | Variance peaks, test error spikes |
+| Overparameterized | $p \gg n$ | Implicit regularization kicks in, test error drops |
 
 Para fines prácticos: si está utilizando redes neuronales o grandes conjuntos de árboles, no se detenga en el umbral de interpolación. O permanezca muy por debajo de él (con regularización explícita) o pase mucho más allá de él.
 
@@ -180,7 +181,7 @@ Los métodos conjuntos son la herramienta más práctica para combatir la varian
 
 **Bagging (Bootstrap Aggregating)**El modelo de formación de la formación de los equipos de entrenamiento de la formación de los equipos de entrenamiento de la formación de los equipos de entrenamiento de los equipos de entrenamiento de los equipos de entrenamiento de los equipos de entrenamiento de los equipos de entrenamiento de los equipos de entrenamiento de los equipos de entrenamiento de los equipos de entrenamiento de los equipos de entrenamiento de los equipos de entrenamiento de los equipos de entrenamiento de los equipos de entrenamiento de los equipos de entrenamiento de entrenamiento de los equipos de entrenamiento de entrenamiento de los equipos de entrenamiento de entrenamiento de los equipos de entrenamiento de entrenamiento de los equipos de entrenamiento de entrenamiento de los equipos de entrenamiento de entrenamiento de los equipos de entrenamiento de entrenamiento de los equipos de entrenamiento de entrenamiento de los equipos de entrenamiento de entrenamiento de los equipos de entrenamiento de entrenamiento de los equipos de entrenamiento de entrenamiento de los equipos de entrenamiento de entrenamiento de los equipos de entrenamiento de entrenamiento de los equipos de entrenamiento de entrenamiento de entrenamiento de los equipos de entrenamiento de entrenamiento de entrenamiento de entrenamiento de entrenamiento de entrenamiento de entrenamiento de entrenamiento de entrenamiento de entrenamiento de entrenamiento de entrenamiento de entrenamiento de entrenamiento de entrenamiento de entrenamiento de entrenamiento de entrenamiento de entrenamiento de entrenamiento de entrenamiento de entrenamiento de entrenamiento de entrenamiento de entrenamiento de entrenamiento de entrenamiento de entrenamiento de entrenamiento de entrenamiento de entrenamiento de entrenamiento de entrenamiento de entrenamiento de entrenamiento de entrenamiento de entrenamiento de entrenamiento de entrenamiento de entrenamiento de entrenamiento de entrenamiento de entrenamiento de entrenamiento de entrenamiento de entrenamiento de entrenamiento de entrenamiento de entrenamiento de entrenamiento de entrenamiento de entrenamiento de entrenamiento de entrenamiento de entrenamiento de entren en entrenamiento de entrenamiento de entrenamiento de entrenamiento de entren en entrenamiento de entrenamiento de entrenamiento de entren en entren en entrenamiento de entren en entrenamiento de entrenamiento de entren en entrenamiento de entren en entren en entrenamiento de entren en entren en entren en entren en entren en entrenamiento de entren en entren en entren en entren en entren en entren en entren en entren en entren en entren en entren en entren en entren en entren en entren en entren en entren en entren en entren en entren en entren en entren en entren en entren en entren en
 
-Por qué funciona matemáticamente: si promedias N predicciones independientes, cada una con varianza sigma^2, la varianza de la media es sigma^2 / N. Los modelos no son verdaderamente independientes (todos ven datos similares), por lo que la reducción es menor que 1/N, pero sigue siendo sustancial.
+¿Por qué funciona matemáticamente ? Si usted promedio$N$Las predicciones independientes, cada una con variación $\sigma^2$, la variación del promedio es $\sigma^2 / N$Los modelos no son verdaderamente independientes (todos ven datos similares), por lo que la reducción es menor que $1/N$, pero sigue siendo sustancial.
 
 **Boosting**El sistema de impulso de los modelos se centra en los errores del conjunto hasta el momento. El impulso de los gradientes y AdaBoost son los principales ejemplos.
 
@@ -306,10 +307,10 @@ variance = np.mean(predictions.var(axis=0))
 total_error = np.mean(np.mean((predictions - y_true) ** 2, axis=1))
 ```
 
-- `mean_pred`es E[f_hat(x)] estimado a partir de muestras de arranque
+- `mean_pred`¿ Es verdad ?$\mathbb{E}[\hat{f}(x)]$estimados a partir de muestras de arranque
 - `bias_sq`es la diferencia cuadrada entre la predicción promedio y la verdad
 - `variance`es la propagación promedio de las predicciones en las muestras de arranque
-- `total_error`debe ser aproximadamente igual a la variación^2 + variación + ruido
+- `total_error`debe ser aproximadamente igual $\text{bias}^2 + \text{variance} + \text{noise}$
 
 ### Paso 4: Curvas de aprendizaje
 
@@ -440,7 +441,7 @@ Esta lección produce: `outputs/prompt-model-diagnostics.md`
 
 2. ¿Aumentar el tamaño del conjunto de entrenamiento de 30 a 300? ¿Cómo afecta esto al componente de varianza? ¿El grado polinómico óptimo cambia?
 
-3. Añadir regularización L2 (regresión de Ridge) al experimento. Para un polinomio de alto grado fijo (grado 15), barrida lambda de 0 a 100.
+3. Añadir regularización L2 (regresión de Ridge) al experimento. Para un polinomio de alto grado fijo (grado 15), barrida lambda de 0 a 100.$\text{bias}^2$y la variación como funciones de lambda.
 
 4. Modificar la función verdadera de un polinomio a `sin(x)`¿Cómo cambia la descomposición de la variación de sesgo? ¿Existe todavía un grado óptimo claro?
 

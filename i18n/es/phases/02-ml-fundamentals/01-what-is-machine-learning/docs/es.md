@@ -176,7 +176,7 @@ flowchart LR
 
 El conjunto de pruebas es sagrado. Lo miras exactamente una vez. Si sigues ajustando tu modelo basado en el rendimiento de la prueba, estás entrenando efectivamente en el conjunto de pruebas y tus números reportados no tienen sentido.
 
-Para conjuntos de datos pequeños, utilice la validación cruzada k-fold: dividir los datos en k partes, entrenar en k-1 partes, validar en la parte restante, girar y resultados promedio.
+Para conjuntos de datos pequeños, utilice la validación cruzada k-fold: dividir los datos en $k$piezas, tren en $k-1$las partes, validar en la parte restante, girar y resultados promedio.
 
 ### El exceso de ajuste vs el exceso de ajuste
 
@@ -242,9 +242,9 @@ Este es el marco matemático detrás de la sobremesa y la falta de ajuste.
 | Just right | Medium | Medium | Good generalization |
 | Too high (degree-20 polynomial for 10 points) | Low | High | Overfitting |
 
-Erro total = Bias^2 + Varianza + ruido irreducible
+$\text{Total error} = \text{Bias}^2 + \text{Variance} + \text{Irreducible noise}$
 
-No se puede reducir el ruido irreducible (es aleatoriedad en los datos mismos).
+No se puede reducir el ruido irreducible (es aleatoriedad en los datos mismos).$\text{bias}^2 + \text{variance}$se minimiza.
 
 ### No hay teorema del almuerzo gratis
 

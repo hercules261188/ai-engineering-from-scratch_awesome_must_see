@@ -62,8 +62,8 @@ El filtro más simple. Si una característica apenas varía entre muestras, casi
 
 Considere una característica que es 0.0 para 999 de 1000 muestras. Su varianza es cercana a cero. Ningún modelo puede usarlo para distinguir entre clases.
 
-```
-variance(x) = mean((x - mean(x))^2)
+```math
+\text{variance}(x) = \text{mean}\bigl((x - \text{mean}(x))^2\bigr)
 ```
 
 Establezca un umbral (por ejemplo, 0.01). Dejar cada característica con variación por debajo de ella. Esto elimina las características constantes o casi constantes sin mirar la variable objetivo en absoluto.
@@ -74,17 +74,17 @@ Limitación: una característica puede tener una alta variación y seguir siendo
 
 ### Información mutua
 
-La información mutua mide hasta qué punto conocer el valor de la característica X reduce la incertidumbre sobre el objetivo Y.
+La información mutua mide cuánto se sabe el valor de una característica $X$reduce la incertidumbre sobre el objetivo $Y$¿ Qué ?
 
-```
-I(X; Y) = sum_x sum_y p(x, y) * log(p(x, y) / (p(x) * p(y)))
+```math
+I(X; Y) = \sum_x \sum_y p(x, y) \cdot \log \frac{p(x, y)}{p(x) \cdot p(y)}
 ```
 
-Si X y Y son independientes, p(x, y) = p(x) * p(y), por lo que el término de registro es cero y I(X; Y) = 0.
+Si ...$X$y $Y$son independientes, $p(x, y) = p(x) \cdot p(y)$, por lo que el término de registro es cero y $I(X; Y) = 0$- Cuanto más .$X$¿ Qué es eso ?$Y$, cuanto mayor sea la información mutua.
 
 Una característica puede tener una correlación cero con el objetivo, pero una información mutua alta porque la relación es cuadrática o periódica.
 
-Para las características continuas, primero discrete en contenedores (estimación basada en histograma). El número de contenedores afecta la estimación - muy pocos contenedores pierden información, demasiados contenedores añaden ruido. Una opción común: cuadrados n) contenedores o regla de Sturges (1 + log2(n)).
+Para las características continuas, primero discretar en contenedores (estimación basada en histograma). El número de contenedores afecta la estimación - muy pocos contenedores pierden información, demasiados contenedores añaden ruido. Una opción común: $\sqrt{n}$Reglas de los contenedores o de Sturges ($1 + \log_2 n$¿Qué es lo que se hace?
 
 ```mermaid
 flowchart LR
@@ -116,14 +116,14 @@ flowchart TD
 
 La RFE considera las interacciones de características porque el modelo ve todas las características restantes juntas.
 
-El costo: entrenar el modelo N - tiempo objetivo. Con 500 características y un objetivo de 10, es 490 carreras de entrenamiento. Para modelos caros, esto es lento. Puedes acelerarlo eliminando múltiples características por paso (por ejemplo, eliminar el 10% inferior en cada ronda).
+El costo: usted entrena al modelo $N - \text{target}$En el caso de los modelos caros, esto es lento. Se puede acelerar eliminando múltiples características por paso (por ejemplo, eliminar el 10% inferior en cada ronda).
 
 ### L1 (Lasso) Regularización
 
 La regularización L1 agrega el valor absoluto de los pesos a la función de pérdida:
 
-```
-loss = prediction_error + alpha * sum(|w_i|)
+```math
+\text{loss} = \text{prediction\_error} + \alpha \cdot \sum \lvert w_i \rvert
 ```
 
 El parámetro alfa controla la agresividad con que se poda las características.
@@ -140,12 +140,10 @@ Limitación: sólo funciona para modelos lineales. No puede capturar la importan
 
 Los árboles de decisión y sus conjuntos (bosques aleatorios, aumento de gradientes) clasifican naturalmente las características.
 
-Para un bosque aleatorio con árboles T:
+Para un bosque aleatorio con $T$árboles:
 
-```
-importance(feature_j) = (1/T) * sum over all trees of
-    sum over all nodes splitting on feature_j of
-        (n_samples * impurity_decrease)
+```math
+\text{importance}(\text{feature}_j) = \frac{1}{T} \sum_{\text{all trees}} \; \sum_{\text{all nodes splitting on } \text{feature}_j} (\text{n\_samples} \cdot \text{impurity\_decrease})
 ```
 
 Esto da una puntuación de importancia normalizada para cada característica.
@@ -524,7 +522,7 @@ Esta lección produce:
 | Filter method | "Score features independently" | A feature selection approach that ranks features using a statistical measure without training a model, evaluating each feature in isolation |
 | Wrapper method | "Use the model to pick features" | A feature selection approach that evaluates feature subsets by training a model and using its performance as the selection criterion |
 | Embedded method | "The model selects features during training" | Feature selection that happens as part of model fitting, such as L1 regularization driving weights to zero |
-| Mutual information | "How much one variable tells you about another" | A measure of the reduction in uncertainty about Y given knowledge of X, capturing both linear and nonlinear dependencies |
+| Mutual information | "How much one variable tells you about another" | A measure of the reduction in uncertainty about $Y$ given knowledge of $X$, capturing both linear and nonlinear dependencies |
 | Recursive Feature Elimination | "Train, rank, prune, repeat" | An iterative wrapper method that trains a model, removes the least important feature(s), and repeats until a target count is reached |
 | L1 / Lasso regularization | "Penalty that kills features" | Adding the sum of absolute weight values to the loss function, which drives unimportant feature weights to exactly zero |
 | Variance threshold | "Remove constant features" | Dropping features whose variance across samples falls below a specified threshold, filtering out features that carry no information |

@@ -51,7 +51,7 @@ Los números en bruto rara vez están listos para el modelo.
 
 **Binning:**Conversión de valores continuos en categorías. Útil cuando la relación entre característica y objetivo no es lineal, pero es gradual (por ejemplo, grupos de edad).
 
-**Polynomial features:**Crea términos x^2, x^3, x1*x2. permite que los modelos lineales capturen relaciones no lineales a costa de más características.
+**Polynomial features:**Crear$x^2$¿ Qué ?$x^3$¿ Qué ?$x_1 x_2$Los modelos lineales capturan relaciones no lineales a costa de más características.
 
 ### Características de la categoría
 
@@ -69,10 +69,12 @@ Los modelos necesitan números, las categorías necesitan codificación.
 
 **TF-IDF:**El término frecuencia inversa frecuencia de documento. Pese las palabras por lo únicas que son en los documentos. palabras comunes como "el" tienen un peso bajo.
 
-```
-TF(word, doc) = count(word in doc) / total words in doc
-IDF(word) = log(total docs / docs containing word)
-TF-IDF = TF * IDF
+```math
+\begin{aligned}
+\text{TF}(\text{word}, \text{doc}) &= \frac{\text{count(word in doc)}}{\text{total words in doc}} \\
+\text{IDF}(\text{word}) &= \log \frac{\text{total docs}}{\text{docs containing word}} \\
+\text{TF-IDF} &= \text{TF} \cdot \text{IDF}
+\end{aligned}
 ```
 
 ### Los valores que faltan
@@ -87,7 +89,7 @@ Los datos reales tienen agujeros.
 
 ### Interacción de las características
 
-A veces la relación está en la combinación. "Alteza" y "peso" por sí solos son menos predictivos que "BMI = peso / altura^2". Las interacciones de características multiplican el espacio de características, por lo que utilice el conocimiento del dominio para elegir los adecuados.
+A veces la relación es en la combinación. "Alta" y "peso" por sí solos son menos predictivos que $\text{BMI} = \text{weight} / \text{height}^2$Las interacciones de características multiplican el espacio de características, así que utiliza el conocimiento del dominio para elegir las correctas.
 
 ### Selección de características
 
