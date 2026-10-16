@@ -44,8 +44,8 @@ Başarısızlık modu: eleştirmenler N ajanlarla büyür (gönüllülük tüm e
 
 Toplam ödül, bir ajan başına Q değerlerinin monoton fonksiyonunun toplamıdır:
 
-```
-Q_tot(tau, a) = f(Q_1(tau_1, a_1), ..., Q_n(tau_n, a_n)),   df/dQ_i >= 0
+```math
+Q_{\text{tot}}(\tau, a) = f\big(Q_1(\tau_1, a_1), \ldots, Q_n(\tau_n, a_n)\big), \quad \frac{\partial f}{\partial Q_i} \ge 0
 ```
 
 Tek kelimelilik garanti eder `argmax_a Q_tot`Her seçen ajan tarafından hesaplanabilir.`argmax_{a_i} Q_i`- Bağımsız olarak.**exactly the decentralized execution property**Eğitim sırasında, bir karıştırma ağı üretir.`Q_tot`- Bir ajan için Qs'ten.

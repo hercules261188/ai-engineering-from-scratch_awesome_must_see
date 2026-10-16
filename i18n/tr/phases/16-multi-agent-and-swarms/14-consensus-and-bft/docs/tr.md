@@ -148,7 +148,7 @@ Bir konsensüse sahip olmak için herhangi bir mekanizma göndermeden önce:
 
 ## Daha Fazla Okumak
 
-- [Castro & Liskov — Practical Byzantine Fault Tolerance (OSDI 1999)](https://pmg.csail.mit.edu/papers/osdi99.pdf) Temel
+- [Castro & Liskov — Practical Byzantine Fault Tolerance (OSDI 1999)](https://www.usenix.org/conference/osdi-99/practical-byzantine-fault-tolerance) Temel
 - [CP-WBFT — Confidence-Probe Weighted BFT](https://arxiv.org/abs/2511.10400) Güvenle oy ağırlığı
 - [DecentLLMs — leaderless multi-agent consensus](https://arxiv.org/abs/2507.14928) Geometri-medyen birleştirme
 - [WBFT — Weighted BFT with Hierarchical Structure Clustering](https://arxiv.org/abs/2505.05103) Sınırlı gecikme için çekirdek/kırık bölünmesi

@@ -117,7 +117,7 @@ Beklenen çıkış: tik-tik iz. Son tik'e kadar, 5 ajanın en az 3'ü partiyi pl
 
 - **Memory is the database.**Gerçek bir mağazayı (vector DB, Postgres) ölçekle seçin.
 - **Log the retrieval trace.**Her eylem için, onu yönlendiren en üst-k anıları kaydet.
-- **Budget per-agent tokens.**Her ajanın tik başına alın + refleks + planı O(k) LLM çağrılarıdır. N ajan × T tik × tik başına çağrılar bütçenizi küçültüyor.
+- **Budget per-agent tokens.**Her ajanın tik başına alın + refleks + planı $O(k)$N ajanlar × T tikler × tik başına çağrılar bütçenizi küçültüyor.
 - **Compact memory periodically.**Düşük önemli yazıları özetleyip biç.
 - **Detect spatial / social norm violations**Mimarlık onları öğrenmez.
 

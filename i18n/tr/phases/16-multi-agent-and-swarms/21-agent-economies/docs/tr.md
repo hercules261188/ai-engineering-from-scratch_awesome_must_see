@@ -61,8 +61,8 @@ LLM sistemleri için bu neden önemlidir: tamamlama görevlerini farklı fiyatla
 
 DID'ye bağlı bir itibar puanı onaylanmış katkılardan biriktirilmiştir.
 
-```
-rep(i, t+1) = alpha * rep(i, t) + (1 - alpha) * contribution_quality(i, t)
+```math
+\text{rep}(i, t+1) = \alpha \cdot \text{rep}(i, t) + (1 - \alpha) \cdot \text{contribution\_quality}(i, t)
 ```
 
 Çürüme faktörü ile`alpha`1. Ünlü:

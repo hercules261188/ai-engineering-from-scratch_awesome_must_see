@@ -17,24 +17,52 @@ A2A, bu çağrı için evrensel kablo protokolüdür. Standart keşif, standart 
 
 ### Dört unsur
 
-**Agent Card.**JSON belgesini `/.well-known/agent.json`Bu, bir kişinin adı, becerileri, son noktaları, desteklenen yöntemleri, yazar gereksinimleri ile ilgili.
+**Agent Card.**JSON belgesini `/.well-known/agent-card.json`ajanın tanımlanması: isim, beceriler, `supportedInterfaces`(Son nokta URL, protokol bağlaması, protokol sürümü), varsayılan giriş ve çıkış medya türleri ve oth gereklilikleri (`securitySchemes`Ek olarak .`securityRequirements`Kartayı okuyarak keşfetmek mümkündür.
 
+```http
+GET /.well-known/agent-card.json HTTP/1.1
+Host: agent.example.com
 ```
-GET https://agent.example.com/.well-known/agent.json
-→ {
-    "name": "code-review-agent",
-    "skills": ["review-python", "review-typescript"],
-    "endpoints": {
-      "tasks": "https://agent.example.com/tasks"
+
+```json
+{
+  "name": "code-review-agent",
+  "description": "Reviews Python and TypeScript code.",
+  "version": "1.0.0",
+  "supportedInterfaces": [
+    {
+      "url": "https://agent.example.com",
+      "protocolBinding": "HTTP+JSON",
+      "protocolVersion": "1.0"
+    }
+  ],
+  "capabilities": {"streaming": false, "pushNotifications": false},
+  "securitySchemes": {
+    "bearer": {"httpAuthSecurityScheme": {"scheme": "Bearer"}}
+  },
+  "securityRequirements": [{"schemes": {"bearer": {"list": []}}}],
+  "defaultInputModes": ["text/plain", "application/json"],
+  "defaultOutputModes": ["application/json"],
+  "skills": [
+    {
+      "id": "review-python",
+      "name": "Review Python",
+      "description": "Reviews Python code.",
+      "tags": ["code-review", "python"]
     },
-    "auth": {"type": "bearer"},
-    "modalities": ["text", "structured"]
-  }
+    {
+      "id": "review-typescript",
+      "name": "Review TypeScript",
+      "description": "Reviews TypeScript code.",
+      "tags": ["code-review", "typescript"]
+    }
+  ]
+}
 ```
 
-**Task.**İş birimi. Hayat döngüsü olan asynk, durumlu bir nesne:`submitted → working → completed / failed / canceled`Bir müşteri bir görev gönderir, anketler gönderir veya güncellemelere abone olur.
+**Task.**İş birimi. Hayat döngüsü olan asynk, durumlu bir nesne:`TASK_STATE_SUBMITTED`→ `TASK_STATE_WORKING`→ `TASK_STATE_COMPLETED`- Ne ?`TASK_STATE_FAILED`- Ne ?`TASK_STATE_CANCELED`Bir istemci bir mesaj gönderir, sunucu görevi oluşturur ve istemci sondajlar yapar veya güncellemelere abone olur.
 
-**Artifact.**Bir görev tarafından üretilen sonuç türü. Metin, yapılandırılmış JSON, görüntü, video, ses. Sanat eserleri yazılır, böylece farklı modaliteler birinci sınıftır.
+**Artifact.**Bir görev tarafından üretilen sonuç türü. Metin, yapılandırılmış JSON, görüntü, video, ses.`text`- Evet .`raw`- Evet .`url`veya`data`ve adını verebilir.`mediaType`Bu yüzden farklı modaliteler birinci sınıf.
 
 **Opaque lifecycle.**A2A, uzaktan ajanın görevi nasıl çözeceğini belirlemez. Müşteri, durum geçişlerini ve eserleri görür; uygulamanın herhangi bir çerçeveyi kullanması özgürdür.
 
@@ -47,29 +75,33 @@ Bir A2A eşleri tarafında MCP araçları çağırır.
 
 ### Bulma akışı
 
-```
-Client                     Agent server
-  ├──GET /.well-known/agent.json──>
-  <──Agent Card JSON─────────────
-  ├──POST /tasks {skill, input}──>
-  <──201 task_id, state=submitted
-  ├──GET /tasks/{id}──────────────>
-  <──state=working, 42% done──────
-  ├──GET /tasks/{id}──────────────>
-  <──state=completed, artifacts──
+```mermaid
+sequenceDiagram
+    participant C as Client
+    participant S as Agent server
+    C->>S: GET /.well-known/agent-card.json
+    S-->>C: Agent Card JSON
+    C->>S: POST /message:send (returnImmediately)
+    S-->>C: task, TASK_STATE_SUBMITTED
+    C->>S: GET /tasks/{id}
+    S-->>C: TASK_STATE_WORKING
+    C->>S: GET /tasks/{id}
+    S-->>C: TASK_STATE_COMPLETED, artifacts
 ```
 
-Ya da akışla: SSE aboneliği`/tasks/{id}/events`- Geçici güncellemeler için.
+Bunlar HTTP+JSON bağlayıcı yolları ve her istek taşıyor `A2A-Version: 1.0`- Öntanımlı olarak .`SendMessage`Bu nedenle, bir oylama istemcisi, görevin bir terminal veya kesinti durumuna ulaşana kadar bloklar.`configuration.returnImmediately`Görevini hemen geri almak için.
+
+Ya da akışla:`POST /message:stream`Server Gönderilen Olayları gönderir (a `task`Önce, sonra.`statusUpdate`ve `artifactUpdate`olaylar) ve `/tasks/{id}:subscribe`Çalışma bir göreve yeniden bağlanır. Görev bir terminal durumuna ulaştığında akım kapanır; hiçbir `final`Bayrak.
 
 ### Müellif
 
 A2A üç ortak örneği destekler:
 
-- **Bearer token** OAuth2 veya açık olmayan.
-- **mTLS** karşılıklı TLS; kuruluşlar birbirlerine kimliklerini kanıtlar.
-- **Signed requests**- HMAC, yararlı yük üzerinde.
+- **Bearer token**: OAuth2 veya açık olmayan (`httpAuthSecurityScheme`veya `oauth2SecurityScheme`)
+- **mTLS**: karşılıklı TLS; kuruluşlar birbirlerine kimliklerini kanıtlar (`mtlsSecurityScheme`)
+- **API key**: bir başlık, sorgu parametri veya çerez (`apiKeySecurityScheme`)
 
-Auth, ajan kartında açıklanmıştır. Müşteriler bulup uyarlar.
+Autür , ajan kartında belirtilmiştir:`securitySchemes`Her bir programın adı ve `securityRequirements`Müşteriler bulup kabul etmeleri gerekenleri belirler.
 
 ### 150'den fazla kuruluş Nisan 2026'a kadar
 
@@ -104,17 +136,17 @@ sw-agent-card-discovery
 
 ## Yapın
 
-`code/main.py`A2A-minimal bir sunucu ve istemci uyguluyor `http.server`Ve JSON.
+`code/main.py`A2A-minimal bir sunucu ve istemci uyguluyor `http.server`ve JSON, 1.0 HTTP + JSON bağlamasında.
 
-- Açıklamalar`/.well-known/agent.json`- Evet .
-- kabul eder .`POST /tasks`- Evet .
+- Açıklamalar`/.well-known/agent-card.json`- Evet .
+- kabul eder .`POST /message:send`- Evet .
 - Görev durumu yönetir,
 - Artefakları geri gönderir .`GET /tasks/{id}`- Evet .
 
 Müşteri:
 
 - Ajan kartını alır.
-- görev gönderir,
+- ile bir mesaj gönderir `returnImmediately`- Evet .
 - Seçimler tamamlanana kadar,
 - - Bu eser okur.
 
@@ -134,8 +166,8 @@ Skenar, sunucuyu arka plan bir ipçeye başlatır, sonra da istemciyi ona karş�
 
 Kontrol listesini:
 
-- **Pin the spec version.**A2A hala gelişmekte. Ajan Kartı protokol versiyonunu açıklamalı.
-- **Idempotent task creation.**Çift gönderiler (ağ yeniden denemeleri) bir görev oluşturmalıdır.
+- **Pin the spec version.**A2A hala gelişmekte .`supportedInterfaces`Giriş , kendi `protocolVersion`, ve müşteriler gönderir .`A2A-Version: 1.0`- Evet .
+- **Idempotent task creation.**Tekrar gönderilen (ağ tekrar deneme) bir görev oluşturmalıdır.`messageId`- Evet .
 - **Artifact schemas.**Ajanın hangi şekilleri gönderdiğini bildirin; tüketicilerin onaylaması gerekir.
 - **Rate limits + auth.**A2A kamuya yöneliktir; standart web güvenliği uygulayın.
 - **Dead-letter for failed tasks.**Sürekli aralıklı arıza türleri için zaman içinde kalıpları kontrol edin.
@@ -143,8 +175,8 @@ Kontrol listesini:
 ## Egzersizler
 
 1. Çık .`code/main.py`Müşteri sunucuyu keşfettiğini ve doğru eseri aldığını onaylayın.
-2. Servere ikinci bir beceri ekleyin (örneğin "cümle edin"). Ajan Kartı güncelleyin. Görev türüne göre beceri seçen bir istemci yazın.
-3. SSE akış sonucu uygulamak: `/tasks/{id}/events`Müşterinin farklı bir şekilde ne yapması gerekiyor?
+2. Bir ikinci beceri sunucuya ekleyin (örneğin, "cümle edin"). Ajan Kartı güncelleyin. Görev türüne göre beceri seçen bir istemci yazın. 1.0 talebi beceri alanı yoktur, bu nedenle sunucu mesaj parçalarına yönlendiriyor.
+3. Uygulama`POST /message:stream`: cevap sunucu gönderilen olaylar ile (a `task`Önce, sonra.`statusUpdate`Bu nedenle, müşterinin farklı bir şekilde ne yapması gerekir?
 4. A2A takvimini okuyun (https://a2a-protocol.org/latest/specification/Bu demo'nun uygulandığı üç konuyu belirleyin.
 5. A2A (Agent Card keşfi) ile MCP (server tarafı yetenek listesi üzerinden) karşılaştırın `listTools`Kendini tanımlayan ajanlar ile yetenek denetleme arasındaki fark nedir?
 
@@ -153,17 +185,18 @@ Kontrol listesini:
 | Term | What people say | What it actually means |
 |------|----------------|------------------------|
 | A2A | "Agent-to-agent" | Peer protocol for agents to call other agents across systems. Google 2025. |
-| Agent Card | "The agent's business card" | JSON at `/.well-known/agent.json` describing skills, endpoints, auth. |
+| Agent Card | "The agent's business card" | JSON at `/.well-known/agent-card.json` describing skills, `supportedInterfaces`, auth. |
 | Task | "The unit of work" | Async stateful object with a lifecycle; artifacts produced on completion. |
 | Artifact | "The result" | Typed output: text, structured JSON, image, video, audio. First-class media. |
 | Opaque lifecycle | "How it's solved is the agent's business" | Client sees state transitions; server is free to choose framework/tools. |
-| Discovery | "Finding the agent" | `GET /.well-known/agent.json` returns the card. |
+| Discovery | "Finding the agent" | `GET /.well-known/agent-card.json` returns the card. |
 | MCP vs A2A | "Tools vs peers" | MCP: vertical agent ↔ tool. A2A: horizontal agent ↔ agent. |
 | ACP / ANP / NLIP | "Sibling protocols" | Adjacent specs; A2A is the most-adopted 2026. |
 
 ## Daha Fazla Okumak
 
 - [A2A specification](https://a2a-protocol.org/latest/specification/) Kanonik özellik
+- [A2A v1.0.1 release](https://github.com/a2aproject/A2A/tree/v1.0.1)Etiketlenmiş`docs/specification.md`ve `specification/a2a.proto`Bu ders
 - [Google Developers Blog — A2A announcement](https://developers.googleblog.com/en/a2a-a-new-era-of-agent-interoperability/) Nisan 2025'te başlatma tarihi
 - [A2A GitHub repo](https://github.com/a2aproject/A2A) Referans uygulamalar ve SDK'lar
 - [Liu et al. — A Survey of Agent Interoperability Protocols](https://arxiv.org/html/2505.02279v1) MCP, ACP, A2A, ANP karşılaştırması
