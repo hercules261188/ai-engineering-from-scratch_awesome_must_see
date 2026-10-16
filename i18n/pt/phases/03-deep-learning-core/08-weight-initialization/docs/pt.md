@@ -38,40 +38,40 @@ Mas "aleatório" não é suficiente. A *escala* da aleatória determina se a red
 
 Considere uma única camada com entradas fan_in:
 
-```
-z = w1*x1 + w2*x2 + ... + w_n*x_n
-```
-
-Se cada peso wi for extraído de uma distribuição com variância Var(w) e cada entrada xi tem variância Var(x), a variância de saída é:
-
-```
-Var(z) = fan_in * Var(w) * Var(x)
+```math
+z = w_1 x_1 + w_2 x_2 + \cdots + w_n x_n
 ```
 
-Se Var(w) = 1 e fan_in = 512, a variância de saída é 512x a variância de entrada. Depois de 10 camadas: 512^10 = 1.2e27.
+Se cada peso $w_i$é derivado de uma distribuição com variação $\mathrm{Var}(w)$e cada entrada $x_i$tem variação $\mathrm{Var}(x)$, a variância de saída é:
 
-Se Var ((w) = 0,001, a variância de saída diminui em 0,001 * 512 = 0,512 por camada. Após 10 camadas: 0,512^10 = 0,00013.
+```math
+\mathrm{Var}(z) = \text{fan}_{\text{in}} \cdot \mathrm{Var}(w) \cdot \mathrm{Var}(x)
+```
 
-O objetivo: escolher Var(w) para que Var(z) = Var(x). A magnitude do sinal permanece constante em todas as camadas.
+Se$\mathrm{Var}(w) = 1$E ...$\text{fan}_{\text{in}} = 512$, a variância de saída é 512x a variância de entrada.$512^{10} = 1.2 \times 10^{27}$O teu sinal explodiu.
+
+Se$\mathrm{Var}(w) = 0.001$, a variância de saída diminui em $0.001 \cdot 512 = 0.512$por camada. Depois de 10 camadas: $0.512^{10} = 0.00013$O teu sinal desapareceu.
+
+O objetivo: escolher .$\mathrm{Var}(w)$Então ,$\mathrm{Var}(z) = \mathrm{Var}(x)$A magnitude do sinal permanece constante em todas as camadas.
 
 ### Xavier/Glorot Inicialização
 
 Glorot e Bengio (2010) derivaram a solução para a ativação sigmoide e tanh.
 
-```
-Var(w) = 2 / (fan_in + fan_out)
+```math
+\mathrm{Var}(w) = \frac{2}{\text{fan}_{\text{in}} + \text{fan}_{\text{out}}}
 ```
 
 Na prática, os pesos são extraídos de:
 
-```
-w ~ Uniform(-limit, limit)  where limit = sqrt(6 / (fan_in + fan_out))
+```math
+w \sim \text{Uniform}(-\text{limit}, \text{limit}) \quad \text{where } \text{limit} = \sqrt{\frac{6}{\text{fan}_{\text{in}} + \text{fan}_{\text{out}}}}
 ```
 
 ou
 
-```
-w ~ Normal(0, sqrt(2 / (fan_in + fan_out)))
+```math
+w \sim \text{Normal}\left(0, \sqrt{\frac{2}{\text{fan}_{\text{in}} + \text{fan}_{\text{out}}}}\right)
 ```
 
 Isso funciona porque sigmoide e tanh são aproximadamente lineares perto de zero, onde as ativações iniciadas corretamente vivem.
@@ -82,27 +82,27 @@ ReLU mata metade das saídas (todo o negativo torna-se zero). O fan_in efetivo �
 
 He et al. (2015) ajustaram a fórmula:
 
-```
-Var(w) = 2 / fan_in
+```math
+\mathrm{Var}(w) = \frac{2}{\text{fan}_{\text{in}}}
 ```
 
 Os pesos são extraídos de:
 
-```
-w ~ Normal(0, sqrt(2 / fan_in))
+```math
+w \sim \text{Normal}\left(0, \sqrt{\frac{2}{\text{fan}_{\text{in}}}}\right)
 ```
 
-O fator de 2 compensa a re-realização de metade das ativações. Sem ele, o sinal encolhe em ~ 0,5x por camada. Com 50 camadas: 0,5^50 = 8,8e-16.
+O fator de 2 compensa a re-alienação da metade das ativações. sem ele, o sinal encolhe em ~ 0,5x por camada.$0.5^{50} = 8.8 \times 10^{-16}$O Kaiming init impede isso.
 
 ### Inicialização do transformador
 
 O GPT-2 introduziu um padrão diferente. As conexões residuais adicionam a saída de cada subcamada à sua entrada:
 
-```
-x = x + sublayer(x)
+```math
+x = x + \text{sublayer}(x)
 ```
 
-Cada adição aumenta a variância. Com N camadas residuais, a variância cresce proporcionalmente a N. GPT-2 escala os pesos das camadas residuais por 1/sqrt(2N), onde N é o número de camadas. Isso mantém a magnitude de sinal acumulada estável.
+Cada adição aumenta a variância.$N$As camadas residuais, a variância aumenta proporcionalmente à$N$. O GPT-2 escala os pesos das camadas residuais por $1/\sqrt{2N}$, onde$N$O número de camadas mantém a magnitude do sinal acumulado estável.
 
 O Llama 3 (405B parâmetros, 126 camadas) usa um esquema similar. sem essa escala, o fluxo residual cresceria ilimitadamente através de 126 camadas de atenção e blocos de feedforward.
 
@@ -341,7 +341,7 @@ nn.init.zeros_(layer.bias)
 
 Quando ligares .`nn.Linear(512, 256)`Por isso a maioria das redes simples "apenas funciona" - PyTorch já fez a escolha certa. Mas quando você constrói arquiteturas personalizadas ou vai mais fundo do que 20 camadas, você precisa entender o que está acontecendo e potencialmente anular o padrão.
 
-Para transformadores, os modelos HuggingFace geralmente lidam com a inicialização em seus `_init_weights`O GPT-2 escala projeções residuais por 1/sqrt ((N). Se você está construindo um transformador a partir do zero, você precisa adicionar isso você mesmo.
+Para transformadores, os modelos HuggingFace geralmente lidam com a inicialização em seus `_init_weights`A aplicação do GPT-2 escala as projecções residuais em $1/\sqrt{N}$Se está a construir um transformador a partir do zero, precisa de adicionar isto sozinho.
 
 ## Envia-o
 
@@ -350,13 +350,13 @@ Esta lição produz:
 
 ## Exercícios
 
-1. Adicione a inicialização LeCun (Var = 1/fan_in, projetada para a ativação SELU).
+1. Adicionar inicialização LeCun ($\mathrm{Var} = 1/\text{fan}_{\text{in}}$Execute o experimento de 50 camadas com LeCun init + tanh e compare com Xavier + tanh.
 
-2. Implementar a escalação residual GPT-2: multiplicar a saída de cada camada por 1/sqrt ((2 * N) antes de adicionar ao fluxo residual.
+2. Implementar a escalação residual GPT-2: multiplicar a produção de cada camada por $1/\sqrt{2N}$Antes de adicionar ao fluxo residual, executar 50 camadas com e sem escala, medir a rapidez com que a magnitude residual cresce.
 
 3. Crie uma função de "check de saúde init" que tome as dimensões de camadas de uma rede e o tipo de ativação, recomende a inicialização correta e avisa se o init atual causará problemas.
 
-4. Exercite o experimento com fan_in = 16 vs fan_in = 1024. Xavier e Kaiming se adaptam ao fan_in, mas o init aleatório não. Mostre como a diferença entre "trabalha" e "pausa" se amplia com camadas maiores.
+4. Executa a experiência com $\text{fan} _{\text{in}} = 16$- Não .$\text{fan} _{\text{in}} = 1024$Xavier e Kaiming se adaptam ao fan_in, mas o random init não. Mostre como a lacuna entre "funções" e "pausas" se amplia com camadas maiores.
 
 5. Implementar inicialização ortogonal (generar uma matriz aleatória, calcular seu SVD, usar a matriz ortogonal U). Compare com Kaiming para redes ReLU em 50 camadas.
 
@@ -368,10 +368,10 @@ Esta lição produz:
 | Symmetry breaking | "Make neurons different" | Using random initialization to ensure neurons learn distinct features instead of computing identical functions |
 | Fan-in | "Number of inputs to a neuron" | The number of incoming connections, which determines how input variance accumulates in the weighted sum |
 | Fan-out | "Number of outputs from a neuron" | The number of outgoing connections, relevant for maintaining gradient variance during backpropagation |
-| Xavier/Glorot init | "The sigmoid initialization" | Var(w) = 2/(fan_in + fan_out), designed to preserve variance through sigmoid and tanh activations |
-| Kaiming/He init | "The ReLU initialization" | Var(w) = 2/fan_in, accounts for ReLU zeroing half the activations |
+| Xavier/Glorot init | "The sigmoid initialization" | $\mathrm{Var}(w) = 2/(\text{fan} _{\text{in}} + \text{fan} _{\text{out}})$, designed to preserve variance through sigmoid and tanh activations |
+| Kaiming/He init | "The ReLU initialization" | $\mathrm{Var}(w) = 2/\text{fan}_{\text{in}}$, accounts for ReLU zeroing half the activations |
 | Variance propagation | "How signals grow or shrink through layers" | The mathematical analysis of how activation variance changes layer by layer based on weight scale |
-| Residual scaling | "GPT-2's init trick" | Scaling residual connection weights by 1/sqrt(2N) to prevent variance growth through N transformer layers |
+| Residual scaling | "GPT-2's init trick" | Scaling residual connection weights by $1/\sqrt{2N}$ to prevent variance growth through $N$ transformer layers |
 | Dead network | "Nothing trains" | A network where poor initialization causes all gradients to be zero or all activations to saturate |
 | Exploding activations | "Values go to infinity" | When weight variance is too high, causing activation magnitudes to grow exponentially through layers |
 

@@ -26,7 +26,7 @@ Entender o perceptron significa entender o que "aprender" realmente significa em
 
 ### Um Neurônio, uma decisão
 
-Um perceptron toma n entradas, multiplica cada uma por um peso, soma-as, adiciona um viés e passa o resultado através de uma função de ativação.
+Um perceptron leva .$n$As entradas, multiplicam cada uma por um peso, somam-nas, adicionam um viés e passam o resultado através de uma função de ativação.
 
 ```mermaid
 graph LR
@@ -38,11 +38,10 @@ graph LR
     step --> out["output (0 or 1)"]
 ```
 
-A função de passo é brutal: se a soma ponderada mais o viés é >= 0, saída 1.
+A função de passo é brutal: se a soma ponderada mais o viés é $\ge 0$Output 1. Caso contrário, saída 0.
 
-```
-step(z) = 1  if z >= 0
-           0  if z < 0
+```math
+\text{step}(z) = \begin{cases} 1 & \text{if } z \ge 0 \\ 0 & \text{if } z < 0 \end{cases}
 ```
 
 Este é um classificador linear. Os pesos e o viés definem uma linha (ou hiperplano em dimensões mais altas) que divide o espaço de entrada em duas regiões.
@@ -80,7 +79,7 @@ For each training example (x, y_true):
     bias = bias + learning_rate * error
 ```
 
-Se a previsão for correta, o erro = 0, nada muda. Se ela prevê 0 mas deve ser 1, os pesos aumentam. Se ela prevê 1 mas deve ser 0, os pesos diminuem. A taxa de aprendizagem controla o tamanho de cada ajuste.
+Se a previsão for correta,$\text{error} = 0$Se ele prevê 0, mas deve ser 1, os pesos aumentam. Se ele prevê 1, mas deve ser 0, os pesos diminuem. A taxa de aprendizagem controla o tamanho de cada ajuste.
 
 ### O problema do XOR
 
@@ -213,7 +212,7 @@ Esta é a prova de que um único perceptron não pode aprender XOR.
 
 ### Passo 4: Resolver o XOR com duas camadas
 
-O truque: XOR = (x1 OR x2) E NÃO (x1 E x2). Combine três perceptrões:
+O truque:$\text{XOR} = (x_1 \text{ OR } x_2) \text{ AND NOT } (x_1 \text{ AND } x_2)$Combinar três perceptores:
 
 ```mermaid
 graph LR
@@ -359,7 +358,7 @@ Esta lição produz:
 ## Exercícios
 
 1. Treinar um perceptron em um gate NAND (o gate universal - qualquer circuito lógico pode ser construído a partir do NAND). Verificar seus pesos e preconceitos formam um limite de decisão válido.
-2. Modifique a classe Perceptron para rastrear o limite de decisão (w1*x1 + w2*x2 + b = 0) em cada época.
+2. Modificar a classe Perceptron para rastrear o limite de decisão ($w_1 x_1 + w_2 x_2 + b = 0$Imprimir como a linha muda durante o treinamento no portão AND.
 3. Construir um perceptron de 3 entradas que produz 1 apenas quando pelo menos 2 das 3 entradas são 1 (uma função de voto de maioria).
 
 ## Termos-chave
@@ -372,7 +371,7 @@ Esta lição produz:
 | Activation function | "The thing that squishes values" | A function applied after the weighted sum - step function for perceptrons, sigmoid/ReLU for modern networks |
 | Linearly separable | "You can draw a line between them" | A dataset where a single hyperplane can perfectly separate the classes |
 | XOR problem | "The thing perceptrons can't do" | Proof that single-layer networks cannot learn non-linearly-separable functions |
-| Decision boundary | "Where the classifier switches" | The hyperplane w*x + b = 0 that divides input space into two classes |
+| Decision boundary | "Where the classifier switches" | The hyperplane $w \cdot x + b = 0$ that divides input space into two classes |
 | Multi-layer perceptron | "A real neural network" | Perceptrons stacked in layers, where each layer's output feeds the next layer's input |
 
 ## Mais leitura

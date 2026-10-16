@@ -26,7 +26,7 @@ A propagação para trás resolve isto. Uma passagem para frente, uma passagem p
 
 ### A Regra da Cadeia, aplicável às redes
 
-Você viu a regra da cadeia na fase 01, lição 05. Resumo rápido: se y = f(g(x)), então dy/dx = f'(g(x)) * g'(x. Você multiplica derivadas ao longo da cadeia.
+Viste a regra da cadeia na fase 01, lição 05. Resumo rápido: se $y = f(g(x))$, então$\frac{dy}{dx} = f'(g(x)) \cdot g'(x)$Multiplicas derivadas ao longo da cadeia.
 
 Em uma rede neural, a "cadeia" é a sequência de operações da entrada à perda. Cada camada aplica pesos, adiciona viés, passa por uma ativação. A função de perda compara a saída final ao alvo. A backpropagation rastreia essa cadeia para trás, calculaindo como cada operação contribuiu para o erro.
 
@@ -45,9 +45,9 @@ graph LR
     y["target"] --> loss
 ```
 
-Passagem para a frente: os valores fluem de esquerda para direita. x e w produzem z1 = w*x. Adicionar b para obter z2. Sigmoid dá a ativação a. Compare a a meta y usando a função de perda.
+Passagem para a frente: os valores fluem de esquerda para direita. $x$E ...$w$Produtos$z_1 = w x$- Adicionar .$b$Para conseguir$z_2$Sigmoid dá a ativação .$a$- Comparar .$a$para atingir o alvo$y$utilizando a função de perda.
 
-Passagem para trás: os gradientes fluem de direita para esquerda. Comece com dL/da (como as perdas mudam com a ativação). Multiplica por da/dz2 (derivada sigmoide). Isso dá dL/dz2. Divida em dL/db (que é igual a dL/dz2, já que z2 = z1 + b) e dL/dz1.
+Passagem para trás: gradientes fluem de direita para esquerda.$\partial L/\partial a$Multiplica por $\partial a/\partial z_2$(Derivada sigmoide).$\partial L/\partial z_2$Dividido em dois .$\partial L/\partial b$(que é igual a $\partial L/\partial z_2$, desde $z_2 = z_1 + b$) e $\partial L/\partial z_1$Então ...$\partial L/\partial w = \partial L/\partial z_1 \cdot x$E ...$\partial L/\partial x = \partial L/\partial z_1 \cdot w$- Não .
 
 Cada nó no gráfico tem um trabalho durante a passagem para trás: tomar o gradiente que vem de cima, multiplicar pela sua derivada local e passar para baixo.
 
@@ -84,7 +84,7 @@ graph RL
     L1 -- "dL/dz1 = dL/da1 * sigmoid'(z1)" --> I["Input"]
 ```
 
-Em cada camada, o gradiente é multiplicado pela derivada sigmoide. A derivada sigmoide é um * (1 - a), que maximiza em 0,25 (quando a = 0,5).
+Em cada camada, o gradiente é multiplicado pela derivada sigmoide.$a(1 - a)$, que é de 0,25 (quando $a = 0.5$O gradiente foi multiplicado pelo máximo.$0.25^3 = 0.0156$Dez camadas de profundidade:$0.25^{10} = 0.000001$- Não .
 
 ### Os gradientes desaparecem
 
@@ -102,32 +102,35 @@ After 10 layers:  gradient * 0.25^10 = 0.000001x original
 
 ### Derivar gradientes para uma rede de duas camadas
 
-Matemática concreta para uma rede com entrada x, camada oculta com sigmoide, camada de saída com sigmoide e perda de MSE.
+Matemática concreta para uma rede com entrada $x$, camada oculta com sigmoide, camada de saída com sigmoide e perda de MSE.
 
 Passagem para a frente:
-```
-z1 = W1 * x + b1
-a1 = sigmoid(z1)
-z2 = W2 * a1 + b2
-a2 = sigmoid(z2)
-L = (a2 - y)^2
+
+```math
+\begin{aligned}
+z_1 &= W_1 x + b_1 \\
+a_1 &= \text{sigmoid}(z_1) \\
+z_2 &= W_2 a_1 + b_2 \\
+a_2 &= \text{sigmoid}(z_2) \\
+L &= (a_2 - y)^2
+\end{aligned}
 ```
 
 Passagem para trás (aplicando a regra da cadeia passo a passo):
-```
-dL/da2 = 2(a2 - y)
-da2/dz2 = a2 * (1 - a2)
-dL/dz2 = dL/da2 * da2/dz2 = 2(a2 - y) * a2 * (1 - a2)
 
-dL/dW2 = dL/dz2 * a1
-dL/db2 = dL/dz2
-
-dL/da1 = dL/dz2 * W2
-da1/dz1 = a1 * (1 - a1)
-dL/dz1 = dL/da1 * da1/dz1
-
-dL/dW1 = dL/dz1 * x
-dL/db1 = dL/dz1
+```math
+\begin{aligned}
+\frac{\partial L}{\partial a_2} &= 2(a_2 - y) \\
+\frac{\partial a_2}{\partial z_2} &= a_2 (1 - a_2) \\
+\frac{\partial L}{\partial z_2} &= \frac{\partial L}{\partial a_2} \cdot \frac{\partial a_2}{\partial z_2} = 2(a_2 - y) \cdot a_2 (1 - a_2) \\[6pt]
+\frac{\partial L}{\partial W_2} &= \frac{\partial L}{\partial z_2} \cdot a_1 \\
+\frac{\partial L}{\partial b_2} &= \frac{\partial L}{\partial z_2} \\[6pt]
+\frac{\partial L}{\partial a_1} &= \frac{\partial L}{\partial z_2} \cdot W_2 \\
+\frac{\partial a_1}{\partial z_1} &= a_1 (1 - a_1) \\
+\frac{\partial L}{\partial z_1} &= \frac{\partial L}{\partial a_1} \cdot \frac{\partial a_1}{\partial z_1} \\[6pt]
+\frac{\partial L}{\partial W_1} &= \frac{\partial L}{\partial z_1} \cdot x \\
+\frac{\partial L}{\partial b_1} &= \frac{\partial L}{\partial z_1}
+\end{aligned}
 ```
 
 Cada gradiente é um produto de derivadas locais rastreadas pela perda.
@@ -185,9 +188,9 @@ def __mul__(self, other):
     return out
 ```
 
-Para adição: d(a+b)/da = 1, d(a+b)/db = 1. Então ambas as entradas obtêm o gradiente da saída diretamente.
+Para adição: $\partial(a+b)/\partial a = 1$- Não .$\partial(a+b)/\partial b = 1$Então ambas as entradas obtêm o gradiente da saída diretamente.
 
-Para multiplicação: d(a*b)/da = b, d(a*b)/db = a. Cada entrada obtém o valor do outro vezes o gradiente de saída.
+Para multiplicação: $\partial(ab)/\partial a = b$- Não .$\partial(ab)/\partial b = a$Cada entrada obtém o valor do outro vezes o gradiente de saída.
 
 O `+=`O valor pode ser usado em múltiplas operações.
 
@@ -209,7 +212,7 @@ def sigmoid(self):
     return out
 ```
 
-Derivada sigmoide: sigmoide(x) * (1 - sigmoide(x)). Nós calculamos sigmoide(x) = s durante a passagem para a frente. Reutilizar.
+Derivada sigmoide: $\text{sigmoid}(x) \cdot (1 - \text{sigmoid}(x))$- Nós calculamos .$\text{sigmoid}(x) = s$Não há trabalho extra.
 
 ```python
 def mse_loss(predicted, target):
@@ -217,7 +220,7 @@ def mse_loss(predicted, target):
     return diff * diff
 ```
 
-MSE para uma única saída: (previsto - meta) ^ 2. Expresso subtração como adição com um valor negado.
+MSE para uma única saída: $(\text{predicted} - \text{target})^2$Expresso subtração como adição com um valor negado.
 
 ### Passo 4: Passagem para trás
 
@@ -241,7 +244,7 @@ def backward(self):
         v._backward()
 ```
 
-Comece na perda (gradiente = 1.0, já que dL/dL = 1).`_backward`empurra gradientes para os seus filhos.
+Começar na perda (gradiente = 1.0, já que $dL/dL = 1$3) Passe para trás através do gráfico ordenado.`_backward`empurra gradientes para os seus filhos.
 
 ### Passo 5: camada e rede
 
@@ -301,7 +304,7 @@ class Network:
             p.grad = 0.0
 ```
 
-Um Neurônio toma entradas, calcula a soma ponderada + viés e aplica sigmoide. Escalas de inicialização de peso por sqrt(2/n_input) para evitar a saturação sigmoide em redes mais profundas. Uma camada é uma lista de neurônios. Uma rede é uma lista de camadas.`parameters()`O método recolhe todos os valores apropriados para que possamos atualizá-los.
+Um Neurônio toma entradas, calcula a soma ponderada + viés e aplica sigmoide.$\sqrt{2/n_{\text{inputs}}}$A camada é uma lista de neurônios.`parameters()`O método recolhe todos os valores apropriados para que possamos atualizá-los.
 
 ### Passo 6: Trem no XOR
 
@@ -439,9 +442,9 @@ Esta lição produz:
 
 ## Exercícios
 
-1. Adicionar um`__sub__`O método para a classe de Valor (a - b = a + (-1 * b)).`__neg__`Verificar que os gradientes são corretos comparando com o cálculo manual para uma expressão simples como (a - b) ^ 2.
+1. Adicionar um`__sub__`método para a classe Valor $(a - b = a + (-1 \cdot b))$- Então, implementar um`__neg__`Verificar que os gradientes são corretos comparando com o cálculo manual para uma expressão simples como $(a - b)^2$- Não .
 
-2. Adicionar um`relu`O método para Valor (output max ((0, x), derivado é 1 se x > 0, então 0). Substitua sigmoide com relú nas camadas ocultas e treine novamente no XOR. Compare velocidade de convergência. Você deve ver treinamento mais rápido - esta prévia lição 04.
+2. Adicionar um`relu`método para Valor (output $\max(0, x)$, derivada é 1 se $x \gt 0$Replaça o sigmoide com o relú nas camadas ocultas e treine novamente no XOR. Compare a velocidade de convergência.
 
 3. Implementar um `__pow__`método sobre Valor para potências inteiras.`mse_loss`com um adequado`(predicted - target) ** 2`Verifique se os gradientes correspondem à implementação original.
 
@@ -453,14 +456,14 @@ Esta lição produz:
 
 | Term | What people say | What it actually means |
 |------|----------------|----------------------|
-| Backpropagation | "The network learns" | An algorithm that computes dL/dw for every weight by applying the chain rule backward through the computational graph |
+| Backpropagation | "The network learns" | An algorithm that computes $\partial L/\partial w$ for every weight by applying the chain rule backward through the computational graph |
 | Computational graph | "The network structure" | A directed acyclic graph where nodes are operations and edges carry values (forward) and gradients (backward) |
-| Chain rule | "Multiply the derivatives" | If y = f(g(x)), then dy/dx = f'(g(x)) * g'(x) -- the mathematical foundation of backpropagation |
+| Chain rule | "Multiply the derivatives" | If $y = f(g(x))$, then $\frac{dy}{dx} = f'(g(x)) \cdot g'(x)$ -- the mathematical foundation of backpropagation |
 | Gradient | "The direction of steepest ascent" | The partial derivative of the loss with respect to a parameter -- tells you how to change that parameter to reduce the loss |
 | Vanishing gradient | "Deep networks don't learn" | Gradients shrink exponentially as they propagate through layers with saturating activations like sigmoid |
 | Forward pass | "Running the network" | Computing the output from inputs by sequentially applying each layer's operations and storing intermediate values |
 | Backward pass | "Computing gradients" | Traversing the computational graph in reverse, accumulating gradients at each node using the chain rule |
-| Learning rate | "How fast it learns" | A scalar that controls the step size when updating weights: w_new = w_old - lr * gradient |
+| Learning rate | "How fast it learns" | A scalar that controls the step size when updating weights: $w_{\text{new}} = w_{\text{old}} - \text{lr} \cdot \text{gradient}$ |
 | Topological sort | "The right order" | An ordering of graph nodes where each node appears after all nodes it depends on -- ensures gradients are fully accumulated before propagation |
 | Autograd | "Automatic differentiation" | A system that builds computational graphs during forward computation and automatically computes gradients -- what PyTorch's engine does |
 

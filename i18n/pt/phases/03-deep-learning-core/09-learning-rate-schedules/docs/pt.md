@@ -30,8 +30,8 @@ Quando você aprende um modelo pré-treinado, o horário certo é diferente do t
 
 A abordagem mais simples é escolher um número, usar-o para cada passo.
 
-```
-lr(t) = lr_0
+```math
+\text{lr}(t) = \text{lr}_0
 ```
 
 Raramente óptimo. É muito alto para o final do treinamento (oscillação em torno do mínimo) ou muito baixo para o início (computação desperdiçada em passos pequenos). Funciona bem para pequenos modelos e depuração. Uma escolha terrível para qualquer coisa que treina por mais de uma hora.
@@ -40,11 +40,11 @@ Raramente óptimo. É muito alto para o final do treinamento (oscillação em to
 
 A abordagem da velha escola da era ResNet: reduzir a taxa de aprendizagem em um fator (geralmente 10x) em épocas fixas.
 
-```
-lr(t) = lr_0 * gamma^(floor(epoch / step_size))
+```math
+\text{lr}(t) = \text{lr}_0 \cdot \gamma^{\lfloor \text{epoch} / \text{step\_size} \rfloor}
 ```
 
-Onde gama = 0,1 e passo_dimensião = 30 significa: lr cai 10x a cada 30 épocas. ResNet-50 usou isto -- lr = 0,1, cai 10x a épocas 30, 60 e 90.
+Onde ?$\gamma = 0.1$e step_size = 30 significa: lr cai 10x a cada 30 épocas. ResNet-50 usou isto -- lr = 0,1, cai 10x a épocas 30, 60 e 90.
 
 O problema: os pontos de decomposição ótimos dependem do conjunto de dados e da arquitetura. Passe para um problema diferente e você precisa reajustar quando cair. As transições são abruptas - a perda pode aumentar quando a taxa muda repentinamente.
 
@@ -52,24 +52,24 @@ O problema: os pontos de decomposição ótimos dependem do conjunto de dados e 
 
 Desintegração suave da taxa máxima de aprendizagem para o mínimo, seguindo uma curva cosínica:
 
+```math
+\text{lr}(t) = \text{lr}_{\min} + 0.5 \cdot (\text{lr}_{\max} - \text{lr}_{\min}) \cdot \left(1 + \cos\left(\frac{\pi t}{T}\right)\right)
 ```
-lr(t) = lr_min + 0.5 * (lr_max - lr_min) * (1 + cos(pi * t / T))
-```
 
-Onde t é o passo atual e T é o número total de passos.
+Onde ?$t$é o passo atual e $T$é o número total de passos.
 
-Em t=0, o termo cosínico é 1, então lr = lr_max. Em t=T, o termo cosínico é -1, então lr = lr_min. A decadência é suave no início, acelera no meio, e torna-se suave novamente perto do fim.
+- Não .$t=0$, o termo cosínio é 1, então $\text{lr} = \text{lr} _{\max}$- Em .$t=T$, o termo cosínio é -1, então $\text{lr} = \text{lr} _{\min}$A decadência é suave no início, acelera no meio, e torna-se suave novamente perto do fim.
 
-Esta é a padrão para a maioria das corridas de treinamento modernas. Não há hiperparâmetros para sintonizar além de lr_max e lr_min. A forma cosínica corresponde à observação empírica de que a maioria da aprendizagem acontece no meio do treinamento - você quer tamanhos razoáveis de passos durante esse período crítico.
+Esta é a padrão para a maioria das corridas de treinamento modernas.$\text{lr} _{\max}$E ...$\text{lr} _{\min}$A forma cosínica corresponde à observação empírica de que a maior parte da aprendizagem acontece no meio do treinamento - queremos tamanhos razoáveis de passos durante esse período crítico.
 
 ### O aquecimento: Por que começar pequeno
 
 Adam e outros optimizadores adaptativos mantêm estimativas em execução da média de gradiente e variação. No passo 0, essas estimativas são iniciadas para zero. As primeiras atualizações de gradiente são baseadas em estatísticas de lixo. Se a sua taxa de aprendizagem é grande durante esse período, o modelo toma passos enormes e mal direcionados.
 
-O Warmup corrige isso. Comece com uma pequena taxa de aprendizagem (muitas vezes lr_max / warmup_steps ou até zero) e linearmente eleve-se para lr_max durante os primeiros N passos. Quando você alcança a taxa de aprendizagem completa, as estatísticas de Adam se estabilizaram.
+O Warmup corrige isto. Comece com uma pequena taxa de aprendizagem (muitas vezes lr_max / warmup_steps ou até zero) e linearmente eleve para $\text{lr}_{\max}$- Não .$N$Quando você alcançar a taxa de aprendizagem completa, as estatísticas de Adam se estabilizaram.
 
-```
-lr(t) = lr_max * (t / warmup_steps)     for t < warmup_steps
+```math
+\text{lr}(t) = \text{lr}_{\max} \cdot \frac{t}{\text{warmup\_steps}} \quad \text{for } t < \text{warmup\_steps}
 ```
 
 O aquecimento típico: 1-5% do total de etapas de treinamento. Llama 3 treinado para ~ 1,8 trilhão de tokens e aquecido para 2000 etapas. GPT-3 aquecido para mais de 375 milhões de tokens.
@@ -398,13 +398,13 @@ Esta lição produz:
 
 ## Exercícios
 
-1. Implementar decadência exponencial: lr(t) = lr_0 * gamma^t onde gamma = 0,999.
+1. Implementar decadência exponencial: $\text{lr}(t) = \text{lr}_0 \cdot \gamma^t$onde$\gamma = 0.999$Comparar com o cosino de anelação no conjunto de dados do círculo.
 
 2. Implementar o teste de faixa de taxa de aprendizagem (Leslie Smith): treinar por algumas centenas de passos aumentando exponencialmente a LR de 1e-7 para 1.
 
 3. Treinar com aquecimento + cosino, mas variar o comprimento do aquecimento: 0%, 1%, 5%, 10%, 20% dos passos totais.
 
-4. Implementar o cozinheamento de reinicialização com reinicialização quente (SGDR): restabelecer a taxa de aprendizagem para lr_max a cada passo T e decadência novamente.
+4. Implementar o anelamento cosino com reinicialização quente (SGDR): restabelecer a taxa de aprendizagem para $\text{lr}_{\max}$- Todos .$T$Comparar com o cosino padrão numa corrida de treinamento mais longa.
 
 5. Construir um "chirurgião de horário" que monitore a perda de treinamento e muda automaticamente do aquecimento para cosino quando a perda se estabiliza, e reduz a irritação se a perda se prolongar por muito tempo.
 
@@ -414,12 +414,12 @@ Esta lição produz:
 |------|----------------|----------------------|
 | Learning rate | "How fast the model learns" | The scalar that multiplies the gradient to determine the parameter update size |
 | Schedule | "Change the LR over time" | A function that maps training step to learning rate, designed to optimize convergence |
-| Warmup | "Start with a small LR" | Linearly ramping the LR from near-zero to the target value over the first N steps to stabilize optimizer statistics |
-| Cosine annealing | "Smooth LR decay" | Decreasing the LR following a cosine curve from lr_max to lr_min over training |
+| Warmup | "Start with a small LR" | Linearly ramping the LR from near-zero to the target value over the first $N$ steps to stabilize optimizer statistics |
+| Cosine annealing | "Smooth LR decay" | Decreasing the LR following a cosine curve from $\text{lr} _{\max}$ to $\text{lr} _{\min}$ over training |
 | Step decay | "Drop LR at milestones" | Multiplying the LR by a factor (usually 0.1) at fixed epoch intervals |
 | 1cycle policy | "Up then down" | Leslie Smith's method of ramping LR up then down in a single cycle for faster convergence |
 | LR range test | "Find the best learning rate" | Training briefly while increasing LR to find the value where loss starts diverging |
-| Cosine with warm restarts | "Reset and repeat" | Periodically resetting the LR to lr_max and decaying again (SGDR) |
+| Cosine with warm restarts | "Reset and repeat" | Periodically resetting the LR to $\text{lr} _{\max}$ and decaying again (SGDR) |
 | Eta min | "The floor for the LR" | The minimum learning rate that the schedule decays to |
 | Peak learning rate | "The maximum LR" | The highest LR reached during training, typically after warmup |
 

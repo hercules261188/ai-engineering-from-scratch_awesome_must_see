@@ -16,7 +16,7 @@
 
 ## O problema
 
-Estape duas transformações lineares: y = W2 ((W1x + b1) + b2. Expandir: y = W2W1x + W2b1 + b2. Isso é apenas y = Ax + c - uma única transformação linear. Não importa quantas camadas lineares você estape, o resultado desmorona para uma matriz multiplicar. Sua rede de 100 camadas tem o mesmo poder de representação que uma única camada.
+Apila duas transformações lineares: $y = W_2(W_1 x + b_1) + b_2$- Expandir:$y = W_2 W_1 x + W_2 b_1 + b_2$- É só...$y = Ax + c$- uma única transformação linear. Não importa quantas camadas lineares você apilar, o resultado colapsa para uma matriz multiplicar.
 
 Isto não é uma curiosidade teórica. Significa que uma rede linear profunda literalmente não pode aprender XOR, não pode classificar um conjunto de dados em espiral, não pode reconhecer um rosto. Sem funções de ativação, a profundidade é uma ilusão.
 
@@ -26,52 +26,58 @@ As funções de ativação quebram a linearidade. Eles distorcem a saída de cad
 
 ### Por que é necessário não-linearidade
 
-A multiplicação de matriz é compostavel. Multiplicar um vetor pela matriz A, então a matriz B é idêntico a multiplicar por AB. Isso significa que apilar dez camadas lineares é matematicamente equivalente a uma camada linear com uma grande matriz. Todos esses parâmetros, toda essa profundidade - desperdiçado. Você precisa de algo para quebrar a cadeia. É isso que as funções de ativação fazem.
+Multiplicação de matriz é compostavel. Multiplicação de um vetor por matriz $A$Então matriz $B$é idêntico a multiplicar por $AB$Isto significa que empilhar dez camadas lineares é matematicamente equivalente a uma camada linear com uma grande matriz. Todos esses parâmetros, toda essa profundidade - desperdiçado. Você precisa de algo para quebrar a cadeia.
 
-Aqui está a prova. Uma camada linear calcula f ((x) = Wx + b.
+Aqui está a prova. Uma camada linear calcula.$f(x) = Wx + b$- A pilha dois:
 
-```
-Layer 1: h = W1 * x + b1
-Layer 2: y = W2 * h + b2
+```math
+\begin{aligned}
+\text{Layer 1:} \quad h &= W_1 x + b_1 \\
+\text{Layer 2:} \quad y &= W_2 h + b_2
+\end{aligned}
 ```
 
 Substituto:
 
-```
-y = W2 * (W1 * x + b1) + b2
-y = (W2 * W1) * x + (W2 * b1 + b2)
-y = A * x + c
-```
-
-Uma camada. Insira uma ativação não linear g (() entre as camadas:
-
-```
-h = g(W1 * x + b1)
-y = W2 * h + b2
+```math
+\begin{aligned}
+y &= W_2 (W_1 x + b_1) + b_2 \\
+y &= (W_2 W_1) x + (W_2 b_1 + b_2) \\
+y &= A x + c
+\end{aligned}
 ```
 
-Agora a substituição se rompe. W2 * g(W1 * x + b1) + b2 não pode ser reduzida a uma única transformação linear. A rede pode representar funções não lineares. Cada camada adicional com uma ativação adiciona capacidade de representação.
+Uma camada. Insira uma ativação não linear $g()$entre camadas:
+
+```math
+\begin{aligned}
+h &= g(W_1 x + b_1) \\
+y &= W_2 h + b_2
+\end{aligned}
+```
+
+Agora a substituição rompe.$W_2 g(W_1 x + b_1) + b_2$A rede pode representar funções não lineares. Cada camada adicional com uma ativação adiciona capacidade de representação.
 
 ### Sigmoide
 
 A função de ativação original para redes neurais.
 
-```
-sigmoid(x) = 1 / (1 + e^(-x))
+```math
+\text{sigmoid}(x) = \frac{1}{1 + e^{-x}}
 ```
 
 Intervalo de saída: (0, 1). Suave, diferenciável, mapeia qualquer número real a um valor semelhante à probabilidade.
 
 O derivado:
 
-```
-sigmoid'(x) = sigmoid(x) * (1 - sigmoid(x))
+```math
+\text{sigmoid}'(x) = \text{sigmoid}(x) \cdot (1 - \text{sigmoid}(x))
 ```
 
-O valor máximo desta derivada é de 0,25, ocorrendo em x = 0. Na propagação para trás, os gradientes se multiplicam através de camadas. Dez camadas de sigmoide significa que o gradiente é multiplicado pelo máximo 0,25 dez vezes:
+O valor máximo desta derivada é de 0,25, ocorrendo em $x = 0$Em propagação para trás, os gradientes se multiplicam através de camadas.
 
-```
-0.25^10 = 0.000000953674
+```math
+0.25^{10} = 0.000000953674
 ```
 
 Menos de um milionésimo do sinal original. Este é o problema do gradiente desaparecendo. Os gradientes nas camadas iniciais tornam-se tão pequenos que os pesos mal atualizam. A rede parece aprender - a perda diminui nas camadas posteriores - mas as primeiras camadas estão congeladas. As redes sigmoides profundas simplesmente não treinam.
@@ -82,33 +88,32 @@ O problema adicional é que as saídas sigmoides são sempre positivas (0 a 1), 
 
 A versão centrada do sigmoide.
 
-```
-tanh(x) = (e^x - e^(-x)) / (e^x + e^(-x))
+```math
+\tanh(x) = \frac{e^x - e^{-x}}{e^x + e^{-x}}
 ```
 
 Intervalo de saída: (-1, 1). Centrado em zero, o que elimina o problema do zigzag.
 
 O derivado:
 
-```
-tanh'(x) = 1 - tanh(x)^2
+```math
+\tanh'(x) = 1 - \tanh(x)^2
 ```
 
-A derivada máxima é de 1,0 em x = 0 - quatro vezes melhor do que o sigmoide. Mas o problema do gradiente desaparecendo ainda existe. Para grandes entradas positivas ou negativas, a derivada se aproxima de zero. Dez camadas ainda esmagam o gradiente, apenas menos agressivamente.
+A derivada máxima é de 1,0 em $x = 0$Mas o problema do gradiente desaparecendo ainda existe. Para grandes entradas positivas ou negativas, a derivada se aproxima de zero. Dez camadas ainda esmagam o gradiente, apenas com menos agressividade.
 
 ### ReLU: O avanço
 
 Corrigida Unidade Linear. Popularizada para aprendizagem profunda por Nair e Hinton em 2010 (a função em si data do trabalho de Fukushima de 1969), mudou tudo.
 
-```
-relu(x) = max(0, x)
+```math
+\text{relu}(x) = \max(0, x)
 ```
 
-O intervalo de saída: [0, infinito).
+Intervalo de saída: $[0, \infty)$A derivada é trivialmente simples:
 
-```
-relu'(x) = 1  if x > 0
-            0  if x <= 0
+```math
+\text{relu}'(x) = \begin{cases} 1 & \text{if } x > 0 \\ 0 & \text{if } x \le 0 \end{cases}
 ```
 
 Não há gradiente de desaparecimento para entradas positivas. O gradiente é exatamente 1, passado diretamente através. É por isso que redes profundas tornaram-se treinaveis - ReLU preserva magnitude de gradiente em todas as camadas.
@@ -119,25 +124,24 @@ Mas há um modo de falha: o problema de neurônios mortos. Se a entrada ponderad
 
 A solução mais simples para neurónios mortos.
 
-```
-leaky_relu(x) = x        if x > 0
-                alpha * x if x <= 0
+```math
+\text{leaky\_relu}(x) = \begin{cases} x & \text{if } x > 0 \\ \alpha x & \text{if } x \le 0 \end{cases}
 ```
 
-Onde o alfa é uma pequena constante, normalmente 0,01. O lado negativo tem uma pequena inclinação em vez de zero, por isso os neurônios mortos ainda recebem um sinal de gradiente e podem recuperar.
+Onde ?$\alpha$O lado negativo tem uma pequena inclinação em vez de zero, por isso os neurônios mortos ainda recebem um sinal de gradiente e podem recuperar.
 
 ### GELU: O Default Moderno
 
 Unidade linear de erro de Gaussian. Introduzida por Hendrycks e Gimpel em 2016. Ativação padrão em BERT, GPT e a maioria dos transformadores modernos.
 
-```
-gelu(x) = x * Phi(x)
+```math
+\text{gelu}(x) = x \cdot \Phi(x)
 ```
 
-Onde Phi ((x) é a função de distribuição cumulativa da distribuição normal padrão.
+Onde ?$\Phi(x)$é a função de distribuição cumulativa da distribuição normal padrão.
 
-```
-gelu(x) ~= 0.5 * x * (1 + tanh(sqrt(2/pi) * (x + 0.044715 * x^3)))
+```math
+\text{gelu}(x) \approx 0.5 \cdot x \cdot \left(1 + \tanh\left(\sqrt{2/\pi} \cdot (x + 0.044715 \cdot x^3)\right)\right)
 ```
 
 O GELU é suave em todos os lugares, permite pequenos valores negativos (ao contrário do ReLU que faz clips rígidos para zero) e tem uma interpretação probabilística: pesa cada entrada por quão provável é que seja positiva sob uma distribuição gaussiana.
@@ -146,11 +150,11 @@ O GELU é suave em todos os lugares, permite pequenos valores negativos (ao cont
 
 Ativação auto-guardada descoberta por Ramachandran et al. em 2017 através de pesquisa automatizada.
 
-```
-swish(x) = x * sigmoid(x)
+```math
+\text{swish}(x) = x \cdot \text{sigmoid}(x)
 ```
 
-O Swish é formalmente x * sigmoid ((x). O Google descobriu-o através de pesquisas automatizadas sobre o espaço de função de ativação -- uma rede neural que projeta partes de redes neurais.
+O Swish é formalmente .$x \cdot \text{sigmoid}(x)$O Google descobriu-o através de uma pesquisa automática no espaço de funções de ativação -- uma rede neural que desenha partes de redes neurais.
 
 Como o GELU, é liso, não monótono e permite pequenos valores negativos. A diferença é sutil: o Swish usa sigmoid para gating enquanto o GELU usa o CDF gaussiano. Na prática, o desempenho é quase idêntico.
 
@@ -158,8 +162,8 @@ Como o GELU, é liso, não monótono e permite pequenos valores negativos. A dif
 
 Não é usado em camadas ocultas. Softmax converte um vetor de pontuações brutas (logits) em uma distribuição de probabilidade.
 
-```
-softmax(x_i) = e^(x_i) / sum(e^(x_j) for all j)
+```math
+\text{softmax}(x_i) = \frac{e^{x_i}}{\sum_j e^{x_j}}
 ```
 
 Cada saída é entre 0 e 1. Todas as saídas somam a 1. Isso torna-a a ativação final padrão para classificação de várias classes. A logit maior obtém a maior probabilidade, mas ao contrário de argmax, softmax é diferenciável e preserva informações sobre confiança relativa.
@@ -500,11 +504,11 @@ Esta lição produz:
 
 ## Exercícios
 
-1. Implementar o Parametric ReLU (PReLU) onde a inclinação negativa alfa é um parâmetro apropriado.
+1. Implementar a ReLU Parametral (PReLU) onde a inclinação negativa $\alpha$Trá-lo no conjunto de dados do círculo e compará-lo com o ReLU Leaky fixo.
 
 2. Execute o experimento de gradiente de desaparecimento com 50 camadas em vez de 10. Desenhe a magnitude em cada camada para sigmoide, tanh, ReLU e GELU. Em que camada o sinal de cada ativação atinge efetivamente o zero?
 
-3. Implementar a ELU (Unidade Linear Exponencial): elu(x) = x se x > 0, alfa * (e^x - 1) se x <= 0. Compare sua taxa de neurônios mortos com a ReLU na mesma rede.
+3. Implementar a ELA (Unidade Linear Exponencial): $\text{elu}(x) = x$se$x \gt 0$- Não .$\alpha (e^x - 1)$se$x \le 0$Comparar a taxa de neurônios mortos com a ReLU na mesma rede.
 
 4. Construa um "monitor de saúde gradiente" que funcione durante o treinamento: em cada época, calcule a magnitude média de gradiente em cada camada.
 
@@ -518,12 +522,12 @@ Esta lição produz:
 | Vanishing gradient | "Gradients disappear in deep networks" | Gradients shrink exponentially through layers when the activation's derivative is less than 1, making early layers untrainable |
 | Exploding gradient | "Gradients blow up" | Gradients grow exponentially through layers when the effective multiplier exceeds 1, causing unstable training |
 | Dead neuron | "A neuron that stopped learning" | A ReLU neuron whose input is permanently negative, producing zero output and zero gradient |
-| Sigmoid | "Squishes values to 0-1" | The logistic function 1/(1+e^-x), historically important but causes vanishing gradients in deep networks |
-| ReLU | "Clips negatives to zero" | max(0, x) -- the activation that made deep learning practical by preserving gradient magnitude |
+| Sigmoid | "Squishes values to 0-1" | The logistic function $1/(1+e^{-x})$, historically important but causes vanishing gradients in deep networks |
+| ReLU | "Clips negatives to zero" | $\max(0, x)$ -- the activation that made deep learning practical by preserving gradient magnitude |
 | GELU | "The transformer activation" | Gaussian Error Linear Unit, a smooth activation that weights inputs by their probability of being positive |
-| Swish/SiLU | "Self-gated ReLU" | x * sigmoid(x), discovered through automated search, used in EfficientNet |
+| Swish/SiLU | "Self-gated ReLU" | $x \cdot \text{sigmoid}(x)$, discovered through automated search, used in EfficientNet |
 | Softmax | "Turns scores into probabilities" | Normalizes a vector of logits into a probability distribution where all values are in (0,1) and sum to 1 |
-| Leaky ReLU | "ReLU that doesn't die" | max(alpha*x, x) where alpha is small (0.01), preventing dead neurons by allowing small negative gradients |
+| Leaky ReLU | "ReLU that doesn't die" | $\max(\alpha x, x)$ where $\alpha$ is small (0.01), preventing dead neurons by allowing small negative gradients |
 | Saturation | "The flat part of sigmoid" | Regions where an activation's derivative approaches zero, blocking gradient flow |
 | Logit | "The raw score before softmax" | The unnormalized output of the final layer before applying softmax or sigmoid |
 

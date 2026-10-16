@@ -143,11 +143,11 @@ Elementos fundamentais:
 
 | Module | What it does | Parameters |
 |--------|-------------|------------|
-| nn.Linear(in, out) | Wx + b | in*out + out |
+| nn.Linear(in, out) | $Wx + b$ | in*out + out |
 | nn.Conv2d(in_ch, out_ch, k) | 2D convolution | in_ch*out_ch*k*k + out_ch |
 | nn.BatchNorm1d(features) | Normalize activations | 2 * features |
 | nn.Dropout(p) | Random zeroing | 0 |
-| nn.ReLU() | max(0, x) | 0 |
+| nn.ReLU() | $\max(0, x)$ | 0 |
 | nn.GELU() | Gaussian error linear | 0 |
 | nn.Embedding(vocab, dim) | Lookup table | vocab * dim |
 | nn.LayerNorm(dim) | Per-sample normalization | 2 * dim |
@@ -356,7 +356,7 @@ class MNISTModel(nn.Module):
 
 A camada de saída produz 10 logits brutos (um por dígito).`CrossEntropyLoss`- Ele lida com isso internamente.
 
-Contagem de parâmetros: 784 * 256 + 256 + 256 * 128 + 128 + 128 * 10 + 10 = 235.146. Pequeno segundo os padrões modernos. GPT-2 pequeno tem 124M. Isso treina em segundos.
+Contagem de parâmetros: $784 \cdot 256 + 256 + 256 \cdot 128 + 128 + 128 \cdot 10 + 10 = 235{,}146$Pequeno segundo os padrões modernos, o GPT-2 pequeno tem 124 milhões.
 
 ### Passo 3: Loop de treinamento
 
