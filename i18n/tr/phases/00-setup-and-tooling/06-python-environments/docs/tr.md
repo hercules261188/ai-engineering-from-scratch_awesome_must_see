@@ -259,6 +259,16 @@ Bu bir `.venv`çekirdek bağımlılıkları yüklenmiş ve doğrulanmış repo k
 3. Bir yazın .`pyproject.toml`PyTorch ve Anthropic SDK'ye ihtiyaç duyan bir proje için
 4. Kasten bir paket küresel olarak yükle (venv aktive etmeden), nereye gittiğini fark et, sonra onu kaldır
 
+### İpuçlar
+
+**Exercise 1.**Çık .`bash phases/00-setup-and-tooling/06-python-environments/code/env_setup.sh`Her çıkış satırını okuyun; bir kontrol başarısız olduğunda, bu öğeyi düzeltin ve hiçbir kontrol başarısız olana kadar senaryoyu tekrar çalıştırın.
+
+**Exercise 2.**Yeni bir klasörde ikinci ortam oluştur `uv venv`, onu etkinleştirin ve  gibi bir versiyon pin ile eski bir numpy kurmak`numpy==1.26.4`- Çık .`python -c "import numpy; print(numpy.__version__)"`Her ortamda; iki versiyon farklı olmalıdır.
+
+**Exercise 3.**pyproject.toml'deki örnekten başlayın Temel ve listeler `torch`ve `anthropic`Alt `dependencies`- Çık .`uv pip install -e .`veya `uv sync`Yeni bir ortamda; her iki paket de hata olmadan ithal edildiğinde dosya doğru.
+
+**Exercise 4.**Her ortamı devre dışı bırak, çalıştır `pip install --user <small package>`Sonra koş .`pip show <package>`Ve oku `Location`İndir.`pip uninstall <package>`ve koş .`pip show`Yine yok olduğunu doğrulayacak.
+
 ## Anahtar Terimler
 
 | Term | What people say | What it actually means |

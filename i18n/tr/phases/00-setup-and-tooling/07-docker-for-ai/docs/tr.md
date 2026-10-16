@@ -155,7 +155,7 @@ python:3.12-slim
 İşte Docker Dosyası.`code/Dockerfile`- İçinden geç:
 
 ```dockerfile
-FROM nvidia/cuda:12.4.1-devel-ubuntu22.04
+FROM --platform=linux/amd64 nvidia/cuda:12.4.1-devel-ubuntu22.04
 
 ENV DEBIAN_FRONTEND=noninteractive
 ENV PYTHONUNBUFFERED=1
@@ -215,6 +215,8 @@ docker build -t ai-dev -f phases/00-setup-and-tooling/07-docker-for-ai/code/Dock
 ```
 
 Bu, ilk sefer biraz zaman alır (CUDA taban görüntüsünü indir + PyTorch).
+
+**macOS / Apple Silicon (M1/M2/M3/M4):**- Evet .`--platform=linux/amd64`- ...`FROM`CUDA taban görüntüsü aynı zamanda bir arm64 varianti gönderir ve Docker Desktop otomatik olarak Apple Silicon'de seçer, ancak PyTorch kendi `cu124`Tekerlekler sadece x86_64 için, bu yüzden `pip install torch==2.6.0+cu124`katman başarısız oldu `No matching distribution found for torch==2.6.0+cu124`. Platformu sabitleyerek x86_64 görüntüsünü çekip emülasyon altında çalıştırır: yapı daha yavaş ve konteynerde GPU yoktur (Mac'da CUDA yoktur).`--gpus all`- ...`docker run`Mac'de GPU çalışması için, dersleri MPS'den ders 01'den oluşturulmuş olan derslerle yerel olarak çalıştırın ve bu resmi NVIDIA GPU'sı olan x86_64 Linux sunucuları için koruyun.
 
 Çek şunu:
 
@@ -372,6 +374,16 @@ docker logs -f <container_id>
 2. Docker-Compose stack ' i başlatın ve Qdrant ' ın AI konteynerinden erişilebildiğini kontrol edin .`http://qdrant:6333/collections`
 3. Ekle`flask`Dockerfile'e, yeniden inşa edin ve port 5000'de basit bir API sunucusu çalıştırın.`-p 5000:5000`
 4. Resim boyutunu ölç`docker images`Bas resimini değiştirmeye çalış .`devel`- ...`runtime`Ve boyutları karşılaştır
+
+### İpuçlar
+
+**Exercise 1.**Bu yüzden inşa et .`docker build -t ai-dev -f phases/00-setup-and-tooling/07-docker-for-ai/code/Dockerfile .`Dersten komut, sonra içeriye aktarmayı çalıştır `docker run --rm ai-dev`Mac'te, çıkma.`--gpus all`Desteğin, "Büyük bir şey" ile başlayan bir versiyonu basması gerekir.`2.6.0`- Evet .
+
+**Exercise 2.**Çık .`docker compose up -d`- ... ...`code/`klasör, sonra `ai-dev`hizmetleri ile`docker compose exec ai-dev bash`İçeride, koş.`curl http://qdrant:6333/collections`JSON cevabı, hizmet adı oluşturma ağında çözülür demektir.
+
+**Exercise 3.**Bir ekle`RUN pip install flask`Dockerfile'e bir hat atın, yeniden oluşturun ve sunucuyu `host="0.0.0.0"`, çünkü konteyner içindeki localhost'a bağlı bir sunucu dışarıdan erişilemez.`http://localhost:5000`Port haritasının çalışmadığını doğrultmak için makineye.
+
+**Exercise 4.**Çık .`docker images ai-dev`Ve boyut sütunu yaz.`devel`- ...`runtime`- ... ...`FROM`çizgi, yeni bir etiketle inşa edin ve iki boyutu karşılaştırın; çalıştırma süresi görüntüsü, toplayıcıları ve başlıkları bırakır.
 
 ## Anahtar Terimler
 

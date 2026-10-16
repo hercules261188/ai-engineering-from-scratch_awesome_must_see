@@ -146,6 +146,14 @@ Bu ders şunları ortaya çıkarır:
 2. Çöm HTTP sürümünü deneyin ve yanıt biçimini SDK sürümüne karşılaştırın
 3. Kasten yanlış bir API anahtarı kullanın ve hata mesajını okuyun
 
+### İpuçlar
+
+**Exercise 1.**Antropik Konsol'da bir anahtar oluşturun, içine koyun `ANTHROPIC_API_KEY`Derste gösterildiği gibi, ve koş `code/first_api_call.py`- Skenar model cevabını yazdırırken ve hata olmadan arama çalışır.
+
+**Exercise 2.**Her iki işlev de `code/first_api_call.py`Sadece metni ve simge sayısını yazdır.`print(response)`İçeride`call_with_sdk()`ve `print(result)`İçeride`call_raw_http()`, sonra iki tam yanıt görmek için senaryo çalıştırın. Alan isimlerini karşılaştırın: çi JSON aynı `content`- Evet .`usage`ve`stop_reason`SDK'nin nesne özelliklerine dönüştürdüğü alanlar.
+
+**Exercise 3.**Yapıştır `ANTHROPIC_API_KEY`HTTP durum kodu ve çıkıştaki hata türünü bul; bir kimlik doğrulama başarısızlığı 401 durumunu iade eder.
+
 ## Anahtar Terimler
 
 | Term | What people say | What it actually means |

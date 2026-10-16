@@ -130,6 +130,14 @@ if torch.cuda.is_available():
 2. Eğer bir GPU'unuz yoksa, Google Colab'da çalıştırın ve karşılaştırın
 3. Ne kadar GPU belleği olduğunuzu kontrol edin ve yerleştirilebilecek en büyük modelin tahmin edilmesini sağlayın (barmak kuralı: fp16 için parametresi başına 2 byte)
 
+### İpuçlar
+
+**Exercise 1.**Build It bölümünden kodu olduğu gibi çalıştırın, sonra CPU süresi, GPU süresi ve hızlandırma çizgisini yazın. İkinci kez çalıştırın; ilk GPU çalıştırması başlangıç maliyetini içerir, bu nedenle ikinci sayıların karşılaştırılması gerekir.
+
+**Exercise 2.**Colab'de Çalışma Zamanı > Çalışma Zamanı Tipi > GPU'yı seçin ve sonra referans değerini hücreye yapıştırın.`!nvidia-smi`İlk olarak başka bir hücreye girerken, referans sonucu herhangi bir anlam ifade etmeden önce bir GPU adı gösterilmelidir.
+
+**Exercise 3.**Tüm hafızayı oku `torch.cuda.get_device_properties(0).total_memory / 1e9`, tıpkı `code/gpu_check.py`. Fp16 için parametrelerin sayısını elde etmek için hafızayı byteye 2 bölün, sonra bir kenar tut, çünkü etkinleştirmeler ve CUDA bağlamı da hafıza kullanır.
+
 ## Anahtar Terimler
 
 | Term | What people say | What it actually means |

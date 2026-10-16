@@ -395,3 +395,15 @@ Bakın .`outputs/prompt-debug-ai-code.md`AI-specifik hataları teşhis etmeye ya
 3. Kullanım`tracemalloc`veri yükleme hattınızdaki hangi satır en fazla bellek ayırıyor.
 4. TenzorBoard'ı basit bir eğitim için ayarlayın ve modelin aşırı uygun olup olmadığını belirleyin.
 5. Kullanım`breakpoint()`Bir eğitim döngüsünün içinde. Debugger prompt'tan tenzor şekilleri, cihazları ve gradient değerlerini incelemeyi deneyin.
+
+### İpuçlar
+
+**Exercise 1.**Çık .`python3 phases/00-setup-and-tooling/12-debugging-and-profiling/code/debug_tools.py`Ve her demo fonksiyonunun çıkışını okuyun.`demo_nan_detection`Böylece çıkışı sıfırla bölünür ve tekrar çalıştırılır.`detect_nan`Adım numarasıyla bir NaN uyarısı yazmalı.
+
+**Exercise 2.**Çapıyı çalıştır `python -m cProfile -s cumtime your_script.py`Ya da içine sarın .`cProfile.Profile()`. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .`cumtime`sütun; en uzun zamanlı işlevi kendi kodunuz en yavaş işlevi.
+
+**Exercise 3.**Arama .`tracemalloc.start()`veri yükleme kodundan önce ve `tracemalloc.take_snapshot()`Sonra, tıpkı `demo_memory_tracking`- Çap .`snapshot.statistics("lineno")[:5]`; ilk satır en büyük payı olan dosya ve satır numarasını gösterir.
+
+**Exercise 4.**Eğitim kaybını ve doğrulama kaybını bir `SummaryWriter`Her zaman, sonra koş.`tensorboard --logdir=runs`Eğer eğitim kaybı, doğrulama kaybı arttıkça azalmaya devam ederse, model aşırı yükselir.
+
+**Exercise 5.**- Yapacağım .`breakpoint()``loss.backward()`- Ve senaryoyu çalıştır.`(Pdb)`Hemen basın.`x.shape`- Evet .`x.device`ve`next(model.parameters()).grad`, sonra yaz `c`Bir sonraki adıma devam etmek için.

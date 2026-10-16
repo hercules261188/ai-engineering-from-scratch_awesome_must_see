@@ -239,6 +239,14 @@ Bu ders şunları ortaya çıkarır:
 2. CSV'yi yükleyen, bir veri çerçevesini görüntüleyen ve bir tablo çizen bir not defteri oluşturun. Sonra Kernel > Restart & Run All'u çalıştırın ve üstten aşağıya doğru çalışırken doğrulayın
 3. Şifreyi alın .`code/notebook_tips.py`, Colab bir not defterine yapıştırıp ücretsiz bir GPU ile çalıştır
 
+### İpuçlar
+
+**Exercise 1.**JupyterLab ile başlayın `jupyter lab`, sonra her versiyonu kendi hücresine koyun ki ,`%timeit`Her iki hücre de aynı 100.000 boyut kullanın böylece iki kez aynı işi ölçün.
+
+**Exercise 2.**Kullanım`pd.read_csv`Veriler için, veriler çerçevesini bir hücrenin son satırı olarak göster ve  ile çizin.`df.plot()`Kernel > Restart & Run All'dan sonra, her hücre, çalıştırma sayfasında bir sayı göstermelidir ve hiçbir hücre hata gösteremez.
+
+**Exercise 3.**Colab'de, kod koymadan önce Çalışma Zamanı > Çalışma Zamanı Tipi > GPU'yi seçin.`code/notebook_tips.py`bölümünü basıyor ve `torch.cuda.is_available()`Devamı`True`Bir hücreye.
+
 ## Anahtar Terimler
 
 | Term | What people say | What it actually means |

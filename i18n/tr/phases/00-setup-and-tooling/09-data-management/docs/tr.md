@@ -61,7 +61,7 @@ Bu IMDB film inceleme verileri indirir. İlk indirilmesinden sonra, önbelleği 
 Bazı veri kümeleri diske yerleştirilecek kadar büyüktür. Akış, tümünü indirmeden onları sıra sıra yükler.
 
 ```python
-dataset = load_dataset("wikimedia/wikipedia", "20220301.en", split="train", streaming=True)
+dataset = load_dataset("wikimedia/wikipedia", "20231101.en", split="train", streaming=True)
 
 for i, example in enumerate(dataset):
     print(example["title"])
@@ -244,6 +244,16 @@ Bu ders şunları ortaya çıkarır:
 2. Akış `c4`veriler kümesi ve 10 saniyede kaç örnek işleyebileceğinizi sayın
 3. Veriler kümesini Parquet'e dönüştür ve dosya boyutunu CSV ile karşılaştır
 4. sabit bir tohumla 70/15/15 tren/val/test bölümü oluşturun ve boyutları doğrulayın
+
+### İpuçlar
+
+**Exercise 1.**Arama .`load_and_inspect("glue", "mrpc")`-`code/data_utils.py`veya`load_dataset("glue", "mrpc")`Doğrudan ve basılı`ds["train"][:5]`Her örnekte bir tane olmalı .`sentence1`- Evet .`sentence2`ve`label`Alanlar.
+
+**Exercise 2.**Veriler kümesini  ile yükle`streaming=True`, tıpkı`stream_dataset`yapar ve örnekleri bir döngü içinde okuyun ki durur.`time.time()`Başlangıç süresi artı 10 saniye geçiyor. Sayıyı basın; ilk çalışmada bağlantı başlatılması dahil olduğu için iki kez çalıştırın.
+
+**Exercise 3.**Aynı veri kümesini  ile kaydet`to_csv`ve `to_parquet`, tıpkı`convert_format`- Evet, sonra ölçüleri karşılaştır.`ls -lh`veya `os.path.getsize`Parket dosyasını yükle .`load_from_parquet`ve sıra sayısının değişmediğini kontrol et.
+
+**Exercise 4.**Kullanım`train_test_split`İki kez sabit bir `seed`İlk olarak yüzde 30'u ayırın, sonra yüzde 30'u yarıya ayırın. Üç uzunluk orijinal uzunluğu toplamalı ve aynı tohumla ikinci bir atış her bölünmede aynı ilk satır vermeli.
 
 ## Anahtar Terimler
 

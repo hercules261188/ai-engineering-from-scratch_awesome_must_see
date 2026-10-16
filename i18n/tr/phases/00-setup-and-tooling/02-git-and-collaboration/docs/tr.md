@@ -106,6 +106,14 @@ Bu ders için rebase, cherry-pick veya submodules gerekmiyor.
 2. Bir `.gitignore`Bu, kontrol nokta dosyalarının modelini kapsar (`.pt`- Evet .`.pth`- Evet .`.safetensors`)
 3. Bu repo ' nun commit tarihiyle ilgili bir bakış .`git log --oneline`Ve derslerin nasıl eklendiğini okuyun.
 
+### İpuçlar
+
+**Exercise 1.**GitHub'da Fork'e tıklayın.`git clone`Kendi çatalının URL'si.`git push -u origin my-progress`GitHub ' da çatalınızı açın ve şubeler listesinin gösterildiğini onaylayın .`my-progress`Dosyanla birlikte.
+
+**Exercise 2.**Genişleme başına bir desen ekleyin, örneğin `*.pt`, bir `.gitignore`her uzantı ile boş bir dosya oluşturun ve çalıştırın `git status`; bunların hiçbiri izlenmemiş dosyaların listesinde görünmeyebilir.
+
+**Exercise 3.**Çık .`git log --oneline`Ve sonra ...`git log --oneline -- phases/00-setup-and-tooling`Bu aşamayı değiştiren sadece commit'leri göstermek için.`git show --stat <hash>`Hangi ders dosyalarını eklediğini görmek için.
+
 ## Anahtar Terimler
 
 | Term | What people say | What it actually means |

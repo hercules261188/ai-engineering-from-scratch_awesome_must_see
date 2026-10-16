@@ -81,11 +81,11 @@ Her birinin yaptığı:
 | Black Formatter | Auto-format on save, consistent style |
 | Ruff | Fast linting, catches common mistakes |
 
-Dosya `code/.vscode/extensions.json`Bu ders, proje klasörünü açtığınızda, VS Code, bunları yüklemenizi isteyecektir.
+Dosya `code/vscode/extensions.json`Bu ders, tüm önerileri içerir.`.vscode/extensions.json`Proje klasörünüzde ve VS Code, bu klasörü açtığınızda bunları yüklemenizi ister.
 
 ### Adım 3: Ayarları yapılandır
 
-Ayarları `code/.vscode/settings.json`Bu derste, ya da elle uygulayın.`Settings > Open Settings (JSON)`- Evet .
+Ayarları `code/vscode/settings.json`Bu derste, ya da elle uygulayın.`Settings > Open Settings (JSON)`- Evet .
 
 AI çalışması için ana ayarlar:
 
@@ -200,6 +200,16 @@ Bu ayarla günlük iş akışınız şöyle görünüyor:
 2. Kopyalayın .`settings.json`Bu dersden VS Code yapılandırmalarına
 3. Python dosyasını açın ve Pylance'de kaydetken tip ipuçlarını ve siyah biçimleri gösterildiğini doğrulayın
 4. Uzaktan bir makineye erişimi varsa, Uzaktan SSH ayarlayın ve üzerinde bir klasör açın
+
+### İpuçlar
+
+**Exercise 1.**Adım 2' deki tabloda eklentileri yükleyin veya her bir ID'yi `code/vscode/extensions.json`- Evet .`code --install-extension <id>`- Çık .`code --list-extensions`Ve her kimliği dosya ile karşılaştır.
+
+**Exercise 2.**Açık Ayarlar > Açık Ayarlar (JSON) ve içeriği kopyalayın `code/vscode/settings.json`Dosyada ayarlar varsa, anahtarları birleştirin ve geçerli JSON'u koruyun. VS Code kırık bir dosya kırmızı bir çizgi ile işaretler.
+
+**Exercise 3.**Bir fonksiyonu bir tip açıklaması ile yazın, sonra ona bir çağrıda uzanın; Pylance çıkarılan türü gösterir. Bir satırda ekstra boşluklar ekleyin ve dosyayı kaydetin; Siyah satır kaydetme üzerine yeniden biçimlendirilmelidir.
+
+**Exercise 4.**Sunucu ekle `~/.ssh/config`Önce ve bunu onayla.`ssh <host>`Ardından uzaktan bir makinede çalıştırıldığında durum çubuğunda host adı gösterir.
 
 ## Anahtar Terimler
 

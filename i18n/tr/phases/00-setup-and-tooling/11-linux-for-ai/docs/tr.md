@@ -305,3 +305,15 @@ s0-process-fork
 3. Bir tmux seansı başlatın, çalışın.`sleep 300`İçeride, ayrılıp, seansları listele ve tekrar bağla.
 4. Kullanım`df -h`Kullanılabilir disk alanını kontrol etmek için, sonra kullan `du -sh ~/.cache/*`- Kayınatkasında ne yer alıyorsa onu bul.
 5. Lokal makinenizden bir dosyayı uzaktan birine aktarmak için `scp`, sonra aynı transferü yap `rsync`Ve deneyimi karşılaştır.
+
+### İpuçlar
+
+**Exercise 1.**Kullanım`cd ~`- Evet .`mkdir`ve`cd`Yeni klasöre gir, sonra çalıştır `touch`Üç dosya adı ile.`ls -la`çıkış, üç dosyanın 0 boyutlu ve kullanıcı adınızın sahibi olduğunu kontrol edin.
+
+**Exercise 2.** ile yükle`sudo apt install -y htop`Başlatın ve basın.`F6`(ya da sütun adını tıklayın) sıralamak için `MEM%`Liste başında olan süreç en fazla hafıza kullanıyor.
+
+**Exercise 3.**Kullanım`tmux new -s train`Dersten sonra koş.`sleep 300`, ve  ile ayrılır .`Ctrl+B`O zaman ...`d`- Çık .`tmux ls`O zaman oturumu görmek için.`tmux attach -t train``sleep`Hala kaçmak zorunda.
+
+**Exercise 4.**Çık .`df -h`Ve oku `Avail`Ev klasörünüzü tutan dosya sisteminin sütunu.`du -sh ~/.cache/* | sort -h`Yani en büyük klasör son satırdaki.
+
+**Exercise 5.**Dosyayı  ile kopyalan`scp file.txt user@host:~/`Sonra koş .`rsync -avP file.txt user@host:~/`Aynı dosya için çalıştır.`rsync`İkinci kez komut: neredeyse hiçbir şey göndermez, çünkü uzak taraftaki dosya değişmedi.

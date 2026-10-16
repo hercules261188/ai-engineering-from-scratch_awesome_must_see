@@ -336,6 +336,16 @@ env | grep -i torch
 3. Yalanca bir eğitim günlüğü oluşturun `for i in $(seq 1 100); do echo "epoch $i loss: $(echo "scale=4; 1/$i" | bc)"; sleep 0.1; done > fake_train.log`ve sonra kullan `grep`- Evet .`tail`ve`awk`Sadece kayb değerlerini çıkarmak için.
 4. Kullanmakta olduğunuz (veya kullandığınız) bir sunucu için SSH yapılandırma girişini ayarlayın `localhost`Sözcükleri uygulamak için).
 
+### İpuçlar
+
+**Exercise 1.**Başlayın .`tmux new -s practice`, sonra önbellekle bölün .`Ctrl+B`Ardından `"`ve `%`, ve paneller arasında hareket `Ctrl+B`Ve bir ok anahtarı.`Ctrl+B`O zaman ...`d`, koş .`tmux ls`, ve tekrar bağlayın `tmux attach -t practice`Bu üç programın da devam etmesi gerekiyor.
+
+**Exercise 2.**`code/shell_aliases.sh`Sonuna kadar `~/.zshrc`veya `~/.bashrc`Sonra koş .`source`- Bu dosyada.`alias`veya `type <name>`Yeni isimlerden birinin, kabukların bunu bildiğini doğrulaması için.
+
+**Exercise 3.**İlk atış .`tail -5 fake_train.log`Satır biçimini görmek için.`grep loss`ve sadece son alanı basın `awk '{print $NF}'`; çıkış 100 sayı daha küçük hale gelmelidir.
+
+**Exercise 4.**Kopyalayın .`Host gpu`Dersin blokundan `~/.ssh/config`ve değişim .`HostName`ve `User`sunucunuza veya `localhost`Kullanıcı adınız.`ssh -G gpu`Eğer anahtarınızı kabul eden erişilebilir bir SSH sunucunuz varsa, çalıştırın `ssh gpu`Bağlantı kurmak için.
+
 ## Anahtar Terimler
 
 | Term | What people say | What it actually means |
