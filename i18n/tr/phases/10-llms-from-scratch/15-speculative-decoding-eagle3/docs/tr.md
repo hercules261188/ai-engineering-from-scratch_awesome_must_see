@@ -36,8 +36,8 @@ Yumruk .`N`Bu çağrıların bir verifikatörle geri dönüş yapılması için 
 
 - Bırak .`α`Bu, bir taslak çekilen token için beklenen kabul oranı olacaktır.`c = cost(draft) / cost(verifier)`Geçmiş doğrulayıcı başına kabul edilen tokenlerin beklenen sayısı:
 
-```
-E[accepted] = (1 - α^(N+1)) / (1 - α)
+```math
+\mathbb{E}[\text{accepted}] = \frac{1 - \alpha^{N+1}}{1 - \alpha}
 ```
 
 Kabul edilen bir token için beklenen toplam duvar süresi `(N * c + 1) / E[accepted]`- Bunu en az `N`Ve sen de tatlı noktayı alırsın.`α = 0.8, c = 0.05`: en iyi `N`5 7 civarında, hızlanma 3.2 x.`α = 0.95, c = 0.02`: en iyi `N`810 civarında, hızlanma 5×'ye doğru ilerliyor.

@@ -67,8 +67,8 @@ graph TD
 
 Kafasızlık, bir modelin bir token dizisi tarafından ne kadar şaşırtıldığını ölçer.
 
-```
-PPL = exp(-1/N * sum(log P(token_i | context)))
+```math
+\text{PPL} = \exp\left(-\frac{1}{N} \sum_i \log P(\text{token}_i \mid \text{context})\right)
 ```
 
 10'un karmaşıklığı, modelin her token pozisyonunda 10 seçenek arasında eşit seçimi kadar belirsiz olduğu anlamına gelir. Daha düşük daha iyidir. GPT-2 WikiText-103'de ~30'un karmaşıklığını alır. GPT-3 ~20'e ulaşır. Llama 3 8B ~7'e ulaşır.
@@ -503,7 +503,7 @@ Ayrıca üretir `outputs/skill-llm-evaluation.md`-- görev türüne, bütçenize
 | MMLU | "The benchmark" | Massive Multitask Language Understanding -- 15,908 multiple choice questions across 57 subjects, saturated above 88% by 2025 |
 | HumanEval | "Code eval" | 164 Python function-completion problems from OpenAI, tests only isolated function generation |
 | SWE-bench | "Real coding eval" | 2,294 GitHub issues from 12 Python repos, measures end-to-end bug fixing including test generation |
-| Perplexity | "How confused the model is" | exp(-avg(log P(token_i given context))) -- lower means the model assigns higher probability to the actual tokens |
+| Perplexity | "How confused the model is" | $\exp(-\mathop{\mathrm{avg}}(\log P(\text{token}_i \text{ given context})))$ -- lower means the model assigns higher probability to the actual tokens |
 | ELO rating | "Chess ranking for models" | A relative skill rating computed from pairwise win/loss records, used by Chatbot Arena to rank 100+ models |
 | LLM-as-judge | "Using AI to grade AI" | A strong model scores a weaker model's outputs against a rubric, ~80% agreement with human judges at ~$0.01/judgment |
 | Data contamination | "The model saw the test" | Training data includes benchmark questions, inflating scores without improving real capability |
@@ -516,4 +516,4 @@ Ayrıca üretir `outputs/skill-llm-evaluation.md`-- görev türüne, bütçenize
 - [Hendrycks et al., 2021 -- "Measuring Massive Multitask Language Understanding"](https://arxiv.org/abs/2009.03300)-- MMLU makalesi, still the most cited LLM benchmark despite its saturation
 - [Chen et al., 2021 -- "Evaluating Large Language Models Trained on Code"](https://arxiv.org/abs/2107.03374)-- OpenAI'den HumanEval makalesi, kurulan kod üretimi değerlendirme metodolojisi
 - [Zheng et al., 2023 -- "Judging LLM-as-a-Judge"](https://arxiv.org/abs/2306.05685)-- pozisyon ve sözcüksellik önyargısı bulguları dahil olmak üzere LLM'leri değerlendirmek için LLM'lerin kullanılması sistematik analiz
-- [LMSYS Chatbot Arena](https://chat.lmsys.org/)-- 2M+ oyları olan, gerçek dünyadaki en güvenilir LLM sıralaması
+- [Arena (formerly LMSYS Chatbot Arena)](https://arena.ai/leaderboard)-- 2M+ oyları olan, gerçek dünyadaki en güvenilir LLM sıralaması

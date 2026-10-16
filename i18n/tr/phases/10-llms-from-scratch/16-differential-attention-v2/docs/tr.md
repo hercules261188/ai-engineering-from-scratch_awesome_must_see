@@ -28,8 +28,8 @@ DIFF V1'in sınır öncesi eğitim boru hattlarından uzak tutmak için üç sor
 
 Bir sorgu için .`q`Ve anahtarlar `K = [k_1, ..., k_N]`, dikkat ağırlıkları:
 
-```
-w_i = exp(q . k_i / sqrt(d)) / sum_j exp(q . k_j / sqrt(d))
+```math
+w_i = \frac{\exp(q \cdot k_i / \sqrt{d})}{\sum_j \exp(q \cdot k_j / \sqrt{d})}
 ```
 
 Hayır .`w_i`- Eğer...`k_i`tamamen bağlantısı yok.`q`, puanı `q . k_i`0 değil  varyansa ile sıfır etrafında dalgalanır `||q||^2 / d`Softmax normalleştikten sonra, her ilişkisi olmayan token hala katkıda bulunur.`O(1/N)`Bağlantı olmayan tokenlerin toplam katkı oranı `O((N-1)/N) = O(1)` küçük bir miktar değil.
@@ -38,17 +38,19 @@ Model, sert bir üst k gibi bir şey istiyor: eşleşen tokenlarda yüksek ağı
 
 ### Farklılık fikri
 
-Her başın Q ve K projeksiyonlarını iki bölüme ayırın: Q = (Q_1, Q_2) ve K = (K_1, K_2). İki dikkat haritasını hesaplayın:
+Her başın Q ve K projeksiyonlarını iki bölüme ayırın: $Q = (Q_1, Q_2)$ve $K = (K_1, K_2)$İki dikkat haritasını hesaplayın:
 
-```
-A_1 = softmax(Q_1 K_1^T / sqrt(d))
-A_2 = softmax(Q_2 K_2^T / sqrt(d))
+```math
+\begin{aligned}
+A_1 &= \mathop{\mathrm{softmax}}(Q_1 K_1^T / \sqrt{d}) \\
+A_2 &= \mathop{\mathrm{softmax}}(Q_2 K_2^T / \sqrt{d})
+\end{aligned}
 ```
 
 Çıktı:
 
-```
-DiffAttn = (A_1 - lambda * A_2) V
+```math
+\mathop{\mathrm{DiffAttn}} = (A_1 - \lambda \cdot A_2) V
 ```
 
 Kısıtlama, iki haritada paylaşılan herhangi bir gürültü dağılımını iptal eder. Her iki haritada 127k bağlantısız simgeler üzerinde yaklaşık aynı ağırlık varsa (herhangi bir rastgele başlangıçta geçer), bunlar iptal edilir.
@@ -63,7 +65,7 @@ Aynı sesi kaydeten iki gürültülü mikrofon düşünün. İkisi de hoparlörl
 
 V1 parametre sayısını baseline Transformer ile eşit tutmuştur. Baş başına iki sorgu almak için baş boyutunu yarıya düşürmüştür. Bu baş ifade gücünü ve  daha acı verici  baş başına değer önbelleğini yarıya düşürmüştür. Dekode, değer önbelleğini her adımda iki kez (softmax dal başına bir kez) yüklemek zorunda kalmıştır. Sonuç: eşleşen parametre sayısına rağmen, baseline göre yavaş dekode edilmiştir.
 
-V2 sorgu başlıklarının sayısını ikiye katlar ve KV başlıklarını aynı tutar (yukarı projeksiyondan parametre ödünç alır). Baş boyutu başlangıç çizgisinde kalır. Kısaltmadan sonra, ek boyut, başlangıç Transformer'ın O_W projeksiyine eşleşmek için aşağıya projeksiyona geri gönderilmektedir.
+V2 sorgu başlıklarının sayısını ikiye katlar ve KV başlıklarını aynı tutar (yukarı projeksiyondan parametre ödünç alır). Baş boyutu başlangıç çizgisinde kalır. Kısaltıldıktan sonra, ek boyut, Transformer'in başlangıç çizgisine eşleşmek için aşağıya projekselendirilir $O_W$Bir anda üç şey olur:
 
 1. Deşifreleme hızı başlangıç çizgisiyle eşleşir (KV önbelleği bir kez yüklenir).
 2. FlashAttention değişmez olarak çalışır (herhangi bir özel çekirdek yoktur).
@@ -139,8 +141,8 @@ Not: çıkış ağırlıkları negatif olabilir. Bu iyi  değer önbelleği hala
 Bir yapılandırma verildiğinde (hidden=4096, heads=32, d_head=128), bas:
 
 - Baseline Transformer: her boyut Q, K, V `hidden * hidden`- 4* gizli.
-- DIFF V1: Her boyut için Q, K `hidden * hidden`, V boyutu `hidden * hidden`(Görünmez), başı içinden yarıya kısılmış.`lambda`parametre (O(başlar * d_başlar)).
-- DIFF V2: Q boyutu `2 * hidden * hidden`, K boyutu `hidden * hidden`, V boyutu `hidden * hidden`O_W ' dan önce daha düşük bir görüntü . Aynı şey ekliyor .`lambda`Parametre.
+- DIFF V1: Her boyut için Q, K `hidden * hidden`, V boyutu `hidden * hidden`(Görünmez), başı içinden yarıya kısılmış.`lambda`Parametre$(O(\text{heads} \cdot d_{\text{head}}))$- Evet .
+- DIFF V2: Q boyutu `2 * hidden * hidden`, K boyutu `hidden * hidden`, V boyutu `hidden * hidden`- Daha önce de hafif bir şekilde aşağıya doğru yansıtıldı .$O_W$Aynı şeyi ekler.`lambda`Parametre.
 
 Oyuncak , V2 için ekstra parametreler maliyetini ölçer (yaklaşık olarak `hidden * hidden`(Blok dikkat) ve yazdırırır.
 
@@ -182,8 +184,8 @@ Bu ders bize çok yararlı .`outputs/skill-diff-attention-integrator.md`. Bir mo
 
 | Term | What people say | What it actually means |
 |------|----------------|------------------------|
-| Differential attention | "Two softmaxes minus each other" | Split Q, K into two halves, compute two softmax maps, subtract the second (scaled by lambda) from the first, then multiply by V |
-| Noise floor | "The non-zero tail of softmax" | The O(1/N) weight softmax puts on every unrelated token, which sums to O(1) across long contexts |
+| Differential attention | "Two softmaxes minus each other" | Split Q, K into two halves, compute two softmax maps, subtract the second (scaled by $\lambda$) from the first, then multiply by V |
+| Noise floor | "The non-zero tail of softmax" | The $O(1/N)$ weight softmax puts on every unrelated token, which sums to $O(1)$ across long contexts |
 | lambda | "The subtraction scale" | Per-head learnable scalar parameterized as `exp(lq1.lk1) - exp(lq2.lk2) + lambda_init`; can be negative |
 | DIFF V1 | "The ICLR 2025 version" | Original Differential Transformer; halves head dim to preserve parameter count, needs custom kernel, slower decode |
 | DIFF V2 | "The January 2026 fix" | Doubles Q heads keeping KV heads; matches baseline decode speed and works with FlashAttention |

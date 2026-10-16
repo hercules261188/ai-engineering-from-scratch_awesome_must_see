@@ -80,8 +80,8 @@ Eğitim verileri insan tercihleri çiftleri. Her bir çağrı için, yorumcular 
 
 Kayıp işlevi, çiftli tercihlerin Bradley-Terry modeli kullanır:
 
-```
-loss = -log(sigmoid(reward(preferred) - reward(rejected)))
+```math
+\text{loss} = -\log\big(\mathop{\mathrm{sigmoid}}(\text{reward}(\text{preferred}) - \text{reward}(\text{rejected}))\big)
 ```
 
 Bu anahtar denklem.`sigmoid(reward(A) - reward(B))`Bu, A'nın B'ye karşı tercih edilmesinin olasılığını verir. Kayıp ödül modelini tercih edilen cevap için daha yüksek bir puan vermeye zorlar.
@@ -96,8 +96,8 @@ PPO, güçlendirme öğrenme algoritmasıdır. RLHF'de "örneğin" ödül modeli
 
 Amaç:
 
-```
-maximize: E[R(prompt, response)] - beta * KL(policy || reference)
+```math
+\text{maximize:} \quad \mathbb{E}[R(\text{prompt}, \text{response})] - \beta \cdot \mathrm{KL}(\text{policy} \,\|\, \text{reference})
 ```
 
 İlk dönem modelin yüksek ödül yanıtları üretmesini zorlar. İkinci dönem (KL farklılık cezası) modelin SFT kontrol noktasından çok uzaklaşmasını engeller.
@@ -110,7 +110,7 @@ KL cezası neden? Bu olmadan model bozulmuş çözümler bulur. Ödül modeli in
 
 KL cezası şöyle diyor: iyileşebilirsin ama tamamen farklı bir model olamazsın. SFT versiyonuna yakın kal, bu zaten makul idi. Çok ileri git ve KL maliyeti ödülü ele geçirir.
 
-**InstructGPT numbers:**PPO eğitiminde lr=1.5e-5, KL katılamı beta=0.02, 256K bölümler (sürekli yanıt çiftleri) ve her partide 4 PPO dönem kullanıldı.
+**InstructGPT numbers:**PPO eğitim kullanıldı lr=1.5e-5, KL koefisien $\beta=0.02$Bu, bir dizi GPU'da birkaç gün süren RLHF borusunun tamamını oluşturdu.
 
 ```mermaid
 graph LR
@@ -133,12 +133,14 @@ graph LR
 
 ### PPO Hedefi Ayrıntılı
 
-PPO, aşırı büyük güncellemeleri önlemek için "kısaltılmış alternatif hedef" kullanır. Yeni politika ile eski politika olasılıkları arasındaki oran tipik olarak 0,2 olduğu [1 - epsilon, 1 + epsilon] aralığına kesilir.
+PPO, aşırı büyük güncellemeleri önlemek için "kısaltılmış alternatif hedef" kullanır.$[1 - \epsilon, 1 + \epsilon]$, nerede $\epsilon$Normalde 0,2'dir.
 
-```
-ratio = pi_new(action | state) / pi_old(action | state)
-clipped_ratio = clip(ratio, 1 - epsilon, 1 + epsilon)
-loss = -min(ratio * advantage, clipped_ratio * advantage)
+```math
+\begin{aligned}
+\text{ratio} &= \pi_{\text{new}}(\text{action} \mid \text{state}) / \pi_{\text{old}}(\text{action} \mid \text{state}) \\
+\text{clipped\_ratio} &= \mathop{\mathrm{clip}}(\text{ratio}, 1 - \epsilon, 1 + \epsilon) \\
+\text{loss} &= -\min(\text{ratio} \cdot \text{advantage}, \text{clipped\_ratio} \cdot \text{advantage})
+\end{aligned}
 ```
 
 Avantaj fonksiyonu, mevcut tepkinin beklenen kaliteye kıyasla ne kadar daha iyi olduğunu tahmin eder.
@@ -606,9 +608,9 @@ Bu ders bize çok yararlı .`outputs/prompt-reward-model-designer.md`-- ödül m
 
 3. Ödül hackleme simülasyonu. Uzun cevaplara yüksek puan veren bir ödül modeli oluşturun (ödül = len(reponse) / 100). Bu kusurlu ödül modeli ile PPO çalıştırın ve politikayı daha uzun, tekrarlayan çıkışlar üreten bir model olarak gözlemleyin.
 
-4. Çoklu objektif bir ödül uygulayın. Bir ödül modeli eğitiniz - biri yararlılık için ve biri kısaca. R = 0.7 * R_helpful + 0.3 * R_concise olarak birleştirin. Birleştirilen hedefin hem yararlı hem de kısaca yanıtlar ürettiğini gösterin, tek bir yararlılık ödülünün sözlücelik tuzağını önleyin.
+4. Çok amaçlı bir ödül uygulayın. İki ödül modeli eğitiniz -- biri yardımcılık için ve biri kısaca.$R = 0.7 \cdot R_{\text{helpful}} + 0.3 \cdot R_{\text{concise}}$. Birleştirilmiş hedeflerin hem faydalı hem de kısa cevaplar ürettiğini gösterirken tek bir yardımcılık ödülünün sözlülük tuzağından kaçınır.
 
-5. Farklı KL katılamlarını karşılaştırın. Beta=0.001 (çok düşük, ödül hackleme), beta=0.02 (standart) ve beta=0.5 (çok yüksek, öğrenme yok) ile PPO çalıştırın.
+5. Farklı KL katılıklarını karşılaştırın.$\beta=0.001$(Çok düşük, ödül hackeri),$\beta=0.02$(standart) ve$\beta=0.5$Ödül eğri ve KL eğri çiz.$\beta=0.02$Çeviri sınırlı KL ile sürekli ödül artışını göstermelidir.
 
 ## Anahtar Terimler
 
@@ -616,10 +618,10 @@ Bu ders bize çok yararlı .`outputs/prompt-reward-model-designer.md`-- ödül m
 |------|----------------|----------------------|
 | RLHF | "Training with human feedback" | Reinforcement Learning from Human Feedback: a three-stage pipeline (SFT, reward model, PPO) that optimizes language model outputs using human preference signals |
 | Reward model | "A model that scores responses" | A transformer with a scalar output head, trained on pairwise human preferences using the Bradley-Terry loss |
-| Bradley-Terry | "The comparison model" | A probabilistic model where P(A > B) = sigmoid(score(A) - score(B)), converting pairwise preferences into a consistent scoring function |
+| Bradley-Terry | "The comparison model" | A probabilistic model where $P(A > B) = \mathop{\mathrm{sigmoid}}(\text{score}(A) - \text{score}(B))$, converting pairwise preferences into a consistent scoring function |
 | PPO | "The RL algorithm" | Proximal Policy Optimization: updates the policy to maximize reward while clipping the update magnitude to prevent instability |
 | KL divergence | "How different two distributions are" | A measure of the difference between the policy model's token distribution and the reference model's -- used as a penalty to prevent reward hacking |
-| KL penalty | "The leash on the model" | Beta * KL(policy \|\| reference) subtracted from the reward signal -- prevents the policy from diverging too far from the SFT checkpoint |
+| KL penalty | "The leash on the model" | $\beta \cdot \mathrm{KL}(\text{policy} \Vert \text{reference})$ subtracted from the reward signal -- prevents the policy from diverging too far from the SFT checkpoint |
 | Reward hacking | "Gaming the reward" | When the policy finds degenerate high-reward outputs by exploiting weaknesses in the reward model instead of genuinely improving |
 | Preference pair | "Which is better, A or B?" | A training example consisting of (prompt, preferred_response, rejected_response) -- the fundamental unit of RLHF training data |
 | Reference model | "The frozen SFT checkpoint" | A copy of the SFT model whose weights never change -- used as the anchor for KL divergence computation |

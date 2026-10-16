@@ -42,11 +42,11 @@ INT8:  [1 sign] [7 value]                   = 8  bits (uniform steps)
 INT4:  [1 sign] [3 value]                   = 4  bits (16 levels total)
 ```
 
-**FP32**23 mantissa bit yaklaşık 7 onluk rakamını verir. aralığı: yaklaşık 1.2 x 10^-38 ile 3.4 x 10^38.
+**FP32**23 mantissa bit, yaklaşık 7 onluk rakamlı bir doğruluk sağlar.$1.2 \times 10^{-38}$- ...$3.4 \times 10^{38}$.Eğitim eskiden yalnızca FP32'de yapılıyordu.
 
 **FP16**10 mantissa bit yaklaşık 3.3 onluk rakam verir. Eksponent 5 bit'e kadar küçülür ve aralığı çarpıcı bir şekilde azaltır (maksimum değer ~65,504). Bu, ağırlıklar için iyi (sıfırın yakınında toplananlar), ancak eğitim sırasında tırmanıp çıkabilecek aktivasyonlar ve gradientler için tehlikelidir. FP16 eğitiminde aşağı akışın önlenmesi için kayıp ölçeklemesini gerektirir.
 
-**BF16**(Beyin yüzerek 16) 8 bitli göstergeyi FP32'den tutar ama mantissa'yı 7 bitle küçültür. FP32 ile aynı aralığı, FP16'dan daha az hassaslık. Google bunu özellikle derin öğrenme için tasarladı. İntüyüsyon: Nöral ağlar için mesafe, hassasiyetten daha önemlidir. FP16'da sıfıra doğru akışan 10^-20 bir eğilimi BF16'da hayatta kalır. BF16'da 0.07342'e doğru yuvarlanan bir ağırlık yeterince yakın. Her modern eğitim koşusu BF16 veya BF16/FP32 karışımı kullanır.
+**BF16**(Brain Float 16) 8 bitli göstergeyi FP32'den tutar, ancak mantissa'yı 7 bitlere düşürür. FP32 ile aynı aralığı, FP16'dan daha az hassaslık. Google bunu özellikle derin öğrenme için tasarladı.$10^{-20}$BF16'da sıfıra doğru akışan BF16'da hayatta kalır. BF16'da 0.07342'e kadar olan bir ağırlık yeterince yakın.
 
 **FP8**E4M3 (4 eksponent, 3 mantissa) sonucu çıkarma sırasında ağırlıklar ve aktivasyonlar için kullanılır. E5M2 (5 exponent, 2 mantissa) aralığın hassaslıktan daha önemli olduğu eğitim sırasında gradientler için kullanılır. H100 GPU'larda FP8 sonucu, ihmal edilebilir kalite kaybı ile FP16'a göre 30-50% hızlandırmayı sağlar.
 
@@ -773,59 +773,73 @@ if __name__ == "__main__":
 
 ## Kullan
 
-### AutoGPTQ ile kuantitasyon
+### GPTQModel ile kuantitasyon
 
 ```python
-# pip install auto-gptq transformers
-# from auto_gptq import AutoGPTQForCausalLM, BaseQuantizeConfig
-# from transformers import AutoTokenizer
+# pip install gptqmodel
+# from gptqmodel import GPTQConfig, GPTQModel
 #
 # model_id = "meta-llama/Llama-3.1-8B"
-# quantize_config = BaseQuantizeConfig(
-#     bits=4,
-#     group_size=128,
-#     desc_act=False,
+# quant_config = GPTQConfig(bits=4, group_size=128)
+#
+# model = GPTQModel.load(model_id, quant_config)
+# model.quantize(calibration_texts[:128], batch_size=1)
+# model.save("llama-8b-gptq-int4")
+```
+
+### LLM Kompresörü ile AWQ'ya kadar miktarlandırma
+
+```python
+# pip install llmcompressor
+# from transformers import AutoModelForCausalLM, AutoTokenizer
+# from llmcompressor import oneshot
+# from llmcompressor.modifiers.quantization import QuantizationModifier
+# from llmcompressor.modifiers.transform.awq import AWQModifier
+#
+# model_id = "meta-llama/Llama-3.1-8B"
+# model = AutoModelForCausalLM.from_pretrained(model_id)
+# tokenizer = AutoTokenizer.from_pretrained(model_id)
+#
+# recipe = [
+#     AWQModifier(duo_scaling="both"),
+#     QuantizationModifier(ignore=["lm_head"], scheme="W4A16_ASYM", targets=["Linear"]),
+# ]
+# oneshot(
+#     model=model,
+#     dataset="perfectblend",
+#     splits="train[:512]",
+#     recipe=recipe,
+#     max_seq_length=512,
+#     num_calibration_samples=256,
 # )
-#
-# tokenizer = AutoTokenizer.from_pretrained(model_id)
-# model = AutoGPTQForCausalLM.from_pretrained(model_id, quantize_config)
-#
-# calibration = [tokenizer(t, return_tensors="pt") for t in calibration_texts[:128]]
-# model.quantize(calibration)
-# model.save_quantized("llama-8b-gptq-int4")
+# model.save_pretrained("llama-8b-awq-int4", save_compressed=True)
+# tokenizer.save_pretrained("llama-8b-awq-int4")
 ```
 
-### AutoAWQ ile kuantitasyon
-
-```python
-# pip install autoawq
-# from awq import AutoAWQForCausalLM
-# from transformers import AutoTokenizer
-#
-# model_id = "meta-llama/Llama-3.1-8B"
-# model = AutoAWQForCausalLM.from_pretrained(model_id)
-# tokenizer = AutoTokenizer.from_pretrained(model_id)
-#
-# model.quantize(tokenizer, quant_config={"zero_point": True, "q_group_size": 128, "w_bit": 4})
-# model.save_quantized("llama-8b-awq-int4")
-```
+Bu iki yöntem için orijinal araç olan AutoGPTQ ve AutoAWQ arşivlenmiştir.
 
 ### GGUF'ye dönüştürülüyor
 
 ```bash
-# pip install llama-cpp-python
-# python convert_hf_to_gguf.py meta-llama/Llama-3.1-8B --outtype q4_k_m --outfile llama-8b-q4km.gguf
-# llama-server -m llama-8b-q4km.gguf -c 4096 -ngl 99
+# git clone https://github.com/ggml-org/llama.cpp
+# cmake -S llama.cpp -B llama.cpp/build && cmake --build llama.cpp/build --config Release
+# pip install -r llama.cpp/requirements.txt
+# hf download meta-llama/Llama-3.1-8B --local-dir Llama-3.1-8B
+# python llama.cpp/convert_hf_to_gguf.py Llama-3.1-8B --outtype f16 --outfile llama-8b-f16.gguf
+# llama.cpp/build/bin/llama-quantize llama-8b-f16.gguf llama-8b-q4km.gguf Q4_K_M
+# llama.cpp/build/bin/llama-server -m llama-8b-q4km.gguf -c 4096 -ngl 99
 ```
+
+Değiştiricinin K-quant outputı yoktur (`--outtype`kabul eder .`f32`- Evet .`f16`- Evet .`bf16`- Evet .`q8_0`- Evet .`tq1_0`- Evet .`tq2_0`veya`auto`), yani `llama-quantize`Q4_K_M dosyasını üretir.
 
 ### Kvantistik modellere hizmet vermek
 
 ```python
 # pip install vllm
-# vllm serve model-awq --quantization awq --dtype half --max-model-len 8192
+# vllm serve llama-8b-awq-int4 --max-model-len 8192
 ```
 
-vLLM, AWQ ve GPTQ modelleri doğal olarak destekler. Matrix çarpımı sırasında dequantisation ile ilgilenir ve KV önbelleği için pageed dikkat kullanır.`--dtype float8_e4m3fn`- Evet .
+vLLM AWQ ve GPTQ modelleri doğal olarak destekler ve kontrol noktasının yapılandırmasından kuantitasyon yöntemini okuyor, bu yüzden hayır `--quantization`FP8 için H100'de ekle `--quantization fp8_per_tensor`16 bitli kontrol noktasının yükleme sırasında ağırlığını kuantistik olarak ölçmek için.
 
 ## Gönder
 

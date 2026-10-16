@@ -30,12 +30,14 @@ Bu ders, üç makaleyi de okuyor ve "doğru oranı seç" için zihinsel model ol
 
 Bir devlet uzay modeli bir dizi işleme yapar `x_1, ..., x_N`sabit boyutlu bir durumla.`h`- ...
 
-```
-h_t = A h_{t-1} + B x_t
-y_t = C h_t
+```math
+\begin{aligned}
+h_t &= A h_{t-1} + B x_t \\
+y_t &= C h_t
+\end{aligned}
 ```
 
-Her aşamada , devlet bir çizgi dinamikle gelişir .`A`, giriş alır `B x_t`, ve çıkışı yayıyor `C h_t`- Evet .`A, B, C`Önemli bir özelliği dikkat edin: Bilgisayar`y_t`Sadece ihtiyaçları var.`h_{t-1}`ve `x_t`Daha önce hiç olmadı .`x`Hatırlama sabit.
+Her aşamada , devlet bir çizgi dinamikle gelişir .`A`, giriş alır `B x_t`, ve çıkışı yayıyor `C h_t`- Evet .`A, B, C`Önemli bir özelliği dikkat edin: Bilgisayar`y_t`Sadece ihtiyaçları var.`h_{t-1}`ve `x_t`Daha önce hiç olmadı .`x`Hatıra sürekli, akıl etkisi de sürekli.$O(1)$- Bir simge.
 
 Modelleme kalitesi için bir hile , `A`S4 (Gu 2021) eğitim sırasında uzun bir konvulsiyon olarak verimli bir şekilde değerlendirilebilecek yüksek yapılandırılmış bir matris kullandı.`A, B, C`Mamba-2 (2024) yapıyı daha da basitleştirdi. Mamba-3 (2026) belirli yerlerde karmaşıklığı yeniden ekledi.
 

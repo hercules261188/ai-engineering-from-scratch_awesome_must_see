@@ -141,13 +141,13 @@ graph LR
     style V fill:#1a1a2e,stroke:#0f3460,color:#fff
 ```
 
-Sqrt(d_k) - sqrt(64) = 8 - ile bölünme ölçeklendiriliyor. Bu olmadan nokta ürünleri yüksek boyutlu vektörler için büyür ve softmax'ı gradientlerin neredeyse sıfır olduğu bölgelere doğru itirir. Bu orijinal "Dikkat Tek İhtiyacınız Var" makalesindeki ana bilgilerden biriydi.
+Bölüm $\sqrt{d_k}$- ...$\sqrt{64} = 8$Bu, orijinal "Dikkat Tek İhtiyacınız Var" makalesindeki ana bilgilerden biriydi.
 
 ### KV Cache: Neden Tahmin Hızlı
 
-Eğitim sırasında tüm dizini bir anda işletiyorsunuz. Tahmin sırasında, bir seferde bir token oluşturursunuz. Optimize edilmeden, N tokenini oluşturmak, tüm N-1 önceki tokenleri için yeniden hesaplama dikkatini gerektirir. Bu, üretilen token başına O(N^2) veya uzunluğu N dizisi için toplam O(N^3)
+Eğitim sırasında tüm dizini bir anda işletiyorsunuz. Tahmin sırasında, bir seferde bir token oluşturursunuz. Optimize olmadan, token oluşturur.$N$Herkes için yeniden hesaplama yapılması gerekiyor .$N-1$- Önceki simgeler.$O(N^2)$üretilen token başına veya $O(N^3)$uzunluk bir dizi için toplam $N$- Evet .
 
-KV Cache bunu çözer. Her bir token için K ve V hesapladıktan sonra, onları saklayın. N+1 simgesini oluştururken, yeni simgesini Q'yu hesaplamanız ve önceki tüm simgelerden önbelleğe alınan K ve V'yi aramanız gerekir. Bu, K ve V hesaplamaları için token başına maliyetin O(N) 'den O(1) 'ye düşmesini sağlar. Dikkat puanı hesaplaması hala O(N) çünkü önceki tüm pozisyonlara dikkat edersiniz, ancak giriş üzerinde redundant matris çarpımlarından kaçınırsınız.
+KV Cache bunu çözür. Her bir token için K ve V hesapladıktan sonra, onları saklayın.$N+1$, sadece yeni token için Q hesaplamak ve öncekinden tüm tokenler için önbelleğe K ve V aramak gerekir. Bu, token başına maliyeti azaltır$O(N)$- ...$O(1)$Dikkat puanı hesaplama hala $O(N)$Çünkü önceki tüm pozisyonlara dikkat edersiniz, ama giriş üzerinde redundant matris çarpımlarından kaçınırsınız.
 
 12 katman ve 12 başlı GPT-2 için, KV önbelleği 2 (K + V) x 12 katman x 12 baş x 64 dims = 18.432 değerleri bir token için saklar. 1024-token dizisi için, bu FP32'de yaklaşık 75MB. 128 katmanlı Llama 3 405B için, tek bir dizide KV önbelleği 10GB'yi aştırabilir. Bu nedenle uzun bağlamlı sonuç belleğe bağlıdır.
 
@@ -211,7 +211,7 @@ Bir eğitim adım:
 |-----------|-------|------------|
 | Token embeddings | (50257, 768) | 38,597,376 |
 | Position embeddings | (1024, 768) | 786,432 |
-| Per-block attention (W_q, W_k, W_v, W_out) | 4 x (768, 768) | 2,359,296 |
+| Per-block attention ($W_q, W_k, W_v, W_{\text{out}}$) | 4 x (768, 768) | 2,359,296 |
 | Per-block FFN (up + down) | (768, 3072) + (3072, 768) | 4,718,592 |
 | Per-block LayerNorms (2x) | 2 x 768 x 2 | 3,072 |
 | Final LayerNorm | 768 x 2 | 1,536 |
@@ -258,7 +258,7 @@ def attention(Q, K, V, mask=None):
     return weights @ V
 ```
 
-Softmax uygulaması, eksponenciye edilmeden önce maksimumı çıkarır. Bu olmadan, exp(large_number) sonsuzluğa akıyor. Bu, herhangi bir sabit c için softmax(x - c) = softmax(x) nedeniyle çıkışını değiştirmeyen bir sayısal istikrar hilesi.
+Softmax uygulaması, eksponenciasyon yapmadan önce maksimumı çıkarır. Bu olmadan, exp(large_number) sonsuzluğa akıyor. Bu, çıkışın değişmediği sayısal istikrar hilesidir çünkü $\mathop{\mathrm{softmax}}(x - c) = \mathop{\mathrm{softmax}}(x)$Herhangi bir sabit için .$c$- Evet .
 
 ### Üçüncü Adım: Çok Başlı Dikkat
 
@@ -504,7 +504,7 @@ Bu ders bize çok yararlı .`outputs/prompt-gpt-architecture-analyzer.md`-- herh
 
 1. Modelle 12/12 yerine 24 kat ve 16 baş kullanmak için değişiklik yapın. Parametreyi sayın.
 
-2. GELU etkinleştirme fonksiyonunu uygulayın (GELU(x) = x * 0.5 * (1 + erf(x / sqrt(2)))) ve ReLU'yu feedforward ağındaki değiştirin. Her etkinleştirme ile 500 adım boyunca eğitim uygulayın ve son kaybı karşılaştırın.
+2. GELU etkinleştirme fonksiyonunu uygulayın $(\mathop{\mathrm{GELU}}(x) = x \cdot 0.5 \cdot (1 + \mathop{\mathrm{erf}}(x / \sqrt{2})))$Her aktivasyonda 500 adımlık eğitim yapın ve son kaybı karşılaştırın.
 
 3. Generasyon fonksiyonuna bir KV önbelleği ekleyin. İlk ileri geçişten sonra her katman için K ve V tensörlerini saklayın ve sonraki jetonlar için tekrar kullanın. Hızlandırmayı ölçün: 200 jetonları önbelleği ile ve olmadan oluşturun ve duvar saatini karşılaştırın.
 
@@ -525,7 +525,7 @@ Bu ders bize çok yararlı .`outputs/prompt-gpt-architecture-analyzer.md`-- herh
 | Weight tying | "Sharing embeddings" | Using the same matrix for input token embeddings and the output projection head -- saves 38M params in GPT-2 |
 | Residual connection | "Skip connection" | Adding the input directly to the output of a sublayer (x + sublayer(x)) -- enables gradient flow in deep networks |
 | Layer normalization | "Normalizing activations" | Normalizing across the feature dimension to mean 0 and variance 1, with learnable scale and bias parameters |
-| Cross-entropy loss | "How wrong the predictions are" | -log(probability assigned to the correct next token), averaged over all positions -- the standard LLM training objective |
+| Cross-entropy loss | "How wrong the predictions are" | $-\log(\text{probability assigned to the correct next token})$, averaged over all positions -- the standard LLM training objective |
 
 ## Daha Fazla Okumak
 

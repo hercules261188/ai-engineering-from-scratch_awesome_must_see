@@ -161,11 +161,13 @@ Uzun belgeleri sırayla sınırlarda kısaltılır veya parçalara ayrılır. B�
 
 ### Chinchilla Ölçekleme Yasası
 
-Sıkı bir hesaplama bütçesi C için (FLOP'lerde ölçülür) en uygun model boyutu N ve veri kümesi boyutu D aşağıdakiler:
+Sıkı bir hesaplama bütçesi için $C$(FLOP'larda ölçülür) en iyi model boyutu $N$ve veri kümesi boyutu $D$Bu da:
 
-```
-N_opt ~ C^0.5
-D_opt ~ C^0.5
+```math
+\begin{aligned}
+N_{\text{opt}} &\sim C^{0.5} \\
+D_{\text{opt}} &\sim C^{0.5}
+\end{aligned}
 ```
 
 Bu, pratikte model boyutunu ve veri kümesi boyutunu yaklaşık olarak eşit olarak ölçeklendirmeniz gerektiği anlamına gelir. 10 kat daha fazla parametre olan bir model aynı kayba ulaşmak için yaklaşık 10 kat daha fazla eğitim jetonu gerektirir.
@@ -432,7 +434,7 @@ Bu ders, LLM eğitim boru hattlarında veri kalitesini doğrulamak ve düzeltmek
 |------|----------------|----------------------|
 | Common Crawl | "The internet" | A non-profit that crawls the web monthly -- ~250TB raw, the starting point for most LLM training data |
 | MinHash | "Some hashing trick" | A technique to estimate Jaccard similarity between sets using fixed-size signatures -- enables near-duplicate detection at scale |
-| LSH | "Locality-Sensitive Hashing" | A method to group similar items into the same bucket -- reduces pairwise comparisons from O(n^2) to near-linear |
+| LSH | "Locality-Sensitive Hashing" | A method to group similar items into the same bucket -- reduces pairwise comparisons from $O(n^2)$ to near-linear |
 | Sequence packing | "Concatenating documents" | Fitting multiple documents into fixed-length sequences with proper attention masks -- eliminates padding waste |
 | Chinchilla scaling | "Train on more data" | For a fixed compute budget, optimal performance requires scaling model size and training tokens roughly equally |
 | Fertility | "Tokens per word" | Average number of tokens per word -- 1.3 for English in GPT-4, higher for non-Latin scripts |

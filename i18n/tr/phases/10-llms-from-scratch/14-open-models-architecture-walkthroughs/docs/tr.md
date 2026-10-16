@@ -52,8 +52,8 @@ Diğer her şey (öğrenme oranı programı, veri karışımı, parti boyutu, ba
 
 LayerNorm ortalamayı çıkarır, std, ölçekler ve değişimler ile bölür. RMSNorm sadece ölçeği tutar:
 
-```
-RMSNorm(x) = x / sqrt(mean(x^2) + eps) * gamma
+```math
+\mathop{\mathrm{RMSNorm}}(x) = \frac{x}{\sqrt{\mathop{\mathrm{mean}}(x^2) + \epsilon}} \cdot \gamma
 ```
 
 Bir tane daha az matmul. Zhang ve Sennrich (2019) makine çevirisi üzerinde LayerNorm'a eşleştiğini ve %10 daha hızlı olduğunu savundu.
@@ -78,8 +78,8 @@ Her Llama, Mistral, Qwen, DeepSeek ve Gemma RoPE kullanır. Gemma 2 bir hibrid k
 
 GPT-2'nin MLP'si `x -> gelu(xW1 + b1) -> (...)W2 + b2`SwiGLU (Shazeer 2020) aktivasyonu kapalı bir ürünle değiştirir:
 
-```
-SwiGLU(x) = (xW1) * sigmoid(xW1) * xV
+```math
+\mathop{\mathrm{SwiGLU}}(x) = (xW_1) \cdot \mathop{\mathrm{sigmoid}}(xW_1) \cdot xV
 ```
 
 Bir yerine paralel olarak iki projeksiyon, Swish etkinleştirmesi ile kapalıdır. Parametre başına karmaşıklığa karşı empiri olarak daha güçlü. Llama 2 onu kabul etti, herkes takip etti. MLP'nin gizli boyutu genellikle toplam parametre sayısının orijinal yoğun MLP'ye eşleşmesi için ayarlanır: eğer GPT-2 kullanıldı `ff_dim = 4 * hidden`, SwiGLU kullanıyor `ff_dim = (2/3) * 4 * hidden = 8/3 * hidden`- Evet .
@@ -90,7 +90,7 @@ GPT-2 kullanıldı **Multi-Head Attention (MHA)**Her başın kendi Q, K, V proje
 
 **Multi-Query Attention (MQA, Shazeer 2019)**KV önbelleğini num_heads ile keser, bu da tipik bir modelde 12x ila 32x azaldır.
 
-**Grouped-Query Attention (GQA, Ainslie et al. 2023)**orta nokta: Q başlarının G grupları bir K ve bir V paylaşır. Llama 3 8B 32 Q başı ve 8 KV başı ile GQA kullanır (G=8), bu nedenle KV önbelleği tam MHA ile karşılaştırıldığında 4 kat küçülür.
+**Grouped-Query Attention (GQA, Ainslie et al. 2023)**Orta nokta:$G$Q başlı gruplar bir K ve bir V'yi paylaşıyor. Llama 3 8B 32 Q başlı ve 8 KV başlı GQA kullanıyor ($G=8$), böylece KV önbelleği MHA'nın tam olarak karşılaştırıldığında 4 kat azalır.
 
 **Multi-Head Latent Attention (MLA, DeepSeek 2024)**K ve V'yi ortak bir düşük sıralama gizli bir hale sıkıştırır ve onları baş başına geri doğru yansıtır. Baş başına ifade gücünü korurken KV önbelleğini daha da azaltır. DeepSeek-V2 ve V3 uzun bağlamlı performansları için buna güveniyor.
 
@@ -154,6 +154,7 @@ GPT-2'den bu yana her açık model, her alt katmanın önüne * koymuştur. Pre-
 | Qwen 2.5 72B | 2024 | 72B | 72B | RMSNorm | SwiGLU | RoPE (YaRN) | GQA (64/8) | no | 128k |
 | DeepSeek V2 236B | 2024 | 236B | 21B | RMSNorm | SwiGLU | RoPE | MLA | yes (160 experts, top-6) | 128k |
 | DeepSeek V3 | 2024 | 671B | 37B | RMSNorm | SwiGLU | RoPE | MLA | yes (256 experts, top-8) | 128k |
+| Spark-X2.5 4B | 2026 | 4.1B | 4.1B | RMSNorm | GeGLU | RoPE + sliding (3:1) | GQA (16/4), gated output | no | 1M |
 
 RMSNorm evrenseldir. SwiGLU veya GeGLU kuzenü evrenseldir. RoPE evrenseldir. GQA, MLA ile değiştirilmedikçe 7B'nin üzerinde evrenseldir. MoE üst ucundaki farklılık göstericidir.
 
@@ -176,6 +177,12 @@ Llama 3 8B yapılandırması:
 ```
 
 Her alan zaten uyguladığınız bir şeye karşılık gelir.
+Daha yeni yapılandırmalar aritmetik değişikliği yapan birkaç alan ekler.
+Onlar oradayken okuyor:
+
+- `head_dim`: açıkça belirlenmiş durumda değil.`hidden_size / num_attention_heads`Gemma 29B 3584 ve 16 başı sakladı ama ...`head_dim`256, yani Q projesi 3584 x 4096'dır, kare değil.
+- `tie_word_embeddings`Llama 3 8B bağlanmaz, bu da sadece bir kez yerleştirmeyi sayarsanız kaçırdığınız 525M parametreleridir.
+- `layer_types`ve `sliding_window`: hangi katmanlar tüm bağlamı ele alır ve hangiları sadece son W simgelerine.
 
 - `hidden_size`: yerleştirme boyutu.
 - `intermediate_size`: MLP gizli boyutu (3.5x gizli -- SwiGLU matematik).
@@ -212,6 +219,15 @@ Llama 3 8B 128k bağlamda, BF16, baş_dim = gizli / num_head = 128:
 
 8B ağırlıkları BF16'da 16 GB'dır. Tek 128k dizisi için KV önbelleği ağırlıklardan daha büyüktür. Bu GQA, MLA ve KV önbelleği kuantitasyon araştırmasını yönlendiren bellek basıncıdır.
 
+Formula her katman tüm dizini önbelleğe alır. Bir kaydırıcı pencere katmanı sadece son W jetonlarına ihtiyaç duyar, bu nedenle hibrit modeller için toplam katman başına çalışır:
+
+```
+kv_cache = 2 * num_kv_heads * head_dim * bytes_per_element
+           * (full_layers * max_seq_len + sliding_layers * min(W, max_seq_len))
+```
+
+Spark-X2.5 4B üç kaydırıcı pencere katmanı ($W = 512$Bu, BF16'da bir dizi için yaklaşık 38.7 GB (36 GiB) olan 1M-token bağlamında, eğer tüm 36 katman tam bağlamı önbelleğe kaydırırsa, 154.6 GB (144 GiB) olur. Tam katmanlar neredeyse tüm maliyeti taşır, bu nedenle tam katmanların kaydırıcı katman oranı uzun bağlamlı bir modelde ilk okunması gereken rakamdır.
+
 ### Her Model Kazanırken
 
 - **Single 80GB GPU, no MoE**Llama 3 8B, Mistral 7B, Gemma 2 9B. Hizmet etmek kolay, geniş alet.
@@ -219,6 +235,7 @@ Llama 3 8B 128k bağlamda, BF16, baş_dim = gizli / num_head = 128:
 - **Biggest open capability, accept MoE complexity**DeepSeek V3, Mixtral 8x22B. Aktif FLOP başına en iyi kapasite.
 - **Long-context needs**: Llama 3 (128k RoPE ölçeklendirme), DeepSeek (MLA avantajı).
 - **Low-latency serving**: Gemma 2 9B (slaying window cuts long-context computation).
+- **Long context on a small memory budget**: Spark-X2.5 4B gibi hibrit sürükleyici pencere modelleri, katmanların sadece dörtte biri tam bağlamı ödüyor.
 
 ```figure
 rmsnorm-vs-layernorm
@@ -237,13 +254,17 @@ config = {
 }
 ```
 
-Skenar, mimari alanı alanlar doğrultusunda yürür, yerleştirme, dikkat (GQA azaltımı ile), MLP (SwiGLU genişletilmesi ile), katman normları ve baş için param sayısını hesaplar.
+Skenar, mimari alanı alanlar artarak, yerleştirme, dikkat (GQA azaltımı ve açık bir `head_dim`Konfig bir ayarladığında, MLP (SwiGLU veya GeGLU genişleme ile), katman normları ve yerleştirme ile bağlanmadığında LM başlığı. Daha sonra KV önbelleğini belirtilen bağ uzunluğunda, katman-katman olarak hesaplar.
+
+Sıkı modeller için toplamlar yayınlanan parametrelere tam olarak uymaktadır: Llama 3 8B 8.030.261.248'de, Gemma 2 9B 9.241.705.984'de ve Spark-X2.5 4B 4.112.079.360. Qwen 2.5 72B 819,200'e çıkıyor, bu da Egzersiz 1.
 
 Bakın .`code/main.py`uygulanması için.
 
 ## Kullan
 
 Kalkülüter, Llama 3 8B, Mistral 7B, Mixtral 8x7B ve DeepSeek V3 yapılandırmalarında çalıştırın. Parametr ayrıntılarını karşılaştırın.
+
+Sonra Gemma 2 9B ve Spark-X2.5 4B'yi karşılaştırın. Her ikisi için de, senaryo aslında ihtiyaç duyduğu KV önbelleği ve her katman tam dikkatli olsaydı ihtiyaç duyacağı KV önbelleği yazdırırır. Gemma 2 8k bağlamında 1:1'yi değiştirir, bu nedenle tasarruf mütevazıdır. Spark-X2.5 1M'de 512-token penceresiyle 3:1'e gidiyor, bu nedenle tasarruf 4x'dir.
 
 Sonra yerel olarak sahip olduğunuz herhangi bir model için bir yapılandırma bağlayın, özetini okuyun ve GPU'ya uygun olup olmadığını karar verin.
 
@@ -275,7 +296,7 @@ Bu ders bize çok yararlı .`outputs/skill-open-model-picker.md`. Bir dağıtım
 | MoE | "Sparse experts" | Mixture of Experts: N MLPs per block, router picks top-k per token — huge total params, small active params |
 | Top-k routing | "Pick k experts per token" | The router computes a score per expert and activates the k highest — typical k is 2 (Mixtral) to 8 (DeepSeek) |
 | YaRN | "Stretch RoPE" | Yet another RoPE extension — interpolates rotary angles to extend context from 8k to 128k+ at inference time |
-| Sliding-window attention | "Don't attend to everything" | Each token attends only to the last W tokens — caps attention cost at O(W) per token, used in Gemma 2 and early Mistral |
+| Sliding-window attention | "Don't attend to everything" | Each token attends only to the last $W$ tokens — caps attention cost at $O(W)$ per token, used in Gemma 2 and early Mistral |
 | Active params | "What runs per token" | For MoE models, the parameter count that sees a forward pass per token (much smaller than total params) — governs per-token FLOPs |
 
 ## Daha Fazla Okumak

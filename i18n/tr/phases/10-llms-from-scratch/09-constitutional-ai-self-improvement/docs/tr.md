@@ -74,22 +74,22 @@ DeepSeek, DeepSeekMath makalesinde (2024) GRPO'yu tanıttı ve DeepSeek-R1'in om
 
 PPO'nun hedefini hatırlatın (Lection 07):
 
-```
-L_PPO = E[min(r(theta) * A, clip(r(theta), 1-eps, 1+eps) * A)]
+```math
+L_{\text{PPO}} = \mathbb{E}\left[\min\left(r(\theta) \cdot A, \mathop{\mathrm{clip}}(r(\theta), 1-\epsilon, 1+\epsilon) \cdot A\right)\right]
 ```
 
 nerede`A`GAE ile öğrenilen değer ağı kullanarak genellikle tahmin edilen avantajdır `V(s)`Değer ağı, politika ile aynı boyutta ikinci bir modeldir.
 
-GRPO değer fonksiyonunu atıyor. Her çağrı için, G yanıtlarının bir grubunu örnekler (genellikle G = 16 veya 64).
+GRPO değer fonksiyonunu atıyor. her çağrı için, bir grup $G$Cevaplar (genellikle $G=16$Her cevap için ödül hesaplanır ve sonra grup içinde normalleştirilir:
 
-```
-A_i = (r_i - mean(r_1, ..., r_G)) / std(r_1, ..., r_G)
+```math
+A_i = \frac{r_i - \mathop{\mathrm{mean}}(r_1, \ldots, r_G)}{\mathop{\mathrm{std}}(r_1, \ldots, r_G)}
 ```
 
 Bu nedenle, bir grup, bir grup olarak değer fonksiyonu oluşturur ve bir grup olarak kendi temel çizgisi olarak hareket eder.
 
-```
-L_GRPO = E[min(r(theta) * A_group, clip(r(theta), 1-eps, 1+eps) * A_group)] - beta * KL(pi || pi_ref)
+```math
+L_{\text{GRPO}} = \mathbb{E}\left[\min\left(r(\theta) \cdot A_{\text{group}}, \mathop{\mathrm{clip}}(r(\theta), 1-\epsilon, 1+\epsilon) \cdot A_{\text{group}}\right)\right] - \beta \cdot \mathrm{KL}(\pi \,\|\, \pi_{\text{ref}})
 ```
 
 Referans modeline karşı KL cezası hala var, PPO'nunki gibi.
