@@ -39,15 +39,15 @@ features += weight_a * control_a(depth) + weight_b * control_b(pose)
 
 ### LoRA (Hu et al., 2021)
 
-Đối với bất kỳ lớp tuyến tính nào `W ∈ R^{d×d}`trong mô hình, đóng băng `W`và thêm một delta hạng thấp:
+Đối với bất kỳ lớp tuyến tính nào $W \in \mathbb{R}^{d \times d}$trong mô hình, đóng băng $W$và thêm một delta hạng thấp:
 
+```math
+W' = W + \Delta W, \quad \Delta W = B A, \quad A \in \mathbb{R}^{r \times d}, \quad B \in \mathbb{R}^{d \times r}
 ```
-W' = W + ΔW,  ΔW = B @ A,  A ∈ R^{r×d},  B ∈ R^{d×r}
-```
 
-với `r << d`. Đường 4-16 là tiêu chuẩn cho sự chú ý, hạng 64-128 cho các âm thanh tinh tế nặng.`2 · d · r`thay vì `d²`. Để SDXL chú ý với `d=640`- `r=16`: 20k params mỗi bộ điều chỉnh thay vì 410k  giảm 20x. Trên toàn bộ mô hình: một LoRA thường là 20-200MB so với 5GB cơ sở.
+với $r \ll d$. Đường 4-16 là tiêu chuẩn cho sự chú ý, hạng 64-128 cho các âm thanh tinh tế nặng.$2 \cdot d \cdot r$thay vì $d^2$. Để SDXL chú ý với $d=640$- $r=16$: 20k params mỗi bộ điều chỉnh thay vì 410k  giảm 20x. Trên toàn bộ mô hình: một LoRA thường là 20-200MB so với 5GB cơ sở.
 
-Khi suy luận bạn có thể mở rộng LoRA: `W' = W + α · B @ A`- `α = 0.5-1.5`LoRA nhiều chồng lên bổ sung (với cảnh báo thông thường rằng chúng tương tác theo cách không tuyến tính).
+Khi suy luận bạn có thể mở rộng LoRA: $W' = W + \alpha \cdot B A$- $\alpha = 0.5\text{-}1.5$LoRA nhiều chồng lên bổ sung (với cảnh báo thông thường rằng chúng tương tác theo cách không tuyến tính).
 
 ### Đáp ứng IP (Ye et al., 2023)
 
@@ -74,7 +74,7 @@ v4-controlnet-zero
 
 `code/main.py`mô phỏng hai cơ chế trên 1-D:
 
-1. **LoRA.**Một lớp tuyến tính được huấn luyện trước `W`- Đưa máy xuống.`B @ A`như thế này`W + BA`phù hợp với một lớp đường thẳng mục tiêu.`r = 1`là đủ để học một sự điều chỉnh cấp 1 hoàn hảo.
+1. **LoRA.**Một lớp tuyến tính được huấn luyện trước $W$- Đưa máy xuống.$BA$như thế này$W + BA$phù hợp với một lớp đường thẳng mục tiêu.$r = 1$là đủ để học một sự điều chỉnh cấp 1 hoàn hảo.
 
 2. **ControlNet-lite.**Một dự đoán "đấu chốt" và một "hạng bên" đọc một tín hiệu bổ sung.
 
@@ -98,11 +98,11 @@ h = base(x) + gated
 
 ## Những bẫy
 
-- **Over-scaling LoRAs.** `α = 2`hoặc `α = 3`là một hack "làm nó mạnh hơn" phổ biến tạo ra các kết quả quá kiểu hóa / bị phá vỡ.`α ≤ 1.5`- Tôi không biết.
+- **Over-scaling LoRAs.** $\alpha = 2$hoặc $\alpha = 3$là một hack "làm nó mạnh hơn" phổ biến tạo ra các kết quả quá kiểu hóa / bị phá vỡ.$\alpha \le 1.5$- Tôi không biết.
 - **ControlNet weight conflict.**Sử dụng một Pose ControlNet với trọng lượng 1.0 và một Depth ControlNet với trọng lượng 1.0 thường vượt quá.
 - **LoRA on the wrong base.**SDXL LoRA âm thầm không hoạt động trên SD 1.5 vì kích thước chú ý không phù hợp.
 - **Textual Inversion drift.**Các token được huấn luyện tại một điểm kiểm soát sẽ bị lôi kéo xấu ở điểm kiểm soát khác.
-- **LoRA weight-merging and storage.**Bạn có thể nướng một LoRA vào các trọng lượng mô hình cơ bản để suy luận nhanh hơn (không thêm thời gian chạy), nhưng bạn mất khả năng để mở rộng `α`- Giữ cả hai phiên bản.
+- **LoRA weight-merging and storage.**Bạn có thể nướng một LoRA vào các trọng lượng mô hình cơ bản để suy luận nhanh hơn (không thêm thời gian chạy), nhưng bạn mất khả năng để mở rộng $\alpha$- Giữ cả hai phiên bản.
 
 ## Sử dụng nó
 
@@ -125,7 +125,7 @@ h = base(x) + gated
 
 1. **Easy.**Trong `code/main.py`, thay đổi cấp độ LoRA `r`Từ 1 đến 4, ở mức nào LoRA chính xác phù hợp với một điểm mục tiêu hạng 2?
 2. **Medium.**Đào tạo hai LoRA riêng biệt trên hai biến đổi mục tiêu. Lái chúng lại với nhau và cho thấy sự tương tác phụ gia của chúng.
-3. **Hard.**Sử dụng các diffuser để xếp chồng: SDXL-base + Canny-ControlNet (tín 0,8) + một kiểu LoRA (α 0,8) + IP-Adapter (tín 0,6).
+3. **Hard.**Sử dụng các diffuser để xếp chồng: SDXL-base + Canny-ControlNet (tín 0.8) + một kiểu LoRA ($\alpha$0.8) + IP-Adapter (tín 0.6). đo FID-vs-quan-ngháp-đáp ứng trade-off khi các khối lượng chồng cân khác nhau.
 
 ## Các điều khoản chính
 
@@ -133,9 +133,9 @@ h = base(x) + gated
 |------|-----------------|-----------------------|
 | ControlNet | "Spatial control" | Cloned encoder + zero-conv skips; reads a conditioning image. |
 | Zero convolution | "Starts as identity" | 1×1 conv initialized to zero; ControlNet starts as no-op. |
-| LoRA | "Low-rank adapter" | `W + B @ A`, `r << d`; 100x fewer params than a full fine-tune. |
+| LoRA | "Low-rank adapter" | $W + BA$, $r \ll d$; 100x fewer params than a full fine-tune. |
 | rank r | "The knob" | LoRA compression; 4-16 typical, 64+ for heavy personalization. |
-| α | "LoRA strength" | Runtime scaling of the LoRA delta. |
+| $\alpha$ | "LoRA strength" | Runtime scaling of the LoRA delta. |
 | IP-Adapter | "Reference image" | Small image-conditioning adapter via CLIP-image tokens. |
 | DreamBooth | "Full subject fine-tune" | Train the full model on ~30 images of a subject. |
 | Textual Inversion | "New token" | Learn a new word embedding only; legacy, mostly replaced. |
@@ -144,7 +144,7 @@ h = base(x) + gated
 
 Một SaaS văn bản thực tế phục vụ hàng trăm LoRA và một chục ControlNets trên cùng một điểm kiểm soát cơ sở. Vấn đề phục vụ trông giống như LLM đa thuê (bibliografi sản xuất bao gồm trường hợp LLM dưới sự phân phối liên tục và LoRAX / S-LoRA):
 
-- **Hot-swap LoRAs, do not merge.**Thêm vào`W' = W + α·B·A`vào cơ sở cho ~ 3-5% nhanh hơn mỗi bước suy luận nhưng đóng băng `α`Giữ LoRAs nóng trong VRAM như rank-r delta; diffuser phơi bày `pipe.load_lora_weights()`+ `pipe.set_adapters([...], adapter_weights=[...])`cho kích hoạt theo yêu cầu. chi phí trao đổi là `2 · d · r · num_layers`trọng lượng  MB-scale, sub-second.
+- **Hot-swap LoRAs, do not merge.**Thêm vào$W' = W + \alpha \cdot B \cdot A$vào cơ sở cho ~ 3-5% nhanh hơn mỗi bước suy luận nhưng đóng băng $\alpha$Giữ LoRAs nóng trong VRAM như rank-r delta; diffuser phơi bày `pipe.load_lora_weights()`+ `pipe.set_adapters([...], adapter_weights=[...])`cho kích hoạt theo yêu cầu. chi phí trao đổi là `2 · d · r · num_layers`trọng lượng  MB-scale, sub-second.
 - **ControlNet as a second attention lane.**Các mã hóa được sao chép chạy song song với cơ sở. Hai ControlNets với trọng lượng 1.0 mỗi = hai vượt qua phía trước thêm mỗi bước, không phải một vượt qua hợp nhất.
 - **Quantized LoRAs too.**Nếu bạn định lượng cơ sở (xem Bài học 07, Flux trên 8GB), delta LoRA cũng định lượng sạch đến 8-bit hoặc 4-bit. Loading theo kiểu QLoRA cho phép bạn xếp 5-10 LoRA trên đỉnh cơ sở Flux 4-bit mà không làm hư hỏng bộ nhớ.
 

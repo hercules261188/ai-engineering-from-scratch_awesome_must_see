@@ -9,9 +9,9 @@
 
 ## Vấn đề
 
-Quá trình ngược của DDPM là một bước đi stochastic 1000 bước từ `N(0, I)`DDIM đã phá vỡ nó thành 20-50 bước xác định. Bạn muốn ít hơn các bước  lý tưởng là một.
+Quá trình ngược của DDPM là một bước đi stochastic 1000 bước từ $\mathcal{N}(0, I)$DDIM đã phá vỡ nó thành 20-50 bước xác định. Bạn muốn ít hơn các bước  lý tưởng là một.
 
-Nếu bạn có thể đào tạo mô hình như vậy rằng con đường từ tiếng ồn đến dữ liệu là một đường thẳng, một bước đơn giản của Euler từ `t=1`đến`t=0`sẽ hoạt động. Tích hợp dòng chảy xây dựng điều này trực tiếp: xác định một sự phân cực thẳng từ`x_1 ∼ N(0, I)`đến`x_0 ∼ data`, tập hợp một trường vector `v_θ(x, t)`để phù hợp với phái sinh thời gian của nó, tích hợp khi suy luận.
+Nếu bạn có thể đào tạo mô hình như vậy rằng con đường từ tiếng ồn đến dữ liệu là một đường thẳng, một bước đơn giản của Euler từ $t=1$đến$t=0$sẽ hoạt động. Tích hợp dòng chảy xây dựng điều này trực tiếp: xác định một sự phân cực thẳng từ$x_1 \sim \mathcal{N}(0, I)$đến$x_0 \sim \text{data}$, tập hợp một trường vector $v_\theta(x, t)$để phù hợp với phái sinh thời gian của nó, tích hợp khi suy luận.
 
 Phong trào sửa đổi (Liu 2022) đi xa hơn: lặp đi lặp lại khớp các con đường bằng một thủ tục tái lưu dẫn đến một ODE dần gần hơn đến tuyến tính. Sau hai lần tái lưu, một mẫu 2 bước phù hợp với chất lượng DDPM 50 bước.
 
@@ -23,41 +23,41 @@ Phong trào sửa đổi (Liu 2022) đi xa hơn: lặp đi lặp lại khớp c�
 
 Định nghĩa:
 
-```
-x_t = t · x_1 + (1 - t) · x_0,   t ∈ [0, 1]
-```
-
-nơi `x_0 ~ data`và `x_1 ~ N(0, I)`. Tiến dẫn thời gian dọc theo đường thẳng này là không đổi:
-
-```
-dx_t / dt = x_1 - x_0
+```math
+x_t = t \cdot x_1 + (1 - t) \cdot x_0, \quad t \in [0, 1]
 ```
 
-Định nghĩa một trường vector thần kinh `v_θ(x_t, t)`và đào tạo nó để phù hợp với phái sinh này:
+nơi $x_0 \sim \text{data}$và $x_1 \sim \mathcal{N}(0, I)$. Tiến dẫn thời gian dọc theo đường thẳng này là không đổi:
 
-```
-L = E_{x_0, x_1, t} || v_θ(x_t, t) - (x_1 - x_0) ||²
+```math
+\frac{dx_t}{dt} = x_1 - x_0
 ```
 
-Đây là **conditional flow matching**Lỗ tập không có mô phỏng: bạn không bao giờ mở ODE. Chỉ cần lấy mẫu`(x_0, x_1, t)`và lùi lại.
+Định nghĩa một trường vector thần kinh $v_\theta(x_t, t)$và đào tạo nó để phù hợp với phái sinh này:
+
+```math
+L = \mathbb{E}_{x_0, x_1, t} \left\lVert v_\theta(x_t, t) - (x_1 - x_0) \right\rVert^2
+```
+
+Đây là **conditional flow matching**Lỗ tập không có mô phỏng: bạn không bao giờ mở ODE. Chỉ cần lấy mẫu$(x_0, x_1, t)$và lùi lại.
 
 ### Tiêu chuẩn
 
 Khi suy luận, tích hợp trường vector học * trở lại* trong thời gian:
 
-```
-x_{t-Δt} = x_t - Δt · v_θ(x_t, t)
+```math
+x_{t-\Delta t} = x_t - \Delta t \cdot v_\theta(x_t, t)
 ```
 
-Bắt đầu từ `x_1 ~ N(0, I)`, bước Euler xuống `t=0`- Tôi không biết.
+Bắt đầu từ $x_1 \sim \mathcal{N}(0, I)$, bước Euler xuống $t=0$- Tôi không biết.
 
 ### Lượng lưu lượng được sửa đổi (Liu 2022)
 
-dòng chảy thẳng hoạt động nhưng các con đường học được không thực sự thẳng`x_0`s có thể lập bản đồ cho cùng `x_1`. bước tái lưu của dòng chảy được sửa chữa:
+dòng chảy thẳng hoạt động nhưng các con đường học được không thực sự thẳng$x_0$- Có thể được lập bản đồ cho cùng một điểm$x_1$. bước tái lưu của dòng chảy được sửa chữa:
 
-1. Mô hình dòng tàu v_1 với kết hợp ngẫu nhiên.
-2. Mô hình N cặp `(x_1, x_0)`bằng cách tích hợp v_1 từ `x_1`đến khi hạ cánh `x_0`- Tôi không biết.
-3. Cụ thể v_2 trên những ví dụ cặp. Bởi vì cặp hiện nay là "ODE-tích hợp", interpolant thẳng giữa chúng thực sự phẳng hơn.
+1. Mô hình dòng chảy tàu $v_1$với các cặp ngẫu nhiên.
+2. Mô hình N cặp $(x_1, x_0)$bằng cách tích hợp $v_1$từ $x_1$đến khi hạ cánh $x_0$- Tôi không biết.
+3. Đào tàu $v_2$Vì các cặp hiện nay là "ODE-tích hợp", các interpolant thẳng giữa chúng thực sự phẳng hơn.
 4. Lặp lại.
 
 Trong thực tế, 2 lặp lại tái lưu đưa bạn đến gần tuyến tính, cho phép suy luận 2-4 bước. SDXL-Turbo, SD3-Turbo, LCM đều là mô hình khâu khâu từ dòng chảy phù hợp.
@@ -72,7 +72,7 @@ Ba lý do:
 
 ## Tương thích dòng chảy so với DDPM  kết nối chính xác
 
-Tương thích dòng chảy với một con đường Gaussian-conditional là phân tán *with a specific noise schedule*.`x_t = α(t) x_0 + σ(t) x_1`thời gian và dòng chảy phù hợp phục hồi Stratonovich-reformed phân tán với `v = α'·x_0 - σ'·x_1`Hai con đường này là tương đương với đường dẫn Gaussian.
+Tương thích dòng chảy với một con đường Gaussian-conditional là phân tán *with a specific noise schedule*.$x_t = \alpha(t) x_0 + \sigma(t) x_1$thời gian và dòng chảy phù hợp phục hồi Stratonovich-reformed phân tán với $v = \alpha' \cdot x_0 - \sigma' \cdot x_1$Hai con đường này là tương đương với đường dẫn Gaussian.
 
 Những gì phù hợp dòng chảy đã thêm vào: độ rõ ràng của mục tiêu (một tốc độ đơn giản), một mất mát sạch hơn, và giấy phép để thử nghiệm với các chất can thiệp không Gaussian.
 
@@ -82,7 +82,7 @@ normalizing-flow
 
 ## Hãy xây dựng nó
 
-`code/main.py`thực hiện sự phù hợp dòng chảy 1-D trên một hỗn hợp Gaussian hai chế độ.`v_θ(x, t)`là một MLP nhỏ được đào tạo với mục tiêu thẳng. Khi suy luận, tích hợp 1, 2, 4 và 20 bước của Euler và so sánh chất lượng mẫu.
+`code/main.py`thực hiện sự phù hợp dòng chảy 1-D trên một hỗn hợp Gaussian hai chế độ.$v_\theta(x, t)$là một MLP nhỏ được đào tạo với mục tiêu thẳng. Khi suy luận, tích hợp 1, 2, 4 và 20 bước của Euler và so sánh chất lượng mẫu.
 
 ### Bước 1: mất tập luyện
 
@@ -115,10 +115,10 @@ Hi vọng mẫu 4 bước sẽ phù hợp với chất lượng 20 bước  mộ
 
 ## Những bẫy
 
-- **Time parameterization.**Sử dụng phù hợp dòng chảy `t ∈ [0, 1]`với `t=0`trong dữ liệu, `t=1`DDPM sử dụng `t ∈ [0, T]`với `t=0`trong dữ liệu, `t=T`cùng hướng, khác nhau quy mô, báo cáo luôn sai lầm.
+- **Time parameterization.**Sử dụng phù hợp dòng chảy $t \in [0, 1]$với $t=0$trong dữ liệu, $t=1$DDPM sử dụng $t \in [0, T]$với $t=0$trong dữ liệu, $t=T$cùng hướng, khác nhau quy mô, báo cáo luôn sai lầm.
 - **Schedule choice.**Dòng thẳng của dòng chảy được sửa là "the" dòng chảy phù hợp lịch trình, nhưng bạn có thể sử dụng cosine hoặc logit-normal t-sampling (SD3 làm điều này) để bao phủ quy mô tốt hơn.
 - **Reflow cost.**Tạo bộ dữ liệu kết hợp để tái lưu là một thông qua suy luận đầy đủ cho mỗi mẫu. Chỉ làm tái lưu khi bạn thực sự cần suy luận 1-2 bước.
-- **Classifier-free guidance still applies.**Chỉ cần thay ε cho v trong kết hợp tuyến tính: `v_cfg = (1+w) v_cond - w v_uncond`- Tôi không biết.
+- **Classifier-free guidance still applies.**Chỉ cần đổi $\epsilon$cho $v$trong kết hợp tuyến tính: $v_{\text{cfg}} = (1+w) v_{\text{cond}} - w v_{\text{uncond}}$- Tôi không biết.
 
 ## Sử dụng nó
 
@@ -140,21 +140,21 @@ Bất cứ khi nào một bài báo nói "quá nhanh hơn sự pha trộn" trong
 ## Các bài tập
 
 1. **Easy.**Đi chạy`code/main.py`và so sánh 1 bước vs 20 bước MSE vs phân phối dữ liệu thực.
-2. **Medium.**Thay đổi đồng phục`t`lấy mẫu thành logit-normal (đồng độ lấy mẫu ở giữa t).
-3. **Hard.**Thực hiện một lần lặp lại: tạo cặp (x_0, x_1) bằng cách tích hợp mô hình đầu tiên, đào tạo mô hình thứ hai trên các cặp, và so sánh chất lượng mẫu 1 bước.
+2. **Medium.**Thay đổi đồng phục$t$lấy mẫu thành logit-normal (đồng độ lấy mẫu ở giữa t).
+3. **Hard.**Thực hiện một lần lặp lại dòng chảy: tạo cặp $(x_0, x_1)$bằng cách tích hợp mô hình đầu tiên, đào tạo mô hình thứ hai trên các cặp, và so sánh chất lượng mẫu 1 bước.
 
 ## Các điều khoản chính
 
 | Term | What people say | What it actually means |
 |------|-----------------|-----------------------|
-| Flow matching | "Straight-line diffusion" | Train `v_θ(x, t)` to match `x_1 - x_0` along an interpolant. |
+| Flow matching | "Straight-line diffusion" | Train $v_\theta(x, t)$ to match $x_1 - x_0$ along an interpolant. |
 | Rectified flow | "Reflow" | Iterative procedure that straightens learned flows. |
-| Velocity field | "v_θ" | Output of the model — the direction to move `x_t`. |
-| Straight-line interpolant | "The path" | `x_t = (1-t)·x_0 + t·x_1`; trivial target derivative. |
+| Velocity field | "v_θ" | Output of the model — the direction to move $x_t$. |
+| Straight-line interpolant | "The path" | $x_t = (1-t) \cdot x_0 + t \cdot x_1$; trivial target derivative. |
 | Euler sampler | "1st order ODE solver" | Simplest integrator; works well when paths are straight. |
-| Logit-normal t | "SD3 sampling" | Concentrate `t` sampling toward mid-values where gradients are strongest. |
-| Consistency distillation | "1-step sampler" | Train a student to map any `x_t` directly to `x_0`. |
-| CFG with velocity | "v-CFG" | `v_cfg = (1+w) v_cond - w v_uncond`; same trick, new variable. |
+| Logit-normal t | "SD3 sampling" | Concentrate $t$ sampling toward mid-values where gradients are strongest. |
+| Consistency distillation | "1-step sampler" | Train a student to map any $x_t$ directly to $x_0$. |
+| CFG with velocity | "v-CFG" | $v_{\text{cfg}} = (1+w) v_{\text{cond}} - w v_{\text{uncond}}$; same trick, new variable. |
 
 ## Lưu ý sản xuất: Flux.1-schnell là dòng chảy phù hợp với tốc độ nhanh nhất của nó
 

@@ -21,9 +21,9 @@ Hầu hết các FLOP đó đi đến đẩy các chi tiết không quan trọng
 
 **Two stages, separately trained.**
 
-1. **Stage 1 — VAE.**Mã hóa `E(x) → z`, decoder `D(z) → x`. Nhấn mục tiêu: 8x mẫu xuống trong mỗi trục không gian + điều chỉnh các kênh để tổng kích thước ẩn là ~ 1/16 của số lượng pixel.`z`không phải là quá Gaussian, bởi vì chúng tôi không cần mẫu chính xác từ `z`Thường được huấn luyện với một thất bại đối thủ vì vậy hình ảnh được giải mã là sắc nét.
+1. **Stage 1 — VAE.**Mã hóa $E(x) \to z$, decoder $D(z) \to x$. Nhấn mục tiêu: 8x mẫu xuống trong mỗi trục không gian + điều chỉnh các kênh để tổng kích thước ẩn là ~ 1/16 của số lượng pixel.$z$không phải là quá Gaussian, bởi vì chúng tôi không cần mẫu chính xác từ $z$Thường được huấn luyện với một thất bại đối thủ vì vậy hình ảnh được giải mã là sắc nét.
 
-2. **Stage 2 — diffusion on `z`.**Chữa bệnh`z = E(x_real)`Đào tạo một U-Net (hoặc DiT) để phản đối`z_t`- Khi kết luận: mẫu`z_0`qua sự phân tán, sau đó `x = D(z_0)`- Tôi không biết.
+2. **Stage 2 — diffusion on $z$.**Chữa bệnh$z = E(x_{\text{real}})$Đào tạo một U-Net (hoặc DiT) để phản đối$z_t$- Khi kết luận: mẫu$z_0$qua sự phân tán, sau đó $x = D(z_0)$- Tôi không biết.
 
 **Text conditioning.**Hai thành phần bổ sung. Một mã hóa văn bản đóng băng (CLIP-L cho SD 1.x, CLIP-L+OpenCLIP-G cho SD 2/XL, T5-XXL cho SD3 và Flux).`[Q = image features, K = V = text tokens]`Các mã chỉ là cách duy nhất văn bản ảnh hưởng đến hình ảnh.
 
@@ -58,21 +58,21 @@ def encode(x):    return x * 0.5          # toy "compression" to smaller scale
 def decode(z):    return z * 2.0
 ```
 
-Một VAE thực sự có trọng lượng được đào tạo.`z`không quan tâm đến không gian dữ liệu gốc.
+Một VAE thực sự có trọng lượng được đào tạo.$z$không quan tâm đến không gian dữ liệu gốc.
 
 ### Bước 2: phân tán trong `z`- Không gian
 
-DDPM tương tự như bài học 06.`z = E(x)`Sau khi lấy mẫu`z_0`, giải mã với `D(z_0)`- Tôi không biết.
+DDPM tương tự như bài học 06.$z = E(x)$Sau khi lấy mẫu$z_0$, giải mã với $D(z_0)$- Tôi không biết.
 
 ### Bước 3: hướng dẫn không có phân loại
 
-Trong quá trình đào tạo, hãy bỏ nhãn lớp 10% thời gian (đổi lại bằng một token không).`ε_cond`và `ε_uncond`, sau đó:
+Trong quá trình đào tạo, hãy bỏ nhãn lớp 10% thời gian (đổi lại bằng một token không).$\epsilon_{\text{cond}}$và $\epsilon_{\text{uncond}}$, sau đó:
 
 ```python
 eps_cfg = (1 + w) * eps_cond - w * eps_uncond
 ```
 
-`w = 0`= không có hướng dẫn (cụ thể đa dạng),`w = 3`= mặc định, `w = 7+`= bão hòa / quá sắc nét.
+$w = 0$= không có hướng dẫn (cụ thể đa dạng),$w = 3$= mặc định, $w = 7+$= bão hòa / quá sắc nét.
 
 ### Bước 4: Điều kiện văn bản (định nghĩa, không phải mã)
 
@@ -90,7 +90,7 @@ h = h + CrossAttention(Q=h, K=text_embed, V=text_embed)
 - **Text encoder silently wrong.**SD3 cần T5-XXL với >=128 token, và sự quay lại CLIP-chỉ là thua lỗ.`use_t5=True`hoặc các miệng núi lửa trung thành.
 - **Mixing latent spaces.**SDXL, SD3, Flux đều sử dụng các VAE khác nhau. LoRA được đào tạo trên các laten SDXL sẽ không hoạt động trên SD3.
 - **CFG too high.** `w > 10`tạo ra những hình ảnh bão hòa, dầu và quá phù hợp với các yêu cầu với chi phí của sự đa dạng.`w = 3-7`- Tôi không biết.
-- **Negative prompts leaking.**Lần báo âm trống trở thành biểu tượng không; một lời báo âm đầy trở thành `ε_uncond`Chúng không giống nhau; một số đường ống âm thầm mặc định đến null.
+- **Negative prompts leaking.**Lần báo âm trống trở thành biểu tượng không; một lời báo âm đầy trở thành $\epsilon_{\text{uncond}}$Chúng không giống nhau; một số đường ống âm thầm mặc định đến null.
 
 ## Sử dụng nó
 
@@ -111,7 +111,7 @@ Các đống sản xuất vào năm 2026:
 
 ## Các bài tập
 
-1. **Easy.**Đi chạy`code/main.py`Với hướng dẫn`w ∈ {0, 1, 3, 7, 15}`- Đăng mẫu trung bình theo lớp.`w`có phải các phương tiện lớp khác nhau ngoài phương tiện dữ liệu thực?
+1. **Easy.**Đi chạy`code/main.py`Với hướng dẫn$w \in \lbrace 0, 1, 3, 7, 15 \rbrace$- Đăng mẫu trung bình theo lớp.$w$có phải các phương tiện lớp khác nhau ngoài phương tiện dữ liệu thực?
 2. **Medium.**Thay đổi bộ mã hóa hàng tuyến đồ chơi cho cặp mã hóa / mã hóa tanh-MLP với mất tích tái tạo. Phục trệ phân tán trên các dấu ẩn mới.
 3. **Hard.**Thiết lập một suy luận Stable Diffusion thực sự với các diffuser: tải `sdxl-base`, chạy 30 bước Euler với CFG=7, thời gian nó.`sdxl-turbo`cùng chủ đề, chất lượng khác nhau  mô tả những gì đã thay đổi và tại sao.
 
@@ -121,8 +121,8 @@ Các đống sản xuất vào năm 2026:
 |------|-----------------|-----------------------|
 | First stage | "The VAE" | Trained encoder/decoder pair; compresses 512² to 64². |
 | Second stage | "The U-Net" | Diffusion model over the latent space. |
-| CFG | "Guidance scale" | `(1+w)·ε_cond - w·ε_uncond`; tunes conditioning strength. |
-| Null token | "Empty prompt embed" | Unconditional embed used for `ε_uncond`. |
+| CFG | "Guidance scale" | $(1+w) \cdot \epsilon_{\text{cond}} - w \cdot \epsilon_{\text{uncond}}$; tunes conditioning strength. |
+| Null token | "Empty prompt embed" | Unconditional embed used for $\epsilon_{\text{uncond}}$. |
 | Cross-attention | "How text gets in" | Each U-Net block attends to text tokens as K and V. |
 | DiT | "Diffusion Transformer" | Replace U-Net with a transformer over latent patches; scales better. |
 | MMDiT | "Multi-modal DiT" | SD3's architecture: text and image streams with joint attention. |

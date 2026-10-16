@@ -9,34 +9,36 @@
 
 ## Vấn đề
 
-Một mẫu GAN vô điều kiện lấy mẫu khuôn mặt tùy ý. hữu ích cho một bản demo, vô dụng trong sản xuất. Bạn muốn: *mở bản phác thảo sang một bức ảnh*, *mở bản đồ sang một bức ảnh trên không*, *mở cảnh ban ngày sang ban đêm*, *mở màu một hình ảnh quy mô xám*. Trong tất cả những hình ảnh này, bạn được cung cấp một hình ảnh nhập`x`và phải phát hành `y`Có nhiều điều đáng tin cậy.`y`S/m`x`Một thất bại đối thủ không làm, bởi vì "có vẻ thật" là sắc bén.
+Một mẫu GAN vô điều kiện lấy mẫu khuôn mặt tùy ý. hữu ích cho một bản demo, vô dụng trong sản xuất. Bạn muốn: *mở bản phác thảo sang một bức ảnh*, *mở bản đồ sang một bức ảnh trên không*, *mở cảnh ban ngày sang ban đêm*, *mở màu một hình ảnh quy mô xám*. Trong tất cả những hình ảnh này, bạn được cung cấp một hình ảnh nhập$x$và phải phát hành $y$Có nhiều điều đáng tin cậy.$y$- Đúng vậy .$x$Một thất bại đối thủ không làm, bởi vì "có vẻ thật" là sắc bén.
 
-GAN có điều kiện (Mirza & Osindero, 2014) thêm một điều kiện `c`như là một đầu vào cho cả hai `G`và `D`Pix2Pix (Isola et al., 2017) chuyên về điều này: điều kiện là một hình ảnh nhập đầy đủ, máy phát điện là một U-Net, phân biệt là một phân loại dựa trên các bản vá (PatchGAN), và mất mát là đối kháng + L1.
+GAN có điều kiện (Mirza & Osindero, 2014) thêm một điều kiện $c$như là một đầu vào cho cả hai $G$và $D$Pix2Pix (Isola et al., 2017) chuyên về điều này: điều kiện là một hình ảnh nhập đầy đủ, máy phát điện là một U-Net, phân biệt là một phân loại dựa trên các bản vá (PatchGAN), và mất mát là đối kháng + L1.
 
 ## Khái niệm
 
 ![Pix2Pix: U-Net generator, PatchGAN discriminator](../assets/pix2pix.svg)
 
-**Conditional G.** `G(x, z) → y`Trong Pix2Pix,`z`là trượt trong G (không có tiếng ồn nhập  Isola tìm thấy tiếng ồn rõ ràng bị bỏ qua).
+**Conditional G.** $G(x, z) \to y$Trong Pix2Pix,$z$là trượt trong G (không có tiếng ồn nhập  Isola tìm thấy tiếng ồn rõ ràng bị bỏ qua).
 
-**Conditional D.** `D(x, y) → [0, 1]`. Input là *pair* (cấp, đầu ra). Đây là sự khác biệt chính: D phải đánh giá liệu`y`phù hợp với `x`, không chỉ là`y`trông thật.
+**Conditional D.** $D(x, y) \to [0, 1]$. Input là *pair* (cấp, đầu ra). Đây là sự khác biệt chính: D phải đánh giá liệu$y$phù hợp với $x$, không chỉ là$y$trông thật.
 
 **U-Net generator.**Mã hóa-kết giải có kết nối skip trên nút chai. Khí yết cho các nhiệm vụ mà đầu vào và đầu ra chia sẻ cấu trúc cấp thấp (về, hình xảo).
 
-**PatchGAN discriminator.**Thay vì đưa ra một điểm thực/sự giả, D đưa ra một `N×N`lưới mà mỗi tế bào đánh giá một lĩnh vực thụ thể của ~ 70 × 70 pixel. trung bình. Đây là một giả định trường ngẫu nhiên Markov: thực tế là địa phương.
+**PatchGAN discriminator.**Thay vì đưa ra một điểm thực/sự giả, D đưa ra một $N \times N$lưới mà mỗi tế bào đánh giá một lĩnh vực thụ thể của ~ 70 × 70 pixel. trung bình. Đây là một giả định trường ngẫu nhiên Markov: thực tế là địa phương.
 
 **Loss.**
 
-```
-loss_G = -log D(x, G(x)) + λ · ||y - G(x)||_1
-loss_D = -log D(x, y) - log (1 - D(x, G(x)))
+```math
+\begin{aligned}
+\text{loss}_G &= -\log D(x, G(x)) + \lambda \cdot \lVert y - G(x) \rVert_1 \\
+\text{loss}_D &= -\log D(x, y) - \log(1 - D(x, G(x)))
+\end{aligned}
 ```
 
-Thuật ngữ L1 ổn định đào tạo và đẩy G về phía mục tiêu được biết đến. L1 cung cấp cạnh sắc nét hơn L2 (tương đương, không phải là trung bình). `λ = 100`là Pix2Pix mặc định.
+Thuật ngữ L1 ổn định đào tạo và đẩy G về phía mục tiêu được biết đến. L1 cung cấp cạnh sắc nét hơn L2 (tương đương, không phải là trung bình). $\lambda = 100$là Pix2Pix mặc định.
 
 ## CycleGAN  khi bạn không có cặp
 
-Pix2Pix cần được ghép `(x, y)`Data. CycleGAN (Zhu et al., 2017) giảm yêu cầu này với chi phí của một tổn thất thêm: mất * chu kỳ nhất quán * hai máy phát `G: X → Y`và `F: Y → X`- Đọc cho họ làm thế này`F(G(x)) ≈ x`và `G(F(y)) ≈ y`Điều này cho phép bạn chuyển đổi ngựa thành ngựa, mùa hè sang mùa đông, mà không có những ví dụ.
+Pix2Pix cần được ghép $(x, y)$Data. CycleGAN (Zhu et al., 2017) giảm yêu cầu này với chi phí của một tổn thất thêm: mất * chu kỳ nhất quán * hai máy phát $G: X \to Y$và $F: Y \to X$- Đọc cho họ làm thế này$F(G(x)) \approx x$và $G(F(y)) \approx y$Điều này cho phép bạn chuyển đổi ngựa thành ngựa, mùa hè sang mùa đông, mà không có những ví dụ.
 
 Năm 2026, không cặp hình ảnh-to-photos được thực hiện chủ yếu thông qua phân tán (ControlNet, IP-Adapter) thay vì CycleGAN, nhưng ý tưởng nhất quán chu kỳ tồn tại trong hầu hết các giấy thích ứng miền không cặp.
 
@@ -46,7 +48,7 @@ gx-patchgan
 
 ## Hãy xây dựng nó
 
-`code/main.py`thực hiện một GAN điều kiện nhỏ trên dữ liệu 1D.`c`là một nhãn lớp (0 hoặc 1). Nhiệm vụ: tạo ra một mẫu từ phân phối có điều kiện cho lớp được đưa ra.
+`code/main.py`thực hiện một GAN điều kiện nhỏ trên dữ liệu 1D.$c$là một nhãn lớp (0 hoặc 1). Nhiệm vụ: tạo ra một mẫu từ phân phối có điều kiện cho lớp được đưa ra.
 
 ### Bước 1: thêm điều kiện cho cả hai đầu vào G và D
 
@@ -84,9 +86,9 @@ for c in [0, 1]:
 ## Những bẫy
 
 - **Condition ignored.**G học cách bớt đi xa, D không bao giờ phạt vì tín hiệu điều kiện yếu.
-- **L1 weight too low.**G di chuyển đến các kết quả thực sự tùy ý, không phải là trung thành. Bắt đầu λ≈100 cho các nhiệm vụ kiểu Pix2Pix.
-- **L1 weight too high.**G tạo ra các kết quả mờ vì L1 vẫn là một chuẩn L_p.
-- **Ground-truth leakage in D.**Concatenate `(x, y)`như D đầu vào, không chỉ `y`Không có D này thì không thể kiểm tra sự phù hợp.
+- **L1 weight too low.**G hướng đến các kết quả có vẻ thực sự tùy ý, không phải những kết quả trung thành.$\lambda \approx 100$cho các nhiệm vụ kiểu Pix2Pix.
+- **L1 weight too high.**G tạo ra các kết quả mờ vì L1 vẫn là một $L_p$- Thử hạ cổ khi tập luyện ổn định.
+- **Ground-truth leakage in D.**Concatenate $(x, y)$như D đầu vào, không chỉ $y$Không có D này thì không thể kiểm tra sự phù hợp.
 - **Mode collapse per class.**Mỗi lớp có thể sụp đổ một cách độc lập.
 
 ## Sử dụng nó

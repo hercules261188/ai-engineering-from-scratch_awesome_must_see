@@ -21,7 +21,7 @@ Mỗi thang đo sẽ theo dõi tất cả các thang đo trước đó (từ ngu
 
 ### VQ-VAE Multi-Scale Tokenizer
 
-VAR cần một **multi-scale discrete tokenizer**Đối với hình ảnh x, nó tạo ra một chuỗi các lưới token độ phân giải cao hơn dần:
+VAR cần một **multi-scale discrete tokenizer**Để có hình ảnh$x$, nó tạo ra một chuỗi các lưới token độ phân giải cao dần dần:
 
 ```
 x -> encoder -> latent f
@@ -31,13 +31,13 @@ f -> tokenize at 2x2: token grid z_2 of shape (2, 2)
 f -> tokenize at (H/p)x(W/p): token grid z_K of shape (H/p, W/p)
 ```
 
-Mỗi z_k sử dụng cùng một sổ mã (khu thước điển hình 4096-16384).
+Mỗi người$z_k$sử dụng cùng một cuốn sách mã (kích thước điển hình 4096-16384). Việc mã hóa tại mỗi thang không độc lập  nó được đào tạo để tổng hợp các dư ở mỗi thang tái tạo $f$- Có thể là:
 
-```
-f ≈ upsample(embed(z_1), target_size) + ... + upsample(embed(z_K), target_size)
+```math
+f \approx \mathop{\mathrm{upsample}}(\mathop{\mathrm{embed}}(z_1), \text{target\_size}) + \cdots + \mathop{\mathrm{upsample}}(\mathop{\mathrm{embed}}(z_K), \text{target\_size})
 ```
 
-Đây là một **residual VQ**Kích thước k chụp những gì các quy mô 1..k-1 bỏ lỡ. Decoder lấy tổng số tất cả các nhúng quy mô và tạo ra hình ảnh.
+Đây là một **residual VQ**biến thể.$k$bắt được những cân bằng nào $1 \ldots k-1$Decoder lấy tổng số tất cả các tích hợp quy mô và tạo ra hình ảnh.
 
 VQ Tokenizer đa quy mô được đào tạo một lần (như VQGAN) và sau đó đóng băng.
 
@@ -50,9 +50,9 @@ Cấu trúc chuỗi đầu vào:
 [START, z_1 tokens, z_2 tokens, z_3 tokens, ..., z_K tokens]
 ```
 
-Các vị trí được nhúng mã hóa cả chỉ số thang và vị trí không gian trong thang. Sự chú ý là nguyên nhân theo thứ tự thang: token ở thang k, vị trí (i, j) có thể quan tâm đến tất cả các token ở thang 1..k và đến các token ở thang k chính nó đến sớm hơn trong bất kỳ thứ tự nội bộ quy mô nào được sử dụng (VAR sử dụng sự chú ý vị trí cố định mà không có sự liên quan đến nội bộ quy mô  tất cả các vị trí trong thang được dự đoán song song).
+Các vị trí nhúng mã hóa cả chỉ số quy mô và vị trí không gian trong quy mô.$k$, vị trí $(i, j)$có thể tham gia tất cả các token ở quy mô $1 \ldots k$và các token ở quy mô $k$chính nó xuất hiện sớm hơn trong bất kỳ thứ tự nội quy nào được sử dụng (VAR sử dụng sự chú ý vị trí cố định mà không có tính nhân quả nội quy  tất cả các vị trí trong một quy mô được dự đoán song song).
 
-Thiệt lỗ đào tạo: tại mỗi thang k, dự đoán các token z_k được cho tất cả các token thang trước. Thiệt lỗ entropy chéo trên các mã VQ riêng biệt.
+Thiệt hại đào tạo: trên mỗi thang$k$, dự đoán các token $z_k$GPT chỉ có "đường" mà bây giờ có cấu trúc quy mô.
 
 ### Thế hệ
 
@@ -66,7 +66,7 @@ decode: f = sum of embed-and-upsample scales 1..K
 image = VAE_decoder(f)
 ```
 
-Đối với quy mô K = 10, thế hệ là 10 chuyển đổi chuyển tiếp. Mỗi lần đi lại tạo ra toàn bộ quy mô của nó song song  không có tự rút theo mã trong quy mô. Đối với hình ảnh 256x256 đây là khoảng 10 lần đi qua so với DiT 28-50.
+Vì $K = 10$Scales, thế hệ là 10 chuyển đổi chuyển tiếp. Mỗi lần đi lại tạo ra toàn bộ quy mô của nó song song  không có tự rút theo mã thông báo trong một quy mô. Đối với một hình ảnh 256x256 đây là khoảng 10 lần đi qua so với DiT's 28-50.
 
 ### Tại sao quy mô tiếp theo thắng hơn quy mô tiếp theo
 
@@ -127,7 +127,7 @@ Bài học này sẽ mang lại kết quả `outputs/skill-var-tokenizer-designe
 | Multi-scale VQ tokenizer | "Residual VQ" | VQ-VAE that produces K token grids of increasing resolution, with decoder summing all scales |
 | Scale k | "Pyramid level k" | One of K resolution levels, from 1x1 at k=1 up to (H/p)x(W/p) at k=K |
 | Parallel-within-scale | "One forward per scale" | All tokens at scale k are predicted in one transformer pass, not autoregressively |
-| Causal-across-scales | "Scale-ordered attention" | Token at scale k can attend to all of scales 1..k but not scales k+1..K |
+| Causal-across-scales | "Scale-ordered attention" | Token at scale $k$ can attend to all of scales $1 \ldots k$ but not scales $k+1 \ldots K$ |
 | Residual VQ | "Additive tokenization" | Each scale's tokens encode the residual left by lower scales; decoder sums all scale embeddings |
 | VAR scaling law | "Image GPT scaling" | FID follows a predictable power law in compute, like language models' perplexity |
 | HART | "Hybrid VAR + text" | Text-conditional VAR variant combining MaskGIT-style iterative decoding with VAR's scale structure |

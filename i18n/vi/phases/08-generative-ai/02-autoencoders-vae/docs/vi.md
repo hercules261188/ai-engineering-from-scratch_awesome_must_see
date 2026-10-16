@@ -1,6 +1,6 @@
 # Tự động mã hóa & Tự động mã hóa biến thể (VAE)
 
-> Một mã mã tự động đơn giản nén lại sau đó tái tạo. Nó ghi nhớ. Nó không tạo ra. Thêm một thủ thuật  buộc mã để trông Gaussian  và bạn có được một mẫu.`z = μ + σ·ε`, đó là lý do tại sao mỗi mô hình ảnh phân tán tiềm ẩn và tương thích dòng chảy mà bạn sử dụng vào năm 2026 có một VAE tại đầu vào.
+> Một mã mã tự động đơn giản nén lại sau đó tái tạo. Nó ghi nhớ. Nó không tạo ra. Thêm một thủ thuật  buộc mã để trông Gaussian  và bạn có được một mẫu.$z = \mu + \sigma \cdot \epsilon$, đó là lý do tại sao mỗi mô hình ảnh phân tán tiềm ẩn và tương thích dòng chảy mà bạn sử dụng vào năm 2026 có một VAE tại đầu vào.
 
 **Type:** Build
 **Languages:** Python
@@ -11,9 +11,9 @@
 
 Nhiết nét MNIST 784 pixel thành mã số 16, sau đó tái tạo. Một mã tự động đơn giản sẽ làm tái tạo MSE nhưng không gian mã là một sự lộn xộn. Chọn một điểm ngẫu nhiên trong không gian mã, giải mã nó, và bạn sẽ có tiếng ồn. Nó không có mẫu. Đó là một mô hình nén mặc trang phục.
 
-Điều bạn thực sự muốn là: (a) không gian mã là một phân bố sạch, trơn tru bạn có thể lấy mẫu từ  nói là một Gaussian isotropic `N(0, I)`, (b) giải mã bất kỳ mẫu nào tạo ra một con số đáng tin cậy, và (c) bộ mã hóa và bộ giải mã vẫn nén tốt. Ba mục tiêu, một kiến trúc, một lỗ.
+Điều bạn thực sự muốn là: (a) không gian mã là một phân bố sạch, trơn tru bạn có thể lấy mẫu từ  nói là một Gaussian isotropic $\mathcal{N}(0, I)$, (b) giải mã bất kỳ mẫu nào tạo ra một con số đáng tin cậy, và (c) bộ mã hóa và bộ giải mã vẫn nén tốt. Ba mục tiêu, một kiến trúc, một lỗ.
 
-VAE 2013 của Kingma giải quyết vấn đề này bằng cách đào tạo bộ mã hóa để phát ra một * phân phối * `q(z|x) = N(μ(x), σ(x)²)`, kéo phân phối đó về phía trước `N(0, I)`thông qua một hình phạt KL, và sau đó lấy mẫu `z`từ `q(z|x)`Khi suy luận, hãy thả bộ mã hóa, lấy mẫu`z ~ N(0, I)`Cảnh phạt KL là điều buộc không gian mã phải được cấu trúc.
+VAE 2013 của Kingma giải quyết vấn đề này bằng cách đào tạo bộ mã hóa để phát ra một * phân phối * $q(z \mid x) = \mathcal{N}(\mu(x), \sigma(x)^2)$, kéo phân phối đó về phía trước $\mathcal{N}(0, I)$thông qua một hình phạt KL, và sau đó lấy mẫu $z$từ $q(z \mid x)$Khi suy luận, hãy thả bộ mã hóa, lấy mẫu$z \sim \mathcal{N}(0, I)$Cảnh phạt KL là điều buộc không gian mã phải được cấu trúc.
 
 Trong năm 2026, VAE hiếm khi được vận chuyển độc lập  chúng đã được vượt trội bởi sự phân tán về chất lượng hình ảnh nguyên thô  nhưng chúng là bộ mã hóa lựa chọn cho mọi mô hình phân tán tiềm ẩn (SD 1/2/XL/3, Flux, AudioCraft).
 
@@ -21,22 +21,24 @@ Trong năm 2026, VAE hiếm khi được vận chuyển độc lập  chúng đ�
 
 ![Autoencoder vs VAE: the reparameterization trick](../assets/vae.svg)
 
-**Autoencoder.** `z = encoder(x)`- `x̂ = decoder(z)`, mất mát = `||x - x̂||²`Không gian mã không có cấu trúc.
+**Autoencoder.** $z = \text{encoder}(x)$- $\hat{x} = \text{decoder}(z)$, mất mát = $\lVert x - \hat{x} \rVert^2$Không gian mã không có cấu trúc.
 
-**VAE encoder.**Tạo ra hai vector: `μ(x)`và `log σ²(x)`- Chúng định nghĩa`q(z|x) = N(μ, diag(σ²))`- Tôi không biết.
+**VAE encoder.**Tạo ra hai vector: $\mu(x)$và $\log \sigma^2(x)$- Chúng định nghĩa$q(z \mid x) = \mathcal{N}(\mu, \mathop{\mathrm{diag}}(\sigma^2))$- Tôi không biết.
 
-**Reparameterization trick.**Tiêu chuẩn lấy mẫu từ `q(z|x)`không phân biệt được.`z = μ + σ·ε`nơi `ε ~ N(0, I)`Giờ thì`z`là một hàm xác định của `(μ, σ)`cộng với tiếng ồn không phải tham số  gradient chảy qua `μ`và `σ`- Tôi không biết.
+**Reparameterization trick.**Tiêu chuẩn lấy mẫu từ $q(z \mid x)$không phân biệt được.$z = \mu + \sigma \cdot \epsilon$nơi $\epsilon \sim \mathcal{N}(0, I)$Giờ thì$z$là một hàm xác định của $(\mu, \sigma)$cộng với tiếng ồn không phải tham số  gradient chảy qua `μ`và $\sigma$- Tôi không biết.
 
 **Loss.**Bằng chứng Bind thấp hơn (ELBO), hai thuật ngữ:
 
-```
-loss = reconstruction + β · KL[q(z|x) || N(0, I)]
-     = ||x - x̂||²  + β · Σ_i ( σ_i² + μ_i² - log σ_i² - 1 ) / 2
+```math
+\begin{aligned}
+\text{loss} &= \text{reconstruction} + \beta \cdot \mathrm{KL}[q(z \mid x) \,\Vert\, \mathcal{N}(0, I)] \\
+&= \lVert x - \hat{x} \rVert^2 + \beta \cdot \sum_i \frac{\sigma_i^2 + \mu_i^2 - \log \sigma_i^2 - 1}{2}
+\end{aligned}
 ```
 
-Việc tái thiết thúc đẩy `x̂`hướng tới`x`KL đẩy.`q(z|x)`Vị trí của các mô hình này được tạo ra bởi các mô hình hình dạng dạng dạng dạng dạng dạng dạng dạng dạng dạng dạng dạng dạng dạng dạng dạng dạng dạng dạng dạng dạng dạng dạng dạng dạng dạng dạng dạng dạng dạng dạng dạng dạng dạng dạng dạng dạng dạng dạng dạng dạng dạng dạng dạng dạng dạng dạng dạng dạng dạng dạng dạng dạng dạng dạng dạng dạng dạng dạng dạng dạng dạng dạng dạng dạng dạng dạng dạng dạng dạng dạng dạng dạng dạng dạng dạng dạng dạng dạng dạng dạng dạng dạng dạng dạng dạng dạng dạng dạng dạng dạng dạng dạng dạng dạng dạng dạng dạng dạng dạng dạng dạng dạng dạng dạng dạng dạng dạng dạng dạng dạng dạng dạng dạng dạng dạng dạng dạng dạng dạng dạng dạng dạng dạng dạng dạng dạng dạng dạng dạng dạng dạng dạng dạng dạng dạng dạng dạng dạng dạng dạng dạng dạng dạng dạng dạng dạng dạng dạng dạng dạng dạng dạng dạng dạng dạng dạng dạng dạng dạng dạng dạng dạng dạng dạng dạng dạng dạng dạng dạng dạng dạng dạng dạng dạng dạng dạng dạng dạng dạng dạng dạng dạng dạng dạng dạng dạng dạng dạng dạng dạng dạng dạng dạng dạng dạng dạng dạng dạng dạng dạng dạng dạng dạng dạng dạng dạng dạng dạng dạng dạng dạng dạng dạng dạng dạng dạng dạng dạng dạng dạng dạng dạng dạng dạng dạng dạng dạng dạng dạng dạng dạng dạng dạng dạng dạng dạng dạng dạng dạng dạng dạng dạng dạng dạng dạng dạng dạng dạng dạng dạng dạng dạng dạng dạng dạng dạng dạng dạng dạng dạng dạng dạng dạng dạng dạng dạng dạng dạng dạng dạng dạng dạng dạng dạng dạng dạng dạng dạng dạng dạng dạng dạng dạng dạng dạng dạng dạng dạng dạng dạng dạng dạng dạng dạng dạng dạng dạng dạng dạng dạng dạng dạng dạng dạng dạng dạng dạng dạng dạng dạng dạng dạng dạng dạng dạng dạng dạng dạng dạng dạng dạng dạng dạng dạng dạng dạng dạng dạng dạng dạng dạng dạng dạng dạng dạng dạng dạng dạng dạng dạng dạng dạng dạng dạng dạng dạng dạng dạng dạng dạng dạng dạng dạng dạng dạng dạng dạng dạng dạng dạng dạng dạng dạng dạng dạng dạng dạng dạng dạng dạng dạng dạng dạng dạng dạng dạng dạng dạng dạng dạng dạng dạng dạng dạng dạng dạng dạng dạng dạng dạng dạng dạng dạng dạng dạng dạng dạng dạng dạng dạng dạng dạng dạng dạng dạng dạng dạng dạng dạng dạng dạng dạng dạng dạng dạng dạng dạng dạng dạng dạng dạng dạng dạng dạng dạng dạng dạng dạng dạng dạng dạng dạng dạng dạng dạng dạng dạng dạng dạng dạng dạng dạng dạng dạng dạng dạng dạng dạng dạng dạng dạng dạng dạng dạng dạng dạng dạng dạng dạng dạng dạng dạng dạng dạng dạng dạng dạng dạng dạng dạng dạng dạng dạng dạng dạng dạng dạng dạng dạng dạng dạng dạng dạng dạng dạng dạng dạng dạng dạng dạng dạng dạng dạng
+Việc tái thiết thúc đẩy $\hat{x}$hướng tới$x$KL đẩy.$q(z \mid x)$Họ đổi lấy.$\beta$($<1$) = mẫu sắc hơn, không gian mã ít Gaussian.$\beta$($>1$(Higgins 2017) đã làm cho nút này nổi tiếng và bắt đầu nghiên cứu giải quyết.
 
-**Sampling.**Khi kết luận: vẽ`z ~ N(0, I)`Một lần đi trước không có mẫu lặp lại như phân tán.
+**Sampling.**Khi kết luận: vẽ$z \sim \mathcal{N}(0, I)$Một lần đi trước không có mẫu lặp lại như phân tán.
 
 ```figure
 vae-latent-grid
@@ -56,7 +58,7 @@ def encode(x, enc):
     return mu, log_sigma2
 ```
 
-`log σ²`thay vì `σ`Vì vậy, đầu ra mạng không bị hạn chế (softplus của σ là một cái bẫy  gradient chết ở σ ≈ 0).
+$\log \sigma^2$thay vì $\sigma$Vì vậy, đầu ra mạng không bị hạn chế (softplus của σ là một cái bẫy  gradient chết ở $\sigma \approx 0$().
 
 ### Bước 2: tái định đo và giải mã
 
@@ -94,9 +96,9 @@ def sample(dec, z_dim, rng):
 
 ## Những bẫy
 
-- **Posterior collapse.**KL term drive `q(z|x) → N(0, I)`quá mạnh mẽ mà`z`không có thông tin nào về `x`. Lắp đặt: β-annealing (bắt đầu β=0, ramp đến 1), free bits, hoặc skip KL trên kích thước không hoạt động.
+- **Posterior collapse.**KL term drive $q(z \mid x) \to \mathcal{N}(0, I)$quá mạnh mẽ mà$z$không có thông tin nào về $x$Phong sửa: β- hủy bỏ (bắt đầu $\beta=0$, ramp đến 1), free bits, hoặc bỏ qua KL trên kích thước không hoạt động.
 - **Blurry samples.**Thiết lập: decoder phân biệt (VQ-VAE, NVAE), hoặc chỉ sử dụng VAE như một bộ mã hóa và phân tán chồng trên các laten (đó là điều Stable Diffusion làm).
-- **β too large, too early.**Xem sự sụp đổ sau, bắt đầu ở β≈0.01 và tăng tốc.
+- **β too large, too early.**Xem sự sụp đổ sau.$\beta \approx 0.01$và đường băng.
 - **Latent dim too small.**16-D hoạt động cho MNIST, 256-D cho ImageNet 2562, 2048-D cho ImageNet 10242. VAE của Stable Diffusion nén 512×512×3 → 64×64×4 (32x downsample factor trong không gian, 32x trong kênh).
 
 ## Sử dụng nó
@@ -118,32 +120,32 @@ Một mô hình phân tán ẩn là một mô hình phân tán có một mô hì
 
 - Cứu lại`outputs/skill-vae-trainer.md`- Tôi không biết.
 
-Các kỹ năng được lấy: hồ sơ bộ dữ liệu + mục tiêu trộm laten + sử dụng tiếp theo (tái tạo, lấy mẫu hoặc đầu vào trộm laten) và đầu ra: lựa chọn kiến trúc (sơn/β/VQ/RVQ), lịch trình β, trộm laten, xác suất giải mã (Gaussian vs categorical), và kế hoạch đánh giá (recon MSE, KL per dim, khoảng cách Fréchet giữa `q(z|x)`và `N(0, I)`().
+Các kỹ năng được lấy: hồ sơ bộ dữ liệu + mục tiêu trộm laten + sử dụng tiếp theo (tái tạo, lấy mẫu hoặc đầu vào trộm laten) và đầu ra: lựa chọn kiến trúc (sơn/β/VQ/RVQ), lịch trình β, trộm laten, xác suất giải mã (Gaussian vs categorical), và kế hoạch đánh giá (recon MSE, KL per dim, khoảng cách Fréchet giữa $q(z \mid x)$và $\mathcal{N}(0, I))$- Tôi không biết.
 
 ## Các bài tập
 
-1. **Easy.**Thay đổi`β`trong `code/main.py`đến`0.01`- `0.1`- `1.0`- `5.0`. ghi lại tái tạo cuối cùng của MSE và KL.
+1. **Easy.**Thay đổi$\beta$trong `code/main.py`đến`0.01`- `0.1`- `1.0`- `5.0`. ghi lại việc tái thiết cuối cùng của MSE và KL.$\beta$Pareto là tốt nhất cho dữ liệu tổng hợp của bạn?
 2. **Medium.**Thay thế xác suất decoder Gaussian bằng xác suất Bernoulli (sự mất mát entropy chéo). So sánh chất lượng mẫu trên một phiên bản nhị phân của cùng một dữ liệu tổng hợp.
-3. **Hard.**Tăng `code/main.py`thành một VQ-VAE mini: thay thế liên tục `z`- so sánh MSE tái thiết và báo cáo số lượng các mục codebook được sử dụng (sự sụp đổ codebook là thực).
+3. **Hard.**Tăng `code/main.py`thành một VQ-VAE mini: thay thế liên tục $z$- so sánh MSE tái thiết và báo cáo số lượng các mục codebook được sử dụng (sự sụp đổ codebook là thực).
 
 ## Các điều khoản chính
 
 | Term | What people say | What it actually means |
 |------|-----------------|-----------------------|
-| Autoencoder | Encode-decode network | `x → z → x̂`, learn MSE. Not generative. |
+| Autoencoder | Encode-decode network | $x \to z \to \hat{x}$, learn MSE. Not generative. |
 | VAE | AE with a sampler | Encoder outputs a distribution, KL penalty shapes code space. |
-| ELBO | Evidence lower bound | `log p(x) ≥ recon - KL[q(z\|x) \|\| p(z)]`; tight when `q = p(z\|x)`. |
-| Reparameterization | `z = μ + σ·ε` | Rewrites stochastic node as deterministic + pure noise. Enables backprop through sampling. |
-| Prior | `p(z)` | Target distribution for the latent, typically `N(0, I)`. |
-| Posterior collapse | "KL term wins" | Encoder ignores `x`, outputs the prior; decoder must hallucinate. |
-| β-VAE | Tunable KL weight | `loss = recon + β·KL`. Higher β = more disentangled but blurrier. |
-| VQ-VAE | Discrete latent | Replace continuous `z` with nearest codebook vector; enables transformer modelling. |
+| ELBO | Evidence lower bound | $\log p(x) \ge \text{recon} - \mathrm{KL}[q(z \mid x) \Vert p(z)]$; tight when $q = p(z \mid x)$. |
+| Reparameterization | $z = \mu + \sigma \cdot \epsilon$ | Rewrites stochastic node as deterministic + pure noise. Enables backprop through sampling. |
+| Prior | $p(z)$ | Target distribution for the latent, typically $\mathcal{N}(0, I)$. |
+| Posterior collapse | "KL term wins" | Encoder ignores $x$, outputs the prior; decoder must hallucinate. |
+| β-VAE | Tunable KL weight | $\text{loss} = \text{recon} + \beta \cdot \mathrm{KL}$. Higher $\beta$ = more disentangled but blurrier. |
+| VQ-VAE | Discrete latent | Replace continuous $z$ with nearest codebook vector; enables transformer modelling. |
 
 ## Lưu ý sản xuất: VAE là con đường nóng nhất trong máy chủ phân phối
 
 Trong một đường ống dẫn Stable Diffusion / Flux / SD3, VAE được gọi hai lần theo yêu cầu  một lần để mã hóa (nếu thực hiện img2img / inpainting) và một lần để giải mã. Tại 10242, đoạn giải mã thường là đỉnh kích hoạt lớn nhất trong toàn bộ đường ống vì nó có thể tăng lên `128×128×16`Lưu ý về `1024×1024×3`Hai hậu quả thực tế:
 
-- **Slice or tile the decode.** `diffusers`- Tự động`pipe.vae.enable_slicing()`và `pipe.vae.enable_tiling()`Tiiling giao dịch một đồ tạo tác nhỏ cho `O(tile²)`trí nhớ thay vì `O(H·W)`- Khả năng thiết yếu cho 10242+ trên các GPU tiêu dùng.
+- **Slice or tile the decode.** `diffusers`- Tự động`pipe.vae.enable_slicing()`và `pipe.vae.enable_tiling()`Tiiling giao dịch một đồ tạo tác nhỏ cho $O(\text{tile}^2)$trí nhớ thay vì $O(H \cdot W)$- Khả năng thiết yếu cho 10242+ trên các GPU tiêu dùng.
 - **bf16 decoder, fp32 numerics for the final resize.**SD 1.x VAE được phát hành trong fp32 và * lặng lẽ sản xuất NaNs* khi đúc lên fp16 tại 10242+. tàu SDXL `madebyollin/sdxl-vae-fp16-fix` luôn thích biến thể cố định fp16 hoặc sử dụng bf16.
 
 ## Đọc thêm

@@ -9,9 +9,9 @@
 
 ## Vấn đề
 
-Một mô hình tạo ra làm một công việc: lấy mẫu đào tạo từ một số phân phối không rõ `p_data(x)`, xuất hiện các mẫu mới trông giống như chúng đến từ cùng một phân phối. khuôn mặt, câu, tệp MIDI, cấu trúc protein  tất cả đều là vấn đề tương tự nếu bạn nháy mắt.
+Một mô hình tạo ra làm một công việc: lấy mẫu đào tạo từ một số phân phối không rõ $p_{\text{data}}(x)$, xuất hiện các mẫu mới trông giống như chúng đến từ cùng một phân phối. khuôn mặt, câu, tệp MIDI, cấu trúc protein  tất cả đều là vấn đề tương tự nếu bạn nháy mắt.
 
-Cái quái vật là thế.`p_data`sống trong một không gian có hàng triệu chiều kích (một hình ảnh RGB 512x512 là ~ 786k chiều kích), các mẫu nằm trên một bộ sợi mỏng bên trong không gian đó, và bạn chỉ có có thể 10M ví dụ.
+Cái quái vật là thế.$p_{\text{data}}$sống trong một không gian có hàng triệu chiều kích (một hình ảnh RGB 512x512 là ~ 786k chiều kích), các mẫu nằm trên một bộ sợi mỏng bên trong không gian đó, và bạn chỉ có có thể 10M ví dụ.
 
 Năm gia đình đã sống sót trong mười hai năm qua.
 
@@ -19,13 +19,13 @@ Năm gia đình đã sống sót trong mười hai năm qua.
 
 ![Five families of generative models — taxonomy by what they model](../assets/taxonomy.svg)
 
-**1. Explicit density, tractable.**Hãy viết`log p(x)`mô hình tự động (PixelCNN, WaveNet, GPT) tính toán`p(x) = ∏ p(x_i | x_<i)`. Tạo ra dòng chảy bình thường (RealNVP, Glow)`p(x)`Pro: xác suất chính xác, mất tập luyện sạch. Con: suy luận tự giảm là theo trình tự (nước chậm cho các chuỗi dài), dòng chảy cần kiến trúc đảo ngược (chỉ hạn chế về kiến trúc).
+**1. Explicit density, tractable.**Hãy viết$\log p(x)$mô hình tự động (PixelCNN, WaveNet, GPT) tính toán$p(x) = \prod_i p(x_i \mid x_{<i})$. Tạo ra dòng chảy bình thường (RealNVP, Glow)$p(x)$Pro: xác suất chính xác, mất tập luyện sạch. Con: suy luận tự giảm là theo trình tự (nước chậm cho các chuỗi dài), dòng chảy cần kiến trúc đảo ngược (chỉ hạn chế về kiến trúc).
 
-**2. Explicit density, approximate.**Bị buộc `log p(x)`từ dưới (ELBO) và tối ưu hóa đường biên. VAE (Kingma 2013) sử dụng một bộ mã hóa-chế vị có một hậu biến. Các mô hình phân tán (DDPM, Ho 2020) đào tạo một mô hình biểu thị tối ưu hóa một ELBO cân nặng.
+**2. Explicit density, approximate.**Bị buộc $\log p(x)$từ dưới (ELBO) và tối ưu hóa đường biên. VAE (Kingma 2013) sử dụng một bộ mã hóa-chế vị có một hậu biến. Các mô hình phân tán (DDPM, Ho 2020) đào tạo một mô hình biểu thị tối ưu hóa một ELBO cân nặng.
 
-**3. Implicit density.**Trượt độ mật độ hoàn toàn; học máy phát điện `G(z)`sản xuất mẫu và phân biệt đối xử `D(x)`GAN (Goodfellow 2014). Nhanh chóng suy luận (một vượt qua phía trước) nhưng không ổn định trong quá trình đào tạo. StyleGAN 1/2/3 vẫn là hiện đại cho quang học miền cố định (người, phòng ngủ) ngay cả trong năm 2026.
+**3. Implicit density.**Trượt độ mật độ hoàn toàn; học máy phát điện $G(z)$sản xuất mẫu và phân biệt đối xử $D(x)$GAN (Goodfellow 2014). Nhanh chóng suy luận (một vượt qua phía trước) nhưng không ổn định trong quá trình đào tạo. StyleGAN 1/2/3 vẫn là hiện đại cho quang học miền cố định (người, phòng ngủ) ngay cả trong năm 2026.
 
-**4. Score-based / continuous-time.**Tìm hiểu gradient của khối lượng gỗ `∇_x log p(x)`Song & Ermon (2019) cho thấy kết quả kết hợp tổng hợp phân phối đến SDE. Kết hợp dòng chảy (Lipman 2023) là độ nóng 2024-2026: đào tạo không mô phỏng, các con đường thẳng hơn, lấy mẫu nhanh hơn DDPM 4-10 lần. Stable Diffusion 3, Flux, AudioCraft 2 tất cả sử dụng kết hợp dòng chảy.
+**4. Score-based / continuous-time.**Tìm hiểu gradient của khối lượng gỗ $\nabla_x \log p(x)$Song & Ermon (2019) cho thấy kết quả kết hợp tổng hợp phân phối đến SDE. Kết hợp dòng chảy (Lipman 2023) là độ nóng 2024-2026: đào tạo không mô phỏng, các con đường thẳng hơn, lấy mẫu nhanh hơn DDPM 4-10 lần. Stable Diffusion 3, Flux, AudioCraft 2 tất cả sử dụng kết hợp dòng chảy.
 
 **5. Token-based autoregressive over discrete codes.**Cấp dữ liệu độ sâu cao bằng VQ-VAE hoặc lượng tử dư thành một chuỗi nhỏ các token riêng biệt, sau đó sử dụng một Transformer để mô hình hóa chuỗi token. Parti, MuseNet, AudioLM, VALL-E, token patch của Sora đều sử dụng điều này. Đây là bucket 1 cộng với một token học.
 
@@ -53,7 +53,7 @@ Năm gia đình đã sống sót trong mười hai năm qua.
 Khi một mẫu giấy tạo ra mới rơi xuống, hãy trả lời năm câu hỏi này trước khi đọc phần phương pháp.
 
 1. **What is being modeled?**Pixel, laten, token riêng biệt, Gaussians 3D, lưới, hình dạng sóng?
-2. **Is the density explicit or implicit?**Họ ghi lại `log p(x)`- Không .
+2. **Is the density explicit or implicit?**Họ ghi lại $\log p(x)$- Không .
 3. **Sampling: one-shot or iterative?**Iterative có nghĩa là suy luận chậm hơn; một lần bắn thường có nghĩa là đối kháng hoặc chưng cất.
 4. **Conditioning: unconditional, class, text, image, pose?**Điều này xác định sự mất mát và kiến trúc bàn phẳng.
 5. **Evaluation: FID, CLIP score, IS, human preference, task accuracy?**Mỗi người đều có những chế độ thất bại (xem Bài học 14).
@@ -90,7 +90,7 @@ Gia đình nào, nhiệm vụ nào, vào năm 2026?
 | Text-to-video | Diffusion Transformer + flow matching | Sora, Veo 2, Kling. |
 | Speech + music | Token-based AR (AudioLM, VALL-E, MusicGen) or flow matching (AudioCraft 2) | Discrete tokens scale cheaply. |
 | 3D scenes | Gaussian Splatting fit, diffusion prior | 3D-GS for reconstruction, diffusion for novel-view. |
-| Density estimation (no sampling) | Flows | Only family with exact `log p(x)`. |
+| Density estimation (no sampling) | Flows | Only family with exact $\log p(x)$. |
 | Simulation / physics | Flow matching, score SDE | Straight-line paths, smooth vector fields. |
 
 ## Chuyển nó
@@ -109,11 +109,11 @@ Kỹ năng này có một mô tả nhiệm vụ và kết quả: (1) gia đình 
 
 | Term | What people say | What it actually means |
 |------|-----------------|-----------------------|
-| Generative model | "It makes new stuff" | Learns a sampler for `p_data(x)`, optionally exposes `log p(x)`. |
-| Explicit density | "You can evaluate it" | Model provides a closed-form or tractable `log p(x)`. |
-| Implicit density | "GAN-style" | Only a sampler — no way to evaluate `p(x)` of a given point. |
-| ELBO | "Evidence lower bound" | A tractable lower bound on `log p(x)`; VAEs and diffusion optimize it. |
-| Score | "Gradient of log-density" | `∇_x log p(x)`; diffusion and SDE models learn this field. |
+| Generative model | "It makes new stuff" | Learns a sampler for $p_{\text{data}}(x)$, optionally exposes $\log p(x)$. |
+| Explicit density | "You can evaluate it" | Model provides a closed-form or tractable $\log p(x)$. |
+| Implicit density | "GAN-style" | Only a sampler — no way to evaluate $p(x)$ of a given point. |
+| ELBO | "Evidence lower bound" | A tractable lower bound on $\log p(x)$; VAEs and diffusion optimize it. |
+| Score | "Gradient of log-density" | $\nabla_x \log p(x)$; diffusion and SDE models learn this field. |
 | Manifold hypothesis | "Data lives on a surface" | High-dim data concentrates on a low-dim manifold; why dimensionality reduction works. |
 | Autoregressive | "Predict the next piece" | Factorize joint as product of conditionals. |
 | Latent | "Compressed code" | Low-dim representation from which a decoder can reconstruct the input. |

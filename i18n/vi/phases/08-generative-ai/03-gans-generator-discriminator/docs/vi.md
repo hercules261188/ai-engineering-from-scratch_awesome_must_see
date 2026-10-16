@@ -11,12 +11,12 @@
 
 VAE sản xuất mẫu mờ vì mất mát của decoder MSE của họ là Bayes tối ưu cho hình ảnh * trung bình *  và trung bình của nhiều chữ số hợp lý là một chữ số mờ. Bạn muốn một lỗ hổng thưởng cho * khả thi *, không phải gần gũi với một mục tiêu nào đó. Không có hình thức đóng kín cho khả thi. Bạn phải học nó.
 
-Ý tưởng của Goodfellow: đào tạo một bộ phân loại.`D(x)`để phân biệt hình ảnh thực với hình ảnh giả.`G(z)`để làm trò lừa`D`. tín hiệu mất mát cho `G`là bất cứ điều gì `D`hiện đang nghĩ làm cho một cái gì đó trông thật.`G`Nếu cả hai mạng hội tụ,`G`đã học cách phân phối dữ liệu mà không bao giờ viết xuống `log p(x)`- Tôi không biết.
+Ý tưởng của Goodfellow: đào tạo một bộ phân loại.$D(x)$để phân biệt hình ảnh thực với hình ảnh giả.$G(z)$để làm trò lừa$D$. tín hiệu mất mát cho $G$là bất cứ điều gì $D$hiện đang nghĩ làm cho một cái gì đó trông thật.$G$Nếu cả hai mạng hội tụ,$G$đã học cách phân phối dữ liệu mà không bao giờ viết xuống `log p(x)`- Tôi không biết.
 
 Đây là huấn luyện đối kháng.
 
-```
-min_G max_D  E_real[log D(x)] + E_fake[log(1 - D(G(z)))]
+```math
+\min_G \max_D \; \mathbb{E}_{\text{real}}[\log D(x)] + \mathbb{E}_{\text{fake}}[\log(1 - D(G(z)))]
 ```
 
 Năm 2026, GAN không còn là máy phát điện SOTA (sự pha trộn và phù hợp dòng chảy ăn đống vương miện đó). Nhưng StyleGAN 2/3 vẫn là mô hình khuôn mặt sắc nét nhất từng được vận chuyển, các phân biệt đối xử GAN được sử dụng như là * mất mát nhận thức * trong đào tạo pha trộn, và đào tạo đối kháng cung cấp năng lực cho các loại chưng cất nhanh 1 bước (SDXL-Turbo, SD3-Turbo, LCM) cho phép bạn vận chuyển pha trộn thời gian thực.
@@ -25,20 +25,20 @@ Năm 2026, GAN không còn là máy phát điện SOTA (sự pha trộn và phù
 
 ![GAN training: generator and discriminator in minimax](../assets/gan.svg)
 
-**Generator `G(z)`.**Bản đồ một vector tiếng `z ~ N(0, I)`cho một mẫu `x̂`Một mạng hình dạng decoder (cụ thể hoặc chuyển thể con).
+**Generator $G(z)$.**Bản đồ một vector tiếng $z \sim \mathcal{N}(0, I)$cho một mẫu $\hat{x}$Một mạng hình dạng decoder (cụ thể hoặc chuyển thể con).
 
-**Discriminator `D(x)`.**Bản đồ một mẫu đến một xác suất scalar (hoặc điểm số).
+**Discriminator $D(x)$.**Bản đồ một mẫu đến một xác suất scalar (hoặc điểm số).
 
 **Loss.**Hai bản cập nhật thay thế:
 
-- **Train `D`:** `loss_D = -[ log D(x) + log(1 - D(G(z))) ]`- Binary cross-entropy trên real=1, fake=0.
-- **Train `G`:** `loss_G = -log D(G(z))`Đây là hình thức không bão hòa được Goodfellow sử dụng (tôi ban đầu)`log(1 - D(G(z)))`saturates và giết chết gradients khi `D`là tự tin).
+- **Train $D$:** $\text{loss}_D = -[ \log D(x) + \log(1 - D(G(z))) ]$- Binary cross-entropy trên real=1, fake=0.
+- **Train $G$:** $\text{loss}_G = -\log D(G(z))$Đây là hình thức không bão hòa được Goodfellow sử dụng (tôi ban đầu)$\log(1 - D(G(z)))$saturates và giết chết gradients khi $D$là tự tin).
 
-**Training loop.**Một bước đi của `D`, một bước đi của `G`- Lặp lại.
+**Training loop.**Một bước đi của $D$, một bước đi của $G$- Lặp lại.
 
-**Why it works.**Nếu`G`Đúng là phù hợp.`p_data`, sau đó `D`không thể làm tốt hơn so với tình cờ và kết quả là 0,5 ở khắp mọi nơi;`G`không còn gradient nữa.
+**Why it works.**Nếu$G$Đúng là phù hợp.$p_{\text{data}}$, sau đó $D$không thể làm tốt hơn so với tình cờ và kết quả là 0,5 ở khắp mọi nơi;$G$không còn gradient nữa.
 
-**Why it breaks.**Phong trào chế độ (`G`tìm thấy một chế độ `D`không thể phân loại và mint nó mãi mãi), biến mất gradient (`D`học quá nhanh và `log D`(tỷ lệ học tập, kích thước lô, bất cứ thứ gì).
+**Why it breaks.**Phong trào chế độ ($G$tìm thấy một chế độ $D$không thể phân loại và mint nó mãi mãi), biến mất gradient ($D$học quá nhanh và $\log D$(tỷ lệ học tập, kích thước lô, bất cứ thứ gì).
 
 ## Các biến thể làm cho các GAN hoạt động
 
@@ -63,7 +63,7 @@ gan-minimax
 
 ### Bước 1: mất không bão hòa
 
-Cái vanilla Goodfellow mất đi`log(1 - D(G(z)))`D phân loại giả của G là giả với độ tin cậy cao. Tại thời điểm đó gradient cho G về cơ bản là không  G không thể cải thiện.`-log D(G(z))`có asymptote ngược lại: nó nổ ra khi D tự tin, cho G một tín hiệu mạnh mẽ.
+Cái vanilla Goodfellow mất đi$\log(1 - D(G(z)))$D phân loại giả của G là giả với độ tin cậy cao. Tại thời điểm đó gradient cho G về cơ bản là không  G không thể cải thiện.$-\log D(G(z))$có asymptote ngược lại: nó nổ ra khi D tự tin, cho G một tín hiệu mạnh mẽ.
 
 ```python
 def g_loss(d_fake):
@@ -130,7 +130,7 @@ GAN là sắc nét nhưng hẹp. Một khi miền của bạn mở  ảnh, các 
 ## Các bài tập
 
 1. **Easy.**Đi chạy`code/main.py`với các cài đặt cổ phiếu.`D_LR = 5 * G_LR`G mất mát của G sụp đổ nhanh như thế nào?
-2. **Medium.**Thay thế lỗ của Goodfellow BCE bằng lỗ của WGAN: `loss_D = E[D(fake)] - E[D(real)]`- `loss_G = -E[D(fake)]`, và clip D's trọng lượng để `[-0.01, 0.01]`- Trình luyện ổn định hơn không?
+2. **Medium.**Thay thế lỗ của Goodfellow BCE bằng lỗ của WGAN: $\text{loss}_D = \mathbb{E}[D(\text{fake})] - \mathbb{E}[D(\text{real})]$- $\text{loss}_G = -\mathbb{E}[D(\text{fake})]$, và clip D's trọng lượng để `[-0.01, 0.01]`- Trình luyện ổn định hơn không?
 3. **Hard.**Cải nghiệm các mô hình 1D cho các dữ liệu 2D (sự trộn lẫn của 8 Gaussians trên một vòng). Theo dõi bao nhiêu trong số 8 chế độ máy phát điện bắt được ở các bước 1k, 5k, 10k. Thực hiện phân biệt bộ phận nhỏ và đo lại.
 
 ## Các điều khoản chính
@@ -139,8 +139,8 @@ GAN là sắc nét nhưng hẹp. Một khi miền của bạn mở  ảnh, các 
 |------|-----------------|-----------------------|
 | Generator | "G" | Noise-to-sample network, `G: z → x̂`. |
 | Discriminator | "D" | Classifier `D: x → [0, 1]`, real vs fake. |
-| Minimax | "The game" | `min_G max_D` of a joint objective. |
-| Non-saturating loss | "The fix" | Use `-log D(G(z))` for G instead of `log(1 - D(G(z)))`. |
+| Minimax | "The game" | $\min_G \max_D$ of a joint objective. |
+| Non-saturating loss | "The fix" | Use $-\log D(G(z))$ for G instead of $\log(1 - D(G(z)))$. |
 | Mode collapse | "G memorized one thing" | Generator produces few distinct outputs despite diverse data. |
 | WGAN | "Wasserstein" | Replace BCE with Earth-Mover distance + gradient penalty; smoother gradient. |
 | Spectral norm | "Lipschitz trick" | Constrain D's weight norms to bound its slope; stabilizes training. |
@@ -150,7 +150,7 @@ GAN là sắc nét nhưng hẹp. Một khi miền của bạn mở  ảnh, các 
 
 GAN không còn giành chiến thắng trên chất lượng mẫu cho việc tạo ra miền mở, nhưng họ vẫn giành chiến thắng trên chi phí suy luận.
 
-- **No prefill, no decode stages.**Một người đơn `G(z)`TTFT ≈ thời gian trễ hoàn toàn.
+- **No prefill, no decode stages.**Một người đơn $G(z)$TTFT ≈ thời gian trễ hoàn toàn.
 - **No KV-cache pressure.**Chỉ có trạng thái là trọng lượng, kích thước của lô được giới hạn bởi bộ nhớ kích hoạt, không phải bộ nhớ cache.
 - **Trivial continuous batching.**Vì mỗi yêu cầu có cùng FLOPs cố định, một lô tĩnh ở vị trí chiếm đóng mục tiêu của máy chủ thường là tối ưu. Không cần lập lịch trong chuyến bay.
 
