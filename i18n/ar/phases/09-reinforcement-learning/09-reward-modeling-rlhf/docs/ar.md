@@ -21,31 +21,31 @@ RLHF (Christiano et al. 2017; Ouyang et al. 2022) تحويل التفضيلات 
 
 ![Three-stage RLHF: SFT, RM training on pairwise prefs, PPO with KL penalty](../assets/rlhf.svg)
 
-**Stage 1: Supervised Fine-Tuning (SFT).**البدء من نموذج أساسي مدرب مسبقًا. تحسين التوضيحات المكتوبة من قبل الإنسان لسلوك الهدف (ردود تتابع التعليمات، الردود المفيدة، إلخ). النتيجة: نموذج `π_SFT`التي * تحيز نحو السلوك الجيد * ولكن لا يزال لها مساحة عمل غير محدودة.
+**Stage 1: Supervised Fine-Tuning (SFT).**البدء من نموذج أساسي مدرب مسبقًا. تحسين التوضيحات المكتوبة من قبل الإنسان لسلوك الهدف (ردود تتابع التعليمات، الردود المفيدة، إلخ). النتيجة: نموذج $\pi_{\text{SFT}}$التي * تحيز نحو السلوك الجيد * ولكن لا يزال لها مساحة عمل غير محدودة.
 
 **Stage 2: Reward Model training.**
 
-- جمع أزواج من الردود `(y_+, y_-)`إلى الإشارات`x`، يسميها البشر "y_+ تفضل على y_-. "
-- تدريب نموذج مكافأة `R_φ(x, y)`لتحديد درجات أعلى ل`y_+`. . .
+- جمع أزواج من الردود $(y_+, y_-)$إلى الإشارات$x$، يسميها البشر "y_+ تفضل على y_-. "
+- تدريب نموذج مكافأة $R_\phi(x, y)$لتحديد درجات أعلى ل$y_+$. . .
 - الخسارة:**Bradley-Terry pairwise logistic**:
 
-  `L(φ) = -E[ log σ(R_φ(x, y_+) - R_φ(x, y_-)) ]`
+  $L(\phi) = -\mathbb{E}[ \log \sigma(R_\phi(x, y_+) - R_\phi(x, y_-)) ]$
 
-  σ هو sigmoid. الفرق في المكافأة يعني إيقاع الاختيارات التميزية. كانت BT هي القاعدة منذ عام 1952 (برادلي-تيري) وهي الخيار المهيمن في RLHF الحديث.
+  $\sigma$هو sigmoid. الفرق في المكافأة يعني تراجع التوقيت. BT كانت المعيار منذ 1952 (برادلي تيري) وهي الخيار المهيمن في RLHF الحديث.
 
-- `R_φ`عادة ما يتم تشغيلها من نموذج SFT مع رأس سكالي على الأعلى. نفس العمود الفقري للمتحول؛ طبقة خطية واحدة تنطلق الجائزة.
+- $R_\phi$عادة ما يتم تشغيلها من نموذج SFT مع رأس سكالي على الأعلى. نفس العمود الفقري للمتحول؛ طبقة خطية واحدة تنطلق الجائزة.
 
 **Stage 3: PPO against the RM with KL penalty.**
 
-- إطلاق سياسة التدريب`π_θ`من`π_SFT`. إبقَ مرجعًا مُجمدًا`π_ref = π_SFT`. . .
-- مكافأة في نهاية الإجابة`y`:
+- إطلاق سياسة التدريب$\pi_\theta$من$\pi_{\text{SFT}}$. إبقَ مرجعًا مُجمدًا$\pi_{\text{ref}} = \pi_{\text{SFT}}$. . .
+- مكافأة في نهاية الإجابة$y$:
 
-  `r_total(x, y) = R_φ(x, y) - β · KL(π_θ(·|x) || π_ref(·|x))`
+  $r_{\text{total}}(x, y) = R_\phi(x, y) - \beta \cdot \mathrm{KL}(\pi_\theta(\cdot \mid x) \Vert \pi_{\text{ref}}(\cdot \mid x))$
 
-  عقوبة ك.إل تمنع`π_θ`من التجول تعسفيًا من`π_SFT` هو * تنظيمي *، وليس منطقة ثقة صعبة. `β`عادةً`0.01`-أجل`0.05`. . .
+  عقوبة ك.إل تمنع$\pi_\theta$من التجول تعسفيًا من$\pi_{\text{SFT}}$ هو * تنظيمي *، وليس منطقة ثقة صعبة. $\beta$عادةً 0.01-0.05.
 - تشغيل PPO (دروس 08) مع هذه المكافأة. يتم حساب المزايا على مسار مستوى الرمز، ولكن RM تسجل فقط الاستجابة الكاملة.
 
-**Why the KL?**بدونها، سوف يجد PPO بكل سرور استراتيجيات اختراق المكافآت  تم تدريب RM فقط على الانتهاءات في التوزيع. قد يحصل استجابة خارج التوزيع على درجة أعلى من أي من كتب البشر.`π_θ`بالقرب من المجموعة حيث تم تدريب RM.
+**Why the KL?**بدونها، سوف يجد PPO بكل سرور استراتيجيات اختراق المكافآت  تم تدريب RM فقط على الانتهاءات في التوزيع. قد يحصل استجابة خارج التوزيع على درجة أعلى من أي من كتب البشر.$\pi_\theta$بالقرب من المجموعة حيث تم تدريب RM.
 
 **2026 status:**
 
@@ -97,7 +97,7 @@ def rm_train_step(w, x, y_pos, y_neg, lr):
 
 ### الخطوة الثالثة: سياسة تشبه PPO فوق RM
 
-سياسة ألعابنا تنتج رمز واحد من المفردات`log π_θ(token | prompt)`، إضافة عقوبة KL إلى المرجع، وتطبيق قطع PPO بديل.
+سياسة ألعابنا تنتج رمز واحد من المفردات$\log \pi_\theta(\text{token} \mid \text{prompt})$، إضافة عقوبة KL إلى المرجع، وتطبيق قطع PPO بديل.
 
 ```python
 def rlhf_step(theta, ref, w, prompt, rng, eps=0.2, beta=0.1, lr=0.05):
@@ -113,7 +113,7 @@ def rlhf_step(theta, ref, w, prompt, rng, eps=0.2, beta=0.1, lr=0.05):
 
 ### الخطوة الرابعة: مراقبة الممر
 
-متوسط المسار`KL(π_θ || π_ref)`كل تحديث، إذا كان يمر`~5-10`السياسة قد انحرفت بعيدا عن`π_SFT` أقل `β`هذا هو التشخيص الأعلى في RLHF الحقيقي.
+متوسط المسار$\mathrm{KL}(\pi_\theta \Vert \pi_{\text{ref}})$كل تحديث، إذا كان يمر`~5-10`السياسة قد انحرفت بعيدا عن$\pi_{\text{SFT}}$ أقل $\beta$هذا هو التشخيص الأعلى في RLHF الحقيقي.
 
 ### الخطوة 5: وصفة الإنتاج مع TRL
 
@@ -163,7 +163,7 @@ for batch in dataloader:
 
 ## الفخاخ
 
-- **Over-optimization / reward hacking.**الـ (مـ) غير كاملة`π_θ`العلامات: الافضل يرتفع إلى أجل غير مسمى بينما تقدم البشر تقييم مستطيلات أو انخفاض.`β`، وتوسيع بيانات تدريب RM.
+- **Over-optimization / reward hacking.**الـ (مـ) غير كاملة$\pi_\theta$العلامات: الافضل يرتفع إلى أجل غير مسمى بينما تقدم البشر تقييم مستطيلات أو انخفاض.$\beta$، وتوسيع بيانات تدريب RM.
 - **Length hacking.**غالباً ما يتم تكافؤ المعلمين المهنيين على الاستجابات المفيدة بشكل ضمني. تتعلم السياسة كيفية تعبئة الاستجابات. التعويض: مكافأة طبيعية على طول، أو RLAIF مع RM واعية على طول.
 - **Too-small RM.**يجب أن يكون الرقم الكبير على الأقل مثل السياسة، ولا يمكن لـ RM الصغير أن يحصل على نتائج سياسة
 - **KL tuning.**انخفاض β → التجريد والكافأة القرصنة. انخفاض β → السياسة بالكاد يتغير. الخدعة القياسية هي * التكيف * β التي تهدف إلى KL ثابتة في كل خطوة.
@@ -213,7 +213,7 @@ Refuse to ship RLHF-PPO without a KL monitor. Refuse to use an RM smaller than t
 ## التمارين
 
 1. **Easy.**تدريب نموذج مكافأة برادلي تيري في`code/main.py`على 500 زوج من الأزواج المفضلة الاصطناعية. قياس دقة الأزواج على 100 زوج من الأزواج المحتملة. يجب أن يتجاوز 90%.
-2. **Medium.**إشغال حلقة لعبة PPO-RLHF مع `β ∈ {0.0, 0.1, 1.0}`لكل منهما، قم بتحديد النتيجة المقدمة مقابل النتيجة المرجعية من خلال التحديثات
+2. **Medium.**إشغال حلقة لعبة PPO-RLHF مع $\beta \in \lbrace 0.0, 0.1, 1.0 \rbrace$لكل منهما، قم بتحديد النتيجة المقدمة مقابل النتيجة المرجعية من خلال التحديثات
 3. **Hard.**تنفيذ DPO (خسارة احتمالية تفضيل الشكل المغلق) على نفس البيانات المفضلة ومقارنة مع خط أنابيب RLHF-PPO في الحساب المستخدم والنتيجة النهائية RM التي تم تحقيقها.
 
 ## الشروط الرئيسية
@@ -222,8 +222,8 @@ Refuse to ship RLHF-PPO without a KL monitor. Refuse to use an RM smaller than t
 |------|-----------------|-----------------------|
 | RLHF | "Alignment RL" | Three-stage SFT + RM + PPO pipeline (Christiano 2017, Ouyang 2022). |
 | Reward Model (RM) | "The scoring net" | Learned scalar function fit to pairwise preferences via Bradley-Terry. |
-| Bradley-Terry | "Pairwise logistic loss" | `P(y_+ ≻ y_-) = σ(R(y_+) - R(y_-))`; the standard RM objective. |
-| KL penalty | "Stay near the reference" | `β · KL(π_θ \|\| π_ref)` in the reward; the anti-reward-hacking regularizer. |
+| Bradley-Terry | "Pairwise logistic loss" | $P(y_+ \succ y_-) = \sigma(R(y_+) - R(y_-))$; the standard RM objective. |
+| KL penalty | "Stay near the reference" | $\beta \cdot \mathrm{KL}(\pi_\theta \Vert \pi_{\text{ref}})$ in the reward; the anti-reward-hacking regularizer. |
 | Reward hacking | "Goodhart's law" | Policy exploits RM flaws; symptoms: reward up, human eval flat. |
 | RLAIF | "AI-labeled preferences" | RLHF where labels come from another LM instead of humans. |
 | PRM | "Process Reward Model" | Scores partial reasoning steps; used in reasoning pipelines. |

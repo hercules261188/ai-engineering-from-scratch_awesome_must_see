@@ -30,19 +30,19 @@ while True:
 
 **AlphaZero (2017).**الفضة وغيرها. في اللعبة (الشطرنج، الشوجي، الجو) مع قواعد معروفة:
 
-- شبكة القيمة السياسية: برج واحد `f_θ(s) → (p, v)`. .`p`هو مقدم على التحركات القانونية.`v`هو النتيجة المتوقعة من اللعبة.
-- البحث عن شجرة مونت كارلو (MCTS): في كل خطوة، توسع شجرة من المواصلات المحتملة. استخدام `(p, v)`كـ "المركز السابق + التشغيل". اختر العقدات حسب UCB (PUCT): `a* = argmax Q(s, a) + c · p(a|s) · √N(s) / (1 + N(s, a))`. . .
-- لعب الذاتي: لعب ألعاب عميل ضد عميل.`t`، توزيع زيارات المكثولات`π_t`يصبح هدف التدريب السياسي.
-- الخسارة:`L = (v - z)² - π · log p + c · ||θ||²`. .`z`هو نتيجة اللعبة (+1 / 0 / -1).
+- شبكة القيمة السياسية: برج واحد $f_\theta(s) \to (p, v)$. .$p$هو مقدم على التحركات القانونية.$v$هو النتيجة المتوقعة من اللعبة.
+- البحث عن شجرة مونت كارلو (MCTS): في كل خطوة، توسع شجرة من المواصلات المحتملة. استخدام $(p, v)$كـ "المركز السابق + التشغيل". اختر العقدات حسب UCB (PUCT): $a^{\ast} = \arg\max_a Q(s, a) + c \cdot p(a \mid s) \cdot \sqrt{N(s)} / (1 + N(s, a))$. . .
+- لعب الذاتي: لعب ألعاب عميل ضد عميل.$t$، توزيع زيارات المكثولات$\pi_t$يصبح هدف التدريب السياسي.
+- الخسارة:$L = (v - z)^2 - \pi \cdot \log p + c \cdot \lVert \theta \rVert^2$. .$z$هو نتيجة اللعبة (+1 / 0 / -1).
 
 صفر معارف بشرية، صفر هيرستيات صناعية يدوياً وصفة واحدة تتقن الشطرنج، الشوجي، والذهاب بعد عدة عشرات الملايين من ألعاب اللعب الذاتي
 
 **MuZero (2019).**إزالة الاحتياج من معرفة القواعد
 
-- بدلاً من بيئة ثابتة، تعلم نموذج ديناميكي متخفي`(h, g, f)`:
-  - `h(s)`: تشفير الملاحظة إلى حالة غامضة.
-  - `g(s_latent, a)`: التنبؤ بالحالة الخفية القادمة + المكافأة.
-  - `f(s_latent)`: التنبؤ بالسياسة السابقة + القيمة.
+- بدلاً من بيئة ثابتة، تعلم نموذج ديناميكي متخفي$(h, g, f)$:
+  - $h(s)$: تشفير الملاحظة إلى حالة غامضة.
+  - $g(s_{\text{latent}}, a)$: التنبؤ بالحالة الخفية القادمة + المكافأة.
+  - $f(s_{\text{latent}})$: التنبؤ بالسياسة السابقة + القيمة.
 - يُجري MCTS في الفضاء الخفي المُتعلّم نفس البحث، نفس حلقة التدريب.
 - يعمل على الجو، الشطرنج، الشوجي * و * أتاري  خوارزمية واحدة، لا معرفة القواعد.
 
@@ -54,11 +54,11 @@ while True:
 
 - "العاب": الإجابة على مشكلة الرياضيات / التشفير / التفكير. "الفوز" = المؤكد (جوزات حالة الاختبار، تجازات الإجابة العددية) يعود 1.
 - السياسة: ماجستير في مجال القانون. الإجراءات: الرموز. الحالة: السرعة + الاستجابة-حتى الآن.
-- لا يوجد نقدي (في نمط (PPO) V_φ) بدلاً من ذلك ، لكل طلب ، عينة `G`إكمالات من السياسة حساب مكافأة لكل واحد**group-relative advantage** `A_i = (r_i - mean_r) / std_r`كإشارة لتحديث على النمط REINFORCE.
+- لا نقاد (مثل "PPO" $V_\phi$) بدلاً من ذلك، لكل إشارة، عينة$G$إكمالات من السياسة حساب مكافأة لكل واحد**group-relative advantage** $A_i = (r_i - \text{mean}_r) / \text{std}_r$كإشارة لتحديث على النمط REINFORCE.
 - عقوبة KL إلى سياسة مرجعية لمنع الانحراف (مثل RLHF).
 - الخسارة الكاملة:
 
-  `L_GRPO(θ) = -E_{q, {o_i}} [ (1/G) Σ_i A_i · log π_θ(o_i | q) ] + β · KL(π_θ || π_ref)`
+  $L_{\text{GRPO}}(\theta) = -\mathbb E_{q, \lbrace o_i \rbrace} \left[ \frac{1}{G} \sum_i A_i \cdot \log \pi_\theta(o_i \mid q) \right] + \beta \cdot \mathrm{KL}(\pi_\theta \Vert \pi_{\text{ref}})$
 
 لا نموذج مكافأة، لا نقاد، لا MCTS. يبدل الجدول الأساسي للجماعة الثلاثة. يطابق أو يتجاوز جودة PPO-RLHF على معايير التفكير في جزء صغير من الحساب.
 
@@ -144,7 +144,7 @@ def grpo_step(theta, p_idx, G=8, beta=0.01, lr=0.1, rng=None):
 ## الفخاخ
 
 - **Reward hacking via verifier gaming.**ورثت شركة GRPO مخاطر RLHF: إذا كان المحقق خاطئًا أو يمكن استغلاله، فسوف يجد LLM الاستغلال.
-- **Group size too small.**التباين في خط الأساس للمجموعة هو `1/√G`أسفل`G = 4`إشارة الميزة ضوضاء ، اختيار القياس هو`G = 8`إلى`64`. . .
+- **Group size too small.**التباين في خط الأساس للمجموعة هو $1/\sqrt{G}$أسفل$G = 4$إشارة الميزة ضوضاء ، اختيار القياس هو$G = 8$إلى 64
 - **Length bias.**إكمالات LLM من أطول مختلفة لها احتمالات سجل مختلفة. عادي من خلال عدد الرمز، أو استخدام مستوى التسلسل سجل-بصيرة، أو تقسيم إلى أقصى طول.
 - **Pure self-play cycles.**يمكن أن يعلق التدريب على النمط الألفازي في حلقات الهيمنة في ألعاب الجملة العامة. يتم تخفيف ذلك من قبل مجموعة متنوعة من المعارضين (لعب الدوري، الدروس 10).
 - **Search-policy mismatch.**يقوم ألفا زيرو بتدريب السياسة لتحاكي نتائج البحث. إذا كان شبكة السياسة صغيرة جداً لتمثيل توزيع البحث، فإن التدريب يتوقف.
@@ -195,7 +195,7 @@ Refuse AlphaZero on imperfect-info games (route to CFR). Refuse GRPO without a t
 
 ## التمارين
 
-1. **Easy.**تنفيذ القاتل GRPO في `code/main.py`. تدريب على 2 طلبات × 4 رموز الإجابة كل. التقارب في < 1000 تحديثات مع `G=8`. . .
+1. **Easy.**تنفيذ القاتل GRPO في `code/main.py`. تدريب على 2 طلبات × 4 رموز الإجابة كل. التقارب في < 1000 تحديثات مع $G=8$. . .
 2. **Medium.**قم بتقارن كفاءة العينة وتباين الجائزة مع جروبو على نفس القاتل
 3. **Hard.**تمديد إلى "سلسلة التفكير" طويلة-2: يقوم الوكيل بإصدار رموز اثنين ويمكّن المؤكد من مكافأة الزوج. قياس كيفية تعامل GRPO مع تعيين الائتمان عبر تسلسل خطويين. (تلميح: ميزة مجموعة الحساب لكل *سلسلة كاملة*، انتشر إلى كلا المراكز الرمزية).
 
@@ -203,11 +203,11 @@ Refuse AlphaZero on imperfect-info games (route to CFR). Refuse GRPO without a t
 
 | Term | What people say | What it actually means |
 |------|-----------------|-----------------------|
-| MCTS | "Tree search with learned net" | Monte Carlo Tree Search; UCB1/PUCT selection with learned `(p, v)` priors. |
+| MCTS | "Tree search with learned net" | Monte Carlo Tree Search; UCB1/PUCT selection with learned $(p, v)$ priors. |
 | AlphaZero | "Self-play + MCTS" | Policy-value net trained to match MCTS visits and game outcome. |
 | MuZero | "Learned-model AlphaZero" | Same loop but in latent space via learned dynamics. |
 | GRPO | "Critic-free PPO" | Group Relative Policy Optimization; REINFORCE with group-mean baseline + KL. |
-| PUCT | "AlphaZero's UCB" | `Q + c · p · √N / (1 + N_a)` — balances value estimate with prior. |
+| PUCT | "AlphaZero's UCB" | $Q + c \cdot p \cdot \sqrt{N} / (1 + N_a)$ — balances value estimate with prior. |
 | Self-play | "Agent vs past self" | Standard for zero-sum; symmetric training signal. |
 | League play | "Population-based self-play" | Past + current + exploiters sampled as opponents. |
 | Verifier reward | "Verifiable RL" | Reward comes from a deterministic checker (tests pass, answer matches). |

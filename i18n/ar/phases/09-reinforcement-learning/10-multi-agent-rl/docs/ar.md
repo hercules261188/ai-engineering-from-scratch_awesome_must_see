@@ -21,31 +21,31 @@
 
 ![Four MARL regimes: indep, centralized critic, self-play, league](../assets/marl.svg)
 
-**Formalism: Markov Game.**تعاملية للمدنيات: الدول `S`، عمل مشترك `a = (a_1, …, a_n)`، الانتقال`P(s' | s, a)`و مكافآت لكل عميل`R_i(s, a, s')`كل عميل`i`يزيد عائداتها بموجب سياساتها الخاصة`π_i`إذا كانت المكافآت متطابقة، فهي**fully cooperative**إذا كان الصفر المجموع، هو **adversarial**إذا كان مختلقاً، فهو كذلك**general-sum**. . .
+**Formalism: Markov Game.**تعاملية للمدنيات: الدول $S$، عمل مشترك $a = (a_1, \ldots, a_n)$، الانتقال$P(s' \mid s, a)$و مكافآت لكل عميل$R_i(s, a, s')$كل عميل$i$يزيد عائداتها بموجب سياساتها الخاصة$\pi_i$إذا كانت المكافآت متطابقة، فهي**fully cooperative**إذا كان الصفر المجموع، هو **adversarial**إذا كان مختلقاً، فهو كذلك**general-sum**. . .
 
 **Core challenges:**
 
-- **Non-stationarity.** `P(s' | s, a_i)`من الوكيل`i`وجهة نظر يعتمد على`π_{-i}`، والذي يتغير
+- **Non-stationarity.** $P(s' \mid s, a_i)$من الوكيل$i$وجهة نظر يعتمد على$\pi_{-i}$، والذي يتغير
 - **Credit assignment.**مع مكافأة مشتركة، أي وكيل أسببت به؟
 - **Exploration coordination.**يجب على العملاء استكشاف استراتيجيات متكاملة، وليس استكشاف نفس الحالة بشكل زائد.
-- **Scalability.**يزداد مساحة العمل المشترك بشكل متسارع في `n`. . .
+- **Scalability.**يزداد مساحة العمل المشترك بشكل متسارع في $n$. . .
 - **Partial observability.**كل عميل يرى فقط مراقبته الخاصة؛ الحالة العالمية مخفية.
 
 **Four dominant regimes:**
 
 **1. Independent Q-learning / independent PPO (IQL, IPPO).**يتعلم كل عميل Q أو سياسة خاصة به، ويعامل الآخرين كجزء من البيئة. بسيط، في بعض الأحيان يعمل (وخاصة مع تجربة إعادة التعبير التي تعمل كحيلة نمذجة العميل السلسة). التقارب النظري: لا. في الممارسة العملية: جيد للمهام المرتبطة بشكل بطيء، سيء للمهام المرتبطة بشكل وثيق.
 
-**2. Centralized training, decentralized execution (CTDE).**المثال الحديث الأكثر شيوعاً لكل وكيل سياسة خاصة به`π_i`هذه الشروط على الملاحظة المحلية`o_i` تنفيذ مستوى لامركزي عند النشر. أثناء *التدريب* ، نقدي مركزي `Q(s, a_1, …, a_n)`الشروط المتعلقة بالحالة العالمية الكاملة والعمل المشترك.
+**2. Centralized training, decentralized execution (CTDE).**المثال الحديث الأكثر شيوعاً لكل وكيل سياسة خاصة به$\pi_i$هذه الشروط على الملاحظة المحلية$o_i$ تنفيذ مستوى لامركزي عند النشر. أثناء *التدريب* ، نقدي مركزي $Q(s, a_1, \ldots, a_n)$الشروط المتعلقة بالحالة العالمية الكاملة والعمل المشترك.
 - **MADDPG**(لو وآخرون 2017): DDPG مع منتقد مركزي لكل وكيل.
-- **COMA**(فوارستر وزملاء 2017): نقطة أساسية مُضادة للواقع  اسأل "ما كان مكافأتي لو اتخذت إجراءات `a'`بدلاً من ذلك؟"
+- **COMA**(فوارستر وزملاء 2017): نقطة أساسية مُضادة للواقع  اسأل "ما كان مكافأتي لو اتخذت إجراءات $a'$بدلاً من ذلك؟"
 - **MAPPO**- لا ، لا**IPPO**مع النقاد المشترك (Yu et al. 2022): PPO مع وظيفة قيمة مركزية. هيمنة في عام 2026 للمؤسسة التعاونية MARL.
-- **QMIX**(Rashid et al. 2018): تدهور القيمة  `Q_tot(s, a) = f(Q_1(s, a_1), …, Q_n(s, a_n))`مع خلط واحد.
+- **QMIX**(Rashid et al. 2018): تدهور القيمة  $Q_{\text{tot}}(s, a) = f(Q_1(s, a_1), \ldots, Q_n(s, a_n))$مع خلط واحد.
 
 **3. Self-play.**نسختان من نفس الوكيل يلعبون بعضها البعض. سياسة الخصم * هو سياسة من اللقطة السابقة. ألفاغو / ألفا زيرو / MuZero. مفتوحة خمسة. يعمل بشكل أفضل لعبة الصفر المجموعة؛ إشارة التدريب متماثلة.
 
 **4. League play.**تمديد اللعب الذاتي إلى بيئات مجموعية / معادلة عامة: الحفاظ على سكان السياسات السابقة والحالية ، ومعينة خصم من الدوري ، وتدريب ضدهم. يضيف المستغلين (مخصصين في هزيمة أفضل الحالي) والمستغلين الرئيسيين (مخصصين في هزيمة المستغلين). ألفا ستار (ستار كرافت II). مطلوب عندما تعترف اللعبة "حلقة استراتيجية ورقة ورق-قصان".
 
-**Communication.**اسمحوا للعملاء بإرسال رسائل علمية`m_i`في عام 2016، أظهرت فورستر وآخرون أن التواصل بين الوكلاء يمكن تدريبه من نهاية إلى نهاية. أنظمة القانون الجامعي اليوم القائمة على العديد من الوكلاء (المرحلة 16) تتواصل بشكل أساسي باللغة الطبيعية.
+**Communication.**اسمحوا للعملاء بإرسال رسائل علمية$m_i$في عام 2016، أظهرت فورستر وآخرون أن التواصل بين الوكلاء يمكن تدريبه من نهاية إلى نهاية. أنظمة القانون الجامعي اليوم القائمة على العديد من الوكلاء (المرحلة 16) تتواصل بشكل أساسي باللغة الطبيعية.
 
 ```figure
 f3-marl-orbit
@@ -101,11 +101,11 @@ def independent_q(env, episodes, alpha, gamma, epsilon):
 
 ### الخطوة 3: Q مركزية مع تحديث القيمة المتحللة
 
-استخدموا Q واحد على الإجراءات المشتركة `Q(s, a_1, a_2)`تحديث من مكافأة مشتركة . تحويل اللوائح عند التنفيذ عن طريق تجاهل: `π_i(s) = argmax_{a_i} max_{a_{-i}} Q(s, a_1, a_2)`. يتداول مساحة العمل المشتركة المتقدمة من أجل رؤية عالمية *صحيحة*
+استخدموا Q واحد على الإجراءات المشتركة $Q(s, a_1, a_2)$تحديث من مكافأة مشتركة . تحويل اللوائح عند التنفيذ عن طريق تجاهل: $\pi_i(s) = \arg\max_{a_i} \max_{a_{-i}} Q(s, a_1, a_2)$. يتداول مساحة العمل المشتركة المتقدمة من أجل رؤية عالمية *صحيحة*
 
 ### الخطوة الرابعة: لعبة بسيطة (العدو المضاد)
 
-نفس العميل، دوران، العميل "أ" ضد العميل "ب"`K`التدريب التناظير، التقدم المتواصل وصفة ألفا زيرو في التفاصيل
+نفس العميل، دوران، العميل "أ" ضد العميل "ب"$K$التدريب التناظير، التقدم المتواصل وصفة ألفا زيرو في التفاصيل
 
 ## الفخاخ
 
@@ -167,11 +167,11 @@ Refuse independent Q-learning on tightly-coupled cooperative tasks. Refuse to re
 
 | Term | What people say | What it actually means |
 |------|-----------------|-----------------------|
-| Markov game | "Multi-agent MDP" | `(S, A_1, …, A_n, P, R_1, …, R_n)`; each agent has its own reward. |
+| Markov game | "Multi-agent MDP" | $(S, A_1, \ldots, A_n, P, R_1, \ldots, R_n)$; each agent has its own reward. |
 | CTDE | "Centralized training, decentralized execution" | Joint critic at training time; each agent's policy uses only local obs. |
 | IPPO | "Independent PPO" | Each agent runs PPO separately. Simple baseline; often underrated. |
 | MAPPO | "Multi-agent PPO" | PPO with a centralized value function conditioned on global state. |
-| QMIX | "Monotonic value decomposition" | `Q_tot = f_monotone(Q_1, …, Q_n)` allows decentralized argmax. |
+| QMIX | "Monotonic value decomposition" | $Q_{\text{tot}} = f_{\text{monotone}}(Q_1, \ldots, Q_n)$ allows decentralized argmax. |
 | COMA | "Counterfactual multi-agent" | Advantage = my Q minus expected Q marginalizing over my action. |
 | Self-play | "Agent vs past self" | Single agent, two roles; standard for zero-sum games. |
 | League play | "Population training" | Cache past policies, sample opponents from the pool; handles strategy cycles. |

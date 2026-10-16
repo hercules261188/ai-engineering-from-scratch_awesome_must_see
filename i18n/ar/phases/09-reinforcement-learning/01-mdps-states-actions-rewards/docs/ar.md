@@ -21,20 +21,24 @@
 
 **The five objects.**
 
-- **States** `S`كل ما يحتاج الوكيل إلى القرار به في "جريد ورلد" الخلية في الشطرنج اللوحة في ماجستير في العلوم، نافذة السياق بالإضافة إلى أي ذاكرة
-- **Actions** `A`الخيارات، تحرك للأعلى/إلى الأسفل/اليسار/اليمين، تلعب حركة، إصدر رمزاً
-- **Transitions** `P(s' | s, a)`. في ظل الحالة`s`والعمل`a`التمييز في الشطرنج، الاستوكاستيك في المخزون، شبه التمييز في فك التمييز
-- **Rewards** `R(s, a, s')`الإشارة المتعددة الربح = +1، الخسارة = -1. الإيرادات ناقص التكلفة. معدل احتمالات التسجيل في GRPO.
-- **Discount** `γ ∈ [0, 1)`كم من المكافأة المستقبلية تُعادل مع الحاضر`γ = 0.99`يشتري أفقًا من ~ 100 خطوة ؛`γ = 0.9`يشتري 10
+- **States** $S$كل ما يحتاج الوكيل إلى القرار به في "جريد ورلد" الخلية في الشطرنج اللوحة في ماجستير في العلوم، نافذة السياق بالإضافة إلى أي ذاكرة
+- **Actions** $A$الخيارات، تحرك للأعلى/إلى الأسفل/اليسار/اليمين، تلعب حركة، إصدر رمزاً
+- **Transitions** $P(s' \mid s, a)$. في ظل الحالة$s$والعمل$a$التمييز في الشطرنج، الاستوكاستيك في المخزون، شبه التمييز في فك التمييز
+- **Rewards** $R(s, a, s')$الإشارة المتعددة الربح = +1، الخسارة = -1. الإيرادات ناقص التكلفة. معدل احتمالات التسجيل في GRPO.
+- **Discount** $\gamma \in [0, 1)$كم من المكافأة المستقبلية تُعادل مع الحاضر$\gamma = 0.99$يشتري أفقًا من ~ 100 خطوة ؛$\gamma = 0.9$يشتري 10
 
-**The Markov property** `P(s_{t+1} | s_t, a_t) = P(s_{t+1} | s_0, a_0, …, s_t, a_t)`. المستقبل يعتمد فقط على الحالة الحالية. إذا لم يكن كذلك، فإن تمثيل الدولة غير كامل
+**The Markov property** $P(s_{t+1} \mid s_t, a_t) = P(s_{t+1} \mid s_0, a_0, \ldots, s_t, a_t)$. المستقبل يعتمد فقط على الحالة الحالية. إذا لم يكن كذلك، فإن تمثيل الدولة غير كامل
 
-**Policies and returns.**سياسة`π(a | s)`الخرائط تعطي التوزيعات العمل.`G_t = r_t + γ r_{t+1} + γ² r_{t+2} + …`هو المبلغ المخصوم من المكافآت المستقبلية.`V^π(s) = E[G_t | s_t = s]`هو العائد المتوقع بدءا من `s`في سياسة`π`. قيمة Q`Q^π(s, a) = E[G_t | s_t = s, a_t = a]`هو العائد المتوقع الذي يبدأ بعمل معين. كل خوارزمية RL تقدّر واحدة من هذين الاثنين، ثم تحسن `π`وفقًا لذلك
+**Policies and returns.**سياسة$\pi(a \mid s)$الخرائط تعطي التوزيعات العمل.$G_t = r_t + \gamma r_{t+1} + \gamma^2 r_{t+2} + \ldots$هو المبلغ المخصوم من المكافآت المستقبلية.$V^\pi(s) = \mathbb{E}[G_t \mid s_t = s]$هو العائد المتوقع بدءا من $s$في سياسة$\pi$. قيمة Q$Q^\pi(s, a) = \mathbb{E}[G_t \mid s_t = s, a_t = a]$هو العائد المتوقع الذي يبدأ بعمل معين. كل خوارزمية RL تقدّر واحدة من هذين الاثنين، ثم تحسن $\pi$وفقًا لذلك
 
 **The Bellman equations.**المعادلات الثابتة التي تستخدمها كل شيء في هذه المرحلة:
 
-`V^π(s) = Σ_a π(a|s) Σ_{s', r} P(s', r | s, a) [r + γ V^π(s')]`
-`Q^π(s, a) = Σ_{s', r} P(s', r | s, a) [r + γ Σ_{a'} π(a'|s') Q^π(s', a')]`
+```math
+\begin{aligned}
+V^\pi(s) &= \sum_a \pi(a \mid s) \sum_{s', r} P(s', r \mid s, a) [r + \gamma V^\pi(s')] \\
+Q^\pi(s, a) &= \sum_{s', r} P(s', r \mid s, a) [r + \gamma \sum_{a'} \pi(a' \mid s') Q^\pi(s', a')]
+\end{aligned}
+```
 
 هذه الانقسام المتوقعة تعود إلى "مكافأة هذه الخطوة" زائد "قيمة خصم من حيث الهبوط". التكراري. كل خوارزمية في المرحلة 9 إما تكرر هذه المعادلة إلى التقارب (برمجة ديناميكية) ، أو عينات منها (مونتي كارلو) ، أو تشغيلها خطوة واحدة (فرق الزمن).
 
@@ -113,16 +117,16 @@ def policy_evaluation(policy, gamma=0.99, tol=1e-6):
 
 ### الخطوة الرابعة:`γ`هو مُعدل فائق معنى جسدي
 
-الأفق الفعلي تقريباً`1 / (1 - γ)`. .`γ = 0.9`→ 10 خطوات. `γ = 0.99`→ 100 خطوة. `γ = 0.999`1000 خطوة
+الأفق الفعلي تقريباً$1 / (1 - \gamma)$. .$\gamma = 0.9$→ 10 خطوات. $\gamma = 0.99$→ 100 خطوة. $\gamma = 0.999$1000 خطوة
 
-منخفض جداً ويتصرف الوكيل بعمق قصير. مرتفع جداً و يصبح تعيين الائتمان ضجيجاً، لأن العديد من الخطوات المبكرة تتشارك المسؤولية عن مكافأة بعيدة المستقبل.`γ = 1`لأن الحلقات قصيرة ومحدودة.`0.95–0.99`ألعاب استراتيجية طويلة الأفق تستخدم`0.999`. . .
+منخفض جداً ويتصرف الوكيل بعمق قصير. مرتفع جداً و يصبح تعيين الائتمان ضجيجاً، لأن العديد من الخطوات المبكرة تتشارك المسؤولية عن مكافأة بعيدة المستقبل.$\gamma = 1$لأن الحلقات قصيرة ومحدودة.`0.95–0.99`ألعاب استراتيجية طويلة الأفق تستخدم`0.999`. . .
 
 ## الفخاخ
 
 - **Non-Markovian state.**إذا كنت بحاجة إلى الملاحظات الثلاثة الأخيرة لتحديد، فإن "الحالة" ليست مجرد الملاحظة الحالية.
 - **Sparse rewards.**مكافآت النصر فقط تجعل التعلم مستحيلا تقريبا في المساحات الكبيرة. مكافآت الشكل (إشارة متوسطة) أو إطلاق مع التمثيل (المرحلة 9 · 09).
 - **Reward hacking.**تحسين مكافأة الوكيل غالبا ما ينتج سلوكًا مريضًا. يدور وكيل سباق القوارب في OpenAI في دوائر يجمع القوى إلى الأبد بدلاً من إنهاء السباق. حدد دائمًا مكافأة من النتيجة المستهدفة ، وليس الوكيل.
-- **Discount mis-spec.** `γ = 1`في مهمة ذات الأفق المحدود يجعل كل قيمة لا نهاية لها. دائما القمة مع إما الأفق المحدود أو`γ < 1`. . .
+- **Discount mis-spec.** $\gamma = 1$في مهمة ذات الأفق المحدود يجعل كل قيمة لا نهاية لها. دائما القمة مع إما الأفق المحدود أو$\gamma < 1$. . .
 - **Reward scale.**مكافآت {+100، -100} مقابل {+1، -1} تعطى نفس السياسات المثلى ولكن اختلاف كبير جدا في حجم التراجع.`[-1, 1]`- قبل التوصيل إلى PPO / DQN.
 
 ## استخدمها
@@ -167,21 +171,21 @@ Refuse to ship any MDP where the state is non-Markovian without explicit mention
 ## التمارين
 
 1. **Easy.**تنفيذ 4 × 4 GridWorld والتنفيذ في السياسات العشوائية`code/main.py`. إشغال 10 آلاف حلقة . تقرير متوسط و ستد من العائد . مقارنة مع العائد المثالي ( - 6).
-2. **Medium.**أركض`policy_evaluation`مع`γ ∈ {0.5, 0.9, 0.99}`لسياسة الاختيار العشوائي الموحد`V`كشبكة 4 × 4 لكل واحد. شرح لماذا قيم الحالة بالقرب من المحطة تزداد بسرعة مع أكبر `γ`. . .
-3. **Hard.**قم بتحويل شبكة العالم إلى مستوى مستقر: كل عمل ينزلق إلى اتجاه مجاور مع احتمال `p = 0.1`إعادة تقييم سياسة المزيّة`V[start]`هل تتحسن أم تتفاقم؟
+2. **Medium.**أركض`policy_evaluation`مع$\gamma \in \lbrace 0.5, 0.9, 0.99 \rbrace$لسياسة الاختيار العشوائي الموحد`V`كشبكة 4 × 4 لكل واحد. شرح لماذا قيم الحالة بالقرب من المحطة تزداد بسرعة مع أكبر $\gamma$. . .
+3. **Hard.**قم بتحويل شبكة العالم إلى مستوى مستقر: كل عمل ينزلق إلى اتجاه مجاور مع احتمال $p = 0.1$إعادة تقييم سياسة المزيّة`V[start]`هل تتحسن أم تتفاقم؟
 
 ## الشروط الرئيسية
 
 | Term | What people say | What it actually means |
 |------|-----------------|-----------------------|
-| MDP | "Reinforcement learning setup" | Tuple `(S, A, P, R, γ)` satisfying the Markov property. |
+| MDP | "Reinforcement learning setup" | Tuple $(S, A, P, R, \gamma)$ satisfying the Markov property. |
 | State | "What the agent sees" | Sufficient statistic for future dynamics under the chosen policy class. |
-| Policy | "Agent's behavior" | Conditional distribution `π(a \| s)` or deterministic map `s → a`. |
-| Return | "Total reward" | Discounted sum `Σ γ^t r_t` from the current step. |
-| Value | "How good a state is" | Expected return under `π` starting from `s`. |
-| Q-value | "How good an action is" | Expected return under `π` starting from `s` with first action `a`. |
+| Policy | "Agent's behavior" | Conditional distribution $\pi(a \mid s)$ or deterministic map $s \to a$. |
+| Return | "Total reward" | Discounted sum $\sum \gamma^t r_t$ from the current step. |
+| Value | "How good a state is" | Expected return under $\pi$ starting from $s$. |
+| Q-value | "How good an action is" | Expected return under $\pi$ starting from $s$ with first action $a$. |
 | Bellman equation | "Dynamic programming recursion" | Fixed-point decomposition of value / Q into one-step reward plus discounted successor value. |
-| Discount `γ` | "Future vs present" | Geometric weight on far-future reward; effective horizon `~1/(1-γ)`. |
+| Discount $\gamma$ | "Future vs present" | Geometric weight on far-future reward; effective horizon $\approx 1/(1-\gamma)$. |
 
 ## المزيد من القراءة
 
@@ -189,4 +193,4 @@ Refuse to ship any MDP where the state is non-Markovian without explicit mention
 - [Bellman (1957). Dynamic Programming](https://press.princeton.edu/books/paperback/9780691146683/dynamic-programming) أصل معادلة بيلمان
 - [OpenAI Spinning Up — Part 1: Key Concepts](https://spinningup.openai.com/en/latest/spinningup/rl_intro.html) مُبادرة MDP مُختصرة من زاوية عميقة لـ RL.
 - [Puterman (2005). Markov Decision Processes](https://onlinelibrary.wiley.com/doi/book/10.1002/9780470316887) إشارة البحث العمليات حول MDPs وأساليب الحل الدقيقة.
-- [Littman (1996). Algorithms for Sequential Decision Making (PhD thesis)](https://www.cs.rutgers.edu/~mlittman/papers/thesis-main.pdf) أسهل استنتاج من MDPs كتميز في البرمجة الديناميكية.
+- [Littman (1996). Algorithms for Sequential Decision Making (PhD thesis)](https://cs.brown.edu/media/filer_public/d1/a6/d1a6f66a-289a-4b81-9596-417114843489/littman.pdf) أسهل استنتاج من MDPs كتميز في البرمجة الديناميكية.

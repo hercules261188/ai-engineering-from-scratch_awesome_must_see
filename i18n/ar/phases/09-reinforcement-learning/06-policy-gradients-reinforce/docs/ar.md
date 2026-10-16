@@ -11,9 +11,9 @@
 
 Q-التعلم و DQN تعريف وظيفة * القيمة *. انت تختار الإجراءات عن طريق `argmax Q`هذا جيد للأفعال المفصلة والحالات المفصلة. انهار عندما تكون الأفعال مستمرة (التي`argmax`أكثر من 10 أبعاد الدوران؟) أو عندما تريد سياسة استوكاستية (`argmax`هو تحديد من خلال البناء).
 
-تُعَدّل نسبة السياسة * السياسة* بدلاً من ذلك. `π_θ(a | s)`شبكة عصبية تنتج توزيع على الإجراءات.`θ`خطوة صعوداً`argmax`لا يوجد استرجاع بيلمان، فقط صعود التسلسل`J(θ) = E_{π_θ}[G]`. . .
+تُعَدّل نسبة السياسة * السياسة* بدلاً من ذلك. $\pi_\theta(a \mid s)$شبكة عصبية تنتج توزيع على الإجراءات.$\theta$خطوة صعوداً`argmax`لا يوجد استرجاع بيلمان، فقط صعود التسلسل$J(\theta) = \mathbb E_{\pi_\theta}[G]$. . .
 
-نظرية REINFORCE (ويليامز 1992) تقول لك أن هذا التراجع يمكن حسابه:`∇J(θ) = E_π[ G · ∇_θ log π_θ(a | s) ]`أطلق حلقة، احسب العائد، مضاعفة بال`∇ log π_θ(a | s)`في كل خطوة، متوسط، صعود درجة، انتهى
+نظرية REINFORCE (ويليامز 1992) تقول لك أن هذا التراجع يمكن حسابه:$\nabla J(\theta) = \mathbb E_\pi[ G \cdot \nabla_\theta \log \pi_\theta(a \mid s) ]$أطلق حلقة، احسب العائد، مضاعفة بال$\nabla \log \pi_\theta(a \mid s)$في كل خطوة، متوسط، صعود درجة، انتهى
 
 كل خوارزمية LLM-RL في 2026  PPO، DPO، GRPO  هي تحسين من REINFORCE. فهمها في أصابعك هو شرط أساسي لبقية هذه المرحلة، وللمرحلة 10 · 07 (تنفيذ RLHF) والمرحلة 10 · 08 (DPO).
 
@@ -21,36 +21,44 @@ Q-التعلم و DQN تعريف وظيفة * القيمة *. انت تختار 
 
 ![Policy gradient: softmax policy, log-π gradient, return-weighted update](../assets/policy-gradient.svg)
 
-**The policy gradient theorem.**لأي سياسة`π_θ`المعلمات بواسطة `θ`:
+**The policy gradient theorem.**لأي سياسة$\pi_\theta$المعلمات بواسطة $\theta$:
 
-`∇J(θ) = E_{τ ~ π_θ}[ Σ_{t=0}^{T} G_t · ∇_θ log π_θ(a_t | s_t) ]`
+```math
+\nabla J(\theta) = \mathbb{E}_{\tau \sim \pi_\theta}[ \sum_{t=0}^{T} G_t \cdot \nabla_\theta \log \pi_\theta(a_t \mid s_t) ]
+```
 
-أين`G_t = Σ_{k=t}^{T} γ^{k-t} r_{k+1}`هو العائد المخصوم من الخطوة`t`التوقعات تجاوزت المسارات الكاملة`τ`تم أخذ عينات من`π_θ`. . .
+أين$G_t = \sum_{k=t}^{T} \gamma^{k-t} r_{k+1}$هو العائد المخصوم من الخطوة$t$التوقعات تجاوزت المسارات الكاملة$\tau$تم أخذ عينات من$\pi_\theta$. . .
 
-**The proof is short.**التفريق`J(θ) = Σ_τ P(τ; θ) G(τ)`تحت التوقعات.`∇P(τ; θ) = P(τ; θ) ∇ log P(τ; θ)`(حيلة المشتقات السجلية) عامل`log P(τ; θ) = Σ log π_θ(a_t | s_t) + environment terms that do not depend on θ`تعبيرات البيئة تختفي خطين من الجبر يعطيكما النظرية
+**The proof is short.**التفريق$J(\theta) = \sum_\tau P(\tau; \theta) G(\tau)$تحت التوقعات.$\nabla P(\tau; \theta) = P(\tau; \theta) \nabla \log P(\tau; \theta)$(حيلة المشتقات السجلية) عامل$\log P(\tau; \theta) = \sum \log \pi_\theta(a_t \mid s_t) + \text{environment terms that do not depend on } \theta$تعبيرات البيئة تختفي خطين من الجبر يعطيكما النظرية
 
-**Variance reduction tricks.**"فانيلا رينفورس" لديها اختلافات قاتلة "الردود ضجة"`∇ log π`إنّهم صاخبان، إنّ منتجاتهم صاخبة جداً.
+**Variance reduction tricks.**"فانيلا رينفورس" لديها اختلافات قاتلة "الردود ضجة"$\nabla \log \pi$إنّهم صاخبان، إنّ منتجاتهم صاخبة جداً.
 
-1. **Baseline subtraction.**استبدل`G_t`مع`G_t - b(s_t)`لأي خط أساسي `b(s_t)`لا تعتمد على`a_t`غير متحيز لأن`E[b(s_t) · ∇ log π(a_t | s_t)] = 0`اختيار نموذجي:`b(s_t) = V̂(s_t)`تعلم من قبل النقاد → الممثل-النقاد (درس 07).
-2. **Reward-to-go.**استبدل`Σ_t G_t · ∇ log π_θ(a_t | s_t)`مع`Σ_t G_t^{from t} · ∇ log π_θ(a_t | s_t)`. فقط العائدات المستقبلية مهمة لفعل معين  مكافآت سابقة تساهم في ضجيج صفر المتوسط.
+1. **Baseline subtraction.**استبدل$G_t$مع$G_t - b(s_t)$لأي خط أساسي $b(s_t)$لا تعتمد على$a_t$غير متحيز لأن$\mathbb{E}[b(s_t) \cdot \nabla \log \pi(a_t \mid s_t)] = 0$اختيار نموذجي:$b(s_t) = \hat{V}(s_t)$تعلم من قبل النقاد → الممثل-النقاد (درس 07).
+2. **Reward-to-go.**استبدل$\sum_t G_t \cdot \nabla \log \pi_\theta(a_t \mid s_t)$مع$\sum_t G_t^{\text{from } t} \cdot \nabla \log \pi_\theta(a_t \mid s_t)$. فقط العائدات المستقبلية مهمة لفعل معين  مكافآت سابقة تساهم في ضجيج صفر المتوسط.
 
 مجتمعة، تحصل على:
 
-`∇J ≈ (1/N) Σ_{i=1}^{N} Σ_{t=0}^{T_i} [ G_t^{(i)} - V̂(s_t^{(i)}) ] · ∇_θ log π_θ(a_t^{(i)} | s_t^{(i)})`
+```math
+\nabla J \approx (1/N) \sum_{i=1}^{N} \sum_{t=0}^{T_i} [ G_t^{(i)} - \hat{V}(s_t^{(i)}) ] \cdot \nabla_\theta \log \pi_\theta(a_t^{(i)} \mid s_t^{(i)})
+```
 
 وهو REINFORCE مع خط أساسي  الجدول المباشر لـ A2C (دراسة 07) و PPO (دراسة 08).
 
 **Softmax policy parameterization.**بالنسبة للقيام بعمل منفصل، الخيار القياسي:
 
-`π_θ(a | s) = exp(f_θ(s, a)) / Σ_{a'} exp(f_θ(s, a'))`
+```math
+\pi_\theta(a \mid s) = \exp(f_\theta(s, a)) / \sum_{a'} \exp(f_\theta(s, a'))
+```
 
-أين`f_θ`أي شبكة عصبية تنتج نتيجة لكل عمل.
+أين$f_\theta$أي شبكة عصبية تنتج نتيجة لكل عمل.
 
-`∇_θ log π_θ(a | s) = ∇_θ f_θ(s, a) - Σ_{a'} π_θ(a' | s) ∇_θ f_θ(s, a')`
+```math
+\nabla_\theta \log \pi_\theta(a \mid s) = \nabla_\theta f_\theta(s, a) - \sum_{a'} \pi_\theta(a' \mid s) \nabla_\theta f_\theta(s, a')
+```
 
 أي، النتيجة من الإجراءات التي تم اتخاذها ناقصاً قيمتها المتوقعة في إطار السياسة.
 
-**Gaussian policy for continuous actions.** `π_θ(a | s) = N(μ_θ(s), σ_θ(s))`. .`∇ log N(a; μ, σ)`هذا كل ما يحتاجه SAC في المرحلة 9 · 07
+**Gaussian policy for continuous actions.** $\pi_\theta(a \mid s) = N(\mu_\theta(s), \sigma_\theta(s))$. .$\nabla \log N(a; \mu, \sigma)$هذا كل ما يحتاجه SAC في المرحلة 9 · 07
 
 ```figure
 policy-gradient-landscape
@@ -119,19 +127,19 @@ def reinforce_step(theta, trajectory, gamma, lr, baseline=0.0):
                 theta[i][j] += lr * advantage * grad_log_pi_a[i] * s[j]
 ```
 
-التراجع`∇ log π(a|s) = e_a - π(·|s)`(بما في ذلك)`a`- احتمالات) هو قلب التدرج السياسية softmax. احرقها في الذاكرة العضلية.
+التراجع$\nabla \log \pi(a \mid s) = e_a - \pi(\cdot \mid s)$(بما في ذلك)$a$- احتمالات) هو قلب التدرج السياسية softmax. احرقها في الذاكرة العضلية.
 
 ### الخطوة 5: خطوط أساسية
 
-متوسط سريع من`G`على الرغم من أنّه لا يزال هناك الكثير من المعلومات عن المجموعة، فإنّه لا يزال من المفاجئ أنّه لا يزال من المفاجئ أنّه لا يزال من المفاجئ أنّه لا يزال من المفاجئ أنّه لا يزال من المفاجئ أنّه لا يزال من المفاجئ أنّه لا يزال من المفاجئ أنّه لا يزال من المفاجئ أنّه لا يزال من المفاجئ أنّه لا يزال من المفاجئ أنّه لا يزال من المفاجئ أنّه لا يزال من المفاجئ أنّه لا يزال من المفاجئ، ولكنّه لا يزال من المفاجئ أنّه لا يصل إلى المفاجئ.`V̂(s)`و تحصل على نقدي الممثل
+متوسط سريع من$G$على الرغم من أنّه لا يزال هناك الكثير من المعلومات عن المجموعة، فإنّه لا يزال من المفاجئ أنّه لا يزال من المفاجئ أنّه لا يزال من المفاجئ أنّه لا يزال من المفاجئ أنّه لا يزال من المفاجئ أنّه لا يزال من المفاجئ أنّه لا يزال من المفاجئ أنّه لا يزال من المفاجئ أنّه لا يزال من المفاجئ أنّه لا يزال من المفاجئ أنّه لا يزال من المفاجئ أنّه لا يزال من المفاجئ أنّه لا يزال من المفاجئ، ولكنّه لا يزال من المفاجئ أنّه لا يصل إلى المفاجئ.$\hat{V}(s)$و تحصل على نقدي الممثل
 
 ## الفخاخ
 
-- **Exploding gradients.**العائدات يمكن أن تكون ضخمة دائماً التطبيع`G`إلى`~N(0, 1)`عبر اللحظة قبل أن تضاعف ب `∇ log π`. . .
-- **Entropy collapse.**السياسة تتحرك نحو عمل تقريب القرار مبكراً جداً، وتوقف عن الاستكشاف، وتعلق.`β · H(π(·|s))`إلى الهدف
+- **Exploding gradients.**العائدات يمكن أن تكون ضخمة دائماً التطبيع$G$إلى`~N(0, 1)`عبر اللحظة قبل أن تضاعف ب $\nabla \log \pi$. . .
+- **Entropy collapse.**السياسة تتحرك نحو عمل تقريب القرار مبكراً جداً، وتوقف عن الاستكشاف، وتعلق.$\beta \cdot H(\pi(\cdot \mid s))$إلى الهدف
 - **High variance.**تحتاج فانيلا رينفورس إلى آلاف الحلقات. خط أساسي للنقد (درس 07) أو منطقة الثقة في TRPO/PPO (درس 08) هو الإصلاح القياسي.
 - **Sample inefficiency.**على السياسة يعني أنك ترمي كل انتقال بعد تحديث واحد. التصحيحات خارج السياسة عن طريق أخذ العينات الأهمية تجلب البيانات، على تكلفة التباين (نسبة الـPPO هي وزن IS المقلد).
-- **Non-stationary gradients.**نفس التراجع من 100 حلقة مضت يستخدم القديم`π`أساليب السياسة تحديث كل عدد قليل من التنفيذ لهذا السبب.
+- **Non-stationary gradients.**نفس التراجع من 100 حلقة مضت يستخدم القديم$\pi$أساليب السياسة تحديث كل عدد قليل من التنفيذ لهذا السبب.
 - **Credit assignment.**بدون مكافأة للذهاب، مكافآت سابقة تساهم في الضوضاء.
 
 ## استخدمها
@@ -178,20 +186,20 @@ Refuse REINFORCE-no-baseline on horizons > 500 steps. Refuse continuous-action c
 
 1. **Easy.**تنفيذ REINFORCE على 4 × 4 GridWorld مع سياسة softmax خطية. تدريب لمدة 1000 حلقة دون خط أساسي. رسم منحنى التعلم؛ قياس التباين (std من العائدات).
 2. **Medium.**إضافة خط أساسي متوسط التشغيل، تدريب مرة أخرى، مقارنة كفاءة العينة والتشابه مع الجري من الفانيليا. كم يقلل خط أساسي الخطوات إلى التقارب؟
-3. **Hard.**إضافة إضافة إضافية للإنتروبيا `β · H(π)`- أُسحّر`β ∈ {0, 0.01, 0.1, 1.0}`الخطة النهائية العودة والسياسة الانتروبية أين هو نقطة اللطيفة في هذه المهمة؟
+3. **Hard.**إضافة إضافة إضافية للإنتروبيا $\beta \cdot H(\pi)$- أُسحّر$\beta \in \lbrace 0, 0.01, 0.1, 1.0 \rbrace$الخطة النهائية العودة والسياسة الانتروبية أين هو نقطة اللطيفة في هذه المهمة؟
 
 ## الشروط الرئيسية
 
 | Term | What people say | What it actually means |
 |------|-----------------|-----------------------|
-| Policy gradient | "Train the policy directly" | `∇J(θ) = E[G · ∇ log π_θ(a\|s)]`; derived from the log-derivative trick. |
+| Policy gradient | "Train the policy directly" | $\nabla J(\theta) = \mathbb{E}[G \cdot \nabla \log \pi_\theta(a \mid s)]$; derived from the log-derivative trick. |
 | REINFORCE | "The original PG algorithm" | Williams (1992); Monte Carlo returns multiplied by log-policy gradient. |
-| Log-derivative trick | "Score function estimator" | `∇P(τ;θ) = P(τ;θ) · ∇ log P(τ;θ)`; makes gradients of expectations tractable. |
-| Baseline | "Variance reduction" | Any `b(s)` subtracted from `G`; unbiased because `E[b · ∇ log π] = 0`. |
-| Reward-to-go | "Only future returns count" | `G_t^{from t}` instead of the full `G_0`; correct and lower-variance. |
-| Entropy bonus | "Encourage exploration" | `+β · H(π(·\|s))` term keeps the policy from collapsing. |
+| Log-derivative trick | "Score function estimator" | $\nabla P(\tau;\theta) = P(\tau;\theta) \cdot \nabla \log P(\tau;\theta)$; makes gradients of expectations tractable. |
+| Baseline | "Variance reduction" | Any $b(s)$ subtracted from $G$; unbiased because $\mathbb{E}[b \cdot \nabla \log \pi] = 0$. |
+| Reward-to-go | "Only future returns count" | $G_t^{\text{from } t}$ instead of the full $G_0$; correct and lower-variance. |
+| Entropy bonus | "Encourage exploration" | $+\beta \cdot H(\pi(\cdot \mid s))$ term keeps the policy from collapsing. |
 | On-policy | "Train on what you just saw" | Gradient expectation is w.r.t. the current policy — cannot reuse old data directly. |
-| Advantage | "How much better than average" | `A(s, a) = G(s, a) - V(s)`; the signed quantity REINFORCE-with-baseline multiplies. |
+| Advantage | "How much better than average" | $A(s, a) = G(s, a) - V(s)$; the signed quantity REINFORCE-with-baseline multiplies. |
 
 ## المزيد من القراءة
 

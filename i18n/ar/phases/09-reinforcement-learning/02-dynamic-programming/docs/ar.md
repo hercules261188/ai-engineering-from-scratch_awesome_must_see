@@ -1,6 +1,6 @@
 # التخطيط الديناميكي  تعديل السياسات وتعديل القيمة
 
-> البرمجة الديناميكية هي RL مع الغش. أنت تعرف بالفعل وظائف الانتقال والمكافأة؛ أنت فقط تكرر معادلة بيلمان حتى `V`أو`π`إنه المعيار الذي تحاول كل طريقة تستند إلى العينات.
+> البرمجة الديناميكية هي RL مع الغش. أنت تعرف بالفعل وظائف الانتقال والمكافأة؛ أنت فقط تكرر معادلة بيلمان حتى $V$أو$\pi$إنه المعيار الذي تحاول كل طريقة تستند إلى العينات.
 
 **Type:** Build
 **Languages:** Python
@@ -9,11 +9,11 @@
 
 ## المشكلة
 
-لديك MDP مع نموذج معروف: يمكنك استفسار `P(s' | s, a)`و`R(s, a, s')`لجميع أزواج الحالة. مدير المخزون يعرف توزيع الطلب. لعبة اللوحة لديها انتقالات تحديدية. عالم الشبكة هو أربعة خطوط من بيثون. لديك * نموذج *.
+لديك MDP مع نموذج معروف: يمكنك استفسار $P(s' \mid s, a)$و$R(s, a, s')$لجميع أزواج الحالة. مدير المخزون يعرف توزيع الطلب. لعبة اللوحة لديها انتقالات تحديدية. عالم الشبكة هو أربعة خطوط من بيثون. لديك * نموذج *.
 
 تم اختراع RL الخالية من النموذج (Q-learning ، PPO ، REINFORCE) للحالة التي لا يكون لديك نموذج  يمكنك فقط أخذ عينات من البيئة. ولكن عندما يكون لديك واحد ، هناك أساليب أسرع وأفضل: البرمجة الديناميكية. صممها بيلمان في عام 1957. لا يزالون يحددون الصواب: عندما يقول الناس "سياسة مثالية لهذا MDP ،" يعنيون أن السياسة DP ستعود.
 
-تحتاج إليها في عام 2026 لثلاث أسباب. أولاً، يتم حل كل بيئة جدولية في أبحاث RL (GridWorld، FrozenLake، CliffWalking) مع DP لإنتاج سياسة معيار الذهب. ثانياً، القيم الدقيقة تسمح لك * إزالة * أساليب العينات: إذا كان تقدير Q-تعلم ل `V*(s_0)`يختلف مع إجابة DP بنسبة 30% ، فإن Q-learning لديك خطأ. ثالثًا ، فإن أساليب التخطيط والتنظيم الحديثة غير المتعلقة بالإنترنت (MCTS ، البحث في AlphaZero ، RL القائمة على النموذج في المرحلة 9 · 10) كلها تكرر نسخة احتياطية Bellman على النموذج المعلم أو المقدم.
+تحتاج إليها في عام 2026 لثلاث أسباب. أولاً، يتم حل كل بيئة جدولية في أبحاث RL (GridWorld، FrozenLake، CliffWalking) مع DP لإنتاج سياسة معيار الذهب. ثانياً، القيم الدقيقة تسمح لك * إزالة * أساليب العينات: إذا كان تقدير Q-تعلم ل $V^{\ast}(s_0)$يختلف مع إجابة DP بنسبة 30% ، فإن Q-learning لديك خطأ. ثالثًا ، فإن أساليب التخطيط والتنظيم الحديثة غير المتعلقة بالإنترنت (MCTS ، البحث في AlphaZero ، RL القائمة على النموذج في المرحلة 9 · 10) كلها تكرر نسخة احتياطية Bellman على النموذج المعلم أو المقدم.
 
 ## المفهوم
 
@@ -23,20 +23,22 @@
 
 **Policy iteration.**يتناوب خطوتين حتى تتوقف السياسة عن التغيير
 
-1. *التقييم:* السياسة المقدمة `π`، الحساب`V^π`من خلال تطبيقها مراراً وتكراراً`V(s) ← Σ_a π(a|s) Σ_{s',r} P(s',r|s,a) [r + γ V(s')]`حتى يتقارب
-2. *تحسين:* تم إعطائه `V^π`, جعل`π`الشريعون`V^π`: `π(s) ← argmax_a Σ_{s',r} P(s',r|s,a) [r + γ V(s')]`. . .
+1. *التقييم:* السياسة المقدمة $\pi$، الحساب$V^\pi$من خلال تطبيقها مراراً وتكراراً$V(s) \leftarrow \sum_a \pi(a \mid s) \sum_{s',r} P(s',r \mid s,a) [r + \gamma V(s')]$حتى يتقارب
+2. *تحسين:* تم إعطائه $V^\pi$, جعل$\pi$الشريعون$V^\pi$: $\pi(s) \leftarrow \arg\max_a \sum_{s',r} P(s',r \mid s,a) [r + \gamma V(s')]$. . .
 
-يتم ضمان التقارب لأن (أ) كل خطوة تحسين إما تحافظ على`π`نفس أو زيادة صارمة `V^π`بالنسبة لبعض الدول، (ب) مساحة السياسات التحديدية محدودة. عادة ما تتقارب في ~ 520 التكرارات الخارجية حتى بالنسبة إلى مساحات الدولة الكبيرة.
+يتم ضمان التقارب لأن (أ) كل خطوة تحسين إما تحافظ على$\pi$نفس أو زيادة صارمة $V^\pi$بالنسبة لبعض الدول، (ب) مساحة السياسات التحديدية محدودة. عادة ما تتقارب في ~ 520 التكرارات الخارجية حتى بالنسبة إلى مساحات الدولة الكبيرة.
 
 **Value iteration.**ينهار التقييم والتحسين إلى صفعة واحدة. تطبيق معادلة بيلمان * الإيجابية *:
 
-`V(s) ← max_a Σ_{s',r} P(s',r|s,a) [r + γ V(s')]`
+```math
+V(s) \leftarrow \max_a \sum_{s',r} P(s',r \mid s,a) [r + \gamma V(s')]
+```
 
-كرر حتى`max_s |V_{new}(s) - V(s)| < ε`. استخراج السياسة في النهاية عن طريق اتخاذ الإجراء الطموح. أسرع بشكل صارم لكل إعادة التكرار  لا يوجد حلول تقييم داخلي  ولكن عادة ما تحتاج إلى المزيد من الإعادة التكرارية للتقارب.
+كرر حتى$\max_s \lvert V_{\text{new}}(s) - V(s) \rvert < \epsilon$. استخراج السياسة في النهاية عن طريق اتخاذ الإجراء الطموح. أسرع بشكل صارم لكل إعادة التكرار  لا يوجد حلول تقييم داخلي  ولكن عادة ما تحتاج إلى المزيد من الإعادة التكرارية للتقارب.
 
 **Generalized policy iteration (GPI).**الإطار الموحد. يتم حبس وظيفة القيمة والسياسة في حلقة تحسين متجهين. أي طريقة تدفع كلا نحو التوافق المتبادل (تكرار القيمة غير المزامنة، وتكرار السياسة المعدلة، Q-التعلم، الممثل-النقاد، PPO) هي مثال على GPI.
 
-**Why `γ < 1` matters.**عامل بيلمان هو`γ`-التقلص في القاعدة السائدة:`||T V - T V'||_∞ ≤ γ ||V - V'||_∞`. التقلص يعني نقطة ثابتة و تقارب هندسي فريدة من نوعها.`γ < 1`و أنت تفقد الضمان تحتاج إلى أفق محدود أو حالة نهاية امتصاص
+**Why $\gamma < 1$ matters.**عامل بيلمان هو$\gamma$-التقلص في القاعدة السائدة:$\lVert T V - T V' \rVert_\infty \le \gamma \lVert V - V' \rVert_\infty$. التقلص يعني نقطة ثابتة و تقارب هندسي فريدة من نوعها.$\gamma < 1$و أنت تفقد الضمان تحتاج إلى أفق محدود أو حالة نهاية امتصاص
 
 ```figure
 value-iteration-gamma
@@ -64,7 +66,7 @@ def transitions(state, action):
 
 ### الخطوة الثانية: تقييم السياسات
 
-نظراً لسياسة`π(s) = {action: prob}`، أعيد تعاديل معادلة بيلمان حتى `V`يتوقف عن التحرك:
+نظراً لسياسة`π(s) = {action: prob}`، أعيد تعاديل معادلة بيلمان حتى $V$يتوقف عن التحرك:
 
 ```python
 def policy_evaluation(policy, gamma=0.99, tol=1e-6):
@@ -83,7 +85,7 @@ def policy_evaluation(policy, gamma=0.99, tol=1e-6):
 
 ### الخطوة الثالثة: تحسين السياسات
 
-استبدل`π`مع السياسة الطموحة w.r.t.`V`إذا`π`لم يتغير، العودة نحن في المثالي.
+استبدل$\pi$مع السياسة الطموحة w.r.t.$V$إذا$\pi$لم يتغير، العودة نحن في المثالي.
 
 ```python
 def policy_improvement(V, gamma=0.99):
@@ -111,7 +113,7 @@ def policy_iteration(gamma=0.99):
         policy = new_policy
 ```
 
-التقارب النموذجي على 4 × 4: 46 التكرارات الخارجية.`V*(0,0) ≈ -6`و سياسة تقلل صارمة من عدد الخطوات
+التقارب النموذجي على 4 × 4: 46 التكرارات الخارجية.$V^{\ast}(0,0) \approx -6$و سياسة تقلل صارمة من عدد الخطوات
 
 ### الخطوة 5: التكرار القيم (إصدار حلقة واحدة)
 
@@ -140,7 +142,7 @@ def value_iteration(gamma=0.99, tol=1e-6):
 - **Sup-norm vs L2 convergence.**استخدام`max |V_new - V|`الضمان النظري هو على القاعدة السائدة
 - **In-place vs synchronous updates.**تحديث`V[s]`في مكان (غوس-سايدل) يتقارب أسرع من منفصل `V_new`(جاكوبي) رمز الإنتاج يستخدم في المكان
 - **Policy ties.**إذا كانت اثنين من الأعمال لها قيمة Q متساوية،`argmax`قد يقطع الروابط بشكل مختلف في كل تكرار، مما يسبب تذبذب في عملية التحقق من "استقرار السياسة". استخدم وقف الربط المستقر (الفعال الأول في ترتيب ثابت).
-- **State-space explosion.**دبي هو`O(|S| · |A|)`يعمل حتى ~ 107 حالة. وبالإضافة إلى ذلك، تحتاج إلى تقريب الوظيفة (المرحلة 9 · 05 وما بعدها).
+- **State-space explosion.**دبي هو$O(\lvert S \rvert \cdot \lvert A \rvert)$يعمل حتى ~ 107 حالة. وبالإضافة إلى ذلك، تحتاج إلى تقريب الوظيفة (المرحلة 9 · 05 وما بعدها).
 
 ## استخدمها
 
@@ -149,12 +151,12 @@ def value_iteration(gamma=0.99, tol=1e-6):
 | Use case | Method |
 |----------|--------|
 | Solve a small tabular MDP exactly | Value iteration (simpler) or policy iteration (fewer outer steps) |
-| Verify a Q-learning / PPO implementation | Compare to DP-optimal V* on a toy environment |
+| Verify a Q-learning / PPO implementation | Compare to DP-optimal $V^{\ast}$ on a toy environment |
 | Model-based RL (Phase 9 · 10) | Bellman backup on a learned transition model |
 | Planning in AlphaZero / MuZero | Monte Carlo Tree Search = async Bellman backup |
 | Offline RL (CQL, IQL) | Conservative Q-iteration — DP with a penalty on OOD actions |
 
-كلما قال شخص ما "العمل القيمة المثلى" ، يعنى "نقطة DP ثابتة". عندما ترى `V*`أو`Q*`في ورقة، تخيل هذه الحلقة.
+كلما قال شخص ما "العمل القيمة المثلى" ، يعنى "نقطة DP ثابتة". عندما ترى $V^{\ast}$أو$Q^{\ast}$في ورقة، تخيل هذه الحلقة.
 
 ## أرسله
 
@@ -183,26 +185,26 @@ Refuse to run DP on state spaces > 10⁷. Refuse to claim convergence without a 
 
 ## التمارين
 
-1. **Easy.**إدارة التكرار القيمة على شبكة 4 × 4 العالم مع `γ ∈ {0.9, 0.99}`كم عدد المراقبين حتى`max |ΔV| < 1e-6`طباعة`V*`كشبكة 4 × 4.
-2. **Medium.**مقارنة التكرار السياسة مقابل التكرار القيم على الشبكة التجاري * ستوكاستيك * (احتمال التزلج `0.1`العد: المصفحات، ساعة الحائط، النهائي `V*(0,0)`أيّها يتقارب أسرع في التكرار؟
-3. **Hard.**إعداد تكرار سياسة معدلة: في خطوة التقييم، تشغيلها فقط `k`يُسحف بدلاً من التناغم`V*(0,0)`خطأ vs`k`لـ`k ∈ {1, 2, 5, 10, 50}`ماذا يخبرك المنحنى عن التداول بين التقييم والتحسين؟
+1. **Easy.**إدارة التكرار القيمة على شبكة 4 × 4 العالم مع $\gamma \in \lbrace 0.9, 0.99 \rbrace$كم عدد المراقبين حتى$\max \lvert \Delta V \rvert < 10^{-6}$طباعة$V^{\ast}$كشبكة 4 × 4.
+2. **Medium.**مقارنة التكرار السياسة مقابل التكرار القيم على الشبكة التجاري * ستوكاستيك * (احتمال التزلج `0.1`العد: المصفحات، ساعة الحائط، النهائي $V^{\ast}(0,0)$أيّها يتقارب أسرع في التكرار؟
+3. **Hard.**إعداد تكرار سياسة معدلة: في خطوة التقييم، تشغيلها فقط $k$يُسحف بدلاً من التناغم$V^{\ast}(0,0)$خطأ vs$k$لـ$k \in \lbrace 1, 2, 5, 10, 50 \rbrace$ماذا يخبرك المنحنى عن التداول بين التقييم والتحسين؟
 
 ## الشروط الرئيسية
 
 | Term | What people say | What it actually means |
 |------|-----------------|-----------------------|
-| Policy iteration | "DP algorithm" | Alternating evaluation (`V^π`) and improvement (greedy `π` w.r.t. `V^π`) until the policy stops changing. |
-| Value iteration | "Faster DP" | Bellman optimality backup applied in one sweep; converges to `V*` geometrically. |
-| Bellman operator | "The recursion" | `(T V)(s) = max_a Σ P (r + γ V(s'))`; a `γ`-contraction in sup-norm. |
-| Contraction | "Why DP converges" | Any operator `T` with `\|\|T x - T y\|\| ≤ γ \|\|x - y\|\|` has a unique fixed point. |
-| GPI | "Everything is DP" | Generalized Policy Iteration: any method driving `V` and `π` to mutual consistency. |
-| Synchronous update | "Jacobi-style" | Use old `V` throughout a sweep; cleanly analyzable but slower. |
-| In-place update | "Gauss-Seidel-style" | Use `V` as it's being updated; converges faster in practice. |
+| Policy iteration | "DP algorithm" | Alternating evaluation ($V^\pi$) and improvement (greedy $\pi$ w.r.t. $V^\pi$) until the policy stops changing. |
+| Value iteration | "Faster DP" | Bellman optimality backup applied in one sweep; converges to $V^{\ast}$ geometrically. |
+| Bellman operator | "The recursion" | $(T V)(s) = \max_a \sum P (r + \gamma V(s'))$; a $\gamma$-contraction in sup-norm. |
+| Contraction | "Why DP converges" | Any operator $T$ with $\lVert T x - T y \rVert \le \gamma \lVert x - y \rVert$ has a unique fixed point. |
+| GPI | "Everything is DP" | Generalized Policy Iteration: any method driving $V$ and $\pi$ to mutual consistency. |
+| Synchronous update | "Jacobi-style" | Use old $V$ throughout a sweep; cleanly analyzable but slower. |
+| In-place update | "Gauss-Seidel-style" | Use $V$ as it's being updated; converges faster in practice. |
 
 ## المزيد من القراءة
 
 - [Sutton & Barto (2018). Ch. 4 — Dynamic Programming](http://incompleteideas.net/book/RLbook2020.pdf) العرض القنوني للتكرار السياسي وتكرار القيمة.
-- [Bertsekas (2019). Reinforcement Learning and Optimal Control](http://www.athenasc.com/rlbook.html) التعامل الصارم مع حجج خريطة التقلص.
+- [Bertsekas (2019). Reinforcement Learning and Optimal Control](http://www.athenasc.com/rlbook_athena.html) التعامل الصارم مع حجج خريطة التقلص.
 - [Puterman (2005). Markov Decision Processes](https://onlinelibrary.wiley.com/doi/book/10.1002/9780470316887) تكرار السياسة المعدل وتحليل التقارب.
 - [Howard (1960). Dynamic Programming and Markov Processes](https://mitpress.mit.edu/9780262582300/dynamic-programming-and-markov-processes/)ورقة التكرار الأصلية للسياسة.
 - [Bertsekas & Tsitsiklis (1996). Neuro-Dynamic Programming](http://www.athenasc.com/ndpbook.html)الجسر من دبي إلى تقريبي دبي / عميق RL المستخدم في كل درس لاحقا.
