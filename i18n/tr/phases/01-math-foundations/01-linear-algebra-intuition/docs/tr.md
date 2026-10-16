@@ -32,7 +32,7 @@ Vectör sadece sayılar listesi. Ama bu sayılar bir anlam taşır. Uzaydaki koo
 |---|---|-------|
 | 3 | 2 | The vector points from origin (0,0) to (3, 2) on the plane |
 
-vektörün büyüklüğü karartı ((3^2 + 2^2) = karartı ((13) ve yukarı ve sağa doğru gösterir.
+vektörün büyüklüğü var .$\sqrt{3^2 + 2^2} = \sqrt{13}$Ve yukarı doğru ve sağ doğru gösterir.
 
 Yapay zeka'da vektörler her şeyi temsil eder:
 - Bir kelime → 768 sayının vektörü (eğlenme alanında "mavzu")
@@ -71,19 +71,20 @@ Yapay zeka'da, matrisler model:
 
 İki vektörün nokta ürünü, birbirlerine ne kadar benzer olduklarını gösterir.
 
-```
-a · b = a₁×b₁ + a₂×b₂ + ... + aₙ×bₙ
-
-Same direction:      a · b > 0  (similar)
-Perpendicular:       a · b = 0  (unrelated)
-Opposite direction:  a · b < 0  (dissimilar)
+```math
+\begin{aligned}
+a \cdot b &= a_1 \times b_1 + a_2 \times b_2 + \cdots + a_n \times b_n \\[4pt]
+\text{Same direction:} \quad a \cdot b &> 0 \quad \text{(similar)} \\
+\text{Perpendicular:} \quad a \cdot b &= 0 \quad \text{(unrelated)} \\
+\text{Opposite direction:} \quad a \cdot b &< 0 \quad \text{(dissimilar)}
+\end{aligned}
 ```
 
 Arama motorları, tavsiye sistemleri ve RAG'lar bu şekilde çalışır. Yüksek nokta ürünleri olan vektörleri bulurlar.
 
 ### Düzsel Bağımsızlık
 
-Eğer v1, v2, v3 bağımsız ise, 3 boyutlu bir alanı kapsarlar. Eğer bir vektör diğerlerinin bir kombinasyonu ise, sadece bir düzlem kapsarlar.
+Eğer bir dizi içinde hiçbir vektör diğerlerinin bir kombinasyonu olarak yazılmasa vektörler doğrusal olarak bağımsızdır.$v_1, v_2, v_3$Eğer biri diğerlerinin kombinasyonu ise, sadece bir uçak kapsamında.
 
 Bu, AI için neden önemlidir: Özellik matrisinizin doğrusal bağımsız sütunları olması gerekir. İki özellik mükemmel bir şekilde ilişkili (linear olarak bağımlı) ise, model onların etkilerini ayırt edemez. Bu, gerileme sırasında çok doğrusallığa neden olur - ağırlık matrisi istikrarsız hale gelir ve küçük giriş değişiklikleri vahşi çıkış dalgalanmaları üretir.
 
@@ -95,7 +96,7 @@ v2 = [0, 1, 0]
 v3 = [2, 1, 0]   # v3 = 2*v1 + v2
 ```
 
-v1 ve v2 bağımsızdır. Ne bir skalar katı ne de diğerinin kombinasyonu. ama v3 = 2*v1 + v2, bu yüzden {v1, v2, v3} bağımlı bir set. Bu üç vektör hepsi xy düzleminde.
+$v_1$ve $v_2$Bu iki sistem bağımsızdır.$v_3 = 2 v_1 + v_2$- Evet .$\lbrace v_1, v_2, v_3 \rbrace$Bu üç vektör xy düzleminde yer alır. Nasıl birleştirirseniz birleştirirseniz, [0, 0, 1]'e ulaşamazsınız.
 
 Veriler kümesinde: eğer feature_3 = 2*feature_1 + feature_2, ekleyerek feature_3 modelde sıfır yeni bilgi verir. Daha da kötüsü, normal denklemleri tek başına yapar - ağırlıklar için benzersiz bir çözüm yoktur.
 
@@ -105,15 +106,15 @@ Bir temel, tüm alanı kaplayan asgari bir dizi doğrusal bağımsız vektördü
 
 3D alanı için standart temel {1,0,0], [0,1,0], [0,0,1]}. Ancak 3D'deki herhangi üç bağımsız vektör geçerli bir temel oluşturur.
 
-Bir matrisin rütbesi = doğrusal bağımsız sütun sayısı = doğrusal bağımsız satır sayısı.
+Bir matrisin sırası = doğrusal bağımsız sütun sayısı = doğrusal bağımsız satır sayısı.$\text{rank} < \min(\text{rows}, \text{cols})$, matris sıra eksikliği.
 - Sistemde sonsuz sayıda çözüm vardır (veya hiç yoktur)
 - Değişiklik sırasında bilgi kaybolur.
 - Matris tersine çevirilemez
 
 | Situation | Rank | What it means for ML |
 |-----------|------|---------------------|
-| Full rank (rank = min(m, n)) | Maximum possible | Unique least-squares solution exists. Model is well-conditioned. |
-| Rank deficient (rank < min(m, n)) | Below maximum | Features are redundant. Infinitely many weight solutions. Regularization needed. |
+| Full rank $(\text{rank} = \min(m, n))$ | Maximum possible | Unique least-squares solution exists. Model is well-conditioned. |
+| Rank deficient $(\text{rank} < \min(m, n))$ | Below maximum | Features are redundant. Infinitely many weight solutions. Regularization needed. |
 | Rank 1 | 1 | Every column is a scaled copy of one vector. All data lies on a line. |
 | Near rank-deficient (small singular values) | Numerically low | Matrix is ill-conditioned. Tiny input noise causes large output changes. Use SVD truncation or ridge regression. |
 
@@ -121,11 +122,11 @@ Bir matrisin rütbesi = doğrusal bağımsız sütun sayısı = doğrusal bağı
 
 Proje vectörü **a**vektörüne**b****a****b**- ...
 
-```
-proj_b(a) = (a dot b / b dot b) * b
+```math
+\mathop{\mathrm{proj}}_b(a) = \frac{a \cdot b}{b \cdot b} \, b
 ```
 
-Geri kalan (a - proj_b(a)) b'ye diktir. Bu ortogonal parçalanma en az karelik yerleşimlerin temelidir.
+Geri kalan $(a - \mathop{\mathrm{proj}}_b(a))$ ile diktir$b$Bu ortogonal parçalanma en az karelik yerleşimlerin temelini oluşturur.
 
 Projection her yerde ML'de:
 - Düzsel gerileme gözlemlerden sütun alanına olan mesafeyi en aza indirir.
@@ -143,9 +144,9 @@ graph LR
     end
 ```
 
-**Example:**A = [3, 4], b = [1, 0]
+**Example:** $a = [3, 4]$- Evet .$b = [1, 0]$
 
-proj_b(a) = (3*1 + 4*0) / (1*1 + 0*0) * [1, 0] = 3 * [1, 0] = [3, 0]
+$\mathop{\mathrm{proj}}_b(a) = (3 \cdot 1 + 4 \cdot 0) / (1 \cdot 1 + 0 \cdot 0) \cdot [1, 0] = 3 \cdot [1, 0] = [3, 0]$
 
 Y bileşenini düşüren projeksiyon, en basit biçimindeki boyutların azalmasıdır.
 
@@ -447,6 +448,20 @@ LoRA özel bir değinime layık. Ağır dil modellerini düşük sıralama matri
 4. Gram-Schmidt çıkışının gerçekten ortonom olduğunu kontrol edin: Her çiftin 0 nokta ürünü ve her vektörün 1 büyüklüğü olduğunu kontrol edin
 5. 2 sıralı 3x3 bir matris oluşturun. `rank()`Sonra sütunların hangi geometrik nesneyi kapsadığını açıklayın.
 6. [1, 2, 3] vektörünü [1, 1, 1] üzerine projekt edin.
+
+### İpuçlar
+
+**Exercise 1.**Başlayın .`cosine_similarity`, değerini -1 ile 1 arasında tut, sonra ark cosinus al ve radyanları dereceye çevir.`Vector([1, 0])`ve `Vector([0, 1])`90 ver ve kendi başına bir vektör 0 verir.
+
+**Exercise 2.**İki ölçek faktörünü 2x2 matrisinin diyagonalına koy ve diğer iki hücreye 0 koy. [1, 1] için sonuç [2, 3] olmalıdır.
+
+**Exercise 3.**5 vektörden her çift için (iki çift) kozin benzerliğini hesaplayın ve en büyük değerini tutun.
+
+**Exercise 4.**Kullanım`gram_schmidt`Üç bağımsız vektör üzerinde hesaplayın.`dot`her çift için ve `magnitude`Her vektör için.`1e-9`, çünkü yüzen nokta tam sıfır vermez.
+
+**Exercise 5.**Üçüncü satır veya sütun ilk iki sayının toplamını yapın, böylece bir yön tekrarlanır. `rank()`2'yi geri göndermeli ve sütunlar bir düzlemden bir uçuruma geçmelidir.
+
+**Exercise 6.**Ölçüyü hesapla $\frac{a \cdot b}{b \cdot b}$ve kat kat .$b$Ya da çağırabilirsin.`project_onto`Geri kalanı kontrol et .$a$- proje, [1, 1, 1] ile 0'lu bir nokta ürünü vardır.
 
 ## Anahtar Terimler
 

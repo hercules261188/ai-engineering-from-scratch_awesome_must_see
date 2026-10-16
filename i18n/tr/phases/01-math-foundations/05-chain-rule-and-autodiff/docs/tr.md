@@ -28,29 +28,31 @@ PyTorch, TensorFlow ve JAX'in işleyişleri bu şekilde.
 
 ### Zincir Kuralı
 
-- Eğer`y = f(g(x))`, derivatif `y``x`Bu:
+- Eğer$y = f(g(x))$, derivatif $y$$x$Bu:
 
-```
-dy/dx = dy/dg * dg/dx = f'(g(x)) * g'(x)
+```math
+\frac{dy}{dx} = \frac{dy}{dg} \cdot \frac{dg}{dx} = f'(g(x)) \cdot g'(x)
 ```
 
 Zincir boyunca türevleri çarpın. Her bağlantı yerel türevini ekler.
 
-Örnek: `y = sin(x^2)`
+Örnek: $y = \sin(x^2)$
 
-```
-g(x) = x^2       g'(x) = 2x
-f(g) = sin(g)     f'(g) = cos(g)
-
-dy/dx = cos(x^2) * 2x
+```math
+\begin{aligned}
+g(x) &= x^2 \qquad & g'(x) &= 2x \\
+f(g) &= \sin(g) \qquad & f'(g) &= \cos(g) \\[4pt]
+\frac{dy}{dx} &= \cos(x^2) \cdot 2x
+\end{aligned}
 ```
 
 Daha derin kompozisyonlar için zincir uzanır:
 
-```
-y = f(g(h(x)))
-
-dy/dx = f'(g(h(x))) * g'(h(x)) * h'(x)
+```math
+\begin{aligned}
+y &= f(g(h(x))) \\[4pt]
+\frac{dy}{dx} &= f'(g(h(x))) \cdot g'(h(x)) \cdot h'(x)
+\end{aligned}
 ```
 
 Bir sinir ağının her katmanı bu zincirdeki bir bağlantıdır.
@@ -88,7 +90,7 @@ Geriye geçiş, her düğümde zincir kuralını uyguluyor ve çıkıştan giri�
 
 Bir grafik aracılığıyla zincir kuralını uygulamanın iki yolu vardır.
 
-**Forward mode**Girişlerdeki işlemleri başlatır ve türevleri ileriye doğru itirir.`dx/dx = 1`Bu, çok az giriş ve çok çıkış olduğunda iyi olur.
+**Forward mode**Girişlerdeki işlemleri başlatır ve türevleri ileriye doğru itirir.$dx/dx = 1$Bu, çok az giriş ve çok çıkış olduğunda iyi olur.
 
 ```
 Forward mode: seed dx/dx = 1, propagate forward
@@ -98,7 +100,7 @@ Forward mode: seed dx/dx = 1, propagate forward
   y = sin(a)  (dy/dx = cos(a) * da/dx = cos(4) * 4 = -2.615)
 ```
 
-**Reverse mode**çıkıştan başlayıp, eğrilikleri geriye çekir.`dy/dy = 1`Bu, çok fazla giriş ve çok az çıkış olduğunda iyi olur.
+**Reverse mode**çıkıştan başlayıp, eğrilikleri geriye çekir.$dy/dy = 1$Bu, çok fazla giriş ve çok az çıkış olduğunda iyi olur.
 
 ```
 Reverse mode: seed dy/dy = 1, propagate backward
@@ -112,12 +114,12 @@ Nöral ağlar milyonlarca giriş (koşul) ve bir çıkış (kayıp) vardır. Ter
 
 | Mode | Seed | Direction | Best when |
 |------|------|-----------|-----------|
-| Forward | `dx_i/dx_i = 1` | Input to output | Few inputs, many outputs |
-| Reverse | `dy/dy = 1` | Output to input | Many inputs, few outputs (neural nets) |
+| Forward | $dx_i/dx_i = 1$ | Input to output | Few inputs, many outputs |
+| Reverse | $dy/dy = 1$ | Output to input | Many inputs, few outputs (neural nets) |
 
 ### Önceki Mod için Çift Sayılar
 
-Önceki mod ikili sayı ile zarif bir şekilde uygulanabilir.`a + b*epsilon`nerede`epsilon^2 = 0`- Evet .
+Önceki mod ikili sayı ile zarif bir şekilde uygulanabilir.$a + b\epsilon$nerede$\epsilon^2 = 0$- Evet .
 
 ```
 Dual number: (value, derivative)
@@ -236,7 +238,7 @@ Her işlem, yerel gradientleri hesaplayıp akıntıdaki gradientle çarpmayı bi
             v._backward()
 ```
 
-Topolojik sıralama, her düğümün, çocuklarına yayılmadan önce tamamen hesaplanmasını sağlar.
+Topolojik sınıflandırma, her düğümün gradiyenti, çocuklarına yayılmadan önce tamamen hesaplanır.$dy/dy = 1$)
 
 ### Dördüncü adım: Tam bir motor için daha fazla operasyon
 
@@ -300,11 +302,11 @@ Temel değer sınıfı ekleme, çarpma ve relü ile ilgilenir. Gerçek bir otogr
 | Operation | Backward rule | Used in |
 |-----------|--------------|---------|
 | `__sub__` | Reuses add + neg | Loss computation (pred - target) |
-| `__pow__` | n * x^(n-1) | Polynomial activations, MSE (error^2) |
+| `__pow__` | $n \cdot x^{n-1}$ | Polynomial activations, MSE ($\text{error}^2$) |
 | `__truediv__` | Reuses mul + pow(-1) | Normalization, learning rate scaling |
-| `exp` | exp(x) * upstream | Softmax, log-likelihood |
-| `log` | (1/x) * upstream | Cross-entropy loss, log probabilities |
-| `tanh` | (1 - tanh^2) * upstream | Classic activation function |
+| `exp` | $\exp(x) \cdot \text{upstream}$ | Softmax, log-likelihood |
+| `log` | $(1/x) \cdot \text{upstream}$ | Cross-entropy loss, log probabilities |
+| `tanh` | $(1 - \tanh^2) \cdot \text{upstream}$ | Classic activation function |
 
 Akıllı tarafı:`__sub__`ve `__truediv__`Bu işlemler, zincir kuralının altta yatan ekleme/mul/pow işlemleri ile oluşturulduğu için ücretsiz olarak doğru gradientler elde eder.
 
@@ -489,13 +491,23 @@ Burada oluşturulan Değer sınıfı 3. aşamada sinir ağı eğitim döngüsün
 
 ## Egzersizler
 
-1. Ekle`__pow__`Değer sınıfına gönderin böylece hesaplayabilirsiniz `x ** n`- Bunu kontrol et .`d/dx(x^3)`- ...`x=2`eşit `12.0`- Evet .
+1. Ekle`__pow__`Değer sınıfına gönderin böylece hesaplayabilirsiniz `x ** n`- Bunu kontrol et .$\frac{d}{dx}(x^3)$- ...$x=2$eşit `12.0`- Evet .
 
-2. Ekle`tanh`- Bu bir aktivasyon fonksiyonu.`tanh'(0) = 1`ve `tanh'(2) = 0.0707`(Yaklaşık).
+2. Ekle`tanh`- Bu bir aktivasyon fonksiyonu.$\tanh'(0) = 1$ve $\tanh'(2) = 0.0707$(Yaklaşık).
 
 3. Tek bir nöron için hesaplama grafikleri oluştur: `y = relu(w1*x1 + w2*x2 + b)`Beş gradientini hesaplayın ve PyTorch'a karşı doğrulayın.
 
 4. Önceki modda ikili numaralar kullanarak otomatik olarak kullanın.`Dual`sınıflandırıp, ters mod motorunuzla aynı türevleri verdiyse doğrulayın.
+
+### İpuçlar
+
+**Exercise 1.** `Value`zaten tanımlar `__pow__`- Oku .`_backward`ve uygulanmasını onaylayın.$n x^{n-1}$- Gelen bir eğrime doğru.`x = Value(2.0)`- Evet .`y = x ** 3`- Evet .`y.backward()`- ...`x.grad`12.0 olmalı.
+
+**Exercise 2.**Kullanım$\tanh'(x) = 1 - \tanh(x)^2$İçeride`_backward`Kendi sınırlı farkına karşı kontrol et .$\frac{\tanh(x + h) - \tanh(x - h)}{2h}$$x = 0$ve $x = 2$- Evet .
+
+**Exercise 3.**Yapım`w1*x1 + w2*x2 + b`-`Value`nesneler, uygulanır `relu`, ve aramak`backward`PyTorch ile karşılaştırmadan önce, girişlerin `relu` için gradient olumlu`w1`eşit `x1`Eğer negatif ise, tüm beş gradient de 0'dur.
+
+**Exercise 4.**Her birinde bir değer ve bir türev saklayın `Dual`, ve ürün kuralını kullan $(a, a')(b, b') = (ab, a'b + ab')$Girişi 1 türevle tohumla karşılaştırın ve sonucu `x.grad`Aynı işlevi için ters mod motorundan.
 
 ## Anahtar Terimler
 
@@ -506,13 +518,13 @@ Burada oluşturulan Değer sınıfı 3. aşamada sinir ağı eğitim döngüsün
 | Forward mode | "Push derivatives forward" | Autodiff that propagates derivatives from inputs to outputs. One pass per input variable. |
 | Reverse mode | "Backpropagation" | Autodiff that propagates gradients from outputs to inputs. One pass per output variable. |
 | Autograd | "Automatic gradients" | A system that records operations on values, builds a graph, and computes exact gradients via the chain rule |
-| Dual numbers | "Value plus derivative" | Numbers of the form a + b*epsilon (epsilon^2 = 0) that carry derivative information through arithmetic |
+| Dual numbers | "Value plus derivative" | Numbers of the form $a + b\epsilon$ ($\epsilon^2 = 0$) that carry derivative information through arithmetic |
 | Topological sort | "Dependency order" | Ordering graph nodes so every node comes after all its dependencies. Required for correct gradient propagation. |
 | Gradient accumulation | "Add, don't replace" | When a value feeds into multiple operations, its gradient is the sum of all incoming gradient contributions |
 | Dynamic graph | "Define by run" | A computation graph rebuilt on every forward pass, allowing Python control flow inside models (PyTorch style) |
 | Gradient checking | "Numerical verification" | Comparing autodiff gradients against numerical finite-difference gradients to verify correctness. Essential for debugging. |
 | MLP | "Multi-layer perceptron" | A neural network with one or more hidden layers of neurons. Each neuron computes a weighted sum plus bias, then applies an activation function. |
-| Neuron | "Weighted sum + activation" | The basic unit: output = activation(w1*x1 + w2*x2 + ... + b). The weights and bias are learnable parameters. |
+| Neuron | "Weighted sum + activation" | The basic unit: $\text{output} = \text{activation}(w_1 x_1 + w_2 x_2 + \cdots + b)$. The weights and bias are learnable parameters. |
 
 ## Daha Fazla Okumak
 

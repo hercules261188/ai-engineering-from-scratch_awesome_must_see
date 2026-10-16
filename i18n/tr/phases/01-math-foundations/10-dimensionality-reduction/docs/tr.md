@@ -38,9 +38,9 @@ Dimension    Avg distance ratio (max/min between random points)
 1000         ~1.02
 ```
 
-**Volume concentrates in corners.**D boyutlu bir birim hiper küpünün 2'lik köşeleri vardır. 100 boyutda, neredeyse tüm hacmin merkezin uzak köşelerinde olması.
+**Volume concentrates in corners.**Bir birim hiper küp içinde $d$boyutları $2^d$100 boyutda neredeyse tüm ses, merkezden uzak köşelerde.
 
-**You need exponentially more data.**Bir uzaydaki örneklerin aynı yoğunluğunu korumak için 2 boyuttan 20 boyut'a geçmek 10^18 kat daha fazla veriye ihtiyaç duyar.
+**You need exponentially more data.**Bir uzaydaki örneklerin aynı yoğunluğunu korumak için 2D'den 20D'ye geçmek gerekir.$10^{18}$Daha fazla verinin kat katı olması, daha fazla verinin katı olması.
 
 ### PCA: önemli yönleri bul
 
@@ -88,7 +88,7 @@ Toplam açıklanan varyansa 0,95'e ulaştığında, birçok bileşenin bilgiyi 9
 
 1. **Threshold.**Farklılığın %90-95'ini açıklayacak kadar bileşen tut.
 2. **Elbow method.**Plan, bileşenler arasındaki değişimi açıkladı.
-3. **Downstream performance.**PCA'yı önceden işleme olarak kullanın. k'yi tarayın ve modelinizin doğruluğunu ölçün.
+3. **Downstream performance.**PCA'yı önceden işleme olarak kullanın.$k$Ve modelinizin doğruluğunu ölçmek için en iyi.$k$Tam doğruluk platoları her yerde.
 
 ### t-SNE: mahalleleri korumak
 
@@ -101,7 +101,7 @@ T-SNE'nin temel özellikleri:
 - Farklı koşular farklı düzeni oluşturur.
 - Kafası karışıklık parametri, kaç komşunu dikkate almayı belirler (tipik aralığı: 5-50).
 - Çıktıdaki kümeler arasındaki mesafeler anlamlı değildir. Sadece kümelerin kendileri anlamlıdır.
-- Büyük veri kümeleri üzerinde yavaş.
+- Büyük veri kümeleri üzerinde yavaş. $O(n^2)$- Default olarak.
 
 ### UMAP: Daha hızlı ve daha iyi küresel yapı
 
@@ -135,27 +135,27 @@ Standart PCA, doğrusal alt alanlar bulur. Koordinat sisteminizi döndürür ve 
 Kernel PCA, bir çekirdek fonksiyonu tarafından tetiklenen yüksek boyutlu bir özellik alanında, bu alanın koordinatlarını açıkça hesaplamadan PCA'yı uyguluyor.
 
 Algoritm:
-1. K_ij = k(x_i, x_j) olduğu çekirdek matrisini hesaplayın
+1. Yükleme matrisini hesaplayın $K$nerede$K_{ij} = k(x_i, x_j)$
 2. Yükleme alanında çekirdek matrisini merkeze edin
 3. Eigendecompose merkezli çekirdek matrisi
-4. Üst öz vektörler (1/sqrt(öz değerleri ile ölçebilir) projeksiyonlardır
+4. Üst öz vektörleri (skalada $1/\sqrt{\text{eigenvalue}}$) projeler
 
 Genel çekirdek fonksiyonları:
 
 | Kernel | Formula | Good for |
 |--------|---------|----------|
-| RBF (Gaussian) | exp(-gamma * \|\|x - y\|\|^2) | Most nonlinear data, smooth manifolds |
-| Polynomial | (x . y + c)^d | Polynomial relationships |
-| Sigmoid | tanh(alpha * x . y + c) | Neural network-like mappings |
+| RBF (Gaussian) | $\exp(-\gamma \lVert x - y \rVert^2)$ | Most nonlinear data, smooth manifolds |
+| Polynomial | $(x \cdot y + c)^d$ | Polynomial relationships |
+| Sigmoid | $\tanh(\alpha x \cdot y + c)$ | Neural network-like mappings |
 
 Kerneli PCA ile standart PCA ne zaman kullanılır:
 
 | Criterion | Standard PCA | Kernel PCA |
 |-----------|-------------|------------|
 | Data structure | Linear subspace | Nonlinear manifold |
-| Speed | O(min(n^2 d, d^2 n)) | O(n^2 d + n^3) |
+| Speed | $O(\min(n^2 d, d^2 n))$ | $O(n^2 d + n^3)$ |
 | Interpretability | Components are linear combinations of features | Components lack direct feature interpretation |
-| Scalability | Works on millions of samples | Kernel matrix is n x n, memory-limited |
+| Scalability | Works on millions of samples | Kernel matrix is $n \times n$, memory-limited |
 | Reconstruction | Direct inverse transform | Requires pre-image approximation |
 
 Klasik örnek: 2 boyutlu konsentrik döngüler. Birbiri diğerinin içinde iki nokta halka. Standart PCA her ikisini de aynı çizgiye doğru projekt eder. sınıflandırma için işe yaramaz. RBF çekirdeği ile çekirdeği PCA, iç döngüyü ve dış döngüyü farklı bölgelerde haritası yapar ve onları doğrusal olarak ayırır.
@@ -165,22 +165,24 @@ Klasik örnek: 2 boyutlu konsentrik döngüler. Birbiri diğerinin içinde iki n
 Boyutların ne kadar azalıyor? 784 boyutları 50'e sıkıştırdın.
 
 Yeniden yapılandırma hatasını ölçmek:
-1. Proje verileri k boyutlara: X_reduced = X @ W_k
-2. Yeniden yapılandır: X_hat = X_reduced @ W_k^T
-3. Hesaplama MSE: ortalama
+1. Proje verileri$k$boyutları: $X_{\text{reduced}} = X W_k$
+2. Yeniden inşa:$\hat{X} = X_{\text{reduced}} W_k^T$
+3. Hesaplama MSE: $\text{mean}((X - \hat{X})^2)$
 
 PCA için, yeniden yapılama hatası açıklanan varyansa ile temiz bir ilişkiye sahiptir:
 
-```
-Reconstruction error = sum of eigenvalues NOT included
-Total variance = sum of ALL eigenvalues
-Fraction lost = (sum of dropped eigenvalues) / (sum of all eigenvalues)
+```math
+\begin{aligned}
+\text{Reconstruction error} &= \text{sum of eigenvalues NOT included} \\
+\text{Total variance} &= \text{sum of ALL eigenvalues} \\
+\text{Fraction lost} &= \frac{\text{sum of dropped eigenvalues}}{\text{sum of all eigenvalues}}
+\end{aligned}
 ```
 
 Her bileşen için açıklanan varyansa oranı:
 
-```
-explained_ratio_k = eigenvalue_k / sum(all eigenvalues)
+```math
+\text{explained\_ratio}_k = \frac{\text{eigenvalue}_k}{\sum \text{all eigenvalues}}
 ```
 
 Toplam açıklanan parça sayısı ile ilgili çizim, size "ikkinci" eğri verir.
@@ -188,7 +190,7 @@ Toplam açıklanan parça sayısı ile ilgili çizim, size "ikkinci" eğri verir
 - Toplam değişkenlik eşiğini geçti (genellikle 0,90 veya 0,95)
 - Aşağıdaki görev performans platoları
 
-Yeniden inşaat hatası k seçmekten daha yararlıdır. Anomalyayı tespit etmek için kullanabilirsiniz: yüksek yeniden inşaat hatası olan örnekler öğrenilen alt alanına uymayan dış değerlerdir. Bu, üretim sistemlerinde PCA tabanlı anomaly tespitinin temelini oluşturur.
+Yeniden yapılandırma hatası seçilmekten daha yararlı $k$Anomalyayı tespit etmek için kullanabilirsiniz: yüksek yeniden yapılama hatası olan örnekler öğrenilen alt alanlara uymayan dış seviyelerdir.
 
 ```figure
 pca-axes
@@ -353,6 +355,14 @@ Bu ders şunları ortaya çıkarır:
 
 3. Sadece 5'i bilgilendirici olan 50 özellikten oluşan bir veri kümesi alın (bir tane `sklearn.datasets.make_classification`). PCA uygulayın ve açıklanan varyansa eğri verilerin aslında beş boyutlu olduğunu doğru bir şekilde belirlediğini kontrol edin.
 
+### İpuçlar
+
+**Exercise 1.**Oku `inverse_transform`- ... ...`PCA`sınıfı ve her bir bileşen sayısına uygun bir model.`reconstruction_error`10, 50 ve 200 bileşen için; hata bileşen sayısı arttıkça azalmalıdır.
+
+**Exercise 2.**Uygunluk`sklearn.manifold.TSNE`Aynı alt kümede üç kez, sadece değişen `perplexity`, ve aynı şeyi kullan `random_state`Düşük karmaşıklık birkaç komşuya bakıyor, bu yüzden küçük sıkı grupları bekleyin; yüksek karmaşıklık daha fazla komşuya bakıyor, bu yüzden daha büyük, daha düzgün grupları bekleyin.
+
+**Exercise 3.**Arama .`make_classification(n_features=50, n_informative=5, n_redundant=45)`, uygun`PCA`Bu nedenle, eğrilik 5 bileşende neredeyse 1.0'a ulaşır.`n_redundant=0`: diğer 45 özellik bağımsız gürültüdür ve eğri düzleşmez.
+
 ## Anahtar Terimler
 
 | Term | What people say | What it actually means |
@@ -360,8 +370,8 @@ Bu ders şunları ortaya çıkarır:
 | Curse of dimensionality | "Too many features" | Distances, volumes, and data density all behave counterintuitively as dimensions grow. Models need exponentially more data to compensate. |
 | PCA | "Reduce dimensions" | Rotate your coordinate system so the axes align with the directions of maximum variance, then drop the low-variance axes. |
 | Principal component | "An important direction" | An eigenvector of the covariance matrix. The direction in feature space along which the data varies most. |
-| Explained variance ratio | "How much info this component has" | The fraction of total variance captured by one principal component. Sum the top k ratios to see how much k components preserve. |
-| Covariance matrix | "How features correlate" | A symmetric matrix where entry (i,j) measures how feature i and feature j move together. Diagonal entries are individual variances. |
+| Explained variance ratio | "How much info this component has" | The fraction of total variance captured by one principal component. Sum the top $k$ ratios to see how much $k$ components preserve. |
+| Covariance matrix | "How features correlate" | A symmetric matrix where entry $(i,j)$ measures how feature $i$ and feature $j$ move together. Diagonal entries are individual variances. |
 | t-SNE | "That cluster plot" | A nonlinear method that maps high-dimensional data to 2D by preserving pairwise neighborhood probabilities. Good for visualization, not for preprocessing. |
 | UMAP | "Faster t-SNE" | A nonlinear method based on topological data analysis. Preserves both local and some global structure. Scales better than t-SNE. |
 | Perplexity | "A t-SNE knob" | Controls the effective number of neighbors each point considers. Low perplexity focuses on very local structure. High perplexity captures broader patterns. |

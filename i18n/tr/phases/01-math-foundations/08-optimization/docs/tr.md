@@ -38,8 +38,8 @@ minimize L(w) where:
 
 En basit optimizör. Her ağırlığa göre kaybın gradiyenti hesaplayın. Her ağırlığı gradiyentin karşı yönüne taşıyin.
 
-```
-w = w - lr * gradient
+```math
+w = w - \text{lr} \cdot \text{gradient}
 ```
 
 Tüm algoritma bu.
@@ -94,9 +94,11 @@ SGD ve mini-batch'taki gürültü bir hata değil.
 
 Vanilla gradient düşüşü sadece akım gradientini izler. Eğer gradient zigzagları (sık sık dar vadilerde) varsa, ilerleme yavaş olur. Momentum, geçmiş gradientleri bir hız terimi olarak biriktirerek bunu düzeltir.
 
-```
-v = beta * v + gradient
-w = w - lr * v
+```math
+\begin{aligned}
+v &= \beta \cdot v + \text{gradient} \\
+w &= w - \text{lr} \cdot v
+\end{aligned}
 ```
 
 Benzer bir örnek: bir top tepeden aşağı doğru yuvarlanır. Her çarpışmada durmaz ve yeniden başlatmaz.
@@ -124,17 +126,17 @@ Farklı ağırlıkların farklı öğrenme oranlarına ihtiyacı vardır. Nadire
 
 Adam (Adaptif Moment Tahmini) ağırlık başına iki şeyi takip ediyor:
 
-1. İlk an (m): gradientlerin (momantum gibi) akış ortalaması
-2. İkinci an (v): seksenlik derecelerin (gradyen büyüklüğü) devam eden ortalaması
+1. İlk an ($m$): gradientlerin geçerli ortalaması (eğlence gibi)
+2. İkinci an ($v$): sekmert gradientlerin geçerli ortalaması (gradyen büyüklüğü)
 
-```
-m = beta1 * m + (1 - beta1) * gradient
-v = beta2 * v + (1 - beta2) * gradient^2
-
-m_hat = m / (1 - beta1^t)    bias correction
-v_hat = v / (1 - beta2^t)    bias correction
-
-w = w - lr * m_hat / (sqrt(v_hat) + epsilon)
+```math
+\begin{aligned}
+m &= \beta_1 \cdot m + (1 - \beta_1) \cdot \text{gradient} \\
+v &= \beta_2 \cdot v + (1 - \beta_2) \cdot \text{gradient}^2 \\[4pt]
+\hat{m} &= m / (1 - \beta_1^t) \quad \text{bias correction} \\
+\hat{v} &= v / (1 - \beta_2^t) \quad \text{bias correction} \\[4pt]
+w &= w - \text{lr} \cdot \hat{m} / (\sqrt{\hat{v}} + \epsilon)
+\end{aligned}
 ```
 
 Bölüm `sqrt(v_hat)`Bu, temel anlayışdır. Büyük gradientli ağırlıklar büyük bir sayıyla bölünür (küçük etkili adım). Küçük gradientli ağırlıklar küçük bir sayıyla bölünür (büyük etkili adım). Her ağırlık kendi uyarlayıcı öğrenme oranına sahiptir.
@@ -149,14 +151,14 @@ Ortak programlar:
 
 | Schedule | Formula | Use case |
 |----------|---------|----------|
-| Step decay | lr = lr * factor every N epochs | Simple, manual control |
-| Exponential decay | lr = lr_0 * decay^t | Smooth reduction |
-| Cosine annealing | lr = lr_min + 0.5 * (lr_max - lr_min) * (1 + cos(pi * t / T)) | Transformers, modern training |
+| Step decay | $\text{lr} = \text{lr} \cdot \text{factor}$ every $N$ epochs | Simple, manual control |
+| Exponential decay | $\text{lr} = \text{lr}_0 \cdot \text{decay}^t$ | Smooth reduction |
+| Cosine annealing | $\text{lr} = \text{lr} _{\min} + 0.5 \cdot (\text{lr} _{\max} - \text{lr} _{\min}) \cdot (1 + \cos(\pi t / T))$ | Transformers, modern training |
 | Warmup + decay | Linear ramp up, then decay | Large models, prevents early instability |
 
 ### Konves vs. konves olmayan
 
-Bir eğri fonksiyonun en az bir tane olması gerekmektedir.`f(x) = x^2`-Konküks.
+Bir eğri fonksiyonun en az bir tane olması gerekmektedir.$f(x) = x^2$-Konküks.
 
 Nöral ağ kaybı fonksiyonları konveks değildir. Birçok yerel minimum, otlak noktaları ve düz bölgelere sahiptir.
 
@@ -205,8 +207,8 @@ gradient-descent
 
 Rosenbrock fonksiyonu klasik bir optimizasyon referansıdır. En azı (1, 1) bulmak kolay ama takip etmek zor olan dar bir eğri vadide bulunur.
 
-```
-f(x, y) = (1 - x)^2 + 100 * (y - x^2)^2
+```math
+f(x, y) = (1 - x)^2 + 100 \cdot (y - x^2)^2
 ```
 
 ```python
@@ -351,9 +353,19 @@ Burada inşa edilen optimizer sınıfları, nöral ağı sıfırdan eğittikten 
 
 2. **Momentum comparison.**Rosenbrock fonksiyonunda momentum değerleri ile SGD çalıştırın. Her adımda kayıpları takip edin. Hangi momentum değerinin en hızlı yakınlaşması? Hangi atışlar?
 
-3. **Saddle point escape.**Fonksiyonu tanımlayın `f(x, y) = x^2 - y^2`Vanilya GD, SGD ve Adam'ın hareketlerini karşılaştırın.
+3. **Saddle point escape.**Fonksiyonu tanımlayın $f(x, y) = x^2 - y^2$Vanilya GD, SGD ve Adam'ın hareketlerini karşılaştırın.
 
 4. **Implement learning rate decay.**GradientDescent sınıfına bir eksponensel çöküş programı ekleyin: `lr = lr_0 * 0.999^step`Rosenbrock fonksiyonunda çürümeden ve çürümeden bir yakınlık karşılaştırın.
+
+### İpuçlar
+
+**Exercise 1.**Öğrenme oranlarını aşın, bir `GradientDescent(lr=...)`Her biri için, ve onu `optimize`- Evet .`rosenbrock`ve `rosenbrock_gradient`- Ayrılığa düşen bir koşuk , kaybı arttırır veya dönüşür .`nan`En az $(1, 1)$Kayıp 0.
+
+**Exercise 2.**Yaratmak`SGDMomentum(momentum=m)`Her adımdan sonra kaybı kaydet.`find_convergence_step`Hızı karşılaştırmak ve aşırılık bulmak için yukarı ve aşağı giden kayıpları araştırmak.
+
+**Exercise 3.**Köklemeyi yaz $(2x, -2y)$ve üç optimizörü (0.01, 0.01) ' den çalıştırın.$y$Her 100 adımda: kaçan optimizer, kaçan optimizer.$\lvert y \rvert$büyür.
+
+**Exercise 4.**Depolama`lr_0`Ve bir adım sayıcı .`GradientDescent`, ve hesaplama .`lr = lr_0 * 0.999 ** step`İçeride .`step`. Öğrenme oranını adım 0 ve adım 1000'de basın;`lr_0`- Yaklaşık .$0.37 \times \text{lr}_0$- Evet .
 
 ## Anahtar Terimler
 
@@ -365,7 +377,7 @@ Burada inşa edilen optimizer sınıfları, nöral ağı sıfırdan eğittikten 
 | SGD | "Random sampling" | Stochastic gradient descent. Compute gradient on a random subset instead of the full dataset. Almost always means mini-batch SGD in practice. |
 | Mini-batch | "A chunk of data" | A small subset of training data (32-256 samples) used to estimate the gradient. Balances speed and gradient accuracy. |
 | Adam | "The default optimizer" | Adaptive Moment Estimation. Tracks per-weight running averages of gradients and squared gradients to give each weight its own learning rate. |
-| Bias correction | "Fix the cold start" | Adam's first and second moments are initialized to zero. Bias correction divides by (1 - beta^t) to compensate during early steps. |
+| Bias correction | "Fix the cold start" | Adam's first and second moments are initialized to zero. Bias correction divides by $(1 - \beta^t)$ to compensate during early steps. |
 | Learning rate schedule | "Change lr over time" | A function that adjusts the learning rate during training. Large steps early, small steps late. |
 | Convex function | "One valley" | A function where any local minimum is the global minimum. Gradient descent always finds it. Neural network losses are not convex. |
 | Saddle point | "Flat but not a minimum" | A point where the gradient is zero but it is a minimum in some directions and a maximum in others. Common in high dimensions. |

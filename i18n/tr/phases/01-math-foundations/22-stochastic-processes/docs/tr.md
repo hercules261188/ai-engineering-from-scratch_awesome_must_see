@@ -9,7 +9,7 @@
 
 ## Öğrenme Hedefleri
 
-- 1D ve 2D rastgele yürüyüşleri simüle edin ve yer değiştirme oranını doğrulayın
+- 1D ve 2D rastgele yürüyüşleri simüle edin ve $\sqrt{n}$Yer değiştirme oranı
 - Markov zinciri simülatörü oluşturun ve kendi kompozisyon yoluyla sabit dağılımını hesaplayın
 - Metropolis-Hastings MCMC ve Langevin dinamiklerini hedef dağıtımlardan örnek almak için uygula
 - Önceki difüzyon sürecini Brownian hareketi ile bağlayın ve ters süreçten veri nasıl üretildiğini açıklayın
@@ -38,9 +38,9 @@ Bunların hepsi dört temel fikir üzerine kuruluyor:
 
 0 pozisyonundan başlayın. Her adımda adil bir madeni para atın. Başlar: sağ (+1) hareket et. Kuyruklar: sola (-1) hareket et.
 
-N adımdan sonra pozisyonunuz n rastgele +/-1 değerlerinin toplamıdır. Beklenen pozisyon 0 (yolculuk tarafsızdır).
+Sonra .$n$Adımlar, pozisyonunuz toplamdır.$n$ rastgele$\pm 1$Bu değerler, beklenen konum 0'dur (yolculuk tarafsızdır).$\sqrt{n}$- Evet .
 
-Bu mantıklı değil. Yürüyüş adil - her iki yönde de sürüklenmez. Ama zamanla, başladığı yerden gittikçe daha da uzaklaşır. n adımdan sonra standart sapma n'dir.
+Bu mantıklı değil. Yürüyüş adil. Her iki yönde de hareket etmez. Ama zamanla, başlangıçtan daha da uzaklaşır.$n$adımlar $\sqrt{n}$- Evet .
 
 ```
 Step 0:  Position = 0
@@ -51,33 +51,33 @@ Step 100: Expected distance from origin ~ 10 (sqrt(100))
 Step 10000: Expected distance from origin ~ 100 (sqrt(10000))
 ```
 
-**In 2D**Bu yol, aynı olasılık ile yukarı, aşağı, sola veya sağa hareket eder.
+**In 2D**, yürüyüş yukarı, aşağı, sola veya sağa doğru aynı olasılıkla hareket eder.$\sqrt{n}$Skalalama, kökenden uzaklıkta geçer.
 
-**Why sqrt(n)?**Her adım eşit olasılıkla +1 veya -1'dir. N adımdan sonra, S_n = X_1 + X_2 + ... + X_n konumunda her X_i +/-1. Her adımın varyansi 1'dir ve adımlar bağımsızdır, bu nedenle Var(S_n) = n. Standart sapma = sqrt(n. Merkez sınır teoremi ile S_n / sqrt(n) standart normal bir dağılım ile birleşti.
+**Why $\sqrt{n}$?**Her adım aynı olasılıkla +1 veya -1'dir.$n$Adımlar, pozisyon $S_n = X_1 + X_2 + \cdots + X_n$her biri$X_i$- Evet .$\pm 1$. Her adımın farkı 1 ve adımlar bağımsızdır, bu yüzden $\mathop{\mathrm{Var}}(S_n) = n$. Standart sapma = $\sqrt{n}$Merkez sınır teoremi ile,$S_n / \sqrt{n}$standart normal bir dağılım ile birleşti.
 
-Bu sqrt(n) ölçekleme ML'de her yerde görünür. SGD gürültü ölçekleri 1/sqrt(batch_size olarak.
+Bu ...$\sqrt{n}$Skalalama ML'de her yerde görünür. SGD gürültü ölçekleri 1/sqrt(batch_size olarak yerleştirilmiştir.$\sqrt{d}$- Karek kök bağımsız rastgele eklemlerin imzası.
 
-**Connection to Brownian motion.**Adım boyutu 1/sqrt(n) ve n adımları birim zaman ile rastgele bir yürüyüş yapın. n sonsuzluğa giderken yürüyüş Brownian hareketi B(t) - B(t) normalde ortalama 0 ve varyansa t ile dağılmış olan bir sürekli zaman süreci olarak birleşti.
+**Connection to Brownian motion.**Adım boyutları ile rastgele yürüyüş yapın .$1/\sqrt{n}$ve $n$Zaman biriminde adımlar.$n$Sonsuzluğa giderken, yürüyüş Brownian hareketine doğru birleşti.$B(t)$-- sürekli bir süreçtir.$B(t)$Normalde ortalama 0 ve varyansa ile paylaşılan bir $t$- Evet .
 
 Brownian hareketi, difüzyonun matematiksel temelidir. Bir sıvıdaki parçacıkların rastgele titreşimini, hisse senet fiyatlarının dalgalanmasını ve - en önemlisi - difüzyon modellerinde gürültü sürecini modellemektedir.
 
-**Gambler's ruin.**0 ve N'de absorber engellerle, k pozisyonundan başlayan rastgele yürüyüşçü. 0'dan önce N'ye ulaşma olasılığı nedir?
+**Gambler's ruin.**Bir random yürüyüşcü pozisyonundan başlayarak .$k$, absorber engeller 0 ve $N$- Başarılı olma olasılığı nedir ?$N$- Doğru bir yürüyüş için:$P(\text{reach } N) = k/N$Bu şaşırtıcı derecede basit ve zarif. Martingale teorisi ile bağlantılıdır -- adil rastgele yürüyüş bir martingale (bütün beklenen gelecek değeri = mevcut değer).
 
 ### Markov Zincirleri
 
 Markov zinciri, sabit olasılıklara göre eyaletler arasında geçiş yapan bir sistemdir. Ana özellik: bir sonraki devlet sadece tarihte değil, mevcut durumda bağlıdır.
 
-```
-P(X_{t+1} = j | X_t = i, X_{t-1} = ...) = P(X_{t+1} = j | X_t = i)
-```
-
-Bu Markov özelliği. Tüm dinamikleri geçiş matrisi P ile tanımlayabilirsiniz:
-
-```
-P[i][j] = probability of going from state i to state j
+```math
+P(X_{t+1} = j \mid X_t = i, X_{t-1} = \ldots) = P(X_{t+1} = j \mid X_t = i)
 ```
 
-P'nin her satırı 1'e denk gelir (bir yere gitmelisin).
+Bu Markov özelliği. Tüm dinamikleri geçiş matrisi ile tarif edebilirsiniz.$P$- ...
+
+```math
+P[i][j] = \text{probability of going from state } i \text{ to state } j
+```
+
+Her satır $P$1'e kadar bir miktar (bir yere gitmelisin).
 
 **Example -- Weather:**
 
@@ -89,7 +89,7 @@ P = [[0.7, 0.1, 0.2],    (if sunny: 70% sunny, 10% rainy, 20% cloudy)
      [0.4, 0.2, 0.4]]    (if cloudy: 40% sunny, 20% rainy, 40% cloudy)
 ```
 
-Herhangi bir durumdan başlayın. Birçok geçişten sonra durumların dağılımı pi * P = pi olduğu sabit dağılım pi'ye yaklaşıyor. Bu, P'nin öz değerine sahip sol öz vektörüdür.
+Birçok geçişten sonra, devletlerin dağılımı sabit dağılımlara yaklaşıyor.$\pi$, nerede $\pi P = \pi$Bu sol öz vektörü.$P$1. öz değerli.
 
 Hava zinciri için, sabit dağılım [0.55, 0.18, 0.27] -- uzun vadede, başlangıç durumundan bağımsız olarak, zamanın %55'inde güneşli.
 
@@ -108,8 +108,8 @@ graph LR
 
 **Computing the stationary distribution.**İki yaklaşım vardır:
 
-1. **Power method**Bu da bir dizi farklılıktan sonra, bir dizi farklılıktan sonra, birbiriyle bir araya gelir.
-2. **Eigenvalue method**: P'nin sol öz vektörünü öz değeri 1 ile bul. Bu, P^T'nin öz vektörünü öz değeri 1 ile bulur.
+1. **Power method**: herhangi bir başlangıç dağıtımını çarpı $P$Yeterli tekrarlardan sonra, birbiriyle yaklaşıyor.
+2. **Eigenvalue method**: sol öz vektörü bul $P$Bu öz vektörü $P^T$1. öz değerli.
 
 Her iki yaklaşım da zincirin konverjense koşullarını karşılamasını gerektirir.
 
@@ -119,63 +119,63 @@ Her iki yaklaşım da zincirin konverjense koşullarını karşılamasını gere
 
 ML'de karşılaştığınız zincirlerin çoğu her iki şartı da karşılar.
 
-**Absorbing states.**Bir durum, bir kere girdiğinizde asla ayrılmıyorsanız, emiliyor (P[i][i] = 1). Markov zincirlerini emleme terminal durumlarla modellemektedir. Sonlanan bir oyun, sarsılan bir müşteri, metin sonu tokenine çarpan bir token dizisi.
+**Absorbing states.**Bir devlet içine girdiğin zaman asla çıkmazsan, onu içine alıyorsun.$P[i][i] = 1$Markov zincirlerini terminal durumlarla modellemenin içine alıyor. Sonlanan bir oyun, çırpınan bir müşteri, metin sonundaki bir token'e çarpan bir token dizisi.
 
-**Mixing time.**Zincir sabit dağılımına "yaklaşan" kaç adım var? Formal olarak, sabitliğin toplam değişim mesafesine kadar adım sayısı bir sınırın altında düşer. Hızlı karıştırma = birkaç adım gereklidir. P'nin spektral boşluğu (1 eksi en büyük özdeğer) karıştırma süresini kontrol eder. Büyük boşluk = daha hızlı karıştırma.
+**Mixing time.**Düzgün dağılım zincirinin "yaklaşması" için kaç adım var? Formal olarak, düzgünlüğün toplam değişim mesafesine kadar adım sayısı bir eşiğin altında düşer.$P$(1 eksi ikinci en büyük öz değeri) karıştırma süresini kontrol eder.
 
 ### Dil Modelleri ile Bağlantı
 
 Bir dil modelinde simge üretimi yaklaşık olarak Markov işlemidir. Şu anki bağlamı göz önüne alarak, model bir sonraki simge üzerinde bir dağılım çıkarır.
 
-```
-P(token_i) = exp(logit_i / temperature) / sum(exp(logit_j / temperature))
+```math
+P(\text{token}_i) = \frac{\exp(\text{logit}_i / \text{temperature})}{\sum_j \exp(\text{logit}_j / \text{temperature})}
 ```
 
 - Sıcaklık = 1,0: standart dağılım
 - Temperatür < 1,0: keskin (öntemsel)
 - Temperatür > 1,0: daha düz (daha rastgele)
-- Temperatür -> 0: argmax (açık)
+-               $\to 0$: argmax (açık)
 
-Top-k örnekleme, en yüksek olasılıklı k simgelere kısaltır. Top-p (nukleus) örnekleme, toplama olasılığı p'yi aşan en küçük simgelere kısaltır. Her ikisi de Markov geçiş olasılığını değiştirir.
+Üst-k örnekleme kesikleri $k$En yüksek olasılıklı tokenler. Top-p (nukleus) örnekleme, toplu olasılıktan daha büyük olan en küçük token kümesine kısaltılır $p$Her ikisi de Markov geçiş olasılığını değiştirir.
 
 ### Brownian Hareketi
 
-Rastgele yürüyüşün sürekli zaman sınırı. B(t) pozisyonunun üç özelliği vardır:
-1. B(0) = 0
-2. B(t) - B(s) normalde ortalama 0 ve varians t -s ile (t > s için) dağılır
+- Rastgele yürüyüşün sürekli zaman sınırı.$B(t)$üç özelliklere sahiptir:
+1. $B(0) = 0$
+2. $B(t) - B(s)$Normalde ortalama 0 ve varyansa ile paylaşılan bir $t - s$(çünkü)$t > s$)
 3. Dönüşmeyen aralıklarda artışlar bağımsızdır.
 
 Brownian hareketi sürekli ama hiçbir yerde ayırt edilemez. Her ölçekte titreşiyor. Yolu düzlemde fraktal boyut 2'e sahiptir.
 
 Ayrı simülasyonda Brownian hareketi ile yaklaşır:
 
-```
-B(t + dt) = B(t) + sqrt(dt) * z,    where z ~ N(0, 1)
+```math
+B(t + dt) = B(t) + \sqrt{dt} \, z, \quad \text{where } z \sim \mathcal{N}(0, 1)
 ```
 
-Sqrt(dt) ölçeklenmesi önemlidir. Bu rastgele yürüyüşlere uygulanan merkezi sınır teoreminden gelir.
+- Evet .$\sqrt{dt}$Bu, rastgele yürüyüşlere uygulanan merkezi sınır teoreminden geliyor.
 
 ### Langevin Dinamikleri
 
-Langevin dinamikleri, U'nun bir enerji fonksiyonu, T'nin ise sıcaklık olduğu exp(-U(x) / T'ye nispeten olasılık dağılımını bulur.
+Langevin dinamikleri olasılıkla dağılımın $\exp(-U(x)/T)$, nerede $U$enerji fonksiyonu ve $T$sıcaklık.
 
-```
-x_{t+1} = x_t - dt * gradient(U(x_t)) + sqrt(2 * T * dt) * z_t
+```math
+x_{t+1} = x_t - dt \, \nabla U(x_t) + \sqrt{2 T \, dt} \, z_t
 ```
 
 Parçacık üzerinde iki güç etkilidir:
-1. **Gradient force**(-dt * gradient(U)): düşük enerjiye doğru (gredyen düşüşü gibi) itme
-2. **Random force**(sqrt(2*T*dt) * z): rastgele yönlerde itmektedir (kaşlama)
+1. **Gradient force**($-dt \cdot \nabla U$): düşük enerjiye doğru (gredyen düşüşü gibi) itmektedir
+2. **Random force**($\sqrt{2T dt} \cdot z$): rastgele yönlerde itme (kaşlama)
 
-Bu, yüksek sıcaklıkta neredeyse rastgele bir yürüyüştür. Doğru sıcaklıkta parçacık enerji manzarasını keşfeder ve düşük enerji bölgelerinde daha fazla zaman geçirir.
+        $T = 0$Bu, yüksek sıcaklıklarda neredeyse rastgele bir yürüyüştür. Doğru sıcaklıkta, parçacık enerji manzarasını keşfeder ve düşük enerji bölgelerinde daha fazla zaman geçirir.
 
 **Connection to diffusion models.**Bir difüzyon modelinin ileriye doğru süreci:
 
-```
-x_t = sqrt(alpha_t) * x_{t-1} + sqrt(1 - alpha_t) * noise
+```math
+x_t = \sqrt{\alpha_t} \, x_{t-1} + \sqrt{1 - \alpha_t} \cdot \text{noise}
 ```
 
-Bu, Markov zinciri, veriyi gürültü ile yavaş yavaş karıştırır.
+Bu Markov zinciri, veriyi gürültü ile yavaş yavaş karıştırıyor.$x_T$saf Gaussian gürültüsü.
 
 Geri dönüş süreci - gürültüden veriye dönüş - aynı zamanda Markov zinciri, ama geçiş olasılığı bir nöral ağ tarafından öğrenilmiştir. Ağ her adımda eklenen gürültüyü tahmin etmeyi öğrenir, sonra da onu çıkarır.
 
@@ -195,27 +195,27 @@ graph LR
 
 ### MCMC: Markov Chain Monte Carlo
 
-Bazen bir dağılımdan örnek almak gerekir p ((x) değerlendirebilirsiniz (bir sabit kadar) ama doğrudan örnek alamazsınız. Bayesian poziterleri klasik örnekler -- olasılığı önceden çarpıyor bilirsiniz, ama normalleşen sabit çözülebilir.
+Bazen bir dağıtımdan örnek almak gerekir.$p(x)$Bayesian pozteriörleri klasik örnekler -- olasılığı önceden çarpıyor, ama normalleştirme sabitleri çözülemez.
 
-**Metropolis-Hastings**sabit dağılımının p ((x) olduğu Markov zinciri oluşturur:
+**Metropolis-Hastings**Markov zinciri inşa ederken sabit dağılımları $p(x)$- ...
 
-1. Bir pozisyondan başla x
-2. Teklif dağıtımından yeni bir pozisyon x' önerin Q(x'
-3. Hesaplama kabul oranı: a(x') * Q(x (x) = (x) = (x) * (x) * (x) = (x)
-4. - 1'nin olasılıkları ile x'yi kabul edin.
+1. Bir pozisyondan başla.$x$
+2. Yeni bir pozisyon önerin .$x'$Teklif dağıtımından$Q(x' \mid x)$
+3. Hesaplama kabul oranı: $a = p(x') Q(x \mid x') / (p(x) Q(x' \mid x))$
+4. Kabul et .$x'$- Büyük ihtimalle .$\min(1, a)$Yoksa kalın .$x$- Evet .
 5. Tekrar ediyorum.
 
-Eğer Q simetrik ise örneğin, Q(x' (leavingx) = Q(x (leavingx') = N(x, sigma^2)), oran a = p(x') / p(x'e basitleştirilir. Sadece olasılık oranına ihtiyacınız var - normalleşen sabitler iptal edilir.
+- Eğer$Q$simetriktir (örneğin, $Q(x' \mid x) = Q(x \mid x') = \mathcal{N}(x, \sigma^2){}$), oranı $a = p(x') / p(x)$Sadece olasılık oranına ihtiyacınız var. Normalleşen sabitler iptal edilir.
 
-Zincir hafif koşullarda p ((x) 'e doğru bir şekilde yaklaşması garantilidir. Ancak bir teklif çok küçükse (hassasi yürüyüş) veya çok büyükse (yüksek reddedilme) bir dönüş yavaş olabilir.
+Zincir , $p(x)$Ancak, bir önerinin çok küçük olması (hassasi yürüyüş) veya çok büyük olması (yüksek reddedilme) durumunda, birleşme yavaş olabilir.
 
-**Why it works.**Kabul oranı detaylı dengeyi sağlar: x'de olma ve x'ye geçme olasılığı x'de olma ve x'ye geçme olasılığına eşittir. Detaylı denge p(x) zincirin sabit dağılımını içerir.
+**Why it works.**Kabul oranı detaylı dengeni sağlar: $x$ve $x'$                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             $x'$ve $x$Detaylı denge , $p(x)$Bu da zincirin sabit dağılımıdır.$p(x)$- Evet .
 
 **Practical considerations:**
-- **Burn-in**Zincir, başlangıç noktasından sabit dağılımına ulaşmak için zaman gerektirir.
-- **Thinning**: otokorrelasyonu azaltmak için her k-th örnek tutun.
+- **Burn-in**: ilkini at $N$zincir, başlangıç noktasından sabit dağıtımına ulaşmak için zaman gerektirir.
+- **Thinning**: her birini tut .$k$-Auto-korrelasyonu azaltmak için.
 - **Multiple chains**Eğer aynı dağılımlara doğru birleştilerse, birleştiği kanıtları elde edebilirsiniz.
-- **Acceptance rate**Bu nedenle, bu değerler, bir dizi değişkenlik ve bir dizi değişkenlik gibi bir değişkenlik anlamına gelir.
+- **Acceptance rate**: Gaussian önerileri için$d$Bu nedenle, bu zincirlerin en yüksek seviyelerinde, en iyi kabul oranı yaklaşık %23'dir (Roberts & Rosenthal, 2001).
 
 ### AI'de Stochastic Prosesler
 
@@ -260,7 +260,7 @@ def random_walk_2d(n_steps, seed=None):
     return x, y
 ```
 
-1D yürüyüşü kumületif toplamları saklar. Her adım +1 veya -1. n adımdan sonra pozisyon toplamdır. Değişiklik n ile doğrusal olarak büyür, bu nedenle standart sapma sqrt(n olarak büyür.
+1D yürüyüşü toplam toplamı saklar. her adım +1 veya -1.$n$Bu da bir değişikliğin bir kısmıdır.$n$, yani standart sapma $\sqrt{n}$- Evet .
 
 ### Adım 2: Markov zinciri
 
@@ -294,7 +294,7 @@ class MarkovChain:
         return np.abs(stationary)
 ```
 
-Durgun dağılım, P'nin sol özvektoru ve öz değeridir 1. Onu P^T'nin özvektorlarını hesaplayarak (sol özvektorları sağ özvektorlara dönüştürerek) buluruz.
+Duruşsuz dağılım sol öz vektörüdür $P$Bu değerleri kendi değerleri ile hesaplayarak buluruz.$P^T$(transposing sol öz vektörleri sağ öz vektörlere dönüştürür).
 
 ### Adım 3: Langevin dinamikleri
 
@@ -310,7 +310,7 @@ def langevin_dynamics(grad_U, x0, dt, temperature, n_steps, seed=None):
     return np.array(trajectory)
 ```
 
-Bu da bir diğer devirde, bir devirde, bir devirde, bir devirde, bir devirde, bir devirde, bir devirde, bir devirde, bir devirde, bir devirde, bir devirde, bir devirde, bir devirde, bir devirde, bir devirde, bir devirde, bir devirde, bir devirde, bir devirde, bir devirde, bir devirde, bir devirde, bir devirde, bir devirde, bir devirde, bir devirde, bir devirde, bir devirde, bir devirde, bir devirde, bir devirde, bir devirde, bir devirde, bir devirde, bir devirde, bir devirde, bir devirde, bir devirde, bir devirde, bir devirde, bir devirde, bir devirde, bir devirde, bir devirde, bir devirde, bir devirde, bir devirde, bir devirde, bir devirde, bir devirde, bir devirde, bir devirde, bir devirde, bir devirde, bir devirde, bir devirde, bir devirde, bir devirde, bir devirde, bir devirde, bir devirde, devirde, bir devirde, devirde, devirde, devirde, bir devirde, devirde, devirde, devirde, devirde, devirde, devirde, devirde, devirde, devirde, devirde, devirde, devirde, devirde, devirde, devirde, devirde, devirde, devirde, devirde, devirde, devirde, devirde, devirde, de de de de devirde, devirde, de de de de de de de de de de de de de de de de de de de de de de de de de de de de de de de de de de de de de de de de de de de de de de de de de de de de de de de de de de de de de de de de de de de de de de de de
+Yürüyüşte baskı yapılıyor .$x$Bu nedenle, bu durum, bir grup grup grup grup tarafından daha fazla kontrol edilmesini sağlayan bir sistemdir.$\exp(-U(x)/\text{temperature})$- Evet .
 
 ### Dördüncü Adım: Metropolis-Hastings
 
@@ -363,7 +363,7 @@ for _ in range(100):
 print(f"Stationary distribution: {np.round(distribution, 4)}")
 ```
 
-İlk dağıtımını P ile tekrar tekrar çarpın. Yeterli tekrarlardan sonra, nereden başladığınızı düşünmeden sabit dağıtımına doğru birleşti.
+İlk dağıtımı  ile çarpın .$P$Bu, baskın sol öz vektörü bulmak için güç yöntemi.
 
 ### Gerçek çerçevelere bağlantılar
 
@@ -409,14 +409,14 @@ Bu ders şunları ortaya çıkarır:
 
 DDPM (Ho et al., 2020) ileri Markov zinciri tanımlar:
 
-```
-q(x_t | x_{t-1}) = N(x_t; sqrt(1-beta_t) * x_{t-1}, beta_t * I)
+```math
+q(x_t \mid x_{t-1}) = \mathcal{N}\left(x_t; \sqrt{1-\beta_t} \, x_{t-1}, \beta_t I\right)
 ```
 
-T adımlarından sonra x_T yaklaşık olarak N(0, I.) ters süreç, gürültüyü öngören bir sinir ağı tarafından parametrelidir:
+nerede$\beta_t$- Bu bir gürültü programı.$T$adımlar,$x_T$Yaklaşık olarak $\mathcal{N}(0, I)$Geri dönüş süreci , gürültüyü tahmin eden bir nöral ağ tarafından parametrelidir:
 
-```
-p_theta(x_{t-1} | x_t) = N(x_{t-1}; mu_theta(x_t, t), sigma_t^2 * I)
+```math
+p_\theta(x_{t-1} \mid x_t) = \mathcal{N}\left(x_{t-1}; \mu_\theta(x_t, t), \sigma_t^2 I\right)
 ```
 
 Her aşama öğrenilmiş bir Markov zincirinde bir adımdır. Markov zincirlerini anlamak, difüzyon modellerinin nasıl ve neden verileri ürettiğini anlamak demektir.
@@ -427,15 +427,27 @@ Tüm bu bağlantıların anahtar anlayışı: Stochastic süreçler sadece teori
 
 ## Egzersizler
 
-1. **Simulate 1000 random walks of 10000 steps.**Son pozisyonların dağılımını çiz. Ortalama 0 ve standart sapma sqrt ((10000) = 100 ile yaklaşık olarak Gaussian olduğunu doğrulayın.
+1. **Simulate 1000 random walks of 10000 steps.**Son pozisyonların dağılımını çizin. ortalama 0 ve standart sapma ile yaklaşık olarak Gaussian olduğunu doğrulayın.$\sqrt{10000} = 100$- Evet .
 
 2. **Build a text generator using a Markov chain.**Küçük bir korpus üzerinde eğit: her kelime için, bir sonraki kelimeye geçişleri sayın. Değişim matrisi oluşturun. Zincirden örnek alarak yeni cümleler oluşturun.
 
 3. **Implement simulated annealing**Metropolis-Hastings'i kullanın. Yüksek sıcaklıkta başlayın (geleneksel olarak her şeyi kabul edin) ve yavaş yavaş soğurun (sadece geliştirmeleri kabul edin).
 
-4. **Compare Langevin dynamics at different temperatures.**İkiz kuyu potansiyelinden örnek U(x) = (x^2 - 1)^2. Düşük sıcaklıkta örnekler bir kuyuya toplanır. Yüksek sıcaklıkta, her iki kuyuya da yayılır.
+4. **Compare Langevin dynamics at different temperatures.**İki tane kuyu potansiyelinden örnek$U(x) = (x^2 - 1)^2$Düşük sıcaklıkta örnekler bir kuyunun içinde toplanır. Yüksek sıcaklıkta, her iki kuyunun arasında karışan kritik sıcaklığı bulurlar.
 
 5. **Implement the forward diffusion process.**1 boyutlu bir sinyalle başlayın (örneğin sinüs dalgası). Sıcak bir gürültü programı ile 100 adımdan fazla gürültü ekleyin. Sinyalın saf gürültüye nasıl düştüğünü gösterin. Sonra süreci tersine çeviren basit bir denoizer uygulayın (hətta tahmin edilen gürültüyü sadece çıkarırsa dahi saf bir şey).
+
+### İpuçlar
+
+**Exercise 1.**Arama .`random_walk_1d(10000, seed=i)`1000 tohum için ve her son pozisyonunu tutun. ortalamanın 0'ya yakın olup olmadığını kontrol edin, standart sapma 100'e yakın olup olmadığını ve son pozisyonların yaklaşık% 68'inin -100 ile 100 arasında olduğunu kontrol edin.
+
+**Exercise 2.**Her kelime çiftini sayın, sonra her satırı toplamına bölün, böylece her satır 1'e kadar eklenir. Matrisi `MarkovChain(transition_matrix, state_names)`Ve aramak .`simulate`Çıkışınızdaki her kelime çiftinin de korpusda oluştuğunu kontrol edin.
+
+**Exercise 3.**Daha kötü bir noktayı olasılık ile kabul et .$\exp(-\Delta / T)$ve kat kat .$T$Her adımda 0.99 gibi bir faktörle. En az bildiğiniz bir fonksiyon üzerinde test edin ve cevaplarınızı ince bir şebekede arama ile kontrol edin.
+
+**Exercise 4.**- Değişiklik .$4x(x^2 - 1)$, o yüzden bunu `langevin_dynamics(grad_U, x0, dt, temperature, n_steps)`- Sınırın altında .$x = 0$1 yüksekliği var, bu yüzden işaretini sayın.$x$Temperatürlerin değişmesi için 0,05'den 1'e kadar ve sayının hızla yükselmeye başladığı sıcaklık için bak.
+
+**Exercise 5.**Arama .`diffusion_forward(signal, 100)`ve hesaplama.$\bar{\alpha}$Son aşamada $(1 - \beta_t)$- Eğer ...$\bar{\alpha}$0'dan uzakta, sinyal henüz saf gürültü değil, bu yüzden yükselt.`beta_end`Önce denoiserinizi gerçek gürültü ile test edin .$(x_t - \sqrt{1 - \bar{\alpha}_t} \epsilon)/\sqrt{\bar{\alpha}_t}$Orijinal sinyalini tam olarak geri vermeli.
 
 ## Anahtar Terimler
 
@@ -443,9 +455,9 @@ Tüm bu bağlantıların anahtar anlayışı: Stochastic süreçler sadece teori
 |------|----------------|----------------------|
 | Random walk | "Coin-flip movement" | A process where position changes by random increments at each step |
 | Markov property | "Memoryless" | The future depends only on the present state, not on the history |
-| Transition matrix | "The probability table" | P[i][j] = probability of moving from state i to state j |
-| Stationary distribution | "The long-run average" | The distribution pi where pi*P = pi -- the chain's equilibrium |
-| Brownian motion | "Random jiggling" | The continuous-time limit of a random walk, B(t) ~ N(0, t) |
+| Transition matrix | "The probability table" | $P[i][j]$ = probability of moving from state $i$ to state $j$ |
+| Stationary distribution | "The long-run average" | The distribution $\pi$ where $\pi P = \pi$ -- the chain's equilibrium |
+| Brownian motion | "Random jiggling" | The continuous-time limit of a random walk, $B(t) \sim \mathcal{N}(0, t)$ |
 | Langevin dynamics | "Gradient descent with noise" | Update rule that combines deterministic gradient and random perturbation |
 | MCMC | "Walking toward the target" | Constructing a Markov chain whose stationary distribution is the one you want |
 | Metropolis-Hastings | "Propose and accept/reject" | MCMC algorithm that uses acceptance ratios to ensure convergence |

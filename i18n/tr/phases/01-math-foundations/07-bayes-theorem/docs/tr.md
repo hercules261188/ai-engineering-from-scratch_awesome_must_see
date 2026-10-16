@@ -30,24 +30,24 @@ Bunu anlamadan ML sistemleri inşa ederseniz, model çıkışlarını yanlış y
 
 Ders 06 ' dan beri şartsal olasılığın:
 
-```
-P(A|B) = P(A and B) / P(B)
+```math
+P(A \mid B) = \frac{P(A \text{ and } B)}{P(B)}
 ```
 
 Ve simetrik olarak:
 
+```math
+P(B \mid A) = \frac{P(A \text{ and } B)}{P(A)}
 ```
-P(B|A) = P(A and B) / P(A)
-```
 
-Her iki ifade de aynı sayıcıya sahiptir: P(A ve B).
+Her iki ifade de aynı sayıcıya sahiptir: $P(A \text{ and } B)$- Onları eşitle ve yeniden düzenle .
 
-```
-P(A and B) = P(A|B) * P(B) = P(B|A) * P(A)
-
-Therefore:
-
-P(A|B) = P(B|A) * P(A) / P(B)
+```math
+\begin{aligned}
+P(A \text{ and } B) &= P(A \mid B) \cdot P(B) = P(B \mid A) \cdot P(A) \\[4pt]
+&\text{Therefore:} \\[4pt]
+P(A \mid B) &= \frac{P(B \mid A) \cdot P(A)}{P(B)}
+\end{aligned}
 ```
 
 Bu Bayes teoremi. 4 büyüklük, 1 denklem.
@@ -56,35 +56,35 @@ Bu Bayes teoremi. 4 büyüklük, 1 denklem.
 
 | Part | Name | What it means |
 |------|------|---------------|
-| P(A\|B) | Posterior | Your updated belief about A after seeing evidence B |
-| P(B\|A) | Likelihood | How probable the evidence B is if A is true |
-| P(A) | Prior | Your belief about A before seeing any evidence |
-| P(B) | Evidence | Total probability of seeing B under all possibilities |
+| $P(A \mid B)$ | Posterior | Your updated belief about $A$ after seeing evidence $B$ |
+| $P(B \mid A)$ | Likelihood | How probable the evidence $B$ is if $A$ is true |
+| $P(A)$ | Prior | Your belief about $A$ before seeing any evidence |
+| $P(B)$ | Evidence | Total probability of seeing $B$ under all possibilities |
 
-Kanıt terimi P(B) normalleştiricidir. Toplam olasılık yasasını kullanarak genişletebilirsiniz:
+Kanıt süresi$P(B)$Toplam olasılık yasasını kullanarak genişletebilirsiniz:
 
-```
-P(B) = P(B|A) * P(A) + P(B|not A) * P(not A)
+```math
+P(B) = P(B \mid A) \cdot P(A) + P(B \mid \text{not } A) \cdot P(\text{not } A)
 ```
 
 ### Tıbbi test örneği
 
 Bir hastalık 10.000 kişiden 1'i etkiliyor. Test %99 doğrudur (hastalık olanların %99'unu yakalar, %1'inde yanlış pozitif verir).
 
-```
-P(sick)          = 0.0001     (prior: disease is rare)
-P(positive|sick) = 0.99       (likelihood: test catches it)
-P(positive|healthy) = 0.01    (false positive rate)
-
-P(positive) = P(positive|sick) * P(sick) + P(positive|healthy) * P(healthy)
-            = 0.99 * 0.0001 + 0.01 * 0.9999
-            = 0.000099 + 0.009999
-            = 0.010098
-
-P(sick|positive) = P(positive|sick) * P(sick) / P(positive)
-                 = 0.99 * 0.0001 / 0.010098
-                 = 0.0098
-                 = 0.98%
+```math
+\begin{aligned}
+P(\text{sick}) &= 0.0001 \quad \text{(prior: disease is rare)} \\
+P(\text{positive} \mid \text{sick}) &= 0.99 \quad \text{(likelihood: test catches it)} \\
+P(\text{positive} \mid \text{healthy}) &= 0.01 \quad \text{(false positive rate)} \\[6pt]
+P(\text{positive}) &= P(\text{positive} \mid \text{sick}) \cdot P(\text{sick}) + P(\text{positive} \mid \text{healthy}) \cdot P(\text{healthy}) \\
+&= 0.99 \cdot 0.0001 + 0.01 \cdot 0.9999 \\
+&= 0.000099 + 0.009999 \\
+&= 0.010098 \\[6pt]
+P(\text{sick} \mid \text{positive}) &= P(\text{positive} \mid \text{sick}) \cdot P(\text{sick}) / P(\text{positive}) \\
+&= 0.99 \cdot 0.0001 / 0.010098 \\
+&= 0.0098 \\
+&= 0.98\%
+\end{aligned}
 ```
 
 Bir hastalığa rastlananlar bile, çoğu kez yanlış pozitif sonuçlar verir.
@@ -93,18 +93,18 @@ Bir hastalığa rastlananlar bile, çoğu kez yanlış pozitif sonuçlar verir.
 
 "Lotteri" kelimesini içeren bir e-posta aldınız.
 
-```
-P(spam)                = 0.3      (30% of email is spam)
-P("lottery"|spam)      = 0.05     (5% of spam emails contain "lottery")
-P("lottery"|not spam)  = 0.001    (0.1% of legitimate emails contain "lottery")
-
-P("lottery") = 0.05 * 0.3 + 0.001 * 0.7
-             = 0.015 + 0.0007
-             = 0.0157
-
-P(spam|"lottery") = 0.05 * 0.3 / 0.0157
-                  = 0.955
-                  = 95.5%
+```math
+\begin{aligned}
+P(\text{spam}) &= 0.3 \quad \text{(30\% of email is spam)} \\
+P(\text{"lottery"} \mid \text{spam}) &= 0.05 \quad \text{(5\% of spam emails contain "lottery")} \\
+P(\text{"lottery"} \mid \text{not spam}) &= 0.001 \quad \text{(0.1\% of legitimate emails contain "lottery")} \\[6pt]
+P(\text{"lottery"}) &= 0.05 \cdot 0.3 + 0.001 \cdot 0.7 \\
+&= 0.015 + 0.0007 \\
+&= 0.0157 \\[6pt]
+P(\text{spam} \mid \text{"lottery"}) &= 0.05 \cdot 0.3 / 0.0157 \\
+&= 0.955 \\
+&= 95.5\%
+\end{aligned}
 ```
 
 Bir kelime olasılığı %30'dan %95.5'e kaydırır. Gerçek bir spam filtresi Bayes'i yüzlerce kelime üzerinde aynı anda uyguluyor.
@@ -113,58 +113,56 @@ Bir kelime olasılığı %30'dan %95.5'e kaydırır. Gerçek bir spam filtresi B
 
 Naive Bayes, tüm özelliklerin sınıfı göz önüne alındığında koşulsuz bağımsız olduğunu varsayarak bunu birden fazla özelliğe uzattı:
 
-```
-P(class | feature_1, feature_2, ..., feature_n)
-  = P(class) * P(feature_1|class) * P(feature_2|class) * ... * P(feature_n|class)
-    / P(feature_1, feature_2, ..., feature_n)
+```math
+P(\text{class} \mid \text{feature}_1, \text{feature}_2, \ldots, \text{feature}_n) = \frac{P(\text{class}) \cdot P(\text{feature}_1 \mid \text{class}) \cdot P(\text{feature}_2 \mid \text{class}) \cdots P(\text{feature}_n \mid \text{class})}{P(\text{feature}_1, \text{feature}_2, \ldots, \text{feature}_n)}
 ```
 
 "Sane" kısmı bağımsızlık varsayımıdır. Metinde, kelime olayları bağımsız değildir ("Yeni" ve "York" ilişkilidir). Ancak varsayım pratikte şaşırtıcı derecede iyi çalışır çünkü sınıflandırıcı sadece sınıfları sıralamalı, kalibrli olasılıkları üretmemelidir.
 
 Tüm sınıflar için isimlendirici aynı olduğundan, onu atlayıp saylayıcıları karşılaştırabilirsiniz:
 
-```
-score(class) = P(class) * product of P(feature_i | class)
+```math
+\text{score}(\text{class}) = P(\text{class}) \cdot \prod_i P(\text{feature}_i \mid \text{class})
 ```
 
 En yüksek puanı alan sınıfı seç.
 
 ### Maksimum olasılık tahminleri (MLE)
 
-Eğitim verilerinden P                                                                                                                                                                                                                                                            
+Nasıl oluyor da ?$P(\text{feature} \mid \text{class})$- Eğitim verilerinden mi?
 
-```
-P("free"|spam) = (number of spam emails containing "free") / (total spam emails)
+```math
+P(\text{"free"} \mid \text{spam}) = \frac{\text{number of spam emails containing "free"}}{\text{total spam emails}}
 ```
 
 Bu MLE: gözlemlenen verileri en olası yapan parametreler değerlerini seçin. Muhtemelenlik fonksiyonunu en üst düzeye çıkarıyorsunuz, bu da ayrı sayılar için nispet frekansına düşürür.
 
 Sorun: Eğer bir kelime eğitim sırasında spam'de hiç görünmezse, MLE ona sıfır olasılık verir.
 
-```
-P(word|class) = (count(word, class) + 1) / (total_words_in_class + vocabulary_size)
+```math
+P(\text{word} \mid \text{class}) = \frac{\text{count}(\text{word}, \text{class}) + 1}{\text{total\_words\_in\_class} + \text{vocabulary\_size}}
 ```
 
 Her saymaya 1 eklemek, hiç bir olasılığın asla sıfır olmadığını sağlar.
 
 ### Maksimum a posteriori (MAP)
 
-MLE soruyor: hangi parametreler P ((dataparameters) maksimum olarak değerlendiriyor?
+MLE soruyor: hangi parametrelerin en üst düzeyde olması $P(\text{data} \mid \text{parameters})$- Ne ?
 
-MAP soruyor: hangi parametreler P                                                                                                                                                                                                                                                           
+MAP soruyor: hangi parametrelerin en üst düzeyde olması $P(\text{parameters} \mid \text{data})$- Ne ?
 
 Bayes teoremiyle:
 
-```
-P(parameters|data) proportional to P(data|parameters) * P(parameters)
+```math
+P(\text{parameters} \mid \text{data}) \propto P(\text{data} \mid \text{parameters}) \cdot P(\text{parameters})
 ```
 
 MAP, parametrelerin kendileri üzerinde bir öncü ekler. Eğer parametrelerin küçük olması gerektiğine inanıyorsanız, bunu büyük değerleri cezalandıran bir öncü olarak kodlarsınız. Bu ML'deki L2 düzenlenmesine benzer. Kırmızı tepede "boğaz" cezası, ağırlıklarda kelimenin tam anlamıyla Gaussian öncüdür.
 
 | Estimation | Optimizes | ML equivalent |
 |------------|-----------|---------------|
-| MLE | P(data\|params) | Unregularized training |
-| MAP | P(data\|params) * P(params) | L2 / L1 regularization |
+| MLE | $P(\text{data} \mid \text{params})$ | Unregularized training |
+| MAP | $P(\text{data} \mid \text{params}) \cdot P(\text{params})$ | L2 / L1 regularization |
 
 ### Bayesian vs. Frequentist: pratik fark
 
@@ -189,7 +187,7 @@ Bağlantı analogiden daha derin:
 
 **Priors are regularization.**Gaussian önlemleri L2 düzenlemesi, Laplace önlemleri L1'dir. Her düzenleme terimini eklediğinizde, hangi parametreler değerlerini beklediğiniz hakkında Bayesian bir ifade yapıyorsunuz.
 
-**Posteriors are uncertainty.**Tek tahmin edilen olasılık, modelin bu tahminle ilgili ne kadar güvenli olduğunu söylemez. Bayesian yöntemleri size bir dağılım verir: "P(spam) 0.8 ile 0.95 arasında olduğunu düşünüyorum".
+**Posteriors are uncertainty.**Tek tahmin edilen olasılık, modelin bu tahminle ilgili ne kadar güvenli olduğunu söylemez.$P(\text{spam})$0.8 ile 0.95 arasında".
 
 **Bayes updates are online learning.**Bugünün arkası yarınki öncesidir. Modeliniz yeni verileri gördüğünde, inançlarını sıfırdan yeniden eğitmek yerine, aşamalı olarak güncelleyecek.
 
@@ -345,26 +343,28 @@ Burada inşa edilen NaiveBayes sınıfı tüm hattı gösterir: tokenizasyon, La
 
 | Likelihood | Conjugate Prior | Posterior | Example |
 |-----------|----------------|-----------|---------|
-| Bernoulli | Beta(a, b) | Beta(a + successes, b + failures) | Coin flip bias estimation |
-| Normal (known variance) | Normal(mu_0, sigma_0) | Normal(weighted mean, smaller variance) | Sensor calibration |
-| Poisson | Gamma(a, b) | Gamma(a + sum of counts, b + n) | Modeling arrival rates |
-| Multinomial | Dirichlet(alpha) | Dirichlet(alpha + counts) | Topic modeling, language models |
+| Bernoulli | $\text{Beta}(a, b)$ | $\text{Beta}(a + \text{successes}, b + \text{failures})$ | Coin flip bias estimation |
+| Normal (known variance) | $\text{Normal}(\mu_0, \sigma_0)$ | Normal(weighted mean, smaller variance) | Sensor calibration |
+| Poisson | $\text{Gamma}(a, b)$ | $\text{Gamma}(a + \text{sum of counts}, b + n)$ | Modeling arrival rates |
+| Multinomial | $\text{Dirichlet}(\alpha)$ | $\text{Dirichlet}(\alpha + \text{counts})$ | Topic modeling, language models |
 
 Bu neden önemlidir: konjugat ön önlemleri olmadan, sonradan yaklaşmak için Monte Carlo örneklemesine veya varyasyon sonucuya ihtiyacınız var.
 
-Beta dağılım, pratikte en yaygın konjugat öncidir. Beta(a, b) bir olasılık parametri hakkında inancınızı temsil eder. Ortalama a/(a+b.
+Beta dağılım, pratikte en yaygın konjugat öncesi olanıdır. $\text{Beta}(a, b)$Bu, bir olasılık parametri hakkında inancınızı temsil eder.$a/(a+b)$- Daha büyük .$a+b$, daha yoğun (güvenli) dağıtım.
 
 Beta öncesi özel durumlar:
-- Beta ((1, 1) = üniform. Parametre hakkında hiçbir fikriniz yok.
-- Beta ((10, 10) = 0.5'e ulaştı.
-- Beta ((1, 10) = 0'a doğru eğilen. Parametre küçük olduğuna inanıyorsun.
+- $\text{Beta}(1, 1)$Parametre hakkında hiçbir fikrin yok.
+- $\text{Beta}(10, 10)$Parametreyi 0.5'e yakın olduğuna inanıyorsunuz.
+- $\text{Beta}(1, 10)$= 0'ya doğru eğilmiş. Parametre küçük olduğuna inanıyorsun.
 
 Güncelleme kuralı çok basit:
 
-```
-Prior:     Beta(a, b)
-Data:      s successes, f failures
-Posterior: Beta(a + s, b + f)
+```math
+\begin{aligned}
+\text{Prior:} \quad & \text{Beta}(a, b) \\
+\text{Data:} \quad & s \text{ successes}, f \text{ failures} \\
+\text{Posterior:} \quad & \text{Beta}(a + s, b + f)
+\end{aligned}
 ```
 
 Entegral yok, örnekleme yok, sadece ekleme.
@@ -376,19 +376,19 @@ Bayesian sonuçları doğal olarak sıradan bir şekilde gerçekleşir. Bugünü
 Konkrete bir örnek: bir madeni paranın adil olup olmadığını tahmin etmek.
 
 **Day 1: No data yet.**
-Beta'dan başlayalım. 1'den başlayalım.
+Başlayın .$\text{Beta}(1, 1)$- Bir üniforma öncü.
 - Önceki ortalama: 0,5
 - Prior, düz bir [0, 1]
 
 **Day 2: Observe 7 heads, 3 tails.**
-Arka = Beta(1 + 7, 1 + 3) = Beta(8, 4)
-- Arka ortalama: 8/12 = 0.667
+$\text{Posterior} = \text{Beta}(1 + 7, 1 + 3) = \text{Beta}(8, 4)$
+- Arka ortalama: $8/12 = 0.667$
 - Kanıtlar para başlara doğru yönlendirilmiş olduğunu gösteriyor
 
 **Day 3: Observe 5 more heads, 5 more tails.**
 Dünki arka parayı bugünün ön parayı olarak kullan.
-Arka = Beta(8 + 5, 4 + 5) = Beta(13, 9)
-- Ardından ortalama: 13/22 = 0,591
+$\text{Posterior} = \text{Beta}(8 + 5, 4 + 5) = \text{Beta}(13, 9)$
+- Arka ortalama: $13/22 = 0.591$
 - Dengeli yeni veriler tahminleri 0.5'e geri çekmiş.
 
 ```mermaid
@@ -398,7 +398,7 @@ graph LR
     C -->|"5H, 5T"| D["Posterior 2<br/>Beta(13,9)<br/>mean = 0.59"]
 ```
 
-Gözetimlerin sırası önemli değildir. Beta(1,1) aynı anda tüm 12 baş ve 8 kuyruğu ile güncellenmiş Beta(13, 9) - aynı sonuç verir.
+Gözlemlerin sırası önemli değil. $\text{Beta}(1,1)$12 baş ve 8 kuyrukla aynı anda güncelleştirilmiş .$\text{Beta}(13, 9)$- aynı sonuç. Sıralı güncelleme ve seri güncelleme matematiksel olarak eşittir. Ama sıralı güncelleme, ham verileri saklamadan her adımda kararlar vermenizi sağlar.
 
 Bu, üretim ML sistemlerinde çevrimiçi öğrenmenin temelidir. Thompson'un banditler için örneklemesi, artışlı önerme sistemleri ve akış anomali tespitçileri bu örneği kullanır.
 
@@ -410,14 +410,14 @@ Kurulum: iki düğme rengi test ediyorsunuz. A (mavi) ve B (yeşil) variansı. H
 
 Bayesian A/B testi:
 
-1. **Prior.**Her iki varians için Beta ((1, 1) ile başlayın.
+1. **Prior.**Başlayın .$\text{Beta}(1, 1)$Her iki varians için de ön tercih yoktur.
 2. **Data.**A Variant: 1000 görüntüden 50 tıklama. B Variant: 1000 görüntüden 65 tıklama.
 3. **Posteriors.**
-   - A: Beta(1 + 50, 1 + 950) = Beta(51, 951). Ortalama = 0.051
-   - B: Beta(1 + 65, 1 + 935) = Beta(66, 936). Ortalama = 0,066
-4. **Decision.**P ((B > A) hesaplayın -- B'nin gerçek dönüşüm oranının A'dan daha yüksek olasılığı.
+   - A: $\text{Beta}(1 + 50, 1 + 950) = \text{Beta}(51, 951)$Ortalama = 0.051
+   - B: $\text{Beta}(1 + 65, 1 + 935) = \text{Beta}(66, 936)$Ortalama = 0.066
+4. **Decision.**Hesaplama$P(B > A)$-- B'nin gerçek dönüşüm oranının A'dan daha yüksek olasılığı.
 
-P (B) > A) hesaplamak analitik olarak zor ama Monte Carlo onu önemsiz kılar:
+Bilgisayar $P(B > A)$Analizsel olarak zor ama Monte Carlo onu önemsiz kılar.
 
 ```
 1. Draw 100,000 samples from Beta(51, 951)  -> samples_A
@@ -425,7 +425,7 @@ P (B) > A) hesaplamak analitik olarak zor ama Monte Carlo onu önemsiz kılar:
 3. P(B > A) = fraction of samples where B > A
 ```
 
-Eğer P(B > A) > 0.95, B varianti gönderirsiniz. Eğer 0.05 ile 0.95 arasında ise, verileri toplamaya devam edersiniz.
+- Eğer$P(B > A) > 0.95$Eğer 0.05 ile 0.95 arasında ise, verileri toplamaya devam edersiniz.$P(B > A) < 0.05$, siz gemi A varianti .
 
 Sıklıklı A/B testlerine göre avantajlar:
 - Doğrudan bir olasılık ifadesi elde ediyorsunuz: "B'nin daha iyi olma ihtimali %97'dir"
@@ -435,40 +435,50 @@ Sıklıklı A/B testlerine göre avantajlar:
 
 | Aspect | Frequentist A/B | Bayesian A/B |
 |--------|----------------|--------------|
-| Output | p-value | P(B > A) |
+| Output | p-value | $P(B > A)$ |
 | Interpretation | "How surprising is this data if A=B?" | "How likely is B better than A?" |
 | Early stopping | Inflates false positives | Safe at any point (given a well-chosen prior and correctly specified model) |
 | Prior knowledge | Not used | Encoded as Beta prior |
-| Decision rule | p < 0.05 | P(B > A) > threshold |
+| Decision rule | $p < 0.05$ | $P(B > A) > \text{threshold}$ |
 
 ## Egzersizler
 
-1. **Multiple tests.**Bir hasta iki kez bağımsız testlerde pozitif testler yapar (her ikisi de %99 doğrudur, hastalık yayılması 10.000'den 1'dir).
+1. **Multiple tests.**Bir hasta bağımsız testlerde iki kez pozitif testler yapmıştır (her ikisi de %99 doğrudur, hastalık yayılması 10.000'den 1'dir).$P(\text{sick})$İkinci test için ilk testten önceki test olarak arka test kullanın.
 
 2. **Smoothing impact.**Spam sınıflandırıcısını 0.01, 0.1, 1.0 ve 10.0'luk düzeltme değerleriyle çalıştırın.
 
-3. **Add features.**NaiveBayes sınıfını genişletmek için mesaj uzunluğu (kısık/uzun) kelimeler sayısının yanında bir özellik olarak kullanın.
+3. **Add features.**NaiveBayes sınıfını, kelimeler sayısının yanında bir özellik olarak mesaj uzunluğu (kısık/uzun) kullanmak için genişlet. Tahmin $P(\text{short} \mid \text{spam})$ve $P(\text{short} \mid \text{ham})$Eğitim verilerinden alın ve tahmin puanına katlayın.
 
-4. **MAP by hand.**Görülen verileri (7 baş 10 para atışında) göz önüne alarak, tarafsızlığın MAP tahminini Beta ((2,2) öncesi kullanılarak hesaplayın.
+4. **MAP by hand.**Görülen verileri göz önüne alarak (7 başlık 10 para atışında) bir $\text{Beta}(2,2)$(MLE tahminine karşılaştırın)$7/10$)
+
+### İpuçlar
+
+**Exercise 1.**Arama .`bayes`1 testi sonrasında bir kez geriye dönmek için, sonra geriye dönmeyi öncü olarak tekrar çağırın.`sequential_bayes(prior, likelihood, false_positive_rate, 2)`0.5'e yakın aynı değer vermeli.
+
+**Exercise 2.**Bir tane oluştur .`NaiveBayes(smoothing=s)`Her değer için aynı verilere göre çalıştırın ve yazdırın.`top_words`0. düzeltmekle spam'de hiç görünmeyen bir kelime 0 olasılığı elde eder, bu yüzden logu tanımlanmaz.
+
+**Exercise 3.**Kaç spam ve ham mesajının kısa olduğunu hesaplayın, her sınıfdaki mesaj sayısına bölün ve bu oranın logunu puanlara ekleyin `predict`Her sınıf için iki olasılığın 1'e kadar olduğunu kontrol et.
+
+**Exercise 4.**Bir $\text{Beta}(\alpha, \beta)$Daha önce, MAP tahminleri $\frac{h + \alpha - 1}{n + \alpha + \beta - 2}$- İçeri koy .$h = 7$- Evet .$n = 10$; sonuç MLE (0.7) ile önceki mod (0.5) arasında olmalıdır.
 
 ## Anahtar Terimler
 
 | Term | What people say | What it actually means |
 |------|----------------|----------------------|
-| Prior | "My initial guess" | P(hypothesis) before observing evidence. In ML: the regularization term. |
-| Likelihood | "How well the data fits" | P(evidence\|hypothesis). How probable the observed data is under a specific hypothesis. |
-| Posterior | "My updated belief" | P(hypothesis\|evidence). The prior multiplied by the likelihood, then normalized. |
-| Evidence | "The normalizing constant" | P(data) across all hypotheses. Ensures the posterior sums to 1. |
+| Prior | "My initial guess" | $P(\text{hypothesis})$ before observing evidence. In ML: the regularization term. |
+| Likelihood | "How well the data fits" | $P(\text{evidence} \mid \text{hypothesis})$. How probable the observed data is under a specific hypothesis. |
+| Posterior | "My updated belief" | $P(\text{hypothesis} \mid \text{evidence})$. The prior multiplied by the likelihood, then normalized. |
+| Evidence | "The normalizing constant" | $P(\text{data})$ across all hypotheses. Ensures the posterior sums to 1. |
 | Naive Bayes | "That simple text classifier" | A classifier that assumes features are independent given the class. Works well despite the false assumption. |
 | Laplace smoothing | "Add-one smoothing" | Adding a small count to every feature to prevent zero probabilities from unseen data. |
-| MLE | "Just use the frequencies" | Choose parameters that maximize P(data\|parameters). No prior. Can overfit with small data. |
-| MAP | "MLE with a prior" | Choose parameters that maximize P(data\|parameters) * P(parameters). Equivalent to regularized MLE. |
-| Log-probability | "Work in log space" | Using log(P) instead of P to avoid floating-point underflow when multiplying many small numbers. |
+| MLE | "Just use the frequencies" | Choose parameters that maximize $P(\text{data} \mid \text{parameters})$. No prior. Can overfit with small data. |
+| MAP | "MLE with a prior" | Choose parameters that maximize $P(\text{data} \mid \text{parameters}) \cdot P(\text{parameters})$. Equivalent to regularized MLE. |
+| Log-probability | "Work in log space" | Using $\log(P)$ instead of $P$ to avoid floating-point underflow when multiplying many small numbers. |
 | False positive | "A wrong alarm" | The test says positive, but the true state is negative. Drives the base rate fallacy. |
 
 ## Daha Fazla Okumak
 
 - [3Blue1Brown: Bayes' theorem](https://www.youtube.com/watch?v=HZGCoVF3YvM)- tıbbi test örneği ile görsel açıklama
-- [Stanford CS229: Generative Learning Algorithms](https://cs229.stanford.edu/notes2022fall/cs229-notes2.pdf)- Naif Bayes ve onun ayrımcılık modellerine ilişkisi
+- [Stanford CS229: Generative Learning Algorithms](https://cs229.stanford.edu/main_notes.pdf)- Naif Bayes ve onun ayrımcılık modellerine ilişkisi
 - [Think Bayes](https://greenteapress.com/wp/think-bayes/)- ücretsiz kitap, Bayesian istatistikleri Python kodu ile
 - [scikit-learn Naive Bayes](https://scikit-learn.org/stable/modules/naive_bayes.html)- üretim uygulamaları ve her variantın ne zaman kullanılacağı

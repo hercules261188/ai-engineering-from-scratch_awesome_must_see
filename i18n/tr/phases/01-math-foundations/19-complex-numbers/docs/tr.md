@@ -45,40 +45,42 @@ Bu sayılar, bir düzlemde, gerçek sayılar bir tarafa, hayal sayılar diğer t
 
 **Addition.**Gerçek parçaları bir araya getirin, hayali parçaları bir araya getirin.
 
+```math
+\begin{aligned}
+(a + bi) + (c + di) &= (a + c) + (b + d)i \\[4pt]
+\text{Example: } (3 + 2i) + (1 + 4i) &= 4 + 6i
+\end{aligned}
 ```
-(a + bi) + (c + di) = (a + c) + (b + d)i
 
-Example: (3 + 2i) + (1 + 4i) = 4 + 6i
-```
+**Multiplication.**Paylaştırma yasasını kullan ve bunu unutma.$i^2 = -1$- Evet .
 
-**Multiplication.**Paylaştırma yasasını kullanın ve i^2 = -1 olduğunu unutmayın.
-
-```
-(a + bi)(c + di) = ac + adi + bci + bdi^2
-                 = ac + adi + bci - bd
-                 = (ac - bd) + (ad + bc)i
-
-Example: (3 + 2i)(1 + 4i) = 3 + 12i + 2i + 8i^2
-                            = 3 + 14i - 8
-                            = -5 + 14i
+```math
+\begin{aligned}
+(a + bi)(c + di) &= ac + adi + bci + bdi^2 \\
+&= ac + adi + bci - bd \\
+&= (ac - bd) + (ad + bc)i \\[8pt]
+\text{Example: } (3 + 2i)(1 + 4i) &= 3 + 12i + 2i + 8i^2 \\
+&= 3 + 14i - 8 \\
+&= -5 + 14i
+\end{aligned}
 ```
 
 **Conjugate.**Hayal gücünün işaretini çevir.
 
-```
-conjugate of (a + bi) = a - bi
+```math
+\text{conjugate of } (a + bi) = a - bi
 ```
 
 Karmaşık bir sayının ve onun eşleşmesinin ürünü her zaman gerçek olur:
 
-```
+```math
 (a + bi)(a - bi) = a^2 + b^2
 ```
 
 **Division.**Sayıcı ve adlendiricini adlendiricinin birleşikliği ile çarpın.
 
-```
-(a + bi) / (c + di) = (a + bi)(c - di) / (c^2 + d^2)
+```math
+\frac{a + bi}{c + di} = \frac{(a + bi)(c - di)}{c^2 + d^2}
 ```
 
 Bu, isimlendiriciden hayali kısmı ortadan kaldırır ve size temiz karmaşık bir sayı verir.
@@ -99,23 +101,24 @@ Karmaşık bir sayı aynı zamanda bir noktayı ve bir kaynağı olan vektördü
 
 Düzende herhangi bir nokta, kökeninden uzaklığı ve pozitif gerçek eksiden açısı ile tanımlanabilir.
 
+```math
+\begin{aligned}
+z &= r (\cos\theta + i \sin\theta) \\[4pt]
+\text{where: } r &= |z| = \sqrt{a^2 + b^2} \quad \text{(magnitude, or modulus)} \\
+\theta &= \mathop{\mathrm{atan2}}(b, a) \quad \text{(phase, or argument)}
+\end{aligned}
 ```
-z = r * (cos(theta) + i*sin(theta))
 
-where:
-  r = |z| = sqrt(a^2 + b^2)     (magnitude, or modulus)
-  theta = atan2(b, a)             (phase, or argument)
-```
-
-Dörtgenlik biçimi (a + bi) eklemek için iyidir. Polar biçimi (r, theta) çarpma için iyidir.
+Dörtgen şekli$(a + bi)$- Bu, eklemek için iyi.$(r, \theta)$çarpma için iyi.
 
 **Multiplication in polar form.**Büyüklükleri çarpıp açıları ekleyin.
 
-```
-z1 = r1 * e^(i*theta1)
-z2 = r2 * e^(i*theta2)
-
-z1 * z2 = (r1 * r2) * e^(i*(theta1 + theta2))
+```math
+\begin{aligned}
+z_1 &= r_1 e^{i\theta_1} \\
+z_2 &= r_2 e^{i\theta_2} \\[4pt]
+z_1 z_2 &= (r_1 r_2) \, e^{i(\theta_1 + \theta_2)}
+\end{aligned}
 ```
 
 Bu yüzden karmaşık sayılar dönümler için mükemmel. 1 büyüklüğü ile karmaşık sayılarla çarpmak saf bir dönümdür.
@@ -124,38 +127,38 @@ Bu yüzden karmaşık sayılar dönümler için mükemmel. 1 büyüklüğü ile 
 
 Karmaşık eksponensal ve trigonometri arasındaki köprü:
 
-```
-e^(i*theta) = cos(theta) + i*sin(theta)
-```
-
-Bu dersdeki en önemli formül.
-
-```
-e^(i*pi) = cos(pi) + i*sin(pi) = -1 + 0i = -1
-
-Therefore: e^(i*pi) + 1 = 0
+```math
+e^{i\theta} = \cos\theta + i \sin\theta
 ```
 
-Beş temel sabit (e, i, pi, 1, 0) bir denklemde birbirine bağlanmıştır.
+Bu dersin en önemli formülü.$\theta = \pi$- ...
+
+```math
+\begin{aligned}
+e^{i\pi} &= \cos\pi + i \sin\pi = -1 + 0i = -1 \\[4pt]
+\text{Therefore: } e^{i\pi} + 1 &= 0
+\end{aligned}
+```
+
+Beş temel sabit ($e$- Evet .$i$- Evet .$\pi$, 1, 0) bir denklemde bağlantılıdır.
 
 ### Euler'ın formülü ML için neden önemlidir
 
-Euler'in formülü bunu söylüyor.`e^(i*theta)`Theta = 0, teta = pi/2, teta = pi = 0, teta = 1, teta = 2, teta = 1, teta = 3, teta = 3, teta = 0, teta = 2, teta = 2, teta = 2, teta = 2, teta = 2, teta = 2, teta = 2, teta = 2, teta = 2, teta = 2, teta = 1, teta = 2, teta = 1, teta = 2, teta = 1, teta = 1, teta = 1, teta = 1, teta = 1, teta = 1, teta = 1, teta = 1, teta = 1, teta = 1, teta = 1, teta = 1, teta = 1, teta = 1, teta = 1, teta = 1, teta = 1, teta = 1, teta = 1, teta = 1, teta = 1, teta = 1, teta = 1, teta = 1, teta = 1, teta = 1, teta = 1, teta = 1, teta = 1, teta = 1, teta = 1, teta = 1, teta = 1, teta = 1, teta = 1, teta = 1, teta = 1, teta = 1, teta = 1, teta = 1, teta = 1, teta = 1, teta = 1, teta = 2, teta = 1, teta = 1, teta = 2, teta = 1, teta = 1, teta = 2, teta = 1, teta = 1, teta = 2, teta = 1, teta = 2, teta = 1, teta = 2, teta = 2, teta = 1, teta = 2, t = 1, teta = 2, t = 1, t = 2, t = 1, t = 2, t = 2, t = 1, t = 2, t = 2, t = 1, t = 2, t = 2, t = 2, t = 2, t = 1, t = 2, t = 1, t = 2, t = 2, t = 1, t = 2, t = 1, t = 2, t = 1, t = 2, t = 2, t = 2, t = 2, t = 1, t = 2, t = = 1, t = 2, t = = 2, t = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+Euler'in formülü bunu söylüyor.$e^{i\theta}$Birlik çemberini izler $\theta$değişir.$\theta = 0$- Sen de varsın .$(1, 0)$- Ne ?$\theta = \pi/2$- Sen de varsın .$(0, 1)$- Ne ?$\theta = \pi$- Sen de varsın .$(-1, 0)$- Ne ?$\theta = 3\pi/2$- Sen de varsın .$(0, -1)$Tam bir dönüşüm .$\theta = 2\pi$- Evet .
 
 Bu karmaşık eksponensialler Dönüştürücüdür ve sinyal işleme ve ML'de her yerde dönüştür.
 
 ### 2D dönüşümlere bağlanmak
 
-Karmaşık sayıyı (x + yi) e^(i*theta ile çarpırsak, noktayı (x, y) köşe theta tarafından köken etrafında döndürür.
+Karmaşık sayıyı çarpmak $(x + yi)$- ...$e^{i\theta}$nokta dönüyor $(x, y)$açı ile$\theta$- Kaynakın kaynağı.
 
-```
-Rotation via complex multiplication:
-  (x + yi) * (cos(theta) + i*sin(theta))
-  = (x*cos(theta) - y*sin(theta)) + (x*sin(theta) + y*cos(theta))i
-
-Rotation via matrix multiplication:
-  [cos(theta)  -sin(theta)] [x]   [x*cos(theta) - y*sin(theta)]
-  [sin(theta)   cos(theta)] [y] = [x*sin(theta) + y*cos(theta)]
+```math
+\begin{aligned}
+&\text{Rotation via complex multiplication:} \\
+&\quad (x + yi)(\cos\theta + i \sin\theta) = (x \cos\theta - y \sin\theta) + (x \sin\theta + y \cos\theta)i \\[8pt]
+&\text{Rotation via matrix multiplication:} \\
+&\quad \begin{bmatrix} \cos\theta & -\sin\theta \\ \sin\theta & \cos\theta \end{bmatrix} \begin{bmatrix} x \\ y \end{bmatrix} = \begin{bmatrix} x \cos\theta - y \sin\theta \\ x \sin\theta + y \cos\theta \end{bmatrix}
+\end{aligned}
 ```
 
 Bu iki metrekal bir dönüştürücü matrisin bir matris notasyonunda yazılmış karmaşık çarpma.
@@ -173,55 +176,56 @@ graph TD
 
 ### Fasorlar ve dönük sinyaller
 
-Karmaşık bir eksponensal e^(i*omega*t) açı frekansı omega'da birim döngüsünün etrafında dönen bir noktayır. t arttıkça nokta döngüyü izler.
+Karmaşık bir eksponensal $e^{i\omega t}$birim döngüsünün etrafında açı frekansında dönen bir noktayı$\omega$- Nasıl ?$t$Artarsa nokta daireyi izler.
 
-Bu dönüm noktasının gerçek kısmı cos(omega*t) imajür kısmı sin(omega*t) sinusoidal bir sinyal dönümlü bir karmaşık sayının gölgesidir.
+Bu dönüm noktasının gerçek kısmı $\cos(\omega t)$Hayal gücünün kısmı$\sin(\omega t)$Sinusoidal sinyal, dönen bir karmaşık sayının gölgesidir.
 
-```
-e^(i*omega*t) = cos(omega*t) + i*sin(omega*t)
-
-Real part:      cos(omega*t)    -- a cosine wave
-Imaginary part: sin(omega*t)    -- a sine wave
+```math
+\begin{aligned}
+e^{i\omega t} &= \cos(\omega t) + i \sin(\omega t) \\[4pt]
+\text{Real part: } & \cos(\omega t) \quad \text{-- a cosine wave} \\
+\text{Imaginary part: } & \sin(\omega t) \quad \text{-- a sine wave}
+\end{aligned}
 ```
 
 Bu fazör temsilidir. Bir sinüs dalgasını izlemek yerine, düzgün bir şekilde dönen bir ok izlersiniz. Faz değişimleri açı bozuklukları haline gelir. Amplitude değişiklikleri büyüklük değişimleri haline gelir. Sinyal eklemesi vektör eklemesi haline gelir.
 
 ### Birliğin Temelleri
 
-Birlik köklerinin N-th kökü, birlik dairesinde eşit derecede uzanan N noktalardır:
+- Evet .$N$-Birliğin kökleri $N$Birlik dairesinde eşit mesafelerde bulunan noktalar:
 
+```math
+w_k = e^{2\pi i k/N} \quad \text{for } k = 0, 1, 2, \ldots, N-1
 ```
-w_k = e^(2*pi*i*k/N)    for k = 0, 1, 2, ..., N-1
-```
 
-N = 4 için kökler şunlardır: 1, i, -1, -i (dört pusula noktası).
-N = 8 için dört pusula noktasını artı dört diyagonalı elde edersiniz.
+- Evet .$N = 4$, kökleri: $1, i, -1, -i$(dört pusula noktası).
+- Evet .$N = 8$, dört pusula noktasını artı dört diyagonalı elde edersiniz.
 
-Birlik kökleri Diskret Fourier Transform'un temelidir. DFT, bir sinyali bu N eşit alanlı frekanslarda bileşenlere parçalayır.
+Birlik kökleri Diskret Fourier Transform'un temelini oluşturur.$N$eşit derecede uzanan frekanslar.
 
 ### DFT'ye Bağlantı
 
-Bir sinyalin x[0], x[1], ..., x[N-1] Diskret Fourier Transform'u:
+Bir sinyalin Diskret Fourier dönüşümü$x[0], x[1], \ldots, x[N-1]$Bu:
 
-```
-X[k] = sum_{n=0}^{N-1} x[n] * e^(-2*pi*i*k*n/N)
+```math
+X[k] = \sum_{n=0}^{N-1} x[n] \, e^{-2\pi i k n/N}
 ```
 
-Her X[k] sinyalin birliğin k-inci kökü ile ne kadar ilişkili olduğunu ölçer. Bu karmaşık sinusoid bir frekans k. DFT bir sinyalü N dönümlü fazörlere ayırır ve her birinin amplitudu ve fazını söyler.
+Her biri .$X[k]$sinyalin  ile ne kadar ilişkili olduğunu ölçer.$k$-Birlik kökünün karmaşık bir sinusoidi.$k$DFT bir sinyal kırıyor .$N$Bu da, her bir fazörün genişliğini ve fazını gösterir.
 
 ### Neden ben hayali değilim?
 
-"Fantastik" kelimesi tarihi bir tesadüf. Descartes onu reddeterek kullandı. Ama i negatif sayılar ilk defa reddedildiğinde olduğu kadar daha hayali değildir.
+"Hüse" kelimesi tarihsel bir kazadır.$i$Bu sayıların sayısı, negatif sayılardaki sayıların sayısı, negatif sayılardaki sayıların sayısı, negatif sayılardaki sayıların sayısı, negatif sayılardaki sayıların sayısı, negatif sayılardaki sayıların sayısı, negatif sayılardaki sayıların sayısı, negatif sayılardaki sayıların sayısı, negatif sayılardaki sayıların sayısı, negatif sayılardaki sayıların sayısı, negatif sayılardaki sayıların sayısı, negatif sayılardaki sayıların sayısı, negatif sayılardaki sayıların sayısı, negatif sayılardaki sayıların sayısı, negatif sayılardaki sayıların sayısı, negatif sayılardaki sayıların sayısı, negatif sayılardaki sayıların sayısı, negatif sayılardaki sayıların sayısı, negatif sayılardaki sayıların sayısı, negatif sayılardaki sayıların sayısı, negatif sayılardaki sayıların sayısı, negatif sayılardaki sayıların sayısı, negatif sayılardaki sayıların sayısı, negatif sayılardaki sayıların sayısı, negatif sayılardaki sayıların sayısı, negatif sayılardaki sayıların sayısı, negatif sayılardaki sayıların sayısı, negatif sayılardaki sayıların sayısı, negatif sayılardaki sayıların sayısı, negatif sayılardaki sayıların sayısı, yani negatif sayılardaki sayıların sayısı, negatif sayılardaki sayıların sayısı, negatif sayılardaki sayıların sayısı, yani, negatif sayılardaki sayıların sayısı, negatif sayılardaki sayıların sayısı, yani, negatif sayılardaki sayıların sayısı, sayılardaki sayıların sayısı, sayılardaki sayıların sayısı, sayılardaki sayıların sayısı, sayılardaki sayıların sayısı, sayılardaki sayıların sayısı, sayılardaki sayıların sayısı, sayılardaki sayıların sayısı, sayılardaki sayılardaki sayılardaki sayılardaki sayılardaki sayılardaki sayılardaki sayılardaki sayılardaki sayılardaki sayılardaki sayılardaki sayılardaki sayılardaki sayılardaki sayılardaki sayılardaki sayılardaki sayılardaki sayılardaki sayılardaki sayılardaki sayılardaki sayılardaki sayılardaki sayılardaki sayılardaki sayılardaki sayılardaki sayılardaki sayılardaki sayılardaki sayılardaki sayılardaki sayılardaki sayılardaki sayılardaki sayılardaki sayılardaki sayılardaki sayılardaki sayılardaki sayılardaki sayılardaki sayılardaki sayılardaki sayılardaki sayılardaki sayılardaki sayılardaki sayılardaki sayılardaki sayılardaki sayılardaki sayılardaki sayılardaki sayılardaki
 
-Daha da kullanışlı: i 90 derecelik bir dönüm operatörüdür. Gerçek bir sayıyı bir kez i ile çarpırsak, hayalsel eksine 90 derece döndürürüz. tekrar i ile çarpırsak (i^2) bir başka 90 derece döndürürsünüz - şimdi negatif gerçek yönde işaret ediyorsunuz.
+Daha faydalı: $i$90 derecelik bir dönüm operatörü.$i$Bir kere, 90 dereceye denk silkeleyerek çarpın.$i$Yine ($i^2$Bu yüzden, bu yönde, bu yönde, bu yönde, bu yönde, bu yönde, bu yönde, bu yönde, bu yönde, bu yönde, bu yönde, bu yönde, bu yönde, bu yönde, bu yönde, bu yönde, bu yönde, bu yönde, bu yönde, bu yönde, bu yönde, bu yönde, bu yönde, bu yönde, bu yönde, bu yönde, bu yönde, bu yönde, bu yönde, bu yönde, bu yönde, bu yönde, bu yönde, bu yönde, bu yönde, bu yönde, bu yönde, bu yönde, bu yönde, bu yönde, bu yönde, bu yönde, bu yönde, bu yönde, bu yönde, bu yönde, bu yönde, bu yönde, bu yönde, bu yönde, bu yönde, bu yönde, bu yönde, bu yönde, bu yönde, bu yönde, bu yönde, bu yönde, bu yönde, bu yönde, bu yönde, bu yönde, bu yönde, bu yönde,$i^2 = -1$Bu gizemli değil. İki çeyrek dönüşten inşa edilen bir yarı dönüş.
 
 Bu yüzden mühendislikte karmaşık sayılar her yerde var. Dönen her şey - elektromanyetik dalgalar, kuantum durumları, sinyal titreşimleri, konum kodlamaları - doğal olarak karmaşık sayılarla tanımlanır.
 
 ### Karmaşık eksponensaller vs. trigonometrik fonksiyonlar
 
-Euler'in formülünden önce mühendisler sinyalleri A*cos(omega*t + phi) olarak yazdılar. - amplitud A, frekans omega, faz phi. Bu çalışır ama aritmetik ağrılı hale getirir.
+Euler'ın formülü öncesinde mühendisler sinyalleri şöyle yazıyordu:$A \cos(\omega t + \phi)$-- amplitud$A$, frekans $\omega$, aşama$\phi$Bu işe yarıyor ama aritmetik ağrılı hale getiriyor.
 
-Karmaşık eksponensallerle aynı sinyal A*e^(i*(omega*t + phi)). İki sinyal eklemek sadece iki karmaşık sayı eklemektir. Karşılaştırmak (modülasyon) sadece büyüklükleri çarpıtmak ve açı eklemektir. Faz değişikliği açı eklemelerine dönüşür. Frekans değişikliği fazörlerle çarpıtım olur.
+Karmaşık eksponensiallerle aynı sinyal $A e^{i(\omega t + \phi)}$İki sinyal eklemek sadece iki karmaşık sayıyı eklemek demektir. Karşılaştırmak (modülasyon) sadece büyüklükleri çarpmak ve açıları eklemek demektir. Faz değişikliği açı eklemelerine dönüşür. Frekans değişikliği fazörlerle çarpımlara dönüşür.
 
 Tüm sinyal işleme alanı karmaşık eksponensel notasyona geçmiştir çünkü matematik daha temizdir. "gerçek sinyal" her zaman karmaşık temsilin gerçek bir parçasıdır. Hayali kısım da hesaplama olarak taşınır ve tüm cebir doğal olarak çalışır.
 
@@ -229,9 +233,11 @@ Tüm sinyal işleme alanı karmaşık eksponensel notasyona geçmiştir çünkü
 
 **Sinusoidal positional encodings**(Orijinal Transformer kağıdı):
 
-```
-PE(pos, 2i) = sin(pos / 10000^(2i/d))
-PE(pos, 2i+1) = cos(pos / 10000^(2i/d))
+```math
+\begin{aligned}
+PE(pos, 2i) &= \sin\left(pos / 10000^{2i/d}\right) \\
+PE(pos, 2i+1) &= \cos\left(pos / 10000^{2i/d}\right)
+\end{aligned}
 ```
 
 Günah ve cos çiftleri, karmaşık eksponensallerin gerçek ve hayalsel parçalarıdır. Her frekans kodlama pozisyonu için farklı bir " çözünürlük " sağlar. Düşük frekanslar yavaşça (kaşlı pozisyon) değişir. Yüksek frekanslar hızlıca (sık pozisyon) değişir. Birlikte her pozisyonu benzersiz bir frekans parmak izi verirler.
@@ -240,13 +246,13 @@ Günah ve cos çiftleri, karmaşık eksponensallerin gerçek ve hayalsel parçal
 
 | Operation | Algebraic Form | Geometric Meaning |
 |-----------|---------------|-------------------|
-| Addition | (a+c) + (b+d)i | Vector addition in the plane |
-| Multiplication | (ac-bd) + (ad+bc)i | Rotate and scale |
-| Conjugate | a - bi | Reflect over real axis |
-| Magnitude | sqrt(a^2 + b^2) | Distance from origin |
-| Phase | atan2(b, a) | Angle from positive real axis |
+| Addition | $(a+c) + (b+d)i$ | Vector addition in the plane |
+| Multiplication | $(ac-bd) + (ad+bc)i$ | Rotate and scale |
+| Conjugate | $a - bi$ | Reflect over real axis |
+| Magnitude | $\sqrt{a^2 + b^2}$ | Distance from origin |
+| Phase | $\mathop{\mathrm{atan2}}(b, a)$ | Angle from positive real axis |
 | Division | multiply by conjugate | Reverse rotation and rescale |
-| Power | r^n * e^(i*n*theta) | Rotate n times, scale by r^n |
+| Power | $r^n e^{in\theta}$ | Rotate $n$ times, scale by $r^n$ |
 
 ```mermaid
 graph LR
@@ -326,7 +332,7 @@ Kontrol edin:`euler(theta).magnitude()`Her zaman 1.0 olmalı.`euler(0)`vermesi g
 
 ### Adım 3: Dönüşüm
 
-Bir noktayı (x, y) açı ile teta döndürmek bir karmaşık çarpma:
+Bir noktayı döndürmek$(x, y)$açı ile$\theta$bir karmaşık çarpma:
 
 ```python
 point = Complex(3, 4)
@@ -350,11 +356,11 @@ def dft(signal):
     return result
 ```
 
-Bu O(N^2) DFT. Her çıkış X[k] sinyal örneklerinin toplamı birliğin kökleri ile çarpılmıştır.
+Bu da $O(N^2)$DFT. Her çıkış $X[k]$sinyal örneklerinin toplamı, birlik kökleriyle çarpılır.
 
 ### Adım 5: Ters DFT
 
-Ters DFT, orijinal sinyali spektrumundan yeniden oluşturur. Ön DFT'den gelen tek değişiklikler: işaretini katılamada çevir ve N ile bölün.
+Ters DFT, orijinal sinyali spektrumundan yeniden oluşturur. Ön DFT'den gelen tek değişiklikler: işaretini katılamada çevir ve böl $N$- Evet .
 
 ```python
 def idft(spectrum):
@@ -380,7 +386,7 @@ def roots_of_unity(N):
 
 İki özellik doğrulanıyor:
 - Her kökenin büyüklüğü tam olarak 1'dir.
-- Tüm N köklerinin toplamı sıfırdır (simetri ile iptal edilirler).
+- Hepsinin toplamı$N$kökler sıfırdır (simetri ile ortadan kaldırılırlar).
 
 Bu özellikler DFT'yi dönüştürülebilir yapanlardır. Birlik kökleri frekans alanı için ortogonal bir temel oluşturur.
 
@@ -424,30 +430,42 @@ freqs = np.fft.fftfreq(128, d=1/128)
 
 ## Egzersizler
 
-1. **Complex arithmetic by hand.**Hesaplayın (2 + 3i) * (4 - i) ve kod ile doğrulayın. Sonra hesaplayın (5 + 2i) / (1 - 3i). Her iki sonucu da karmaşık düzlemde çizin ve çarpımın ilk sayıyı döndüğünü ve ölçeklediğini kontrol edin.
+1. **Complex arithmetic by hand.**Hesaplama$(2 + 3i)(4 - i)$Sonra hesaplayın.$(5 + 2i) / (1 - 3i)$. Her iki sonucu da karmaşık düzlemde çiz ve çarpımın ilk sayıyı döndüğünü ve ölçeklendirdiğini kontrol et.
 
-2. **Rotation sequence.**Bu sayede, e^(i*pi/6) ile on iki kez çarpın. 12 çarpımdan sonra (1, 0) 'ye döndüğünüzü kontrol edin.
+2. **Rotation sequence.**Önemli noktayla başla.$(1, 0)$- Karşılıklı çarpım$e^{i\pi/6}$12 kez.$(1, 0)$12 çarpımdan sonra, her adımda koordinatları yazdır ve düzenli bir 12gon izlemelerini onayla.
 
-3. **DFT of a known signal.**32 noktada örneklenen sin ((2*pi*3*t) ve 0.5*sin ((2*pi*7*t) toplamı olan bir sinyal oluşturun. DFT'ni çalıştırın. Büyüklük spektrumun 3 ve 7 frekanslarında zirvelerinin olup olmadığını kontrol edin.
+3. **DFT of a known signal.**Bir sinyal oluştur ki $\sin(2\pi \cdot 3t)$ve $0.5 \sin(2\pi \cdot 7t)$Büyüklük spektrumun 3 ve 7 frekanslarında zirveye sahip olduğunu kontrol edin. 7'deki zirve 3'teki zirvenin yüksekliğinin yarısını içerir.
 
-4. **Roots of unity visualization.**Birliğin 8. kökü hesaplayın. Onların sıfıra kadar toplamını kontrol edin. Bir kökü ilk kökü e^(2*pi*i/8) ile çarpmanın bir sonraki kökü verdiğini kontrol edin.
+4. **Roots of unity visualization.**Birliğin 8. kökü hesaplayın. Onların sıfıra kadar toplamını kontrol edin.$e^{2\pi i/8}$Bir sonraki kök verir.
 
 5. **Rotation matrix equivalence.**10 rastgele açı ve 10 rastgele nokta için, karmaşık çarpımın 2x2 döngü matrisinde matris-vektor çarpımı ile aynı sonucu verdiğini kontrol edin.
+
+### İpuçlar
+
+**Exercise 1.**Ürünü genişletmek için $i^2 = -1$, sonra üst ve altını eşleşik ile çarparak bölünür .$1 + 3i$Ürünü kontrol edin .`Complex(2, 3) * Complex(4, -1)`: onun `magnitude()`İki büyüklüğün ürünü olmalıdır ve onun `phase()`iki aşamanın toplamına eşit olmalıdır.
+
+**Exercise 2.**İşe devam et .`euler(math.pi / 6)`Bu sayede, bu değerin en yüksek seviyesinin 1'de kalıp en yüksek seviyesinin 30 derece büyüdüğünü kontrol etmeniz gerekir.
+
+**Exercise 3.**Zaman noktalarını  ile yazın .$t = n/32$Ve aramak .`dft`Sadece 0 ila 15 arası kutulara bak, çünkü üst yarısı aynalı bir görüntü.$k$Amplitude sinüs için$A$- Evet .$AN/2$Bin 3'de 16'nin ve Bin 7'de 8'in olacağını bekle.
+
+**Exercise 4.**Arama .`roots_of_unity(8)`Ve kökleri ekleyin: toplamın büyüklüğü 0'ya yakın olmalıdır. Her kökü önceki kökle bölün ve her sonuç eşit olup olmadığını kontrol edin.`euler(2 * math.pi / 8)`- Evet .
+
+**Exercise 5.**Dönüş matrisi [[cos t, -sin t], [sin t, cos t]]. Her açı ve nokta için hesaplayın `euler(t) * Complex(x, y)`ve matris ürünü, sonra en büyük mutlak farkı kaydet.$10^{-15}$- Evet .
 
 ## Anahtar Terimler
 
 | Term | What it means |
 |------|---------------|
-| Complex number | A number a + bi where a is the real part, b is the imaginary part, and i^2 = -1 |
-| Imaginary unit | The number i, defined by i^2 = -1. Not imaginary in the philosophical sense -- it is a rotation operator |
+| Complex number | A number $a + bi$ where $a$ is the real part, $b$ is the imaginary part, and $i^2 = -1$ |
+| Imaginary unit | The number $i$, defined by $i^2 = -1$. Not imaginary in the philosophical sense -- it is a rotation operator |
 | Complex plane | The 2D plane where the x-axis is real and the y-axis is imaginary. Also called the Argand plane |
-| Magnitude (modulus) | The distance from the origin: sqrt(a^2 + b^2). Written as \|z\| |
-| Phase (argument) | The angle from the positive real axis: atan2(b, a). Written as arg(z) |
-| Conjugate | The mirror image across the real axis: conjugate of a + bi is a - bi |
-| Polar form | Expressing z as r * e^(i*theta) instead of a + bi. Makes multiplication easy |
-| Euler's formula | e^(i*theta) = cos(theta) + i*sin(theta). Connects exponentials to trigonometry |
-| Phasor | A rotating complex number e^(i*omega*t) representing a sinusoidal signal |
-| Roots of unity | The N complex numbers e^(2*pi*i*k/N) for k = 0 to N-1. N equally spaced points on the unit circle |
+| Magnitude (modulus) | The distance from the origin: $\sqrt{a^2 + b^2}$. Written as $\lvert z \rvert$ |
+| Phase (argument) | The angle from the positive real axis: $\mathop{\mathrm{atan2}}(b, a)$. Written as $\arg(z)$ |
+| Conjugate | The mirror image across the real axis: conjugate of $a + bi$ is $a - bi$ |
+| Polar form | Expressing $z$ as $r e^{i\theta}$ instead of $a + bi$. Makes multiplication easy |
+| Euler's formula | $e^{i\theta} = \cos\theta + i \sin\theta$. Connects exponentials to trigonometry |
+| Phasor | A rotating complex number $e^{i\omega t}$ representing a sinusoidal signal |
+| Roots of unity | The $N$ complex numbers $e^{2\pi i k/N}$ for $k = 0$ to $N-1$. $N$ equally spaced points on the unit circle |
 | DFT | Discrete Fourier Transform. Decomposes a signal into complex sinusoidal components using roots of unity |
 | RoPE | Rotary Position Embedding. Uses complex multiplication to encode relative position in transformer attention |
 
@@ -456,6 +474,6 @@ freqs = np.fft.fftfreq(128, d=1/128)
 - [Visual Introduction to Euler's Formula](https://betterexplained.com/articles/intuitive-understanding-of-eulers-formula/)- ağır notasyon olmadan geometrik algı oluşturur
 - [Su et al.: RoFormer (2021)](https://arxiv.org/abs/2104.09864)- karmaşık dönümleri kullanarak Rotary Position Embedding'i tanıtan kağıt
 - [Vaswani et al.: Attention Is All You Need (2017)](https://arxiv.org/abs/1706.03762)- Sinusoidal pozisyon kodlamaları olan orijinal Transformer kağıdı
-- [3Blue1Brown: Euler's formula with introductory group theory](https://www.youtube.com/watch?v=mvmuCPvRoWQ)- e^(i*pi) = -1 nedeninin görsel açıklaması
+- [3Blue1Brown: Euler's formula with introductory group theory](https://www.youtube.com/watch?v=mvmuCPvRoWQ)- nedenini görsel açıklama$e^{i\pi} = -1$
 - [Needham: Visual Complex Analysis](https://global.oup.com/academic/product/visual-complex-analysis-9780198534464)- karmaşık sayılar için en iyi görsel tedavi, geometrik anlayışla dolu
 - [Strang: Introduction to Linear Algebra, Ch. 10](https://math.mit.edu/~gs/linearalgebra/)- Düzsel cebir ve öz değerler bağlamında karmaşık sayılar

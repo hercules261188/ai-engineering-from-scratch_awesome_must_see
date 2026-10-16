@@ -44,7 +44,7 @@ Mode:   most frequent value
         Useful for categorical data. For continuous data, rarely informative.
 ```
 
-Ortalama dengeler. Ortalama yarı yol işaretidir. Ayrıldıklarında dağılım çarpık olur. Gelir dağılımlarının ortalama >> ortalaması vardır (milyardecilerden sağ çarpıklık). Eğitim sırasında kayıp dağılımlarının çoğu zaman ortalama << ortalaması vardır (sadece örneklerden sol çarpıklık).
+Ortalama dengeler arasındaki dengedir. Ortalama da yarı yolun işaretidir.$\text{mean} \gg \text{median}$(Milliarder'den sağ tarafa) Eğitim sırasında kayıp dağılımları genellikle$\text{mean} \ll \text{median}$(sadece örneklerden sol eğilimi).
 
 **Measures of spread**"Veriler ne kadar dağılmış?" cevabını ver.
 
@@ -75,14 +75,16 @@ For latency monitoring:
 
 ML'de, sonuç geçiciliği, tahmin güven dağılımları ve hata dağılımlarını anlama için yüzdeliller önemsediğiniz. Düşük ortalama hata ama korkunç P99 hatası olan bir model güvenlik kritik uygulamalarda işe yaramaz olabilir.
 
-**Sample vs population statistics.**Bir örnekten varyansa hesaplarken, n yerine (n-1) bölün. Bu Bessel'in düzeltmesidir. Bu örnek ortalamanın gerçek popülasyon ortalaması olmamasını telafi eder. N isimlendiriciyle, gerçek varyansa sistematik olarak küçümseniyor. (n-1) ile, tahmin tarafsızdır.
+**Sample vs population statistics.**Bir örnekten hesaplama varyansiyonu yaparken, bölün $(n-1)$yerine$n$Bu Bessel'in düzeltmesi. Bu örnek ortalamanın gerçek nüfus ortalaması olmamasını telafi eder.$n$Eğer bir isimle, gerçek değişimi sistematik olarak küçümsüyorsun.$(n-1)$, tahmin tarafsızdır.
 
-```
-Population variance: sigma^2 = (1/N) * sum((x_i - mu)^2)
-Sample variance:     s^2     = (1/(n-1)) * sum((x_i - x_bar)^2)
+```math
+\begin{aligned}
+\text{Population variance:} \quad \sigma^2 &= \frac{1}{N} \sum (x_i - \mu)^2 \\
+\text{Sample variance:} \quad s^2 &= \frac{1}{n-1} \sum (x_i - \bar{x})^2
+\end{aligned}
 ```
 
-Pratikte: n büyükse (binlerce örnek), fark önemsizdir. n küçükse (bir düzine örnek), önemli.
+İşlemde:$n$Büyük (binlerce örnek) ise fark önemsizdir.$n$Küçük (bir düzine örnek), önemli.
 
 ### İlişki: Değişkenlerin Birlikte Nasıl Hareket Edildiği
 
@@ -100,7 +102,7 @@ r =  0:  no linear relationship (but there might be a nonlinear one!)
 Range: [-1, 1]
 ```
 
-Pearson, ilişkinin doğrusal olduğunu ve her iki değişkenin de normal olarak dağıtıldığını varsayıyor.
+Pearson, ilişkinin doğrusal olduğunu ve her iki değişkenin de normal olarak dağıtıldığını varsayıyor.$r$0.1'den 0.9'a kadar.
 
 **Spearman rank correlation**Monoton ilişki önlemleri:
 
@@ -139,7 +141,7 @@ Cov(X, Y) < 0:  when X increases, Y tends to decrease
 Cov(X, Y) = 0:  no linear co-movement
 ```
 
-D özellikleri için, kovariansa matrisi C, C[i][j] = Cov(feature_i, feature_j) olduğu bir d x d matrisidir.
+- Evet .$d$Özellikler, kovariansa matrisi $C$- bir$d \times d$matris nerede $C[i][j] = \mathop{\mathrm{Cov}}(\text{feature}_i, \text{feature}_j)$- Diagonal girişler$C[i][i]$Her bir özelliğin farklılıkları.
 
 ```
 C = | Var(x1)      Cov(x1,x2)  Cov(x1,x3) |
@@ -155,7 +157,7 @@ Properties:
 
 **Connection to PCA.**PCA özendependiance matrisiyi oluşturur. Özvektorlar ana bileşenlerdir (maksimum değişkenlik yönleri). Öz değerleri size her bileşenin ne kadar değişkenlik yakaladığını söyler. Bu tam olarak Ders 10'un kapsadığı şeydir, ancak şimdi neden kovariansa matrisi parçalanmak için doğru olduğunu görüyorsunuz: verilerinizde tüm çift yönlü doğrusal ilişkileri kodlar.
 
-**Connection to correlation.**Korrelasyon matrisi, standart değişkenlerin (her biri standart sapmalarıyla bölünmüş) kovarians matrisidir. Korrelasyon kovariansı normalleştirir, böylece tüm değerler [-1, 1]'e düşer.
+**Connection to correlation.**Korrelasyon matrisi, standart değişkenlerin (her biri standart sapmalarıyla bölünmüş) kovarians matrisidir.$[-1, 1]$- Evet .
 
 ### Hipotez Testleri
 
@@ -205,10 +207,11 @@ T testi ortalamaları karşılaştırır.
 
 **One-sample t-test:**nüfusun ortalaması bir hipotez değerinden farklı mı?
 
-```
-t = (x_bar - mu_0) / (s / sqrt(n))
-
-degrees of freedom = n - 1
+```math
+\begin{aligned}
+t &= \frac{\bar{x} - \mu_0}{s / \sqrt{n}} \\[4pt]
+\text{degrees of freedom} &= n - 1
+\end{aligned}
 ```
 
 **Two-sample t-test (independent):**İki grup farklı mıdır?
@@ -297,19 +300,20 @@ engineering cost of deploying a new model.
 
 **Effect size**örnek boyutundan bağımsız olarak farkın ne kadar büyük olduğunu ölçer:
 
-```
-Cohen's d = (mean_1 - mean_2) / pooled_std
-
-d = 0.2:  small effect
-d = 0.5:  medium effect
-d = 0.8:  large effect
+```math
+\begin{aligned}
+\text{Cohen's } d &= \frac{\text{mean}_1 - \text{mean}_2}{\text{pooled\_std}} \\[4pt]
+d &= 0.2: \quad \text{small effect} \\
+d &= 0.5: \quad \text{medium effect} \\
+d &= 0.8: \quad \text{large effect}
+\end{aligned}
 ```
 
 Her zaman hem p-de etki boyutunu bildirin. p-değer farkın gerçek olup olmadığını söyler. efekt boyutu önemli olup olmadığını söyler.
 
 ### Çeşitli Benzetme Sorunu
 
-Eğer bir çok hipotez denediğinizde, bazıları tesadüfen "önemli" olur. Eğer 20 şeyi alfa = 0.05'te test ederseniz, hiçbir şey gerçek olmasa bile 1 yanlış pozitif beklersiniz.
+Birçok hipotez denediğinizde, bazıları tesadüfen "önemli" olur.$\alpha = 0.05$, gerçek bir şey olmasa bile 1 yanlış pozitif bekliyorsunuz.
 
 ```
 P(at least one false positive) = 1 - (1 - alpha)^m
@@ -320,7 +324,7 @@ P(false positive) = 1 - 0.95^20 = 0.64
 You have a 64% chance of at least one false positive.
 ```
 
-**Bonferroni correction:**Alfa'yı test sayısına göre bölün.
+**Bonferroni correction:**bölün .$\alpha$Test sayısı ile.
 
 ```
 Adjusted alpha = alpha / m = 0.05 / 20 = 0.0025
@@ -417,11 +421,11 @@ Kruskal-Wallis:     compares multiple groups (replaces ANOVA)
 - More statistical power (better at detecting real differences)
 ```
 
-ML deneylerinde, tipik olarak küçük n (5 veya 10 çapraz onay katlaması) vardır, bu nedenle Wilcoxon'un imzalaması gibi parametrik olmayan testler genellikle t testlerinden daha uygun olur.
+ML deneylerinde, genellikle küçük $n$(5 veya 10 çapraz onay katlaması), bu nedenle Wilcoxon'un imzalama derecesi gibi parametrik olmayan testler t testlerinden daha uygun olur.
 
 ### Merkez Sınır Teoremi: Pratik Etkileri
 
-CLT'nin belirttiği gibi, örneklerin dağılımı, n'in büyüdüğü sırada, temel popülasyon dağılımı ne olursa olsun normal bir dağılmaya yaklaşır.
+CLT'de örneklerin dağıtımı ortalama normal bir dağıtmaya yaklaştığı belirtildi.$n$Bu, temel nüfus dağılımından bağımsız olarak büyür.
 
 ```
 If X_1, X_2, ..., X_n are iid with mean mu and variance sigma^2:
@@ -473,7 +477,7 @@ For highly skewed distributions, you might need n >= 100.
 
 9. **Assuming independence when data is not independent.**Aynı hastadan gelen tıbbi görüntüler, aynı belgeye ait birden fazla cümle.
 
-10. **P-hacking.**P < 0,05'e ulaşana kadar farklı testler, alt kümeler veya dışlama kriterlerini denemek.
+10. **P-hacking.**Farklı testler, alt setler veya dışlama kriterlerini denemek,$p < 0.05$Sonuç arama eseridir.
 
 ## Yapım
 
@@ -484,7 +488,7 @@ Bu uygulamayı uygulayacaksınız:
 3. **Hypothesis tests**(bir örnek t testi, iki örnek t testi, chi kare testi)
 4. **Bootstrap confidence intervals**(herhangi bir istatistik için varsayım gerekmez)
 5. **A/B test simulator**(veriler oluşturmak, test etmek, I ve II tip hataları kontrol etmek)
-6. **Statistical vs practical significance demo**(büyük n'in her şeyi "önemli" kıldığını gösterir)
+6. **Statistical vs practical significance demo**(büyük bir tane gösterir)$n$Her şeyi "büyük" yapar.)
 
 Hepsi sıfırdan, sadece kullanılarak.`math`ve `random`- Ne şapşalık ne de şapşalık.
 
@@ -501,7 +505,7 @@ f3-bootstrap-resample
 | Standard deviation | Square root of variance. Measures spread in original units. |
 | Percentile | Value below which a given percentage of data falls. |
 | IQR | Interquartile range. Q3 minus Q1. The spread of the middle 50%. |
-| Pearson correlation | Measures linear association between two variables. Range [-1, 1]. |
+| Pearson correlation | Measures linear association between two variables. Range $[-1, 1]$. |
 | Spearman correlation | Measures monotonic association using ranks. |
 | Covariance matrix | Matrix of pairwise covariances between all features. |
 | Null hypothesis | Default assumption of no effect or no difference. |

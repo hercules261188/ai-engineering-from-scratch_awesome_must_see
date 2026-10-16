@@ -9,7 +9,7 @@
 
 ## Öğrenme Hedefleri
 
-- Güç İterasyonu yoluyla SVD uygulamak ve U, Sigma ve V^T'nin geometrik anlamını açıklamak
+- SVD'yi güç iterasyonu yoluyla uygulayın ve $U$- Evet .$\Sigma$ve$V^T$
 - Resim sıkıştırılması için kısaltılmış SVD uygulayın ve sıkıştırma oranı vs. yeniden yapılandırma hatasını ölçün
 - SVD üzerinden Moore-Penrose pseudoinversini hesaplayın .
 - SVD'yi PCA'ya, tavsiye sistemlerine (latent faktörler) ve NLP'deki latent semantik analizi ile bağlayın
@@ -26,17 +26,14 @@ SVD herhangi bir matris üzerinde çalışır. Herhangi bir şekil. Her sıra. H
 
 Her matris, şekilinden bağımsız olarak, üç işlem yapar: dön, ölçek, dön.
 
-```
-A = U * Sigma * V^T
-
-      m x n     m x m    m x n    n x n
-     (any)    (rotate)  (scale)  (rotate)
+```math
+\underset{\substack{m \times n \\ \text{(any)}}}{A} = \underset{\substack{m \times m \\ \text{(rotate)}}}{U} \cdot \underset{\substack{m \times n \\ \text{(scale)}}}{\Sigma} \cdot \underset{\substack{n \times n \\ \text{(rotate)}}}{V^T}
 ```
 
-A matrisi göz önüne alındığında, SVD onu aşağıdaki konularda değerlendirir:
-- V^T giriş alanında vektörleri döndürür (n boyutlu)
-- Her eksesi boyunca Sigma ölçekleri (kendi veya kompres)
-- U sonucu çıkış alanına döndürür (m boyutlu)
+Herhangi bir matris verildiğinde $A$, SVD'nin bu değerleri:
+- $V^T$Giriş alanında vektörleri döndürür ($n$- boyutlu)
+- $\Sigma$Her eksesi boyunca ölçekler (kendi veya kompresler)
+- $U$Sonuç çıkış alanına döndür ($m$- boyutlu)
 
 ```mermaid
 graph LR
@@ -44,35 +41,35 @@ graph LR
     B -->|"U\n(rotate)"| C["Output space (m-dim)\nRotated to output\norientation"]
 ```
 
-SVD'ye bir matris verilir. "Bu matris bir giriş küresini alır, önce V^T ile döndürür, sonra Sigma ile elipsoide uzatır, sonra elipsoide U ile döndür".
+SVD'ye bir matris veriyorsunuz. "Bu matris bir giriş küresini alır, önce onu döndürür.$V^T$Sonra da bir elipsoide uzattı .$\Sigma$, sonra elipsoid'i döner $U$." Tek değerler elipsoidlerin ekselerin uzunluklarıdır.
 
 ### Tam bir parçalanma
 
-M x n şekli olan A matrisi için:
+Matris için $A$şekli ile$m \times n$- ...
 
+```math
+\begin{aligned}
+& A = U \cdot \Sigma \cdot V^T \\[6pt]
+& \text{where:} \\
+& \quad U \text{ is } m \times m, \text{ orthogonal } (U^T U = I) \\
+& \quad \Sigma \text{ is } m \times n, \text{ diagonal (singular values on the diagonal)} \\
+& \quad V \text{ is } n \times n, \text{ orthogonal } (V^T V = I) \\[6pt]
+& \text{The singular values } \sigma_1 \ge \sigma_2 \ge \cdots \ge \sigma_r > 0 \\
+& \text{where } r = \mathop{\mathrm{rank}}(A)
+\end{aligned}
 ```
-A = U * Sigma * V^T
 
-where:
-  U     is m x m, orthogonal (U^T U = I)
-  Sigma is m x n, diagonal (singular values on the diagonal)
-  V     is n x n, orthogonal (V^T V = I)
-
-The singular values sigma_1 >= sigma_2 >= ... >= sigma_r > 0
-where r = rank(A)
-```
-
-U sütunları sol tek tek vektörler olarak adlandırılır. V sütunları sağ tek tek vektörler olarak adlandırılır. Sigma'nın diyagonal girişleri tek tek değerler olarak adlandırılır. Onlar her zaman negatif olmayan ve geleneksel olarak azalır sırada sıralanmıştır.
+ sütunları$U$Sol tek vektörler olarak adlandırılır.$V$Düz tek tek vektörler olarak adlandırılır.$\Sigma$Bu değerler her zaman negatif olmayan ve geleneksel olarak azalır sırada sıralanmıştır.
 
 ### Sol tekerleyici vektörler, tekerleyici değerler, sağ tekerleyici vektörler
 
 SVD'nin her bileşeninin farklı bir geometrik anlamı vardır.
 
-**Right singular vectors (columns of V):**Bunlar giriş alanı (R^n) için bir ortonomal temel oluşturur. Bunlar giriş alanındaki yönleridir. Matris çıkış alanındaki ortogonal yönlere haritası yapar.
+**Right singular vectors (columns of $V$):**Bu, giriş alanının ortonomik bir temelini oluşturur ($\mathbb{R}^n$Bu, giriş alanındaki yönleridir ve matris çıkış alanındaki ortogonal yönlere haritası yapar.
 
-**Singular values (diagonal of Sigma):**Bu, ölçekleme faktörleri. i. tek değer, matrisin i. sağ tek vektör boyunca vektörleri ne kadar uzattığını söyler.
+**Singular values (diagonal of $\Sigma$):**Bu, ölçekleme faktörleri. i. tek değer, matrisin i. sağ tek vektör boyunca vektörleri ne kadar uzattığını söyler.
 
-**Left singular vectors (columns of U):**Bunlar çıkış alanı için bir ortonomal temel oluşturur (R^m). I. sol tek tek tek tek tek tek tek tek tek tek tek tek tek tek tek tek tek tek tek tek tek tek tek tek tek tek tek tek tek tek tek tek tek tek tek tek tek tek tek tek tek tek tek tek tek tek tek tek tek tek tek tek tek tek tek tek tek tek tek tek tek tek tek tek tek tek tek tek tek tek tek tek tek tek tek tek tek tek tek tek tek tek tek tek tek tek tek tek tek tek tek tek tek tek tek tek tek tek tek tek tek tek tek tek tek tek tek tek tek tek tek tek tek tek tek tek tek tek tek tek tek tek tek tek tek tek tek tek tek tek tek tek tek tek tek tek tek tek tek tek tek tek tek tek tek tek tek tek tek tek tek tek tek tek tek tek tek tek tek tek tek tek tek tek tek tek tek tek tek tek tek tek tek tek tek tek tek tek tek tek tek tek tek tek tek tek tek tek tek tek tek tek tek tek tek tek tek tek tek tek tek tek tek tek tek tek tek tek tek tek tek tek tek tek tek tek tek tek tek tek tek tek tek tek tek tek tek tek tek tek tek tek tek tek tek tek tek tek tek tek tek tek tek tek tek tek tek tek tek tek tek tek tek tek tek tek tek tek tek tek tek tek tek tek tek tek tek tek tek tek tek tek tek tek tek tek tek tek tek tek tek tek tek tek tek tek tek tek tek tek tek tek tek tek tek tek tek tek tek tek tek tek tek tek tek tek tek tek tek tek tek tek tek tek tek tek tek tek tek tek tek tek tek tek tek tek tek tek tek tek tek tek tek tek tek tek tek tek tek tek tek tek tek tek tek tek tek tek tek tek tek tek tek tek tek tek tek tek tek tek tek tek tek tek tek tek tek tek tek tek tek tek tek tek tek tek tek tek tek tek tek tek tek tek tek tek tek tek tek tek tek tek tek tek tek tek tek tek tek tek tek tek tek tek tek tek tek tek tek tek tek tek tek tek tek tek tek tek tek tek tek tek tek tek tek tek tek tek tek tek tek tek tek tek tek tek tek tek tek tek tek tek tek tek tek tek tek tek tek tek tek tek tek tek tek tek tek tek tek tek tek tek tek tek tek tek tek tek tek tek tek tek tek tek tek tek tek tek tek tek tek tek tek tek tek tek tek tek tek
+**Left singular vectors (columns of $U$):**Bu, çıkış alanı için ortonomik bir temel oluşturur ($\mathbb{R}^m$). I- sol tek tek tek vektör, i- sağ tek tek tek vektörün (skale sonrasında) düştüğü çıkış alanındaki yöndür.
 
 Arasındaki ilişki:
 
@@ -98,20 +95,20 @@ The full matrix is the sum of r such matrices, where r is the rank.
 
 Bu form düşük sıralama yaklaşımının temelidir. Her terim bir yapı katmanı ekler. Birinci terim tek en önemli örneği yakalar. İkinci terim bir sonraki en önemli olanı yakalar. Ve buna benzer. Bu toplamı kısaltmak size verilen herhangi bir sıralamada mümkün olan en iyi yaklaşım sağlar.
 
-```
-Rank-1 approx:    A_1 = sigma_1 * u_1 * v_1^T
-                  (captures the dominant pattern)
-
-Rank-2 approx:    A_2 = sigma_1 * u_1 * v_1^T + sigma_2 * u_2 * v_2^T
-                  (captures the two most important patterns)
-
-Rank-k approx:    A_k = sum of top k terms
-                  (optimal by the Eckart-Young theorem)
+```math
+\begin{aligned}
+\text{Rank-1 approx:} \quad & A_1 = \sigma_1 u_1 v_1^T \\
+& \text{(captures the dominant pattern)} \\[6pt]
+\text{Rank-2 approx:} \quad & A_2 = \sigma_1 u_1 v_1^T + \sigma_2 u_2 v_2^T \\
+& \text{(captures the two most important patterns)} \\[6pt]
+\text{Rank-}k\text{ approx:} \quad & A_k = \text{sum of top } k \text{ terms} \\
+& \text{(optimal by the Eckart-Young theorem)}
+\end{aligned}
 ```
 
 ### Kendi bileşimi ile ilişki
 
-SVD ve eigende kompozisyon derin bir bağlantıya sahiptir. A'nın tek değerleri ve vektörleri doğrudan A^T A ve A^T'nin öz değerlerinden ve öz vektörlerinden gelir.
+SVD ve eigende kompozisyon derin bir bağlantıya sahiptir.$A$                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             $A^T A$ve $A A^T$- Evet .
 
 ```
 A^T A = V * Sigma^T * U^T * U * Sigma * V^T
@@ -135,41 +132,41 @@ So:
 
 Bu bağlantı size üç şeyi anlatıyor:
 1. Tek değerler her zaman gerçek ve negatif değildir (pozitif yarı tanımlı bir matrisin öz değerlerinin kare köküdürler).
-2. SVD'yi A^T A'nın kendi bileşimi ile hesaplayabilirsiniz, ancak bu durum numarasını karesine katarak sayısal doğruluğu kaybeder.
-3. A kare ve simetrik pozitif yarı belirlenmiş olduğunda, SVD ve eigende kompozisyon aynı şeydir.
+2. SVD'yi kendi bileşimiyle hesaplayabilirsiniz .$A^T A$Bu durum, bir durum sayısını karesine katarak sayısal doğruluğu kaybeder.
+3. Ne zaman ?$A$- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
 ### Kısaltılmış SVD: düşük seviye yakınlaştırma
 
-Eckart-Young-Mirsky teoremi, A'ya en iyi sıra-k yaklaşımının (hem Frobenius hem de spektral normda) sadece üst k tek değerlerini ve ilgili vektörlerini tutarak elde edildiğini belirtir:
+Eckart-Young-Mirsky teoremi , en iyi$\text{rank-}k$$A$(Frobenius ve spektral normda) sadece üstü tutarak elde edilir.$k$tek değerler ve ilgili vektörler:
 
+```math
+\begin{aligned}
+& A_k = U_k \cdot \Sigma_k \cdot V_k^T \\[6pt]
+& \text{where:} \\
+& \quad U_k \text{ is } m \times k \quad \text{(first } k \text{ columns of } U\text{)} \\
+& \quad \Sigma_k \text{ is } k \times k \quad \text{(top-left } k \times k \text{ block of } \Sigma\text{)} \\
+& \quad V_k \text{ is } n \times k \quad \text{(first } k \text{ columns of } V\text{)} \\[6pt]
+& \text{Approximation error} = \sigma_{k+1} \quad \text{(in spectral norm)} \\
+& \text{Approximation error} = \sqrt{\sigma_{k+1}^2 + \cdots + \sigma_r^2} \quad \text{(in Frobenius norm)}
+\end{aligned}
 ```
-A_k = U_k * Sigma_k * V_k^T
 
-where:
-  U_k     is m x k  (first k columns of U)
-  Sigma_k is k x k  (top-left k x k block of Sigma)
-  V_k     is n x k  (first k columns of V)
-
-Approximation error = sigma_{k+1}  (in spectral norm)
-                    = sqrt(sigma_{k+1}^2 + ... + sigma_r^2)  (in Frobenius norm)
-```
-
-Bu sadece "iyi" bir yaklaşım değil. Bu, provable olarak, sıra k'nin en iyi yaklaşımıdır.
+Bu sadece "iyi" bir yaklaşım değil.$k$Başka kimse yok .$\text{rank-}k$Matrix daha yakın .$A$- Evet .
 
 | Component | Relative magnitude | Kept in rank-3 approx? |
 |-----------|-------------------|------------------------|
-| sigma_1 | Largest | Yes |
-| sigma_2 | Large | Yes |
-| sigma_3 | Medium-large | Yes |
-| sigma_4 | Medium | No (error) |
-| sigma_5 | Medium-small | No (error) |
-| sigma_6 | Small | No (error) |
-| sigma_7 | Very small | No (error) |
-| sigma_8 | Tiny | No (error) |
+| $\sigma_1$ | Largest | Yes |
+| $\sigma_2$ | Large | Yes |
+| $\sigma_3$ | Medium-large | Yes |
+| $\sigma_4$ | Medium | No (error) |
+| $\sigma_5$ | Medium-small | No (error) |
+| $\sigma_6$ | Small | No (error) |
+| $\sigma_7$ | Very small | No (error) |
+| $\sigma_8$ | Tiny | No (error) |
 
-A_3 en büyük üç tek değerini yakalar. Hata = kalan değerler (sigma_4 ile sigma_8).
+Üstü üçü tut .$A_3$Bu değerler, en büyük üç tek değerden oluşur.$\sigma_4$- Evet .$\sigma_8$)
 
-Tek değerler hızlı bir şekilde bozulursa, küçük bir k matrisin çoğunu yakalar.
+Eğer tek değerler hızlı bir şekilde bozulursa, küçük bir $k$Eğer yavaş yavaş bozulurlarsa, matrisin düşük bir yapısı yoktur.
 
 ### SVD ile görüntü sıkıştırma
 
@@ -211,9 +208,9 @@ Netflix Ödülü bunu ünlü kıldı. Çoğu giriş kayıp olduğu bir kullanıc
 Bu değerlendirme matrisi düşük bir sıralama sahiptir. Kullanıcıların tamamen bağımsız zevkleri yoktur. Çoğu tercihleri açıklayan bir avuç gizli faktör vardır (harekete karşı drama, eskiye karşı yeniye, beyinye karşı visceral).
 
 SVD (dolmuş) derecelendirme matrisinde, aşağıdaki bölümlere ayrılır:
-- U: gizli faktör alanında kullanıcı profilleri
-- Sigma: her gizli faktörün önemi
-- V^T: gizli faktör alanında film profili
+- $U$: gizli faktör alanında kullanıcı profilleri
+- $\Sigma$: her gizli faktörün önemi
+- $V^T$: gizli faktör alanında film profilleri
 
 Bir kullanıcı tarafından bir film için tahmin edilen derece, kullanıcı profilinin film profilinin nokta ürünüdür (birbirlik değerleriyle ağırlanır).
 
@@ -253,23 +250,23 @@ Gürültülü veriler, sinyalin en üst tek değerlerde yoğunlaştığını ve 
 
 | Component | Magnitude | Type |
 |-----------|-----------|------|
-| sigma_1 | Very large | Signal |
-| sigma_2 | Large | Signal |
-| sigma_3 | Medium | Signal |
-| sigma_4 | Near zero | Negligible |
-| sigma_5 | Near zero | Negligible |
+| $\sigma_1$ | Very large | Signal |
+| $\sigma_2$ | Large | Signal |
+| $\sigma_3$ | Medium | Signal |
+| $\sigma_4$ | Near zero | Negligible |
+| $\sigma_5$ | Near zero | Negligible |
 
 **Noisy signal singular values (noise adds to all):**
 
 | Component | Magnitude | Type |
 |-----------|-----------|------|
-| sigma_1 | Very large | Signal |
-| sigma_2 | Large | Signal |
-| sigma_3 | Medium | Signal |
-| sigma_4 | Small | Noise |
-| sigma_5 | Small | Noise |
-| sigma_6 | Small | Noise |
-| sigma_7 | Small | Noise |
+| $\sigma_1$ | Very large | Signal |
+| $\sigma_2$ | Large | Signal |
+| $\sigma_3$ | Medium | Signal |
+| $\sigma_4$ | Small | Noise |
+| $\sigma_5$ | Small | Noise |
+| $\sigma_6$ | Small | Noise |
+| $\sigma_7$ | Small | Noise |
 
 ```mermaid
 graph TD
@@ -283,7 +280,7 @@ Bu, sinyal işleme, bilimsel ölçüm ve veri temizlemesinde kullanılır.
 
 ### SVD yoluyla sahte tersleşme
 
-Moore-Penrose pseudoinverse A+ metrik inversiyonunu kareler olmayan ve tekerlekli metriklere genelleştirir.
+Moore-Penrose sahte tersine .$A^+$SVD, matris inversiyonunu karelersiz ve tekerlekli matrislere genelleştirir.
 
 ```
 If A = U * Sigma * V^T, then:
@@ -299,7 +296,7 @@ For A (m x n):      A+ is (n x m)
 For Sigma (m x n):  Sigma+ is (n x m)
 ```
 
-Pseudoinverse en az kare problemlerini çözür. Ax = b'nin kesin çözümü yoksa (över belirlenmiş sistem), o zaman x = A + b en az kare çözümüdür (BXAx - b'yi en az azaltır).
+Pseudoinverse en az kare problemlerini çözüyor.$Ax = b$tam bir çözüm yok (çok belirlenmiş bir sistem), o zaman $x = A^+ b$en az kare çözümüdür (minimize eder $\lVert Ax - b \rVert$)
 
 ```
 Overdetermined system (more equations than unknowns):
@@ -317,7 +314,7 @@ Overdetermined system (more equations than unknowns):
 
 ### Sayısal istikrar avantajları
 
-A^T A'nın kendi bileşimi hesaplamak tek değerleri karıştırır (A^T A'nın kendi değerleri sigma_i^2) Bu durum sayısını karıştırır ve sayısız hataları artırır.
+                                                                                                                                                                                          $A^T A$tek değerleri (eigenwales of $A^T A$- Evet .$\sigma_i^2$Bu durum numarasını karesine katarak sayı hatalarını artırır.
 
 ```
 Example:
@@ -332,7 +329,7 @@ Example:
                            (6 extra digits of precision lost)
 ```
 
-Modern SVD algoritmaları (Golub-Kahan bidiagonalizasyonu) doğrudan A'da çalışırlar, asla A^T A oluşturmazlar. Bu nedenle her zaman tercih edilmelidir `np.linalg.svd(A)`- Tamam .`np.linalg.eig(A.T @ A)`- Evet .
+Modern SVD algoritmaları (Golub-Kahan bidiagonalizasyonu) doğrudan üzerinde çalışır $A$, asla oluşmaz .$A^T A$Bu yüzden her zaman tercih etmelisin .`np.linalg.svd(A)`- Tamam .`np.linalg.eig(A.T @ A)`- Evet .
 
 ### PCA'ya bağlantı
 
@@ -368,7 +365,7 @@ svd-rank-reconstruction
 
 ### Adım 1: Güç İterasyonu kullanarak sıfırdan SVD
 
-Fikir: en büyük tek değer ve vektörlerini bulmak için, A^T A (veya A A^T) üzerinde güç iterasyonunu kullanın.
+Fikir: en büyük tek değer ve vektörlerini bulmak için güç iterasyonunu kullanın.$A^T A$(veya $A A^T$Sonra matrisi deflate edin ve bir sonraki tek değer için tekrarlayın.
 
 ```python
 import numpy as np
@@ -513,7 +510,7 @@ Bu ders şunları ortaya çıkarır:
 
 ## Egzersizler
 
-1. A^T A'nın kendi bileşimini hesaplayın ve V ve tek değerleri elde edin, sonra U = A V Sigma^{-1} hesaplayın.
+1. Güç İterasyonu kullanmadan tüm SVD'yi sıfırdan uygulayın.$A^T A$Almak için$V$ve tek değerleri, sonra hesaplayın.$U = A V \Sigma^{-1}$Sayısal doğruluğu güç iterasyon versiyonunuzla ve NumPy ile karşılaştırın.
 
 2. Gerçek bir gri ölçekli görüntü yükleyin (veya birini gri ölçekli olarak dönüştürün). 1, 5, 10, 25, 50, 100 sıralarında sıkıştırın. Her bir sıra için sıkıştırma oranını ve görevi hatayı hesaplayın.
 
@@ -521,23 +518,35 @@ Bu ders şunları ortaya çıkarır:
 
 4. Her konu 5 ilişkili terimlere sahiptir. Ses ekleyin. SVD uygulayın ve üst 3 tek kelime değerinin diğerlerinden çok daha büyük olduğunu doğrulayın. 3 boyutlu gizli alanı belgeleri projelendir ve aynı konu kümesinden gelen belgeleri birlikte kontrol edin.
 
-5. Temiz bir düşük sıralama matrisi oluşturun (seviye 3, boyut 50x40) ve farklı seviyelerde Gaussian gürültüsü ekleyin (sigma = 0.1, 0.5, 1.0, 2.0). Her gürültü seviyesine göre, k'yi 1'den 40'a doğru süpürerek ve temiz matrisle yeniden yapılandırma hatasını ölçerek en uygun kesim seviyesini bulun.
+5. Temiz bir düşük sıralama matrisi (seviye 3, boyut 50x40) oluşturun ve farklı seviyelerde Gaussian gürültüsü ekleyin ($\sigma$= 0,1, 0,5, 1,0,2.0) Her gürültü seviyesine göre, en uygun kesim seviyesini tarayarak bul$k$1 ila 40 arasında ve temiz matris karşısında yeniden yapılandırma hatasını ölçmek.$k$gürültü seviyesiyle ilgili değişiklikler.
+
+### İpuçlar
+
+**Exercise 1.**Hesaplama$A^T A$, kendi değerlerini ve kendi vektörlerini elde ederek `np.linalg.eigh`Tek değerler kendi değerlerin kare köküdür.$U \Sigma V^T$Yeniden inşaat$A$ve hatayı  ile karşılaştır`svd_from_scratch`ve `np.linalg.svd`- Evet .
+
+**Exercise 2.**Arama .`truncated_svd`Her bir sıra için, resmini yeniden inşa edin.`reconstruct`ve kullanmak`compression_ratio(m, n, k)`Sayfa büyüdükçe göreceli hatası düşmelidir ve açık bloklar görmediğiniz ilk sıra cevap olacaktır.
+
+**Exercise 3.**Kayıp hücreleri işaretleyin, sıradaki ortalama ile doldurun, sonra 3 seviyesinin yaklaşımını yeniden oluşturun `truncated_svd`ve `reconstruct`. Sonra sonucu ölçün: derecelendirme aralığı dışında tahminleri sayın ve bilinen bir hücrede en büyük değişimi basın. 3 sıra yaklaşım hiçbir özelliği garanti etmez, bu nedenle geçerli derecelendirme gerekirse tahminleri aralığına ayırın.
+
+**Exercise 4.**Her konuyu yüksek sayılarla 5 kelimeyle bir blok verin, sonra küçük gürültü ekleyin. Tek kelime değerlerini basın: ilk 3'ün 4'üncüsünden çok daha büyük olması gerekir.
+
+**Exercise 5.**Temiz matrisi 50x3 ve 3x40 rastgele matrisin ürünü olarak yapın, sonra her biri için gürültü ekleyin $\sigma$Her biri için .$k$, sıraları karşılaştır .$k$Temiz matrisle yeniden inşa etmek; en iyisini bekle $k$Düşük gürültü için 3'e yakın, yüksek gürültü için daha küçük.
 
 ## Anahtar Terimler
 
 | Term | What people say | What it actually means |
 |------|----------------|----------------------|
-| SVD | "Factor any matrix" | Decompose A into U Sigma V^T where U and V are orthogonal and Sigma is diagonal with non-negative entries. Works for any matrix of any shape. |
-| Singular value | "How important this component is" | The i-th diagonal entry of Sigma. Measures how much the matrix stretches along the i-th principal direction. Always non-negative, sorted in decreasing order. |
-| Left singular vector | "Output direction" | A column of U. The direction in output space that the i-th right singular vector maps to (after scaling by sigma_i). |
-| Right singular vector | "Input direction" | A column of V. The direction in input space that the matrix maps to the i-th left singular vector (after scaling by sigma_i). |
-| Truncated SVD | "Low-rank approximation" | Keep only the top k singular values and their vectors. Produces the provably best rank-k approximation to the original matrix (Eckart-Young theorem). |
+| SVD | "Factor any matrix" | Decompose $A$ into $U \Sigma V^T$ where $U$ and $V$ are orthogonal and $\Sigma$ is diagonal with non-negative entries. Works for any matrix of any shape. |
+| Singular value | "How important this component is" | The $i$-th diagonal entry of $\Sigma$. Measures how much the matrix stretches along the i-th principal direction. Always non-negative, sorted in decreasing order. |
+| Left singular vector | "Output direction" | A column of $U$. The direction in output space that the $i$-th right singular vector maps to (after scaling by $\sigma_i$). |
+| Right singular vector | "Input direction" | A column of $V$. The direction in input space that the matrix maps to the $i$-th left singular vector (after scaling by $\sigma_i$). |
+| Truncated SVD | "Low-rank approximation" | Keep only the top $k$ singular values and their vectors. Produces the provably best $\text{rank-}k$ approximation to the original matrix (Eckart-Young theorem). |
 | Rank | "True dimensionality" | The number of non-zero singular values. Tells you how many independent directions the matrix actually uses. |
-| Pseudoinverse | "Generalized inverse" | V Sigma+ U^T. Inverts non-zero singular values, leaves zeros as zeros. Solves least-squares problems for non-square or singular matrices. |
-| Condition number | "How sensitive to errors" | sigma_max / sigma_min. A large condition number means small input changes cause large output changes. SVD reveals this directly. |
+| Pseudoinverse | "Generalized inverse" | $V \Sigma^+ U^T$. Inverts non-zero singular values, leaves zeros as zeros. Solves least-squares problems for non-square or singular matrices. |
+| Condition number | "How sensitive to errors" | $\sigma_{\max} / \sigma_{\min}$. A large condition number means small input changes cause large output changes. SVD reveals this directly. |
 | Latent factor | "Hidden variable" | A dimension in the low-rank space discovered by SVD. In recommendations, a latent factor might correspond to genre preference. In NLP, it might correspond to a topic. |
 | Frobenius norm | "Total matrix size" | Square root of the sum of squared entries. Equals the square root of the sum of squared singular values. Used to measure approximation error. |
-| Eckart-Young theorem | "SVD gives the best compression" | For any target rank k, the truncated SVD minimizes the approximation error over all possible rank-k matrices. |
+| Eckart-Young theorem | "SVD gives the best compression" | For any target rank $k$, the truncated SVD minimizes the approximation error over all possible $\text{rank-}k$ matrices. |
 | Power iteration | "Find the biggest eigenvector" | Repeatedly multiply a random vector by the matrix and normalize. Converges to the eigenvector with the largest eigenvalue. The building block of many SVD algorithms. |
 
 ## Daha Fazla Okumak

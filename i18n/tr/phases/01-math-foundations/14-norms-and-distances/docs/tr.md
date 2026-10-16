@@ -28,14 +28,14 @@ Bu ders, her büyük mesafe fonksiyonunu sıfırdan inşa eder, her biri doğru 
 
 ### Normalar: vektör büyüklüğünü ölçmek
 
-norm bir vektörün "çeşitliğini" ölçer. İki vektör arasındaki her mesafe fonksiyonu farklarının normı olarak yazılabilir: d(a, b) = a - b)
+Bir norm bir vektörün "ölümünü" ölçer. İki vektör arasındaki her mesafe fonksiyonu fark norm olarak yazılabilir:$d(a, b) = \lVert a - b \rVert$Yani normları anlamak mesafeleri anlamak demektir.
 
 ### L1 Norm (Manhattan mesafesi)
 
 L1 normı tüm bileşenlerin mutlak değerlerini toplamaktadır.
 
-```
-||x||_1 = |x_1| + |x_2| + ... + |x_n|
+```math
+\lVert x \rVert_1 = |x_1| + |x_2| + \cdots + |x_n|
 ```
 
 Manhattan mesafe adı veriliyor çünkü şehir şebekesinde ne kadar uzak yürüydüğünüzü ölçüyor.
@@ -54,7 +54,7 @@ L1 ne zaman kullanılır:
 - Eğer katılık isteseydiniz (tek büyük bir fark baskın değildir)
 - Özellik seçimi sorunları (L1 düzenlenmesi kısıtlılığı teşvik eder)
 
-L1 düzenlenmesine bağlamak: kaybı işlevi (Lasso) 'ye eklemek mutlak ağırlık değerlerinin toplamını cezalandırır. Bu, küçük ağırlıkları tam olarak sıfıra doğru itiyor, otomatik özellik seçimi yapar. L1 cezası ağırlık alanında elmas şeklinde kısıtlama bölgelerini oluşturur ve elmasların köşeleri bazı ağırlıkların sıfır olduğu ekseler üzerinde yer alır.
+L1 düzenlenmesine bağlama (Lasso): ekleme $\lVert w \rVert_1$L1 cezası, ağırlık alanında elmas şeklinde kısıtlama bölgelerini oluşturur ve elmasların köşeleri bazı ağırlıkların sıfır olduğu eksellerde bulunur.
 
 Kayıp fonksiyonlarına bağlantı: Ortalama mutlak hata (MAE) tahminler ve hedefler arasındaki ortalama L1 mesafedir. Tüm hataları doğrusal olarak cezalandırır ve MSE ile karşılaştırıldığında dış değerlere dayanıklı hale getirir.
 
@@ -62,11 +62,11 @@ Kayıp fonksiyonlarına bağlantı: Ortalama mutlak hata (MAE) tahminler ve hede
 
 L2 normı düz çizgi mesafesi.
 
-```
-||x||_2 = sqrt(x_1^2 + x_2^2 + ... + x_n^2)
+```math
+\lVert x \rVert_2 = \sqrt{x_1^2 + x_2^2 + \cdots + x_n^2}
 ```
 
-Bu geometri sınıfında öğrendiğiniz mesafedir.
+Bu geometri dersi boyunca öğrendiğin mesafedir.$n$boyutları.
 
 ```
 Point A = (1, 1)
@@ -83,24 +83,26 @@ L2 ne zaman kullanılır:
 - Fiziksel mesafeler (yerel veriler, sensör okumaları)
 - Piksel düzeyinde görüntü benzerliği
 
-L2 düzenlenmesi (Ridge): Kayıp fonksiyonuna Unww Drawing_2 eklemek büyük ağırlıkları cezalandırır.L1 gibi, ağırlıkları sıfıra itmez. Tüm ağırlıkları sıfıra göre küçültür.L2 cezası döngü kısıtlama bölgelerini oluşturur, bu nedenle ekselerde köşeler yoktur.
+L2 düzenlenmesine bağlama (Ridge): ekleme $\lVert w \rVert_2^2$L1'den farklı olarak, ağırlıkları sıfıra doğru itmez. Tüm ağırlıkları sıfıra doğru oranla küçültür. L2 cezası döngü kısıtlama bölgelerini oluşturur, bu nedenle ekselerde köşeler yoktur.
 
 Kayıp fonksiyonlarına bağlantı: Ortalama kare hata (MSE) L2 mesafelerinin ortalamasıdır.
 
-```
-MAE (L1 loss):  |y - y_hat|         Linear penalty. Robust to outliers.
-MSE (L2 loss):  (y - y_hat)^2       Quadratic penalty. Sensitive to outliers.
+```math
+\begin{aligned}
+\text{MAE (L1 loss):} \quad & |y - \hat{y}| && \text{Linear penalty. Robust to outliers.} \\
+\text{MSE (L2 loss):} \quad & (y - \hat{y})^2 && \text{Quadratic penalty. Sensitive to outliers.}
+\end{aligned}
 ```
 
 ### Lp Normalar: Genel aile
 
 L1 ve L2 Lp normunun özel durumlarıdır:
 
-```
-||x||_p = (|x_1|^p + |x_2|^p + ... + |x_n|^p)^(1/p)
+```math
+\lVert x \rVert_p = (|x_1|^p + |x_2|^p + \cdots + |x_n|^p)^{1/p}
 ```
 
-Farklı p değerleri farklı şekildeki "birlik topları" oluşturur (başlangıçtan 1 mesafede bulunan tüm noktaların kümesi):
+ Farklı değerler$p$Farklı şekilli "birlik topları" üretmek (kötüden 1 mesafede bulunan tüm noktaların toplamı):
 
 ```
 p=1:    Diamond shape      (corners on axes)
@@ -111,19 +113,20 @@ p=inf:  Square/hypercube   (flat sides along axes)
 
 ### L- sonsuzluk Norm (Chebyshev mesafe)
 
-P sonsuzluğa yaklaştıkça, Lp normı maksimum mutlak bileşenine yaklaşıyor.
+- Evet .$p$Sonsuzluk yaklaşırsa, Lp normı maksimum mutlak bileşenine yaklaşıyor.
 
-```
-||x||_inf = max(|x_1|, |x_2|, ..., |x_n|)
+```math
+\lVert x \rVert_\infty = \max(|x_1|, |x_2|, \ldots, |x_n|)
 ```
 
 İki nokta arasındaki mesafe en çok farklı oldukları tek boyutla belirlenir.
 
-```
-Point A = (1, 1)
-Point B = (4, 5)
-
-L-inf distance = max(|4-1|, |5-1|) = max(3, 4) = 4
+```math
+\begin{aligned}
+\text{Point } A &= (1, 1) \\
+\text{Point } B &= (4, 5) \\[6pt]
+L_\infty \text{ distance} &= \max(|4-1|, |5-1|) = \max(3, 4) = 4
+\end{aligned}
 ```
 
 L- Infinity ne zaman kullanılır:
@@ -135,19 +138,20 @@ L- Infinity ne zaman kullanılır:
 
 Kosinus benzerliği, iki vektör arasındaki açıyı ölçer ve büyüklüklerini görmezden gelir.
 
-```
-cos_sim(a, b) = (a . b) / (||a||_2 * ||b||_2)
+```math
+\text{cos\_sim}(a, b) = \frac{a \cdot b}{\lVert a \rVert_2 \, \lVert b \rVert_2}
 ```
 
 -1 (karşı yönler) ile +1 (aynı yön) arasında değişir. Döksel vektörler 0'da cosine benzerliği vardır.
 
 Kosinus mesafe onu bir mesafeye dönüştürür: cosine_distance = 1 - cosine_semblarity. Bu 0 (tıpkı aynı yönde) ile 2 (karşı yönde) arasında değişir.
 
-```
-a = (1, 0)    b = (1, 1)
-
-cos_sim = (1*1 + 0*1) / (1 * sqrt(2)) = 1/sqrt(2) = 0.707
-cos_dist = 1 - 0.707 = 0.293
+```math
+\begin{aligned}
+& a = (1, 0) \qquad b = (1, 1) \\[6pt]
+& \text{cos\_sim} = \frac{1 \cdot 1 + 0 \cdot 1}{1 \cdot \sqrt{2}} = \frac{1}{\sqrt{2}} = 0.707 \\
+& \text{cos\_dist} = 1 - 0.707 = 0.293
+\end{aligned}
 ```
 
 Neden cosine NLP ve yerleşimlerde egemenlik gösterir: metinde, belge uzunluğu benzerliği etkilememeli. Kediler hakkında iki kat daha uzun bir belge hala "böyle" olmalıdır. Kosin benzerliği büyüklüğü (uzunluğu) görmezden gelir ve sadece yönü önemsiyor. Aynı kelime dağılımına sahip ama farklı uzunluklara sahip iki belge aynı yönde işaret eder ve cosine benzerliği 1.0 elde eder.
@@ -162,16 +166,17 @@ Kosinus benzerliği ne zaman kullanılır:
 
 İki vektörün nokta ürünü:
 
-```
-a . b = a_1*b_1 + a_2*b_2 + ... + a_n*b_n
-      = ||a|| * ||b|| * cos(angle)
+```math
+\begin{aligned}
+a \cdot b &= a_1 b_1 + a_2 b_2 + \cdots + a_n b_n \\
+&= \lVert a \rVert \, \lVert b \rVert \cos(\text{angle})
+\end{aligned}
 ```
 
 Kosin benzerliği, her iki büyüklükten normalleştirilen nokta ürünüdür. Her iki vektör zaten birim normalleştirildiğinde (büyüklük = 1), nokta ürünü ve kozine benzerliği aynıdır.
 
-```
-If ||a|| = 1 and ||b|| = 1:
-    a . b = cos(angle between a and b)
+```math
+\text{If } \lVert a \rVert = 1 \text{ and } \lVert b \rVert = 1: \quad a \cdot b = \cos(\text{angle between } a \text{ and } b)
 ```
 
 Farklı olduğunda: nokta ürünü büyüklük bilgisini içerir. Daha büyük büyüklükteki bir vektör daha yüksek nokta ürünü puanını alır. Bu, "popüler" öğelerin daha yüksek sıraya yer almasını istediğiniz bazı çekim sistemlerinde önemlidir. Büyüklük içeren bir kalite veya önem sinyali olarak hareket eder.
@@ -197,13 +202,13 @@ Euclidean mesafe tüm boyutları eşit şekilde değerlendirir ama özelliklerin
 
 Mahalanobis mesafesinin verilerin kovarians yapısını hesaplaması.
 
-```
-d_M(x, y) = sqrt((x - y)^T * S^(-1) * (x - y))
+```math
+d_M(x, y) = \sqrt{(x - y)^T S^{-1} (x - y)}
 ```
 
-S'nin verilerin kovarians matrisi olduğu.
+nerede$S$verilerin kovarians matrisi.
 
-İnsüütüel olarak: Mahalanobis mesafe önce verileri dekorele eder ve normalleştirir (beyazlama), sonra bu dönüştürülen alanın L2 mesafesini hesaplar. S kimlik matrisi ise (korreli olmayan, birim varyans özellikleri), Mahalanobis mesafe Euklid mesafesine düşürür.
+İnsüütüel olarak: Mahalanobis mesafe önce verileri dekorele eder ve normalleştirir (beyazlama), sonra bu dönüştürülen alanın L2 mesafesini hesaplar.$S$Mahalanobis mesafesinin, kimlik matrisi (korreli olmayan, birim varyans özellikleri) olarak, Euclidean mesafeye indirgenmesi.
 
 ```
 Example: height and weight are correlated.
@@ -225,8 +230,8 @@ Mahalanobis mesafesini ne zaman kullanmalısınız:
 
 Jaccard benzerlik ölçüleri iki set arasında örtüşmektedir.
 
-```
-J(A, B) = |A intersect B| / |A union B|
+```math
+J(A, B) = \frac{|A \cap B|}{|A \cup B|}
 ```
 
 0 (tıpkı birer set gibi) ile 1 (tıpkı birer set gibi) arasında değişir.
@@ -263,7 +268,7 @@ sittin -> sitting (insert g)
 Edit distance = 3
 ```
 
-Dinamik programlama kullanarak hesaplanmıştır. Giriş (i, j) dizinin ilk i karakterleri A ile dizinin ilk j karakterleri B arasındaki düzenleme mesafesi olan bir matrisi doldurun.
+Dinamik programlama kullanarak hesaplanmıştır.$(i, j)$ilk edit arasındaki mesafe $i$A ve birinci harflerin karakterleri $j$B. dizinin karakterleri.
 
 ```
         ""  s  i  t  t  i  n  g
@@ -286,20 +291,20 @@ Düzenleme mesafesini ne zaman kullanılır:
 
 KL farklılığı, bir olasılık dağılımının diğerinden nasıl farklı olduğunu ölçer. Ders 09, ancak bu tartışmaya dahil olur çünkü insanlar bir olmamasına rağmen "uzaktan" olarak kullanırlar.
 
-```
-D_KL(P || Q) = sum(p(x) * log(p(x) / q(x)))
+```math
+D_{KL}(P \,\|\, Q) = \sum_x p(x) \log\frac{p(x)}{q(x)}
 ```
 
 Kritik özellik: KL farklılığı simetrik değildir.
 
-```
-D_KL(P || Q) != D_KL(Q || P)
+```math
+D_{KL}(P \,\|\, Q) \ne D_{KL}(Q \,\|\, P)
 ```
 
 Bu, mesafe metrikinin temel gerekçesiyle karşılanmıyor, üçgen eşitsizliğini de tatmin etmiyor, bu bir mesafe değil bir farklılık.
 
-Forward KL (D_KL(P ̓ Q)) "anlam aramak" anlamına gelir: Q, P'nin tüm modlarını kapsamaya çalışır.
-Ters KL (D_KL(Q zamanda P)) "modu aramak" anlamına gelir: Q, P'nin tek bir moduna odaklanır.
+KL ' den ileriye$(D_{KL}(P \Vert Q))$"Anlam aramak": $Q$$P$- Evet .
+KL ' i tersine çevir$(D_{KL}(Q \Vert P))$"modu aramak": $Q$Tek bir mod üzerinde odaklanır.$P$- Evet .
 
 KL'nin farklılığını gördüğünüzde:
 - VAEs (ELBO'daki KL terimi, gizli dağılımları bir öncekiye doğru itiyor)
@@ -311,14 +316,14 @@ KL'nin farklılığını gördüğünüzde:
 
 Wasserstein mesafesinin ölçüsü, bir olasılık dağılımını diğerine dönüştürmek için gereken en az "iş"in ölçülmesidir.
 
-```
-W(P, Q) = inf over all transport plans gamma of E[d(x, y)]
+```math
+W(P, Q) = \inf_{\gamma} \mathbb{E}[d(x, y)] \quad \text{(over all transport plans } \gamma\text{)}
 ```
 
 1D dağılımlar için, kumületif dağılım fonksiyonlarının mutlak farkının entegraline basitleştirir:
 
-```
-W_1(P, Q) = integral |CDF_P(x) - CDF_Q(x)| dx
+```math
+W_1(P, Q) = \int |\text{CDF}_P(x) - \text{CDF}_Q(x)| \, dx
 ```
 
 Wasserstein neden önemli:
@@ -353,7 +358,7 @@ Wasserstein ne zaman kullanılır:
 | Set overlap (tags, categories) | Jaccard | Data is naturally set-valued, not vectorial |
 | String matching | Edit distance | Operations map to human editing intuition |
 | Outlier detection | Mahalanobis | Accounts for feature correlations and scales |
-| Comparing distributions | KL divergence | Measures information lost by using Q instead of P |
+| Comparing distributions | KL divergence | Measures information lost by using $Q$ instead of $P$ |
 | GAN training | Wasserstein | Provides gradients even when distributions do not overlap |
 | Embeddings (vector DB) | Cosine or dot product | Embeddings are trained to encode meaning in direction |
 | Recommendation | Dot product | Magnitude can encode popularity or confidence |
@@ -404,7 +409,7 @@ L1 neden kısıtlama üretir ama L2 neden üretmez: 2 boyutlu bir ağırlık ala
 
 Her mesafe işlevi en yakın komşu arama sorunu anlamına gelir: sorgu noktasını vererek, bir veri kümesindeki en yakın noktaları bul.
 
-En yakın komşu arama, n boyutlu n noktayı olan bir veri kümesinde bir sorguya göre O(n * d) d. Büyük veri kümeleri için bu çok yavaş.
+En yakın komşu aramaları .$O(n \cdot d)$ bir veri kümesindeki sorguya göre$n$$d$Büyük veri kümeleri için bu çok yavaş.
 
 Yaklaşık En Yakın Komşu (ANN) algoritmaları büyük hız kazanımları için küçük miktarda doğruluk ticareti:
 
@@ -469,7 +474,7 @@ Aradığın zaman .`model.encode(text)`Vectör veritabanı, sorgu vektörünüzl
 
 ## Egzersizler
 
-1. L1, L2 ve L- sonsuzluk mesafelerini (1, 2, 3) ve (4, 0, 6) arasında hesaplayın. L-inf <= L2 <= L1'in her zaman herhangi bir nokta çiftine geçerli olduğunu kontrol edin. Bu sıralanmanın neden garanti edildiğini kanıtlayın.
+1. (1, 2, 3) ve (4, 0, 6) arasındaki L1, L2 ve L- sonsuzluk mesafelerini hesaplayın.$L_\infty \le L_2 \le L_1$Bu sipariş neden garantili olduğunu kanıtlayın.
 
 2. İki vektör oluşturmak, burada kozin benzerliği yüksek (> 0,9) ama L2 mesafe büyük (> 10). Geometri olarak ne olduğunu açıklayın.
 
@@ -479,6 +484,18 @@ Aradığın zaman .`model.encode(text)`Vectör veritabanı, sorgu vektörünüzl
 
 5. Yaklaşık Jaccard benzerliği için MinHash uygulayın. 100 rastgele set oluşturun, tüm çiftler için tam Jaccard hesaplayın ve 50, 100 ve 200 hash fonksiyonlarını kullanarak MinHash yaklaşımıyla karşılaştırın. Yaklaşım hatasını çizin.
 
+### İpuçlar
+
+**Exercise 1.**Fark vektörü (-3, 2, -3), bu yüzden o vektörün üç normunu hesapla `l1_norm`- Evet .`l2_norm`ve`linf_norm`Kanıt için en büyüklerini karşılaştırın.$\lvert d_i \rvert$ve toplamı mutlak değerlerin toplamının karesine karşılaştırın.
+
+**Exercise 2.**Kosin benzerliği uzunluğu görmezden gelir, bu nedenle neredeyse aynı yönde işaret eden iki vektörle başlayın ve onlardan birini çok daha uzun yapın. İkinci durumda, farklı yönlerde işaret eden köken yakınında iki kısa vektör kullanın, sonra her iki koşulı kontrol edin `cosine_similarity`ve `l2_distance`- Evet .
+
+**Exercise 3.**Arama .`find_nearest_neighbor(query, dataset, distance_fn)`Her biri için bir kez .`l1_distance`- Evet .`l2_distance`- Evet .`cosine_distance`ve`mahalanobis_distance`- Evet .`demo_different_neighbors`Metriklerin anlaşılmadığı bir veri kümesi gösterir, önce okuyun ve dört yanıtın da farklılaşana kadar noktaları değiştirin.
+
+**Exercise 4.**Her dağılımın toplam toplamını yazın, sonra iki toplam toplamın mutlak farklarını ekleyin.`wasserstein_1d(p, q)`, sonra büyük değerin olasılık kütlesi ne kadar uzakta hareket etmesi gerektiğini açıklayın.
+
+**Exercise 5.**Her bir hash fonksiyonu için, bir setin MinHash imzası, elementlerinin üzerindeki en az hash değeri ve iki setin aynı en az tahminleri aldığı hash fonksiyonlarının bölümü olarak Jaccard benzerliklerini tahmin eder.`jaccard_similarity`Bu hata yaklaşık olarak $1/\sqrt{k}$için$k$hash fonksiyonları.
+
 ## Anahtar Terimler
 
 | Term | What people say | What it actually means |
@@ -486,15 +503,15 @@ Aradığın zaman .`model.encode(text)`Vectör veritabanı, sorgu vektörünüzl
 | Norm | "Size of a vector" | A function that maps a vector to a non-negative scalar, satisfying triangle inequality, absolute homogeneity, and zero only for the zero vector |
 | L1 norm | "Manhattan distance" | Sum of absolute component values. Produces sparsity in optimization. Robust to outliers |
 | L2 norm | "Euclidean distance" | Square root of sum of squared components. The straight-line distance in Euclidean space |
-| Lp norm | "Generalized norm" | The p-th root of the sum of p-th powers of absolute components. L1 and L2 are special cases |
-| L-infinity norm | "Max norm" or "Chebyshev distance" | The maximum absolute component value. The limit of Lp as p approaches infinity |
+| Lp norm | "Generalized norm" | The $p$-th root of the sum of $p$-th powers of absolute components. L1 and L2 are special cases |
+| L-infinity norm | "Max norm" or "Chebyshev distance" | The maximum absolute component value. The limit of Lp as $p$ approaches infinity |
 | Cosine similarity | "Angle between vectors" | Dot product normalized by both magnitudes. Ranges from -1 to +1. Ignores vector length |
 | Cosine distance | "1 minus cosine similarity" | Converts cosine similarity to a distance. Ranges from 0 to 2 |
 | Dot product | "Unnormalized cosine" | Sum of component-wise products. Equals cosine similarity times both magnitudes |
 | Mahalanobis distance | "Correlation-aware distance" | L2 distance in a space that has been whitened (decorrelated and normalized) using the data covariance matrix |
 | Jaccard similarity | "Set overlap" | Size of intersection divided by size of union. For sets, not vectors |
 | Edit distance | "Levenshtein distance" | Minimum insertions, deletions, and substitutions to transform one string into another |
-| KL divergence | "Distance between distributions" | Not a true distance (not symmetric). Measures extra bits from using Q to encode P |
+| KL divergence | "Distance between distributions" | Not a true distance (not symmetric). Measures extra bits from using $Q$ to encode $P$ |
 | Wasserstein distance | "Earth mover's distance" | Minimum work to transport mass from one distribution to another. A true metric |
 | Approximate nearest neighbor | "ANN search" | Algorithms (HNSW, LSH, IVF) that find approximately closest points much faster than exact search |
 | HNSW | "The vector DB algorithm" | Hierarchical Navigable Small World graph. Multi-layer graph for fast approximate nearest neighbor search |

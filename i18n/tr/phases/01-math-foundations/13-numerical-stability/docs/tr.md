@@ -96,7 +96,7 @@ Relative error: 19.2%
 
 Bu, tek bir çıkarmadan elde edilen %19 oranlı bir hata. ML'de, bu her zaman olur:
 
-- Büyük ortalama ile verilerin değişkenliğini hesaplayın: `E[x^2] - E[x]^2`E[x] büyük olduğunda
+- Büyük ortalama ile verilerin değişkenliğini hesaplayın: $\mathbb{E}[x^2] - \mathbb{E}[x]^2$Ne zaman ?$\mathbb{E}[x]$büyük
 - Yaklaşık eşit log olasılığı çıkar
 - Çok küçük epsilon ile son fark gradiyenti hesaplayın
 
@@ -141,20 +141,22 @@ Bilgisayar `log(sum(exp(x_i)))`- Bu sayısal olarak tehlikeli.`x_i`büyüktür.`
 
 İşin tek yolu, eksponenciyalanmadan önce maksimum değeri çıkarmak.
 
-```
-log(sum(exp(x_i))) = max(x) + log(sum(exp(x_i - max(x))))
+```math
+\log\left(\sum_i \exp(x_i)\right) = \max(x) + \log\left(\sum_i \exp(x_i - \max(x))\right)
 ```
 
 Neden bu işe yarıyor: çıkarmadan sonra `max(x)`, en büyük gösterge `exp(0) = 1`. Üstü akış mümkün değildir. toplamda en az bir terim 1'dir, bu yüzden toplam en az 1'dir ve `log(1) = 0`- Akış yok .`-inf`- Bu mümkün.
 
 Kanıt:
 
-```
-log(sum(exp(x_i)))
-= log(sum(exp(x_i - c + c)))                    (add and subtract c)
-= log(sum(exp(x_i - c) * exp(c)))               (exp(a+b) = exp(a)*exp(b))
-= log(exp(c) * sum(exp(x_i - c)))               (factor out exp(c))
-= c + log(sum(exp(x_i - c)))                    (log(a*b) = log(a) + log(b))
+```math
+\begin{aligned}
+& \log\left(\sum_i \exp(x_i)\right) \\
+&= \log\left(\sum_i \exp(x_i - c + c)\right) && \text{(add and subtract } c\text{)} \\
+&= \log\left(\sum_i \exp(x_i - c) \cdot \exp(c)\right) && (\exp(a+b) = \exp(a) \cdot \exp(b)) \\
+&= \log\left(\exp(c) \cdot \sum_i \exp(x_i - c)\right) && \text{(factor out } \exp(c)\text{)} \\
+&= c + \log\left(\sum_i \exp(x_i - c)\right) && (\log(a \cdot b) = \log(a) + \log(b))
+\end{aligned}
 ```
 
 Yapıştır `c = max(x)`Ve aşırı akış ortadan kalktı.
@@ -170,8 +172,8 @@ Bu numara ML'de her yerde görünebilir:
 
 Softmax logitleri olasılıklara dönüştürür:
 
-```
-softmax(x_i) = exp(x_i) / sum(exp(x_j))
+```math
+\mathop{\mathrm{softmax}}(x_i) = \frac{\exp(x_i)}{\sum_j \exp(x_j)}
 ```
 
 Bu hile olmadan, [100, 101, 102] logitleri aşırı akışa neden olur:
@@ -242,18 +244,18 @@ Analizsel gradientler (geri yayılma) hatalara sahip olabilir. Sayısal gradient
 
 Merkezi fark formülü:
 
-```
-df/dx ~= (f(x + h) - f(x - h)) / (2h)
+```math
+\frac{df}{dx} \approx \frac{f(x + h) - f(x - h)}{2h}
 ```
 
-Bu O ((h^2) doğru, ileri farkından çok daha iyi`(f(x+h) - f(x)) / h`Bu sadece O(h.)
+Bu ...$O(h^2)$- Evet. - Evet.$(f(x+h) - f(x)) / h$Bu sadece $O(h)$- Evet .
 
-H: çok büyük ve yaklaşım yanlış. Çok küçük ve felaketli iptal cevabı yok eder. `h = 1e-5`- ...`1e-7`Tipik bir durum.
+Seçim$h$Bu nedenle, bu konuyla ilgili bir görüşü daha da genişletmek için, bu konuyla ilgili bir görüşü daha da genişletmek için, bu konuyla ilgili bir görüşü daha da genişletmek için, bu konuyla ilgili bir görüşü daha da genişletmek için, bu konuyla ilgili bir görüşü daha da genişletmek için, bu konuyla ilgili bir görüşü daha da genişletmek için, bu konuyla ilgili bir görüşü daha da genişletmek için, bu konuyla ilgili bir görüşü daha da genişletmek için, bu konuyla ilgili bir görüşü daha da genişletmek için, bu konuyla ilgili bir görüşü daha da genişletmek için, bu konuyla ilgili bir görüşü daha da genişletmek için, bu konuyla ilgili bir görüşü daha da genişletmek için, bu konuyla ilgili bir görüşü daha da genişletmek için, bu konuyla ilgili bir çözüm de daha fazla bir çözüm olarak, bir çözüm olarak, bir çözüm olarak, bir çözüm olarak, bir çözüm olarak, bir çözüm olarak, bir çözüm olarak, bir çözüm olarak, bir çözüm olarak, bir çözüm olarak, bir çözüm olarak, bir şekilde, bir çözüm olarak, bir şekilde, bir şekilde, bir şekilde, bir şekilde, bir şekilde, bir şekilde, bir şekilde, bir şekilde, bir şekilde, bir şekilde, bir şekilde, bir şekilde, bir şekilde, bir şekilde, bir şekilde, bir şekilde, bir şekilde, bir şekilde, bir şekilde, bir şekilde, bir şekilde, bir şekilde, bir şekilde, bir şekilde, bir şekilde, bir şekilde, bir şekilde, bir şekilde, bir şekilde, bir şekilde, bir şekilde, bir şekilde, bir şekilde, bir şekilde, bir şekilde, bir şekilde, bir şekilde, bir şekilde, bir şekilde, bir şekilde, bir şekilde, bir şekilde, bir şekilde, bir şekilde, bir şekilde, bir şekilde, bir şekilde, bir şekilde, bir şekilde, bir şekilde, bir şekilde, bir şekilde, bir şekilde, bir şekilde, bir şekilde, bir şekilde, bir şekilde, bir şekilde, bir şekilde, bir şekilde, bir şekilde, bir şekilde, ve, bir şekilde, bir şekilde, bir şekilde, bir şekilde, bir şekilde, bir şekilde, bir şekilde, bir şekilde, bir şekilde, bir şekilde, bir şekilde, bir şekilde, bir şekilde, ve, bir şekilde, bir şekilde, bir şekilde, bir şekilde, bir şekilde, ve, bir şekilde, bir şekilde`h = 1e-5`- ...`1e-7`Tipik bir durum.
 
 Kontrol: analitik ve sayısal gradientler arasındaki göreceli farkı hesaplayın.
 
-```
-relative_error = |grad_analytical - grad_numerical| / max(|grad_analytical|, |grad_numerical|, 1e-8)
+```math
+\text{relative\_error} = \frac{\lvert \text{grad}_{\text{analytical}} - \text{grad}_{\text{numerical}} \rvert}{\max(\lvert \text{grad}_{\text{analytical}} \rvert, \lvert \text{grad}_{\text{numerical}} \rvert, 10^{-8})}
 ```
 
 Basamak kuralları:
@@ -289,7 +291,7 @@ Temiz float16 eğitiminde sorun: gradientler genellikle çok küçüktür (1e-8 
 5. Net effect: same update, but no underflow
 ```
 
-Dinamik kayıp ölçekleme otomatik olarak ölçek faktörü ayarlar. Büyük bir değerle başlayın (65536).`inf`Eğer N adımlar aşırı akış olmadan geçerse, iki katına çıkar.
+Dinamik kayıp ölçekleme otomatik olarak ölçek faktörü ayarlar. Büyük bir değerle başlayın (65536).`inf`- Yarıya ayır.$N$Aşırı aşmadan adımlar geçiyor, iki katına çıkıyor.
 
 ### Bfloat16 vs. Float16: Neden Bfloat16 Yararlar
 
@@ -350,8 +352,8 @@ Layer 50: values in [0, inf]
 
 Normalleştirme modernleştiriciler ve her katman üzerinde yeniden ölçeklendirme aktivasyonları:
 
-```
-LayerNorm(x) = (x - mean(x)) / (std(x) + epsilon) * gamma + beta
+```math
+\mathop{\mathrm{LayerNorm}}(x) = \frac{x - \mathop{\mathrm{mean}}(x)}{\mathop{\mathrm{std}}(x) + \epsilon} \cdot \gamma + \beta
 ```
 
 - Evet .`epsilon`(genellikle 1e-5) tüm aktivasyonlar aynı olduğunda sıfırla bölünmeyi engeller.`gamma`ve `beta`Ağın ihtiyaç duyduğu herhangi bir ölçekini geri getirmesine izin verin.
@@ -568,7 +570,7 @@ Bu istikrarlı uygulamalar eğitim döngüsünün oluşturulmasında 3. aşamada
 
 ## Egzersizler
 
-1. **Catastrophic cancellation.**Naif formülü kullanarak [1000000.0, 1000001.0, 1000002.0] değişikliğini hesaplayın `E[x^2] - E[x]^2`Sonra Welford'un çevrimiçi algoritmasını kullanarak hesaplayın.
+1. **Catastrophic cancellation.**Naif formülü kullanarak [1000000.0, 1000001.0, 1000002.0] değişikliğini hesaplayın $\mathbb{E}[x^2] - \mathbb{E}[x]^2$Sonra Welford'un çevrimiçi algoritmasını kullanarak hesaplayın.
 
 2. **Precision hunt.**En küçük pozitif float32 değerini bul `x`Bu kadar .`1.0 + x == 1.0`Python'da. Bu makine epsilon.`numpy.finfo(numpy.float32).eps`- Evet .
 
@@ -578,17 +580,29 @@ Bu istikrarlı uygulamalar eğitim döngüsünün oluşturulmasında 3. aşamada
 
 5. **Loss scaling experiment.**float16 ile eğitim simülasyonu: [1e-9, 1e-3 aralığında rastgele gradientler oluşturun, float16'a dönüştürün ve hangi fraksiyon sıfır haline geldiğini ölçün.
 
+### İpuçlar
+
+**Exercise 1.**Üç değerini  ile dönüştür`np.float32`Onları düzeltmeden önce, sonra aramak.`variance_naive`ve `welford_variance`- Yaklaşık bir değer .$10^{12}$float32'de 1'den çok daha büyük bir mesafe var, bu yüzden saf sonuç 0.6667'den uzak ve Welford sonucu yakın olmasını bekleyin.
+
+**Exercise 2.**Başlayın .`x = np.float32(1.0)`Ve yarıya kadar kes .`np.float32(1.0) + x != np.float32(1.0)`. Her değerini float32'de tut ve son değerini karşılaştır.`numpy.finfo(numpy.float32).eps`, yani $2^{-23}$- Evet .
+
+**Exercise 3.**Önce her cevabı tahmin et.$n$eşit değerler $c$Sonuç şu:$c + \ln n$Bir büyük değer için, sonuç bu değerle yakın. -1000 yakın değerler için, sonuç yakın $-1000 + \ln n$,`logsumexp_naive`Devamı`-inf`Çünkü her eksponensal 0'a düşüyor.
+
+**Exercise 4.**- Evet .$y = Wx + b$Kayıplarla.$L$,  için eğrilik$W$                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             $x$- Kayıpları düzeltme fonksiyonu olarak sarın .$W$- Arayın .`numerical_gradient`, ve her iki sonucu da `check_gradient`- Evet .
+
+**Exercise 5.**Büyüklükleri bir log ölçeğinde örnekleyin .`10 ** np.random.uniform(-9, -3, n)`ve dönüştürmek için `np.float16`. Float16 değerleri yaklaşık olarak aşağıda tutamaz .$6 \times 10^{-8}$Bu nedenle, değerlerin yaklaşık dörtte biri ölçeklendirmeden önce sıfır olur ve 1024 ile çarpıldıktan sonra neredeyse hiç olmaz.
+
 ## Anahtar Terimler
 
 | Term | What people say | What it actually means |
 |------|----------------|----------------------|
 | IEEE 754 | "The float standard" | International standard defining binary floating point formats, rounding rules, and special values (inf, nan). Every modern CPU and GPU implements it. |
-| Machine epsilon | "The precision limit" | The smallest value e such that 1.0 + e != 1.0 in a given float format. For float32, it is about 1.19e-7. |
+| Machine epsilon | "The precision limit" | The smallest value $e$ such that $1.0 + e \ne 1.0$ in a given float format. For float32, it is about 1.19e-7. |
 | Catastrophic cancellation | "Precision loss from subtraction" | When subtracting nearly equal floating point numbers, significant digits cancel and rounding noise dominates the result. |
 | Overflow | "Number too big" | A result exceeds the maximum representable value and becomes inf. exp(89) overflows float32. |
 | Underflow | "Number too small" | A result is closer to zero than the smallest representable positive number and becomes 0.0. exp(-104) underflows float32. |
-| Log-sum-exp trick | "Subtract the max first" | Computing log(sum(exp(x))) by factoring out exp(max(x)) to prevent overflow and underflow. Used in softmax, cross-entropy, and log-probability math. |
-| Stable softmax | "Softmax that does not explode" | Subtracting max(logits) before exponentiating. Numerically identical result, no overflow possible. |
+| Log-sum-exp trick | "Subtract the max first" | Computing $\log(\sum \exp(x))$ by factoring out $\exp(\max(x))$ to prevent overflow and underflow. Used in softmax, cross-entropy, and log-probability math. |
+| Stable softmax | "Softmax that does not explode" | Subtracting $\max(\text{logits})$ before exponentiating. Numerically identical result, no overflow possible. |
 | Gradient checking | "Verify your backprop" | Comparing analytical gradients from backpropagation against numerical gradients from finite differences to catch implementation bugs. |
 | Mixed precision | "Float16 forward, float32 backward" | Using lower-precision floats for speed-critical operations and higher-precision floats for numerically sensitive operations. Typical speedup is 2-3x. |
 | Loss scaling | "Prevent gradient underflow" | Multiplying the loss by a large constant before backprop so gradients stay in float16's representable range, then dividing by the same constant before weight updates. |
@@ -596,7 +610,7 @@ Bu istikrarlı uygulamalar eğitim döngüsünün oluşturulmasında 3. aşamada
 | Gradient clipping | "Cap the gradient norm" | Scaling the gradient vector so its norm does not exceed a threshold. Prevents exploding gradients from ruining weights. |
 | NaN | "Not a Number" | Special float value from undefined operations (0/0, inf-inf, sqrt(-1)). Propagates through all subsequent arithmetic. |
 | Inf | "Infinity" | Special float value from overflow or division by zero. Can combine to produce NaN (inf - inf, inf * 0). |
-| Numerical gradient | "Brute force derivative" | Approximating a derivative by evaluating f(x+h) and f(x-h) and dividing by 2h. Slow but reliable for verification. |
+| Numerical gradient | "Brute force derivative" | Approximating a derivative by evaluating $f(x+h)$ and $f(x-h)$ and dividing by $2h$. Slow but reliable for verification. |
 
 ## Daha Fazla Okumak
 

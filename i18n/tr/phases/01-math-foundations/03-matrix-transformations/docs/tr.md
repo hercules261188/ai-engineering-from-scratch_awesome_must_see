@@ -45,7 +45,7 @@ graph LR
 
 ### Dönüşüm
 
-2 boyutlu bir dönüm açısı ile teta uzaklıkları ve açıları sağlam tutar.
+2 boyutlu bir dönüm açısı $\theta$Arka bir yuvarlak ark boyunca her noktayı hareket ettirir.
 
 ```mermaid
 graph LR
@@ -66,18 +66,12 @@ graph LR
 
 3 boyutlu bir aksanın etrafında dönersiniz.
 
-```
-Rz(theta) = | cos  -sin  0 |     Rotate around z-axis
-            | sin   cos  0 |     (x-y plane spins, z stays)
-            |  0     0   1 |
-
-Rx(theta) = | 1   0     0    |   Rotate around x-axis
-            | 0  cos  -sin   |   (y-z plane spins, x stays)
-            | 0  sin   cos   |
-
-Ry(theta) = |  cos  0  sin |     Rotate around y-axis
-            |   0   1   0  |     (x-z plane spins, y stays)
-            | -sin  0  cos |
+```math
+\begin{aligned}
+R_z(\theta) &= \begin{bmatrix} \cos\theta & -\sin\theta & 0 \\ \sin\theta & \cos\theta & 0 \\ 0 & 0 & 1 \end{bmatrix} \quad \text{Rotate around z-axis (x-y plane spins, z stays)} \\[6pt]
+R_x(\theta) &= \begin{bmatrix} 1 & 0 & 0 \\ 0 & \cos\theta & -\sin\theta \\ 0 & \sin\theta & \cos\theta \end{bmatrix} \quad \text{Rotate around x-axis (y-z plane spins, x stays)} \\[6pt]
+R_y(\theta) &= \begin{bmatrix} \cos\theta & 0 & \sin\theta \\ 0 & 1 & 0 \\ -\sin\theta & 0 & \cos\theta \end{bmatrix} \quad \text{Rotate around y-axis (x-z plane spins, y stays)}
+\end{aligned}
 ```
 
 ### Ölçekleme
@@ -123,8 +117,8 @@ graph LR
 ```
 
 Çekim matrisleri:
-- `Shx = [[1, k], [0, 1]]`x by k * y
-- `Shy = [[1, 0], [k, 1]]`y'yi k * x'e çevirir
+- `Shx = [[1, k], [0, 1]]`Vardiyalar$x$- ...$k \cdot y$
+- `Shy = [[1, 0], [k, 1]]`Vardiyalar$y$- ...$k \cdot x$
 
 ### Düşünce
 
@@ -196,7 +190,7 @@ Matris, alanı [1, 1] boyunca 3x uzatır ve [1, -1] değişmez kalır.
 
 ### Kendi bileşimi
 
-Bir matrisin n doğrusal bağımsız öz vektörü varsa, parçalanabilir:
+Eğer bir matris varsa$n$Düzsel bağımsız öz vektörler, parçalanabilir:
 
 ```
 A = V @ D @ V^(-1)
@@ -210,7 +204,7 @@ This says: rotate into eigenvector coordinates, scale along each axis, rotate ba
 
 ### Kendi değerlerin neden önemli olduğu
 
-**PCA.**Kovayans matrisinin öz vektörleri ana bileşenlerdir. öz değerleri size her bileşen ne kadar farklılık yakaladığını söyler. öz değerlere göre sıralayın, üst k'yi tutun ve boyut oranı azalır.
+**PCA.**Kopransa matrisinin öz vektörleri ana bileşenlerdir. öz değerleri size her bileşen ne kadar değişimi yakaladığını söyler. öz değerlere göre sıralayın, üstünü tutun $k$Ve boyutların azalması var.
 
 **Stability.**Tekrarlanan ağlarda ve dinamik sistemlerde, büyüklüğü > 1 olan öz değerleri çıkışların patlamasına neden olur. Büyüklük < 1 onları ortadan kaldırır. Bu bir cümlede belirtilen kaybolma/fışkırma gradient sorunu.
 
@@ -309,7 +303,7 @@ print(f"Same? {result1 == result2}")
 
 ### Adım 3: Öz değerleri sıfırdan (2x2)
 
-2x2 matris için `[[a, b], [c, d]]`, öz değerleri karakteristik denklemi çözüyor: `lambda^2 - (a+d)*lambda + (ad - bc) = 0`- Evet .
+2x2 matris için `[[a, b], [c, d]]`, öz değerleri karakteristik denklemi çözüyor: $\lambda^2 - (a+d)\lambda + (ad - bc) = 0$- Evet .
 
 ```python
 def eigenvalues_2x2(matrix):
@@ -443,6 +437,14 @@ Bu ders PCA (Fase 2) ve nöral ağ ağırlık analizi için geometrik temel olu�
 
 3. Üç dönüşümden oluşan bir kompozisyon oluşturun (30 derece döndürün, [1.5, 0.8 ile ölçeklendirin], kx=0.3 ile kesin ve bir döngü içinde düzenlenen 8 noktaya uygulayın. Koordinatların önünü ve arkasını yazdırın.
 
+### İpuçlar
+
+**Exercise 1.**Uygula`rotation_2d`- Evet .`scaling_2d`ve`shearing_2d`Her köşede `mat_vec_mul`. Dönüş için, 4 yan uzunluğu ve 2 diyagonal ön ve sonrasını hesaplayın; her biri aynı kalmalıdır.
+
+**Exercise 2.**Karakteristik denklemi yaz $\lambda^2 - (\text{trace})\lambda + \det = 0$İki değerinizin iz (7) ile birlikte belirleyici (10) ile çarpıldığını kontrol edin ve sonra `eigenvalues_2x2`ve `np.linalg.eigvals`- Evet .
+
+**Exercise 3.**Üç matris oluşturun.`shearing_2d(0.3, 0)`Çekmek için, onları çarpın `mat_mul`Bu sayede, 8 puan için sonuçları uygulayabilirsiniz.$(\cos\theta, \sin\theta)$Dönüşün bir belirleyicisi var 1 ve kesmenin bir belirleyicisi var 1 bu yüzden `det_2x2`Yapılandırma eşit olmalıdır $1.5 \times 0.8 = 1.2$- Evet .
+
 ## Anahtar Terimler
 
 | Term | What people say | What it actually means |
@@ -454,9 +456,9 @@ Bu ders PCA (Fase 2) ve nöral ağ ağırlık analizi için geometrik temel olu�
 | Composition | "Do two things" | Multiplying transformation matrices to chain operations. Order matters: B @ A means apply A first, then B. |
 | Eigenvector | "Special direction" | A direction that the matrix only scales, never rotates. The transformation's fingerprint. |
 | Eigenvalue | "How much it stretches" | The scalar factor by which the matrix scales its eigenvector. Can be negative (flip) or complex (rotation). |
-| Eigendecomposition | "Break the matrix apart" | Writing a matrix as V @ D @ V^(-1), separating it into its fundamental scaling directions and magnitudes. |
+| Eigendecomposition | "Break the matrix apart" | Writing a matrix as $V D V^{-1}$, separating it into its fundamental scaling directions and magnitudes. |
 | Determinant | "A single number from a matrix" | The factor by which the transformation scales area (2D) or volume (3D). Zero means the transformation is irreversible. |
-| Characteristic equation | "Where eigenvalues come from" | det(A - lambda * I) = 0. The polynomial whose roots are the eigenvalues. |
+| Characteristic equation | "Where eigenvalues come from" | $\det(A - \lambda I) = 0$. The polynomial whose roots are the eigenvalues. |
 
 ## Daha Fazla Okumak
 

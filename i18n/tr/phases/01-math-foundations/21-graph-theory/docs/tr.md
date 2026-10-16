@@ -34,9 +34,9 @@ Dört şeye ihtiyacın var:
 
 ### Grafikler: Kısımlar ve Kenarlar
 
-Bir grafik G = (V, E) V ve E kenarlarından oluşan zirvelerden (nodlardan) oluşur. Her kenar iki düğmeyi birbirine bağlar.
+Bir grafik$G = (V, E)$Dönemlerden oluşur (nodlar) $V$ve kenarları $E$Her kenar iki düğüm ile bağlantılı.
 
-**Directed vs undirected.**Yönlendirilmemiş bir graftede, kenar (u, v) u v ile bağlantılıdır ve v u ile bağlantılıdır. Yönlendirilmiş bir graftede (digraft) kenar (u, v) u v'ye işaret eder, ancak mutlaka tersine değildir.
+**Directed vs undirected.**Yönlendirilmemiş bir grafikte, kenar $(u, v)$- Yöntemleri$u$$v$Ve ...$v$$u$. Yönlendirilmiş bir grafikte (digraph), kenar $(u, v)$- Yöntemleri$u$$v$, ama mutlaka tersine değil.
 
 **Weighted vs unweighted.**Ağırlaştırılmamış bir grafikte kenarlar ya var ya da yok. Ağırlaştırılmış bir grafikte her kenarın sayısal bir ağırlığı vardır - bir mesafe, bir maliyet, bir güç.
 
@@ -49,14 +49,13 @@ Bir grafik G = (V, E) V ve E kenarlarından oluşan zirvelerden (nodlardan) olu�
 
 ### Yakınlık Matrisi
 
-A'nın bitişiklik matrisi çekirdek temsilidir. n düğümlü bir grafik için:
+Yakınlık matrisi $A$Bu da bir grafik olarak $n$düğümler:
 
-```
-A[i][j] = 1    if there is an edge from node i to node j
-A[i][j] = 0    otherwise
+```math
+A[i][j] = \begin{cases} 1 & \text{if there is an edge from node } i \text{ to node } j \\ 0 & \text{otherwise} \end{cases}
 ```
 
-Yönlendirilmemiş grafikler için, A simetriktir: A[i][j] = A[j][i]. Ağırlaştırılmış grafikler için, A[i][j] = kenar ağırlığı (i, j).
+Yönlendirilmemiş grafikler için,$A$simetriktir: $A[i][j] = A[j][i]$.Kevre grafikler için, $A[i][j]$= kenar ağırlığı $(i, j)$- Evet .
 
 **Example -- a triangle:**
 
@@ -69,20 +68,22 @@ A = [[0, 1, 1],
      [1, 1, 0]]
 ```
 
-A'daki matris işlemleri grafikteki işlemlere karşılık gelir.
+Yanlışı matrisi, her GNN'ye girilen girişdir.$A$Grafdaki işlemlere karşılık gelir.
 
 ### Derece
 
 Bir düğümün derecesi, ona bağlı olan kenarların sayısını gösterir. Yönlendirilmiş grafikler için, dereceden (girenler giren) ve dış dereceden (girenler çıkıp giden) vardır.
 
-D derece matrisi diyagonaldir:
+Derece matrisi $D$diyagonal:
 
-```
-D[i][i] = degree of node i
-D[i][j] = 0    for i != j
+```math
+\begin{aligned}
+D[i][i] &= \text{degree of node } i \\
+D[i][j] &= 0 \quad \text{for } i \ne j
+\end{aligned}
 ```
 
-Üçgen örneği için: D = diag(2, 2, 2) çünkü her düğüm diğer iki düğüme bağlanır.
+Üçgen örneği için: $D = \mathop{\mathrm{diag}}(2, 2, 2)$Çünkü her düğüm diğer iki düğümle bağlantılıdır.
 
 Derece, düğüm önemi hakkında size bilgi verir. Yüksek derece = merkez düğümü. Bir ağın derece dağılımı yapısını ortaya çıkarır. Sosyal ağlar güç yasalarını izler (beçik merkezler, birçok yaprak düğümü).
 
@@ -132,19 +133,17 @@ DFS:
 
 ### Grafik Laplakyan
 
-L = D - A. Spektral grafik teorisi'nde en önemli matris.
+$L = D - A$Spektral grafik teorisi'nde en önemli matris.
 
 Üçgen için:
 
-```
-D = [[2, 0, 0],    A = [[0, 1, 1],    L = [[2, -1, -1],
-     [0, 2, 0],         [1, 0, 1],         [-1, 2, -1],
-     [0, 0, 2]]         [1, 1, 0]]         [-1, -1,  2]]
+```math
+D = \begin{bmatrix} 2 & 0 & 0 \\ 0 & 2 & 0 \\ 0 & 0 & 2 \end{bmatrix} \qquad A = \begin{bmatrix} 0 & 1 & 1 \\ 1 & 0 & 1 \\ 1 & 1 & 0 \end{bmatrix} \qquad L = \begin{bmatrix} 2 & -1 & -1 \\ -1 & 2 & -1 \\ -1 & -1 & 2 \end{bmatrix}
 ```
 
 Laplakya'nın dikkat çekici özellikleri vardır:
 
-1. **L is positive semi-definite.**Tüm öz değerleri >= 0'dur.
+1. **$L$ is positive semi-definite.**Tüm öz değerleri $\ge 0$- Evet .
 
 2. **The number of zero eigenvalues equals the number of connected components.**Bağlı bir grafik tam olarak bir sıfır öz değere sahiptir. 3 bağlantısız bileşenli bir grafik üç sıfır öz değere sahiptir.
 
@@ -174,12 +173,12 @@ graph TD
 Yakınlık matrisinin ve Laplakistan'ın öz değerleri herhangi bir geçiş olmadan yapısal özellikleri ortaya çıkarır.
 
 **Spectral clustering**Bu şekilde çalışır:
-1. Laplak L'yi hesaplayın
-2. L'nin k en küçük öz vektörlerini bul (birincisi atlayın, bu bağlantılı grafikler için tüm-birler)
+1. Laplakya'yı hesapla $L$
+2. Bul .$k$  en küçük öz vektörleri$L$(İlkini atlayın, bağlantılı grafikler için hepsi-bir)
 3. Bu öz vektörleri her düğüm için yeni koordinatlar olarak kullanın
-4. K- ortalamaları bu koordinatlarda çalıştır
+4. Çık .$k$- bu koordinatlarda ortalamalar
 
-Bu neden çalışır? L'nin özvektorları grafikteki "en ince" fonksiyonları kodlar. İyi bağlantılı düğümler benzer özvektor değerlerini alır. Botluk boynuzıyla ayrılmış düğümler farklı değerler alır. Özvektorlar doğal olarak kümeleri ayırır.
+Bu neden işe yarıyor?$L$Grafdaki "en ince" fonksiyonları kodlayın. İyi bağlantılı düğümler benzer öz vektör değerlerini elde eder. Botulyo boynuzundan ayrılmış düğümler farklı değerler elde eder. Öz vektörler doğal olarak grupları ayırır.
 
 **Random walk connection.**Normalleştirilmiş Laplakyan, grafikte rastgele yürüyüşlerle ilgilidir. rastgele yürüyüşün sabit dağılımı düğüm derecesine orantılıdır. Karıştırma zamanı ( yürüyüşün ne kadar hızlı bir şekilde yakınlaşması) spektral boşluğu üzerine bağlıdır.
 
@@ -187,25 +186,25 @@ Bu neden çalışır? L'nin özvektorları grafikteki "en ince" fonksiyonları k
 
 Graf Sinir Ağlarının temel işlevi. Her düğüm komşularından mesajlar toplar, onları toplar ve kendi durumunu güncelleyebilir.
 
-```
-h_v^(k+1) = UPDATE(h_v^(k), AGGREGATE({h_u^(k) : u in neighbors(v)}))
+```math
+h_v^{(k+1)} = \text{UPDATE}\left(h_v^{(k)}, \text{AGGREGATE}\left(\{h_u^{(k)} : u \in \text{neighbors}(v)\}\right)\right)
 ```
 
 En basit biçimde, AGGREGATE = ortalama ve UPDATE = doğrusal dönüşüm + etkinleştirme:
 
-```
-h_v^(k+1) = sigma(W * mean({h_u^(k) : u in neighbors(v)}))
-```
-
-Bu, maskeli matris çarpımıdır. Eğer H tüm düğüm özelliklerinin matrisidir ve A bitişiklik matrisidirse:
-
-```
-H^(k+1) = sigma(A_norm * H^(k) * W)
+```math
+h_v^{(k+1)} = \sigma\left(W \cdot \text{mean}\left(\{h_u^{(k)} : u \in \text{neighbors}(v)\}\right)\right)
 ```
 
-A_norm normalleştirilmiş bitişiklik matrisidir (her satır 1'e kadar tutar).
+Bu, matris çarpımı gizlenmiş.$H$tüm düğüm özelliklerinin matrisi ve $A$bitişiklik matrisi:
 
-Bir mesaj geçiş turunda her düğüm yakın komşularını "gör" sağlar. İki turda komşu komşuları görmesine izin verir. K turları her düğümde K-hop komşularından bilgi verir.
+```math
+H^{(k+1)} = \sigma\left(A_{\text{norm}} H^{(k)} W\right)
+```
+
+nerede$A_{\text{norm}}$normalleşmiş bitişiklik matrisi (her satır 1'e kadar toplamlanır).
+
+Bir mesaj geçişinin her düğümün yakın komşularını "görmesine" izin verir.$K$Çemberler her düğümden bilgi verir $K$-Hop Mahallesi.
 
 ```mermaid
 graph LR
@@ -326,7 +325,7 @@ def dfs(graph, start):
     return order
 ```
 
-BFS, O(1) pop sol için bir deque (iki uçlı kuyruk) kullanır. DFS bir listeyi bir yığın olarak kullanır. Her iki düğümde tam olarak bir kez ziyaret eder - O(V + E) zaman.
+BFS,  için bir deque (iki uçlı sırayla) kullanır.$O(1)$DFS bir listeyi bir yığın olarak kullanır. Her iki düğümde de tam olarak bir kez ziyaret edilir.$O(V + E)$Zamanı.
 
 ### Adım 3: Bağlı bileşenler ve Laplak öz değerleri
 
@@ -369,7 +368,7 @@ def spectral_clustering(graph, k=2):
     return labels
 ```
 
-Fiedler vektörünün işaretinin k=2 için grafiği iki kümeye ayırması gerekir. k>2 için ilk k öz vektörlerinde k- ortalamaları çalıştırırsınız (büyük tüm-bir öz vektör hariç).
+- Evet .$k=2$Fiedler vektörünün işaretleri, grafiği iki kümeye ayırır.$k>2$- Sen de koşardın .$k$-İlk anlamda.$k$öz vektörleri (bütün birliğin önemsiz öz vektörünü hariç).
 
 ### Adım 5: Mesaj aktarılıyor
 
@@ -462,13 +461,13 @@ Bu ders şunları ortaya çıkarır:
 | Connected components | Preprocessing, handling disconnected graphs |
 | PageRank | Node importance ranking, attention initialization |
 
-GNN'ler özel bir değinime layık. GCN'deki grafik konvulsiyon işlevi (Kipf & Welling, 2017) A_hat = A + I:
+GNN'ler özel bir değinime layık. GCN'deki grafik konvulsiyon işlevi (Kipf & Welling, 2017) kendi kendini halka ekleyerek bitişiklik matrisini kullanır.$\hat{A} = A + I$- ...
 
-```text
-H^(l+1) = sigma(D_hat^(-1/2) * A_hat * D_hat^(-1/2) * H^(l) * W^(l))
+```math
+H^{(l+1)} = \sigma\left(\hat{D}^{-1/2} \hat{A} \hat{D}^{-1/2} H^{(l)} W^{(l)}\right)
 ```
 
-A_hat = A + I (ekşilik artı kendi-süküller) ve D_hat A_hat'ın dereceleri matrisidir. Kendi kendini oluşturan döngüler, her düğümün toplanma sırasında kendi özelliklerini içerdiğini sağlar. Bu tam olarak simetrik normallaşımla geçen mesaj. D_hat^(-1/2) * A_hat * D_hat^(-1/2) normalleştirilmiş bitişiklik matrisidir. Laplakyan ortaya çıkıyor çünkü bu normallaşma L_sym = I - D^(-1/2) * A * D^(-1/2) ile ilişkilidir. Laplakya'yı anlamak, GCN'lerin neden çalıştığını anlamak demektir.
+nerede$\hat{A} = A + I$(kısıtlılık ve kendi kendini döngüler) ve $\hat{D}$ dereceleri matrisidir.$\hat{A}$. Kendi kendini döngüler her düğümün toplama sırasında kendi özelliklerini içerdiğini sağlar. Bu tam olarak simetrik normallaşımla ileti geçer. $\hat{D}^{-1/2} \hat{A} \hat{D}^{-1/2}$Laplakya'nın ortaya çıkması, normalleşmenin $L_{\text{sym}} = I - D^{-1/2} A D^{-1/2}$Laplakya'yı anlamak, GCN'lerin neden çalıştığını anlamak demektir.
 
 ## Egzersizler
 
@@ -482,15 +481,27 @@ A_hat = A + I (ekşilik artı kendi-süküller) ve D_hat A_hat'ın dereceleri ma
 
 5. **Analyze a real-world graph.**Karate Kulübü grafikini kullanın (34 düğüm, 78 kenar). Derece dağılımını, Laplakya öz değerlerini ve spektral kümeler oluşturmayı hesaplayın.
 
+### İpuçlar
+
+**Exercise 1.**Egzersizden alınan formülü kullanın. Dışarı çıkış kenarları olmayan bir düğüm puanını tüm düğümlerle eşit olarak paylaşmalıdır veya toplam 1'den aşağı düşmelidir.`pagerank(graph)`- Evet .
+
+**Exercise 2.**İki klise oluşturun .`add_edge`Bir kenarla bağla ve aramaya.`spectral_clustering(graph, k=2)`Her klik bir etiket aldığını kontrol edin.`laplacian()`, iki grup birleştikçe büyüyen.
+
+**Exercise 3.**Öncelik sırasını `heapq`Her ağırlığı 1 yapın ve her Dijkstra mesafesinin bu düğümün BFS katmanına eşit olduğunu kontrol edin`bfs(graph, start)`- Evet .
+
+**Exercise 4.**Kimlik matrisini  olarak kullanın .`features`, böylece her sütun bir düğüm işaretler ve uygulayın `message_passing`Sonra düğümler için sıradaki sıfır dışı girişler$v$Hangi düğümlerin ulaştığını göster $v$Bu seti, ilk arama genişliğinden 2 mesafede olan düğümlerle karşılaştırın.
+
+**Exercise 5.** `networkx.karate_club_graph()`Kısayol listesi ve düğüm özelliğinde yerin doğruluğunu verir `club`Kütülerin kopyasını bir `Graph`Ve 34 düğüm ve 78 kenarın olup olmadığını kontrol et.`spectral_clustering`- ... ...`club`değerleri değiştirilmesine izin verin.
+
 ## Anahtar Terimler
 
 | Term | What people say | What it actually means |
 |------|----------------|----------------------|
-| Graph | "Nodes and edges" | A mathematical structure G=(V,E) encoding pairwise relationships |
-| Adjacency matrix | "The connection table" | An n x n matrix where A[i][j] = 1 if nodes i and j are connected |
+| Graph | "Nodes and edges" | A mathematical structure $G=(V,E)$ encoding pairwise relationships |
+| Adjacency matrix | "The connection table" | An $n \times n$ matrix where $A[i][j] = 1$ if nodes $i$ and $j$ are connected |
 | Degree | "How connected a node is" | The number of edges touching a node |
-| Laplacian | "D minus A" | L = D - A, the matrix whose eigenvalues reveal graph structure |
-| Fiedler value | "The algebraic connectivity" | The smallest non-zero eigenvalue of L, measuring how well-connected the graph is |
+| Laplacian | "D minus A" | $L = D - A$, the matrix whose eigenvalues reveal graph structure |
+| Fiedler value | "The algebraic connectivity" | The smallest non-zero eigenvalue of $L$, measuring how well-connected the graph is |
 | BFS | "Level-by-level search" | Traversal that visits all neighbors before going deeper, finds shortest paths |
 | DFS | "Go deep first" | Traversal that follows one path to its end before backtracking |
 | Message passing | "Nodes talk to neighbors" | Each node aggregates information from its neighbors, the core of GNNs |

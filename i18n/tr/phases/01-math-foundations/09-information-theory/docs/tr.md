@@ -28,10 +28,10 @@ Bu ders, her formülü sıfırdan inşa eder böylece nereden geldiğini ve nede
 
 Bir şey gerçekleşmesi beklenmedik olduğunda, daha fazla bilgi taşıyor.
 
-P olasılığı olan bir olayın bilgi içeriği:
+Muhtemelen bir olayın bilgi içeriği $p$Bu:
 
-```
-I(x) = -log(p(x))
+```math
+I(x) = -\log(p(x))
 ```
 
 Log base 2'yi kullanarak bitler elde ediyoruz.
@@ -50,98 +50,104 @@ Bazı olaylar sıfır bilgi taşır.
 
 Entropi, bir dağıtımın tüm olası sonuçları üzerinde beklenen sürprizdir.
 
-```
-H(P) = -sum( p(x) * log(p(x)) )  for all x
+```math
+H(P) = -\sum_{x} p(x) \log(p(x))
 ```
 
 Bir adil maden, ikili değişken için en fazla entropiye sahiptir: 1 bit. Tarafsız bir maden (% 99 başları) düşük entropiye sahiptir: 0.08 bit. Ne olacağını zaten biliyorsunuz, bu yüzden her atış size neredeyse hiçbir şey söylemez.
 
-```
-Fair coin:    H = -(0.5 * log2(0.5) + 0.5 * log2(0.5)) = 1.0 bit
-Biased coin:  H = -(0.99 * log2(0.99) + 0.01 * log2(0.01)) = 0.08 bits
+```math
+\begin{aligned}
+\text{Fair coin:} \quad & H = -(0.5 \log_2(0.5) + 0.5 \log_2(0.5)) = 1.0 \text{ bit} \\
+\text{Biased coin:} \quad & H = -(0.99 \log_2(0.99) + 0.01 \log_2(0.01)) = 0.08 \text{ bits}
+\end{aligned}
 ```
 
 Entropi bir dağılımdaki eksiksiz belirsizlikleri ölçer.
 
 ### Çarpıcı Entropi (Her Gün Kullanılan Kayıp Fonksiyonu)
 
-Çelişki entropisi, P dağılımından gelen olayları kodlamak için dağılım Q'yi kullandığınızda ortalama sürpriz ölçümünü ölçer.
+Çarpışıklık , dağılım kullanıldığında ortalama sürprizleri ölçer .$Q$dağıtımdan gelen olayları kodlamak için $P$- Evet .
 
+```math
+H(P, Q) = -\sum_{x} p(x) \log(q(x))
 ```
-H(P, Q) = -sum( p(x) * log(q(x)) )  for all x
-```
 
-P, gerçek dağılımdır. Q, modelinizin tahminidir. Q, P ile mükemmel bir şekilde eşleşirse, çapraz entropi entropiye eşittir. Herhangi bir eşleşme eksikliği onu daha büyük yapar.
+$P$Bu, gerçek dağıtımdır (etiketler).$Q$Bu modelin tahminleri.$Q$Düzleşmeler$P$Herhangi bir eşleşme eksikliği daha büyük olur.
 
-Sınıflandırmada, P bir tek sıcak vektördür (gerçek sınıfın olasılığı 1'dir, diğer her şey 0). Bu, çapraz entropiyi basitleştirir:
+Sınıflandırma:$P$tek sıcak bir vektördür (gerçek sınıfın olasılığı 1'dir, diğer her şey 0'dur). Bu, çapraz entropiyi basitleştirir:
 
-```
-H(P, Q) = -log(q(true_class))
+```math
+H(P, Q) = -\log(q(\text{true\_class}))
 ```
 
 Bu sınıflandırma için bütün çapraz entropi kaybı formülü. Doğru sınıfın öngörülen olasılıklarını en üst düzeye çıkarın.
 
 ### KL Değişimi (Yekimler Arasındaki Uzaklık)
 
-KL farklılığı, P yerine Q kullanmanın ne kadar fazladan sürpriz aldığını ölçer.
+KL farklılığı , kullanmanın ne kadar fazladan sürpriz aldığını ölçer .$Q$yerine$P$- Evet .
 
-```
-D_KL(P || Q) = sum( p(x) * log(p(x) / q(x)) )  for all x
-             = H(P, Q) - H(P)
+```math
+\begin{aligned}
+D_{KL}(P \,\|\, Q) &= \sum_{x} p(x) \log(p(x) / q(x)) \\
+&= H(P, Q) - H(P)
+\end{aligned}
 ```
 
 Çelişki entropisi, entropi artı KL farklılığıdır. Gerçek dağılımın entropi eğitimin sırasında sabit olduğundan, çapraz entropiyi en aza indirmek KL farklılığı en aza indirmekle aynıdır.
 
-KL farklılığı simetrik değildir: D_KL(P  Q) != D_KL(Q  P). Gerçek bir mesafe metrik değildir.
+KL farklılığı simetrik değildir: $D_{KL}(P \Vert Q) \ne D_{KL}(Q \Vert P)$Bu gerçek bir mesafe metrikası değil.
 
 ### Karşılıklı Bilgi
 
 Karşılıklı bilgi, bir değişkenin bir değişken hakkında ne kadar bilgi vermesini ölçer.
 
-```
-I(X; Y) = H(X) - H(X|Y)
-        = H(X) + H(Y) - H(X, Y)
+```math
+\begin{aligned}
+I(X; Y) &= H(X) - H(X \mid Y) \\
+&= H(X) + H(Y) - H(X, Y)
+\end{aligned}
 ```
 
-Eğer X ve Y bağımsız ise karşılıklı bilgi sıfırdır. Birini bilmek size diğerini hakkında hiçbir şey söylemez. Eğer mükemmel bir şekilde ilişkili ise karşılıklı bilgi her iki değişkenin entropiye eşit olur.
+- Eğer$X$ve $Y$Bu iki değişkenin birbiriyle ilişkili olması, karşılıklı bilgiyi bir değişkenin entropiye eşit kılar.
 
 Özellik seçimi sırasında, bir özellik ve hedef arasındaki yüksek karşılıklı bilgi, özellikin yararlı olduğu anlamına gelir.
 
 ### Şartlı Entropi
 
-H(Y de X) Y hakkında ne kadar belirsizlik kaldığını ölçer.
+$H(Y \mid X)$Bu , belirsizliklerin ne kadar kaldığını ölçer .$Y$Gözlem yaptıktan sonra .$X$- Evet .
 
-```
-H(Y|X) = H(X,Y) - H(X)
+```math
+H(Y \mid X) = H(X,Y) - H(X)
 ```
 
 İki aşırılık:
-- Eğer X tamamen Y'yi belirlerse, H(Y de X) = 0. X'i bilmek Y hakkında tüm belirsizlikleri ortadan kaldırır. Örnek: X = sıcaklık Celsius, Y = sıcaklık Fahrenheit.
-- Eğer X size Y hakkında hiçbir şey söylemezse, H(YX ) = H(Y). X'i bilmek hiç de belirsizlikinizi azaltmaz.
+- - Eğer$X$Tamamen belirleyici.$Y$O zaman ...$H(Y \mid X) = 0$Bilmek .$X$$Y$Örnek:$X$= sıcaklık Celsius'de,$Y$= Fahrenheit sıcaklığı.
+- - Eğer$X$Sana hiçbir şey söylemiyor .$Y$O zaman ...$H(Y \mid X) = H(Y)$Bilmek .$X$Bu, belirsizliklerinizi hiç azaltmaz.$X$= para atmak,$Y$= Yarınki hava.
 
-Şartlı entropi her zaman negatif değildir ve asla H(Y'yi aşmaz:
+Şartlı entropi her zaman negatif değildir ve asla aşmaz .$H(Y)$- ...
 
+```math
+0 \le H(Y \mid X) \le H(Y)
 ```
-0 <= H(Y|X) <= H(Y)
-```
 
-Makine öğreniminde koşullu entropi karar ağaçlarında ortaya çıkar. Her bölünmede, algoritma H(Y) ile ilgili en fazla belirsizlikten kurtulduğu özelliği olan H ((Y)) değerini en aza indirgenir.
+Makine öğreniminde, koşullu entropi karar ağaçlarında ortaya çıkar.$X$Bu da en azını azaltır.$H(Y \mid X)$-- etiket hakkında en fazla belirsizlikten kurtulmuş özellik .$Y$- Evet .
 
 ### Ortak Entropi
 
-H(X,Y) X ve Y'nin ortak dağılımının entropi.
+$H(X,Y)$                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             $X$ve $Y$Birlikte.
 
-```
-H(X,Y) = -sum sum p(x,y) * log(p(x,y))   for all x, y
+```math
+H(X,Y) = -\sum_{x} \sum_{y} p(x,y) \log(p(x,y))
 ```
 
 Ana özellik:
 
-```
-H(X,Y) <= H(X) + H(Y)
+```math
+H(X,Y) \le H(X) + H(Y)
 ```
 
-X ve Y bağımsız olduğunda eşitlik geçerlidir. Bilgiler paylaşırsa, ortak entropi bireysel entropi toplamından daha azdır. "Kayıp" entropi tam olarak karşılıklı bilgi.
+Dürüst olmak gerekirse , eşitlik$X$ve $Y$Eğer bilgi paylaşırlarsa, ortak entropi bireysel entropi toplamından daha azdır.
 
 ```mermaid
 graph TD
@@ -167,50 +173,52 @@ graph TD
 ```
 
 İlişkiler:
-- H(X,Y) = H(X) + H(Y
-- H (H) - H (H) - H (H) - H (H) - H (H) - H (H) - H (H) - H (H) - H (H) - H (H) - H (H) - H (H) - H (H) - H (H) - H (H) - H (H) - H (H) - H (H) - H (H) - H (H) - H (H) - H (H) - H (H) - H (H) - H (H) - H (H) - H (H) - H (H) - H (H) - H (H) - H (H) - H (H) - H (H) - H (H) - H) - H (H) - H (H) - H) - H (H) - H) - H (H) - H) - H (H) - H) - H) - H (H) - H) - H) - H (H) - H) - H) - H) - H) - H (H) - H) - H) - H) - H) - H - H - H - H - H - H - H - H - H - H - H - H - H - H - H - H - H - H - H - H - H - H - H - H - H - H - H - H - H - H - H - H - H - H - H - H - H - H - H - H - H - H - H - H - H - H - H - H - H - H - H - H - H - H - H - H - H - H - H - H - H - H - H - H - H - H - H - H - H - H - H - H - H - H - H - H - H - H - H - H - H - H - H - H - H - H - H - H - H - H - H - H - H - H - H - H - H - H - H - H - H - H - H - H - H - H - H - H - H - H - H - H - H - H - H - H - H - H - H - H - H - H - H - H - H - H -
-- H(X,Y) = H(X) + H(Y) - I(X;Y)
+- $H(X,Y) = H(X) + H(Y \mid X) = H(Y) + H(X \mid Y)$
+- $I(X;Y) = H(X) - H(X \mid Y) = H(Y) - H(Y \mid X)$
+- $H(X,Y) = H(X) + H(Y) - I(X;Y)$
 
 ### Karşılıklı Bilgi (Deep Dive)
 
-Karşılıklı bilgi I(X;Y) bir değişkenin ne kadar bilinmesi diğerine ilişkin belirsizlikleri azaltır.
+Karşılıklı bilgi$I(X;Y)$Bir değişkenin ne kadar bilinmesi diğer değişkenle ilgili belirsizlikleri azaltır.
 
-```
-I(X;Y) = H(X) - H(X|Y)
-       = H(Y) - H(Y|X)
-       = H(X) + H(Y) - H(X,Y)
-       = sum sum p(x,y) * log(p(x,y) / (p(x) * p(y)))
+```math
+\begin{aligned}
+I(X;Y) &= H(X) - H(X \mid Y) \\
+&= H(Y) - H(Y \mid X) \\
+&= H(X) + H(Y) - H(X,Y) \\
+&= \sum_{x} \sum_{y} p(x,y) \log\left(\frac{p(x,y)}{p(x) \, p(y)}\right)
+\end{aligned}
 ```
 
 Özellikleri:
-- I ((X;Y) >= 0 her zaman. Bir şeyi gözlemleyerek asla bilgiyi kaybetmezsiniz.
-- I(X;Y) = 0 eğer ve sadece X ve Y bağımsızsa.
-- I(X;Y) = I(Y;X) KL farklılığından farklı olarak simetriktir.
-- I(X;X) = H(X). Bir değişken tüm bilgilerini kendisiyle paylaşır.
+- $I(X;Y) \ge 0$Bir şeyi gözlemleyerek asla bilgiyi kaybetmezsin.
+- $I(X;Y) = 0$Eğer ve sadece eğer$X$ve $Y$bağımsızdırlar.
+- $I(X;Y) = I(Y;X)$KL farklılığından farklı olarak simetrik.
+- $I(X;X) = H(X)$Değişken tüm bilgilerini kendisiyle paylaşır.
 
 **Mutual information for feature selection.**ML'de hedef hakkında bilgilendirici özellikler istiyorsunuz. karşılıklı bilgi size özellikleri sıralamanın prensipsel bir yolunu sağlar:
 
-1. Her bir özellik için X_i, Y hedef değişken olduğu I(X_i; Y) hesaplayın.
+1. Her özellik için $X_i$, hesaplama$I(X_i; Y)$nerede$Y$hedef değişken.
 2. MI puanı ile sıralama özellikleri.
-3. Üst k özelliklerini tut.
+3. Yukarıdakiları tut .$k$Özellikler.
 
 Bu özellik ve hedef arasındaki herhangi bir ilişki için çalışır - doğrusal, doğrusal olmayan, tek sesli veya değil. Korrelasyon sadece doğrusal ilişkileri yakalar. MI her şeyi yakalar.
 
 | Method | Detects | Computational cost | Handles categorical? |
 |--------|---------|-------------------|---------------------|
-| Pearson correlation | Linear relationships | O(n) | No |
-| Spearman correlation | Monotonic relationships | O(n log n) | No |
-| Mutual information | Any statistical dependency | O(n log n) with binning | Yes |
+| Pearson correlation | Linear relationships | $O(n)$ | No |
+| Spearman correlation | Monotonic relationships | $O(n \log n)$ | No |
+| Mutual information | Any statistical dependency | $O(n \log n)$ with binning | Yes |
 
 ### Etiket Düzeltme ve Çaplak Entropi
 
 Standart sınıflandırma sert hedefler kullanır: [0, 0, 1, 0]. Gerçek sınıf olasılık 1 alır, diğer her şey 0. Etiket düzeltme bunları yumuşak hedeflerle değiştirir:
 
-```
-soft_target = (1 - epsilon) * hard_target + epsilon / num_classes
+```math
+\text{soft\_target} = (1 - \epsilon) \cdot \text{hard\_target} + \epsilon / \text{num\_classes}
 ```
 
-Epsilon = 0,1 ve 4 sınıf:
+- Evet .$\epsilon = 0.1$Ve 4 sınıf:
 - Zor hedef: [0, 0, 1, 0]
 - Yumuşak hedef: [0.025, 0.025, 0.925, 0.025]
 
@@ -224,8 +232,8 @@ Bu neden yardımcı oluyor:
 
 Etiket düzeltmesi ile çapraz entropi kaybı:
 
-```
-L = (1 - epsilon) * CE(hard_target, prediction) + epsilon * H_uniform(prediction)
+```math
+L = (1 - \epsilon) \cdot \text{CE}(\text{hard\_target}, \text{prediction}) + \epsilon \cdot H_{\text{uniform}}(\text{prediction})
 ```
 
 İkinci terim, bir yandan da aynı olmayan tahminleri cezalandırır. Güven konusunda doğrudan düzenlenme.
@@ -236,12 +244,14 @@ L = (1 - epsilon) * CE(hard_target, prediction) + epsilon * H_uniform(prediction
 
 **Information theory view.**Çarpışık entropi, modelinizin gerçek dağılım yerine dağıtımını kullanarak kaç bit harcadığınızı ölçer.
 
-**Maximum likelihood view.**Gerçek sınıf y_i olan N eğitim örnekleri için:
+**Maximum likelihood view.**- Evet .$N$Gerçek sınıflarla eğitim örnekleri $y_i$- ...
 
-```
-Likelihood     = product( q(y_i) )
-Log-likelihood = sum( log(q(y_i)) )
-Negative log-likelihood = -sum( log(q(y_i)) )
+```math
+\begin{aligned}
+\text{Likelihood} &= \prod_i q(y_i) \\
+\text{Log-likelihood} &= \sum_i \log(q(y_i)) \\
+\text{Negative log-likelihood} &= -\sum_i \log(q(y_i))
+\end{aligned}
 ```
 
 Son satır, çapraz entropi kaybı. çapraz entropiyi en aza indirmek = modeliniz altında eğitim verilerinin olasılığını artırmak.
@@ -258,15 +268,17 @@ log base e   -> nats      (machine learning convention)
 log base 10  -> hartleys  (rarely used)
 ```
 
-1 nat = 1/ln(2) bit = 1.4427 bit. PyTorch ve TensorFlow varsayılan olarak doğal log (nats) kullanırlar.
+1 nat = $1/\ln(2)$PyTorch ve TensorFlow varsayılan olarak doğal log (nats) kullanırlar.
 
 ### Kafası karışık
 
 Kafası karışıklık, çapraz entropiyi gösterir. modelin arasında belirsiz olduğu eşit olası seçeneklerin etkin sayısını gösterir.
 
-```
-Perplexity = 2^H(P,Q)   (if using bits)
-Perplexity = e^H(P,Q)   (if using nats)
+```math
+\begin{aligned}
+\text{Perplexity} &= 2^{H(P,Q)} \quad \text{(if using bits)} \\
+\text{Perplexity} &= e^{H(P,Q)} \quad \text{(if using nats)}
+\end{aligned}
 ```
 
 50 karmaşıklığı olan bir dil modeli ortalama olarak, 50 olası sonraki jetonlardan eşit bir şekilde seçmek zorunda olduğu gibi karışık.
@@ -445,19 +457,29 @@ Neyi sıfırdan inşa ettin ?`torch.nn.CrossEntropyLoss()`Şimdi eğitim sıras�
 
 2. Bir model gerçek sınıf 1 olan bir örnek için logitler çıkarır.`cross_entropy_loss`Hangi logitler sıfır kaybı verir?
 
-3. KL farklılığının simetrik olmadığını gösterin. iki dağılım seçin P ve Q ve hesaplayın D_KL_P_K  Q) ve DL Q  P. Neden farklı olduklarını açıklayın.
+3. KL farklılığının simetrik olmadığını göster.$P$ve $Q$ve hesaplama.$D_{KL}(P \Vert Q)$ve $D_{KL}(Q \Vert P)$Neden farklı olduklarını açıkla.
 
 4. Bir dizi belirti tahmininin karmaşıklığını hesaplayan bir işlev oluşturun. (true_token_index, predicted_logits) çiftlerinin bir listesini vererek, sıradanın karmaşıklığını geri gönderin.
+
+### İpuçlar
+
+**Exercise 1.**Arama .`entropy`26 eşit olasılık ile sonuçlandırılmalıdır.$\log_2 26 \approx 4.70$Gerçek harf frekansları birer gerektirmez, bu yüzden entropi daha düşük olmalı.
+
+**Exercise 2.**Hesaplama`softmax`O zaman $-\ln$1'de olasılık oranı ile karşılaştırın.`cross_entropy_loss(1, logits)`; her ikisi de 3.06'ya yakın olmalıdır. Kayıp sadece 1. sınıf için logit diğer iki sınıftan çok daha büyük olduğunda 0'ya yaklaşır.
+
+**Exercise 3.**Örneğin farklı şekillerde iki küçük dağılım kullanın $P = [0.9, 0.1]$ve $Q = [0.5, 0.5]$, ve aramak`kl_divergence`İki değer farklı olmalıdır, çünkü her yön log oranını farklı bir dağılımla ağırlaştırır.
+
+**Exercise 4.**Her çift için hesaplayın.`cross_entropy_loss(true_token_index, predicted_logits)`, ortalamayı al ve onu `perplexity`- Üniforma kayıtlarına bak .$V$Token: karmaşıklık $V$- Evet .
 
 ## Anahtar Terimler
 
 | Term | What people say | What it actually means |
 |------|----------------|----------------------|
-| Information content | "Surprise" | The number of bits (or nats) needed to encode an event: -log(p) |
+| Information content | "Surprise" | The number of bits (or nats) needed to encode an event: $-\log(p)$ |
 | Entropy | "Randomness" | The average surprise across all outcomes of a distribution. Measures irreducible uncertainty. |
-| Cross-entropy | "The loss function" | Average surprise when using model distribution Q to encode events from true distribution P. |
-| KL divergence | "Distance between distributions" | Extra bits wasted by using Q instead of P. Equals cross-entropy minus entropy. Not symmetric. |
-| Mutual information | "How related are X and Y" | Reduction in uncertainty about X from knowing Y. Zero means independent. |
+| Cross-entropy | "The loss function" | Average surprise when using model distribution $Q$ to encode events from true distribution $P$. |
+| KL divergence | "Distance between distributions" | Extra bits wasted by using $Q$ instead of $P$. Equals cross-entropy minus entropy. Not symmetric. |
+| Mutual information | "How related are X and Y" | Reduction in uncertainty about $X$ from knowing $Y$. Zero means independent. |
 | Softmax | "Turn logits into probabilities" | Exponentiate and normalize. Maps any real-valued vector to a valid probability distribution. |
 | Perplexity | "How confused the model is" | Exponential of cross-entropy. The effective vocabulary size the model is choosing from at each step. |
 | Bits | "Shannon's unit" | Information measured with log base 2. One bit resolves one fair coin flip. |

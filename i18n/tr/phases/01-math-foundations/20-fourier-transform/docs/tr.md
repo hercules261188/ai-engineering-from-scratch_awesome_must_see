@@ -9,7 +9,7 @@
 
 ## Öğrenme Hedefleri
 
-- DFT'yi sıfırdan uygulayın ve O(N log N) Cooley-Tukey FFT'ye karşı doğrulayın
+- DFT ' yi sıfırdan uygula ve onu $O(N \log N)$Cooley-Tukey FFT
 - Frekans koefisienlerini yorumlayın: bir sinyaldeki amplitud, faz ve güç spektrumu çıkarın
 - FFT çarpımı yoluyla konvulsiyon gerçekleştirmek için konvulsiyon teoremi uygulayın
 - Fourier frekansı parçalanmasını transformatör pozisyon kodlama ve CNN konvolisyon katmanlarına bağlayın
@@ -28,67 +28,64 @@ Bu ML için önemlidir çünkü frekans alanı düşüncesi her yerde ortaya ç�
 
 ### DFT tanımı
 
-N örnekler x[0], x[1], ..., x[N-1] verildiğinde, Diskret Fourier Transform N frekans katılıkları X[0], X[1], ..., X[N-1] üretir:
+Verilmiştir .$N$örnekler $x[0], x[1], \ldots, x[N-1]$, Diskret Fourier Transform üretir $N$frekans katılıkları $X[0], X[1], \ldots, X[N-1]$- ...
 
-```
-X[k] = sum_{n=0}^{N-1} x[n] * e^(-2*pi*i*k*n/N)
-
-for k = 0, 1, ..., N-1
+```math
+X[k] = \sum_{n=0}^{N-1} x[n] \, e^{-2\pi i k n/N} \qquad \text{for } k = 0, 1, \ldots, N-1
 ```
 
-Her X [k] karmaşık bir sayıdır. Büyüklüğü. X [k] da size frekans k'nin amplitudunu söyler. Faz açısı.
+Her biri .$X[k]$Bu karmaşık bir sayıdır.$\lvert X[k] \rvert$frekans amplitudu size söyler.$k$- Fase .$\angle X[k]$Bu frekansın faz geçişini gösterir.
 
-Anahtar bilgi:`e^(-2*pi*i*k*n/N)`DFT, sinyal ile N eşit alanlı frekansların her biri arasındaki ilişkiyi hesaplar. Eğer sinyal k frekanslı enerji içerirse, ilişki büyüktür.
+Anahtar bilgi:$e^{-2\pi i k n/N}$frekansında dönen bir fazördür.$k$DFT , sinyal ve her bir sinyal arasındaki ilişkiyi hesaplar .$N$Eğer sinyal frekanslı bir enerji içerirse$k$Eğer bu değilse, sıfırın yakınında.
 
 ### Her bir katılamın anlamı
 
-**X[0]: the DC component.**Bu, tüm örneklerin toplamı ortalama oranla oranlıdır.
+**$X[0]$: the DC component.**Bu, tüm örneklerin toplamı ortalama oranla oranlıdır.
 
+```math
+X[0] = \sum_{n=0}^{N-1} x[n] \, e^0 = \text{sum of all samples}
 ```
-X[0] = sum_{n=0}^{N-1} x[n] * e^0 = sum of all samples
-```
 
-**X[k] for 1 <= k <= N/2: positive frequencies.**X[k] N örnekler başına frekans k döngüleri temsil eder. Yüksek k, daha yüksek frekans (hızlı ossilasyon) anlamına gelir.
+**$X[k]$ for $1 \le k \le N/2$: positive frequencies.** $X[k]$frekansı temsil eder $k$$N$Örnekler.$k$Daha yüksek frekans (hızlı bir titreşim) anlamına gelir.
 
-**X[N/2]: the Nyquist frequency.**N örneklerle temsil edebileceğiniz en yüksek frekans. Bu üzerinde, düşük frekanslar gibi maske edilen yüksek frekanslar.
+**$X[N/2]$: the Nyquist frequency.**Yapabileceğiniz en yüksek frekans .$N$Bu örneğin üstünde, yüksek frekanslar düşük frekanslar gibi maske ederek isimlendirilir.
 
-**X[k] for N/2 < k < N: negative frequencies.**Gerçek değerli sinyaller için, X[N-k] = conj(X[k]). Negatif frekanslar pozitiflerin ayna görüntüleridir. Bu nedenle yararlı bilgiler ilk N/2 + 1 katılımcılarda bulunur.
+**$X[k]$ for $N/2 < k < N$: negative frequencies.**Gerçek değerli sinyaller için,$X[N-k] = \overline{X[k]}$Negatif frekanslar pozitif frekansların ayna görüntüleridir.$N/2 + 1$Koefisienler.
 
 ### Ters DFT
 
 Ters DFT, orijinal sinyali frekans koefisienlerinden yeniden oluşturur:
 
-```
-x[n] = (1/N) * sum_{k=0}^{N-1} X[k] * e^(2*pi*i*k*n/N)
-
-for n = 0, 1, ..., N-1
+```math
+x[n] = \frac{1}{N} \sum_{k=0}^{N-1} X[k] \, e^{2\pi i k n/N} \qquad \text{for } n = 0, 1, \ldots, N-1
 ```
 
-Önceki DFT'den tek fark: Eksponent'teki işaret olumlu (menik değil) ve 1/N normallaşma faktörü vardır.
+Önceki DFT'den sadece farklılıklar: Eksponentteki işaret olumlu (negatif değil) ve bir $1/N$Normalleşme faktörü.
 
 DFT tersine dönüşüm mükemmel. Hiçbir bilgi kaybolmaz. Zaman alanından frekans alanına ve geri herhangi bir hata olmadan gidebilirsiniz. DFT temel değişikliği - aynı bilgileri farklı koordinat sisteminde yeniden ifade eder.
 
 ### FFT: hızlı hale getirmek
 
-Yukarıda tanımlanan DFT O(N^2): N çıkış katılıklarının her biri için N giriş örneklerini toplamlarsınız. N = 1 milyon için, bu 10^12 işlemdir.
+Yukarıda tanımlanan DFT $O(N^2)$: her biri için $N$Çıktılık koeficientleri, topladınız $N$Giriş örnekleri.$N$= 1 milyon, yani $10^{12}$İşlemler.
 
-Hızlı Fourier Değişimi (FFT) aynı sonucu O  N log N'de hesaplar. N = 1 milyon için, bu bir trilyon yerine yaklaşık 20 milyon işlemdir.
+Fast Fourier Transform (FFT) aynı sonucu hesaplar $O(N \log N)$- Evet .$N$Bu da frekans analizini pratik kılan bir şey.
 
 Cooley-Tukey algoritması (en yaygın FFT) bölme ve fetih yoluyla çalışır:
 
 1. Sinyalı eşit indeksi ve eşsiz indeksi örneklere bölün.
 2. Her yarısının DFT'sini geri dönüşlü olarak hesaplayın.
-3. İki yarı boyutlu DFT'yi "ikili faktör" e^(-2*pi*i*k/N ile birleştirin.
+3. İki yarı boyutlu DFT'yi "twicel faktörler" kullanarak birleştirin.$e^{-2\pi i k/N}$- Evet .
 
+```math
+\begin{aligned}
+X[k] &= E[k] + e^{-2\pi i k/N} \, O[k] && \text{for } k = 0, \ldots, N/2 - 1 \\
+X[k + N/2] &= E[k] - e^{-2\pi i k/N} \, O[k] && \text{for } k = 0, \ldots, N/2 - 1 \\[6pt]
+\text{where } E &= \text{DFT of even-indexed samples} \\
+O &= \text{DFT of odd-indexed samples}
+\end{aligned}
 ```
-X[k] = E[k] + e^(-2*pi*i*k/N) * O[k]          for k = 0, ..., N/2 - 1
-X[k + N/2] = E[k] - e^(-2*pi*i*k/N) * O[k]    for k = 0, ..., N/2 - 1
 
-where E = DFT of even-indexed samples
-      O = DFT of odd-indexed samples
-```
-
-Simetri, her rekürsiyon düzeyinin O(N) çalışmasını ve log2(N) düzeylerinin olması anlamına gelir.
+Simetri , her rekürsiyon seviyesinin $O(N)$İş ve var $\log_2(N)$Düzenler.$O(N \log N)$- Evet .
 
 ```mermaid
 graph TD
@@ -110,23 +107,27 @@ FFT, sinyal uzunluğunun 2'lik bir güç olması gerektiğini gerektirir.
 
 ### Spektral analiz
 
-- Evet .**power spectrum**Bu, her frekans koefisieninin karesi büyüklüğü.
+- Evet .**power spectrum**- Evet .$\lvert X[k] \rvert^2$- her frekans katılamının karesi büyüklüğü.
 
-- Evet .**phase spectrum**Bu, her frekansın faz karşılığıdır.
+- Evet .**phase spectrum**- Evet .$\angle X[k]$En çok analiz görevleri için güç spektrumuyla ilgilenir ve fazı görmezden gelirsiniz.
 
-```
-Power at frequency k:  P[k] = |X[k]|^2 = X[k].real^2 + X[k].imag^2
-Phase at frequency k:  phi[k] = atan2(X[k].imag, X[k].real)
+```math
+\begin{aligned}
+\text{Power at frequency } k: \quad P[k] &= |X[k]|^2 = \mathop{\mathrm{Re}}(X[k])^2 + \mathop{\mathrm{Im}}(X[k])^2 \\
+\text{Phase at frequency } k: \quad \phi[k] &= \mathop{\mathrm{atan2}}(\mathop{\mathrm{Im}}(X[k]), \mathop{\mathrm{Re}}(X[k]))
+\end{aligned}
 ```
 
 ### Frekans çözünürlüğü
 
-DFT'nin frekans çözünürlüğü N örnek sayısına ve örnekleme hızı fs'ye bağlıdır.
+DFT'nin frekans çözünürlüğü örneklerin sayısına bağlıdır $N$ve örnekleme oranı $f_s$- Evet .
 
-```
-Frequency of bin k:      f_k = k * fs / N
-Frequency resolution:    delta_f = fs / N
-Maximum frequency:       f_max = fs / 2  (Nyquist)
+```math
+\begin{aligned}
+\text{Frequency of bin } k: \quad & f_k = k \cdot f_s / N \\
+\text{Frequency resolution:} \quad & \Delta f = f_s / N \\
+\text{Maximum frequency:} \quad & f_{\max} = f_s / 2 \quad \text{(Nyquist)}
+\end{aligned}
 ```
 
 Birbiriyle yakın olan iki frekansı çözmek için daha fazla örnek gerekmektedir. Yüksek frekansları yakalamak için daha yüksek örnekleme oranına ihtiyacınız vardır.
@@ -137,20 +138,21 @@ Bu sinyal işleme alanındaki en önemli sonuçlardan biri ve CNN'lere doğrudan
 
 **Convolution in the time domain equals pointwise multiplication in the frequency domain.**
 
-```
-x * h = IFFT(FFT(x) . FFT(h))
-
-where * is convolution and . is element-wise multiplication
+```math
+\begin{aligned}
+& x * h = \text{IFFT}(\text{FFT}(x) \cdot \text{FFT}(h)) \\[4pt]
+& \text{where } * \text{ is convolution and } \cdot \text{ is element-wise multiplication}
+\end{aligned}
 ```
 
 Bunun neden önemli olduğunu:
 
-- Uzunluk N ve M'li iki sinyali doğrudan kıvrım O(N*M) işlemleri yapar.
-- FFT tabanlı konvolisyon O(N log N alır: her ikisini de dönüştür, katlay, geri dönüştür.
+- İki uzunluk sinyalinin doğrudan kıvrımı $N$ve $M$Alıyor .$O(NM)$İşlemler.
+- FFT tabanlı konvulsiyonlar $O(N \log N)$Her ikisini de dönüştür, çoğalt, geri dönüştür.
 - Büyük çekirdekler için, FFT konvolyyonu çok daha hızlıdır.
 - Büyük kabul alanları olan konvulsiyon katmanlarında da aynen böyle olur.
 
-Not: DFT, döngülik konvulsiyon hesaplar (sinyal etrafta sarılır). Düzsel konvulsiyon için (kavrayış yok), hesaplamadan önce her iki sinyali de uzunluğu N + M - 1 ile sıfır-pad.
+Not: DFT döngülik kıvrım hesaplar (sinyal etrafında sarılır).$N + M - 1$Bilgisayar yapmadan önce.
 
 ```mermaid
 graph LR
@@ -170,7 +172,7 @@ graph LR
 
 ### Pencere
 
-DFT, sinyalin periyodik olduğunu varsayır - N örneklerini sonsuz bir şekilde tekrarlanan bir sinyalin bir dönem olarak değerlendirir. Eğer sinyal aynı değerde başlamaz ve bitmezse, bu, sınırda bir kesintisizlik yaratır.
+DFT sinyalin periyodik olduğunu varsayır.$N$Eğer sinyal aynı değerde başlamaz ve bitmezse, bu, sınırda bir kesintisizlik yaratır ve bu durum, yanlış yüksek frekanslı bir içeriğe sahip olarak ortaya çıkar.
 
 Pencereleme, DFT'yi hesaplamadan önce sinyalin her iki ucunda sıfıra indirerek sızıntıları azaltır.
 
@@ -183,9 +185,11 @@ Genel pencereler:
 | Hamming | Modified cosine | Moderate | Lower (-42 dB) | Audio processing, speech analysis |
 | Blackman | Triple cosine | Wide | Very low (-58 dB) | When side lobe suppression is critical |
 
-```
-Hann window:    w[n] = 0.5 * (1 - cos(2*pi*n / (N-1)))
-Hamming window: w[n] = 0.54 - 0.46 * cos(2*pi*n / (N-1))
+```math
+\begin{aligned}
+\text{Hann window:} \quad & w[n] = 0.5 \left(1 - \cos\frac{2\pi n}{N-1}\right) \\
+\text{Hamming window:} \quad & w[n] = 0.54 - 0.46 \cos\frac{2\pi n}{N-1}
+\end{aligned}
 ```
 
 Pencereyi DFT'den önceki sinyalle element ölçüsünde çarparak uygulayın: `X = DFT(x * w)`- Evet .
@@ -194,13 +198,13 @@ Pencereyi DFT'den önceki sinyalle element ölçüsünde çarparak uygulayın: `
 
 | Property | Time Domain | Frequency Domain |
 |----------|-------------|-----------------|
-| Linearity | a*x + b*y | a*X + b*Y |
-| Time shift | x[n - k] | X[f] * e^(-2*pi*i*f*k/N) |
-| Frequency shift | x[n] * e^(2*pi*i*f0*n/N) | X[f - f0] |
-| Convolution | x * h | X * H (pointwise) |
-| Multiplication | x * h (pointwise) | X * H (circular convolution, scaled by 1/N) |
-| Parseval's theorem | sum \|x[n]\|^2 | (1/N) * sum \|X[k]\|^2 |
-| Conjugate symmetry (real input) | x[n] real | X[k] = conj(X[N-k]) |
+| Linearity | $ax + by$ | $aX + bY$ |
+| Time shift | $x[n - k]$ | $X[f] e^{-2\pi i f k/N}$ |
+| Frequency shift | $x[n] e^{2\pi i f_0 n/N}$ | $X[f - f_0]$ |
+| Convolution | $x * h$ | $X \cdot H$ (pointwise) |
+| Multiplication | $x \cdot h$ (pointwise) | $X * H$ (circular convolution, scaled by $1/N$) |
+| Parseval's theorem | $\sum \lvert x[n] \rvert^2$ | $\frac{1}{N} \sum \lvert X[k] \rvert^2$ |
+| Conjugate symmetry (real input) | $x[n]$ real | $X[k] = \overline{X[N-k]}$ |
 
 Parseval teoremi, her iki alanda toplam enerjinin aynı olduğunu söyler.
 
@@ -208,18 +212,20 @@ Parseval teoremi, her iki alanda toplam enerjinin aynı olduğunu söyler.
 
 Orijinal Transformer sinusoidal pozisyon kodlamaları kullanıyor:
 
-```
-PE(pos, 2i)   = sin(pos / 10000^(2i/d_model))
-PE(pos, 2i+1) = cos(pos / 10000^(2i/d_model))
+```math
+\begin{aligned}
+PE(pos, 2i) &= \sin\left(pos / 10000^{2i/d_{\text{model}}}\right) \\
+PE(pos, 2i+1) &= \cos\left(pos / 10000^{2i/d_{\text{model}}}\right)
+\end{aligned}
 ```
 
-Her boyut çiftinin (2i, 2i+1) farklı bir frekansta titreşiyor. Frekanslar coğrafi olarak yüksek (boyuta 0,1) ile düşük (son boyutlar) arasında uzanır. Bu, her pozisyonu tüm frekans bantlarında benzersiz bir kalıp sağlar. Fourier katılamalarının bir sinyali benzer şekilde tanımladığı gibi.
+Her boyut çiftini .$(2i, 2i+1)$Bu, her pozisyonun tüm frekans bantlarında benzersiz bir kalıp oluşturmasını sağlar. Fourier katılıklarının bir sinyalin benzersiz olarak tanımlandığı gibi.
 
 Bu özellikler şunlardır:
 
 - **Uniqueness:**İki pozisyon aynı kodlamada bulunamaz.
-- **Bounded values:**Günah ve cos her zaman [-1, 1]'de.
-- **Relative position:**P + k pozisyonunun kodlanması, p pozisyonunda kodlamanın bir çizgisi işlevi olarak ifade edilebilir. Modelle görevi pozisyonlara dikkat etmeyi öğrenebilir.
+- **Bounded values:**Günah ve günah hep içindedir.$[-1, 1]$- Evet .
+- **Relative position:**Konum kodlaması $p+k$konumdaki kodlamanın bir çizgi işlevi olarak ifade edilebilir $p$Model göreceli pozisyonlara katılmayı öğrenebilir.
 
 ### CNN'lere bağlantı
 
@@ -231,7 +237,7 @@ Konvulsiyon teoremi ile, bu eşdeğer:
 3. Frekans alanında çarpma
 4. Sonuçı
 
-Standart CNN uygulamalar doğrudan konvoluyonu kullanır (küçük 3x3 çekirdekler için daha hızlı). Ancak büyük çekirdekler veya küresel konvoluyon için, FFT tabanlı yaklaşımlar önemli ölçüde daha hızlıdır.
+Standart CNN uygulamalar doğrudan konvoluyonu kullanır (küçük 3x3 çekirdekler için daha hızlı). Ancak büyük çekirdekler veya küresel konvoluyon için, FFT tabanlı yaklaşımlar önemli ölçüde daha hızlıdır.$O(N \log N)$yerine$O(N^2)$karmaşıklık.
 
 ### Spektrogramlar ve Kısa Zamanlı Fourier Değişimi
 
@@ -254,7 +260,7 @@ Spektrogramlar, ses ML modelleri için standart giriş temsilidir. Konuşma tan�
 
 ### İsimsiz
 
-Bir sinyal fs/2'den (Nyquist frekansı) yüksek frekanslar içerirse, fs frekansı ile örnekleme isimli kopyalar oluşturacaktır. 100 Hz'de örneklenen 90 Hz sinyali 10 Hz sinyali ile aynı görünür.
+Eğer bir sinyal yukarıdaki frekansları içerirse $f_s/2$(Nyquist frekansı), örnekleme hızında $f_s$90 Hz sinyalinin 100 Hz'de örneklenmesi 10 Hz sinyaline benzer görünüyor.
 
 ```
 Example:
@@ -273,7 +279,7 @@ Bu nedenle analog-dijital dönüştürücüler, örnekleme yapmadan önce Nyquis
 
 Genel bir yanlış anlama: FFT'den önce bir sinyalin sıfır patlaması frekans çözünürlüğünü artırır. Yapmaz. sıfır patlama mevcut frekans kutuları arasında aralaşır, size daha düzgün görünen bir spektrum verir. Ama orijinal örneklerde bulunmayan frekans ayrıntılarını ortaya çıkaramaz.
 
-Gerçek frekans çözünürlüğü yalnızca gözlem süresine bağlıdır T = N / fs. delta_f ile ayrılmış iki frekansın çözülmesi için, en az T = 1 / delta_f saniyelerinde verilere ihtiyacınız vardır.
+Gerçek frekans çözünürlüğü sadece gözlem süresine bağlıdır .$T = N / f_s$. İki frekansın çözülmesi için $\Delta f$En azından ihtiyacın var .$T = 1 / \Delta f$Hiçbir sıfır dolgu miktarı bu temel sınırı değiştirmez.
 
 ```figure
 fourier-synthesis
@@ -283,7 +289,7 @@ fourier-synthesis
 
 ### Adım 1: DFT sıfırdan
 
-O(N^2) DFT, tanımdan doğrudan çıkar.
+- Evet .$O(N^2)$DFT, tanımdan doğrudan bir şekilde çıkar.
 
 ```python
 import math
@@ -307,7 +313,7 @@ def dft(x):
 
 ### Adım 2: Ters DFT
 
-Aynı yapı, pozitif katılımcı, N ile bölün.
+Aynı yapı, pozitif katılımcı, bölme $N$- Evet .
 
 ```python
 def idft(X):
@@ -426,33 +432,45 @@ Spektrogram matrisinin şekli vardır (n_frequencies, n_time_frames). Her sütun
 
 1. **Pure tone identification.**Bilinmeyen bir frekansta (1-50 Hz arasında) tek sinüs dalgasıyla bir sinyal oluşturun ve 128 Hz'de 1 saniye boyunca örnek alın. DFT'ni kullanarak frekansı tanımlayın. Cevap eşleşmesini kontrol edin. Şimdi standart sapma 0.5 ile Gaussian gürültüsünü ekleyin ve tekrarlayın.
 
-2. **FFT vs DFT verification.**DFT (O(N^2) ve FFT her ikisini hesaplayın. Tüm katmanların 1e-10'a eşleştiğini kontrol edin. Zaman, uzunluk 256, 512, 1024, ve 2048 sinyallerinde her iki işlevi de gerçekleştirir. DFT zamanının FFT zamanına oranını çizin.
+2. **FFT vs DFT verification.**64 uzunluğundaki rastgele bir sinyal oluşturun.$O(N^2){}$DFT zamanının FFT zaman oranını çizin.
 
 3. **Convolution theorem proof by example.**Sinyal x = [1, 2, 3, 4, 0, 0, 0, 0] oluşturun ve h = [1, 1, 1, 0, 0, 0, 0, 0] filtreleyin. Dört kıvrımlarını doğrudan hesaplayın (bir yuva).
 
 4. **Windowing effects.**Bir sinyal oluşturun ki bu sinyal 10 Hz ve 12 Hz (çok yakın) iki sinüs dalgasının toplamıdır. 128 Hz'de 1 saniye boyunca örnek alın. Pencere olmayan güç spektrumu, Hann pencere ve Hamming pencereyi hesaplayın. Hangi pencere iki zirveyi ayırt etmenin en kolayını sağlar?
 
-5. **Positional encoding analysis.**D_model = 128 ve max_pos = 512 için sinusoidal pozisyon kodlamaları oluşturun. Her iki pozisyon (p1, p2) için kodlamalarının nokta ürünü hesaplayın.
+5. **Positional encoding analysis.**D_model = 128 ve max_pos = 512 için sinusoidal pozisyon kodlamaları oluşturun.$(p_1, p_2)$, kodlamalarının nokta ürünü hesaplar.$\lvert p_1 - p_2 \rvert$- Uzaklık arttıkça nokta ürünü ne olur?
+
+### İpuçlar
+
+**Exercise 1.**128 numune ile 1 saniye boyunca bin $k$- Evet .$k$Hz, yani tam sayı frekansı için 1 ila 63 kutulardaki en büyük değer indeksi frekansdır.`generate_signal`ve `magnitude_spectrum`Ses ekledikten sonra, diğer kutular yükselirken zirve aynı kutuda olup olmadığını kontrol et.
+
+**Exercise 2.**İki uzunluklu bir güç kullanın, çünkü `fft`- Siyalı ikiye ayırır.`max(abs(a - b))`Zaman oranı yaklaşık olarak $N / \log_2 N$- Evet .
+
+**Exercise 3.**Dört dönüklik için hesaplayın.$y[n] = \sum_k h[k] x[(n-k) \bmod 8]$el ile $n$= 0, 1 ve 2 ve 'nin ilk üç değerini karşılaştırın.`convolve_direct`ve `convolve_fft`Düzsel kıvrım uzunluğu 4 + 3 - 1 = 6'dur, bu yüzden önce 8'in uzunluğu yeterince uzun olup olmadığını kontrol edin.
+
+**Exercise 4.**Kullanım`hann_window`- Evet .`hamming_window`- Evet .`apply_window`ve`power_spectrum`10 Hz ve 12 Hz her ikisi de 1 saniye içinde tüm döngüleri tamamlar, bu nedenle hiçbir pencere en iyi görünmez olabilir. Pencerelerin sızdırılmasını azaltmak için 10.5 Hz ve 12.5 Hz ile tekrarlayın.
+
+**Exercise 5.**Her kodlamayı  ile hesaplayın`positional_encoding(pos, 128)`. Konumlar (0, 10) için nokta ürünü ile (100, 110) için nokta ürünü karşılaştırın: iki değer yaklaşık 1e-10 ile eşleşmelidir.$\lvert p_1 - p_2 \rvert$Bir tane sabit .$p_1$- Evet .
 
 ## Anahtar Terimler
 
 | Term | What it means |
 |------|---------------|
-| DFT (Discrete Fourier Transform) | Converts N time-domain samples into N frequency-domain coefficients. Each coefficient is the correlation with a complex sinusoid at that frequency |
-| FFT (Fast Fourier Transform) | An O(N log N) algorithm to compute the DFT. The Cooley-Tukey algorithm splits even/odd indices recursively |
-| Inverse DFT | Reconstructs the time-domain signal from frequency coefficients. Same formula as DFT with flipped exponent sign and 1/N scaling |
-| Frequency bin | Each index k in the DFT output represents frequency k*fs/N Hz. The "bin" is the discrete frequency slot |
-| DC component | X[0], the zero-frequency coefficient. Proportional to the signal mean |
-| Nyquist frequency | fs/2, the maximum frequency representable at sampling rate fs. Frequencies above this alias |
-| Power spectrum | \|X[k]\|^2, the squared magnitude of each frequency coefficient. Shows energy distribution across frequencies |
-| Phase spectrum | angle(X[k]), the phase offset of each frequency component. Often ignored in analysis |
+| DFT (Discrete Fourier Transform) | Converts $N$ time-domain samples into $N$ frequency-domain coefficients. Each coefficient is the correlation with a complex sinusoid at that frequency |
+| FFT (Fast Fourier Transform) | An $O(N \log N)$ algorithm to compute the DFT. The Cooley-Tukey algorithm splits even/odd indices recursively |
+| Inverse DFT | Reconstructs the time-domain signal from frequency coefficients. Same formula as DFT with flipped exponent sign and $1/N$ scaling |
+| Frequency bin | Each index $k$ in the DFT output represents frequency $k f_s/N$ Hz. The "bin" is the discrete frequency slot |
+| DC component | $X[0]$, the zero-frequency coefficient. Proportional to the signal mean |
+| Nyquist frequency | $f_s/2$, the maximum frequency representable at sampling rate $f_s$. Frequencies above this alias |
+| Power spectrum | $\lvert X[k] \rvert^2$, the squared magnitude of each frequency coefficient. Shows energy distribution across frequencies |
+| Phase spectrum | $\angle X[k]$, the phase offset of each frequency component. Often ignored in analysis |
 | Spectral leakage | Spurious frequency content caused by treating a non-periodic signal as periodic. Reduced by windowing |
 | Window function | A tapering function (Hann, Hamming, Blackman) applied before DFT to reduce spectral leakage |
-| Twiddle factor | The complex exponential e^(-2*pi*i*k/N) used to combine sub-DFTs in the FFT butterfly computation |
+| Twiddle factor | The complex exponential $e^{-2\pi i k/N}$ used to combine sub-DFTs in the FFT butterfly computation |
 | Convolution theorem | Convolution in time domain equals pointwise multiplication in frequency domain. Fundamental to signal processing and CNNs |
 | Circular convolution | Convolution where the signal wraps around. This is what the DFT naturally computes |
 | Linear convolution | Standard convolution without wraparound. Achieved by zero-padding before DFT |
-| Parseval's theorem | Total energy is preserved through the Fourier transform. sum \|x[n]\|^2 = (1/N) sum \|X[k]\|^2 |
+| Parseval's theorem | Total energy is preserved through the Fourier transform. $\sum \lvert x[n] \rvert^2 = \frac{1}{N} \sum \lvert X[k] \rvert^2$ |
 | Aliasing | When frequencies above Nyquist appear as lower frequencies due to insufficient sampling rate |
 
 ## Daha Fazla Okumak

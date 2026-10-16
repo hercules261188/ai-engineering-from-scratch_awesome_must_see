@@ -9,7 +9,7 @@
 
 ## Öğrenme Hedefleri
 
-- Ortak ML fonksiyonları için sayısal ve analitik türevleri hesaplayın (x^2, sigmoid, çapraz entropy)
+- Ortak ML fonksiyonları için sayısal ve analitik türevleri hesaplayın ($x^2$, sigmoid, çapraz entropiy)
 - 1D ve 2D'de bir kayıp fonksiyonunu en aza indirmek için sıfırdan gradient düşüşü uygulayın
 - Bir çizgisi gerileme modelinin gradiyentiyi çıkarın ve manuel ağırlık güncelleştirmeleri ile çalıştırın
 - Hessian matrisini, Taylor serisi yaklaşımlarını ve optimizasyon yöntemleriyle bağlantısını açıklayın
@@ -24,59 +24,58 @@ Kalkülüs olmadan, sinir ağını eğitmek, rastgele değişiklikleri denemek v
 
 ### Devirim nedir?
 
-Bir türev değişim hızını ölçer. bir işlevi için y = f(x), türev f'(x) size söyler: x'yi küçük bir miktarda itirseniz, y ne kadar değişir?
+Bir türev değişim oranını ölçer.$y = f(x)$, türevli $f'(x)$Eğer itirseniz$x$Küçük bir miktarda, ne kadar?$y$Değişiklik mi?
 
 Geometrik olarak, türe bir noktada çelişkin çizginin eğimi.
 
-**f(x) = x^2:**
+**$f(x) = x^2$:**
 
-| x | f(x) | f'(x) (slope) |
+| $x$ | $f(x)$ | $f'(x)$ (slope) |
 |---|------|---------------|
 | 0 | 0    | 0 (flat, at the bottom) |
 | 1 | 1    | 2 |
 | 2 | 4    | 4 (tangent line slope at this point) |
 | 3 | 9    | 6 |
 
-X=2'de eğim 4'dir. Eğer x'i biraz sağdan hareket ettirseniz, y bu miktarın yaklaşık 4 katına çıkar. x=0'da eğim 0'dur.
+- Evet .$x=2$Eğer hareket edersen $x$Biraz sağdan.$y$Bu miktarın yaklaşık 4 katı artışa neden oluyor.$x=0$Eğer bu şekilde yaparsanız, bu şekilde yaparsanız, bu şekilde yaparsanız, bu şekilde yaparsanız, bu şekilde yaparsanız, bu şekilde yaparsanız, bu şekilde yaparsanız, bu şekilde yaparsanız, bu şekilde yaparsanız, bu şekilde yaparsanız, bu şekilde yaparsanız, bu şekilde yaparsanız, bu şekilde yaparsanız, bu şekilde yaparsanız, bu şekilde yaparsanız, bu şekilde yaparsanız, bu şekilde yaparsanız, bu şekilde yaparsanız, bu şekilde yaparsanız, bu şekilde yaparsanız, bu şekilde yaparsanız, bu şekilde yaparsınız.
 
 Resmi tanım:
 
-```
-f'(x) = lim   f(x + h) - f(x)
-        h->0  -----------------
-                     h
+```math
+f'(x) = \lim_{h \to 0} \frac{f(x + h) - f(x)}{h}
 ```
 
-Kodda, sınırı atlayıp çok küçük bir h kullanırız. Bu sayısal türevdir.
+Kodda, sınırı atlayıp çok küçük bir tane kullanırsın.$h$Bu sayısal türev.
 
 ### Bölümsel türevler: Bir seferde bir değişken
 
 Gerçek fonksiyonlar birçok giriş vardır. Bir sinir ağı kaybı binlerce ağırlığa bağlıdır. Bir kısmi türev bir hariç tüm değişkenleri sabit tutar, sonra türevini o birine göre alır.
 
-```
-f(x, y) = x^2 + 3xy + y^2
-
-df/dx = 2x + 3y     (treat y as a constant)
-df/dy = 3x + 2y     (treat x as a constant)
+```math
+\begin{aligned}
+f(x, y) &= x^2 + 3xy + y^2 \\[4pt]
+\frac{\partial f}{\partial x} &= 2x + 3y \quad \text{(treat } y \text{ as a constant)} \\
+\frac{\partial f}{\partial y} &= 3x + 2y \quad \text{(treat } x \text{ as a constant)}
+\end{aligned}
 ```
 
 Her kısmi türeç cevap verir: Eğer sadece bu ağırlığı itirsem, kaybı nasıl değiştiriyor?
 
 ### Gradyent: tüm kısmi türevlerin vektörü
 
-Gradient, her kısmi türevini bir vektörde toplar. f ((x, y, z) fonksiyonu için, gradient:
+Gradient, tüm kısmi türevleri bir vektörde toplar.$f(x, y, z)$, gradient:
 
-```
-grad f = [ df/dx, df/dy, df/dz ]
+```math
+\nabla f = \left[ \frac{\partial f}{\partial x}, \frac{\partial f}{\partial y}, \frac{\partial f}{\partial z} \right]
 ```
 
 Merdiven en dik tırmanış yönünde işaret eder.
 
-**Contour plot of f(x,y) = x^2 + y^2:**
+**Contour plot of $f(x,y) = x^2 + y^2$:**
 
 İşlev, kontur çizgiler olarak konsentrik döngülerle bir kase şeklinde oluşur.
 
-| Point | grad f | -grad f (descent direction) |
+| Point | $\nabla f$ | $-\nabla f$ (descent direction) |
 |-------|--------|----------------------------|
 | (1, 1) | [2, 2] (points uphill, away from minimum) | [-2, -2] (points downhill, toward minimum) |
 | (0, 0) | [0, 0] (flat, at the minimum) | [0, 0] |
@@ -85,7 +84,7 @@ Bu bir resimde gradient düşüşü.
 
 ### Optimize bağlantısı
 
-Bir sinir ağını eğitmek optimizasyon demektir. modelin ne kadar yanlış olduğunu ölçen bir kayb fonksiyonu L ((w1, w2, ..., wn) var. Onu en aza indirmek istiyorsunuz.
+Bir sinir ağını eğitmek optimize edilmek demektir.$L(w_1, w_2, \ldots, w_n)$Bu modelin ne kadar yanlış olduğunu ölçer.
 
 ```
 Gradient descent update rule:
@@ -102,7 +101,7 @@ For every weight:
 
 **Loss landscape (1D slice):**
 
-Kayıp işlevi L ((w) ağırlık w değişirken zirve ve vadilerle bir eğri oluşturur.
+Kayıp fonksiyonu $L(w)$Kırıklık ve vadilerle bir eğri oluşturur.$w$değişir.
 
 | Feature | Description |
 |---------|-------------|
@@ -116,9 +115,9 @@ Gradyent düşüş, yamaçın aşağıya doğru ilerler. Yerel minimumlarda sık
 
 Bir türevini hesaplamanın iki yolu vardır.
 
-Analiz: hesap kurallarını el ile uygulayın. f'(x) = x^2, türev f'(x) = 2x. Tam.
+Analiz: hesap kurallarını el ile uygulayın.$f(x) = x^2$, türevli olan $f'(x) = 2x$- Evet, hızlı.
 
-Sayısal: tanımı kullanarak tahmini. F ((x+h) ve f ((x-h) küçük bir h için hesaplayın, sonra farkı kullanın.
+Sayısal: tanımı kullanarak yaklaşım. Hesaplama $f(x+h)$ve $f(x-h)$Küçük bir şey için.$h$, sonra farkı kullan.
 
 ```
 Numerical (central difference):
@@ -148,7 +147,7 @@ f(x) = ln(x)   f'(x) = 1/x     Cross-entropy loss
 f(x) = 1/(1+e^-x)  f'(x) = f(x)(1-f(x))   Sigmoid activation
 ```
 
-f ((x) = x^2:
+- Evet .$f(x) = x^2$- ...
 
 ```
 f(x) = x^2    f'(x) = 2x
@@ -161,7 +160,7 @@ f(x) = x^2    f'(x) = 2x
    2    4       4      slope tilts right (increasing)
 ```
 
-f(w) = wx + b için x=3, b=1:
+- Evet .$f(w) = wx + b$- Evet .$x=3$- Evet .$b=1$- ...
 
 ```
 f(w) = 3w + 1    f'(w) = 3
@@ -189,17 +188,16 @@ Nöral ağlar fonksiyon zincirleri: giriş -> doğrusal -> etkinleştirme -> do�
 
 Merdiven, eğimden, Hessian'dan eğrilikten bahseder.
 
-Hessian, ikinci sıradaki kısmi türevlerin matrisidir. f ((x1, x2, ..., xn) fonksiyonu için, Hessian'ın giriş (i, j) şudur:
+Hessian, ikinci sıradaki kısmi türevlerin matrisidir.$f(x_1, x_2, \ldots, x_n)$, giriş$(i, j)$Hessian'ın:
 
-```
-H[i][j] = d^2f / (dx_i * dx_j)
+```math
+H_{ij} = \frac{\partial^2 f}{\partial x_i \, \partial x_j}
 ```
 
-2 değişken fonksiyon için f ((x, y):
+2 değişken fonksiyon için $f(x, y)$- ...
 
-```
-H = | d^2f/dx^2    d^2f/dxdy |
-    | d^2f/dydx    d^2f/dy^2 |
+```math
+H = \begin{bmatrix} \dfrac{\partial^2 f}{\partial x^2} & \dfrac{\partial^2 f}{\partial x \, \partial y} \\[8pt] \dfrac{\partial^2 f}{\partial y \, \partial x} & \dfrac{\partial^2 f}{\partial y^2} \end{bmatrix}
 ```
 
 **What the Hessian tells you at a critical point (where gradient = 0):**
@@ -210,7 +208,7 @@ H = | d^2f/dx^2    d^2f/dxdy |
 | Negative definite (all eigenvalues < 0) | Local maximum | Bowl pointing down |
 | Indefinite (mixed eigenvalues) | Saddle point | Horse saddle shape |
 
-**Example:**f(x, y) = x^2 - y^2 (bir otlak fonksiyonu)
+**Example:** $f(x, y) = x^2 - y^2$(saddel fonksiyonu)
 
 ```
 df/dx = 2x       df/dy = -2y
@@ -223,7 +221,7 @@ Eigenvalues: 2 and -2 (one positive, one negative)
 --> Saddle point at (0, 0)
 ```
 
-f ((x, y) = x^2 + y^2 (bir kase) ile karşılaştırın:
+$f(x, y) = x^2 + y^2$(bir kase):
 
 ```
 H = | 2  0 |
@@ -237,22 +235,24 @@ Eigenvalues: 2 and 2 (both positive)
 
 Newton'un yöntemi, gradient düşüşünden daha iyi optimizasyon adımlarını almak için Hessian'ı kullanır.
 
-```
-Newton's update:    w_new = w_old - H^(-1) * gradient
-Gradient descent:   w_new = w_old - lr * gradient
+```math
+\begin{aligned}
+\text{Newton's update:} \quad & w_{\text{new}} = w_{\text{old}} - H^{-1} \cdot \text{gradient} \\
+\text{Gradient descent:} \quad & w_{\text{new}} = w_{\text{old}} - \text{lr} \cdot \text{gradient}
+\end{aligned}
 ```
 
 Newton'un yöntemi daha hızlı bir şekilde yaklaşır çünkü Hessian'ın "daha" kaymaları - dik yönler daha küçük adımlar alır, düz yönler daha büyük adımlar alır.
 
-N parametre olan bir sinir ağı için Hessian N x N. 1 milyon parametre olan bir model 1 trilyon giriş matrisine ihtiyaç duyar.
+Yakalama:  ile sinir ağı için$N$Parametre, Hessian'ın $N \times N$1 milyon parametre olan bir model 1 trilyon giriş matrisine ihtiyaç duyar.
 
 | Method | What it uses | Cost | Convergence |
 |--------|-------------|------|-------------|
-| Gradient descent | First derivatives only | O(N) per step | Slow (linear) |
-| Newton's method | Full Hessian | O(N^3) per step | Fast (quadratic) |
-| L-BFGS | Approximate Hessian from gradient history | O(N) per step | Medium (superlinear) |
-| Adam | Per-parameter adaptive rates (diagonal Hessian approx) | O(N) per step | Medium |
-| Natural gradient | Fisher information matrix (statistical Hessian) | O(N^2) per step | Fast |
+| Gradient descent | First derivatives only | $O(N)$ per step | Slow (linear) |
+| Newton's method | Full Hessian | $O(N^3)$ per step | Fast (quadratic) |
+| L-BFGS | Approximate Hessian from gradient history | $O(N)$ per step | Medium (superlinear) |
+| Adam | Per-parameter adaptive rates (diagonal Hessian approx) | $O(N)$ per step | Medium |
+| Natural gradient | Fisher information matrix (statistical Hessian) | $O(N^2)$ per step | Fast |
 
 Adam, derin öğrenme için varsayılan optimizerdir. Parametre başına gradientlerin çalışkan ortalamasını ve değişimini takip ederek ikinci sıradaki bilgileri ucuz bir şekilde yaklaştırır.
 
@@ -260,17 +260,17 @@ Adam, derin öğrenme için varsayılan optimizerdir. Parametre başına gradien
 
 Herhangi bir düz fonksiyon yerel olarak bir polinom ile yaklaşılabilir:
 
-```
-f(x + h) = f(x) + f'(x)*h + (1/2)*f''(x)*h^2 + (1/6)*f'''(x)*h^3 + ...
+```math
+f(x + h) = f(x) + f'(x)\,h + \frac{1}{2} f''(x)\,h^2 + \frac{1}{6} f'''(x)\,h^3 + \cdots
 ```
 
-Ne kadar çok terimi eklerseniz, yaklaşım daha iyi olur -- ama sadece x noktasına yakın.
+Ne kadar çok terimi eklerseniz, yaklaşım daha iyi olur. Ama sadece noktaya yakın.$x$- Evet .
 
 **Why Taylor series matter for ML:**
 
-- **First-order Taylor = gradient descent.**f(x + h) ~ f(x) + f'(x) *h kullanırken, bir çizgi yaklaşım yapıyorsunuz.
+- **First-order Taylor = gradient descent.**Kullandığınızda$f(x + h) \approx f(x) + f'(x) h$Düzsel düşüş bu çizgi modeli seçmek için en aza indirir.$h = -\text{lr} \cdot f'(x)$- Evet .
 
-- **Second-order Taylor = Newton's method.**f(x + h) ~ f(x) + f'(x) *h + (1/2) *f'(x) *h^2, bir kare modeli elde edersiniz.
+- **Second-order Taylor = Newton's method.**Kullanım$f(x + h) \approx f(x) + f'(x) h + \frac{1}{2} f''(x) h^2$Bu da bir modelin şeklini değiştirir.$h = -f'(x)/f''(x)$- Newton'un adımları.
 
 - **Loss function design.**MSE ve çapraz entropi, düzgün bir şekilde hareket eder, yani Taylor genişlemeleri iyi davranır.
 
@@ -291,28 +291,36 @@ Devireler değişim oranlarını söyler. Integraller bir eğri altında alanı 
 
 ML'de, entegralları el ile hesaplamak nadiren mümkündür, ama kavram her yerde:
 
-**Probability.**Sıklık p ((x) olan sürekli rastgele değişken için:
+**Probability.**Sıklıklı sürekli rastgele değişken için $p(x)$- ...
+
+```math
+P(a < X < b) = \int_a^b p(x) \, dx
 ```
-P(a < X < b) = integral from a to b of p(x) dx
-```
-A ve b arasındaki olasılık yoğunluk eğrisinin altındaki alan, bu aralıkta iniş olasılığıdır.
+
+ arasındaki olasılık yoğunluk eğrisinin altındaki alan$a$ve $b$Bu aralıkta iniş olasılığıdır.
 
 **Expected value.**Muhtemelen ağırlanan ortalama sonuç:
+
+```math
+\mathbb{E}[f(X)] = \int f(x) \, p(x) \, dx
 ```
-E[f(X)] = integral of f(x) * p(x) dx
-```
+
 Verilerin dağıtımına karşı beklenen kayıp bir ayrılmaz bir unsurdur.
 
 **KL divergence.**İki dağılımın ne kadar farklı olduğunu ölçer:
+
+```math
+\mathrm{KL}(p \,\|\, q) = \int p(x) \log \frac{p(x)}{q(x)} \, dx
 ```
-KL(p || q) = integral of p(x) * log(p(x) / q(x)) dx
-```
+
 VAE'lerde, bilgi destillasyonunda ve Bayesian sonuçlandırmada kullanılır.
 
 **Normalization constants.**Bayesian sonucu:
+
+```math
+p(w \mid \text{data}) = \frac{p(\text{data} \mid w) \, p(w)}{\int p(\text{data} \mid w) \, p(w) \, dw}
 ```
-p(w | data) = p(data | w) * p(w) / integral of p(data | w) * p(w) dw
-```
+
 Adınlayıcı, tüm olası parametreler değerlerinin bir bütünüdür. Genellikle çözülemezdir, bu nedenle MCMC ve varyasyonsal çıkarım gibi yaklaşımları kullanıyoruz.
 
 | Integral concept | Where it appears in ML |
@@ -353,16 +361,16 @@ Bu, geri yayılma: bir hesaplama grafiği ile sistematik olarak uygulanan zincir
 
 Bir fonksiyon bir vektörü bir vektöre (örneğin bir nöral ağ katmanı gibi) haritasında bulduğunda, onun türevisi bir matrisdir. Jacobian, her çıkışın her girişe ilişkin her kısmi türevini içerir.
 
-F: R^n -> R^m için, Jacobian J bir m x n matrisidir:
+- Evet .$f: \mathbb{R}^n \to \mathbb{R}^m$, Jacobian $J$- Evet .$m \times n$matris:
 
-| | x1 | x2 | ... | xn |
+| | $x_1$ | $x_2$ | ... | $x_n$ |
 |---|---|---|---|---|
-| f1 | df1/dx1 | df1/dx2 | ... | df1/dxn |
-| f2 | df2/dx1 | df2/dx2 | ... | df2/dxn |
+| $f_1$ | $\partial f_1/\partial x_1$ | $\partial f_1/\partial x_2$ | ... | $\partial f_1/\partial x_n$ |
+| $f_2$ | $\partial f_2/\partial x_1$ | $\partial f_2/\partial x_2$ | ... | $\partial f_2/\partial x_n$ |
 | ... | ... | ... | ... | ... |
-| fm | dfm/dx1 | dfm/dx2 | ... | dfm/dxn |
+| $f_m$ | $\partial f_m/\partial x_1$ | $\partial f_m/\partial x_2$ | ... | $\partial f_m/\partial x_n$ |
 
-PyTorch onu işletiyor. Ama varlığını bilmek size geri yayılma şekilleri anlamanıza yardımcı olur: bir katman R^n'i R^m'e haritası yaparsa, onun Jacobian'ı m x n'dir.
+Neural ağlar için el ile Jacobians hesaplamayacaksınız. PyTorch bunu halleder. Ama varlığını bilmek size arka yayılma şekilleri anlamanıza yardımcı olur: bir katman haritalar$\mathbb{R}^n$- ...$\mathbb{R}^m$, onun Jacobian ' ı $m \times n$- Bu matrisin transposasyonu boyunca eğilimi geriye doğru akıyor.
 
 ### Neden bu sinir ağları için önemlidir
 
@@ -445,7 +453,7 @@ for step in range(20):
     print(f"step {step:2d}  x={x:8.4f}  f(x)={x**2:10.6f}")
 ```
 
-X=5'den başlayarak her adım x=0'ye (minimum) daha yakınlaşır.
+Başlangıçta $x=5$, her adım yaklaşır $x=0$(minimum)
 
 ### Adım 4: 2 boyutlu bir fonksiyonda dereceli düşüş
 
@@ -531,7 +539,7 @@ for h in [0.1, 0.5, 1.0, 2.0]:
     print(f"h={h:.1f}  sin(h)={true_val:.4f}  order1={t1:.4f}  order2={t2:.4f}")
 ```
 
-X0 = 0 yakınında, sin(x) ~ x (birinci sıradaki Taylor). Yaklaşım küçük h için mükemmel ama büyük h için ayrılır. Bu nedenle gradient düşüşü küçük öğrenme oranları ile en iyi çalışır - her adım çizgisi yaklaşımın doğru olduğunu varsayır.
+Yakınlıkta .$x_0=0$- Evet .$\sin(x) \approx x$(Birinci sırada Taylor) Yaklaşım küçükler için mükemmel.$h$Ama büyüklükte bozulur.$h$Bu nedenle gradient düşüşü küçük öğrenme oranları ile en iyi çalışır. Her adım, doğrusal yaklaşımın doğru olduğunu varsayır.
 
 ### Adım 8: Neden bu bir nöral ağ için önemlidir
 
@@ -600,9 +608,17 @@ PyTorch gradient hesaplamasını otomatikleştirir ama güncelleme döngüsü ay
 
 ## Egzersizler
 
-1. Uygulama`numerical_second_derivative(f, x)`kullanmak`numerical_derivative`x^3'ün ikinci türevinin x=2'de 12 olduğunu kontrol edin.
-2. F ((x, y) = (x - 3) ^ 2 + (y + 1) ^ 2'nin en azını bulmak için gradient düşüşünü kullanın. (0, 0) 'den başlayın. Cevap (3, -1) 'e yakın olmalıdır.
-3. Gradyent düşüş döngüsüne momentum ekleyin: Geçmiş gradientleri toplayan bir hız vektörünü koruyun.
+1. Uygulama`numerical_second_derivative(f, x)`kullanmak`numerical_derivative`İkinci türevinin $x^3$- ...$x=2$12'dir.
+2.  En azı bulmak için gradient düşüşü kullanın$f(x, y) = (x - 3)^2 + (y + 1)^2$- Başlayın .$(0, 0)$Cevap şu yönde olmalıdır:$(3, -1)$- Evet .
+3. Gradyent düşüş döngüsüne momentum ekleyin: Geçmişte gradientler biriktiren bir hız vektörünü koruyun.$f(x) = x^4 - 3x^2$- Evet .
+
+### İpuçlar
+
+**Exercise 1.**Geri dönen bir yardımcı tanımla .`numerical_derivative(f, x)`Ve yardımcını `numerical_derivative`Eğer sonuç gürültülü ise, daha büyük bir adım kullanın.`h=1e-4`İki çağrı için de değer$x=2$12'ye yakın olmalı.
+
+**Exercise 2.**Köklemeyi yaz $(2(x - 3), 2(y + 1))$veya kullanmak `numerical_gradient`, ve aramak`gradient_descent_nd`-$(0, 0)$. Noktayı her 10 adımda bir basın; doğru hareket etmesi gerekir .$(3, -1)$ve kaybı neredeyse 0'ya düşmelidir.
+
+**Exercise 3.**Hızlı ol .`v`, güncelleme olarak `v = momentum * v - lr * grad`, sonra ekle `v`- ...`x`. Her yöntemin 0 yakınında bir gradiyenti ulaşması için gereken adımları sayın; en az $x = \pm\sqrt{1.5} \approx \pm 1.225$- Evet .
 
 ## Anahtar Terimler
 
@@ -613,12 +629,12 @@ PyTorch gradient hesaplamasını otomatikleştirir ama güncelleme döngüsü ay
 | Gradient | "Direction of steepest ascent" | A vector of all partial derivatives. Points in the direction that increases the function fastest. |
 | Gradient descent | "Go downhill" | Subtract the gradient (times a learning rate) from the parameters to reduce the loss. The core of neural network training. |
 | Learning rate | "Step size" | A scalar that controls how big each gradient descent step is. Too large: diverge. Too small: converge slowly. |
-| Chain rule | "Multiply the derivatives" | The rule for differentiating composed functions: df/dx = df/dg * dg/dx. The mathematical basis of backpropagation. |
+| Chain rule | "Multiply the derivatives" | The rule for differentiating composed functions: $\frac{df}{dx} = \frac{df}{dg} \cdot \frac{dg}{dx}$. The mathematical basis of backpropagation. |
 | Jacobian | "Matrix of derivatives" | When a function maps vectors to vectors, the Jacobian is the matrix of all partial derivatives of outputs with respect to inputs. |
 | Numerical derivative | "Finite differences" | Approximating a derivative by evaluating the function at two nearby points and computing the slope between them. |
 | Backpropagation | "Reverse-mode autodiff" | Computing gradients layer by layer from output to input using the chain rule. How neural networks learn. |
 | Hessian | "Matrix of second derivatives" | The matrix of all second-order partial derivatives. Describes the curvature of a function. Positive definite Hessian at a critical point means local minimum. |
-| Taylor series | "Polynomial approximation" | Approximating a function near a point using its derivatives: f(x+h) ~ f(x) + f'(x)h + (1/2)f''(x)h^2 + ... The basis for understanding why gradient descent and Newton's method work. |
+| Taylor series | "Polynomial approximation" | Approximating a function near a point using its derivatives: $f(x+h) \approx f(x) + f'(x)h + \frac{1}{2}f''(x)h^2 + \cdots$ The basis for understanding why gradient descent and Newton's method work. |
 | Integral | "Area under the curve" | The accumulation of a quantity over a range. In ML, integrals define probabilities, expected values, and KL divergence. |
 
 ## Daha Fazla Okumak

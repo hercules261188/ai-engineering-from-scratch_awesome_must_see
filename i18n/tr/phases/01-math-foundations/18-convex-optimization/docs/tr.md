@@ -26,7 +26,7 @@ Konvessiyet'i anlamak üç şey yapar. Birincisi, size sorununuz kolay (konves) 
 
 ### Konves setleri
 
-Bir S kümesi, S'deki herhangi iki noktaya göre, aralarındaki çizgi bölümü de tamamen S'de bulunursa, konveks olur.
+Bir set .$S$                                                      $S$, aralarındaki çizgi bölümü de tamamen $S$- Evet .
 
 | Convex sets | Not convex |
 |---|---|
@@ -34,12 +34,12 @@ Bir S kümesi, S'deki herhangi iki noktaya göre, aralarındaki çizgi bölümü
 | **Triangle**: same property holds for all interior points | **Donut/annulus**: the hole means some line segments leave the set |
 | The line segment between any two points stays within the set | The line segment between some pairs of points exits the set |
 
-Formal test: S'deki herhangi bir x, y ve [0, 1]daki herhangi bir t için, tx + (1-t) y noktası da S'de bulunur.
+Formal test: herhangi bir nokta için $x, y$İçeride$S$Ve herhangi bir .$t \in [0, 1]$, nokta $tx + (1-t)y$Aynı zamanda $S$- Evet .
 
 Konves setlerinin örnekleri:
-- Bir çizgi, bir uçak, tüm R^n
+- Bir hat, bir uçak, hepsi.$\mathbb{R}^n$
 - Bir top (daire, küresi, hipersfer)
-- A yarı alan: {x: a^T x <= b}
+- Yarım boşluk:$\lbrace x : a^T x \le b \rbrace$
 - Herhangi bir sayıda konveks setin kesişimi
 
 Konveks olmayan kümelerin örnekleri:
@@ -49,10 +49,10 @@ Konveks olmayan kümelerin örnekleri:
 
 ### Konves fonksiyonları
 
-Bir fonksiyon f, domeni bir konveks kümesi ise ve domenindeki herhangi iki noktayı x, y ve [0, 1]'deki herhangi bir t için eğri:
+Bir fonksiyon$f$Eğer alanı bir konveks kümesi ise ve herhangi iki noktaya göre konveksse.$x, y$Bölüm ve alanında$t \in [0, 1]$- ...
 
-```
-f(tx + (1-t)y) <= t*f(x) + (1-t)*f(y)
+```math
+f(tx + (1-t)y) \le t f(x) + (1-t) f(y)
 ```
 
 Jeometrik olarak: grafikteki herhangi iki nokta arasındaki çizgi bölümü, grafikten yukarıda veya üzerinde bulunur.
@@ -64,26 +64,26 @@ Jeometrik olarak: grafikteki herhangi iki nokta arasındaki çizgi bölümü, gr
 | **Local minima** | Every local minimum is the global minimum | Multiple local minima may exist at different heights |
 
 Ortak konveks fonksiyonlar:
-- f(x) = x^2 (parabola)
-- f(x) = ↓ x (mükemmel değer)
-- f(x) = e^x (gelişmiş)
-- f(x) = max(0, x) (ReLU, parça şeklinde doğrusal olsa da)
-- f(x) = -log(x) için x > 0 (negatif log)
-- Herhangi bir doğrusal fonksiyon f ((x) = a^T x + b (hem konveks hem de konkav)
+- $f(x) = x^2$- Evet .
+- $f(x) = \lvert x \rvert$(mükemmel değer)
+- $f(x) = e^x$(gelişmiş)
+- $f(x) = \max(0, x)$(ReLU, parça olarak doğrusal olmasına rağmen)
+- $f(x) = -\log(x)$için$x > 0$(Negatif kayıt)
+- Herhangi bir doğrusal fonksiyon $f(x) = a^T x + b$(hem konveks hem de konkav)
 
 ### Çelişkinlik için test
 
 En kolaytan en zorluya kadar üç pratik test.
 
-**Test 1: Second derivative test (1D).**Eğer f'(x) >= 0 tüm x için ise f eğri.
+**Test 1: Second derivative test (1D).**- Eğer$f''(x) \ge 0$Herkes için .$x$O zaman ...$f$-Konküks.
 
-- f''((x) = x^2: f''(x) = 2 >= 0.
-- f'(x) = x^3: f'(x) = 6x. X < 0 için negatif.
-- f'(x) = e^x: f'(x) = e^x > 0.
+- $f(x) = x^2$- Evet .$f''(x) = 2 \ge 0$- Konves.
+- $f(x) = x^3$- Evet .$f''(x) = 6x$- Negatif .$x < 0$- Kovaş değil.
+- $f(x) = e^x$- Evet .$f''(x) = e^x > 0$- Konves.
 
-**Test 2: Hessian test (multivariate).**Eğer Hessian matrisi H ((x) tüm x için pozitif yarı belirlenmiş ise, f sarıdır. Hessian ikinci kısmi türevlerin matrisidir.
+**Test 2: Hessian test (multivariate).**Eğer Hessian matrisi $H(x)$Herkes için yarı belirlenmiş bir pozitif.$x$O zaman ...$f$Hessian ikinci kısmi türevlerin matrisidir.
 
-**Test 3: Definition test.**Doğrudan f ((tx + (1-t) y) <= t*f ((x) + (1-t) * f ((y) eşitsizliğini kontrol edin.
+**Test 3: Definition test.**Uygulmazlığı kontrol et .$f(tx + (1-t)y) \le t f(x) + (1-t) f(y)$Doğrudan. Derivatların hesaplanması zor olan fonksiyonlar için kullanışlı.
 
 ### Neden konveksi önemli
 
@@ -129,20 +129,22 @@ Sınırlı kayıplarla çizgi modeller sarıdır.
 
 ### Hessian Matrix
 
-Bir fonksiyonun Hessian H'si f: R^n -> R ikinci kısmi türevlerin n x n matrisidir.
+Hessyan $H$bir fonksiyonun $f: \mathbb{R}^n \to \mathbb{R}$- Bu ...$n \times n$İkinci kısmi türevlerin matrisi.
 
+```math
+H_{ij} = \frac{\partial^2 f}{\partial x_i \, \partial x_j}
 ```
-H[i][j] = d^2 f / (dx_i dx_j)
-```
 
-f ((x, y) = x^2 + 3xy + y^2:
+- Evet .$f(x, y) = x^2 + 3xy + y^2$- ...
 
-```
-df/dx = 2x + 3y       d^2f/dx^2 = 2      d^2f/dxdy = 3
-df/dy = 3x + 2y       d^2f/dydx = 3      d^2f/dy^2 = 2
-
-H = [ 2  3 ]
-    [ 3  2 ]
+```math
+\begin{gathered}
+\begin{aligned}
+\frac{\partial f}{\partial x} &= 2x + 3y & \frac{\partial^2 f}{\partial x^2} &= 2 & \frac{\partial^2 f}{\partial x \, \partial y} &= 3 \\
+\frac{\partial f}{\partial y} &= 3x + 2y & \frac{\partial^2 f}{\partial y \, \partial x} &= 3 & \frac{\partial^2 f}{\partial y^2} &= 2
+\end{aligned} \\[8pt]
+H = \begin{bmatrix} 2 & 3 \\ 3 & 2 \end{bmatrix}
+\end{gathered}
 ```
 
 Hessian, eğrilik hakkında şöyle diyor:
@@ -151,18 +153,17 @@ Hessian, eğrilik hakkında şöyle diyor:
 - Karışık işaretler: otlak noktası (bazı yönlerde yukarı eğri, diğerlerinde aşağı eğri)
 - 0 öz değeri: bu yönde düz (degenerasyon)
 
-Konvesisite için, Hessian sadece bir noktada değil her yerde pozitif yarı belirlenmiş (tüm öz değerleri >= 0) olmalıdır.
+Konvesisite için, Hessian pozitif yarı belirlenmiş olmalıdır (tüm öz değerleri $\ge 0$) her yerde, sadece bir noktada değil.
 
 ### Newton'un yöntemi
 
 Gradyent inme birinci sıra bilgilerini (gradient) kullanır. Newton'un yöntemi ikinci sıra bilgilerini (Hessian) kullanır.
 
-```
-Update rule:
-  x_new = x - H^(-1) * gradient
-
-Compare to gradient descent:
-  x_new = x - lr * gradient
+```math
+\begin{aligned}
+\text{Update rule:} \quad & x_{\text{new}} = x - H^{-1} \cdot \text{gradient} \\
+\text{Compare to gradient descent:} \quad & x_{\text{new}} = x - \text{lr} \cdot \text{gradient}
+\end{aligned}
 ```
 
 Newton'un yöntemi, skalar öğrenme hızını ters Hessian ile değiştirir. Bu otomatik olarak yerel eğriliği temelinde adım boyutunu ve yönünü ayarlar.
@@ -190,14 +191,14 @@ Avantajlar:
 - Ölçek değişkenliği (problemi nasıl parametrelediğine bakılmaksızın çalışır)
 
 Eksiklikler:
-- Hessian hesaplama O  n ^ 2) hafıza ve O  n ^ 3) tersine maliyet
-- 1 milyon ağırlıklı bir sinir ağı için, yani 10^12 giriş ve 10^18 işlem
+- Hessian maliyetlerini hesaplamak $O(n^2)$hafıza ve $O(n^3)$tersine çevirmek
+- Bir milyon ağırlıklı sinir ağı için, bu $10^{12}$Notlar ve $10^{18}$İşlemler
 - Derin öğrenme için pratik değil
 
 ### Sınırlı optimizasyon
 
-Sınırsız optimizasyon: tüm x üzerinde f ((x) 'yi en aza indir.
-Sınırlı optimizasyon: sınırlara tabi f ((x) 'yi en aza indir.
+Sınırsız optimizasyon: en aza indir $f(x)$Her şeyde .$x$- Evet .
+Sınırlı optimizasyon: en aza indirmek $f(x)$kısıtlamalara tabi.
 
 Gerçek sorunların kısıtlamaları vardır. Masrafları en aza indirmek istiyorsunuz ama bütçeniz sınırlıdır. Hataları en aza indirmek istiyorsunuz ama model karmaşıklığınız sınırlıdır.
 
@@ -216,22 +217,24 @@ graph LR
 
 Lagrange çarpıcıları yöntemi, kısıtlı bir sorunu kısıtlı olmayan bir soruna dönüştürür.
 
-Sorun: g(x) = 0 ile f ((x) ı en aza indirmek.
+Sorun: en aza indir .$f(x)$$g(x) = 0$- Evet .
 
-Çözüm: yeni bir değişken (Lagrange çarpıcı lambda) ekle ve kısıtlama olmayan sorunu çöz:
+Çözüm: yeni bir değişken (Lagrange çarpıcısı)$\lambda$) ve kısıtlamalar olmadan sorunu çözmek:
 
-```
-L(x, lambda) = f(x) + lambda * g(x)
-```
-
-Çözümde L'nin gradiyenti sıfırdır:
-
-```
-dL/dx = df/dx + lambda * dg/dx = 0
-dL/dlambda = g(x) = 0
+```math
+L(x, \lambda) = f(x) + \lambda g(x)
 ```
 
-Geometrik algı: kısıtlı minimumda, f'nin gradiyenti kısıtlama g'nin gradiyenti ile paralel olmalıdır. Eğer paralel değillerse, kısıtlama yüzeyi boyunca hareket edip f'yi daha da azaltabilirsiniz.
+Çözümde, $L$sıfırdır:
+
+```math
+\begin{aligned}
+\frac{\partial L}{\partial x} &= \frac{\partial f}{\partial x} + \lambda \frac{\partial g}{\partial x} = 0 \\
+\frac{\partial L}{\partial \lambda} &= g(x) = 0
+\end{aligned}
+```
+
+Geometrik algı: sınırlı minimumda, $f$Zorunluğun eğilimi ile paralel olmalıdır $g$Eğer paralel değillerse, kısıtlama yüzeyi boyunca hareket edip,$f$Daha ileri.
 
 ```mermaid
 graph LR
@@ -240,39 +243,41 @@ graph LR
     S --- C["At the solution, gradient of f is parallel to gradient of g"]
 ```
 
-Örnek: f ((x,y) = x^2 + y^2'yi x + y = 1'e tabi olarak en aza indir.
+Örnek: en aza indirmek$f(x,y) = x^2 + y^2$$x + y = 1$- Evet .
 
+```math
+\begin{aligned}
+L &= x^2 + y^2 + \lambda(x + y - 1) \\[4pt]
+\frac{\partial L}{\partial x} &= 2x + \lambda = 0 \implies x = -\lambda/2 \\
+\frac{\partial L}{\partial y} &= 2y + \lambda = 0 \implies y = -\lambda/2 \\
+\frac{\partial L}{\partial \lambda} &= x + y - 1 = 0 \\[4pt]
+&\text{From first two: } x = y \\
+&\text{Substituting: } 2x = 1, \text{ so } x = y = 0.5, \ \lambda = -1
+\end{aligned}
 ```
-L = x^2 + y^2 + lambda(x + y - 1)
 
-dL/dx = 2x + lambda = 0  =>  x = -lambda/2
-dL/dy = 2y + lambda = 0  =>  y = -lambda/2
-dL/dlambda = x + y - 1 = 0
-
-From first two: x = y
-Substituting: 2x = 1, so x = y = 0.5, lambda = -1
-```
-
-X + y = 1 çizgisindeki en yakın nokta (0,5, 0,5)
+Hatın en yakın noktası .$x + y = 1$Kaynak:$(0.5, 0.5)$- Evet .
 
 ### KKT koşulları
 
 Karush-Kuhn-Tucker koşulları Lagrange çarpıcılarını eşitsizlik kısıtlamalarına kadar uzattır.
 
-Sorun: i = 1, ..., m için g_i(x) <= 0 ile sınırlı f ((x) en az azaltmak.
+Sorun: en aza indir .$f(x)$$g_i(x) \le 0$için$i = 1, \ldots, m$- Evet .
 
 KKT koşulları (optimallık için gerekli):
 
-```
-1. Stationarity:    df/dx + sum(lambda_i * dg_i/dx) = 0
-2. Primal feasibility:  g_i(x) <= 0  for all i
-3. Dual feasibility:    lambda_i >= 0  for all i
-4. Complementary slackness:  lambda_i * g_i(x) = 0  for all i
+```math
+\begin{aligned}
+&\text{1. Stationarity:} && \frac{\partial f}{\partial x} + \sum_i \lambda_i \frac{\partial g_i}{\partial x} = 0 \\
+&\text{2. Primal feasibility:} && g_i(x) \le 0 \quad \text{for all } i \\
+&\text{3. Dual feasibility:} && \lambda_i \ge 0 \quad \text{for all } i \\
+&\text{4. Complementary slackness:} && \lambda_i \, g_i(x) = 0 \quad \text{for all } i
+\end{aligned}
 ```
 
-Eklemci gevşeklik anahtar bir anlayıştır: ya kısıtlama aktifdir (g_i = 0, çözünürlük sınır üzerinde oturur) veya katılatıcı sıfırdır (sıkıntı önemi yoktur).
+Ek gevşeklik, ana anlayıştır: ya kısıtlama aktif ($g_i = 0$Soluğun sınır üzerinde oturduğu veya katılayıcının sıfır olduğu (sıkıntı önemli değildir).$\lambda = 0$- Evet .
 
-KKT koşulları SVM'lerin merkezi konumdadır. Destek vektörleri kısıtlamanın aktif olduğu veri noktalarıdır (lambda > 0). Diğer tüm veri noktalarının lambda = 0'u vardır ve karar sınırını etkilemez.
+KKT koşulları SVM'lerin merkezinde bulunur. Destek vektörleri kısıtlamanın aktif olduğu veri noktalarıdır ($\lambda > 0$Bütün diğer veri noktaları $\lambda = 0$Ve karar sınırını etkilemez.
 
 ### Düzenlendirme kısıtlı optimizasyon olarak
 
@@ -280,25 +285,27 @@ L1 ve L2 düzenlenmesi keyfi hileler değil, maskeli kısıtlı optimizasyon pro
 
 **L2 regularization (Ridge):**
 
+```math
+\begin{aligned}
+&\text{minimize } \text{Loss}(w) \text{ subject to } \lVert w \rVert^2 \le t \\[4pt]
+&\text{Equivalent unconstrained form:} \\
+&\text{minimize } \text{Loss}(w) + \lambda \lVert w \rVert^2
+\end{aligned}
 ```
-minimize  Loss(w)  subject to  ||w||^2 <= t
 
-Equivalent unconstrained form:
-minimize  Loss(w) + lambda * ||w||^2
-```
-
-Bu kısıtlama bir topu tanımlar (dörtlü 2D, küre 3D).
+Zorluklar $\lVert w \rVert^2 \le t$Bir top (toku 2 boyutlu, küre 3 boyutlu) tanımlar.
 
 **L1 regularization (LASSO):**
 
+```math
+\begin{aligned}
+&\text{minimize } \text{Loss}(w) \text{ subject to } \lVert w \rVert_1 \le t \\[4pt]
+&\text{Equivalent unconstrained form:} \\
+&\text{minimize } \text{Loss}(w) + \lambda \lVert w \rVert_1
+\end{aligned}
 ```
-minimize  Loss(w)  subject to  ||w||_1 <= t
 
-Equivalent unconstrained form:
-minimize  Loss(w) + lambda * ||w||_1
-```
-
-Sınırlılık çiçekler bir elmas (dört boyutlu bir dönüm) tanımlar.
+Zorluklar $\lVert w \rVert_1 \le t$bir elmas tanımlar (2 boyutlu bir döngü)
 
 | Property | L2 constraint (circle) | L1 constraint (diamond) |
 |---|---|---|
@@ -315,11 +322,13 @@ Her kısıtlı optimizasyon sorunu (birincil) bir eş sorunu (ikili) vardır. Ko
 
 Lagrangian çift fonksiyonu:
 
-```
-Primal: minimize f(x) subject to g(x) <= 0
-Lagrangian: L(x, lambda) = f(x) + lambda * g(x)
-Dual function: d(lambda) = min_x L(x, lambda)
-Dual problem: maximize d(lambda) subject to lambda >= 0
+```math
+\begin{aligned}
+&\text{Primal:} && \text{minimize } f(x) \text{ subject to } g(x) \le 0 \\
+&\text{Lagrangian:} && L(x, \lambda) = f(x) + \lambda g(x) \\
+&\text{Dual function:} && d(\lambda) = \min_x L(x, \lambda) \\
+&\text{Dual problem:} && \text{maximize } d(\lambda) \text{ subject to } \lambda \ge 0
+\end{aligned}
 ```
 
 İkiliğin neden önemli olduğu:
@@ -346,7 +355,7 @@ Neural ağ kaybı fonksiyonları oldukça konveks değildir. Her klasik ölçüm
 
 **Most local minima are good enough.**Yüksek boyutlu alanlarda, rastgele kritik noktalar (gelişme sıfır olduğu yerlerde) yerel minimumlar değil, büyük ölçüde otlak noktalarıdır. Var olan birkaç yerel minimum, küresel minimumın yakınında kayıp değerlerine sahip olma eğilimindedir. Parametre alanının milyonlarca boyutunda olduğu zaman korkunç bir yerel minimumda sıkışmak son derece muhtemel değildir.
 
-**Saddle points, not local minima, are the real obstacle.**N parametre olan bir fonksiyonda, bir sedil noktası pozitif ve negatif eğrilik yönlerinin bir karışımına sahiptir. Yüksek boyutlarda rastgele bir kritik noktada, tüm n öz değerlerinin pozitif olma olasılığı (yerel minimum) yaklaşık 2 ^ - n'dir.
+**Saddle points, not local minima, are the real obstacle.**Bir fonksiyonda $n$Bu nedenle, bir dilimde bir dilimde bir dilimde bir dilimde bir dilimde bir dilimde bir dilimde bir dilimde bir dilimde bir dilimde bir dilimde bir dilimde bir dilimde bir dilimde bir dilimde bir dilimde bir dilimde bir dilimde bir dilimde bir dilimde bir dilimde bir dilimde bir dilimde bir dilimde bir dilimde bir dilimde bir dilimde bir dilimde bir dilimde bir dilimde bir dilimde bir dilimde bir karışım vardır.$n$öz değerleri pozitif (yerel minimum) yaklaşık olarak $2^{-n}$Neredeyse tüm kritik noktalar otlak noktaları.
 
 **Overparameterization smooths the landscape.**Eğitim örneklerinden daha fazla parametreye sahip ağlar daha düzgün, daha bağlantılı kayıp yüzeylerine sahiptir. Daha geniş ağlar daha az kötü yerel minimumlara sahiptir. Bu, mantık dışı ancak empiri olarak tutarlıdır.
 
@@ -365,21 +374,21 @@ Neural ağ kaybı fonksiyonları oldukça konveks değildir. Her klasik ölçüm
 
 Pure Newton'un yöntemi büyük modeller için pratik değildir.
 
-**L-BFGS (Limited-memory BFGS):**Son m gradient farklarını kullanarak ters Hessian'ı yaklaştırır. O(n^2 yerine O(mn) belleği gerektirir. ~ 10,000 parametre kadar olan sorunlar için iyi çalışır. Klasik ML (logistik geri dönüş, CRF) ama derin öğrenme için kullanılır.
+**L-BFGS (Limited-memory BFGS):**Sonuncu Hessian'ı kullanarak ters Hessian'ı yaklaştırır $m$Gelişme farkları.$O(mn)$- Anımsamak yerine .$O(n^2)$. ~ 10.000 parametre kadar olan sorunlarda iyi çalışır. Klasik ML (logistik gerileme, CRF) için kullanılır, ancak derin öğrenme için kullanılmaz.
 
 **Natural gradient:**Standart Hessian yerine Fisher bilgi matrisini (log- olasılık beklenen Hessian) kullanır. Bu olasılık dağılımlarının jeometri için hesap verir. K-FAC (Kronecker-Faktörlü Yaklaşım Kürürümesi) Fisher matrisini Kronecker ürünü olarak yaklaştırır ve sinir ağları için pratik hale getirir.
 
-**Hessian-free optimization:**Hx = g'yi hiçbir zaman H oluşturmadan çözmek için konjugat gradiyenti kullanır. Sadece otomatik farklılaşma yoluyla O ((n) zamanında hesaplanabilen Hessian vektör ürünlerini gerektirir.
+**Hessian-free optimization:**Çözmek için konjugat gradiyenti kullanır $Hx = g$Hiç oluşmadan.$H$Sadece Hessian vektör ürünleri gerektirir.$O(n)$otomatik farklılık yoluyla zaman.
 
 **Diagonal approximations:**Adam'ın ikinci anı, Hessian'ın diyagonalının diyagonal yaklaşımıdır. AdaHessian bunu Hutchinson'un tahmincisi aracılığıyla gerçek Hessian diyagonal unsurlarını kullanarak genişletiyor.
 
 | Method | Memory | Per-step cost | When to use |
 |--------|--------|--------------|-------------|
-| Gradient descent | O(n) | O(n) | Baseline, large models |
-| Newton's method | O(n^2) | O(n^3) | Small convex problems |
-| L-BFGS | O(mn) | O(mn) | Medium convex problems |
-| Adam | O(n) | O(n) | Deep learning default |
-| K-FAC | O(n) | O(n) per layer | Research, large-batch training |
+| Gradient descent | $O(n)$ | $O(n)$ | Baseline, large models |
+| Newton's method | $O(n^2)$ | $O(n^3)$ | Small convex problems |
+| L-BFGS | $O(mn)$ | $O(mn)$ | Medium convex problems |
+| Adam | $O(n)$ | $O(n)$ | Deep learning default |
+| K-FAC | $O(n)$ | $O(n)$ per layer | Research, large-batch training |
 
 ```figure
 convex-vs-nonconvex
@@ -516,15 +525,27 @@ print(f"Support vectors: {svm.n_support_}")
 
 ## Egzersizler
 
-1. **Convexity gallery.**Bu fonksiyonları şıklık için kontrolci kullanarak test edin: f(x) = x^4, f(x) = sin(x), f(x,y) = x^2 + y^2, f(x,y) = x*y, f(x) = max(x, 0).
+1. **Convexity gallery.**Bu fonksiyonları kontrol cihazı kullanarak konveksiyet için test edin: $f(x) = x^4$- Evet .$f(x) = \sin(x)$- Evet .$f(x,y) = x^2 + y^2$- Evet .$f(x,y) = xy$- Evet .$f(x) = \max(x, 0)$Her sonuç neden mantıklı olduğunu açıkla.
 
-2. **Newton vs gradient descent race.**Her iki yöntemi de f ((x,y) = 50*x^2 + y^2 olarak başlatın (10,10).
+2. **Newton vs gradient descent race.**Her iki yöntemi de kullan $f(x,y) = 50x^2 + y^2$Başlangıç noktasından $(10, 10)$. Her bir kaybı < 1e-10'a ulaşmak için kaç adım gerekir? Şart sayısının (en büyük Hessian öz değeri oranı) artması halinde gradient düşüşü ne olur?
 
-3. **Lagrange multiplier geometry.**f ((x,y) = (x-3)^2 + (y-3)^2 x + 2y = 4 ile sınırlı olarak en azı azaltın.
+3. **Lagrange multiplier geometry.**En azını azaltın .$f(x,y) = (x-3)^2 + (y-3)^2$$x + 2y = 4$. Çözümün                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         $f$                                           $g$Çözümde.
 
-4. **Regularization constraint.**L1 kısıtlı optimizasyonu uygulayın: (x-3)^2 + (y-2)^2'yi azaltın, bu sayede \x \x \y \y \ \y \ <= 1. Çözümün sıfır eşit bir koordinat olduğunu gösterin (erlinç kısıtlamasından uzaklık).
+4. **Regularization constraint.**L1 kısıtlı optimizasyonu uygulayın: en aza indirmek $(x-3)^2 + (y-2)^2$$\lvert x \rvert + \lvert y \rvert \le 1$. Çözümün sıfır eşit bir koordinatının olduğunu göster (elmas kısıtlamasından ayırt edicilik).
 
 5. **Hessian eigenvalue analysis.**Rosenbrock fonksiyonunun Hessian'ı (1,1) ve (-1,1) ile hesaplayın.
+
+### İpuçlar
+
+**Exercise 1.**Koşmadan önce her sonucu tahmin et .`check_convexity`Bir boyutta, $f''(x)$Hessian'ın öz değerlerine iki boyutta bakın.$f(x,y) = xy$, Hessian'ın öz değerleri 1 ve -1'dir, bu yüzden kontrolcü, konveks olmadığını bildirmelidir.
+
+**Exercise 2.**Arama .`optimize_gd`ve `newtons_method`                        $f$Newton'un yöntemi bir adımla bir kare çözür.$2/100$Çünkü $50x^2$term, yani $y$Yön yavaş hareket eder.$100x^2$Ve adımları tekrar sayın.
+
+**Exercise 3.**Kullanım`lagrange_solve`- Evet .$g(x,y) = x + 2y - 4$Cevabı verip kontrol et.$x + 2y = 4$Ve bu da ...$\nabla f = (2(x-3), 2(y-3))$$\nabla g = (1, 2)$- Evet .
+
+**Exercise 4.**Sınırsız minimum (3, 2) elmasın dışında, bu nedenle cevap onun sınırında.$\lvert x \rvert + \lvert y \rvert \le 1$Sonuç eşitlik ile kısıtlama karşılıyor mu kontrol edin ve karşılaştırın `demo_regularization_geometry`- Evet .
+
+**Exercise 5.**Arama .`rosenbrock_hessian`Her noktada sonuçları `hessian_eigenvalues_2d`. (1, 1)'de her iki öz değer de pozitif ve oranları çok büyüktür, bu nedenle vadisi bir yönde dar ve diğerinde düz.
 
 ## Anahtar Terimler
 
@@ -543,7 +564,7 @@ print(f"Support vectors: {svm.n_support_}")
 | Complementary slackness | At the solution, either a constraint is active or its multiplier is zero. Never both nonzero |
 | Duality | Every constrained problem has a companion dual problem. For convex problems, both have the same optimal value |
 | Strong duality | Primal and dual optimal values are equal. Holds for convex problems satisfying Slater's condition |
-| L-BFGS | Approximate second-order method that stores the last m gradient differences instead of the full Hessian |
+| L-BFGS | Approximate second-order method that stores the last $m$ gradient differences instead of the full Hessian |
 | Saddle point | A point where the gradient is zero but it is a minimum in some directions and a maximum in others |
 | Overparameterization | Using more parameters than training examples. Smooths the loss landscape and reduces bad local minima |
 

@@ -42,7 +42,7 @@ Temel zorluk: sadece basit dağılımlardan (eşit, normal) doğrudan örnek ala
 
 ### Eşsiz Rastgele Örnekleme
 
-Her örnekleme yöntemi burada başlar. Bir benzer rastgele sayı jeneratörü, eşit uzunlukta her alt aralığın eşit olasılıkla olduğu [0, 1) değerlerini üretir.
+Her örnekleme yöntemi buradan başlar.$[0, 1)$Burada eşit uzunlukta her alt aralığın eşit olasılığı vardır.
 
 ```
 U ~ Uniform(0, 1)
@@ -54,7 +54,7 @@ Properties:
   Var(U) = 1/12
 ```
 
-N öğelerin ayrı bir setinden benzer bir şekilde örnek almak için U oluşturun ve tekrar katı ((n * U).
+                                                                                                   $n$Üretim, üretmek $U$ve geri dön .$\lfloor n U \rfloor$. Sürekli bir aralıktan örnek almak için $[a, b]$, hesaplama$a + (b - a) U$- Evet .
 
 Anahtar bir anlayış: tek bir eşsiz rastgele sayı herhangi bir dağılımdan bir örnek üretmek için tam olarak doğru miktarda rastgeleliği içerir.
 
@@ -72,7 +72,7 @@ Properties:
   F maps the real line to [0, 1]
 ```
 
-Ters CDF olasılıkları değerlere geri harfler. Eğer U ~ Uniform(0, 1), o zaman X = F_inverse(U) hedef dağılım takip eder.
+Ters CDF olasılıkları değerlere geri gönderir.$U \sim \text{Uniform}(0, 1)$O zaman ...$X = F^{-1}(U)$hedef dağılımını takip eder.
 
 ```
 Algorithm:
@@ -98,9 +98,9 @@ Since (1 - U) and U have the same distribution:
   x = -ln(u) / lambda
 ```
 
-Bu, F_inverse'i kapalı biçimde yazabildiğinizde mükemmel bir şekilde çalışır. Normal dağılım için, kapalı biçimdeki ters CDF yoktur, bu yüzden diğer yöntemleri kullanıyoruz (Box-Muller veya sayısal yaklaşım).
+Bu , yazmayı bildiğin zaman mükemmel bir şekilde çalışır .$F^{-1}$Normal dağılım için, kapalı biçimdeki ters CDF yoktur, bu yüzden diğer yöntemleri kullanıyoruz (Box-Muller veya sayısal yaklaşım).
 
-**Discrete version:**Diskre dağılımlar için CDF'yi kumülatîf bir toplam olarak oluşturun, U oluşturun ve kumülatîf toplamın U'yu aştığı ilk indeks bulun.`sample_categorical`6. Ders'te çalışmalar.
+**Discrete version:**Ayrı dağılımlar için, CDF'yi kumülatyonel bir toplam olarak oluşturun, oluşturun $U$, ve toplu toplamın üstesinden gelen ilk indeksi bul .$U$- İşte böyle .`sample_categorical`6. Ders'te çalışmalar.
 
 ### Reddetme Örnekleme
 
@@ -120,15 +120,15 @@ Algorithm:
 Acceptance rate = 1/M
 ```
 
-M'nin bağlanması ne kadar sıkı olursa, kabul oranı o kadar yüksek olur. Düşük boyutlarda (1-3), reddetme örneği iyi çalışır. Yüksek boyutlarda, kabul oranı, önerinin büyük bir kısmı reddedildiği için eksponansal olarak düşer. Bu reddetme örneği için boyutluk lanetidir.
+Sınır ne kadar sıkı olursa o kadar .$M$Bu, reddetme örneğinin boyutunun büyük kısmının reddedilmesi nedeniyle, yüksek boyutlarda kabul oranı eksponensal olarak düşer. Bu, reddetme örneğinin boyutsuzluğunun lanetidir.
 
-**Example: sampling from a truncated normal.**Kısaltılmış aralık üzerinde bir teklifte bulun. M zarf, bu aralığın normal PDF'lerinin maksimumıdır.
+**Example: sampling from a truncated normal.**Kısaltılmış aralıkta teker teker teker teker kullanın.$M$Bu aralığın normal PDF'lerinin maksimumıdır.
 
-**Example: sampling from a semicircle.**Yönlü düzbuzda teker teker önerin. Nokta yarı döngü içinde düşerse kabul edin. Monte Carlo pi'yi böyle hesaplar: kabul oranı alan oranı pi/4'e eşittir.
+**Example: sampling from a semicircle.**Dörtgenin sınırlı kısımlarında teker teker önerin.$\pi$: kabul oranı alan oranına eşittir $\pi/4$- Evet .
 
 ### Önemlilik Örnekleme
 
-Bazen hedef dağılım p(x'den örneklere ihtiyacınız yoktur. Bir beklentiyi p(x altında tahmin etmek gerekir ve farklı bir dağılım q(x'den örnekler vardır.
+Bazen hedef dağıtımdan örneklere ihtiyacınız yok $p(x)$- Bir beklentiyi tahmin etmelisin .$p(x)$, ve farklı bir dağılımdan örnekler var .$q(x)$- Evet .
 
 ```
 Goal: estimate E_p[f(x)] = integral of f(x) * p(x) dx
@@ -143,12 +143,12 @@ Estimator:
   E_p[f(x)] ~ (1/N) * sum(f(x_i) * w(x_i))    where x_i ~ q(x)
 ```
 
-Bu, güçlendirme öğreniminde kritik bir önem taşır. PPO (Prosimal Policy Optimization) da eski bir politika pi_old altında yoldurları toplarsınız ancak yeni bir politika pi_new'i optimize etmek istiyorsunuz. Önemliyet ağırlığı pi_new'ler / pi_old'lar.
+Bu, güçlendirme öğreniminde kritik bir rol oynar.PPO (Prosimal Policy Optimization) 'de eski bir politika altında yollar toplanır.$\pi_{\text{old}}$Ama yeni bir politika optimizasyonu yapmak istiyoruz.$\pi_{\text{new}}$- Önemli bir ağırlık$\pi_{\text{new}}(a \mid s) / \pi_{\text{old}}(a \mid s)$PPO bu ağırlıkları yeni politikaların eski politikadan çok uzaklaşmasını önlemek için keser.
 
-Önemlilik örnekleme tahminçisinin değişimi q'nın p'ye ne kadar benzer olduğuna bağlıdır. q p'den çok farklıysa, birkaç örnek büyük ağırlıklar alır ve tahminin baskısıdır.
+Önemlilik örneği değerlendiricisinin değişimi, benzerlik oranına bağlıdır $q$- Evet .$p$- Eğer ...$q$Çok farklıdır.$p$Bu sorunu azaltmak için kendi kendine normalleştirilmiş önem örneklemesini ağırlıkların toplamıyla böler:
 
-```
-E_p[f(x)] ~ sum(w_i * f(x_i)) / sum(w_i)
+```math
+\mathbb{E}_p[f(x)] \approx \frac{\sum_i w_i \, f(x_i)}{\sum_i w_i}
 ```
 
 ### Monte Carlo Tahmini
@@ -186,7 +186,7 @@ Variance of the estimator = Var(f(X)) / N
 
 ### Markov Chain Monte Carlo (MCMC): Metropolis-Hastings
 
-MCMC, sabit dağılımının hedef dağılım p ((x) olan Markov zinciri oluşturur. Yeterli adımlardan sonra, zincirden örnekler (yaklaşık olarak) p ((x) örnekler olur.
+MCMC , sabit dağıtım hedefli dağıtım olan Markov zinciri inşa eder .$p(x)$. Yeterince adımlar atıldıktan sonra zincirden örnekler (yaklaşık) zincirden örnekler oluşturulur.$p(x)$- Evet .
 
 ```
 Target: p(x)  (known up to a normalizing constant)
@@ -205,13 +205,13 @@ Metropolis-Hastings algorithm:
   4. Return remaining samples
 ```
 
-Simetrik öneriler için (q(x'taitx) = q(x tık x') oranı p(x')/p(x'e basitleştirilir.
+Simetrik öneriler için $(q(x' \mid x) = q(x \mid x'))$, oranı $p(x')/p(x)$Bu orijinal Metropolis algoritması.
 
-**Why it works.**Kabul kuralı detaylı dengeyi sağlar: x'de bulunma ve x'ye taşınma olasılığı x'de bulunma ve x'ye taşınma olasılığına eşit olur. Detaylı denge p ((x) zincirin sabit dağılımını içerir.
+**Why it works.**Kabul kuralı detaylı dengeni sağlar: $x$ve $x'$                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             $x'$ve $x$Detaylı denge , $p(x)$zincirin sabit dağılımıdır.
 
 **Practical considerations:**
 - Yanma: zincir dengeleme ulaşmadan önce erken örnekler atılır
-- İnceleme: Otokorelasyonu azaltmak için her k-te örnek tutun
+- İnceleme: her birini tutun$k$-Auto-korrelasyonu azaltmak için
 - Teklif ölçeği: çok küçük ve zincir yavaş hareket eder (yüksek kabul, yavaş araştırmalar); çok büyük ve çoğu teklif reddedilmiştir ( düşük kabul, yerinde kalmıştır)
 - Yüksek boyutlarda Gaussian önerisi için en iyi kabul oranı yaklaşık 0.234'dir.
 
@@ -230,7 +230,7 @@ Algorithm:
     Sample x_d^{t+1} ~ p(x_d | x_1^{t+1}, x_2^{t+1}, ..., x_{d-1}^{t+1})
 ```
 
-Gibbs örneği, her koşullu dağılımdan örnek alabilmenizi gerektirir.
+Gibbs örneği , her koşullu dağıtımdan örnek alabilmenizi gerektirir .$p(x_i \mid x_{-i})$Bu birçok model için çok basit .
 - Bayesian ağlar: grafik yapısından şartlar
 - Gaussian karışımları: şartlar Gaussian
 - İzin modelleri: her spin'in koşulları sadece komşularına bağlıdır
@@ -241,7 +241,7 @@ Kabul oranı her zaman 1'dir (her teklif kabul edilir), çünkü tam şartlı ö
 
 ### Temperatür örneği (LLM'lerde kullanılır)
 
-Dil modelleri sözcüklükteki her token için z_1, ..., z_V logitlerini çıkarır. Softmax bunları olasılıklara dönüştürür.
+Dil modelleri çıkış logitleri $z_1, \ldots, z_V$Softmax bunları olasılıklara dönüştürür.
 
 ```
 p_i = exp(z_i / T) / sum(exp(z_j / T))
@@ -253,20 +253,20 @@ T < 1.0: sharpens the distribution (more confident, less diverse)
 T > 1.0: flattens the distribution (less confident, more diverse)
 ```
 
-**Why it works.**Logitleri T < 1 ile bölmek logitler arasındaki farkları artırır. Z_1 = 2 ve z_2 = 1 ise, T = 0.5 ile bölmek z_1/T = 4 ve z_2/T = 2 verir.
+**Why it works.**Çizgiyi bölmek $T < 1$Bu, logitler arasındaki farkları artırır.$z_1 = 2$ve $z_2 = 1$, bölünerek $T = 0.5$ver .$z_1/T = 4$ve $z_2/T = 2$Softmax'den sonra en yüksek logit token çok daha büyük bir pay alır.
 
 **In practice:**
-- T = 0.0: açgözlülükle çözme, gerçekçi soru ve cevaplar için en iyisi
-- T = 0.3-0.7: biraz yaratıcı, kod üretimi için iyi
-- T = 0,7-1,0: dengeli, genel konuşma için iyi
-- T = 1.0-1.5: Yaratıcı yazma, beyin fırtınası
-- T > 1,5: giderek rastgele, nadiren kullanışlı
+- $T = 0.0$: açgözlü çözme, gerçekli sorular ve cevaplar için en iyisi
+- $T = 0.3\text{-}0.7$: biraz yaratıcı, kod üretimi için iyi
+- $T = 0.7\text{-}1.0$: dengeli, genel konuşma için iyi
+- $T = 1.0\text{-}1.5$: yaratıcı yazma, beyin fırtınası
+- $T > 1.5$: giderek rastgele, nadiren yararlı
 
 Temperatür, hangi tokenlerin mümkün olduğunu değiştirmez. Her token'a verilen olasılık kütlesini değiştirir.
 
 ### Top-k Örnekleme
 
-Top-k örnekleme, aday seti en yüksek olasılıklara sahip k jetonlarına sınırlandırır, ardından bu sınırlı setten örnekleri yeniden normalleştirir ve gösterir.
+Top-k örneklemesi, adayları $k$en yüksek olasılıkları olan tokenler, sonra da bu kısıtlı setten yeniden normalleştiriler ve örnekler.
 
 ```
 Algorithm:
@@ -281,11 +281,11 @@ k = V:  no filtering (standard sampling)
 k = 40: typical setting, removes long tail of unlikely tokens
 ```
 
-Top-k, sözlük dağılımının uzun kuyruğunda bulunan son derece olası olmayan jetonları (tipos, saçma) seçmekten modelin kaçınıyor. Sorun: k bağlamdan bağımsız olarak sabitlenir. Model güvenlidir (bir jeton 95% olasılıklara sahiptir), k = 40 hala 39 alternatif izin verir.
+Top-k, modelin sözcük dağılımının uzun kuyruğunda bulunan son derece olası olmayan işaretleri (tipler, saçmalıklar) seçmesini engeller.$k$Modelle güven olduğu zaman (bir token %95 olasılıkla)$k = 40$model belirsiz olduğunda (muhtemelen 1000 token arasında yayılır), $k = 40$- Evet. - Evet.
 
 ### Üst-p (Nucleus) Örnekleme
 
-Top-p örneklemesi aday setinin boyutunu dinamik olarak ayarlar.
+Top-p örneklemesi, aday setinin boyutunu dinamik olarak ayarlar.$p$- Evet .
 
 ```
 Algorithm:
@@ -335,13 +335,13 @@ Reparameterized sampling:
   Gradients flow through mu and sigma.
 ```
 
-Bu, N(mu, sigma^2) ile mu + sigma * N(0,1 arasındaki aynı dağılım nedeniyle çalışır. Anahtar anlayış: rastlantıyı bir parametre dışı kaynağa (epsilon) taşıyarak, sonra örneği parametrelerin farklılaştırılabilir bir dönüşümü olarak ifade edin.
+Bu işe yarıyor çünkü$\mathcal{N}(\mu, \sigma^2)$Aynı dağılımdır.$\mu + \sigma \cdot \mathcal{N}(0, 1)$Anahtar bilgi: rastlantıyı parametre dışı bir kaynağa taşı ($\epsilon$), sonra örnekleri parametrelerin farklılaştırılabilir dönüşümü olarak ifade eder.
 
 **In the VAE training loop:**
-1. Kodlayıcı çıkışları mu ve log(sigma^2) her giriş için
-2. Örnek epsilon ~ N(0, 1)
-3. Z = mu + sigma * epsilon hesaplayın
-4. Girişi yeniden yapılandırmak için z kodunu çöz
+1. Kodlayıcı çıkışları $\mu$ve $\log(\sigma^2)$her giriş için
+2. Örnek$\epsilon \sim \mathcal{N}(0, 1)$
+3. Hesaplama$z = \mu + \sigma \epsilon$
+4. Çözümleme$z$Girişi yeniden yapılandırmak için
 5. 4, 3, 2, 1 adımları üzerinden geriye yayılmak (mümkün çünkü adım 3 farklılaştırılabilir)
 
 Reparametrizasyon hilesi olmadan, VAE'ler standart geri yayılma ile eğitilmez.
@@ -413,7 +413,7 @@ For piecewise-constant functions, stratified sampling is exact.
 
 ### Diffüzyon Modelleri ile Bağlantı
 
-Diffusion modelleri örnekleme süreci aracılığıyla görüntüler üretir. Ön süreci saf gürültü haline gelene kadar bir görüntüye T adımları üzerinde Gaussian gürültüsü ekler. Ters süreci, adım adım orijinal görüntüyü geri kazanarak denosiyon yapmayı öğrenir.
+Diffusion modelleri örnekleme süreci ile görüntüler üretir.$T$Bu süreç, orijinal görüntüyü adım adım geri kazanarak, denosiyon yapmayı öğrenir.
 
 ```
 Forward process (known):
@@ -431,7 +431,7 @@ Reverse process (learned):
 
 Bu dersdeki yöntemlerle bağlantı:
 - Her denoizing adım reparameterizasyon hilesi kullanır (sample gürültüsü, deterministik dönüşüm uygula)
-- Gürültü programı {alpha_t} bir tür sıcaklık kaydırma kontrolü sağlar.
+- Gürültü programı$\lbrace \alpha_t \rbrace$bir sıcaklık kaydırma biçimini kontrol eder
 - Eğitim, ELBO'yu (gösteriler alt sınır) yakınlaştırmak için Monte Carlo tahminini kullanıyor.
 - Diffüzyon modellerinde ata örneklemesi Markov zinciridir (her adım sadece mevcut durumdan bağlıdır)
 
@@ -457,7 +457,7 @@ def sample_exponential_inverse_cdf(lam):
     return -math.log(u) / lam
 ```
 
-10.000 eksponensial örnek oluşturun ve ortalamanın 1/lambda olduğunu doğrulayın.
+10.000 eksponensial örnek oluşturun ve ortalamanın doğru olduğunu kontrol edin .$1/\lambda$- Evet .
 
 ### Adım 2: Reddedilme örneği
 
@@ -484,7 +484,7 @@ def importance_sampling_estimate(f, target_pdf, proposal_pdf, proposal_sample, n
     return total / n
 ```
 
-E[X^2]'yi, bir teker teker öneride normal bir dağılım altında tahmin edin. Bilinen yanıtla karşılaştırın (mu^2 + sigma^2).
+Tahmin et .$\mathbb{E}[X^2]$Bilinen cevapla karşılaştırın ($\mu^2 + \sigma^2$)
 
 ### Adım 4: Monte Carlo pi tahmin
 
@@ -642,37 +642,49 @@ MCMC'nin ölçekli olması için özel kütüphaneler kullanın:
 
 ## Egzersizler
 
-1. Cauchy dağılımında ters CDF örneklemesini uygulayın. CDF F(x) = 0.5 + arctan(x) / pi. 10.000 örnek oluşturun ve histogramı gerçek PDF ile çizin. Ağır kuyruğu (ekstrem değerler merkezden uzak) dikkat edin.
+1. Cauchy dağılımında ters CDF örneklemesini uygulayın.$F(x) = 0.5 + \arctan(x)/\pi$. 10.000 örnek oluşturun ve histogramı gerçek PDF'ye karşı çizin. Ağır kuyruğu (yüksek değerler merkezden uzakta) fark edin.
 
 2. Bir Beta ((2, 5) dağıtımından örnekler oluşturmak için Uniform ((0, 1) önerisi kullanın. Kabul edilen örnekleri gerçek Beta PDF ile çizin.
 
-3. Sin ((x) entegralını, Monte Carlo'dan 1000, 10.000 ve 100.000 örnekle 0'dan pi'ye kadar hesaplayın. Her seviyede hata ile karşılaştırın. Hata ölçeğinin O(1/sqrt(N) olduğunu kontrol edin.
+3. $\sin(x)$0'dan 'ye kadar$\pi$Monte Carlo'da 1000, 10.000 ve 100.000 örnek kullanın.$O(1/\sqrt{N})$- Evet .
 
-4. Metropolis-Hastings'i uygulayın, 2D dağılımından örnek almak için p ((x, y) x^2 * y^2 + x^2 + y^2 - 8*x - 8*y) / 2).
+4. Metropolis-Hastings ' i 2 boyutlu bir dağıtımdan örnek almak için uygulayın $p(x, y)$$\exp(-(x^2 y^2 + x^2 + y^2 - 8x - 8y) / 2)$- Örnekleri ve zincir yollarını çizmek.
 
 5. Tam bir metin oluşturma demo oluşturun: logitlerle 10 kelimelik bir sözlük verildiğinde, (a) açgözlülük, (b) sıcaklık = 0,7, (c) üst-k = 3, (d) üst-p = 0,9 kullanarak 20 jetonlu bir dizi oluşturun.
+
+### İpuçlar
+
+**Exercise 1.**Çözüm$u = F(x)$için$x$, yani $x = \tan(\pi(u - 0.5))$. Örnek ortalaması 0' a yakın olup olmadığını ve örneklerin yaklaşık % 6 ' un $\lvert x \rvert > 10$, yani $1 - (2/\pi)\arctan(10)$- Evet .
+
+**Exercise 2.**Beta ((2, 5) yoğunluğu $30x(1-x)^4$. En büyük değerini modda bul .$x = 1/5$ve bu değerleri kullan $M$İçeride`rejection_sample`- Teorik kabul oranı $1/M$, bu yüzden kabul ettiğiniz tekliflerin küçük bir kısmıyla karşılaştırın.
+
+**Exercise 3.**Tam değeri 2 . Arama.`monte_carlo_integral(math.sin, 0, math.pi, n)`Her biri için$n$Ve her koşuyu birkaç tane tohumla tekrarlayın.$n$10 kat artırsa ortalama hata yaklaşık olarak düşmelidir.$\sqrt{10} \approx 3.2$- Evet .
+
+**Exercise 4.**Hedef logunu yaz, ki bu $-(x^2 y^2 + x^2 + y^2 - 8x - 8y)/2$, ve onu `metropolis_hastings_2d`. Her öneride standart sapma için kabul oranını kaydet: çok küçük bir değer neredeyse her adımı kabul eder, ancak yavaş hareket eder ve çok büyük bir değer neredeyse her adımı reddeder.
+
+**Exercise 5.**Açgözlü kodlama her adımda en büyük logit indeksi alır.`temperature_sample`- Evet .`top_k_sample`ve`top_p_sample`Açgözlülük, her beş koşuda aynı sırayı vermeli, bu yüzden çeşitliliği ölçmek için her yöntem için farklı sırayı sayın.
 
 ## Anahtar Terimler
 
 | Term | What people say | What it actually means |
 |------|----------------|----------------------|
 | Sampling | "Drawing random values" | Generating values according to a probability distribution. The mechanism behind all generative AI |
-| Uniform distribution | "All equally likely" | Every value in [a, b] has equal probability density 1/(b-a). The starting point for all sampling methods |
-| Inverse CDF | "Probability transform" | F_inverse(U) converts a uniform sample into a sample from any distribution with known CDF. Exact and efficient |
+| Uniform distribution | "All equally likely" | Every value in $[a, b]$ has equal probability density $1/(b-a)$. The starting point for all sampling methods |
+| Inverse CDF | "Probability transform" | $F^{-1}(U)$ converts a uniform sample into a sample from any distribution with known CDF. Exact and efficient |
 | Rejection sampling | "Propose and accept/reject" | Generate from a simple proposal, accept with probability proportional to target/proposal ratio. Exact but wastes samples |
-| Importance sampling | "Reweight samples" | Estimate expectations under p(x) using samples from q(x) by weighting each sample by p(x)/q(x). Core to PPO in RL |
-| Monte Carlo | "Average random samples" | Approximate integrals as sample averages. Error O(1/sqrt(N)) regardless of dimension |
+| Importance sampling | "Reweight samples" | Estimate expectations under $p(x)$ using samples from $q(x)$ by weighting each sample by $p(x)/q(x)$. Core to PPO in RL |
+| Monte Carlo | "Average random samples" | Approximate integrals as sample averages. Error $O(1/\sqrt{N})$ regardless of dimension |
 | MCMC | "Random walk that converges" | Construct a Markov chain whose stationary distribution is the target. Metropolis-Hastings is the foundational algorithm |
 | Metropolis-Hastings | "Accept uphill, sometimes downhill" | Propose moves, accept based on density ratio. Detailed balance ensures convergence to target distribution |
 | Gibbs sampling | "One variable at a time" | Update each variable from its conditional distribution holding others fixed. 100% acceptance rate |
-| Temperature | "Confidence knob" | Divides logits by T before softmax. T<1 sharpens (more confident), T>1 flattens (more diverse) |
-| Top-k sampling | "Keep the k best" | Zero out all but the k highest-probability tokens, renormalize, sample. Fixed candidate set size |
-| Nucleus sampling (top-p) | "Keep the probable ones" | Keep the smallest set of tokens whose cumulative probability exceeds p. Adaptive candidate set size |
-| Reparameterization trick | "Move randomness outside" | Write z = mu + sigma * epsilon where epsilon ~ N(0,1). Makes sampling differentiable. Essential for VAE training |
+| Temperature | "Confidence knob" | Divides logits by $T$ before softmax. $T<1$ sharpens (more confident), $T>1$ flattens (more diverse) |
+| Top-k sampling | "Keep the k best" | Zero out all but the $k$ highest-probability tokens, renormalize, sample. Fixed candidate set size |
+| Nucleus sampling (top-p) | "Keep the probable ones" | Keep the smallest set of tokens whose cumulative probability exceeds $p$. Adaptive candidate set size |
+| Reparameterization trick | "Move randomness outside" | Write $z = \mu + \sigma \epsilon$ where $\epsilon \sim \mathcal{N}(0,1)$. Makes sampling differentiable. Essential for VAE training |
 | Gumbel-Softmax | "Soft categorical sampling" | Differentiable approximation to categorical sampling using Gumbel noise + softmax with temperature |
 | Stratified sampling | "Forced coverage" | Divide sample space into strata, sample from each. Always lower variance than naive Monte Carlo |
 | Burn-in | "Warm-up period" | Initial MCMC samples discarded before the chain reaches its stationary distribution |
-| Detailed balance | "Reversibility condition" | p(x) * T(x->y) = p(y) * T(y->x). Sufficient condition for p to be the stationary distribution of a Markov chain |
+| Detailed balance | "Reversibility condition" | $p(x) T(x \to y) = p(y) T(y \to x)$. Sufficient condition for $p$ to be the stationary distribution of a Markov chain |
 | Diffusion sampling | "Iterative denoising" | Generate data by starting from noise and applying learned denoising steps. Each step is a conditional sampling operation |
 
 ## Daha Fazla Okumak

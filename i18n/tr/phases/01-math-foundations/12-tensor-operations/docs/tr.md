@@ -36,7 +36,7 @@ graph LR
     T3 --> T4["4D Tensor<br/>rank 4<br/>shape: (B,C,H,W)"]
 ```
 
-Toplam elementler = tüm boyutların ürünü.`(2, 3, 4)`Tutulur .`2 * 3 * 4 = 24`unsurlar.
+Toplam elementler = tüm boyutların ürünü.`(2, 3, 4)`Tutulur .$2 \cdot 3 \cdot 4 = 24$unsurlar.
 
 ### Derin öğrenme için tensor şekilleri
 
@@ -232,7 +232,7 @@ batch_B = np.random.randn(4, 5, 2)
 batch_mm = np.einsum("bij,bjk->bik", batch_A, batch_B)
 ```
 
-Bir kısıtlamanın hesaplama maliyeti tüm indeks boyutlarının (daha fazla ve toplam) ürünüdür.`bij,bjk->bik`B=32, I=128, J=64, K=128:`32 * 128 * 64 * 128 = 33,554,432`kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat
+Bir kısıtlamanın hesaplama maliyeti tüm indeks boyutlarının (daha fazla ve toplam) ürünüdür.`bij,bjk->bik`- Evet .$B=32$- Evet .$I=128$- Evet .$J=64$- Evet .$K=128$- Evet .$32 \cdot 128 \cdot 64 \cdot 128 = 33{,}554{,}432$kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat kat
 
 ### Adım 7: Eynüm yoluyla dikkat mekanizması
 
@@ -319,6 +319,16 @@ Bu ders iki tekrar kullanılabilir ipucu verir:
 3. **Hard -- Build einsum from scratch.**Temel bir uygulama yapın `einsum(subscripts, *tensors)`En az: nokta ürünü (`i,i->`), matris çarpımı (`ij,jk->ik`), dış ürün (`i,j->ij`(), ve transpose (`ij->ji`) Alt yazılı dizileri analiz edin, sözleşmiş indeksleri belirleyin ve tüm indeks kombinasyonlarını inceleyin.`np.einsum`- Evet .
 
 4. **Hard -- Attention shape tracker.**Alıcı bir fonksiyon yaz `batch_size`- Evet .`seq_len`- Evet .`embed_dim`ve`num_heads`Giriş, Q/K/V projesi, baş bölümü, dikkat puanları, softmax ağırlıkları, ağırlıklı toplam, baş birleşimi, çıkış projesi.`demo_attention_einsum()`çıkış.
+
+### İpuçlar
+
+**Exercise 1.**Tenzörü oluştur `list(range(24))`Böylece her element kendi konumunu gösterir.`reshape`Çağır, bas.`flatten().to_list()`ve 0 ila 23 arasında bir düzene sahip olup olmadığını kontrol et.
+
+**Exercise 2.**Bir boyut sadece iki boyut eşit olduğunda yayınabilir veya bunlardan biri 1 olduğunda, bu nedenle önce bu kuralı kontrol edin ve başarısız olduğunda bir hata yükleyin.`(3, 1)`ve `(1, 4)`Bu yazıyı kontrol et .`[i][j]`Sonuç eşit `a[i][0] + b[0][j]`, ve tüm sonuçları NumPy ile karşılaştırın.
+
+**Exercise 3.**Ücretleri bölün .`->`Girişlerdeki ama çıkışta olmayan bir harf toplam bir indeksdir, bu nedenle her harfın tüm değerlerini sarıp çıkış pozisyonuna ekleyin.`np.allclose(mine, np.einsum(...))`- Evet .
+
+**Exercise 4.**Baş boyutundan başla `embed_dim // num_heads`Ve bunu iddia et .`embed_dim % num_heads == 0`Dikkat puanları şekillidir .`(batch_size, num_heads, seq_len, seq_len)`Bu yüzden baskılarınızı bu şekil ve şekillerle karşılayın .`demo_attention_einsum()`Parmak izleri.
 
 ## Anahtar Terimler
 
