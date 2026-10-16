@@ -16,7 +16,7 @@
 
 ## O problema
 
-Um modelo de parâmetro 70B em fp16 precisa de 140 GB de parâmetros sozinho. Nenhuma GPU de consumo o mantém. O ZeRO-3 reduz os parâmetros entre as fileiras, mas ainda precisa de cada fileira para reunir a camada completa para cada passo para frente, pagando log ((N) saltos por camada. O paralelo do oleoduto segue uma rota diferente: cortar o modelo em N etapas e colocar uma etapa em cada classificação. A frente da camada 1 termina na posição 0 e entrega o tensor de ativação para a posição 1; a posição 1 corre na posição 2 e as mãos para a posição 2; e assim por diante. Fluxos retrocédentes ao contrário. A memória cai linearmente porque cada nível só mantém um estágio; a computação é sequencial, o que é o problema da bolha.
+Um modelo de parâmetro 70B em fp16 precisa de 140 GB de parâmetros sozinho. Nenhuma GPU de consumo o mantém. ZeRO-3 divide os parâmetros em filas, mas ainda precisa de cada fila para reunir a camada completa para cada passo a frente, pagando $\log(N)$O modelo é dividido em N fases e colocado em cada categoria. A frente da camada 1 termina na categoria 0 e entrega o tensor de ativação para a categoria 1; a categoria 1 corre na categoria 2 e as mãos para a categoria 2; e assim por diante.
 
 A bolha é o tempo de inatividade no início do oleoduto (a espera do primeiro microbatch para chegar à última fase) e no final (a espera do último microbatch para drenar de volta). Com microbates M e estágios N, a fração de bolhas por estágio é (N-1)/(M+N-1). Em M=8, N=4 é 27%. Em M=64, N=4 é 4,5%. A bolha encolhe quando temos muitos microbatches por passo, o que significa pequenos tamanhos de batches por microbatch, que é a restrição que impulsiona o projeto de microbatches.
 

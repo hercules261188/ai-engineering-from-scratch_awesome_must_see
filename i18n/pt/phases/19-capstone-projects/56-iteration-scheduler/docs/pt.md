@@ -61,8 +61,8 @@ flowchart TB
 
 A fórmula UCB usada nesta lição é a clássica UCB1.
 
-```text
-ucb(branch) = mean_reward(branch) + c * sqrt( ln(total_runs) / runs(branch) )
+```math
+\text{ucb}(\text{branch}) = \text{mean\_reward}(\text{branch}) + c \sqrt{ \frac{\ln(\text{total\_runs})}{\text{runs}(\text{branch})} }
 ```
 
 `total_runs`é o número de todos os experimentos realizados em todos os ramos. `c`é o peso da exploração; a lição é por defeito para `sqrt(2)`Um ramo com zero corridas ganha .`+inf`Assim, os ramos não testados são sempre programados primeiro. Um ramos com alta média de recompensa mantém uma pontuação alta até que outros ramos se aproximem; um ramos que funciona muitas vezes sem muita recompensa é eclipsado por alternativas menos executadas.

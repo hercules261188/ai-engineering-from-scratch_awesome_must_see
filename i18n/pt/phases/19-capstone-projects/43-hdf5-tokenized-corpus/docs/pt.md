@@ -16,7 +16,7 @@
 
 ## O problema
 
-Uma formação moderna de modelos de linguagem lê tokens a centenas de milhares de amostras por segundo em dezenas de trabalhadores. O JSONL no disco morre na primeira falha da página de cache frio: o parsementa JSON é lento, os limites do documento não são endereçáveis, e procurar "sampulhar 4.217.884" requer escanear o arquivo. Mesmo o Parquet, que comprime bem, é um apto ruim porque o treinador não quer colunas; ele quer um fluxo de tokens plano com acesso aleatório O(1).
+Uma formação moderna de modelos de linguagem lê tokens a centenas de milhares de amostras por segundo em dezenas de trabalhadores. O JSONL no disco morre na primeira falha da página de cache frio: o parsementa JSON é lento, os limites do documento não são endereçáveis, e procurar "sampulhar 4.217.884" requer escanear o arquivo. Mesmo o Parquet, que comprime bem, é um péssimo ajuste porque o treinador não quer colunas; ele quer um fluxo de token plano com $O(1)$Acesso aleatório.
 
 O HDF5 se encaixa porque oferece um conjunto de dados fragmentado, dimensionável, apenas num número inteiro cujos fragmentos são amigáveis ao cache de páginas no momento da leitura.`tokens[3,200,000 : 3,200,8192]`O custo é um manuseio de arquivo aberto e uma pegada de página de caché de tamanho de pedaço por trabalhador, o que é insignificante em comparação com o custo de decodificação JSONL.
 

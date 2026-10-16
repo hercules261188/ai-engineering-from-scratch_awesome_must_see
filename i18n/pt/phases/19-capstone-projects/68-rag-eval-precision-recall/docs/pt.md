@@ -182,7 +182,7 @@ Lição 69 conecta todo o pipeline (cunker, retriever, reranker, gerador) e exec
 - Buckley, Voorhees, "Evaluating Evaluation Measure Stability", SIGIR 2000 - o artigo canônico sobre métricas de classificação
 - Jarvelin, Kekalainen, "Avaliação acumulada de técnicas de IR com base em ganhos" - o artigo nDCG
 - [Ragas: Automated Evaluation of RAG Pipelines](https://docs.ragas.io)
-- [Anthropic, Evaluating RAG](https://www.anthropic.com/news/evaluating-rag)
+- [Anthropic, Introducing Contextual Retrieval](https://www.anthropic.com/engineering/contextual-retrieval)- pontuação de recuperação com 1 menos recall@20
 - Fase 11 lição 10 - Fundamentos do quadro de avaliação
 - Lições da fase 19 64-67 - componentes avaliados aqui
 - Fase 19 lição 69 - o pipeline de ponta a ponta esta avaliação notas

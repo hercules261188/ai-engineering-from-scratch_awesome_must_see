@@ -90,7 +90,7 @@ cc-atomic-checkpoint
 
 ### Passo 1: captura e restauração do estado de RNG
 
-`capture_rng_state`Retorna um ditado com Python `random.getstate`NumPy's.`np.random.get_state`, e CPU PyTorch e CUDA RNG bytes. `restore_rng_state`O tensor da CPU é um buffer de 8 bytes que o RNG da PyTorch sabe como consumir.
+`capture_rng_state`Retorna um ditado com Python `random.getstate`NumPy's.`np.random.get_state`Cada peça é armazenada como números, tuples e listas simples Python (a matriz de chave de NumPy passa por `tolist()`), para que o carregador no passo 3 possa lê-lo de volta sem descolher objetos arbitrários. `restore_rng_state`O tensor da CPU é um buffer de 8 bytes que o RNG da PyTorch sabe como consumir.
 
 ### Passo 2: Salvo atômico
 
@@ -100,9 +100,11 @@ cc-atomic-checkpoint
 
 `save_checkpoint`O modelo, o optimizador, o cronógrafo, o estado do trem e o RNG são combinados num único dict. `load_checkpoint`inverte e retorna um `TrainState`. O campo de esquema é o gancho de atualização: alterações futuras no formato acidentam a cadeia de versões e o carregador despeça.
 
+`load_checkpoint`chamadas`torch.load(..., weights_only=True)`- A.`.pt`Um arquivo é um pedaço de pimentão, e desmontar um arquivo não confiável com `weights_only=False`O carregador de peso só aceita tensores e recipientes primitivos e rejeita tudo o mais, e é por isso que o passo 1 mantém o estado de RNG em listas simples.`ValueError`em vez de usar `assert`, porque`python -O`As tiras afirmam. Use tocha 2.6 ou mais recente: antes dessa liberação `weights_only=True`A garantia de que esta lição depende de manobras só a partir de 2,6.
+
 ### Passo 4: variante em fragmentos
 
-`save_sharded_checkpoint`rotula as chaves de parâmetro em N fragmentos, escreve cada fragmento com seu próprio salvo atômico, escreve um arquivo meta com otimizador e cronógrafo e estado de trem, e escreve o índice JSON com fragmentos sha256s. `load_sharded_checkpoint`Verifica cada fragmento antes de se fundir.
+`save_sharded_checkpoint`rotula as chaves de parâmetro em N fragmentos, escreve cada fragmento com seu próprio salvo atômico, escreve um arquivo meta com otimizador e cronógrafo e estado de trem, e escreve o índice JSON com fragmentos sha256s. `load_sharded_checkpoint`Verifica cada fragmento antes da fusão e recusa qualquer caminho de fragmento que se resolva fora do diretório de pontos de controlo.
 
 ### Passo 5: Demo de resumados
 
@@ -120,8 +122,9 @@ Os dados de um único arquivo e os dados em fragmentos afirmam a diferença máx
 
 O treinamento de produção empilha o ponto de checagem do navio como parte do treinador. A forma é a mesma: modelo + optimizador + agendador + contadores + RNG, escrito atomicamente, nomeado por passo para que o mais recente seja fácil de encontrar.
 
-Três padrões a aplicar:
+Quatro padrões a aplicar:
 
+- **Load with `weights_only=True`.**Um ponto de verificação retirado de uma unidade compartilhada ou de um download é uma entrada não confiável. O carregador de peso só impede que um arquivo malicioso execute código na máquina que reinicia.
 - **Schema is a string in the payload.**Sem ele não se pode evoluir o formato sem quebrar as velhas corridas.
 - **Sha256 every shard.**Um download silenciosamente truncado é o pior tipo de bug; o carregador falha rápido ou falha tarde.
 - **Keep checkpoint cadence honest.**Salva todos os passos N e cada minuto de relógio, o que for mais curto.
@@ -151,7 +154,7 @@ Três padrões a aplicar:
 ## Mais leitura
 
 - POSIX `rename`Semântica para a atomização afirma que `os.replace`- Depende.
-- Documentação da PyTorch sobre `torch.save`E ...`torch.load`, incluindo `map_location`para restaurações transversais de dispositivos.
+- Documentação da PyTorch sobre `torch.save`E ...`torch.load`, incluindo `map_location`para restaurações transversais de dispositivos e `weights_only`para carregamento de ficheiros não confiáveis.
 - A lição 46 da fase 19 abrange a acumulação de gradientes que a carga útil do ponto de controlo desta lição sobrevive.
 - A fase 19 lição 48 abrange as embalagens distribuídas cujo formato de instrução estatal este esquema abriga.
 - O kernel do Linux `fsync`documentação relativa à garantia de durabilidade por trás da renomeação atómica.

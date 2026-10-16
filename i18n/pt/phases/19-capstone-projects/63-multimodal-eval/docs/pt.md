@@ -49,15 +49,14 @@ Para cada uma (imagem, pergunta, resposta), codifique a imagem, incrusta a pergu
 
 ### BLEU-4
 
-```text
-BLEU-4 = BP * exp(mean(log p1, log p2, log p3, log p4))
+```math
+\text{BLEU-4} = \text{BP} \cdot \exp\big(\text{mean}(\log p_1, \log p_2, \log p_3, \log p_4)\big)
 ```
 
 Onde ?`p_n`é a precisão modificada de n-gram (contação reduzida de n-grams gerados que aparecem em qualquer referência, dividida pelo total de n-grams gerados), e `BP`é a pena de brevidade:
 
-```text
-BP = 1                if generated length > reference length
-   = exp(1 - r/g)     otherwise, where r is reference length and g is generated
+```math
+\text{BP} = \begin{cases} 1 & \text{if generated length} > \text{reference length} \\ \exp(1 - r/g) & \text{otherwise, where } r \text{ is reference length and } g \text{ is generated} \end{cases}
 ```
 
 É necessário suavizar as amostras pequenas, onde algumas`p_n`A implementação usa o "método 1" de Chen e Cherry ( Adicionar 1 ao numerador e denominador para qualquer contagem de zero), que é o padrão mais seguro para regimes de baixa contagem.

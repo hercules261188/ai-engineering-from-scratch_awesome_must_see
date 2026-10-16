@@ -82,7 +82,7 @@ O contador de símbolos é intencionalmente um estúpido .`len(text) // 4`O pont
 
 ## Por que a ordem da cadeia importa
 
-Uma negação é mais barata do que uma autorização.`WhitelistGate`corre em O(1) hash search. `RegexGate`corre em O(patrão * argv). `RecencyGate`lê uma pequena fatia da loja de mensagens. `BudgetGate`O que é que você faz com que o preço suba, para que uma chamada recusada seja cortada antes de fazer o trabalho caro.
+Uma negação é mais barata do que uma autorização.`WhitelistGate`- É um bom momento .$O(1)$- Uma busca de hash.`RegexGate`- É um bom momento .$O(\text{pattern} \cdot \text{argv})$- Não .`RecencyGate`lê uma pequena fatia da loja de mensagens. `BudgetGate`O que é que você faz com que o preço suba, para que uma chamada recusada seja cortada antes de fazer o trabalho caro.
 
 O que é mais importante é que o sistema de controlo de dados seja um sistema de controlo de dados que, em qualquer caso, seja o mais eficaz e eficaz possível, e que seja o mais eficaz.
 

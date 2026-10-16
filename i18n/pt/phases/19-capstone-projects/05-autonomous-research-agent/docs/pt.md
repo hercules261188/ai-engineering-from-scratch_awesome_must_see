@@ -156,4 +156,4 @@ $ ai-scientist run --seed "attention sparsity in sub-1B transformers" --budget 3
 - [LangGraph documentation](https://langchain-ai.github.io/langgraph/) camada de orquestração de referência
 - [Semantic Scholar Graph API](https://api.semanticscholar.org/) Busca de literatura
 - [E2B sandboxes](https://e2b.dev) Isolamento de experiências de referência
-- [NeurIPS reviewer guidelines](https://neurips.cc/Conferences/2026/Reviewer-Guidelines) a rubrica codificada pelo grupo de revisores
+- [NeurIPS reviewer guidelines](https://neurips.cc/Conferences/2026/ReviewerGuidelines) a rubrica codificada pelo grupo de revisores

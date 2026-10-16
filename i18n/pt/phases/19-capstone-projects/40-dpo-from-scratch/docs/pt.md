@@ -27,42 +27,46 @@ O DPO substitui ambas as etapas com uma única perda supervisionada. O modelo de
 
 Comece com o modelo Bradley-Terry.`x`e duas conclusões `y_w`(escolhido) e `y_l`(rejeitado), a probabilidade que o ser humano prefere `y_w`é
 
-```text
-P(y_w > y_l | x) = sigmoid( r(x, y_w) - r(x, y_l) )
+```math
+P(y_w > y_l \mid x) = \sigma\big( r(x, y_w) - r(x, y_l) \big)
 ```
 
 onde`r`É uma função de recompensa latente.`r`O que é que é o que é?`pi`para maximizar `r`com âncora KL:
 
-```text
-max_pi   E_{x, y~pi} [ r(x, y) ] - beta * KL(pi || pi_ref)
+```math
+\max_{\pi} \; \mathbb{E}_{x, y \sim \pi} \big[ r(x, y) \big] - \beta \, \mathrm{KL}(\pi \,\|\, \pi_{\text{ref}})
 ```
 
 A derivação do DPO observa que a política óptima `pi*`O objectivo de esta acção é de forma fechada em termos de`r`- Não .
 
-```text
-pi*(y | x) = (1/Z(x)) * pi_ref(y | x) * exp( r(x, y) / beta )
+```math
+\pi^*(y \mid x) = \frac{1}{Z(x)} \, \pi_{\text{ref}}(y \mid x) \exp\!\left( \frac{r(x, y)}{\beta} \right)
 ```
 
 Reorganizar para `r`- Não .
 
-```text
-r(x, y) = beta * ( log pi*(y | x) - log pi_ref(y | x) ) + beta * log Z(x)
+```math
+r(x, y) = \beta \big( \log \pi^*(y \mid x) - \log \pi_{\text{ref}}(y \mid x) \big) + \beta \log Z(x)
 ```
 
 O `log Z(x)`O termo é o mesmo para ambos `y_w`E ...`y_l`(depende de)`x`Não , não .`y`), por isso, é cancelado quando se calcula a diferença de preferências:
 
-```text
-r(x, y_w) - r(x, y_l) = beta * ( log pi_theta(y_w|x) - log pi_ref(y_w|x)
-                                - log pi_theta(y_l|x) + log pi_ref(y_l|x) )
+```math
+\begin{aligned}
+r(x, y_w) - r(x, y_l) = \beta \big( &\log \pi_\theta(y_w \mid x) - \log \pi_{\text{ref}}(y_w \mid x) \\
+&- \log \pi_\theta(y_l \mid x) + \log \pi_{\text{ref}}(y_l \mid x) \big)
+\end{aligned}
 ```
 
 Substituir no sigmoide Bradley-Terry e tomar probabilidade de registro negativo sobre pares de preferência:
 
-```text
-L_DPO(theta) = - E_{(x, y_w, y_l)} [
-  log sigmoid( beta * ( log pi_theta(y_w|x) - log pi_ref(y_w|x)
-                       - log pi_theta(y_l|x) + log pi_ref(y_l|x) ) )
-]
+```math
+\begin{aligned}
+L_{\text{DPO}}(\theta) = -\mathbb{E}_{(x, y_w, y_l)} \Big[
+  \log \sigma\big( \beta \big( &\log \pi_\theta(y_w \mid x) - \log \pi_{\text{ref}}(y_w \mid x) \\
+  &- \log \pi_\theta(y_l \mid x) + \log \pi_{\text{ref}}(y_l \mid x) \big) \big)
+\Big]
+\end{aligned}
 ```
 
 Esta é a perda. É um sigmoide sobre um único escalar, por exemplo, calculado a partir de quatro log-probabilidades. Não há modelo de recompensa separado. Não há PPO. Não há termo KL na perda; a restrição KL é cozida na derivação de forma fechada.
@@ -87,8 +91,8 @@ flowchart LR
 
 Uma boa verificação de sanidade mental antes de qualquer treino.`log pi_theta(y_w | x)`- Não .
 
-```text
-d L_DPO / d log pi_theta(y_w | x) = - beta * (1 - sigmoid(z))
+```math
+\frac{\partial L_{\text{DPO}}}{\partial \log \pi_\theta(y_w \mid x)} = -\beta \big(1 - \sigma(z)\big)
 ```
 
 onde`z`É o argumento para o sigmoide.`z`O aumento da probabilidade de log da política de conclusão escolhida diminui a perda.`log pi_theta(y_l | x)`O processo de formação é positivo: o aumento da probabilidade de log rejeitado aumenta a perda.
