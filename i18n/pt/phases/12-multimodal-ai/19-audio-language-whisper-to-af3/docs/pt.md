@@ -36,7 +36,7 @@ Cada codificador de áudio começa com a mesma característica: um espectrograma
 2. Transformação Fourier de curto prazo com janelas de 25 ms, salto de 10 ms.
 3. Tomar a magnitude do resultado da FFT.
 4. Aplicar bancos de filtros Mel (normalmente 80 filtros com espaço de registro de 0-8000 Hz) para distorcer a frequência perceptiva.
-5. Compressão de log (log(1 + x)) para o intervalo dinâmico.
+5. Compressão de tronco$(\log(1 + x))$para o alcance dinâmico.
 
 Resultado: uma matriz 2D de forma (T, 80) onde T é o número de quadros de tempo. Para um clip de 30 segundos a frequência de quadros de 100 Hz: (3000, 80).
 

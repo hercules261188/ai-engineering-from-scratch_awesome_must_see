@@ -62,9 +62,9 @@ Implementado como uma máscara triangular de bloco no treinamento e inferência.
 A perda de difusão é padrão: adicione ruído a um parche de imagem, peça ao modelo para prever o ruído (ou o parche limpo, equivalentemente).
 
 Durante a formação:
-1. Para cada parche de imagem x0, amostre um passo temporal aleatório t.
-2. Escolha ruído ε, calcula xt = (1-t) * x0 + t * ε (interpolação linear para a correspondência de fluxo).
-3. O transformador prevê v_theta(xt, t); perda = MSE(v_theta(xt, t), ε - x0).
+1. Para cada parche de imagem $x_0$, amostra de um passo de tempo aleatório $t$- Não .
+2. Resumo de amostra$\epsilon$, computação $x_t = (1-t) \cdot x_0 + t \cdot \epsilon$(interpolação linear para a correspondência de fluxo).
+3. O transformador prevê .$v_\theta(x_t, t)$- O que é ?$\text{loss} = \mathop{\mathrm{MSE}}(v_\theta(x_t, t), \epsilon - x_0)$- Não .
 4. O backprop ao lado de perdas de texto NTP da mesma sequência.
 
 Na inferência, a geração é:

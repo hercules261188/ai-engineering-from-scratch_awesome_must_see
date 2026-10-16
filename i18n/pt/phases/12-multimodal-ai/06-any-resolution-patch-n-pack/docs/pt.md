@@ -63,7 +63,7 @@ Qwen2-VL introduziu a Embedding Multimodal Rotary Positioning. Em vez das posiç
 
 M-RoPE envia resolução dinâmica nativa sem reformulação. Na inferência de você alimentar qualquer imagem HxW, o inseridor de patch produz tokens H/14 x W/14, cada token obtém sua posição (t=0, r=row, c=col), RoPE gira a atenção com as frequências certas, feito. Qwen2.5-VL e Qwen3-VL continuam assim. V2PE do InternVL3 é a mesma ideia com codificação variável por modalidade.
 
-Ao contrário de AnyRes, M-RoPE é O(H x W / P^2) tokens em resolução nativa  sem sobrecarga de azulejos multiplicativos. Ao contrário de NaViT, ele ainda espera uma única imagem por avanço. Batching em resoluções ainda precisa de patch-n'-pack no topo.
+Ao contrário do AnyRes, o M- RoPE é $O(H \times W / P^2)$O software de partilha de dados é um sistema de partilha de dados que permite a transferência de dados para outros dispositivos.
 
 ### NaFlex (SigLIP 2)
 

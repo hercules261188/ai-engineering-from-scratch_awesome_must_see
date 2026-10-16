@@ -71,10 +71,12 @@ A linha de linhagem: até 2025, a arquitetura Qwen-VL tinha se estabilizado.
 
 O RoPE clássico gira uma consulta `q`de dimensão `d`por posição `m`utilizando coordenadas emparelhadas:
 
-```
-q_rot[2i]   = q[2i]   * cos(m * theta_i) - q[2i+1] * sin(m * theta_i)
-q_rot[2i+1] = q[2i]   * sin(m * theta_i) + q[2i+1] * cos(m * theta_i)
-theta_i     = 10000^(-2i/d)
+```math
+\begin{aligned}
+q_{\text{rot}}[2i] &= q[2i] \cos(m \theta_i) - q[2i+1] \sin(m \theta_i) \\
+q_{\text{rot}}[2i+1] &= q[2i] \sin(m \theta_i) + q[2i+1] \cos(m \theta_i) \\
+\theta_i &= 10000^{-2i/d}
+\end{aligned}
 ```
 
 O M-RoPE divide o escuro escondido em três bandas.`d = 96`. Assinar 32 dims para temporário, 32 para altura, 32 para largura. Cada faixa gira por sua própria posição de eixo. Um parche em (t=5, h=10, w=20) obtém rotações `R_t(5)`- Não .`R_h(10)`- Não .`R_w(20)`Aplicada às suas três bandas.

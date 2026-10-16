@@ -36,28 +36,28 @@ Corrigir com o ColPali: pular o OCR, incorporar a imagem da página diretamente.
 
 ColBERT (Khattab & Zaharia, arXiv:2004.12832) é um método de recuperação de texto. Em vez de um vetor por documento, ele produz um vetor por token.
 
-- Os tokens de consulta têm as suas próprias incorporações (vectores N_q).
-- Os tokens de documento recebem embutidos (vectores N_d, normalmente armazenados em cache).
-- Score = soma sobre os tokens de consulta de max sobre os tokens de documento de similaridade cosínea: Σ_i max_j cos(q_i, d_j).
+- Os tokens de consulta têm as suas próprias incorporações ($N_q$(Vetores).
+- Os tokens de documentos recebem embutidos ($N_d$Vectores, normalmente armazenados em cache).
+- Score = soma sobre os tokens de consulta de max sobre os tokens de documento de similaridade cosínica: $\sum_i \max_j \cos(q_i, d_j)$- Não .
 
 Esta é a operação MaxSim. Cada token de consulta "põe" o seu melhor correspondente documento token.
 
-Pros: forte recall, lida com semântica de nível de termo. Cons: N_d vetores por documento, armazenamento caro.
+Pros: forte recall, lida com semântica de nível de termos.$N_d$Vectores por documento, armazenamento caro.
 
 ### ColPali
 
 ColPali (Faysse et al., arXiv:2407.01449) aplica o padrão ColBERT às imagens.
 
-- Cada página é codificada pelo PaliGemma (linguagem ViT +) em embutidos de correio: N_p vetores por página.
-- Cada consulta de usuário (texto) é codificada em embutidos de query-token: vetores N_q.
-- Score = Σ_i max_j cos(q_i, p_j), ou seja, MaxSim sobre query-text-tokens e page-image-patches.
+- Cada página é codificada por PaliGemma (linguagem ViT +) em embalagens de correio: $N_p$Vectores por página.
+- Cada consulta de usuário (texto) é codificada em embutidos de query-token: $N_q$Vectores.
+- Resultado = $\sum_i \max_j \cos(q_i, p_j)$, ou seja, MaxSim sobre query-text-tokens e página-imagem-parches.
 - Retirando as páginas de topo por pontuação total.
 
 No momento da ingestão de documentos: embebebedar cada página com PaliGemma, armazenar todas as incorporações de patch. No momento da consulta: embebedar os tokens de consulta, calcular MaxSim contra todas as incorporações de página armazenadas, retornar páginas top-k.
 
 Pros: end-to-end supera o texto-RAG em 20-40% em documentos visualmente ricos. Cada patch-vector capta o layout e o conteúdo local.
 
-Desvantagens: N_p patches × 4 bytes flutuantes × D-dim vectores por página = armazenamento cresce rapidamente. Mitigado pela quantização PQ / OPQ.
+Cons: $N_p$Parches × 4 bytes flutuantes × $D$- dim vectores por página = armazenamento cresce rapidamente.
 
 ### ColQwen2 e ColSmol
 
@@ -128,7 +128,7 @@ Esta lição produz`outputs/skill-vision-rag-designer.md`. Tendo em conta um pro
 
 1. Um relatório anual de 200 páginas, com 729 parches por página, emblem de 128 dimensões, flutuantes de 4 bytes.
 
-2. MaxSim é Σ_i max_j cos(q_i, p_j). O que esta soma capta que uma semelhança simples não significa?
+2. MaxSim é $\sum_i \max_j \cos(q_i, p_j)$O que é que esta soma capta que uma semelhança simples não significa?
 
 3. O ColPali indexa páginas como conjuntos de correções. Que mudanças se indexarmos no nível da palavra (como o ColBERT faz)?
 
@@ -143,7 +143,7 @@ Esta lição produz`outputs/skill-vision-rag-designer.md`. Tendo em conta um pro
 | Late interaction | "ColBERT-style" | Retrieval using per-token or per-patch embeddings + MaxSim, not a single doc vector |
 | MaxSim | "Max-over-patches" | For each query token, pick the highest-similarity document token; sum across query |
 | Bi-encoder | "Single-vector" | One vector per document; faster but loses granularity |
-| Multi-vector | "Many-vectors-per-doc" | Store N_p vectors per document / page; storage cost grows but recall improves |
+| Multi-vector | "Many-vectors-per-doc" | Store $N_p$ vectors per document / page; storage cost grows but recall improves |
 | Patch embedding | "Page feature" | One vector per image patch from a VLM encoder, cached per page |
 | ViDoRe | "Vision doc bench" | ColPali's benchmark suite for visual document retrieval |
 | PQ quantization | "Product quantization" | Compression that maintains vector similarity while shrinking storage ~8x |

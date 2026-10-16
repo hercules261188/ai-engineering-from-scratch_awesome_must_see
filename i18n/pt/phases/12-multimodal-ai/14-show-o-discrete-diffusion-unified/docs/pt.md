@@ -69,11 +69,11 @@ A capacidade de pintura vem gratuitamente do treinamento de previsão mascarada.
 
 O cronograma de quantos tokens devem ser desmascarados por passo forma a qualidade.
 
-```
-mask_ratio(t) = cos(pi * t / (2 * T))   # t = 0..T
+```math
+\text{mask\_ratio}(t) = \cos\left(\frac{\pi t}{2T}\right) \qquad t = 0, \ldots, T
 ```
 
-No passo 0, todos os tokens são mascarados (ratio 1.0). No passo T, nenhum é mascarado. Cosino concentra massa em proporções de médio alcance onde a previsão é mais informativa.
+No passo 0, todos os tokens são mascarados (ratio 1.0).$T$O cosino concentra a massa em proporções de médio alcance onde a previsão é mais informativa.
 
 ### - O2
 
@@ -117,7 +117,7 @@ Esta lição produz`outputs/skill-unified-gen-model-picker.md`. Tendo em conta u
 
 3. Calendário cosínico vs calendário linear: rastrear o número de tokens desmascarados por passo para T=8. Qual é mais equilibrado?
 
-4. Uma imagem de 512x512 Show-o é de 1024 tokens. Na vocab K = 16384, o modelo emite 1024 * log2(16384) = 14.336 bits (~ 1,75 KiB) de dados.
+4. Uma imagem de 512x512 mostra-o é 1024 tokens.$K=16384$, o modelo emite$1024 \cdot \log_2(16384) = 14{,}336$Bit (~ 1,75 KiB) de dados. Estabilidade de difusão de 512 * 512 * 24 bits = 6.291.456 bits (~ 768 KiB) de pixels brutos. Qual é a relação de compressão e que qualidade compra?
 
 5. Leia LlamaGen (arXiv:2406.06525). Como o modelo de imagem autoregressiva condicional de classe do LlamaGen é diferente da abordagem mascarada do Show-o?
 

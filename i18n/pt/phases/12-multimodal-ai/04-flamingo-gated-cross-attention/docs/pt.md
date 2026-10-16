@@ -30,18 +30,18 @@ Flamingo começa com um LLM congelado Chinchilla 70B. Todos os pesos 70B intacto
 
 ### Re-estampilador de percepção
 
-Para cada imagem no prompt, o ViT produz N patch tokens. O resampler Perceptor tem K latentes fixas aprendíveis (Flamingo usa K=64).
+Para cada imagem no prompt, o ViT produz $N$O re-estamplador do Perceptor tem$K$- a utilização de sistemas de informação e de informação (Flamingo utiliza $K=64$Cada bloco de resampler é constituído por duas sub-passas:
 
-1. Atensão cruzada: os K latentes atendem aos tokens de patches N (Q dos latentes, K/V dos patches).
+1. A atenção cruzada: o $K$As pessoas que estão latentes assistem ao longo do $N$Tokens de patches (Q de patches latentes, K/V de patches).
 2. Auto-atenção + FFN dentro dos latentes.
 
-Após 6 blocos de resampler, a saída é K = 64 tokens visuais de dim 1024, independentemente do número de patches produzidos pela ViT. Uma imagem 224x224 (196 patches) e uma imagem 480x480 (900 patches) ambos saem como 64 tokens de resampler.
+Após 6 blocos de resampler, a saída é $K=64$As imagens de dim 1024 são de 224x224 (196 patches) e de 480x480 (900 patches) e ambos são de 64 resampler.
 
-Para o vídeo, o resampler é aplicado temporalmente: os patches de cada quadro produzem 64 latentes, e uma codificação posicional temporal permite que o modelo distingua t=0 de t=N. O vídeo completo se torna T * 64 tokens visuais.
+Para o vídeo, o resampler é aplicado temporalmente: os patches de cada quadro produzem 64 latentes, e uma codificação posicional temporal permite que o modelo distinja $t=0$de$t=N$O vídeo completo torna-se$T \cdot 64$Tokens visuais.
 
 ### Atensão transversal
 
-Entre cada camada M do ML congelado (Flamingo usa M=4), inserir um novo bloco de atenção cruzada fechado:
+Entre cada um .$M$As camadas do MLL congelado (Flamingo utiliza $M=4$), inserir um novo bloco de atenção cruzada fechado:
 
 ```
 x_after_llm_block = llm_block(x_before)
@@ -148,7 +148,7 @@ Esta lição produz`outputs/skill-gated-bridge-diagnostic.md`. Dada a configura�
 | OBELICS | "Interleaved web corpus" | Open dataset of 141M web pages with images and text in reading order |
 | Chinchilla | "70B frozen base" | Flamingo's frozen text LLM, from DeepMind's Chinchilla paper |
 | Gate schedule | "How alpha moves" | The rate at which the cross-attention gate opens during training |
-| Cross-attn frequency | "Every M layers" | How often a gated cross-attention block is inserted; Flamingo uses M=4 |
+| Cross-attn frequency | "Every M layers" | How often a gated cross-attention block is inserted; Flamingo uses $M=4$ |
 | OpenFlamingo | "Open reproduction" | MosaicML/LAION open checkpoint at 3-9B; architecture-identical to Flamingo |
 
 ## Mais leitura

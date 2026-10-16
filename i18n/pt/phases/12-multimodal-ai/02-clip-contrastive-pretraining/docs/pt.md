@@ -35,10 +35,10 @@ O CLIP tem duas torres:
 
 Ambas as torres normalizam suas saídas para a extensão da unidade.`cos(f(x), g(y)) = f(x)^T g(y)`já que ambas são norma-unidade.
 
-Para um lote de pares N (imagem, legenda), construa a matriz de semelhança `S`de forma`(N, N)`- Não .
+Para um lote de$N$(imagem, legenda) pares, construir a matriz de semelhança `S`de forma`(N, N)`- Não .
 
-```
-S[i, j] = cos(f(x_i), g(y_j)) / tau
+```math
+S[i, j] = \cos(f(x_i), g(y_j)) / \tau
 ```
 
 onde`tau`é uma temperatura aprendida (CLIP inicializa-se em 0,07; aprendida no log-space).
@@ -57,7 +57,7 @@ Esta é a InfoNCE. A softmax em CE obriga cada imagem a corresponder à sua lege
 
 ### Temperatura
 
-`tau`O sistema de controle de temperatura é o sistema de controle de temperatura. o sistema de controle de temperatura é o sistema de controle de temperatura. o sistema de controle de temperatura é o sistema de controle de temperatura. o sistema de controle de temperatura é o sistema de controle de temperatura. o sistema de controle de temperatura é o sistema de controle de temperatura. o sistema de controle de temperatura é o sistema de controle de temperatura. o sistema de controle de temperatura é o sistema de controle de temperatura. o sistema de controle de temperatura é o sistema de controle de temperatura. o sistema de controle de temperatura é o sistema de controle de temperatura. o sistema de controle de temperatura é o sistema de controle de temperatura. o sistema de controle de temperatura é o sistema de controle de temperatura. o sistema de controle de temperatura é o sistema de controle de temperatura. o sistema de controle de temperatura é o sistema de controle de temperatura. o sistema de controle de temperatura é o sistema de controle de temperatura. o sistema de controle de temperatura é o sistema de controle de temperatura. o sistema de controle de temperatura é o sistema de controle de temperatura é o sistema de controle de temperatura. o sistema de controle de temperatura é o sistema de controle de temperatura é o sistema de controle de temperatura é o sistema de controle de temperatura ética ética é o sistema de controle de temperatura ética ética ética ética ética ética ética ética ética ética ética ética ética ética ética ética ética ética ética ética ética ética ética ética ética ética ética ética ética ética ética ética ética ética ética ética ética ética ética ética ética ética ética ética ética ética ética ética ética ética ética ética ética ética ética ética ética ética ética ética ética ética ética ética ética ética ética ética ética ética ética ética ética ética ética ética ética ética ética ética ética ética ética ética ética ética ética ética ética ética ética ética ética ética ética ética ética ética ética ética ética ética ética ética ética ética ética ética ética ética ética ética ética ética ética ética ética ética ética ética é
+`tau`Controla a nitidez da suavidade máxima.$\tau$→ Distribuição acentuada, efeito de mineração duro negativo.$\tau$→ suave, todas as amostras contribuem.$\log(1/\tau)$O SigLIP 2 corrige o inicial.$\tau$e usa um viés aprendido em vez disso.
 
 ### Por que a sigmoide se balança melhor (SigLIP)
 
@@ -65,8 +65,8 @@ Softmax precisa de toda a matriz de semelhança em sincronia. No treinamento dis
 
 SigLIP substitui softmax por sigmoide por elemento: para cada par `(i, j)`, a perda é uma classificação binária de "estes são o par de correspondência?"
 
-```
-L = -1/N sum over (i, j) [ y_ij log sigmoid(S[i,j]) + (1-y_ij) log sigmoid(-S[i,j]) ]
+```math
+L = -\frac{1}{N} \sum_{(i, j)} \Big[ y_{ij} \log \mathop{\mathrm{sigmoid}}(S[i,j]) + (1-y_{ij}) \log \mathop{\mathrm{sigmoid}}(-S[i,j]) \Big]
 ```
 
 `y_ij = 1`se`i == j`Cada GPU calcula seu bloco local e somas. SigLIP 2 escala para lotes 32k-512k a baixo custo onde CLIP precisaria de proporcionalmente mais comunicação.
@@ -132,7 +132,7 @@ Esta lição produz`outputs/skill-clip-zero-shot.md`. Tendo em conta um conjunto
 
 3. Construir um classificador de tiros zero para gatos versus cães. Tente dois modelos rápidos: `a photo of a {class}`E ...`a picture of a {class}`- Medir a precisão em 100 imagens de teste.
 
-4. Calcule o custo de comunicação de softmax InfoNCE vs sigmoid em pares para uma corrida de 512 GPU no lote 32k. Que escalas como O(N), que como O(N^2)? Cite Secção SigLIP 4.
+4. Calcule o custo de comunicação de softmax InfoNCE vs sigmoid em pares para uma corrida de 512 GPU em lote 32k.$O(N)$, que como $O(N^2)$Cite a secção 4 do Siglip.
 
 5. Leia o artigo sobre as leis de escalagem do OpenCLIP (arXiv:2212.07143, Cherti et al.). Reproduzir a sua conclusão para a escalagem de dados a partir dos números: em tamanho fixo do modelo, qual é a relação log-linear entre a precisão de imagem de imagem de imagem de imagem de imagem zero e o tamanho dos dados de treinamento?
 
