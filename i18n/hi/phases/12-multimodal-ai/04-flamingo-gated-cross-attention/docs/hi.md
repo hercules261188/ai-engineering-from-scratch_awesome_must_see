@@ -30,18 +30,18 @@ Flamingo ने दूसरे प्रश्न का उत्तर दि
 
 ### रिसेप्टर रिसेम्पलर
 
-प्रॉम्प्ट में प्रत्येक छवि के लिए, ViT N पैच टोकन उत्पन्न करता है। पर्सीवर रीसैम्पलर में K फिक्स्ड लर्नेबल लैंट हैं (फ्लैमिंगो K=64 का उपयोग करता है) । प्रत्येक रीसैम्पलर ब्लॉक दो उप-चरणों से बना हैः
+प्रत्येक छवि के लिए, ViT उत्पन्न करता है $N$प्रतिबिंबित करनेवाला resampler है$K$फिक्स्ड लर्नेबल लटेंट्स (फ्लैमिंगो उपयोग करता है $K=64$) प्रत्येक रिसेम्प्लर ब्लॉक दो उप-चरणों से मिलकर बनता हैः
 
-1. क्रॉस-अटेंशनः K लटेंट्स N पैच टोकन पर मौजूद होते हैं (Q लटेंट्स से, K/V पैच से) ।
+1. क्रॉस-अटेंशनः $K$$N$पैच टोकन (लाटेंट से क्यू, पैच से के/वी) ।
 2. आत्म-विचार + लटेंट्स के भीतर एफएफएन।
 
-6 resampler ब्लॉक के बाद, आउटपुट K=64 dim 1024 के दृश्य टोकन है, भले ही ViT ने कितने पैच बनाए हों। एक 224x224 छवि (196 पैच) और एक 480x480 छवि (900 पैच) दोनों 64 resampler टोकन के रूप में बाहर निकलते हैं।
+6 resampler ब्लॉक के बाद, आउटपुट है $K=64$विटी द्वारा निर्मित कितने पैच के बावजूद dim 1024 के दृश्य टोकन। एक 224x224 छवि (196 पैच) और एक 480x480 छवि (900 पैच) दोनों 64 resampler टोकन के रूप में बाहर निकलते हैं।
 
-वीडियो के लिए, रीसैम्पलर को समय के साथ लागू किया जाता हैः प्रत्येक फ्रेम के पैच 64 लटेंट्स का उत्पादन करते हैं, और एक समय स्थिति एन्कोडिंग मॉडल को t=0 से t=N को अलग करने की अनुमति देता है। पूरा वीडियो T * 64 दृश्य टोकन बन जाता है।
+वीडियो के लिए, resampler समय पर लागू किया जाता हैः प्रत्येक फ्रेम के पैच 64 लटेंट्स का उत्पादन करते हैं, और एक समय स्थिति एन्कोडिंग मॉडल को अलग करने की अनुमति देता है $t=0$से$t=N$. पूरा वीडियो बन जाता है $T \cdot 64$दृश्य टोकन।
 
 ### ग्लिटेड क्रॉस-अटेंशन
 
-जमे हुए LLM की प्रत्येक M परत के बीच (Flamingo M=4 का उपयोग करता है), एक नया गैलेटेड क्रॉस-अटेंशन ब्लॉक डालेंः
+हर एक के बीच$M$जमे हुए LLM की परतें (फ्लैमिंगो उपयोग करता है $M=4$), एक नया गैलेटेड क्रॉस-अटेंशन ब्लॉक डालेंः
 
 ```
 x_after_llm_block = llm_block(x_before)
@@ -148,7 +148,7 @@ cross-attention-fusion
 | OBELICS | "Interleaved web corpus" | Open dataset of 141M web pages with images and text in reading order |
 | Chinchilla | "70B frozen base" | Flamingo's frozen text LLM, from DeepMind's Chinchilla paper |
 | Gate schedule | "How alpha moves" | The rate at which the cross-attention gate opens during training |
-| Cross-attn frequency | "Every M layers" | How often a gated cross-attention block is inserted; Flamingo uses M=4 |
+| Cross-attn frequency | "Every M layers" | How often a gated cross-attention block is inserted; Flamingo uses $M=4$ |
 | OpenFlamingo | "Open reproduction" | MosaicML/LAION open checkpoint at 3-9B; architecture-identical to Flamingo |
 
 ## आगे पढ़ना
