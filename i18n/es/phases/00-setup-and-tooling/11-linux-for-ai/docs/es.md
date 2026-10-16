@@ -305,3 +305,15 @@ s0-process-fork
 3. Comience una sesión de tmux, ejecuta`sleep 300`dentro de ella, desprenderse, hacer una lista de sesiones y volver a unir.
 4. Usar`df -h`para comprobar el espacio disponible en el disco, luego utilizar `du -sh ~/.cache/*`para encontrar lo que está ocupando espacio en su caché.
 5. Transfiere un archivo de su máquina local a una remota usando `scp`, entonces haga la misma transferencia con `rsync`y comparar la experiencia.
+
+### Indicios
+
+**Exercise 1.**Usar`cd ~`¿ Qué ?`mkdir`, y `cd`en la nueva carpeta, luego ejecutar `touch`con tres nombres de archivos.`ls -la`de salida, compruebe que los tres archivos muestran un tamaño de 0 y su nombre de usuario como propietario.
+
+**Exercise 2.**Instalar con `sudo apt install -y htop`, comienza, y pulsa`F6`(o haga clic en el nombre de la columna) para ordenar por `MEM%`El proceso en la parte superior de la lista utiliza la mayor cantidad de memoria.
+
+**Exercise 3.**Usar`tmux new -s train`de la lección, correr `sleep 300`, y se desprenden de `Ctrl+B`Entonces ...`d`- Corra .`tmux ls`para ver la sesión, entonces `tmux attach -t train`El `sleep`Aún debe correr.
+
+**Exercise 4.**- ¿ Qué ?`df -h`y leer el `Avail`columna para el sistema de archivos que contiene su carpeta de inicio.`du -sh ~/.cache/* | sort -h`Así que la carpeta más grande está en la última línea.
+
+**Exercise 5.**Copie un archivo con `scp file.txt user@host:~/`, luego corre .`rsync -avP file.txt user@host:~/`Para el mismo archivo.`rsync`mando una segunda vez: no envía casi nada, porque el archivo en el lado remoto no cambió.

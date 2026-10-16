@@ -49,7 +49,7 @@ xcode-select --install
 brew install git curl wget
 
 # Ubuntu/Debian
-sudo apt update && sudo apt install -y build-essential git curl wget
+sudo apt update && sudo apt install -y build-essential git curl wget unzip
 
 # Windows (use WSL2)
 wsl --install -d Ubuntu-24.04
@@ -95,6 +95,8 @@ npm install -g pnpm
 
 node -e "console.log('Node', process.version)"
 ```
+
+El instalador de fnm comprueba si `unzip`Primero y sale con `Not installing fnm due to missing dependencies.`Cuando está ausente: en Linux desempaca un archivo zip, en macOS lo instala a través de Homebrew.`unzip`; Ubuntu, Debian y WSL2 lo obtienen desde la línea apt del Paso 1 (`sudo apt install -y unzip`si saltaste ese paso).
 
 **macOS / Apple Silicon (M1/M2/M3/M4):**Si el instalador deja de instalar `Error: Cannot install under Rosetta 2 in ARM default prefix (/opt/homebrew)`, su terminal está funcionando bajo Rosetta 2 (`arch`huellas`i386`Instálle el arm64 forzador de fnm, cablealo en su caparazón, y luego vuelva a ejecutar los comandos anteriores desde `fnm install 22`¿Qué es esto ?
 
@@ -218,3 +220,11 @@ Esta lección produce un guión de verificación que cualquiera puede ejecutar p
 1. Ejecutar el guión de verificación y corregir cualquier falla
 2. Crear un entorno virtual Python para este curso e instalar PyTorch
 3. Escriba un "hola mundo" en los cuatro idiomas y ejecuta cada uno
+
+### Indicios
+
+**Exercise 1.**- ¿ Qué ?`python3 phases/00-setup-and-tooling/01-dev-environment/code/verify.py --route beginner`La verificación se hace cuando se ejecuta el guión de nuevo y cada sonda requerida pasa.
+
+**Exercise 2.**Hacer el entorno con `uv venv`en la raíz del repositorio, activarlo, luego instalar PyTorch con el comando del paso 6 que coincide con su hardware.`python -c "import torch; print(torch.__version__)"`dentro del entorno; un número de versión significa que la instalación se ha realizado.
+
+**Exercise 3.**Utilice los cuatro tiempos de ejecución de la pila en The Concept: Python, TypeScript en Node.js, Rust y Julia. Escriba un pequeño archivo para cada uno y ejecuta con `python3`¿ Qué ?`npx tsx`(Node.js no puede ejecutar un `.ts`archivo directamente), `cargo run`o `rustc`, y `julia`Cada ejecución debe imprimir su mensaje y salir con el código 0.

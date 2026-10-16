@@ -146,6 +146,14 @@ Esta lección produce:
 2. Prueba la versión HTTP en bruto y compara el formato de respuesta con la versión del SDK
 3. Usar intencionalmente una clave de API incorrecta y leer el mensaje de error
 
+### Indicios
+
+**Exercise 1.**Crear una llave en la consola Antropic, ponerla en `ANTHROPIC_API_KEY`Como se muestra en la lección, y correr `code/first_api_call.py`La llamada funciona cuando el guión imprime la respuesta modelo y no hay error.
+
+**Exercise 2.**Ambas funciones en `code/first_api_call.py`Imprima sólo el texto y el token cuenta.`print(response)`En el`call_with_sdk()`y `print(result)`En el`call_raw_http()`, luego ejecuta el guión para ver ambas respuestas completas. Compara los nombres de campos: el JSON crudo tiene el mismo `content`¿ Qué ?`usage`, y `stop_reason`los campos que el SDK convierte en atributos de objeto.
+
+**Exercise 3.**Se ha establecido`ANTHROPIC_API_KEY`En el resultado de una falla de autenticación se devuelve un estado 401
+
 ## Términos clave
 
 | Term | What people say | What it actually means |

@@ -395,3 +395,15 @@ python phases/00-setup-and-tooling/12-debugging-and-profiling/code/debug_tools.p
 3. Usar`tracemalloc`para encontrar qué línea en su línea de carga de datos asigna la mayor cantidad de memoria.
 4. Configure TensorBoard para una simple carrera de entrenamiento y identifique si el modelo está sobreajustado.
 5. Usar`breakpoint()`En el interior de un bucle de entrenamiento.
+
+### Indicios
+
+**Exercise 1.**- ¿ Qué ?`python3 phases/00-setup-and-tooling/12-debugging-and-profiling/code/debug_tools.py`y leer la salida de cada función demo. Luego cambiar el modelo en `demo_nan_detection`Así que su salida se divide por cero, y correr de nuevo;`detect_nan`debe imprimir una advertencia de NaN con el número de paso.
+
+**Exercise 2.**Ejecutar el bucle bajo `python -m cProfile -s cumtime your_script.py`, o envuelvélo en `cProfile.Profile()`. Lea las filas superiores de la`cumtime`columna; la función con el mayor tiempo que es su propio código es la más lenta.
+
+**Exercise 3.**Llamé`tracemalloc.start()`antes del código de carga de datos y `tracemalloc.take_snapshot()`después de él, como en `demo_memory_tracking`Impresión .`snapshot.statistics("lineno")[:5]`La primera línea muestra el número de expediente y la línea con la mayor asignación.
+
+**Exercise 4.**Registrar la pérdida de formación y la pérdida de validación a un `SummaryWriter`en cada época, luego corren.`tensorboard --logdir=runs`Si la pérdida de entrenamiento continúa disminuyendo mientras la pérdida de validación aumenta, el modelo supera.
+
+**Exercise 5.**Ponga`breakpoint()`dentro del bucle después `loss.backward()`y ejecutar el guión.`(Pdb)`Pronto, imprimir`x.shape`¿ Qué ?`x.device`, y `next(model.parameters()).grad`, entonces escribe`c`para continuar al siguiente paso.

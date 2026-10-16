@@ -81,11 +81,11 @@ Lo que cada uno hace:
 | Black Formatter | Auto-format on save, consistent style |
 | Ruff | Fast linting, catches common mistakes |
 
-El archivo`code/.vscode/extensions.json`Cuando abras la carpeta de proyectos, VS Code te pedirá que las instales.
+El archivo`code/vscode/extensions.json`En esta lección se encuentra la lista completa de recomendaciones.`.vscode/extensions.json`en su carpeta de proyecto, y VS Code le pide que los instale cuando abra esa carpeta.
 
 ### Paso 3: Configurar las configuraciones
 
-Copie las configuraciones de `code/.vscode/settings.json`En esta lección, o aplicarlos manualmente a través de `Settings > Open Settings (JSON)`¿ Qué ?
+Copie las configuraciones de `code/vscode/settings.json`En esta lección, o aplicarlos manualmente a través de `Settings > Open Settings (JSON)`¿ Qué ?
 
 Las configuraciones clave para el trabajo de IA:
 
@@ -200,6 +200,16 @@ Con esta configuración, tu flujo de trabajo diario se ve como:
 2. Copie el `settings.json`de esta lección en su VS código de configuración
 3. Abre un archivo Python y comprueba que Pylance muestra sugerencias de tipo y formatos negros en guardar
 4. Si tiene acceso a una máquina remota, configure Remote SSH y abra una carpeta en ella
+
+### Indicios
+
+**Exercise 1.**Instale las extensiones de la tabla en el paso 2, o instale cada ID en `code/vscode/extensions.json`con`code --install-extension <id>`- Corra .`code --list-extensions`y comprobar cada identificación con el archivo.
+
+**Exercise 2.**Configuración abierta > Configuración abierta (JSON) y copia el contenido de `code/vscode/settings.json`Si el archivo ya tiene configuraciones, fusionar las teclas y mantener válido JSON; VS Code marca un archivo roto con una línea roja.
+
+**Exercise 3.**Escriba una función con una anotación de tipo, luego haga un desplazamiento en una llamada a ella; Pylance muestra el tipo inferido. Agregue espacios adicionales en una línea y guarde el archivo; negro debe reformatar la línea en guardar.
+
+**Exercise 4.**Añadir el servidor a `~/.ssh/config`Primero y confirme que`ssh <host>`Después utiliza el comando SSH remoto para conectarse; la barra de estado muestra el nombre del host cuando el código VS se ejecuta en la máquina remota.
 
 ## Términos clave
 

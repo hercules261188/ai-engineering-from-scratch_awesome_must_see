@@ -61,7 +61,7 @@ Esto descarga el conjunto de datos de revisión de películas de IMDB. Después 
 Algunos conjuntos de datos son demasiado grandes para caber en el disco.
 
 ```python
-dataset = load_dataset("wikimedia/wikipedia", "20220301.en", split="train", streaming=True)
+dataset = load_dataset("wikimedia/wikipedia", "20231101.en", split="train", streaming=True)
 
 for i, example in enumerate(dataset):
     print(example["title"])
@@ -244,6 +244,16 @@ Esta lección produce:
 2. Envía el `c4`conjunto de datos y contar cuántos ejemplos puede procesar en 10 segundos
 3. Convierta un conjunto de datos a Parquet y compara el tamaño del archivo a CSV
 4. Crear una división de tren/val/prueba 70/15/15 con semilla fija y verificar los tamaños
+
+### Indicios
+
+**Exercise 1.**Llamé`load_and_inspect("glue", "mrpc")`de la`code/data_utils.py`, o`load_dataset("glue", "mrpc")`directamente, y imprimir`ds["train"][:5]`Cada ejemplo debe tener`sentence1`¿ Qué ?`sentence2`, y `label`los campos.
+
+**Exercise 2.**Cargar el conjunto de datos con `streaming=True`, como`stream_dataset`hace, y leer ejemplos en un bucle que se detiene cuando `time.time()`Imprima el recuento; ejecuta dos veces, porque la primera ejecución incluye la inicialización de la conexión.
+
+**Exercise 3.**Guardar el mismo conjunto de datos con `to_csv`y `to_parquet`, como`convert_format`hace, luego comparar los tamaños con `ls -lh`o `os.path.getsize`Cargue el archivo del Parquet con`load_from_parquet`y comprobar que el recuento de filas no ha cambiado.
+
+**Exercise 4.**Usar`train_test_split`dos veces con un fijo `seed`Las tres longitudes deben sumar hasta la longitud original, y una segunda carrera con la misma semilla debe dar la misma primera fila en cada división.
 
 ## Términos clave
 

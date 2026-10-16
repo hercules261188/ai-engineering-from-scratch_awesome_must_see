@@ -106,6 +106,14 @@ No necesitas rebases, selección de cerezas o submodules para este curso.
 2. Crear un `.gitignore`que excluye los archivos de los puntos de control modelo (`.pt`¿ Qué ?`.pth`¿ Qué ?`.safetensors`(en inglés)
 3. Mira el historial de los compromisos de este repo con `git log --oneline`y leer cómo se agregaron las lecciones
 
+### Indicios
+
+**Exercise 1.**Haga clic en Fork en GitHub, entonces `git clone`La dirección de tu propio tenedor.`git push -u origin my-progress`, abrir su tenedor en GitHub y confirmar que la lista de ramas se muestra `my-progress`con su expediente.
+
+**Exercise 2.**Añadir un patrón por extensión, como `*.pt`, a un `.gitignore`Crea un archivo vacío con cada extensión y ejecuta `git status`ninguno de ellos podrá aparecer en la lista de archivos no rastreados.
+
+**Exercise 3.**- ¿ Qué ?`git log --oneline`Y luego ...`git log --oneline -- phases/00-setup-and-tooling`Solo mostrar los compromisos que cambiaron esta fase.`git show --stat <hash>`para ver qué archivos de lecciones añadió.
+
 ## Términos clave
 
 | Term | What people say | What it actually means |
