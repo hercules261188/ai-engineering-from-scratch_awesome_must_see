@@ -1,6 +1,6 @@
 # المُحَرِّفات الذاتية والمتغيرات المُحَرِّفات الذاتية (VAE)
 
-> يقوم جهاز تشفير السيارات العادي بتقليص ثم بإعادة تشكيل. يتذكر. لا يولد. أضف خدعة واحدة  اضغط على الرمز ليظهر غوسيان  وستحصل على عينة. هذه الخدعة الوحيدة، إعادة تشكيل`z = μ + σ·ε`ولهذا السبب كل نموذج تصوير متساوٍ للتنشر الخفيف والتي تستخدمها في عام 2026 لديه VAE عند المدخل.
+> يقوم جهاز تشفير السيارات العادي بتقليص ثم بإعادة تشكيل. يتذكر. لا يولد. أضف خدعة واحدة  اضغط على الرمز ليظهر غوسيان  وستحصل على عينة. هذه الخدعة الوحيدة، إعادة تشكيل$z = \mu + \sigma \cdot \epsilon$ولهذا السبب كل نموذج تصوير متساوٍ للتنشر الخفيف والتي تستخدمها في عام 2026 لديه VAE عند المدخل.
 
 **Type:** Build
 **Languages:** Python
@@ -11,9 +11,9 @@
 
 قم بتضغط رقم من 784 بكسل على رمز 16 رقماً ثم قم بإعادة تشكيل. سوف يقوم جهاز تشكيل السيارات العادي بإعادة تشكيل MSE ولكن مساحة الرمز هي فوضى ضخمة. اختر نقطة عشوائية في مساحة الرمز، فكرها، وستحصل على ضجيج. ليس لديها عينة. إنه نموذج ضغط مرتدياً.
 
-ما تريد حقا هو: (أ) مساحة الرمز هو صافي، وتوزيع سلس يمكنك أن تأخذ عينات من  قل غوسيانية متوازية `N(0, I)`(ب) تشفير أي عينة ينتج رقم معقول، و (ج) تشفير و تشفير لا يزال الضغط جيد. ثلاثة أهداف، بنية واحدة، خسارة واحدة.
+ما تريد حقا هو: (أ) مساحة الرمز هو صافي، وتوزيع سلس يمكنك أن تأخذ عينات من  قل غوسيانية متوازية $\mathcal{N}(0, I)$(ب) تشفير أي عينة ينتج رقم معقول، و (ج) تشفير و تشفير لا يزال الضغط جيد. ثلاثة أهداف، بنية واحدة، خسارة واحدة.
 
-حل VAE 2013 Kingma هذا عن طريق تدريب المُرمّد لإخراج * توزيع*`q(z|x) = N(μ(x), σ(x)²)`، سحب هذا التوزيع نحو البار`N(0, I)`عبر عقوبة KL، ثم أخذ العينات`z`من`q(z|x)`قبل فك الشفرة. في وقت الاستنتاج، إسقط المشفر، العينة `z ~ N(0, I)`عقوبة ك.إل هي ما يفرض على مساحة الرمز أن تكون مهيكلة.
+حل VAE 2013 Kingma هذا عن طريق تدريب المُرمّد لإخراج * توزيع*$q(z \mid x) = \mathcal{N}(\mu(x), \sigma(x)^2)$، سحب هذا التوزيع نحو البار$\mathcal{N}(0, I)$عبر عقوبة KL، ثم أخذ العينات$z$من$q(z \mid x)$قبل فك الشفرة. في وقت الاستنتاج، إسقط المشفر، العينة $z \sim \mathcal{N}(0, I)$عقوبة ك.إل هي ما يفرض على مساحة الرمز أن تكون مهيكلة.
 
 في عام 2026 نادرًا ما تقوم VAEs بالشحن بمفردها  تم تفوقها من خلال التوزيع لجودة الصورة الخام  ولكنها هي مرموزة الاختيار لكل نموذج للتوزيع الخاطئ (SD 1/2/XL/3, Flux, AudioCraft). تعلم VAE وتتعلم الطبقة الأولى غير المرئية لكل خط أنابيب الصورة التي تستخدمها.
 
@@ -21,22 +21,24 @@
 
 ![Autoencoder vs VAE: the reparameterization trick](../assets/vae.svg)
 
-**Autoencoder.** `z = encoder(x)`،`x̂ = decoder(z)`، الخسارة = `||x - x̂||²`-المكان غير المهيكلي
+**Autoencoder.** $z = \text{encoder}(x)$،$\hat{x} = \text{decoder}(z)$، الخسارة = $\lVert x - \hat{x} \rVert^2$-المكان غير المهيكلي
 
-**VAE encoder.**النتائج اثنين من المتجهات: `μ(x)`و`log σ²(x)`هذه تحدد`q(z|x) = N(μ, diag(σ²))`. . .
+**VAE encoder.**النتائج اثنين من المتجهات: $\mu(x)$و$\log \sigma^2(x)$هذه تحدد$q(z \mid x) = \mathcal{N}(\mu, \mathop{\mathrm{diag}}(\sigma^2))$. . .
 
-**Reparameterization trick.**أخذ العينات من`q(z|x)`لا يمكن التمييز. أعيد كتابة العينة على النحو`z = μ + σ·ε`أين`ε ~ N(0, I)`الآن`z`هو وظيفة تحديدية من`(μ, σ)`بالإضافة إلى ضجيج غير معين  تدفق التدرج `μ`و`σ`. . .
+**Reparameterization trick.**أخذ العينات من$q(z \mid x)$لا يمكن التمييز. أعيد كتابة العينة على النحو$z = \mu + \sigma \cdot \epsilon$أين$\epsilon \sim \mathcal{N}(0, I)$الآن$z$هو وظيفة تحديدية من$(\mu, \sigma)$بالإضافة إلى ضجيج غير معين  تدفق التدرج `μ`و$\sigma$. . .
 
 **Loss.**دليل (الربط السفلي) ، شروطتان:
 
-```
-loss = reconstruction + β · KL[q(z|x) || N(0, I)]
-     = ||x - x̂||²  + β · Σ_i ( σ_i² + μ_i² - log σ_i² - 1 ) / 2
+```math
+\begin{aligned}
+\text{loss} &= \text{reconstruction} + \beta \cdot \mathrm{KL}[q(z \mid x) \,\Vert\, \mathcal{N}(0, I)] \\
+&= \lVert x - \hat{x} \rVert^2 + \beta \cdot \sum_i \frac{\sigma_i^2 + \mu_i^2 - \log \sigma_i^2 - 1}{2}
+\end{aligned}
 ```
 
-إعادة الإعمار تدفع`x̂`نحو`x`. كيل يدفع`q(z|x)`في حين أن النقاط التجارية في البيانات الأولى من النقاط التجارية، تُصبح النقاط التجارية أكثر وضوحاً. تتداول بينها. β (<1) = عينات أكثر وضوحاً، فضاء رمز أقل غوسياً. β (>1) = مساحة رمز أكثر نظافة، عينات أكثر وضوحاً. β-VAE (Higgins 2017) جعلت هذه الزر مشهورة وبدأت بحوث التفريق.
+إعادة الإعمار تدفع$\hat{x}$نحو$x$. كيل يدفع$q(z \mid x)$إلى القسّة، يتبادلون$\beta$($<1$) = عينات أكثر وضوحاً، مساحة الرمز أقل غوسيانية.$\beta$($>1$) = مساحة رمز أكثر نظافة، عينات أكثر وضوحا. β-VAE (Higgins 2017) جعل هذه الزر مشهورة وبدأت دراسة التفريق.
 
-**Sampling.**عند الاستنتاج: رسم`z ~ N(0, I)`لا يوجد عينة متكررة مثل التوزيع
+**Sampling.**عند الاستنتاج: رسم$z \sim \mathcal{N}(0, I)$لا يوجد عينة متكررة مثل التوزيع
 
 ```figure
 vae-latent-grid
@@ -56,7 +58,7 @@ def encode(x, enc):
     return mu, log_sigma2
 ```
 
-`log σ²`بدلاً من`σ`لذلك إنتاج الشبكة غير مقيد (المضافة اللينة من σ هي فخ  تتوقف تراجعات في σ ≈ 0).
+$\log \sigma^2$بدلاً من$\sigma$لذلك إنتاج الشبكة غير مقيد (رمل زائد من σ هو فخ  تراجيع يموت في $\sigma \approx 0$)
 
 ### الخطوة الثانية: إعادة تشكيل وتحديد المعدلات
 
@@ -94,9 +96,9 @@ def sample(dec, z_dim, rng):
 
 ## الفخاخ
 
-- **Posterior collapse.**محركات قيادة المدة`q(z|x) → N(0, I)`بفعالية كبيرة`z`لا يحمل أي معلومات عن`x`. إصلاح: التخلّص من β (بدء β=0، الرّامب إلى 1), التخلّص من البط أو تخطي KL في الأبعاد غير النشطة.
+- **Posterior collapse.**محركات قيادة المدة$q(z \mid x) \to \mathcal{N}(0, I)$بفعالية كبيرة$z$لا يحمل أي معلومات عن$x$. إصلاح: التخفيض β (بدء $\beta=0$، الرمب إلى 1), بثات حرّة، أو تخطي KL على الأبعاد غير النشطة.
 - **Blurry samples.**احتمالات القيادة الجاوسي تشير إلى إعادة بناء MSE ، وهو مطلوب بايز ل L2 (المتوسط)  متوسط مجموعة من الأرقام المثيرة للصدق هو رقم غامض. تحديد: القيادة المفصلة (VQ-VAE ، NVAE) ، أو استخدام VAE فقط كمُخترع وتوزيع كومة على الاختفاء (هذا ما يفعله Diffusion Stable).
-- **β too large, too early.**انظر الانهيار الخلفي، ابدأ عند β≈0.01 ومرحلة
+- **β too large, too early.**انظر الانهيار اللاحق.$\beta \approx 0.01$و الرامب
 - **Latent dim too small.**يعمل 16-D لـ MNIST ، 256-D لـ ImageNet 2562 ، 2048-D لـ ImageNet 10242. VAE من Stable Diffusion يضغط على 512 × 512 × 3 → 64 × 64 × 4 (32x عامل النموذج إلى أسفل في المساحة الفضائية ، 32x في القنوات).
 
 ## استخدمها
@@ -118,32 +120,32 @@ def sample(dec, z_dim, rng):
 
 إنقاذ`outputs/skill-vae-trainer.md`. . .
 
-المهارات: ملف مجموعة البيانات + هدف التخفيض المتخفيض + استخدامها في المستقبل (إعادة الإعمار أو أخذ العينات أو مدخل التوزيع المتخفيض) والخروج: اختيار الهندسة المعمارية (بطنة / β / VQ / RVQ) ، جدول β ، التخفيض المتخفيض ، احتمالات المقاطع (غوسيان مقابل فئة) ، وخطة التقييم (تعريف MSE ، KL لكل ضوء ، مسافة Fréchet بين `q(z|x)`و`N(0, I)`)
+المهارات: ملف مجموعة البيانات + هدف التخفيض المتخفيض + استخدامها في المستقبل (إعادة الإعمار أو أخذ العينات أو مدخل التوزيع المتخفيض) والخروج: اختيار الهندسة المعمارية (بطنة / β / VQ / RVQ) ، جدول β ، التخفيض المتخفيض ، احتمالات المقاطع (غوسيان مقابل فئة) ، وخطة التقييم (تعريف MSE ، KL لكل ضوء ، مسافة Fréchet بين $q(z \mid x)$و$\mathcal{N}(0, I))$. . .
 
 ## التمارين
 
-1. **Easy.**التغيير`β`في`code/main.py`إلى`0.01`،`0.1`،`1.0`،`5.0`.سجل إعادة الإعمار النهائية MSE و KL. أي β هو أفضل Pareto لبياناتك الاصطناعية؟
+1. **Easy.**التغيير$\beta$في`code/main.py`إلى`0.01`،`0.1`،`1.0`،`5.0`. سجل الإعادة الإعمار النهائية MSE و KL .$\beta$هل (باريتو) أفضل للبيانات الاصطناعية الخاصة بك؟
 2. **Medium.**استبدل احتمالات القيادة الجاوسي بعقيدة بيرنولي (خسارة الانتروبيا المتقاطعة). مقارنة نوعية العينة على نسخة ثنائية من نفس البيانات الاصطناعية.
-3. **Hard.**التمديد`code/main.py`إلى VQ-VAE صغير: استبدال المستمر `z`مع البحث عن أقرب جيران في كتاب كود من إدخالات K=32. مقارنة إعادة الإعمار MSE وتقرير عدد إدخالات كودك استخدام (انهيار كودكوب حقيقي).
+3. **Hard.**التمديد`code/main.py`إلى VQ-VAE صغير: استبدال المستمر $z$مع البحث عن أقرب جيران في كتاب كود من إدخالات K=32. مقارنة إعادة الإعمار MSE وتقرير عدد إدخالات كودك استخدام (انهيار كودكوب حقيقي).
 
 ## الشروط الرئيسية
 
 | Term | What people say | What it actually means |
 |------|-----------------|-----------------------|
-| Autoencoder | Encode-decode network | `x → z → x̂`, learn MSE. Not generative. |
+| Autoencoder | Encode-decode network | $x \to z \to \hat{x}$, learn MSE. Not generative. |
 | VAE | AE with a sampler | Encoder outputs a distribution, KL penalty shapes code space. |
-| ELBO | Evidence lower bound | `log p(x) ≥ recon - KL[q(z\|x) \|\| p(z)]`; tight when `q = p(z\|x)`. |
-| Reparameterization | `z = μ + σ·ε` | Rewrites stochastic node as deterministic + pure noise. Enables backprop through sampling. |
-| Prior | `p(z)` | Target distribution for the latent, typically `N(0, I)`. |
-| Posterior collapse | "KL term wins" | Encoder ignores `x`, outputs the prior; decoder must hallucinate. |
-| β-VAE | Tunable KL weight | `loss = recon + β·KL`. Higher β = more disentangled but blurrier. |
-| VQ-VAE | Discrete latent | Replace continuous `z` with nearest codebook vector; enables transformer modelling. |
+| ELBO | Evidence lower bound | $\log p(x) \ge \text{recon} - \mathrm{KL}[q(z \mid x) \Vert p(z)]$; tight when $q = p(z \mid x)$. |
+| Reparameterization | $z = \mu + \sigma \cdot \epsilon$ | Rewrites stochastic node as deterministic + pure noise. Enables backprop through sampling. |
+| Prior | $p(z)$ | Target distribution for the latent, typically $\mathcal{N}(0, I)$. |
+| Posterior collapse | "KL term wins" | Encoder ignores $x$, outputs the prior; decoder must hallucinate. |
+| β-VAE | Tunable KL weight | $\text{loss} = \text{recon} + \beta \cdot \mathrm{KL}$. Higher $\beta$ = more disentangled but blurrier. |
+| VQ-VAE | Discrete latent | Replace continuous $z$ with nearest codebook vector; enables transformer modelling. |
 
 ## ملاحظة الإنتاج: الممر المكثف هو أكثر مسار حرارة في خادم التوزيع
 
 في خط أنابيب Diffusion / Flux / SD3 المستقر يتم استدعاء VAE مرتين لكل طلب  مرة واحدة لترميز (إذا كنت تفعل img2img / inpainting) ومرة واحدة لترميز. في 10242 مرسلة المقرر غالبا ما تكون أكبر ذروة تنشيط ذاكرة واحدة في خط الأنابيب كله لأنه يظهر`128×128×16`الاختفاءات العودة إلى`1024×1024×3`اثنين من العواقب العملية:
 
-- **Slice or tile the decode.** `diffusers`يُعرض`pipe.vae.enable_slicing()`و`pipe.vae.enable_tiling()`تيلينغ تجارية صغيرة القطع الأثرية للخياطة`O(tile²)`الذاكرة بدلاً من`O(H·W)`. ضروري لـ 10242+ على أجهزة البيانات المعالجة البيانية المستهلكة
+- **Slice or tile the decode.** `diffusers`يُعرض`pipe.vae.enable_slicing()`و`pipe.vae.enable_tiling()`تيلينغ تجارية صغيرة القطع الأثرية للخياطة$O(\text{tile}^2)$الذاكرة بدلاً من$O(H \cdot W)$. ضروري لـ 10242+ على أجهزة البيانات المعالجة البيانية المستهلكة
 - **bf16 decoder, fp32 numerics for the final resize.**تم إطلاق SD 1.x VAE في fp32 و * ينتج بصمت NaNs * عند إلقاء إلى fp16 في 10242 + سفن SDXL `madebyollin/sdxl-vae-fp16-fix` تفضل دائماً الإصدار المثبت fp16-fix أو استخدم bf16.
 
 ## المزيد من القراءة

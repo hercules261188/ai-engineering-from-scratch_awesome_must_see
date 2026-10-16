@@ -21,7 +21,7 @@
 
 ### VQ-VAE Tokenizer متعدد النطاقات
 
-VAR تحتاج إلى**multi-scale discrete tokenizer**. لصور x ، فإنه ينتج سلسلة من الشبكات الرمزية عالية الدقة تدريجيا:
+VAR تحتاج إلى**multi-scale discrete tokenizer**- للوحة$x$، فإنه ينتج سلسلة من الشبكات الرمزية عالية الدقة تدريجيا:
 
 ```
 x -> encoder -> latent f
@@ -31,13 +31,13 @@ f -> tokenize at 2x2: token grid z_2 of shape (2, 2)
 f -> tokenize at (H/p)x(W/p): token grid z_K of shape (H/p, W/p)
 ```
 
-كل z_k يستخدم نفس كتاب التعليمات (القياس النموذجي 4096-16384). لا يتم تعيين الرموز على كل مقياس مستقل  يتم تدريبها بحيث يتم إعادة جمع بقايا كل مقياس f:
+كل واحد$z_k$يستخدم نفس كتاب التعليمات (القياس النموذجي 4096-16384). لا يتم تعيين الرموز على كل مقياس مستقل  يتم تدريبها بحيث يتم إعادة جمع البقايا في كل مقياس$f$:
 
-```
-f ≈ upsample(embed(z_1), target_size) + ... + upsample(embed(z_K), target_size)
+```math
+f \approx \mathop{\mathrm{upsample}}(\mathop{\mathrm{embed}}(z_1), \text{target\_size}) + \cdots + \mathop{\mathrm{upsample}}(\mathop{\mathrm{embed}}(z_K), \text{target\_size})
 ```
 
-هذا هو**residual VQ**تغير. مقياس k يلتقط ما المقياس 1..k-1 غاب. القيادة تأخذ مجموع جميع التوابل في المقياس ويجعل الصورة.
+هذا هو**residual VQ**النوعية$k$يلتقط ما الميزانات$1 \ldots k-1$يُخذ المُفكّر مجموع جميع التوابع في المقياس ويُنتج الصورة.
 
 يتم تدريب رمز VQ متعدد النطاق مرة واحدة (مثل VQGAN) ثم تجميد. يتم القيام بكل العمل التوليدي من قبل النموذج السريع على الطرف العلوي.
 
@@ -50,9 +50,9 @@ f ≈ upsample(embed(z_1), target_size) + ... + upsample(embed(z_K), target_size
 [START, z_1 tokens, z_2 tokens, z_3 tokens, ..., z_K tokens]
 ```
 
-تضمنت إدخالات الموقف كل من مؤشر المقياس وموقع المكان داخل المقياس. الاهتمام سببي في الترتيب من النطاق: الوهم على النطاق k، الموقف (i، j) يمكن أن يشاهد جميع الرموز على النطاق 1..k والرموز على النطاق k نفسها التي تأتي في وقت سابق في أي ترتيب داخل النطاق يستخدم (VAR يستخدم الاهتمام الموقف الثابت دون وجود سببية داخل النطاق  يتم التنبؤ بالجميع من المواقع داخل النطاق بالتوازي).
+تُرمز إضافة المواقع كل من مؤشر المقياس والموقع الفضائي داخل المقياس. الاهتمام هو سبب في ترتيب المقياس: رمز على المقياس $k$، الموقف$(i, j)$يمكن أن يشاهد جميع الرموز على مقياس $1 \ldots k$و إلى الرموز على نطاق واسع$k$نفسها التي تأتي في وقت سابق في أي ترتيب داخل المقياس يستخدم (VAR يستخدم الاهتمام الموقف الثابت دون أي سبب داخل المقياس  يتم التنبؤ بالجميع من المواقع داخل المقياس بالتوازي).
 
-خسارة التدريب: في كل مقياس k، توقع الرموز z_k مع جميع الرموز القياسية السابقة. فقدان الانتروبية المتقاطعة على رموز VQ المفصلة. نفس الهيكل مثل GPT باستثناء "الترتيب" هو الآن بنية مقياسية.
+فقدان التدريب: في كل مقياس $k$، توقع الرموز$z_k$في حالة عدم وجود أي إشارة، فإن هذه الإشارة لا تتضمن أي إشارة أخرى.
 
 ### الجيل
 
@@ -66,7 +66,7 @@ decode: f = sum of embed-and-upsample scales 1..K
 image = VAE_decoder(f)
 ```
 
-بالنسبة إلى مقياس K = 10 ، فإن التوليد هو 10 مرسلات محولة للأمام. كل مرسلة تنتج مقياسها بأكمله بالتوازي  لا يوجد تراجع للطاقة في داخل مقياس. بالنسبة إلى صورة 256x256 ، هذا حوالي 10 مرسلات مقابل 28-50 من DiT.
+لأجل$K = 10$المقياسات، إنتاج هو 10 مرسلات تحويل إلى الأمام. كل مرسلة تنتج مقياسها بأكمله بالتوازي  لا يوجد تراجع للطاقة في داخل مقياس. بالنسبة إلى صورة 256x256 هذا حوالي 10 مرسلات مقابل 28-50 من DiT.
 
 ### لماذا يربح النطاق التالي على النطاق التالي
 
@@ -127,7 +127,7 @@ gx-var-next-scale
 | Multi-scale VQ tokenizer | "Residual VQ" | VQ-VAE that produces K token grids of increasing resolution, with decoder summing all scales |
 | Scale k | "Pyramid level k" | One of K resolution levels, from 1x1 at k=1 up to (H/p)x(W/p) at k=K |
 | Parallel-within-scale | "One forward per scale" | All tokens at scale k are predicted in one transformer pass, not autoregressively |
-| Causal-across-scales | "Scale-ordered attention" | Token at scale k can attend to all of scales 1..k but not scales k+1..K |
+| Causal-across-scales | "Scale-ordered attention" | Token at scale $k$ can attend to all of scales $1 \ldots k$ but not scales $k+1 \ldots K$ |
 | Residual VQ | "Additive tokenization" | Each scale's tokens encode the residual left by lower scales; decoder sums all scale embeddings |
 | VAR scaling law | "Image GPT scaling" | FID follows a predictable power law in compute, like language models' perplexity |
 | HART | "Hybrid VAR + text" | Text-conditional VAR variant combining MaskGIT-style iterative decoding with VAR's scale structure |

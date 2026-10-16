@@ -21,9 +21,9 @@
 
 **Two stages, separately trained.**
 
-1. **Stage 1 — VAE.**مُشفّر`E(x) → z`، المُفكّر`D(z) → x`. الضغط المستهدف: 8 × العينة التنازلية في كل محور فضائي + ضبط القنوات بحيث يكون إجمالي حجم الخفاء ~ 1/16 من عدد البيكسل. الخسارة = إعادة التكوين (L1 + LPIPS الإدراكية) + KL (وزن صغير لذلك `z`لا يجبرنا على فعل ذلك لأننا لا نحتاج إلى عينة دقيقة من`z`غالباً ما يتم تدريبها مع خسارة معادلة لذا الصور المفكورة حادة
+1. **Stage 1 — VAE.**مُشفّر$E(x) \to z$، المُفكّر$D(z) \to x$. الضغط المستهدف: 8 × العينة التنازلية في كل محور فضائي + ضبط القنوات بحيث يكون إجمالي حجم الخفاء ~ 1/16 من عدد البيكسل. الخسارة = إعادة التكوين (L1 + LPIPS الإدراكية) + KL (وزن صغير لذلك $z$لا يجبرنا على فعل ذلك لأننا لا نحتاج إلى عينة دقيقة من$z$غالباً ما يتم تدريبها مع خسارة معادلة لذا الصور المفكورة حادة
 
-2. **Stage 2 — diffusion on `z`.**العلاج`z = E(x_real)`تدريب شبكة U-Net (أو DiT) للتخفيض`z_t`عند الاستنتاج: عينة`z_0`عبر التوزيع، ثم `x = D(z_0)`. . .
+2. **Stage 2 — diffusion on $z$.**العلاج$z = E(x_{\text{real}})$تدريب شبكة U-Net (أو DiT) للتخفيض$z_t$عند الاستنتاج: عينة$z_0$عبر التوزيع، ثم $x = D(z_0)$. . .
 
 **Text conditioning.**اثنين من المكونات الإضافية. مرموز نص تجميد (CLIP-L ل SD 1.x، CLIP-L + OpenCLIP-G ل SD 2 / XL، T5-XXL ل SD3 و Flux). حقن الانتباه المتقاطع: كل بلوك U-Net يأخذ `[Q = image features, K = V = text tokens]`ويقومون بتخليطها بينها. الوهم هي الطريقة الوحيدة التي يؤثر فيها النص على الصورة.
 
@@ -58,21 +58,21 @@ def encode(x):    return x * 0.5          # toy "compression" to smaller scale
 def decode(z):    return z * 2.0
 ```
 
-الـ VAE الحقيقي لديه أوزان تدريبية.`z`دون اهتمام بالمساحة البيانية الأصلية.
+الـ VAE الحقيقي لديه أوزان تدريبية.$z$دون اهتمام بالمساحة البيانية الأصلية.
 
 ### الخطوة الثانية: التوزيع في`z`-المجال
 
-نفس DDPM كما دراسة 06. البيانات التي يراها الشبكة هي `z = E(x)`بعد أخذ العينات`z_0`، فك رموزها مع `D(z_0)`. . .
+نفس DDPM كما دراسة 06. البيانات التي يراها الشبكة هي $z = E(x)$بعد أخذ العينات$z_0$، فك رموزها مع $D(z_0)$. . .
 
 ### الخطوة الثالثة: إرشادات خالية من التصنيف
 
-أثناء التدريب، اترك علامة الفصل 10% من الوقت (استبدلها بـ رمز صفر). عند الاستنتاج، احسب كلتا `ε_cond`و`ε_uncond`، ثم:
+أثناء التدريب، اترك علامة الفصل 10% من الوقت (استبدلها بـ رمز صفر). عند الاستنتاج، احسب كلتا $\epsilon_{\text{cond}}$و$\epsilon_{\text{uncond}}$، ثم:
 
 ```python
 eps_cfg = (1 + w) * eps_cond - w * eps_uncond
 ```
 
-`w = 0`= لا توجد إرشادات (تنوع كامل) ،`w = 3`= الاختلاف، `w = 7+`= ملئ / حاد جدا.
+$w = 0$= لا توجد إرشادات (تنوع كامل) ،$w = 3$= الاختلاف، $w = 7+$= ملئ / حاد جدا.
 
 ### الخطوة الرابعة: تكييف النص (المفهوم وليس الرمز)
 
@@ -90,7 +90,7 @@ h = h + CrossAttention(Q=h, K=text_embed, V=text_embed)
 - **Text encoder silently wrong.**SD3 تحتاج T5-XXL مع >=128 رموز، والعودة إلى CLIP فقط خسارة. تحقق دائما `use_t5=True`أو كراتيرات الصدقة السريعة
 - **Mixing latent spaces.**SDXL، SD3، وFlux تستخدم جميعها VAEs مختلفة. لا تعمل LoRA المدربة على SDXL latences على SD3.
 - **CFG too high.** `w > 10`يُنتج صورًا مشبعة وشمّة ويتكيف مع الإشارة على حساب التنوع.`w = 3-7`. . .
-- **Negative prompts leaking.**إن طلب سلبي فارغ يصبح رمز الصفر ، إن طلب سلبي ملء يصبح الـ`ε_uncond`هذه ليست نفسها، بعض خطوط الأنابيب تُخلف صامتًا إلى الصفر.
+- **Negative prompts leaking.**إن طلب سلبي فارغ يصبح رمز الصفر ، إن طلب سلبي ملء يصبح الـ$\epsilon_{\text{uncond}}$هذه ليست نفسها، بعض خطوط الأنابيب تُخلف صامتًا إلى الصفر.
 
 ## استخدمها
 
@@ -111,7 +111,7 @@ h = h + CrossAttention(Q=h, K=text_embed, V=text_embed)
 
 ## التمارين
 
-1. **Easy.**أركض`code/main.py`مع توجيه`w ∈ {0, 1, 3, 7, 15}`سجل العينة المتوسطة حسب الفئة`w`هل الوسائل الطبقة تختلف عن الوسائل الحقيقية للبيانات؟
+1. **Easy.**أركض`code/main.py`مع توجيه$w \in \lbrace 0, 1, 3, 7, 15 \rbrace$سجل العينة المتوسطة حسب الفئة$w$هل الوسائل الطبقة تختلف عن الوسائل الحقيقية للبيانات؟
 2. **Medium.**تغيير مُشفّر اللعبة الخطيّة إلى زوج مُشفّر/مُفَكّر من TANH-MLP مع فقدان إعادة الإعمار. إعادة تدريب التوزيع على المُختلفات الجديدة. هل تتغير جودة العينة؟
 3. **Hard.**قم بتعيين استنتاج انتشار مستقيم حقيقي مع المنتشرين: الحمل `sdxl-base`, إضافة 30 خطوة (أولير) مع (سي.إف.جي) =7 , توقيتها`sdxl-turbo`مع 4 خطوات و CFG = 0 نفس الموضوع، نوعية مختلفة  وصف ما تغير ولماذا.
 
@@ -121,8 +121,8 @@ h = h + CrossAttention(Q=h, K=text_embed, V=text_embed)
 |------|-----------------|-----------------------|
 | First stage | "The VAE" | Trained encoder/decoder pair; compresses 512² to 64². |
 | Second stage | "The U-Net" | Diffusion model over the latent space. |
-| CFG | "Guidance scale" | `(1+w)·ε_cond - w·ε_uncond`; tunes conditioning strength. |
-| Null token | "Empty prompt embed" | Unconditional embed used for `ε_uncond`. |
+| CFG | "Guidance scale" | $(1+w) \cdot \epsilon_{\text{cond}} - w \cdot \epsilon_{\text{uncond}}$; tunes conditioning strength. |
+| Null token | "Empty prompt embed" | Unconditional embed used for $\epsilon_{\text{uncond}}$. |
 | Cross-attention | "How text gets in" | Each U-Net block attends to text tokens as K and V. |
 | DiT | "Diffusion Transformer" | Replace U-Net with a transformer over latent patches; scales better. |
 | MMDiT | "Multi-modal DiT" | SD3's architecture: text and image streams with joint attention. |

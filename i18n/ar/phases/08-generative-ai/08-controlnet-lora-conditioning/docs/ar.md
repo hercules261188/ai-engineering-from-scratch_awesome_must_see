@@ -39,15 +39,15 @@ features += weight_a * control_a(depth) + weight_b * control_b(pose)
 
 ### (هو وزملاء)
 
-لأي طبقة خطية`W ∈ R^{d×d}`في النموذج، التجمد `W`و أضف ديلتا منخفضة الدرجة:
+لأي طبقة خطية$W \in \mathbb{R}^{d \times d}$في النموذج، التجمد $W$و أضف ديلتا منخفضة الدرجة:
 
+```math
+W' = W + \Delta W, \quad \Delta W = B A, \quad A \in \mathbb{R}^{r \times d}, \quad B \in \mathbb{R}^{d \times r}
 ```
-W' = W + ΔW,  ΔW = B @ A,  A ∈ R^{r×d},  B ∈ R^{d×r}
-```
 
-مع`r << d`. الدرجة 4-16 هي معيار للاهتمام، الدرجة 64-128 لخطوات دقيقة ثقيلة. عدد المعلمات الجديدة: `2 · d · r`بدلاً من`d²`. لـ (SDXL) الاهتمام مع`d=640`،`r=16`: 20k في كل جهاز تعديل بدلا من 410k  تخفيض 20x. عبر النموذج بأكمله: لورا عادة ما تكون 20-200MB مقابل 5GB القاعدة.
+مع$r \ll d$. الدرجة 4-16 هي معيار للاهتمام، الدرجة 64-128 لخطوات دقيقة ثقيلة. عدد المعلمات الجديدة: $2 \cdot d \cdot r$بدلاً من$d^2$. لـ (SDXL) الاهتمام مع$d=640$،$r=16$: 20k في كل جهاز تعديل بدلا من 410k  تخفيض 20x. عبر النموذج بأكمله: لورا عادة ما تكون 20-200MB مقابل 5GB القاعدة.
 
-عند الاستنتاج يمكنك أن تقوم بتحقيق حجم المعدل`W' = W + α · B @ A`. .`α = 0.5-1.5`المواد المتعددة لـ LoRA تتراكم بشكل إضافي (مع الحذارة المعتادة بأنها تتفاعل بطريقة غير خطية).
+عند الاستنتاج يمكنك أن تقوم بتحقيق حجم المعدل$W' = W + \alpha \cdot B A$. .$\alpha = 0.5\text{-}1.5$المواد المتعددة لـ LoRA تتراكم بشكل إضافي (مع الحذارة المعتادة بأنها تتفاعل بطريقة غير خطية).
 
 ### المعدل المعدل (Ye et al., 2023)
 
@@ -74,7 +74,7 @@ v4-controlnet-zero
 
 `code/main.py`يحاكي الآليين في 1-D:
 
-1. **LoRA.**طبقة خطية مسبقة`W`أجمدوه، تدربوا منخفضين`B @ A`مثل هذا`W + BA`يطابق طبقة خطية هدف.`r = 1`يكفي لتعلم تصحيح الدرجة 1 بشكل مثالي
+1. **LoRA.**طبقة خطية مسبقة$W$أجمدوه، تدربوا منخفضين$BA$مثل هذا$W + BA$يطابق طبقة خطية هدف.$r = 1$يكفي لتعلم تصحيح الدرجة 1 بشكل مثالي
 
 2. **ControlNet-lite.**"قاعدة مقفزة" و "شبكة جانبية" تقرأ إشارة إضافية. يتم إغلاق خروج الشبكة الجانبية بواسطة مقياس قابل للتعلم تم تشريعه إلى الصفر (إصدارنا من الصفر-conv). قم بتشغيل ومراقبة البوابة.
 
@@ -98,11 +98,11 @@ h = base(x) + gated
 
 ## الفخاخ
 
-- **Over-scaling LoRAs.** `α = 2`أو`α = 3`هو عملية "جعلها أقوى" شائعة التي تنتج نتائج أكثر من اللازمة.`α ≤ 1.5`. . .
+- **Over-scaling LoRAs.** $\alpha = 2$أو$\alpha = 3$هو عملية "جعلها أقوى" شائعة التي تنتج نتائج أكثر من اللازمة.$\alpha \le 1.5$. . .
 - **ControlNet weight conflict.**استخدام شبكة التحكم في الوزن 1.0 و شبكة التحكم في الغموض عند الوزن 1.0 عادة ما يتجاوز. مجموع الوزن ≈ 1.0 هو افتراض آمن.
 - **LoRA on the wrong base.**SDXL LoRA لا تعمل بصمت على SD 1.5 لأن أبعاد الاهتمام لا تتطابق.
 - **Textual Inversion drift.**الوهم المدربة في نقطة تفتيش تتحرك بشكل سيء في نقطة أخرى.
-- **LoRA weight-merging and storage.**يمكنك تطبيق لورا في أساس النموذج الوزن لتحديد أسرع (لا إضافة وقت التشغيل) ، ولكنك تفقد القدرة على التوسع`α`في وقت تشغيل، احتفظ بالنسختين
+- **LoRA weight-merging and storage.**يمكنك تطبيق لورا في أساس النموذج الوزن لتحديد أسرع (لا إضافة وقت التشغيل) ، ولكنك تفقد القدرة على التوسع$\alpha$في وقت تشغيل، احتفظ بالنسختين
 
 ## استخدمها
 
@@ -125,7 +125,7 @@ h = base(x) + gated
 
 1. **Easy.**في`code/main.py`، تغير رتبة لورا`r`من 1 إلى 4 في أي صف يطابق لورا بالضبط دلتا الهدف من صف 2؟
 2. **Medium.**قم بتدريب اثنين من الـ LoRA على اثنين من تحويلات الهدف قم بتحميلها معاً وظهر تفاعلهم الإضافي متى ينتهي التفاعل الخطية؟
-3. **Hard.**استخدام الموزعات لتحديد: SDXL-base + Canny-ControlNet (وزن 0.8) + LoRA (α 0.8) + IP-Adapter (وزن 0.6).
+3. **Hard.**استخدام الموزعات للاستئمار: SDXL- قاعدة + Canny-ControlNet (وزن 0.8) + طراز LoRA ($\alpha$0.8) + IP-Adapter (وزن 0.6) قياس FID مقابل التزام فورية التداول مع اختلاف وزن الكتل.
 
 ## الشروط الرئيسية
 
@@ -133,9 +133,9 @@ h = base(x) + gated
 |------|-----------------|-----------------------|
 | ControlNet | "Spatial control" | Cloned encoder + zero-conv skips; reads a conditioning image. |
 | Zero convolution | "Starts as identity" | 1×1 conv initialized to zero; ControlNet starts as no-op. |
-| LoRA | "Low-rank adapter" | `W + B @ A`, `r << d`; 100x fewer params than a full fine-tune. |
+| LoRA | "Low-rank adapter" | $W + BA$, $r \ll d$; 100x fewer params than a full fine-tune. |
 | rank r | "The knob" | LoRA compression; 4-16 typical, 64+ for heavy personalization. |
-| α | "LoRA strength" | Runtime scaling of the LoRA delta. |
+| $\alpha$ | "LoRA strength" | Runtime scaling of the LoRA delta. |
 | IP-Adapter | "Reference image" | Small image-conditioning adapter via CLIP-image tokens. |
 | DreamBooth | "Full subject fine-tune" | Train the full model on ~30 images of a subject. |
 | Textual Inversion | "New token" | Learn a new word embedding only; legacy, mostly replaced. |
@@ -144,7 +144,7 @@ h = base(x) + gated
 
 يقدم SaaS الحقيقي من النص إلى الصورة مئات من LoRAs وعشرات ControlNets على نفس نقطة التفتيش القاعدة. تبدو مشكلة الخدمة على غرار LLM متعددة التأجير (غطي أدب الإنتاج حالة LLM تحت الإجراءات المستمرة والLoRAX / S-LoRA):
 
-- **Hot-swap LoRAs, do not merge.**الاندماج`W' = W + α·B·A`في القاعدة يعطي ~ 3-5% أسرع في خطوة استنتاج ولكن يتجمد `α`و القاعدة. الحفاظ على لورا ساخنة في VRAM كديلتا رتبة- r؛ الموزعات تعرض `pipe.load_lora_weights()`+ `pipe.set_adapters([...], adapter_weights=[...])`لتنشيط الطلب. تكلفة التبادل هي `2 · d · r · num_layers`الوزن  على مقياس MB، في الجزء الثاني.
+- **Hot-swap LoRAs, do not merge.**الاندماج$W' = W + \alpha \cdot B \cdot A$في القاعدة يعطي ~ 3-5% أسرع في خطوة استنتاج ولكن يتجمد $\alpha$و القاعدة. الحفاظ على لورا ساخنة في VRAM كديلتا رتبة- r؛ الموزعات تعرض `pipe.load_lora_weights()`+ `pipe.set_adapters([...], adapter_weights=[...])`لتنشيط الطلب. تكلفة التبادل هي `2 · d · r · num_layers`الوزن  على مقياس MB، في الجزء الثاني.
 - **ControlNet as a second attention lane.**يعمل المُخترف المُستنسخ بالتوازي مع القاعدة. اثنين من ControlNets وزنها 1.0 كل واحد = مرتين إضافيتين إلى الأمام في كل خطوة، وليس مراراً واحداً مدمجاً. تنخفض مساحة المجموعة من الحجم التربيعي. ميزانية ~ 1.5 × تكلفة الخطوة لكل ControlNet نشطة.
 - **Quantized LoRAs too.**إذا قمت بتقييم القاعدة (انظر الدروس 07, التدفق على 8GB) ، فإن دلتا LoRA تقييمها أيضاً بشكل نظيف إلى 8 بتات أو 4 بتات. تسمح لك التحميل على شكل QLoRA بتجميع 5-10 LoRA على رأس قاعدة 4 بتات من التدفق دون تفجير الذاكرة.
 

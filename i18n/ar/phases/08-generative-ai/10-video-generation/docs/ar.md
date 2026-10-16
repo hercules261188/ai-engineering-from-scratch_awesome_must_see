@@ -152,7 +152,7 @@ def pos_embed(t, dim):
 - [Brooks et al. (2024). Video generation models as world simulators](https://openai.com/index/video-generation-models-as-world-simulators/)تقرير فني سورا
 - [Yang et al. (2024). CogVideoX: Text-to-Video Diffusion Models with An Expert Transformer](https://arxiv.org/abs/2408.06072) CogVideoX
 - [Kong et al. (2024). HunyuanVideo: A Systematic Framework for Large Video Generative Models](https://arxiv.org/abs/2412.03603) HunyuanVideo.
-- [Genmo (2024). Mochi-1 Technical Report](https://www.genmo.ai/blog/mochi)(موتشي-1)
+- [Genmo (2024). Mochi 1 preview model card](https://huggingface.co/genmo/mochi-1-preview)(موتشي-1)
 - [Alibaba (2025). WAN 2.2](https://wanvideo.io/) فتح SOTA في منتصف عام 2025.
 - [Ho, Salimans, Gritsenko et al. (2022). Video Diffusion Models](https://arxiv.org/abs/2204.03458)ورقة التوزيع الفيديو
 - [Blattmann et al. (2023). Align your Latents (Video LDM)](https://arxiv.org/abs/2304.08818) أسلاف انتشار الفيديو المستقر.

@@ -9,9 +9,9 @@
 
 ## المشكلة
 
-النموذج التوليد يقوم بعمل واحد: عينات التدريب المقدمة من بعض التوزيع غير المعروف `p_data(x)`أظهر عينات جديدة تبدو وكأنها جاءت من نفس التوزيع. وجوه، جمل، ملفات MIDI، هيكل البروتين
+النموذج التوليد يقوم بعمل واحد: عينات التدريب المقدمة من بعض التوزيع غير المعروف $p_{\text{data}}(x)$أظهر عينات جديدة تبدو وكأنها جاءت من نفس التوزيع. وجوه، جمل، ملفات MIDI، هيكل البروتين
 
-المشكلة هي أن`p_data`يعيش في مساحة ذات ملايين الأبعاد (صورة RGB 512 × 512 تبلغ 786K أبعاد) ، والعينة تجلس على مجموعة رقيقة داخل هذا المساحة، ويمكنك الحصول على فقط ربما 10M من الأمثلة. القوة الوحشية الكثافة هي بلا أمل. كل نموذج توليدي هو تنازل الذي يتداول مشكلة واحدة صعبة مقابل واحدة أقل صعوبة قليلا.
+المشكلة هي أن$p_{\text{data}}$يعيش في مساحة ذات ملايين الأبعاد (صورة RGB 512 × 512 تبلغ 786K أبعاد) ، والعينة تجلس على مجموعة رقيقة داخل هذا المساحة، ويمكنك الحصول على فقط ربما 10M من الأمثلة. القوة الوحشية الكثافة هي بلا أمل. كل نموذج توليدي هو تنازل الذي يتداول مشكلة واحدة صعبة مقابل واحدة أقل صعوبة قليلا.
 
 خمسة عائلات نجوت خلال الاثني عشر عاماً الماضية، معرفة ما الذي يفعله كل عائلة يخبرك لماذا تفوز في بعض المهام وتنهار في الآخرين.
 
@@ -19,13 +19,13 @@
 
 ![Five families of generative models — taxonomy by what they model](../assets/taxonomy.svg)
 
-**1. Explicit density, tractable.**اكتب`log p(x)`النماذج السلبية (PixelCNN، WaveNet، GPT) تصنع`p(x) = ∏ p(x_i | x_<i)`. إنشاء التدفقات الطبيعية (الواقعية النفطية، الوهاء) `p(x)`كتحويل قابل للتحويل من قاعدة بسيطة. المزايا: احتمالات دقيقة، فقدان التدريب النظيف. المشكلة: استنتاج السريع هو تسلسل (بطيء لسلسلة طويلة) ، وتدفقات تحتاج إلى معمارات قابل للتحويل (مقيّدة من الناحية الهندسة المعمارية).
+**1. Explicit density, tractable.**اكتب$\log p(x)$النماذج السلبية (PixelCNN، WaveNet، GPT) تصنع$p(x) = \prod_i p(x_i \mid x_{<i})$. إنشاء التدفقات الطبيعية (الواقعية النفطية، الوهاء) $p(x)$كتحويل قابل للتحويل من قاعدة بسيطة. المزايا: احتمالات دقيقة، فقدان التدريب النظيف. المشكلة: استنتاج السريع هو تسلسل (بطيء لسلسلة طويلة) ، وتدفقات تحتاج إلى معمارات قابل للتحويل (مقيّدة من الناحية الهندسة المعمارية).
 
-**2. Explicit density, approximate.**مقيد`log p(x)`من أسفل (ELBO) وتحسين الحدود. تستخدم VAEs (Kingma 2013) مرموزة-مقررة مع خلفية متغيرة. تدرب نماذج التفريق (DDPM ، Ho 2020) على مفسر يفضل بشكل ضمني ELBO الموزن. التفريق هو العمود الفقري المهيمن الصورة والفيديو وال3D في عام 2026.
+**2. Explicit density, approximate.**مقيد$\log p(x)$من أسفل (ELBO) وتحسين الحدود. تستخدم VAEs (Kingma 2013) مرموزة-مقررة مع خلفية متغيرة. تدرب نماذج التفريق (DDPM ، Ho 2020) على مفسر يفضل بشكل ضمني ELBO الموزن. التفريق هو العمود الفقري المهيمن الصورة والفيديو وال3D في عام 2026.
 
-**3. Implicit density.**تخطي الكثافة بالكامل ، تعلم المولد`G(z)`التي تنتج عينات و تمييز`D(x)`النظام النمطي النمطي النمطي النمطي النمطي النمطي النمطي النمطي النمطي النمطي النمطي النمطي النمطي النمطي النمطي النمطي النمطي النمطي النمطي النمطي النمطي النمطي النمطي النمطي النمطي النمطي النمطي النمطي النمطي النمطي النمطي النمطي النمطي النمطي النمطي النمطي النمطي النمطي النمطي النمطي النمطي النمطي النمطي النمطي النمطي النمطي النمطي النمطي النمطي النمطي النمطي النمطي النمطي النمطي النمطي النمطي النمطي النمطي النمطي النمطي النمطي النمطي النمطي النمطي النمطي النمطي النمطي النمطي النمطي النمطي النمطي النمطي النمطي النمطي النمطي النمطي النمطي النمطي النمطي النمطي النمطي النمطي النمطي النمطي النمطي النمطي النمطي النمطي النمطي النمطي النمطي النمطي النمطي النمطي النمطي النمطي النمطي النمطي النمطي النمطي النمطي النمطي النمطي النمطي النمطي النمطي النمطي النمطي النمطي النمطي النمطي النمطي النمطي النمطي النمطي النمطي النمطي النمطي النمطي النمطي النمطي النمطي النمطي النمطي النمطي النمطي النمطي
+**3. Implicit density.**تخطي الكثافة بالكامل ، تعلم المولد$G(z)$التي تنتج عينات و تمييز$D(x)$النظام النمطي النمطي النمطي النمطي النمطي النمطي النمطي النمطي النمطي النمطي النمطي النمطي النمطي النمطي النمطي النمطي النمطي النمطي النمطي النمطي النمطي النمطي النمطي النمطي النمطي النمطي النمطي النمطي النمطي النمطي النمطي النمطي النمطي النمطي النمطي النمطي النمطي النمطي النمطي النمطي النمطي النمطي النمطي النمطي النمطي النمطي النمطي النمطي النمطي النمطي النمطي النمطي النمطي النمطي النمطي النمطي النمطي النمطي النمطي النمطي النمطي النمطي النمطي النمطي النمطي النمطي النمطي النمطي النمطي النمطي النمطي النمطي النمطي النمطي النمطي النمطي النمطي النمطي النمطي النمطي النمطي النمطي النمطي النمطي النمطي النمطي النمطي النمطي النمطي النمطي النمطي النمطي النمطي النمطي النمطي النمطي النمطي النمطي النمطي النمطي النمطي النمطي النمطي النمطي النمطي النمطي النمطي النمطي النمطي النمطي النمطي النمطي النمطي النمطي النمطي النمطي النمطي النمطي النمطي النمطي النمطي النمطي النمطي النمطي النمطي النمطي النمطي
 
-**4. Score-based / continuous-time.**تعلم تدريج كثافة الحشيش`∇_x log p(x)`(النتيجة) مباشرة. أظهرت سونغ و إرمون (2019) أن مطابقة النتيجة تعامل التوزيع إلى SDE. تطابق التدفق (ليبمان 2023) هو الدرجة الساخنة 2024-2026: التدريب الخالي من المحاكاة ، المسارات المستقيمة ، 4-10 مرات أسرع من DDPM. الاستقرار التوزيع 3 ، التدفق ، الصوت 2 جميع استخدام تطابق التدفق.
+**4. Score-based / continuous-time.**تعلم تدريج كثافة الحشيش$\nabla_x \log p(x)$(النتيجة) مباشرة. أظهرت سونغ و إرمون (2019) أن مطابقة النتيجة تعامل التوزيع إلى SDE. تطابق التدفق (ليبمان 2023) هو الدرجة الساخنة 2024-2026: التدريب الخالي من المحاكاة ، المسارات المستقيمة ، 4-10 مرات أسرع من DDPM. الاستقرار التوزيع 3 ، التدفق ، الصوت 2 جميع استخدام تطابق التدفق.
 
 **5. Token-based autoregressive over discrete codes.**قم بتضغط البيانات عالية التميز باستخدام VQ-VAE أو الكميات المتبقية إلى تسلسل قصير من الرموز المتفصلة ، ثم استخدم محول لنموذج تسلسل الرموز. Parti ، MuseNet ، AudioLM ، VALL-E ، Tokenizer الصغرى سورا تستخدم كل هذا. هذا هو علبة 1 بالإضافة إلى Tokenizer تعلم.
 
@@ -53,7 +53,7 @@
 عندما تنخفض ورقة النموذج الجيني الجديد، اجيب على هذه الأسئلة الخمسة قبل قراءة قسم الطرق.
 
 1. **What is being modeled?**البيكسلات، الاختفاءات، القطع التقطيعية، غوسيانات ثلاثية الأبعاد، الشبكات، أشكال الموجات؟
-2. **Is the density explicit or implicit?**هل يكتبون`log p(x)`- ماذا ؟
+2. **Is the density explicit or implicit?**هل يكتبون$\log p(x)$- ماذا ؟
 3. **Sampling: one-shot or iterative?**تعني التكرار استنتاج أبطأ، وعادة ما تعني إطلاق واحد عداوة أو نزيف.
 4. **Conditioning: unconditional, class, text, image, pose?**هذا يحدد الخسارة والهيكل الرفاهية.
 5. **Evaluation: FID, CLIP score, IS, human preference, task accuracy?**كل منهما لديه أساليب الفشل المعروفة (انظر الدروس 14).
@@ -90,7 +90,7 @@ implicit (nearest-sample gen): 20 new samples printed, no p(x)
 | Text-to-video | Diffusion Transformer + flow matching | Sora, Veo 2, Kling. |
 | Speech + music | Token-based AR (AudioLM, VALL-E, MusicGen) or flow matching (AudioCraft 2) | Discrete tokens scale cheaply. |
 | 3D scenes | Gaussian Splatting fit, diffusion prior | 3D-GS for reconstruction, diffusion for novel-view. |
-| Density estimation (no sampling) | Flows | Only family with exact `log p(x)`. |
+| Density estimation (no sampling) | Flows | Only family with exact $\log p(x)$. |
 | Simulation / physics | Flow matching, score SDE | Straight-line paths, smooth vector fields. |
 
 ## أرسله
@@ -109,11 +109,11 @@ implicit (nearest-sample gen): 20 new samples printed, no p(x)
 
 | Term | What people say | What it actually means |
 |------|-----------------|-----------------------|
-| Generative model | "It makes new stuff" | Learns a sampler for `p_data(x)`, optionally exposes `log p(x)`. |
-| Explicit density | "You can evaluate it" | Model provides a closed-form or tractable `log p(x)`. |
-| Implicit density | "GAN-style" | Only a sampler — no way to evaluate `p(x)` of a given point. |
-| ELBO | "Evidence lower bound" | A tractable lower bound on `log p(x)`; VAEs and diffusion optimize it. |
-| Score | "Gradient of log-density" | `∇_x log p(x)`; diffusion and SDE models learn this field. |
+| Generative model | "It makes new stuff" | Learns a sampler for $p_{\text{data}}(x)$, optionally exposes $\log p(x)$. |
+| Explicit density | "You can evaluate it" | Model provides a closed-form or tractable $\log p(x)$. |
+| Implicit density | "GAN-style" | Only a sampler — no way to evaluate $p(x)$ of a given point. |
+| ELBO | "Evidence lower bound" | A tractable lower bound on $\log p(x)$; VAEs and diffusion optimize it. |
+| Score | "Gradient of log-density" | $\nabla_x \log p(x)$; diffusion and SDE models learn this field. |
 | Manifold hypothesis | "Data lives on a surface" | High-dim data concentrates on a low-dim manifold; why dimensionality reduction works. |
 | Autoregressive | "Predict the next piece" | Factorize joint as product of conditionals. |
 | Latent | "Compressed code" | Low-dim representation from which a decoder can reconstruct the input. |
