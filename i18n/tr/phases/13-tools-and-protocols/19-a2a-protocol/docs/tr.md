@@ -1,6 +1,6 @@
 # A2A  Ajan-Ajan Protokolü
 
-> MCP, ajan-a-alıt. A2A (Agent2Agent) farklı çerçevelerde inşa edilmiş açık olmayan ajanların işbirliği yapmasına izin veren açık bir protokol. Google tarafından Nisan 2025'te yayınlanan, Haziran 2025'te Linux Vakfına bağışlanan, Nisan 2026'da AWS, Cisco, Microsoft, Salesforce, SAP ve ServiceNow dahil 150+ destekleyici ile v1.0'ya ulaştı. IBM'in ACP'ini absorbe etti ve AP2 ödeme uzatmalarını ekledi. Bu ders ajan kartı, görev yaşam döngüsü ve iki taşımacılık bağını içerir.
+> MCP, ajan-a-alıt. A2A (Agent2Agent) farklı çerçevelerde inşa edilmiş açık olmayan ajanların işbirliği yapmasına izin veren açık bir protokol. Google tarafından Nisan 2025'te yayınlanan, Haziran 2025'te Linux Vakfına bağışlanan, Nisan 2026'da AWS, Cisco, Microsoft, Salesforce, SAP ve ServiceNow dahil 150+ destekleyici ile v1.0'ya ulaştı. IBM'in ACP'ini absorbe etti ve AP2 ödeme uzatmalarını ekledi. Bu ders, A2A 1.0.1 tel isimlerini kullanarak ajan kartı, görev yaşam döngüsü ve üç protokol bağlamasını yürütüyor.
 
 **Type:** Build
 **Languages:** Python (stdlib, Agent Card + Task harness)
@@ -10,9 +10,9 @@
 ## Öğrenme Hedefleri
 
 - Ajan-a-ağent (A2A) kullanım durumlarından ajan-a-ağent (MCP) kullanımı ayırt edin.
-- Bir ajan kartı yayınlayın .`/.well-known/agent.json`Bilgiler ve son nokta metadataları ile.
-- Görev yaşam döngüsünü izleyin (gelip gönderilen → çalışkan → girme gereksinimli → tamamlanmış / başarısız / iptal edilmiş / reddedilmiş).
-- Çıktı olarak Parts (metin, dosya, veri) ve Artifacts ile Mesajlar kullanın.
+- Bir ajan kartı yayınlayın .`/.well-known/agent-card.json`yetenekleri ve `supportedInterfaces`Metadata.
+- Görev yaşam döngüsünü izleyin: `TASK_STATE_SUBMITTED`- Evet .`TASK_STATE_WORKING`- Evet .`TASK_STATE_INPUT_REQUIRED`, ve terminal durumları `TASK_STATE_COMPLETED`- Evet .`TASK_STATE_FAILED`- Evet .`TASK_STATE_CANCELED`- Evet .`TASK_STATE_REJECTED`- Evet .
+- Her bir kısmının bir tane olduğu Mesajları kullan `text`- Evet .`raw`- Evet .`url`veya`data`, ve çıkış olarak eserler.
 
 ## Sorun
 
@@ -30,60 +30,79 @@ A2A, "cadre arası ajanların birbirleriyle konuşmasına izin verin" protokolü
 
 ### Ajan Kartı
 
-A2A ' ya uygun her ajan bir kart yayınlar .`/.well-known/agent.json`- ...
+A2A ' ya uygun her ajan bir kart yayınlar .`/.well-known/agent-card.json`- ...
 
 ```json
 {
-  "schemaVersion": "1.0",
   "name": "research-agent",
   "description": "Summarizes academic papers and drafts citations.",
-  "url": "https://research.example.com/a2a",
   "version": "1.2.0",
+  "supportedInterfaces": [
+    {
+      "url": "https://research.example.com/a2a",
+      "protocolBinding": "JSONRPC",
+      "protocolVersion": "1.0"
+    }
+  ],
+  "capabilities": {"streaming": true, "pushNotifications": true},
+  "securitySchemes": {
+    "bearer": {"httpAuthSecurityScheme": {"scheme": "Bearer"}}
+  },
+  "securityRequirements": [{"schemes": {"bearer": {"list": []}}}],
+  "defaultInputModes": ["text/plain"],
+  "defaultOutputModes": ["text/markdown"],
   "skills": [
     {
       "id": "summarize_paper",
       "name": "Summarize a paper",
       "description": "Read a paper PDF and produce a 3-paragraph summary.",
-      "inputModes": ["text", "file"],
-      "outputModes": ["text", "artifact"]
+      "tags": ["research", "summarization"],
+      "inputModes": ["text/plain", "application/pdf"],
+      "outputModes": ["text/markdown"]
     }
-  ],
-  "capabilities": {"streaming": true, "pushNotifications": true}
+  ]
 }
 ```
 
-Bulma URL tabanlı: kartı getir, A2A son noktasının URL'sini öğren, becerileri say.
+Bulma URL tabanlı: kartı getir, ilkini seç `supportedInterfaces`Kayıtı`protocolBinding`Bu, bir iletişim ortamı olarak kullanılır.
 
-### İmzalanmış Ajan Kartları (AP2)
+### İmzalanmış Ajan Kartları
 
-AP2 uzantısı (Eylül 2025) Agent Kartlarına kriptografik imzalar ekler. Bir yayıncı JWT ile kendi kartını imzalar; tüketiciler doğruluyor.
+Bir kart bir kart taşıyabilir .`signatures`Array. Her giriş bir JWS (RFC 7515) kartın RFC 8785 kanonik JSON üzerinden hesaplanmıştır, `signatures`Kullanıcılar aynı şekilde kartı kanonikalize eder ve doğrulayır.
 
 ### Görev yaşam döngüsü
 
-```
-submitted -> working -> completed | failed | canceled | rejected
-             -> input_required -> working (loop via message)
+```text
+TASK_STATE_SUBMITTED
+  -> TASK_STATE_WORKING
+  -> TASK_STATE_COMPLETED | TASK_STATE_FAILED | TASK_STATE_CANCELED | TASK_STATE_REJECTED
+
+TASK_STATE_WORKING
+  -> TASK_STATE_INPUT_REQUIRED
+  -> TASK_STATE_WORKING (the client sends a message with the same taskId)
 ```
 
-Müşteriler başlıyor `tasks/send`- Çağrılan ajan devletler üzerinden geçiş yapar; müşteriler SSE veya anket yoluyla devlet güncellemelerine abone olurlar.
+Müşteriler başlıyor `SendMessage`Adı ajanları devletler arasında geçiyor, müşteriler ile sorgu yapıyor.`GetTask`veya SSE üzerinden akış `SendStreamingMessage`ve `SubscribeToTask`Akıntı taşıyor .`statusUpdate`ve `artifactUpdate`Bu durum, görevlerin son durumuna ulaştığında gerçekleşir ve kapanır.`final`Bayrak.
 
 ### Mesajlar ve Bölümler
 
-Bir mesaj bir veya daha fazla parçayı taşır:
+Bir mesajın bir `messageId`, a `role`(`ROLE_USER`veya `ROLE_AGENT`), ve bir veya daha fazla Bölüm. Her Bölüm tam olarak bir içerik alanı içerir ve bu alan adı türdür.`kind`- Alan.
 
-- `text` Basit bir içerik.
-- `file`Base64 blobı mimeType ile.
-- `data` JSON payload (sırh edilen ajan için yapılandırılmış giriş) yazıldı.
+- `text`: basit içerik.
+- `raw`: dosya baytları, JSON'da base64, genellikle  ile`filename`ve `mediaType`- Evet .
+- `url`Dosya içeriğine bir bağlantı.
+- `data`: yapılandırılmış JSON payload (sırhlanan ajan için yapılandırılmış giriş).
 
 Örnek:
 
 ```json
 {
-  "role": "user",
+  "messageId": "msg-001",
+  "role": "ROLE_USER",
   "parts": [
-    {"type": "text", "text": "Summarize this paper."},
-    {"type": "file", "file": {"name": "paper.pdf", "mimeType": "application/pdf", "bytes": "..."}},
-    {"type": "data", "data": {"targetLength": "3 paragraphs"}}
+    {"text": "Summarize this paper."},
+    {"raw": "...", "filename": "paper.pdf", "mediaType": "application/pdf"},
+    {"data": {"targetLength": "3 paragraphs"}, "mediaType": "application/json"}
   ]
 }
 ```
@@ -94,20 +113,41 @@ Bir mesaj bir veya daha fazla parçayı taşır:
 
 ```json
 {
+  "artifactId": "art-001",
   "name": "summary",
-  "parts": [{"type": "text", "text": "..."}],
-  "mimeType": "text/markdown"
+  "parts": [{"text": "...", "mediaType": "text/markdown"}]
 }
 ```
 
-Sanat eserleri parça olarak akıştırabilir.
+Sanat eserleri parça olarak akışabilir.`artifactUpdate`Olay , eser ve artfaktı taşıyor .`append`ve `lastChunk`- Arayan toplanıyor.
 
-### İki nakliye bağlaması
+### Üç protokol bağlaması
 
-1. **JSON-RPC over HTTP.** `/a2a`Son nokta, istekler için POST, akış için seçeneği SSE. Öntanımlı bağlama.
-2. **gRPC.**GRPC'nin yerli olduğu işletme ortamları için.
+1. **JSON-RPC 2.0 over HTTP**(`JSONRPC`) POST istekler için, SSE akış için.`SendMessage`- Evet .`SendStreamingMessage`- Evet .`GetTask`- Evet .`ListTasks`- Evet .`CancelTask`- Evet .`SubscribeToTask`- Evet .`CreateTaskPushNotificationConfig`- Evet .`GetTaskPushNotificationConfig`- Evet .`ListTaskPushNotificationConfigs`- Evet .`DeleteTaskPushNotificationConfig`ve`GetExtendedAgentCard`- Evet .
+2. **gRPC**(`GRPC`) GRPC'nin yerli olduğu işletme ortamları için.
+3. **HTTP+JSON/REST**(`HTTP+JSON`).  gibi kaynak URL'leri`POST /message:send`ve `GET /tasks/{id}`- Evet .
 
-Her iki bağlama da aynı mantıklı mesaj şeklini taşır.
+Üç bağlama da aynı veri modelini taşır.`supportedInterfaces`Giriş isimleri bir bağlayıcı ve onun `protocolVersion`Müşteriler başlığı gönderir .`A2A-Version: 1.0`Her istek için, çünkü bir sunucu, istek olmadan bir istekleri 0.3 sürümü olarak okuyor.
+
+```http
+POST /a2a HTTP/1.1
+Host: research.example.com
+Content-Type: application/json
+A2A-Version: 1.0
+
+{
+  "jsonrpc": "2.0",
+  "id": 1,
+  "method": "SendMessage",
+  "params": {
+    "message": {
+      "messageId": "msg-001",
+      "role": "ROLE_USER",
+      "parts": [{"text": "Summarize this paper."}]
+    }
+  }
+}
+```
 
 ### Açıklık koruma
 
@@ -131,8 +171,8 @@ A2A, rekabetçilerin içsel bilgileri açığa çıkarmadan işbirliği yapması
 | Opacity | Transparent tool calls | Opaque inner reasoning |
 | Typical caller | Agent runtime | Another agent |
 | State | Tool-call result | Task with lifecycle |
-| Authorization | OAuth 2.1 (Phase 13 · 16) | JWT-signed Agent Cards (AP2) |
-| Transport | Stdio / Streamable HTTP | JSON-RPC over HTTP / gRPC |
+| Authorization | OAuth 2.1 (Phase 13 · 16) | Agent Card `securitySchemes` + `securityRequirements` |
+| Transport | Stdio / Streamable HTTP | JSON-RPC / gRPC / HTTP+JSON |
 
 Bir özel aracı çağrıştırmak istediğinizde MCP kullanın. Bir tüm görevi başka bir ajan'a devretmek istediğinizde A2A kullanın. Birçok üretim sistemi her ikisini de kullanır: bir ajan araç katmanı için MCP'yi ve işbirliği katmanı için A2A'yı kullanır.
 
@@ -142,14 +182,14 @@ a2a-task-lifecycle
 
 ## Kullan
 
-`code/main.py`A2A'nın en az bir harnesini uyguluyor: bir araştırma ajanı kartını yayınlar, bir yazar ajanı bir `tasks/send`PDF ve metin talimatı dahil olmak üzere parçalar ile, çalışmak → input_required → working → tamamlanmış geçişler ve bir metin eserini iade eder. Tüm stdlib; mesaj şekillerine odaklanmak için bir hafıza taşımacılığı kullanır.
+`code/main.py`A2A harnesini en az uyguluyor: yazar ajanı kartını yayınlıyor, araştırma ajanı ona bir `SendMessage`PDF bir parçası ve metin talimatı ile başvurun ve görev devam eder `TASK_STATE_WORKING`→ `TASK_STATE_INPUT_REQUIRED`→ `TASK_STATE_WORKING`→ `TASK_STATE_COMPLETED`Tüm stdlib; mesaj şekillerine odaklanmak için bir hafıza taşıyıcısı kullanır.
 
 Neye bakılır:
 
 - Ajan Kartı JSON şekli.
-- Görev kimliği ve devre geçişleri.
-- Karışık parçalarla mesajlar.
-- Giriş gerektiren dal görev ortasında.
+- Sunucu tarafındaki görev kimliği ve durum geçişleri.
+- İçerik alanının bulunduğu bölümler.
+- `TASK_STATE_INPUT_REQUIRED`- Ara sıra.
 - Artifak tamamlandığında geri döner.
 
 ## Gönder
@@ -158,11 +198,11 @@ Bu ders bize çok yararlı .`outputs/skill-a2a-agent-spec.md`. Diğer ajanlar ta
 
 ## Egzersizler
 
-1. Çık .`code/main.py`. Çağırılan ajanın açıklama istediği giriş gerektiren durak dahil olmak üzere görev yaşam döngüsünün tamamını takip edin.
+1. Çık .`code/main.py`.Task'ın tüm yaşam döngüsünü takip edin, `TASK_STATE_INPUT_REQUIRED`Çağrılan ajan açıklama istediğinde dur.
 
-2. İmzalanmış bir ajan kartı ekleyin. HMAC ile kartın kanonik JSON'una imza atın. Bir doğrulama yazın ve mutasyonlu bir kartta başarısız olduğunu onaylayın.
+2. İmzalanmış bir ajan kartı ekle.`signatures`- Evet .`alg` ayarlanmıştır`HS256`, kartın kanonik JSON'unu imzalamak `signatures`Bir doğrulama yaz ve mutasyonlu bir kartta başarısız olduğunu onayla.
 
-3. Görev akışı uygulamak: yazar ajanı SSE üzerinden üç artfakta parçalarını yayar ve çağıran onları biriktirir.
+3. Görev akışı ile uygulayın `SendStreamingMessage`: yazar ajanı `task`, üç .`artifactUpdate`parçalar ve bir `statusUpdate`- Evet .`TASK_STATE_COMPLETED`Sonra akış kapanır.
 
 4. Bir MCP sunucusuyla bir A2A ajanı tasarlayın. Her MCP aracı bir A2A yeteneğine göre bir harita yapın.
 
@@ -173,20 +213,21 @@ Bu ders bize çok yararlı .`outputs/skill-a2a-agent-spec.md`. Diğer ajanlar ta
 | Term | What people say | What it actually means |
 |------|----------------|------------------------|
 | A2A | "Agent-to-Agent protocol" | Open protocol for opaque agent collaboration |
-| Agent Card | "`.well-known/agent.json`" | Published metadata describing an agent's skills and endpoint |
+| Agent Card | "`/.well-known/agent-card.json`" | Published metadata describing an agent's skills and `supportedInterfaces` |
 | Skill | "A callable unit" | A named operation the agent supports (analog to MCP tool) |
 | Task | "Unit of delegation" | A work item with a lifecycle and final artifact |
-| Message | "Task input" | Carries Parts (text, file, data) |
-| Part | "Typed chunk" | `text` / `file` / `data` element of a message |
+| Message | "Task input" | Carries Parts (`text`, `raw`, `url`, `data`) |
+| Part | "Typed chunk" | Exactly one of `text` / `raw` / `url` / `data`, plus optional `mediaType`; no `kind` field |
 | Artifact | "Task output" | Named, typed output returned on completion |
-| AP2 | "Agent Payments Protocol" | Signed Agent Cards extension for trust and payments |
+| AP2 | "Agent Payments Protocol" | Payments extension built on A2A; card signing is core A2A (`signatures`) |
 | Opacity | "Black-box collaboration" | Called agent's internals are hidden from caller |
-| Input-required | "Task pause" | Lifecycle state when the agent needs more info |
+| `TASK_STATE_INPUT_REQUIRED` | "Task pause" | Interrupted state when the agent needs more info |
 
 ## Daha Fazla Okumak
 
 - [a2a-protocol.org](https://a2a-protocol.org/latest/) Kanonik A2A spesifikasyonu
 - [a2aproject/A2A — GitHub](https://github.com/a2aproject/A2A) Referans uygulamalar ve SDK'lar
+- [A2A v1.0.1 release](https://github.com/a2aproject/A2A/tree/v1.0.1)Etiketlenmiş`docs/specification.md`ve düzenlemeler.`specification/a2a.proto`Bu ders
 - [Linux Foundation — A2A launch press release](https://www.linuxfoundation.org/press/linux-foundation-launches-the-agent2agent-protocol-project-to-enable-secure-intelligent-communication-between-ai-agents) Haziran 2025 yönetim transfer
 - [Google Cloud — A2A protocol upgrade](https://cloud.google.com/blog/products/ai-machine-learning/agent2agent-protocol-is-getting-an-upgrade) Yol haritası ve ortakların hareketi
 - [Google Dev — A2A 1.0 milestone](https://discuss.google.dev/t/the-a2a-1-0-milestone-ensuring-and-testing-backward-compatibility/352258) v1.0 serbest bırakma notları ve geriye doğru kompak rehberlik
