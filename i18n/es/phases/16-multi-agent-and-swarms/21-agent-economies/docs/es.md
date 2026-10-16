@@ -61,8 +61,8 @@ Por qué esto es importante para los sistemas de LLM: puede externalizar las tar
 
 Una puntuación de reputación vinculada a DID se acumula a partir de contribuciones confirmadas.
 
-```
-rep(i, t+1) = alpha * rep(i, t) + (1 - alpha) * contribution_quality(i, t)
+```math
+\text{rep}(i, t+1) = \alpha \cdot \text{rep}(i, t) + (1 - \alpha) \cdot \text{contribution\_quality}(i, t)
 ```
 
 Con factor de descomposición`alpha`Propiedad:

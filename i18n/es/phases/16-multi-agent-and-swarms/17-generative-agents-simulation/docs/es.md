@@ -117,7 +117,7 @@ Reglas para las simulaciones de producción:
 
 - **Memory is the database.**Elige una tienda real (vector DB, Postgres) en escala.
 - **Log the retrieval trace.**Para cada acción, registra los recuerdos de la parte superior que lo impulsó.
-- **Budget per-agent tokens.**El plan de cada agente para recoger + reflejar + plan por tick es O(k) llamadas de LLM. N agentes × T ticks × llamadas por tick pueden enarmar su presupuesto.
+- **Budget per-agent tokens.**El plan de cada agente para recoger + reflejar + plan por tick es $O(k)$Las llamadas de LLM. N agentes × T ticks × llamadas por tick pueden enarmar su presupuesto.
 - **Compact memory periodically.**Resumen y recorte de poca importancia. La política de retención es una decisión de diseño, no un detalle.
 - **Detect spatial / social norm violations**La arquitectura no las aprende.
 

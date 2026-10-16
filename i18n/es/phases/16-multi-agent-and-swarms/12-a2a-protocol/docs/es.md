@@ -17,24 +17,52 @@ A2A es el protocolo universal para esa llamada. Descubrimiento estándar, modelo
 
 ### Los cuatro elementos
 
-**Agent Card.**Un documento JSON en `/.well-known/agent.json`Describir al agente: nombre, habilidades, puntos finales, modalidades compatibles, requisitos de autor.
+**Agent Card.**Un documento JSON en `/.well-known/agent-card.json`Describir al agente: nombre, habilidades, `supportedInterfaces`(URL de punto final, unión de protocolo, versión de protocolo), tipos de medios de entrada y salida predeterminados y requisitos de autor (`securitySchemes`Además`securityRequirements`El descubrimiento se hace leyendo la tarjeta.
 
+```http
+GET /.well-known/agent-card.json HTTP/1.1
+Host: agent.example.com
 ```
-GET https://agent.example.com/.well-known/agent.json
-→ {
-    "name": "code-review-agent",
-    "skills": ["review-python", "review-typescript"],
-    "endpoints": {
-      "tasks": "https://agent.example.com/tasks"
+
+```json
+{
+  "name": "code-review-agent",
+  "description": "Reviews Python and TypeScript code.",
+  "version": "1.0.0",
+  "supportedInterfaces": [
+    {
+      "url": "https://agent.example.com",
+      "protocolBinding": "HTTP+JSON",
+      "protocolVersion": "1.0"
+    }
+  ],
+  "capabilities": {"streaming": false, "pushNotifications": false},
+  "securitySchemes": {
+    "bearer": {"httpAuthSecurityScheme": {"scheme": "Bearer"}}
+  },
+  "securityRequirements": [{"schemes": {"bearer": {"list": []}}}],
+  "defaultInputModes": ["text/plain", "application/json"],
+  "defaultOutputModes": ["application/json"],
+  "skills": [
+    {
+      "id": "review-python",
+      "name": "Review Python",
+      "description": "Reviews Python code.",
+      "tags": ["code-review", "python"]
     },
-    "auth": {"type": "bearer"},
-    "modalities": ["text", "structured"]
-  }
+    {
+      "id": "review-typescript",
+      "name": "Review TypeScript",
+      "description": "Reviews TypeScript code.",
+      "tags": ["code-review", "typescript"]
+    }
+  ]
+}
 ```
 
-**Task.**Una unidad de trabajo, un objeto sincronizado, con un ciclo de vida:`submitted → working → completed / failed / canceled`Un cliente envía una tarea, encuestas o suscribe actualizaciones.
+**Task.**Una unidad de trabajo, un objeto sincronizado, con un ciclo de vida:`TASK_STATE_SUBMITTED`¿ Qué es esto ?`TASK_STATE_WORKING`¿ Qué es esto ?`TASK_STATE_COMPLETED`- ¿ Qué ?`TASK_STATE_FAILED`- ¿ Qué ?`TASK_STATE_CANCELED`Un cliente envía un mensaje, el servidor crea la tarea, y el cliente vota o suscribe para las actualizaciones.
 
-**Artifact.**El tipo de resultado producido por una tarea. texto, JSON estructurado, imagen, video, audio.
+**Artifact.**El tipo de resultado producido por una tarea. Texto, JSON estructurado, imagen, video, audio.`text`¿ Qué ?`raw`¿ Qué ?`url`, o`data`y puede nombrar su `mediaType`, así que las diferentes modalidades son de primera clase.
 
 **Opaque lifecycle.**A2A no prescribe *cómo* el agente remoto resuelve la tarea.El cliente ve las transiciones de estado y los artefactos; la implementación es libre de usar cualquier marco.
 
@@ -47,29 +75,33 @@ Los sistemas de producción multi-agentes utilizan ambos. Un A2A peer llama a he
 
 ### Flujo de descubrimiento
 
-```
-Client                     Agent server
-  ├──GET /.well-known/agent.json──>
-  <──Agent Card JSON─────────────
-  ├──POST /tasks {skill, input}──>
-  <──201 task_id, state=submitted
-  ├──GET /tasks/{id}──────────────>
-  <──state=working, 42% done──────
-  ├──GET /tasks/{id}──────────────>
-  <──state=completed, artifacts──
+```mermaid
+sequenceDiagram
+    participant C as Client
+    participant S as Agent server
+    C->>S: GET /.well-known/agent-card.json
+    S-->>C: Agent Card JSON
+    C->>S: POST /message:send (returnImmediately)
+    S-->>C: task, TASK_STATE_SUBMITTED
+    C->>S: GET /tasks/{id}
+    S-->>C: TASK_STATE_WORKING
+    C->>S: GET /tasks/{id}
+    S-->>C: TASK_STATE_COMPLETED, artifacts
 ```
 
-O con transmisión: suscripción de SSE a `/tasks/{id}/events`para actualizaciones de empuje.
+Estas son las rutas de enlace HTTP+JSON, y cada solicitud lleva `A2A-Version: 1.0`Por defecto .`SendMessage`bloquea hasta que la tarea alcanza un estado terminal o interrumpido, por lo que un cliente de encuesta establece `configuration.returnImmediately`para recuperar la tarea de inmediato.
+
+O con transmisión: `POST /message:stream`devuelve los eventos enviados por el servidor (a `task`Primero, luego.`statusUpdate`y `artifactUpdate`eventos), y `/tasks/{id}:subscribe`Se reune a una tarea en ejecución. La corriente se cierra cuando la tarea alcanza un estado terminal; no hay `final`bandera.
 
 ### Autor
 
 A2A admite tres patrones comunes:
 
-- **Bearer token** OAuth2 o opaco.
-- **mTLS** TLS mutuo; las organizaciones se prueban la identidad.
-- **Signed requests** HMAC sobre la carga útil.
+- **Bearer token**: OAuth2 o opaco (`httpAuthSecurityScheme`o `oauth2SecurityScheme`¿Qué es lo que se hace?
+- **mTLS**: TLS mutuo; las organizaciones se muestran la identidad entre sí (`mtlsSecurityScheme`¿Qué es lo que se hace?
+- **API key**: una clave en un encabezado, parámetro de consulta o cookie (`apiKeySecurityScheme`¿Qué es lo que se hace?
 
-El autor se declara en la tarjeta de agente; los clientes descubren y cumplen.
+El autor se declara en la tarjeta de agente:`securitySchemes`Nombrar cada régimen y `securityRequirements`El cliente debe descubrir y cumplir.
 
 ### 150+ organizaciones para abril de 2026
 
@@ -104,17 +136,17 @@ sw-agent-card-discovery
 
 ## Construye el mismo
 
-`code/main.py`Implementa un servidor y cliente A2A mínimo utilizando `http.server`El servidor:
+`code/main.py`Implementa un servidor y cliente A2A mínimo utilizando `http.server`y JSON, en la unión HTTP + JSON 1.0. El servidor:
 
-- expone `/.well-known/agent.json`¿ Qué ?
-- acepta`POST /tasks`¿ Qué ?
+- expone `/.well-known/agent-card.json`¿ Qué ?
+- acepta`POST /message:send`¿ Qué ?
 - gestiona el estado de tarea,
 - devuelve los artefactos en `GET /tasks/{id}`¿ Qué ?
 
 El cliente:
 
 - Trae la tarjeta de agente,
-- presentar una tarea,
+- Envía un mensaje con `returnImmediately`¿ Qué ?
 - encuestas hasta su finalización,
 - Leía el artefacto.
 
@@ -134,8 +166,8 @@ El script inicia el servidor en un hilo de fondo, luego ejecuta el cliente contr
 
 Lista de control:
 
-- **Pin the spec version.**A2A todavía está evolucionando; la tarjeta de agente debe declarar la versión del protocolo.
-- **Idempotent task creation.**Las presentaciones duplicadas (retemplazos en red) deben producir una tarea.
+- **Pin the spec version.**A2A sigue evolucionando; cada uno `supportedInterfaces`La entrada declara su `protocolVersion`, y los clientes envían`A2A-Version: 1.0`¿ Qué ?
+- **Idempotent task creation.**Las presentaciones duplicadas (retemplazos de red) deben producir una tarea.`messageId`¿ Qué ?
 - **Artifact schemas.**Declarar qué formas devuelve el agente; los consumidores deben validar.
 - **Rate limits + auth.**A2A es público; aplica seguridad web estándar.
 - **Dead-letter for failed tasks.**Inspeccionar los patrones a lo largo del tiempo para detectar tipos de fallas recurrentes.
@@ -143,8 +175,8 @@ Lista de control:
 ## Los ejercicios
 
 1. - ¿ Qué ?`code/main.py`Confirme que el cliente descubre el servidor y recibe el artefacto correcto.
-2. Añadir una segunda habilidad al servidor (por ejemplo, "resumir"). Actualizar la Tarjeta de agente. Escribir un cliente que seleccione la habilidad en función del tipo de tarea.
-3. Implementar un punto final de transmisión de SSE: `/tasks/{id}/events`¿Qué necesita el cliente para hacer de manera diferente?
+2. Añadir una segunda habilidad al servidor (por ejemplo, "resumir"). Actualizar la tarjeta de agente. Escribir un cliente que selecciona la habilidad en función del tipo de tarea. Una solicitud 1.0 no tiene campo de habilidad, por lo que el servidor rutas en las partes del mensaje.
+3. Implementación `POST /message:stream`: respuesta con eventos enviados por servidor (a `task`Primero, luego.`statusUpdate`¿Qué necesita hacer el cliente de manera diferente?
 4. Leer la especificación A2A (https://a2a-protocol.org/latest/specification/Se trata de un proyecto de investigación que se desarrolla en el ámbito de la seguridad social.
 5. Compare A2A (descubrimiento de tarjetas de agente) con MCP (lista de capacidades del lado del servidor a través de `listTools`¿Cuál es la diferencia entre los agentes que se describen a sí mismos y los que prueban sus capacidades?
 
@@ -153,17 +185,18 @@ Lista de control:
 | Term | What people say | What it actually means |
 |------|----------------|------------------------|
 | A2A | "Agent-to-agent" | Peer protocol for agents to call other agents across systems. Google 2025. |
-| Agent Card | "The agent's business card" | JSON at `/.well-known/agent.json` describing skills, endpoints, auth. |
+| Agent Card | "The agent's business card" | JSON at `/.well-known/agent-card.json` describing skills, `supportedInterfaces`, auth. |
 | Task | "The unit of work" | Async stateful object with a lifecycle; artifacts produced on completion. |
 | Artifact | "The result" | Typed output: text, structured JSON, image, video, audio. First-class media. |
 | Opaque lifecycle | "How it's solved is the agent's business" | Client sees state transitions; server is free to choose framework/tools. |
-| Discovery | "Finding the agent" | `GET /.well-known/agent.json` returns the card. |
+| Discovery | "Finding the agent" | `GET /.well-known/agent-card.json` returns the card. |
 | MCP vs A2A | "Tools vs peers" | MCP: vertical agent ↔ tool. A2A: horizontal agent ↔ agent. |
 | ACP / ANP / NLIP | "Sibling protocols" | Adjacent specs; A2A is the most-adopted 2026. |
 
 ## Leer más
 
 - [A2A specification](https://a2a-protocol.org/latest/specification/) la especificación canónica
+- [A2A v1.0.1 release](https://github.com/a2aproject/A2A/tree/v1.0.1): el etiquetado `docs/specification.md`y `specification/a2a.proto`Esta lección sigue
 - [Google Developers Blog — A2A announcement](https://developers.googleblog.com/en/a2a-a-new-era-of-agent-interoperability/) Abril 2025 puesta en marcha
 - [A2A GitHub repo](https://github.com/a2aproject/A2A) Implementaciones de referencia y KDD
 - [Liu et al. — A Survey of Agent Interoperability Protocols](https://arxiv.org/html/2505.02279v1) Comparación entre MCP, ACP, A2A y ANP
