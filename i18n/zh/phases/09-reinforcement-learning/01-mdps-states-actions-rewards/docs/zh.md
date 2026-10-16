@@ -21,20 +21,24 @@
 
 **The five objects.**
 
-- **States** `S`在格里德世界,细胞,象棋,板块,在法学,文本窗口和任何记忆.
-- **Actions** `A`选择,向上/下/左/右,玩动,发行令牌.
-- **Transitions** `P(s' | s, a)`根据国家`s`行动`a`在棋牌中确定性,在库存中稳定性,在LLM解码中几乎确定性.
-- **Rewards** `R(s, a, s')`收益减成本,日志概率比率在GRPO中.
-- **Discount** `γ ∈ [0, 1)`未来的奖励与现在的奖励有多少?`γ = 0.99`购买一个水平的 ~ 100 步; `γ = 0.9`买了10个.
+- **States** $S$在格里德世界,细胞,象棋,板块,在法学,文本窗口和任何记忆.
+- **Actions** $A$选择,向上/下/左/右,玩动,发行令牌.
+- **Transitions** $P(s' \mid s, a)$根据国家$s$行动$a$在棋牌中确定性,在库存中稳定性,在LLM解码中几乎确定性.
+- **Rewards** $R(s, a, s')$收益减成本,日志概率比率在GRPO中.
+- **Discount** $\gamma \in [0, 1)$未来的奖励与现在的奖励有多少?$\gamma = 0.99$购买一个水平的 ~ 100 步; $\gamma = 0.9$买了10个.
 
-**The Markov property** `P(s_{t+1} | s_t, a_t) = P(s_{t+1} | s_0, a_0, …, s_t, a_t)`如果没有,国家代表性是不完整的,不是方法的失败,是国家的失败.
+**The Markov property** $P(s_{t+1} \mid s_t, a_t) = P(s_{t+1} \mid s_0, a_0, \ldots, s_t, a_t)$如果没有,国家代表性是不完整的,不是方法的失败,是国家的失败.
 
-**Policies and returns.**一个政策`π(a | s)`图表状态到行动分布. 返回`G_t = r_t + γ r_{t+1} + γ² r_{t+2} + …`价值: 未来奖励的折扣金额.`V^π(s) = E[G_t | s_t = s]`是从 开始的预期回报`s`政策`π`值`Q^π(s, a) = E[G_t | s_t = s, a_t = a]`每个RL算法估计其中一个,然后改进`π`根据此.
+**Policies and returns.**一个政策$\pi(a \mid s)$图表状态到行动分布. 返回$G_t = r_t + \gamma r_{t+1} + \gamma^2 r_{t+2} + \ldots$价值: 未来奖励的折扣金额.$V^\pi(s) = \mathbb{E}[G_t \mid s_t = s]$是从 开始的预期回报$s$政策$\pi$值$Q^\pi(s, a) = \mathbb{E}[G_t \mid s_t = s, a_t = a]$每个RL算法估计其中一个,然后改进$\pi$根据此.
 
 **The Bellman equations.**在这个阶段使用的固定点方程:
 
-`V^π(s) = Σ_a π(a|s) Σ_{s', r} P(s', r | s, a) [r + γ V^π(s')]`
-`Q^π(s, a) = Σ_{s', r} P(s', r | s, a) [r + γ Σ_{a'} π(a'|s') Q^π(s', a')]`
+```math
+\begin{aligned}
+V^\pi(s) &= \sum_a \pi(a \mid s) \sum_{s', r} P(s', r \mid s, a) [r + \gamma V^\pi(s')] \\
+Q^\pi(s, a) &= \sum_{s', r} P(s', r \mid s, a) [r + \gamma \sum_{a'} \pi(a' \mid s') Q^\pi(s', a')]
+\end{aligned}
+```
 
 这些预期的分化返回为"这个步骤的奖励"加上"你降落的地方的折扣值".反复性. 9 阶段的每个算法要么重复这个方程到融合 (动态编程),从它 (蒙特卡洛) 样本,或者将它启动一步 (时间差异).
 
@@ -113,16 +117,16 @@ def policy_evaluation(policy, gamma=0.99, tol=1e-6):
 
 ### 步骤4:`γ`是一个具有物理意义的超参数
 
-实际水平大概是`1 / (1 - γ)`现在,我们要去.`γ = 0.9`十个步骤.`γ = 0.99`百步.`γ = 0.999`千个步骤.
+实际水平大概是$1 / (1 - \gamma)$现在,我们要去.$\gamma = 0.9$十个步骤.$\gamma = 0.99$百步.$\gamma = 0.999$千个步骤.
 
-由于许多早期步骤都承担了远期奖励的责任,因此信用分配变得很杂.`γ = 1`控制任务使用`0.95–0.99`长视野战略游戏使用`0.999`现在,我们要去.
+由于许多早期步骤都承担了远期奖励的责任,因此信用分配变得很杂.$\gamma = 1$控制任务使用`0.95–0.99`长视野战略游戏使用`0.999`现在,我们要去.
 
 ## 陷
 
 - **Non-Markovian state.**如果您需要最后三个观察来决定,"状态"不仅仅是当前的观察. 修复:堆框架 (DQN在Atari堆 4) 或使用复制状态 (LSTM/GRU在观测上).
 - **Sparse rewards.**只有获奖奖使在大型状态空间中学习几乎不可能.
 - **Reward hacking.**优化代理奖励通常会产生病态行为.OpenAI的船只比赛代理在圈子里旋转,以收集力量而不是永远完成比赛.总是根据目标结果定义奖励,而不是代理.
-- **Discount mis-spec.** `γ = 1`在一个无限视野任务上,每个值都是无限的.`γ < 1`现在,我们要去.
+- **Discount mis-spec.** $\gamma = 1$在一个无限视野任务上,每个值都是无限的.$\gamma < 1$现在,我们要去.
 - **Reward scale.**奖励 {+100, -100} vs {+1, -1} 给出相同的最佳政策,但截然不同的梯度大小.`[-1, 1]`- 在连接到PPO/DQN之前.
 
 ## 用它
@@ -167,21 +171,21 @@ Refuse to ship any MDP where the state is non-Markovian without explicit mention
 ## 运动
 
 1. **Easy.**实现4×4格式世界和随机政策推广`code/main.py`运行1万集,报告回报的平均值和STD.
-2. **Medium.**跑步`policy_evaluation`随着`γ ∈ {0.5, 0.9, 0.99}`对于统一随机政策.`V`解释为什么终端附近的状态值越来越快`γ`现在,我们要去.
-3. **Hard.**转换格里德世界到静止状态:每个动作都会与概率相邻方向滑动`p = 0.1`重新评估制服政策.`V[start]`变得更好还是更糟?
+2. **Medium.**跑步`policy_evaluation`随着$\gamma \in \lbrace 0.5, 0.9, 0.99 \rbrace$对于统一随机政策.`V`解释为什么终端附近的状态值越来越快$\gamma$现在,我们要去.
+3. **Hard.**转换格里德世界到静止状态:每个动作都会与概率相邻方向滑动$p = 0.1$重新评估制服政策.`V[start]`变得更好还是更糟?
 
 ## 关键词
 
 | Term | What people say | What it actually means |
 |------|-----------------|-----------------------|
-| MDP | "Reinforcement learning setup" | Tuple `(S, A, P, R, γ)` satisfying the Markov property. |
+| MDP | "Reinforcement learning setup" | Tuple $(S, A, P, R, \gamma)$ satisfying the Markov property. |
 | State | "What the agent sees" | Sufficient statistic for future dynamics under the chosen policy class. |
-| Policy | "Agent's behavior" | Conditional distribution `π(a \| s)` or deterministic map `s → a`. |
-| Return | "Total reward" | Discounted sum `Σ γ^t r_t` from the current step. |
-| Value | "How good a state is" | Expected return under `π` starting from `s`. |
-| Q-value | "How good an action is" | Expected return under `π` starting from `s` with first action `a`. |
+| Policy | "Agent's behavior" | Conditional distribution $\pi(a \mid s)$ or deterministic map $s \to a$. |
+| Return | "Total reward" | Discounted sum $\sum \gamma^t r_t$ from the current step. |
+| Value | "How good a state is" | Expected return under $\pi$ starting from $s$. |
+| Q-value | "How good an action is" | Expected return under $\pi$ starting from $s$ with first action $a$. |
 | Bellman equation | "Dynamic programming recursion" | Fixed-point decomposition of value / Q into one-step reward plus discounted successor value. |
-| Discount `γ` | "Future vs present" | Geometric weight on far-future reward; effective horizon `~1/(1-γ)`. |
+| Discount $\gamma$ | "Future vs present" | Geometric weight on far-future reward; effective horizon $\approx 1/(1-\gamma)$. |
 
 ## 进一步阅读
 
@@ -189,4 +193,4 @@ Refuse to ship any MDP where the state is non-Markovian without explicit mention
 - [Bellman (1957). Dynamic Programming](https://press.princeton.edu/books/paperback/9780691146683/dynamic-programming)贝尔曼方程的起源.
 - [OpenAI Spinning Up — Part 1: Key Concepts](https://spinningup.openai.com/en/latest/spinningup/rl_intro.html)从深度RL角度来看简洁的MDP.
 - [Puterman (2005). Markov Decision Processes](https://onlinelibrary.wiley.com/doi/book/10.1002/9780470316887)关于MDP和精确解决方法的操作研究参考.
-- [Littman (1996). Algorithms for Sequential Decision Making (PhD thesis)](https://www.cs.rutgers.edu/~mlittman/papers/thesis-main.pdf)作为动态编程专业化的MDP最清洁的衍生.
+- [Littman (1996). Algorithms for Sequential Decision Making (PhD thesis)](https://cs.brown.edu/media/filer_public/d1/a6/d1a6f66a-289a-4b81-9596-417114843489/littman.pdf)作为动态编程专业化的MDP最清洁的衍生.

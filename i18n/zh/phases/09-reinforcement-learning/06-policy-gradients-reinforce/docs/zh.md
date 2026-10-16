@@ -11,9 +11,9 @@
 
 通过Q-学习和DQN来参数 *值*函数.`argmax Q`它们是对单独的操作和单独的状态来说很好的.`argmax`对于10维扭矩而言,`argmax`根据结构的决定性性.
 
-政策梯度则为"政策"设定参数.`π_θ(a | s)`根据数据的数据,一个数据的分布在一个数据的分布中.`θ`走上山坡.`argmax`没有贝尔曼复发,只是梯度上升.`J(θ) = E_{π_θ}[G]`现在,我们要去.
+政策梯度则为"政策"设定参数.$\pi_\theta(a \mid s)$根据数据的数据,一个数据的分布在一个数据的分布中.$\theta$走上山坡.`argmax`没有贝尔曼复发,只是梯度上升.$J(\theta) = \mathbb E_{\pi_\theta}[G]$现在,我们要去.
 
-强化定理 (威廉姆斯 1992) 告诉你,这个梯度是可计算的:`∇J(θ) = E_π[ G · ∇_θ log π_θ(a | s) ]`运行一个集,计算返回,乘以`∇ log π_θ(a | s)`平均水平,梯度上升,完成.
+强化定理 (威廉姆斯 1992) 告诉你,这个梯度是可计算的:$\nabla J(\theta) = \mathbb E_\pi[ G \cdot \nabla_\theta \log \pi_\theta(a \mid s) ]$运行一个集,计算返回,乘以$\nabla \log \pi_\theta(a \mid s)$平均水平,梯度上升,完成.
 
 对于2026年每一个LLM-RL算法都是REINFORCE的完善.
 
@@ -21,36 +21,44 @@
 
 ![Policy gradient: softmax policy, log-π gradient, return-weighted update](../assets/policy-gradient.svg)
 
-**The policy gradient theorem.**任何政策`π_θ`参数为`θ`其他:
+**The policy gradient theorem.**任何政策$\pi_\theta$参数为$\theta$其他:
 
-`∇J(θ) = E_{τ ~ π_θ}[ Σ_{t=0}^{T} G_t · ∇_θ log π_θ(a_t | s_t) ]`
+```math
+\nabla J(\theta) = \mathbb{E}_{\tau \sim \pi_\theta}[ \sum_{t=0}^{T} G_t \cdot \nabla_\theta \log \pi_\theta(a_t \mid s_t) ]
+```
 
-在哪里`G_t = Σ_{k=t}^{T} γ^{k-t} r_{k+1}`是从步骤的折扣回报`t`预期已经超过了完整的轨迹`τ`采集了`π_θ`现在,我们要去.
+在哪里$G_t = \sum_{k=t}^{T} \gamma^{k-t} r_{k+1}$是从步骤的折扣回报$t$预期已经超过了完整的轨迹$\tau$采集了$\pi_\theta$现在,我们要去.
 
-**The proof is short.**区分`J(θ) = Σ_τ P(τ; θ) G(τ)`使用 `∇P(τ; θ) = P(τ; θ) ∇ log P(τ; θ)`原因是,我们在这个过程中,`log P(τ; θ) = Σ log π_θ(a_t | s_t) + environment terms that do not depend on θ`两个代数线给出了定理.
+**The proof is short.**区分$J(\theta) = \sum_\tau P(\tau; \theta) G(\tau)$使用 $\nabla P(\tau; \theta) = P(\tau; \theta) \nabla \log P(\tau; \theta)$原因是,我们在这个过程中,$\log P(\tau; \theta) = \sum \log \pi_\theta(a_t \mid s_t) + \text{environment terms that do not depend on } \theta$两个代数线给出了定理.
 
-**Variance reduction tricks.**尼拉强化学品具有凶残的变化 回报很,`∇ log π`它们的产品非常杂.
+**Variance reduction tricks.**尼拉强化学品具有凶残的变化 回报很,$\nabla \log \pi$它们的产品非常杂.
 
-1. **Baseline subtraction.**取代`G_t`随着`G_t - b(s_t)`对于任何基线`b(s_t)`这不取决于`a_t`公正,因为`E[b(s_t) · ∇ log π(a_t | s_t)] = 0`典型的选择:`b(s_t) = V̂(s_t)`经过评论家 →演员-评论家的学习 (课程07).
-2. **Reward-to-go.**取代`Σ_t G_t · ∇ log π_θ(a_t | s_t)`随着`Σ_t G_t^{from t} · ∇ log π_θ(a_t | s_t)`只有未来的回报对特定行动而言是重要的过去的回报贡献零平均噪音.
+1. **Baseline subtraction.**取代$G_t$随着$G_t - b(s_t)$对于任何基线$b(s_t)$这不取决于$a_t$公正,因为$\mathbb{E}[b(s_t) \cdot \nabla \log \pi(a_t \mid s_t)] = 0$典型的选择:$b(s_t) = \hat{V}(s_t)$经过评论家 →演员-评论家的学习 (课程07).
+2. **Reward-to-go.**取代$\sum_t G_t \cdot \nabla \log \pi_\theta(a_t \mid s_t)$随着$\sum_t G_t^{\text{from } t} \cdot \nabla \log \pi_\theta(a_t \mid s_t)$只有未来的回报对特定行动而言是重要的过去的回报贡献零平均噪音.
 
 结合起来,你得到:
 
-`∇J ≈ (1/N) Σ_{i=1}^{N} Σ_{t=0}^{T_i} [ G_t^{(i)} - V̂(s_t^{(i)}) ] · ∇_θ log π_θ(a_t^{(i)} | s_t^{(i)})`
+```math
+\nabla J \approx (1/N) \sum_{i=1}^{N} \sum_{t=0}^{T_i} [ G_t^{(i)} - \hat{V}(s_t^{(i)}) ] \cdot \nabla_\theta \log \pi_\theta(a_t^{(i)} \mid s_t^{(i)})
+```
 
 是A2C (课07),PPO (课08的直接祖先) 的基线.
 
 **Softmax policy parameterization.**对于单独行动,标准选择:
 
-`π_θ(a | s) = exp(f_θ(s, a)) / Σ_{a'} exp(f_θ(s, a'))`
+```math
+\pi_\theta(a \mid s) = \exp(f_\theta(s, a)) / \sum_{a'} \exp(f_\theta(s, a'))
+```
 
-在哪里`f_θ`任何神经网络都能输出每次操作的分数.
+在哪里$f_\theta$任何神经网络都能输出每次操作的分数.
 
-`∇_θ log π_θ(a | s) = ∇_θ f_θ(s, a) - Σ_{a'} π_θ(a' | s) ∇_θ f_θ(s, a')`
+```math
+\nabla_\theta \log \pi_\theta(a \mid s) = \nabla_\theta f_\theta(s, a) - \sum_{a'} \pi_\theta(a' \mid s) \nabla_\theta f_\theta(s, a')
+```
 
 投资者: 投资者: 投资者: 投资者: 投资者:
 
-**Gaussian policy for continuous actions.** `π_θ(a | s) = N(μ_θ(s), σ_θ(s))`现在,我们要去.`∇ log N(a; μ, σ)`只有9期07期的SAC需要.
+**Gaussian policy for continuous actions.** $\pi_\theta(a \mid s) = N(\mu_\theta(s), \sigma_\theta(s))$现在,我们要去.$\nabla \log N(a; \mu, \sigma)$只有9期07期的SAC需要.
 
 ```figure
 policy-gradient-landscape
@@ -119,19 +127,19 @@ def reinforce_step(theta, trajectory, gamma, lr, baseline=0.0):
                 theta[i][j] += lr * advantage * grad_log_pi_a[i] * s[j]
 ```
 
-梯度`∇ log π(a|s) = e_a - π(·|s)`(其中一个是`a`软max的核心是软max的政策梯度.
+梯度$\nabla \log \pi(a \mid s) = e_a - \pi(\cdot \mid s)$(其中一个是$a$软max的核心是软max的政策梯度.
 
 ### 步骤5:基线
 
-运行的平均值`G`为了使4×4 GridWorld运行,需要500个集集集.`V̂(s)`你会得到演员评论.
+运行的平均值$G$为了使4×4 GridWorld运行,需要500个集集集.$\hat{V}(s)$你会得到演员评论.
 
 ## 陷
 
-- **Exploding gradients.**总是正常化.`G`为了`~N(0, 1)`在乘以之前,`∇ log π`现在,我们要去.
-- **Entropy collapse.**政策过早收缩到近定决策行动,停止探索,陷入困境.`β · H(π(·|s))`实现目标.
+- **Exploding gradients.**总是正常化.$G$为了`~N(0, 1)`在乘以之前,$\nabla \log \pi$现在,我们要去.
+- **Entropy collapse.**政策过早收缩到近定决策行动,停止探索,陷入困境.$\beta \cdot H(\pi(\cdot \mid s))$实现目标.
 - **High variance.**尼拉 REINFORCE需要数千个集. 标准解决方案是批评基线 (课时07),或TRPO/PPO的信任区域 (课时08).
 - **Sample inefficiency.**政策上意味着你在一次更新后都会丢弃每一个过渡.通过重要样本取样,在变化成本下,通过政策外的纠正将数据恢复 (PPO的比例是减小 IS重量).
-- **Non-stationary gradients.**百集前的梯度使用旧的`π`政策方法每次更新都是因为这个原因.
+- **Non-stationary gradients.**百集前的梯度使用旧的$\pi$政策方法每次更新都是因为这个原因.
 - **Credit assignment.**没有奖励,过去的奖励会产生噪音.
 
 ## 用它
@@ -178,20 +186,20 @@ Refuse REINFORCE-no-baseline on horizons > 500 steps. Refuse continuous-action c
 
 1. **Easy.**运用4×4 GridWorld上 REINFORCE 进行直线软max 政策. 训练1000集没有基线. 绘制学习曲线;测量变异 (回报的STD).
 2. **Medium.**加入运行平均基线. 再次训练. 比较样本效率和变异与尼拉运行.
-3. **Hard.**添加一个体奖金`β · H(π)`扫描`β ∈ {0, 0.01, 0.1, 1.0}`关于这个任务的甜点点是什么?
+3. **Hard.**添加一个体奖金$\beta \cdot H(\pi)$扫描$\beta \in \lbrace 0, 0.01, 0.1, 1.0 \rbrace$关于这个任务的甜点点是什么?
 
 ## 关键词
 
 | Term | What people say | What it actually means |
 |------|-----------------|-----------------------|
-| Policy gradient | "Train the policy directly" | `∇J(θ) = E[G · ∇ log π_θ(a\|s)]`; derived from the log-derivative trick. |
+| Policy gradient | "Train the policy directly" | $\nabla J(\theta) = \mathbb{E}[G \cdot \nabla \log \pi_\theta(a \mid s)]$; derived from the log-derivative trick. |
 | REINFORCE | "The original PG algorithm" | Williams (1992); Monte Carlo returns multiplied by log-policy gradient. |
-| Log-derivative trick | "Score function estimator" | `∇P(τ;θ) = P(τ;θ) · ∇ log P(τ;θ)`; makes gradients of expectations tractable. |
-| Baseline | "Variance reduction" | Any `b(s)` subtracted from `G`; unbiased because `E[b · ∇ log π] = 0`. |
-| Reward-to-go | "Only future returns count" | `G_t^{from t}` instead of the full `G_0`; correct and lower-variance. |
-| Entropy bonus | "Encourage exploration" | `+β · H(π(·\|s))` term keeps the policy from collapsing. |
+| Log-derivative trick | "Score function estimator" | $\nabla P(\tau;\theta) = P(\tau;\theta) \cdot \nabla \log P(\tau;\theta)$; makes gradients of expectations tractable. |
+| Baseline | "Variance reduction" | Any $b(s)$ subtracted from $G$; unbiased because $\mathbb{E}[b \cdot \nabla \log \pi] = 0$. |
+| Reward-to-go | "Only future returns count" | $G_t^{\text{from } t}$ instead of the full $G_0$; correct and lower-variance. |
+| Entropy bonus | "Encourage exploration" | $+\beta \cdot H(\pi(\cdot \mid s))$ term keeps the policy from collapsing. |
 | On-policy | "Train on what you just saw" | Gradient expectation is w.r.t. the current policy — cannot reuse old data directly. |
-| Advantage | "How much better than average" | `A(s, a) = G(s, a) - V(s)`; the signed quantity REINFORCE-with-baseline multiplies. |
+| Advantage | "How much better than average" | $A(s, a) = G(s, a) - V(s)$; the signed quantity REINFORCE-with-baseline multiplies. |
 
 ## 进一步阅读
 

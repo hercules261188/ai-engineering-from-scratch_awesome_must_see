@@ -1,6 +1,6 @@
 # 演员评论家 A2C和A3C
 
-> 强加强加强加强加强加强加强加强加强加强加强加强加强加强加强加强加强加强加强加强加强加强加强加强加强加强加强加强加强加强加强加强加强加强加强加强加强加强加强加强加强加强加强加强加强加强加强加强加强加强加强加强加强加强加强加强加强加强加强加强加强加强加强加强加强加强加强加强加强加强加强加强`V̂(s)`现在,我们可以看到一个值,从 A2C 运行它同步,A3C 运行它在线程.这两个是每个现代深度RL方法的心理模型.
+> 强加强加强加强加强加强加强加强加强加强加强加强加强加强加强加强加强加强加强加强加强加强加强加强加强加强加强加强加强加强加强加强加强加强加强加强加强加强加强加强加强加强加强加强加强加强加强加强加强加强加强加强加强加强加强加强加强加强加强加强加强加强加强加强加强加强加强加强加强加强加强加强$\hat{V}(s)$现在,我们可以看到一个值,从 A2C 运行它同步,A3C 运行它在线程.这两个是每个现代深度RL方法的心理模型.
 
 **Type:** Build
 **Languages:** Python
@@ -9,11 +9,13 @@
 
 ## 问题
 
-尼拉反弹力有效,但它的变化是可怕的.`G_t`通过数量增加,我们可以在节目之间摆动10倍.`∇ log π`平均化产生了梯度估计器,需要数千个集,
+尼拉反弹力有效,但它的变化是可怕的.$G_t$通过数量增加,我们可以在节目之间摆动10倍.$\nabla \log \pi$平均化产生了梯度估计器,需要数千个集,
 
-如果减去基线,则将其从原始返回中取出.`b(s_t)`任何状态函数,包括学习值 预期保持不变,变异下降.最好的可处理的基线是`V̂(s_t)`现在数量乘以`∇ log π`是*优势*:
+如果减去基线,则将其从原始返回中取出.$b(s_t)$任何状态函数,包括学习值 预期保持不变,变异下降.最好的可处理的基线是$\hat{V}(s_t)$现在数量乘以$\nabla \log \pi$是*优势*:
 
-`A(s, a) = G - V̂(s)`
+```math
+A(s, a) = G - \hat{V}(s)
+```
 
 作为一个高于平均水平的收益,一个低于平均水平的收益是好的. 作为一个熟练的批评者,反复强化是*演员批评者*.批评者给演员一个低变量教师.这是2015年后的每一个深度政策方法 (A2C,A3C,PPO,SAC,IMPALA).
 
@@ -23,33 +25,39 @@
 
 **Two networks, one shared loss:**
 
-- **Actor** `π_θ(a | s)`经过培训,经过培训,经过培训,经过培训,经过培训,经过培训,经过培训,经过培训,经过培训,经过培训,经过培训,经过培训,经过培训,经过培训,经过培训,经过培训,经过培训,经过培训,经过培训,经过培训,经过培训,经过培训,经过培训,经过培训,经过培训,经过培训,经过培训,经过培训,经过培训,经过培训,经过培训.
-- **Critic** `V_φ(s)`预计来自国家的回报.`(V_φ(s) - target)²`现在,我们要去.
+- **Actor** $\pi_\theta(a \mid s)$经过培训,经过培训,经过培训,经过培训,经过培训,经过培训,经过培训,经过培训,经过培训,经过培训,经过培训,经过培训,经过培训,经过培训,经过培训,经过培训,经过培训,经过培训,经过培训,经过培训,经过培训,经过培训,经过培训,经过培训,经过培训,经过培训,经过培训,经过培训,经过培训,经过培训,经过培训.
+- **Critic** $V_\phi(s)$预计来自国家的回报.$(V_\phi(s) - \text{target})^2$现在,我们要去.
 
 **The advantage.**两种标准表格:
 
-- 果公司的优势`A_t = G_t - V_φ(s_t)`无偏见,更高的差异性.
-- 果的优势`A_t = r_{t+1} + γ V_φ(s_{t+1}) - V_φ(s_t)`偏见性 (使用)`V_φ`),更低的变量.`δ_t`现在,我们要去.
+- 果公司的优势$A_t = G_t - V_\phi(s_t)$无偏见,更高的差异性.
+- 果的优势$A_t = r_{t+1} + \gamma V_\phi(s_{t+1}) - V_\phi(s_t)$偏见性 (使用)$V_\phi$),更低的变量.$\delta_t$现在,我们要去.
 
 **n-step advantage.**两者之间进行间接:
 
-`A_t^{(n)} = r_{t+1} + γ r_{t+2} + … + γ^{n-1} r_{t+n} + γ^n V_φ(s_{t+n}) - V_φ(s_t)`
+```math
+A_t^{(n)} = r_{t+1} + \gamma r_{t+2} + \ldots + \gamma^{n-1} r_{t+n} + \gamma^n V_\phi(s_{t+n}) - V_\phi(s_t)
+```
 
-`n = 1`纯粹的TD.`n = ∞`许多应用程序使用`n = 5`对于阿塔利,`n = 2048`对于 MuJoCo的PPO.
+$n = 1$纯粹的TD.$n = \infty$许多应用程序使用$n = 5$对于阿塔利,$n = 2048$对于 MuJoCo的PPO.
 
 **Generalized Advantage Estimation (GAE).**舒尔曼等人 (2016) 提出了对所有 n 步骤优势的指数权重平均值:
 
-`A_t^{GAE} = Σ_{l=0}^{∞} (γλ)^l δ_{t+l}`
+```math
+A_t^{\text{GAE}} = \sum_{l=0}^{\infty} (\gamma \lambda)^l \delta_{t+l}
+```
 
-随着`λ ∈ [0, 1]`现在,我们要去.`λ = 0`是TD (低差异,高偏差). `λ = 1`是MC (高差异性,无偏见性).`λ = 0.95`是2026年默认调调,直到偏差/变量拨号是你想要的.
+随着$\lambda \in [0, 1]$现在,我们要去.$\lambda = 0$是TD (低差异,高偏差). $\lambda = 1$是MC (高差异性,无偏见性).$\lambda = 0.95$是2026年默认调调,直到偏差/变量拨号是你想要的.
 
-**A2C: synchronous advantage actor-critic.**收集`T`跨越的步骤`N`通过平行环境计算每个步骤的优势 更新演员和评论家的组合. 重复. 简单,更可扩展的A3C兄弟.
+**A2C: synchronous advantage actor-critic.**收集$T$跨越的步骤$N$通过平行环境计算每个步骤的优势 更新演员和评论家的组合. 重复. 简单,更可扩展的A3C兄弟.
 
-**A3C: asynchronous advantage actor-critic.**其他研究人员`N`工作者线程,每个操作一个环境.每个操作员在自己的推广上本地计算梯度,然后异步地将其应用到共享参数服务器上. 没有重复缓冲器需要. 工作者通过运行不同的轨迹来解关联. A3C证明你可以在规模上训练CPU. 在2026年,基于GPU的A2C (批量并行环境) 主导,因为GPU想要大批量.
+**A3C: asynchronous advantage actor-critic.**其他研究人员$N$工作者线程,每个操作一个环境.每个操作员在自己的推广上本地计算梯度,然后异步地将其应用到共享参数服务器上. 没有重复缓冲器需要. 工作者通过运行不同的轨迹来解关联. A3C证明你可以在规模上训练CPU. 在2026年,基于GPU的A2C (批量并行环境) 主导,因为GPU想要大批量.
 
 **The combined loss.**
 
-`L(θ, φ) = -E[ A_t · log π_θ(a_t | s_t) ]  +  c_v · E[(V_φ(s_t) - G_t)²]  -  c_e · E[H(π_θ(·|s_t))]`
+```math
+L(\theta, \phi) = -\mathbb{E}[ A_t \cdot \log \pi_\theta(a_t \mid s_t) ] + c_v \cdot \mathbb{E}[(V_\phi(s_t) - G_t)^2] - c_e \cdot \mathbb{E}[H(\pi_\theta(\cdot \mid s_t))]
+```
 
 政策渐进损失,价值回归,值奖金.`c_v ~ 0.5`现在`c_e ~ 0.01`它们是神圣的起点.
 
@@ -61,7 +69,7 @@ actor-critic
 
 ### 步骤1:一个批评者
 
-线性评论家`V_φ(s) = w · features(s)`更新与MSE:
+线性评论家$V_\phi(s) = w \cdot \text{features}(s)$更新与MSE:
 
 ```python
 def critic_update(w, x, target, lr):
@@ -76,7 +84,7 @@ def critic_update(w, x, target, lr):
 
 ### 步骤2:n-步骤优势
 
-考虑到长度的推广`T`起的决赛`V(s_T)`其他:
+考虑到长度的推广$T$起的决赛$V(s_T)$其他:
 
 ```python
 def compute_advantages(rewards, values, gamma=0.99, lam=0.95, last_value=0.0):
@@ -91,7 +99,7 @@ def compute_advantages(rewards, values, gamma=0.99, lam=0.95, last_value=0.0):
     return advantages, returns
 ```
 
-`returns`对于这些问题,我们必须要做出一些决定.`advantages`它们是什么乘法`∇ log π`现在,我们要去.
+`returns`对于这些问题,我们必须要做出一些决定.`advantages`它们是什么乘法$\nabla \log \pi$现在,我们要去.
 
 ### 步骤3: 综合更新
 
@@ -114,8 +122,8 @@ for step_i, (x, a, _r, probs) in enumerate(traj):
 
 ### 步骤4:并行 (A3C与A2C)
 
-- **A3C:**转动起来`N`它们是个""的,它们是""的,它们是""的,它们是""的,它们是""的.
-- **A2C:**跑步`N`集观察到一个过程中的实例`[N, obs_dim]`批量前进,批量后退,高GPU使用率,确定性,更容易推理.
+- **A3C:**转动起来$N$它们是个""的,它们是""的,它们是""的,它们是""的,它们是""的.
+- **A2C:**跑步$N$集观察到一个过程中的实例`[N, obs_dim]`批量前进,批量后退,高GPU使用率,确定性,更容易推理.
 
 我们的玩具代码是单线的,以便更清晰; 重写成批量A2C是三行的无线.
 
@@ -125,7 +133,7 @@ for step_i, (x, a, _r, probs) in enumerate(traj):
 - **Advantage normalization.**实现每批次平均零/单位/STd的优势.
 - **Shared trunk.**通过使用共享功能提取器,在影像输入中使用演员和评论家. 分开头.共享功能在两种输入中自由行.
 - **On-policy contract.**更多的数据,你的梯度偏差 (重要样本纠正是PPO添加的).
-- **Entropy collapse.**没有`c_e > 0`几百次更新后,政策就会变得近乎决定性,
+- **Entropy collapse.**没有$c_e > 0$几百次更新后,政策就会变得近乎决定性,
 - **Reward scale.**优势大小取决于奖励规模. 规范奖励 (例如,运行-std 分类) 对于不同任务的一致梯度大小.
 
 ## 用它
@@ -170,22 +178,22 @@ Refuse single-worker A2C on environments with horizon > 1000 (too on-policy, too
 
 ## 运动
 
-1. **Easy.**训练演员-批评者具有 MC优势 (`G_t - V(s_t)`根据第06课程的实验效率与REINFORCE与运行平均基线进行比较.
-2. **Medium.**转向 TD残余优势 (`r + γ V(s') - V(s)`优势分组的差异量量.
-3. **Hard.**执行GAE () 扫描`λ ∈ {0, 0.5, 0.9, 0.95, 1.0}`图案最终回报与样本效率. 这个任务的偏差/变异点是什么?
+1. **Easy.**训练演员-批评者,具有MC优势$(G_t - V(s_t))$根据第06课,对样本效率进行反复强化与运行平均基线的比较.
+2. **Medium.**转向 TD残余优势$(r + \gamma V(s') - V(s))$测量优势分组的差异.
+3. **Hard.**执行GAE () 扫描$\lambda \in \lbrace 0, 0.5, 0.9, 0.95, 1.0 \rbrace$图案最终回报与样本效率. 这个任务的偏差/变异点是什么?
 
 ## 关键词
 
 | Term | What people say | What it actually means |
 |------|-----------------|-----------------------|
-| Actor | "The policy net" | `π_θ(a\|s)`, updated by policy gradient. |
-| Critic | "The value net" | `V_φ(s)`, updated by MSE regression to returns / TD targets. |
-| Advantage | "How much better than average" | `A(s, a) = Q(s, a) - V(s)` or its estimators. Multiplier for `∇ log π`. |
-| TD residual | "δ" | `δ_t = r + γ V(s') - V(s)`; one-step advantage estimate. |
-| GAE | "The interpolation knob" | Exponentially weighted sum of n-step advantages, parameterized by `λ`. |
+| Actor | "The policy net" | $\pi_\theta(a \mid s)$, updated by policy gradient. |
+| Critic | "The value net" | $V_\phi(s)$, updated by MSE regression to returns / TD targets. |
+| Advantage | "How much better than average" | $A(s, a) = Q(s, a) - V(s)$ or its estimators. Multiplier for $\nabla \log \pi$. |
+| TD residual | "δ" | $\delta_t = r + \gamma V(s') - V(s)$; one-step advantage estimate. |
+| GAE | "The interpolation knob" | Exponentially weighted sum of n-step advantages, parameterized by $\lambda$. |
 | A2C | "Synchronous actor-critic" | Batched across envs; one gradient step per rollout. |
 | A3C | "Async actor-critic" | Worker threads push gradients to a shared param server. Original paper; less common in 2026. |
-| Bootstrap | "Use V at the horizon" | Truncate the rollout, add `γ^n V(s_{t+n})` to close the sum. |
+| Bootstrap | "Use V at the horizon" | Truncate the rollout, add $\gamma^n V(s_{t+n})$ to close the sum. |
 
 ## 进一步阅读
 

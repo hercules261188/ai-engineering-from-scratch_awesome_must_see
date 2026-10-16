@@ -31,7 +31,7 @@
 
 **Domain Adaptation.**训练在模拟,微调用少量真实数据.
 
-- **Real2Sim2Real:**学习一个残余模拟器`f(s, a, z) - f_sim(s, a)`通过使用真实推广,在修改的模拟中训练. 没有太多真实数据就关闭了差距.
+- **Real2Sim2Real:**学习一个残余模拟器$f(s, a, z) - f_{\text{sim}}(s, a)$通过使用真实推广,在修改的模拟中训练. 没有太多真实数据就关闭了差距.
 - **Observation adaptation:**通过学习的特征提取器 (例如GAN像素到像素) 绘制真实obs →sim类似的obs的策略.控制器保持在sim.
 
 **Privileged learning / teacher-student.**学生们可以从历史中推断特权特征,在物理参数中强. 学生们可以从历史中推断特权特征,在物理参数中强. 学生们可以从历史中推断特权特征.
@@ -128,7 +128,7 @@ Refuse to deploy without (a) a zero-shot sim-variant test, (b) a safety shield, 
 
 ## 运动
 
-1. **Easy.**训练一个Q学习代理在固定滑动格里德世界 (滑动=0.0). 评估在滑动 ∈ {0.0, 0.1, 0.3, 0.5}.
+1. **Easy.**训练一个Q学习代理在固定滑动格里德世界 (滑动=0.0).$\text{slip} \in \lbrace 0.0, 0.1, 0.3, 0.5 \rbrace$阴谋反弹与反弹.
 2. **Medium.**训练一个DRQ学习代理样本`slip ~ Uniform[0, 0.3]`根据"分销"的价格,DR在0.5分时购买多少钱?
 3. **Hard.**实施课程:从滑=0.0开始,每当政策达到90%的最佳时,扩大DR范围. 测量环境的总步骤,以达到滑=0.3的零射与固定DR基线.
 

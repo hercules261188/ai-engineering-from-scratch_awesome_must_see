@@ -21,31 +21,31 @@
 
 ![Three-stage RLHF: SFT, RM training on pairwise prefs, PPO with KL penalty](../assets/rlhf.svg)
 
-**Stage 1: Supervised Fine-Tuning (SFT).**开始从预训练的基础模型. 精细调理人类写的目标行为示范 (遵循指示的反应,有用的答案等). 结果:一个模型 `π_SFT`虽然它是对良好的行为有偏见的,但仍然具有无限的行动空间.
+**Stage 1: Supervised Fine-Tuning (SFT).**开始从预训练的基础模型. 精细调理人类写的目标行为示范 (遵循指示的反应,有用的答案等). 结果:一个模型 $\pi_{\text{SFT}}$虽然它是对良好的行为有偏见的,但仍然具有无限的行动空间.
 
 **Stage 2: Reward Model training.**
 
-- 收集对答案`(y_+, y_-)`为了得到提示`x`标记为"y_+ 优先于y_-."
-- 培养一个奖励模式`R_φ(x, y)`给更高的分数`y_+`现在,我们要去.
+- 收集对答案$(y_+, y_-)$为了得到提示$x$标记为"y_+ 优先于y_-."
+- 培养一个奖励模式$R_\phi(x, y)$给更高的分数$y_+$现在,我们要去.
 - 损失:**Bradley-Terry pairwise logistic**其他:
 
-  `L(φ) = -E[ log σ(R_φ(x, y_+) - R_φ(x, y_-)) ]`
+  $L(\phi) = -\mathbb{E}[ \log \sigma(R_\phi(x, y_+) - R_\phi(x, y_-)) ]$
 
-  由于BT是标准的,它是现代RLHF中的主导选择.
+  $\sigma$由于BT是标准的,它是现代RLHF中的主导选择.
 
-- `R_φ`转变器的背骨相同;单个线性层输出奖励.
+- $R_\phi$转变器的背骨相同;单个线性层输出奖励.
 
 **Stage 3: PPO against the RM with KL penalty.**
 
-- 启动可培训的政策`π_θ`其他`π_SFT`保持一个结的 * 参考 *`π_ref = π_SFT`现在,我们要去.
-- 答复结束时的奖励`y`其他:
+- 启动可培训的政策$\pi_\theta$其他$\pi_{\text{SFT}}$保持一个结的 * 参考 *$\pi_{\text{ref}} = \pi_{\text{SFT}}$现在,我们要去.
+- 答复结束时的奖励$y$其他:
 
-  `r_total(x, y) = R_φ(x, y) - β · KL(π_θ(·|x) || π_ref(·|x))`
+  $r_{\text{total}}(x, y) = R_\phi(x, y) - \beta \cdot \mathrm{KL}(\pi_\theta(\cdot \mid x) \Vert \pi_{\text{ref}}(\cdot \mid x))$
 
-  克莱特的罚款阻止了`π_θ`由于自主而偏离`π_SFT`它是一个*规范性*的地区,而不是一个难以信任的地区.`β`通常`0.01`- 没有什么.`0.05`现在,我们要去.
+  克莱特的罚款阻止了$\pi_\theta$由于自主而偏离$\pi_{\text{SFT}}$它是一个*规范性*的地区,而不是一个难以信任的地区.$\beta$通常是0.01-0.05.
 - 运行PPO (课程 08) 通过此奖励.优势在代币水平轨迹上计算,但RM仅得分了全部响应.
 
-**Why the KL?**没有它,PPO会很高兴找到奖励黑客策略. 人民币只在在分销完成中训练.`π_θ`机器在RLHF中最重要的单个.
+**Why the KL?**没有它,PPO会很高兴找到奖励黑客策略. 人民币只在在分销完成中训练.$\pi_\theta$机器在RLHF中最重要的单个.
 
 **2026 status:**
 
@@ -97,7 +97,7 @@ def rm_train_step(w, x, y_pos, y_neg, lr):
 
 ### 步骤3:除了人民币外,PPO类似的政策
 
-我们的玩具政策从词汇中产生一个代币.`log π_θ(token | prompt)`加入KL-to-reference罚款,并使用切割的PPO替代品.
+我们的玩具政策从词汇中产生一个代币.$\log \pi_\theta(\text{token} \mid \text{prompt})$加入KL-to-reference罚款,并使用切割的PPO替代品.
 
 ```python
 def rlhf_step(theta, ref, w, prompt, rng, eps=0.2, beta=0.1, lr=0.05):
@@ -113,7 +113,7 @@ def rlhf_step(theta, ref, w, prompt, rng, eps=0.2, beta=0.1, lr=0.05):
 
 ### 步骤4:监控KL
 
-轨道平均值`KL(π_θ || π_ref)`如果它过去,`~5-10`政策已经远离了`π_SFT`低`β`这就是真正的RLHF的顶级诊断.
+轨道平均值$\mathrm{KL}(\pi_\theta \Vert \pi_{\text{ref}})$如果它过去,`~5-10`政策已经远离了$\pi_{\text{SFT}}$低$\beta$这就是真正的RLHF的顶级诊断.
 
 ### 步骤5:使用TRL的生产配方
 
@@ -163,7 +163,7 @@ for batch in dataloader:
 
 ## 陷
 
-- **Over-optimization / reward hacking.**子是不完美的.`π_θ`发现高分但不佳的对立性完成. 症状:奖励无限上升,而人类评价分水平高或下降. 修正:早点停止,提高 `β`增加了训练数据.
+- **Over-optimization / reward hacking.**子是不完美的.$\pi_\theta$发现高分但不佳的对立性完成. 症状:奖励无限上升,而人类评价分水平高或下降. 修正:早点停止,提高 $\beta$增加了训练数据.
 - **Length hacking.**训练在有用的反应上,RM通常隐含地奖励长度.政策学习填补响应.补救:长度正常化的奖励,或RLAIF与长度意识的RM.
 - **Too-small RM.**只有一个小的RM才能准确地评分出口.
 - **KL tuning.**太低 β →漂移和奖励黑客.太高 β →政策几乎没有改变.标准技巧是*适应性* β 针对每步的固定 KL.
@@ -213,7 +213,7 @@ Refuse to ship RLHF-PPO without a KL monitor. Refuse to use an RM smaller than t
 ## 运动
 
 1. **Easy.**训练布拉德利-特里奖励模型`code/main.py`在500个合成优先对上,对100个被持久对上,测量对准.应超过90%.
-2. **Medium.**使用玩具PPO-RLHF循环运行`β ∈ {0.0, 0.1, 1.0}`对于每一个,图片的RM分数与KL参考更新.
+2. **Medium.**使用玩具PPO-RLHF循环运行$\beta \in \lbrace 0.0, 0.1, 1.0 \rbrace$对于每一个,图片的RM分数与KL参考更新.
 3. **Hard.**根据相同的偏好数据实施DPO (闭式形式偏好概率损失),并在计算中使用的RLHF-PPO管道和最终RM分数中进行比较.
 
 ## 关键词
@@ -222,8 +222,8 @@ Refuse to ship RLHF-PPO without a KL monitor. Refuse to use an RM smaller than t
 |------|-----------------|-----------------------|
 | RLHF | "Alignment RL" | Three-stage SFT + RM + PPO pipeline (Christiano 2017, Ouyang 2022). |
 | Reward Model (RM) | "The scoring net" | Learned scalar function fit to pairwise preferences via Bradley-Terry. |
-| Bradley-Terry | "Pairwise logistic loss" | `P(y_+ ≻ y_-) = σ(R(y_+) - R(y_-))`; the standard RM objective. |
-| KL penalty | "Stay near the reference" | `β · KL(π_θ \|\| π_ref)` in the reward; the anti-reward-hacking regularizer. |
+| Bradley-Terry | "Pairwise logistic loss" | $P(y_+ \succ y_-) = \sigma(R(y_+) - R(y_-))$; the standard RM objective. |
+| KL penalty | "Stay near the reference" | $\beta \cdot \mathrm{KL}(\pi_\theta \Vert \pi_{\text{ref}})$ in the reward; the anti-reward-hacking regularizer. |
 | Reward hacking | "Goodhart's law" | Policy exploits RM flaws; symptoms: reward up, human eval flat. |
 | RLAIF | "AI-labeled preferences" | RLHF where labels come from another LM instead of humans. |
 | PRM | "Process Reward Model" | Scores partial reasoning steps; used in reasoning pipelines. |

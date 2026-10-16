@@ -30,19 +30,19 @@ while True:
 
 **AlphaZero (2017).**银等. 根据已知规则的游戏 (象棋,肖吉,戈):
 
-- 政策价值网络:一个塔`f_θ(s) → (p, v)`现在,我们要去.`p`法律行动的先驱.`v`游戏的预期结果.
-- 果树搜索 (MCTS):每次移动,扩展一个可能的延续的树. 使用 `(p, v)`按 UCB (PUCT) 选择节点: `a* = argmax Q(s, a) + c · p(a|s) · √N(s) / (1 + N(s, a))`现在,我们要去.
-- 玩自己游戏:玩代理对代理.`t`士,士,士,士,士,士,士,士,士,士,士,士,士,士,士,士,士,士,士,士,士,士,士,士,士,士,士,士,士,士,士,士,士,士,士,士,士,士,士,士,士,士,士,士,士,士,士,士,士,士,士,士,士,士,士,士,士,士,士,士,士,士,士,士,士,士,士,士,士,士,士,士,士,士,士,士,士,士,士,士,士,士,士,士,士,士,士,士,士,士,士,士,士,士,士,士,士,士,士,士,士,士,`π_t`成为政策培训目标.
-- 损失:`L = (v - z)² - π · log p + c · ||θ||²`现在,我们要去.`z`是游戏结果 (+1 / 0 / -1).
+- 政策价值网络:一个塔$f_\theta(s) \to (p, v)$现在,我们要去.$p$法律行动的先驱.$v$游戏的预期结果.
+- 果树搜索 (MCTS):每次移动,扩展一个可能的延续的树. 使用 $(p, v)$按 UCB (PUCT) 选择节点: $a^{\ast} = \arg\max_a Q(s, a) + c \cdot p(a \mid s) \cdot \sqrt{N(s)} / (1 + N(s, a))$现在,我们要去.
+- 玩自己游戏:玩代理对代理.$t$士,士,士,士,士,士,士,士,士,士,士,士,士,士,士,士,士,士,士,士,士,士,士,士,士,士,士,士,士,士,士,士,士,士,士,士,士,士,士,士,士,士,士,士,士,士,士,士,士,士,士,士,士,士,士,士,士,士,士,士,士,士,士,士,士,士,士,士,士,士,士,士,士,士,士,士,士,士,士,士,士,士,士,士,士,士,士,士,士,士,士,士,士,士,士,士,士,士,士,士,士,士,$\pi_t$成为政策培训目标.
+- 损失:$L = (v - z)^2 - \pi \cdot \log p + c \cdot \lVert \theta \rVert^2$现在,我们要去.$z$是游戏结果 (+1 / 0 / -1).
 
 没有人知道,没有手工修复,只有一个食谱, 掌握了几万个自动游戏的棋牌,肖吉和戈.
 
 **MuZero (2019).**施里特维泽等. 取消了规则的要求.
 
-- 学习一个置动态模型`(h, g, f)`其他:
-  - `h(s)`编码观察到隐形状态.
-  - `g(s_latent, a)`预测下一个潜伏状态 + 奖励.
-  - `f(s_latent)`预测政策前值.
+- 学习一个置动态模型$(h, g, f)$其他:
+  - $h(s)$编码观察到隐形状态.
+  - $g(s_{\text{latent}}, a)$预测下一个潜伏状态 + 奖励.
+  - $f(s_{\text{latent}})$预测政策前值.
 -  MCTS在"学习的隐藏空间"中运行.
 - 运行在棋牌,棋牌,肖吉和阿塔利,一个算法,没有规则知识.
 
@@ -54,11 +54,11 @@ while True:
 
 - "游戏":回答数学/编码/推理问题. "Win" =验证器 (测试案例通过,数值答案匹配) 返回1.
 - 政策:法师. 行动:代币. 状态:快速+反应-迄今.
-- 没有批评者 (PPO式V_φ).`G`根据政策的完成,每一个收费的收费.**group-relative advantage** `A_i = (r_i - mean_r) / std_r`作为REINFORCE类型更新的信号.
+- 没有批评者 (PPO风格)$V_\phi$代替每次提示,$G$根据政策的完成,每一个收费的收费.**group-relative advantage** $A_i = (r_i - \text{mean}_r) / \text{std}_r$作为REINFORCE类型更新的信号.
 - 根据"海上海域"的规定,海域海域海域海域海域海域海域海域海域海域海域海域海域海域海域海域海域海域海域海域海域海域海域海域海域海域海域海域海域海域海域海域海域海域海域海域海域海域海域海域海域海域海域海域海域海域海域海域海域海域海域海域海域海域海域海域海域海域海域海域海域海域海域海域海域海域海域海域海域海域海域海域海域海域海域海域海域海域海域海域海域海域海域海域海域海域海域海域海域海域海域海域海域海域海域海域海域海域海域海域海域海域海域海域海域海域海域海域海域海域海域海域海域海域海域海域海域海域海域海域海域海域海域海域海域海域海域海域海域海域海域海域海域海域海域海域海域海域海域海域海域海域海域海域海域海域海域海域海域海域海域海域海域海域海域海域海域海域海域海域海域海域海域海域海域海域海域海域海域海域海域海域海域海域.
 - 完全损失:
 
-  `L_GRPO(θ) = -E_{q, {o_i}} [ (1/G) Σ_i A_i · log π_θ(o_i | q) ] + β · KL(π_θ || π_ref)`
+  $L_{\text{GRPO}}(\theta) = -\mathbb E_{q, \lbrace o_i \rbrace} \left[ \frac{1}{G} \sum_i A_i \cdot \log \pi_\theta(o_i \mid q) \right] + \beta \cdot \mathrm{KL}(\pi_\theta \Vert \pi_{\text{ref}})$
 
 没有奖励模型,没有批评者,没有MCTS. 组相关基线取代了所有三个. 在计算的部分情况下,在推理基准上匹配或超过PPO-RLHF质量.
 
@@ -144,7 +144,7 @@ def grpo_step(theta, p_idx, G=8, beta=0.01, lr=0.1, rng=None):
 ## 陷
 
 - **Reward hacking via verifier gaming.**经验者可能会发现实验者是错误的或可利用的.
-- **Group size too small.**基因基因变异是`1/√G`在下面`G = 4`优势信号是噪音的;标准选择是`G = 8`为了`64`现在,我们要去.
+- **Group size too small.**基因基因变异是$1/\sqrt{G}$在下面$G = 4$优势信号是噪音的;标准选择是$G = 8$现在,我们要做什么?
 - **Length bias.**通过代币计数正常化,或使用序列级日志检查,或缩小到最大长度.
 - **Pure self-play cycles.**球运动的总数可以被各种对手游泳池减轻 (联盟比赛,10课).
 - **Search-policy mismatch.**如果政策网太小,不能代表搜索的分布,训练站.
@@ -195,7 +195,7 @@ Refuse AlphaZero on imperfect-info games (route to CFR). Refuse GRPO without a t
 
 ## 运动
 
-1. **Easy.**执行 GRPO 强盗在`code/main.py`训练用2个提示 ×4个答案代币.  konverge 在<1000个更新中`G=8`现在,我们要去.
+1. **Easy.**执行 GRPO 强盗在`code/main.py`训练用2个提示 ×4个答案代币.  konverge 在<1000个更新中$G=8$现在,我们要去.
 2. **Medium.**入PPO (剪切) 和尼拉 REINFORCE. 比较样品效率和奖励差异与GRPO在同一名强盗.
 3. **Hard.**扩展到长度-2的"推理链":代理发出两个代币,验证者奖励对.测量GRPO如何处理两个步骤的序列中信用分配. (提示:计算组优势每 *完整序列*,扩散到两个代币位置).
 
@@ -203,11 +203,11 @@ Refuse AlphaZero on imperfect-info games (route to CFR). Refuse GRPO without a t
 
 | Term | What people say | What it actually means |
 |------|-----------------|-----------------------|
-| MCTS | "Tree search with learned net" | Monte Carlo Tree Search; UCB1/PUCT selection with learned `(p, v)` priors. |
+| MCTS | "Tree search with learned net" | Monte Carlo Tree Search; UCB1/PUCT selection with learned $(p, v)$ priors. |
 | AlphaZero | "Self-play + MCTS" | Policy-value net trained to match MCTS visits and game outcome. |
 | MuZero | "Learned-model AlphaZero" | Same loop but in latent space via learned dynamics. |
 | GRPO | "Critic-free PPO" | Group Relative Policy Optimization; REINFORCE with group-mean baseline + KL. |
-| PUCT | "AlphaZero's UCB" | `Q + c · p · √N / (1 + N_a)` — balances value estimate with prior. |
+| PUCT | "AlphaZero's UCB" | $Q + c \cdot p \cdot \sqrt{N} / (1 + N_a)$ — balances value estimate with prior. |
 | Self-play | "Agent vs past self" | Standard for zero-sum; symmetric training signal. |
 | League play | "Population-based self-play" | Past + current + exploiters sampled as opponents. |
 | Verifier reward | "Verifiable RL" | Reward comes from a deterministic checker (tests pass, answer matches). |

@@ -21,31 +21,31 @@
 
 ![Four MARL regimes: indep, centralized critic, self-play, league](../assets/marl.svg)
 
-**Formalism: Markov Game.**总体化MDP:国家`S`共同行动`a = (a_1, …, a_n)`过渡`P(s' | s, a)`并且每位代理人收取奖励`R_i(s, a, s')`每个代理人`i`根据自己的政策,最大化自己的回报.`π_i`如果奖励是相同的,那么它是**fully cooperative**如果是零和,那就算是**adversarial**如果混合,它是**general-sum**现在,我们要去.
+**Formalism: Markov Game.**总体化MDP:国家$S$共同行动$a = (a_1, \ldots, a_n)$过渡$P(s' \mid s, a)$并且每位代理人收取奖励$R_i(s, a, s')$每个代理人$i$根据自己的政策,最大化自己的回报.$\pi_i$如果奖励是相同的,那么它是**fully cooperative**如果是零和,那就算是**adversarial**如果混合,它是**general-sum**现在,我们要去.
 
 **Core challenges:**
 
-- **Non-stationarity.** `P(s' | s, a_i)`经纪人`i`视角取决于`π_{-i}`现在,我们正在改变.
+- **Non-stationarity.** $P(s' \mid s, a_i)$经纪人$i$视角取决于$\pi_{-i}$现在,我们正在改变.
 - **Credit assignment.**谁造成了这个?
 - **Exploration coordination.**代理人必须探索互补的策略,而不是冗余地探索同一个状态.
-- **Scalability.**共同行动空间在`n`现在,我们要去.
+- **Scalability.**共同行动空间在$n$现在,我们要去.
 - **Partial observability.**每个代理只能看到自己的观察; 全球状态是隐藏的.
 
 **Four dominant regimes:**
 
 **1. Independent Q-learning / independent PPO (IQL, IPPO).**每个代理学习自己的Q或政策,把他人视为环境的一部分.简单,有时它会发挥作用 (特别是经验重演作为一个平滑的代理模型技巧).理论融合:没有.实践中:宽松关联任务很好,密切关联任务很糟糕.
 
-**2. Centralized training, decentralized execution (CTDE).**现在,我们要做什么?`π_i`地方观察的条件`o_i`标准的分散执行在部署. 在*培训*期间,一个集中批评者`Q(s, a_1, …, a_n)`关于全球全面状态和联合行动的条件.
+**2. Centralized training, decentralized execution (CTDE).**现在,我们要做什么?$\pi_i$地方观察的条件$o_i$标准的分散执行在部署. 在*培训*期间,一个集中批评者$Q(s, a_1, \ldots, a_n)$关于全球全面状态和联合行动的条件.
 - **MADDPG**(Lowe et al. 2017):每位代理人均有集中批评者.
-- **COMA**问问"如果我采取行动,我的奖励会是什么?"`a'`分离了我的贡献.
+- **COMA**问问"如果我采取行动,我的奖励会是什么?"$a'$分离了我的贡献.
 - **MAPPO**现在,**IPPO**具有共享批评者 (Yu及其他2022):具有集中价值功能的PPO.2026年为合作社MARL占主导地位.
-- **QMIX**值分解  `Q_tot(s, a) = f(Q_1(s, a_1), …, Q_n(s, a_n))`的混合.
+- **QMIX**值分解  $Q_{\text{tot}}(s, a) = f(Q_1(s, a_1), \ldots, Q_n(s, a_n))$的混合.
 
 **3. Self-play.**两个副本的同一代理玩彼此.对手的政策是我从过去的快照的政策.AlphaGo / AlphaZero / MuZero.OpenAI五.最适合零总数游戏;训练信号是对称.
 
 **4. League play.**扩展自动游戏到总和/对抗环境:保持过去和当前政策的人口,从联盟中样本对手,训练对抗他们. 增加剥削者 (专注于击败当前最好的) 和主要剥削者 (专注于击败剥削者). AlphaStar (StarCraft II). 当游戏允许"岩石纸刀刀"战略周期时需要.
 
-**Communication.**让代理人发送学习信息`m_i`福斯特等人 (2016) 表明可以从端到端培训可分化的代理间通信.今天的基于LLM的多代理系统 (阶段16) 基本上以自然语言进行通信.
+**Communication.**让代理人发送学习信息$m_i$福斯特等人 (2016) 表明可以从端到端培训可分化的代理间通信.今天的基于LLM的多代理系统 (阶段16) 基本上以自然语言进行通信.
 
 ```figure
 f3-marl-orbit
@@ -101,11 +101,11 @@ def independent_q(env, episodes, alpha, gamma, epsilon):
 
 ### 步骤3: 集中式Q,并更新分解值
 
-使用一个Q而不是联合行动`Q(s, a_1, a_2)`通过边缘化: `π_i(s) = argmax_{a_i} max_{a_{-i}} Q(s, a_1, a_2)`交易指数式的联合行动空间以获得一个*正确*的全球观.
+使用一个Q而不是联合行动$Q(s, a_1, a_2)$通过边缘化: $\pi_i(s) = \arg\max_{a_i} \max_{a_{-i}} Q(s, a_1, a_2)$交易指数式的联合行动空间以获得一个*正确*的全球观.
 
 ### 步骤4:简单的自动玩法 (对抗性二代)
 
-列车代理A与B后`K`随着A的重量转换为B的重量,对称训练,持续进步,
+列车代理A与B后$K$随着A的重量转换为B的重量,对称训练,持续进步,
 
 ## 陷
 
@@ -167,11 +167,11 @@ Refuse independent Q-learning on tightly-coupled cooperative tasks. Refuse to re
 
 | Term | What people say | What it actually means |
 |------|-----------------|-----------------------|
-| Markov game | "Multi-agent MDP" | `(S, A_1, …, A_n, P, R_1, …, R_n)`; each agent has its own reward. |
+| Markov game | "Multi-agent MDP" | $(S, A_1, \ldots, A_n, P, R_1, \ldots, R_n)$; each agent has its own reward. |
 | CTDE | "Centralized training, decentralized execution" | Joint critic at training time; each agent's policy uses only local obs. |
 | IPPO | "Independent PPO" | Each agent runs PPO separately. Simple baseline; often underrated. |
 | MAPPO | "Multi-agent PPO" | PPO with a centralized value function conditioned on global state. |
-| QMIX | "Monotonic value decomposition" | `Q_tot = f_monotone(Q_1, …, Q_n)` allows decentralized argmax. |
+| QMIX | "Monotonic value decomposition" | $Q_{\text{tot}} = f_{\text{monotone}}(Q_1, \ldots, Q_n)$ allows decentralized argmax. |
 | COMA | "Counterfactual multi-agent" | Advantage = my Q minus expected Q marginalizing over my action. |
 | Self-play | "Agent vs past self" | Single agent, two roles; standard for zero-sum games. |
 | League play | "Population training" | Cache past policies, sample opponents from the pool; handles strategy cycles. |
