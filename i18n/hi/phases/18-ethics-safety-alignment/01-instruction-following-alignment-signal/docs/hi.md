@@ -32,8 +32,8 @@ SFT आपको क्या देता हैः मॉडल अब प्�
 
 प्रत्येक प्रॉम्प्ट के लिए, SFT मॉडल से K पूर्णता का नमूना लें। एक लेबलर उन्हें रैंक करता है। एक इनाम मॉडल को प्रशिक्षित करें जो किसी भी प्रॉम्प्ट-रिस्पॉन्स जोड़े को स्कोर करता है ताकि, जोड़े के लिए जहां `y_w``y_l`:
 
-```
-L_RM = -log sigmoid(r(x, y_w) - r(x, y_l))
+```math
+L_{\text{RM}} = -\log \sigma\big(r(x, y_w) - r(x, y_l)\big)
 ```
 
 यह ब्रैडली-टेरी जोड़ी प्राथमिकता हानि है। आरएम आमतौर पर एसएफटी मॉडल से आरंभ किया जाता है जिसमें एलएम सिर को स्कारर सिर से प्रतिस्थापित किया जाता है।
@@ -44,8 +44,8 @@ L_RM = -log sigmoid(r(x, y_w) - r(x, y_l))
 
 लक्ष्य को परिभाषित करेंः
 
-```
-J(pi) = E_{x~D, y~pi(.|x)} [ r(x, y) ] - beta * KL(pi(.|x) || pi_SFT(.|x))
+```math
+J(\pi) = \mathbb{E}_{x \sim D,\, y \sim \pi(\cdot \mid x)} \big[ r(x, y) \big] - \beta \, \mathrm{KL}\big(\pi(\cdot \mid x) \,\|\, \pi_{\text{SFT}}(\cdot \mid x)\big)
 ```
 
 पीपीओ के साथ अधिकतम करें।`pi`इसके बिना, अनुकूलक प्रतिकूल उदाहरणों को पाता है  स्ट्रिंग जो आरएम के नीचे उच्च स्कोर करते हैं क्योंकि आरएम ने उन्हें कभी नहीं देखा, न कि क्योंकि मनुष्य वास्तव में उन्हें पसंद करते हैं।
@@ -56,8 +56,8 @@ KL गुणांक `beta`बहुत कम: इनाम हैकिंग
 
 आरएलएचएफ के बाद, मॉडल को मनुष्यों द्वारा पसंद किया जाता है लेकिन मानक बेंचमार्क (एसक्वाड, हेलास्वाग, डीआरओपी) पर पीछे हटता है। Ouyang et al. इसे संरेखण कर कहते हैं और इसे पीपीओ-पीटीएक्स के साथ तय करते हैंः आरएल लक्ष्य में पूर्व-शिक्षण ग्रेडिएंट्स को मिलाएं ताकि मॉडल यह न भूलें कि कैसे डाउनस्ट्रीम कार्यों को करना है जिसके लिए इसे कभी पुरस्कृत नहीं किया गया था।
 
-```
-J_ptx(pi) = J(pi) + gamma * E_{x~D_pretrain} [ log pi(x) ]
+```math
+J_{\text{ptx}}(\pi) = J(\pi) + \gamma \, \mathbb{E}_{x \sim D_{\text{pretrain}}} \big[ \log \pi(x) \big]
 ```
 
 पीपीओ-पीटीएक्स मानक बन गया। मानव, डीपमाइंड और मेटा सभी कुछ प्रकार का उपयोग करते हैं।
@@ -84,7 +84,7 @@ al-instruct-pipeline
 क्या देखना हैः
 
 -  के साथ पुरस्कार पथ`beta = 0.1`vs `beta = 0.0`. .
-- प्रशिक्षण चरणों पर।
+- $\mathrm{KL}(\pi \Vert \pi_{\text{SFT}})$प्रशिक्षण चरणों पर।
 - लेबलर प्राथमिकता की तुलना में अंतिम कार्रवाई वितरण।
 
 ## इसे भेजें
@@ -109,7 +109,7 @@ al-instruct-pipeline
 |------|-----------------|------------------------|
 | SFT | "instruction tuning" | Stage 1: cross-entropy fine-tune on prompt-response pairs |
 | Reward model | "the RM" | Scalar regressor over (prompt, response) trained with Bradley-Terry on pairwise labels |
-| Bradley-Terry | "pairwise preference loss" | -log sigmoid(r_w - r_l); reduces pairwise ranking to binary classification |
+| Bradley-Terry | "pairwise preference loss" | $-\log \sigma(r_w - r_l)$; reduces pairwise ranking to binary classification |
 | KL penalty | "the regularizer" | `beta * KL(pi \|\| pi_SFT)` — keeps the RL policy near the SFT anchor |
 | PPO-ptx | "PPO with pretraining mix" | Adds a fraction of pre-training log-likelihood to the PPO objective to offset the alignment tax |
 | Alignment tax | "the RLHF regression" | Post-RLHF drop on standard benchmarks that RLHF did not target |

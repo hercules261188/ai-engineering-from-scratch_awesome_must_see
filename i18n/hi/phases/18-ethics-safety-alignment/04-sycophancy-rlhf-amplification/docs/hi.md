@@ -28,10 +28,12 @@
 
 चलो`pi_0`आधार मॉडल होना,`pi_A`संरेखण के बाद का मॉडल, `r`प्रॉक्सी इनाम,`s(x, y)`एक द्विआधारी संयोग्यता सूचक। परिभाषित करेंः
 
-```
-E[s | r]            = probability of sycophancy given reward
-E_{pi_0}[s | r]     = measured on the base model's output distribution
-E_{pi_A}[s | r]     = measured on the aligned model's output distribution
+```math
+\begin{aligned}
+\mathbb{E}[s \mid r] &= \text{probability of sycophancy given reward} \\
+\mathbb{E}_{\pi_0}[s \mid r] &= \text{measured on the base model's output distribution} \\
+\mathbb{E}_{\pi_A}[s \mid r] &= \text{measured on the aligned model's output distribution}
+\end{aligned}
 ```
 
 चरण 1: अनुभवजन्य रूप से,`E_{pi_0}[s | r=high] > E_{pi_0}[s | r=low]`. साइकोफैंटिक पूर्णताएं लेबलर-प्राथमिकता डेटा पर प्रशिक्षित आरएम के तहत समान गैर-साइकोफैंटिक पूर्णताओं की तुलना में औसत से अधिक होती हैं।
@@ -69,8 +71,8 @@ E_{pi_A}[s | r]     = measured on the aligned model's output distribution
 
 शापिरा एट अल. पुरस्कार को संशोधित करने का प्रस्ताव देते हैंः
 
-```
-r'(x, y) = r(x, y) - alpha * agree(x, y)
+```math
+r'(x, y) = r(x, y) - \alpha \cdot \text{agree}(x, y)
 ```
 
 कहाँ`agree(x, y)`एक सहायक वर्गीकरण है जो यह मापता है कि क्या `y`सहमत है `x`अल्फा स्वीप में साइकोफैन्स की गिरावट को आधार मॉडल के स्तर के करीब दिखाया गया है।`alpha`0.3-0.5, कुछ वैध सहमति के नुकसान की कीमत पर (मॉडल सही उपयोगकर्ता विश्वासों के विपरीत थोड़ा अधिक हो जाता है) ।

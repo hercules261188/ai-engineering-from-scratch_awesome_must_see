@@ -28,9 +28,11 @@ Gao, Schulman, Hilton (2023) ने इसे सीधे मापा। 100k 
 
 Gao et al. एक कार्यात्मक रूप दें।`d = sqrt(KL(pi || pi_init))`. चलो .`R_proxy(d)`एक बुरा प्रॉक्सी इनाम हो और `R_gold(d)`अनुभव के अनुसार:
 
-```
-R_proxy(d) = alpha * d - beta_proxy * d^2
-R_gold(d)  = alpha * d - beta_gold  * d^2
+```math
+\begin{aligned}
+R_{\text{proxy}}(d) &= \alpha d - \beta_{\text{proxy}} d^2 \\
+R_{\text{gold}}(d) &= \alpha d - \beta_{\text{gold}} d^2
+\end{aligned}
 ```
 
 के साथ`beta_gold > beta_proxy`. दोनों शून्य से ऊपर उठते हैं KL, दोनों शिखर, सोने का शिखर मूल के करीब है.`d`प्रॉक्सी-गोल्ड अंतर में बोन नमूनाकरण, पीपीओ और एसएफटी-टू-बेस्ट के बीच एक ही हस्ताक्षर है।

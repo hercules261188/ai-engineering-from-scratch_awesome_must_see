@@ -18,20 +18,20 @@
 
 आरएलएचएफ उद्देश्य (पढ़ें 1):
 
-```
-max_pi E_{x,y~pi} [ r(x, y) ] - beta * KL(pi || pi_ref)
+```math
+\max_{\pi} \; \mathbb{E}_{x, y \sim \pi} \big[ r(x, y) \big] - \beta \, \mathrm{KL}(\pi \,\|\, \pi_{\text{ref}})
 ```
 
 एक ज्ञात इष्टतम हैः
 
-```
-pi*(y|x) = (1/Z(x)) * pi_ref(y|x) * exp(r(x, y) / beta)
+```math
+\pi^*(y \mid x) = \frac{1}{Z(x)} \, \pi_{\text{ref}}(y \mid x) \exp\!\left(\frac{r(x, y)}{\beta}\right)
 ```
 
 तो इनाम अप्रत्यक्ष रूप से संदर्भ के लिए इष्टतम नीति के अनुपात द्वारा परिभाषित किया जाता हैः
 
-```
-r(x, y) = beta * log(pi*(y|x) / pi_ref(y|x)) + beta * log Z(x)
+```math
+r(x, y) = \beta \log \frac{\pi^*(y \mid x)}{\pi_{\text{ref}}(y \mid x)} + \beta \log Z(x)
 ```
 
 ब्रैडली-टेरी वरीयता संभावना और विभाजन समारोह में यह प्रतिस्थापित करें`Z(x)`रद्द करता है क्योंकि यह केवल निर्भर करता है`x`. जो कुछ भी शेष है वह केवल नीतिगत मापदंडों में हानि है  कोई इनाम मॉडल की आवश्यकता नहीं है।
@@ -42,11 +42,11 @@ r(x, y) = beta * log(pi*(y|x) / pi_ref(y|x)) + beta * log Z(x)
 
 ### डीपीओ (राफेलोव एट अल., 2023)
 
-```
-L_DPO = -log sigmoid(
-  beta * log(pi(y_w | x) / pi_ref(y_w | x))
-  - beta * log(pi(y_l | x) / pi_ref(y_l | x))
-)
+```math
+L_{\text{DPO}} = -\log \sigma\!\left(
+  \beta \log \frac{\pi(y_w \mid x)}{\pi_{\text{ref}}(y_w \mid x)}
+  - \beta \log \frac{\pi(y_l \mid x)}{\pi_{\text{ref}}(y_l \mid x)}
+\right)
 ```
 
 क्या गलत हो सकता हैः
@@ -59,8 +59,8 @@ L_DPO = -log sigmoid(
 
 पहचान प्राथमिकता अनुकूलन प्राथमिकता संभावना पर एक पहचान मानचित्रण के साथ लॉग-सिग्मोइड की जगह लेता है। हानि एक सीमाबद्ध लक्ष्य पर एक वर्ग-त्रुटि बन जाती हैः
 
-```
-L_IPO = (log(pi(y_w | x) / pi_ref(y_w | x)) - log(pi(y_l | x) / pi_ref(y_l | x)) - 1/(2 beta))^2
+```math
+L_{\text{IPO}} = \left( \log \frac{\pi(y_w \mid x)}{\pi_{\text{ref}}(y_w \mid x)} - \log \frac{\pi(y_l \mid x)}{\pi_{\text{ref}}(y_l \mid x)} - \frac{1}{2\beta} \right)^2
 ```
 
 मार्जिन से सीमा है `1/(2 beta)`. प्राथमिकता बल और अप्रत्यक्ष पुरस्कार अंतर समानुपातिक हैं. कोई विस्फोट नहीं.
@@ -69,8 +69,8 @@ L_IPO = (log(pi(y_w | x) / pi_ref(y_w | x)) - log(pi(y_l | x) / pi_ref(y_l | x))
 
 Kahneman-Tversky अनुकूलन पूरी तरह से जोड़ी संरचना को छोड़ देता है। एक एकल लेबल आउटपुट और एक द्विआधारी " वांछनीय " या "अवांछनीय" संकेत को देखते हुए, यह एक संभावना सिद्धांत उपयोगिता के लिए मैप करता हैः
 
-```
-v(x, y) = sigma(beta * log(pi(y|x) / pi_ref(y|x)) - z_ref)
+```math
+v(x, y) = \sigma\!\left(\beta \log \frac{\pi(y \mid x)}{\pi_{\text{ref}}(y \mid x)} - z_{\text{ref}}\right)
 ```
 
 लाभः आप असंगत डेटा का उपयोग कर सकते हैं, जो बहुत अधिक प्रचुर मात्रा में है।
@@ -79,12 +79,12 @@ v(x, y) = sigma(beta * log(pi(y|x) / pi_ref(y|x)) - z_ref)
 
 सरल प्राथमिकता अनुकूलन प्रशिक्षण संकेत को पीढ़ी के साथ संरेखित करता है। संदर्भ नीति को पूरी तरह से हटा दें और लंबाई द्वारा लॉग-संभाव्यता को सामान्य बनाएंः
 
-```
-L_SimPO = -log sigmoid(
-  (beta / |y_w|) * log pi(y_w | x)
-  - (beta / |y_l|) * log pi(y_l | x)
-  - gamma
-)
+```math
+L_{\text{SimPO}} = -\log \sigma\!\left(
+  \frac{\beta}{|y_w|} \log \pi(y_w \mid x)
+  - \frac{\beta}{|y_l|} \log \pi(y_l \mid x)
+  - \gamma
+\right)
 ```
 
 एक मार्जिन के साथ `gamma`लंबाई सामान्यीकरण DPO की लंबाई-bias विफलता मोड का लाभ उठाने के लिए प्रोत्साहन को हटा देता है (अधिक`y_w`निर्माण द्वारा लॉग-प्रोब अंतर अधिक देता है) ।
@@ -93,9 +93,11 @@ L_SimPO = -log sigmoid(
 
 Odds-Ratio Preference Optimization मानक SFT नकारात्मक लॉग-संभाव्यता के लिए एक प्राथमिकता शब्द जोड़ता हैः
 
-```
-L_ORPO = L_NLL(y_w) + lambda * L_OR
-L_OR = -log sigmoid(log(odds(y_w) / odds(y_l)))
+```math
+\begin{aligned}
+L_{\text{ORPO}} &= L_{\text{NLL}}(y_w) + \lambda L_{\text{OR}} \\
+L_{\text{OR}} &= -\log \sigma\!\left(\log \frac{\text{odds}(y_w)}{\text{odds}(y_l)}\right)
+\end{aligned}
 ```
 
 कोई संदर्भ नीति नहीं  एसएफटी शब्द नियमितता है। आधार मॉडल से संरेखित मॉडल तक एक चरण में ट्रेन करें। कोई अलग एसएफटी चेकपॉइंट नहीं है।
