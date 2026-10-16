@@ -1,6 +1,6 @@
 # Actor-Critico  A2C e A3C
 
-> A ReINFORCE é barulhenta, adicione um crítico que aprenda.`V̂(s)`A 2C executa sincronicamente; A 3C executa através de fios. Ambos são o modelo mental para cada método moderno de RL profundo.
+> A ReINFORCE é barulhenta, adicione um crítico que aprenda.$\hat{V}(s)$A 2C executa sincronicamente; A 3C executa através de fios. Ambos são o modelo mental para cada método moderno de RL profundo.
 
 **Type:** Build
 **Languages:** Python
@@ -9,11 +9,13 @@
 
 ## O problema
 
-A Vanilla ReINFORCE funciona, mas a sua variação é terrível.`G_t`O que é que é o que é o que é o que é o que é o que é o que é o que é o que é o que é o que é o que é o que é o que é o que é o que é o que é o que é o que é o que é o que é o que é o que é o que é o que é o que é o que é o que é o que é o que é o que é o que é o que é o que é o que é o que é o que é o que é o que é o que é o que é.`∇ log π`e a média produz um estimador de gradiente que leva milhares de episódios para mover a política a mesma distância que você poderia mover com muito menos atualizações DQN.
+A Vanilla ReINFORCE funciona, mas a sua variação é terrível.$G_t$O que é que é o que é o que é o que é o que é o que é o que é o que é o que é o que é o que é o que é o que é o que é o que é o que é o que é o que é o que é o que é o que é o que é o que é o que é o que é o que é o que é o que é o que é o que é o que é o que é o que é o que é o que é o que é o que é o que é o que é o que é o que é.$\nabla \log \pi$e a média produz um estimador de gradiente que leva milhares de episódios para mover a política a mesma distância que você poderia mover com muito menos atualizações DQN.
 
-A variação vem do uso de retornos brutos. Se subtrair uma linha de base `b(s_t)` qualquer função de estado, incluindo um valor aprendido  a expectativa é inalterada e a variância cai.`V̂(s_t)`Agora a quantidade se multiplica .`∇ log π`é a *vantagem*:
+A variação vem do uso de retornos brutos. Se subtrair uma linha de base $b(s_t)$ qualquer função de estado, incluindo um valor aprendido  a expectativa é inalterada e a variância cai.$\hat{V}(s_t)$Agora a quantidade se multiplica .$\nabla \log \pi$é a *vantagem*:
 
-`A(s, a) = G - V̂(s)`
+```math
+A(s, a) = G - \hat{V}(s)
+```
 
 Uma ação é boa se produzir retornos acima da média; ruim se abaixo. REINFORCE com um crítico erudito é *actor-crítica*. O crítico dá ao ator um professor de baixa variação. Este é todo método de política profunda após 2015 (A2C, A3C, PPO, SAC, IMPALA).
 
@@ -23,33 +25,39 @@ Uma ação é boa se produzir retornos acima da média; ruim se abaixo. REINFORC
 
 **Two networks, one shared loss:**
 
-- **Actor** `π_θ(a | s)`A política: a política.
-- **Critic** `V_φ(s)`As estimativas de retorno esperado do estado.`(V_φ(s) - target)²`- Não .
+- **Actor** $\pi_\theta(a \mid s)$A política: a política.
+- **Critic** $V_\phi(s)$As estimativas de retorno esperado do estado.$(V_\phi(s) - \text{target})^2$- Não .
 
 **The advantage.**Dois formulários padrão:
 
-- *Vantagem MC:* `A_t = G_t - V_φ(s_t)`Imparcial, maior variância.
-- *Vantagem TD:* `A_t = r_{t+1} + γ V_φ(s_{t+1}) - V_φ(s_t)`. Preciados (utilizos `V_φ`O valor de variação é muito menor.`δ_t`- Não .
+- *Vantagem MC:* $A_t = G_t - V_\phi(s_t)$Imparcial, maior variância.
+- *Vantagem TD:* $A_t = r_{t+1} + \gamma V_\phi(s_{t+1}) - V_\phi(s_t)$. Preciados (utilizos $V_\phi$O valor de variação é muito menor.$\delta_t$- Não .
 
 **n-step advantage.**Interpolar entre os dois:
 
-`A_t^{(n)} = r_{t+1} + γ r_{t+2} + … + γ^{n-1} r_{t+n} + γ^n V_φ(s_{t+n}) - V_φ(s_t)`
+```math
+A_t^{(n)} = r_{t+1} + \gamma r_{t+2} + \ldots + \gamma^{n-1} r_{t+n} + \gamma^n V_\phi(s_{t+n}) - V_\phi(s_t)
+```
 
-`n = 1`é TD puro. `n = ∞`A maioria das implementações utiliza`n = 5`para a Atari, `n = 2048`Para o PPO no MuJoCo.
+$n = 1$é TD puro. $n = \infty$A maioria das implementações utiliza$n = 5$para a Atari, $n = 2048$Para o PPO no MuJoCo.
 
 **Generalized Advantage Estimation (GAE).**Schulman et al. (2016) propôs uma média ponderada exponencialmente sobre todas as vantagens do n-passo:
 
-`A_t^{GAE} = Σ_{l=0}^{∞} (γλ)^l δ_{t+l}`
+```math
+A_t^{\text{GAE}} = \sum_{l=0}^{\infty} (\gamma \lambda)^l \delta_{t+l}
+```
 
-com`λ ∈ [0, 1]`- Não .`λ = 0`é TD (baixa variância, alto viés). `λ = 1`é MC (alta variância, imparcial). `λ = 0.95`é o 2026 de acordo com o padrão  tune até que o dial de desvio/variância esteja onde você quer.
+com$\lambda \in [0, 1]$- Não .$\lambda = 0$é TD (baixa variância, alto viés). $\lambda = 1$é MC (alta variância, imparcial). $\lambda = 0.95$é o 2026 de acordo com o padrão  tune até que o dial de desvio/variância esteja onde você quer.
 
-**A2C: synchronous advantage actor-critic.**Coletar`T`Passo de cruzamento .`N`Paralelas de ambiente. Compute vantagens para cada passo. Atualize ator e crítico no lote combinado. Repita. O irmão mais simples e mais escalavel do A3C.
+**A2C: synchronous advantage actor-critic.**Coletar$T$Passo de cruzamento .$N$Paralelas de ambiente. Compute vantagens para cada passo. Atualize ator e crítico no lote combinado. Repita. O irmão mais simples e mais escalavel do A3C.
 
-**A3C: asynchronous advantage actor-critic.**Mnih et al. (2016). Spawn `N`As funções de trabalho são de um tipo de processador, cada um executando um env. Cada trabalhador calcula gradientes localmente em sua própria implementação, em seguida, assincronicamente os aplica a um servidor de parâmetros compartilhado.
+**A3C: asynchronous advantage actor-critic.**Mnih et al. (2016). Spawn $N$As funções de trabalho são de um tipo de processador, cada um executando um env. Cada trabalhador calcula gradientes localmente em sua própria implementação, em seguida, assincronicamente os aplica a um servidor de parâmetros compartilhado.
 
 **The combined loss.**
 
-`L(θ, φ) = -E[ A_t · log π_θ(a_t | s_t) ]  +  c_v · E[(V_φ(s_t) - G_t)²]  -  c_e · E[H(π_θ(·|s_t))]`
+```math
+L(\theta, \phi) = -\mathbb{E}[ A_t \cdot \log \pi_\theta(a_t \mid s_t) ] + c_v \cdot \mathbb{E}[(V_\phi(s_t) - G_t)^2] - c_e \cdot \mathbb{E}[H(\pi_\theta(\cdot \mid s_t))]
+```
 
 Três termos: perda de grau de política, regressão de valor, bônus de entropia. `c_v ~ 0.5`- Não .`c_e ~ 0.01`são pontos de partida canônicos.
 
@@ -61,7 +69,7 @@ actor-critic
 
 ### Passo 1: um crítico
 
-Crítico linear `V_φ(s) = w · features(s)`Atualizado com a MSE:
+Crítico linear $V_\phi(s) = w \cdot \text{features}(s)$Atualizado com a MSE:
 
 ```python
 def critic_update(w, x, target, lr):
@@ -76,7 +84,7 @@ Em um ambiente tabular o crítico converge em algumas centenas de episódios.
 
 ### Passo 2: vantagem de n-passo
 
-Dado o seu comprimento .`T`E uma final de arranque .`V(s_T)`- Não .
+Dado o seu comprimento .$T$E uma final de arranque .$V(s_T)$- Não .
 
 ```python
 def compute_advantages(rewards, values, gamma=0.99, lam=0.95, last_value=0.0):
@@ -91,7 +99,7 @@ def compute_advantages(rewards, values, gamma=0.99, lam=0.95, last_value=0.0):
     return advantages, returns
 ```
 
-`returns`É o alvo crítico.`advantages`é o que se multiplica.`∇ log π`- Não .
+`returns`É o alvo crítico.`advantages`é o que se multiplica.$\nabla \log \pi$- Não .
 
 ### Passo 3: atualização combinada
 
@@ -114,8 +122,8 @@ Na política, uma implementação por atualização, taxas de aprendizagem separ
 
 ### Passo 4: paralelação (A3C vs. A2C)
 
-- **A3C:**- Não .`N`Cada um corre seu próprio env e seu próprio pass para a frente. Periodicamente empurrar atualizações de gradiente para um mestre compartilhado.
-- **A2C:**- Correr .`N`Env instâncias num único processo, empilhar observações em um `[N, obs_dim]`Batch, batch forward pass, batch backward pass. Maior utilização de GPU, determinista, mais fácil de raciocinar.
+- **A3C:**- Não .$N$Cada um corre seu próprio env e seu próprio pass para a frente. Periodicamente empurrar atualizações de gradiente para um mestre compartilhado.
+- **A2C:**- Correr .$N$Env instâncias num único processo, empilhar observações em um `[N, obs_dim]`Batch, batch forward pass, batch backward pass. Maior utilização de GPU, determinista, mais fácil de raciocinar.
 
 O nosso código de brinquedo é de um único fio para a clareza; reescrever para A2C em lote é três linhas de numpy.
 
@@ -125,7 +133,7 @@ O nosso código de brinquedo é de um único fio para a clareza; reescrever para
 - **Advantage normalization.**Normaliza as vantagens para zero média/unit-std por lote. Estabiliza o treinamento em massa a um custo próximo a zero.
 - **Shared trunk.**Use um extractor de recursos compartilhado para ator e crítico em entradas de imagem. cabeças separadas. Os recursos compartilhados de livre-mover em ambas as perdas.
 - **On-policy contract.**A A2C reutiliza dados para exatamente uma atualização. Mais e o seu gradiente é tendencioso (a correção de amostragem de importância é o que a PPO adiciona).
-- **Entropy collapse.**Sem .`c_e > 0`A política se torna quase determinista em algumas centenas de atualizações e deixa de explorar.
+- **Entropy collapse.**Sem .$c_e > 0$A política se torna quase determinista em algumas centenas de atualizações e deixa de explorar.
 - **Reward scale.**Grandes vantagens dependem da escala de recompensa. Normalize recompensas (por exemplo, divisão run-std) para magnitudes de gradiente consistentes em tarefas.
 
 ## Usá-lo
@@ -170,22 +178,22 @@ Refuse single-worker A2C on environments with horizon > 1000 (too on-policy, too
 
 ## Exercícios
 
-1. **Easy.**Treinar actor-crítica com vantagem MC (`G_t - V(s_t)`Compare a eficiência da amostra com a linha de base da REINFORCE-with-running-median de lição 06.
-2. **Medium.**A transição para a vantagem residual TD (`r + γ V(s') - V(s)`A diferença entre os lotes de vantagem é medida.
-3. **Hard.**Implementar o GAE ((λ).`λ ∈ {0, 0.5, 0.9, 0.95, 1.0}`O que é o ponto de preferência para esta tarefa?
+1. **Easy.**Treinar actor-crítica com vantagem MC $(G_t - V(s_t))$Compare a eficiência da amostra com a linha de base da REINFORCE-with-running-median da lição 06.
+2. **Medium.**Passe para vantagem residual TD $(r + \gamma V(s') - V(s))$- Medir a variância dos lotes de vantagem.
+3. **Hard.**Implementar o GAE ((λ).$\lambda \in \lbrace 0, 0.5, 0.9, 0.95, 1.0 \rbrace$O que é o ponto de preferência para esta tarefa?
 
 ## Termos-chave
 
 | Term | What people say | What it actually means |
 |------|-----------------|-----------------------|
-| Actor | "The policy net" | `π_θ(a\|s)`, updated by policy gradient. |
-| Critic | "The value net" | `V_φ(s)`, updated by MSE regression to returns / TD targets. |
-| Advantage | "How much better than average" | `A(s, a) = Q(s, a) - V(s)` or its estimators. Multiplier for `∇ log π`. |
-| TD residual | "δ" | `δ_t = r + γ V(s') - V(s)`; one-step advantage estimate. |
-| GAE | "The interpolation knob" | Exponentially weighted sum of n-step advantages, parameterized by `λ`. |
+| Actor | "The policy net" | $\pi_\theta(a \mid s)$, updated by policy gradient. |
+| Critic | "The value net" | $V_\phi(s)$, updated by MSE regression to returns / TD targets. |
+| Advantage | "How much better than average" | $A(s, a) = Q(s, a) - V(s)$ or its estimators. Multiplier for $\nabla \log \pi$. |
+| TD residual | "δ" | $\delta_t = r + \gamma V(s') - V(s)$; one-step advantage estimate. |
+| GAE | "The interpolation knob" | Exponentially weighted sum of n-step advantages, parameterized by $\lambda$. |
 | A2C | "Synchronous actor-critic" | Batched across envs; one gradient step per rollout. |
 | A3C | "Async actor-critic" | Worker threads push gradients to a shared param server. Original paper; less common in 2026. |
-| Bootstrap | "Use V at the horizon" | Truncate the rollout, add `γ^n V(s_{t+n})` to close the sum. |
+| Bootstrap | "Use V at the horizon" | Truncate the rollout, add $\gamma^n V(s_{t+n})$ to close the sum. |
 
 ## Mais leitura
 

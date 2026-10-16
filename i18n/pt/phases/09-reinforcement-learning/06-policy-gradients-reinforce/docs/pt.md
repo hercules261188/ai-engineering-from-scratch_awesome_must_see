@@ -11,9 +11,9 @@
 
 Q-learning e DQN paramétricos da função *valor*.`argmax Q`O que é bom para ações discretas e estados discretos.`argmax`sobre um torque de 10 dimensões?) ou quando você quer uma política estocástica (`argmax`É determinista por construção).
 
-Os gradientes de política parametrizam a *política* em vez disso. `π_θ(a | s)`A rede neural é uma rede neural que produz uma distribuição sobre ações.`θ`- Passa para cima.`argmax`Não há recursão de Bellman, só ascensão de gradiente.`J(θ) = E_{π_θ}[G]`- Não .
+Os gradientes de política parametrizam a *política* em vez disso. $\pi_\theta(a \mid s)$A rede neural é uma rede neural que produz uma distribuição sobre ações.$\theta$- Passa para cima.`argmax`Não há recursão de Bellman, só ascensão de gradiente.$J(\theta) = \mathbb E_{\pi_\theta}[G]$- Não .
 
-O teorema de REINFORCE (Williams 1992) diz que este gradiente é computavel: `∇J(θ) = E_π[ G · ∇_θ log π_θ(a | s) ]`- Exerça um episódio, calcula o retorno, multiplica por`∇ log π_θ(a | s)`- A média, a ascensão gradual, pronto.
+O teorema de REINFORCE (Williams 1992) diz que este gradiente é computavel: $\nabla J(\theta) = \mathbb E_\pi[ G \cdot \nabla_\theta \log \pi_\theta(a \mid s) ]$- Exerça um episódio, calcula o retorno, multiplica por$\nabla \log \pi_\theta(a \mid s)$- A média, a ascensão gradual, pronto.
 
 Cada algoritmo LLM-RL em 2026  PPO, DPO, GRPO  é um aperfeiçoamento da REINFORCE.
 
@@ -21,36 +21,44 @@ Cada algoritmo LLM-RL em 2026  PPO, DPO, GRPO  é um aperfeiçoamento da REINFOR
 
 ![Policy gradient: softmax policy, log-π gradient, return-weighted update](../assets/policy-gradient.svg)
 
-**The policy gradient theorem.**Para qualquer política`π_θ`Parametrizado por `θ`- Não .
+**The policy gradient theorem.**Para qualquer política$\pi_\theta$Parametrizado por $\theta$- Não .
 
-`∇J(θ) = E_{τ ~ π_θ}[ Σ_{t=0}^{T} G_t · ∇_θ log π_θ(a_t | s_t) ]`
+```math
+\nabla J(\theta) = \mathbb{E}_{\tau \sim \pi_\theta}[ \sum_{t=0}^{T} G_t \cdot \nabla_\theta \log \pi_\theta(a_t \mid s_t) ]
+```
 
-onde`G_t = Σ_{k=t}^{T} γ^{k-t} r_{k+1}`é o retorno descontado do passo `t`A expectativa é de que as trajetórias sejam completas .`τ`amostragem de `π_θ`- Não .
+onde$G_t = \sum_{k=t}^{T} \gamma^{k-t} r_{k+1}$é o retorno descontado do passo $t$A expectativa é de que as trajetórias sejam completas .$\tau$amostragem de $\pi_\theta$- Não .
 
-**The proof is short.**Diferenciar `J(θ) = Σ_τ P(τ; θ) G(τ)`- Não é o que se espera.`∇P(τ; θ) = P(τ; θ) ∇ log P(τ; θ)`Factor `log P(τ; θ) = Σ log π_θ(a_t | s_t) + environment terms that do not depend on θ`Os termos de ambiente desaparecem. Duas linhas de álgebra dão-lhe o teorema.
+**The proof is short.**Diferenciar $J(\theta) = \sum_\tau P(\tau; \theta) G(\tau)$- Não é o que se espera.$\nabla P(\tau; \theta) = P(\tau; \theta) \nabla \log P(\tau; \theta)$Factor $\log P(\tau; \theta) = \sum \log \pi_\theta(a_t \mid s_t) + \text{environment terms that do not depend on } \theta$Os termos de ambiente desaparecem. Duas linhas de álgebra dão-lhe o teorema.
 
-**Variance reduction tricks.**A Vanilla ReINFORCE tem uma variância homicida. Os retornos são ruidosos.`∇ log π`O produto é muito barulhento.
+**Variance reduction tricks.**A Vanilla ReINFORCE tem uma variância homicida. Os retornos são ruidosos.$\nabla \log \pi$O produto é muito barulhento.
 
-1. **Baseline subtraction.**Substitui`G_t`com`G_t - b(s_t)`para qualquer linha de base `b(s_t)`que não depende de `a_t`- Imparcial porque`E[b(s_t) · ∇ log π(a_t | s_t)] = 0`. Escolha típica: `b(s_t) = V̂(s_t)`aprendizado por um crítico → ator-crítico (Lessão 07).
-2. **Reward-to-go.**Substitui`Σ_t G_t · ∇ log π_θ(a_t | s_t)`com`Σ_t G_t^{from t} · ∇ log π_θ(a_t | s_t)`. Apenas os retornos futuros são importantes para uma determinada ação  Os retornos passados contribuem com ruído zero-médio.
+1. **Baseline subtraction.**Substitui$G_t$com$G_t - b(s_t)$para qualquer linha de base $b(s_t)$que não depende de $a_t$- Imparcial porque$\mathbb{E}[b(s_t) \cdot \nabla \log \pi(a_t \mid s_t)] = 0$. Escolha típica: $b(s_t) = \hat{V}(s_t)$aprendizado por um crítico → ator-crítico (Lessão 07).
+2. **Reward-to-go.**Substitui$\sum_t G_t \cdot \nabla \log \pi_\theta(a_t \mid s_t)$com$\sum_t G_t^{\text{from } t} \cdot \nabla \log \pi_\theta(a_t \mid s_t)$. Apenas os retornos futuros são importantes para uma determinada ação  Os retornos passados contribuem com ruído zero-médio.
 
 Combinados, obtém:
 
-`∇J ≈ (1/N) Σ_{i=1}^{N} Σ_{t=0}^{T_i} [ G_t^{(i)} - V̂(s_t^{(i)}) ] · ∇_θ log π_θ(a_t^{(i)} | s_t^{(i)})`
+```math
+\nabla J \approx (1/N) \sum_{i=1}^{N} \sum_{t=0}^{T_i} [ G_t^{(i)} - \hat{V}(s_t^{(i)}) ] \cdot \nabla_\theta \log \pi_\theta(a_t^{(i)} \mid s_t^{(i)})
+```
 
 que é REINFORCE com uma linha de base  o ancestral directo do A2C (Lessão 07) e do PPO (Lessão 08).
 
 **Softmax policy parameterization.**Para ações discretas, a escolha padrão:
 
-`π_θ(a | s) = exp(f_θ(s, a)) / Σ_{a'} exp(f_θ(s, a'))`
+```math
+\pi_\theta(a \mid s) = \exp(f_\theta(s, a)) / \sum_{a'} \exp(f_\theta(s, a'))
+```
 
-onde`f_θ`É qualquer rede neural que produz uma pontuação por ação.
+onde$f_\theta$É qualquer rede neural que produz uma pontuação por ação.
 
-`∇_θ log π_θ(a | s) = ∇_θ f_θ(s, a) - Σ_{a'} π_θ(a' | s) ∇_θ f_θ(s, a')`
+```math
+\nabla_\theta \log \pi_\theta(a \mid s) = \nabla_\theta f_\theta(s, a) - \sum_{a'} \pi_\theta(a' \mid s) \nabla_\theta f_\theta(s, a')
+```
 
 Por exemplo, o resultado da acção tomada menos o seu valor esperado no âmbito da política.
 
-**Gaussian policy for continuous actions.** `π_θ(a | s) = N(μ_θ(s), σ_θ(s))`- Não .`∇ log N(a; μ, σ)`A fase 9 · 07 é a fase de SAC.
+**Gaussian policy for continuous actions.** $\pi_\theta(a \mid s) = N(\mu_\theta(s), \sigma_\theta(s))$- Não .$\nabla \log N(a; \mu, \sigma)$A fase 9 · 07 é a fase de SAC.
 
 ```figure
 policy-gradient-landscape
@@ -119,19 +127,19 @@ def reinforce_step(theta, trajectory, gamma, lr, baseline=0.0):
                 theta[i][j] += lr * advantage * grad_log_pi_a[i] * s[j]
 ```
 
-O gradiente`∇ log π(a|s) = e_a - π(·|s)`(exceto em`a`- probabilidades) é o coração dos gradientes de política softmax.
+O gradiente$\nabla \log \pi(a \mid s) = e_a - \pi(\cdot \mid s)$(exceto em$a$- probabilidades) é o coração dos gradientes de política softmax.
 
 ### Passo 5: Linhas de base
 
-Uma média corrente de `G`Em relação aos episódios recentes, a redução de variância é suficiente para que um GridWorld 4×4 seja executado; é preciso ~ 500 episódios para convergir.`V̂(s)`E você tem crítico de ator.
+Uma média corrente de $G$Em relação aos episódios recentes, a redução de variância é suficiente para que um GridWorld 4×4 seja executado; é preciso ~ 500 episódios para convergir.$\hat{V}(s)$E você tem crítico de ator.
 
 ## Encurralagens
 
-- **Exploding gradients.**Os rendimentos podem ser enormes.`G`- Não .`~N(0, 1)`através do lote antes de multiplicar por `∇ log π`- Não .
-- **Entropy collapse.**A política converge para uma ação quase determinista muito cedo, deixa de explorar, fica presa.`β · H(π(·|s))`Para o objectivo.
+- **Exploding gradients.**Os rendimentos podem ser enormes.$G$- Não .`~N(0, 1)`através do lote antes de multiplicar por $\nabla \log \pi$- Não .
+- **Entropy collapse.**A política converge para uma ação quase determinista muito cedo, deixa de explorar, fica presa.$\beta \cdot H(\pi(\cdot \mid s))$Para o objectivo.
 - **High variance.**A Vanilla REINFORCE precisa de milhares de episódios.
 - **Sample inefficiency.**A correcção extra-política através da amostragem de importância traz dados, ao custo da variação (a taxa da OPP é um peso de IS reduzido).
-- **Non-stationary gradients.**O mesmo gradiente de há 100 episódios usa o antigo .`π`Os métodos de política atualizam cada algumas implementações por este motivo.
+- **Non-stationary gradients.**O mesmo gradiente de há 100 episódios usa o antigo .$\pi$Os métodos de política atualizam cada algumas implementações por este motivo.
 - **Credit assignment.**Sem recompensa, recompensas passadas contribuem com ruído.
 
 ## Usá-lo
@@ -178,20 +186,20 @@ Refuse REINFORCE-no-baseline on horizons > 500 steps. Refuse continuous-action c
 
 1. **Easy.**Implementar REINFORCE no 4×4 GridWorld com uma política de softmax linear. Treinar por 1.000 episódios sem uma linha de base. Planejar a curva de aprendizagem; medir a variância (std de retornos).
 2. **Medium.**Adicione uma linha de base de corrida média. Treine novamente. Compare a eficiência da amostra e a variância com a corrida de baunilha. Em quanto a linha de base reduz os passos para a convergência?
-3. **Hard.**Adicionar um bônus de entropia `β · H(π)`- Esvaziar .`β ∈ {0, 0.01, 0.1, 1.0}`O que é que é o ponto de encontro desta tarefa?
+3. **Hard.**Adicionar um bônus de entropia $\beta \cdot H(\pi)$- Esvaziar .$\beta \in \lbrace 0, 0.01, 0.1, 1.0 \rbrace$O que é que é o ponto de encontro desta tarefa?
 
 ## Termos-chave
 
 | Term | What people say | What it actually means |
 |------|-----------------|-----------------------|
-| Policy gradient | "Train the policy directly" | `∇J(θ) = E[G · ∇ log π_θ(a\|s)]`; derived from the log-derivative trick. |
+| Policy gradient | "Train the policy directly" | $\nabla J(\theta) = \mathbb{E}[G \cdot \nabla \log \pi_\theta(a \mid s)]$; derived from the log-derivative trick. |
 | REINFORCE | "The original PG algorithm" | Williams (1992); Monte Carlo returns multiplied by log-policy gradient. |
-| Log-derivative trick | "Score function estimator" | `∇P(τ;θ) = P(τ;θ) · ∇ log P(τ;θ)`; makes gradients of expectations tractable. |
-| Baseline | "Variance reduction" | Any `b(s)` subtracted from `G`; unbiased because `E[b · ∇ log π] = 0`. |
-| Reward-to-go | "Only future returns count" | `G_t^{from t}` instead of the full `G_0`; correct and lower-variance. |
-| Entropy bonus | "Encourage exploration" | `+β · H(π(·\|s))` term keeps the policy from collapsing. |
+| Log-derivative trick | "Score function estimator" | $\nabla P(\tau;\theta) = P(\tau;\theta) \cdot \nabla \log P(\tau;\theta)$; makes gradients of expectations tractable. |
+| Baseline | "Variance reduction" | Any $b(s)$ subtracted from $G$; unbiased because $\mathbb{E}[b \cdot \nabla \log \pi] = 0$. |
+| Reward-to-go | "Only future returns count" | $G_t^{\text{from } t}$ instead of the full $G_0$; correct and lower-variance. |
+| Entropy bonus | "Encourage exploration" | $+\beta \cdot H(\pi(\cdot \mid s))$ term keeps the policy from collapsing. |
 | On-policy | "Train on what you just saw" | Gradient expectation is w.r.t. the current policy — cannot reuse old data directly. |
-| Advantage | "How much better than average" | `A(s, a) = G(s, a) - V(s)`; the signed quantity REINFORCE-with-baseline multiplies. |
+| Advantage | "How much better than average" | $A(s, a) = G(s, a) - V(s)$; the signed quantity REINFORCE-with-baseline multiplies. |
 
 ## Mais leitura
 

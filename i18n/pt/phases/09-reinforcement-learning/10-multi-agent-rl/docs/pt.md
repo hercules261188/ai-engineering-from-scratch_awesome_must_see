@@ -21,31 +21,31 @@ Aplicações 2026: enxames de robôs, roteamento de tráfego, frotas de veículo
 
 ![Four MARL regimes: indep, centralized critic, self-play, league](../assets/marl.svg)
 
-**Formalism: Markov Game.**Uma generalização do MDP: estados `S`, uma acção conjunta `a = (a_1, …, a_n)`, transição `P(s' | s, a)`, e recompensas por agente `R_i(s, a, s')`Cada agente .`i`maximiza o seu próprio retorno sob a sua própria política `π_i`Se as recompensas forem idênticas, é o caso.**fully cooperative**Se for zero, é o mesmo.**adversarial**Se misturado, é.**general-sum**- Não .
+**Formalism: Markov Game.**Uma generalização do MDP: estados $S$, uma acção conjunta $a = (a_1, \ldots, a_n)$, transição $P(s' \mid s, a)$, e recompensas por agente $R_i(s, a, s')$Cada agente .$i$maximiza o seu próprio retorno sob a sua própria política $\pi_i$Se as recompensas forem idênticas, é o caso.**fully cooperative**Se for zero, é o mesmo.**adversarial**Se misturado, é.**general-sum**- Não .
 
 **Core challenges:**
 
-- **Non-stationarity.** `P(s' | s, a_i)`do agente .`i`A visão depende de`π_{-i}`, que está a mudar.
+- **Non-stationarity.** $P(s' \mid s, a_i)$do agente .$i$A visão depende de$\pi_{-i}$, que está a mudar.
 - **Credit assignment.**Com uma recompensa compartilhada, qual agente causou isso?
 - **Exploration coordination.**Os agentes devem explorar estratégias complementares, não explorar redundantemente o mesmo estado.
-- **Scalability.**O espaço de acção comum cresce exponencialmente em `n`- Não .
+- **Scalability.**O espaço de acção comum cresce exponencialmente em $n$- Não .
 - **Partial observability.**Cada agente vê apenas a sua própria observação; o estado global está oculto.
 
 **Four dominant regimes:**
 
 **1. Independent Q-learning / independent PPO (IQL, IPPO).**Cada agente aprende sua própria Q ou política, tratando os outros como parte do ambiente. Simples, às vezes funciona (especialmente com repetição de experiência agindo como um truque de modelagem de agente suave). Convergência teórica: nenhuma. Na prática: bom para tarefas soltos, ruim para as fortemente acopladas.
 
-**2. Centralized training, decentralized execution (CTDE).**O paradigma moderno mais comum.`π_i`que as condições da observação local `o_i` execução descentralizada padrão na implantação.`Q(s, a_1, …, a_n)`Condições relativas ao estado global completo e a acção conjunta.
+**2. Centralized training, decentralized execution (CTDE).**O paradigma moderno mais comum.$\pi_i$que as condições da observação local $o_i$ execução descentralizada padrão na implantação.$Q(s, a_1, \ldots, a_n)$Condições relativas ao estado global completo e a acção conjunta.
 - **MADDPG**(Lowe et al. 2017): DDPG com um crítico centralizado por agente.
-- **COMA**(Foerster et al. 2017): base contrafactual  perguntar "qual seria a minha recompensa se eu tivesse tomado medidas `a'`"Em vez disso?"
+- **COMA**(Foerster et al. 2017): base contrafactual  perguntar "qual seria a minha recompensa se eu tivesse tomado medidas $a'$"Em vez disso?"
 - **MAPPO**- Não .**IPPO**com crítico compartilhado (Yu et al. 2022): PPO com função de valor centralizada. Dominant em 2026 para a MARL cooperativa.
-- **QMIX**(Rashid et al. 2018): decomposição do valor  `Q_tot(s, a) = f(Q_1(s, a_1), …, Q_n(s, a_n))`com mistura monótona.
+- **QMIX**(Rashid et al. 2018): decomposição do valor  $Q_{\text{tot}}(s, a) = f(Q_1(s, a_1), \ldots, Q_n(s, a_n))$com mistura monótona.
 
 **3. Self-play.**Duas cópias do mesmo agente jogam um ao outro. A política do adversário é a minha política de um snapshot passado. AlphaGo / AlphaZero / MuZero. OpenAI Five. Funciona melhor para jogos de soma zero; o sinal de treinamento é simétrico.
 
 **4. League play.**Uma extensão do auto-jogo para ambientes de soma geral / adversária: manter uma população de políticas passadas e atuais, amostrar um adversário da liga, treinar contra eles. Adiciona exploradores (especializados em vencer o melhor atual) e exploradores principais (especializados em vencer exploradores). AlphaStar (StarCraft II). Necessário quando o jogo admite ciclos de estratégia "rock-paper-scissors".
 
-**Communication.**Permita que os agentes enviem mensagens aprendidas .`m_i`Foerster et al. (2016) mostrou que a comunicação inter-agente diferenciável pode ser treinada de ponta a ponta. Os sistemas multi-agente baseados em LLM de hoje (Fase 16) comunicam essencialmente em linguagem natural.
+**Communication.**Permita que os agentes enviem mensagens aprendidas .$m_i$Foerster et al. (2016) mostrou que a comunicação inter-agente diferenciável pode ser treinada de ponta a ponta. Os sistemas multi-agente baseados em LLM de hoje (Fase 16) comunicam essencialmente em linguagem natural.
 
 ```figure
 f3-marl-orbit
@@ -101,11 +101,11 @@ Funciona nessa tarefa porque as recompensas são densas e alinhadas.
 
 ### Passo 3: Q centralizado com atualização de valor decomposto
 
-Use um Q em vez de acções conjuntas `Q(s, a_1, a_2)`Atualizar a partir de recompensa compartilhada. Descentralize na execução marginalizando: `π_i(s) = argmax_{a_i} max_{a_{-i}} Q(s, a_1, a_2)`. Troca espaço de acção comum exponencial para uma visão global *correcta* .
+Use um Q em vez de acções conjuntas $Q(s, a_1, a_2)$Atualizar a partir de recompensa compartilhada. Descentralize na execução marginalizando: $\pi_i(s) = \arg\max_{a_i} \max_{a_{-i}} Q(s, a_1, a_2)$. Troca espaço de acção comum exponencial para uma visão global *correcta* .
 
 ### Passo 4: simples jogo próprio (adversário 2 agente)
 
-O mesmo agente, dois papéis.`K`O que é que é que é o que é que é que é que é que é que é que é que é que é que é que é que é que é que é que é que é que é que é que é que é que é que é que é que é que é que é que é que é que é que é que é que é que é que é que é que é que é que é que é que é que é que é que é que é que é que é que é que é que é que é que é que é que é que é que é que é que é que é que é que é que é que é que é que é que é que é que é que é que é que é que é que é que é que é que é que é que é que é que é que é que é que é que é que é que é que é que é que é que é?
+O mesmo agente, dois papéis.$K$O que é que é que é o que é que é que é que é que é que é que é que é que é que é que é que é que é que é que é que é que é que é que é que é que é que é que é que é que é que é que é que é que é que é que é que é que é que é que é que é que é que é que é que é que é que é que é que é que é que é que é que é que é que é que é que é que é que é que é que é que é que é que é que é que é que é que é que é que é que é que é que é que é que é que é que é que é que é que é que é que é que é que é que é que é que é que é que é que é que é que é que é que é?
 
 ## Encurralagens
 
@@ -167,11 +167,11 @@ Refuse independent Q-learning on tightly-coupled cooperative tasks. Refuse to re
 
 | Term | What people say | What it actually means |
 |------|-----------------|-----------------------|
-| Markov game | "Multi-agent MDP" | `(S, A_1, …, A_n, P, R_1, …, R_n)`; each agent has its own reward. |
+| Markov game | "Multi-agent MDP" | $(S, A_1, \ldots, A_n, P, R_1, \ldots, R_n)$; each agent has its own reward. |
 | CTDE | "Centralized training, decentralized execution" | Joint critic at training time; each agent's policy uses only local obs. |
 | IPPO | "Independent PPO" | Each agent runs PPO separately. Simple baseline; often underrated. |
 | MAPPO | "Multi-agent PPO" | PPO with a centralized value function conditioned on global state. |
-| QMIX | "Monotonic value decomposition" | `Q_tot = f_monotone(Q_1, …, Q_n)` allows decentralized argmax. |
+| QMIX | "Monotonic value decomposition" | $Q_{\text{tot}} = f_{\text{monotone}}(Q_1, \ldots, Q_n)$ allows decentralized argmax. |
 | COMA | "Counterfactual multi-agent" | Advantage = my Q minus expected Q marginalizing over my action. |
 | Self-play | "Agent vs past self" | Single agent, two roles; standard for zero-sum games. |
 | League play | "Population training" | Cache past policies, sample opponents from the pool; handles strategy cycles. |

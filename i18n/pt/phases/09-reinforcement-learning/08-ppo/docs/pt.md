@@ -9,11 +9,11 @@
 
 ## O problema
 
-A2C (Lessão 07) é sobre política: o gradiente `E_{π_θ}[A · ∇ log π_θ]`requer dados recolhidos a partir da * corrente* `π_θ`- Faça uma atualização e...`π_θ`Os dados que usou agora estão fora da política.
+A2C (Lessão 07) é sobre política: o gradiente $\mathbb E_{\pi_\theta}[A \cdot \nabla \log \pi_\theta]$requer dados recolhidos a partir da * corrente* $\pi_\theta$- Faça uma atualização e...$\pi_\theta$Os dados que usou agora estão fora da política.
 
 As implementações são caras. Na Atari, uma implementação em 8 envs × 128 passos = 1024 transições e uma dúzia de segundos de tempo ambiental.
 
-A Primeira solução foi a otimização das políticas de região de confiança (TRPO, Schulman 2015): restringir cada atualização para que a divergência entre as políticas antigas e novas permaneça abaixo `δ`Teoricamente limpo, mas requer uma solução conjugada-gradiente por atualização.
+A Primeira solução foi a otimização das políticas de região de confiança (TRPO, Schulman 2015): restringir cada atualização para que a divergência entre as políticas antigas e novas permaneça abaixo $\delta$Teoricamente limpo, mas requer uma solução conjugada-gradiente por atualização.
 
 O PPO (Schulman et al. 2017) substitui a restrição de região de confiança dura por um objetivo simples. Uma linha extra de código. Dez épocas por implantação. Nenhum gradiente conjugado. Garantias teóricas boas o suficiente. Nove anos depois, ainda é o algoritmo padrão de política-gradiente para tudo, desde MuJoCo até RLHF.
 
@@ -23,43 +23,49 @@ O PPO (Schulman et al. 2017) substitui a restrição de região de confiança du
 
 **The importance ratio.**
 
-`r_t(θ) = π_θ(a_t | s_t) / π_{θ_old}(a_t | s_t)`
+```math
+r_t(\theta) = \frac{\pi_\theta(a_t \mid s_t)}{\pi_{\theta_{\text{old}}}(a_t \mid s_t)}
+```
 
-Esta é a relação de probabilidade entre a nova política e a política que recolheu os dados. `r_t = 1`Não significa nenhuma mudança.`r_t = 2`significa que a nova política é duas vezes mais provável que`a_t`Como os antigos.
+Esta é a relação de probabilidade entre a nova política e a política que recolheu os dados. $r_t = 1$Não significa nenhuma mudança.$r_t = 2$significa que a nova política é duas vezes mais provável que$a_t$Como os antigos.
 
 **The clipped surrogate.**
 
-`L^{CLIP}(θ) = E_t [ min( r_t(θ) A_t, clip(r_t(θ), 1-ε, 1+ε) A_t ) ]`
+```math
+L^{\text{CLIP}}(\theta) = \mathbb{E}_t \left[ \min\left( r_t(\theta) A_t, \mathop{\mathrm{clip}}(r_t(\theta), 1-\epsilon, 1+\epsilon) A_t \right) \right]
+```
 
 Dois termos:
 
-- Se a vantagem `A_t > 0`E a proporção tenta crescer para além.`1 + ε`, o clip aplania a gradiente  não empurrar uma boa ação mais longe do que `+ε`acima da velha probabilidade.
-- Se a vantagem `A_t < 0`E a proporção tenta crescer para além.`1 - ε`(o que significa que faríamos uma ação ruim mais provável em comparação com a sua redução cortada), o clip caps a gradiente  não empurrar uma ação ruim abaixo `-ε`- Não .
+- Se a vantagem $A_t > 0$E a proporção tenta crescer para além.$1 + \epsilon$, o clip aplania a gradiente  não empurrar uma boa ação mais longe do que $+\epsilon$acima da velha probabilidade.
+- Se a vantagem $A_t < 0$E a proporção tenta crescer para além.$1 - \epsilon$(o que significa que faríamos uma ação ruim mais provável em comparação com a sua redução cortada), o clip caps a gradiente  não empurrar uma ação ruim abaixo $-\epsilon$- Não .
 
 O `min`O que é que se passa? - Não, não.
 
-Tipico .`ε = 0.2`. Descrever o objectivo como uma função de `r_t`A função linear de pedaço com um telhado plano no "lado bom" e um piso plano no "lado ruim".
+Tipico .$\epsilon = 0.2$. Descrever o objectivo como uma função de $r_t$A função linear de pedaço com um telhado plano no "lado bom" e um piso plano no "lado ruim".
 
 **The full PPO loss.**
 
-`L(θ, φ) = L^{CLIP}(θ) - c_v · (V_φ(s_t) - V_t^{target})² + c_e · H(π_θ(·|s_t))`
+```math
+L(\theta, \phi) = L^{\text{CLIP}}(\theta) - c_v \cdot (V_\phi(s_t) - V_t^{\text{target}})^2 + c_e \cdot H(\pi_\theta(\cdot \mid s_t))
+```
 
-A mesma estrutura de actores-críticos que A2C. Três coeficientes, geralmente `c_v = 0.5`- Não .`c_e = 0.01`- Não .`ε = 0.2`- Não .
+A mesma estrutura de actores-críticos que A2C. Três coeficientes, geralmente $c_v = 0.5$- Não .$c_e = 0.01$- Não .$\epsilon = 0.2$- Não .
 
 **The training loop.**
 
-1. Coletar`N × T`Transições transversais `N`Envistas paralelas para `T`Cada passo.
+1. Coletar$N \times T$Transições transversais $N$Envistas paralelas para $T$Cada passo.
 2. Calcule vantagens (GAE), congelem-nas como constantes.
-3. Congelando .`π_{θ_old}`como um instantâneo de corrente `π_θ`- Não .
-4. Para o`K`Epoca, para cada minipartida de `(s, a, A, V_target, log π_old(a|s))`- Não .
-   - Computação`r_t(θ) = exp(log π_θ(a|s) - log π_old(a|s))`- Não .
-   - Aplicar`L^{CLIP}`+ perda de valor + entropia.
+3. Congelando .$\pi_{\theta_{\text{old}}}$como um instantâneo de corrente $\pi_\theta$- Não .
+4. Para o$K$Epoca, para cada minipartida de `(s, a, A, V_target, log π_old(a|s))`- Não .
+   - Computação$r_t(\theta) = \exp(\log \pi_\theta(a \mid s) - \log \pi_{\text{old}}(a \mid s))$- Não .
+   - Aplicar$L^{\text{CLIP}}$+ perda de valor + entropia.
    - Passo gradual.
 5. Descarte o lançamento, volte ao primeiro passo.
 
-`K = 10`O PPO é robusto: os números exatos raramente importam dentro de ±50%.
+$K = 10$O PPO é robusto: os números exatos raramente importam dentro de ±50%.
 
-**KL-penalty variant.**O artigo original propôs uma alternativa que utilizasse uma penalidade KL adaptativa: `L = L^{PG} - β · KL(π_θ || π_old)`com`β`A versão de corte tornou-se dominante; a variante KL sobrevive no RLHF (onde KL à política de referência é uma restrição separada que você sempre quer de qualquer maneira).
+**KL-penalty variant.**O artigo original propôs uma alternativa que utilizasse uma penalidade KL adaptativa: $L = L^{\text{PG}} - \beta \cdot \mathrm{KL}(\pi_\theta \Vert \pi_{\text{old}})$com$\beta$A versão de corte tornou-se dominante; a variante KL sobrevive no RLHF (onde KL à política de referência é uma restrição separada que você sempre quer de qualquer maneira).
 
 ```figure
 ppo-clip
@@ -124,19 +130,19 @@ Adicionar MSE padrão ao alvo crítico e um bônus de entropia no ator, igual ao
 
 Três coisas para ver em cada atualização:
 
-- **Mean KL** `E[log π_old - log π_θ]`Devia ficar dentro .`[0, 0.02]`Se passar por aí .`0.1`, reduzir`K_EPOCHS`ou `LR`- Não .
-- **Clip fraction** a fracção das amostras cuja proporção se encontra fora `[1-ε, 1+ε]`Devia ser .`~0.1-0.3`Se ...`~0`, o clip nunca desencadeia → aumento `LR`ou `K_EPOCHS`Se ...`~0.5+`, você está super-ajustando a implantação → baixá-los.
-- **Explained variance** `1 - Var(V_target - V_pred) / Var(V_target)`Metrica de qualidade crítica. Deve subir para 1.
+- **Mean KL** $\mathbb{E}[\log \pi_{\text{old}} - \log \pi_\theta]$Devia ficar dentro .`[0, 0.02]`Se passar por aí .`0.1`, reduzir`K_EPOCHS`ou `LR`- Não .
+- **Clip fraction** a fracção das amostras cuja proporção se encontra fora $[1-\epsilon, 1+\epsilon]$Devia ser .`~0.1-0.3`Se ...`~0`, o clip nunca desencadeia → aumento `LR`ou `K_EPOCHS`Se ...`~0.5+`, você está super-ajustando a implantação → baixá-los.
+- **Explained variance** $1 - \text{Var}(V_{\text{target}} - V_{\text{pred}}) / \text{Var}(V_{\text{target}})$Metrica de qualidade crítica. Deve subir para 1.
 
 ## Encurralagens
 
-- **Clip coefficient mistuned.** `ε = 0.2`É o padrão de facto.`0.1`torna as atualizações demasiado tímidas; `0.3+`Invita a instabilidade.
-- **Too many epochs.** `K > 20`O sistema de segurança social é um dos principais factores de destabilização da política social.`π_old`- Epoca de limite, especialmente para grandes redes.
+- **Clip coefficient mistuned.** $\epsilon = 0.2$É o padrão de facto.`0.1`torna as atualizações demasiado tímidas; `0.3+`Invita a instabilidade.
+- **Too many epochs.** $K > 20$O sistema de segurança social é um dos principais factores de destabilização da política social.$\pi_{\text{old}}$- Epoca de limite, especialmente para grandes redes.
 - **No reward normalization.**Grandes escalas de recompensa se alimentam na faixa de clip. Normalize recompensas (exercício std) antes de vantagens computacionais.
 - **Forgetting advantage normalization.**A normalização de média zero/unit-std por lote é padrão.
 - **Learning rate not decayed.**O PPO beneficia da decadência do LR linear para zero.
 - **Importance ratio math errors.**Sempre .`exp(log_new - log_old)`para estabilidade numérica, não `new / old`- Não .
-- **Wrong gradient sign.**Maximizar a substitutória = *minimizar* `-L^{CLIP}`Um sinal invertido é o bug mais comum de PPO.
+- **Wrong gradient sign.**Maximizar a substitutória = *minimizar* $-L^{\text{CLIP}}$Um sinal invertido é o bug mais comum de PPO.
 
 ## Usá-lo
 
@@ -180,18 +186,18 @@ Refuse `K > 30` or `ε > 0.3` (unsafe trust region). Refuse any PPO run without 
 
 ## Exercícios
 
-1. **Easy.**Execute PPO em 4×4 GridWorld com `ε=0.2, K=4`- Compare a eficiência da amostra com A2C (uma época por implantação) em etapas de ambiente correspondentes.
-2. **Medium.**Esvaziar`K ∈ {1, 4, 10, 30}`- Retorno de trama versus passos de env e seguimento média KL por atualização.`K`O KL explode nesta tarefa?
-3. **Hard.**Substitua a substitutora cortada por uma penalidade KL adaptativa (`β`duplicado se `KL > 2·target`, reduzida à metade se `KL < target/2`) Compare o retorno final, estabilidade e livre de clipes.
+1. **Easy.**Execute PPO em 4×4 GridWorld com $\epsilon=0.2, K=4$- Compare a eficiência da amostra com A2C (uma época por implantação) em etapas de ambiente correspondentes.
+2. **Medium.**Esvaziar$K \in \lbrace 1, 4, 10, 30 \rbrace$- Retorno de trama versus passos de env e seguimento média KL por atualização.$K$O KL explode nesta tarefa?
+3. **Hard.**Substitua a substitutora cortada por uma penalidade KL adaptativa ($\beta$duplicado se $\mathrm{KL} > 2 \cdot \text{target}$, reduzida à metade se $\mathrm{KL} < \text{target}/2$) Compare o retorno final, estabilidade e livre de clipes.
 
 ## Termos-chave
 
 | Term | What people say | What it actually means |
 |------|-----------------|-----------------------|
-| Importance ratio | "r_t(θ)" | `π_θ(a\|s) / π_old(a\|s)`; deviation from the policy that collected the data. |
-| Clipped surrogate | "PPO's main trick" | `min(r·A, clip(r, 1-ε, 1+ε)·A)`; flat gradient past the clip on beneficial side. |
+| Importance ratio | "r_t(θ)" | $\pi_\theta(a \mid s) / \pi_{\text{old}}(a \mid s)$; deviation from the policy that collected the data. |
+| Clipped surrogate | "PPO's main trick" | $\min(r \cdot A, \mathop{\mathrm{clip}}(r, 1-\epsilon, 1+\epsilon) \cdot A)$; flat gradient past the clip on beneficial side. |
 | Trust region | "TRPO / PPO intent" | Limit each update's KL to guarantee monotone improvement. |
-| KL penalty | "Soft trust region" | Alternative PPO: `L - β · KL(π_θ \|\| π_old)`. Adaptive `β`. |
+| KL penalty | "Soft trust region" | Alternative PPO: $L - \beta \cdot \mathrm{KL}(\pi_\theta \Vert \pi_{\text{old}})$. Adaptive $\beta$. |
 | Clip fraction | "How often clipping triggers" | Diagnostic — should be 0.1-0.3; outside means mistuned. |
 | Multi-epoch training | "Data reuse" | K epochs on each rollout; variance cost traded for sample efficiency. |
 | On-policy-ish | "Mostly on-policy" | PPO is nominally on-policy but K>1 epochs uses slightly-off-policy data safely. |

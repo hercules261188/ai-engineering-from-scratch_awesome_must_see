@@ -31,7 +31,7 @@ Precisam de uma política que seja *robusta para a transferência de distribuiç
 
 **Domain Adaptation.**Treinamento em simulação, sintonização com uma pequena quantidade de dados reais.
 
-- **Real2Sim2Real:**Aprender um simulador residual `f(s, a, z) - f_sim(s, a)`usando lançamentos reais, treinar no simulador corrigido. Fecha a lacuna sem muitos dados reais.
+- **Real2Sim2Real:**Aprender um simulador residual $f(s, a, z) - f_{\text{sim}}(s, a)$usando lançamentos reais, treinar no simulador corrigido. Fecha a lacuna sem muitos dados reais.
 - **Observation adaptation:**Capacitar uma política que mapeia os ob → sim-like ob através de um extractor de características aprendido (por exemplo, GAN pixel-to-pixel).
 
 **Privileged learning / teacher-student.**Miki et al. 2022 (ANYmal quadruped). Treinar um professor em simulação que tenha acesso a informações privilegiadas (frito de verdade do solo, altura do terreno, deriva IMU). Destila um estudante que só vê observações de sensores reais. O estudante aprende a inferir características privilegiadas da história, robustas em parâmetros físicos.
@@ -128,7 +128,7 @@ Refuse to deploy without (a) a zero-shot sim-variant test, (b) a safety shield, 
 
 ## Exercícios
 
-1. **Easy.**Treinar um agente de aprendizagem Q no GridWorld de deslize fixo (slip=0.0). Avaliação em deslize ∈ {0.0, 0.1, 0.3, 0.5}. Retorno de trama vs deslize.
+1. **Easy.**Treinar um agente de aprendizagem Q no GridWorld de deslize fixo (slip=0,0).$\text{slip} \in \lbrace 0.0, 0.1, 0.3, 0.5 \rbrace$- Retorno contra ressaca.
 2. **Medium.**Treinar um agente de aprendizagem DR Q`slip ~ Uniform[0, 0.3]`- Evaluação da mesma varredura.
 3. **Hard.**Implementar um currículo: começar com slips=0.0, ampliar a faixa de DR sempre que a política atinge 90% do ideal. Medir os passos totais do ambiente para alcançar slips=0.3 zero-shot versus uma linha de base fixa de DR.
 
