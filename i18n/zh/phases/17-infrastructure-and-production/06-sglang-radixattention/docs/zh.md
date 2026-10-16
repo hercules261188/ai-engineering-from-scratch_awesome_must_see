@@ -125,4 +125,4 @@ roofline
 - [SGLang documentation](https://sgl-project.github.io/)                                                                                                                                                                                                                                                              
 - [SGLang paper — Efficiently Programming Large Language Models (arXiv:2312.07104)](https://arxiv.org/abs/2312.07104)设计参考.
 - [LMSYS blog — SGLang with RadixAttention](https://www.lmsys.org/blog/2024-01-17-sglang/)基准数字和时间表理性.
-- [vLLM — Prefix Caching](https://docs.vllm.ai/en/latest/features/prefix_caching.html) vLLM自己的基像实施,比较.
+- [vLLM — Prefix Caching](https://docs.vllm.ai/en/latest/features/automatic_prefix_caching/) vLLM自己的基像实施,比较.

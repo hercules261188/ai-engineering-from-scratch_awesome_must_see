@@ -125,6 +125,6 @@ cold-start-pipeline
 - [Modal — Cold start performance](https://modal.com/docs/guide/cold-start)莫达尔发布的基准和检查点架构.
 - [AWS Bottlerocket](https://github.com/bottlerocket-os/bottlerocket)预先播种数据量快照模式.
 - [NVIDIA Run:ai Model Streamer](https://github.com/run-ai/runai-model-streamer)重量重量重量重量重量重量重量重量重量重量重量重量重量重量重量重量重量重量重量重量重量重量重量重量重量重量重量重量重量重量重量重量重量重量重量重量重量重量重量重量重量重量重量重量重量重量重量重量重量重量重量重量重量重量重量重量重量重量重量重量重量重量重量重量重量重量重量重量重量重量重量重量重量重量重量重量重量重量重量重量重量重量重量重量重量重量重量重量重量重量重量重量重量重量重量重量重量重量重量重量重量重量重量重量重量重量重量重量重量重量重量重量重量重量重量重量重量重量重量重量重量重量重量重量重量重量重量重量重量重量重量重量重量重量重量重量重量重量重量重量重量重量重量重量重量重量重量重量重量重量重量重量重量重量重量重量重量重量重量重量重量重量重量重量重量重量重量重量重量重量重量重量重量重量重量重量重量重量重量重量重量重量重量重量重量重量重量重量重量重量重量重量重量重量重量重量重量重量重量重量重量重量重量重量重量重量重量重量重量重量重量重量重量重量重量重量重量重量重量重量重量重量重量重量重量重量重量重量重量重量重量重量重量重量重量重量重量重量重量重量重量重量重量重量重量重量重量重量重量重量重量重量重量重量
-- [Baseten — Cold-start mitigation](https://www.baseten.co/blog/cold-start-mitigation/)预热的游戏手册.
+- [Baseten — Cold starts](https://docs.baseten.co/deployment/autoscaling/cold-starts)预热的游戏手册.
 - [ServerlessLLM paper (USENIX OSDI'24)](https://www.usenix.org/conference/osdi24/presentation/fu) 层次装载设计.
 - [NVIDIA — Disaggregated LLM Inference on Kubernetes](https://developer.nvidia.com/blog/deploying-disaggregated-llm-inference-workloads-on-kubernetes/) 活迁移,用于分类部署.

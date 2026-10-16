@@ -12,7 +12,7 @@
 - 解释PagedAttention作为KV缓存分配器:区块,区块表,以及为什么在生产负载时碎片化保持在4%以下.
 - 在反复级别上进行连续批量图:完成的序列如何离开批量,而新的序列如何在没有排水的情况下加入.
 - 描述一个句子中的零碎预填,并命名它保护的延迟指标 (提示:这是TTFT尾声,而不是平均吞吐量).
-- 给2026年VLLM v0.18.0的名称来说,它可以同时实现每个优化.
+- 在一次启用每个优化之前,请检查您的版本的vLLM功能组合与兼容性矩阵.
 
 ## 问题
 
@@ -56,9 +56,9 @@
 
 你不需要知道每一个旗,你需要知道调度器优化什么:KV区块预算下,
 
-### 2026年版本0.18.0得到了你
+### 检查兼容性矩阵
 
-在vLLM v0.18.0中,不能组合`--enable-chunked-prefill`采用预测式模拟解码 (`--speculative-model`) 文件的例外是V1调度器中的N-gram GPU推测解码. 没有阅读发布说明的团队在启动时会出现运行时间错误,而不是软回归. 如果你的投机收益值得实现零碎预填, 再次选择2026年正确的答案通常是EAGLE-3没有零碎预填,而不是一个不编译的草案模型加上零碎预填.
+在一次启用它们之前,请检查每个功能组合与兼容性矩阵的确切vLLM版本,因为版本之间构成的内容会发生变化. 在v0.18.0中,特征矩阵标记了投机解码与分块预填和预写缓存兼容,投机解码页面列出了两个已知不兼容性:通过v0.15.0的管道平行性,通过v0.10.0的草案模型投机性. 对于草案方法本身,2026年默认通常是EAGLE-3 (`"method": "eagle3"`),包括17期 · 05.
 
 ### 你应该记住的数字
 
@@ -131,7 +131,7 @@ tensor-parallel
 | TTFT | "first token time" | Prefill + queue + network; dominated by prefill at long prompts |
 | ITL | "inter-token latency" | Time between consecutive decode tokens; dominated by batch size |
 | Goodput | "throughput that meets SLO" | Tokens/sec where every request still hit TTFT and ITL targets |
-| V1 scheduler | "the new scheduler" | vLLM's 2026 scheduler; N-gram spec decode is the chunked-prefill-compatible path |
+| V1 scheduler | "the new scheduler" | vLLM's 2026 scheduler; runs continuous batching with chunked prefill |
 | `--gpu-memory-utilization` | "the memory knob" | Fraction of HBM reserved for KV blocks after weights and activations |
 
 ## 进一步阅读
