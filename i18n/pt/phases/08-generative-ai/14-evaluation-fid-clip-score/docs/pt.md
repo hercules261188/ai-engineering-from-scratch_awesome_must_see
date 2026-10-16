@@ -26,13 +26,13 @@ Você também verá: IS (pontuação inicial, em grande parte aposentado), KID, 
 Heusel et al. (2017). Passo:
 
 1. Extrair recursos Inception-v3 (2048-D) para N imagens reais e N geradas.
-2. Aplique um Gaussian a cada piscina: média de cálculo `μ_r, μ_g`e covariância `Σ_r, Σ_g`- Não .
-3. FID = `||μ_r - μ_g||² + Tr(Σ_r + Σ_g - 2 · (Σ_r · Σ_g)^0.5)`- Não .
+2. Aplique um Gaussian a cada piscina: média de cálculo $\mu_r, \mu_g$e covariância $\Sigma_r, \Sigma_g$- Não .
+3. $\text{FID} = \lVert \mu_r - \mu_g \rVert^2 + \mathop{\mathrm{Tr}}\left(\Sigma_r + \Sigma_g - 2 \cdot (\Sigma_r \cdot \Sigma_g)^{0.5}\right)$- Não .
 
 Interpretação: Distância de Fréchet entre dois Gaussianos multivariados no espaço de características.
 
 Modos de falha:
-- **Biased on small N.**O FID é o quadrado médio sobre a distribuição de características  pequena N subestima a covariância, dá falsamente baixo FID.
+- **Biased on small N.**FID é o quadrado médio sobre a distribuição de características  pequena N subestima covariância, dá falsamente baixo FID. Sempre use $N \ge 10{,}000$- Não .
 - **Inception-dependent.**Inception-v3 foi treinado na ImageNet. Domínios longe da ImageNet (faces, arte, imagens de texto) produzem FID sem sentido. Use um extractor de recursos específico de domínio.
 - **Gaming.**O excesso de montagem ao prévio de iniciação dá uma baixa FID sem melhoria da qualidade visual.
 

@@ -9,9 +9,9 @@
 
 ## O problema
 
-O processo inverso do DDPM é um passeio estocástico de 1000 passos de `N(0, I)`O DDIM desmoronou-o para 20-50 passos deterministas. Você quer menos passos  idealmente um. O bloqueador é que o ODE resolvendo o processo inverso é rígido; o caminho é curvo.
+O processo inverso do DDPM é um passeio estocástico de 1000 passos de $\mathcal{N}(0, I)$O DDIM desmoronou-o para 20-50 passos deterministas. Você quer menos passos  idealmente um. O bloqueador é que o ODE resolvendo o processo inverso é rígido; o caminho é curvo.
 
-Se pudesse treinar o modelo de tal forma que o caminho do ruído para os dados fosse uma *linha reta*, um único passo de Euler de `t=1`- Não .`t=0`A combinação de fluxos constrói isto diretamente: definir uma interpolação reta a partir de`x_1 ∼ N(0, I)`- Não .`x_0 ∼ data`, treinar um campo vetorial `v_θ(x, t)`para combinar a sua derivada do tempo, integrar na inferência.
+Se pudesse treinar o modelo de tal forma que o caminho do ruído para os dados fosse uma *linha reta*, um único passo de Euler de $t=1$- Não .$t=0$A combinação de fluxos constrói isto diretamente: definir uma interpolação reta a partir de$x_1 \sim \mathcal{N}(0, I)$- Não .$x_0 \sim \text{data}$, treinar um campo vetorial $v_\theta(x, t)$para combinar a sua derivada do tempo, integrar na inferência.
 
 O fluxo retificado (Liu 2022) vai mais longe: endireita iterativamente os caminhos com um procedimento de refluxo que produz um ODE progressivo mais próximo a linear. Após duas iterações de refluxo, um amostragem de 2 passos corresponde à qualidade de DDPM de 50 passos.
 
@@ -23,41 +23,41 @@ O fluxo retificado (Liu 2022) vai mais longe: endireita iterativamente os caminh
 
 Define:
 
-```
-x_t = t · x_1 + (1 - t) · x_0,   t ∈ [0, 1]
-```
-
-onde`x_0 ~ data`E ...`x_1 ~ N(0, I)`A derivada temporal ao longo desta reta é constante:
-
-```
-dx_t / dt = x_1 - x_0
+```math
+x_t = t \cdot x_1 + (1 - t) \cdot x_0, \quad t \in [0, 1]
 ```
 
-Defina um campo de vetor neural `v_θ(x_t, t)`e treinar para combinar com esta derivada:
+onde$x_0 \sim \text{data}$E ...$x_1 \sim \mathcal{N}(0, I)$A derivada temporal ao longo desta reta é constante:
 
-```
-L = E_{x_0, x_1, t} || v_θ(x_t, t) - (x_1 - x_0) ||²
+```math
+\frac{dx_t}{dt} = x_1 - x_0
 ```
 
-É o que eu faço .**conditional flow matching**O programa de formação é gratuito: nunca se desbloqueia o ODE.`(x_0, x_1, t)`e regressão.
+Defina um campo de vetor neural $v_\theta(x_t, t)$e treinar para combinar com esta derivada:
+
+```math
+L = \mathbb{E}_{x_0, x_1, t} \left\lVert v_\theta(x_t, t) - (x_1 - x_0) \right\rVert^2
+```
+
+É o que eu faço .**conditional flow matching**O programa de formação é gratuito: nunca se desbloqueia o ODE.$(x_0, x_1, t)$e regressão.
 
 ### Amostragem
 
 Na inferência, integra o campo vetorial aprendido * para trás* no tempo:
 
-```
-x_{t-Δt} = x_t - Δt · v_θ(x_t, t)
+```math
+x_{t-\Delta t} = x_t - \Delta t \cdot v_\theta(x_t, t)
 ```
 
-Começa em`x_1 ~ N(0, I)`, Euler-passo para baixo para `t=0`- Não .
+Começa em$x_1 \sim \mathcal{N}(0, I)$, Euler-passo para baixo para $t=0$- Não .
 
 ### Fluxo rectificado (Liu 2022)
 
-O fluxo em linha reta funciona, mas os caminhos aprendidos não são realmente retos.`x_0`s pode mapear para o mesmo `x_1`. Passo de refluxo do fluxo corrigido:
+O fluxo em linha reta funciona, mas os caminhos aprendidos não são realmente retos.$x_0$O mapa pode ser o mesmo .$x_1$. Passo de refluxo do fluxo corrigido:
 
-1. Modelo de fluxo de trem v_1 com acoplamento aleatório.
-2. Amostra N pares `(x_1, x_0)`integrando v_1 de `x_1`até ao seu pouso .`x_0`- Não .
-3. Como os pares agora são "ODE-matched", o interpolante em linha reta entre eles é realmente mais plano.
+1. Modelo de fluxo de trem $v_1$com acaso emparelhamento.
+2. Amostra N pares $(x_1, x_0)$através da integração $v_1$de$x_1$até ao seu pouso .$x_0$- Não .
+3. Trem $v_2$Como os pares estão agora "compatíveis com ODE", o interpolante de linha reta entre eles é realmente mais plano.
 4. Repito. - Não.
 
 Na prática, 2 iterações de reflow levam você a quase linear, permitindo inferência de 2-4 passos. SDXL-Turbo, SD3-Turbo, LCM são todos modelos destilados de fluxo-matching.
@@ -72,7 +72,7 @@ Três razões:
 
 ## Correspondência de fluxo versus DDPM  a conexão exata
 
-A correspondência de fluxo com um caminho condicional de Gauss é difusão *com um cronograma específico de ruído*.`x_t = α(t) x_0 + σ(t) x_1`O calendário e o fluxo correspondentes recuperam a difusão reformulada por Stratonovich com `v = α'·x_0 - σ'·x_1`Os dois são algébricos equivalentes para os caminhos de Gaussian.
+A correspondência de fluxo com um caminho condicional de Gauss é difusão *com um cronograma específico de ruído*.$x_t = \alpha(t) x_0 + \sigma(t) x_1$O calendário e o fluxo correspondentes recuperam a difusão reformulada por Stratonovich com $v = \alpha' \cdot x_0 - \sigma' \cdot x_1$Os dois são algébricos equivalentes para os caminhos de Gaussian.
 
 O que o fluxo de correspondência adicionou: a *clarity* do alvo (uma velocidade simples), uma perda mais limpa, e a licença para experimentar com interpolantes não gaussianos.
 
@@ -82,7 +82,7 @@ normalizing-flow
 
 ## Construí-lo
 
-`code/main.py`Implementa a correspondência de fluxo 1-D em uma mistura de Gaussian de dois modos.`v_θ(x, t)`A conclusão é que, ao fazer uma conclusão, integrar 1, 2, 4 e 20 passos de Euler e comparar a qualidade da amostra.
+`code/main.py`Implementa a correspondência de fluxo 1-D em uma mistura de Gaussian de dois modos.$v_\theta(x, t)$A conclusão é que, ao fazer uma conclusão, integrar 1, 2, 4 e 20 passos de Euler e comparar a qualidade da amostra.
 
 ### Passo 1: perda de formação
 
@@ -115,10 +115,10 @@ Esperem que o amostragem de 4 passos já corresponda à qualidade de 20 passos, 
 
 ## Encurralagens
 
-- **Time parameterization.**Utilizações de correspondência de fluxo `t ∈ [0, 1]`com`t=0`em dados, `t=1`- a utilização de DDPM`t ∈ [0, T]`com`t=0`em dados, `t=T`O mesmo rumo, em escala diferente, os papéis estão sempre errados.
+- **Time parameterization.**Utilizações de correspondência de fluxo $t \in [0, 1]$com$t=0$em dados, $t=1$- a utilização de DDPM$t \in [0, T]$com$t=0$em dados, $t=T$O mesmo rumo, em escala diferente, os papéis estão sempre errados.
 - **Schedule choice.**A linha reta do fluxo corrigido é "o" cronograma de correspondência de fluxo, mas você pode usar o cosino ou logit-normal t-sampling (SD3 faz isso) para uma melhor cobertura em escala.
 - **Reflow cost.**Gerar o conjunto de dados emparelhados para refluxo é uma passagem completa de inferência por amostra. Só fazer refluxo quando você realmente precisa de inferência de 1-2 passos.
-- **Classifier-free guidance still applies.**Basta trocar ε por v na combinação linear: `v_cfg = (1+w) v_cond - w v_uncond`- Não .
+- **Classifier-free guidance still applies.**Apenas troca .$\epsilon$Para$v$na combinação linear: $v_{\text{cfg}} = (1+w) v_{\text{cond}} - w v_{\text{uncond}}$- Não .
 
 ## Usá-lo
 
@@ -140,21 +140,21 @@ Salvar`outputs/skill-fm-tuner.md`. A Skill toma uma especificação de modelo de
 ## Exercícios
 
 1. **Easy.**Corra .`code/main.py`e comparar a distribuição de dados real com a MSE de 1 passo versus 20 passos.
-2. **Medium.**- Desliga-te do uniforme .`t`A amostragem para logit-normal (concentra a amostragem em meados de t).
-3. **Hard.**Implementar uma iteração de reflow: gerar emparelhado (x_0, x_1) integrando o primeiro modelo, treinar um segundo modelo nos pares e comparar a qualidade da amostra em 1 passo.
+2. **Medium.**- Desliga-te do uniforme .$t$A amostragem para logit-normal (concentra a amostragem em meados de t).
+3. **Hard.**Implementar uma iteração de reflow: gerar emparelhado $(x_0, x_1)$integrando o primeiro modelo, treinar um segundo modelo nos pares e comparar a qualidade da amostra em um passo.
 
 ## Termos-chave
 
 | Term | What people say | What it actually means |
 |------|-----------------|-----------------------|
-| Flow matching | "Straight-line diffusion" | Train `v_θ(x, t)` to match `x_1 - x_0` along an interpolant. |
+| Flow matching | "Straight-line diffusion" | Train $v_\theta(x, t)$ to match $x_1 - x_0$ along an interpolant. |
 | Rectified flow | "Reflow" | Iterative procedure that straightens learned flows. |
-| Velocity field | "v_θ" | Output of the model — the direction to move `x_t`. |
-| Straight-line interpolant | "The path" | `x_t = (1-t)·x_0 + t·x_1`; trivial target derivative. |
+| Velocity field | "v_θ" | Output of the model — the direction to move $x_t$. |
+| Straight-line interpolant | "The path" | $x_t = (1-t) \cdot x_0 + t \cdot x_1$; trivial target derivative. |
 | Euler sampler | "1st order ODE solver" | Simplest integrator; works well when paths are straight. |
-| Logit-normal t | "SD3 sampling" | Concentrate `t` sampling toward mid-values where gradients are strongest. |
-| Consistency distillation | "1-step sampler" | Train a student to map any `x_t` directly to `x_0`. |
-| CFG with velocity | "v-CFG" | `v_cfg = (1+w) v_cond - w v_uncond`; same trick, new variable. |
+| Logit-normal t | "SD3 sampling" | Concentrate $t$ sampling toward mid-values where gradients are strongest. |
+| Consistency distillation | "1-step sampler" | Train a student to map any $x_t$ directly to $x_0$. |
+| CFG with velocity | "v-CFG" | $v_{\text{cfg}} = (1+w) v_{\text{cond}} - w v_{\text{uncond}}$; same trick, new variable. |
 
 ## Nota de produção: Flux.1-schnell está a corresponder fluxo em seu mais rápido
 

@@ -39,15 +39,15 @@ features += weight_a * control_a(depth) + weight_b * control_b(pose)
 
 ### LoRA (Hu et al., 2021)
 
-Para qualquer camada linear `W ∈ R^{d×d}`no modelo, congelar `W`e adicionar um delta de baixo grau:
+Para qualquer camada linear $W \in \mathbb{R}^{d \times d}$no modelo, congelar $W$e adicionar um delta de baixo grau:
 
+```math
+W' = W + \Delta W, \quad \Delta W = B A, \quad A \in \mathbb{R}^{r \times d}, \quad B \in \mathbb{R}^{d \times r}
 ```
-W' = W + ΔW,  ΔW = B @ A,  A ∈ R^{r×d},  B ∈ R^{d×r}
-```
 
-com`r << d`. O ranking 4-16 é padrão para atenção, o ranking 64-128 para tons finas pesados.`2 · d · r`Em vez de`d²`. Para a atenção da SDXL com `d=640`- Não .`r=16`Por exemplo, o modelo de um adaptador de 20k em vez de 410k  uma redução de 20x.
+com$r \ll d$. O ranking 4-16 é padrão para atenção, o ranking 64-128 para tons finas pesados.$2 \cdot d \cdot r$Em vez de$d^2$. Para a atenção da SDXL com $d=640$- Não .$r=16$Por exemplo, o modelo de um adaptador de 20k em vez de 410k  uma redução de 20x.
 
-Em inferência , pode escalar a LoRA:`W' = W + α · B @ A`- Não .`α = 0.5-1.5`Os LoRAs múltiplos se empilham adicionalmente (com a habitual advertença de que interagem de forma não linear).
+Em inferência , pode escalar a LoRA:$W' = W + \alpha \cdot B A$- Não .$\alpha = 0.5\text{-}1.5$Os LoRAs múltiplos se empilham adicionalmente (com a habitual advertença de que interagem de forma não linear).
 
 ### Adaptador IP (Ye et al., 2023)
 
@@ -74,7 +74,7 @@ v4-controlnet-zero
 
 `code/main.py`Simula os dois mecanismos em 1-D:
 
-1. **LoRA.**Uma camada linear pré-treinada .`W`- Congelar. Treinar um de baixo grau.`B @ A`Tal como isso .`W + BA`- O que é que ele faz?`r = 1`É suficiente para aprender uma correcção de grau 1 perfeitamente.
+1. **LoRA.**Uma camada linear pré-treinada .$W$- Congelar. Treinar um de baixo grau.$BA$Tal como isso .$W + BA$- O que é que ele faz?$r = 1$É suficiente para aprender uma correcção de grau 1 perfeitamente.
 
 2. **ControlNet-lite.**Um preditor de "base congelada" e uma "rede lateral" que lê um sinal extra. A saída da rede lateral é bloqueada por um escalar aprendizagem iniciada para zero (nossa versão de zero-conv).
 
@@ -98,11 +98,11 @@ No passo 0 a saída é idêntica à base.`gate`lentamente, sem uma deriva catast
 
 ## Encurralagens
 
-- **Over-scaling LoRAs.** `α = 2`ou `α = 3`É um hack comum "faça-o mais forte" que produz resultados excessivamente estilizados / quebrados.`α ≤ 1.5`- Não .
+- **Over-scaling LoRAs.** $\alpha = 2$ou $\alpha = 3$É um hack comum "faça-o mais forte" que produz resultados excessivamente estilizados / quebrados.$\alpha \le 1.5$- Não .
 - **ControlNet weight conflict.**Usando uma Pose ControlNet com peso 1.0 e uma Depth ControlNet com peso 1.0 geralmente ultrapassam.
 - **LoRA on the wrong base.**Os SDXL LoRAs silenciosamente não operam no SD 1.5 porque as dimensões de atenção não coincidem.
 - **Textual Inversion drift.**Os tokens treinados num ponto de controlo desviam mal em outro.
-- **LoRA weight-merging and storage.**Você pode fazer um LoRA em pesos do modelo base para inferência mais rápida (sem adição de tempo de execução), mas você perde a capacidade de escalar `α`Mantém as duas versões.
+- **LoRA weight-merging and storage.**Você pode fazer um LoRA em pesos do modelo base para inferência mais rápida (sem adição de tempo de execução), mas você perde a capacidade de escalar $\alpha$Mantém as duas versões.
 
 ## Usá-lo
 
@@ -125,7 +125,7 @@ Salvar`outputs/skill-sd-toolkit-composer.md`. A competência assume uma tarefa (
 
 1. **Easy.**- Não .`code/main.py`, variar o grau de LoRA `r`Em que nível o LoRA corresponde exactamente a um delta-alvo de nível 2?
 2. **Medium.**Treinar dois LoRAs separados em duas transformações alvo. carregar-los juntos e mostrar a sua interação aditiva. Quando a interação quebra a linearidade?
-3. **Hard.**Use difusores para apilar: SDXL-base + Canny-ControlNet (peso 0,8) + um estilo LoRA (α 0,8) + IP-Adaptor (peso 0,6).
+3. **Hard.**Utilize difusores para empilhar: SDXL-base + Canny-ControlNet (peso 0,8) + um estilo LoRA ($\alpha$0.8) + IP-Adapter (peso 0,6).
 
 ## Termos-chave
 
@@ -133,9 +133,9 @@ Salvar`outputs/skill-sd-toolkit-composer.md`. A competência assume uma tarefa (
 |------|-----------------|-----------------------|
 | ControlNet | "Spatial control" | Cloned encoder + zero-conv skips; reads a conditioning image. |
 | Zero convolution | "Starts as identity" | 1×1 conv initialized to zero; ControlNet starts as no-op. |
-| LoRA | "Low-rank adapter" | `W + B @ A`, `r << d`; 100x fewer params than a full fine-tune. |
+| LoRA | "Low-rank adapter" | $W + BA$, $r \ll d$; 100x fewer params than a full fine-tune. |
 | rank r | "The knob" | LoRA compression; 4-16 typical, 64+ for heavy personalization. |
-| α | "LoRA strength" | Runtime scaling of the LoRA delta. |
+| $\alpha$ | "LoRA strength" | Runtime scaling of the LoRA delta. |
 | IP-Adapter | "Reference image" | Small image-conditioning adapter via CLIP-image tokens. |
 | DreamBooth | "Full subject fine-tune" | Train the full model on ~30 images of a subject. |
 | Textual Inversion | "New token" | Learn a new word embedding only; legacy, mostly replaced. |
@@ -144,7 +144,7 @@ Salvar`outputs/skill-sd-toolkit-composer.md`. A competência assume uma tarefa (
 
 Um SaaS de texto a imagem real serve centenas de LoRAs e uma dúzia de ControlNets sobre o mesmo ponto de controle base. O problema de serviço parece muito com a LLM multi-pensionamento (a literatura de produção abrange o caso LLM sob batch contínuo e LoRAX / S-LoRA):
 
-- **Hot-swap LoRAs, do not merge.**Fusão`W' = W + α·B·A`na base dá ~ 3-5% mais rápido por etapa de inferência, mas congela `α`Mantém os LoRAs quentes no VRAM como delta de rango; os difusores expõem`pipe.load_lora_weights()`+ `pipe.set_adapters([...], adapter_weights=[...])`O custo de troca é o `2 · d · r · num_layers`Pesos  em escala de MB, subsegundo.
+- **Hot-swap LoRAs, do not merge.**Fusão$W' = W + \alpha \cdot B \cdot A$na base dá ~ 3-5% mais rápido por etapa de inferência, mas congela $\alpha$Mantém os LoRAs quentes no VRAM como delta de rango; os difusores expõem`pipe.load_lora_weights()`+ `pipe.set_adapters([...], adapter_weights=[...])`O custo de troca é o `2 · d · r · num_layers`Pesos  em escala de MB, subsegundo.
 - **ControlNet as a second attention lane.**O codificador clonado funciona em paralelo com a base. Dois ControlNets com peso de 1.0 cada = dois passes adicionais adicionais por passo, não um passes combinados.
 - **Quantized LoRAs too.**Se você quantizar a base (ver Lição 07, Flux em 8GB), o delta LoRA também quantiza limpo para 8-bit ou 4-bit.
 

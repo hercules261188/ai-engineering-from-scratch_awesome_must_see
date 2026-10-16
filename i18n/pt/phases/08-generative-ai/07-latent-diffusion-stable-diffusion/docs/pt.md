@@ -21,9 +21,9 @@ Esta é a receita da Estabilidade de Difusão.`64×64×4`Os dados dos dados de d
 
 **Two stages, separately trained.**
 
-1. **Stage 1 — VAE.**Encoder `E(x) → z`, decodificador`D(z) → x`. Compressão alvo: 8x amostra descendente em cada eixo espacial + ajuste de canais para que o tamanho total latente seja ~1/16 da contagem de pixels. perda = reconstrução (L1 + LPIPS perceptivo) + KL (pequeno peso, portanto `z`Não é forçado Gaussian, porque não precisamos de amostragem exata de`z`O que é que é uma forma de fazer isso?
+1. **Stage 1 — VAE.**Encoder $E(x) \to z$, decodificador$D(z) \to x$. Compressão alvo: 8x amostra descendente em cada eixo espacial + ajuste de canais para que o tamanho total latente seja ~1/16 da contagem de pixels. perda = reconstrução (L1 + LPIPS perceptivo) + KL (pequeno peso, portanto $z$Não é forçado Gaussian, porque não precisamos de amostragem exata de$z$O que é que é uma forma de fazer isso?
 
-2. **Stage 2 — diffusion on `z`.**Tratar`z = E(x_real)`- A formação de uma rede U-Net (ou DiT) para denúncia`z_t`- Em inferência: amostra`z_0`através da difusão, então `x = D(z_0)`- Não .
+2. **Stage 2 — diffusion on $z$.**Tratar$z = E(x_{\text{real}})$- A formação de uma rede U-Net (ou DiT) para denúncia$z_t$- Em inferência: amostra$z_0$através da difusão, então $x = D(z_0)$- Não .
 
 **Text conditioning.**Dois componentes adicionais: um codificador de texto congelado (CLIP-L para SD 1.x, CLIP-L+OpenCLIP-G para SD 2/XL, T5-XXL para SD3 e Flux).`[Q = image features, K = V = text tokens]`Os tokens são a única forma de texto influenciar a imagem.
 
@@ -58,21 +58,21 @@ def encode(x):    return x * 0.5          # toy "compression" to smaller scale
 def decode(z):    return z * 2.0
 ```
 
-Para a pedagogia, este mapa linear é suficiente para mostrar que a difusão opera em`z`sem se preocupar com o espaço de dados original.
+Para a pedagogia, este mapa linear é suficiente para mostrar que a difusão opera em$z$sem se preocupar com o espaço de dados original.
 
 ### Passo 2: difusão em`z`- Espaço
 
-A mesma DDPM que a lição 06.`z = E(x)`Após a amostragem`z_0`, decodificar com `D(z_0)`- Não .
+A mesma DDPM que a lição 06.$z = E(x)$Após a amostragem$z_0$, decodificar com $D(z_0)$- Não .
 
 ### Passo 3: Orientação sem classificador
 
-Durante o treino, deixe de lado a etiqueta de classe 10% do tempo (substitua-a por um token zero).`ε_cond`E ...`ε_uncond`, então:
+Durante o treino, deixe de lado a etiqueta de classe 10% do tempo (substitua-a por um token zero).$\epsilon_{\text{cond}}$E ...$\epsilon_{\text{uncond}}$, então:
 
 ```python
 eps_cfg = (1 + w) * eps_cond - w * eps_uncond
 ```
 
-`w = 0`= não há orientação (plena diversidade), `w = 3`= padrão, `w = 7+`= saturado / demasiado nítido.
+$w = 0$= não há orientação (plena diversidade), $w = 3$= padrão, $w = 7+$= saturado / demasiado nítido.
 
 ### Passo 4: condicionamento de texto (conceito, não código)
 
@@ -90,7 +90,7 @@ Esta é a única diferença substancial entre um modelo de difusão condicional 
 - **Text encoder silently wrong.**SD3 precisa de T5-XXL com >=128 tokens, e o regresso para CLIP-só é perdedor.`use_t5=True`ou crateras de fidelidade.
 - **Mixing latent spaces.**SDXL, SD3, Flux todos usam diferentes VAEs. Um LoRA treinado em latentes SDXL não funcionará em SD3.
 - **CFG too high.** `w > 10`O ponto mais interessante é que a sua qualidade de vida é muito mais elevada.`w = 3-7`- Não .
-- **Negative prompts leaking.**Um prompt negativo vazio torna-se o token zero; um prompt negativo preenchido torna-se o `ε_uncond`Não são os mesmos; alguns oleodutos silenciosamente param para o zero.
+- **Negative prompts leaking.**Um prompt negativo vazio torna-se o token zero; um prompt negativo preenchido torna-se o $\epsilon_{\text{uncond}}$Não são os mesmos; alguns oleodutos silenciosamente param para o zero.
 
 ## Usá-lo
 
@@ -111,7 +111,7 @@ Salvar`outputs/skill-sd-prompter.md`. A Skill assume um prompt de texto + estilo
 
 ## Exercícios
 
-1. **Easy.**Corra .`code/main.py`com orientação.`w ∈ {0, 1, 3, 7, 15}`- Registrar a amostra média por classe.`w`Os meios de classe divergem além dos meios de dados reais?
+1. **Easy.**Corra .`code/main.py`com orientação.$w \in \lbrace 0, 1, 3, 7, 15 \rbrace$- Registrar a amostra média por classe.$w$Os meios de classe divergem além dos meios de dados reais?
 2. **Medium.**Troque o codificador linear do brinquedo por um par de codificador/decodificador tanh-MLP com perda de reconstrução. Retrain difusão nos novos latentes.
 3. **Hard.**Configurar uma verdadeira inferência de difusão estável com difusores: carga `sdxl-base`, executar 30 passos de Euler com CFG=7, tempo. Agora, desligue para `sdxl-turbo`O mesmo assunto, qualidade diferente descreve o que mudou e porquê.
 
@@ -121,8 +121,8 @@ Salvar`outputs/skill-sd-prompter.md`. A Skill assume um prompt de texto + estilo
 |------|-----------------|-----------------------|
 | First stage | "The VAE" | Trained encoder/decoder pair; compresses 512² to 64². |
 | Second stage | "The U-Net" | Diffusion model over the latent space. |
-| CFG | "Guidance scale" | `(1+w)·ε_cond - w·ε_uncond`; tunes conditioning strength. |
-| Null token | "Empty prompt embed" | Unconditional embed used for `ε_uncond`. |
+| CFG | "Guidance scale" | $(1+w) \cdot \epsilon_{\text{cond}} - w \cdot \epsilon_{\text{uncond}}$; tunes conditioning strength. |
+| Null token | "Empty prompt embed" | Unconditional embed used for $\epsilon_{\text{uncond}}$. |
 | Cross-attention | "How text gets in" | Each U-Net block attends to text tokens as K and V. |
 | DiT | "Diffusion Transformer" | Replace U-Net with a transformer over latent patches; scales better. |
 | MMDiT | "Multi-modal DiT" | SD3's architecture: text and image streams with joint attention. |

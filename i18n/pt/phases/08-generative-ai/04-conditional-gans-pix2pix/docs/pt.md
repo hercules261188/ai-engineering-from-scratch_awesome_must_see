@@ -9,34 +9,36 @@
 
 ## O problema
 
-Uma GAN incondicional mostra rostos arbitrários. Útil para uma demonstração, inútil na produção. Você quer: *mapear um esboço para uma foto*, *mapear um mapa para uma foto aérea*, *mapear uma cena diurna para a noite*, *colorizar uma imagem em escala de cinza*. Em todos eles, você recebe uma imagem de entrada`x`e deve ser emitido`y`Há muitas hipóteses plausíveis.`y`S por`x`O erro médio quadrado aplania-os em massa, mas a perda adversária não, porque "parece real" é acentuada.
+Uma GAN incondicional mostra rostos arbitrários. Útil para uma demonstração, inútil na produção. Você quer: *mapear um esboço para uma foto*, *mapear um mapa para uma foto aérea*, *mapear uma cena diurna para a noite*, *colorizar uma imagem em escala de cinza*. Em todos eles, você recebe uma imagem de entrada$x$e deve ser emitido$y$Há muitas hipóteses plausíveis.$y$É por .$x$O erro médio quadrado aplania-os em massa, mas a perda adversária não, porque "parece real" é acentuada.
 
-GAN condicional (Mirza & Osindero, 2014) adiciona uma condição `c`como uma entrada para ambos `G`E ...`D`. Pix2Pix (Isola et al., 2017) especializou-se nisso: condição é uma imagem de entrada completa, gerador é uma U-Net, discriminador é um classificador baseado em patch (PatchGAN), e perda é adversária + L1. Essa receita supera modelos de texto a imagem de zero em domínios de imagem a imagem estreitos mesmo em 2026 porque é treinado em * dados em pares *  você tem exatamente o sinal que precisa.
+GAN condicional (Mirza & Osindero, 2014) adiciona uma condição $c$como uma entrada para ambos $G$E ...$D$. Pix2Pix (Isola et al., 2017) especializou-se nisso: condição é uma imagem de entrada completa, gerador é uma U-Net, discriminador é um classificador baseado em patch (PatchGAN), e perda é adversária + L1. Essa receita supera modelos de texto a imagem de zero em domínios de imagem a imagem estreitos mesmo em 2026 porque é treinado em * dados em pares *  você tem exatamente o sinal que precisa.
 
 ## O conceito
 
 ![Pix2Pix: U-Net generator, PatchGAN discriminator](../assets/pix2pix.svg)
 
-**Conditional G.** `G(x, z) → y`- Na Pix2Pix,`z`é descontinuado dentro de G (sem ruído de entrada  Isola encontrou ruído explícito foi ignorado).
+**Conditional G.** $G(x, z) \to y$- Na Pix2Pix,$z$é descontinuado dentro de G (sem ruído de entrada  Isola encontrou ruído explícito foi ignorado).
 
-**Conditional D.** `D(x, y) → [0, 1]`. A entrada é o *par* (condição, saída). Esta é a diferença chave: D deve julgar se `y`é consistente com `x`Não só se`y`Parece real.
+**Conditional D.** $D(x, y) \to [0, 1]$. A entrada é o *par* (condição, saída). Esta é a diferença chave: D deve julgar se $y$é consistente com $x$Não só se$y$Parece real.
 
 **U-Net generator.**Encoder-decodificador com conexões de saltar através do gargalo de engarrafamento. É crítico para tarefas onde entrada e saída compartilham estrutura de baixo nível (borda, silueta). Sem os saltos, detalhes de alta frequência desaparecem.
 
-**PatchGAN discriminator.**Em vez de emitir uma única pontuação real/falsa, D emitirá uma`N×N`Grade onde cada célula julga um campo receptivo de ~70×70 pixels. média. Esta é uma suposição de campo aleatório de Markov: realismo é local. muito mais rápido para treinar, menos parâmetros, saída mais nítida.
+**PatchGAN discriminator.**Em vez de emitir uma única pontuação real/falsa, D emitirá uma$N \times N$Grade onde cada célula julga um campo receptivo de ~70×70 pixels. média. Esta é uma suposição de campo aleatório de Markov: realismo é local. muito mais rápido para treinar, menos parâmetros, saída mais nítida.
 
 **Loss.**
 
-```
-loss_G = -log D(x, G(x)) + λ · ||y - G(x)||_1
-loss_D = -log D(x, y) - log (1 - D(x, G(x)))
+```math
+\begin{aligned}
+\text{loss}_G &= -\log D(x, G(x)) + \lambda \cdot \lVert y - G(x) \rVert_1 \\
+\text{loss}_D &= -\log D(x, y) - \log(1 - D(x, G(x)))
+\end{aligned}
 ```
 
-O termo L1 estabiliza o treinamento e empurra G para o alvo conhecido.`λ = 100`Era o Pix2Pix padrão.
+O termo L1 estabiliza o treinamento e empurra G para o alvo conhecido.$\lambda = 100$Era o Pix2Pix padrão.
 
 ## CycleGAN  quando não tiver pares
 
-Pix2Pix precisa de paragem `(x, y)`Os dados. CycleGAN (Zhu et al., 2017) reduz esta exigência ao custo de uma perda extra: a perda de *consistência do ciclo*.`G: X → Y`E ...`F: Y → X`Treinar-lhes assim .`F(G(x)) ≈ x`E ...`G(F(y)) ≈ y`Isto permite que se traduza cavalos em zebras, verão em inverno, sem exemplos emparelhados.
+Pix2Pix precisa de paragem $(x, y)$Os dados. CycleGAN (Zhu et al., 2017) reduz esta exigência ao custo de uma perda extra: a perda de *consistência do ciclo*.$G: X \to Y$E ...$F: Y \to X$Treinar-lhes assim .$F(G(x)) \approx x$E ...$G(F(y)) \approx y$Isto permite que se traduza cavalos em zebras, verão em inverno, sem exemplos emparelhados.
 
 Em 2026, a imagem-para-imagem não-parejada é feita principalmente através da difusão (ControlNet, IP-Adapter) em vez do CycleGAN, mas a ideia de consistência de ciclo sobrevive em quase todos os documentos de adaptação de domínio não-parejado.
 
@@ -46,7 +48,7 @@ gx-patchgan
 
 ## Construí-lo
 
-`code/main.py`Implementa uma pequena GAN condicional em dados 1-D.`c`é um rótulo de classe (0 ou 1). A tarefa: produzir uma amostra da distribuição condicional para a classe dada.
+`code/main.py`Implementa uma pequena GAN condicional em dados 1-D.$c$é um rótulo de classe (0 ou 1). A tarefa: produzir uma amostra da distribuição condicional para a classe dada.
 
 ### Passo 1: apenda condição tanto às entradas G como D
 
@@ -84,9 +86,9 @@ for c in [0, 1]:
 ## Encurralagens
 
 - **Condition ignored.**G aprende a marginalizar, D nunca penaliza porque o sinal de condição é fraco.
-- **L1 weight too low.**G deriva para saídas arbitrárias de aparência real, não fiéis. Comece λ≈100 para tarefas de estilo Pix2Pix.
-- **L1 weight too high.**O G produz resultados borrosos porque o L1 continua a ser uma norma de L_p.
-- **Ground-truth leakage in D.**Concatenato `(x, y)`como entrada D, não apenas `y`Sem este D não podemos verificar a consistência.
+- **L1 weight too low.**G deriva para resultados arbitrários de aparência real, não fiéis.$\lambda \approx 100$para tarefas de estilo Pix2Pix.
+- **L1 weight too high.**G produz saídas borbulhas porque L1 é ainda um $L_p$A anel baixa quando o treino estabilizar.
+- **Ground-truth leakage in D.**Concatenato $(x, y)$como entrada D, não apenas $y$Sem este D não podemos verificar a consistência.
 - **Mode collapse per class.**Cada classe pode colapsar de forma independente.
 
 ## Usá-lo

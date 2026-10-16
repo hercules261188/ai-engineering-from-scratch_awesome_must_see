@@ -9,9 +9,9 @@
 
 ## O problema
 
-Um modelo gerativo faz um trabalho: fornece amostras de formação extraídas de uma distribuição desconhecida `p_data(x)`As faces, frases, arquivos MIDI, estruturas de proteínas, todos os mesmos problemas se você piscar.
+Um modelo gerativo faz um trabalho: fornece amostras de formação extraídas de uma distribuição desconhecida $p_{\text{data}}(x)$As faces, frases, arquivos MIDI, estruturas de proteínas, todos os mesmos problemas se você piscar.
 
-O problema é que ...`p_data`A maioria dos modelos de geradores de computadores de computadores de computadores de computadores de computadores de computadores de computadores de computadores de computadores de computadores de computadores de computadores de computadores de computadores de computadores de computadores de computadores de computadores de computadores de computadores de computadores de computadores de computadores de computadores de computadores de computadores de computadores de computadores de computadores de computadores de computadores de computadores de computadores de computadores de computadores de computadores de computadores de computadores de computadores de computadores de computadores de computadores de computadores de computadores de computadores de computadores de computadores de computadores de computadores de computadores de computadores de computadores de computadores de computadores de computadores de computadores de computadores de computadores de computadores de computadores de computadores de computadores de computadores de computadores de computadores de computadores de computadores de computadores de computadores de computadores de computadores de computadores de computadores de computadores de computadores de computadores de computadores de computadores de computadores de computadores de computadores de computadores de computadores de computadores de computadores de computadores de computadores de computadores de computadores de computadores de computadores de computadores de computadores de computadores de computadores de computadores de computadores de computadores de computadores de computadores de computadores de computadores de computadores de computadores de computadores de computadores de computadores de computadores de computadores de computadores de computadores de computadores de computadores de computadores de computadores de computadores de computadores de computadores de computadores de computadores de computadores de computadores de computadores de computadores de computadores de computadores de computadores de computadores de computadores de computadores de computadores de computadores de computadores de computadores de computadores de computadores de computadores de computadores de computadores de computadores de computadores de computadores de computadores de computadores de computadores de computadores de computadores de computadores de computadores de computadores de computadores de computadores de computadores de computadores de computadores de computadores de computadores de computadores de computadores de computadores de computadores de computadores de computadores de computadores de computadores de computadores de computadores de comput
+O problema é que ...$p_{\text{data}}$A maioria dos modelos de geradores de computadores de computadores de computadores de computadores de computadores de computadores de computadores de computadores de computadores de computadores de computadores de computadores de computadores de computadores de computadores de computadores de computadores de computadores de computadores de computadores de computadores de computadores de computadores de computadores de computadores de computadores de computadores de computadores de computadores de computadores de computadores de computadores de computadores de computadores de computadores de computadores de computadores de computadores de computadores de computadores de computadores de computadores de computadores de computadores de computadores de computadores de computadores de computadores de computadores de computadores de computadores de computadores de computadores de computadores de computadores de computadores de computadores de computadores de computadores de computadores de computadores de computadores de computadores de computadores de computadores de computadores de computadores de computadores de computadores de computadores de computadores de computadores de computadores de computadores de computadores de computadores de computadores de computadores de computadores de computadores de computadores de computadores de computadores de computadores de computadores de computadores de computadores de computadores de computadores de computadores de computadores de computadores de computadores de computadores de computadores de computadores de computadores de computadores de computadores de computadores de computadores de computadores de computadores de computadores de computadores de computadores de computadores de computadores de computadores de computadores de computadores de computadores de computadores de computadores de computadores de computadores de computadores de computadores de computadores de computadores de computadores de computadores de computadores de computadores de computadores de computadores de computadores de computadores de computadores de computadores de computadores de computadores de computadores de computadores de computadores de computadores de computadores de computadores de computadores de computadores de computadores de computadores de computadores de computadores de computadores de computadores de computadores de computadores de computadores de computadores de computadores de computadores de computadores de computadores de computadores de computadores de computadores de computadores de computadores de computadores de computadores de computadores de computadores de computadores de computadores de computadores de computadores de comput
 
 Cinco famílias sobreviveram nos últimos doze anos. Saber que compromisso cada família faz nos diz por que ganha em algumas tarefas e desmorona em outras.
 
@@ -19,13 +19,13 @@ Cinco famílias sobreviveram nos últimos doze anos. Saber que compromisso cada 
 
 ![Five families of generative models — taxonomy by what they model](../assets/taxonomy.svg)
 
-**1. Explicit density, tractable.**Escreva .`log p(x)`Os modelos autoregressivos (PixelCNN, WaveNet, GPT) factorizam`p(x) = ∏ p(x_i | x_<i)`- Construção de fluxos normalizados (RealNVP, Glow) `p(x)`Pro: probabilidade exata, perda de treinamento limpa. Con: inferência autoregressiva é sequencial (lento para sequências longas), fluxos precisam de arquiteturas invertíveis (arquiteturicamente restritivas).
+**1. Explicit density, tractable.**Escreva .$\log p(x)$Os modelos autoregressivos (PixelCNN, WaveNet, GPT) factorizam$p(x) = \prod_i p(x_i \mid x_{<i})$- Construção de fluxos normalizados (RealNVP, Glow) $p(x)$Pro: probabilidade exata, perda de treinamento limpa. Con: inferência autoregressiva é sequencial (lento para sequências longas), fluxos precisam de arquiteturas invertíveis (arquiteturicamente restritivas).
 
-**2. Explicit density, approximate.**- Não .`log p(x)`Os modelos de difusão (DDPM, Ho 2020) treinam um denoizador que otimiza implícitamente um ELBO ponderado. A difusão é a espinha dorsal dominante de imagem, vídeo e 3D em 2026.
+**2. Explicit density, approximate.**- Não .$\log p(x)$Os modelos de difusão (DDPM, Ho 2020) treinam um denoizador que otimiza implícitamente um ELBO ponderado. A difusão é a espinha dorsal dominante de imagem, vídeo e 3D em 2026.
 
-**3. Implicit density.**Salte a densidade inteiramente; aprenda um gerador `G(z)`que produz amostras e um discriminador `D(x)`GANs (Goodfellow 2014). Rapidos na inferência (uma passagem para frente) mas notoriamente instáveis durante o treinamento. StyleGAN 1/2/3 permanece o estado da arte para fotorealismo de domínio fixo (faces, quartos) mesmo em 2026.
+**3. Implicit density.**Salte a densidade inteiramente; aprenda um gerador $G(z)$que produz amostras e um discriminador $D(x)$GANs (Goodfellow 2014). Rapidos na inferência (uma passagem para frente) mas notoriamente instáveis durante o treinamento. StyleGAN 1/2/3 permanece o estado da arte para fotorealismo de domínio fixo (faces, quartos) mesmo em 2026.
 
-**4. Score-based / continuous-time.**Aprenda a gradiente da densidade de tronco.`∇_x log p(x)`Song & Ermon (2019) mostrou que a correspondência de pontuação generaliza a difusão para um SDE. A correspondência de fluxo (Lipman 2023) é a temperatura de 2024-2026: treinamento sem simulação, caminhos mais retos, amostragem 4-10 vezes mais rápida do que o DDPM.
+**4. Score-based / continuous-time.**Aprenda a gradiente da densidade de tronco.$\nabla_x \log p(x)$Song & Ermon (2019) mostrou que a correspondência de pontuação generaliza a difusão para um SDE. A correspondência de fluxo (Lipman 2023) é a temperatura de 2024-2026: treinamento sem simulação, caminhos mais retos, amostragem 4-10 vezes mais rápida do que o DDPM.
 
 **5. Token-based autoregressive over discrete codes.**Comprime dados de alta dim com um VQ-VAE ou quantificador residual em uma curta sequência de tokens discretos, em seguida, use um transformador para modelar a sequência de tokens. Parti, MuseNet, AudioLM, VALL-E, o tokenizer de patch de Sora todos usam isso. Este é um balde 1 mais um tokenizer aprendido.
 
@@ -53,7 +53,7 @@ Cinco famílias sobreviveram nos últimos doze anos. Saber que compromisso cada 
 Quando um novo modelo gerativo cair, responda a estas cinco perguntas antes de ler a seção de métodos.
 
 1. **What is being modeled?**Pixels, latentes, tokens discretos, Gaussians 3D, malhas, formas de onda?
-2. **Is the density explicit or implicit?**Eles escrevem .`log p(x)`- Não .
+2. **Is the density explicit or implicit?**Eles escrevem .$\log p(x)$- Não .
 3. **Sampling: one-shot or iterative?**Iterativo significa inferência mais lenta; um tiro geralmente significa adversário ou destilado.
 4. **Conditioning: unconditional, class, text, image, pose?**Isto determina a perda e o andaime de arquitetura.
 5. **Evaluation: FID, CLIP score, IS, human preference, task accuracy?**Cada um tem modos de falha conhecidos (ver Lição 14).
@@ -90,7 +90,7 @@ Que família, para que tarefa, em 2026?
 | Text-to-video | Diffusion Transformer + flow matching | Sora, Veo 2, Kling. |
 | Speech + music | Token-based AR (AudioLM, VALL-E, MusicGen) or flow matching (AudioCraft 2) | Discrete tokens scale cheaply. |
 | 3D scenes | Gaussian Splatting fit, diffusion prior | 3D-GS for reconstruction, diffusion for novel-view. |
-| Density estimation (no sampling) | Flows | Only family with exact `log p(x)`. |
+| Density estimation (no sampling) | Flows | Only family with exact $\log p(x)$. |
 | Simulation / physics | Flow matching, score SDE | Straight-line paths, smooth vector fields. |
 
 ## Envia-o
@@ -109,11 +109,11 @@ A habilidade requer uma descrição da tarefa e resultados: (1) qual família us
 
 | Term | What people say | What it actually means |
 |------|-----------------|-----------------------|
-| Generative model | "It makes new stuff" | Learns a sampler for `p_data(x)`, optionally exposes `log p(x)`. |
-| Explicit density | "You can evaluate it" | Model provides a closed-form or tractable `log p(x)`. |
-| Implicit density | "GAN-style" | Only a sampler — no way to evaluate `p(x)` of a given point. |
-| ELBO | "Evidence lower bound" | A tractable lower bound on `log p(x)`; VAEs and diffusion optimize it. |
-| Score | "Gradient of log-density" | `∇_x log p(x)`; diffusion and SDE models learn this field. |
+| Generative model | "It makes new stuff" | Learns a sampler for $p_{\text{data}}(x)$, optionally exposes $\log p(x)$. |
+| Explicit density | "You can evaluate it" | Model provides a closed-form or tractable $\log p(x)$. |
+| Implicit density | "GAN-style" | Only a sampler — no way to evaluate $p(x)$ of a given point. |
+| ELBO | "Evidence lower bound" | A tractable lower bound on $\log p(x)$; VAEs and diffusion optimize it. |
+| Score | "Gradient of log-density" | $\nabla_x \log p(x)$; diffusion and SDE models learn this field. |
 | Manifold hypothesis | "Data lives on a surface" | High-dim data concentrates on a low-dim manifold; why dimensionality reduction works. |
 | Autoregressive | "Predict the next piece" | Factorize joint as product of conditionals. |
 | Latent | "Compressed code" | Low-dim representation from which a decoder can reconstruct the input. |
