@@ -61,7 +61,7 @@ print(dataset["train"][0])
 بعض مجموعات البيانات كبيرة جداً للاستيعاب على القرص. تحملها التدفق صف بعد صف دون تنزيل الكامل.
 
 ```python
-dataset = load_dataset("wikimedia/wikipedia", "20220301.en", split="train", streaming=True)
+dataset = load_dataset("wikimedia/wikipedia", "20231101.en", split="train", streaming=True)
 
 for i, example in enumerate(dataset):
     print(example["title"])
@@ -244,6 +244,16 @@ python code/data_utils.py
 2. -أشغل`c4`مجموعة بيانات و احتساب عدد الأمثلة التي يمكنك معالجتها في 10 ثوان
 3. تحويل مجموعة البيانات إلى Parquet ومقارنة حجم الملف إلى CSV
 4. إعداد 70/15/15 قطعة/قيمة/اختبار مع بذرة ثابتة وتحقق من الأحجام
+
+### إشارات
+
+**Exercise 1.**اتصل`load_and_inspect("glue", "mrpc")`من`code/data_utils.py`أو`load_dataset("glue", "mrpc")`مباشرة، والطباعة`ds["train"][:5]`كل مثال يجب أن يكون له`sentence1`،`sentence2`و`label`الحقول
+
+**Exercise 2.**قم بتحميل مجموعة البيانات بـ `streaming=True`، كما`stream_dataset`ويقرأ الأمثلة في حلقة تتوقف عندما`time.time()`يمر وقت البدء زائد 10 ثوان. طبع العد؛ تشغيله مرتين، لأن الركوب الأول يشمل تشغيل الاتصال.
+
+**Exercise 3.**حفظ مجموعة البيانات نفسها مع `to_csv`و`to_parquet`، كما`convert_format`إذا كان ذلك، ثم مقارنة الحجم مع `ls -lh`أو`os.path.getsize`. إعادة ملف " باركيت " مع`load_from_parquet`وتحقق من عدم تغيير عدد الصفوف
+
+**Exercise 4.**استخدام`train_test_split`مرتين مع ثبث`seed`: أولاً تقسيم 30 في المئة، ثم تقسيم ذلك 30 في المئة إلى النصف. يجب أن يجمع طول الثلاثة إلى طول الأصلي، والرحلة الثانية مع نفس البذور يجب أن تعطى نفس الصف الأول في كل تقسيم.
 
 ## الشروط الرئيسية
 

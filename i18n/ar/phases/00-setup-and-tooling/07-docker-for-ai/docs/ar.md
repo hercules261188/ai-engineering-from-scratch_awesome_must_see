@@ -155,7 +155,7 @@ python:3.12-slim
 هنا هو الملف الدوكر في`code/Dockerfile`تمشي من خلالها
 
 ```dockerfile
-FROM nvidia/cuda:12.4.1-devel-ubuntu22.04
+FROM --platform=linux/amd64 nvidia/cuda:12.4.1-devel-ubuntu22.04
 
 ENV DEBIAN_FRONTEND=noninteractive
 ENV PYTHONUNBUFFERED=1
@@ -215,6 +215,8 @@ docker build -t ai-dev -f phases/00-setup-and-tooling/07-docker-for-ai/code/Dock
 ```
 
 يستغرق هذا بعض الوقت في المرة الأولى (تحميل صورة أساسية CUDA + PyTorch). تستخدم المكونات اللاحقة طبقات مخزن.
+
+**macOS / Apple Silicon (M1/M2/M3/M4):**- نعم`--platform=linux/amd64`على`FROM`الخط هو ما يجعل هذا البناء ناجح على جهاز Mac. الصورة القاعدة CUDA أيضا شحن مجموعة من أرم64 وDocker Desktop يختارها تلقائيا على أبل السيليكون، ولكن PyTorch ينشر`cu124`عجلات فقط ل x86_64، لذلك `pip install torch==2.6.0+cu124`الطبقة تفشل مع `No matching distribution found for torch==2.6.0+cu124`. إضافة المنصة تسحب الصورة x86_64 وتشغيلها تحت التمثيل: إنشاء أبطأ والحاوية لا تمتلك GPU (لا يوجد CUDA على جهاز Mac بأي حال من الأحوال).`--gpus all`من`docker run`للعمل مع GPU على Apple Silicon، قم بتشغيل الدروس بشكل أصلي مع بناء MPS من الدروس 01 والاحتفاظ بهذه الصورة لضيوف x86_64 لينكس مع GPU NVIDIA.
 
 إشغله
 
@@ -372,6 +374,16 @@ docker logs -f <container_id>
 2. إبدأ بثقة المكونات المكونة من المرفق وتحقق من إمكانية الوصول إلى Qdrant من حاوية الذكاء الاصطناعي في `http://qdrant:6333/collections`
 3. إضافة`flask`إلى ملف دوكر، إعادة بناء، وإدارة خادم API بسيط على ميناء 5000. خريطة البورط مع `-p 5000:5000`
 4. قياس حجم الصورة مع `docker images`حاولي تغيير الصورة الأساسية من`devel`إلى`runtime`و مقارنة الأحجام
+
+### إشارات
+
+**Exercise 1.**بناء مع `docker build -t ai-dev -f phases/00-setup-and-tooling/07-docker-for-ai/code/Dockerfile .`القيادة من الدروس، ثم تشغيل الإستيراد داخل `docker run --rm ai-dev`على جهاز ماك، لا تترك`--gpus all`يجب أن تقوم الحاوية بطبع نسخة تبدأ بـ`2.6.0`. . .
+
+**Exercise 2.**أركض`docker compose up -d`في`code/`المجلد، ثم فتح قذيفة في `ai-dev`الخدمة مع `docker compose exec ai-dev bash`داخلها، والركض`curl http://qdrant:6333/collections`؛ يعني رد JSON أن اسم الخدمة يصل على شبكة التجميع.
+
+**Exercise 3.**إضافة`RUN pip install flask`الخط إلى الملف Docker، إعادة بناء، وبدء الخادم مع `host="0.0.0.0"`، لأن خادم متصل بمضيف محلي داخل الحاوية لا يمكن الوصول إليه من الخارج.`http://localhost:5000`على جهازك للتأكد من أن خريطة الميناء تعمل
+
+**Exercise 4.**أركض`docker images ai-dev`واكتب عمود "القياس"`devel`إلى`runtime`في`FROM`خط، بناء مع علامة جديدة، ومقارنة الحجمين؛ الصورة في الوقت التشغيل يترك المجمعين والرؤوس.
 
 ## الشروط الرئيسية
 

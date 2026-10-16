@@ -106,6 +106,14 @@ git push origin my-progress
 2. إخلق`.gitignore`التي تستبعد ملفات النموذجية لمواقع التفتيش (`.pt`،`.pth`،`.safetensors`)
 3. انظر تاريخ التزامات هذا الإنتقال مع`git log --oneline`وقرأ كيف تم إضافة الدروس
 
+### إشارات
+
+**Exercise 1.**انقر على فورك على GitHub ، ثم `git clone`عنوان عنوان الشوكة الخاصة بك. بعد `git push -u origin my-progress`، فتح الشوكة على GitHub وتأكيد أن قائمة الفرع تظهر `my-progress`مع ملفك
+
+**Exercise 2.**إضافة نمط واحد لكل امتداد، مثل `*.pt`، إلى`.gitignore`الملف في جذور المخبأ. قم بإنشاء ملف فارغ مع كل امتداد وتشغيل `git status`لا يمكن أن تظهر أي منها في قائمة الملفات غير المتتبعة.
+
+**Exercise 3.**أركض`git log --oneline`ثم`git log --oneline -- phases/00-setup-and-tooling`لإظهار المشاركات التي غيرت هذه المرحلة فقط. اختر واحد المشاركات والعمل`git show --stat <hash>`لمعرفة أي ملفات دراسية أضافها.
+
 ## الشروط الرئيسية
 
 | Term | What people say | What it actually means |

@@ -81,11 +81,11 @@ code --install-extension charliermarsh.ruff
 | Black Formatter | Auto-format on save, consistent style |
 | Ruff | Fast linting, catches common mistakes |
 
-الملف`code/.vscode/extensions.json`في هذه الدروس تحتوي على قائمة التوصيات الكاملة. عند فتح مجلد المشروع، سيطلب منك VS Code تثبيتها.
+الملف`code/vscode/extensions.json`في هذه الدروس توجد قائمة التوصيات الكاملة.`.vscode/extensions.json`في مجلد مشروعك، و VS Code يطلب منك تثبيتها عند فتح هذا المجلد.
 
 ### الخطوة الثالثة: إعداد الإعدادات
 
-نسخ الإعدادات من `code/.vscode/settings.json`في هذه الدروس، أو تطبيقها يدويا من خلال `Settings > Open Settings (JSON)`. . .
+نسخ الإعدادات من `code/vscode/settings.json`في هذه الدروس، أو تطبيقها يدويا من خلال `Settings > Open Settings (JSON)`. . .
 
 الإعدادات الرئيسية لعمل الذكاء الاصطناعي:
 
@@ -200,6 +200,16 @@ Host gpu-box
 2. نسخة `settings.json`من هذا الدروس إلى إعدادات VS Code
 3. افتح ملف Python وتحقق من أن Pylance يظهر إشارات النمط والتنسيقات الأسود على حفظ
 4. إذا كان لديك إمكانية الوصول إلى جهاز بعيد، قم بتعيين نظام SSH عن بعد وفتح مجلد عليه
+
+### إشارات
+
+**Exercise 1.**قم بتثبيت الإمدادات من الجدول في الخطوة 2 أو قم بتثبيت كل مرخص في `code/vscode/extensions.json`مع`code --install-extension <id>`- أركض`code --list-extensions`و تحقق من كل هوية ضد الملف
+
+**Exercise 2.**إعدادات مفتوحة > إعدادات مفتوحة (JSON) ونسخ محتوى `code/vscode/settings.json`إذا كان الملف يحتوي بالفعل على إعدادات، دمج المفاتيح والحفاظ على JSON صالحة؛ VS Code يرمز إلى الملف المكسور مع خط أحمر.
+
+**Exercise 3.**اكتب وظيفة مع ملاحظة النوع ، ثم اركب على مكالمة لها ؛ Pylance يظهر النوع المستنير. إضافة مساحات إضافية في سطر وتحفظ الملف. يجب أن يعيد تنسيق الخط على حفظ.
+
+**Exercise 4.**إضافة الخادم إلى `~/.ssh/config`أولاً و تأكدي ذلك`ssh <host>`يعمل في محطة. ثم استخدم أمر Remote SSH للتواصل؛ شريط الحالة يظهر اسم المضيف عندما يتم تشغيل VS Code على الجهاز عن بعد.
 
 ## الشروط الرئيسية
 

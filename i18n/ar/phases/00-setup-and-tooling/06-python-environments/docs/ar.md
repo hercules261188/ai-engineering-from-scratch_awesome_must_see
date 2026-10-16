@@ -259,6 +259,16 @@ bash phases/00-setup-and-tooling/06-python-environments/code/env_setup.sh
 3. اكتب`pyproject.toml`لمشروع يحتاج كل من PyTorch و SDK Anthropic
 4. قم بتثبيت حزمة عمداً عالمياً (بدون تفعيل venv) ، لاحظ أين تذهب، ثم إزالتها
 
+### إشارات
+
+**Exercise 1.**أركض`bash phases/00-setup-and-tooling/06-python-environments/code/env_setup.sh`من جذور مخزن. اقرأ كل سطر من الخروج؛ عندما تفشل التحقق، إصلاح هذا العنصر واحد وتشغيل النص مرة أخرى حتى لا تفشل أي التحقق.
+
+**Exercise 2.**قم بإعداد البيئة الثانية في مجلد جديد مع `uv venv`، تنشرها، وتركيب قديم numpy مع محور النسخ مثل `numpy==1.26.4`- أركض`python -c "import numpy; print(numpy.__version__)"`في كل بيئة، يجب أن تكون النسختين مختلفة.
+
+**Exercise 3.**البدء من المثال في pyproject.toml الأساسيات والقائمة `torch`و`anthropic`تحت`dependencies`- أركض`uv pip install -e .`أو`uv sync`في بيئة جديدة، الملف صحيح عندما تستورد كلتا الحزم دون خطأ.
+
+**Exercise 4.**أوقف كل بيئة، إشغلي`pip install --user <small package>`ثمّ أركض`pip show <package>`و قراءة `Location`الخط. إزالتها مع `pip uninstall <package>`و ركض`pip show`مرة أخرى للتأكيد على أنه قد اختفى
+
 ## الشروط الرئيسية
 
 | Term | What people say | What it actually means |

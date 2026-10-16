@@ -49,7 +49,7 @@ xcode-select --install
 brew install git curl wget
 
 # Ubuntu/Debian
-sudo apt update && sudo apt install -y build-essential git curl wget
+sudo apt update && sudo apt install -y build-essential git curl wget unzip
 
 # Windows (use WSL2)
 wsl --install -d Ubuntu-24.04
@@ -95,6 +95,8 @@ npm install -g pnpm
 
 node -e "console.log('Node', process.version)"
 ```
+
+يقوم جهاز التثبيت بالتحقق من`unzip`أولاً و يخرج مع`Not installing fnm due to missing dependencies.`عندما لا يوجد: على لينكس يفتح أرشيف zip، على macOS يثبت من خلال Homebrew.`unzip`؛ أوبونتو، ديبيان، و WSL2 الحصول عليه من الخط الخط 1`sudo apt install -y unzip`إذا تخطيت تلك الخطوة)
 
 **macOS / Apple Silicon (M1/M2/M3/M4):**إذا توقف التركيب عن`Error: Cannot install under Rosetta 2 in ARM default prefix (/opt/homebrew)`، محطةك تعمل تحت " روزيتا 2 "`arch`بصمات`i386`(هومبريو) هو بناء أليف أرم64، قم بتثبيت (أرم64) القسري، قم بتسجيله في قذفك، ثم قم بإعادة تشغيل الأوامر أعلاه من (أرم64).`fnm install 22`:
 
@@ -218,3 +220,11 @@ Next: python3 phases/01-math-foundations/01-linear-algebra-intuition/code/vector
 1. إشغال النص التحقق وإصلاح أي أخطاء
 2. قم بإنشاء بيئة افتراضية Python لهذا الدورة و قم بتثبيت PyTorch
 3. اكتب "مرحباً للعالم" بكلّ الألغات الأربعة و إشغلي كلّها
+
+### إشارات
+
+**Exercise 1.**أركض`python3 phases/00-setup-and-tooling/01-dev-environment/code/verify.py --route beginner`من جذور مخزن وتصحيح أول سطر فشل قبل النظر في التالي. يتم التحقق عندما تشغيل النص مرة أخرى وكل المراقبة المطلوبة تمر.
+
+**Exercise 2.**اجعل البيئة مع`uv venv`في جذور مخزن، تنشرها، ثم تثبيت PyTorch مع الأوامر من الخطوة 6 التي تتطابق مع الأجهزة الخاصة بك.`python -c "import torch; print(torch.__version__)"`داخل البيئة، رقم النسخة يعني أن التثبيت قد تم.
+
+**Exercise 3.**استخدم أربعة أوقات تشغيل من كومة في المفهوم: Python، TypeScript على Node.js، Rust، وجوليا. اكتب ملفًا صغيرًا لكل منها وتشغيله مع `python3`،`npx tsx`(لا يمكن لـ Node.js تشغيل`.ts`الملف مباشرة)`cargo run`أو`rustc`و`julia`كل مرة يجب أن تقوم بطبع رسالتك وتخرج بالرمز 0

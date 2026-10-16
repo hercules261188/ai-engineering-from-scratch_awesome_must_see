@@ -146,6 +146,14 @@ with urllib.request.urlopen(req) as resp:
 2. جرب النسخة الخامة HTTP ومقارنة تنسيق الاستجابة إلى النسخة SDK
 3. استخدم عمدا مفتاح API خاطئ وقراءة رسالة الخطأ
 
+### إشارات
+
+**Exercise 1.**إخلق مفتاح في جهاز التشغيل الإنساني، وضعه في `ANTHROPIC_API_KEY`كما هو موضح في الدروس، والركض `code/first_api_call.py`.النداء يعمل عندما يقوم النص بتطبيق النموذج الإجابة و لا يوجد خطأ
+
+**Exercise 2.**كلتا الوظائف في`code/first_api_call.py`طبع فقط النص والرمز يعد. إضافة `print(response)`في`call_with_sdk()`و`print(result)`في`call_raw_http()`، ثم تشغيل النص لترى كل من الردود الكاملة. مقارنة أسماء الحقول: JSON الخام له نفس `content`،`usage`و`stop_reason`الحقول التي تحوّل SDK إلى صفات كائن.
+
+**Exercise 3.**المجموعة`ANTHROPIC_API_KEY`إلى قيمة مزيفة في محطة واحدة فقط ، ثم تشغيل النص مرة أخرى. العثور على رمز حالة HTTP ونوع الخطأ في الخروج. فشل التوثيق يعيد حالة 401 .
+
 ## الشروط الرئيسية
 
 | Term | What people say | What it actually means |

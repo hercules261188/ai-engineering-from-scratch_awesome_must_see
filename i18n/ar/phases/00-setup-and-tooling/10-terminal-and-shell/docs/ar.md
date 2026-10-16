@@ -336,6 +336,16 @@ env | grep -i torch
 3. إعداد سجل تدريب مزيف مع `for i in $(seq 1 100); do echo "epoch $i loss: $(echo "scale=4; 1/$i" | bc)"; sleep 0.1; done > fake_train.log`ثم استخدم`grep`،`tail`و`awk`لاستخراج سوى قيم الخسارة
 4. قم بتعيين إدخال إعداد SSH لخادم لديك الوصول إليه (أو استخدامه `localhost`لممارسة النص).
 
+### إشارات
+
+**Exercise 1.**ابدأ بـ`tmux new -s practice`، ثم تقسيم مع المقبل`Ctrl+B`يليها `"`و`%`، ونتحرك بين الألواح مع`Ctrl+B`و مفتاح سهم، أفرج مع`Ctrl+B`إذاً`d`, أركض`tmux ls`، و إرفاقها مرة أخرى مع`tmux attach -t practice`يجب أن تستمر البرامج الثلاثة
+
+**Exercise 2.**نسخ الخطوط من`code/shell_aliases.sh`حتى نهاية`~/.zshrc`أو`~/.bashrc`ثمّ أركض`source`على هذا الملف.`alias`أو`type <name>`لأحد الاسم الخارجي لتحديد أن القذيفة تعرف ذلك.
+
+**Exercise 3.**أول جولة`tail -5 fake_train.log`لنرى شكل الخط. ثم قم بتصفية`grep loss`وطبع فقط الحقل الأخير مع `awk '{print $NF}'`يجب أن تكون المخرجة 100 رقم يصبح أصغر
+
+**Exercise 4.**نسخة `Host gpu`حلقة من الدروس إلى`~/.ssh/config`وتغيير`HostName`و`User`إلى خادمك، أو إلى `localhost`اسم المستخدم الخاص بك.`ssh -G gpu`إذا كان لديك خادم SSH قابل الوصول يقبل مفتاحك ، قم بتشغيل `ssh gpu`للتواصل
+
 ## الشروط الرئيسية
 
 | Term | What people say | What it actually means |
