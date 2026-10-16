@@ -30,8 +30,8 @@
 
 أسهل طريقة، إختار رقمًا واستخدمه في كل خطوة
 
-```
-lr(t) = lr_0
+```math
+\text{lr}(t) = \text{lr}_0
 ```
 
 نادراً ما يكون مثاليًا. إما أنه مرتفع جدًا في نهاية التدريب (التذبذب حول الحد الأدنى) أو منخفض جدًا في البداية (حساب مضيعة على خطوات صغيرة). يعمل بشكل جيد للنماذج الصغيرة وإعداد التحليلات. خيار رهيب لأي شيء يتدرب لأكثر من ساعة.
@@ -40,11 +40,11 @@ lr(t) = lr_0
 
 النهج القديم من عصر ريسنت: خفض معدل التعلم بمقدار عامل (عادةً 10x) في حقول ثابتة.
 
-```
-lr(t) = lr_0 * gamma^(floor(epoch / step_size))
+```math
+\text{lr}(t) = \text{lr}_0 \cdot \gamma^{\lfloor \text{epoch} / \text{step\_size} \rfloor}
 ```
 
-حيث غاما = 0.1 و step_size = 30 يعني: lr ينخفض 10x كل 30 عصر.
+أين$\gamma = 0.1$و step_size = 30 يعني: lr ينخفض 10x كل 30 عصر.
 
 المشكلة: نقاط التدهور المثلى تعتمد على مجموعة البيانات والهندسة المعمارية. الانتقال إلى مشكلة مختلفة و تحتاج إلى إعادة ضبط متى تنخفض. الانتقالات مفاجئة - يمكن أن يرتفع الخسارة عندما يتغير المعدل فجأة.
 
@@ -52,24 +52,24 @@ lr(t) = lr_0 * gamma^(floor(epoch / step_size))
 
 التراجع السلس من معدل التعلم القصوى إلى الحد الأدنى، وذلك بعد منحنى الكوسين:
 
+```math
+\text{lr}(t) = \text{lr}_{\min} + 0.5 \cdot (\text{lr}_{\max} - \text{lr}_{\min}) \cdot \left(1 + \cos\left(\frac{\pi t}{T}\right)\right)
 ```
-lr(t) = lr_min + 0.5 * (lr_max - lr_min) * (1 + cos(pi * t / T))
-```
 
-حيث t هو الخطوة الحالية و T هو العدد الإجمالي للخطوات.
+أين$t$هو الخطوة الحالية و$T$هو عدد الخطوات الإجمالية.
 
-عند t=0، يكون مصطلح الكوسين 1، لذا lr = lr_max. عند t=T، يكون مصطلح الكوسين -1, لذا lr = lr_min. يكون التهالك لطيفا في البداية، ويتسارع في الوسط، ويصبح لطيفا مرة أخرى بالقرب من النهاية.
+في$t=0$، مصطلح الكوسين هو 1 ، لذلك $\text{lr} = \text{lr} _{\max}$في$t=T$، مصطلح الكوسين هو -1 ، لذلك $\text{lr} = \text{lr} _{\min}$التهالك لطيف في البداية، يتسارع في منتصف، ويصبح لطيفا مرة أخرى في النهاية.
 
-هذا هو الافتراض الافتراضي لمعظم عمليات التدريب الحديثة. لا توجد مفاصيل فائقة للتنسيق خارج lr_max و lr_min. شكل الكوزين يطابق الملاحظة التجريبية التي تحدث معظم التعلم في منتصف التدريب -- تريد أحجام خطوات معقولة خلال تلك الفترة الحرجة.
+هذه هي الافتراضية لمعظم عمليات التدريب الحديثة لا توجد أي معايير لتنسيق ما بعد$\text{lr} _{\max}$و$\text{lr} _{\min}$تشكل الكوسين يطابق الملاحظة التجريبية التي تقول أن معظم التعلم يحدث في منتصف التدريب -- تريد أحجام خطوات معقولة خلال تلك الفترة الحرجة.
 
 ### التدفئة: لماذا تبدأ من الصغر
 
 يحتفظ آدم وغيره من المحفسين التكيفيين بتقديرات تشغيلية لمتوسط التدرج والتباعد. في الخطوة 0 ، يتم تشغيل هذه التقديرات إلى الصفر. تستند التحديثات القليلة الأولى للتدرج إلى إحصاءات القمامة. إذا كان معدل التعلم كبير خلال هذه الفترة ، فإن النموذج يتخذ خطوات ضخمة ، غير موجهة بشكل سيء.
 
-يصلح Warmup هذا. تبدأ مع معدل التعلم الصغير (غالباً ما lr_max / warmup_steps أو حتى صفر) وتسلق خطياً إلى lr_max على مدار الخطوات الأولى N. بحلول الوقت الذي تصل فيه إلى معدل التعلم الكامل ، فإن إحصاءات آدم قد استقرت.
+يصلح Warmup هذا. تبدأ مع معدل التعلم الصغير (غالباً ما lr_max / warmup_steps أو حتى صفر) وتسلق خطياً إلى $\text{lr}_{\max}$على أول مرة$N$عندما تصل إلى معدل التعلم الكامل، ستستقر إحصاءات آدم.
 
-```
-lr(t) = lr_max * (t / warmup_steps)     for t < warmup_steps
+```math
+\text{lr}(t) = \text{lr}_{\max} \cdot \frac{t}{\text{warmup\_steps}} \quad \text{for } t < \text{warmup\_steps}
 ```
 
 التدفئة النموذجية: 1-5% من إجمالي مراحل التدريب. تدرب Llama 3 على حوالي 1.8 تريليون رمز وتدفأ على 2000 خطوة. GPT-3 حرارة أكثر من 375 مليون رمز.
@@ -398,13 +398,13 @@ scheduler = get_cosine_schedule_with_warmup(
 
 ## التمارين
 
-1. تنفيذ التدهور المرتفع: lr(t) = lr_0 * غاما^t حيث غاما = 0.999. مقارنة مع التخفيف الكوسين على مجموعة البيانات الدائرة.
+1. تنفيذ التدهور المتعرض: $\text{lr}(t) = \text{lr}_0 \cdot \gamma^t$أين$\gamma = 0.999$. مقارنة مع التخفيف الكوسيني على مجموعة بيانات الدائرة
 
 2. تنفيذ اختبار نطاق معدل التعلم (ليسي سميث): تدريب لعدة مئات من الخطوات مع زيادة نمطية لـ LR من 1e-7 إلى 1. خسارة اللقطة مقابل LR.
 
 3. تدريب مع التدفئة + كوسين ولكن تغير طول التدفئة: 0٪، 1٪، 5٪، 10٪، 20٪ من إجمالي الخطوات. العثور على نقطة الحلوة حيث التدريب أكثر استقرارا.
 
-4. تنفيذ التمرد الكوسيني مع إعادة تشغيل دافئ (SGDR): إعادة تعيين معدل التعلم إلى lr_max كل خطوة T وتحلل مرة أخرى. مقارنة مع الكوسيني القياسي على دور تدريب أطول.
+4. تنفيذ إعادة تشغيل الكوسين مع إعادة تشغيل دافئ (SGDR): إعادة تعيين معدل التعلم إلى $\text{lr}_{\max}$كل$T$مقارنة مع كوسين القياسي على دورة تدريب أطول
 
 5. بناء "جراح جدول" الذي يراقب فقدان التدريب ويتحول تلقائيا من التدفئة إلى السينوم عندما يتحسن الخسارة، ويقلل من العدالة إذا كانت الخسارة مرتفعة لفترة طويلة جدا.
 
@@ -414,12 +414,12 @@ scheduler = get_cosine_schedule_with_warmup(
 |------|----------------|----------------------|
 | Learning rate | "How fast the model learns" | The scalar that multiplies the gradient to determine the parameter update size |
 | Schedule | "Change the LR over time" | A function that maps training step to learning rate, designed to optimize convergence |
-| Warmup | "Start with a small LR" | Linearly ramping the LR from near-zero to the target value over the first N steps to stabilize optimizer statistics |
-| Cosine annealing | "Smooth LR decay" | Decreasing the LR following a cosine curve from lr_max to lr_min over training |
+| Warmup | "Start with a small LR" | Linearly ramping the LR from near-zero to the target value over the first $N$ steps to stabilize optimizer statistics |
+| Cosine annealing | "Smooth LR decay" | Decreasing the LR following a cosine curve from $\text{lr} _{\max}$ to $\text{lr} _{\min}$ over training |
 | Step decay | "Drop LR at milestones" | Multiplying the LR by a factor (usually 0.1) at fixed epoch intervals |
 | 1cycle policy | "Up then down" | Leslie Smith's method of ramping LR up then down in a single cycle for faster convergence |
 | LR range test | "Find the best learning rate" | Training briefly while increasing LR to find the value where loss starts diverging |
-| Cosine with warm restarts | "Reset and repeat" | Periodically resetting the LR to lr_max and decaying again (SGDR) |
+| Cosine with warm restarts | "Reset and repeat" | Periodically resetting the LR to $\text{lr} _{\max}$ and decaying again (SGDR) |
 | Eta min | "The floor for the LR" | The minimum learning rate that the schedule decays to |
 | Peak learning rate | "The maximum LR" | The highest LR reached during training, typically after warmup |
 

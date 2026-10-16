@@ -16,7 +16,7 @@
 
 ## المشكلة
 
-قم بتجميع اثنين من التحوّلات الخطية: y = W2(W1x + b1) + b2. قم بتوسيعها: y = W2W1x + W2b1 + b2. هذا فقط y = Ax + c -- تحوّل خطي واحد. مهما كانت عدد الطبقات الخطية التي تقوم بتجميعها، فإن النتيجة تنهار إلى مصفوفة واحدة مضاعفة. شبكة 100 طبقة لديك نفس القدرة التمثيلية مثل طبقة واحدة.
+إثنائي تحويلات خطية:$y = W_2(W_1 x + b_1) + b_2$. توسعها:$y = W_2 W_1 x + W_2 b_1 + b_2$هذا فقط$y = Ax + c$-- تحويل خطي واحد. مهما كانت عدد الطبقات الخطية التي تقوم بتجميعها، فإن النتيجة تنهار إلى مضاعفة ماتريكية واحدة. شبكة 100 طبقة لديك نفس القدرة التمثيلية للطبقة الواحدة.
 
 هذا ليس فضول نظري. هذا يعني أن شبكة خطية عميقة لا تستطيع حرفياً تعلم XOR، لا تستطيع تصنيف مجموعة بيانات مستديرة، لا تستطيع التعرف على وجه. بدون وظائف التفعيل، العمق وهم.
 
@@ -26,52 +26,58 @@
 
 ### لماذا لا يتطلب الأمر خطية
 
-مضاعفة المصفوفة قابلة للتكوين. مضاعفة متجهة بمصفوفة A ثم المصفوفة B هو نفس مضاعفة ب AB. وهذا يعني أن تجميع عشرة طبقات خطية يعادل رياضياً طبقة خطية واحدة مع مصفوفة كبيرة واحدة. كل تلك المعايير، كل هذا العمق -- مضيعة. تحتاج إلى شيء لتحطيم السلسلة. هذا ما تفعله وظائف التفعيل.
+مضاعفة المصفوفة قابلة للتكوين مضاعفة المتجه بالصفوفة$A$ثم المصفوفة$B$هو متطابق مع مضاعفة ب $AB$هذا يعني أن وضع عشرة طبقات خطية يعادل رياضياً طبقة خطية واحدة مع ماتريكس كبيرة واحدة. كل تلك المعايير، كل هذا العمق -- ضائع. تحتاج إلى شيء لتحطيم السلسلة. هذا ما تفعله وظائف التفعيل.
 
-هنا هو دليل. طبقة خطية يحسب f ((x) = Wx + b. كومة اثنين:
+هنا دليل، طبقة خطية تقوم بحسابات$f(x) = Wx + b$- كومة ثانية:
 
-```
-Layer 1: h = W1 * x + b1
-Layer 2: y = W2 * h + b2
+```math
+\begin{aligned}
+\text{Layer 1:} \quad h &= W_1 x + b_1 \\
+\text{Layer 2:} \quad y &= W_2 h + b_2
+\end{aligned}
 ```
 
 البديل:
 
-```
-y = W2 * (W1 * x + b1) + b2
-y = (W2 * W1) * x + (W2 * b1 + b2)
-y = A * x + c
-```
-
-طبقة واحدة. أدخل تنشيط غير خطي g() بين الطبقات:
-
-```
-h = g(W1 * x + b1)
-y = W2 * h + b2
+```math
+\begin{aligned}
+y &= W_2 (W_1 x + b_1) + b_2 \\
+y &= (W_2 W_1) x + (W_2 b_1 + b_2) \\
+y &= A x + c
+\end{aligned}
 ```
 
-الآن يتم كسر الاستبدال. W2 * g(W1 * x + b1) + b2 لا يمكن تقليصها إلى تحول خطي واحد. الشبكة يمكن أن تمثل وظائف غير خطية. كل طبقة إضافية مع تنشيط يضيف القدرة التمثيلية.
+طبقة واحدة. إدخل تنشيط غير خطي $g()$بين الطبقات:
+
+```math
+\begin{aligned}
+h &= g(W_1 x + b_1) \\
+y &= W_2 h + b_2
+\end{aligned}
+```
+
+الآن، الإستبدال ينفذ$W_2 g(W_1 x + b_1) + b_2$لا يمكن تقليصها إلى تحول خطي واحد. الشبكة يمكن أن تمثل وظائف غير خطية. كل طبقة إضافية مع تنشيط يضيف القدرة التمثيلية.
 
 ### السجمايد
 
 وظيفة التفعيل الأصلية لشبكات العصبية
 
-```
-sigmoid(x) = 1 / (1 + e^(-x))
+```math
+\text{sigmoid}(x) = \frac{1}{1 + e^{-x}}
 ```
 
 نطاق الخروج: (0, 1). سلاسة، قابلة للتفريق، تقوم بتخطيط أي رقم حقيقي إلى قيمة تشبه الاحتمالات.
 
 المشتق:
 
-```
-sigmoid'(x) = sigmoid(x) * (1 - sigmoid(x))
+```math
+\text{sigmoid}'(x) = \text{sigmoid}(x) \cdot (1 - \text{sigmoid}(x))
 ```
 
-القيمة القصوى لهذا المشتق هو 0.25 ، والتي تحدث عند x = 0. في الانتشار الخلفي ، تتضاعف التدرجات عبر الطبقات. عشرة طبقات من sigmoid يعني أن التدرجة تتضاعف بأكثر من 0.25 عشرة مرات:
+القيمة القصوى لهذا المشتق هو 0.25 ، والتي تحدث عند $x = 0$في التنشر الخلفي، تتضاعف التدرجات عبر الطبقات. عشرة طبقات من sigmoid يعني أن التدرجة تتضاعف بأكثر من 0.25 عشرة مرات:
 
-```
-0.25^10 = 0.000000953674
+```math
+0.25^{10} = 0.000000953674
 ```
 
 أقل من مليون جزء من الإشارة الأصلية. هذه مشكلة التهاب المراحل. تصبح المراحل في الطبقات الأولى صغيرة جداً بحيث لا تتحديث الأوزان بالكاد. ويبدو أن الشبكة تتعلم - الخسارة تقل في الطبقات اللاحقة - ولكن الطبقات الأولى تتجمد. شبكات sigmoid العميقة ببساطة لا تتدرب.
@@ -82,33 +88,32 @@ sigmoid'(x) = sigmoid(x) * (1 - sigmoid(x))
 
 النسخة المركزية من sigmoid.
 
-```
-tanh(x) = (e^x - e^(-x)) / (e^x + e^(-x))
+```math
+\tanh(x) = \frac{e^x - e^{-x}}{e^x + e^{-x}}
 ```
 
 نطاق الخروج: (-1, 1). مركز على الصفر، مما يزيل مشكلة الزيغ زاج.
 
 المشتق:
 
-```
-tanh'(x) = 1 - tanh(x)^2
+```math
+\tanh'(x) = 1 - \tanh(x)^2
 ```
 
-المشتق الأقصى هو 1.0 عند x = 0 -- أربع مرات أفضل من sigmoid. ولكن مشكلة التراجع تختفي لا تزال موجودة. بالنسبة للمدخلات الإيجابية أو السلبية الكبيرة، المشتق يقترب من الصفر. عشرة طبقات لا تزال تحطم التراجع، فقط أقل عدوانية.
+الحد الأقصى للمشتق هي 1.0 عند $x = 0$ولكن مشكلة التراجع المختفي لا تزال موجودة. بالنسبة للمدخلات الإيجابية أو السلبية الكبيرة، فإن المشتق تقترب من الصفر. عشرة طبقات لا تزال تحطم التراجع، فقط أقل عدوانية.
 
 ### الـ (رليو): الانفجار
 
 وحدة خطية تصحيحة. تم تسليطها للدقة من قبل ناير وهينتون في عام 2010 (المهام نفسها تعود إلى عمل فوكوشيما عام 1969) ، غيرت كل شيء.
 
-```
-relu(x) = max(0, x)
+```math
+\text{relu}(x) = \max(0, x)
 ```
 
-نطاق الخروج: [0، لا نهاية لها). المشتق هي بسيطة بشكل بسيط:
+نطاق الناتج: $[0, \infty)$المشتق هي بسيطة جداً
 
-```
-relu'(x) = 1  if x > 0
-            0  if x <= 0
+```math
+\text{relu}'(x) = \begin{cases} 1 & \text{if } x > 0 \\ 0 & \text{if } x \le 0 \end{cases}
 ```
 
 لا يوجد تراجع يختفي للمدخلات الإيجابية. تراجع هو بالضبط 1، تمر مباشرة. هذا هو السبب في أن الشبكات العميقة أصبحت قابلة للتدريب -- ريلو يحافظ على حجم تراجع عبر الطبقات.
@@ -119,25 +124,24 @@ relu'(x) = 1  if x > 0
 
 أسهل علاج للخلايا العصبية الميتة
 
-```
-leaky_relu(x) = x        if x > 0
-                alpha * x if x <= 0
+```math
+\text{leaky\_relu}(x) = \begin{cases} x & \text{if } x > 0 \\ \alpha x & \text{if } x \le 0 \end{cases}
 ```
 
-حيث أن ألفا ثابت صغير، عادةً 0.01، الجانب السلبي لديه ميل صغير بدلاً من الصفر، لذا لا يزال الخلايا العصبية الميتة تحصل على إشارة تراجع ويمكن أن تعافى.
+أين$\alpha$هو ثابت صغير، عادة 0.01. الجانب السلبي لديه ميل صغير بدلا من الصفر، لذلك لا يزال الخلايا العصبية الميتة الحصول على إشارة تراجع ويمكن أن تعافى.
 
 ### جيلو: الخلل الحديث
 
 وحدة الخطوطية للخطأ الغاسية. قدمتها هندريكس وجيمبل في عام 2016. تنشيط الافتراضي في BERT وGPT ومعظم المحولات الحديثة.
 
-```
-gelu(x) = x * Phi(x)
+```math
+\text{gelu}(x) = x \cdot \Phi(x)
 ```
 
-حيث Phi ((x) هو وظيفة التوزيع التراكمية لتوزيع الطبيعي القياسي. التقريب المستخدم في الممارسة العملية:
+أين$\Phi(x)$هو وظيفة التوزيع التراكمية لتوزيع الطبيعي القياسي. التقريب المستخدم في الممارسة العملية:
 
-```
-gelu(x) ~= 0.5 * x * (1 + tanh(sqrt(2/pi) * (x + 0.044715 * x^3)))
+```math
+\text{gelu}(x) \approx 0.5 \cdot x \cdot \left(1 + \tanh\left(\sqrt{2/\pi} \cdot (x + 0.044715 \cdot x^3)\right)\right)
 ```
 
 GELU مسلس في كل مكان ، ويحتوي على قيم سلبية صغيرة (على عكس ReLU التي تصفح صلبًا إلى الصفر) ، ولها تفسير محتمل: يوزن كل مدخل من خلال احتمال أن يكون إيجابيًا تحت توزيع غوسسي. هذا التغليف السلس يفوق ReLU في معماري المحولات لأنه يوفر تدفق تراجعي أفضل ويجنب مشكلة العصبية الميتة بالكامل.
@@ -146,11 +150,11 @@ GELU مسلس في كل مكان ، ويحتوي على قيم سلبية صغي
 
 اكتشاف التفعيل الذاتي الذي اكتشفته راماشندران وآخرون في عام 2017 من خلال البحث الآلي.
 
-```
-swish(x) = x * sigmoid(x)
+```math
+\text{swish}(x) = x \cdot \text{sigmoid}(x)
 ```
 
-سويش رسمياً هو x * sigmoid ((x) ، اكتشفتها جوجل من خلال البحث الآلي على مساحة وظيفة التفعيل -- شبكة عصبية تصميم أجزاء من الشبكات العصبية.
+سويش رسمياً$x \cdot \text{sigmoid}(x)$اكتشفتها جوجل من خلال البحث الآلي على مساحة وظائف التفعيل -- شبكة عصبية تصميم أجزاء من الشبكات العصبية.
 
 مثل GELU ، هو سلس وغير متناغم ، ويسمح بقيمات سلبية صغيرة. الفرق خفيف: Swish يستخدم sigmoid للقبض بينما GELU يستخدم CDF غوسية. في الممارسة العملية ، الأداء هو متطابق تقريبًا. يستخدم Swish في EfficientNet وبعض نماذج الرؤية. يهيمن GELU في نماذج اللغة.
 
@@ -158,8 +162,8 @@ swish(x) = x * sigmoid(x)
 
 لا تستخدم في الطبقات الخفية. Softmax تحويل متجه من النتائج الخام (اللوجيتس) إلى توزيع الاحتمالات.
 
-```
-softmax(x_i) = e^(x_i) / sum(e^(x_j) for all j)
+```math
+\text{softmax}(x_i) = \frac{e^{x_i}}{\sum_j e^{x_j}}
 ```
 
 كل خروج تتراوح بين 0 و 1. كل الخروج جمع إلى 1. وهذا يجعلها التفعيل النهائي القياسي للتصنيف متعدد الفئات. يحصل أكبر منطقة على أعلى احتمال ، ولكن على عكس argmax ، softmax يمكن التمييز ويحفظ المعلومات حول الثقة النسبية.
@@ -500,11 +504,11 @@ model = nn.Sequential(
 
 ## التمارين
 
-1. تنفيذ ReLU المعلم (PReLU) حيث يكون الميل السلبي ألفا هو ملامح قابل للتعلم. قم بتدريبها على مجموعة بيانات الدائرة ومقارنة مع ReLU الثابتة.
+1. تنفيذ RELU المعلم (PRELU) حيث التوجه السلبي $\alpha$هو مُعلم قابلة للتعلم. قم بتدريبها على مجموعة بيانات الدائرة ومقارنةها مع RLU الثابتة.
 
 2. قم بتجربة التهاب التهابية مع 50 طبقة بدلا من 10. رسم الحجم في كل طبقة للسيغمويد، تان، ريلو، و GELU. في أي طبقة يصل إشارة كل تنشيط فعالية إلى الصفر؟
 
-3. تنفيذ ELU (وحدة خطية تعريضية): elu(x) = x إذا x > 0, ألفا * (e^x - 1) إذا x <= 0. مقارنة معدل الخلايا العصبية الميتة ل ReLU على نفس الشبكة.
+3. تنفيذ الوحدة السطحية المتعددة: $\text{elu}(x) = x$إذا$x \gt 0$،$\alpha (e^x - 1)$إذا$x \le 0$مقارنة معدل أعصابها الميتة مع ريلو على نفس الشبكة
 
 4. قم ببناء "مراقب صحة التدريج" الذي يعمل أثناء التدريب: في كل مرحلة، احسب متوسط حجم التدريج في كل طبقة. طبع تحذير عندما ينخفض التدريج في أي طبقة إلى أقل من 0.001 أو يتجاوز 100.
 
@@ -518,12 +522,12 @@ model = nn.Sequential(
 | Vanishing gradient | "Gradients disappear in deep networks" | Gradients shrink exponentially through layers when the activation's derivative is less than 1, making early layers untrainable |
 | Exploding gradient | "Gradients blow up" | Gradients grow exponentially through layers when the effective multiplier exceeds 1, causing unstable training |
 | Dead neuron | "A neuron that stopped learning" | A ReLU neuron whose input is permanently negative, producing zero output and zero gradient |
-| Sigmoid | "Squishes values to 0-1" | The logistic function 1/(1+e^-x), historically important but causes vanishing gradients in deep networks |
-| ReLU | "Clips negatives to zero" | max(0, x) -- the activation that made deep learning practical by preserving gradient magnitude |
+| Sigmoid | "Squishes values to 0-1" | The logistic function $1/(1+e^{-x})$, historically important but causes vanishing gradients in deep networks |
+| ReLU | "Clips negatives to zero" | $\max(0, x)$ -- the activation that made deep learning practical by preserving gradient magnitude |
 | GELU | "The transformer activation" | Gaussian Error Linear Unit, a smooth activation that weights inputs by their probability of being positive |
-| Swish/SiLU | "Self-gated ReLU" | x * sigmoid(x), discovered through automated search, used in EfficientNet |
+| Swish/SiLU | "Self-gated ReLU" | $x \cdot \text{sigmoid}(x)$, discovered through automated search, used in EfficientNet |
 | Softmax | "Turns scores into probabilities" | Normalizes a vector of logits into a probability distribution where all values are in (0,1) and sum to 1 |
-| Leaky ReLU | "ReLU that doesn't die" | max(alpha*x, x) where alpha is small (0.01), preventing dead neurons by allowing small negative gradients |
+| Leaky ReLU | "ReLU that doesn't die" | $\max(\alpha x, x)$ where $\alpha$ is small (0.01), preventing dead neurons by allowing small negative gradients |
 | Saturation | "The flat part of sigmoid" | Regions where an activation's derivative approaches zero, blocking gradient flow |
 | Logit | "The raw score before softmax" | The unnormalized output of the final layer before applying softmax or sigmoid |
 

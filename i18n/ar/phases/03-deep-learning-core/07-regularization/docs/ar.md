@@ -41,21 +41,23 @@ graph LR
 
 ### التخلي عن العمل
 
-أسهل تقنية تنظيم مع أروع تفسير أثناء التدريب، قم بتعيين خروج كل عصبية عشوائية إلى الصفر مع احتمال p.
+أسهل تقنية تنظيم مع أروع تفسير أثناء التدريب، قم بتعيين أداء كل عصبية عشوائيًا إلى الصفر مع احتمال$p$. . .
 
+```math
+\text{output} = \text{activation}(z) \cdot \text{mask} \quad \text{where }\text{mask}[i] \sim \text{Bernoulli}(1 - p)
 ```
-output = activation(z) * mask    where mask[i] ~ Bernoulli(1 - p)
-```
 
-مع p = 0.5 ، نصف الخلايا العصبية يتم تسريحها في كل مرور إلى الأمام. يجب على الشبكة تعلم التمثيلات الزائدة لأنه لا يستطيع التنبؤ بالخلايا العصبية التي ستكون متاحة. هذا يمنع التكيف - الخلايا العصبية تتعلم الاعتماد على الخلايا العصبية الأخرى المحددة موجودة.
+مع$p = 0.5$نصف الخلايا العصبية يتم تحديدها على كل مرور إلى الأمام. يجب على الشبكة تعلم التمثيلات الزائدة لأنه لا يستطيع التنبؤ بالخلايا العصبية التي ستكون متاحة. هذا يمنع التكيف - الخلايا العصبية تتعلم الاعتماد على الخلايا العصبية الأخرى المحددة موجودة.
 
-تفسير الجمع: شبكة مع N الخلايا العصبية والإقلاع يخلق 2^N شبكات فرعية ممكنة (كل مزيج من الخلايا العصبية تعمل أو غير تعمل). تدريب مع التخلي عن التدريب تقريبا تدرب جميع شبكات 2^N الفرعية في وقت واحد، كل على مجموعات صغيرة مختلفة. في وقت الاختبار، تستخدم جميع الخلايا العصبية (لا تخطئ) وتقييم النتائج بنسبة (1 - ص) لتتطابق مع القيمة المتوقعة أثناء التدريب. هذا يعادل متوسط التنبؤات لشبكات فرعية 2^N -- مجموعة ضخمة من نموذج واحد.
+تفسير الجمع: شبكة مع $N$الخلايا العصبية والإقلاع يخلق$2^N$شبكات فرعية محتملة (كل مزيج من الخلايا العصبية تعمل أو غير تعمل).$2^N$شبكات فرعية في وقت واحد، كل على مجموعات صغيرة مختلفة. في وقت الاختبار، تستخدم جميع الخلايا العصبية (لا تخفيض) وتقليص النتائج بحلول $(1 - p)$لتتطابق القيمة المتوقعة خلال التدريب. هذا يعادل متوسط التنبؤات$2^N$شبكات فرعية -- مجموعة ضخمة من نموذج واحد.
 
 في الممارسة العملية، يتم تطبيق التوسع خلال التدريب بدلاً من الاختبار (التوقف المُعكس):
 
-```
-During training:  output = activation(z) * mask / (1 - p)
-During testing:   output = activation(z)   (no change needed)
+```math
+\begin{aligned}
+\text{During training:} \quad & \text{output} = \text{activation}(z) \cdot \text{mask} / (1 - p) \\
+\text{During testing:} \quad & \text{output} = \text{activation}(z) \quad \text{(no change needed)}
+\end{aligned}
 ```
 
 هذا أكثر نظافة لأن رمز الاختبار لا يحتاج إلى معرفة عن التخلي على الإطلاق.
@@ -66,15 +68,15 @@ During testing:   output = activation(z)   (no change needed)
 
 أضف الكبيرة المربعة لجميع الوزن إلى الخسارة:
 
-```
-total_loss = task_loss + (lambda / 2) * sum(w_i^2)
+```math
+\text{total\_loss} = \text{task\_loss} + \frac{\lambda}{2} \sum_i w_i^2
 ```
 
-إن تراجع مصطلح التنظيم هو lambda * w. وهذا يعني في كل خطوة، يتم تقليص كل وزن نحو الصفر بنسبة متناسبة مع حجمها. يتم تعاقب الوزن الكبير أكثر. يتم دفع النموذج نحو حلول لا يهيمن فيها وزن واحد.
+تراجع مصطلح التنظيم هو $\lambda w$هذا يعني في كل خطوة، كل وزن يتم تقليصه نحو الصفر بنسبة متناسبة مع حجمها. يتم تعاقب الوزن الكبير أكثر. يتم دفع النموذج نحو حلول حيث لا يهيمن أي وزن واحد.
 
 لماذا يساعد هذا على التعميم: تميل نماذج أكثر تكييفا إلى أن يكون لها أوزان كبيرة تضخم الضوضاء في بيانات التدريب. يحتفظ التدهور الوزن بالأوزان الصغيرة ، مما يحد من القدرة الفعالة للنموذج ويجبره على الاعتماد على ميزات قوية ويمكن التعميم بدلاً من الطرق الغريبة المتذكرة.
 
-المعلم المضاد للامبدا يحدد القوة القياسية:
+- نعم$\lambda$يحدد المعلم المضاد القوة القياسية
 
 - 0.01 لـ AdamW على المحولات
 - 1e-4 للـ SGD على قنوات CNN
@@ -88,16 +90,18 @@ total_loss = task_loss + (lambda / 2) * sum(w_i^2)
 
 لـ (ميني) مجموعة من التفعيلات في بعض الطبقات:
 
-```
-mu = (1/B) * sum(x_i)           (batch mean)
-sigma^2 = (1/B) * sum((x_i - mu)^2)   (batch variance)
-x_hat = (x_i - mu) / sqrt(sigma^2 + eps)   (normalize)
-y = gamma * x_hat + beta        (scale and shift)
+```math
+\begin{aligned}
+\mu &= \frac{1}{B} \sum_i x_i && \text{(batch mean)} \\
+\sigma^2 &= \frac{1}{B} \sum_i (x_i - \mu)^2 && \text{(batch variance)} \\
+\hat{x} &= \frac{x_i - \mu}{\sqrt{\sigma^2 + \epsilon}} && \text{(normalize)} \\
+y &= \gamma \hat{x} + \beta && \text{(scale and shift)}
+\end{aligned}
 ```
 
 غاما وبيتا هي معايير قابلة للتعلم التي تسمح للشبكة بإلغاء التطبيع إذا كان ذلك مثالياً. بدونها، كنت ستضطر إلى أن تكون خروج كل طبقة صفر المتوسط
 
-**Training vs inference split:**أثناء التدريب، تأتي mu و sigma من المجموعة الصغيرة الحالية. أثناء الاستنتاج، تستخدم المتوسطات الجارية المتراكمة أثناء التدريب (متوسط متحرك تعريفي مع الزخم = 0.1, مما يعني 90% قديم + 10% جديد).
+**Training vs inference split:**أثناء التدريب$\mu$و$\sigma$تأتي من الحزمة الصغيرة الحالية. أثناء الاستنتاج، تستخدم المتوسطات الجارية المتراكمة خلال التدريب (متوسط متحرك تعريفي مع الزخم = 0.1, مما يعني 90% قديم + 10% جديد).
 
 لماذا يعمل "باتش نورم" لا يزال مناقشة ادعى الورقة الأصلية أنها تقلل من "التحولات المتغيرة الداخلية" (توزيع مدخلات الطبقة تتغير مع تحديث الطبقات السابقة). سانتوركار وغيره (2018) أظهرت أن هذا التفسير خاطئ. السبب الحقيقي: "باتش نورم" يجعل المشهد الخسري أكثر سلاسة التراجعيات أكثر تنبؤا، ومستمرات ليبسكيتز أصغر، ويمكن للمحسن أن يتخذ خطوات أكبر بأمان. هذا هو السبب في أن BatchNorm يسمح لك باستخدام معدلات تعلم أعلى وتقارب أسرع.
 
@@ -107,14 +111,16 @@ y = gamma * x_hat + beta        (scale and shift)
 
 عادةً، يجب أن تكون المعدلات المعدنية على جميع الميزات بدلاً من على جميع المجموعات.
 
-```
-mu = (1/D) * sum(x_j)           (feature mean)
-sigma^2 = (1/D) * sum((x_j - mu)^2)   (feature variance)
-x_hat = (x_j - mu) / sqrt(sigma^2 + eps)
-y = gamma * x_hat + beta
+```math
+\begin{aligned}
+\mu &= \frac{1}{D} \sum_j x_j && \text{(feature mean)} \\
+\sigma^2 &= \frac{1}{D} \sum_j (x_j - \mu)^2 && \text{(feature variance)} \\
+\hat{x} &= \frac{x_j - \mu}{\sqrt{\sigma^2 + \epsilon}} \\
+y &= \gamma \hat{x} + \beta
+\end{aligned}
 ```
 
-D هو بعد الميزات. يتم تطبيع كل عينة بشكل مستقل - لا تعتمد على حجم الحزمة. لهذا السبب يستخدم المحولون LayerNorm بدلاً من BatchNorm. التسلسلات لها أطول متغيرة، وغالباً ما تكون أحجام الحزمة صغيرة (أو 1 خلال التوليد) ، والحسابات متشابهة بين التدريب والإستنتاج.
+$D$هو بعد الميزة. يتم تطبيع كل عينة بشكل مستقل - لا يعتمد على حجم الحزمة. لهذا السبب يستخدم المحولات LayerNorm بدلاً من BatchNorm. التسلسلات لها أطول متغيرة، و أحجام الحزمة تكون صغيرة في كثير من الأحيان (أو 1 خلال التوليد) ، والحساب هو نفسه بين التدريب والإستنتاج.
 
 يتم تطبيق LayerNorm في المحولات بعد كل كتلة الانتباه الذاتي وكل كتلة إرسال إلى الأمام (Post-LN) ، أو قبلها (Pre-LN ، وهو أكثر استقرارًا للتدريب).
 
@@ -122,9 +128,11 @@ D هو بعد الميزات. يتم تطبيع كل عينة بشكل مستق�
 
 الطبقة غير المتوسط. اقترحها Zhang & Sennrich (2019).
 
-```
-rms = sqrt((1/D) * sum(x_j^2))
-y = gamma * x / rms
+```math
+\begin{aligned}
+\text{rms} &= \sqrt{\frac{1}{D} \sum_j x_j^2} \\
+y &= \gamma \cdot \frac{x}{\text{rms}}
+\end{aligned}
 ```
 
 هذا هو الأمر. لا متوسط الحسابات، لا وجود لبرامج بيتا. الملاحظة: إعادة المركز (الخصم المتوسط) في LayerNorm يساهم قليلا جدا في أداء النموذج، ولكن تكلفة الحساب. إزالتها تعطى نفس الدقة مع حوالي 10% أقل التكلفة العامة.
@@ -515,8 +523,8 @@ class TransformerBlock(nn.Module):
 |------|----------------|----------------------|
 | Overfitting | "Model memorized the data" | When a model's training performance significantly exceeds its test performance, indicating it learned noise rather than signal |
 | Regularization | "Preventing overfitting" | Any technique that constrains model complexity to improve generalization: dropout, weight decay, normalization, augmentation |
-| Dropout | "Random neuron deletion" | Zeroing random neurons during training with probability p, forcing redundant representations; equivalent to training an ensemble |
-| Weight decay | "L2 penalty" | Shrinking all weights toward zero by subtracting lambda * w at each step; penalizes complexity through weight magnitude |
+| Dropout | "Random neuron deletion" | Zeroing random neurons during training with probability $p$, forcing redundant representations; equivalent to training an ensemble |
+| Weight decay | "L2 penalty" | Shrinking all weights toward zero by subtracting $\lambda w$ at each step; penalizes complexity through weight magnitude |
 | Batch normalization | "Normalize per batch" | Normalizing layer outputs across the batch dimension using batch statistics during training and running averages during inference |
 | Layer normalization | "Normalize per sample" | Normalizing across features within each sample; batch-independent, used in transformers where batch size varies |
 | RMSNorm | "LayerNorm without the mean" | Root mean square normalization; drops the mean subtraction from LayerNorm for 10% speedup with equal accuracy |

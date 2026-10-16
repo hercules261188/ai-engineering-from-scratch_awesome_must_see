@@ -75,8 +75,8 @@ graph LR
 
 في الوقت الحالي، التفعيل هو sigmoid:
 
-```
-sigmoid(z) = 1 / (1 + e^(-z))
+```math
+\text{sigmoid}(z) = \frac{1}{1 + e^{-z}}
 ```
 
 سيغمايد يضرب أي عدد في النطاق (0,1) ، مدخلات إيجابية كبيرة تدفع نحو 1. مدخلات سلبية كبيرة تدفع نحو 0. خرائط صفر إلى 0.5. هذا المنحنى السلس هو ما يجعل التعلم ممكن - على عكس خطوة صعبة من perceptron، سيغمايد لديها تراجع في كل مكان.
@@ -99,9 +99,11 @@ graph TD
 
 في كل طبقة، تحدث ثلاث عمليات متتالية:
 
-```
-z = W * input + b       (linear transformation)
-a = sigmoid(z)           (activation)
+```math
+\begin{aligned}
+z &= W \cdot \text{input} + b \quad \text{(linear transformation)} \\
+a &= \text{sigmoid}(z) \quad \text{(activation)}
+\end{aligned}
 ```
 
 إنخراج طبقة واحدة يصبح مدخل للطبقة التالية. هذا هو المخطط الأمامي بأكمله.
@@ -112,13 +114,13 @@ a = sigmoid(z)           (activation)
 
 | Step | Operation | Dimensions | Result Shape |
 |------|-----------|------------|-------------|
-| Input | x | -- | (2,) |
-| Hidden linear | W1 * x + b1 | W1: (3, 2), b1: (3,) | (3,) |
-| Hidden activation | sigmoid(z1) | -- | (3,) |
-| Output linear | W2 * h + b2 | W2: (1, 3), b2: (1,) | (1,) |
-| Output activation | sigmoid(z2) | -- | (1,) |
+| Input | $x$ | -- | (2,) |
+| Hidden linear | $W_1 x + b_1$ | $W_1$: (3, 2), $b_1$: (3,) | (3,) |
+| Hidden activation | $\text{sigmoid}(z_1)$ | -- | (3,) |
+| Output linear | $W_2 h + b_2$ | $W_2$: (1, 3), $b_2$: (1,) | (1,) |
+| Output activation | $\text{sigmoid}(z_2)$ | -- | (1,) |
 
-القاعدة: المصفوفة الوزن W في الطبقة k لها شكل (الأنبياطية_in_layer_k، والأنبياطية_in_layer_k_minus_1). الصفوف تتطابق مع الطبقة الحالية. الأعمدة تتطابق مع الطبقة السابقة. إذا كانت الأشكال لا تتطابق، لديك خطأ.
+القاعدة: المصفوفة الوزن $W$في الطبقة$k$يحتوي على شكل (الأنبياض العصبية_في_طبقة_ك، والأنبياض العصبية_في_طبقة_ك_ميس_1). الصفوف تتطابق مع الطبقة الحالية. الأعمدة تتطابق مع الطبقة السابقة. إذا كانت الأشكال لا تتطابق، لديك خطأ.
 
 ### نظرية التقريب العالمي
 
@@ -168,7 +170,7 @@ def sigmoid(x):
 
 ### الخطوة الثانية: فئة الطبقة
 
-أهم عملية في كل التعلم العميق هو مضاعفة المصفوفة. كل طبقة، كل رأس الاهتمام، كل مرور إلى الأمام -- إنها متمولات في كل الطريق إلى أسفل. طبقة خطية تأخذ متجه إدخال، تضاعفها بمصفوفة الوزن، وتضيف متجه تحيز: y = Wx + b. هذه المعادلة الوحيدة هي 90٪ من الحساب في شبكة عصبية.
+أهم عملية في كل التعلم العميق هو مضاعفة المصفوفة. كل طبقة، كل رأس الاهتمام، كل مرور إلى الأمام -- إنها متمولات في كل الطريق إلى أسفل. طبقة خطية تأخذ متجه المدخل، و تضاعفها بمصفوفة الوزن، و تضيف متجه التحيز:$y = Wx + b$هذه المعادلة الوحيدة هي 90% من الحسابات في شبكة عصبية
 
 تحتوي الطبقة على ماتريكس وزن و متجه تحيز. طريقة التقدم لها تأخذ متجه مدخل وتعيد الخروج المفعول.
 
@@ -204,7 +206,7 @@ class Layer:
 
 ### الخطوة الثالثة: فئة الشبكة
 
-شبكة هي قائمة من الطبقات. يسلسل السفر الأمامي لهم: إنتاج الطبقة k يغذى إلى الطبقة k + 1.
+شبكة هي قائمة من الطبقات. السلسلة الأمامية تسليطها: إنتاج الطبقة $k$يطعم في الطبقة$k+1$. . .
 
 ```python
 class Network:
@@ -346,11 +348,11 @@ print(output)
 | Hidden layer | "The middle part" | Any layer between input and output whose values are not directly observed in the data |
 | Multi-layer network | "A deep neural network" | Layers of neurons stacked sequentially, where each layer's output feeds the next layer's input |
 | Activation function | "The nonlinearity" | A function applied after the linear transformation that introduces curves into the decision boundary |
-| Sigmoid | "The S-curve" | sigma(z) = 1/(1+e^(-z)), squashes any real number to (0,1), smooth and differentiable everywhere |
-| Weight matrix | "The parameters" | A matrix W of shape (current_layer_neurons, previous_layer_neurons) containing learnable connection strengths |
+| Sigmoid | "The S-curve" | $\sigma(z) = 1/(1+e^{-z})$, squashes any real number to (0,1), smooth and differentiable everywhere |
+| Weight matrix | "The parameters" | A matrix $W$ of shape (current_layer_neurons, previous_layer_neurons) containing learnable connection strengths |
 | Bias vector | "The offset" | A vector added after the matrix multiply that lets neurons activate even when all inputs are zero |
 | Universal approximation | "Neural nets can learn anything" | A single hidden layer with enough neurons can approximate any continuous function -- but "enough" can mean billions |
-| Linear transformation | "The matrix multiply step" | z = W * x + b, the computation before activation, which maps inputs to a new space |
+| Linear transformation | "The matrix multiply step" | $z = W x + b$, the computation before activation, which maps inputs to a new space |
 | Decision boundary | "Where the classifier switches" | The surface in input space where the network output crosses the classification threshold |
 
 ## المزيد من القراءة

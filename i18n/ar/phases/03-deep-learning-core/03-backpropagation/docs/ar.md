@@ -26,7 +26,7 @@
 
 ### قاعدة السلسلة، تطبق على الشبكات
 
-لقد رأيت قاعدة السلسلة في المرحلة 01, الدروس 05. إعادة التعبير السريع: إذا y = f(g(x) ، ثم dy/dx = f'(g(x)) * g'(x. أنت ضرب المشتقات على طول السلسلة.
+لقد رأيت قاعدة السلسلة في المرحلة 01, الدروس 05.$y = f(g(x))$، ثم$\frac{dy}{dx} = f'(g(x)) \cdot g'(x)$أنت تضاعف المشتقات على طول السلسلة
 
 في شبكة عصبية، "السلسلة" هي تسلسل العمليات من المدخل إلى الخسارة. تطبق كل طبقة أوزانًا، تضيف تحيزات، تمر عبر تنشيط. تقوم وظيفة الخسارة بمقارنة الخروج النهائي مع الهدف. تتبع التنشر الخلفي هذه السلسلة إلى الوراء، وتحسب كيفية مساهمة كل عملية في الخطأ.
 
@@ -45,9 +45,9 @@ graph LR
     y["target"] --> loss
 ```
 
-المضي قدما: تدفق القيم من اليسار إلى اليمين. x و w ينتج z1 = w * x. إضافة b للحصول على z2. سيغمايد يعطي تفعيل a. مقارنة a إلى الهدف y باستخدام وظيفة الخسارة.
+المضي قدما: تتدفق القيم من اليسار إلى اليمين. $x$و$w$المنتجات$z_1 = w x$. إضافة$b$للحصول على$z_2$سيغمايد يعطي تفعيل$a$. مقارنة$a$لتحديد الهدف$y$باستخدام وظيفة الخسارة
 
-الممر الخلفي: تدفق التدرج يمينا إلى اليسار. تبدأ بـ dL/da (كيف تتغير الخسارة مع التفعيل). مضاعفة بـ da/dz2 (مشتق سيغمايد). هذا يعطي dL/dz2. تقسيم إلى dL/db (الذي يساوي dL/dz2 ، حيث z2 = z1 + b) و dL/dz1. ثم dL/dw = dL/dz1 * x و dL/dx = dL/dz1 * w.
+الممر الخلفي: تدفق التدرج يمينا إلى اليسار. ابدأ ب $\partial L/\partial a$(كيف تتغير الخسارة مع التفعيل).$\partial a/\partial z_2$هذا يعطي$\partial L/\partial z_2$. تم تقسيمها إلى$\partial L/\partial b$(والذي يساوي $\partial L/\partial z_2$، منذ$z_2 = z_1 + b$) و $\partial L/\partial z_1$- إذن$\partial L/\partial w = \partial L/\partial z_1 \cdot x$و$\partial L/\partial x = \partial L/\partial z_1 \cdot w$. . .
 
 كل عقدة في الرسم البياني لديها وظيفة واحدة خلال المرور إلى الوراء: تأخذ التراجع قادم من الأعلى، و مضاعفة بمشتقها المحلي، و تمررها إلى أسفل.
 
@@ -84,7 +84,7 @@ graph RL
     L1 -- "dL/dz1 = dL/da1 * sigmoid'(z1)" --> I["Input"]
 ```
 
-في كل طبقة، يتم ضرب التراجع بالمت مشتقة sigmoid. المشتقة sigmoid هي * (1 - a) ، والتي تصل إلى 0.25 (عندما a = 0.5). ثلاثة طبقات عميقة، تم ضرب التراجع بأكثر من 0.25^3 = 0.0156. عشرة طبقات عميقة: 0.25^10 = 0.000001.
+في كل طبقة، يتم ضرب التراجع بمشتقات سيغمويد.$a(1 - a)$، والتي تصل إلى 0.25 (حين$a = 0.5$ثلاث طبقات عميقة، وقد تضاعف التراجع بأكثر من$0.25^3 = 0.0156$عشرة طبقات عميقة$0.25^{10} = 0.000001$. . .
 
 ### الدرجات المختفية
 
@@ -102,32 +102,35 @@ After 10 layers:  gradient * 0.25^10 = 0.000001x original
 
 ### استنتاج المراحل لشبكة 2 طبقات
 
-الرياضيات الملموسة لشبكة مع المدخل x، الطبقة الخفية مع sigmoid، الطبقة الخروج مع sigmoid، وفقدان MSE.
+الرياضيات الملموسة لشبكة مع المدخلات $x$، الطبقة الخفية مع sigmoid، الطبقة الخروج مع sigmoid، وفقدان MSE.
 
 التسلل الأمامي:
-```
-z1 = W1 * x + b1
-a1 = sigmoid(z1)
-z2 = W2 * a1 + b2
-a2 = sigmoid(z2)
-L = (a2 - y)^2
+
+```math
+\begin{aligned}
+z_1 &= W_1 x + b_1 \\
+a_1 &= \text{sigmoid}(z_1) \\
+z_2 &= W_2 a_1 + b_2 \\
+a_2 &= \text{sigmoid}(z_2) \\
+L &= (a_2 - y)^2
+\end{aligned}
 ```
 
 التخطيط للخلف (تطبيق قاعدة السلسلة خطوة بخطوة):
-```
-dL/da2 = 2(a2 - y)
-da2/dz2 = a2 * (1 - a2)
-dL/dz2 = dL/da2 * da2/dz2 = 2(a2 - y) * a2 * (1 - a2)
 
-dL/dW2 = dL/dz2 * a1
-dL/db2 = dL/dz2
-
-dL/da1 = dL/dz2 * W2
-da1/dz1 = a1 * (1 - a1)
-dL/dz1 = dL/da1 * da1/dz1
-
-dL/dW1 = dL/dz1 * x
-dL/db1 = dL/dz1
+```math
+\begin{aligned}
+\frac{\partial L}{\partial a_2} &= 2(a_2 - y) \\
+\frac{\partial a_2}{\partial z_2} &= a_2 (1 - a_2) \\
+\frac{\partial L}{\partial z_2} &= \frac{\partial L}{\partial a_2} \cdot \frac{\partial a_2}{\partial z_2} = 2(a_2 - y) \cdot a_2 (1 - a_2) \\[6pt]
+\frac{\partial L}{\partial W_2} &= \frac{\partial L}{\partial z_2} \cdot a_1 \\
+\frac{\partial L}{\partial b_2} &= \frac{\partial L}{\partial z_2} \\[6pt]
+\frac{\partial L}{\partial a_1} &= \frac{\partial L}{\partial z_2} \cdot W_2 \\
+\frac{\partial a_1}{\partial z_1} &= a_1 (1 - a_1) \\
+\frac{\partial L}{\partial z_1} &= \frac{\partial L}{\partial a_1} \cdot \frac{\partial a_1}{\partial z_1} \\[6pt]
+\frac{\partial L}{\partial W_1} &= \frac{\partial L}{\partial z_1} \cdot x \\
+\frac{\partial L}{\partial b_1} &= \frac{\partial L}{\partial z_1}
+\end{aligned}
 ```
 
 كل تراجع هو نتاج من المشتقات المحلية تتبع من الخسارة هذا كل ما هو الانتشار الخلفي.
@@ -185,9 +188,9 @@ def __mul__(self, other):
     return out
 ```
 
-لضافة: d(a+b) /da = 1، d(a+b) /db = 1. لذلك كل من المدخلات تحصل على تراجع الخروج مباشرة.
+للاضافة: $\partial(a+b)/\partial a = 1$،$\partial(a+b)/\partial b = 1$لذا كلتا المدخلات تحصل على تراجع الخروج مباشرة
 
-للضرب: d(a*b)/da = b، d(a*b)/db = a. كل مدخل يحصل على قيمة الآخر مضربة على تراجع الخروج.
+للضرب: $\partial(ab)/\partial a = b$،$\partial(ab)/\partial b = a$كل مدخل يحصل على قيمة الآخر × نسبة الخروج
 
 - نعم`+=`القيمة يمكن استخدامها في عمليات متعددة. تراجعتها هي مجموع تراجعات من جميع المسارات.
 
@@ -209,7 +212,7 @@ def sigmoid(self):
     return out
 ```
 
-مشتق سيغمويد: sigmoid(x) * (1 - sigmoid(x)). قمنا بحساب sigmoid(x) = s خلال المضي قدما. استعمله مرة أخرى. لا عمل إضافي.
+المشتق من سيغمويد: $\text{sigmoid}(x) \cdot (1 - \text{sigmoid}(x))$لقد حسبنا$\text{sigmoid}(x) = s$خلال المرحلة الأمامية إعادة استخدامها لا عمل إضافي
 
 ```python
 def mse_loss(predicted, target):
@@ -217,7 +220,7 @@ def mse_loss(predicted, target):
     return diff * diff
 ```
 
-MSE لإنتاج واحد: (توقعات - هدف) ^ 2 . نعبر عن الحد كجمع مع قيمة سلبية.
+الـ MSE للإنتاج الواحد: $(\text{predicted} - \text{target})^2$نُعبر عن الخفض كضرب مع قيمة سلبية.
 
 ### الخطوة الرابعة: التراجع
 
@@ -241,7 +244,7 @@ def backward(self):
         v._backward()
 ```
 
-ابدأ في الخسارة (المرح = 1.0 ، منذ dL / dL = 1).`_backward`يضغط على التدفقات إلى أطفالها
+البدء في الخسارة (المركز = 1.0 ، منذ $dL/dL = 1$) المشي إلى الوراء من خلال الرسم البياني المرتب. كل عقدة `_backward`يضغط على التدفقات إلى أطفالها
 
 ### الخطوة 5: الطبقة والشبكة
 
@@ -301,7 +304,7 @@ class Network:
             p.grad = 0.0
 ```
 
-يأخذ العصبية المدخلات ، ويحسب المجموع الموزن + التحيز ، ويتطبق sigmoid. يُقيم مقياس البدء في الوزن بواسطة sqrt(2/n_inputs) لمنع شبع sigmoid في الشبكات العميقة. الطبقة هي قائمة بالعصبية. شبكة هي قائمة بالطبقات.`parameters()`طريقة جمع جميع القيم التي يمكن تعلمها حتى نتمكن من تحديثها.
+يأخذ العصبية المدخلات، ويحسب المجموع الموزن + التحيز، ويتطبق sigmoid.$\sqrt{2/n_{\text{inputs}}}$لتجنب الاكتفاء في شبكات أعمق. الطبقة هي قائمة بالنيورونات.`parameters()`طريقة جمع جميع القيم التي يمكن تعلمها حتى نتمكن من تحديثها.
 
 ### الخطوة 6: القطار على XOR
 
@@ -439,9 +442,9 @@ with torch.no_grad():
 
 ## التمارين
 
-1. إضافة`__sub__`طريقة إلى فئة القيمة (a - b = a + (-1 * b)). ثم تنفيذ a `__neg__`التحقق من صحة التدرج عن طريق مقارنة مع الحساب اليدوي لمعبرة بسيطة مثل (a - b) ^ 2.
+1. إضافة`__sub__`طريقة إلى فئة القيمة $(a - b = a + (-1 \cdot b))$ثم تنفيذ`__neg__`التحقق من صحة التدرج عن طريق مقارنة مع الحساب اليدوي لمعبرة بسيطة مثل $(a - b)^2$. . .
 
-2. إضافة`relu`طريقة إلى القيمة (خروج أقصى ((0، x) ، المشتق هي 1 إذا x > 0 ، ثم 0). استبدل sigmoid مع relu في الطبقات الخفية وتدرب على XOR مرة أخرى. مقارنة سرعة التقارب. يجب أن ترى تدريب أسرع -- هذا يقدم الدروس 04.
+2. إضافة`relu`طريقة إلى القيمة (المخرج $\max(0, x)$، المشتق هي 1 إذا $x \gt 0$استبدل sigmoid مع relu في الطبقات الخفية وتدرب على XOR مرة أخرى. مقارنة سرعة التقارب. يجب أن ترى تدريب أسرع -- هذا يقدم الدروس 04.
 
 3. تنفيذ`__pow__`طريقة على القيمة لأقوى الأعداد الكاملة. استخدمها لتحل محل `mse_loss`مع مناسبة`(predicted - target) ** 2`التحقق من أن التدرج يطابق التنفيذ الأصلي.
 
@@ -453,14 +456,14 @@ with torch.no_grad():
 
 | Term | What people say | What it actually means |
 |------|----------------|----------------------|
-| Backpropagation | "The network learns" | An algorithm that computes dL/dw for every weight by applying the chain rule backward through the computational graph |
+| Backpropagation | "The network learns" | An algorithm that computes $\partial L/\partial w$ for every weight by applying the chain rule backward through the computational graph |
 | Computational graph | "The network structure" | A directed acyclic graph where nodes are operations and edges carry values (forward) and gradients (backward) |
-| Chain rule | "Multiply the derivatives" | If y = f(g(x)), then dy/dx = f'(g(x)) * g'(x) -- the mathematical foundation of backpropagation |
+| Chain rule | "Multiply the derivatives" | If $y = f(g(x))$, then $\frac{dy}{dx} = f'(g(x)) \cdot g'(x)$ -- the mathematical foundation of backpropagation |
 | Gradient | "The direction of steepest ascent" | The partial derivative of the loss with respect to a parameter -- tells you how to change that parameter to reduce the loss |
 | Vanishing gradient | "Deep networks don't learn" | Gradients shrink exponentially as they propagate through layers with saturating activations like sigmoid |
 | Forward pass | "Running the network" | Computing the output from inputs by sequentially applying each layer's operations and storing intermediate values |
 | Backward pass | "Computing gradients" | Traversing the computational graph in reverse, accumulating gradients at each node using the chain rule |
-| Learning rate | "How fast it learns" | A scalar that controls the step size when updating weights: w_new = w_old - lr * gradient |
+| Learning rate | "How fast it learns" | A scalar that controls the step size when updating weights: $w_{\text{new}} = w_{\text{old}} - \text{lr} \cdot \text{gradient}$ |
 | Topological sort | "The right order" | An ordering of graph nodes where each node appears after all nodes it depends on -- ensures gradients are fully accumulated before propagation |
 | Autograd | "Automatic differentiation" | A system that builds computational graphs during forward computation and automatically computes gradients -- what PyTorch's engine does |
 

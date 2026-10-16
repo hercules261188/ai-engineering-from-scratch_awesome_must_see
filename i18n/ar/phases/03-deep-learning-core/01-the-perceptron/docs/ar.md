@@ -26,7 +26,7 @@
 
 ### عصب واحد، قرار واحد
 
-يأخذ الفهم n مدخلات، ويعد كل منها وزنا، ويعددهم، ويعد تحيز، ويمر النتيجة من خلال وظيفة تنشيط.
+" أجهزة " البصرون تأخذ$n$المدخلات، ويعد كل منها وزنا، ويعمل على جمعها، ويعمل على إضافة تحيز، ويعمل على نقل النتيجة من خلال وظيفة تفعيل.
 
 ```mermaid
 graph LR
@@ -38,11 +38,10 @@ graph LR
     step --> out["output (0 or 1)"]
 ```
 
-وظيفة الخطوة وحشية: إذا كان المجموع الموزن زائد التحيز >= 0، الخروج 1. خلاف ذلك، الخروج 0.
+وظيفة الخطوة وحشية: إذا كان المبلغ الموزن زائد التحيز $\ge 0$إنتاج 1، وإلا فإن الخروج 0
 
-```
-step(z) = 1  if z >= 0
-           0  if z < 0
+```math
+\text{step}(z) = \begin{cases} 1 & \text{if } z \ge 0 \\ 0 & \text{if } z < 0 \end{cases}
 ```
 
 هذا تصنيف خطي. يحدد الوزن والتحيز خطًا (أو طائرة فائقة في الأبعاد العالية) يقسّم مساحة المدخل إلى منطقتين.
@@ -80,7 +79,7 @@ For each training example (x, y_true):
     bias = bias + learning_rate * error
 ```
 
-إذا كان التنبؤ صحيحاً، فإن الخطأ = 0، لا يتغير أي شيء. إذا كان يتنبأ 0 ولكن يجب أن يكون 1, تزيد الوزن. إذا كان يتنبأ 1 ولكن يجب أن يكون 0, تقل الوزن. معدل التعلم يسيطر على مدى حجم كل تعديل.
+إذا كان التنبؤ صحيحاً$\text{error} = 0$إذا كان يتوقع 0 ولكن يجب أن يكون 1, وزن تزيد. إذا كان يتوقع 1 ولكن يجب أن يكون 0, وزن يقلل. معدل التعلم يسيطر على مدى كل ضبط كبير.
 
 ### مشكلة XOR
 
@@ -213,7 +212,7 @@ for inputs, expected in xor_data:
 
 ### الخطوة 4: حل XOR مع طبقتين
 
-الخدعة: XOR = (x1 OR x2) و لا (x1 و x2). مزج ثلاثة مفاتيح:
+الخدعة:$\text{XOR} = (x_1 \text{ OR } x_2) \text{ AND NOT } (x_1 \text{ AND } x_2)$. قم بتجميع ثلاثة أجهزة:
 
 ```mermaid
 graph LR
@@ -359,7 +358,7 @@ print([clf.predict([x])[0] for x in X])
 ## التمارين
 
 1. تدريب جهاز الرؤية على بوابة NAND (البوابة العالمية - يمكن بناء أي دائرة منطقية من NAND). التحقق من وزنها والتحيز تشكل حدود القرارات المفعول.
-2. تعديل فئة Perceptron لتتبع حدود القرار (w1*x1 + w2*x2 + b = 0) في كل عصر. طبع كيفية تحول الخط أثناء التدريب على بوابة AND.
+2. تعديل فئة Perceptron لتتبع حدود القرار ($w_1 x_1 + w_2 x_2 + b = 0$) في كل عصر. طبع كيف يتحول الخط أثناء التدريب على بوابة AND.
 3. بناء 3 مدخلات perceptron التي تنطلق 1 فقط عندما 2 على الأقل من المدخلات 3 هي 1 (عمل تصويت الأغلبية). هل هذا يمكن فصل خطيا؟ لماذا؟
 
 ## الشروط الرئيسية
@@ -372,7 +371,7 @@ print([clf.predict([x])[0] for x in X])
 | Activation function | "The thing that squishes values" | A function applied after the weighted sum - step function for perceptrons, sigmoid/ReLU for modern networks |
 | Linearly separable | "You can draw a line between them" | A dataset where a single hyperplane can perfectly separate the classes |
 | XOR problem | "The thing perceptrons can't do" | Proof that single-layer networks cannot learn non-linearly-separable functions |
-| Decision boundary | "Where the classifier switches" | The hyperplane w*x + b = 0 that divides input space into two classes |
+| Decision boundary | "Where the classifier switches" | The hyperplane $w \cdot x + b = 0$ that divides input space into two classes |
 | Multi-layer perceptron | "A real neural network" | Perceptrons stacked in layers, where each layer's output feeds the next layer's input |
 
 ## المزيد من القراءة

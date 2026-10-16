@@ -38,40 +38,40 @@
 
 اعتبر طبقة واحدة مع مدخلات fan_in:
 
-```
-z = w1*x1 + w2*x2 + ... + w_n*x_n
-```
-
-إذا تم استخراج كل وزن wi من توزيع مع اختلاف Var(w) وكل مدخل xi لديه اختلاف Var(x) ، فإن المتغير الخارجي هو:
-
-```
-Var(z) = fan_in * Var(w) * Var(x)
+```math
+z = w_1 x_1 + w_2 x_2 + \cdots + w_n x_n
 ```
 
-إذا كان Var(w) = 1 و fan_in = 512, فإن المتغيرات الخارجة 512x المتغيرات المدخلة. بعد 10 طبقات: 512^10 = 1.2e27. لقد انفجرت إشارتك.
+إذا كل وزن$w_i$يتم استخلاصها من توزيع مع اختلاف $\mathrm{Var}(w)$وكل مدخل$x_i$لديه اختلاف$\mathrm{Var}(x)$، تغير الخروج هو:
 
-إذا كان Var ((w) = 0.001، فإن التباين الخارجي ينخفض بنسبة 0.001 * 512 = 0.512 لكل طبقة. بعد 10 طبقات: 0.512^10 = 0.00013. اختفى إشارتك.
+```math
+\mathrm{Var}(z) = \text{fan}_{\text{in}} \cdot \mathrm{Var}(w) \cdot \mathrm{Var}(x)
+```
 
-الهدف: اختيار Var(w) بحيث Var(z) = Var(x). يبقى حجم الإشارة ثابتًا عبر الطبقات.
+إذا$\mathrm{Var}(w) = 1$و$\text{fan}_{\text{in}} = 512$، فإن التباين الخارجي هو 512x التباين المدخل. بعد 10 طبقات: $512^{10} = 1.2 \times 10^{27}$لقد انفجرت إشارتك
+
+إذا$\mathrm{Var}(w) = 0.001$، تقلص المتباينات المخرجة بـ $0.001 \cdot 512 = 0.512$لكل طبقة بعد 10 طبقات:$0.512^{10} = 0.00013$إشارتك اختفت
+
+الهدف: اختيار$\mathrm{Var}(w)$لذا$\mathrm{Var}(z) = \mathrm{Var}(x)$حجم الإشارة يبقى ثابتًا عبر الطبقات
 
 ### إعدادات إعدادات إعدادات إعدادات إعدادات إعدادات إعدادات إعدادات إعدادات إعدادات إعدادات إعدادات إعدادات إعدادات إعدادات إعدادات إعدادات إعدادات إعدادات إعدادات إعدادات إعدادات إعدادات إعدادات إعدادات إعدادات إعدادات إعدادات إعدادات إعدادات إعدادات إعدادات إعدادات إعدادات إعدادات إعدادات إعدادات إعدادات إعدادات إعدادات إعدادات إعدادات إعدادات إعدادات إعدادات إعدادات إعدادات إعدادات إعدادات إعدادات إعدادات إعدادات إعدادات إعدادات إعدادات إعدادات إعدادات إعدادات إعدادات إعدادات إعدادات إعدادات إعدادات إعداداتات إعدادات إعداداتاتات إعدادات إعداداتاتات إعدادات إعداداتاتات إعدادات إعداداتات إعدادات إعدادات إعدادات إعدادات إعداداتات إعدادات إعداداتات إعدادات إعدادات إعدادات إعدادات إعدادات إعدادات إعدادات إعدادات إعدادات إعدادات إعدادات إعدادات إعدادات إعدادات إعدادات إعدادات إعدادات إعدادات إعدادات إعدادات إعدادات إعدادات إعدادات إعدادات إعدادات إعدادات إعدادات إعدادات إعدادات إعدادات إعدادات إعدادات إعدادات إعدادات إعدادات إعدادات إعدادات إعدادات إعدادات إعدادات إعدادات إعدادات إعدادات إعدادات إعدادات إعدادات إعدادات إعدادات إعدادات إعدادات إعدادات إعدادات إعدادات إعدادات إعدادات إعدادات إعدادات إعدادات إعدادات إعدادات إعدادات إعدادات إعدادات إعدادات إعدادات إعدادات إعدادات إعدادات إعدادات إعدادات إ إ إعدادات إ إ إ إ إ إ إ إ إ إ إ إ إ إ إ إ إ إ إ إ إ إ إ إ إ إ إ إ إ إ إ إ إ إ إ إ إ إ إ إطار إطار إ إ إ إ إ
 
 استخرج غلوروت و بينجيو (2010) الحل لتنشيط sigmoid و tanh. للحفاظ على التباين ثابت في كل من الممر الأمامي والخلفي:
 
-```
-Var(w) = 2 / (fan_in + fan_out)
+```math
+\mathrm{Var}(w) = \frac{2}{\text{fan}_{\text{in}} + \text{fan}_{\text{out}}}
 ```
 
 في الممارسة العملية، يتم استخلاص الوزن من:
 
-```
-w ~ Uniform(-limit, limit)  where limit = sqrt(6 / (fan_in + fan_out))
+```math
+w \sim \text{Uniform}(-\text{limit}, \text{limit}) \quad \text{where } \text{limit} = \sqrt{\frac{6}{\text{fan}_{\text{in}} + \text{fan}_{\text{out}}}}
 ```
 
 أو:
 
-```
-w ~ Normal(0, sqrt(2 / (fan_in + fan_out)))
+```math
+w \sim \text{Normal}\left(0, \sqrt{\frac{2}{\text{fan}_{\text{in}} + \text{fan}_{\text{out}}}}\right)
 ```
 
 هذا يعمل لأن sigmoid و tanh خطية تقريبًا بالقرب من الصفر ، حيث يعيش التفعيلات المبكرة بشكل صحيح. يبقى التباين مستقراً عبر عشرات الطبقات.
@@ -82,27 +82,27 @@ ReLU يقتل نصف المخرجات (كل شيء سلبي يصبح صفر). ي
 
 He et al. (2015) قام بتعديل الصيغة:
 
-```
-Var(w) = 2 / fan_in
+```math
+\mathrm{Var}(w) = \frac{2}{\text{fan}_{\text{in}}}
 ```
 
 يتم استخراج الوزن من:
 
-```
-w ~ Normal(0, sqrt(2 / fan_in))
+```math
+w \sim \text{Normal}\left(0, \sqrt{\frac{2}{\text{fan}_{\text{in}}}}\right)
 ```
 
-عامل 2 يعوض عن ReLU صفر نصف التفعيلات. دون ذلك، تقلص الإشارة بنسبة ~ 0.5x لكل طبقة. مع 50 طبقة: 0.5^50 = 8.8e-16.
+عامل 2 يعوض عن ReLU صفر نصف التفعيلات. بدونها، الإشارة تقلص بنسبة ~ 0.5x لكل طبقة. مع 50 طبقة: $0.5^{50} = 8.8 \times 10^{-16}$كايمينغ إنيت يمنع هذا
 
 ### إطلاق المحول
 
 أدى GPT-2 إلى وضع نمط مختلف. تضيف الاتصالات المتبقية إنتاج كل طبقة فرعية إلى مدخلها:
 
-```
-x = x + sublayer(x)
+```math
+x = x + \text{sublayer}(x)
 ```
 
-يزيد كل إضافة التباين. مع N طبقات بقايا، يتزايد التباين بالتناظير مع N. يسلّط GPT-2 وزن الطبقات المتبقيّة بمقدار 1/sqrt(2N) ، حيث أن N هو عدد الطبقات. وهذا يبقي حجم الإشارة المتراكم مستقراً.
+كل إضافة تزيد من التباين$N$الطبقات المتبقية، يتزايد التباين بالتناغم مع $N$. GPT-2 يُقيس وزن الطبقات المتبقية$1/\sqrt{2N}$، حيث$N$هو عدد الطبقات هذا يبقي حجم الإشارة المتراكم مستقرا
 
 يستخدم Llama 3 (405B المعلمات، 126 طبقة) مخططًا مماثلًا. بدون هذا التوسع، فإن التدفق المتبقي سيصبح غير محدود عبر 126 طبقة من الاهتمام والبلوكات المسبقة.
 
@@ -341,7 +341,7 @@ nn.init.zeros_(layer.bias)
 
 عندما تتصلين`nn.Linear(512, 256)`وذلك هو السبب في أن معظم الشبكات البسيطة "تعمل فقط" - PyTorch قد اتخذت بالفعل الخيار الصحيح. ولكن عندما تقوم ببناء بنيات مخصصة أو تذهب أعمق من 20 طبقة، تحتاج إلى فهم ما يحدث وربما تفضيض الافتراض.
 
-بالنسبة للمتحولات، عادة ما تتعامل نماذج HuggingFace مع التبديل في أجهزة التشغيل الخاصة بهم.`_init_weights`طريقة. تنفيذ GPT-2 يقيّم التوقعات المتبقية بمقدار 1/sqrt ((N). إذا كنت تبني محول من الصفر، تحتاج إلى إضافة هذا بنفسك.
+بالنسبة للمتحولات، عادة ما تتعامل نماذج HuggingFace مع التبديل في أجهزة التشغيل الخاصة بهم.`_init_weights`طريقة: تنفيذ GPT-2 يقيّم التوقعات المتبقية بحلول $1/\sqrt{N}$إذا كنتِ تبني محول من الصفر، عليكِ إضافة هذا بنفسكِ.
 
 ## أرسله
 
@@ -350,13 +350,13 @@ nn.init.zeros_(layer.bias)
 
 ## التمارين
 
-1. إضافة تشغيل LeCun (Var = 1/fan_in ، مصممة لتنشيط SELU). قم بتشغيل تجربة 50 طبقة مع LeCun init + tanh ومقارنة مع Xavier + tanh.
+1. إضافة إعدادات "LeCun" ($\mathrm{Var} = 1/\text{fan}_{\text{in}}$إدارة تجربة 50 طبقة مع LeCun init + tanh ومقارنة مع Xavier + tanh.
 
-2. تنفيذ مقياس بقايا GPT-2: مضاعفة خروج كل طبقة بمقدار 1/sqrt ((2 * N) قبل إضافةها إلى تيار البقايا. تشغيل 50 طبقة مع ودون مقياس، قياس سرعة نمو حجم البقايا.
+2. تنفيذ مقياس بقايا GPT-2: مضاعفة خروجه لكل طبقة$1/\sqrt{2N}$قبل إضافةها إلى التيار المتبقية، قم بتشغيل 50 طبقة مع ودون قياس، وقاس سرعة نمو حجم المتبقية.
 
 3. قم بإنشاء وظيفة "تحقق صحة التشغيل" التي تأخذ أبعاد طبقة الشبكة ونوع تفعيلها، ثم توصي بالبدء الصحيح وتحذير إذا كان التشغيل الحالي سيسبب مشاكل.
 
-4. قم بتشغيل التجربة مع fan_in = 16 مقابل fan_in = 1024. يتكيف Xavier و Kaiming مع fan_in ، ولكن الابتكار العشوائي لا يفعل ذلك. أظهر كيف يتوسع الفجوة بين "العمل" و "الفراغات" مع طبقات أكبر.
+4. إنجز التجربة مع$\text{fan} _{\text{in}} = 16$و$\text{fan} _{\text{in}} = 1024$. زافير وكايمينغ تتكيف مع fan_in، ولكن عشوائية init لا. أظهر كيف الفجوة بين "العمل" و "الفراغات" توسع مع طبقات أكبر.
 
 5. تنفيذ التبني المُستقيم (إنشاء مصفوفة عشوائية، حساب SVD، استخدام المصفوفة المُستقيمة U). مقارنة مع كايمينغ لشبكات ReLU في 50 طبقة.
 
@@ -368,10 +368,10 @@ nn.init.zeros_(layer.bias)
 | Symmetry breaking | "Make neurons different" | Using random initialization to ensure neurons learn distinct features instead of computing identical functions |
 | Fan-in | "Number of inputs to a neuron" | The number of incoming connections, which determines how input variance accumulates in the weighted sum |
 | Fan-out | "Number of outputs from a neuron" | The number of outgoing connections, relevant for maintaining gradient variance during backpropagation |
-| Xavier/Glorot init | "The sigmoid initialization" | Var(w) = 2/(fan_in + fan_out), designed to preserve variance through sigmoid and tanh activations |
-| Kaiming/He init | "The ReLU initialization" | Var(w) = 2/fan_in, accounts for ReLU zeroing half the activations |
+| Xavier/Glorot init | "The sigmoid initialization" | $\mathrm{Var}(w) = 2/(\text{fan} _{\text{in}} + \text{fan} _{\text{out}})$, designed to preserve variance through sigmoid and tanh activations |
+| Kaiming/He init | "The ReLU initialization" | $\mathrm{Var}(w) = 2/\text{fan}_{\text{in}}$, accounts for ReLU zeroing half the activations |
 | Variance propagation | "How signals grow or shrink through layers" | The mathematical analysis of how activation variance changes layer by layer based on weight scale |
-| Residual scaling | "GPT-2's init trick" | Scaling residual connection weights by 1/sqrt(2N) to prevent variance growth through N transformer layers |
+| Residual scaling | "GPT-2's init trick" | Scaling residual connection weights by $1/\sqrt{2N}$ to prevent variance growth through $N$ transformer layers |
 | Dead network | "Nothing trains" | A network where poor initialization causes all gradients to be zero or all activations to saturate |
 | Exploding activations | "Values go to infinity" | When weight variance is too high, causing activation magnitudes to grow exponentially through layers |
 
