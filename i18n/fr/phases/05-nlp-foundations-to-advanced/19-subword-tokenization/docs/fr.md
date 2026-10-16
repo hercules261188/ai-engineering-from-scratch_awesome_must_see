@@ -79,7 +79,7 @@ def encode_bpe(word, merges):
     return symbols
 ```
 
-Les applications de production utilisent des tokens de fusion avec des files d'attente prioritaires et fonctionnent en temps quasi linéaire.
+Naïf .$O(n \cdot \lvert \text{merges} \rvert)$. Les mises en œuvre de production (tiktoken, HF Tokenizers) utilisent une recherche de classement fusionné avec des files d'attente prioritaires et fonctionnent en temps quasi linéaire.
 
 ### Étape 3: SentencePiece en pratique
 

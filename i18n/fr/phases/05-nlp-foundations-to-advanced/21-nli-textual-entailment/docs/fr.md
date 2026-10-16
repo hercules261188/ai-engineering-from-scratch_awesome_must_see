@@ -71,7 +71,7 @@ print(result)
 #  {'label': 'contradiction', 'score': 0.01}]
 ```
 
-Pour les NLI de production, `facebook/bart-large-mnli`et `microsoft/deberta-v3-large-mnli`DeBERTa-v3 est au sommet des classements.
+Pour les NLI de production, `facebook/bart-large-mnli`et `MoritzLaurer/DeBERTa-v3-large-mnli-fever-anli-ling-wanli`DeBERTa-v3 est au sommet des classements.
 
 ### Étape 2: classification à tir zéro
 
@@ -118,7 +118,7 @@ La pile de 2026:
 
 | Use case | Model |
 |---------|-------|
-| General-purpose NLI | `microsoft/deberta-v3-large-mnli` |
+| General-purpose NLI | `MoritzLaurer/DeBERTa-v3-large-mnli-fever-anli-ling-wanli` |
 | Fast / edge | `cross-encoder/nli-deberta-v3-base` |
 | Zero-shot classification (lightweight) | `facebook/bart-large-mnli` |
 | Document-level NLI | `MoritzLaurer/DeBERTa-v3-large-mnli-fever-anli-ling-wanli` |

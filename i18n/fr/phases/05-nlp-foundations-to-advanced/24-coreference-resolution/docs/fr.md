@@ -36,7 +36,7 @@ Pourquoi cela importe en 2026:
 **Architectures.**
 
 1. **Rule-based (Hobbs, 1978).**Une résolution syntaxique de pronoms à base d'arbre, avec des règles de grammaire.
-2. **Mention-pair classifier.**Pour chaque paire de mentions (m_i, m_j), prédire si elles sont plus importantes.
+2. **Mention-pair classifier.**Pour chaque paire de mentions $(m_i, m_j)$Les résultats de la recherche ont été obtenus en fonction des résultats obtenus par la Commission.
 3. **Mention-ranking.**Pour chaque mention, classez les antécédents des candidats (y compris "pas d'antécédents").
 4. **Span-based end-to-end (Lee et al., 2017).**Enchanteur de transformateur: énumérez tous les intervalles de candidats jusqu'à un cap de longueur. Prédisez les scores. Prédisez la probabilité d'anticiper pour chaque intervalle.
 5. **Generative (2024+).**Prompter un LLM: "Listez tous les pronoms dans ce texte et son antécédent".

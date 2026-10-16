@@ -41,8 +41,8 @@ prediction-game
 
 **N-gram probability:** `P(w_i | w_{i-n+1}, ..., w_{i-1})`- Réparer .`n`(généralement 3 pour les trigrammes, 4 pour les 4 grammes).
 
-```text
-P(w | context) = count(context, w) / count(context)
+```math
+P(w \mid \text{context}) = \frac{\mathop{\mathrm{count}}(\text{context}, w)}{\mathop{\mathrm{count}}(\text{context})}
 ```
 
 **The zero-count problem.**Un rapport de 2007 sur le corpus de Brown a révélé que même un modèle de 4 grammes avait 30% de 4 grammes non vus dans l'entraînement.
@@ -60,8 +60,8 @@ Le concept de Kneser-Ney est profond. "San Francisco" est un gros mot commun. L'
 
 **Evaluation: perplexity.**Le facteur de probabilité négative moyenne par mot sur un ensemble de tests prolongés. Moins est mieux. Une perplexité de 100 signifie que le modèle est aussi confus qu'il choisirait uniformément parmi 100 mots.
 
-```text
-perplexity = exp(- (1/N) * Σ log P(w_i | context_i))
+```math
+\text{perplexity} = \exp\left(-\frac{1}{N} \sum_i \log P(w_i \mid \text{context}_i)\right)
 ```
 
 ```figure

@@ -80,8 +80,8 @@ Sur le corpus Brown, cette ligne de base atteint une précision de 85%.
 
 Modélisez la probabilité commune de la séquence:
 
-```
-P(tags, words) = prod P(tag_i | tag_{i-1}) * P(word_i | tag_i)
+```math
+P(\text{tags}, \text{words}) = \prod_i P(\text{tag}_i \mid \text{tag}_{i-1}) \cdot P(\text{word}_i \mid \text{tag}_i)
 ```
 
 Deux tableaux: probabilités de transition (tag donné la tag précédente), probabilités d'émission (tag donné le mot). Estimer les deux à partir des comptes avec l'allumage Laplace. Décoder avec Viterbi (programming dynamique sur le réseau de tag).

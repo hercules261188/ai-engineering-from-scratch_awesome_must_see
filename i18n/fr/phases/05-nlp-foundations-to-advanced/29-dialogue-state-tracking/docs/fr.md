@@ -147,7 +147,7 @@ Sur une correction détectée, écris la dernière fente mise à jour plutôt qu
 
 ## Les pièges
 
-- **Full-history regeneration cost.**Laissez le MLL régénérer chaque tour coûte O ((n2) tokens totaux.
+- **Full-history regeneration cost.**Laisser le MLL régénérer chaque tour coûte $O(n^2)$Les données de la liste des actions de la Commission sont les suivantes:
 - **Schema drift.**L'ajout de nouveaux slots après le hoc casse les données de formation anciennes.
 - **Case sensitivity.**"Italien" contre "italien" contre "Italien"  se normalisent partout.
 - **Implicit inheritance.**Si l'utilisateur a déjà spécifié "pour 4 personnes", une nouvelle demande pour un autre moment ne devrait pas effacer les personnes.
