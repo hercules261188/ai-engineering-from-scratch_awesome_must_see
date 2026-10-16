@@ -863,7 +863,7 @@ A API de lote oferece um desconto de 50% em todos os tokens. Os resultados chega
 #     return None
 ```
 
-Em produção, substituir o scan linear com um índice vetorial (Redis Vector Search, Pinecone, ou pgvector).
+Em produção, substituir a varredura linear por um índice vetorial (Redis Vector Search, Pinecone ou pgvector).$O(\log n)$- Não.
 
 ## Envia-o
 

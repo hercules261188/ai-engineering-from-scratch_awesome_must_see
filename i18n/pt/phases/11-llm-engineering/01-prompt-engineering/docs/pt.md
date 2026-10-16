@@ -937,24 +937,24 @@ O assistente de preenchimento (`"{"`O JSON é mais confiável do que as solicita
 ### Google: Gémeos com configurações de segurança
 
 ```python
-# import google.generativeai as genai
+# from google import genai
+# from google.genai import types
 #
-# genai.configure(api_key="your-key")
+# client = genai.Client()
 #
-# model = genai.GenerativeModel(
-#     "gemini-1.5-pro",
-#     system_instruction="You are a technical analyst. Be precise and cite sources.",
-#     generation_config=genai.GenerationConfig(
+# response = client.models.generate_content(
+#     model="gemini-3.8-flash",
+#     contents="Compare PostgreSQL and MySQL for write-heavy workloads.",
+#     config=types.GenerateContentConfig(
+#         system_instruction="You are a technical analyst. Be precise and cite sources.",
 #         temperature=0.3,
 #         max_output_tokens=2048,
 #     ),
 # )
-#
-# response = model.generate_content("Compare PostgreSQL and MySQL for write-heavy workloads.")
 # print(response.text)
 ```
 
-O Gemini processa instruções do sistema como parte da configuração do modelo, não como uma mensagem. A janela de contexto de token 2M significa que você pode incluir conjuntos de exemplos de poucas fotos maciços que não caberiam no GPT-4o ou Claude.
+A Gemini processa instruções do sistema como parte da configuração do modelo, não como uma mensagem. A janela de contexto de token 1M significa que você pode incluir conjuntos de exemplos de poucas fotos maciços que não caberiam na janela 128K do GPT-4o.
 
 ### Templates de Prompt do Fornecedor-Agnóstico
 
@@ -1023,6 +1023,6 @@ O código Python (`code/prompt_engineering.py`O sistema de teste de interfaces d
 - [Wei et al., 2022 -- "Chain-of-Thought Prompting Elicits Reasoning in Large Language Models"](https://arxiv.org/abs/2201.11903)-- o artigo de base que mostra que "pensar passo a passo" melhora a precisão do LLM em 10-40% nas tarefas de raciocínio
 - [Zamfirescu-Pereira et al., 2023 -- "Why Johnny Can't Prompt"](https://arxiv.org/abs/2304.13529)-- pesquisa sobre como os não-especialistas lutam com a engenharia de urgência e o que torna as urgências eficazes
 - [Shin et al., 2023 -- "Prompt Engineering a Prompt Engineer"](https://arxiv.org/abs/2311.05661)-- usando LLM para otimizar automaticamente as instruções, a base da meta-promptação
-- [LMSYS Chatbot Arena](https://chat.lmsys.org/)-- comparação ao vivo dos LLM onde você pode testar o mesmo prompt em todos os modelos e votar sobre qual resposta é melhor
+- [Arena (formerly LMSYS Chatbot Arena)](https://arena.ai/)-- comparação ao vivo dos LLM onde você pode testar o mesmo prompt em todos os modelos e votar sobre qual resposta é melhor
 - [DAIR.AI Prompt Engineering Guide](https://www.promptingguide.ai/)- catálogo exaustivo de técnicas de "prompte" com exemplos (zero-shot, few-shot, CoT, ReAct, auto-consistência); os profissionais de referência usam para a superfície mais ampla de "ingenieria de "prompte".
-- [Anthropic prompt library](https://docs.anthropic.com/en/prompt-library)- indicações de uso conhecidas, por caso de utilização; mostra os padrões estruturais que se enviam para a produção.
+- [Claude prompting best practices](https://platform.claude.com/docs/en/build-with-claude/prompt-engineering/claude-prompting-best-practices)A guia da Anthropic sobre a estrutura de prompt, com exemplos de trabalho, substituiu a biblioteca de prompt anterior.

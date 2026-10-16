@@ -100,20 +100,20 @@ Dados dois vetores de incorporação, três formas de medir o quão semelhantes 
 
 **Cosine similarity**O cosino do ângulo entre dois vetores varia de -1 (oposto) a 1 (direção idêntica). Ignora a magnitude - uma frase de 10 palavras e um documento de 500 palavras podem obter 1,0 se apontam na mesma direção. Esta é a padrão para 90% dos casos de uso.
 
-```
-cosine_sim(a, b) = dot(a, b) / (||a|| * ||b||)
+```math
+\mathop{\mathrm{cosine\_sim}}(a, b) = \frac{\mathop{\mathrm{dot}}(a, b)}{\lVert a \rVert \cdot \lVert b \rVert}
 ```
 
 **Dot product**O produto interno bruto de dois vetores. Identico à semelhança cosínica quando os vetores são normalizados (longoura de unidade). Mais rápido para calcular. Os incorporados do OpenAI são normalizados, então o produto ponto e o cosínio dão a mesma classificação.
 
-```
-dot(a, b) = sum(a_i * b_i)
+```math
+\mathop{\mathrm{dot}}(a, b) = \sum_i a_i b_i
 ```
 
 **Euclidean (L2) distance**A distância é de linha reta no espaço vetorial. menor = mais semelhante. sensível às diferenças de magnitude.
 
-```
-L2(a, b) = sqrt(sum((a_i - b_i)^2))
+```math
+\mathop{\mathrm{L2}}(a, b) = \sqrt{\sum_i (a_i - b_i)^2}
 ```
 
 Quando utilizar:
@@ -134,7 +134,7 @@ As bases de dados vetoriais resolvem isso com algoritmos Approximate Nearest Nei
 2. As camadas superiores são escassas - conexões de longo alcance entre aglomerados distantes
 3. As camadas inferiores são densas - conexões de grãos finos entre vetores próximos
 4. A busca começa na camada superior, descendo gananciosamente para refinar
-5. Retorna resultados aproximados de top-k em O(log n) tempo em vez de O(n)
+5. Retorna resultados aproximados de top-k em $O(\log n)$tempo em vez de$O(n)$
 
 O HNSW negocia uma pequena perda de precisão (normalmente 95-99% de recall) para ganhos de velocidade maciços. Em 10 milhões de vetores, a força bruta leva segundos.
 
@@ -491,7 +491,7 @@ Esta lição produz:
 | Embedding | "Text to numbers" | A dense vector where geometric proximity encodes semantic similarity |
 | Word2Vec | "The OG embedding" | 2013 model that learned word vectors by predicting context words; proved vector arithmetic encodes meaning |
 | Cosine similarity | "How similar are two vectors" | Cosine of the angle between vectors; 1 = identical direction, 0 = orthogonal, -1 = opposite |
-| HNSW | "Fast vector search" | Hierarchical Navigable Small World graph -- multi-layer structure enabling O(log n) approximate nearest neighbor search |
+| HNSW | "Fast vector search" | Hierarchical Navigable Small World graph -- multi-layer structure enabling $O(\log n)$ approximate nearest neighbor search |
 | Bi-encoder | "Embed separately, compare fast" | Encodes query and document independently into vectors; enables pre-computation and fast retrieval |
 | Cross-encoder | "Slow but accurate reranker" | Processes query-document pair jointly through the full model; higher accuracy, no pre-computation |
 | Matryoshka embeddings | "Truncatable vectors" | Embeddings trained so the first N dimensions capture the most important information, enabling variable-size storage |

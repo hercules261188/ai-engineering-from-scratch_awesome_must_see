@@ -438,22 +438,20 @@ O gasoduto combina todas as técnicas com uma estratégia de escalada.
 
 ```python
 def solve_with_escalation(question, examples, client, model):
-    system, user = build_cot_prompt(question, examples)
-    single_response = call_llm(client, model, system, user, temperature=0.0)
-    single_answer = extract_answer(single_response)
+    single_answer, _ = few_shot_cot_solve(question, examples, client, model)
 
     sc_answer, confidence, _, _ = self_consistency_solve(
         question, examples, client, model, n_samples=5
     )
 
-    if confidence >= 0.8:
+    if confidence >= 0.8 and single_answer == sc_answer:
         return sc_answer, "self_consistency", confidence
 
     tot_answer, _ = tree_of_thought_solve(question, client, model)
     return tot_answer, "tree_of_thought", None
 ```
 
-A lógica da escalada: tentar barato (Cot único) primeiro. Se a confiança em autoconsistência for abaixo de 0,8 (menos de 4 de 5 amostras concordam), escala para ToT. Isso equilibra custo e precisão - a maioria dos problemas são resolvidos barato, os problemas difíceis obtêm mais computação.
+A lógica da escalada: primeiro, tente o barato (Cot único). Um único caminho determinista não dá participação de votos, por isso a sua verificação de qualidade é concordância: a resposta de temperatura-0 tem de corresponder à resposta da maioria dos caminhos amostrados. Se não for o caso, ou se a confiança em autoconsistência for inferior a 0,8 (menos de 4 das 5 amostras concordarem), a escala para ToT. Isto equilibra o custo e a precisão - a maioria dos problemas é resolvida a baixo custo, os problemas difíceis obtêm mais computação.
 
 ## Usá-lo
 
