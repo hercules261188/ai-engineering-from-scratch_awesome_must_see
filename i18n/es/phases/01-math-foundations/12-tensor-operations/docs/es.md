@@ -36,7 +36,7 @@ graph LR
     T3 --> T4["4D Tensor<br/>rank 4<br/>shape: (B,C,H,W)"]
 ```
 
-El total de elementos = producto de todos los tamaños.`(2, 3, 4)`Tiene`2 * 3 * 4 = 24`elementos.
+El total de elementos = producto de todos los tamaños.`(2, 3, 4)`Tiene$2 \cdot 3 \cdot 4 = 24$elementos.
 
 ### Las formas de tensor en el aprendizaje profundo
 
@@ -232,7 +232,7 @@ batch_B = np.random.randn(4, 5, 2)
 batch_mm = np.einsum("bij,bjk->bik", batch_A, batch_B)
 ```
 
-El coste computacional de una contracción es el producto de todos los tamaños de índices (contidos y sumados).`bij,bjk->bik`con B=32, I=128, J=64, K=128: `32 * 128 * 64 * 128 = 33,554,432`el número de veces adicionales.
+El coste computacional de una contracción es el producto de todos los tamaños de índices (contidos y sumados).`bij,bjk->bik`con$B=32$¿ Qué ?$I=128$¿ Qué ?$J=64$¿ Qué ?$K=128$¿ Qué es esto ?$32 \cdot 128 \cdot 64 \cdot 128 = 33{,}554{,}432$el número de veces adicionales.
 
 ### Paso 7: Mecanismo de atención a través del einsum
 
@@ -319,6 +319,16 @@ Esta lección produce dos instrucciones reutilizables:
 3. **Hard -- Build einsum from scratch.**Implementar una base `einsum(subscripts, *tensors)`Función que maneje al menos: producto punto (`i,i->`), multiplicar la matriz (`ij,jk->ik`), producto exterior (`i,j->ij`), y trasponer (`ij->ji`Repasar la cadena de subcritos, identificar índices contratados y recorrer todas las combinaciones de índices.`np.einsum`¿ Qué ?
 
 4. **Hard -- Attention shape tracker.**Escriba una función que toma `batch_size`¿ Qué ?`seq_len`¿ Qué ?`embed_dim`, y `num_heads`como entradas e imprime la forma exacta en cada paso de la atención multi-cabeza: entrada, proyección Q/K/V, división de cabeza, puntuaciones de atención, pesos de softmax, suma ponderada, cabeza fusionada, proyección de salida.`demo_attention_einsum()`de salida.
+
+### Indicios
+
+**Exercise 1.**Construye el tensor desde `list(range(24))`Así que cada elemento muestra su propia posición.`reshape`Llamado, impresión`flatten().to_list()`y comprobar que todavía es de 0 a 23 en orden.
+
+**Exercise 2.**Una dimensión sólo puede transmitirse cuando los dos tamaños son iguales o uno de ellos es 1, así que compruebe primero esa regla y eleva un error cuando falla.`(3, 1)`y `(1, 4)`, revisa esa entrada .`[i][j]`de los resultados es igual `a[i][0] + b[0][j]`, y comparar el resultado completo con NumPy.
+
+**Exercise 3.**Divide los suscriptores en `->`Una letra que está en las entradas pero no en la salida es un índice sumado, así que bucle sobre todos los valores de cada letra y agregar en la posición de salida. Prueba cada uno de los cuatro casos en pequeñas matrices aleatorias con `np.allclose(mine, np.einsum(...))`¿ Qué ?
+
+**Exercise 4.**Comienza con el tamaño de la cabeza `embed_dim // num_heads`y afirman que`embed_dim % num_heads == 0`Los resultados de atención tienen forma .`(batch_size, num_heads, seq_len, seq_len)`, así que revisa tu impresión contra esa forma y contra las formas que`demo_attention_einsum()`Las huellas.
 
 ## Términos clave
 

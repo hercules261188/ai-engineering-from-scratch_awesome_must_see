@@ -9,7 +9,7 @@
 
 ## Objetivos de aprendizaje
 
-- Simula las caminatas aleatorias 1D y 2D y verifica la escala de desplazamiento
+- Simula las caminatas aleatorias 1D y 2D y verifica las $\sqrt{n}$escala de desplazamiento
 - Construir un simulador de cadena de Markov y calcular su distribución estacionaria a través de la propia composición
 - Implementar la dinámica MCMC y Langevin de Metropolis-Hastings para la toma de muestras de las distribuciones objetivo
 - Conecte el proceso de difusión hacia adelante al movimiento de Brownian y explique cómo el proceso inverso genera datos
@@ -38,9 +38,9 @@ Todo esto se basa en cuatro ideas fundamentales:
 
 Comience en la posición 0. En cada paso, lanza una moneda justa. cabezas: mueve a la derecha (+1).
 
-Después de n pasos, su posición es la suma de n valores aleatorios +/-1. La posición esperada es 0 (el paseo es imparcial). Pero la distancia esperada del origen crece como sqrt(n).
+Después de$n$pasos, tu posición es la suma de $n$al azar$\pm 1$La posición esperada es de 0 (el paseo es imparcial).$\sqrt{n}$¿ Qué ?
 
-Esto es contrario a la intuición. La caminata es justa - no se deriva en ninguna dirección. Pero con el tiempo, vaga más y más lejos de donde comenzó. La desviación estándar después de n pasos es sqrt(n).
+Esto es contrario a la intuición. La caminata es justa, no se deriva en ninguna dirección. Pero con el tiempo, vaga más y más lejos de donde comenzó. La desviación estándar después de$n$los pasos es $\sqrt{n}$¿ Qué ?
 
 ```
 Step 0:  Position = 0
@@ -51,33 +51,33 @@ Step 100: Expected distance from origin ~ 10 (sqrt(100))
 Step 10000: Expected distance from origin ~ 100 (sqrt(10000))
 ```
 
-**In 2D**La misma escala de cuadrados se aplica a la distancia desde el origen. La ruta rastrea un patrón similar a un fractal.
+**In 2D**, el paseo se mueve hacia arriba, hacia abajo, a la izquierda o a la derecha con la misma probabilidad.$\sqrt{n}$La escala se aplica a la distancia desde el origen.
 
-**Why sqrt(n)?**Cada paso es +1 o -1 con igual probabilidad. Después de n pasos, la posición S_n = X_1 + X_2 + ... + X_n donde cada X_i es +/-1. La varianza de cada paso es 1, y los pasos son independientes, por lo que Var(S_n) = n. Desviación estándar = sqrt(n).
+**Why $\sqrt{n}$?**Cada paso es +1 o -1 con igual probabilidad.$n$los pasos, la posición $S_n = X_1 + X_2 + \cdots + X_n$donde cada uno $X_i$¿ Es verdad ?$\pm 1$. La variación de cada paso es de 1, y los pasos son independientes, por lo que $\mathop{\mathrm{Var}}(S_n) = n$. Desviación estándar = $\sqrt{n}$Por el teorema del límite central,$S_n / \sqrt{n}$converge a una distribución normal estándar.
 
-Esta escala de cuadrados se muestra en todas partes en ML. SGD escala el ruido como 1/sqrt(batch_size).
+Esto .$\sqrt{n}$La escala de escala se muestra en todas partes en ML. Las escalas de ruido SGD son 1/sqrt(tamaño de lote).$\sqrt{d}$La raíz cuadrada es la firma de adiciones aleatorias independientes.
 
-**Connection to Brownian motion.**Tomar un paseo aleatorio con el tamaño del paso 1/sqrt(n) y n pasos por unidad de tiempo. A medida que n va al infinito, el paseo converge al movimiento browniano B(t) - un proceso continuo en el tiempo donde B(t) se distribuye normalmente con la media 0 y la varianza t.
+**Connection to Brownian motion.**Haz un paseo al azar con el tamaño del paso .$1/\sqrt{n}$y $n$pasos por unidad de tiempo.$n$Se va al infinito, el camino converge al movimiento browniano.$B(t)$-- un proceso continuo en el que $B(t)$se distribuye normalmente con la media 0 y la varianza $t$¿ Qué ?
 
 El movimiento browniano es la base matemática de la difusión. Modela el sacudimiento aleatorio de partículas en un fluido, las fluctuaciones de los precios de las acciones y, lo que es crucial, el proceso de ruido en los modelos de difusión.
 
-**Gambler's ruin.**Un caminante aleatorio que comienza en la posición k, con barreras de absorción en 0 y N. ¿Cuál es la probabilidad de llegar a N antes de 0? Para un paseo justo: P(llegar a N) = k/N. Esto es sorprendentemente simple y elegante. Se conecta con la teoría de los martingales - el paseo aleatorio justo es un martingale (valor futuro esperado = valor actual).
+**Gambler's ruin.**Un caminante aleatorio que comienza en posición .$k$, con barreras de absorción en 0 y $N$¿ Cuál es la probabilidad de alcanzar ?$N$¿Para un paseo justo?$P(\text{reach } N) = k/N$Esto es sorprendentemente simple y elegante. Se conecta con la teoría de los martingales - el paseo aleatorio justo es un martingale (valor futuro esperado = valor actual).
 
 ### Las cadenas de Markov
 
 Una cadena de Markov es un sistema que transiciona entre estados de acuerdo a probabilidades fijas. La propiedad clave: el siguiente estado depende sólo del estado actual, no de la historia.
 
-```
-P(X_{t+1} = j | X_t = i, X_{t-1} = ...) = P(X_{t+1} = j | X_t = i)
-```
-
-Esto es la propiedad de Markov. Significa que se puede describir toda la dinámica con una matriz de transición P:
-
-```
-P[i][j] = probability of going from state i to state j
+```math
+P(X_{t+1} = j \mid X_t = i, X_{t-1} = \ldots) = P(X_{t+1} = j \mid X_t = i)
 ```
 
-Cada fila de P suma a 1 (debes ir a algún lado).
+Esto es la propiedad de Markov. Significa que se puede describir toda la dinámica con una matriz de transición$P$¿Qué es esto ?
+
+```math
+P[i][j] = \text{probability of going from state } i \text{ to state } j
+```
+
+Cada fila de $P$suma a 1 (debe ir a algún lugar).
 
 **Example -- Weather:**
 
@@ -89,7 +89,7 @@ P = [[0.7, 0.1, 0.2],    (if sunny: 70% sunny, 10% rainy, 20% cloudy)
      [0.4, 0.2, 0.4]]    (if cloudy: 40% sunny, 20% rainy, 40% cloudy)
 ```
 
-Comienza en cualquier estado. Después de muchas transiciones, la distribución de estados converge a la distribución estacionaria pi, donde pi * P = pi. Este es el vector propio izquierdo de P con valor propio 1.
+Después de muchas transiciones, la distribución de estados converge a la distribución estacionaria.$\pi$, donde $\pi P = \pi$Este es el vector propio izquierdo de$P$con valor propio 1.
 
 Para la cadena meteorológica, la distribución estacionaria es [0,55, 0,18, 0,27] -- a largo plazo, es soleado el 55% del tiempo independientemente del estado de inicio.
 
@@ -108,8 +108,8 @@ graph LR
 
 **Computing the stationary distribution.**Hay dos enfoques:
 
-1. **Power method**: multiplicar cualquier distribución inicial por P repetidamente. Después de suficientes iteraciones, converge.
-2. **Eigenvalue method**: encontrar el vector propio izquierdo de P con valor propio 1. Este es el vector propio de P^T con valor propio 1.
+1. **Power method**: multiplicar cualquier distribución inicial por $P$Después de suficientes iteraciones, converge.
+2. **Eigenvalue method**: encontrar el vector propio izquierdo de $P$con valor propio 1. Este es el vector propio de $P^T$con valor propio 1.
 
 Ambos enfoques requieren que la cadena cumpla con las condiciones de convergencia.
 
@@ -119,63 +119,63 @@ Ambos enfoques requieren que la cadena cumpla con las condiciones de convergenci
 
 La mayoría de las cadenas que encuentras en ML cumplen ambas condiciones.
 
-**Absorbing states.**Un estado es absorbente si una vez que lo ingresas, nunca sales (P[i][i] = 1). Absorber cadenas de Markov modelos de procesos con estados terminales - un juego que termina, un cliente que se agita, una secuencia de tokens que golpea el token final del texto.
+**Absorbing states.**Un estado es absorbente si una vez que entras en él, nunca sales ($P[i][i] = 1$Absorber procesos de modelos de cadenas de Markov con estados terminales: un juego que termina, un cliente que se agita, una secuencia de tokens que golpea el token final del texto.
 
-**Mixing time.**¿Cuántos pasos hasta que la cadena esté "cerca" de la distribución estacionaria? formalmente, el número de pasos hasta que la distancia total de variación de la estacionariedad caiga por debajo de algún umbral. mezcla rápida = pocos pasos necesarios. La brecha espectral de P (1 menos el segundo valor propio más grande) controla el tiempo de mezcla.
+**Mixing time.**¿Cuántos pasos hasta que la cadena está "cerca" de la distribución estacionaria? formalmente, el número de pasos hasta que la distancia total de variación de estacionariedad cae por debajo de algún umbral. mezcla rápida = pocos pasos necesarios.$P$(1 menos el segundo valor propio más grande) controla el tiempo de mezcla.
 
 ### Conexión con modelos de idiomas
 
 La generación de tokens en un modelo de lenguaje es aproximadamente un proceso de Markov. Dado el contexto actual, el modelo produce una distribución sobre el siguiente token.
 
-```
-P(token_i) = exp(logit_i / temperature) / sum(exp(logit_j / temperature))
+```math
+P(\text{token}_i) = \frac{\exp(\text{logit}_i / \text{temperature})}{\sum_j \exp(\text{logit}_j / \text{temperature})}
 ```
 
 - Temperatura = 1,0: distribución estándar
 - Temperatura < 1,0: más nítida (más determinista)
 - Temperatura > 1,0: más plana (más aleatoria)
-- Temperatura -> 0: argmax (compulsivo)
+- Temperatura $\to 0$: argmax (compulsivo)
 
-El muestreo de top-k se reduce a los tokens de mayor probabilidad k. El muestreo de top-p (núcleo) se reduce al conjunto más pequeño de tokens cuya probabilidad acumulada excede p. Ambos modifican las probabilidades de transición de Markov.
+Los muestras de muestreo de la parte superior se truncan a la$k$Los puntos de referencia de los puntos de referencia de la muestra de la muestra de la muestra de la muestra de la muestra de la muestra de la muestra de la muestra de la muestra de la muestra de la muestra de la muestra de la muestra de la muestra de la muestra de la muestra de la muestra de la muestra de la muestra de la muestra de la muestra de la muestra de la muestra de la muestra de la muestra de la muestra de la muestra de la muestra de la muestra de la muestra de la muestra de la muestra de la muestra de la muestra de la muestra de la muestra de la muestra de la muestra de la muestra de la muestra de la muestra de la muestra de la muestra de la muestra de la muestra de la muestra de la muestra de la muestra de la muestra de la muestra de la muestra de la muestra de la muestra de la muestra de la muestra de la muestra de la muestra de la muestra de la muestra de la muestra de la muestra de la muestra de la muestra de la muestra de la muestra de la muestra de la muestra de la muestra de la muestra de la muestra de la muestra de la muestra de la muestra de la muestra de la muestra de la muestra de la muestra de la muestra de la muestra de la muestra de la muestra de la muestra de la muestra de la muestra de la muestra de la muestra de la muestra de la muestra de la muestra de la muestra de la muestra de la muestra de la muestra de la muestra de la muestra de la muestra de la muestra de la muestra de la muestra de la muestra de la muestra de la muestra de la muestra de la muestra de la muestra de la muestra de la muestra de la muestra de la muestra de la muestra de la muestra de la muestra de la muestra de la muestra de la muestra de la muestra de la muestra de la muestra de la muestra de la muestra de la muestra de la muestra de la muestra de la muestra de la muestra de la muestra de la muestra de la muestra de la muestra de la muestra de la muestra de la muestra de la muestra de la muestra de la muestra de la muestra de la muestra de la muestra de la muestra de la muestra de la muestra de la muestra de la muestra de la muestra de la muestra de la muestra de la muestra de la muestra de la muestra de la muestra de la muestra de la muestra de la muestra de la muestra de la muestra de la muestra de la muestra de la muestra de la muestra de la muestra de la muestra de la muestra de la muestra de la muestra de la muestra de la muestra de la muestra$p$Ambos modifican las probabilidades de transición de Markov.
 
 ### Movimiento browniano
 
-El límite de tiempo continuo de la marcha aleatoria. La posición B(t) tiene tres propiedades:
-1. B(0) = 0
-2. B(t) - B(s) se distribuye normalmente con la media 0 y la varianza t - s (para t > s)
+El límite de tiempo continuo del paseo aleatorio.$B(t)$tiene tres propiedades:
+1. $B(0) = 0$
+2. $B(t) - B(s)$se distribuye normalmente con la media 0 y la varianza $t - s$(para $t > s$(en inglés)
 3. Los incrementos en los intervalos no superpuestos son independientes
 
 El movimiento browniano es continuo pero en ninguna parte diferenciable, se tambalea en todas las escalas.
 
 En simulación discreta, se aproxima el movimiento browniano por:
 
-```
-B(t + dt) = B(t) + sqrt(dt) * z,    where z ~ N(0, 1)
+```math
+B(t + dt) = B(t) + \sqrt{dt} \, z, \quad \text{where } z \sim \mathcal{N}(0, 1)
 ```
 
-La escala de sqrt(dt) es importante. proviene del teorema de límite central aplicado a los paseos aleatorios.
+El $\sqrt{dt}$Es importante, viene del teorema de límite central aplicado a los paseos aleatorios.
 
 ### Dinámica de Langevin
 
-La dinámica de Langevin encuentra la distribución de probabilidades proporcional a exp(-U(x) /T), donde U es una función de energía y T es temperatura.
+La descenso gradiente encuentra el mínimo de una función.$\exp(-U(x)/T)$, donde $U$es una función energética y $T$es la temperatura.
 
-```
-x_{t+1} = x_t - dt * gradient(U(x_t)) + sqrt(2 * T * dt) * z_t
+```math
+x_{t+1} = x_t - dt \, \nabla U(x_t) + \sqrt{2 T \, dt} \, z_t
 ```
 
 Dos fuerzas actúan sobre la partícula:
-1. **Gradient force**(-dt * gradiente(U)): empuja hacia la baja energía (como la descensía de gradiente)
-2. **Random force**(sqrt(2*T*dt) * z): empuja en direcciones aleatorias (exploración)
+1. **Gradient force**(El artículo$-dt \cdot \nabla U$): empuja hacia la baja energía (como la descenso de gradiente)
+2. **Random force**(El artículo$\sqrt{2T dt} \cdot z$): empuja en direcciones aleatorias (exploración)
 
-A temperatura T = 0, esto es un descenso de gradiente puro. A temperatura alta, es casi un paseo aleatorio. A la temperatura adecuada, la partícula explora el paisaje energético y pasa más tiempo en regiones de baja energía.
+A temperatura baja .$T = 0$En una temperatura alta, es casi un paseo aleatorio. a la temperatura adecuada, la partícula explora el paisaje energético y pasa más tiempo en regiones de baja energía.
 
 **Connection to diffusion models.**El proceso avanzado de un modelo de difusión es:
 
-```
-x_t = sqrt(alpha_t) * x_{t-1} + sqrt(1 - alpha_t) * noise
+```math
+x_t = \sqrt{\alpha_t} \, x_{t-1} + \sqrt{1 - \alpha_t} \cdot \text{noise}
 ```
 
-Esta es una cadena de Markov que mezcla gradualmente los datos con el ruido.
+Esta es una cadena de Markov que mezcla gradualmente los datos con el ruido.$x_T$Es un ruido gaussiano puro.
 
 El proceso inverso, pasar del ruido de vuelta a los datos, es también una cadena de Markov, pero sus probabilidades de transición son aprendidas por una red neuronal. La red aprende a predecir el ruido que se agregó en cada paso, y luego lo restará.
 
@@ -195,27 +195,27 @@ graph LR
 
 ### MCMC: Cadena de Markov Monte Carlo
 
-A veces se necesita tomar una muestra de una distribución p ((x) que se puede evaluar (hasta una constante) pero no puede tomar una muestra directamente. los posteriores bayesianos son el ejemplo clásico - usted sabe la probabilidad veces el anterior, pero la constante normalizadora es intratable.
+A veces necesitas muestras de una distribución.$p(x)$Los exteriores bayesianos son el ejemplo clásico, ya sabes la probabilidad por la anterior, pero la constante de normalización es intratable.
 
-**Metropolis-Hastings**construye una cadena de Markov cuya distribución estacionaria es p(x):
+**Metropolis-Hastings**construye una cadena de Markov cuya distribución estacionaria es$p(x)$¿Qué es esto ?
 
-1. Comience en alguna posición x
-2. Proponer una nueva posición x' de una distribución de propuesta Q(x'
-3. Ratio de aceptación de cálculo: a(x') * Q(x (x) = (x) = (x) * (x) * (x)
-4. Acepta x' con probabilidad min ((1, a). de lo contrario permanezca en x.
+1. Comience en alguna posición .$x$
+2. Propón un nuevo puesto .$x'$de una distribución de propuestas $Q(x' \mid x)$
+3. Ratio de aceptación de cálculo: $a = p(x') Q(x \mid x') / (p(x) Q(x' \mid x))$
+4. Aceptad$x'$con probabilidad $\min(1, a)$De lo contrario , permanezca en la$x$¿ Qué ?
 5. Repito, ¿qué quieres?
 
-Si Q es simétrico, por ejemplo, Q(x' ( ( ( ( () ), = Q(x (x) ), la relación se simplifica a a = p(x') / p(x. Solo se necesita la relación de probabilidades - las constantes normalizadoras se cancelan.
+Si ...$Q$es simétrico (por ejemplo, $Q(x' \mid x) = Q(x \mid x') = \mathcal{N}(x, \sigma^2){}$), la relación se simplifica a $a = p(x') / p(x)$Sólo necesitas la proporción de probabilidades, la constante de normalización cancela.
 
-La cadena está garantizada para converger a px en condiciones suaves. Pero la convergencia puede ser lenta si la propuesta es demasiado pequeña (caminar al azar) o demasiado grande (alto rechazo).
+La cadena está garantizada para converger a $p(x)$En el caso de las empresas que se encuentran en el mercado de la información, el mercado de la información se ha convertido en un mercado de la información y de la información.
 
-**Why it works.**El coeficiente de aceptación garantiza el equilibrio detallado: la probabilidad de estar en x y moverse a x' es igual a la probabilidad de estar en x' y moverse a x. El equilibrio detallado implica que p(x) es la distribución estacionaria de la cadena.
+**Why it works.**La tasa de aceptación garantiza un equilibrio detallado: la probabilidad de estar en $x$y se mueve a$x'$es igual a la probabilidad de estar en $x'$y se mueve a$x$. El equilibrio detallado implica que$p(x)$Así que después de suficientes pasos, las muestras vienen de$p(x)$¿ Qué ?
 
 **Practical considerations:**
-- **Burn-in**La cadena necesita tiempo para llegar a la distribución estacionaria desde su punto de partida.
-- **Thinning**: mantener cada k-ta muestra para reducir la autocorrelación.
+- **Burn-in**: descartar el primero $N$La cadena necesita tiempo para llegar a la distribución estacionaria desde su punto de partida.
+- **Thinning**: mantener todos $k$- la muestra para reducir la autocorrelación.
 - **Multiple chains**Si convergen en la misma distribución, se tiene evidencia de convergencia.
-- **Acceptance rate**En el caso de las propuestas gaussianas en dimensiones d, la tasa óptima de aceptación es de alrededor del 23% (Roberts & Rosenthal, 2001).
+- **Acceptance rate**: para las propuestas de Gauss en $d$En el caso de las cadenas de distribución, la aceptación óptima es de alrededor del 23% (Roberts & Rosenthal, 2001).
 
 ### Procesos estocásticos en IA
 
@@ -260,7 +260,7 @@ def random_walk_2d(n_steps, seed=None):
     return x, y
 ```
 
-El paseo 1D almacena sumas acumuladas. Cada paso es +1 o -1. Después de n pasos, la posición es la suma. La varianza crece linealmente con n, por lo que la desviación estándar crece como sqrt(n).
+El paseo 1D almacena sumas acumuladas. Cada paso es +1 o -1. Después $n$La varianza crece linealmente con $n$, por lo que la desviación estándar crece a medida que$\sqrt{n}$¿ Qué ?
 
 ### Paso 2: cadena de Markov
 
@@ -294,7 +294,7 @@ class MarkovChain:
         return np.abs(stationary)
 ```
 
-La distribución estacionaria es el propio vector izquierdo de P con valor propio 1. Lo encontramos mediante el cálculo de los propios vectores de P^T (transponer los propios vectores izquierdo en propios vectores derechosos).
+La distribución estacionaria es el vector propio izquierdo de $P$Lo encontramos calculando los vectores propios de $P^T$(transponer convierte los propios vectores izquierdistas en propios vectores derecho).
 
 ### Paso 3: Dinámica de Langevin
 
@@ -310,7 +310,7 @@ def langevin_dynamics(grad_U, x0, dt, temperature, n_steps, seed=None):
     return np.array(trajectory)
 ```
 
-El gradiente empuja x hacia la energía baja. El ruido evita que se atasque. En equilibrio, la distribución de las muestras es proporcional a exp(-U(x) / temperatura).
+El gradiente empuja$x$El ruido evita que se atasque. en equilibrio, la distribución de las muestras es proporcional a la$\exp(-U(x)/\text{temperature})$¿ Qué ?
 
 ### Paso 4: Metrópolis-Hastings
 
@@ -363,7 +363,7 @@ for _ in range(100):
 print(f"Stationary distribution: {np.round(distribution, 4)}")
 ```
 
-Multiplicar la distribución inicial por P repetidamente. Después de suficientes iteraciones, converge a la distribución estacionaria independientemente de dónde comenzó. Este es el método de potencia para encontrar el vector propio izquierdo dominante.
+Multiplicar la distribución inicial por $P$Después de suficientes iteraciones, converge a la distribución estacionaria sin importar dónde comenzó. Este es el método de potencia para encontrar el vector propio izquierdo dominante.
 
 ### Conexiones con marcos reales
 
@@ -409,14 +409,14 @@ Esta lección produce:
 
 Los modelos de difusión merecen una atención especial.
 
-```
-q(x_t | x_{t-1}) = N(x_t; sqrt(1-beta_t) * x_{t-1}, beta_t * I)
+```math
+q(x_t \mid x_{t-1}) = \mathcal{N}\left(x_t; \sqrt{1-\beta_t} \, x_{t-1}, \beta_t I\right)
 ```
 
-donde beta_t es un cronograma de ruido. Después de T pasos, x_T es aproximadamente N(0, I). El proceso inverso es parametrizado por una red neuronal que predice el ruido:
+donde$\beta_t$Es un horario de ruido.$T$pasos,$x_T$es aproximadamente $\mathcal{N}(0, I)$El proceso inverso es parametrizado por una red neuronal que predice el ruido:
 
-```
-p_theta(x_{t-1} | x_t) = N(x_{t-1}; mu_theta(x_t, t), sigma_t^2 * I)
+```math
+p_\theta(x_{t-1} \mid x_t) = \mathcal{N}\left(x_{t-1}; \mu_\theta(x_t, t), \sigma_t^2 I\right)
 ```
 
 Cada paso de generación es un paso en una cadena de Markov aprendida.
@@ -427,15 +427,27 @@ La clave de todas estas conexiones: los procesos estocásticos no son solo herra
 
 ## Los ejercicios
 
-1. **Simulate 1000 random walks of 10000 steps.**Traza la distribución de las posiciones finales. Verifique que es aproximadamente gaussiano con media 0 y desviación estándar sqrt(10000) = 100.
+1. **Simulate 1000 random walks of 10000 steps.**Traza la distribución de las posiciones finales. Verifique que es aproximadamente Gaussian con la media 0 y la desviación estándar $\sqrt{10000} = 100$¿ Qué ?
 
 2. **Build a text generator using a Markov chain.**Entrenamiento en un corpus pequeño: para cada palabra, contar las transiciones a la siguiente palabra. Construir la matriz de transición. Generar nuevas frases mediante muestreo de la cadena.
 
 3. **Implement simulated annealing**El método de cálculo de la función de un mínimo de función con muchos mínimos locales es el método de cálculo de la función de una función de un mínimo de función con una función de una función de mayor temperatura.
 
-4. **Compare Langevin dynamics at different temperatures.**Muestra de un potencial de pozo doble U(x) = (x^2 - 1)^2. a baja temperatura, las muestras se agrupan en un pozo. a alta temperatura, se propagan a través de ambos.
+4. **Compare Langevin dynamics at different temperatures.**Muestra de un potencial de pozo doble $U(x) = (x^2 - 1)^2$A baja temperatura, las muestras se agrupan en un pozo. a alta temperatura, se extienden a ambos.
 
 5. **Implement the forward diffusion process.**Comience con una señal 1D (por ejemplo, una onda seno). Agregue el ruido progresivamente más de 100 pasos con un cronograma de ruido lineal. Muestre cómo la señal se degrada a ruido puro. Luego implemente un simple denoizador que invierte el proceso (incluso uno ingenuo que solo restará el ruido estimado).
+
+### Indicios
+
+**Exercise 1.**Llamé`random_walk_1d(10000, seed=i)`Para 1000 semillas y mantener cada posición final. compruebe que la media está cerca de 0, la desviación estándar está cerca de 100, y aproximadamente el 68% de las posiciones finales están entre -100 y 100.
+
+**Exercise 2.**Cuenta cada par de palabras, luego divide cada fila por su total para que cada fila se suma a 1. Pasar la matriz a `MarkovChain(transition_matrix, state_names)`y llamar`simulate`Compruebe que cada par de palabras en su salida también se encuentre en el corpus.
+
+**Exercise 3.**Acepta un punto peor con probabilidad .$\exp(-\Delta / T)$y multiplicarse.$T$Prueba en una función cuyo mínimo sabes, y compruebe tu respuesta con una búsqueda fina en la cuadrícula.
+
+**Exercise 4.**El gradiente es $4x(x^2 - 1)$, así que pasa eso a `langevin_dynamics(grad_U, x0, dt, temperature, n_steps)`La barrera en la$x = 0$tiene altura 1, así que cuenta con qué frecuencia el signo de$x$en el caso de los cambios de temperatura de 0,05 a 1, y buscar la temperatura en la que el recuento comience a aumentar rápidamente.
+
+**Exercise 5.**Llamé`diffusion_forward(signal, 100)`y la computación .$\bar{\alpha}$en el último paso como producto de $(1 - \beta_t)$Si ...$\bar{\alpha}$está lejos de 0, la señal aún no es ruido puro, así que eleva `beta_end`Prueba tu desinfectador primero con el ruido verdadero .$(x_t - \sqrt{1 - \bar{\alpha}_t} \epsilon)/\sqrt{\bar{\alpha}_t}$debe devolver la señal original exactamente.
 
 ## Términos clave
 
@@ -443,9 +455,9 @@ La clave de todas estas conexiones: los procesos estocásticos no son solo herra
 |------|----------------|----------------------|
 | Random walk | "Coin-flip movement" | A process where position changes by random increments at each step |
 | Markov property | "Memoryless" | The future depends only on the present state, not on the history |
-| Transition matrix | "The probability table" | P[i][j] = probability of moving from state i to state j |
-| Stationary distribution | "The long-run average" | The distribution pi where pi*P = pi -- the chain's equilibrium |
-| Brownian motion | "Random jiggling" | The continuous-time limit of a random walk, B(t) ~ N(0, t) |
+| Transition matrix | "The probability table" | $P[i][j]$ = probability of moving from state $i$ to state $j$ |
+| Stationary distribution | "The long-run average" | The distribution $\pi$ where $\pi P = \pi$ -- the chain's equilibrium |
+| Brownian motion | "Random jiggling" | The continuous-time limit of a random walk, $B(t) \sim \mathcal{N}(0, t)$ |
 | Langevin dynamics | "Gradient descent with noise" | Update rule that combines deterministic gradient and random perturbation |
 | MCMC | "Walking toward the target" | Constructing a Markov chain whose stationary distribution is the one you want |
 | Metropolis-Hastings | "Propose and accept/reject" | MCMC algorithm that uses acceptance ratios to ensure convergence |

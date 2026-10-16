@@ -42,7 +42,7 @@ El reto principal: sólo se puede tomar muestras directamente de distribuciones 
 
 ### Muestreo aleatorio uniforme
 
-Cada método de muestreo comienza aquí. Un generador de números aleatorios uniforme produce valores en [0, 1) donde cada subintervalo de igual longitud tiene la misma probabilidad.
+Cada método de muestreo comienza aquí. Un generador de números aleatorios uniforme produce valores en$[0, 1)$donde cada subintervalo de igual longitud tiene igual probabilidad.
 
 ```
 U ~ Uniform(0, 1)
@@ -54,7 +54,7 @@ Properties:
   Var(U) = 1/12
 ```
 
-Para tomar muestras uniformes de un conjunto discreto de n elementos, generar U y devolver piso(n * U. Para tomar muestras de un rango continuo [a, b], calcular a + (b - a) * U.
+Para tomar muestras uniformes de un conjunto discreto de $n$los artículos, generar $U$y regresar .$\lfloor n U \rfloor$. Para muestras de un rango continuo $[a, b]$, computación $a + (b - a) U$¿ Qué ?
 
 La clave: un solo número aleatorio uniforme contiene exactamente la cantidad adecuada de aleatoriedad para producir una muestra de cualquier distribución.
 
@@ -72,7 +72,7 @@ Properties:
   F maps the real line to [0, 1]
 ```
 
-El CDF inverso mapea las probabilidades de vuelta a valores. Si U ~ Uniform(0, 1), entonces X = F_inverse(U) sigue la distribución objetivo.
+El CDF inverso hace mapas de probabilidades de vuelta a valores.$U \sim \text{Uniform}(0, 1)$, entonces$X = F^{-1}(U)$se sigue a la distribución objetivo.
 
 ```
 Algorithm:
@@ -98,9 +98,9 @@ Since (1 - U) and U have the same distribution:
   x = -ln(u) / lambda
 ```
 
-Esto funciona perfectamente cuando se puede escribir F_inverse en forma cerrada. Para la distribución normal, no hay CDF inverso de forma cerrada, por lo que usamos otros métodos (Box-Muller, o aproximación numérica).
+Esto funciona perfectamente cuando puedes escribir .$F^{-1}$Para la distribución normal, no hay CDF inverso de forma cerrada, por lo que usamos otros métodos (Box-Muller, o aproximación numérica).
 
-**Discrete version:**Para las distribuciones discretas, construye el CDF como una suma acumulada, genera U y encuentra el primer índice donde la suma acumulada exceda a U. Así es como `sample_categorical`trabaja en la Lección 06.
+**Discrete version:**Para las distribuciones discretas, construye el CDF como una suma acumulada, genera $U$, y encontrar el primer índice donde la suma acumulada exceda $U$Así es como ...`sample_categorical`trabaja en la Lección 06.
 
 ### Muestras de rechazo
 
@@ -120,15 +120,15 @@ Algorithm:
 Acceptance rate = 1/M
 ```
 
-En las dimensiones bajas (1-3), el muestreo de rechazo funciona bien. En las dimensiones altas, la tasa de aceptación disminuye exponencialmente porque la mayor parte del volumen de la propuesta es rechazada. Esta es la maldición de dimensionalidad para el muestreo de rechazo.
+Cuanto más estrecha sea la línea$M$En las dimensiones bajas (1-3), el muestreo de rechazo funciona bien. En las dimensiones altas, la tasa de aceptación disminuye exponencialmente porque la mayor parte del volumen de la propuesta es rechazada. Esta es la maldición de dimensionalidad para el muestreo de rechazo.
 
-**Example: sampling from a truncated normal.**Utilice una propuesta uniforme en el rango truncado. El sobre M es el máximo del PDF normal en ese rango.
+**Example: sampling from a truncated normal.**Utilice una propuesta uniforme en el rango reducido.$M$es el máximo del PDF normal en ese rango.
 
-**Example: sampling from a semicircle.**Propón uniformemente en el rectángulo de borde. Acepta si el punto cae dentro del semicírculo. Así calcula Monte Carlo pi: la tasa de aceptación es igual a la proporción de área pi/4.
+**Example: sampling from a semicircle.**Propón uniformemente en el rectángulo de borde. Aceptar si el punto cae dentro del semicírculo. Así es como calcula Monte Carlo.$\pi$: la tasa de aceptación es igual a la proporción de superficie $\pi/4$¿ Qué ?
 
 ### Muestreo de importancia
 
-A veces no se necesitan muestras de la distribución objetivo p(x). Se necesita estimar una expectativa bajo p(x), y se tienen muestras de una distribución diferente q(x.
+A veces no se necesitan muestras de la distribución objetivo $p(x)$Necesitas estimar una expectativa bajo$p(x)$, y tienes muestras de una distribución diferente .$q(x)$¿ Qué ?
 
 ```
 Goal: estimate E_p[f(x)] = integral of f(x) * p(x) dx
@@ -143,12 +143,12 @@ Estimator:
   E_p[f(x)] ~ (1/N) * sum(f(x_i) * w(x_i))    where x_i ~ q(x)
 ```
 
-Esto es fundamental en el aprendizaje de refuerzo. En PPO (Proximal Policy Optimization), recopilas trayectorias bajo una vieja política pi_old pero quieres optimizar una nueva política pi_new. El peso de importancia es pi_new ̇a ̇a ̇a ̇a ̇a ̇a ̇a ̇a ̇a ̇a ̇a ̇a ̇a ̇a ̇a ̇a ̇a ̇a ̇a ̇a ̇a ̇a ̇a ̇a ̇a ̇a ̇a ̇a ̇a ̇a ̇a ̇a ̇a ̇a ̇a ̇a ̇a ̇a ̇a ̇a ̇a ̇a ̇a ̇a ̇a ̇a ̇a ̇a ̇a ̇a ̇a ̇a ̇a ̇a ̇a ̇a ̇a ̇a ̇a ̇a ̇a ̇a ̇a ̇a ̇a ̇a ̇a ̇a ̇a ̇a ̇a ̇a ̇a ̇a ̇a ̇a ̇a ̇a ̇a ̇a ̇a ̇a ̇a ̇a ̇a ̇a ̇a ̇a ̇a ̇a ̇a ̇a ̇a ̇a ̇a ̇a ̇a ̇a ̇a ̇a ̇a ̇a ̇a ̇a ̇a ̇a ̇a ̇a ̇a ̇a ̇a ̇a ̇a ̇a    ̇a ̇a  ̇a ̇a  ̇a    ̇a    ̇a     ̇a      ̇      ̇                                                         
+En PPO (Proportion Optimization) se recopilan trayectorias bajo una vieja política.$\pi_{\text{old}}$Pero quieren optimizar una nueva política $\pi_{\text{new}}$. La importancia del peso es $\pi_{\text{new}}(a \mid s) / \pi_{\text{old}}(a \mid s)$La PPO recorta estos pesos para evitar que la nueva política se desvíe demasiado de la antigua.
 
-La variación del estimador de muestreo de importancia depende de cuan similar q es a p. Si q es muy diferente de p, algunas muestras obtienen enormes pesos y dominan la estimación.
+La variación del estimador de la muestreo de importancia depende de la similitud $q$¿ Qué es ?$p$Si ...$q$es muy diferente de $p$La normalización de la importancia de la muestra se divide por la suma de los pesos para reducir este problema:
 
-```
-E_p[f(x)] ~ sum(w_i * f(x_i)) / sum(w_i)
+```math
+\mathbb{E}_p[f(x)] \approx \frac{\sum_i w_i \, f(x_i)}{\sum_i w_i}
 ```
 
 ### Estimación de Monte Carlo
@@ -186,7 +186,7 @@ Variance of the estimator = Var(f(X)) / N
 
 ### La cadena Markov Monte Carlo (MCMC): Metrópolis-Hastings
 
-MCMC construye una cadena de Markov cuya distribución estacionaria es la distribución objetivo p(x). Después de suficientes pasos, las muestras de la cadena son (aproximadamente) muestras de p(x.
+MCMC construye una cadena de Markov cuya distribución estacionaria es la distribución objetivo $p(x)$. Después de suficientes pasos, las muestras de la cadena son (aproximadamente) muestras de $p(x)$¿ Qué ?
 
 ```
 Target: p(x)  (known up to a normalizing constant)
@@ -205,13 +205,13 @@ Metropolis-Hastings algorithm:
   4. Return remaining samples
 ```
 
-Para las propuestas simétricas (q(x' (x) = q(x (x) = x)), la relación se simplifica a p(x') / p(x. Este es el algoritmo Metropolis original.
+Para propuestas simétricas $(q(x' \mid x) = q(x \mid x'))$, la relación se simplifica a $p(x')/p(x)$Este es el algoritmo original de Metropolis.
 
-**Why it works.**La regla de aceptación asegura el equilibrio detallado: la probabilidad de estar en x y moverse a x' es igual a la probabilidad de estar en x' y moverse a x. El equilibrio detallado implica que p(x) es la distribución estacionaria de la cadena.
+**Why it works.**La regla de aceptación garantiza el equilibrio detallado: la probabilidad de estar en $x$y se mueve a$x'$es igual a la probabilidad de estar en $x'$y se mueve a$x$. El equilibrio detallado implica que$p(x)$es la distribución estacionaria de la cadena.
 
 **Practical considerations:**
 - Incendio: descartar las muestras tempranas antes de que la cadena alcance el equilibrio
-- El adelgazamiento: mantener cada k-a muestra para reducir la autocorrelación
+- El adelgazamiento: mantenga cada uno$k$- la muestra para reducir la autocorrelación
 - Escala de las propuestas: demasiado pequeña y la cadena se mueve lentamente (alta aceptación, lenta exploración); demasiado grande y la mayoría de las propuestas son rechazadas (baja aceptación, en su lugar)
 - La tasa óptima de aceptación de una propuesta gaussiana en grandes dimensiones es de aproximadamente 0,234
 
@@ -230,7 +230,7 @@ Algorithm:
     Sample x_d^{t+1} ~ p(x_d | x_1^{t+1}, x_2^{t+1}, ..., x_{d-1}^{t+1})
 ```
 
-El muestreo de Gibbs requiere que puedas muestrar de cada distribución condicional p ((x_i ∈ x_{-i}). Esto es sencillo para muchos modelos:
+La muestreo de Gibbs requiere que puedas muestrar de cada distribución condicional .$p(x_i \mid x_{-i})$Esto es sencillo para muchos modelos:
 - Redes bayesianas: los condicionals siguen de la estructura del gráfico
 - Mezclas gaussianas: los condicionantes son gaussianas
 - Modelos de aislamiento: la condicional de cada giro depende sólo de sus vecinos
@@ -241,7 +241,7 @@ La tasa de aceptación es siempre de 1 (se acepta cada propuesta) porque la mues
 
 ### Muestreo de temperatura (utilizado en LLM)
 
-Los modelos de lenguaje producen logits z_1, ..., z_V para cada token en el vocabulario. Softmax convierte estos en probabilidades.
+Modelos de lenguaje logs de salida $z_1, \ldots, z_V$Softmax convierte estas en probabilidades.
 
 ```
 p_i = exp(z_i / T) / sum(exp(z_j / T))
@@ -253,20 +253,20 @@ T < 1.0: sharpens the distribution (more confident, less diverse)
 T > 1.0: flattens the distribution (less confident, more diverse)
 ```
 
-**Why it works.**Dividir los logitos por T < 1 amplifica las diferencias entre los logitos. Si z_1 = 2 y z_2 = 1, dividir por T = 0.5 da z_1/T = 4 y z_2/T = 2, haciendo que la brecha sea mayor. Después de softmax, el token de logito más alto obtiene una participación mucho mayor.
+**Why it works.**Dividiendo los logits por $T < 1$La diferencia entre los logitos se amplifica.$z_1 = 2$y $z_2 = 1$, dividido por $T = 0.5$da .$z_1/T = 4$y $z_2/T = 2$Después de softmax, el token de mayor logit obtiene una participación mucho mayor.
 
 **In practice:**
-- T = 0,0: codificación codificada, mejor para preguntas y respuestas de hecho
-- T = 0,3-0,7: ligeramente creativo, bueno para la generación de código
-- T = 0,7-1,0: equilibrado, bueno para la conversación general
-- T = 1.0-1.5: escritura creativa, lluvia de ideas
-- T > 1,5: cada vez más aleatorios, raramente útiles
+- $T = 0.0$: codificación codificada, mejor para preguntas y respuestas de hecho
+- $T = 0.3\text{-}0.7$: ligeramente creativo, bueno para la generación de código
+- $T = 0.7\text{-}1.0$: equilibrado, bueno para la conversación general
+- $T = 1.0\text{-}1.5$: escritura creativa, lluvia de ideas
+- $T > 1.5$: cada vez más aleatorios, raramente útiles
 
 La temperatura no cambia qué tokens son posibles, sino la masa de probabilidad asignada a cada token.
 
 ### Muestreo de la parte superior
 
-El muestreo de top-k restringe el conjunto candidato a los tokens k con las mayores probabilidades, luego renormaliza y muestra de ese conjunto restringido.
+El muestreo de top-k restringe el candidato establecido a la $k$los tokens con las mayores probabilidades, luego renormaliza y muestra de ese conjunto restringido.
 
 ```
 Algorithm:
@@ -281,11 +281,11 @@ k = V:  no filtering (standard sampling)
 k = 40: typical setting, removes long tail of unlikely tokens
 ```
 
-El top-k impide que el modelo seleccione fijos extremadamente improbables (tipos, tonterías) que existen en la larga cola de la distribución del vocabulario. El problema: k se fija independientemente del contexto. Cuando el modelo es seguro (un token tiene probabilidad del 95%), k = 40 todavía permite 39 alternativas. Cuando el modelo es incierto (la probabilidad se distribuye a través de 1000 tokens), k = 40 corta las opciones plausibles.
+Top-k impide que el modelo seleccione fichas extremadamente improbables (tipo, tontería) que existen en la larga cola de la distribución del vocabulario.$k$Cuando el modelo es seguro (un token tiene una probabilidad del 95%), $k = 40$Si el modelo es incierto (la probabilidad se distribuye entre 1000 tokens), $k = 40$Se corta las opciones plausibles.
 
 ### Muestreo de la parte superior (núcleo)
 
-El muestreo top-p ajusta dinámicamente el tamaño del conjunto candidato. En lugar de mantener un número fijo de tokens, se guarda el conjunto más pequeño de tokens cuya probabilidad acumulada excede de p.
+El muestreo top-p ajusta dinámicamente el tamaño del conjunto candidato. En lugar de mantener un número fijo de tokens, se guarda el conjunto más pequeño de tokens cuya probabilidad acumulada excede $p$¿ Qué ?
 
 ```
 Algorithm:
@@ -335,13 +335,13 @@ Reparameterized sampling:
   Gradients flow through mu and sigma.
 ```
 
-Esto funciona porque N(mu, sigma^2) tiene la misma distribución que mu + sigma * N(0, 1). La clave: mover la aleatoriedad a una fuente libre de parámetros (epsilon), luego expresar la muestra como una transformación diferenciable de los parámetros.
+Esto funciona porque$\mathcal{N}(\mu, \sigma^2)$tiene la misma distribución que $\mu + \sigma \cdot \mathcal{N}(0, 1)$. La clave: mover la aleatoriedad a una fuente libre de parámetros ($\epsilon$), luego expresar la muestra como una transformación diferenciable de los parámetros.
 
 **In the VAE training loop:**
-1. Encuentra las salidas mu y log(sigma^2) para cada entrada
-2. Muestra de epsilon ~ N(0, 1)
-3. Computa z = mu + sigma * epsilon
-4. Decodificar z para reconstruir la entrada
+1. Fuentes de codificación $\mu$y $\log(\sigma^2)$para cada entrada
+2. Muestra $\epsilon \sim \mathcal{N}(0, 1)$
+3. Computación$z = \mu + \sigma \epsilon$
+4. Descifrar$z$para reconstruir la entrada
 5. Propagación hacia atrás a través de los pasos 4, 3, 2, 1 (posible porque el paso 3 es diferenciable)
 
 Sin el truco de reparameterización, las VAEs no pueden ser entrenadas con la retropropagación estándar.
@@ -413,7 +413,7 @@ For piecewise-constant functions, stratified sampling is exact.
 
 ### Conexión a modelos de difusión
 
-Los modelos de difusión generan imágenes a través de un proceso de muestreo. El proceso avanzado agrega ruido gaussiano a una imagen en T pasos hasta que se convierte en ruido puro. El proceso inverso aprende a denotar, recuperando la imagen original paso a paso.
+Los modelos de difusión generan imágenes a través de un proceso de muestreo.$T$El proceso inverso aprende a denogar, recuperando la imagen original paso a paso.
 
 ```
 Forward process (known):
@@ -431,7 +431,7 @@ Reverse process (learned):
 
 La conexión con los métodos en esta lección:
 - Cada paso de desinfección utiliza el truco de reparameterización (ruido de muestra, aplicar la transformación determinista)
-- El horario de ruido {alpha_t} controla una forma de anulación de temperatura
+- El horario de ruido$\lbrace \alpha_t \rbrace$controla una forma de anulación de temperatura
 - El entrenamiento utiliza la estimación de Monte Carlo para aproximar el ELBO (evidencia límite inferior)
 - El muestreo ancestral en modelos de difusión es una cadena de Markov (cada paso depende solo del estado actual)
 
@@ -457,7 +457,7 @@ def sample_exponential_inverse_cdf(lam):
     return -math.log(u) / lam
 ```
 
-Generar 10.000 muestras exponenciales y verificar que la media es 1/lambda.
+Generar 10.000 muestras exponenciales y verificar la media es $1/\lambda$¿ Qué ?
 
 ### Paso 2: Muestreo de rechazo
 
@@ -484,7 +484,7 @@ def importance_sampling_estimate(f, target_pdf, proposal_pdf, proposal_sample, n
     return total / n
 ```
 
-Estimar E[X^2] bajo una distribución normal utilizando una propuesta uniforme.
+Estimación $\mathbb{E}[X^2]$En el caso de las empresas de la Unión Europea, el valor de la ayuda es el valor de la ayuda.$\mu^2 + \sigma^2$¿Qué es lo que se hace?
 
 ### Paso 4: Estimación de Monte Carlo de pi
 
@@ -642,37 +642,49 @@ Construiste esto desde cero, ahora sabes lo que hacen las llamadas de la bibliot
 
 ## Los ejercicios
 
-1. Implemente muestreo inverso de CDF para la distribución de Cauchy. El CDF es F(x) = 0.5 + arctan(x) / pi. Generar 10.000 muestras y trazar el histograma contra el PDF real. Observe las colas pesadas (valores extremos lejos del centro).
+1. Implemente muestreo inverso de CDF para la distribución de Cauchy.$F(x) = 0.5 + \arctan(x)/\pi$. Generar 10.000 muestras y trazar el histograma contra el PDF real. Observe las colas pesadas (valores extremos lejos del centro).
 
 2. Utilice el muestreo de rechazo para generar muestras de una distribución Beta(2, 5) utilizando una propuesta Uniform(0, 1).
 
-3. Estima la integral de sin ((x) de 0 a pi usando Monte Carlo con 1,000, 10,000 y 100,000 muestras. Compara el error en cada nivel. Verifique que la escala de error sea O(1/sqrt(N)).
+3. Estima la integral de $\sin(x)$de 0 a $\pi$Con el uso de Monte Carlo con 1.000, 10.000 y 100.000 muestras. Comparar el error en cada nivel.$O(1/\sqrt{N})$¿ Qué ?
 
-4. Implementar Metropolis-Hastings para muestrar de una distribución 2D p ((x, y) proporcional a exp ((-(x^2 * y^2 + x^2 + y^2 - 8*x - 8*y) / 2).
+4. Implementar Metropolis-Hastings para muestrar de una distribución 2D $p(x, y)$proporcional a $\exp(-(x^2 y^2 + x^2 + y^2 - 8x - 8y) / 2)$- Desarrollar las muestras y la trayectoria de la cadena.
 
 5. Construir una demostración completa de generación de texto: dado un vocabulario de 10 palabras con logits, generar secuencias de 20 tokens utilizando (a) codicioso, (b) temperatura = 0,7, (c) top-k = 3, (d) top-p = 0,9. Comparar la diversidad de las salidas en 5 carreras.
+
+### Indicios
+
+**Exercise 1.**Resolver$u = F(x)$por$x$, que da$x = \tan(\pi(u - 0.5))$. Compruebe que la mediana de la muestra está cerca de 0 y que alrededor del 6% de las muestras tienen$\lvert x \rvert > 10$, que es $1 - (2/\pi)\arctan(10)$¿ Qué ?
+
+**Exercise 2.**La densidad Beta ((2, 5) es $30x(1-x)^4$. Encuentra su valor más grande en el modo $x = 1/5$y utilizar ese valor como $M$En el`rejection_sample`. La tasa de aceptación teórica es $1/M$, así que compártala con la fracción de propuestas que aceptas.
+
+**Exercise 3.**El valor exacto es 2. Llame.`monte_carlo_integral(math.sin, 0, math.pi, n)`por cada uno $n$y repite cada carrera con varias semillas.$n$crece en un factor de 10, el error promedio debe caer en aproximadamente $\sqrt{10} \approx 3.2$¿ Qué ?
+
+**Exercise 4.**Escriba el registro del objetivo, que es $-(x^2 y^2 + x^2 + y^2 - 8x - 8y)/2$, y pasarlo a `metropolis_hastings_2d`. Registrar la tasa de aceptación de cada propuesta de desviación estándar: un valor muy pequeño acepta casi todos los pasos pero se mueve lentamente, y un valor muy grande rechaza casi todos los pasos.
+
+**Exercise 5.**La codificación codificada toma el índice de la logit más grande en cada paso.`temperature_sample`¿ Qué ?`top_k_sample`, y `top_p_sample`El codicioso debe dar la misma secuencia en las 5 carreras, así que cuenta las secuencias distintas para cada método para medir la diversidad.
 
 ## Términos clave
 
 | Term | What people say | What it actually means |
 |------|----------------|----------------------|
 | Sampling | "Drawing random values" | Generating values according to a probability distribution. The mechanism behind all generative AI |
-| Uniform distribution | "All equally likely" | Every value in [a, b] has equal probability density 1/(b-a). The starting point for all sampling methods |
-| Inverse CDF | "Probability transform" | F_inverse(U) converts a uniform sample into a sample from any distribution with known CDF. Exact and efficient |
+| Uniform distribution | "All equally likely" | Every value in $[a, b]$ has equal probability density $1/(b-a)$. The starting point for all sampling methods |
+| Inverse CDF | "Probability transform" | $F^{-1}(U)$ converts a uniform sample into a sample from any distribution with known CDF. Exact and efficient |
 | Rejection sampling | "Propose and accept/reject" | Generate from a simple proposal, accept with probability proportional to target/proposal ratio. Exact but wastes samples |
-| Importance sampling | "Reweight samples" | Estimate expectations under p(x) using samples from q(x) by weighting each sample by p(x)/q(x). Core to PPO in RL |
-| Monte Carlo | "Average random samples" | Approximate integrals as sample averages. Error O(1/sqrt(N)) regardless of dimension |
+| Importance sampling | "Reweight samples" | Estimate expectations under $p(x)$ using samples from $q(x)$ by weighting each sample by $p(x)/q(x)$. Core to PPO in RL |
+| Monte Carlo | "Average random samples" | Approximate integrals as sample averages. Error $O(1/\sqrt{N})$ regardless of dimension |
 | MCMC | "Random walk that converges" | Construct a Markov chain whose stationary distribution is the target. Metropolis-Hastings is the foundational algorithm |
 | Metropolis-Hastings | "Accept uphill, sometimes downhill" | Propose moves, accept based on density ratio. Detailed balance ensures convergence to target distribution |
 | Gibbs sampling | "One variable at a time" | Update each variable from its conditional distribution holding others fixed. 100% acceptance rate |
-| Temperature | "Confidence knob" | Divides logits by T before softmax. T<1 sharpens (more confident), T>1 flattens (more diverse) |
-| Top-k sampling | "Keep the k best" | Zero out all but the k highest-probability tokens, renormalize, sample. Fixed candidate set size |
-| Nucleus sampling (top-p) | "Keep the probable ones" | Keep the smallest set of tokens whose cumulative probability exceeds p. Adaptive candidate set size |
-| Reparameterization trick | "Move randomness outside" | Write z = mu + sigma * epsilon where epsilon ~ N(0,1). Makes sampling differentiable. Essential for VAE training |
+| Temperature | "Confidence knob" | Divides logits by $T$ before softmax. $T<1$ sharpens (more confident), $T>1$ flattens (more diverse) |
+| Top-k sampling | "Keep the k best" | Zero out all but the $k$ highest-probability tokens, renormalize, sample. Fixed candidate set size |
+| Nucleus sampling (top-p) | "Keep the probable ones" | Keep the smallest set of tokens whose cumulative probability exceeds $p$. Adaptive candidate set size |
+| Reparameterization trick | "Move randomness outside" | Write $z = \mu + \sigma \epsilon$ where $\epsilon \sim \mathcal{N}(0,1)$. Makes sampling differentiable. Essential for VAE training |
 | Gumbel-Softmax | "Soft categorical sampling" | Differentiable approximation to categorical sampling using Gumbel noise + softmax with temperature |
 | Stratified sampling | "Forced coverage" | Divide sample space into strata, sample from each. Always lower variance than naive Monte Carlo |
 | Burn-in | "Warm-up period" | Initial MCMC samples discarded before the chain reaches its stationary distribution |
-| Detailed balance | "Reversibility condition" | p(x) * T(x->y) = p(y) * T(y->x). Sufficient condition for p to be the stationary distribution of a Markov chain |
+| Detailed balance | "Reversibility condition" | $p(x) T(x \to y) = p(y) T(y \to x)$. Sufficient condition for $p$ to be the stationary distribution of a Markov chain |
 | Diffusion sampling | "Iterative denoising" | Generate data by starting from noise and applying learned denoising steps. Each step is a conditional sampling operation |
 
 ## Leer más

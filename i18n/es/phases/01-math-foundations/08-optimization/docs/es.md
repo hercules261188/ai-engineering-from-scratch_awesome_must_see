@@ -38,8 +38,8 @@ minimize L(w) where:
 
 El optimizador más simple: calcular el gradiente de la pérdida con respecto a cada peso. mover cada peso en la dirección opuesta a su gradiente. Escala el paso por la tasa de aprendizaje.
 
-```
-w = w - lr * gradient
+```math
+w = w - \text{lr} \cdot \text{gradient}
 ```
 
 Es todo el algoritmo.
@@ -94,9 +94,11 @@ El ruido en SGD y mini-batch no es un error, ayuda a escapar de mínimos locales
 
 El descenso del gradiente de vainilla sólo mira el gradiente actual. Si el gradiente zigzag (común en valles estrechos), el progreso es lento.
 
-```
-v = beta * v + gradient
-w = w - lr * v
+```math
+\begin{aligned}
+v &= \beta \cdot v + \text{gradient} \\
+w &= w - \text{lr} \cdot v
+\end{aligned}
 ```
 
 La analogía: una bola rodando hacia abajo. No se detiene y reinicia en cada golpe.
@@ -124,17 +126,17 @@ Los diferentes pesos necesitan diferentes tasas de aprendizaje. Un peso que rara
 
 Adam (estimación de momento adaptativo) rastrea dos cosas por peso:
 
-1. Primero momento (m): promedio corriente de los gradientes (como el momento)
-2. Segundo momento (v): promedio corriente de los gradientes al cuadrado (magnitud de gradiente)
+1. En el primer momento ($m$): promedio corriente de los gradientes (como el impulso)
+2. Segundo momento ($v$): promedio corriente de gradientes al cuadrado (magnitud de gradiente)
 
-```
-m = beta1 * m + (1 - beta1) * gradient
-v = beta2 * v + (1 - beta2) * gradient^2
-
-m_hat = m / (1 - beta1^t)    bias correction
-v_hat = v / (1 - beta2^t)    bias correction
-
-w = w - lr * m_hat / (sqrt(v_hat) + epsilon)
+```math
+\begin{aligned}
+m &= \beta_1 \cdot m + (1 - \beta_1) \cdot \text{gradient} \\
+v &= \beta_2 \cdot v + (1 - \beta_2) \cdot \text{gradient}^2 \\[4pt]
+\hat{m} &= m / (1 - \beta_1^t) \quad \text{bias correction} \\
+\hat{v} &= v / (1 - \beta_2^t) \quad \text{bias correction} \\[4pt]
+w &= w - \text{lr} \cdot \hat{m} / (\sqrt{\hat{v}} + \epsilon)
+\end{aligned}
 ```
 
 La división por `sqrt(v_hat)`Los pesos con grandes gradientes se dividen por un número grande (pequeño paso efectivo). los pesos con pequeños gradientes se dividen por un número pequeño (pequeño paso efectivo). cada peso obtiene su propia tasa de aprendizaje adaptativa.
@@ -149,14 +151,14 @@ Horarios comunes:
 
 | Schedule | Formula | Use case |
 |----------|---------|----------|
-| Step decay | lr = lr * factor every N epochs | Simple, manual control |
-| Exponential decay | lr = lr_0 * decay^t | Smooth reduction |
-| Cosine annealing | lr = lr_min + 0.5 * (lr_max - lr_min) * (1 + cos(pi * t / T)) | Transformers, modern training |
+| Step decay | $\text{lr} = \text{lr} \cdot \text{factor}$ every $N$ epochs | Simple, manual control |
+| Exponential decay | $\text{lr} = \text{lr}_0 \cdot \text{decay}^t$ | Smooth reduction |
+| Cosine annealing | $\text{lr} = \text{lr} _{\min} + 0.5 \cdot (\text{lr} _{\max} - \text{lr} _{\min}) \cdot (1 + \cos(\pi t / T))$ | Transformers, modern training |
 | Warmup + decay | Linear ramp up, then decay | Large models, prevents early instability |
 
 ### Conveja vs no conveja
 
-Una función convexa tiene un mínimo.`f(x) = x^2`es convexa.
+Una función convexa tiene un mínimo.$f(x) = x^2$es convexa.
 
 Las funciones de pérdida de la red neuronal no son convexas. Tienen muchos mínimos locales, puntos de silla y regiones planas.
 
@@ -205,8 +207,8 @@ gradient-descent
 
 La función Rosenbrock es un estándar clásico de optimización. Su mínimo es (1, 1) dentro de un estrecho valle curvo que es fácil de encontrar pero difícil de seguir.
 
-```
-f(x, y) = (1 - x)^2 + 100 * (y - x^2)^2
+```math
+f(x, y) = (1 - x)^2 + 100 \cdot (y - x^2)^2
 ```
 
 ```python
@@ -351,9 +353,19 @@ Las clases de optimizadores construidas aquí reaparecen en la Fase 3 cuando ent
 
 2. **Momentum comparison.**ejecuta SGD con valores de impulso [0,0, 0,5, 0,9, 0,99] en la función Rosenbrock.
 
-3. **Saddle point escape.**Define la función `f(x, y) = x^2 - y^2`Comparar cómo vanilla GD, SGD con el impulso, y Adam se comportan. ¿Cuál escapa del punto de la silla?
+3. **Saddle point escape.**Define la función $f(x, y) = x^2 - y^2$Comparar cómo vanilla GD, SGD con el impulso, y Adam se comportan. ¿Cuál escapa del punto de la silla?
 
 4. **Implement learning rate decay.**Añadir un calendario de desintegración exponencial a la clase GradientDescent: `lr = lr_0 * 0.999^step`Comparar la convergencia con y sin descomposición en la función Rosenbrock.
+
+### Indicios
+
+**Exercise 1.**Recurrir a las tasas de aprendizaje, crear un`GradientDescent(lr=...)`por cada uno, y pasarlo a `optimize`con`rosenbrock`y `rosenbrock_gradient`Una carrera que diverge muestra una pérdida que crece o se convierte`nan`El mínimo es de $(1, 1)$con pérdida 0.
+
+**Exercise 2.**Crear`SGDMomentum(momentum=m)`para cada valor y registrar la pérdida después de cada paso.`find_convergence_step`comparar velocidad, y buscar pérdidas que van arriba y abajo para encontrar sobrepasa.
+
+**Exercise 3.**Escriba el gradiente $(2x, -2y)$y ejecutar los tres optimizadores desde (0.01, 0.01). Imprimir $y$Cada 100 pasos: el optimizador que escapa es el que está donde $\lvert y \rvert$crece en tamaño.
+
+**Exercise 4.**Almacenamiento`lr_0`y un contador de pasos en `GradientDescent`, y computación .`lr = lr_0 * 0.999 ** step`En el interior .`step`Imprimir la tasa de aprendizaje en el paso 0 y el paso 1000; debe caer desde `lr_0`En el caso de la$0.37 \times \text{lr}_0$¿ Qué ?
 
 ## Términos clave
 
@@ -365,7 +377,7 @@ Las clases de optimizadores construidas aquí reaparecen en la Fase 3 cuando ent
 | SGD | "Random sampling" | Stochastic gradient descent. Compute gradient on a random subset instead of the full dataset. Almost always means mini-batch SGD in practice. |
 | Mini-batch | "A chunk of data" | A small subset of training data (32-256 samples) used to estimate the gradient. Balances speed and gradient accuracy. |
 | Adam | "The default optimizer" | Adaptive Moment Estimation. Tracks per-weight running averages of gradients and squared gradients to give each weight its own learning rate. |
-| Bias correction | "Fix the cold start" | Adam's first and second moments are initialized to zero. Bias correction divides by (1 - beta^t) to compensate during early steps. |
+| Bias correction | "Fix the cold start" | Adam's first and second moments are initialized to zero. Bias correction divides by $(1 - \beta^t)$ to compensate during early steps. |
 | Learning rate schedule | "Change lr over time" | A function that adjusts the learning rate during training. Large steps early, small steps late. |
 | Convex function | "One valley" | A function where any local minimum is the global minimum. Gradient descent always finds it. Neural network losses are not convex. |
 | Saddle point | "Flat but not a minimum" | A point where the gradient is zero but it is a minimum in some directions and a maximum in others. Common in high dimensions. |

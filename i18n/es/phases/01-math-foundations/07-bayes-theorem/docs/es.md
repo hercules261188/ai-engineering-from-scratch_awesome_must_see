@@ -30,24 +30,24 @@ Si construyes sistemas de inteligencia artificial sin entender esto, interpretar
 
 Ya sabes por la lección 06 que la probabilidad condicional es:
 
-```
-P(A|B) = P(A and B) / P(B)
+```math
+P(A \mid B) = \frac{P(A \text{ and } B)}{P(B)}
 ```
 
 Y simétricamente:
 
+```math
+P(B \mid A) = \frac{P(A \text{ and } B)}{P(A)}
 ```
-P(B|A) = P(A and B) / P(A)
-```
 
-Ambas expresiones comparten el mismo numerador: P(A y B.
+Ambas expresiones comparten el mismo numerador: $P(A \text{ and } B)$- Igualándolos y reorganizando:
 
-```
-P(A and B) = P(A|B) * P(B) = P(B|A) * P(A)
-
-Therefore:
-
-P(A|B) = P(B|A) * P(A) / P(B)
+```math
+\begin{aligned}
+P(A \text{ and } B) &= P(A \mid B) \cdot P(B) = P(B \mid A) \cdot P(A) \\[4pt]
+&\text{Therefore:} \\[4pt]
+P(A \mid B) &= \frac{P(B \mid A) \cdot P(A)}{P(B)}
+\end{aligned}
 ```
 
 Eso es el teorema de Bayes. Cuatro cantidades, una ecuación.
@@ -56,35 +56,35 @@ Eso es el teorema de Bayes. Cuatro cantidades, una ecuación.
 
 | Part | Name | What it means |
 |------|------|---------------|
-| P(A\|B) | Posterior | Your updated belief about A after seeing evidence B |
-| P(B\|A) | Likelihood | How probable the evidence B is if A is true |
-| P(A) | Prior | Your belief about A before seeing any evidence |
-| P(B) | Evidence | Total probability of seeing B under all possibilities |
+| $P(A \mid B)$ | Posterior | Your updated belief about $A$ after seeing evidence $B$ |
+| $P(B \mid A)$ | Likelihood | How probable the evidence $B$ is if $A$ is true |
+| $P(A)$ | Prior | Your belief about $A$ before seeing any evidence |
+| $P(B)$ | Evidence | Total probability of seeing $B$ under all possibilities |
 
-El término prueba P(B) actúa como normalizador.
+El término de la prueba $P(B)$Puede ampliarse usando la ley de la probabilidad total:
 
-```
-P(B) = P(B|A) * P(A) + P(B|not A) * P(not A)
+```math
+P(B) = P(B \mid A) \cdot P(A) + P(B \mid \text{not } A) \cdot P(\text{not } A)
 ```
 
 ### Ejemplo de prueba médica
 
 Una enfermedad afecta a 1 de cada 10.000 personas. La prueba es 99% exacta (captura al 99% de las personas enfermas, da falsos resultados en el 1% de las veces).
 
-```
-P(sick)          = 0.0001     (prior: disease is rare)
-P(positive|sick) = 0.99       (likelihood: test catches it)
-P(positive|healthy) = 0.01    (false positive rate)
-
-P(positive) = P(positive|sick) * P(sick) + P(positive|healthy) * P(healthy)
-            = 0.99 * 0.0001 + 0.01 * 0.9999
-            = 0.000099 + 0.009999
-            = 0.010098
-
-P(sick|positive) = P(positive|sick) * P(sick) / P(positive)
-                 = 0.99 * 0.0001 / 0.010098
-                 = 0.0098
-                 = 0.98%
+```math
+\begin{aligned}
+P(\text{sick}) &= 0.0001 \quad \text{(prior: disease is rare)} \\
+P(\text{positive} \mid \text{sick}) &= 0.99 \quad \text{(likelihood: test catches it)} \\
+P(\text{positive} \mid \text{healthy}) &= 0.01 \quad \text{(false positive rate)} \\[6pt]
+P(\text{positive}) &= P(\text{positive} \mid \text{sick}) \cdot P(\text{sick}) + P(\text{positive} \mid \text{healthy}) \cdot P(\text{healthy}) \\
+&= 0.99 \cdot 0.0001 + 0.01 \cdot 0.9999 \\
+&= 0.000099 + 0.009999 \\
+&= 0.010098 \\[6pt]
+P(\text{sick} \mid \text{positive}) &= P(\text{positive} \mid \text{sick}) \cdot P(\text{sick}) / P(\text{positive}) \\
+&= 0.99 \cdot 0.0001 / 0.010098 \\
+&= 0.0098 \\
+&= 0.98\%
+\end{aligned}
 ```
 
 Cuando una afección es rara, incluso las pruebas precisas producen en su mayoría falsos resultados positivos.
@@ -93,18 +93,18 @@ Cuando una afección es rara, incluso las pruebas precisas producen en su mayor�
 
 Recibes un correo electrónico que contiene la palabra "lotería". ¿Es spam?
 
-```
-P(spam)                = 0.3      (30% of email is spam)
-P("lottery"|spam)      = 0.05     (5% of spam emails contain "lottery")
-P("lottery"|not spam)  = 0.001    (0.1% of legitimate emails contain "lottery")
-
-P("lottery") = 0.05 * 0.3 + 0.001 * 0.7
-             = 0.015 + 0.0007
-             = 0.0157
-
-P(spam|"lottery") = 0.05 * 0.3 / 0.0157
-                  = 0.955
-                  = 95.5%
+```math
+\begin{aligned}
+P(\text{spam}) &= 0.3 \quad \text{(30\% of email is spam)} \\
+P(\text{"lottery"} \mid \text{spam}) &= 0.05 \quad \text{(5\% of spam emails contain "lottery")} \\
+P(\text{"lottery"} \mid \text{not spam}) &= 0.001 \quad \text{(0.1\% of legitimate emails contain "lottery")} \\[6pt]
+P(\text{"lottery"}) &= 0.05 \cdot 0.3 + 0.001 \cdot 0.7 \\
+&= 0.015 + 0.0007 \\
+&= 0.0157 \\[6pt]
+P(\text{spam} \mid \text{"lottery"}) &= 0.05 \cdot 0.3 / 0.0157 \\
+&= 0.955 \\
+&= 95.5\%
+\end{aligned}
 ```
 
 Una palabra cambia la probabilidad del 30% al 95.5%. Un verdadero filtro de spam aplica Bayes a cientos de palabras simultáneamente.
@@ -113,58 +113,56 @@ Una palabra cambia la probabilidad del 30% al 95.5%. Un verdadero filtro de spam
 
 Naive Bayes extiende esto a múltiples características asumiendo que todas las características son condicionalmente independientes dadas las clases:
 
-```
-P(class | feature_1, feature_2, ..., feature_n)
-  = P(class) * P(feature_1|class) * P(feature_2|class) * ... * P(feature_n|class)
-    / P(feature_1, feature_2, ..., feature_n)
+```math
+P(\text{class} \mid \text{feature}_1, \text{feature}_2, \ldots, \text{feature}_n) = \frac{P(\text{class}) \cdot P(\text{feature}_1 \mid \text{class}) \cdot P(\text{feature}_2 \mid \text{class}) \cdots P(\text{feature}_n \mid \text{class})}{P(\text{feature}_1, \text{feature}_2, \ldots, \text{feature}_n)}
 ```
 
 La parte "ingenuo" es la suposición de independencia. En el texto, las ocurrencias de palabras no son independientes ("Nuevo" y "York" están correlacionados). Pero la suposición funciona sorprendentemente bien en la práctica porque el clasificador solo necesita clasificar clases, no producir probabilidades calibradas.
 
 Dado que el denominador es el mismo para todas las clases, se puede saltar y simplemente comparar numeradores:
 
-```
-score(class) = P(class) * product of P(feature_i | class)
+```math
+\text{score}(\text{class}) = P(\text{class}) \cdot \prod_i P(\text{feature}_i \mid \text{class})
 ```
 
 Elige la clase con la puntuación más alta.
 
 ### Estimación máxima de probabilidad (MLE)
 
-¿Cómo obtienes P "feature" de los datos de entrenamiento?
+¿ Cómo lo consigues ?$P(\text{feature} \mid \text{class})$¿De los datos del entrenamiento?
 
-```
-P("free"|spam) = (number of spam emails containing "free") / (total spam emails)
+```math
+P(\text{"free"} \mid \text{spam}) = \frac{\text{number of spam emails containing "free"}}{\text{total spam emails}}
 ```
 
 Esto es MLE: elija los valores de parámetros que hacen que los datos observados sean más probables. Estás maximizando la función de probabilidad, que para los recuentos discretos se reduce a la frecuencia relativa.
 
 Problema: si una palabra nunca aparece en el spam durante el entrenamiento, MLE le da probabilidad cero. Una palabra no vista mata todo el producto.
 
-```
-P(word|class) = (count(word, class) + 1) / (total_words_in_class + vocabulary_size)
+```math
+P(\text{word} \mid \text{class}) = \frac{\text{count}(\text{word}, \text{class}) + 1}{\text{total\_words\_in\_class} + \text{vocabulary\_size}}
 ```
 
 Añadir 1 a cada cuenta asegura que ninguna probabilidad es cero.
 
 ### El importe máximo a posteriori (MAP)
 
-MLE pregunta: ¿qué parámetros maximizan los parámetros de datos P?
+MLE pregunta: qué parámetros maximizan $P(\text{data} \mid \text{parameters})$¿ Qué ?
 
-MAP pregunta: ¿qué parámetros maximizan los parámetros P  en los datos?
+MAP pregunta: qué parámetros maximizan $P(\text{parameters} \mid \text{data})$¿ Qué ?
 
 Por el teorema de Bayes:
 
-```
-P(parameters|data) proportional to P(data|parameters) * P(parameters)
+```math
+P(\text{parameters} \mid \text{data}) \propto P(\text{data} \mid \text{parameters}) \cdot P(\text{parameters})
 ```
 
 MAP agrega un prior sobre los parámetros mismos. Si crees que los parámetros deben ser pequeños, codificas eso como un prior que penaliza valores grandes. Esto es idéntico a la regularización de L2 en ML. La penalización de "arido" en la regresión de la cresta es literalmente un prior gaussiano en los pesos.
 
 | Estimation | Optimizes | ML equivalent |
 |------------|-----------|---------------|
-| MLE | P(data\|params) | Unregularized training |
-| MAP | P(data\|params) * P(params) | L2 / L1 regularization |
+| MLE | $P(\text{data} \mid \text{params})$ | Unregularized training |
+| MAP | $P(\text{data} \mid \text{params}) \cdot P(\text{params})$ | L2 / L1 regularization |
 
 ### Bayesiano vs frecuentista: la diferencia práctica
 
@@ -189,7 +187,7 @@ La conexión es más profunda que la analogía:
 
 **Priors are regularization.**Un previo gaussiano en pesas es la regularización L2. Un previo de Laplace es L1. Cada vez que añades un término de regularización, estás haciendo una declaración bayesiana sobre qué valores de parámetros esperas.
 
-**Posteriors are uncertainty.**Una sola probabilidad prevista no le dice nada sobre lo seguro que es el modelo en esa estimación. Los métodos bayesianos le dan una distribución: "Creo que P(spam) es entre 0,8 y 0,95. "
+**Posteriors are uncertainty.**Una sola probabilidad predicha no le dice nada sobre lo seguro que es el modelo en esa estimación.$P(\text{spam})$es entre 0,8 y 0,95."
 
 **Bayes updates are online learning.**El posterior de hoy se convierte en el anterior de mañana. Cuando tu modelo ve nuevos datos, actualiza sus creencias incrementalmente en lugar de reentrenarse desde cero.
 
@@ -345,26 +343,28 @@ Cuando el anterior y posterior pertenecen a la misma familia de distribuciones, 
 
 | Likelihood | Conjugate Prior | Posterior | Example |
 |-----------|----------------|-----------|---------|
-| Bernoulli | Beta(a, b) | Beta(a + successes, b + failures) | Coin flip bias estimation |
-| Normal (known variance) | Normal(mu_0, sigma_0) | Normal(weighted mean, smaller variance) | Sensor calibration |
-| Poisson | Gamma(a, b) | Gamma(a + sum of counts, b + n) | Modeling arrival rates |
-| Multinomial | Dirichlet(alpha) | Dirichlet(alpha + counts) | Topic modeling, language models |
+| Bernoulli | $\text{Beta}(a, b)$ | $\text{Beta}(a + \text{successes}, b + \text{failures})$ | Coin flip bias estimation |
+| Normal (known variance) | $\text{Normal}(\mu_0, \sigma_0)$ | Normal(weighted mean, smaller variance) | Sensor calibration |
+| Poisson | $\text{Gamma}(a, b)$ | $\text{Gamma}(a + \text{sum of counts}, b + n)$ | Modeling arrival rates |
+| Multinomial | $\text{Dirichlet}(\alpha)$ | $\text{Dirichlet}(\alpha + \text{counts})$ | Topic modeling, language models |
 
 Por qué esto importa: sin antecedentes conjugados, se necesita muestreo de Monte Carlo o inferencia variativa para aproximar el posterior.
 
-La distribución Beta es el conjugado anterior más común en la práctica. Beta(a, b) representa su creencia sobre un parámetro de probabilidad. La media es a/(a+b).
+La distribución Beta es el conjugado anterior más común en la práctica. $\text{Beta}(a, b)$representa su creencia sobre un parámetro de probabilidad.$a/(a+b)$- El más grande .$a+b$, más concentrada (confiante) es la distribución.
 
 Casos especiales del Beta anterior:
-- Beta(1, 1) = uniforme. No tienes opinión sobre el parámetro.
-- Beta(10, 10) = alcanzó el máximo de 0.5.
-- Beta(1, 10) = sesgado hacia 0. Crees que el parámetro es pequeño.
+- $\text{Beta}(1, 1)$No tienes opinión sobre el parámetro.
+- $\text{Beta}(10, 10)$Es muy probable que el parámetro esté cerca de 0.5.
+- $\text{Beta}(1, 10)$= inclinado hacia 0. Crees que el parámetro es pequeño.
 
 La regla de actualización es muy simple:
 
-```
-Prior:     Beta(a, b)
-Data:      s successes, f failures
-Posterior: Beta(a + s, b + f)
+```math
+\begin{aligned}
+\text{Prior:} \quad & \text{Beta}(a, b) \\
+\text{Data:} \quad & s \text{ successes}, f \text{ failures} \\
+\text{Posterior:} \quad & \text{Beta}(a + s, b + f)
+\end{aligned}
 ```
 
 No hay integrales, no muestreo, sólo suma.
@@ -376,19 +376,19 @@ La inferencia bayesiana es naturalmente secuencial. El posterior de hoy se convi
 Ejemplo concreto: estimar si una moneda es justa.
 
 **Day 1: No data yet.**
-Comience con Beta ((1, 1) -- un prior uniforme. No tienes opinión.
+Comience con$\text{Beta}(1, 1)$- No tienes opinión.
 - Mediano anterior: 0,5
 - El Prior es plano en el [0, 1]
 
 **Day 2: Observe 7 heads, 3 tails.**
-Posterior = Beta(1 + 7, 1 + 3) = Beta(8, 4)
-- Media posterior: 8/12 = 0,667
+$\text{Posterior} = \text{Beta}(1 + 7, 1 + 3) = \text{Beta}(8, 4)$
+- Media posterior: $8/12 = 0.667$
 - La evidencia sugiere que la moneda está sesgada hacia las cabezas
 
 **Day 3: Observe 5 more heads, 5 more tails.**
 Usa el posterior de ayer como el anterior de hoy.
-Posterior = Beta(8 + 5, 4 + 5) = Beta(13, 9)
-- Mediano posterior: 13/22 = 0,591
+$\text{Posterior} = \text{Beta}(8 + 5, 4 + 5) = \text{Beta}(13, 9)$
+- Media posterior: $13/22 = 0.591$
 - Los nuevos datos equilibrados retrasaron la estimación hacia 0,5
 
 ```mermaid
@@ -398,7 +398,7 @@ graph LR
     C -->|"5H, 5T"| D["Posterior 2<br/>Beta(13,9)<br/>mean = 0.59"]
 ```
 
-El orden de las observaciones no importa. Beta(1,1) actualizado con las 12 cabezas y 8 colas a la vez da Beta(13, 9) - el mismo resultado. Actualización secuencial y actualización de lote son matemáticamente equivalentes. Pero la actualización secuencial le permite tomar decisiones en cada paso sin almacenar datos brutos.
+El orden de las observaciones no importa. $\text{Beta}(1,1)$actualizada con las 12 cabezas y las 8 colas al mismo tiempo da $\text{Beta}(13, 9)$-- el mismo resultado. actualización secuencial y actualización de lote son matemáticamente equivalentes. Pero la actualización secuencial le permite tomar decisiones en cada paso sin almacenar datos crudos.
 
 Esta es la base del aprendizaje en línea en los sistemas ML de producción.
 
@@ -410,14 +410,14 @@ Configuración: está probando dos colores de botones: variante A (azul) y varia
 
 El ensayo Bayesiano A/B:
 
-1. **Prior.**Comience con Beta(1, 1) para ambas variantes.
+1. **Prior.**Comience con$\text{Beta}(1, 1)$No hay preferencia previa.
 2. **Data.**La variante A: 50 clics de 1000 vistas. La variante B: 65 clics de 1000 vistas.
 3. **Posteriors.**
-   - A: Beta(1 + 50, 1 + 950) = Beta(51, 951).
-   - B: Beta(1 + 65, 1 + 935) = Beta(66, 936). media = 0,066
-4. **Decision.**Computa P ((B > A) -- la probabilidad de que la tasa de conversión verdadera de B es mayor que la de A.
+   - A: $\text{Beta}(1 + 50, 1 + 950) = \text{Beta}(51, 951)$. media = 0,051
+   - B: $\text{Beta}(1 + 65, 1 + 935) = \text{Beta}(66, 936)$. media = 0,066
+4. **Decision.**Computación$P(B > A)$-- la probabilidad de que la tasa de conversión verdadera de B es mayor que la de A.
 
-Computación P ((B > A) analíticamente es difícil. Pero Monte Carlo lo hace trivial:
+Computación$P(B > A)$analíticamente es difícil, pero Monte Carlo lo hace trivial:
 
 ```
 1. Draw 100,000 samples from Beta(51, 951)  -> samples_A
@@ -425,7 +425,7 @@ Computación P ((B > A) analíticamente es difícil. Pero Monte Carlo lo hace tr
 3. P(B > A) = fraction of samples where B > A
 ```
 
-Si P(B > A) > 0,95, envías la variante B. Si está entre 0,05 y 0,95, sigues recopilando datos. Si P(B > A) < 0,05, envías la variante A.
+Si ...$P(B > A) > 0.95$Si es entre 0,05 y 0,95, sigue recopilando datos.$P(B > A) < 0.05$, usted nave variante A.
 
 Ventajas sobre las pruebas A/B frecuentes:
 - Obtienes una declaración de probabilidad directa: "hay un 97% de probabilidad de que B sea mejor"
@@ -435,40 +435,50 @@ Ventajas sobre las pruebas A/B frecuentes:
 
 | Aspect | Frequentist A/B | Bayesian A/B |
 |--------|----------------|--------------|
-| Output | p-value | P(B > A) |
+| Output | p-value | $P(B > A)$ |
 | Interpretation | "How surprising is this data if A=B?" | "How likely is B better than A?" |
 | Early stopping | Inflates false positives | Safe at any point (given a well-chosen prior and correctly specified model) |
 | Prior knowledge | Not used | Encoded as Beta prior |
-| Decision rule | p < 0.05 | P(B > A) > threshold |
+| Decision rule | $p < 0.05$ | $P(B > A) > \text{threshold}$ |
 
 ## Los ejercicios
 
-1. **Multiple tests.**Un paciente prueba positivo dos veces en pruebas independientes (ambas son 99% precisas, la prevalencia de la enfermedad es de 1 en 10.000). ¿Qué es P(enfermo) después de ambas pruebas?
+1. **Multiple tests.**Un paciente tiene dos pruebas positivas en pruebas independientes (ambas son 99% precisas, prevalencia de la enfermedad 1 en 10.000).$P(\text{sick})$¿Utiliza el posterior del primer examen como el anterior para el segundo?
 
 2. **Smoothing impact.**¿Cómo cambian las probabilidades de la palabra superior? ¿Qué sucede con la palabra que aparece sólo en jamón?
 
-3. **Add features.**Extenda la clase NaiveBayes para que también utilice la longitud del mensaje (corto/largo) como una característica junto con el conteo de palabras. Estima P(short dizerspam) y P(short dizerham) a partir de los datos de entrenamiento y dobla en la puntuación de predicción.
+3. **Add features.**Extenda la clase NaiveBayes para que también utilice la longitud del mensaje (corto/largo) como característica junto con el recuento de palabras.$P(\text{short} \mid \text{spam})$y $P(\text{short} \mid \text{ham})$de los datos de entrenamiento y doblarlo en el puntaje de predicción.
 
-4. **MAP by hand.**Dados los datos observados (7 cabezas en 10 lanzamientos de moneda), calcular la estimación de MAP del sesgo utilizando un Beta(2,2) anterior.
+4. **MAP by hand.**Dados los datos observados (7 cabezas en 10 lanzamientos de monedas), calcular la estimación de la MAP del sesgo utilizando un $\text{Beta}(2,2)$El informe de la Comisión sobre la evaluación de la situación de los Estados miembros en el sector de la energía ($7/10$¿Qué es lo que se hace?
+
+### Indicios
+
+**Exercise 1.**Llamé`bayes`una vez para obtener la posterior después de la prueba 1, luego vuelva a llamarla con la posterior como la anterior. `sequential_bayes(prior, likelihood, false_positive_rate, 2)`debe dar el mismo valor, cerca de 0,5.
+
+**Exercise 2.**Crear uno `NaiveBayes(smoothing=s)`para cada valor, entrenarlo en los mismos datos, e imprimir `top_words`Con la suavizamiento 0, una palabra que nunca aparece en el spam obtiene probabilidad 0, por lo que su registro no se define.
+
+**Exercise 3.**Cuente cuántos mensajes de spam y jamón son cortos, divida por el número de mensajes en cada clase, y añada el registro de esa relación al puntaje en `predict`Compruebe si las dos probabilidades para cada clase suman hasta 1.
+
+**Exercise 4.**Con un$\text{Beta}(\alpha, \beta)$La evaluación de la MAP es anterior a la$\frac{h + \alpha - 1}{n + \alpha + \beta - 2}$- Ponlo en .$h = 7$¿ Qué ?$n = 10$El resultado debe situarse entre el MLE (0,7) y el modo anterior (0,5).
 
 ## Términos clave
 
 | Term | What people say | What it actually means |
 |------|----------------|----------------------|
-| Prior | "My initial guess" | P(hypothesis) before observing evidence. In ML: the regularization term. |
-| Likelihood | "How well the data fits" | P(evidence\|hypothesis). How probable the observed data is under a specific hypothesis. |
-| Posterior | "My updated belief" | P(hypothesis\|evidence). The prior multiplied by the likelihood, then normalized. |
-| Evidence | "The normalizing constant" | P(data) across all hypotheses. Ensures the posterior sums to 1. |
+| Prior | "My initial guess" | $P(\text{hypothesis})$ before observing evidence. In ML: the regularization term. |
+| Likelihood | "How well the data fits" | $P(\text{evidence} \mid \text{hypothesis})$. How probable the observed data is under a specific hypothesis. |
+| Posterior | "My updated belief" | $P(\text{hypothesis} \mid \text{evidence})$. The prior multiplied by the likelihood, then normalized. |
+| Evidence | "The normalizing constant" | $P(\text{data})$ across all hypotheses. Ensures the posterior sums to 1. |
 | Naive Bayes | "That simple text classifier" | A classifier that assumes features are independent given the class. Works well despite the false assumption. |
 | Laplace smoothing | "Add-one smoothing" | Adding a small count to every feature to prevent zero probabilities from unseen data. |
-| MLE | "Just use the frequencies" | Choose parameters that maximize P(data\|parameters). No prior. Can overfit with small data. |
-| MAP | "MLE with a prior" | Choose parameters that maximize P(data\|parameters) * P(parameters). Equivalent to regularized MLE. |
-| Log-probability | "Work in log space" | Using log(P) instead of P to avoid floating-point underflow when multiplying many small numbers. |
+| MLE | "Just use the frequencies" | Choose parameters that maximize $P(\text{data} \mid \text{parameters})$. No prior. Can overfit with small data. |
+| MAP | "MLE with a prior" | Choose parameters that maximize $P(\text{data} \mid \text{parameters}) \cdot P(\text{parameters})$. Equivalent to regularized MLE. |
+| Log-probability | "Work in log space" | Using $\log(P)$ instead of $P$ to avoid floating-point underflow when multiplying many small numbers. |
 | False positive | "A wrong alarm" | The test says positive, but the true state is negative. Drives the base rate fallacy. |
 
 ## Leer más
 
 - [3Blue1Brown: Bayes' theorem](https://www.youtube.com/watch?v=HZGCoVF3YvM)- explicación visual con el ejemplo del examen médico
-- [Stanford CS229: Generative Learning Algorithms](https://cs229.stanford.edu/notes2022fall/cs229-notes2.pdf)- Bayes ingenuo y su conexión con modelos discriminatorios
+- [Stanford CS229: Generative Learning Algorithms](https://cs229.stanford.edu/main_notes.pdf)- Bayes ingenuo y su conexión con modelos discriminatorios
 - [Think Bayes](https://greenteapress.com/wp/think-bayes/)- libro gratuito, estadísticas bayesianas con código Python
 - [scikit-learn Naive Bayes](https://scikit-learn.org/stable/modules/naive_bayes.html)- las implementaciones de la producción y cuándo utilizar cada variante

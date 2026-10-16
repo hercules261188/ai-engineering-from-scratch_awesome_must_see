@@ -28,29 +28,31 @@ Así es como PyTorch, TensorFlow y JAX funcionan.
 
 ### La regla de la cadena
 
-Si ...`y = f(g(x))`, el derivado de `y`en lo que respecta a `x`es:
+Si ...$y = f(g(x))$, el derivado de $y$en lo que respecta a $x$es:
 
-```
-dy/dx = dy/dg * dg/dx = f'(g(x)) * g'(x)
+```math
+\frac{dy}{dx} = \frac{dy}{dg} \cdot \frac{dg}{dx} = f'(g(x)) \cdot g'(x)
 ```
 
 Multiplicar las derivadas a lo largo de la cadena. Cada enlace contribuye a su derivada local.
 
-Ejemplo: `y = sin(x^2)`
+Ejemplo: $y = \sin(x^2)$
 
-```
-g(x) = x^2       g'(x) = 2x
-f(g) = sin(g)     f'(g) = cos(g)
-
-dy/dx = cos(x^2) * 2x
+```math
+\begin{aligned}
+g(x) &= x^2 \qquad & g'(x) &= 2x \\
+f(g) &= \sin(g) \qquad & f'(g) &= \cos(g) \\[4pt]
+\frac{dy}{dx} &= \cos(x^2) \cdot 2x
+\end{aligned}
 ```
 
 Para composiciones más profundas, la cadena se extiende:
 
-```
-y = f(g(h(x)))
-
-dy/dx = f'(g(h(x))) * g'(h(x)) * h'(x)
+```math
+\begin{aligned}
+y &= f(g(h(x))) \\[4pt]
+\frac{dy}{dx} &= f'(g(h(x))) \cdot g'(h(x)) \cdot h'(x)
+\end{aligned}
 ```
 
 Cada capa de una red neuronal es un eslabón de esta cadena.
@@ -88,7 +90,7 @@ El paso hacia atrás aplica la regla de la cadena en cada nodo, propagando gradi
 
 Hay dos maneras de aplicar la regla de la cadena a través de un gráfico.
 
-**Forward mode**El sistema de cálculo de las derivadas de las operaciones de cálculo de las operaciones de cálculo de las operaciones de cálculo de las operaciones de cálculo de las operaciones de cálculo de las operaciones de cálculo de las operaciones de cálculo de las operaciones de cálculo de las operaciones de cálculo de las operaciones de cálculo de las operaciones de cálculo de las operaciones de cálculo de las operaciones de cálculo de las operaciones de cálculo de las operaciones de cálculo de cálculo de las operaciones de cálculo de las operaciones de cálculo de las operaciones de cálculo de las operaciones de cálculo de cálculo de las operaciones de cálculo de las operaciones de cálculo de cálculo de las operaciones de cálculo de cálculo de las operaciones de cálculo de cálculo de las operaciones de cálculo de cálculo de las operaciones de cálculo de cálculo de las operaciones de cálculo de cálculo de las operaciones de cálculo de cálculo de las operaciones de cálculo de cálculo de cálculo de las operaciones de cálculo de cálculo de cálculo de las operaciones de cálculo de cálculo de cálculo de las operaciones de cálculo de cálculo de las operaciones de cálculo de cálculo de las operaciones de cálculo de cálculo de las operaciones de cálculo de cálculo de las operaciones de cálculo de cálculo de las operaciones de cálculo de cálculo de las operaciones de cálculo de cálculo de las operaciones de cálculo de cálculo de las operaciones de cálculo de cálculo de las operaciones de cálculo de cálculo de las operaciones de cálculo de cálculo de las cuentas de cálculo de cálculo de las cuentas de cálculo de las cuentas de cuentas de cuentas de cuentas de cuentas de cuentas de cuentas de cuentas de cuentas de cuentas de cuentas de cuentas de cuentas de cuentas de cuentas de cuentas de cuentas de cuentas de cuentas de cuentas de cuentas de cuentas de cuentas de cuentas de cuentas de cuentas de cuentas de cuentas de cuentas de cuentas de cuentas de cuentas de cuentas de cuentas de cuentas de cuentas de cuentas de cuentas de cuentas de cuentas de cuentas de cuentas de cuentas de cuentas de cuentas de cuentas de cuentas de cuentas de cuentas de cuentas de cuentas de cuentas de cuentas de cuentas de cuentas de cuentas de cuentas de cuentas de cuentas de cuentas de cuentas de cuentas de cuentas de cuentas de cuentas de cuentas de cuentas de cuentas de cuentas de cuentas de cuentas de cuentas de cuentas de cuentas de cuentas de cuentas de cu`dx/dx = 1`Es bueno cuando tienes pocas entradas y muchas salidas.
+**Forward mode**El sistema de cálculo de las derivadas de las operaciones de cálculo de las operaciones de cálculo de las operaciones de cálculo de las operaciones de cálculo de las operaciones de cálculo de las operaciones de cálculo de las operaciones de cálculo de las operaciones de cálculo de las operaciones de cálculo de las operaciones de cálculo de las operaciones de cálculo de las operaciones de cálculo de las operaciones de cálculo de las operaciones de cálculo de las operaciones de cálculo de cálculo de las operaciones de cálculo de las operaciones de cálculo de las operaciones de cálculo de las operaciones de cálculo de cálculo de las operaciones de cálculo de las operaciones de cálculo de cálculo de las operaciones de cálculo de cálculo de las operaciones de cálculo de cálculo de las operaciones de cálculo de cálculo de las operaciones de cálculo de cálculo de las operaciones de cálculo de cálculo de las operaciones de cálculo de cálculo de las operaciones de cálculo de cálculo de cálculo de las operaciones de cálculo de cálculo de cálculo de las operaciones de cálculo de cálculo de cálculo de las operaciones de cálculo de cálculo de las operaciones de cálculo de cálculo de las operaciones de cálculo de cálculo de las operaciones de cálculo de cálculo de las operaciones de cálculo de cálculo de las operaciones de cálculo de cálculo de las operaciones de cálculo de cálculo de las operaciones de cálculo de cálculo de las operaciones de cálculo de cálculo de las operaciones de cálculo de cálculo de las operaciones de cálculo de cálculo de las cuentas de cálculo de cálculo de las cuentas de cálculo de las cuentas de cuentas de cuentas de cuentas de cuentas de cuentas de cuentas de cuentas de cuentas de cuentas de cuentas de cuentas de cuentas de cuentas de cuentas de cuentas de cuentas de cuentas de cuentas de cuentas de cuentas de cuentas de cuentas de cuentas de cuentas de cuentas de cuentas de cuentas de cuentas de cuentas de cuentas de cuentas de cuentas de cuentas de cuentas de cuentas de cuentas de cuentas de cuentas de cuentas de cuentas de cuentas de cuentas de cuentas de cuentas de cuentas de cuentas de cuentas de cuentas de cuentas de cuentas de cuentas de cuentas de cuentas de cuentas de cuentas de cuentas de cuentas de cuentas de cuentas de cuentas de cuentas de cuentas de cuentas de cuentas de cuentas de cuentas de cuentas de cuentas de cuentas de cuentas de cuentas de cuentas de cuentas de cuentas de cuentas de cu$dx/dx = 1$Es bueno cuando tienes pocas entradas y muchas salidas.
 
 ```
 Forward mode: seed dx/dx = 1, propagate forward
@@ -98,7 +100,7 @@ Forward mode: seed dx/dx = 1, propagate forward
   y = sin(a)  (dy/dx = cos(a) * da/dx = cos(4) * 4 = -2.615)
 ```
 
-**Reverse mode**comienza en la salida y tira los gradientes hacia atrás.`dy/dy = 1`Es bueno cuando tienes muchas entradas y pocas salidas.
+**Reverse mode**comienza en la salida y tira los gradientes hacia atrás.$dy/dy = 1$Es bueno cuando tienes muchas entradas y pocas salidas.
 
 ```
 Reverse mode: seed dy/dy = 1, propagate backward
@@ -112,12 +114,12 @@ Las redes neuronales tienen millones de entradas (pesos) y una salida (pérdida)
 
 | Mode | Seed | Direction | Best when |
 |------|------|-----------|-----------|
-| Forward | `dx_i/dx_i = 1` | Input to output | Few inputs, many outputs |
-| Reverse | `dy/dy = 1` | Output to input | Many inputs, few outputs (neural nets) |
+| Forward | $dx_i/dx_i = 1$ | Input to output | Few inputs, many outputs |
+| Reverse | $dy/dy = 1$ | Output to input | Many inputs, few outputs (neural nets) |
 
 ### Números dobles para el modo de avanzada
 
-El modo de avanzada puede implementarse con elegancia con números dobles.`a + b*epsilon`donde`epsilon^2 = 0`¿ Qué ?
+El modo de avanzada puede implementarse con elegancia con números dobles.$a + b\epsilon$donde$\epsilon^2 = 0$¿ Qué ?
 
 ```
 Dual number: (value, derivative)
@@ -236,7 +238,7 @@ Cada operación crea un cierre que sabe cómo calcular los gradientes locales y 
             v._backward()
 ```
 
-El orden topológico asegura que el gradiente de cada nodo se calcula completamente antes de que se propague a sus hijos.
+El tipo topológico asegura que el gradiente de cada nodo se calcula completamente antes de que se propague a sus hijos.$dy/dy = 1$¿Qué es lo que se hace?
 
 ### Paso 4: Más operaciones para un motor completo
 
@@ -300,11 +302,11 @@ La clase de valor básica maneja la adición, multiplicación y relu. Un motor a
 | Operation | Backward rule | Used in |
 |-----------|--------------|---------|
 | `__sub__` | Reuses add + neg | Loss computation (pred - target) |
-| `__pow__` | n * x^(n-1) | Polynomial activations, MSE (error^2) |
+| `__pow__` | $n \cdot x^{n-1}$ | Polynomial activations, MSE ($\text{error}^2$) |
 | `__truediv__` | Reuses mul + pow(-1) | Normalization, learning rate scaling |
-| `exp` | exp(x) * upstream | Softmax, log-likelihood |
-| `log` | (1/x) * upstream | Cross-entropy loss, log probabilities |
-| `tanh` | (1 - tanh^2) * upstream | Classic activation function |
+| `exp` | $\exp(x) \cdot \text{upstream}$ | Softmax, log-likelihood |
+| `log` | $(1/x) \cdot \text{upstream}$ | Cross-entropy loss, log probabilities |
+| `tanh` | $(1 - \tanh^2) \cdot \text{upstream}$ | Classic activation function |
 
 La parte inteligente:`__sub__`y `__truediv__`Se pueden definir en términos de operaciones existentes. Obtienen gradientes correctos de forma gratuita porque la regla de cadena se compone a través de las operaciones subyacentes de adición/mul/pow.
 
@@ -489,13 +491,23 @@ La clase de valor construida aquí es la base para el ciclo de entrenamiento de 
 
 ## Los ejercicios
 
-1. Añadir`__pow__`a la clase de valor para que pueda calcular`x ** n`Verifique eso .`d/dx(x^3)`En el`x=2`igual `12.0`¿ Qué ?
+1. Añadir`__pow__`a la clase de valor para que pueda calcular`x ** n`Verifique eso .$\frac{d}{dx}(x^3)$En el$x=2$igual `12.0`¿ Qué ?
 
-2. Añadir`tanh`como una función de activación.`tanh'(0) = 1`y `tanh'(2) = 0.0707`(aproximadamente).
+2. Añadir`tanh`como una función de activación.$\tanh'(0) = 1$y $\tanh'(2) = 0.0707$(aproximadamente).
 
 3. Construir un gráfico de cálculo para una sola neurona: `y = relu(w1*x1 + w2*x2 + b)`Computa los cinco gradientes y verifica contra PyTorch.
 
 4. Implementar la autoproducción en modo avanzado utilizando números dobles.`Dual`clase y comprobar que da las mismas derivadas que su motor de modo inverso.
+
+### Indicios
+
+**Exercise 1.** `Value`ya define `__pow__`. Lea su .`_backward`y confirmar que se aplica.$n x^{n-1}$- ¿Qué es lo que está pasando?`x = Value(2.0)`¿ Qué ?`y = x ** 3`¿ Qué ?`y.backward()`¿ Qué es ?`x.grad`Debe ser de 12,0.
+
+**Exercise 2.**Usar$\tanh'(x) = 1 - \tanh(x)^2$En el`_backward`- Controla contra tu propia diferencia finita:$\frac{\tanh(x + h) - \tanh(x - h)}{2h}$Deben estar de acuerdo en $x = 0$y $x = 2$¿ Qué ?
+
+**Exercise 3.**Construir`w1*x1 + w2*x2 + b`de la`Value`objetos, se aplican `relu`, y llamar`backward`Antes de comparar con PyTorch, compruebe a mano si la entrada de`relu`es positivo, el gradiente para `w1`igual `x1`Si es negativo, los cinco gradientes son 0.
+
+**Exercise 4.**Almacenar un valor y un derivado en cada uno `Dual`, y utilizar la regla del producto $(a, a')(b, b') = (ab, a'b + ab')$Sear la entrada con la derivada 1 y comparar el resultado con `x.grad`del motor de modo inverso para la misma función.
 
 ## Términos clave
 
@@ -506,13 +518,13 @@ La clase de valor construida aquí es la base para el ciclo de entrenamiento de 
 | Forward mode | "Push derivatives forward" | Autodiff that propagates derivatives from inputs to outputs. One pass per input variable. |
 | Reverse mode | "Backpropagation" | Autodiff that propagates gradients from outputs to inputs. One pass per output variable. |
 | Autograd | "Automatic gradients" | A system that records operations on values, builds a graph, and computes exact gradients via the chain rule |
-| Dual numbers | "Value plus derivative" | Numbers of the form a + b*epsilon (epsilon^2 = 0) that carry derivative information through arithmetic |
+| Dual numbers | "Value plus derivative" | Numbers of the form $a + b\epsilon$ ($\epsilon^2 = 0$) that carry derivative information through arithmetic |
 | Topological sort | "Dependency order" | Ordering graph nodes so every node comes after all its dependencies. Required for correct gradient propagation. |
 | Gradient accumulation | "Add, don't replace" | When a value feeds into multiple operations, its gradient is the sum of all incoming gradient contributions |
 | Dynamic graph | "Define by run" | A computation graph rebuilt on every forward pass, allowing Python control flow inside models (PyTorch style) |
 | Gradient checking | "Numerical verification" | Comparing autodiff gradients against numerical finite-difference gradients to verify correctness. Essential for debugging. |
 | MLP | "Multi-layer perceptron" | A neural network with one or more hidden layers of neurons. Each neuron computes a weighted sum plus bias, then applies an activation function. |
-| Neuron | "Weighted sum + activation" | The basic unit: output = activation(w1*x1 + w2*x2 + ... + b). The weights and bias are learnable parameters. |
+| Neuron | "Weighted sum + activation" | The basic unit: $\text{output} = \text{activation}(w_1 x_1 + w_2 x_2 + \cdots + b)$. The weights and bias are learnable parameters. |
 
 ## Leer más
 
