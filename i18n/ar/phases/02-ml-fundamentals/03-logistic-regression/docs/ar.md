@@ -18,7 +18,7 @@
 
 تريد التنبؤ ما إذا كان الورم خبيثًا أو خبيثًا نظراً لقياسه. تحاول التراجع الخطي. يخرج أرقام مثل 0.3 أو 1.7 أو -0.5. ماذا يعني ذلك؟ هل 1.7 "خبيثًا للغاية"؟ هل -0.5 "خبيثًا للغاية"؟ التراجع الخطي يخرج أرقام غير محدودة. تحتاج التصنيف إلى احتمالات محدودة بين 0 و 1 ، وقرار واضح: نعم أو لا.
 
-تحل الرجعة اللوجستية هذا الأمر. تأخذ نفس الجمع الخطي (wx + b) وتمررها من خلال وظيفة sigmoid، والتي تضرب أي عدد في النطاق (0, 1). الخروج هو احتمال. تحدد عتبة (عادة 0.5) وتخذ قرارًا.
+العودة اللوجستية تحل هذا الأمر.$wx + b$) ويمررها عبر وظيفة sigmoid، والتي تضرب أي عدد في النطاق (0, 1). الخروج هو احتمال. تحدد عتبة (عادة 0.5) وتخذ قرار.
 
 هذه هي واحدة من أكثر خوارزميات استخداماً على نطاق واسع في الممارسة العملية. على الرغم من اسمه، فإن الرجوع اللوجستي هو خوارزمية تصنيف، وليس خوارزمية الرجوع. يأتي الاسم من الوظيفة اللوجستية (السيغمويد) التي تستخدمها.
 
@@ -44,22 +44,22 @@ actual: 0   0   0   0   1   1   1   1   1   1
 
 وظيفة sigmoid تفعل بالضبط هذا:
 
-```
-sigmoid(z) = 1 / (1 + e^(-z))
+```math
+\sigma(z) = \frac{1}{1 + e^{-z}}
 ```
 
 الخصائص:
-- عندما يكون z كبير و إيجابي، sigmoid ((z) يقترب من 1
-- عندما z كبير و سلبي، sigmoid ((z) يقترب من 0
-- عندما z = 0، sigmoid(z) = 0.5
+- متى$z$هو كبير و إيجابي$\sigma(z)$الإتجاهات 1
+- متى$z$هو كبير و سلبي$\sigma(z)$التقارير 0
+- متى$z = 0$،$\sigma(z) = 0.5$
 - الخروج دائما ما يكون بين 0 و 1
 - الوظيفة سلسة ويمكن التمييز في كل مكان
 
-المشتق لها شكل مريح: sigmoid'(z) = sigmoid(z) * (1 - sigmoid(z)). وهذا يجعل حساب التراجع فعالا.
+المشتقات لها شكل مناسب: $\sigma'(z) = \sigma(z) (1 - \sigma(z))$هذا يجعل حسابات التراجع فعالة
 
 ### التراجع اللوجستي = النموذج الخطوي + Sigmoid
 
-يقوم النموذج بحساب z = wx + b (مثل التراجع الخطوي) ، ثم يطبق sigmoid:
+النموذج يحسب$z = wx + b$(مثل التراجع الخطى) ، ثم يطبق sigmoid:
 
 ```mermaid
 flowchart LR
@@ -70,21 +70,21 @@ flowchart LR
     D -->|No| N[Predict 0]
 ```
 
-إنخراج p يتم تفسيره على أنه P ((y=1)) x) ، احتمال أن المدخل ينتمي إلى الفئة 1. الحدود القرارية حيث wx + b = 0, مما يجعل إنخراج sigmoid بالضبط 0.5.
+الناتج$p$يتم تفسيرها على أنها$P(y=1 \mid x)$، احتمال أن المدخل ينتمي إلى الفئة 1. الحدود القرارية هي حيث $wx + b = 0$، مما يجعل انتاج سيغمايد بالضبط 0.5
 
 ### الخسارة المتقاطعة الثنائية
 
 لا يمكنك استخدام MSE للتراجع اللوجستي. يخلق MSE مع sigmoid سطحًا غير متواصلًا للتكلفة مع العديد من الحد الأدنى المحلي. بدلاً من ذلك ، استخدم التشابه الثنائي (خسارة السجل):
 
-```
-Loss = -(1/n) * sum(y * log(p) + (1-y) * log(1-p))
+```math
+\text{Loss} = -\frac{1}{n} \sum \left( y \log(p) + (1-y) \log(1-p) \right)
 ```
 
 لماذا هذا يعمل:
-- عندما ي=1 و p قريب من 1: log(1) = 0، لذلك الخسارة قريبة من 0 (صحيحة، منخفضة التكلفة)
-- عندما ي=1 و p قريب من 0: log(0) يقترب من اللانهاية السلبية، لذلك الخسارة هائلة (خطأ، تكلفة عالية)
-- عندما y=0 و p قريب من 0: log(1) = 0, لذلك الخسارة قريبة من 0 (صحيحة، منخفضة التكلفة)
-- عندما ي=0 و p قريب من 1: log(0) يقترب من اللانهاية السلبية، لذلك الخسارة هائلة (خطأ، تكلفة عالية)
+- متى$y=1$و$p$هو قريب من 1: $\log(1) = 0$، لذا الخسارة قريبة من 0 (صحيحة، منخفضة التكلفة)
+- متى$y=1$و$p$هو قريب من 0: $\log(0)$يقترب من اللانهاية السلبية، لذلك الخسارة هائلة (خطأ، تكلفة عالية)
+- متى$y=0$و$p$هو قريب من 0: $\log(1) = 0$، لذا الخسارة قريبة من 0 (صحيحة، منخفضة التكلفة)
+- متى$y=0$و$p$هو قريب من 1: $\log(0)$يقترب من اللانهاية السلبية، لذلك الخسارة هائلة (خطأ، تكلفة عالية)
 
 هذه الوظيفة الخسارة متناحلة للعودة اللوجستية، وتضمن الحد الأدنى العالمي الوحيد.
 
@@ -92,12 +92,14 @@ Loss = -(1/n) * sum(y * log(p) + (1-y) * log(1-p))
 
 إن تراجعات الإنتروبي الثنائي مع sigmoid لها شكل نظيف:
 
-```
-dL/dw = (1/n) * sum((p - y) * x)
-dL/db = (1/n) * sum(p - y)
+```math
+\begin{aligned}
+\frac{\partial L}{\partial w} &= \frac{1}{n} \sum (p - y) \, x \\
+\frac{\partial L}{\partial b} &= \frac{1}{n} \sum (p - y)
+\end{aligned}
 ```
 
-هذه تبدو متطابقة مع تراجع خطي. الفرق هو أن p = sigmoid ((wx + b) بدلا من p = wx + b. يقدم sigmoid عدم الخطية، ولكن قاعدة تحديث التراجع تظل نفسها.
+هذه تبدو متطابقة مع تراجع خطي. الفرق هو أن $p = \sigma(wx + b)$بدلاً من$p = wx + b$. سيغمايد يقدم عدم الخطية، ولكن قاعدة تحديث التراجع تظل نفسها.
 
 ```mermaid
 flowchart TD
@@ -114,29 +116,29 @@ flowchart TD
 
 بالنسبة لدخل ثنائي الأبعاد (ميزانين) ، الحد القراري هو الخط الذي يلي:
 
-```
-w1*x1 + w2*x2 + b = 0
+```math
+w_1 x_1 + w_2 x_2 + b = 0
 ```
 
 يتم تصنيف النقاط على جانب واحد على أنها 1 ، والنقاط على الجانب الآخر على أنها 0. تنتج رجعة اللوجستية حدود القرار الخطية دائمًا. إذا كنت بحاجة إلى حدود منحنية ، إما إضافة ميزات متعددة النقاط أو استخدام نموذج غير خطي.
 
 ### التصنيف المتعدد الفئات مع Softmax
 
-التراجع اللوجستي الثنائي يتعامل مع فئتين. بالنسبة إلى فئتين k، استخدم وظيفة softmax:
+التراجع اللوجستي الثنائي يتعامل مع فئتين.$k$فصائل، استخدم وظيفة softmax:
 
-```
-softmax(z_i) = e^(z_i) / sum(e^(z_j) for all j)
+```math
+\text{softmax}(z_i) = \frac{e^{z_i}}{\sum_j e^{z_j}}
 ```
 
-كل فئة لديها متجه وزنها الخاص. يقوم النموذج بحساب درجة z_i لكل فئة، ثم تحويل softmax النتائج إلى احتمالات التي تضم إلى 1.
+كل فئة لها متجه وزنها الخاص. النموذج يحسب النتيجة$z_i$لكل فئة، ثم softmax تحويل النتائج إلى احتمالات التي يصل إلى 1.
 
 تصبح وظيفة الخسارة كجزء من التشكلات المتقاطعة:
 
-```
-Loss = -(1/n) * sum(sum(y_k * log(p_k)))
+```math
+\text{Loss} = -\frac{1}{n} \sum \sum_k y_k \log(p_k)
 ```
 
-حيث y_k هو 1 للصف الحقيقي و 0 لجميع الآخرين (الترميز واحد الحار).
+أين$y_k$هو 1 للصف الحقيقي و 0 لجميع الجهات الأخرى (الترميزات ذات الصلة).
 
 ### مقاييس التقييم
 
@@ -150,18 +152,18 @@ Loss = -(1/n) * sum(sum(y_k * log(p_k)))
 | Actually Negative | False Positive (FP) | True Negative (TN) |
 
 **Precision**: من بين كل الإيجابيات المتوقعة، كم منها هي إيجابية فعلاً؟
-```
-Precision = TP / (TP + FP)
+```math
+\text{Precision} = \frac{TP}{TP + FP}
 ```
 
 **Recall**من بين كل الإيجابيات الفعلية، كم من هذه التي أمسكناها؟
-```
-Recall = TP / (TP + FN)
+```math
+\text{Recall} = \frac{TP}{TP + FN}
 ```
 
 **F1 Score**: متوسط منسجم للدقة والإستدعاء. يوازن كلا المقاييسين.
-```
-F1 = 2 * (Precision * Recall) / (Precision + Recall)
+```math
+F_1 = 2 \cdot \frac{\text{Precision} \cdot \text{Recall}}{\text{Precision} + \text{Recall}}
 ```
 
 متى تحديد الأولويات:
@@ -504,7 +506,7 @@ print(f"\nClassification Report:\n{classification_report(y_te, y_pred)}")
 
 ## التمارين
 
-1. إنشاء مجموعة بيانات غير قابلة للفصل بشكل خطي (على سبيل المثال ، دوائر مركزة). قم بتدريب التراجع اللوجستي ومراقبة فشله. ثم أضف ميزات متعددة النقاط (x1^2, x2^2, x1*x2) وتدريب مرة أخرى. أظهر أن الدقة تتحسن.
+1. إنشاء مجموعة بيانات غير قابلة للفصل بشكل خطي (على سبيل المثال ، دوائر مركزة). قم بتدريب التراجع اللوجستي وملاحظة فشله. ثم أضف ميزات متعددة النقاط ($x_1^2, x_2^2, x_1 x_2$ومرة أخرى، و أظهر أن الدقة تحسن
 2. تنفيذ ماتريكسي الارتباك متعدد الفئات لنموذج 3 فئة softmax. الحساب الدقة لكل فئة والذكاء. أي فئة هي أصعب تصنيفها؟
 3. قم ببناء منحنى ROC من الصفر. لـ 100 قيمة عتبة من 0 إلى 1 ، احسب معدل الإيجابية الحقيقية ومعدل الإيجابية الخاطئة. احسب AUC (المنطقة تحت المنحنى) باستخدام قاعدة التراسبيزويدية.
 
@@ -513,14 +515,14 @@ print(f"\nClassification Report:\n{classification_report(y_te, y_pred)}")
 | Term | What people say | What it actually means |
 |------|----------------|----------------------|
 | Logistic regression | "Regression for classification" | A linear model followed by a sigmoid function that outputs class probabilities |
-| Sigmoid function | "The S-curve" | The function 1/(1+e^(-z)) that maps any real number to the range (0, 1) |
-| Binary cross-entropy | "Log loss" | The loss function -[y*log(p) + (1-y)*log(1-p)] that penalizes confident wrong predictions severely |
+| Sigmoid function | "The S-curve" | The function $1/(1+e^{-z})$ that maps any real number to the range (0, 1) |
+| Binary cross-entropy | "Log loss" | The loss function $-[y \log(p) + (1-y) \log(1-p)]$ that penalizes confident wrong predictions severely |
 | Decision boundary | "The dividing line" | The surface where the model's output probability equals 0.5, separating predicted classes |
 | Softmax | "Multi-class sigmoid" | A function that converts a vector of scores into probabilities that sum to 1 |
-| Precision | "How many selected are relevant" | TP / (TP + FP), the fraction of positive predictions that are actually positive |
-| Recall | "How many relevant are selected" | TP / (TP + FN), the fraction of actual positives that the model correctly identifies |
-| F1 score | "Balanced accuracy" | The harmonic mean of precision and recall: 2*P*R / (P+R) |
+| Precision | "How many selected are relevant" | $TP / (TP + FP)$, the fraction of positive predictions that are actually positive |
+| Recall | "How many relevant are selected" | $TP / (TP + FN)$, the fraction of actual positives that the model correctly identifies |
+| F1 score | "Balanced accuracy" | The harmonic mean of precision and recall: $2PR / (P+R)$ |
 | Confusion matrix | "The error breakdown" | A table showing TP, TN, FP, FN counts for each class pair |
 | Threshold | "The cutoff" | The probability value above which the model predicts class 1 (default 0.5, tunable) |
-| One-hot encoding | "Binary columns for categories" | Representing class k as a vector of zeros with a 1 at position k |
-| Categorical cross-entropy | "Multi-class log loss" | The extension of binary cross-entropy to k classes using one-hot encoded labels |
+| One-hot encoding | "Binary columns for categories" | Representing class $k$ as a vector of zeros with a 1 at position $k$ |
+| Categorical cross-entropy | "Multi-class log loss" | The extension of binary cross-entropy to $k$ classes using one-hot encoded labels |

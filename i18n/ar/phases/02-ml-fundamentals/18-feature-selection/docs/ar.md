@@ -62,8 +62,8 @@ flowchart TD
 
 فكر في ميزة هي 0.0 ل 999 من 1000 عينات. تغيرها قريب من الصفر. لا يمكن لأي نموذج استخدامها للتمييز بين الفئات. إزالتها.
 
-```
-variance(x) = mean((x - mean(x))^2)
+```math
+\text{variance}(x) = \text{mean}\bigl((x - \text{mean}(x))^2\bigr)
 ```
 
 حدد عتبة (مثل 0.01). اترك كل ميزة مع اختلاف أقل منها. هذا يزيل الميزات الثابتة أو شبه الثابتة دون النظر إلى المتغير المستهدف على الإطلاق.
@@ -74,17 +74,17 @@ variance(x) = mean((x - mean(x))^2)
 
 ### المعلومات المتبادلة
 
-تقيس المعلومات المتبادلة إلى أي حد يقلل معرفة قيمة الصفة X من عدم اليقين حول الهدف Y.
+المعلومات المتبادلة تقيس مدى معرفة قيمة الميزة $X$يقلل من عدم اليقين حول الهدف $Y$. . .
 
-```
-I(X; Y) = sum_x sum_y p(x, y) * log(p(x, y) / (p(x) * p(y)))
+```math
+I(X; Y) = \sum_x \sum_y p(x, y) \cdot \log \frac{p(x, y)}{p(x) \cdot p(y)}
 ```
 
-إذا كان X و Y مستقلين، p(x، y) = p(x) * p(y) ، لذلك فإن مصطلح اللغ هو صفر و I(X؛ Y) = 0. كلما أخبرك X عن Y، كلما كانت المعلومات المتبادلة أعلى.
+إذا$X$و$Y$هي مستقلة$p(x, y) = p(x) \cdot p(y)$، لذا المفهوم السجل هو صفر و $I(X; Y) = 0$كلما زادت$X$يخبرك عن$Y$، كلما زادت المعلومات المتبادلة
 
 ميزة رئيسية على التواصل: المعلومات المتبادلة تلتقط العلاقات غير الخطية. قد يكون لدى ميزة صفر ارتباط مع الهدف ولكن معلومات متبادلة عالية لأن العلاقة مربعة أو دورية.
 
-للميزات المستمرة، قم بتحديد الحاويات أولاً (التقدير القائم على التسجيلات القياسية). عدد الحاويات يؤثر على التقدير - عدد قليل جداً من الحاويات يفقد المعلومات، الكثير من الحاويات يضيف الضوضاء. خيار شائع: مربع ((n) الحاويات أو قاعدة ستورجز (1 + log2 ((n)).
+للوصول إلى ميزات مستمرة، قم بتحديد الحاويات أولاً (تقدير مبني على نظام التاريخ). عدد الحاويات يؤثر على التقدير -- عدد قليل جداً من الحاويات يفقد المعلومات، الكثير من الحاويات يضيف الضوضاء. خيار شائع: $\sqrt{n}$قاعدة "ستورج" ($1 + \log_2 n$)
 
 ```mermaid
 flowchart LR
@@ -116,14 +116,14 @@ flowchart TD
 
 يعتبر RFE تفاعلات الميزات لأن النموذج يرى جميع الميزات المتبقية معاً. إزالة ميزة واحدة تغير أهمية أخرى. وهذا يجعلها أكثر دقة من طرق التصفية.
 
-التكلفة: يمكنك تدريب النموذج N - أوقات الهدف. مع 500 ميزة و هدف من 10 ، أي 490 جولة تدريب. بالنسبة للنماذج الثمينة ، هذا بطيء. يمكنك تسريع ذلك عن طريق إزالة العديد من الميزات في كل خطوة (على سبيل المثال ، إزالة 10% السفلي في كل جولة).
+التكلفة: تدرب النموذج$N - \text{target}$مع 500 ميزة و هدف من 10 ، وهذا هو 490 جولة تدريبية. بالنسبة للنماذج الثمينة ، هذا بطيء. يمكنك تسريع ذلك عن طريق إزالة العديد من الميزات في كل خطوة (على سبيل المثال ، إزالة 10% السفلي في كل جولة).
 
 ### L1 (لاسو) التنظيم
 
 يضيف التنظيم L1 القيمة المطلقة للوزن إلى وظيفة الخسارة:
 
-```
-loss = prediction_error + alpha * sum(|w_i|)
+```math
+\text{loss} = \text{prediction\_error} + \alpha \cdot \sum \lvert w_i \rvert
 ```
 
 المعلم الفائقي يسيطر على مدى تعديل الميزات العدوانية، وترتيب الرفاف العالي يعني أن المزيد من الوزن يصل إلى الصفر بالضبط.
@@ -140,12 +140,10 @@ loss = prediction_error + alpha * sum(|w_i|)
 
 شجرة القرار ومجموعاتها (غابات عشوائية، زيادة التدفق) مرتبة طبيعياً. كل شق تقلل من النسب (جيني أو الانتروبيا للتصنيف، والفوارانس للتراجع). هي الميزات التي تنتج تقليلات أكبر من النسب.
 
-بالنسبة للغابة العشوائية مع الأشجار T:
+لأجل غابة عشوائية مع$T$الأشجار:
 
-```
-importance(feature_j) = (1/T) * sum over all trees of
-    sum over all nodes splitting on feature_j of
-        (n_samples * impurity_decrease)
+```math
+\text{importance}(\text{feature}_j) = \frac{1}{T} \sum_{\text{all trees}} \; \sum_{\text{all nodes splitting on } \text{feature}_j} (\text{n\_samples} \cdot \text{impurity\_decrease})
 ```
 
 هذا يعطي درجة أهمية طبيعية لكل ميزة. إنه يتعامل مع العلاقات غير الخطية والتفاعلات المميزة تلقائيا.
@@ -524,7 +522,7 @@ importances = rf.feature_importances_
 | Filter method | "Score features independently" | A feature selection approach that ranks features using a statistical measure without training a model, evaluating each feature in isolation |
 | Wrapper method | "Use the model to pick features" | A feature selection approach that evaluates feature subsets by training a model and using its performance as the selection criterion |
 | Embedded method | "The model selects features during training" | Feature selection that happens as part of model fitting, such as L1 regularization driving weights to zero |
-| Mutual information | "How much one variable tells you about another" | A measure of the reduction in uncertainty about Y given knowledge of X, capturing both linear and nonlinear dependencies |
+| Mutual information | "How much one variable tells you about another" | A measure of the reduction in uncertainty about $Y$ given knowledge of $X$, capturing both linear and nonlinear dependencies |
 | Recursive Feature Elimination | "Train, rank, prune, repeat" | An iterative wrapper method that trains a model, removes the least important feature(s), and repeats until a target count is reached |
 | L1 / Lasso regularization | "Penalty that kills features" | Adding the sum of absolute weight values to the loss function, which drives unimportant feature weights to exactly zero |
 | Variance threshold | "Remove constant features" | Dropping features whose variance across samples falls below a specified threshold, filtering out features that carry no information |

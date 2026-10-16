@@ -26,36 +26,36 @@
 
 ### النموذج
 
-التراجع الخطى يفترض علاقة خطية بين المدخل (x) والخروج (y):
+التراجع الخطى يفترض علاقة خطية بين المدخلات ($x$) والإنتاج ($y$):
 
-```
+```math
 y = wx + b
 ```
 
-- `w`(وزن/التحيل): كم يتغير y عندما يزيد x ب 1
-- `b`(التحيز/القطع): قيمة y عندما x = 0
+- `w`(وزن/ميل): كم $y$تغيرات عندما$x$زيادة بنسبة 1
+- `b`(التحيز/القطع): قيمة $y$متى$x = 0$
 
 بالنسبة للمدخلات المتعددة (الميزات) ، يمتد هذا إلى:
 
-```
-y = w1*x1 + w2*x2 + ... + wn*xn + b
+```math
+y = w_1 x_1 + w_2 x_2 + \cdots + w_n x_n + b
 ```
 
-أو في شكل متجه:`y = w^T * x + b`
+أو في شكل متجه:$y = w^T x + b$
 
-الهدف: العثور على قيم w و b التي تجعل y المتوقعة أقرب إلى y الفعلي قدر الإمكان في جميع أمثلة التدريب.
+الهدف: إيجاد قيم $w$و$b$التي تجعل المتوقع $y$أقرب ما يمكن للواقع$y$في جميع أمثلة التدريب.
 
 ### وظيفة التكلفة (خطأ المتوسط التربيعي)
 
 كيف تقيس " أقرب ما يمكن "؟ تحتاج إلى رقم واحد يحتوي على مدى خطأ التنبؤات الخاصة بك. الخيار الأكثر شيوعا هو الخطأ المتوسط التربيعي (MSE):
 
-```
-MSE = (1/n) * sum((y_predicted - y_actual)^2)
+```math
+\text{MSE} = \frac{1}{n} \sum (y_{\text{predicted}} - y_{\text{actual}})^2
 ```
 
 لماذا مربع؟ سببين. أولاً، فإنه يعاقب الأخطاء الكبيرة أكثر من الأخطاء الصغيرة (خطأ من 10 هو 100x أسوأ من خطأ من 1، وليس 10x). ثانياً، فإن وظيفة مربع متسقة ويمكن التمييز في كل مكان، مما يجعل التحسين سهلاً.
 
-تخلق وظيفة التكلفة سطحا. بالنسبة لوزن واحد w والتحيز b ، تبدو سطح MSE مثل وعاء (موازة متواصلة). الجزء السفلي من وعاء حيث يتم تقليل MSE. التدريب يعني العثور على هذا الجزء السفلي.
+وظيفة التكلفة تخلق سطحاً.$w$والتحيز$b$يظهر سطح MSE على شكل وعاء (موازة متواصلة). الجزء السفلي من وعاء حيث يتم تقليل MSE. التدريب يعني العثور على هذا الجزء السفلي.
 
 ### التراجع المتدريج
 
@@ -74,18 +74,22 @@ flowchart TD
 
 وتخبرك المرافق بشيءين: أي اتجاه تحرك كل ملامح، ومدى التحرك.
 
-بالنسبة لـ MSE مع y_hat = wx + b:
+لـ MSE مع $\hat{y} = wx + b$:
 
-```
-dMSE/dw = (2/n) * sum((y_hat - y) * x)
-dMSE/db = (2/n) * sum(y_hat - y)
+```math
+\begin{aligned}
+\frac{\partial \text{MSE}}{\partial w} &= \frac{2}{n} \sum (\hat{y} - y) \, x \\
+\frac{\partial \text{MSE}}{\partial b} &= \frac{2}{n} \sum (\hat{y} - y)
+\end{aligned}
 ```
 
 قاعدة التحديث:
 
-```
-w = w - learning_rate * dMSE/dw
-b = b - learning_rate * dMSE/db
+```math
+\begin{aligned}
+w &= w - \text{learning\_rate} \cdot \frac{\partial \text{MSE}}{\partial w} \\
+b &= b - \text{learning\_rate} \cdot \frac{\partial \text{MSE}}{\partial b}
+\end{aligned}
 ```
 
 معدل التعلم يحدد حجم الخطوة. كبير جداً: تتجاوز الحد الأدنى وتتباين. صغير جداً: يستغرق التدريب إلى الأبد. قيم البداية النموذجية: 0.01، 0.001، أو 0.0001.
@@ -94,18 +98,18 @@ b = b - learning_rate * dMSE/db
 
 بالنسبة للعودة الخطية على وجه التحديد، هناك صيغة مباشرة توفر الوزن الأمثل دون أي تكرار:
 
-```
-w = (X^T * X)^(-1) * X^T * y
+```math
+w = (X^T X)^{-1} X^T y
 ```
 
-هذا يعكس المصفوفة لحل w في خطوة واحدة. يعمل بشكل مثالي لمجموعات بيانات صغيرة. بالنسبة لمجموعات بيانات كبيرة (ملايين الصفوف أو آلاف الميزات) ، يفضل تراجع التراجعية لأن عكس المصفوفة هو O(n^3) في عدد الميزات.
+هذا يعكس المصفوفة لحل$w$في خطوة واحدة. يعمل بشكل مثالي لمجموعات بيانات صغيرة. لمجموعات بيانات كبيرة (ملايين الصفوف أو آلاف الميزات) ، يفضل تراجع التراجعية لأن عكس المصفوفة هو $O(n^3)$في عدد الميزات.
 
 ### عكس خطي متعدد
 
 مع العديد من الميزات، يصبح النموذج:
 
-```
-y = w1*x1 + w2*x2 + ... + wn*xn + b
+```math
+y = w_1 x_1 + w_2 x_2 + \cdots + w_n x_n + b
 ```
 
 كل شيء يعمل بنفس الطريقة: MSE هو وظيفة التكلفة، تنزيل التراجع تحديث جميع الأوزان في وقت واحد. الفرق الوحيد هو أنك تصل إلى طائرة فائقة بدلا من خط.
@@ -116,36 +120,38 @@ y = w1*x1 + w2*x2 + ... + wn*xn + b
 
 ماذا لو كانت العلاقة ليست خطية؟ يمكنك استخدام التراجع الخطي من خلال إنشاء ميزات متعددة النسب:
 
-```
-y = w1*x + w2*x^2 + w3*x^3 + b
+```math
+y = w_1 x + w_2 x^2 + w_3 x^3 + b
 ```
 
-هذا ما زال رجعة "خطية" لأن النموذج خطي في الوزن (w1، w2، w3). أنت فقط تستخدم ميزات غير خطية من x.
+هذا ما زال رجعة "خطية" لأن النموذج خطي في الوزن ($w_1, w_2, w_3$(). أنت تستخدم فقط ميزات غير خطية من$x$. . .
 
 يمكن أن تتناسب تعدد الحدود العالية الدرجة مع منحنى أكثر تعقيداً ولكن هناك خطر من الإفراط. تعدد الحدود العليا الدرجة 10 سوف تمر عبر كل نقطة في مجموعة بيانات 10 نقاط ولكن تتوقع بشكل سيء على البيانات الجديدة.
 
 ### النتيجة R- مربع
 
-يخبرك MSE كم كنت مخطئاً، ولكن العدد يعتمد على مقياس y. R-^2 (R^2) يعطي مقياساً مستقلاً عن المقياس:
+الـ MSE يخبرك كم أنت مخطئ، لكن العدد يعتمد على حجم$y$. ر- مربع ($R^2$) يعطي تدبير مستقل عن المقياس:
 
-```
-R^2 = 1 - (sum of squared residuals) / (sum of squared deviations from mean)
-    = 1 - SS_res / SS_tot
+```math
+\begin{aligned}
+R^2 &= 1 - \frac{\text{sum of squared residuals}}{\text{sum of squared deviations from mean}} \\
+&= 1 - \frac{SS_{\text{res}}}{SS_{\text{tot}}}
+\end{aligned}
 ```
 
-- R^2 = 1.0: توقعات مثالية
-- R^2 = 0.0: النموذج ليس أفضل من توقع المتوسط في كل مرة
-- R^2 < 0.0: النموذج أسوأ من توقع المتوسط
+- $R^2 = 1.0$: توقعات مثالية
+- $R^2 = 0.0$: النموذج ليس أفضل من توقع المتوسط في كل مرة
+- $R^2 < 0.0$: النموذج أسوأ من التنبؤ بالمتوسط
 
 ### المشاهدة المسبقة للترتيب (رجج ريج)
 
 عندما يكون لديك العديد من الميزات، يمكن أن يضاف النموذج من خلال تعيين أوزان كبيرة.
 
-```
-Cost = MSE + lambda * sum(w_i^2)
+```math
+\text{Cost} = \text{MSE} + \lambda \sum w_i^2
 ```
 
-تعني المادة المعدنية أن المعدل المعدني يُعَدّ لعدد من المعدلات المعدنية، ويتمّ التطبيق على المعدلات المعدنية، ويتمّ التطبيق على المعدلات المعدنية، ويتمّ التطبيق على المعدلات المعدنية، ويتمّ التطبيق على المعدلات المعدنية، ويتمّ التطبيق على المعدلات المعدنية، ويتمّ استخدام المعدلات المعدنية، ويتمّ استخدام المعدلات المعدنية، ويتمّ استخدام المعدلات المعدنية، ويتمّ استخدام المعدلات المعدنية، ويتمّ استخدام المعدلات المعدنية، ويتمّ استخدامها في المعدلات المعدنية، ويتمّ استخدامها في المعدلات المعدنية، ويتمّ استخدامها في المعدات المعدنية، ويتمّ استخدامها في المعدات المعدنية، ويتمّل المعدّة المعدنية، ويتمّل المعدات المعدنية، ويتمّل المعدات المعدنية، والمتة، والمتقدمة المعدنية، والمتة، والمتقدمة، والمتمية، والمتقدمة، والمتمثالية، والمتقدمة.
+المادة العقابية تثبط الوزن الكبير$\lambda$يسيطر على التنازل: أعلى $\lambda$يعني الوزن الأصغر والمزيد من التنظيم. هذا سيتم تغطيته بشكل متعمق في درس لاحقا.
 
 ```figure
 linear-regression-fit
@@ -520,24 +526,24 @@ print(f"Ridge coefficient: {ridge.coef_[0]:.4f}")
 ## التمارين
 
 1. قم بتنفيذ انخفاض تراجع المكونات، وانخفاض تراجع المكونات (SGD) ، وانخفاض تراجع المكونات الصغيرة. مقارنة سرعة التقارب على نفس مجموعة البيانات. أي من المكونات تتقارب أسرع؟ أي من المكونات لديه منحنى التكلفة السلسة؟
-2. توليد البيانات من وظيفة مكعبة (y = ax^3 + bx^2 + cx + d + ضجيج). تعدد الكلمات الملائمة من درجة 1 ، 3 و 10. مقارنة التدريب R^2 والاختبار R^2.
-3. تنفيذ تراجع لاسو (تعديل L1: جريمة ألفا *( على أنواع = i يخرج)). قم بتدريب بيانات السكن متعددة الميزات. مقارنة أي أوزان تذهب إلى الصفر مقابل الرصيف. لماذا تنتج L1 حلول نادرة بينما لا تنتج L2؟
+2. إنشاء بيانات من وظيفة مكعبة ($y = ax^3 + bx^2 + cx + d + \text{noise}$) تعدد الكلمات المتناسبة من الدرجة 1، 3 و 10. مقارنة التدريب $R^2$والاختبار$R^2$إلى أي درجة يصبح الإفراط واضحاً؟
+3. تنفيذ تراجع لاسو (تطبيق L1: $\text{penalty} = \alpha \sum \lvert w_i \rvert$تدريب على بيانات السكن متعددة الميزات. مقارنة أي أوزان تذهب إلى الصفر مقابل الرصيف. لماذا L1 تنتج حلول نادرة بينما L2 لا؟
 
 ## الشروط الرئيسية
 
 | Term | What people say | What it actually means |
 |------|----------------|----------------------|
-| Linear regression | "Draw a line through data" | Find weight w and bias b that minimize the sum of squared differences between wx+b and actual y values |
+| Linear regression | "Draw a line through data" | Find weight $w$ and bias $b$ that minimize the sum of squared differences between $wx+b$ and actual $y$ values |
 | Cost function | "How bad the model is" | A function that maps model parameters to a single number measuring prediction error, which optimization minimizes |
-| Mean squared error | "Average of squared errors" | (1/n) * sum of (predicted - actual)^2, penalizing large errors disproportionately |
+| Mean squared error | "Average of squared errors" | $\frac{1}{n} \sum (\text{predicted} - \text{actual})^2$, penalizing large errors disproportionately |
 | Gradient descent | "Walk downhill" | Iteratively adjust parameters in the direction that reduces the cost function, using partial derivatives |
 | Learning rate | "Step size" | A scalar that controls how much parameters change per gradient descent step |
-| Normal equation | "Solve it directly" | The closed-form solution w = (X^T X)^-1 X^T y that gives optimal weights without iteration |
-| R-squared | "How good the fit is" | The fraction of variance in y explained by the model, ranging from negative infinity to 1.0 |
+| Normal equation | "Solve it directly" | The closed-form solution $w = (X^T X)^{-1} X^T y$ that gives optimal weights without iteration |
+| R-squared | "How good the fit is" | The fraction of variance in $y$ explained by the model, ranging from negative infinity to 1.0 |
 | Feature scaling | "Make features comparable" | Transforming features to similar ranges (e.g., zero mean, unit variance) so gradient descent converges faster |
 | Regularization | "Penalize complexity" | Adding a term to the cost function that shrinks weights, preventing overfitting |
-| Ridge regression | "L2 regularization" | Linear regression with a penalty of lambda * sum(w_i^2) added to MSE |
-| Polynomial regression | "Fitting curves with linear math" | Linear regression on polynomial features (x, x^2, x^3, ...), still linear in the weights |
+| Ridge regression | "L2 regularization" | Linear regression with a penalty of $\lambda \sum w_i^2$ added to MSE |
+| Polynomial regression | "Fitting curves with linear math" | Linear regression on polynomial features ($x, x^2, x^3, \ldots$), still linear in the weights |
 | Overfitting | "Memorizing training data" | Using a model so complex that it fits noise in training data and fails on new data |
 
 ## المزيد من القراءة

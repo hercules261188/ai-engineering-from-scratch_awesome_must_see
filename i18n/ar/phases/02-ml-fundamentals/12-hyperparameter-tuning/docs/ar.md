@@ -16,7 +16,7 @@
 
 ## المشكلة
 
-نموذج تعزيز التدفق لديك لديه معدل التعلم وعدد الأشجار ، أعمق أقصى ، أقل عينات لكل ورقة ، نسبة النموذج الفرعي ، ونسبة عينات العمود. وهذا هو ستة مفاصيل. إذا كان لكل منها 5 قيم معقولة ، فإن الشبكة لديها 5^6 = 15,625 مزيج. يستغرق التدريب لكل منها 10 ثوان. وهذا هو 43 ساعة من الحساب لمحاولة كل منهم.
+نموذج تعزيز التراجع لديك لديه معدل التعلم وعدد الأشجار ، أعمق أقصى ، أقل عينات لكل ورقة ، نسبة النموذج الفرعي ، ونسبة عينات العمود. وهذا هو ستة مفاتيح فائقة. إذا كان لكل منها 5 قيم معقولة ، فإن الشبكة لديها $5^6 = 15{,}625$كل تدريب يستغرق 10 ثواني، وهذا يعني 43 ساعة من الحسابات لمتابعة كل منها
 
 البحث عن الشبكة هو النهج الواضح وأسوأ منهج على نطاق واسع. البحث العشوائي يعمل بشكل أفضل مع أقل حسابات. تحسين البايزيون يعمل بشكل أفضل حتى من خلال التعلم من التقييمات السابقة. معرفة أي استراتيجية لاستخدامها، وأي مفاتيح فائقة أهمية في الواقع، يوفر أيام من وقت GPU مضيعة.
 
@@ -31,7 +31,7 @@
 | Learning rate | Step size per update | 0.001 to 1.0 |
 | Number of trees/epochs | How long to train | 10 to 10,000 |
 | Max depth | Model complexity | 1 to 30 |
-| Regularization (lambda) | Overfitting prevention | 0.0001 to 100 |
+| Regularization ($\lambda$) | Overfitting prevention | 0.0001 to 100 |
 | Batch size | Gradient estimation noise | 16 to 512 |
 | Dropout rate | Fraction of neurons dropped | 0.0 to 0.5 |
 
@@ -125,7 +125,7 @@ flowchart TD
 | Scheduler | Formula | When to use |
 |-----------|---------|-------------|
 | Step decay | Multiply by 0.1 every N epochs | Classic CNN training |
-| Cosine annealing | lr * 0.5 * (1 + cos(pi * t / T)) | Modern default |
+| Cosine annealing | $\text{lr} \cdot 0.5 \cdot (1 + \cos(\pi t / T))$ | Modern default |
 | Warmup + decay | Linear increase then cosine decay | Transformers |
 | One-cycle | Increase then decrease over one cycle | Fast convergence |
 | Reduce on plateau | Reduce by factor when metric stalls | Safe default |

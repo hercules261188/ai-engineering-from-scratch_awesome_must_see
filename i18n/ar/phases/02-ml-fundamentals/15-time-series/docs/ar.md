@@ -91,8 +91,8 @@ flowchart TD
 
 **How to fix:**التفريق: بدلاً من نمذجة القيم الخامة، نمذجة التغيير بين القيم المتتالية:
 
-```
-diff[t] = value[t] - value[t-1]
+```math
+\text{diff}[t] = \text{value}[t] - \text{value}[t-1]
 ```
 
 إذا لم تجعل جولة واحدة من التفريق السلطة ثابتة، فاستخدمها مرة أخرى (التفريق من النظام الثاني). تحتاج معظم سلسلة العالم الحقيقي إلى جولتين على الأكثر.
@@ -109,7 +109,7 @@ diff[t] = value[t] - value[t-1]
 
 ### التواصل الذاتي
 
-تقيس التواصل الذاتي مدى ارتباط قيمة في الوقت t مع قيمة في الوقت t-k (خطوات k في الماضي). تقوم وظيفة التواصل الذاتي (ACF) بتخطيط هذه التواصل لكل فترة k.
+التنسيق الذاتي يقيس كمية القيمة في وقت واحد $t$تتوافق مع القيمة في الوقت الراهن $t-k$($k$ويقوم وظيفة التواصل الذاتي (ACF) بتخطيط هذه التواصل لكل تأخير$k$. . .
 
 **ACF tells you:**
 - كم يذكر السلسلة بعد ذلك إذا انخفضت ACF إلى الصفر بعد التأخير 5، فإن القيم قبل أكثر من 5 خطوات غير ذات صلة.
@@ -142,7 +142,7 @@ diff[t] = value[t] - value[t-1]
 
 **How many lags?**استخدم وظيفة التواصل الذاتي. إذا كان ACF مهمًا حتى 10 تأخيرات، استخدم 10 تأخيرات على الأقل. إذا كان هناك تأخير موسمي أسبوعي، فاضافة 7 تأخيرات (وربما 14). المزيد من التأخيرات تعطى النموذج المزيد من التاريخ ولكن أيضا المزيد من الميزات للاستيعاب، مما يزيد من خطر الإفراط في التكيف.
 
-**The target alignment trap.**عند إنشاء ميزات التأخير، يجب أن يكون الهدف قيمة في الوقت t، و يجب أن تستخدم جميع الميزات قيم في الوقت t-1 أو سابقة. إذا قمت بإدراج قيمة في الوقت t ك ميزة، لديك متنبؤ مثالي - ونموذج غير مفيد تماما. هذا هو الأخطاء الأكثر شيوعا في هندسة الميزات سلسلة الزمن.
+**The target alignment trap.**عند إنشاء ميزات التأخير ، يجب أن يكون الهدف هو القيمة في الوقت المناسب $t$وكل الميزات يجب أن تستخدم قيم في وقتها$t-1$أو قبل ذلك. إذا قمت بإدراج القيمة في وقت سابق$t$كميزة، لديك جهاز تنبؤ مثالي -- ونموذج غير مفيد تماما. هذا هو الأخطاء الأكثر شيوعا في هندسة الميزات سلسلة الزمن.
 
 ### التحقق من التحقق
 
@@ -178,8 +178,8 @@ flowchart TD
 ```
 
 التحقق من التحقق من التحقق من التحقق من التحقق من التحقق من التحقق من التحقق من التحقق من التحقق من التحقق من التحقق من التحقق من التحقق من التحقق من التحقق من التحقق من التحقق من التحقق من التحقق من التحقق من التحقق من التحقق من التحقق من التحقق من التحقق من التحقق من التحقق من التحقق من التحقق من التحقق من التحقق من التحقق من التحقق من التحقق من التحقق من التحقق من التحقق من التحقق من التحقق من التحقق من التحقق من التحقق من التحقق من التحقق من التحقق من التحقق من التحقق من التحقق من التحقق من التحقق من التحقق من التحقق من التحقق من التحقق من التحقق من التحقق من التحقق من التحقق من التحقق من التحقق من التحقق من التحقق من التحقق من التحقق من التحقق من التحقق من التحقق من التحقق من التحقق من التحقق من التحقق من التحقق.
-1. التدريب على البيانات حتى الوقت t
-2. التنبؤ في الوقت t+1 (أو t+1 إلى t+k لخطوات متعددة)
+1. تدريب على البيانات على الوقت المناسب $t$
+2. التنبؤ في الوقت المناسب$t+1$(أو $t+1$إلى$t+k$(للمزيد من الخطوات)
 3. انزلز النافذة للأمام
 4. تكرار
 
@@ -191,11 +191,11 @@ flowchart TD
 
 ARIMA هو نموذج سلسلة الزمن الكلاسيكية.
 
-- **AR (Autoregressive):**التنبؤ من القيم السابقة. AR ((p) يستخدم القيم الأخيرة p.
-- **I (Integrated):**التفريق لتحقيق الثبات.
-- **MA (Moving Average):**التنبؤ من أخطاء التنبؤات السابقة. MA(q) يستخدم الأخطاء الق الأخيرة.
+- **AR (Autoregressive):**التنبؤ من القيم السابقة. AR(p) يستخدم الأخير $p$القيم
+- **I (Integrated):**التفريق لتحقيق الثبات.$d$جولات التفريق
+- **MA (Moving Average):**التنبؤ من أخطاء التنبؤات السابقة.$q$الأخطاء
 
-ARIMA ((p, d, q) يجمع بين الثلاثة. تختار p, d, q بناء على تحليل ACF/PACF أو البحث الآلي (ARIMA)
+(أريما) (ب، د، ق) يجمع بين الثلاثة.$p$،$d$،$q$على أساس تحليل ACF/PACF أو البحث الآلي (ARIMA الآلي).
 
 لن نطبق ARIMA من الصفر - يتطلب ذلك تحسينًا عدديًا يتجاوز نطاق هذا الدروس. المفهوم الرئيسي هو فهم ما يفعله كل مكون حتى تتمكن من تفسير نتائج ARIMA وتعرف متى تستخدمه.
 
@@ -217,7 +217,7 @@ ARIMA ((p, d, q) يجمع بين الثلاثة. تختار p, d, q بناء ع�
 
 **Recursive (iterated):**التنبؤ بخطوة واحدة في الأمام، واستخدام التنبؤ كمدخول للخطوة التالية. بسيطة ولكن الأخطاء تتراكم -- كل التنبؤ يستخدم التنبؤ السابق، لذلك الأخطاء مزيد.
 
-**Direct:**قم بتدريب نموذج منفصل لكل آفاق. يتوقع النموذج 1 t + 1 ، يتوقع النموذج 5 t + 5. لا يوجد تراكم خطأ ، ولكن كل نموذج لديه عينات تدريبية أقل ولا يتبادل المعلومات.
+**Direct:**قم بتدريب نموذج منفصل لكل أفق$t+1$، ماذج-5 تتوقع $t+5$لا يوجد تراكم للخطأ، ولكن كل نموذج لديه عينات تدريب أقل ولا يتبادل المعلومات.
 
 **Multi-output:**قم بتدريب نموذج واحد يخرج جميع الأفقات في وقت واحد. يشارك المعلومات عبر الأفقات ولكن يتطلب نموذج يدعم العديد من الخروجات (أو وظيفة خسارة مخصصة).
 
@@ -228,7 +228,7 @@ ARIMA ((p, d, q) يجمع بين الثلاثة. تختار p, d, q بناء ع�
 | Mistake | Why it happens | How to fix |
 |---------|---------------|-----------|
 | Random train/test split | Habit from standard ML | Use walk-forward or temporal split |
-| Using future features | Feature at time t included by mistake | Audit every feature for temporal alignment |
+| Using future features | Feature at time $t$ included by mistake | Audit every feature for temporal alignment |
 | Overfitting to seasonality | Model memorizes calendar patterns | Hold out a full seasonal cycle in the test set |
 | Ignoring scale changes | Revenue doubles but patterns stay | Model percentage change instead of absolute |
 | Too many lag features | "More history is better" | Use ACF to determine relevant lags |
@@ -386,7 +386,7 @@ print(f"Mean score: {scores.mean():.4f} +/- {scores.std():.4f}")
 
 تُستخدم التنبؤات المتسلسلة الزمنية مقاييس التراجعة، ولكن مع السياق الذي يدرك الوقت:
 
-- **MAE (Mean Absolute Error):**متوسط y_true - y_pred = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+- **MAE (Mean Absolute Error):**متوسط $\lvert y_{\text{true}} - y_{\text{pred}} \rvert$سهل التفسير في الوحدات الأصلية "في المتوسط، التنبؤات غير صحيحة بـ 3.2 درجة"
 - **RMSE (Root Mean Squared Error):**الجذر التربيعي لخطأ التربيعي المتوسط يعاقب الأخطاء الكبيرة أكثر من MAE. استخدم عندما الأخطاء الكبيرة أسوأ من العديد من الأخطاء الصغيرة.
 - **MAPE (Mean Absolute Percentage Error):**متوسط خطأ / true_value = 100 . مستقل من المقياس ، مفيد للمقارنة بين سلسلة مختلفة. ولكن غير محددة عندما تكون القيم الحقيقية صفر.
 - **Naive baseline comparison:**دائماً مقارنة مع خطوط أساس بسيطة. خط أساسية ساذجة موسمية تنبأ بالقيمة من فترة واحدة من قبل (الأمس، الأسبوع الماضي). إذا لم يتمكن نموذجك من هزيمة ساذجة، فشيئاً خاطئ.
@@ -444,10 +444,10 @@ print(f"Mean score: {scores.mean():.4f} +/- {scores.std():.4f}")
 | Term | What people say | What it actually means |
 |------|----------------|----------------------|
 | Stationarity | "The stats don't change over time" | A series whose mean, variance, and autocorrelation structure are constant over time |
-| Differencing | "Subtract consecutive values" | Computing y[t] - y[t-1] to remove trends and achieve stationarity |
+| Differencing | "Subtract consecutive values" | Computing $y[t] - y[t-1]$ to remove trends and achieve stationarity |
 | Autocorrelation (ACF) | "How a series correlates with itself" | The correlation between a time series and a lagged copy of itself, as a function of the lag |
-| Partial autocorrelation (PACF) | "Direct correlation only" | Autocorrelation at lag k after removing the effect of all shorter lags |
-| Lag features | "Past values as inputs" | Using y[t-1], y[t-2], ..., y[t-k] as features to predict y[t] |
+| Partial autocorrelation (PACF) | "Direct correlation only" | Autocorrelation at lag $k$ after removing the effect of all shorter lags |
+| Lag features | "Past values as inputs" | Using $y[t-1], y[t-2], \ldots, y[t-k]$ as features to predict $y[t]$ |
 | Walk-forward validation | "Time-respecting cross-validation" | Evaluation where training data always precedes test data chronologically |
 | ARIMA | "The classic time series model" | AutoRegressive Integrated Moving Average: combines past values (AR), differencing (I), and past errors (MA) |
 | Seasonality | "Repeating calendar patterns" | Regular, predictable cycles in a time series tied to calendar periods (daily, weekly, yearly) |

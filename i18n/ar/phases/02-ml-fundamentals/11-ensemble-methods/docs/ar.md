@@ -24,10 +24,10 @@
 
 ### لماذا تعمل المجموعات
 
-لنفترض أن لديك N مصنفين مستقلين، كل منهم دقة p > 0.5.
+لنفترض أنكِ$N$مصنفين مستقلين، كل واحد دقيق $p > 0.5$. صوت الأغلبية صحيح:
 
-```
-P(majority correct) = sum over k > N/2 of C(N,k) * p^k * (1-p)^(N-k)
+```math
+P(\text{majority correct}) = \sum_{k > N/2} \binom{N}{k} p^k (1-p)^{N-k}
 ```
 
 بالنسبة لـ 21 تصنيفًا يبلغ دقة 60٪ لكل منهما ، فإن دقة الأصوات الأغلبية حوالي 74٪. مع 101 تصنيفًا ، يرتفع إلى 84٪. يتم إلغاء الأخطاء عندما تقوم النماذج بخطاء مختلفة.
@@ -132,7 +132,7 @@ flowchart LR
 3. Final prediction: F_T(x)
 ```
 
-بالنسبة لخسارة الخطأ المربع ، فإن البقايا الزائفة هي البقايا الفعلية فقط: `r_i = y_i - F_{t-1}(x_i)`كل شجرة تطابق حرفياً أخطاء الجمعية السابقة
+بالنسبة لخسارة الخطأ المربع ، فإن البقايا الزائفة هي البقايا الفعلية فقط: $r_i = y_i - F_{t-1}(x_i)$كل شجرة تطابق حرفياً أخطاء الجمعية السابقة
 
 معدل التعلم (التقلص) يتحكم في مقدار المساهمة لكل شجرة. تتطلب معدلات التعلم الأصغر المزيد من الأشجار ولكن تتعمق بشكل أفضل. القيم النموذجية: 0.01 إلى 0.3.
 
@@ -349,7 +349,7 @@ class GradientBoostingScratch:
 ## المزيد من القراءة
 
 - [Schapire & Freund: Boosting: Foundations and Algorithms](https://mitpress.mit.edu/9780262526036/)-- الكتاب من قبل مؤلفي AdaBoost
-- [Friedman: Greedy Function Approximation: A Gradient Boosting Machine (2001)](https://statweb.stanford.edu/~jhf/ftp/trebst.pdf)-- ورقة تعزيز التراجع الأصلية
+- [Friedman: Greedy Function Approximation: A Gradient Boosting Machine (2001)](https://doi.org/10.1214/aos/1013203451)-- ورقة تعزيز التراجع الأصلية
 - [Chen & Guestrin: XGBoost (2016)](https://arxiv.org/abs/1603.02754)-- ورقة XGBoost
 - [Wolpert: Stacked Generalization (1992)](https://www.sciencedirect.com/science/article/abs/pii/S0893608005800231)- الورق الأصلي للدقة
 - [scikit-learn Ensemble Methods](https://scikit-learn.org/stable/modules/ensemble.html)-- المرجع العملي

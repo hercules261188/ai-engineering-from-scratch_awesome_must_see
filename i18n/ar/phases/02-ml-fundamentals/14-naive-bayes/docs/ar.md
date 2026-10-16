@@ -30,8 +30,8 @@
 
 نظرية بايز تغير احتمالات مشروطة:
 
-```
-P(class | features) = P(features | class) * P(class) / P(features)
+```math
+P(\text{class} \mid \text{features}) = \frac{P(\text{features} \mid \text{class}) \cdot P(\text{class})}{P(\text{features})}
 ```
 
 نريد`P(class | features)`-- احتمال أن يخص مستند إلى فئة مع العطاء الكلمات في ذلك. يمكننا حساب هذا من:
@@ -43,15 +43,15 @@ P(class | features) = P(features | class) * P(class) / P(features)
 
 ### افتراض استقلالية ساذج
 
-الحوسبة`P(features | class)`وذلك يعني أنّه من الضروريّ أن تُقدّر احتمالية المشتركة لجميع الميزات معاً. مع مجموعة من 10,000 كلمة، ستحتاج إلى تقدير توزيع أكثر من 2^10,000 مزيج ممكن.
+الحوسبة`P(features | class)`ويحتاج بالضبط إلى تقدير احتمالية المشتركة لجميع الميزات معا. مع المفردات من 10,000 كلمة، كنت بحاجة إلى تقدير التوزيع على$2^{10{,}000}$مزيجات محتملة مستحيلة
 
 افتراض البطيء: كل ميزة مستقلة مشروطاً نظراً للطبقة.
 
-```
-P(w1, w2, ..., wn | class) = P(w1 | class) * P(w2 | class) * ... * P(wn | class)
+```math
+P(w_1, w_2, \ldots, w_n \mid \text{class}) = P(w_1 \mid \text{class}) \cdot P(w_2 \mid \text{class}) \cdots P(w_n \mid \text{class})
 ```
 
-بدلا من توزيع واحد غير ممكن المشترك، تقدّر توزيعات بسيطة لكل خصائص. كل واحد فقط يحتاج إلى حساب.
+بدلاً من توزيع مشترك واحد مستحيل، تقدر$n$توزيعات بسيطة لكل ميزة. كل واحد يحتاج فقط إلى العد.
 
 هذا الافتراض خاطئ بشكل واضح. الكلمات "الآلة" و "التعلم" ليست مستقلة في أي وثيقة. ولكن المصنف لا يحتاج إلى تقديرات احتمالية صحيحة. يحتاج إلى تصنيف صحيح - أي فئة لديها أكبر احتمال. افتراض الاستقلال يقدم أخطاء منهجية، ولكن تلك الأخطاء تؤثر على جميع الفئات على نحو مماثل، لذلك يبقى التصنيف صحيحًا.
 
@@ -59,7 +59,7 @@ P(w1, w2, ..., wn | class) = P(w1 | class) * P(w2 | class) * ... * P(wn | class)
 
 ثلاثة أسباب:
 
-1. **Ranking over calibration.**التصنيف يحتاج فقط إلى الصف الأعلى للمرتبة صحيحة. حتى لو كان P(سبام) = 0.99999 عندما تكون الاحتمال الحقيقي 0.7, فإن المصنف لا يزال يختار البريد الإلكتروني بشكل صحيح. نحن لا نحتاج إلى الاحتمالات الصحيحة. نحن بحاجة إلى الفائز الصحيح.
+1. **Ranking over calibration.**التصنيف يحتاج فقط إلى الصف الأعلى ليكون صحيحاً$P(\text{spam}) = 0.99999$عندما تكون الاحتمال الحقيقي 0.7، فإن المصنف لا يزال يختار الرسائل غير المرغوب فيها بشكل صحيح. نحن لا نحتاج إلى الاحتمالات الصحيحة. نحن بحاجة إلى الفائز الصحيح.
 
 2. **High bias, low variance.**افتراض الاستقلال هو سابق قوي. فإنه يقيّد النموذج بشكل كبير، مما يمنع التكيف الزائد. مع بيانات تدريب محدودة، النموذج الخطأ قليلاً ولكن مستقر يفوق النموذج الصحيح نظرياً ولكن غير مستقر بشكل كبير. هذا هو التداول بين التباينات المتغيرة في العمل.
 
@@ -76,31 +76,33 @@ P(w1, w2, ..., wn | class) = P(w1 | class) * P(w2 | class) * ... * P(wn | class)
 - رسائل البريد الإلكتروني غير الرسائل البشرية تذكرها "مجان" 5 مرات، "مال" 10 مرات، "التقاء" 100 مرة (115 كلمة في الإجمال)
 - 40% من الرسائل الإلكترونية هي الرسائل غير المرسلة، 60% هي غير الرسائل غير المرسلة
 
-مع تسطيح Laplace (ألفا=1):
+مع تسطيح Laplace ($\alpha=1$):
 
-```
-P(free | spam)    = (80 + 1) / (150 + 3) = 81/153 = 0.529
-P(money | spam)   = (60 + 1) / (150 + 3) = 61/153 = 0.399
-P(meeting | spam) = (10 + 1) / (150 + 3) = 11/153 = 0.072
-
-P(free | not-spam)    = (5 + 1) / (115 + 3) = 6/118 = 0.051
-P(money | not-spam)   = (10 + 1) / (115 + 3) = 11/118 = 0.093
-P(meeting | not-spam) = (100 + 1) / (115 + 3) = 101/118 = 0.856
+```math
+\begin{aligned}
+P(\text{free} \mid \text{spam}) &= (80 + 1) / (150 + 3) = 81/153 = 0.529 \\
+P(\text{money} \mid \text{spam}) &= (60 + 1) / (150 + 3) = 61/153 = 0.399 \\
+P(\text{meeting} \mid \text{spam}) &= (10 + 1) / (150 + 3) = 11/153 = 0.072 \\[6pt]
+P(\text{free} \mid \text{not-spam}) &= (5 + 1) / (115 + 3) = 6/118 = 0.051 \\
+P(\text{money} \mid \text{not-spam}) &= (10 + 1) / (115 + 3) = 11/118 = 0.093 \\
+P(\text{meeting} \mid \text{not-spam}) &= (100 + 1) / (115 + 3) = 101/118 = 0.856
+\end{aligned}
 ```
 
 البريد الإلكتروني الجديد يحتوي على: "مجان" (2 مرات) ، "مال" (1 مرة) ، "اجتماع" (0 مرات).
 
+```math
+\begin{aligned}
+\log P(\text{spam} \mid \text{email}) &= \log(0.4) + 2 \log(0.529) + 1 \log(0.399) + 0 \log(0.072) \\
+&= -0.916 + 2(-0.637) + (-0.919) + 0 \\
+&= -3.109 \\[6pt]
+\log P(\text{not-spam} \mid \text{email}) &= \log(0.6) + 2 \log(0.051) + 1 \log(0.093) + 0 \log(0.856) \\
+&= -0.511 + 2(-2.976) + (-2.375) + 0 \\
+&= -8.838
+\end{aligned}
 ```
-log P(spam | email) = log(0.4) + 2*log(0.529) + 1*log(0.399) + 0*log(0.072)
-                    = -0.916 + 2*(-0.637) + (-0.919) + 0
-                    = -3.109
 
-log P(not-spam | email) = log(0.6) + 2*log(0.051) + 1*log(0.093) + 0*log(0.856)
-                        = -0.511 + 2*(-2.976) + (-2.375) + 0
-                        = -8.838
-```
-
-يربح الرسائل غير المرغوب فيها بفارق كبير. كلمة "حرة" التي تظهر مرتين هي دليل قوي على الرسائل غير المرغوب فيها. لاحظ أن "التقاء" الذي لا يظهر يساهم صفر في كل من مجموعات السجلات (0 * log(P)) - في المجموعة متعددة النسب، لا يوجد أي تأثير.
+يربح الرسائل غير المرغوب فيها بفارق كبير. كلمة "حرة" التي تظهر مرتين هي دليل قوي على الرسائل غير المرغوب فيها. لاحظ أن عدم ظهور "التقاء" يساهم في صفر لكل من مجموعات السجل ($0 \cdot \log P$) -- في المجموعة المتعددة NB، لا يوجد أي تأثير على الكلمات الغائبة.
 
 ### ثلاثة طرق
 
@@ -110,8 +112,8 @@ log P(not-spam | email) = log(0.6) + 2*log(0.051) + 1*log(0.093) + 0*log(0.856)
 
 نموذج كل ميزة كعدد. أفضل للبيانات النصية حيث هي ميزات ترددات الكلمات أو قيم TF-IDF.
 
-```
-P(word_i | class) = (count of word_i in class + alpha) / (total words in class + alpha * vocab_size)
+```math
+P(\text{word}_i \mid \text{class}) = \frac{\text{count of } \text{word}_i \text{ in class} + \alpha}{\text{total words in class} + \alpha \cdot \text{vocab\_size}}
 ```
 
 - نعم`alpha`هو تسطيح لابلاس (موضح أدناه). هذا التنوع هو الحصان العمل لتصنيف النص.
@@ -120,8 +122,8 @@ P(word_i | class) = (count of word_i in class + alpha) / (total words in class +
 
 النماذج كل ميزة كتوفر طبيعي. أفضل للميزات المستمرة.
 
-```
-P(x_i | class) = (1 / sqrt(2 * pi * var)) * exp(-(x_i - mean)^2 / (2 * var))
+```math
+P(x_i \mid \text{class}) = \frac{1}{\sqrt{2 \pi \cdot \text{var}}} \cdot \exp\left(-\frac{(x_i - \text{mean})^2}{2 \cdot \text{var}}\right)
 ```
 
 كل فئة تحصل على متوسطها وتباينها لكل ميزة. هذا يعمل بشكل جيد عندما تتبع الميزات حقا منحنى زجاجة داخل كل فئة.
@@ -130,8 +132,8 @@ P(x_i | class) = (1 / sqrt(2 * pi * var)) * exp(-(x_i - mean)^2 / (2 * var))
 
 نموذج كل ميزة كمتعدد ثنائي (حاضر أو غائب). أفضل للنص القصير أو متجهات الميزة الثنائية.
 
-```
-P(word_i | class) = (docs in class containing word_i + alpha) / (total docs in class + 2 * alpha)
+```math
+P(\text{word}_i \mid \text{class}) = \frac{\text{docs in class containing } \text{word}_i + \alpha}{\text{total docs in class} + 2 \alpha}
 ```
 
 على عكس Multinomial ، يعاقب Bernoulli صراحة غياب كلمة. إذا ظهرت "حرة" عادة في الرسائل البشرية ولكن غائبة من هذا البريد الإلكتروني ، يعتبر Bernoulli ذلك كدليل ضد الرسائل البشرية.
@@ -152,11 +154,11 @@ P(word_i | class) = (docs in class containing word_i + alpha) / (total docs in c
 
 التسهيل يضيف عدد صغير `alpha`(عادة 1) لكل عدد من الميزات:
 
-```
-P(word_i | class) = (count(word_i, class) + alpha) / (total_words_in_class + alpha * vocab_size)
+```math
+P(\text{word}_i \mid \text{class}) = \frac{\text{count}(\text{word}_i, \text{class}) + \alpha}{\text{total\_words\_in\_class} + \alpha \cdot \text{vocab\_size}}
 ```
 
-مع ألفا = 1 ، كل كلمة تحصل على احتمال صغير على الأقل. كلمة "تفكيك" التي تظهر في رسالة بريد إلكتروني اختبارية لم تعد تقتل احتمالات البريد الإلكتروني. التسهيل له تفسير بييزي: إنه يعادل وضع ديرشلت موحد قبل توزيع الكلمات.
+مع$\alpha=1$كل كلمة تحصل على على الأقل احتمال صغير. كلمة "تفكيك" التي تظهر في بريد إلكتروني اختبار لم تعد تقتل احتمالات البريد الإلكتروني. التسهيل لديه تفسير بييزي: وهو يعادل وضع ديرتشلت موحد قبل على توزيع الكلمات.
 
 الفا العليا يعني تسطيع أقوى (مزيد من التوزيعات المتساوية). الفا السفلى يعني أن النموذج يثق بالبيانات أكثر. الفا هو مفاتيح فائقة يمكنك ضبطها.
 
@@ -175,8 +177,8 @@ P(word_i | class) = (count(word_i, class) + alpha) / (total_words_in_class + alp
 
 الحل: العمل في مساحة السجلات بدلاً من مضاعفة الاحتمالات، أضف لوغاريتمهم:
 
-```
-log P(class | x1, x2, ..., xn) = log P(class) + sum_i log P(xi | class)
+```math
+\log P(\text{class} \mid x_1, x_2, \ldots, x_n) = \log P(\text{class}) + \sum_i \log P(x_i \mid \text{class})
 ```
 
 هذا يحول التنبؤ إلى نسبة نقطة:
@@ -194,7 +196,7 @@ prediction = argmax(log_scores)
 
 | Aspect | Naive Bayes | Logistic Regression |
 |--------|------------|-------------------|
-| Type | Generative (models P(X\|Y)) | Discriminative (models P(Y\|X)) |
+| Type | Generative (models $P(X \mid Y){}$) | Discriminative (models $P(Y \mid X){}$) |
 | Training | Count frequencies | Optimize loss function |
 | Small data | Better (strong prior helps) | Worse (not enough to estimate weights) |
 | Large data | Worse (wrong assumption hurts) | Better (flexible boundary) |
@@ -221,8 +223,8 @@ flowchart LR
 
 في الممارسة العملية، نعمل في مساحة السجلات لتجنب تدفقات نقطة عائمة. بدلاً من مضاعفة العديد من الاحتمالات الصغيرة، نضيف محاسباتها:
 
-```
-log P(class | features) = log P(class) + sum_i log P(feature_i | class)
+```math
+\log P(\text{class} \mid \text{features}) = \log P(\text{class}) + \sum_i \log P(\text{feature}_i \mid \text{class})
 ```
 
 ```figure
@@ -239,7 +241,7 @@ naive-bayes
 
 1. **fit(X, y)**: لكل فئة، احتساب تردد كل ميزة. إضافة تسطيح Laplace. حساب احتمالات السجل. تخزين قبلات الفئة (سجل ترددات الفئة).
 
-2. **predict_log_proba(X)**: لكل عينة، حساب سجل P(فئة) + جمع سجل P(صف_i ‬فئة) لجميع الفئات. هذه هي مضاعفة المصفوفة: X @ log_probs.T + log_priors.
+2. **predict_log_proba(X)**: لكل عينة، احسب $\log P(\text{class})$+ مجموع $\log P(\text{feature}_i \mid \text{class})$لجميع الفصول. هذه مضاعفة ماتريكية: X @ log_probs.T + log_priors.
 
 3. **predict(X)**: أعد الفئة بأعلى احتمالات التسجيل.
 
@@ -312,9 +314,9 @@ class GaussianNB:
 
 ### السرعة التنبؤية
 
-تنبؤ بايز البغيض هو مضاعفة المصفوفة. بالنسبة n عينات مع d خصائص و k فئات:
-- MultinomialNB: مضاعفة ماتريكية واحدة (n x d) @ (d x k) = O(n * d * k)
-- غوسيانNB: n * k تقييمات غوسيان PDF، كل أكثر من d ميزات = O(n * d * k)
+توقعات (بايز) البرية هي مضاعفة المصفوفة$n$عينات مع $d$الميزات و$k$الفئات:
+- MultinomialNB: مضاعفة ماتريك $(n \times d) \mathbin{@} (d \times k) = O(n \cdot d \cdot k)$
+- غوسيانNB: $n \cdot k$تقييمات غوسيان في PDF، كل مرة $d$الخصائص = $O(n \cdot d \cdot k)$
 
 كلاهما خطي في كل بعد. مقارن هذا مع KNN (الذي يتطلب حساب المسافة إلى جميع نقاط التدريب) أو SVM مع kernel RBF (الذي يتطلب تقييم النواة ضد جميع المتجهات الدعمية). NB أسرع بأوامر من الكبيرة في وقت التنبؤ.
 
@@ -387,7 +389,7 @@ text_clf = Pipeline([
 
 ### تحديد المعدل NB احتمالات
 
-إن احتمالات NB ضعيفة التصفية. عندما تقول NB P(spam) = 0.95, قد تكون الاحتمال الحقيقي 0.7. إذا كنت بحاجة إلى تقديرات احتمالية موثوقة (على سبيل المثال، لتحديد عتبة أو الجمع مع نماذج أخرى) ، استخدم SKULLAARN'S CalibratedClassifierCV:
+الاحتمالات المعدلة بشكل سيء عندما تقول الاحتمالات$P(\text{spam}) = 0.95$إذا كنت بحاجة إلى تقديرات احتمالية موثوقة (على سبيل المثال، لتحديد عتبة أو للجمع مع نماذج أخرى) ، استخدم SKULKARN'S CalibratedClassifierCV:
 
 ```python
 from sklearn.calibration import CalibratedClassifierCV
@@ -405,7 +407,7 @@ proba = calibrated_nb.predict_proba(X_test)
 
 2. **Zero variance features.**يُقسم GaussianNB بالانحناء. إذا كانت ميزة لها انحناء صفر للفئة (كل القيم متطابقة) ، فإن الحسابات الاحتمالية تنتهي. يضيف الرمز مصطلح مسطح صغير (1e-9) لجميع الانحناءات لمنع ذلك.
 
-3. **Class imbalance.**إذا كان 99% من الرسائل الإلكترونية غير رسائل غير رسائلي، فإن P ((غير رسائلي) = 0.99 السابقة قوية جداً بحيث أنها تغلب على دليل الاحتمال. يمكنك تعيين أسس الدرجة يدوياً أو استخدام المعلم class_prior في sklearn.
+3. **Class imbalance.**إذا كان 99% من الرسائل الإلكترونية ليست رسائل غير مرئية،$P(\text{not-spam}) = 0.99$هو قوي جداً حتى أنه يغلب على دليل الاحتمال. يمكنك تعيين مسألة الفئة يدوياً أو استخدام المعلم class_prior في sklearn.
 
 4. **Feature scaling.**MultinomialNB لا تحتاج إلى التوسع (يعمل على العد). GaussianNB لا تحتاج إلى التوسع أيضا (إنه يقدر إحصاءات لكل ميزة). وهذا هو ميزة على التراجع اللوجستي و SVM ، والتي هي حساسة لمقاييس الميزات.
 
@@ -431,7 +433,7 @@ proba = calibrated_nb.predict_proba(X_test)
 
 1. **Smoothing experiment.**تدريب MultinomialNB على بيانات النص مع قيم ألفا من 0.01، 0.1، 1.0, 10.0 و 100.0. دقة المسرحية مقابل ألفا. أين ذروة الأداء؟ لماذا يؤلم الفا عالية جدا؟
 
-2. **Feature independence test.**خذ مجموعة بيانات نصية حقيقية. اختر كلمات مرتبطة بشكل واضح ("الجهاز" و "التعلم") احسب P " كلمة 1 " كلاسة) * P " كلمة 2 " كلاسة) وقارنها مع P " كلمة 1 و كلمة 2 " كلاسة) كم هي خطأ افتراض الاستقلال؟ هل يؤثر على دقة التصنيف؟
+2. **Feature independence test.**خذ مجموعة بيانات نصية حقيقية. اختر كلمات مرتبطة بوضوح ("الآلة" و "التعلم"). احسب $P(\text{word}_1 \mid \text{class}) \cdot P(\text{word}_2 \mid \text{class})$و مقارنة$P(\text{word}_1 \text{ AND } \text{word}_2 \mid \text{class})$كم هو خطأ افتراض الاستقلال؟ هل يؤثر على دقة التصنيف؟
 
 3. **Bernoulli implementation.**تمديد الرمز مع فئة بيرنوليNB. تحويل كيس الكلمات إلى ثنائي (حاضر / غائب) ومقارنة الدقة ضد MultinomialNB على بيانات النص. متى يفوز بيرنولي؟
 
@@ -444,14 +446,14 @@ proba = calibrated_nb.predict_proba(X_test)
 | Term | What people say | What it actually means |
 |------|----------------|----------------------|
 | Naive Bayes | "Simple probabilistic classifier" | A classifier that applies Bayes' theorem with the assumption that features are conditionally independent given the class |
-| Conditional independence | "Features don't affect each other" | P(A, B \| C) = P(A \| C) * P(B \| C) -- knowing B tells you nothing new about A once you know C |
+| Conditional independence | "Features don't affect each other" | $P(A, B \mid C) = P(A \mid C) \cdot P(B \mid C)$ -- knowing $B$ tells you nothing new about $A$ once you know $C$ |
 | Laplace smoothing | "Add-one smoothing" | Adding a small count to every feature to prevent zero probabilities from dominating the prediction |
-| Prior | "What you believed before seeing data" | P(class) -- the probability of each class before observing any features |
-| Likelihood | "How well the data fits" | P(features \| class) -- the probability of observing these features if the class is known |
-| Posterior | "What you believe after seeing data" | P(class \| features) -- the updated probability of the class after observing the features |
-| Generative model | "Models how data is generated" | A model that learns P(X \| Y) and P(Y), then uses Bayes' theorem to get P(Y \| X) |
-| Discriminative model | "Models the decision boundary" | A model that directly learns P(Y \| X) without modeling how X is generated |
-| Log probability | "Avoid underflow" | Working with log P instead of P to prevent the product of many small numbers from becoming zero in floating point |
+| Prior | "What you believed before seeing data" | $P(\text{class})$ -- the probability of each class before observing any features |
+| Likelihood | "How well the data fits" | $P(\text{features} \mid \text{class})$ -- the probability of observing these features if the class is known |
+| Posterior | "What you believe after seeing data" | $P(\text{class} \mid \text{features})$ -- the updated probability of the class after observing the features |
+| Generative model | "Models how data is generated" | A model that learns $P(X \mid Y)$ and $P(Y)$, then uses Bayes' theorem to get $P(Y \mid X)$ |
+| Discriminative model | "Models the decision boundary" | A model that directly learns $P(Y \mid X)$ without modeling how $X$ is generated |
+| Log probability | "Avoid underflow" | Working with $\log P$ instead of $P$ to prevent the product of many small numbers from becoming zero in floating point |
 
 ## المزيد من القراءة
 

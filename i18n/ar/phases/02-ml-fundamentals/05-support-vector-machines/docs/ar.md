@@ -28,15 +28,15 @@
 
 ### تصنيف الحد الأقصى للخفض
 
-نظراً للبيانات القابلة للفصل بشكل خطي مع علامات y_i في {-1, +1} و متجهات ميزة x_i، نريد طائرة خارقة w^T x + b = 0 التي تفصل الفئات.
+إعطاء بيانات يمكن فصلها خطياً مع علامات $y_i \in \lbrace -1, +1 \rbrace$و متجهات الميزات$x_i$نريد طائرة خارقة$w^T x + b = 0$الذي يفصل الفصول.
 
-المسافة من نقطة x_i إلى المخطط العابر هي:
+المسافة من نقطة$x_i$إلى الطائرة المضطربة هي:
 
+```math
+\text{distance} = \frac{\lvert w^T x_i + b \rvert}{\lVert w \rVert}
 ```
-distance = |w^T x_i + b| / ||w||
-```
 
-بالنسبة لمكان مصنف بشكل صحيح: y_i * (w^T x_i + b) > 0. الحافة هي ضعف المسافة من المخطط العابر إلى أقرب نقطة على كل جانب.
+بالنسبة لمكان مصنف بشكل صحيح: $y_i (w^T x_i + b) > 0$الحافة هي ضعف المسافة من المخطط المضاد إلى أقرب نقطة على كل جانب
 
 ```mermaid
 graph LR
@@ -51,19 +51,23 @@ graph LR
 
 مشكلة التحسين:
 
-```
-maximize    2 / ||w||     (the margin width)
-subject to  y_i * (w^T x_i + b) >= 1  for all i
-```
-
-على نحو مماثل (تحقيق الحد الأدنى من المعدلات من المعدلات من المعدلات من المعدلات من المعدلات من المعدلات من المعدلات من المعدلات من المعدلات من المعدلات من المعدلات من المعدلات من المعدلات من المعدلات من المعدلات من المعدلات من المعدات من المعدات من المعدات من المعدات من المعدات من المعدات من المعدات من المعدات من المعدات من المعدات من المعدات من المعدات من المعدات من المعدات من المعدات من المعدات من المعدات من المعدات من المعدات من المعدات من المعدات من المعدات من المعدات من المعدات من المعدات من المعدات من المعدات من المعدات من المعدات من المعدات من المعدات من المعدات من المعدات من المعدات من المعدات من المعدات من المعدات من المعدات من المعدات من المعدات من المعدات من المعدات من المعدات من المعدات من المعدات من المعدات من المعدات:
-
-```
-minimize    (1/2) ||w||^2
-subject to  y_i * (w^T x_i + b) >= 1  for all i
+```math
+\begin{aligned}
+\text{maximize} \quad & \frac{2}{\lVert w \rVert} \quad \text{(the margin width)} \\
+\text{subject to} \quad & y_i (w^T x_i + b) \ge 1 \quad \text{for all } i
+\end{aligned}
 ```
 
-هذا هو برنامج مربع متواصل. لديه حل عالمي فريد. نقاط البيانات التي تقع بالضبط على حدود الحافة (حيث y_i * (w^T x_i + b) = 1) هي متجهات الدعم. هي النقاط الوحيدة التي تحدد حدود القرار. تحريك أو إزالة أي نقطة غير متجهة الدعم، والحدود لا تتغير.
+على نحو متساوٍ (تقلل من$\lVert w \rVert^2$أسهل في التحسين):
+
+```math
+\begin{aligned}
+\text{minimize} \quad & \frac{1}{2} \lVert w \rVert^2 \\
+\text{subject to} \quad & y_i (w^T x_i + b) \ge 1 \quad \text{for all } i
+\end{aligned}
+```
+
+هذا هو برنامج مربع متواصل. لديه حل عالمي فريد. نقاط البيانات التي تقع بالضبط على حدود الحدود (حيث$y_i (w^T x_i + b) = 1$) هي متجهات الدعم. وهي النقاط الوحيدة التي تحدد حدود القرار. تحريك أو إزالة أي نقطة غير متجهة الدعم، والحدود لا تتغير.
 
 ### متجهات الدعم: القليل الحرج
 
@@ -85,30 +89,32 @@ graph TD
 
 البيانات الحقيقية نادرًا ما تكون قابلة للفصل الكامل. قد تكون بعض النقاط على الجانب الخطأ من الحدود، أو داخل الحافة. يسمح صياغة الحافة الناعمة بالانتهاكات عن طريق إدخال متغيرات الهدوء.
 
-```
-minimize    (1/2) ||w||^2 + C * sum(xi_i)
-subject to  y_i * (w^T x_i + b) >= 1 - xi_i
-            xi_i >= 0  for all i
+```math
+\begin{aligned}
+\text{minimize} \quad & \frac{1}{2} \lVert w \rVert^2 + C \sum_i \xi_i \\
+\text{subject to} \quad & y_i (w^T x_i + b) \ge 1 - \xi_i \\
+& \xi_i \ge 0 \quad \text{for all } i
+\end{aligned}
 ```
 
-متغير التخفيف xi_i يقيس كمية نقطة i تنتهك الهامش.
+متغير التخفيف$\xi_i$يُقيّم كم نقطة$i$يخرق الحد الأقصى$C$يسيطر على التداول:
 
-| C value | Behavior |
+| $C$ value | Behavior |
 |---------|----------|
-| Large C | Penalizes violations heavily. Narrow margin, fewer misclassifications. Overfits |
-| Small C | Allows more violations. Wide margin, more misclassifications. Underfits |
+| Large $C$ | Penalizes violations heavily. Narrow margin, fewer misclassifications. Overfits |
+| Small $C$ | Allows more violations. Wide margin, more misclassifications. Underfits |
 
-C هو قوة التنظيم، عكس. C الكبير = تقليص التنظيم. C الصغيرة = تقليص أكثر.
+$C$هو قوة التنظيم، معكسة.$C$= أقل تنظيم$C$= المزيد من التنظيم
 
 ### فقدان المضغوطات: وظيفة فقدان SVM
 
 يمكن إعادة كتابة SVM الحد الهائل كتحسين غير مقيد:
 
-```
-minimize    (1/2) ||w||^2 + C * sum(max(0, 1 - y_i * (w^T x_i + b)))
+```math
+\text{minimize} \quad \frac{1}{2} \lVert w \rVert^2 + C \sum_i \max(0, 1 - y_i (w^T x_i + b))
 ```
 
-المصطلح max(0, 1 - y_i * f(x_i)) هو خسارة الحلزون. هو صفر عندما يتم تصنيف النقطة بشكل صحيح وخارج الحافة. هو خطي عندما تكون النقطة داخل الحافة أو غير مصنفة.
+المفهوم$\max(0, 1 - y_i f(x_i))$هو الخسارة المزج. هو صفر عندما يتم تصنيف النقطة بشكل صحيح وخارج الحافة. هو خطي عندما تكون النقطة داخل الحافة أو غير مصنفة.
 
 ```
 Hinge loss for a single point:
@@ -130,9 +136,11 @@ Linear penalty when y*f(x) < 1.
 
 مقارنة مع الخسارة اللوجستية (التراجع اللوجستية):
 
-```
-Hinge:     max(0, 1 - y*f(x))          Hard cutoff at margin
-Logistic:  log(1 + exp(-y*f(x)))        Smooth, never exactly zero
+```math
+\begin{aligned}
+\text{Hinge:} \quad & \max(0, 1 - y f(x)) && \text{Hard cutoff at margin} \\
+\text{Logistic:} \quad & \log(1 + \exp(-y f(x))) && \text{Smooth, never exactly zero}
+\end{aligned}
 ```
 
 إن خسرة الحنجة تنتج حلول نادرة (فقط متجهات الدعم لها مساهمة غير صفر). يستخدم الخسارة اللوجستية جميع نقاط البيانات. وهذا يجعل SVM أكثر كفاءة في الذاكرة في وقت التنبؤ.
@@ -141,36 +149,40 @@ Logistic:  log(1 + exp(-y*f(x)))        Smooth, never exactly zero
 
 يمكنك تدريب SVM خطي باستخدام انخفاض التراجع على الخسارة المزج زائد L2 التنظيم، دون حل QP المحدود:
 
+```math
+\begin{aligned}
+& L(w, b) = \frac{\lambda}{2} \lVert w \rVert^2 + \frac{1}{n} \sum_i \max(0, 1 - y_i (w^T x_i + b)) \\[6pt]
+& \text{Gradient with respect to } w\text{:} \\
+& \quad \text{If } y_i (w^T x_i + b) \ge 1\text{:} \quad \frac{\partial L}{\partial w} = \lambda w \\
+& \quad \text{If } y_i (w^T x_i + b) < 1\text{:} \quad \frac{\partial L}{\partial w} = \lambda w - y_i x_i \\[6pt]
+& \text{Gradient with respect to } b\text{:} \\
+& \quad \text{If } y_i (w^T x_i + b) \ge 1\text{:} \quad \frac{\partial L}{\partial b} = 0 \\
+& \quad \text{If } y_i (w^T x_i + b) < 1\text{:} \quad \frac{\partial L}{\partial b} = -y_i
+\end{aligned}
 ```
-L(w, b) = (lambda/2) * ||w||^2 + (1/n) * sum(max(0, 1 - y_i * (w^T x_i + b)))
 
-Gradient with respect to w:
-  If y_i * (w^T x_i + b) >= 1:  dL/dw = lambda * w
-  If y_i * (w^T x_i + b) < 1:   dL/dw = lambda * w - y_i * x_i
-
-Gradient with respect to b:
-  If y_i * (w^T x_i + b) >= 1:  dL/db = 0
-  If y_i * (w^T x_i + b) < 1:   dL/db = -y_i
-```
-
-يُطلق على هذا الصيغة الأساسية. يُجري في O(n * d) لكل عصر، حيث n هو عدد العينات و d هو عدد الميزات. بالنسبة للبيانات الكبيرة والنادرة والمتعددة العالية (تصنيف النص) ، هذا سريع.
+هذا يسمى الصيغة الأساسية.$O(n \cdot d)$في كل عصر، حيث$n$هو عدد العينات و$d$هو عدد الميزات. بالنسبة للبيانات الكبيرة والنقرية والمتعددة (تصنيف النص) ، هذا سريع.
 
 ### الصيغة المزدوجة و خدعة النواة
 
 ثنائي اللجرنجية لمشكلة SVM (من الدروس الأولى 18 ، شروط KKT) هي:
 
-```
-maximize    sum(alpha_i) - (1/2) * sum_ij(alpha_i * alpha_j * y_i * y_j * (x_i . x_j))
-subject to  0 <= alpha_i <= C
-            sum(alpha_i * y_i) = 0
+```math
+\begin{aligned}
+\text{maximize} \quad & \sum_i \alpha_i - \frac{1}{2} \sum_{i,j} \alpha_i \alpha_j y_i y_j (x_i \cdot x_j) \\
+\text{subject to} \quad & 0 \le \alpha_i \le C \\
+& \sum_i \alpha_i y_i = 0
+\end{aligned}
 ```
 
-يتضمن الثنائي فقط منتجات النقاط x_i . x_j بين نقاط البيانات. هذه هي المعلومات الرئيسية. استبدل كل منتج نقطة بمهمة النواة K(x_i, x_j) ويمكن لـ SVM تعلم الحدود غير الخطية دون حساب التحويل صراحة.
+المزدوج ينطوي فقط على منتجات نقطة $x_i \cdot x_j$بين نقاط البيانات. هذه هي المعلومات الرئيسية. استبدل كل منتج نقطة بعمل النواة$K(x_i, x_j)$ويمكن لـ (س.و.م) تعلم الحدود غير الخطية دون الحساب أبداً للتحويل صراحة
 
-```
-Linear kernel:      K(x, z) = x . z
-Polynomial kernel:  K(x, z) = (x . z + c)^d
-RBF (Gaussian):     K(x, z) = exp(-gamma * ||x - z||^2)
+```math
+\begin{aligned}
+\text{Linear kernel:} \quad & K(x, z) = x \cdot z \\
+\text{Polynomial kernel:} \quad & K(x, z) = (x \cdot z + c)^d \\
+\text{RBF (Gaussian):} \quad & K(x, z) = \exp(-\gamma \lVert x - z \rVert^2)
+\end{aligned}
 ```
 
 يقوم النواة RBF بتخريط البيانات إلى مساحة غير محدودة. النقاط التي تقترب من مساحة المدخل لها قيمة النواة بالقرب من 1. النقاط التي تبعد عن بعضها لديها قيمة النواة بالقرب من 0.
@@ -186,20 +198,22 @@ graph LR
     A -->|"Kernel trick<br>K(x,z) = phi(x).phi(z)"| B
 ```
 
-خدعة النواة يحسب الناتج النقطي في الفضاء العالي الأبعاد دون الذهاب إلى هناك. بالنسبة للنواة متعددة النقاط من درجة d في أبعاد D، فإن مساحة الميزة الصريحة لها أبعاد O(D^d. ولكن يتم حساب K(x، z) في وقت O(D).
+خدعة النواة يحسب الناتج النقطي في الفضاء العالي الأبعاد دون الذهاب إلى هناك أبدا.$d$في$D$الأبعاد، المساحة المسموح بها$O(D^d)$الأبعاد$K(x, z)$يتم حسابها في $O(D)$الوقت
 
 ### (SVR)
 
-يُصنع النقل الانسحابي للدعم أنبوبًا من عرض إيبسيلون حول البيانات. النقاط داخل الأنبوب لها خسارة صفرية. النقاط خارج الأنبوب تعاقب خطيًا.
+متجهات الدعم تراجع يتناسب مع أنبوب من عرض $\epsilon$النقاط داخل الأنابيب لديها خسارة صفر النقاط خارج الأنابيب تعاقب خطيا
 
-```
-minimize    (1/2) ||w||^2 + C * sum(xi_i + xi_i*)
-subject to  y_i - (w^T x_i + b) <= epsilon + xi_i
-            (w^T x_i + b) - y_i <= epsilon + xi_i*
-            xi_i, xi_i* >= 0
+```math
+\begin{aligned}
+\text{minimize} \quad & \frac{1}{2} \lVert w \rVert^2 + C \sum_i (\xi_i + \xi_i^*) \\
+\text{subject to} \quad & y_i - (w^T x_i + b) \le \epsilon + \xi_i \\
+& (w^T x_i + b) - y_i \le \epsilon + \xi_i^* \\
+& \xi_i, \xi_i^* \ge 0
+\end{aligned}
 ```
 
-يحدد معايير إيبسيلون عرض الأنابيب. الأنابيب الأوسع = أقل متجهات دعم = تناسب أكثر سلاسة. الأنابيب الأصغر = متجهات دعم أكثر = تناسب أكثر ضيقة.
+- نعم$\epsilon$يحدد المعلم عرض الأنابيب. الأنابيب الأوسع = أقل متجهات دعم = تناسب أكثر سلاسة. الأنابيب الأصغر = متجهات دعم أكثر = تناسب أكثر ضيقة.
 
 ### لماذا خسر المعلمون السريعون للتعلم العميق (ومتى ما زالوا يفوزون)
 
@@ -208,7 +222,7 @@ subject to  y_i - (w^T x_i + b) <= epsilon + xi_i
 | Factor | SVMs | Deep learning |
 |--------|------|---------------|
 | Feature engineering | Requires it | Learns features |
-| Scalability | O(n^2) to O(n^3) for kernel | O(n) per epoch with SGD |
+| Scalability | $O(n^2)$ to $O(n^3)$ for kernel | $O(n)$ per epoch with SGD |
 | Image/text/audio | Needs handcrafted features | Learns from raw data |
 | Large datasets (>100k) | Slow | Scales well |
 | GPU acceleration | Limited benefit | Massive speedup |
@@ -324,9 +338,9 @@ print(f"Accuracy: {clf.score(X_test, y_test):.4f}")
 print(f"Support vectors: {clf['svm'].n_support_}")
 ```
 
-المهم: دائماً قم بتحديد ميزاتك قبل تدريب المعلم السريع. السريع السريع هو حساس لجميع الميزات لأن الحافة تعتمد على الميزات غير المتوسطة، وتشوه الهندسة.
+المهم: دائماً قم بتحديد ميزاتك قبل تدريب المهنيين السويدي.$\lVert w \rVert$، و الميزات غير المقاسية تشويه الهندسة
 
-لمجموعات بيانات كبيرة، استخدم `LinearSVC`(الصيغة الأولية، O ((n) لكل عصر) بدلاً من `SVC`(صيغة مزدوجة، O(n^2) إلى O(n^3)):
+لمجموعات بيانات كبيرة، استخدم `LinearSVC`(الصيغة الأولية ، $O(n)$في كل عصر) بدلاً من`SVC`(صيغة مزدوجة)$O(n^2)$إلى$O(n^3){}$):
 
 ```python
 from sklearn.svm import LinearSVC
@@ -341,13 +355,13 @@ clf = Pipeline([
 
 1. إنشاء مجموعة بيانات قابلة للفصل خطي 2D. قم بتدريب LinearSVM الخاص بك وتحديد متجهات الدعم. تحقق من أن متجهات الدعم هي النقاط القريبة من حدود القرار.
 
-2. يختلف C من 0.001 إلى 1000 على مجموعة بيانات ضوضاء. رسم الحد القرار لكل قيمة C. لاحظ الانتقال من الهامش واسع (غير مناسب) إلى الهامش الضيق (تجاوز).
+2. مختلفة$C$من 0.001 إلى 1000 على مجموعة بيانات ضوضاء. رسم الحد القرارية لكل $C$لاحظ الانتقال من الهامش الواسع (التسوية) إلى الهامش الضيق (التسوية).
 
 3. قم بإنشاء مجموعة بيانات تكون حدود الفئة دائرية (ليس خطية). أظهر أن SVM خطية تفشل. احسب ماتريكس النواة RBF و أظهر أن الفصول تصبح قابلة للفصل في مساحة الميزات التي يسببها النواة.
 
 4. مقارنة خسارة الخزينة مقابل خسارة اللوجستية على نفس مجموعة البيانات. قم بتدريب SVM خطي والانسحاب اللوجستي. احسب عدد نقاط التدريب التي تساهم في حدود القرار لكل نموذج (متنقلات الدعم مقابل جميع النقاط).
 
-5. قم بتنفيذ SVR (خسارة غير حساسة لـ epsilon). قم بتصويرها إلى y = sin(x) + ضجيج. رسم أنبوب epsilon حول التنبؤات وبرز متجهات الدعم (النقاط خارج الأنبوب).
+5. تنفيذ SVR (خسارة غير حساسة لـ (إيبسيلون)$y = \sin(x) + \text{noise}$. رسم أنبوب إيبسيلون حول التنبؤات وتسليط الضوء على متجهات الدعم (النقاط خارج الأنبوب).
 
 ## الشروط الرئيسية
 
@@ -355,16 +369,16 @@ clf = Pipeline([
 |------|----------------------|
 | Support vectors | The training points closest to the decision boundary. The only points that determine the hyperplane |
 | Margin | The distance between the decision boundary and the nearest support vectors. SVMs maximize this |
-| Hinge loss | max(0, 1 - y*f(x)). Zero when correctly classified and outside the margin. Linear penalty otherwise |
-| C parameter | Trade-off between margin width and classification errors. Large C = narrow margin, small C = wide margin |
+| Hinge loss | $\max(0, 1 - y f(x))$. Zero when correctly classified and outside the margin. Linear penalty otherwise |
+| C parameter | Trade-off between margin width and classification errors. Large $C$ = narrow margin, small $C$ = wide margin |
 | Soft margin | SVM formulation that allows margin violations via slack variables. Handles non-separable data |
 | Kernel trick | Computing dot products in a high-dimensional feature space without explicitly mapping to that space |
-| Linear kernel | K(x, z) = x . z. Equivalent to standard dot product. For linearly separable data |
-| RBF kernel | K(x, z) = exp(-gamma * \|\|x-z\|\|^2). Maps to infinite dimensions. Learns any smooth boundary |
-| Polynomial kernel | K(x, z) = (x . z + c)^d. Maps to a feature space of polynomial combinations |
+| Linear kernel | $K(x, z) = x \cdot z$. Equivalent to standard dot product. For linearly separable data |
+| RBF kernel | $K(x, z) = \exp(-\gamma \Vert x-z \Vert^2)$. Maps to infinite dimensions. Learns any smooth boundary |
+| Polynomial kernel | $K(x, z) = (x \cdot z + c)^d$. Maps to a feature space of polynomial combinations |
 | Dual formulation | Reformulation of the SVM problem that depends only on dot products between data points. Enables kernels |
 | SVR | Support Vector Regression. Fits an epsilon-tube around the data. Points inside the tube have zero loss |
-| Slack variables | xi_i: measures how much a point violates the margin. Zero for correctly classified points outside margin |
+| Slack variables | $\xi_i$: measures how much a point violates the margin. Zero for correctly classified points outside margin |
 | Maximum margin | The principle of choosing the hyperplane that maximizes the distance to the nearest points of each class |
 
 ## المزيد من القراءة

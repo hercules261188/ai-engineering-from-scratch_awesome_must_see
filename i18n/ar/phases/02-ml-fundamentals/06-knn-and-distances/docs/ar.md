@@ -56,12 +56,12 @@ K هو المعيار المفرط الوحيد. إنه يسيطر على الت
 
 | K | Behavior |
 |---|----------|
-| K = 1 | Decision boundary follows every point. Zero training error. High variance. Overfits |
+| $K = 1$ | Decision boundary follows every point. Zero training error. High variance. Overfits |
 | Small K (3-5) | Sensitive to local structure. Can capture complex boundaries |
 | Large K | Smoother boundaries. More robust to noise. May underfit |
-| K = N | Predicts the majority class for every point. Maximum bias |
+| $K = N$ | Predicts the majority class for every point. Maximum bias |
 
-نقطة بداية شائعة هي K = sqrt(N) لمجموعة بيانات من N نقاط. استخدم K غير مقارنة للتصنيف الثنائي لتجنب العلاقات.
+نقطة بداية مشتركة هي$K = \sqrt{N}$لـ مجموعة بيانات $N$استخدم K غير مقارنة للتصنيف الثنائي لتجنب العلاقات
 
 ```mermaid
 graph LR
@@ -83,32 +83,33 @@ graph LR
 
 **L2 (Euclidean)**هو الافتراض. المسافة على الخط المستقيم.
 
-```
-d(a, b) = sqrt(sum((a_i - b_i)^2))
+```math
+d(a, b) = \sqrt{\sum_i (a_i - b_i)^2}
 ```
 
 حساسة للميزات، دائماً تقييم الميزات قبل استخدام L2 مع KNN.
 
 **L1 (Manhattan)**يجمع الاختلافات المطلقة. أكثر قوة إلى المتفاصيل من L2 لأنه لا يربع الاختلافات.
 
-```
-d(a, b) = sum(|a_i - b_i|)
+```math
+d(a, b) = \sum_i \lvert a_i - b_i \rvert
 ```
 
 **Cosine distance**يُقيّم الزاوية بين المتجهات، دون تجاهل الحجم.
 
-```
-d(a, b) = 1 - (a . b) / (||a|| * ||b||)
+```math
+d(a, b) = 1 - \frac{a \cdot b}{\lVert a \rVert \, \lVert b \rVert}
 ```
 
-**Minkowski**يُعمّل L1 و L2 مع المعلم p.
+**Minkowski**يجميع L1 و L2 مع المعلم $p$. . .
 
-```
-d(a, b) = (sum(|a_i - b_i|^p))^(1/p)
-
-p=1: Manhattan
-p=2: Euclidean
-p->inf: Chebyshev (max absolute difference)
+```math
+\begin{aligned}
+& d(a, b) = \left( \sum_i \lvert a_i - b_i \rvert^p \right)^{1/p} \\[6pt]
+& p=1\text{: Manhattan} \\
+& p=2\text{: Euclidean} \\
+& p \to \infty\text{: Chebyshev (max absolute difference)}
+\end{aligned}
 ```
 
 أي مقياس تستخدم يعتمد على البيانات:
@@ -127,14 +128,15 @@ p->inf: Chebyshev (max absolute difference)
 
 **Distance-weighted KNN**يزن كل جيرانه عكسًا بالبعيد:
 
+```math
+\begin{aligned}
+& \text{weight}_i = \frac{1}{\text{distance}_i + \epsilon} \\[6pt]
+& \text{For classification: weighted vote} \\
+& \text{For regression: weighted average} = \frac{\sum_i w_i y_i}{\sum_i w_i}
+\end{aligned}
 ```
-weight_i = 1 / (distance_i + epsilon)
 
-For classification: weighted vote
-For regression:     weighted average = sum(w_i * y_i) / sum(w_i)
-```
-
-يمنع الـ (إيبسيلون) من الانقسام بالصفر عندما تتطابق نقطة الاستفسار مع نقطة التدريب بالضبط.
+- نعم$\epsilon$يمنع الانقسام بالصفر عندما تتطابق نقطة الاستفسار بالضبط مع نقطة التدريب.
 
 إن KNN الموزن أقل حساسية لخيار K لأن الجيران البعيدين يساهمون قليلاً جداً بغض النظر.
 
@@ -162,7 +164,7 @@ When all distances are nearly equal, "nearest" is meaningless.
 
 ### شجرة كيه دي: بحث سريع عن أقرب جيران
 
-يقوم KNN بقوة قاسية بحساب المسافة من الاستفسار إلى كل نقطة تدريب. وهذا هو O(n * d) لكل استفسار. بالنسبة لمجموعات بيانات كبيرة، هذا بطيء جدا.
+قوة القوة القاسية KNN يحسب المسافة من البحث إلى كل نقطة تدريب.$O(n \cdot d)$لكل استفسار. بالنسبة لمجموعات بيانات كبيرة، هذا بطيء جدا.
 
 تقوم شجرة KD بتقسيم الفضاء بشكل متكرر على طول محور الميزات. في كل مستوى، تقسم على طول بعد واحد عند القيمة المتوسطة.
 
@@ -178,7 +180,7 @@ graph TD
 
 للعثور على أقرب جيران، عبر الشجرة إلى الورقة التي تحتوي على السؤال، ثم تراجع وتحقق من الشقق المجاورة فقط إذا كان يمكن أن تحتوي على نقاط أقرب.
 
-متوسط وقت البحث: O(log n) للأبعاد المنخفضة. ولكن شجرة KD تتدهور إلى O(n) في الأبعاد العالية (d > 20) لأن التراجع يزيل فروع أقل وأقل.
+متوسط وقت البحث: $O(\log n)$لكن الأشجار الكهربائية تتدهور إلى$O(n)$في الأبعاد العالية ($d > 20$) لأن التراجع يزيل عدد أقل وأقل من الفروع.
 
 ### أشجار الكرة: أفضل للأبعاد المتوسطة
 
@@ -197,8 +199,8 @@ graph TD
 
 | Aspect | Lazy (KNN) | Eager (SVM, neural net) |
 |--------|------------|------------------------|
-| Training time | O(1) just store data | O(n * epochs) |
-| Prediction time | O(n * d) per query | O(d) or O(parameters) |
+| Training time | $O(1)$ just store data | $O(n \cdot \text{epochs})$ |
+| Prediction time | $O(n \cdot d)$ per query | $O(d)$ or $O(\text{parameters})$ |
 | Memory at prediction | Store entire training set | Store model parameters only |
 | Adapts to new data | Add points instantly | Retrain the model |
 | Decision boundary | Implicit, computed on the fly | Explicit, fixed after training |
@@ -213,12 +215,12 @@ graph TD
 
 بدلاً من التصويت بأغلبية، يعد KNN للعودة متوسطات القيم المستهدفة للجيران K.
 
-```
-prediction = (1/K) * sum(y_i for i in K nearest neighbors)
-
-Or with distance weighting:
-prediction = sum(w_i * y_i) / sum(w_i)
-where w_i = 1 / distance_i
+```math
+\begin{aligned}
+& \text{prediction} = \frac{1}{K} \sum_{i \in K \text{ nearest neighbors}} y_i \\[6pt]
+& \text{Or with distance weighting:} \\
+& \text{prediction} = \frac{\sum_i w_i y_i}{\sum_i w_i} \quad \text{where } w_i = \frac{1}{\text{distance}_i + \epsilon}
+\end{aligned}
 ```
 
 إن رجعة KNN تنتج توقعات ثابتة قطعة (أو سلمة قطعة مع الوزن). لا يمكن استخراجها خارج نطاق بيانات التدريب. إذا كان جميع أهداف التدريب بين 0 و100، لن تتوقع KNN 200 أبدا.
@@ -345,7 +347,7 @@ distances, indices = index.search(query_vectors, k=5)
 
 ## التمارين
 
-1. تنفيذ تصنيف KNN على مجموعة بيانات 2D ذات 3 فئات. رسم الحدود القرارية ل K=1, K=5, K=15, و K=N. لاحظ الانتقال من الإعدادات المفرطة إلى الإعدادات السيئة.
+1. تنفيذ تصنيف KNN على مجموعة بيانات ثنائية الأبعاد ذات 3 فئات. رسم الحدود القرارية ل $K=1$،$K=5$،$K=15$و$K=N$لاحظ الانتقال من الإصلاح المفرط إلى الإصلاح المفقود
 
 2. توليد 1000 نقطة عشوائية في 2، 5، 10، 50، 100، و 500 بعد. لكل بعد، حساب نسبة من أقصى مسافة زوجية إلى أدنى بعد زوجية. رسم النسبة مقابل بعد لتصور لعنة بعد.
 
@@ -353,7 +355,7 @@ distances, indices = index.search(query_vectors, k=5)
 
 4. تنفيذ شجرة كيه دي وقياس وقت الاستفسار مقابل القوة الخام لمجموعات البيانات من 1k، 10k، و 100k نقاط في 2D، 10D، و 50D. في أي بعد توقف شجرة كيه دي عن أن تكون أسرع من القوة الخام؟
 
-5. قم ببناء مقياس KNN الموزن لـ y = sin(x) + الضجيج. قارنه مع KNN غير الموزن لـ K = 3, 10, 30.
+5. بناء ريغريسر KNN الموزن لـ$y = \sin(x) + \text{noise}$. مقارنة مع KNN غير الموزن$K=3, 10, 30$أظهر أن الوزن ينتج توقعات أكثر سلاسة، خاصة بالنسبة لـ K الكبير.
 
 ## الشروط الرئيسية
 
@@ -363,14 +365,14 @@ distances, indices = index.search(query_vectors, k=5)
 | Lazy learning | No computation at training time. All work happens at prediction time. KNN is the canonical example |
 | Eager learning | Heavy computation at training time to build a compact model. Most ML algorithms are eager |
 | Curse of dimensionality | In high dimensions, distances converge and neighborhoods expand to cover most of the space, making KNN ineffective |
-| KD-tree | Binary tree that recursively partitions space along feature axes. O(log n) queries in low dimensions |
+| KD-tree | Binary tree that recursively partitions space along feature axes. $O(\log n)$ queries in low dimensions |
 | Ball tree | Tree of nested hyperspheres. Works better than KD-trees in moderate dimensions (up to ~50) |
 | Weighted KNN | Neighbors weighted inversely by distance. Closer neighbors have more influence on the prediction |
 | Feature scaling | Normalizing features to comparable ranges. Required for distance-based methods like KNN |
 | Majority vote | Classification by counting which class is most common among K neighbors |
-| Brute force search | Computing distance to every training point. O(n*d) per query. Exact but slow for large n |
+| Brute force search | Computing distance to every training point. $O(n \cdot d)$ per query. Exact but slow for large $n$ |
 | Approximate nearest neighbor | Algorithms (HNSW, LSH, IVF) that find approximately nearest points much faster than exact search |
-| Voronoi diagram | The partition of space where each region contains all points closer to one training point than any other. K=1 KNN produces Voronoi boundaries |
+| Voronoi diagram | The partition of space where each region contains all points closer to one training point than any other. $K=1$ KNN produces Voronoi boundaries |
 
 ## المزيد من القراءة
 

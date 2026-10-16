@@ -81,11 +81,11 @@ flowchart TB
     Fold5 --> R
 ```
 
-1. تقسيم البيانات إلى طوابق ذات حجم K متساو
-2. لكل طائرة، قم بتدريبها على طائرات K-1 وتؤكد على الطائرة المتبقية
-3. متوسط درجات التحقق من التحقق من الاختبار K
+1. تقسيم البيانات إلى $K$طوابق ذات الحجم المُساو
+2. لكل طابق، التدريب على$K-1$يطوي ويتم تأكيده على الطويب المتبقي
+3. متوسط $K$نقاط التحقق من التحقق من التحقق
 
-K=5 أو K=10 هي خيارات قياسية. يتم استخدام كل نقطة بيانات للتحقق من التحقق من التحقق من التحقق من التحقق من التحقق من التحقق من التحقق من التحقق من التحقق من التحقق من التحقق من التحقق من التحقق من التحقق من التحقق من التحقق من التحقق من التحقق من التحقق من التحقق من التحقق من التحقق من التحقق من التحقق من التحقق من التحقق من التحقق من التحقق من التحقق من التحقق من التحقق من التحقق من التحقق من التحقق من التحقق من التحقق من التحقق من التحقق من التحقق من التحقق من التحقق من التحقق من التحقق من التحقق من التحقق من التحقق من التحقق من التحقق من التحقق من التحقق من التحقق من التحقق من التحقق من التحقق من التحققق من التحقققق من التحقققق من التحقققق من التحقققق.
+$K=5$أو$K=10$كل نقطة بيانات تستخدم للتحقق من التحقق مرة واحدة بالضبط. متوسط النتيجة هو تقدير أكثر استقرارا من أي تقسيم واحد.
 
 **Stratified K-fold**: يحافظ على توزيع الفئات في كل طائفة. إذا كان مجموعة البيانات الخاصة بك 70٪ من الفئة A و 30٪ من الفئة B، كل طائفة سيكون لديها نفس النسبة تقريبًا. هذا مهم بالنسبة لمجموعات البيانات غير المتوازنة حيث يمكن أن يضع التقسيم العشوائي جميع عينات الأقلية في طائفة واحدة.
 
@@ -100,18 +100,18 @@ K=5 أو K=10 هي خيارات قياسية. يتم استخدام كل نقط�
 
 من هذه المصفوفة، جميع المقاييس الأخرى هي:
 
-- **Accuracy**= (TP + TN) / (TP + TN + FP + FN). جزء من التنبؤات الصحيحة. إضلال عندما تكون الفئات غير متوازنة.
-- **Precision**= TP / (TP + FP). من كل الأشياء المتوقعة إيجابية، كم كانت في الواقع؟ استخدم عندما تكون الإيجابيات الكاذبة مكلفة (على سبيل المثال، مرشحات البريد الإلكتروني الحقيقي على أنها البريد الإلكتروني).
-- **Recall**(الحساسية) = TP / (TP + FN). من بين جميع الإيجابيات الفعلية، كم من هذه التي أمسكناها؟ استخدمها عندما تكون الإيجابيات الزائفة مكلفة (على سبيل المثال، فحص السرطان غائب الورم).
-- **F1 score**= 2 * دقة * استدعاء / (دقة + استدعاء). المتوسط المتناسب بين دقة واستدعاء. توازن بينهما عندما لا يهيمن أحد منهما بوضوح.
+- **Accuracy**= $(TP + TN) / (TP + TN + FP + FN)$جزء من التنبؤات الصحيحة، إضلال عندما تكون الفصول غير متوازنة
+- **Precision**= $TP / (TP + FP)$من بين كل الأشياء المتوقعة إيجابية، كم عدد منها كان بالفعل؟ استخدم عندما تكون الإيجابيات الكاذبة مكلفة (على سبيل المثال، مرشحات البريد الإلكتروني الحقيقي على أنها البريد الإلكتروني).
+- **Recall**(حساسية) = $TP / (TP + FN)$من بين جميع الإيجابيات الفعلية، كم من هذه التي اكتشفناها؟ استخدمها عندما تكون الإيجابيات الزائفة مكلفة (على سبيل المثال، فحص السرطان الذي يفتقر إلى ورم).
+- **F1 score**= $2 \cdot \text{precision} \cdot \text{recall} / (\text{precision} + \text{recall})$.وسيلة منسقة من الدقة والذكرى . توازن كل منهما عندما لا يهيمن أحد واضحا
 - **AUC-ROC**: المنطقة تحت منحنى خصائص التشغيل المستقبل. يظهر معدل الإيجابي الحقيقي مقابل معدل الإيجابي الكاذب عند مختلف أعلى مستويات التصنيف. AUC = 0.5 يعني التخمين العشوائي، AUC = 1.0 يعني الفصل المثالي. مستقل عن العد: يقيس مدى قيام النموذج بالإيجابيات فوق السلبيات، بغض النظر عن القص الذي تختاره.
 
 ### قياسات الرجوع
 
-- **MSE**(متوسط خطأ مربع) = المتوسط (((y_true - y_pred) ^ 2). يعاقب الأخطاء الكبيرة مربعيا. حساسة للخروج.
-- **RMSE**(أصل متوسط خطأ مربع) = sqrt(MSE). نفس الوحدات مثل المتغير الهدف. أسهل للتفسير من MSE.
-- **MAE**(متوسط خطأ مطلق) = المتوسط ((y_true - y_pred_the) يعامل جميع الأخطاء بشكل خطي. أكثر قوة إلى مستويات خارجية من MSE.
-- **R-squared**= 1 - SS_res / SS_tot، حيث SS_res = مجموع (((y_true - y_pred) ^2) و SS_tot = مجموع ((((y_true - y_mean) ^2). جزء من التباين الذي شرحه النموذج. R^2 = 1.0 مثالية. R^2 = 0.0 يعني أن النموذج ليس أفضل من التنبؤ بالمتوسط دائمًا. R^2 يمكن أن يكون سلبيًا إذا كان النموذج أسوأ من المتوسط.
+- **MSE**(خطأ مربع متوسط) = $\text{mean}((y_{\text{true}} - y_{\text{pred}})^2)$يعاقب الأخطاء الكبيرة على مستوى التربيعي حساسة للخروج
+- **RMSE**(خطأ الجذر المتوسط التربيعي) = $\sqrt{\text{MSE}}$نفس الوحدات المتغير الهدف أسهل للتفسير من MSE
+- **MAE**(خطأ مطلقاً متوسطاً) = $\text{mean}(\lvert y_{\text{true}} - y_{\text{pred}} \rvert)$يعامل جميع الأخطاء بشكل خطي، أكثر قوة إلى مستويات خارجية من MSE.
+- **R-squared**= $1 - SS_{\text{res}} / SS_{\text{tot}}$، حيث$SS_{\text{res}} = \sum (y_{\text{true}} - y_{\text{pred}})^2$و$SS_{\text{tot}} = \sum (y_{\text{true}} - y_{\text{mean}})^2$. جزء من التباين الذي شرحه النموذج. $R^2 = 1.0$هو مثالي.$R^2 = 0.0$يعني أن النموذج ليس أفضل من توقع المتوسط$R^2$يمكن أن تكون سلبية إذا كان النموذج أسوأ من المتوسط.
 
 ### منحنى التعلم
 
@@ -664,10 +664,10 @@ scores = cross_val_score(model, X, y, cv=StratifiedKFold(5), scoring="f1")
 |------|----------------|----------------------|
 | Overfitting | "Memorizing the training data" | The model captures noise in the training data, performing well on training but poorly on unseen data |
 | Cross-validation | "Testing on different subsets" | Systematically rotating which portion of data is used for validation, averaging results across all rotations |
-| Precision | "How many predicted positives are correct" | TP / (TP + FP): the fraction of positive predictions that are actually positive |
-| Recall | "How many actual positives we found" | TP / (TP + FN): the fraction of actual positives that were correctly identified |
+| Precision | "How many predicted positives are correct" | $TP / (TP + FP)$: the fraction of positive predictions that are actually positive |
+| Recall | "How many actual positives we found" | $TP / (TP + FN)$: the fraction of actual positives that were correctly identified |
 | AUC-ROC | "How well the model separates classes" | The area under the curve of true positive rate vs false positive rate across all thresholds, from 0.5 (random) to 1.0 (perfect) |
-| R-squared | "How much variance is explained" | 1 - (sum of squared residuals / total sum of squares): the fraction of target variance captured by the model |
+| R-squared | "How much variance is explained" | $1 - (\text{sum of squared residuals} / \text{total sum of squares})$: the fraction of target variance captured by the model |
 | Data leakage | "The model cheated" | Using information during training that would not be available at prediction time, leading to optimistic evaluation |
 | Learning curve | "How performance changes with more data" | A plot of training and validation scores vs training set size, revealing underfitting or overfitting |
 | Stratified split | "Keeping class ratios balanced" | Splitting data so each subset has the same proportion of each class as the full dataset |

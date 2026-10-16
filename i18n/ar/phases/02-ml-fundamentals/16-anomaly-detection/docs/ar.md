@@ -82,7 +82,7 @@ flowchart TD
 
 ### طريقة Z-Score
 
-أسهل نهج: حساب متوسط و الانحراف القياسي لكل ميزة. علامة أي نقطة أكثر من k الانحراف القياسي من المتوسط.
+أسهل نهج: حساب متوسط و الانحراف القياسي لكل ميزة. علامة أي نقطة أكثر من $k$الانحرافات القياسية عن المتوسط
 
 ```text
 z_score = (x - mean) / std
@@ -148,11 +148,11 @@ flowchart TD
 
 يتم تعيين درجة الانحراف على متوسط طول المسار عبر جميع الأشجار، معتاد على طول المسار المتوقع لشجرة البحث الثنائية العشوائية:
 
-```
-score(x) = 2^(-average_path_length(x) / c(n))
+```math
+\text{score}(x) = 2^{-\text{average\_path\_length}(x) / c(n)}
 ```
 
-أين`c(n)`هو طول المسار المتوقع لـ n عينات. النتيجة بالقرب من 1 تعني انعدام. النتيجة بالقرب من 0.5 تعني طبيعية. النتيجة بالقرب من 0 تعني طبيعية للغاية (عمقًا في مجموعات كثيفة).
+أين`c(n)`هو طول المسار المتوقع ل $n$النتائج القريبة من 1 تعني انعدام النتائج. النتائج القريبة من 0.5 تعني طبيعية. النتائج القريبة من 0 تعني طبيعية جدا (في مجموعات كثيفة).
 
 **Strengths:**لا يوجد افتراضات التوزيع. يعمل في أبعاد عالية. القياس جيدًا (سلبلينير في حجم العينة لأن كل شجرة تستخدم عينة فرعية). يتعامل مع أنواع ميزات مختلطة.
 
@@ -168,7 +168,7 @@ score(x) = 2^(-average_path_length(x) / c(n))
 مقارنة LOF كثافة المحلية حول نقطة مع كثافة حول جيرانها. نقطة في منطقة نادرة محاطة بمناطق كثيفة هي غير طبيعية.
 
 **How it works:**
-1. لكل نقطة، العثور على أقرب جيرانها k
+1. لكل نقطة، إبحث عن نقطة$k$أقرب جيران
 2. احسب كثافة الوصول المحلي (كم كثافة الحي)
 3. مقارنة كثافة كل نقطة مع كثافة جيرانها
 4. إذا كانت النقطة لديها كثافة أقل بكثير من جيرانها، فإنها خارجية
@@ -182,7 +182,7 @@ score(x) = 2^(-average_path_length(x) / c(n))
 
 **Strengths:**يكتشف الانحرافات المحلية (النقاط التي غير عادية في مجال حيّتهم، حتى لو لم تكن غير عادية عالمياً). يعمل على مجموعات ذات كثافة مختلفة.
 
-**Weaknesses:**بطيئة على مجموعات بيانات كبيرة (O(n^2) للتنفيذ ساذج. حساسة لخيار k. لا تعمل بشكل جيد في الأبعاد العالية جدا (لعنة الأبعاد تؤثر على حسابات المسافة).
+**Weaknesses:**بطيئة على مجموعات بيانات كبيرة ($O(n^2)$لتنفيذ ساذج) حساسة لخيار$k$لا يعمل بشكل جيد في الأبعاد العالية جدا (لعنة الأبعاد تؤثر على حسابات المسافة).
 
 ### المقارنة
 
@@ -199,7 +199,7 @@ score(x) = 2^(-average_path_length(x) / c(n))
 
 - **Extreme class imbalance.**مع وجود انشطة منخفضة بنسبة 0.1٪، التنبؤ "طبيعي" لكل شيء يعطي دقة بنسبة 99.9٪.
 - **AUROC is misleading.**مع عدم التوازن الكبير، يمكن أن تبدو AUROC جيدة حتى عندما يفوت النموذج معظم الخلل في العدوان العملية.
-- **Better metrics:**Precision@k (من العناصر التي تم وضع علامة k في الأعلى، كم عدد الخلل الحقيقي) ، AUPRC (المنطقة تحت منحنى استدعاء الدقة) ، والإستدعاء بمعدل ثابت إيجابي كاذب.
+- **Better metrics:**Precision@k (من الأعلى $k$المواد المشاركة، كم عدد الانحرافات الحقيقية) ، AUPRC (المنطقة تحت منحنى استرداد الدقة) ، والإسترداد بمعدل ثابت إيجابي كاذب.
 
 ```mermaid
 flowchart LR
@@ -317,7 +317,7 @@ class IsolationForest:
         return scores
 ```
 
-عامل التطبيع`c(n)`هو طول المسار المتوقع لبحث غير ناجح في شجرة البحث الثنائية مع n عناصر. يساوي `2 * H(n-1) - 2*(n-1)/n`أين`H`هذا التطبيع يضمن أن النتائج مقارنة عبر مجموعات بيانات من أبعاد مختلفة.
+عامل التطبيع`c(n)`هو طول المسار المتوقع لبحث غير ناجح في شجرة البحث الثنائية مع $n$العناصر.`2 * H(n-1) - 2*(n-1)/n`أين`H`هذا التطبيع يضمن أن النتائج مقارنة عبر مجموعات بيانات من أبعاد مختلفة.
 
 ### سيناريوهات الاكتشاف
 
@@ -433,7 +433,7 @@ predictions = oc_svm.predict(X_test)
 
 2. **Multivariate anomalies.**إنشاء بيانات 2D حيث تبدو كل ميزة بشكل فردي طبيعية ، ولكن الجمعية غير طبيعية (على سبيل المثال ، نقاط بعيدة عن خط المجموعة الرئيسية).
 
-3. **LOF from scratch.**تنفيذ عامل خارجية محلية باستخدام قريبا من k الجيران. مقارنة مع LocalOutlierFactor sklearn على نفس البيانات. استخدام k=10 و k=50 - كيف يؤثر اختيار k على النتائج؟
+3. **LOF from scratch.**تنفيذ عامل خارجية محلية باستخدام أقرب جيران. مقارنة مع عامل خارجية محلية sklearn على نفس البيانات. استخدام $k=10$و$k=50$-- كيف يختار$k$يؤثر على النتائج؟
 
 4. **Streaming anomaly detection.**تعديل كاشف الدرجة ز لتعمل في إعداد التدفق: تحديث المتوسط والتشابهات الجارية مع وصول نقاط جديدة (الخوارزمية على الانترنت ويلفورد). مقارنة مع مجموعة من الدرجة ز على نفس البيانات.
 
@@ -448,10 +448,10 @@ predictions = oc_svm.predict(X_test)
 | Contextual anomaly | "Normal value, wrong context" | An observation that is unusual given its context (time, location, etc.) but might be normal in another context |
 | Isolation Forest | "Random splits to find outliers" | An ensemble of random trees that isolates anomalies with fewer splits than normal points |
 | Local Outlier Factor | "Compare density to neighbors" | A method that flags points whose local density is much lower than their neighbors' density |
-| Z-score | "Standard deviations from mean" | (x - mean) / std, measuring how far a point is from the center in units of standard deviation |
-| IQR | "Interquartile range" | Q3 - Q1, measuring the spread of the middle 50% of data, used for robust outlier detection |
+| Z-score | "Standard deviations from mean" | $(x - \text{mean}) / \text{std}$, measuring how far a point is from the center in units of standard deviation |
+| IQR | "Interquartile range" | $Q3 - Q1$, measuring the spread of the middle 50% of data, used for robust outlier detection |
 | Contamination | "Expected fraction of anomalies" | A hyperparameter telling the detector what proportion of the data it should flag as anomalous |
-| Precision@k | "Of the top k flags, how many are real" | Precision computed on only the k most suspicious points, useful for imbalanced anomaly detection |
+| Precision@k | "Of the top k flags, how many are real" | Precision computed on only the $k$ most suspicious points, useful for imbalanced anomaly detection |
 | AUPRC | "Area under precision-recall curve" | A metric that summarizes precision-recall performance across all thresholds, better than AUROC for imbalanced data |
 
 ## المزيد من القراءة
