@@ -41,8 +41,8 @@ prediction-game
 
 **N-gram probability:** `P(w_i | w_{i-n+1}, ..., w_{i-1})`- ¿ Qué ?`n`(normalmente 3 para trigramas, 4 para 4 gramos).
 
-```text
-P(w | context) = count(context, w) / count(context)
+```math
+P(w \mid \text{context}) = \frac{\mathop{\mathrm{count}}(\text{context}, w)}{\mathop{\mathrm{count}}(\text{context})}
 ```
 
 **The zero-count problem.**Cualquier n-gramo no visto en el entrenamiento obtiene probabilidad cero. Un estudio de 2007 sobre el corpus de Brown encontró que incluso un modelo de 4 gramos tenía el 30% de 4 gramos no vistos en el entrenamiento.
@@ -60,8 +60,8 @@ La visión de Kneser-Ney es profunda. "San Francisco" es un gran gramo común. U
 
 **Evaluation: perplexity.**El exponente de la probabilidad de registro negativo promedio por palabra en un conjunto de pruebas prolongadas. Más bajo es mejor. Una perplejidad de 100 significa que el modelo es tan confuso como elegiría uniformemente entre 100 palabras.
 
-```text
-perplexity = exp(- (1/N) * Σ log P(w_i | context_i))
+```math
+\text{perplexity} = \exp\left(-\frac{1}{N} \sum_i \log P(w_i \mid \text{context}_i)\right)
 ```
 
 ```figure

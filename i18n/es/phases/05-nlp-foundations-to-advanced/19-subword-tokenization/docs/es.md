@@ -79,7 +79,7 @@ def encode_bpe(word, merges):
     return symbols
 ```
 
-Las implementaciones de producción de tokens, HF Tokenizers, utilizan la búsqueda de rangos de fusión con colas de prioridad y se ejecutan en tiempo casi lineal.
+Ingenuo .$O(n \cdot \lvert \text{merges} \rvert)$. Las implementaciones de producción (tiktoken, HF Tokenizers) utilizan búsquedas de rango de fusión con colas de prioridad y se ejecutan en tiempo casi lineal.
 
 ### Paso 3: SentenciaPiece en la práctica
 

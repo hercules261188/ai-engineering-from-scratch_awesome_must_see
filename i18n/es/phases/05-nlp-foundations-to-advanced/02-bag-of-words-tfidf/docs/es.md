@@ -23,9 +23,11 @@ Esta lección construye una bolsa de palabras, luego TF-IDF, desde cero. Luego m
 
 **TF-IDF**Una palabra que aparece en cada documento es poco informativa, así que redujelo. Una palabra rara en todo el corpus pero frecuente en un solo documento es señal, así que redujelo.
 
-```
-TF-IDF(w, d) = TF(w, d) * IDF(w)
-             = count(w in d) / |d| * log(N / df(w))
+```math
+\begin{aligned}
+\text{TF-IDF}(w, d) &= \text{TF}(w, d) \cdot \text{IDF}(w) \\
+&= \frac{\mathop{\mathrm{count}}(w \text{ in } d)}{|d|} \cdot \log\frac{N}{\mathop{\mathrm{df}}(w)}
+\end{aligned}
 ```
 
 ¿ Dónde ?`TF`es la frecuencia de los términos en el documento, `df`es la frecuencia del documento (cuántos documentos contienen la palabra), `N`Es el total de documentos.`log`mantiene el peso limitado para las palabras omnipresentes.
