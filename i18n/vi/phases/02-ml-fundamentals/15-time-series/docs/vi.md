@@ -91,8 +91,8 @@ Một chuỗi thời gian là tĩnh nếu các tính chất thống kê của n�
 
 **How to fix:**Thay vì mô hình hóa các giá trị thô, mô hình hóa sự thay đổi giữa các giá trị liên tiếp:
 
-```
-diff[t] = value[t] - value[t-1]
+```math
+\text{diff}[t] = \text{value}[t] - \text{value}[t-1]
 ```
 
 Nếu một vòng phân biệt không làm cho chuỗi không ổn định, hãy áp dụng nó một lần nữa ( phân biệt thứ hai).
@@ -109,7 +109,7 @@ Các loạt ban đầu có xu hướng hình vuông. sự phân biệt đầu ti
 
 ### Tự tương quan
 
-Autocorrelation đo lường mức độ một giá trị tại thời điểm t tương quan với giá trị tại thời điểm t-k (k bước trong quá khứ).
+Autocorrelation đo lường giá trị của một giá trị tại thời điểm nào đó $t$tương quan với giá trị tại thời điểm $t-k$($k$Các hàm tương quan tự động (ACF) vẽ tương quan này cho mỗi lần lag $k$- Tôi không biết.
 
 **ACF tells you:**
 - Nếu ACF giảm xuống 0 sau khi trễ 5, giá trị hơn 5 bước trước là không liên quan.
@@ -142,7 +142,7 @@ Các tính năng bổ sung bạn có thể thiết kế:
 
 **How many lags?**Sử dụng hàm tương quan tự động. Nếu ACF có ý nghĩa lên đến 10 độ trễ, hãy sử dụng ít nhất 10 độ trễ. Nếu có tính theo mùa hàng tuần, hãy bao gồm độ trễ 7 (và có thể 14).
 
-**The target alignment trap.**Khi tạo các tính năng lag, mục tiêu phải là giá trị tại thời điểm t, và tất cả các tính năng phải sử dụng giá trị tại thời điểm t-1 hoặc trước đó. Nếu bạn vô tình bao gồm giá trị tại thời điểm t như một tính năng, bạn có một dự đoán hoàn hảo - và một mô hình hoàn toàn vô dụng. Đây là lỗi phổ biến nhất trong kỹ thuật tính năng chuỗi thời gian.
+**The target alignment trap.**Khi tạo các tính năng lag, mục tiêu phải là giá trị tại thời điểm $t$, và tất cả các tính năng phải sử dụng các giá trị tại thời điểm $t-1$hoặc trước đó. Nếu bạn vô tình đưa vào giá trị vào thời điểm$t$như một tính năng, bạn có một dự đoán hoàn hảo -- và một mô hình hoàn toàn vô dụng. Đây là lỗi phổ biến nhất trong kỹ thuật tính năng chuỗi thời gian.
 
 ### Đăng bằng tiến
 
@@ -178,8 +178,8 @@ flowchart TD
 ```
 
 Định đắc tiến:
-1. Đào tạo dữ liệu đến thời gian t
-2. Dự đoán tại thời gian t+1 (hoặc t+1 đến t+k cho nhiều bước)
+1. Đào tạo dữ liệu theo thời gian $t$
+2. - Định thời gian $t+1$(hoặc $t+1$đến$t+k$cho nhiều bước)
 3. Nhượt cửa sổ về phía trước
 4. Lặp lại
 
@@ -191,11 +191,11 @@ Mỗi lớp thử nghiệm chỉ chứa dữ liệu sau tất cả dữ liệu �
 
 ARIMA là mô hình chuỗi thời gian cổ điển. Nó có ba thành phần:
 
-- **AR (Autoregressive):**Dự đoán từ các giá trị trước đây. AR(p) sử dụng các giá trị p cuối cùng.
-- **I (Integrated):**Sự khác biệt để đạt được sự tĩnh lặng.
-- **MA (Moving Average):**Dự đoán từ lỗi dự báo trước. MA(q) sử dụng các lỗi q cuối cùng.
+- **AR (Autoregressive):**Dự đoán từ các giá trị trước đây. AR(p) sử dụng cuối cùng $p$giá trị.
+- **I (Integrated):**Sự khác biệt để đạt được sự cố định.$d$vòng phân biệt.
+- **MA (Moving Average):**Dự đoán từ lỗi dự báo trước. MA(q) sử dụng cuối cùng $q$sai lầm.
 
-ARIMA ((p, d, q) kết hợp cả ba. Bạn chọn p, d, q dựa trên phân tích ACF/PACF hoặc tìm kiếm tự động (auto-ARIMA).
+ARIMA ((p, d, q) kết hợp cả ba.$p$- $d$- $q$dựa trên phân tích ACF/PACF hoặc tìm kiếm tự động (auto-ARIMA).
 
 Chúng ta sẽ không thực hiện ARIMA từ đầu - nó đòi hỏi tối ưu hóa số ngoài phạm vi của bài học này. Thấu hiểu chính là hiểu những gì mỗi thành phần làm để bạn có thể giải thích kết quả ARIMA và biết khi nào sử dụng nó.
 
@@ -217,7 +217,7 @@ Dự báo một bước dự đoán một bước tiến một lần. Dự báo 
 
 **Recursive (iterated):**Dự đoán một bước đi trước, sử dụng dự đoán như là đầu vào cho bước tiếp theo. đơn giản nhưng sai lầm tích lũy - mỗi dự đoán sử dụng dự đoán trước đó, vì vậy sai lầm phức tạp.
 
-**Direct:**Tập một mô hình riêng cho mỗi chân trời. Mô hình-1 dự đoán t+1, Mô hình-5 dự đoán t+5. Không tích lũy lỗi, nhưng mỗi mô hình có ít mẫu đào tạo hơn và chúng không chia sẻ thông tin.
+**Direct:**Đào tạo một mô hình riêng cho mỗi chân trời.$t+1$, mô hình-5 dự đoán$t+5$Không có sự tích lũy lỗi, nhưng mỗi mô hình có ít mẫu đào tạo hơn và chúng không chia sẻ thông tin.
 
 **Multi-output:**Trình tạo một mô hình phát ra tất cả các đường chân trời cùng một lúc. Chia sẻ thông tin qua đường chân trời nhưng yêu cầu một mô hình hỗ trợ nhiều đường lối ra (hoặc một chức năng mất tùy chỉnh).
 
@@ -228,7 +228,7 @@ Dự báo một bước dự đoán một bước tiến một lần. Dự báo 
 | Mistake | Why it happens | How to fix |
 |---------|---------------|-----------|
 | Random train/test split | Habit from standard ML | Use walk-forward or temporal split |
-| Using future features | Feature at time t included by mistake | Audit every feature for temporal alignment |
+| Using future features | Feature at time $t$ included by mistake | Audit every feature for temporal alignment |
 | Overfitting to seasonality | Model memorizes calendar patterns | Hold out a full seasonal cycle in the test set |
 | Ignoring scale changes | Revenue doubles but patterns stay | Model percentage change instead of absolute |
 | Too many lag features | "More history is better" | Use ACF to determine relevant lags |
@@ -386,7 +386,7 @@ print(f"Mean score: {scores.mean():.4f} +/- {scores.std():.4f}")
 
 Dự báo chuỗi thời gian sử dụng các số liệu hồi quy, nhưng với bối cảnh nhận thức về thời gian:
 
-- **MAE (Mean Absolute Error):**"Trong trung bình, dự đoán bị giảm 3,2 độ".
+- **MAE (Mean Absolute Error):**Tỷ lệ trung bình của $\lvert y_{\text{true}} - y_{\text{pred}} \rvert$"Trong trung bình, dự đoán bị giảm 3,2 độ".
 - **RMSE (Root Mean Squared Error):**Quảng gốc của lỗi trung bình vuông. Giói phạt lỗi lớn hơn MAE. Sử dụng khi lỗi lớn tồi tệ hơn nhiều lỗi nhỏ.
 - **MAPE (Mean Absolute Percentage Error):**Trung bình của lỗi / giá trị thực sự của các * 100. scale-independent, hữu ích để so sánh giữa các chuỗi khác nhau. nhưng không xác định khi giá trị thực là không.
 - **Naive baseline comparison:**Luôn so sánh với các đường cơ sở đơn giản. đường cơ sở ngây thơ theo mùa dự đoán giá trị từ một thời gian trước (ngày hôm qua, tuần trước). Nếu mô hình của bạn không thể đánh bại ngây thơ, có điều gì đó sai.
@@ -444,10 +444,10 @@ Nếu mô hình ML hay của bạn bị mất đến cơ sở ngây thơ theo m�
 | Term | What people say | What it actually means |
 |------|----------------|----------------------|
 | Stationarity | "The stats don't change over time" | A series whose mean, variance, and autocorrelation structure are constant over time |
-| Differencing | "Subtract consecutive values" | Computing y[t] - y[t-1] to remove trends and achieve stationarity |
+| Differencing | "Subtract consecutive values" | Computing $y[t] - y[t-1]$ to remove trends and achieve stationarity |
 | Autocorrelation (ACF) | "How a series correlates with itself" | The correlation between a time series and a lagged copy of itself, as a function of the lag |
-| Partial autocorrelation (PACF) | "Direct correlation only" | Autocorrelation at lag k after removing the effect of all shorter lags |
-| Lag features | "Past values as inputs" | Using y[t-1], y[t-2], ..., y[t-k] as features to predict y[t] |
+| Partial autocorrelation (PACF) | "Direct correlation only" | Autocorrelation at lag $k$ after removing the effect of all shorter lags |
+| Lag features | "Past values as inputs" | Using $y[t-1], y[t-2], \ldots, y[t-k]$ as features to predict $y[t]$ |
 | Walk-forward validation | "Time-respecting cross-validation" | Evaluation where training data always precedes test data chronologically |
 | ARIMA | "The classic time series model" | AutoRegressive Integrated Moving Average: combines past values (AR), differencing (I), and past errors (MA) |
 | Seasonality | "Repeating calendar patterns" | Regular, predictable cycles in a time series tied to calendar periods (daily, weekly, yearly) |

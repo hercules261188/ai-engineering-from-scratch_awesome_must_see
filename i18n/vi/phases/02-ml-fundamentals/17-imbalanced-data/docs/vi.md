@@ -35,25 +35,27 @@ Hãy xem xét một tập dữ liệu với 1000 mẫu: 990 âm, 10 dương. M�
 | Actually Positive | 0 (TP) | 10 (FN) |
 | Actually Negative | 0 (FP) | 990 (TN) |
 
-Độ chính xác = (0 + 990) / 1000 = 99,0%
+```math
+\text{Accuracy} = (0 + 990) / 1000 = 99.0\%
+```
 
 Mô hình này không bắt được gian lận, không mắc bệnh, không có lỗi, nhưng độ chính xác là 99%.
 
 ### Các số liệu tốt hơn
 
-**Precision**= TP / (TP + FP). Trong tất cả những gì được đánh dấu là dương, có bao nhiêu thực sự?
+**Precision**= $\text{TP} / (\text{TP} + \text{FP})$Trong số tất cả những gì được đánh dấu là tích cực, có bao nhiêu thực sự?
 
-**Recall**= TP / (TP + FN). Trong tất cả những gì thực sự tích cực, chúng ta đã bắt được bao nhiêu?
+**Recall**= $\text{TP} / (\text{TP} + \text{FN})$Trong số tất cả những thứ tích cực, chúng ta đã bắt bao nhiêu?
 
-**F1 Score**= 2 * độ chính xác * nhớ lại / ( độ chính xác + nhớ lại).
+**F1 Score**= $2 \cdot \text{precision} \cdot \text{recall} / (\text{precision} + \text{recall})$- Tỷ lệ trung bình hợp nhất, gây ra sự mất cân bằng giữa độ chính xác và nhớ lại nhiều hơn là trung bình toán học.
 
-**F-beta Score**= (1 + beta^2) * độ chính xác * nhớ lại / (beta^2 * độ chính xác + nhớ lại). Khi beta > 1, nhớ lại quan trọng hơn. Khi beta < 1, độ chính xác quan trọng hơn. F2 là phổ biến trong phát hiện gian lận (không có gian lận là tồi tệ hơn một báo động sai).
+**F-beta Score**= $(1 + \beta^2) \cdot \text{precision} \cdot \text{recall} / (\beta^2 \cdot \text{precision} + \text{recall})$Khi nào?$\beta > 1$, nhớ lại quan trọng hơn.$\beta < 1$F2 là phổ biến trong phát hiện gian lận (sự mất gian lận là tồi tệ hơn một báo động sai).
 
 **AUPRC**(Thành vực dưới đường cong nhớ chính xác). Giống như AUC-ROC nhưng thông tin hơn cho dữ liệu không cân bằng. Một phân loại ngẫu nhiên có AUPRC bằng tỷ lệ lớp tích cực (không phải 0,5 như ROC). Điều này làm cho sự cải thiện dễ dàng hơn để thấy.
 
-**Matthews Correlation Coefficient**= (TP * TN - FP * FN) / sqrt((TP+FP)(TP+FN)(TN+FP)(TN+FN)). dao động từ -1 đến +1. Chỉ đưa ra điểm số cao khi mô hình làm tốt trên cả hai lớp.
+**Matthews Correlation Coefficient**= $(\text{TP} \cdot \text{TN} - \text{FP} \cdot \text{FN}) / \sqrt{(\text{TP}+\text{FP})(\text{TP}+\text{FN})(\text{TN}+\text{FP})(\text{TN}+\text{FN})}$. dao động từ -1 đến +1. chỉ đưa ra điểm số cao khi mô hình làm tốt trên cả hai lớp.
 
-Đối với mô hình "luôn dự đoán âm tính" ở trên: độ chính xác = 0/0 (không xác định, thường được đặt lên 0), nhớ lại = 0/10 = 0, F1 = 0, MCC = 0. Những số liệu này xác định chính xác mô hình là vô giá trị.
+Đối với mô hình "luôn dự đoán tiêu cực" trên: $\text{precision} = 0/0$(không xác định, thường được đặt lên 0), $\text{recall} = 0/10 = 0$- $\text{F1} = 0$- $\text{MCC} = 0$Những số liệu này xác định đúng mô hình là vô giá trị.
 
 ### Đường ống dữ liệu không cân bằng
 
@@ -79,9 +81,9 @@ Việc lấy mẫu quá nhiều ngẫu nhiên làm trùng lặp các mẫu thi�
 
 SMOTE tạo ra các mẫu thiểu số tổng hợp mới có thể tin được nhưng không phải là bản sao.
 
-1. Đối với mỗi mẫu thiểu số x, tìm thấy các hàng x gần nhất của nó trong các mẫu thiểu số khác
+1. Đối với mỗi mẫu thiểu số $x$, tìm ra nó $k$hàng xóm gần nhất trong số các mẫu thiểu số khác
 2. Chọn một hàng xóm ngẫu nhiên
-3. Tạo một mẫu mới trên phân đoạn đường giữa x và hàng x đó
+3. Tạo một mẫu mới trên phân đoạn đường giữa $x$Và người hàng xóm đó
 
 Công thức: `new_sample = x + random(0, 1) * (neighbor - x)`
 
@@ -137,24 +139,24 @@ flowchart LR
 Thay vì thay đổi dữ liệu, thay đổi cách mô hình xử lý lỗi. Đưa trọng lượng cao hơn cho phân loại sai nhóm thiểu số.
 
 Đối với một vấn đề nhị phân với 950 mẫu âm và 50 mẫu dương:
-- trọng lượng cho lớp âm = n_samples / (2 * n_negative) = 1000 / (2 * 950) = 0.526
-- trọng lượng cho lớp tích cực = n_samples / (2 * n_positive) = 1000 / (2 * 50) = 10,0
+- trọng lượng cho lớp âm = $n_{\text{samples}} / (2 \cdot n_{\text{negative}}) = 1000 / (2 \cdot 950) = 0.526$
+- Tín trọng cho lớp tích cực = $n_{\text{samples}} / (2 \cdot n_{\text{positive}}) = 1000 / (2 \cdot 50) = 10.0$
 
 Nhóm tích cực có trọng lượng 19x. Việc phân loại sai một mẫu tích cực có giá trị tương đương với việc phân loại sai 19 mẫu tiêu cực. Mô hình buộc phải chú ý đến lớp thiểu số.
 
 Trong sự lùi lại hậu cần, điều này thay đổi hàm mất mát:
 
-```
-weighted_loss = -sum(w_i * [y_i * log(p_i) + (1-y_i) * log(1-p_i)])
+```math
+\text{weighted\_loss} = -\sum \bigl( w_i \cdot [y_i \log(p_i) + (1-y_i) \log(1-p_i)] \bigr)
 ```
 
-nơi w_i phụ thuộc vào lớp mẫu i.
+nơi $w_i$tùy thuộc vào lớp mẫu $i$- Tôi không biết.
 
 Các trọng lượng lớp học bằng toán học với việc lấy mẫu quá mức trong kỳ vọng, nhưng không tạo ra các điểm dữ liệu mới. Điều này làm cho chúng nhanh hơn và tránh nguy cơ quá phù hợp của các mẫu trùng lặp.
 
 ### Định hướng ngưỡng
 
-Hầu hết các phân loại tạo ra một xác suất. ngưỡng mặc định là 0,5: nếu P (( dương) >= 0,5, dự đoán dương. Nhưng 0.5 là tùy ý. Khi các lớp không cân bằng, ngưỡng tối ưu thường thấp hơn nhiều.
+Hầu hết các phân loại xuất hiện một xác suất. ngưỡng mặc định là 0,5: nếu $P(\text{positive}) \ge 0.5$Khi các lớp không cân bằng, ngưỡng tối ưu thường thấp hơn nhiều.
 
 Quá trình:
 1. Trình mẫu
@@ -172,7 +174,7 @@ flowchart LR
     E --> F[Use in Production]
 ```
 
-Một mô hình có thể phát ra P ((trận gian) = 0,15 cho một giao dịch gian lận. Ở ngưỡng 0,5, nó được phân loại là không gian lận. Ở ngưỡng 0,10, nó được bắt đúng. Độ cân bằng xác suất ít quan trọng hơn xếp hạng - miễn là gian lận có xác suất cao hơn không gian lận, có một ngưỡng phân biệt chúng.
+Một mô hình có thể phát hành $P(\text{fraud}) = 0.15$với một giao dịch gian lận. ở ngưỡng 0.5, nó được phân loại là không gian lận. ở ngưỡng 0.10, nó được bắt đúng.
 
 ### Học hỏi có giá trị
 
@@ -180,8 +182,8 @@ Việc tổng hợp trọng lượng lớp thay vì chi phí đồng nhất, ch�
 
 | | Predict Positive | Predict Negative |
 |--|---|---|
-| Actually Positive | 0 (correct) | C_FN = 100 |
-| Actually Negative | C_FP = 1 | 0 (correct) |
+| Actually Positive | 0 (correct) | $C_{\text{FN}} = 100$ |
+| Actually Negative | $C_{\text{FP}} = 1$ | 0 (correct) |
 
 Thiếu giao dịch gian lận (FN) tốn kém hơn 100 lần so với báo động sai (FP). mô hình tối ưu hóa cho tổng chi phí, không phải tổng số lỗi.
 

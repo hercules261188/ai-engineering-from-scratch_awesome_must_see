@@ -30,8 +30,8 @@ Hiểu tại sao một giả định sai dẫn đến dự đoán tốt dạy b�
 
 Định lý Bayes làm đảo ngược xác suất có điều kiện:
 
-```
-P(class | features) = P(features | class) * P(class) / P(features)
+```math
+P(\text{class} \mid \text{features}) = \frac{P(\text{features} \mid \text{class}) \cdot P(\text{class})}{P(\text{features})}
 ```
 
 Chúng tôi muốn`P(class | features)`-- xác suất rằng một tài liệu thuộc về một lớp được đưa ra từ trong đó.
@@ -43,15 +43,15 @@ Nhóm có lớp cao nhất`P(class | features)`thắng.
 
 ### Sự giả định độc lập ngây thơ
 
-Máy tính `P(features | class)`với một từ vựng 10.000 từ, bạn sẽ cần ước tính một phân phối trên 2^10.000 kết hợp có thể.
+Máy tính `P(features | class)`với một từ vựng 10.000 từ, bạn sẽ cần ước tính phân bố trên$2^{10{,}000}$Không thể.
 
 Hiểu tưởng ngây thơ: mỗi tính năng đều độc lập theo điều kiện khi xem xét lớp học.
 
-```
-P(w1, w2, ..., wn | class) = P(w1 | class) * P(w2 | class) * ... * P(wn | class)
+```math
+P(w_1, w_2, \ldots, w_n \mid \text{class}) = P(w_1 \mid \text{class}) \cdot P(w_2 \mid \text{class}) \cdots P(w_n \mid \text{class})
 ```
 
-Thay vì một phân phối chung không thể, bạn ước tính n phân phối đơn giản trên tính năng.
+Thay vì một phân phối chung không thể, bạn ước tính$n$Phân bố đơn giản trên tính năng. Mỗi người chỉ cần một con số.
 
 Hiểu định này rõ ràng là sai. Từ "máy" và "làm học" không độc lập trong bất kỳ tài liệu nào. Nhưng trình phân loại không cần ước tính xác suất chính xác. Nó cần xếp hạng chính xác - lớp nào có xác suất cao nhất. Hiểu định độc lập giới thiệu những lỗi hệ thống, nhưng những sai lầm đó ảnh hưởng đến tất cả các lớp tương tự, vì vậy xếp hạng vẫn chính xác.
 
@@ -59,7 +59,7 @@ Hiểu định này rõ ràng là sai. Từ "máy" và "làm học" không độ
 
 Ba lý do:
 
-1. **Ranking over calibration.**Việc phân loại chỉ cần lớp xếp hạng hàng đầu để đúng. ngay cả khi P(spam) = 0,99999 khi xác suất thực là 0,7, phân loại vẫn chọn spam đúng. Chúng ta không cần xác suất chính xác. Chúng ta cần người chiến thắng chính xác.
+1. **Ranking over calibration.**Việc phân loại chỉ cần lớp xếp hạng hàng đầu để đúng.$P(\text{spam}) = 0.99999$khi xác suất thực là 0,7, phân loại vẫn chọn spam đúng. chúng ta không cần xác suất chính xác. chúng ta cần người chiến thắng chính xác.
 
 2. **High bias, low variance.**Hiểu thuyết độc lập là một giả định mạnh mẽ. Nó hạn chế mô hình rất nhiều, điều này ngăn chặn quá phù hợp. Với dữ liệu đào tạo hạn chế, một mô hình sai một chút nhưng ổn định đánh bại một mô hình lý thuyết đúng nhưng vô cùng không ổn định. Đây là sự đổi giá sự thiên vị trong hành động.
 
@@ -76,31 +76,33 @@ Dữ liệu đào tạo:
 - Các email không spam đề cập đến "tự do" 5 lần, "tiền" 10 lần, "các cuộc họp" 100 lần (115 từ tổng thể)
 - 40% email là spam, 60% là không spam
 
-Với Laplace làm trơn (alpha=1):
+Với Laplace làm trơn ($\alpha=1$):
 
-```
-P(free | spam)    = (80 + 1) / (150 + 3) = 81/153 = 0.529
-P(money | spam)   = (60 + 1) / (150 + 3) = 61/153 = 0.399
-P(meeting | spam) = (10 + 1) / (150 + 3) = 11/153 = 0.072
-
-P(free | not-spam)    = (5 + 1) / (115 + 3) = 6/118 = 0.051
-P(money | not-spam)   = (10 + 1) / (115 + 3) = 11/118 = 0.093
-P(meeting | not-spam) = (100 + 1) / (115 + 3) = 101/118 = 0.856
+```math
+\begin{aligned}
+P(\text{free} \mid \text{spam}) &= (80 + 1) / (150 + 3) = 81/153 = 0.529 \\
+P(\text{money} \mid \text{spam}) &= (60 + 1) / (150 + 3) = 61/153 = 0.399 \\
+P(\text{meeting} \mid \text{spam}) &= (10 + 1) / (150 + 3) = 11/153 = 0.072 \\[6pt]
+P(\text{free} \mid \text{not-spam}) &= (5 + 1) / (115 + 3) = 6/118 = 0.051 \\
+P(\text{money} \mid \text{not-spam}) &= (10 + 1) / (115 + 3) = 11/118 = 0.093 \\
+P(\text{meeting} \mid \text{not-spam}) &= (100 + 1) / (115 + 3) = 101/118 = 0.856
+\end{aligned}
 ```
 
 Email mới có chứa: "tự do" (2 lần), "tiền" (1 lần), "quá trình" (0 lần).
 
+```math
+\begin{aligned}
+\log P(\text{spam} \mid \text{email}) &= \log(0.4) + 2 \log(0.529) + 1 \log(0.399) + 0 \log(0.072) \\
+&= -0.916 + 2(-0.637) + (-0.919) + 0 \\
+&= -3.109 \\[6pt]
+\log P(\text{not-spam} \mid \text{email}) &= \log(0.6) + 2 \log(0.051) + 1 \log(0.093) + 0 \log(0.856) \\
+&= -0.511 + 2(-2.976) + (-2.375) + 0 \\
+&= -8.838
+\end{aligned}
 ```
-log P(spam | email) = log(0.4) + 2*log(0.529) + 1*log(0.399) + 0*log(0.072)
-                    = -0.916 + 2*(-0.637) + (-0.919) + 0
-                    = -3.109
 
-log P(not-spam | email) = log(0.6) + 2*log(0.051) + 1*log(0.093) + 0*log(0.856)
-                        = -0.511 + 2*(-2.976) + (-2.375) + 0
-                        = -8.838
-```
-
-Spam thắng bằng một tỷ lệ lớn. Từ "tự do" xuất hiện hai lần là bằng chứng mạnh mẽ cho spam. Lưu ý rằng "quá trình" không xuất hiện đóng góp bằng không cho cả hai log sums (0 * log(P)) - trong Multinomial NB, từ vắng mặt không có tác động.
+Spam thắng bằng một tỷ lệ lớn. từ "tự do" xuất hiện hai lần là bằng chứng mạnh mẽ cho spam. lưu ý rằng "quá trình" không xuất hiện đóng góp không cho cả hai log tổng ($0 \cdot \log P$(với nhiều chữ số khác nhau, các từ vắng mặt không có hiệu quả.
 
 ### Ba biến thể
 
@@ -110,8 +112,8 @@ Bayes ngây thơ có 3 loại.`P(feature | class)`khác nhau.
 
 Mô hình mỗi tính năng như một con số. Tốt nhất cho dữ liệu văn bản nơi tính năng là tần số từ hoặc giá trị TF-IDF.
 
-```
-P(word_i | class) = (count of word_i in class + alpha) / (total words in class + alpha * vocab_size)
+```math
+P(\text{word}_i \mid \text{class}) = \frac{\text{count of } \text{word}_i \text{ in class} + \alpha}{\text{total words in class} + \alpha \cdot \text{vocab\_size}}
 ```
 
 - `alpha`là Laplace smoothing (được giải thích dưới đây).
@@ -120,8 +122,8 @@ P(word_i | class) = (count of word_i in class + alpha) / (total words in class +
 
 Mô hình mỗi tính năng như một phân phối bình thường.
 
-```
-P(x_i | class) = (1 / sqrt(2 * pi * var)) * exp(-(x_i - mean)^2 / (2 * var))
+```math
+P(x_i \mid \text{class}) = \frac{1}{\sqrt{2 \pi \cdot \text{var}}} \cdot \exp\left(-\frac{(x_i - \text{mean})^2}{2 \cdot \text{var}}\right)
 ```
 
 Mỗi lớp có trung bình và sự khác biệt riêng cho mỗi tính năng. Điều này hoạt động tốt khi các tính năng thực sự theo đường cong chuông trong mỗi lớp.
@@ -130,8 +132,8 @@ Mỗi lớp có trung bình và sự khác biệt riêng cho mỗi tính năng. 
 
 Mô hình mỗi tính năng như nhị phân (đây hoặc vắng mặt).
 
-```
-P(word_i | class) = (docs in class containing word_i + alpha) / (total docs in class + 2 * alpha)
+```math
+P(\text{word}_i \mid \text{class}) = \frac{\text{docs in class containing } \text{word}_i + \alpha}{\text{total docs in class} + 2 \alpha}
 ```
 
 Không giống như Multinomial, Bernoulli rõ ràng trừng phạt sự vắng mặt của một từ. Nếu "tự do" thường xuất hiện trong thư rác nhưng vắng mặt trong email này, Bernoulli tính rằng đó là bằng chứng chống lại thư rác.
@@ -152,11 +154,11 @@ Không làm trơn:`P(word | class) = 0/N = 0`Một số 0 nhân qua toàn bộ s
 
 Lượt độ Laplace thêm một con số nhỏ `alpha`(thường là 1) cho mỗi tính năng:
 
-```
-P(word_i | class) = (count(word_i, class) + alpha) / (total_words_in_class + alpha * vocab_size)
+```math
+P(\text{word}_i \mid \text{class}) = \frac{\text{count}(\text{word}_i, \text{class}) + \alpha}{\text{total\_words\_in\_class} + \alpha \cdot \text{vocab\_size}}
 ```
 
-Với alpha = 1, mỗi từ có ít nhất một xác suất nhỏ. Từ "discombobulate" xuất hiện trong email thử nghiệm không còn giết chết xác suất spam.
+Với $\alpha=1$, mỗi từ có ít nhất một xác suất nhỏ. từ "discombobulate" xuất hiện trong một email thử nghiệm không còn giết chết xác suất spam.
 
 Alpha cao hơn có nghĩa là làm trơn hơn (các phân phối thống nhất hơn). alpha thấp hơn có nghĩa là mô hình tin tưởng dữ liệu nhiều hơn. Alpha là một siêu tham số bạn điều chỉnh.
 
@@ -175,8 +177,8 @@ Bội số hàng trăm xác suất (mỗi số ít hơn 1) gây ra dòng chảy 
 
 Giải pháp: làm việc trong không gian log. Thay vì nhân xác suất, hãy thêm các logarithm của chúng:
 
-```
-log P(class | x1, x2, ..., xn) = log P(class) + sum_i log P(xi | class)
+```math
+\log P(\text{class} \mid x_1, x_2, \ldots, x_n) = \log P(\text{class}) + \sum_i \log P(x_i \mid \text{class})
 ```
 
 Điều này biến dự đoán thành một sản phẩm điểm:
@@ -194,7 +196,7 @@ Cả hai đều là phân loại đường thẳng cho văn bản. Sự khác bi
 
 | Aspect | Naive Bayes | Logistic Regression |
 |--------|------------|-------------------|
-| Type | Generative (models P(X\|Y)) | Discriminative (models P(Y\|X)) |
+| Type | Generative (models $P(X \mid Y){}$) | Discriminative (models $P(Y \mid X){}$) |
 | Training | Count frequencies | Optimize loss function |
 | Small data | Better (strong prior helps) | Worse (not enough to estimate weights) |
 | Large data | Worse (wrong assumption hurts) | Better (flexible boundary) |
@@ -221,8 +223,8 @@ flowchart LR
 
 Thực tế, chúng ta làm việc trong không gian log để tránh dòng chảy dưới điểm nổi. thay vì nhân nhiều xác suất nhỏ, chúng ta thêm các logarithm của chúng:
 
-```
-log P(class | features) = log P(class) + sum_i log P(feature_i | class)
+```math
+\log P(\text{class} \mid \text{features}) = \log P(\text{class}) + \sum_i \log P(\text{feature}_i \mid \text{class})
 ```
 
 ```figure
@@ -239,7 +241,7 @@ Việc thực hiện từ đầu:
 
 1. **fit(X, y)**: Đối với mỗi lớp, đếm tần số của mỗi tính năng. Thêm thanh toán Laplace. Xét xác suất log. Cấp trước lớp (log tần số lớp).
 
-2. **predict_log_proba(X)**: Đối với mỗi mẫu, tính toán log P(class) + tổng của log P(feature_i ≠class) cho tất cả các lớp. Đây là một số nhân tử liệu: X @ log_probs.T + log_priors.
+2. **predict_log_proba(X)**: Đối với mỗi mẫu, tính toán $\log P(\text{class})$+ tổng của $\log P(\text{feature}_i \mid \text{class})$cho tất cả các lớp. Đây là một số nhân tử liệu: X @ log_probs.T + log_priors.
 
 3. **predict(X)**: Trở lại lớp có xác suất log cao nhất.
 
@@ -312,9 +314,9 @@ Bộ luật cũng chứng minh:
 
 ### Tốc độ dự đoán
 
-Dự đoán Bayes ngây thơ là một nhân số tử liệu. Đối với n mẫu có d tính năng và lớp k:
-- MultinomialNB: một số tử liệu nhân (n x d) @ (d x k) = O(n * d * k)
-- GaussianNB: n * k Đánh giá PDF Gaussian, mỗi tính năng d = O(n * d * k)
+Dự đoán Bayes ngây thơ là một số nhân tử liệu.$n$mẫu với $d$đặc điểm và$k$Các lớp:
+- MultinomialNB: một matrix nhân $(n \times d) \mathbin{@} (d \times k) = O(n \cdot d \cdot k)$
+- GaussianNB: $n \cdot k$Các đánh giá Gaussian PDF, mỗi lần $d$đặc điểm = $O(n \cdot d \cdot k)$
 
 Cả hai đều tuyến tính trong mọi chiều kích. So sánh với KNN (cần tính khoảng cách đến tất cả các điểm đào tạo) hoặc SVM với lõi RBF (cần đánh giá lõi đối với tất cả các vector hỗ trợ). NB nhanh hơn theo thứ tự quy mô tại thời gian dự đoán.
 
@@ -387,7 +389,7 @@ text_clf = Pipeline([
 
 ### Định so sánh NB Khả năng
 
-NB xác suất được chuẩn bị kém. Khi NB nói P(spam) = 0,95, xác suất thực có thể là 0,7. Nếu bạn cần ước tính xác suất đáng tin cậy (ví dụ, để đặt ngưỡng hoặc kết hợp với các mô hình khác), sử dụng sklearn's CalibratedClassifierCV:
+NB xác suất là không được chuẩn bị tốt.$P(\text{spam}) = 0.95$Nếu bạn cần ước tính xác suất đáng tin cậy (ví dụ, để đặt ngưỡng hoặc kết hợp với các mô hình khác), sử dụng Skelarn's CalibratedClassifierCV:
 
 ```python
 from sklearn.calibration import CalibratedClassifierCV
@@ -405,7 +407,7 @@ proba = calibrated_nb.predict_proba(X_test)
 
 2. **Zero variance features.**GaussianNB chia theo sự biến động. Nếu một tính năng có sự biến động không cho một lớp (tất cả các giá trị đều giống nhau), tính toán xác suất bị phá vỡ. Mã thêm một thuật ngữ thanh thản nhỏ (1e-9) vào tất cả các biến động để ngăn chặn điều này.
 
-3. **Class imbalance.**Nếu 99% email không spam, P không spam trước = 0,99 là mạnh đến nỗi nó áp đảo bằng chứng xác suất. Bạn có thể đặt các ưu tiên lớp bằng tay hoặc sử dụng tham số class_prior trong sklearn.
+3. **Class imbalance.**Nếu 99% email không phải là spam, trước đó $P(\text{not-spam}) = 0.99$là mạnh đến nỗi nó làm cho chứng cứ khả năng tràn ngập. Bạn có thể đặt class prior bằng tay hoặc sử dụng class_prior tham số trong sklearn.
 
 4. **Feature scaling.**MultinomialNB không cần quy mô (nó hoạt động trên đếm). GaussianNB cũng không cần quy mô (nó ước tính thống kê tính năng).
 
@@ -431,7 +433,7 @@ Trong thực tế, các chế độ thất bại này hiếm khi xảy ra cho ph
 
 1. **Smoothing experiment.**Đào tạo MultinomialNB trên dữ liệu văn bản với giá trị alpha là 0.01, 0.1, 1.0, 10.0 và 100.0. Độ chính xác của bản vẽ so với alpha.
 
-2. **Feature independence test.**Hãy lấy một tập dữ liệu văn bản thực. Chọn hai từ có liên quan rõ ràng ("máy" và "làm học"). Xét P n 1 n lớp) * P n 2 n lớp) và so sánh với P n 1 n lớp 2 n lớp. Giả định độc lập là sai đến mức nào? Nó ảnh hưởng đến độ chính xác phân loại?
+2. **Feature independence test.**Hãy lấy một tập dữ liệu văn bản thực sự. Chọn hai từ rõ ràng liên quan ("cỗ máy" và "làm học").$P(\text{word}_1 \mid \text{class}) \cdot P(\text{word}_2 \mid \text{class})$và so sánh với $P(\text{word}_1 \text{ AND } \text{word}_2 \mid \text{class})$Thuyết độc lập có sai đến mức nào?
 
 3. **Bernoulli implementation.**Lớn thêm mã bằng lớp BernoulliNB. Chuyển đổi túi từ thành nhị phân (đây/không có) và so sánh độ chính xác so với MultinomialNB trên dữ liệu văn bản.
 
@@ -444,14 +446,14 @@ Trong thực tế, các chế độ thất bại này hiếm khi xảy ra cho ph
 | Term | What people say | What it actually means |
 |------|----------------|----------------------|
 | Naive Bayes | "Simple probabilistic classifier" | A classifier that applies Bayes' theorem with the assumption that features are conditionally independent given the class |
-| Conditional independence | "Features don't affect each other" | P(A, B \| C) = P(A \| C) * P(B \| C) -- knowing B tells you nothing new about A once you know C |
+| Conditional independence | "Features don't affect each other" | $P(A, B \mid C) = P(A \mid C) \cdot P(B \mid C)$ -- knowing $B$ tells you nothing new about $A$ once you know $C$ |
 | Laplace smoothing | "Add-one smoothing" | Adding a small count to every feature to prevent zero probabilities from dominating the prediction |
-| Prior | "What you believed before seeing data" | P(class) -- the probability of each class before observing any features |
-| Likelihood | "How well the data fits" | P(features \| class) -- the probability of observing these features if the class is known |
-| Posterior | "What you believe after seeing data" | P(class \| features) -- the updated probability of the class after observing the features |
-| Generative model | "Models how data is generated" | A model that learns P(X \| Y) and P(Y), then uses Bayes' theorem to get P(Y \| X) |
-| Discriminative model | "Models the decision boundary" | A model that directly learns P(Y \| X) without modeling how X is generated |
-| Log probability | "Avoid underflow" | Working with log P instead of P to prevent the product of many small numbers from becoming zero in floating point |
+| Prior | "What you believed before seeing data" | $P(\text{class})$ -- the probability of each class before observing any features |
+| Likelihood | "How well the data fits" | $P(\text{features} \mid \text{class})$ -- the probability of observing these features if the class is known |
+| Posterior | "What you believe after seeing data" | $P(\text{class} \mid \text{features})$ -- the updated probability of the class after observing the features |
+| Generative model | "Models how data is generated" | A model that learns $P(X \mid Y)$ and $P(Y)$, then uses Bayes' theorem to get $P(Y \mid X)$ |
+| Discriminative model | "Models the decision boundary" | A model that directly learns $P(Y \mid X)$ without modeling how $X$ is generated |
+| Log probability | "Avoid underflow" | Working with $\log P$ instead of $P$ to prevent the product of many small numbers from becoming zero in floating point |
 
 ## Đọc thêm
 

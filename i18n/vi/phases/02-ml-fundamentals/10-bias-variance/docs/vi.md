@@ -54,23 +54,24 @@ High variance (overfitting):
 
 ### Sự phân hủy
 
-Đối với bất kỳ điểm x nào, sai lầm dự đoán dự kiến dưới lỗ vuông phân hủy chính xác:
+Cho bất cứ điểm nào $x$, lỗi dự đoán dự kiến dưới lỗ vuông phân hủy chính xác:
 
+```math
+\begin{aligned}
+& \text{Expected Error} = \text{Bias}^2 + \text{Variance} + \text{Irreducible Noise} \\[6pt]
+& \text{where:} \\
+& \quad \text{Bias}^2 = (\mathbb{E}[\hat{f}(x)] - f(x))^2 \\
+& \quad \text{Variance} = \mathbb{E}[(\hat{f}(x) - \mathbb{E}[\hat{f}(x)])^2] \\
+& \quad \text{Noise} = \mathbb{E}[(y - f(x))^2] \quad (\sigma^2)
+\end{aligned}
 ```
-Expected Error = Bias^2 + Variance + Irreducible Noise
 
-where:
-  Bias^2   = (E[f_hat(x)] - f(x))^2
-  Variance = E[(f_hat(x) - E[f_hat(x)])^2]
-  Noise    = E[(y - f(x))^2]             (sigma^2)
-```
+- $f(x)$là chức năng thực
+- $\hat{f}(x)$là dự đoán của mô hình của bạn
+- $\mathbb{E}[\ldots]$là kỳ vọng đối với các tập hợp đào tạo khác nhau
+- $y$là nhãn được quan sát (công cụ thực cộng với tiếng ồn)
 
-- `f(x)`là chức năng thực
-- `f_hat(x)`là dự đoán của mô hình của bạn
-- `E[...]`là kỳ vọng đối với các tập hợp đào tạo khác nhau
-- `y`là nhãn được quan sát (công cụ thực cộng với tiếng ồn)
-
-Thuật ngữ tiếng ồn là không thể giảm thiểu. Không mô hình nào có thể làm tốt hơn sigma^2 trên dữ liệu tiếng ồn. Công việc của bạn là tìm ra sự cân bằng đúng giữa sự thiên vị^2 và sự biến động.
+Thuật ngữ tiếng ồn là không thể giảm thiểu.$\sigma^2$Công việc của bạn là tìm ra sự cân bằng đúng giữa$\text{bias}^2$và sự khác biệt.
 
 ### Mô hình phức tạp so với lỗi
 
@@ -131,9 +132,9 @@ Tại sao lại xảy ra chuyện này? Ở ngưỡng phân cực, mô hình có
 
 | Regime | Parameters vs Samples | Behavior |
 |--------|----------------------|----------|
-| Underparameterized | p << n | Classical tradeoff applies |
-| Interpolation threshold | p ~ n | Variance peaks, test error spikes |
-| Overparameterized | p >> n | Implicit regularization kicks in, test error drops |
+| Underparameterized | $p \ll n$ | Classical tradeoff applies |
+| Interpolation threshold | $p \sim n$ | Variance peaks, test error spikes |
+| Overparameterized | $p \gg n$ | Implicit regularization kicks in, test error drops |
 
 Để mục đích thực tế: nếu bạn đang sử dụng mạng thần kinh hoặc các tập hợp cây lớn, đừng dừng lại ở ngưỡng phân cực. Hoặc ở dưới nó (với quy định rõ ràng) hoặc vượt qua nó.
 
@@ -180,7 +181,7 @@ Các phương pháp tập hợp là công cụ thực tế nhất để chống 
 
 **Bagging (Bootstrap Aggregating)**Các mô hình khác nhau được đào tạo trên các mẫu bootstrap khác nhau của dữ liệu đào tạo, sau đó trung bình dự đoán của họ. Mỗi mô hình cá nhân có sự biến động cao, nhưng trung bình có sự biến động thấp hơn nhiều. Rừng ngẫu nhiên được áp dụng cho cây quyết định.
 
-Tại sao nó hoạt động toán học: nếu bạn trung bình N dự đoán độc lập, mỗi với sự biến động sigma^2, sự biến động của trung bình là sigma^2 / N. Các mô hình không thực sự độc lập (tất cả chúng đều thấy dữ liệu tương tự), do đó sự giảm thấp hơn 1/N, nhưng nó vẫn đáng kể.
+Tại sao nó hoạt động toán học: nếu bạn trung bình $N$dự đoán độc lập, mỗi dự đoán có sự khác biệt.$\sigma^2$, sự biến động của trung bình là $\sigma^2 / N$Các mô hình không thực sự độc lập (tất cả chúng đều thấy dữ liệu tương tự), do đó sự giảm là ít hơn $1/N$Nhưng nó vẫn còn đáng kể.
 
 **Boosting**làm giảm sự thiên vị bằng cách xây dựng các mô hình theo trình tự, trong đó mỗi mô hình mới tập trung vào các lỗi của tập hợp cho đến nay.
 
@@ -306,10 +307,10 @@ variance = np.mean(predictions.var(axis=0))
 total_error = np.mean(np.mean((predictions - y_true) ** 2, axis=1))
 ```
 
-- `mean_pred`là E[f_hat(x)] được ước tính từ các mẫu bootstrap
+- `mean_pred`là $\mathbb{E}[\hat{f}(x)]$ước tính từ các mẫu bootstrap
 - `bias_sq`là khoảng cách vuông giữa dự đoán trung bình và sự thật
 - `variance`là sự lây lan trung bình của dự đoán trên các mẫu bootstrap
-- `total_error`nên tương đương với bias^2 + sự khác biệt + tiếng ồn
+- `total_error`nên tương đương $\text{bias}^2 + \text{variance} + \text{noise}$
 
 ### Bước 4: Lập trình học tập
 
@@ -440,7 +441,7 @@ Bài học này mang lại: `outputs/prompt-model-diagnostics.md`
 
 2. Tăng kích thước tập thể dục từ 30 lên 300. Điều này ảnh hưởng như thế nào đến thành phần biến thể?
 
-3. Thêm L2 điều chỉnh (khuyết phục Ridge) vào thí nghiệm. Đối với một đa số độ cao cố định (đường 15), quét lambda từ 0 đến 100.
+3. Thêm L2 regulation (Ridge regression) vào thí nghiệm. Đối với một polynomial độ cao cố định (đường 15), quét lambda từ 0 đến 100.$\text{bias}^2$và sự khác biệt như các hàm của lambda.
 
 4. Thay đổi hàm thực từ một đa nôn thành `sin(x)`Làm thế nào sự phân hủy biến thái thiên vị thay đổi?
 

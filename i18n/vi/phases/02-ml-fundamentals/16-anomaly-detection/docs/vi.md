@@ -82,7 +82,7 @@ Trong thực tế, các hệ thống tốt nhất kết hợp cả hai: phát hi
 
 ### Phương pháp điểm Z
 
-Cách tiếp cận đơn giản nhất: tính toán trung bình và lệch tiêu chuẩn của mỗi tính năng. Đánh dấu bất kỳ điểm nào nhiều hơn k lệch tiêu chuẩn từ trung bình.
+Cách tiếp cận đơn giản nhất: tính toán trung bình và lệch tiêu chuẩn của mỗi tính năng.$k$Phản độ tiêu chuẩn từ trung bình.
 
 ```text
 z_score = (x - mean) / std
@@ -148,11 +148,11 @@ flowchart TD
 
 Điểm điểm bất thường dựa trên chiều dài đường trung bình trên tất cả các cây, bình thường hóa bằng chiều dài đường dự kiến của một cây tìm kiếm nhị phân ngẫu nhiên:
 
-```
-score(x) = 2^(-average_path_length(x) / c(n))
+```math
+\text{score}(x) = 2^{-\text{average\_path\_length}(x) / c(n)}
 ```
 
-Ở đâu `c(n)`là chiều dài đường dự kiến cho n mẫu. Điểm gần 1 có nghĩa là bất thường. Điểm gần 0.5 có nghĩa là bình thường. Điểm gần 0 có nghĩa là rất bình thường (thậm trong các cụm dày đặc).
+Ở đâu `c(n)`là chiều dài đường dự kiến cho $n$điểm gần 1 có nghĩa là bất thường điểm gần 0.5 có nghĩa là bình thường điểm gần 0 có nghĩa là rất bình thường (trong các cụm dày đặc).
 
 **Strengths:**Không có giả định phân phối. Làm việc trong kích thước cao. Scales tốt (đối với kích thước mẫu vì mỗi cây sử dụng một mẫu phụ).
 
@@ -168,7 +168,7 @@ score(x) = 2^(-average_path_length(x) / c(n))
 LOF so sánh mật độ địa phương xung quanh một điểm với mật độ xung quanh hàng xóm của nó.
 
 **How it works:**
-1. Đối với mỗi điểm, tìm k hàng xóm gần nhất của nó
+1. Đối với mỗi điểm, tìm ra nó $k$hàng xóm gần nhất
 2. Xét mật độ khả năng tiếp cận địa phương (bố phố dày đặc như thế nào)
 3. So sánh mật độ của mỗi điểm với mật độ của hàng xóm của nó
 4. Nếu một điểm có mật độ thấp hơn nhiều so với các hàng xóm của nó, nó là một ngoại lệ
@@ -182,7 +182,7 @@ Phần "địa phương" là quan trọng. Hãy xem xét một tập dữ liệu
 
 **Strengths:**Khám phá các bất thường địa phương (điểm bất thường trong khu vực của họ, ngay cả khi chúng không phải là bất thường trên toàn cầu).
 
-**Weaknesses:**Hạt chậm trên các tập dữ liệu lớn (O(n^2) để thực hiện ngây thơ. Nhận thức về sự lựa chọn của k. Không hoạt động tốt trong các chiều kích rất cao (đại phận về chiều kích ảnh hưởng đến tính toán khoảng cách).
+**Weaknesses:**chậm trên các bộ dữ liệu lớn ($O(n^2)$Nhận thức về việc lựa chọn $k$Không hoạt động tốt trong các chiều kích rất cao (của nguyền của chiều kích ảnh hưởng đến tính toán khoảng cách).
 
 ### So sánh
 
@@ -199,7 +199,7 @@ Việc đánh giá các máy dò bất thường khó hơn đánh giá các bộ
 
 - **Extreme class imbalance.**Với sự bất thường 0,1%, dự đoán "tự nhiên" cho mọi thứ sẽ mang lại độ chính xác 99,9%.
 - **AUROC is misleading.**Với sự mất cân bằng nặng, AUROC có thể trông tốt ngay cả khi mô hình bỏ lỡ hầu hết các bất thường ở ngưỡng thực tế.
-- **Better metrics:**Precision@k (từ các mục được đánh dấu ở trên cùng k, bao nhiêu là bất thường thực tế), AUPRC (vùng dưới đường cong thu hồi chính xác), và thu hồi với tỷ lệ dương tính sai cố định.
+- **Better metrics:**Precision@k (từ trên cùng $k$các mục được đánh dấu, có bao nhiêu bất thường thực tế), AUPRC (vùng dưới đường cong thu hồi chính xác), và thu hồi với tỷ lệ dương tính sai cố định.
 
 ```mermaid
 flowchart LR
@@ -317,7 +317,7 @@ class IsolationForest:
         return scores
 ```
 
-Tỷ lệ bình thường hóa`c(n)`là chiều dài đường dự kiến của một tìm kiếm không thành công trong một cây tìm kiếm nhị phân với n yếu tố.`2 * H(n-1) - 2*(n-1)/n`nơi `H`là số hài hòa. Sự bình thường hóa này đảm bảo điểm số là tương đương giữa các bộ dữ liệu có kích thước khác nhau.
+Tỷ lệ bình thường hóa`c(n)`là chiều dài đường dự kiến của một tìm kiếm không thành công trong một cây tìm kiếm nhị phân với $n$- Đáng giá của nó.`2 * H(n-1) - 2*(n-1)/n`nơi `H`là số hài hòa. Sự bình thường hóa này đảm bảo điểm số là tương đương giữa các bộ dữ liệu có kích thước khác nhau.
 
 ### Các kịch bản demo
 
@@ -433,7 +433,7 @@ Trong cả hai trường hợp, ngưỡng tối ưu phụ thuộc vào tỷ lệ
 
 2. **Multivariate anomalies.**Tạo dữ liệu 2D nơi mỗi tính năng riêng lẻ trông bình thường, nhưng sự kết hợp là bất thường (ví dụ, các điểm xa từ đường viền cluster chính).
 
-3. **LOF from scratch.**Thực hiện Local Outlier Factor sử dụng k-cô lân cận. So sánh với LocalOutlierFactor của sklearn trên cùng một dữ liệu. Sử dụng k=10 và k=50 - cách lựa chọn k ảnh hưởng đến kết quả như thế nào?
+3. **LOF from scratch.**Thực hiện Local Outlier Factor sử dụng k- hàng xóm gần nhất. So sánh với LocalOutlierFactor của sklearn trên cùng dữ liệu. Sử dụng $k=10$và $k=50$-- làm thế nào để lựa chọn $k$ảnh hưởng đến kết quả?
 
 4. **Streaming anomaly detection.**Thay đổi bộ phát hiện điểm Z để hoạt động trong một thiết lập phát trực tuyến: cập nhật trung bình chạy và biến số khi các điểm mới đến ( thuật toán trực tuyến của Welford). So sánh với điểm Z-chọn trên cùng một dữ liệu.
 
@@ -448,10 +448,10 @@ Trong cả hai trường hợp, ngưỡng tối ưu phụ thuộc vào tỷ lệ
 | Contextual anomaly | "Normal value, wrong context" | An observation that is unusual given its context (time, location, etc.) but might be normal in another context |
 | Isolation Forest | "Random splits to find outliers" | An ensemble of random trees that isolates anomalies with fewer splits than normal points |
 | Local Outlier Factor | "Compare density to neighbors" | A method that flags points whose local density is much lower than their neighbors' density |
-| Z-score | "Standard deviations from mean" | (x - mean) / std, measuring how far a point is from the center in units of standard deviation |
-| IQR | "Interquartile range" | Q3 - Q1, measuring the spread of the middle 50% of data, used for robust outlier detection |
+| Z-score | "Standard deviations from mean" | $(x - \text{mean}) / \text{std}$, measuring how far a point is from the center in units of standard deviation |
+| IQR | "Interquartile range" | $Q3 - Q1$, measuring the spread of the middle 50% of data, used for robust outlier detection |
 | Contamination | "Expected fraction of anomalies" | A hyperparameter telling the detector what proportion of the data it should flag as anomalous |
-| Precision@k | "Of the top k flags, how many are real" | Precision computed on only the k most suspicious points, useful for imbalanced anomaly detection |
+| Precision@k | "Of the top k flags, how many are real" | Precision computed on only the $k$ most suspicious points, useful for imbalanced anomaly detection |
 | AUPRC | "Area under precision-recall curve" | A metric that summarizes precision-recall performance across all thresholds, better than AUROC for imbalanced data |
 
 ## Đọc thêm

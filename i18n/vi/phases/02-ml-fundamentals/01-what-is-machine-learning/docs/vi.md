@@ -176,7 +176,7 @@ flowchart LR
 
 Bộ thử nghiệm là thánh. Bạn nhìn vào nó một lần. Nếu bạn tiếp tục điều chỉnh mô hình của bạn dựa trên hiệu suất thử nghiệm, bạn đang thực hiện hiệu quả trên bộ thử nghiệm và số liệu được báo cáo của bạn là vô nghĩa.
 
-Đối với các tập dữ liệu nhỏ, sử dụng xác thực chéo k-fold: chia dữ liệu thành k phần, đào tạo trên k-1 phần, xác nhận trên phần còn lại, xoay và kết quả trung bình.
+Đối với các tập dữ liệu nhỏ, sử dụng xác thực chéo k-fold: chia dữ liệu thành $k$Các bộ phận, tàu trên $k-1$các bộ phận, xác nhận phần còn lại, xoay và kết quả trung bình.
 
 ### Overfitting vs Underfitting
 
@@ -242,9 +242,9 @@ Phong điểm cho việc không phù hợp:
 | Just right | Medium | Medium | Good generalization |
 | Too high (degree-20 polynomial for 10 points) | Low | High | Overfitting |
 
-Tổng lỗi = Bias^2 + Varian + Lồn không thể giảm
+$\text{Total error} = \text{Bias}^2 + \text{Variance} + \text{Irreducible noise}$
 
-Bạn không thể giảm tiếng ồn không thể giảm (đó là sự ngẫu nhiên trong dữ liệu tự nó).
+Bạn không thể giảm tiếng ồn không thể giảm (đó là sự ngẫu nhiên trong dữ liệu).$\text{bias}^2 + \text{variance}$được giảm thiểu.
 
 ### Không có lý thuyết bữa trưa miễn phí
 

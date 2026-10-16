@@ -81,11 +81,11 @@ flowchart TB
     Fold5 --> R
 ```
 
-1. Chia dữ liệu thành các gấp K cùng kích thước
-2. Đối với mỗi gấp, tập trung trên gấp K-1 và xác nhận trên gấp còn lại
-3. Tỷ lệ trung bình điểm xác thực K
+1. Chia dữ liệu thành $K$Lớp gấp cùng kích thước
+2. Với mỗi lần gấp, hãy đi trên $K-1$gấp và xác nhận trên gấp còn lại
+3. Tỷ lệ trung bình của $K$điểm xác thực
 
-K=5 hoặc K=10 là các lựa chọn tiêu chuẩn. Mỗi điểm dữ liệu được sử dụng để xác nhận chính xác một lần. Điểm trung bình là một ước tính ổn định hơn so với bất kỳ phân chia đơn lẻ nào.
+$K=5$hoặc $K=10$mỗi điểm dữ liệu được sử dụng để xác nhận chính xác một lần. điểm trung bình là một ước tính ổn định hơn so với bất kỳ phân chia đơn lẻ nào.
 
 **Stratified K-fold**: giữ phân phối lớp trong mỗi gấp. Nếu tập dữ liệu của bạn là 70% lớp A và 30% lớp B, mỗi gấp sẽ có tỷ lệ tương tự. Điều này quan trọng đối với tập dữ liệu không cân bằng nơi phân chia ngẫu nhiên có thể đưa tất cả các mẫu thiểu số vào một gấp.
 
@@ -100,18 +100,18 @@ K=5 hoặc K=10 là các lựa chọn tiêu chuẩn. Mỗi điểm dữ liệu �
 
 Từ matrix này, tất cả các số liệu khác theo sau:
 
-- **Accuracy**= (TP + TN) / (TP + TN + FP + FN). Phân tích dự đoán chính xác.
-- **Precision**= TP / (TP + FP). Trong tất cả những điều dự đoán tích cực, có bao nhiêu thực sự là? Sử dụng khi tích cực sai đắt tiền (ví dụ, bộ lọc spam đánh dấu email thực là spam).
-- **Recall**(sự nhạy cảm) = TP / (TP + FN). Trong tất cả các tích cực thực tế, chúng tôi đã bắt được bao nhiêu? Sử dụng khi tiêu cực sai đắt tiền (ví dụ, sàng lọc ung thư thiếu khối u).
-- **F1 score**= 2 * độ chính xác * nhớ lại / ( độ chính xác + nhớ lại).
+- **Accuracy**= $(TP + TN) / (TP + TN + FP + FN)$- Phân tích dự đoán chính xác.
+- **Precision**= $TP / (TP + FP)$Trong số tất cả những thứ được dự đoán là tích cực, có bao nhiêu thực sự là? Sử dụng khi tích cực sai là tốn kém (ví dụ, bộ lọc spam đánh dấu email thực là spam).
+- **Recall**(sự nhạy cảm) = $TP / (TP + FN)$Trong số tất cả những điều tích cực thực tế, chúng ta đã bắt được bao nhiêu? Sử dụng khi những điều tiêu cực sai đắt tiền (ví dụ, sàng lọc ung thư thiếu khối u).
+- **F1 score**= $2 \cdot \text{precision} \cdot \text{recall} / (\text{precision} + \text{recall})$- Tương tự nhất của độ chính xác và nhớ lại.
 - **AUC-ROC**: Ánh vực dưới đường cong đặc điểm hoạt động của máy nhận. Hình ảnh tỷ lệ tích cực thực so với tỷ lệ tích cực sai tại các ngưỡng phân loại khác nhau. AUC = 0.5 có nghĩa là đoán ngẫu nhiên, AUC = 1.0 có nghĩa là tách biệt hoàn hảo. Thâm giới độc lập: nó đo mức độ tốt mô hình xếp hạng tích cực trên tiêu cực, bất kể bạn chọn cắt giảm.
 
 ### Tỷ lệ trôi trôi
 
-- **MSE**(Mức độ lỗi bình phương) = trung bình y_true - y_pred) ^2). Chống phạt lỗi lớn theo hình vuông. Nhận thức các điểm ngoại lệ.
-- **RMSE**(Rot Mean Square Error) = sqrt(MSE). cùng đơn vị với biến mục tiêu. dễ giải thích hơn MSE.
-- **MAE**(Mức độ lỗi tuyệt đối) = trung bình của sự thật - y_pred = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
-- **R-squared**= 1 - SS_res / SS_tot, nơi SS_res = tổng hợp((y_true - y_pred) ^2) và SS_tot = tổng hợp(((y_true - y_mean) ^2).
+- **MSE**(Phạm vi bình phương trung bình) = $\text{mean}((y_{\text{true}} - y_{\text{pred}})^2)$- Phạm bồi thường lỗi lớn theo hình vuông.
+- **RMSE**(Phạm vi đường trục trung bình vuông) = $\sqrt{\text{MSE}}$- Các đơn vị giống như biến mục tiêu, dễ hiểu hơn MSE.
+- **MAE**(Tầm là lỗi tuyệt đối) = $\text{mean}(\lvert y_{\text{true}} - y_{\text{pred}} \rvert)$- xử lý tất cả các lỗi theo đường thẳng.
+- **R-squared**= $1 - SS_{\text{res}} / SS_{\text{tot}}$, nơi $SS_{\text{res}} = \sum (y_{\text{true}} - y_{\text{pred}})^2$và $SS_{\text{tot}} = \sum (y_{\text{true}} - y_{\text{mean}})^2$. Phân tích biến số được giải thích bằng mô hình. $R^2 = 1.0$là hoàn hảo.$R^2 = 0.0$có nghĩa là mô hình không tốt hơn luôn dự đoán trung bình. $R^2$có thể là tiêu cực nếu mô hình là tồi tệ hơn trung bình.
 
 ### Lập trình học tập
 
@@ -664,10 +664,10 @@ Bài học này mang lại:
 |------|----------------|----------------------|
 | Overfitting | "Memorizing the training data" | The model captures noise in the training data, performing well on training but poorly on unseen data |
 | Cross-validation | "Testing on different subsets" | Systematically rotating which portion of data is used for validation, averaging results across all rotations |
-| Precision | "How many predicted positives are correct" | TP / (TP + FP): the fraction of positive predictions that are actually positive |
-| Recall | "How many actual positives we found" | TP / (TP + FN): the fraction of actual positives that were correctly identified |
+| Precision | "How many predicted positives are correct" | $TP / (TP + FP)$: the fraction of positive predictions that are actually positive |
+| Recall | "How many actual positives we found" | $TP / (TP + FN)$: the fraction of actual positives that were correctly identified |
 | AUC-ROC | "How well the model separates classes" | The area under the curve of true positive rate vs false positive rate across all thresholds, from 0.5 (random) to 1.0 (perfect) |
-| R-squared | "How much variance is explained" | 1 - (sum of squared residuals / total sum of squares): the fraction of target variance captured by the model |
+| R-squared | "How much variance is explained" | $1 - (\text{sum of squared residuals} / \text{total sum of squares})$: the fraction of target variance captured by the model |
 | Data leakage | "The model cheated" | Using information during training that would not be available at prediction time, leading to optimistic evaluation |
 | Learning curve | "How performance changes with more data" | A plot of training and validation scores vs training set size, revealing underfitting or overfitting |
 | Stratified split | "Keeping class ratios balanced" | Splitting data so each subset has the same proportion of each class as the full dataset |

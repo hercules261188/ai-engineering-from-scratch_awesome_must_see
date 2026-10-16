@@ -51,7 +51,7 @@ Số nguyên liệu hiếm khi sẵn sàng cho mô hình.
 
 **Binning:**Chuyển đổi các giá trị liên tục thành các loại. hữu ích khi mối quan hệ giữa tính năng và mục tiêu không tuyến tính nhưng theo từng bước (ví dụ, nhóm tuổi).
 
-**Polynomial features:**Tạo ra các thuật ngữ x^2, x^3, x1*x2. cho phép các mô hình tuyến tính nắm bắt các mối quan hệ không tuyến tính với chi phí của nhiều tính năng hơn.
+**Polynomial features:**Tạo ra $x^2$- $x^3$- $x_1 x_2$cho phép các mô hình tuyến tính nắm bắt các mối quan hệ không tuyến tính với chi phí của nhiều tính năng hơn.
 
 ### Các tính năng danh mục
 
@@ -69,10 +69,12 @@ Các mô hình cần số, các loại cần mã hóa.
 
 **TF-IDF:**Từ "đồng độ" - "đồng độ" - "đồng độ" - "đồng độ" - "đồng độ" - "đồng độ" - "đồng độ" - "đồng độ" - "đồng độ" - "đồng độ" - "đồng độ" - "đồng độ" - "đồng độ" - "đồng độ" - "đồng độ" - "đồng độ" - "đồng độ" - "đồng độ" - "đồng độ" - "đồng độ" - "đồng độ" - "đồng độ" - "đồng độ" - "đồng độ" - "đồng độ" - "đồng độ" - "đồng độ" - "đồng độ" - "đồng độ" - "đồng độ" - "đồng độ" - "đồng độ" - "đồng độ" - "đồng độ" - "đồng độ" - "đồng độ" - "đồng độ" - "đồng độ" - "đồng độ" - "đồng độ" - "đồng độ" - "đồng độ" - "đồng độ"
 
-```
-TF(word, doc) = count(word in doc) / total words in doc
-IDF(word) = log(total docs / docs containing word)
-TF-IDF = TF * IDF
+```math
+\begin{aligned}
+\text{TF}(\text{word}, \text{doc}) &= \frac{\text{count(word in doc)}}{\text{total words in doc}} \\
+\text{IDF}(\text{word}) &= \log \frac{\text{total docs}}{\text{docs containing word}} \\
+\text{TF-IDF} &= \text{TF} \cdot \text{IDF}
+\end{aligned}
 ```
 
 ### Những giá trị bị mất tích
@@ -87,7 +89,7 @@ Dữ liệu thực có lỗ hổng.
 
 ### Các tính năng tương tác
 
-Đôi khi mối quan hệ là trong sự kết hợp. "Tăng độ" và "năng lượng" đơn lẻ ít dự đoán hơn "BMI = trọng lượng / chiều cao ^ 2".
+Đôi khi mối quan hệ là kết hợp. "Tăng độ" và "năng nặng" đơn lẻ là ít dự đoán hơn $\text{BMI} = \text{weight} / \text{height}^2$Các tương tác tính năng nhân rộng không gian tính năng, vì vậy sử dụng kiến thức miền để chọn đúng.
 
 ### Chọn tính năng
 

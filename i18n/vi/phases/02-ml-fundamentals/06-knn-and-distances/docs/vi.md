@@ -56,12 +56,12 @@ K là một siêu tham số đơn. Nó kiểm soát sự đổi giá sự thiên
 
 | K | Behavior |
 |---|----------|
-| K = 1 | Decision boundary follows every point. Zero training error. High variance. Overfits |
+| $K = 1$ | Decision boundary follows every point. Zero training error. High variance. Overfits |
 | Small K (3-5) | Sensitive to local structure. Can capture complex boundaries |
 | Large K | Smoother boundaries. More robust to noise. May underfit |
-| K = N | Predicts the majority class for every point. Maximum bias |
+| $K = N$ | Predicts the majority class for every point. Maximum bias |
 
-Một điểm khởi đầu phổ biến là K = sqrt(N) cho một tập dữ liệu của các điểm N. Sử dụng K lẻ cho phân loại nhị phân để tránh liên kết.
+Một điểm khởi đầu chung là $K = \sqrt{N}$cho một bộ dữ liệu của $N$Sử dụng K lẻ để phân loại nhị phân để tránh liên kết.
 
 ```mermaid
 graph LR
@@ -83,32 +83,33 @@ Chức năng khoảng cách xác định "gần" nghĩa là gì.
 
 **L2 (Euclidean)**là mặc định.
 
-```
-d(a, b) = sqrt(sum((a_i - b_i)^2))
+```math
+d(a, b) = \sqrt{\sum_i (a_i - b_i)^2}
 ```
 
 Nhẫn đến quy mô tính năng. Luôn chuẩn hóa tính năng trước khi sử dụng L2 với KNN.
 
 **L1 (Manhattan)**L2 mạnh hơn so với L2 vì nó không bình phương các khác biệt.
 
-```
-d(a, b) = sum(|a_i - b_i|)
+```math
+d(a, b) = \sum_i \lvert a_i - b_i \rvert
 ```
 
 **Cosine distance**đo góc giữa các vector, bỏ qua độ lớn.
 
-```
-d(a, b) = 1 - (a . b) / (||a|| * ||b||)
+```math
+d(a, b) = 1 - \frac{a \cdot b}{\lVert a \rVert \, \lVert b \rVert}
 ```
 
-**Minkowski**tổng hợp L1 và L2 với tham số p.
+**Minkowski**tổng hợp L1 và L2 với tham số $p$- Tôi không biết.
 
-```
-d(a, b) = (sum(|a_i - b_i|^p))^(1/p)
-
-p=1: Manhattan
-p=2: Euclidean
-p->inf: Chebyshev (max absolute difference)
+```math
+\begin{aligned}
+& d(a, b) = \left( \sum_i \lvert a_i - b_i \rvert^p \right)^{1/p} \\[6pt]
+& p=1\text{: Manhattan} \\
+& p=2\text{: Euclidean} \\
+& p \to \infty\text{: Chebyshev (max absolute difference)}
+\end{aligned}
 ```
 
 Métric nào để sử dụng phụ thuộc vào dữ liệu:
@@ -127,14 +128,15 @@ KNN tiêu chuẩn cho trọng lượng bằng cho tất cả các hàng xóm K. 
 
 **Distance-weighted KNN**trọng lượng mỗi hàng xóm ngược theo khoảng cách:
 
+```math
+\begin{aligned}
+& \text{weight}_i = \frac{1}{\text{distance}_i + \epsilon} \\[6pt]
+& \text{For classification: weighted vote} \\
+& \text{For regression: weighted average} = \frac{\sum_i w_i y_i}{\sum_i w_i}
+\end{aligned}
 ```
-weight_i = 1 / (distance_i + epsilon)
 
-For classification: weighted vote
-For regression:     weighted average = sum(w_i * y_i) / sum(w_i)
-```
-
-Epsilon ngăn chặn chia bằng không khi một điểm truy vấn phù hợp chính xác với một điểm đào tạo.
+- $\epsilon$ngăn chặn chia bằng không khi một điểm truy vấn phù hợp chính xác với một điểm đào tạo.
 
 KNN cân nặng ít nhạy cảm hơn với sự lựa chọn của K vì những người hàng xóm xa đóng góp rất ít bất kể.
 
@@ -162,7 +164,7 @@ Kết quả thực tế: KNN hoạt động tốt cho đến khoảng 20-50 tín
 
 ### KD-trái: nhanh chóng tìm kiếm hàng xóm gần nhất
 
-KNN lực thô tính khoảng cách từ truy vấn đến mỗi điểm đào tạo. đó là O(n * d) cho mỗi truy vấn. Đối với tập dữ liệu lớn, điều này quá chậm.
+KNN lực lượng thô tính khoảng cách từ truy vấn đến mỗi điểm đào tạo.$O(n \cdot d)$cho các bộ dữ liệu lớn, điều này là quá chậm.
 
 Một cây KD tái tạo chia không gian dọc theo trục tính năng.
 
@@ -178,7 +180,7 @@ graph TD
 
 Để tìm người hàng xóm gần nhất, đi qua cây đến lá chứa câu hỏi, sau đó theo dõi lại và kiểm tra các phân vùng hàng xóm chỉ nếu chúng có thể chứa các điểm gần hơn.
 
-Thời gian truy vấn trung bình: O(log n) cho các chiều kích thấp. Nhưng cây KD giảm xuống O(n) trong các chiều kích cao (d > 20) vì việc theo dõi lại loại bỏ ngày càng ít chi nhánh.
+Thời gian truy vấn trung bình: $O(\log n)$Nhưng cây KD bị hạ xuống thành ốp$O(n)$ở kích thước cao ($d > 20$) vì sự lùi lại loại bỏ ngày càng ít chi nhánh.
 
 ### Cây bóng: tốt hơn cho kích thước vừa phải
 
@@ -197,8 +199,8 @@ KNN là một học viên lười biếng: nó không làm việc trong thời g
 
 | Aspect | Lazy (KNN) | Eager (SVM, neural net) |
 |--------|------------|------------------------|
-| Training time | O(1) just store data | O(n * epochs) |
-| Prediction time | O(n * d) per query | O(d) or O(parameters) |
+| Training time | $O(1)$ just store data | $O(n \cdot \text{epochs})$ |
+| Prediction time | $O(n \cdot d)$ per query | $O(d)$ or $O(\text{parameters})$ |
 | Memory at prediction | Store entire training set | Store model parameters only |
 | Adapts to new data | Add points instantly | Retrain the model |
 | Decision boundary | Implicit, computed on the fly | Explicit, fixed after training |
@@ -213,12 +215,12 @@ Học lười biếng là lý tưởng khi:
 
 Thay vì bỏ phiếu đa số, KNN cho sự lùi lại trung bình các giá trị mục tiêu của các nước láng giềng K.
 
-```
-prediction = (1/K) * sum(y_i for i in K nearest neighbors)
-
-Or with distance weighting:
-prediction = sum(w_i * y_i) / sum(w_i)
-where w_i = 1 / distance_i
+```math
+\begin{aligned}
+& \text{prediction} = \frac{1}{K} \sum_{i \in K \text{ nearest neighbors}} y_i \\[6pt]
+& \text{Or with distance weighting:} \\
+& \text{prediction} = \frac{\sum_i w_i y_i}{\sum_i w_i} \quad \text{where } w_i = \frac{1}{\text{distance}_i + \epsilon}
+\end{aligned}
 ```
 
 KTN regression tạo ra dự đoán liên tục theo từng mảnh (hoặc mềm mại theo từng mảnh với trọng lượng). Nó không thể chi tiết vượt ra ngoài phạm vi dữ liệu đào tạo. Nếu các mục tiêu đào tạo đều nằm giữa 0 và 100, KNN sẽ không bao giờ dự đoán 200.
@@ -345,7 +347,7 @@ distances, indices = index.search(query_vectors, k=5)
 
 ## Các bài tập
 
-1. Thực hiện phân loại KNN trên một tập dữ liệu 2D với 3 lớp. Chụp ranh giới quyết định cho K=1, K=5, K=15, và K=N. Quan sát quá trình chuyển đổi từ quá phù hợp sang thiếu phù hợp.
+1. Thực hiện phân loại KNN trên một bộ dữ liệu 2D với 3 lớp.$K=1$- $K=5$- $K=15$, và$K=N$- Quan sát quá trình chuyển đổi từ quá phù hợp sang thiếu phù hợp.
 
 2. Tạo 1000 điểm ngẫu nhiên trong 2, 5, 10, 50, 100, và 500 chiều. Đối với mỗi chiều kích, tính toán tỷ lệ của khoảng cách đôi tối đa đến khoảng cách đôi tối thiểu.
 
@@ -353,7 +355,7 @@ distances, indices = index.search(query_vectors, k=5)
 
 4. Thực hiện một cây KD và đo thời gian truy vấn so với lực thô cho tập dữ liệu 1k, 10k, và 100k điểm trong 2D, 10D, và 50D. Ở chiều kích nào cây KD ngừng nhanh hơn lực thô?
 
-5. Xây dựng một máy quay lại KNN trọng lượng cho y = sin(x) + tiếng ồn. So sánh nó với KNN không trọng lượng cho K = 3, 10, 30.
+5. Xây dựng một máy quay KNN trọng lượng cho $y = \sin(x) + \text{noise}$So sánh với KNN không cân đối với$K=3, 10, 30$- Cụ thể hóa rằng trọng lượng tạo ra dự đoán mượt mà hơn, đặc biệt là cho K lớn.
 
 ## Các điều khoản chính
 
@@ -363,14 +365,14 @@ distances, indices = index.search(query_vectors, k=5)
 | Lazy learning | No computation at training time. All work happens at prediction time. KNN is the canonical example |
 | Eager learning | Heavy computation at training time to build a compact model. Most ML algorithms are eager |
 | Curse of dimensionality | In high dimensions, distances converge and neighborhoods expand to cover most of the space, making KNN ineffective |
-| KD-tree | Binary tree that recursively partitions space along feature axes. O(log n) queries in low dimensions |
+| KD-tree | Binary tree that recursively partitions space along feature axes. $O(\log n)$ queries in low dimensions |
 | Ball tree | Tree of nested hyperspheres. Works better than KD-trees in moderate dimensions (up to ~50) |
 | Weighted KNN | Neighbors weighted inversely by distance. Closer neighbors have more influence on the prediction |
 | Feature scaling | Normalizing features to comparable ranges. Required for distance-based methods like KNN |
 | Majority vote | Classification by counting which class is most common among K neighbors |
-| Brute force search | Computing distance to every training point. O(n*d) per query. Exact but slow for large n |
+| Brute force search | Computing distance to every training point. $O(n \cdot d)$ per query. Exact but slow for large $n$ |
 | Approximate nearest neighbor | Algorithms (HNSW, LSH, IVF) that find approximately nearest points much faster than exact search |
-| Voronoi diagram | The partition of space where each region contains all points closer to one training point than any other. K=1 KNN produces Voronoi boundaries |
+| Voronoi diagram | The partition of space where each region contains all points closer to one training point than any other. $K=1$ KNN produces Voronoi boundaries |
 
 ## Đọc thêm
 

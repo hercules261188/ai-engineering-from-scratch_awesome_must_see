@@ -58,9 +58,9 @@ Chức năng khách quan (inerti) đo khoảng cách tổng cộng vuông từ m
 
 Hai phương pháp tiêu chuẩn:
 
-**Elbow method:**Động K-Mức cho K = 1, 2, 3, ..., n. Trầm trễ tương đối với K. Tìm kiếm "cái tay" nơi việc thêm nhiều cụm dừng lại giảm trễ đáng kể.
+**Elbow method:**Đi K-Means cho $K = 1, 2, 3, \ldots, n$. Trình độ trôi động so với K. Tìm kiếm "công tay" nơi việc thêm nhiều cluster dừng lại giảm trôi động đáng kể.
 
-**Silhouette score:**Đối với mỗi điểm, đo mức độ tương tự của nó với cụm riêng (a) so với cụm khác gần nhất (b). Tỷ lệ hình ảnh là (b - a) / max(a, b), dao động từ -1 (thống cụm sai) đến +1 (thống cụm tốt).
+**Silhouette score:**Đối với mỗi điểm, đo mức độ tương tự của nó với cụm riêng của nó ($a$) so với các cụm khác gần nhất ($b$). Tỷ lệ hình ảnh là $(b - a) / \max(a, b)$, từ -1 (cluster sai) đến +1 (cluster tốt).
 
 ### DBSCAN: Nhóm dựa trên mật độ
 
@@ -112,7 +112,7 @@ GMM có thể mô hình các cụm hình hình elip (không chỉ hình cầu nh
 |--------|----------|------------|
 | K-Means | Large datasets, spherical clusters, known K | Irregular shapes, outliers present |
 | DBSCAN | Unknown K, arbitrary shapes, outlier detection | Varying densities, very high dimensions |
-| Hierarchical | Small datasets, need dendrogram, unknown K | Large datasets (O(n^2) memory) |
+| Hierarchical | Small datasets, need dendrogram, unknown K | Large datasets ($O(n^2)$ memory) |
 | GMM | Overlapping clusters, soft assignments needed | Very large datasets, too many dimensions |
 
 ### Khám phá bất thường bằng cách tập hợp
@@ -488,7 +488,7 @@ Bài học này tạo ra các triển khai hoạt động của K-Means, DBSCAN 
 | Clustering | "Grouping similar things" | Partitioning data into subsets where within-group similarity exceeds between-group similarity, measured by a specific distance metric |
 | Centroid | "The center of a cluster" | The mean of all points assigned to a cluster; used by K-Means as the cluster representative |
 | Inertia | "How tight the clusters are" | Sum of squared distances from each point to its assigned centroid; lower is tighter |
-| Silhouette score | "How well-separated clusters are" | For each point, (b - a) / max(a, b) where a is mean intra-cluster distance and b is mean nearest-cluster distance |
+| Silhouette score | "How well-separated clusters are" | For each point, $(b - a) / \max(a, b)$ where $a$ is mean intra-cluster distance and $b$ is mean nearest-cluster distance |
 | Core point | "A point in a dense region" | A point with at least min_samples neighbors within eps distance, in DBSCAN |
 | EM algorithm | "Soft K-Means" | Expectation-Maximization: iteratively compute membership probabilities (E-step) and update distribution parameters (M-step) |
 | Dendrogram | "A tree of clusters" | A tree diagram showing the order and distance at which clusters were merged in hierarchical clustering |

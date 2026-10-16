@@ -16,7 +16,7 @@
 
 ## Vấn đề
 
-Mô hình tăng gradient của bạn có tốc độ học tập, số cây, độ sâu tối đa, mẫu ít nhất mỗi lá, tỷ lệ mẫu phụ, và tỷ lệ mẫu cột. Đó là sáu siêu tham số. Nếu mỗi số có 5 giá trị hợp lý, lưới có 5 ^ 6 = 15.625 kết hợp.
+Mô hình tăng gradient của bạn có tốc độ học tập, số lượng cây, độ sâu tối đa, mẫu ít nhất mỗi lá, tỷ lệ mẫu phụ, và tỷ lệ mẫu cột.$5^6 = 15{,}625$mỗi tập mất 10 giây, đó là 43 giờ tính toán để thử tất cả.
 
 Tìm kiếm lưới là cách tiếp cận rõ ràng và tồi tệ nhất trên quy mô. Tìm kiếm ngẫu nhiên làm tốt hơn với ít tính toán hơn. Phối ưu hóa Bayesian làm tốt hơn nữa bằng cách học hỏi từ các đánh giá trước đây. Biết chiến lược nào để sử dụng, và các siêu tham số thực sự quan trọng, tiết kiệm nhiều ngày thời gian GPU lãng phí.
 
@@ -31,7 +31,7 @@ Các tham số được học trong quá trình đào tạo (não trọng lượ
 | Learning rate | Step size per update | 0.001 to 1.0 |
 | Number of trees/epochs | How long to train | 10 to 10,000 |
 | Max depth | Model complexity | 1 to 30 |
-| Regularization (lambda) | Overfitting prevention | 0.0001 to 100 |
+| Regularization ($\lambda$) | Overfitting prevention | 0.0001 to 100 |
 | Batch size | Gradient estimation noise | 16 to 512 |
 | Dropout rate | Fraction of neurons dropped | 0.0 to 0.5 |
 
@@ -125,7 +125,7 @@ Tốc độ học tập hầu như luôn luôn là siêu tham số quan trọng 
 | Scheduler | Formula | When to use |
 |-----------|---------|-------------|
 | Step decay | Multiply by 0.1 every N epochs | Classic CNN training |
-| Cosine annealing | lr * 0.5 * (1 + cos(pi * t / T)) | Modern default |
+| Cosine annealing | $\text{lr} \cdot 0.5 \cdot (1 + \cos(\pi t / T))$ | Modern default |
 | Warmup + decay | Linear increase then cosine decay | Transformers |
 | One-cycle | Increase then decrease over one cycle | Fast convergence |
 | Reduce on plateau | Reduce by factor when metric stalls | Safe default |

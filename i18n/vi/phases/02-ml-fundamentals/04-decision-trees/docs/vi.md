@@ -48,10 +48,8 @@ Cây được xây dựng từ trên xuống bằng cách chọn, tại mỗi n�
 
 **Gini impurity**đo khả năng một mẫu được chọn ngẫu nhiên sẽ bị phân loại sai nếu nó được dán nhãn theo phân phối lớp ở nút đó.
 
-```
-Gini(S) = 1 - sum(p_k^2)
-
-where p_k is the proportion of class k in set S.
+```math
+\text{Gini}(S) = 1 - \sum_k p_k^2 \quad \text{where } p_k \text{ is the proportion of class } k \text{ in set } S.
 ```
 
 Đối với một nút tinh khiết (tất cả một lớp), Gini = 0. Đối với một phân chia nhị phân với lớp 50/50, Gini = 0.5.
@@ -64,8 +62,8 @@ Gini = 1 - (0.6^2 + 0.4^2) = 1 - (0.36 + 0.16) = 0.48
 
 **Entropy**đo nội dung thông tin (trầm lẫn) trong một nút.
 
-```
-Entropy(S) = -sum(p_k * log2(p_k))
+```math
+\text{Entropy}(S) = -\sum_k p_k \log_2(p_k)
 ```
 
 Đối với một nút thuần, entropy = 0. Đối với một phân chia nhị phân 50/50, entropy = 1.0.
@@ -81,20 +79,21 @@ Entropy = -(0.6 * log2(0.6) + 0.4 * log2(0.4))
 
 **Information gain**là sự giảm bớt của sự ô nhiễm (entropy hoặc Gini) sau khi chia.
 
-```
-IG(S, feature, threshold) = Impurity(S) - weighted_avg(Impurity(S_left), Impurity(S_right))
-
-where the weights are the proportions of samples in each child.
+```math
+\begin{aligned}
+& IG(S, \text{feature}, \text{threshold}) = \text{Impurity}(S) - \text{weighted\_avg}(\text{Impurity}(S_{\text{left}}), \text{Impurity}(S_{\text{right}})) \\[4pt]
+& \text{where the weights are the proportions of samples in each child.}
+\end{aligned}
 ```
 
 Các thuật toán tham lam tại mỗi nút: thử mọi tính năng và mọi ngưỡng có thể. chọn cặp (tương tự, ngưỡng) để tối đa hóa thu nhập thông tin.
 
 ### Làm thế nào chia làm việc
 
-Đối với một tập dữ liệu với n tính năng và m mẫu tại nút hiện tại:
+Đối với một bộ dữ liệu với $n$đặc điểm và$m$mẫu tại nút hiện tại:
 
-1. Đối với mỗi tính năng j (j = 1 đến n):
-   - Đặt các mẫu theo tính năng j
+1. Đối với mỗi tính năng $j$($j = 1$đến$n$):
+   - Đặt các mẫu theo tính năng $j$
    - Hãy thử mỗi điểm trung giữa các giá trị khác nhau liên tiếp như một ngưỡng
    - Xét số thu nhập thông tin cho mỗi ngưỡng
 2. Chọn tính năng và ngưỡng có mức thu nhập thông tin cao nhất
@@ -109,7 +108,7 @@ Không ngừng, cây phát triển cho đến khi mỗi lá sạch (một mẫu 
 
 **Pre-pruning**ngăn chặn cây trước khi nó phát triển đầy đủ:
 - Độ sâu tối đa: dừng chia khi cây đạt độ sâu nhất định
-- Mức mẫu tối thiểu cho mỗi lá: dừng nếu một nút có ít hơn k mẫu
+- Mức mẫu tối thiểu cho mỗi lá: dừng nếu một nút có ít hơn $k$mẫu
 - Tối thiểu thu nhập thông tin: dừng nếu chia tốt nhất cải thiện độ ô nhiễm dưới ngưỡng
 - Nốt lá tối đa: giới hạn tổng số lá
 
@@ -125,8 +124,8 @@ Việc cắt trước dễ dàng hơn và nhanh hơn. Sau khi cắt, cây thư�
 
 **Variance reduction**thay thế thu nhập thông tin:
 
-```
-VR(S, feature, threshold) = Var(S) - weighted_avg(Var(S_left), Var(S_right))
+```math
+VR(S, \text{feature}, \text{threshold}) = \text{Var}(S) - \text{weighted\_avg}(\text{Var}(S_{\text{left}}), \text{Var}(S_{\text{right}}))
 ```
 
 Chọn phân chia làm giảm sự khác biệt nhiều nhất. Cây phân chia không gian đầu vào thành các khu vực, và dự đoán một liên tục (tỷ lệ trung bình) trong mỗi khu vực.
@@ -155,7 +154,7 @@ Hai nguồn ngẫu nhiên làm cho cây đa dạng:
 
 **Bagging (bootstrap aggregating):**Mỗi cây được đào tạo trên một mẫu bootstrap, một mẫu ngẫu nhiên với thay thế từ dữ liệu đào tạo. Khoảng 63% các mẫu ban đầu xuất hiện trong mỗi bootstrap (t còn lại là các mẫu ngoài túi có thể được sử dụng để xác thực).
 
-**Feature randomization:**Tại mỗi phân chia, chỉ một bộ phụ ngẫu nhiên của các tính năng được xem xét. Đối với phân loại, mặc định là sqrt(n_features). Đối với sự lùi lại, n_features/3. Điều này ngăn chặn tất cả các cây phân chia trên cùng một tính năng thống trị.
+**Feature randomization:**Tại mỗi phân chia, chỉ một bộ phụ ngẫu nhiên của các tính năng được xem xét.$\sqrt{n_{\text{features}}}$. Để quay trở lại,$n_{\text{features}}/3$Điều này ngăn chặn tất cả các cây chia rẽ trên cùng một đặc điểm thống trị.
 
 Điều quan trọng: trung bình nhiều cây không liên quan làm giảm sự khác biệt mà không tăng thiên vị. Mỗi cây có thể là trung bình.
 
@@ -165,9 +164,8 @@ Các khu rừng ngẫu nhiên tự nhiên cung cấp điểm số tầm quan tr�
 
 **Mean Decrease in Impurity (MDI):**Đối với mỗi tính năng, cộng tổng sự giảm tạp hóa trên tất cả các cây và tất cả các nút nơi tính năng đó được sử dụng.
 
-```
-importance(feature_j) = sum over all nodes where feature_j is used:
-    (n_samples_at_node / n_total_samples) * impurity_decrease
+```math
+\text{importance}(\text{feature}_j) = \sum_{\text{nodes where feature}_j \text{ is used}} \frac{n_{\text{samples at node}}}{n_{\text{total samples}}} \cdot \text{impurity\_decrease}
 ```
 
 Điều này nhanh (được tính toán trong quá trình đào tạo) nhưng thiên hướng về các tính năng và tính năng có tính năng cardinality cao với nhiều điểm chia nhỏ có thể xảy ra.
@@ -444,7 +442,7 @@ Bài học này sẽ mang lại kết quả `outputs/prompt-tree-interpreter.md`
 
 1. Đào tạo một cây quyết định duy nhất trên một tập dữ liệu 2D với 3 lớp. Hướng dẫn các phân chia và vẽ ranh giới quyết định hình chữ nhật. So sánh ranh giới tại max_depth=2 vs max_depth=10.
 
-2. Thực hiện phân chia giảm biến số cho cây hồi quy. Tạo y = sin(x) + tiếng ồn cho 200 điểm và phù hợp với cây hồi quy của bạn. Chụp các dự đoán liên tục từng mảnh của cây so với đường cong thực.
+2. Thực hiện sự chia cắt giảm biến số cho cây hồi quy.$y = \sin(x) + \text{noise}$và phù hợp với cây trục trệ của bạn.
 
 3. Xây dựng một khu rừng ngẫu nhiên với 1, 5, 10, 50 và 200 cây. Cài đặt độ chính xác đào tạo và kiểm tra độ chính xác so với số lượng cây.
 

@@ -24,10 +24,10 @@ Các phương pháp tập hợp thực hiện chính xác điều này. Chúng l
 
 ### Tại sao các nhóm nhóm làm việc
 
-Giả sử bạn có N phân loại độc lập, mỗi loại có độ chính xác p > 0.5.
+Giả sử là anh có$N$Các phân loại độc lập, mỗi loại đều chính xác $p > 0.5$Phần lớn phiếu bầu là chính xác:
 
-```
-P(majority correct) = sum over k > N/2 of C(N,k) * p^k * (1-p)^(N-k)
+```math
+P(\text{majority correct}) = \sum_{k > N/2} \binom{N}{k} p^k (1-p)^{N-k}
 ```
 
 Đối với 21 phân loại, mỗi loại có độ chính xác 60%, độ chính xác đa số là khoảng 74%. Với 101 phân loại, nó tăng lên 84%.
@@ -132,7 +132,7 @@ Tăng cường gradient tổng hợp tăng lên các hàm mất tùy ý. Thay v�
 3. Final prediction: F_T(x)
 ```
 
-Đối với lỗ lỗi vuông, các dư giả chỉ là dư thực tế: `r_i = y_i - F_{t-1}(x_i)`Mỗi cây đều phù hợp với những sai lầm của nhóm trước đó.
+Đối với lỗ lỗi vuông, các dư giả chỉ là dư thực tế: $r_i = y_i - F_{t-1}(x_i)$Mỗi cây đều phù hợp với những sai lầm của nhóm trước đó.
 
 Tốc độ học tập (các) kiểm soát mức độ đóng góp của mỗi cây. Tốc độ học tập nhỏ hơn đòi hỏi nhiều cây hơn nhưng tổng quát tốt hơn.
 
@@ -349,7 +349,7 @@ Bài học này sẽ mang lại kết quả `outputs/prompt-ensemble-selector.md
 ## Đọc thêm
 
 - [Schapire & Freund: Boosting: Foundations and Algorithms](https://mitpress.mit.edu/9780262526036/)-- cuốn sách của những người sáng tạo của AdaBoost
-- [Friedman: Greedy Function Approximation: A Gradient Boosting Machine (2001)](https://statweb.stanford.edu/~jhf/ftp/trebst.pdf)- giấy tăng độ gradient ban đầu
+- [Friedman: Greedy Function Approximation: A Gradient Boosting Machine (2001)](https://doi.org/10.1214/aos/1013203451)- giấy tăng độ gradient ban đầu
 - [Chen & Guestrin: XGBoost (2016)](https://arxiv.org/abs/1603.02754)- giấy XGBoost
 - [Wolpert: Stacked Generalization (1992)](https://www.sciencedirect.com/science/article/abs/pii/S0893608005800231)- giấy xếp chồng gốc
 - [scikit-learn Ensemble Methods](https://scikit-learn.org/stable/modules/ensemble.html)-- tham khảo thực tế

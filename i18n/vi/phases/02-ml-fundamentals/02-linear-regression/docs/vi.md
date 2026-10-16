@@ -26,36 +26,36 @@ Lịch lý quay lại tuyến tính cho bạn đường thẳng đó. Quan trọ
 
 ### Mô hình
 
-Sự lùi lại tuyến tính giả định một mối quan hệ tuyến tính giữa đầu vào (x) và đầu ra (y):
+Lịch ngược tuyến tính giả định một mối quan hệ tuyến tính giữa đầu vào ($x$($y$):
 
-```
+```math
 y = wx + b
 ```
 
-- `w`( trọng lượng/ độ nghiêng): y thay đổi bao nhiêu khi x tăng 1
-- `b`(vi-se/cắt lưng): giá trị của y khi x = 0
+- `w`(tín/cốc): bao nhiêu $y$thay đổi khi $x$tăng 1
+- `b`(tránh/cắt lưng): giá trị của $y$Khi nào $x = 0$
 
 Đối với nhiều đầu vào (các tính năng), điều này mở rộng đến:
 
-```
-y = w1*x1 + w2*x2 + ... + wn*xn + b
+```math
+y = w_1 x_1 + w_2 x_2 + \cdots + w_n x_n + b
 ```
 
-Hoặc trong dạng vector: `y = w^T * x + b`
+Hoặc trong dạng vector: $y = w^T x + b$
 
-Mục tiêu: tìm các giá trị của w và b làm cho y dự đoán gần như có thể với y thực tế trong tất cả các ví dụ đào tạo.
+Mục tiêu: tìm ra các giá trị của $w$và $b$làm cho dự đoán $y$càng gần như có thể với thực tế $y$trên tất cả các ví dụ về đào tạo.
 
 ### Chức năng chi phí (Lỗi bình phương trung bình)
 
 Bạn cần một số đơn để ghi lại những dự đoán sai lầm của bạn.
 
-```
-MSE = (1/n) * sum((y_predicted - y_actual)^2)
+```math
+\text{MSE} = \frac{1}{n} \sum (y_{\text{predicted}} - y_{\text{actual}})^2
 ```
 
 Tại sao vuông? Hai lý do. Thứ nhất, nó phạt lỗi lớn hơn các lỗi nhỏ (một lỗi 10 là 100x tồi tệ hơn một lỗi 1, không phải 10x). Thứ hai, hàm vuông là mượt mà và có thể phân biệt ở mọi nơi, điều này làm cho tối ưu hóa dễ dàng hơn.
 
-Chức năng chi phí tạo ra bề mặt. Đối với một trọng lượng đơn w và thiên hướng b, bề mặt MSE trông giống như một bát (một hình phẳng ngọc).
+Chức năng chi phí tạo ra một bề mặt.$w$và thiên vị$b$, bề mặt MSE trông giống như một bát (một hình phẳng hình cong).
 
 ### Sự giảm dần
 
@@ -74,18 +74,22 @@ flowchart TD
 
 Các gradient cho bạn biết hai điều: hướng nào để di chuyển từng tham số, và bao nhiêu để di chuyển.
 
-Đối với MSE với y_hat = wx + b:
+Đối với MSE với $\hat{y} = wx + b$- Có thể là:
 
-```
-dMSE/dw = (2/n) * sum((y_hat - y) * x)
-dMSE/db = (2/n) * sum(y_hat - y)
+```math
+\begin{aligned}
+\frac{\partial \text{MSE}}{\partial w} &= \frac{2}{n} \sum (\hat{y} - y) \, x \\
+\frac{\partial \text{MSE}}{\partial b} &= \frac{2}{n} \sum (\hat{y} - y)
+\end{aligned}
 ```
 
 Quy tắc cập nhật:
 
-```
-w = w - learning_rate * dMSE/dw
-b = b - learning_rate * dMSE/db
+```math
+\begin{aligned}
+w &= w - \text{learning\_rate} \cdot \frac{\partial \text{MSE}}{\partial w} \\
+b &= b - \text{learning\_rate} \cdot \frac{\partial \text{MSE}}{\partial b}
+\end{aligned}
 ```
 
 Tốc độ học tập kiểm soát kích thước bước quá lớn: bạn vượt quá mức tối thiểu và đi xa. quá nhỏ: đào tạo mất mãi mãi.
@@ -94,18 +98,18 @@ Tốc độ học tập kiểm soát kích thước bước quá lớn: bạn v�
 
 Đối với sự lùi lại tuyến tính cụ thể, có một công thức trực tiếp cho trọng lượng tối ưu mà không có bất kỳ lặp lại nào:
 
-```
-w = (X^T * X)^(-1) * X^T * y
+```math
+w = (X^T X)^{-1} X^T y
 ```
 
-Điều này đảo ngược một số liệu để giải quyết cho w trong một bước. Nó hoạt động hoàn hảo cho các tập dữ liệu nhỏ. Đối với các tập dữ liệu lớn (mọi triệu hàng hoặc hàng ngàn tính năng), giảm gradient được ưa thích vì sự đảo ngược của số liệu là O(n^3) trong số lượng các tính năng.
+Điều này đảo ngược một matrix để giải quyết cho $w$Đối với các bộ dữ liệu lớn (mọi triệu hàng hoặc hàng ngàn tính năng), giảm gradient được ưa thích vì sự đảo ngược matrix là $O(n^3)$trong số các tính năng.
 
 ### Sự lùi lại hàng tuyến
 
 Với nhiều tính năng, mô hình trở thành:
 
-```
-y = w1*x1 + w2*x2 + ... + wn*xn + b
+```math
+y = w_1 x_1 + w_2 x_2 + \cdots + w_n x_n + b
 ```
 
 Mọi thứ đều hoạt động giống nhau: MSE là hàm chi phí, độ giảm gradient cập nhật tất cả các trọng lượng cùng một lúc.
@@ -116,36 +120,38 @@ Nếu một tính năng dao động từ 0 đến 1 và một tính năng khác 
 
 Nếu mối quan hệ không phải là tuyến tính thì sao? Bạn vẫn có thể sử dụng sự lùi lại tuyến tính bằng cách tạo các tính năng đa nôn:
 
-```
-y = w1*x + w2*x^2 + w3*x^3 + b
+```math
+y = w_1 x + w_2 x^2 + w_3 x^3 + b
 ```
 
-Đây vẫn là sự hồi quy "lín" bởi vì mô hình là tuyến tính trong trọng lượng (w1, w2, w3). Bạn chỉ sử dụng các tính năng không tuyến tính của x.
+Đây vẫn là sự lùi lại "lín" bởi vì mô hình là tuyến tính trong trọng lượng ($w_1, w_2, w_3$) Bạn chỉ sử dụng các tính năng không tuyến tính của $x$- Tôi không biết.
 
 Các đa nguyên cấp cao hơn có thể phù hợp với các đường cong phức tạp hơn nhưng có nguy cơ quá phù hợp. Một đa nguyên cấp 10 sẽ đi qua mọi điểm trong một tập dữ liệu 10 điểm nhưng dự đoán kém về dữ liệu mới.
 
 ### Điểm số R-Tứ
 
-MSE cho bạn biết bạn sai, nhưng số lượng phụ thuộc vào quy mô của y. R-quadrat (R^2) cho một thước đo độc lập quy mô:
+MSE cho bạn biết bạn sai, nhưng số lượng phụ thuộc vào quy mô của $y$. R-quadrat ($R^2$) đưa ra một biện pháp độc lập với quy mô:
 
-```
-R^2 = 1 - (sum of squared residuals) / (sum of squared deviations from mean)
-    = 1 - SS_res / SS_tot
+```math
+\begin{aligned}
+R^2 &= 1 - \frac{\text{sum of squared residuals}}{\text{sum of squared deviations from mean}} \\
+&= 1 - \frac{SS_{\text{res}}}{SS_{\text{tot}}}
+\end{aligned}
 ```
 
-- R^2 = 1,0: dự đoán hoàn hảo
-- R^2 = 0.0: mô hình không tốt hơn so với dự đoán trung bình mỗi lần
-- R^2 < 0.0: mô hình tồi tệ hơn dự đoán trung bình
+- $R^2 = 1.0$: dự đoán hoàn hảo
+- $R^2 = 0.0$: mô hình không tốt hơn là dự đoán trung bình mỗi lần
+- $R^2 < 0.0$: mô hình là tồi tệ hơn dự đoán trung bình
 
 ### Hình trước quy định (Ridge Regression)
 
 Khi bạn có nhiều tính năng, mô hình có thể overfit bằng cách gán trọng lượng lớn.
 
-```
-Cost = MSE + lambda * sum(w_i^2)
+```math
+\text{Cost} = \text{MSE} + \lambda \sum w_i^2
 ```
 
-Từ phạt ngăn cản trọng lượng lớn. Lambda siêu tham số kiểm soát sự đổi giá: lambda cao hơn có nghĩa là trọng lượng nhỏ hơn và quy định hơn.
+Điều kiện phạt ngăn cản trọng lượng lớn.$\lambda$kiểm soát sự thỏa hiệp: cao hơn $\lambda$Điều này sẽ được đề cập sâu hơn trong bài học sau này. cho đến bây giờ, hãy biết rằng nó tồn tại và tại sao nó giúp ích.
 
 ```figure
 linear-regression-fit
@@ -520,24 +526,24 @@ Bài học này mang lại:
 ## Các bài tập
 
 1. Thực hiện giảm độ sốc hàng loạt, giảm độ sốc stochastic (SGD), và giảm độ sốc hàng loạt nhỏ. So sánh tốc độ hội tụ trên cùng một tập dữ liệu.
-2. Tạo dữ liệu từ hàm khối (y = ax^3 + bx^2 + cx + d + tiếng ồn). Phù hợp nhiều chữ số của độ 1, 3 và 10. So sánh đào tạo R^2 và thử nghiệm R^2.
-3. Thực hiện hồi quy Lasso (L1 regularization: penalty alpha *(((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((
+2. Tạo dữ liệu từ hàm khối ($y = ax^3 + bx^2 + cx + d + \text{noise}$). Phù hợp nhiều chữ số của độ 1, 3, và 10. So sánh đào tạo $R^2$và kiểm tra$R^2$- Tỷ lệ quá phù hợp trở nên rõ ràng đến mức nào?
+3. Thực hiện hồi quy Lasso (L1 regularization: $\text{penalty} = \alpha \sum \lvert w_i \rvert$Lập trình dữ liệu nhà ở đa tính năng. So sánh những trọng lượng nào đi đến không so với Ridge. Tại sao L1 sản xuất các giải pháp hiếm trong khi L2 không?
 
 ## Các điều khoản chính
 
 | Term | What people say | What it actually means |
 |------|----------------|----------------------|
-| Linear regression | "Draw a line through data" | Find weight w and bias b that minimize the sum of squared differences between wx+b and actual y values |
+| Linear regression | "Draw a line through data" | Find weight $w$ and bias $b$ that minimize the sum of squared differences between $wx+b$ and actual $y$ values |
 | Cost function | "How bad the model is" | A function that maps model parameters to a single number measuring prediction error, which optimization minimizes |
-| Mean squared error | "Average of squared errors" | (1/n) * sum of (predicted - actual)^2, penalizing large errors disproportionately |
+| Mean squared error | "Average of squared errors" | $\frac{1}{n} \sum (\text{predicted} - \text{actual})^2$, penalizing large errors disproportionately |
 | Gradient descent | "Walk downhill" | Iteratively adjust parameters in the direction that reduces the cost function, using partial derivatives |
 | Learning rate | "Step size" | A scalar that controls how much parameters change per gradient descent step |
-| Normal equation | "Solve it directly" | The closed-form solution w = (X^T X)^-1 X^T y that gives optimal weights without iteration |
-| R-squared | "How good the fit is" | The fraction of variance in y explained by the model, ranging from negative infinity to 1.0 |
+| Normal equation | "Solve it directly" | The closed-form solution $w = (X^T X)^{-1} X^T y$ that gives optimal weights without iteration |
+| R-squared | "How good the fit is" | The fraction of variance in $y$ explained by the model, ranging from negative infinity to 1.0 |
 | Feature scaling | "Make features comparable" | Transforming features to similar ranges (e.g., zero mean, unit variance) so gradient descent converges faster |
 | Regularization | "Penalize complexity" | Adding a term to the cost function that shrinks weights, preventing overfitting |
-| Ridge regression | "L2 regularization" | Linear regression with a penalty of lambda * sum(w_i^2) added to MSE |
-| Polynomial regression | "Fitting curves with linear math" | Linear regression on polynomial features (x, x^2, x^3, ...), still linear in the weights |
+| Ridge regression | "L2 regularization" | Linear regression with a penalty of $\lambda \sum w_i^2$ added to MSE |
+| Polynomial regression | "Fitting curves with linear math" | Linear regression on polynomial features ($x, x^2, x^3, \ldots$), still linear in the weights |
 | Overfitting | "Memorizing training data" | Using a model so complex that it fits noise in training data and fails on new data |
 
 ## Đọc thêm

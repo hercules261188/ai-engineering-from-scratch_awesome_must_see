@@ -28,15 +28,15 @@ SVM kết nối trực tiếp với giai đoạn 1: tối ưu hóa là ngọc (L
 
 ### Các loại phân loại biên giới tối đa
 
-Với dữ liệu có thể tách ra tuyến tính với các nhãn y_i trong {-1, +1} và các vector tính năng x_i, chúng ta muốn một siêu phẳng w^T x + b = 0 tách các lớp.
+Với dữ liệu có thể tách ra theo đường thẳng với nhãn $y_i \in \lbrace -1, +1 \rbrace$và các vector tính năng $x_i$, chúng ta muốn một siêu máy bay$w^T x + b = 0$là phân chia các lớp học.
 
-Khoảng cách từ một điểm x_i đến siêu phẳng là:
+Khoảng cách từ một điểm$x_i$để siêu phẳng là:
 
+```math
+\text{distance} = \frac{\lvert w^T x_i + b \rvert}{\lVert w \rVert}
 ```
-distance = |w^T x_i + b| / ||w||
-```
 
-Đối với một điểm được phân loại đúng cách: y_i * (w^T x_i + b) > 0. Hạn hạch là gấp đôi khoảng cách từ siêu phẳng đến điểm gần nhất ở cả hai bên.
+Đối với một điểm được phân loại đúng cách: $y_i (w^T x_i + b) > 0$. Lề biên là gấp đôi khoảng cách từ siêu phẳng đến điểm gần nhất ở cả hai bên.
 
 ```mermaid
 graph LR
@@ -51,19 +51,23 @@ graph LR
 
 Vấn đề tối ưu hóa:
 
-```
-maximize    2 / ||w||     (the margin width)
-subject to  y_i * (w^T x_i + b) >= 1  for all i
-```
-
-Tương đương (giảm thiểu các hoạt động của bạn là dễ dàng hơn để tối ưu hóa):
-
-```
-minimize    (1/2) ||w||^2
-subject to  y_i * (w^T x_i + b) >= 1  for all i
+```math
+\begin{aligned}
+\text{maximize} \quad & \frac{2}{\lVert w \rVert} \quad \text{(the margin width)} \\
+\text{subject to} \quad & y_i (w^T x_i + b) \ge 1 \quad \text{for all } i
+\end{aligned}
 ```
 
-Đây là một chương trình hình vuông. Nó có một giải pháp toàn cầu độc đáo. Các điểm dữ liệu nằm chính xác trên ranh giới biên giới (nơi y_i * (w^T x_i + b) = 1) là các vector hỗ trợ. Chúng là các điểm duy nhất xác định ranh giới quyết định. Di chuyển hoặc loại bỏ bất kỳ điểm không hỗ trợ vector nào, và ranh giới không thay đổi.
+Tương đương (giảm thiểu $\lVert w \rVert^2$dễ dàng tối ưu hóa hơn):
+
+```math
+\begin{aligned}
+\text{minimize} \quad & \frac{1}{2} \lVert w \rVert^2 \\
+\text{subject to} \quad & y_i (w^T x_i + b) \ge 1 \quad \text{for all } i
+\end{aligned}
+```
+
+Đây là một chương trình hình vuông. Nó có một giải pháp toàn cầu độc đáo. các điểm dữ liệu nằm chính xác trên ranh giới biên giới (nơi $y_i (w^T x_i + b) = 1$(v) là các vector hỗ trợ. Chúng là các điểm duy nhất xác định ranh giới quyết định.
 
 ### Các vector hỗ trợ: số ít quan trọng
 
@@ -85,30 +89,32 @@ Số lượng các vector hỗ trợ cũng đưa ra một giới hạn về lỗ
 
 Dữ liệu thực hiếm khi có thể tách ra hoàn toàn. Một số điểm có thể nằm ở bên sai của ranh giới, hoặc bên trong biên giới.
 
-```
-minimize    (1/2) ||w||^2 + C * sum(xi_i)
-subject to  y_i * (w^T x_i + b) >= 1 - xi_i
-            xi_i >= 0  for all i
+```math
+\begin{aligned}
+\text{minimize} \quad & \frac{1}{2} \lVert w \rVert^2 + C \sum_i \xi_i \\
+\text{subject to} \quad & y_i (w^T x_i + b) \ge 1 - \xi_i \\
+& \xi_i \ge 0 \quad \text{for all } i
+\end{aligned}
 ```
 
-Các biến xi_i của sự lỏng lẻo đo lường mức độ điểm i vi phạm biên. C kiểm soát sự thỏa hiệp:
+Các biến của sự lỏng lẻo $\xi_i$đo mức độ điểm $i$vi phạm biên giới. $C$kiểm soát sự đổi giá:
 
-| C value | Behavior |
+| $C$ value | Behavior |
 |---------|----------|
-| Large C | Penalizes violations heavily. Narrow margin, fewer misclassifications. Overfits |
-| Small C | Allows more violations. Wide margin, more misclassifications. Underfits |
+| Large $C$ | Penalizes violations heavily. Narrow margin, fewer misclassifications. Overfits |
+| Small $C$ | Allows more violations. Wide margin, more misclassifications. Underfits |
 
-C là cường độ điều chỉnh, ngược lại. C lớn = ít điều chỉnh. C nhỏ = nhiều điều chỉnh hơn.
+$C$là cường độ quy định, đảo ngược.$C$= ít thường xuyên hơn.$C$= quy định hơn.
 
 ### Thiệt hại hinge: chức năng mất SVM
 
 SVM margin mềm có thể được viết lại như một tối ưu hóa không bị hạn chế:
 
-```
-minimize    (1/2) ||w||^2 + C * sum(max(0, 1 - y_i * (w^T x_i + b)))
+```math
+\text{minimize} \quad \frac{1}{2} \lVert w \rVert^2 + C \sum_i \max(0, 1 - y_i (w^T x_i + b))
 ```
 
-Thuật ngữ max(0, 1 - y_i * f(x_i)) là lỗ đinh. Nó là không khi điểm được phân loại đúng và vượt ra khỏi biên. Nó là tuyến tính khi điểm nằm bên trong biên hoặc được phân loại sai.
+Thuật ngữ $\max(0, 1 - y_i f(x_i))$là mất đinh. Nó là không khi điểm được phân loại đúng và vượt ra khỏi biên. Nó là tuyến tính khi điểm nằm bên trong biên hoặc phân loại sai.
 
 ```
 Hinge loss for a single point:
@@ -130,9 +136,11 @@ Linear penalty when y*f(x) < 1.
 
 So sánh với tổn thất hậu cần (khuyết phục hậu cần):
 
-```
-Hinge:     max(0, 1 - y*f(x))          Hard cutoff at margin
-Logistic:  log(1 + exp(-y*f(x)))        Smooth, never exactly zero
+```math
+\begin{aligned}
+\text{Hinge:} \quad & \max(0, 1 - y f(x)) && \text{Hard cutoff at margin} \\
+\text{Logistic:} \quad & \log(1 + \exp(-y f(x))) && \text{Smooth, never exactly zero}
+\end{aligned}
 ```
 
 Thiếu háng tạo ra các giải pháp hiếm (chỉ các vector hỗ trợ có đóng góp không bằng 0.). Thiếu háng hậu sử dụng tất cả các điểm dữ liệu. Điều này làm cho SVM hiệu quả hơn trong bộ nhớ tại thời gian dự đoán.
@@ -141,36 +149,40 @@ Thiếu háng tạo ra các giải pháp hiếm (chỉ các vector hỗ trợ c�
 
 Bạn có thể đào tạo SVM tuyến tính bằng cách sử dụng giảm gradient trên lỗ đệm cộng với L2 thường xuyên hóa, mà không giải quyết QP bị hạn chế:
 
+```math
+\begin{aligned}
+& L(w, b) = \frac{\lambda}{2} \lVert w \rVert^2 + \frac{1}{n} \sum_i \max(0, 1 - y_i (w^T x_i + b)) \\[6pt]
+& \text{Gradient with respect to } w\text{:} \\
+& \quad \text{If } y_i (w^T x_i + b) \ge 1\text{:} \quad \frac{\partial L}{\partial w} = \lambda w \\
+& \quad \text{If } y_i (w^T x_i + b) < 1\text{:} \quad \frac{\partial L}{\partial w} = \lambda w - y_i x_i \\[6pt]
+& \text{Gradient with respect to } b\text{:} \\
+& \quad \text{If } y_i (w^T x_i + b) \ge 1\text{:} \quad \frac{\partial L}{\partial b} = 0 \\
+& \quad \text{If } y_i (w^T x_i + b) < 1\text{:} \quad \frac{\partial L}{\partial b} = -y_i
+\end{aligned}
 ```
-L(w, b) = (lambda/2) * ||w||^2 + (1/n) * sum(max(0, 1 - y_i * (w^T x_i + b)))
 
-Gradient with respect to w:
-  If y_i * (w^T x_i + b) >= 1:  dL/dw = lambda * w
-  If y_i * (w^T x_i + b) < 1:   dL/dw = lambda * w - y_i * x_i
-
-Gradient with respect to b:
-  If y_i * (w^T x_i + b) >= 1:  dL/db = 0
-  If y_i * (w^T x_i + b) < 1:   dL/db = -y_i
-```
-
-Điều này được gọi là công thức nguyên thủy. Nó chạy trong O(n * d) mỗi thời đại, nơi n là số lượng mẫu và d là số lượng các tính năng. Đối với dữ liệu lớn, hiếm, chiều cao (thân loại văn bản), điều này là nhanh.
+Đây được gọi là công thức nguyên thủy. Nó chạy trong$O(n \cdot d)$theo thời đại, nơi $n$là số lượng mẫu và $d$là số lượng các tính năng. Đối với dữ liệu lớn, hiếm, chiều cao (tân loại văn bản), điều này là nhanh.
 
 ### Sự công bố kép và thủ thuật hạt nhân
 
 Hình thức Lagrangian của vấn đề SVM (từ bài học giai đoạn 1 điều kiện KKT 18) là:
 
-```
-maximize    sum(alpha_i) - (1/2) * sum_ij(alpha_i * alpha_j * y_i * y_j * (x_i . x_j))
-subject to  0 <= alpha_i <= C
-            sum(alpha_i * y_i) = 0
+```math
+\begin{aligned}
+\text{maximize} \quad & \sum_i \alpha_i - \frac{1}{2} \sum_{i,j} \alpha_i \alpha_j y_i y_j (x_i \cdot x_j) \\
+\text{subject to} \quad & 0 \le \alpha_i \le C \\
+& \sum_i \alpha_i y_i = 0
+\end{aligned}
 ```
 
-Sự đôi chỉ liên quan đến các sản phẩm chấm x_i . x_j giữa các điểm dữ liệu. Đây là thông tin quan trọng. Thay thế mỗi sản phẩm chấm bằng hàm lõi K(x_i, x_j) và SVM có thể học ranh giới phi tuyến tính mà không bao giờ tính toán việc chuyển đổi một cách rõ ràng.
+Sự đôi chỉ liên quan đến các sản phẩm điểm $x_i \cdot x_j$giữa các điểm dữ liệu. Đây là thông tin quan trọng. Thay thế mỗi sản phẩm điểm bằng hàm lõi$K(x_i, x_j)$và SVM có thể học được ranh giới không tuyến tính mà không bao giờ tính toán biến đổi một cách rõ ràng.
 
-```
-Linear kernel:      K(x, z) = x . z
-Polynomial kernel:  K(x, z) = (x . z + c)^d
-RBF (Gaussian):     K(x, z) = exp(-gamma * ||x - z||^2)
+```math
+\begin{aligned}
+\text{Linear kernel:} \quad & K(x, z) = x \cdot z \\
+\text{Polynomial kernel:} \quad & K(x, z) = (x \cdot z + c)^d \\
+\text{RBF (Gaussian):} \quad & K(x, z) = \exp(-\gamma \lVert x - z \rVert^2)
+\end{aligned}
 ```
 
 RBF hạt nhân bản đồ dữ liệu vào một không gian không giới hạn. Điểm gần trong không gian đầu vào có giá trị hạt nhân gần 1. Điểm xa nhau có giá trị hạt nhân gần 0. Nó có thể học bất kỳ ranh giới quyết định mượt mà nào.
@@ -186,20 +198,22 @@ graph LR
     A -->|"Kernel trick<br>K(x,z) = phi(x).phi(z)"| B
 ```
 
-Tránh hạt nhân tính toán sản phẩm chấm trong không gian chiều cao mà không bao giờ đi đến đó. Đối với hạt nhân đa nôn d ở chiều D, không gian tính năng rõ ràng có chiều O(D^d). Nhưng K(x, z) được tính toán trong thời gian O(D).
+Trik hạt nhân tính toán sản phẩm chấm trong không gian chiều cao mà không bao giờ đi đến đó.$d$trong $D$kích thước, không gian tính năng rõ ràng có $O(D^d)$- Nhưng...$K(x, z)$được tính toán trong $O(D)$Thời gian.
 
 ### SVM cho sự lùi (SVR)
 
-Vêctor lùi hỗ trợ gắn một ống rộng epsilon xung quanh dữ liệu. các điểm bên trong ống có lỗ không. các điểm bên ngoài ống bị phạt theo đường thẳng.
+Đánh giá Vêctor Regression phù hợp với một ống rộng $\epsilon$Các điểm bên trong ống có lỗ không. các điểm bên ngoài ống bị phạt theo đường thẳng.
 
-```
-minimize    (1/2) ||w||^2 + C * sum(xi_i + xi_i*)
-subject to  y_i - (w^T x_i + b) <= epsilon + xi_i
-            (w^T x_i + b) - y_i <= epsilon + xi_i*
-            xi_i, xi_i* >= 0
+```math
+\begin{aligned}
+\text{minimize} \quad & \frac{1}{2} \lVert w \rVert^2 + C \sum_i (\xi_i + \xi_i^*) \\
+\text{subject to} \quad & y_i - (w^T x_i + b) \le \epsilon + \xi_i \\
+& (w^T x_i + b) - y_i \le \epsilon + \xi_i^* \\
+& \xi_i, \xi_i^* \ge 0
+\end{aligned}
 ```
 
-Các tham số epsilon điều khiển chiều rộng ống. ống rộng hơn = ít các vector hỗ trợ = phù hợp hơn. ống hẹp hơn = nhiều vector hỗ trợ = phù hợp hơn.
+- $\epsilon$Các thông số này được xác định bởi các thông số:
 
 ### Tại sao SVM bị mất bởi Deep Learning (và khi nào họ vẫn thắng)
 
@@ -208,7 +222,7 @@ SVM thống trị ML từ cuối những năm 1990 đến đầu những năm 20
 | Factor | SVMs | Deep learning |
 |--------|------|---------------|
 | Feature engineering | Requires it | Learns features |
-| Scalability | O(n^2) to O(n^3) for kernel | O(n) per epoch with SGD |
+| Scalability | $O(n^2)$ to $O(n^3)$ for kernel | $O(n)$ per epoch with SGD |
 | Image/text/audio | Needs handcrafted features | Learns from raw data |
 | Large datasets (>100k) | Slow | Scales well |
 | GPU acceleration | Limited benefit | Massive speedup |
@@ -324,9 +338,9 @@ print(f"Accuracy: {clf.score(X_test, y_test):.4f}")
 print(f"Support vectors: {clf['svm'].n_support_}")
 ```
 
-Quan trọng: luôn luôn mở rộng các tính năng của bạn trước khi đào tạo một SVM. SVM nhạy cảm với quy mô tính năng vì biên phụ thuộc vào các tính năng không mở rộng và làm biến dạng hình học.
+Quan trọng: luôn luôn mở rộng các tính năng của bạn trước khi đào tạo một SVM. SVM nhạy cảm với các tính năng lớn bởi vì biên phụ thuộc vào $\lVert w \rVert$, và các tính năng không quy mô làm biến dạng hình học.
 
-Đối với các bộ dữ liệu lớn, sử dụng `LinearSVC`(pháp nguyên thủy, O(n) theo thời đại) thay vì `SVC`(pháp kép, O(n^2) đến O(n^3)):
+Đối với các bộ dữ liệu lớn, sử dụng `LinearSVC`(pháp nguyên thủy, $O(n)$(trong thời đại) thay vì `SVC`(sự tạo ra đôi, $O(n^2)$đến$O(n^3){}$):
 
 ```python
 from sklearn.svm import LinearSVC
@@ -341,13 +355,13 @@ clf = Pipeline([
 
 1. Tạo một bộ dữ liệu phân tách theo chiều tuyến tính 2D. Đào tạo LinearSVM của bạn và xác định các vector hỗ trợ. Kiểm tra rằng các vector hỗ trợ là điểm gần nhất với ranh giới quyết định.
 
-2. C thay đổi từ 0,001 đến 1000 trên một tập dữ liệu ồn ào. Bạch ranh giới quyết định cho mỗi giá trị C. Quan sát chuyển đổi từ biên rộng (không phù hợp) đến biên hẹp (sự phù hợp quá mức).
+2. Vary $C$từ 0,001 đến 1000 trên một bộ dữ liệu ồn ào.$C$giá trị: quan sát sự chuyển đổi từ biên giới rộng (không phù hợp) đến biên giới hẹp (sự phù hợp quá mức).
 
 3. Tạo một tập dữ liệu mà ranh giới lớp là tròn (không tuyến tính). Chứng minh rằng một SVM tuyến tính thất bại. Xét toán các khối lượng lõi RBF và cho thấy các lớp trở nên tách rời trong không gian tính năng do hạt nhân tạo ra.
 
 4. So sánh mất sợi vỏ vs mất hậu cần trên cùng một tập dữ liệu. Tập một SVM tuyến tính và hồi quy hậu cần. Đếm bao nhiêu điểm đào tạo đóng góp vào ranh giới quyết định của mỗi mô hình (vêctơ hỗ trợ vs tất cả các điểm).
 
-5. Thực hiện SVR (sự mất mát không nhạy cảm với epsilon). Đưa nó đến y = sin(x) + tiếng ồn. Châm trạm ống epsilon xung quanh các dự đoán và làm nổi bật các vector hỗ trợ (điểm bên ngoài ống).
+5. Thực hiện SVR (sự mất mát không nhạy cảm với epsilon).$y = \sin(x) + \text{noise}$. Chụp đường ống epsilon xung quanh các dự đoán và nhấn mạnh các vector hỗ trợ (điểm bên ngoài ống).
 
 ## Các điều khoản chính
 
@@ -355,16 +369,16 @@ clf = Pipeline([
 |------|----------------------|
 | Support vectors | The training points closest to the decision boundary. The only points that determine the hyperplane |
 | Margin | The distance between the decision boundary and the nearest support vectors. SVMs maximize this |
-| Hinge loss | max(0, 1 - y*f(x)). Zero when correctly classified and outside the margin. Linear penalty otherwise |
-| C parameter | Trade-off between margin width and classification errors. Large C = narrow margin, small C = wide margin |
+| Hinge loss | $\max(0, 1 - y f(x))$. Zero when correctly classified and outside the margin. Linear penalty otherwise |
+| C parameter | Trade-off between margin width and classification errors. Large $C$ = narrow margin, small $C$ = wide margin |
 | Soft margin | SVM formulation that allows margin violations via slack variables. Handles non-separable data |
 | Kernel trick | Computing dot products in a high-dimensional feature space without explicitly mapping to that space |
-| Linear kernel | K(x, z) = x . z. Equivalent to standard dot product. For linearly separable data |
-| RBF kernel | K(x, z) = exp(-gamma * \|\|x-z\|\|^2). Maps to infinite dimensions. Learns any smooth boundary |
-| Polynomial kernel | K(x, z) = (x . z + c)^d. Maps to a feature space of polynomial combinations |
+| Linear kernel | $K(x, z) = x \cdot z$. Equivalent to standard dot product. For linearly separable data |
+| RBF kernel | $K(x, z) = \exp(-\gamma \Vert x-z \Vert^2)$. Maps to infinite dimensions. Learns any smooth boundary |
+| Polynomial kernel | $K(x, z) = (x \cdot z + c)^d$. Maps to a feature space of polynomial combinations |
 | Dual formulation | Reformulation of the SVM problem that depends only on dot products between data points. Enables kernels |
 | SVR | Support Vector Regression. Fits an epsilon-tube around the data. Points inside the tube have zero loss |
-| Slack variables | xi_i: measures how much a point violates the margin. Zero for correctly classified points outside margin |
+| Slack variables | $\xi_i$: measures how much a point violates the margin. Zero for correctly classified points outside margin |
 | Maximum margin | The principle of choosing the hyperplane that maximizes the distance to the nearest points of each class |
 
 ## Đọc thêm

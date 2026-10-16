@@ -62,8 +62,8 @@ Nếu một tính năng hầu như không khác nhau giữa các mẫu, nó sẽ
 
 Hãy xem xét một tính năng là 0,0 cho 999 trong 1000 mẫu. sự khác biệt của nó gần bằng không. Không mô hình nào có thể sử dụng nó để phân biệt giữa các lớp.
 
-```
-variance(x) = mean((x - mean(x))^2)
+```math
+\text{variance}(x) = \text{mean}\bigl((x - \text{mean}(x))^2\bigr)
 ```
 
 Đặt ngưỡng (ví dụ: 0.01). Thả mọi tính năng với sự biến đổi dưới đó. Điều này loại bỏ các tính năng liên tục hoặc gần liên tục mà không cần nhìn vào biến mục tiêu.
@@ -74,17 +74,17 @@ Giới hạn: một tính năng có thể có sự khác biệt cao và vẫn l�
 
 ### Thông tin lẫn nhau
 
-Thông tin lẫn nhau đo lường mức độ biết giá trị của tính năng X làm giảm sự không chắc chắn về mục tiêu Y.
+Thông tin lẫn nhau đo lường mức độ biết giá trị của tính năng $X$Giảm sự không chắc chắn về mục tiêu $Y$- Tôi không biết.
 
-```
-I(X; Y) = sum_x sum_y p(x, y) * log(p(x, y) / (p(x) * p(y)))
+```math
+I(X; Y) = \sum_x \sum_y p(x, y) \cdot \log \frac{p(x, y)}{p(x) \cdot p(y)}
 ```
 
-Nếu X và Y là độc lập, p(x, y) = p(x) * p(y), do đó thuật ngữ log là 0 và I(X; Y) = 0.
+Nếu$X$và $Y$là độc lập,$p(x, y) = p(x) \cdot p(y)$, vậy log thuật ngữ là 0 và $I(X; Y) = 0$- Thêm nữa.$X$nói với anh về $Y$, thông tin lẫn nhau càng cao.
 
 Lợi thế chính so với tương quan: thông tin lẫn nhau nắm bắt các mối quan hệ phi tuyến tính. Một tính năng có thể có không tương quan với mục tiêu nhưng thông tin lẫn nhau cao vì mối quan hệ là vuông hoặc định kỳ.
 
-Đối với các tính năng liên tục, phân định thành thùng trước tiên (sự ước tính dựa trên histogram). Số lượng thùng ảnh hưởng đến ước tính - quá ít thùng mất thông tin, quá nhiều thùng thêm tiếng ồn. Một lựa chọn phổ biến: thùng vuông hoặc quy tắc Sturges (1 + log2(n)).
+Đối với các tính năng liên tục, phân định vào thùng trước tiên (phân tích dựa trên histogram). Số lượng thùng ảnh hưởng đến ước tính - quá ít thùng mất thông tin, quá nhiều thùng thêm tiếng ồn.$\sqrt{n}$quy tắc Sturges ($1 + \log_2 n$().
 
 ```mermaid
 flowchart LR
@@ -116,14 +116,14 @@ flowchart TD
 
 RFE xem xét các tương tác tính năng vì mô hình nhìn thấy tất cả các tính năng còn lại cùng nhau.
 
-Chi phí: bạn đào tạo mô hình N - thời gian mục tiêu. Với 500 tính năng và mục tiêu 10, đó là 490 lần đào tạo. Đối với các mô hình đắt tiền, điều này chậm. Bạn có thể tăng tốc bằng cách loại bỏ nhiều tính năng mỗi bước (ví dụ, loại bỏ 10% dưới mỗi vòng).
+Chi phí: bạn đào tạo mô hình $N - \text{target}$với 500 tính năng và mục tiêu là 10 lần, đó là 490 lần tập luyện. cho các mô hình đắt tiền, điều này là chậm. Bạn có thể tăng tốc bằng cách loại bỏ nhiều tính năng mỗi bước (ví dụ, loại bỏ 10% dưới mỗi vòng).
 
 ### L1 (Lasso) Chuẩn bị
 
 L1 quy định thêm giá trị tuyệt đối của trọng lượng vào hàm mất:
 
-```
-loss = prediction_error + alpha * sum(|w_i|)
+```math
+\text{loss} = \text{prediction\_error} + \alpha \cdot \sum \lvert w_i \rvert
 ```
 
 Các tham số alpha kiểm soát cách tích cực các tính năng được cắt.
@@ -140,12 +140,10 @@ Khác giới hạn: chỉ hoạt động cho các mô hình tuyến tính. Khôn
 
 Cây quyết định và các tập hợp của chúng (hàng rừng ngẫu nhiên, tăng độ nghiêng) tự nhiên xếp hạng các tính năng. Mỗi phân chia làm giảm tạp chất (Gini hoặc entropy để phân loại, biến thể để lùi lại).
 
-Đối với một khu rừng ngẫu nhiên với cây T:
+Để một khu rừng ngẫu nhiên với $T$cây:
 
-```
-importance(feature_j) = (1/T) * sum over all trees of
-    sum over all nodes splitting on feature_j of
-        (n_samples * impurity_decrease)
+```math
+\text{importance}(\text{feature}_j) = \frac{1}{T} \sum_{\text{all trees}} \; \sum_{\text{all nodes splitting on } \text{feature}_j} (\text{n\_samples} \cdot \text{impurity\_decrease})
 ```
 
 Điều này cung cấp một điểm số tầm quan trọng bình thường cho mỗi tính năng. Nó xử lý các mối quan hệ phi tuyến tính và tương tác tính năng tự động.
@@ -524,7 +522,7 @@ Bài học này mang lại:
 | Filter method | "Score features independently" | A feature selection approach that ranks features using a statistical measure without training a model, evaluating each feature in isolation |
 | Wrapper method | "Use the model to pick features" | A feature selection approach that evaluates feature subsets by training a model and using its performance as the selection criterion |
 | Embedded method | "The model selects features during training" | Feature selection that happens as part of model fitting, such as L1 regularization driving weights to zero |
-| Mutual information | "How much one variable tells you about another" | A measure of the reduction in uncertainty about Y given knowledge of X, capturing both linear and nonlinear dependencies |
+| Mutual information | "How much one variable tells you about another" | A measure of the reduction in uncertainty about $Y$ given knowledge of $X$, capturing both linear and nonlinear dependencies |
 | Recursive Feature Elimination | "Train, rank, prune, repeat" | An iterative wrapper method that trains a model, removes the least important feature(s), and repeats until a target count is reached |
 | L1 / Lasso regularization | "Penalty that kills features" | Adding the sum of absolute weight values to the loss function, which drives unimportant feature weights to exactly zero |
 | Variance threshold | "Remove constant features" | Dropping features whose variance across samples falls below a specified threshold, filtering out features that carry no information |

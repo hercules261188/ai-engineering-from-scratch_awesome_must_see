@@ -18,7 +18,7 @@
 
 Bạn muốn dự đoán liệu khối u có ác tính hay lành tính khi xem kích thước của nó. Bạn thử sự hồi quy tuyến tính. Nó đưa ra các số như 0,3 hoặc 1,7 hoặc -0,5.
 
-Lập ngược hậu cần giải quyết điều này. Nó lấy cùng một kết hợp tuyến tính (wx + b) và vượt qua nó thông qua hàm sigmoid, mà đè nhỏ bất kỳ số nào vào phạm vi (0, 1).
+Lập ngược hậu cần giải quyết điều này. Nó có cùng một kết hợp tuyến tính ($wx + b$(x) và vượt qua qua hàm sigmoid, mà đè nhỏ bất kỳ số nào vào phạm vi (0, 1).
 
 Đây là một trong những thuật toán được sử dụng rộng rãi nhất trong thực tế. Mặc dù tên của nó, sự lùi hậu cần là một thuật toán phân loại, không phải là thuật toán lùi hậu cần. Tên này xuất phát từ chức năng hậu cần (sigmoid) nó sử dụng.
 
@@ -44,22 +44,22 @@ Việc phân loại cần một chức năng:
 
 Chức năng sigmoid thực hiện chính xác như thế này:
 
-```
-sigmoid(z) = 1 / (1 + e^(-z))
+```math
+\sigma(z) = \frac{1}{1 + e^{-z}}
 ```
 
 Các tính chất:
-- Khi z lớn và tích cực, sigmoid(z) tiếp cận 1
-- Khi z lớn và âm, sigmoid(z) tiếp cận với 0
-- Khi z = 0, sigmoid(z) = 0,5
+- Khi nào $z$là lớn và tích cực, $\sigma(z)$Phương pháp 1
+- Khi nào $z$là lớn và âm tính,$\sigma(z)$Phương pháp tiếp cận 0
+- Khi nào $z = 0$- $\sigma(z) = 0.5$
 - Khả năng đầu ra luôn nằm giữa 0 và 1
 - Chức năng này đều mượt mà và có thể phân biệt ở mọi nơi
 
-Các dẫn xuất có một hình thức thuận tiện: sigmoid'(z) = sigmoid(z) * (1 - sigmoid(z)). Điều này làm cho tính toán gradient hiệu quả.
+Các dẫn xuất có một hình thức thuận tiện: $\sigma'(z) = \sigma(z) (1 - \sigma(z))$Điều này làm cho tính toán gradient hiệu quả.
 
 ### Lệ nở logistics = mô hình tuyến tính + Sigmoid
 
-Mô hình tính toán z = wx + b (tương tự như sự lùi lại tuyến tính), sau đó áp dụng sigmoid:
+Mô hình tính toán $z = wx + b$(tương tự như sự lùi lại tuyến tính), sau đó áp dụng sigmoid:
 
 ```mermaid
 flowchart LR
@@ -70,21 +70,21 @@ flowchart LR
     D -->|No| N[Predict 0]
 ```
 
-Khả năng đầu ra p được giải thích là P ((y=1 ∈ x), xác suất đầu vào thuộc lớp 1. Biên giới quyết định là nơi wx + b = 0, làm cho hiệu suất sigmoid chính xác là 0.5.
+Tạo ra$p$được giải thích như $P(y=1 \mid x)$, xác suất rằng đầu vào thuộc lớp 1. Biên giới quyết định là nơi $wx + b = 0$, làm cho hiệu suất sigmoid chính xác là 0,5.
 
 ### Loss Cross-Entropy Binary
 
 Bạn không thể sử dụng MSE để hồi quy hậu cần. MSE với sigmoid tạo ra một bề mặt chi phí không ngọc với nhiều mức tối thiểu địa phương. Thay vào đó, sử dụng sự chuyển đổi phân tử nhị phân (tr mất log):
 
-```
-Loss = -(1/n) * sum(y * log(p) + (1-y) * log(1-p))
+```math
+\text{Loss} = -\frac{1}{n} \sum \left( y \log(p) + (1-y) \log(1-p) \right)
 ```
 
 Tại sao điều này hiệu quả:
-- Khi y=1 và p gần 1: log(1) = 0, do đó mất mát gần 0 (đúng, chi phí thấp)
-- Khi y=1 và p gần 0: log(0) tiếp cận vô hạn âm, do đó mất mát là rất lớn (sai, chi phí cao)
-- Khi y=0 và p gần 0: log(1) = 0, do đó mất mát gần 0 (đúng, chi phí thấp)
-- Khi y=0 và p gần 1: log(0) tiếp cận vô hạn âm, do đó mất mát là rất lớn (sai, chi phí cao)
+- Khi nào $y=1$và $p$gần 1 .$\log(1) = 0$, do đó tổn thất gần 0 (đúng, chi phí thấp)
+- Khi nào $y=1$và $p$là gần 0: $\log(0)$tiếp cận vô hạn âm, do đó mất mát là rất lớn (sai, chi phí cao)
+- Khi nào $y=0$và $p$là gần 0: $\log(1) = 0$, do đó tổn thất gần 0 (đúng, chi phí thấp)
+- Khi nào $y=0$và $p$gần 1 .$\log(0)$tiếp cận vô hạn âm, do đó mất mát là rất lớn (sai, chi phí cao)
 
 Chức năng mất mát này là ngọc cho sự lùi hậu cần, đảm bảo một mức tối thiểu toàn cầu duy nhất.
 
@@ -92,12 +92,14 @@ Chức năng mất mát này là ngọc cho sự lùi hậu cần, đảm bảo 
 
 Các gradient cho sự chéo-tròp nhị phân với sigmoid có hình thức sạch:
 
-```
-dL/dw = (1/n) * sum((p - y) * x)
-dL/db = (1/n) * sum(p - y)
+```math
+\begin{aligned}
+\frac{\partial L}{\partial w} &= \frac{1}{n} \sum (p - y) \, x \\
+\frac{\partial L}{\partial b} &= \frac{1}{n} \sum (p - y)
+\end{aligned}
 ```
 
-Những hình ảnh này trông giống hệt với các gradient hồi quy tuyến tính. Sự khác biệt là p = sigmoid(wx + b) thay vì p = wx + b. Sigmoid giới thiệu tính không tuyến tính, nhưng quy tắc cập nhật gradient vẫn giống nhau.
+Những hình ảnh này trông giống như các gradient trục xuất tuyến tính.$p = \sigma(wx + b)$thay vì $p = wx + b$. Sigmoid giới thiệu tính không tuyến tính, nhưng quy tắc cập nhật gradient vẫn giống nhau.
 
 ```mermaid
 flowchart TD
@@ -114,29 +116,29 @@ flowchart TD
 
 Đối với một đầu vào 2D (hai tính năng), ranh giới quyết định là đường:
 
-```
-w1*x1 + w2*x2 + b = 0
+```math
+w_1 x_1 + w_2 x_2 + b = 0
 ```
 
 Các điểm ở một bên được phân loại là 1, điểm ở phía bên kia là 0. Phục hồi hậu cần luôn tạo ra một ranh giới quyết định tuyến tính. Nếu bạn cần một ranh giới cong, bạn hoặc thêm các tính năng đa nôn hoặc sử dụng mô hình không tuyến tính.
 
 ### Định dạng đa lớp với Softmax
 
-Sự lùi hậu cần nhị phân xử lý hai lớp. Đối với các lớp k, sử dụng hàm softmax:
+Sự lùi hậu cần nhị phân xử lý hai lớp.$k$lớp, sử dụng hàm softmax:
 
-```
-softmax(z_i) = e^(z_i) / sum(e^(z_j) for all j)
+```math
+\text{softmax}(z_i) = \frac{e^{z_i}}{\sum_j e^{z_j}}
 ```
 
-Mỗi lớp có vector trọng lượng riêng của nó. mô hình tính toán điểm z_i cho mỗi lớp, sau đó softmax chuyển đổi điểm thành xác suất tổng cộng với 1.
+Mỗi lớp có vector trọng lượng riêng của nó. mô hình tính toán điểm số.$z_i$cho mỗi lớp, sau đó softmax chuyển đổi điểm số thành xác suất tổng cộng là 1.
 
 Chức năng mất mát trở thành cross-entropy phân loại:
 
-```
-Loss = -(1/n) * sum(sum(y_k * log(p_k)))
+```math
+\text{Loss} = -\frac{1}{n} \sum \sum_k y_k \log(p_k)
 ```
 
-nơi y_k là 1 cho lớp thực và 0 cho tất cả các lớp khác (định dạng hóa một lần).
+nơi $y_k$là 1 cho lớp thực và 0 cho tất cả các lớp khác (chế lập mã một lần).
 
 ### Các số liệu đánh giá
 
@@ -150,18 +152,18 @@ Chỉ riêng độ chính xác không đủ. Đối với một tập dữ liệ
 | Actually Negative | False Positive (FP) | True Negative (TN) |
 
 **Precision**Trong số tất cả những điều tích cực dự đoán, có bao nhiêu điều tích cực thực sự?
-```
-Precision = TP / (TP + FP)
+```math
+\text{Precision} = \frac{TP}{TP + FP}
 ```
 
 **Recall**(Sensitivity): Trong tất cả những điều tích cực thực tế, chúng ta đã bắt được bao nhiêu?
-```
-Recall = TP / (TP + FN)
+```math
+\text{Recall} = \frac{TP}{TP + FN}
 ```
 
 **F1 Score**: trung bình hài hòa của độ chính xác và nhớ lại.
-```
-F1 = 2 * (Precision * Recall) / (Precision + Recall)
+```math
+F_1 = 2 \cdot \frac{\text{Precision} \cdot \text{Recall}}{\text{Precision} + \text{Recall}}
 ```
 
 Khi nào để đặt ưu tiên:
@@ -504,7 +506,7 @@ Bài học này mang lại:
 
 ## Các bài tập
 
-1. Tạo một tập dữ liệu không phân tách theo đường tuyến (ví dụ, hai vòng tròn tập trung). Đào tạo sự lùi hậu cần và quan sát sự thất bại của nó. Sau đó thêm các tính năng đa số (x1^2, x2^2, x1*x2) và tập lại.
+1. Tạo một tập dữ liệu không phân tách theo đường thẳng (ví dụ, hai vòng tròn tập trung).$x_1^2, x_2^2, x_1 x_2$(văn khoái) và huấn luyện lại.
 2. Thực hiện một matrix nhầm lẫn đa lớp cho mô hình softmax 3 lớp tính toán độ chính xác cho mỗi lớp và thu hồi.
 3. Xây dựng một đường cong ROC từ đầu. Đối với 100 giá trị ngưỡng từ 0 đến 1, tính toán tỷ lệ tích cực thực và tỷ lệ tích cực sai. Xét AUC (vùng dưới đường cong) bằng cách sử dụng quy tắc trapezoidal.
 
@@ -513,14 +515,14 @@ Bài học này mang lại:
 | Term | What people say | What it actually means |
 |------|----------------|----------------------|
 | Logistic regression | "Regression for classification" | A linear model followed by a sigmoid function that outputs class probabilities |
-| Sigmoid function | "The S-curve" | The function 1/(1+e^(-z)) that maps any real number to the range (0, 1) |
-| Binary cross-entropy | "Log loss" | The loss function -[y*log(p) + (1-y)*log(1-p)] that penalizes confident wrong predictions severely |
+| Sigmoid function | "The S-curve" | The function $1/(1+e^{-z})$ that maps any real number to the range (0, 1) |
+| Binary cross-entropy | "Log loss" | The loss function $-[y \log(p) + (1-y) \log(1-p)]$ that penalizes confident wrong predictions severely |
 | Decision boundary | "The dividing line" | The surface where the model's output probability equals 0.5, separating predicted classes |
 | Softmax | "Multi-class sigmoid" | A function that converts a vector of scores into probabilities that sum to 1 |
-| Precision | "How many selected are relevant" | TP / (TP + FP), the fraction of positive predictions that are actually positive |
-| Recall | "How many relevant are selected" | TP / (TP + FN), the fraction of actual positives that the model correctly identifies |
-| F1 score | "Balanced accuracy" | The harmonic mean of precision and recall: 2*P*R / (P+R) |
+| Precision | "How many selected are relevant" | $TP / (TP + FP)$, the fraction of positive predictions that are actually positive |
+| Recall | "How many relevant are selected" | $TP / (TP + FN)$, the fraction of actual positives that the model correctly identifies |
+| F1 score | "Balanced accuracy" | The harmonic mean of precision and recall: $2PR / (P+R)$ |
 | Confusion matrix | "The error breakdown" | A table showing TP, TN, FP, FN counts for each class pair |
 | Threshold | "The cutoff" | The probability value above which the model predicts class 1 (default 0.5, tunable) |
-| One-hot encoding | "Binary columns for categories" | Representing class k as a vector of zeros with a 1 at position k |
-| Categorical cross-entropy | "Multi-class log loss" | The extension of binary cross-entropy to k classes using one-hot encoded labels |
+| One-hot encoding | "Binary columns for categories" | Representing class $k$ as a vector of zeros with a 1 at position $k$ |
+| Categorical cross-entropy | "Multi-class log loss" | The extension of binary cross-entropy to $k$ classes using one-hot encoded labels |
