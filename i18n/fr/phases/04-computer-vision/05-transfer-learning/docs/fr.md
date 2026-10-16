@@ -100,8 +100,8 @@ Pour les petits ensembles de données, une seule couche linéaire est générale
 
 Une version plus lisse de LR discriminatoire utilisée dans les réglages modernes (BEiT, DINOv2, ViT-B). Au lieu de regrouper les couches en étapes, donnez à chaque couche une LR légèrement plus petite que celle qui est au-dessus:
 
-```
-lr_layer_k = base_lr * decay^(L - k)
+```math
+\text{lr\_layer}_k = \text{base\_lr} \cdot \text{decay}^{L - k}
 ```
 
 Avec des blocs de transformateurs de décomposition = 0,75 et L = 12, les premiers blocs de trains à`0.75^11 ≈ 0.04x`Il est plus important pour les transformateurs de musique fine que pour les CNN, où les LR regroupés en scène sont généralement suffisants.

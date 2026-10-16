@@ -83,11 +83,13 @@ Marigold (Ke et al., CVPR 2024) réframe l'estimation de profondeur en tant que 
 
 Pour soulever un pixel `(u, v)`avec profondeur `d`à un point 3D `(X, Y, Z)`en coordonnées de caméra:
 
-```
-fx, fy, cx, cy = camera intrinsics
-X = (u - cx) * d / fx
-Y = (v - cy) * d / fy
-Z = d
+```math
+\begin{aligned}
+f_x, f_y, c_x, c_y &= \text{camera intrinsics} \\
+X &= (u - c_x) \cdot d / f_x \\
+Y &= (v - c_y) \cdot d / f_y \\
+Z &= d
+\end{aligned}
 ```
 
 L'intrinsèque provient des métadonnées EXIF, d'un schéma d'étalonnage ou d'un estimateur intrinsèque monoculaire (Perspective Fields, UniDepth). Sans intrinsèque, vous pouvez toujours rendre un nuage de point en supposant un principe de 60 à 70 ° FOV et de résolution modérée  utilisable pour la visualisation, pas pour la mesure.
@@ -192,21 +194,21 @@ print(f"before align  absRel = {abs_rel_error(pred, gt):.3f}")
 print(f"after align   absRel = {abs_rel_error(aligned, gt):.3f}")
 ```
 
-### Étape 5: profondeur Quelque chose utilisation V3 (référence)
+### Étape 5: profondeur de tout utilisation V2 (référence)
 
 ```python
-import torch
+import numpy as np
 from transformers import pipeline
 from PIL import Image
 
-pipe = pipeline(task="depth-estimation", model="LiheYoung/depth-anything-v2-large")
+pipe = pipeline(task="depth-estimation", model="depth-anything/Depth-Anything-V2-Large-hf")
 
 image = Image.open("street.jpg").convert("RGB")
 out = pipe(image)
 depth_np = np.array(out["depth"])
 ```
 
-Trois lignes.`out["depth"]`est une échelle de gris PIL; convertis en numpy pour les mathématiques. Pour Depth Anything V3 spécifiquement, échanger l'id du modèle une fois publié; l'API est inchangée.
+Trois lignes.`out["depth"]`La profondeur n'importe quoi 3 (novembre 2025) ne se charge pas à travers ce pipeline.`depth_anything_3`le paquet: `DepthAnything3.from_pretrained("depth-anything/DA3MONO-LARGE")`charge le modèle relatif monoculaire, et `model.inference(images).depth`retourne une `[N, H, W]`le tableau de profondeur.
 
 ## Utilisez-le
 
@@ -246,7 +248,7 @@ Cette leçon donne:
 | Monocular depth | "Single-image depth" | Depth estimation from one RGB frame, no stereo or LiDAR |
 | Relative depth | "Ordered depth" | Ordered z-values without real-world units |
 | Metric depth | "Absolute distance" | Depth in metres; requires calibration or a model trained with metric supervision |
-| AbsRel | "Absolute relative error" | Mean of |d_pred - d_gt| / d_gt; standard depth metric |
+| AbsRel | "Absolute relative error" | Mean of $\lvert d_{\text{pred}} - d_{\text{gt}} \rvert / d_{\text{gt}}$; standard depth metric |
 | Delta accuracy | "delta < 1.25" | Fraction of pixels with prediction within 25% of ground truth |
 | Pinhole camera | "fx, fy, cx, cy" | The camera model used to lift (u, v, d) to (X, Y, Z) |
 | DPT | "Dense Prediction Transformer" | The conv-based decoder used on top of frozen ViT encoders for depth |

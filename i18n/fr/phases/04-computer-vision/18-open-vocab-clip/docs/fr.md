@@ -42,7 +42,7 @@ Les deux encoders se terminent par une projection linéaire vers la même dimens
 
 ### L'objectif
 
-En fonction d'un lot de paires N (image, sous-titre), construisez une matrice de similitude NxN. Traînez les deux encoders de sorte que la diagonale (paires correspondantes) a une grande similitude et les hors-diagonales (non correspondantes) ont une faible similitude.
+En raison d' un lot de $N$(image, sous-titre) paires, construire une $N \times N$Matrice de similitude. entraînez les deux encoders de sorte que la diagonale (pares correspondantes) a une grande similitude et les hors-diagonaux (non correspondants) ont une faible similitude.
 
 ```
 sim_matrix = image_embeddings @ text_embeddings.T / tau
@@ -58,9 +58,11 @@ Symétrique car la récupération d'image à texte et de texte à image devraien
 
 SigLIP (Zhai et coll., 2023) a remplacé le softmax par le sigmoïde par paire:
 
-```
-loss = mean over pairs of log(1 + exp(-y_ij * sim_ij))
-y_ij = +1 if matching, -1 otherwise
+```math
+\begin{aligned}
+\text{loss} &= \mathop{\mathrm{mean}}\limits_{\text{pairs}} \log\left(1 + \exp(-y_{ij} \cdot \text{sim}_{ij})\right) \\
+y_{ij} &= \begin{cases} +1 & \text{if matching} \\ -1 & \text{otherwise} \end{cases}
+\end{aligned}
 ```
 
 La perte par paire supprime la normalisation au niveau des lots requise par CLIP. SigLIP entraîne mieux les petits lots et correspond ou dépasse CLIP aux données égales.
@@ -224,4 +226,4 @@ Cette leçon donne:
 - [CLIP: Learning Transferable Visual Models from Natural Language Supervision (Radford et al., 2021)](https://arxiv.org/abs/2103.00020)
 - [SigLIP: Sigmoid Loss for Language-Image Pre-Training (Zhai et al., 2023)](https://arxiv.org/abs/2303.15343)
 - [OpenCLIP](https://github.com/mlfoundations/open_clip) la base de code communautaire
-- [DINOv2 vs CLIP vs MAE: a features comparison](https://huggingface.co/blog/dinov2) Guide de la FH avec cas d'utilisation côte à côte
+- [Oquab et al. (2023). DINOv2: Learning Robust Visual Features without Supervision](https://arxiv.org/abs/2304.07193) le papier, avec des caractéristiques de référence par rapport aux modèles CLIP et MAE

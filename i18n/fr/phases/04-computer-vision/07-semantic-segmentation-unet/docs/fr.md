@@ -87,10 +87,10 @@ Pour une première U-Net, le bilinéaire est plus sûr.
 
 ### Entropie croisée sur une grille de pixels
 
-Pour la segmentation sémantique avec les classes C, la sortie du modèle est `(N, C, H, W)`La cible est`(N, H, W)`L'entropie croisée est identique à la classification, appliquée à chaque position spatiale:
+Pour la segmentation sémantique avec $C$les classes, la sortie du modèle est `(N, C, H, W)`La cible est`(N, H, W)`L'entropie croisée est identique à la classification, appliquée à chaque position spatiale:
 
-```
-Loss = mean over (n, h, w) of -log( softmax(logits[n, :, h, w])[target[n, h, w]] )
+```math
+\text{Loss} = \mathop{\mathrm{mean}}\limits_{(n, h, w)} \left[ -\log\left( \mathop{\mathrm{softmax}}(\text{logits}[n, :, h, w])[\text{target}[n, h, w]] \right) \right]
 ```
 
 `F.cross_entropy`PyTorch traite cette forme de manière native.
@@ -101,17 +101,19 @@ L'entropie croisée traite tous les pixels de la même manière. C'est faux quan
 
 La perte de dés résout cela en optimisant directement le chevauchement entre le masque prédit et le masque vrai:
 
-```
-Dice(p, y) = 2 * sum(p * y) / (sum(p) + sum(y) + epsilon)
-Dice_loss = 1 - Dice
+```math
+\begin{aligned}
+\mathop{\mathrm{Dice}}(p, y) &= \frac{2 \sum (p \cdot y)}{\sum p + \sum y + \epsilon} \\
+\text{Dice}_{\text{loss}} &= 1 - \text{Dice}
+\end{aligned}
 ```
 
 où `p`est la carte de probabilité sigmoïde/softmax pour une classe et `y`La perte est nulle seulement lorsque la superposition est parfaite. Parce qu'elle est basée sur le ratio, le déséquilibre de classe est irréel.
 
 Dans la pratique, utilisez **combined loss**- Le numéro de la liste:
 
-```
-L = L_cross_entropy + lambda * L_dice       (lambda ~ 1)
+```math
+L = L_{\text{cross\_entropy}} + \lambda \cdot L_{\text{dice}} \qquad (\lambda \approx 1)
 ```
 
 La croisée entropie donne des gradients stables au début de l'entraînement; Dice met l'accent sur la taille du masque.
@@ -120,7 +122,7 @@ La croisée entropie donne des gradients stables au début de l'entraînement; D
 
 - **Pixel accuracy**Le pourcentage de pixels correctement prédits. Cheap. Broken sur des données déséquilibrées pour la même raison que l'exactitude dans la classification.
 - **IoU per class** intersection sur union pour chaque classe de masque; moyenne entre les classes = mIoU.
-- **Dice (F1 on pixels)** similaire à IoU; `Dice = 2 * IoU / (1 + IoU)`L'imagerie médicale préfère les dice, la communauté de conduite préfère l'IUI; elles sont monotonnellement liées.
+- **Dice (F1 on pixels)** similaire à IoU; $\text{Dice} = 2 \cdot \text{IoU} / (1 + \text{IoU})$L'imagerie médicale préfère les dice, la communauté de conduite préfère l'IUI; elles sont monotonnellement liées.
 - **Boundary F1** mesure la proximité des limites prévues aux limites de la vérité au sol, pénalisant même les petits changements.
 
 Les taux de participation sont de 15% pour une classe, alors que les autres neuf sont de 85%.
@@ -400,4 +402,4 @@ Cette leçon donne:
 - [U-Net: Convolutional Networks for Biomedical Image Segmentation (Ronneberger et al., 2015)](https://arxiv.org/abs/1505.04597) le papier original; le chiffre que chacun copie est à la page 2
 - [Fully Convolutional Networks (Long et al., 2015)](https://arxiv.org/abs/1411.4038) le document qui a fait de la segmentation un problème de convection de bout en bout
 - [segmentation_models_pytorch](https://github.com/qubvel/segmentation_models.pytorch) la référence pour la segmentation de la production; chaque architecture standard plus chaque perte standard
-- [Lessons learned from training SOTA segmentation (kaggle.com competitions)](https://www.kaggle.com/code/iafoss/carvana-unet-pytorch) une explication de la raison pour laquelle le TTA, le pseudo-étiquetage et les poids de classe sont importants sur les données réelles
+- [iafoss, Unet34 submission with TTA (Kaggle notebook)](https://www.kaggle.com/code/iafoss/unet34-submission-tta-0-699-new-public-lb) Augmentation du temps d'essai d'un réseau U-Net lors d'un concours de segmentation réel

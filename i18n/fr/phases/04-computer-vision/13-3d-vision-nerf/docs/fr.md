@@ -26,7 +26,7 @@ Les deux représentations dominent pour des raisons différentes. Les nuages de 
 
 ### Nuages de pointe
 
-Un nuage de points est un ensemble non ordonné de N points en R^3, optionnellement chacun avec des caractéristiques (couleur, intensité, normale).
+Un nuage de points est un ensemble non ordonné de $N$points dans $\mathbb{R}^3$, optionnellement chacun avec des caractéristiques (couleur, intensité, normale).
 
 ```
 cloud = [
@@ -44,8 +44,8 @@ Aucune grille, aucune connectivité.
 
 PointNet (Qi et al., 2017) a résolu les deux avec une idée: appliquer un MLP partagé à chaque point, puis agréger avec une fonction symétrique (pools max). Le résultat est un vecteur de taille fixe qui ne dépend pas de l'ordre.
 
-```
-f(P) = max_{p in P} MLP(p)
+```math
+f(P) = \max_{p \in P} \mathop{\mathrm{MLP}}(p)
 ```
 
 C'est le cœur de PointNet. Les variantes plus profondes (PointNet++, Point Transformer) ajoutent un échantillonnage hiérarchique et une aggregation locale, mais le truc de fonction symétrique est inchangé.
@@ -89,22 +89,23 @@ Une perte compare le pixel rendu au pixel de vérité au sol dans les photos d'e
 
 Une vanille en MLP .`(x, y, z)`NeRF corrige cette situation en encodant chaque coordonnée en vecteur de fonctionnalités de Fourier avant la MLP:
 
-```
-gamma(p) = (sin(2^0 pi p), cos(2^0 pi p), sin(2^1 pi p), cos(2^1 pi p), ...)
+```math
+\gamma(p) = \left(\sin(2^0 \pi p), \cos(2^0 \pi p), \sin(2^1 \pi p), \cos(2^1 \pi p), \ldots\right)
 ```
 
-Jusqu'à L=10 niveaux de fréquence. C'est le même truc que les transformateurs utilisent pour les positions, et il apparaît à nouveau dans le conditionnement du temps de diffusion (leçon 10).
+Jusqu' à $L=10$Les niveaux de fréquence sont les mêmes que ceux utilisés par les transformateurs pour les positions, et ils apparaissent à nouveau dans le conditionnement de diffusion (leçon 10).
 
 ### Rendering volumétrique
 
+```math
+\begin{aligned}
+C(r) &= \sum_i T_i \left(1 - \exp(-\sigma_i \delta_i)\right) c_i \\[4pt]
+T_i &= \exp\left(-\sum_{j<i} \sigma_j \delta_j\right) \\
+\delta_i &= t_{i+1} - t_i
+\end{aligned}
 ```
-C(r) = sum_i T_i * (1 - exp(-sigma_i * delta_i)) * c_i
 
-T_i  = exp(- sum_{j<i} sigma_j * delta_j)
-delta_i = t_{i+1} - t_i
-```
-
-`T_i`est la transmission  combien de lumière survit au point i. `(1 - exp(-sigma_i * delta_i))`est l' opacité au point i. `c_i`Le pixel final est une somme pondérée le long du rayon.
+`T_i`est la transmission  combien de lumière survit à la pointe $i$- Je suis là .`(1 - exp(-sigma_i * delta_i))`est l' opacité au point $i$- Je suis là .`c_i`Le pixel final est une somme pondérée le long du rayon.
 
 ### Ce qui a remplacé les NERF
 

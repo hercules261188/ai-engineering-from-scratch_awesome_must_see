@@ -50,8 +50,8 @@ Le haut vers le bas (HRNet, ViTPose) est le leader de la précision; le bas vers
 
 Au lieu de régresser `(x, y)`directement, prédire une`H x W`carte thermique par point clé avec une tache gaussienne centrée sur l'emplacement réel.
 
-```
-target[k, y, x] = exp(-((x - cx_k)^2 + (y - cy_k)^2) / (2 sigma^2))
+```math
+\text{target}[k, y, x] = \exp\left(-\frac{(x - \mathit{cx}_k)^2 + (y - \mathit{cy}_k)^2}{2 \sigma^2}\right)
 ```
 
 À l'inférence, l'argmax de chaque carte thermique est l'emplacement prévisible du point clé.

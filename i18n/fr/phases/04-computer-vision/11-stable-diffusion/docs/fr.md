@@ -55,8 +55,8 @@ flowchart LR
 
 Le conditionnement du texte simple apprend `epsilon_theta(x_t, t, c)`pour chaque demande `c`. La CFG traîne le même réseau avec `c`Il a été réalisé à 10% des cas (replacé par une intégration vide), ce qui a donné un modèle unique qui prédit à la fois le bruit conditionnel et l'inconditionnel.
 
-```
-eps = eps_uncond + w * (eps_cond - eps_uncond)
+```math
+\epsilon = \epsilon_{\text{uncond}} + w \cdot (\epsilon_{\text{cond}} - \epsilon_{\text{uncond}})
 ```
 
 `w`est l'échelle de direction. `w=0`est inconditionnelle,`w=1`est clairement conditionnelle, `w>1`Le système de gestion de la décharge est un système de gestion de la décharge de la décharge de la décharge de la décharge de la décharge de la décharge de la décharge de la décharge de la décharge de la décharge de la décharge de la décharge de la décharge de la décharge de la décharge de la décharge de la décharge de la décharge de la décharge de la décharge de la décharge de la décharge de la décharge de la décharge de la décharge de la décharge de la décharge de la décharge de la décharge de la décharge de la décharge de la décharge de la décharge de la décharge de la décharge de la décharge de la décharge de la décharge de la décharge de la décharge de la décharge de la décharge de la décharge de la décharge de la décharge de la décharge de la décharge de décharge de la décharge de décharge de la décharge de décharge de décharge de décharge de décharge de décharge de décharge de décharge de décharge de décharge de décharge de décharge de décharge de décharge de décharge de décharge de décharge de décharge de décharge de décharge de décharge de décharge de décharge de décharge de décharge de décharge de décharge de décharge de décharge de décharge de décharge de décharge de décharge de décharge de décharge de décharge de décharge de décharge de décharge de décharge de décharge de décharge de décharge de décharge de décharge de décharge de décharge de décharge de décharge de décharge de décharge de décharge de décharge de décharge de décharge de décharge de décharge de décharge de décharge de décharge de décharge de décharge de décharge de décharge de décharge de décharge de décharge de décharge de décharge de décharge de décharge de décharge de décharge de décharge de décharge de décharge de décharge de décharge de décharge de décharge de décharge de décharge de décharge de décharge de décharge de décharge de décharge de décharge de décharge de décharge de décharge de décharge de décharge de décharge de décharge de décharge de décharge de décharge de décharge de`w=7.5`- Je suis désolé .
@@ -193,13 +193,16 @@ Les pixels blancs du masque sont la zone à régénérer.
 ### Étape 5: Chargement de la LoRA
 
 ```python
-pipe.load_lora_weights("sayakpaul/sd-lora-ghibli")
+pipe.load_lora_weights(
+    "artificialguybr/studioghibli-redmond-1-5v-studio-ghibli-lora-for-liberteredmond-sd-1-5",
+    weight_name="StudioGhibliRedmond-15V-LiberteRedmond-StdGBRedmAF-StudioGhibli.safetensors",
+)
 pipe.fuse_lora(lora_scale=0.8)
 
-image = pipe(prompt="a village square in ghibli style").images[0]
+image = pipe(prompt="a village square, StdGBRedmAF, Studio Ghibli").images[0]
 ```
 
-`lora_scale`Les contrôles de résistance: 0,0 = aucun effet, 1,0 = effet complet. `fuse_lora`Il est possible de faire une commande de la vitesse de l'adaptateur, mais il est impossible de le changer.`pipe.unfuse_lora()`avant de charger un autre adaptateur.
+La phrase déclenchante de la carte modèle (`StdGBRedmAF, Studio Ghibli`) met le style en marche. `lora_scale`Les contrôles de résistance: 0,0 = aucun effet, 1,0 = effet complet. `fuse_lora`Il est possible de faire une commande de la vitesse de l'adaptateur, mais il est impossible de le changer.`pipe.unfuse_lora()`avant de charger un autre adaptateur.
 
 ### Étape 6: Formation en LRA (esquisse)
 

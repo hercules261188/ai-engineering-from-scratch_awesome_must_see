@@ -74,11 +74,13 @@ Les détecteurs modernes utilisent souvent des FPN avec différents ensembles d'
 
 Le brut`tx, ty, tw, th`ne sont pas des coordonnées de boîte; elles sont des cibles de régression à transformer avant la traçage:
 
-```
-centre x  = (sigmoid(tx) + cell_x) * stride
-centre y  = (sigmoid(ty) + cell_y) * stride
-width     = anchor_w * exp(tw)
-height    = anchor_h * exp(th)
+```math
+\begin{aligned}
+\text{centre } x &= (\sigma(t_x) + \text{cell}_x) \cdot \text{stride} \\
+\text{centre } y &= (\sigma(t_y) + \text{cell}_y) \cdot \text{stride} \\
+\text{width} &= \text{anchor}_w \cdot \exp(t_w) \\
+\text{height} &= \text{anchor}_h \cdot \exp(t_h)
+\end{aligned}
 ```
 
 `sigmoid`conserve les détournements de centre à l'intérieur de la cellule. `exp`La largeur de l'ancrage est libre sans détour.`stride`Cette étape de décode est la même dans toutes les versions de YOLO depuis v2.
@@ -87,11 +89,11 @@ height    = anchor_h * exp(th)
 
 La métrique de similitude universelle de détection entre deux boîtes:
 
-```
-IoU(A, B) = area(A intersect B) / area(A union B)
+```math
+\mathrm{IoU}(A, B) = \frac{\mathop{\mathrm{area}}(A \cap B)}{\mathop{\mathrm{area}}(A \cup B)}
 ```
 
-IoU = 1 signifie identique; IoU = 0 signifie aucun chevauchement. IoU entre la prédiction et la boîte de vérité de base est ce qui décide si une prédiction compte comme un vrai positif (habituellement IoU >= 0,5).
+$\mathrm{IoU} = 1$signifie identique; $\mathrm{IoU} = 0$La valeur de l'intervalle entre la prédiction et la boîte de vérité de base est celle qui décide si une prédiction est considérée comme vraie positive (généralement$\mathrm{IoU} \ge 0.5$L'IU entre deux prédictions est ce que le NMS utilise pour dédupliquer.
 
 ### Suppression non maximale
 
@@ -113,11 +115,13 @@ Un seuil typique: 0,45 pour la détection d'objets.`soft-NMS`- Je suis là .`DIo
 
 La perte de YOLO est trois pertes ajoutées avec les poids:
 
-```
-L = lambda_coord * L_box(pred, target, where obj=1)
-  + lambda_obj   * L_obj(pred, 1,     where obj=1)
-  + lambda_noobj * L_obj(pred, 0,     where obj=0)
-  + lambda_cls   * L_cls(pred, target, where obj=1)
+```math
+\begin{aligned}
+L = {} & \lambda_{\text{coord}} \cdot L_{\text{box}}(\text{pred}, \text{target}, \text{where obj}=1) \\
++ {} & \lambda_{\text{obj}} \cdot L_{\text{obj}}(\text{pred}, 1, \text{where obj}=1) \\
++ {} & \lambda_{\text{noobj}} \cdot L_{\text{obj}}(\text{pred}, 0, \text{where obj}=0) \\
++ {} & \lambda_{\text{cls}} \cdot L_{\text{cls}}(\text{pred}, \text{target}, \text{where obj}=1)
+\end{aligned}
 ```
 
 Seules les cellules qui contiennent un objet contribuent à la régression des boîtes et aux pertes de classification.`lambda_noobj`est généralement petite (~0,5) car la grande majorité des cellules sont vides et domineraient autrement la perte totale.

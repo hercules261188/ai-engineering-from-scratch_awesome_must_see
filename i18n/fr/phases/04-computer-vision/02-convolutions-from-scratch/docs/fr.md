@@ -74,8 +74,8 @@ Cette formule.**shared weights, locality, sliding window**Tout le reste est la c
 
 Compte tenu de la taille de l' espace d' entrée `H`, taille du noyau `K`, rembourrage`P`- Je suis en train de faire un pas .`S`- Le numéro de la liste:
 
-```
-H_out = floor( (H - K + 2P) / S ) + 1
+```math
+H_{\text{out}} = \left\lfloor \frac{H - K + 2P}{S} \right\rfloor + 1
 ```
 
 Vous le calculerez des dizaines de fois par architecture.
@@ -88,7 +88,7 @@ Vous le calculerez des dizaines de fois par architecture.
 | Pool 2x2 | 32 | 2 | 0 | 2 | 16 |
 | Large receptive field | 32 | 7 | 3 | 2 | 16 |
 
-"Same padding" signifie choisir P de sorte que H_out == H quand S == 1. Pour K impar, c'est P = (K - 1) / 2. C'est pourquoi les noyaux 3x3 dominent  ils sont le plus petit noyau impar qui a encore un centre.
+"Le même rembourrage" signifie "désigner".$P$Alors ...$H_{\text{out}} = H$quand ?$S = 1$Pour les étranges .$K$, c' est ça .$P = (K - 1) / 2$C'est pourquoi les noyaux 3x3 dominent  ils sont le plus petit noyau étrange qui a encore un centre.
 
 ### Padding
 

@@ -61,7 +61,7 @@ Chaque traqueur classique utilise un filtre Kalman dans l'étape de prédiction 
 
 ### L'algorithme hongrois
 
-En raison d' une`M x N`La méthode de calcul des coûts (tracks x detections) est de trouver une assignation individuelle qui réduit au minimum le coût total.`1 - IoU(track_bbox, detection_bbox)`ou de similitude cosine négative des caractéristiques d'apparence. Le temps d'exécution est O(((M+N) ^3); pour M, N jusqu'à ~1000 il est assez rapide en Python via `scipy.optimize.linear_sum_assignment`- Je suis désolé .
+En raison d' une`M x N`La méthode de calcul des coûts (tracks x detections) est de trouver une assignation individuelle qui réduit au minimum le coût total.`1 - IoU(track_bbox, detection_bbox)`ou de similitude cosine négative des caractéristiques d'apparence.$O((M+N)^3)$; pour $M, N$jusqu'à ~ 1000 c' est assez rapide en Python via `scipy.optimize.linear_sum_assignment`- Je suis désolé .
 
 ### L'idée clé de ByteTrack
 

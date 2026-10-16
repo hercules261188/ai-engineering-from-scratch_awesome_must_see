@@ -61,12 +61,13 @@ Cinq étapes, tout GPU-friendly, aucune requête MLP par pixel, un seul RTX 3080
 
 Le Gaussien 3D en position mondiale .`mu`avec une covariance 3D `Sigma`projet à un Gaussian 2D à la position de l'écran `mu'`avec une covariance 2D `Sigma'`- Le numéro de la liste:
 
-```
-mu' = project(mu)
-Sigma' = J W Sigma W^T J^T          (2 x 2)
-
-W = viewing transform (rotation + translation of camera)
-J = Jacobian of the perspective projection at mu'
+```math
+\begin{aligned}
+\mu' &= \mathop{\mathrm{project}}(\mu) \\
+\Sigma' &= J W \Sigma W^T J^T \qquad (2 \times 2) \\[6pt]
+W &= \text{viewing transform (rotation + translation of camera)} \\
+J &= \text{Jacobian of the perspective projection at } \mu'
+\end{aligned}
 ```
 
 L'empreinte Gaussienne 2D est une ellipse dont les axes sont les propres vecteurs de `Sigma'`Chaque pixel à l'intérieur de cette ellipse reçoit la contribution de Gauss, pondérée par`exp(-0.5 * (p - mu')^T Sigma'^-1 (p - mu'))`- Je suis désolé .
@@ -75,12 +76,13 @@ L'empreinte Gaussienne 2D est une ellipse dont les axes sont les propres vecteur
 
 Pour un pixel, les gaussiens qui le couvrent sont triés face à face (ou équivalemment face à face avec la formule inversée).
 
-```
-C_pixel = sum_i alpha_i * T_i * c_i
-
-T_i = prod_{j < i} (1 - alpha_j)       transmittance up to i
-alpha_i = opacity_i * exp(-0.5 * d^T Sigma'^-1 d)   local contribution
-c_i = eval_SH(SH_i, view_direction)    view-dependent colour
+```math
+\begin{aligned}
+C_{\text{pixel}} &= \sum_i \alpha_i T_i c_i \\[6pt]
+T_i &= \prod_{j < i} (1 - \alpha_j) && \text{transmittance up to } i \\
+\alpha_i &= \text{opacity}_i \cdot \exp\left(-0.5 \, d^T \Sigma'^{-1} d\right) && \text{local contribution} \\
+c_i &= \mathop{\mathrm{eval\_SH}}(\text{SH}_i, \text{view\_direction}) && \text{view-dependent colour}
+\end{aligned}
 ```
 
 C' est ça .**the same equation as NeRF's volumetric render**C'est pourquoi les résultats de qualité rendus correspondent à NeRF  les deux intégrent la même équation de champ de rayonnement.
@@ -97,7 +99,7 @@ Un ensemble fixe de Gaussiens ne peut pas couvrir une scène complexe.
 - **Split**un gaussien à grande échelle en deux plus petits lorsque son gradient est élevé  un gaussien grand est trop lisse pour s'adapter à la région.
 - **Prune**Les gaussiens dont l'opacité tombe en dessous d'un seuil ne contribuent pas.
 
-La densité est effectuée à chaque N d'itérations. Une scène passe généralement de 100 000 Gaussiens initiaux (semblés à partir de points SfM) à 1-5 M à la fin de la formation.
+La densité est à chaque fois.$N$Une scène passe généralement de 100 000 Gaussiens initiaux (semblés à partir de points SfM) à 1 à 5 millions à la fin de l'entraînement.
 
 ### Harmonie sphérique dans un paragraphe
 

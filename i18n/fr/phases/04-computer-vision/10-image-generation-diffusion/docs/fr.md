@@ -26,35 +26,32 @@ Cette leçon construit le DDPM minimal: bruit vers l'avant, dénoisage vers l'ar
 
 ### Le processus de développement
 
-Prenez une photo .`x_0`Ajoutez un petit bruit gaussien pour obtenir`x_1`Ajoutez une petite quantité pour obtenir`x_2`Continuez à marcher jusqu' à l' étape T .`x_T`est presque indistinguible du bruit gaussien pur.
+Prenez une photo .`x_0`Ajoutez un petit bruit gaussien pour obtenir`x_1`Ajoutez une petite quantité pour obtenir`x_2`- Continuez à faire .$T$étapes jusqu' à `x_T`est presque indistinguible du bruit gaussien pur.
 
-```
-q(x_t | x_{t-1}) = N(x_t; sqrt(1 - beta_t) * x_{t-1},  beta_t * I)
+```math
+q(x_t \mid x_{t-1}) = \mathcal{N}\left(x_t; \sqrt{1 - \beta_t} \, x_{t-1}, \; \beta_t I\right)
 ```
 
-`beta_t`est un petit schéma de variance, généralement linéaire de 0,0001 à 0,02 sur T=1000 étapes.
+`beta_t`est un petit schéma de variance, généralement linéaire de 0,0001 à 0,02 sur $T=1000$Chaque étape réduit légèrement le signal et produit un bruit nouveau.
 
 ### Le saut en forme fermée
 
 Ajouter du bruit un pas à la fois est une chaîne Markov, mais les mathématiques se plient: vous pouvez échantillonner `x_t`directement à partir de `x_0`En une seule étape.
 
-```
-Define alpha_t = 1 - beta_t
-Define alpha_bar_t = prod_{s=1..t} alpha_s
-
-Then:
-  q(x_t | x_0) = N(x_t; sqrt(alpha_bar_t) * x_0,  (1 - alpha_bar_t) * I)
-
-Equivalently:
-  x_t = sqrt(alpha_bar_t) * x_0 + sqrt(1 - alpha_bar_t) * epsilon
-  where epsilon ~ N(0, I)
+```math
+\begin{aligned}
+&\text{Define } \alpha_t = 1 - \beta_t \\
+&\text{Define } \bar{\alpha}_t = \prod_{s=1}^{t} \alpha_s \\[6pt]
+&\text{Then: } q(x_t \mid x_0) = \mathcal{N}\left(x_t; \sqrt{\bar{\alpha}_t} \, x_0, \; (1 - \bar{\alpha}_t) I\right) \\[6pt]
+&\text{Equivalently: } x_t = \sqrt{\bar{\alpha}_t} \, x_0 + \sqrt{1 - \bar{\alpha}_t} \, \epsilon \quad \text{where } \epsilon \sim \mathcal{N}(0, I)
+\end{aligned}
 ```
 
 Cette seule équation est la raison pour laquelle la diffusion est pratique.`t`, échantillon `x_t`directement à partir de `x_0`, et le train en une seule étape  pas de simulation de la chaîne de Markov complète nécessaire.
 
 ### Le processus inverse
 
-Le processus avant est fixe.`p(x_{t-1} | x_t)`Les modèles de diffusion ne prédisent pas`x_{t-1}`directement; ils prédisent le bruit `epsilon`ajouté à l'étape t, et les mathématiques dérive `x_{t-1}`- Je ne sais pas.
+Le processus avant est fixe.`p(x_{t-1} | x_t)`Les modèles de diffusion ne prédisent pas`x_{t-1}`directement; ils prédisent le bruit `epsilon`ajoutée à pas$t$, et les mathématiques dérivent `x_{t-1}`- Je ne sais pas.
 
 ```mermaid
 flowchart LR
@@ -79,7 +76,7 @@ flowchart LR
 Pour chaque étape de formation:
 
 1. Prenez une vraie image .`x_0`- Je suis désolé .
-2. Prenez un échantillon d' étape de temps `t`uniformément à partir de [1, T].
+2. Prenez un échantillon d' étape de temps `t`uniformément à partir de $[1, T]$- Je suis désolé .
 3. L' échantillon de bruit `epsilon ~ N(0, I)`- Je suis désolé .
 4. Compte `x_t = sqrt(alpha_bar_t) * x_0 + sqrt(1 - alpha_bar_t) * epsilon`- Je suis désolé .
 5. Prédire`epsilon_theta(x_t, t)`avec le réseau.
@@ -103,7 +100,7 @@ La clé est que même si la condition inverse n'est pas connue sous forme fermé
 
 ### Pourquoi 1000 pas ?
 
-Le calendrier de bruit avant est choisi de sorte que chaque étape ajoute juste assez de bruit que la étape inverse est presque gaussienne. Trop peu de étapes et la étape inverse est loin de Gaussienne, le réseau ne peut pas bien le modéliser. Trop de étapes et l'échantillonnage devient coûteux avec une gain décroissante. T = 1000 avec un calendrier linéaire est la DDPM par défaut.
+Le calendrier de bruit avant est choisi de sorte que chaque étape ajoute juste assez de bruit que la étape inverse est presque gaussienne. Trop peu de pas et la étape inverse est loin de Gaussienne, le réseau ne peut pas bien le modéliser. Trop de pas et l'échantillonnage devient coûteux avec un gain décroissant. $T=1000$avec un calendrier linéaire est la DDPM par défaut.
 
 ### DDIM: prélèvement 20 fois plus rapide
 
@@ -313,14 +310,14 @@ Cette leçon donne:
 
 | Term | What people say | What it actually means |
 |------|----------------|----------------------|
-| Forward process | "Add noise over time" | Fixed Markov chain that corrupts an image into Gaussian noise over T steps |
+| Forward process | "Add noise over time" | Fixed Markov chain that corrupts an image into Gaussian noise over $T$ steps |
 | Reverse process | "Denoise step by step" | Learned distribution that walks back from noise to image |
-| Epsilon prediction | "Predict the noise" | The training target: `epsilon_theta(x_t, t)` predicts the noise added at step t |
-| Beta schedule | "Noise amounts" | Sequence of T small variances that define how much noise enters per step |
-| alpha_bar_t | "Cumulative retain factor" | Product of (1 - beta_s) up to time t; bigger t means less signal left |
-| DDPM sampler | "Ancestral, stochastic" | Samples each x_{t-1} from its conditional Gaussian; 1000 steps |
+| Epsilon prediction | "Predict the noise" | The training target: `epsilon_theta(x_t, t)` predicts the noise added at step $t$ |
+| Beta schedule | "Noise amounts" | Sequence of $T$ small variances that define how much noise enters per step |
+| $\bar{\alpha}_t$ | "Cumulative retain factor" | Product of $(1 - \beta_s)$ up to time $t$; bigger $t$ means less signal left |
+| DDPM sampler | "Ancestral, stochastic" | Samples each $x_{t-1}$ from its conditional Gaussian; 1000 steps |
 | DDIM sampler | "Deterministic, fast" | Rewrites sampling as a deterministic ODE; 20-100 steps with similar quality |
-| Time conditioning | "Tell the model which t" | Sinusoidal embedding of t injected into the U-Net so it knows the noise level |
+| Time conditioning | "Tell the model which t" | Sinusoidal embedding of $t$ injected into the U-Net so it knows the noise level |
 
 ## Pour en savoir plus
 

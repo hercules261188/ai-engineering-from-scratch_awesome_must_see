@@ -173,8 +173,8 @@ Pour la plupart des CNN modernes, vous nourrissez RGB.
 
 L'échelle de gris de la RGB est une somme pondérée, pas une moyenne, car l'œil humain est plus sensible au vert que au rouge ou au bleu:
 
-```
-Y = 0.299 R + 0.587 G + 0.114 B       (ITU-R BT.601, the classic weights)
+```math
+Y = 0.299 R + 0.587 G + 0.114 B \qquad \text{(ITU-R BT.601, the classic weights)}
 ```
 
 ### Ratio d'aspect, redimensionnement et interpolation
@@ -440,7 +440,7 @@ Cette leçon donne:
 
 ## Pour en savoir plus
 
-- [Charles Poynton — A Guided Tour of Color Space](https://poynton.ca/PDFs/Guided_tour.pdf) le traitement technique le plus clair de la raison pour laquelle il y a tant d'espaces de couleur et quand chacun d'eux compte
+- [Charles Poynton — A Guided Tour of Color Space](https://web.archive.org/web/20251220000525/https://poynton.ca/PDFs/Guided_tour.pdf) le traitement technique le plus clair de la raison pour laquelle il y a tant d'espaces de couleur et quand chacun d'eux compte
 - [PyTorch Vision Transforms Docs](https://pytorch.org/vision/stable/transforms.html) l'ensemble des transformations que vous allez réellement composer en production
 - [How JPEG Works (Colt McAnlis)](https://www.youtube.com/watch?v=F1kYBnY6mwg) une visite visuelle nette du sous-échantillonnage de chrome, DCT, et pourquoi JPEG encode YCbCr plutôt que RGB
 - [ImageNet Preprocessing Conventions (torchvision models)](https://pytorch.org/vision/stable/models.html) la source de la vérité pour `mean=[0.485, 0.456, 0.406]`et pourquoi chaque modèle au zoo s' y attend

@@ -270,5 +270,5 @@ Cette leçon donne:
 
 - [EfficientNet (Tan & Le, 2019)](https://arxiv.org/abs/1905.11946) Écalement composé pour des architectures efficaces
 - [MobileNetV3 (Howard et al., 2019)](https://arxiv.org/abs/1905.02244) architecture mobile-first avec h-swish et squeeze-excite
-- [A Practical Guide to TensorRT Optimization (NVIDIA)](https://developer.nvidia.com/blog/accelerating-model-inference-with-tensorrt-tips-and-best-practices-for-pytorch-users/) comment obtenir réellement les chiffres de débit dans le papier
+- [Accelerating Inference Up to 6x Faster in PyTorch with Torch-TensorRT (NVIDIA)](https://developer.nvidia.com/blog/accelerating-inference-up-to-6x-faster-in-pytorch-with-torch-tensorrt/) comment obtenir réellement les chiffres de débit dans le papier
 - [ONNX Runtime docs](https://onnxruntime.ai/docs/) quantification, optimisation des graphiques, sélection des fournisseurs

@@ -97,7 +97,7 @@ Les transformateurs utilisés après la fin de la période de transition (`x = L
 
 - 16 parches par 16 par 196 jetons, standard.
 - 32x32 patches -> 49 jetons, plus rapide mais de résolution inférieure.
-- 8x8 patches -> 784 jetons, plus fin mais O(n^2) l'attention coûte des échelles mal.
+- 8x8 patches -> 784 jetons, plus fin mais $O(n^2)$L'attention coûte très cher.
 
 Les patches plus grandes = moins de jetons = plus rapide mais moins de détails spatiaux. SwinV2 utilise des patches 4x4 dans les fenêtres hiérarchiques.
 

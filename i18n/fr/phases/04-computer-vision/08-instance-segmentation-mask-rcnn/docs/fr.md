@@ -86,8 +86,8 @@ Prenez le masque 28x28 à la taille de pixel originale de la proposition pour pr
 
 Mask R-CNN a quatre pertes ajoutées:
 
-```
-L = L_rpn_cls + L_rpn_box + L_box_cls + L_box_reg + L_mask
+```math
+L = L_{\text{rpn\_cls}} + L_{\text{rpn\_box}} + L_{\text{box\_cls}} + L_{\text{box\_reg}} + L_{\text{mask}}
 ```
 
 - `L_rpn_cls`- Je suis là .`L_rpn_box` objet + régression des boîtes pour les propositions RPN.

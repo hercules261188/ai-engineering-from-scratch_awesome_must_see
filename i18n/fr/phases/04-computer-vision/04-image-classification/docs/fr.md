@@ -52,18 +52,20 @@ Chaque ligne de cette boucle est où un bug peut vivre.`model(x).softmax()`Les a
 
 Un classifiant produit `C`Les nombres par image sont appelés logits.
 
-```
-softmax(z)_i = exp(z_i) / sum_j exp(z_j)
+```math
+\mathop{\mathrm{softmax}}(z)_i = \frac{\exp(z_i)}{\sum_j \exp(z_j)}
 ```
 
 L'entropie croisée mesure la probabilité négative de log de la classe correcte:
 
-```
-CE(z, y) = -log( softmax(z)_y )
-        = -z_y + log( sum_j exp(z_j) )
+```math
+\begin{aligned}
+\mathrm{CE}(z, y) &= -\log\left( \mathop{\mathrm{softmax}}(z)_y \right) \\
+&= -z_y + \log\left( \sum_j \exp(z_j) \right)
+\end{aligned}
 ```
 
-La forme de droite est celle numériquement stable (log-sum-exp).`nn.CrossEntropyLoss`Il est possible de faire une commande de logiciel de logiciel de logiciel de logiciel de logiciel de logiciel de logiciel de logiciel de logiciel de logiciel de logiciel de logiciel de logiciel de logiciel de logiciel de logiciel de logiciel de logiciel de logiciel de logiciel de logiciel de logiciel de logiciel de logiciel de logiciel de logiciel de logiciel de logiciel de logiciel de logiciel de logiciel de logiciel de logiciel de logiciel de logiciel de logiciel de logiciel de logiciel de logiciel de logiciel de logiciel de logiciel de logiciel de logiciel de logiciel de logiciel de logiciel de logiciel de logiciel de logiciel de logiciel de logiciel de logiciel de logiciel de logiciel de logiciel de logiciel de logiciel de logiciel de logiciel de logiciel de logiciel de logiciel de logiciel de logiciel de logiciel de logiciel de logiciel de logiciel de logiciel de logiciel de logiciel de logiciel de logiciel de logiciel de logiciel de logiciel de logiciel de logiciel de logiciel de logiciel de logiciel de logiciel de logiciel de logiciel de logiciel de logiciel de logiciel de logiciel de logiciel de logiciel de logiciel de logiciel de logiciel de logiciel de logiciel de logiciel de logiciel de logiciel de logiciel de logiciel de logiciel de logiciel de logiciel de logiciel de logiciel de logiciel de logiciel de logiciel de logiciel de logiciel de logiciel de logiciel de logiciel de logiciel de logiciel de logiciel de logiciel de logiciel de logiciel de logiciel de logiciel de logiciel de logiciel de logiciel de logiciel de logiciel de logiciel de logiciel de logiciel de logiciel de logiciel de logiciel de logiciel de logiciel de logiciel de logiciel de logiciel de logiciel de logiciel de logiciel de logiciel de logiciel de logiciel de logiciel de logiciel de logiciel de logiciel de logiciel de logiciel de logiciel de logiciel de logiciel de logiciel de logiciel de logiciel de logiciel de logiciel de logiciel de logiciel de logiciel de logiciel de logiciel de logiciel de logiciel de logiciel de logiciel de
+La forme de droite est celle numériquement stable (log-sum-exp).`nn.CrossEntropyLoss`Il est possible de faire une commande de la même manière que le logiciel de commande de la même manière.$\log(\mathop{\mathrm{softmax}}(\mathop{\mathrm{softmax}}(z)))$, une quantité sans sens.
 
 ### Pourquoi l'augmentation fonctionne
 
@@ -105,7 +107,7 @@ Un cousin de confusion.`[0, 0, 1, 0, 0]`, train contre `[eps/C, eps/C, 1-eps, ep
 La précision globale cache un déséquilibre. Un classificateur binaire de 90 à 10 qui prédit toujours la classe majoritaire marque 90%.
 
 - **Per-class accuracy** un nombre par classe; apparaît immédiatement dans les catégories qui présentent des résultats inférieurs.
-- **Confusion matrix** Grille C x C avec rangée i col j = nombre de vrais classes i prédites comme classe j; la diagonale est correcte, les hors-diagonales sont là où votre modèle vit.
+- **Confusion matrix** $C \times C$grille avec rangée $i$Col.$j$= nombre de classes réelles $i$prévue en classe $j$La diagonale est correcte, les diagonales sont là où votre modèle vit.
 - **Top-1 / Top-5** si la classe correcte figure dans les prédictions 1 ou 5 premières; Top-5 compte pour ImageNet parce que des classes comme "Norwich Terrier" vs "Norfolk Terrier" sont vraiment ambiguës.
 - **Calibration (ECE)** une prédiction de confiance de 0,8 le rend correct 80% du temps ? les réseaux modernes sont systématiquement trop confiants; résoudre avec l'échelle de température ou l'allumage de l'étiquette.
 

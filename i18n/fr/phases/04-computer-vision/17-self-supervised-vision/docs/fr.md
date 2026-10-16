@@ -177,7 +177,7 @@ print(f"InfoNCE with identical pairs:  {loss_same:.3f}")
 print(f"InfoNCE with random pairs:     {loss_random:.3f}")
 ```
 
-Les paires identiques doivent donner une faible perte (près de 0 pour un lot grand et une température froide).
+Les paires identiques doivent donner une faible perte (près de 0 pour un lot de grande taille et une température froide).$\log(2N-1) \approx \log(31) \approx 3.4$avec un lot de 16 paires.
 
 ### Étape 4: masquage à la mode MAE
 

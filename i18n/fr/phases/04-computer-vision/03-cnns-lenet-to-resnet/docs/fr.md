@@ -72,7 +72,7 @@ stack:   conv 3x3 -> conv 3x3 -> pool 2x2
 repeat:  16 or 19 conv layers
 ```
 
-Deux conv 3x3 voient la même surface d'entrée 5x5 qu'un conv 5x5 mais avec moins de paramètres (2 * 9 * C^2 = 18C^2 vs 25 * C^2) et une ReLU supplémentaire entre les deux. VGG a transformé cette observation en une architecture entière.
+Deux convex 3x3 ont la même surface d'entrée 5x5 qu'un convex 5x5 mais avec moins de paramètres ($2 \cdot 9 \cdot C^2 = 18C^2$contre$25 \cdot C^2$La simplicité de la construction de l'architecture en un seul bloc, répétée, en fait le point de référence pour tout ce qui a suivi.
 
 Coût: 138 millions de paramètres, lent à l'entraînement, coûteux à l'inférence.
 
@@ -120,9 +120,11 @@ La VGG fonctionnait à 19 couches parce que la norme de lot (publiée simultané
 
 Lui, Zhang, Ren, Sun ont proposé un changement qui a tout corrigé:
 
-```
-standard block:   y = F(x)
-residual block:   y = F(x) + x
+```math
+\begin{aligned}
+\text{standard block:} \quad & y = F(x) \\
+\text{residual block:} \quad & y = F(x) + x
+\end{aligned}
 ```
 
 Le `+ x`Cela signifie que la couche peut toujours choisir de ne rien faire en conduisant `F(x)`Un réseau ResNet de 1000 couches est maintenant au maximum aussi mauvais qu'un réseau de 1 couche, parce que chaque bloc supplémentaire a une échappe triviale. Avec cette garantie, l'optimisateur est prêt à rendre chaque bloc * légèrement * utile  et légèrement utile, empilé 100 fois, est de pointe.
