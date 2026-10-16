@@ -41,10 +41,10 @@ Sự tách biệt quan trọng. Người suy nghĩ phải lớn để có lý lu
 
 Đi cả hai cùng nhau:
 
-1. Thinker phát hành mã thông báo văn bản t_i.
-2. Người nói tiêu thụ t_i (thông qua streaming) và phát ra các token nói s_i, s_{i+1}, ..., s_{i+k}.
+1. Thinker phát hành mã thông báo văn bản $t_i$- Tôi không biết.
+2. Người nói tiêu thụ $t_i$(via streaming) và phát ra các token nói $s_i, s_{i+1}, \ldots, s_{i+k}$- Tôi không biết.
 3. Bộ giải mã giọng nói tiêu thụ các mã thông báo giọng nói khi chúng đến và phát ra các mẫu âm thanh.
-4. Đến khi Thinker ở điểm văn bản t_{i+3}, Talker đã phát âm cho t_0..t_{i+2}.
+4. Khi Thinker có thể viết tin nhắn$t_{i+3}$, Talker đã phát âm cho $t_0, \ldots, t_{i+2}$- Tôi không biết.
 
 ### TMRoPE  Vị trí đa phương tiện phù hợp với thời gian
 

@@ -69,11 +69,11 @@ Khả năng vẽ màu được miễn phí từ đào tạo dự đoán ẩn m�
 
 Chương trình về số lượng token để tháo mặt nạ mỗi bước hình thành chất lượng.
 
-```
-mask_ratio(t) = cos(pi * t / (2 * T))   # t = 0..T
+```math
+\text{mask\_ratio}(t) = \cos\left(\frac{\pi t}{2T}\right) \qquad t = 0, \ldots, T
 ```
 
-Ở bước 0, tất cả các token được che giấu ( tỷ lệ 1.0). Ở bước T, không có một cái nào che giấu. Cosine tập trung khối lượng vào tỷ lệ giữa phạm vi nơi dự đoán là thông tin thông tin nhất.
+Ở bước 0, tất cả các token được che giấu ( tỷ lệ 1.0).$T$Cosine tập trung khối lượng vào tỷ lệ giữa phạm vi nơi dự đoán là thông tin quan trọng nhất.
 
 ### Show-o2
 
@@ -117,7 +117,7 @@ Bài học này sẽ mang lại kết quả `outputs/skill-unified-gen-model-pic
 
 3. Chương trình Cosine vs lịch trình tuyến tính: theo dõi số lượng các token không che giấu mỗi bước cho T = 8.
 
-4. Một hình ảnh hiển thị 512x512 là 1024 mã thông báo. Ở từ K = 16384, mô hình phát ra 1024 * log2(16384) = 14,336 bit (~ 1,75 KiB) dữ liệu.
+4. Một hình ảnh 512x512 Show-o là 1024 token.$K=16384$, mô hình phát ra $1024 \cdot \log_2(16384) = 14{,}336$Bit (~ 1,75 KiB) dữ liệu. Phát ra Stable Diffusion 512*512*24 bit = 6,291,456 bit (~ 768 KiB) của các pixel nguyên liệu.
 
 5. LlamaGen (arXiv:2406.06525). mô hình hình ảnh tự rút theo điều kiện lớp học của LlamaGen khác với cách tiếp cận che giấu của Show-o như thế nào?
 

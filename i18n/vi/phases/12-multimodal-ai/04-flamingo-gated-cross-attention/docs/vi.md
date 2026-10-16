@@ -30,18 +30,18 @@ Flamingo bắt đầu với một bộ phim LLM 70B của Chinchilla.
 
 ### Tâm đơn nhận thức
 
-Đối với mỗi hình ảnh trong prompt, ViT tạo ra N patch token. Perceiver resampler có K cố định học được laten (Flamingo sử dụng K=64).
+Đối với mỗi hình ảnh trong prompt, ViT tạo ra $N$Các mã đệm.$K$các khóa học cố định (Flamingo sử dụng $K=64$). Mỗi khối resampler là hai bước phụ:
 
-1. Sự chú ý chéo: các dấu ẩn K là đối tượng của các mã thông báo N (Q từ dấu ẩn, K/V từ các dấu cố).
+1. Sự chú ý qua nhau:$K$$N$token patch (Q từ laten, K/V từ patches).
 2. Sự chú ý tự chủ + FFN trong những điều ẩn dật.
 
-Sau 6 khối resampler, đầu ra là K = 64 token thị giác của dim 1024, bất kể ViT đã tạo ra bao nhiêu bản vá.
+Sau 6 khối resampler, đầu ra là $K=64$Các mã thông báo hình ảnh của dim 1024, bất kể ViT đã tạo ra bao nhiêu mã thông báo. Một hình ảnh 224x224 (196 mã thông báo) và một hình ảnh 480x480 (900 mã thông báo) cả hai đều xuất hiện như 64 mã thông báo resampler.
 
-Đối với video, resampler được áp dụng theo thời gian: các bản vá của mỗi khung tạo ra 64 laten, và mã hóa vị trí thời gian cho phép mô hình phân biệt t=0 từ t=N. Video đầy đủ trở thành token thị giác T * 64.
+Đối với video, resampler được áp dụng theo thời gian: các bản vá của mỗi khung tạo ra 64 laten, và mã hóa vị trí thời gian cho phép mô hình phân biệt $t=0$từ $t=N$. Video đầy đủ trở thành$T \cdot 64$các token hình ảnh.
 
 ### Sự chú ý qua nhau
 
-Giữa mỗi lớp M của LLM đông lạnh (Flamingo sử dụng M=4), hãy chèn một khối quan tâm chéo bị khóa mới:
+Giữa mỗi $M$các lớp của LLM đóng băng (Flamingo sử dụng $M=4$), thêm một khối quan tâm chéo bị khóa mới:
 
 ```
 x_after_llm_block = llm_block(x_before)
@@ -148,7 +148,7 @@ Bài học này sẽ mang lại kết quả `outputs/skill-gated-bridge-diagnost
 | OBELICS | "Interleaved web corpus" | Open dataset of 141M web pages with images and text in reading order |
 | Chinchilla | "70B frozen base" | Flamingo's frozen text LLM, from DeepMind's Chinchilla paper |
 | Gate schedule | "How alpha moves" | The rate at which the cross-attention gate opens during training |
-| Cross-attn frequency | "Every M layers" | How often a gated cross-attention block is inserted; Flamingo uses M=4 |
+| Cross-attn frequency | "Every M layers" | How often a gated cross-attention block is inserted; Flamingo uses $M=4$ |
 | OpenFlamingo | "Open reproduction" | MosaicML/LAION open checkpoint at 3-9B; architecture-identical to Flamingo |
 
 ## Đọc thêm

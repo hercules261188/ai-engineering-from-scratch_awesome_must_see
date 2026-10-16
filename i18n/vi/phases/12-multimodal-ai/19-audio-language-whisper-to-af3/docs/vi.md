@@ -36,7 +36,7 @@ Mỗi bộ mã hóa âm thanh bắt đầu với cùng một tính năng: một 
 2. Chuyển đổi Fourier ngắn thời gian với cửa sổ 25ms, nhảy 10ms.
 3. Hãy lấy kích thước của kết quả FFT.
 4. Sử dụng các băng lọc Mel (thường là 80 bộ lọc có khoảng thời gian log 0-8000 Hz) để biến dạng đến tần số nhận thức.
-5. Log compress (log(1 + x)) cho phạm vi động.
+5. Lớp nén gỗ$(\log(1 + x))$cho phạm vi động.
 
 Kết quả: một mảng hình dạng 2D (T, 80) nơi T là số khung thời gian. Đối với clip 30 giây với tốc độ khung hình 100 Hz: (3000, 80).
 

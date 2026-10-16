@@ -63,7 +63,7 @@ Qwen2-VL đã giới thiệu Đường xếp vị trí xoay đa phương tiện.
 
 M-RoPE cung cấp độ phân giải động bản địa mà không cần đào tạo lại. Khi bạn đưa ra bất kỳ hình ảnh HxW nào, người nhúng vá sẽ tạo ra các mã H/14 x W/14, mỗi mã sẽ có vị trí (t=0, r=row, c=col), RoPE sẽ quay sự chú ý với tần số phù hợp, được thực hiện. Qwen2.5-VL và Qwen3-VL tiếp tục như vậy.
 
-Không giống như AnyRes, M-RoPE là token O(H x W / P^2) ở độ phân giải bản địa  không có chi phí cao phay nhân. Không giống như NaViT, nó vẫn mong đợi một hình ảnh duy nhất mỗi chuyển tiếp.
+Không giống như AnyRes, M- RoPE là $O(H \times W / P^2)$Các mã thông báo ở độ phân giải bản địa không có chi phí cao hơn. Không giống như NaViT, nó vẫn mong đợi một hình ảnh duy nhất mỗi chuyển tiếp.
 
 ### NaFlex (SigLIP 2)
 

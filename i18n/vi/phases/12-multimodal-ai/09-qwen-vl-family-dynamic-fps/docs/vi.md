@@ -71,10 +71,12 @@ Qwen3-VL là một nâng cấp tăng lên tập hợp thay vì tái phát minh: 
 
 RoPE cổ điển xoay một truy vấn `q`kích thước `d`theo vị trí `m`sử dụng các phối hợp:
 
-```
-q_rot[2i]   = q[2i]   * cos(m * theta_i) - q[2i+1] * sin(m * theta_i)
-q_rot[2i+1] = q[2i]   * sin(m * theta_i) + q[2i+1] * cos(m * theta_i)
-theta_i     = 10000^(-2i/d)
+```math
+\begin{aligned}
+q_{\text{rot}}[2i] &= q[2i] \cos(m \theta_i) - q[2i+1] \sin(m \theta_i) \\
+q_{\text{rot}}[2i+1] &= q[2i] \sin(m \theta_i) + q[2i+1] \cos(m \theta_i) \\
+\theta_i &= 10000^{-2i/d}
+\end{aligned}
 ```
 
 M-RoPE chia mờ ẩn thành ba băng.`d = 96`. Đưa 32 điểm tối đến thời gian, 32 điểm cao, 32 điểm rộng. Mỗi băng xoay theo vị trí trục riêng của nó. Một đệm ở (t=5, h=10, w=20) có được xoay `R_t(5)`- `R_h(10)`- `R_w(20)`được áp dụng cho ba băng của nó.

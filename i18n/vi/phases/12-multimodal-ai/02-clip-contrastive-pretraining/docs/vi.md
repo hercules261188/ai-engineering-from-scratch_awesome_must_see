@@ -35,10 +35,10 @@ CLIP có hai tháp:
 
 Cả hai tháp đều bình thường hóa đầu ra của họ cho chiều dài đơn vị.`cos(f(x), g(y)) = f(x)^T g(y)`vì cả hai đều là chuẩn đơn vị.
 
-Đối với một loạt các cặp N (hình ảnh, tiêu đề), xây dựng các matrix tương tự `S`hình dạng`(N, N)`- Có thể là:
+Để một loạt $N$(hình, caption) cặp, xây dựng các matrix tương đồng `S`hình dạng`(N, N)`- Có thể là:
 
-```
-S[i, j] = cos(f(x_i), g(y_j)) / tau
+```math
+S[i, j] = \cos(f(x_i), g(y_j)) / \tau
 ```
 
 nơi `tau`là nhiệt độ được học (CLIP bắt đầu với 0.07; được học trong log-space).
@@ -57,7 +57,7 @@ loss = (loss_i2t + loss_t2i) / 2
 
 ### Nhiệt độ
 
-`tau`kiểm soát độ sắc nét của Softmax. Low tau → phân bố sắc nét, tác dụng khai thác tiêu cực cứng. High tau → mềm, tất cả các mẫu đóng góp. CLIP học log(1/tau), cắt để ngăn chặn sự sụp đổ. SigLIP 2 sửa chữa tau ban đầu và sử dụng một thiên vị học thay thế.
+`tau`điều khiển độ sắc nét của Softmax.$\tau$→ phân bố sắc bén, tác dụng khai thác tiêu cực cứng.$\tau$→ mềm, tất cả các mẫu đóng góp. CLIP học hỏi $\log(1/\tau)$SigLIP 2 sửa chữa các điểm đầu tiên$\tau$và sử dụng một sự thiên vị học tập thay vào đó.
 
 ### Tại sao cân bằng sigmoid tốt hơn (SigLIP)
 
@@ -65,8 +65,8 @@ Softmax cần toàn bộ các matrix tương đồng đồng. trong đào tạo 
 
 SigLIP thay thế softmax bằng sigmoid thông minh về yếu tố: cho mỗi cặp `(i, j)`, mất là phân loại nhị phân của "có cặp phù hợp không?" nhãn lớp tích cực là đường viền, tất cả mọi thứ khác là âm. mất là:
 
-```
-L = -1/N sum over (i, j) [ y_ij log sigmoid(S[i,j]) + (1-y_ij) log sigmoid(-S[i,j]) ]
+```math
+L = -\frac{1}{N} \sum_{(i, j)} \Big[ y_{ij} \log \mathop{\mathrm{sigmoid}}(S[i,j]) + (1-y_{ij}) \log \mathop{\mathrm{sigmoid}}(-S[i,j]) \Big]
 ```
 
 `y_ij = 1`Nếu`i == j`, khác 0. mỗi cặp mất tích độc lập. Không cần tất cả. Mỗi GPU tính toán khối và số tiền địa phương của mình. SigLIP 2 cân bằng để lô 32k-512k rẻ nơi CLIP cần tương xứng nhiều hơn giao tiếp.
@@ -132,7 +132,7 @@ Bài học này sẽ mang lại kết quả `outputs/skill-clip-zero-shot.md`. V
 
 3. Xây dựng một phân loại không bắn cho mèo so với chó.`a photo of a {class}`và `a picture of a {class}`- Đánh giá độ chính xác trên 100 hình ảnh thử nghiệm.
 
-4. Xét chi phí truyền thông của Softmax InfoNCE vs sigmoid cặp cho một 512-GPU chạy tại lô 32k.
+4. Xét chi phí truyền thông của Softmax InfoNCE vs sigmoid đôi cho một 512-GPU chạy tại lô 32k.$O(N)$, như $O(N^2)$- Cita phần 4 của Siglip.
 
 5. Đọc bài báo OpenCLIP về quy mô quy mô (arXiv:2212.07143, Cherti et al.). Tạo lại kết luận của họ về quy mô dữ liệu từ các con số: ở kích thước mô hình cố định, mối quan hệ log-linear giữa độ chính xác chụp không của ImageNet và kích thước dữ liệu đào tạo là gì?
 

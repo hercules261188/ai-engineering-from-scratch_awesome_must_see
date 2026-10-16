@@ -36,28 +36,28 @@ Giải pháp của ColPali: bỏ qua OCR, nhúng hình ảnh trang trực tiếp
 
 ColBERT (Khattab & Zaharia, arXiv:2004.12832) là một phương pháp lấy lại văn bản. Thay vì một vector mỗi tài liệu, nó tạo ra một vector mỗi token.
 
-- Các mã thông báo truy vấn có được các nhúng riêng của họ (N_q vector).
-- Các token tài liệu nhận được nhúng (N_d vector, thường được lưu trữ trong cache).
-- Score = tổng trên các mã thông báo truy vấn của max trên các mã thông báo có tính tương tự cosine: Σ_i max_j cos(q_i, d_j).
+- Các mã thông báo truy vấn có được các bản nhúng riêng của họ ($N_q$các vector).
+- Các token tài liệu nhận được nhúng ($N_d$các vector, thường được lưu trữ trong cache).
+- Score = tổng số trên mã thông báo truy vấn tối đa trên mã thông báo có sự tương đồng cosine: $\sum_i \max_j \cos(q_i, d_j)$- Tôi không biết.
 
 Đây là hoạt động MaxSim. Mỗi mã thông báo truy vấn "tác" mã thông báo phù hợp nhất của mình. Điểm cuối cùng là tổng.
 
-Lợi thế: nhớ lại mạnh, xử lý ngữ nghĩa cấp thuật ngữ. Khác: N_d vector mỗi tài liệu, lưu trữ tốn kém.
+Lợi thế: nhớ lại mạnh, xử lý ngữ nghĩa cấp thuật ngữ.$N_d$vector mỗi tài liệu, lưu trữ đắt tiền.
 
 ### ColPali
 
 ColPali (Faysse et al., arXiv:2407.01449) áp dụng mô hình ColBERT cho hình ảnh.
 
-- Mỗi trang được mã hóa bởi PaliGemma (tiếng ViT +) thành các bản nhúng vá: N_p vector trên mỗi trang.
-- Mỗi truy vấn người dùng (tin nhắn) được mã hóa vào các nội dung mã hóa truy vấn: N_q vector.
-- Score = Σ_i max_j cos(q_i, p_j), tức là, MaxSim trên truy vấn-text-tokens và page-image-patches.
+- Mỗi trang được mã hóa bởi PaliGemma (ViT + ngôn ngữ) thành các bản cheo: $N_p$vector trên mỗi trang.
+- Mỗi truy vấn người dùng (tin nhắn) được mã hóa vào các nội dung mã truy vấn: $N_q$các vector.
+- Điểm = $\sum_i \max_j \cos(q_i, p_j)$, tức là, MaxSim trên truy vấn văn bản-chỉ mã và trang-phần-phần-phần.
 - Nhận lại các trang top-k theo điểm số tổng.
 
 Vào thời điểm nhập tài liệu: nhúng mỗi trang với PaliGemma, lưu trữ tất cả các bản nhúng vá. Vào thời điểm truy vấn: nhúng các mã thông báo truy vấn, tính toán MaxSim so với tất cả các bản nhúng trang được lưu trữ, trả về các trang top-k.
 
 Lợi thế: kết thúc đến kết thúc vượt qua văn bản-RAG bằng 20-40% trên tài liệu giàu thị giác. Mỗi patch-vector nắm bắt bố cục và nội dung địa phương.
 
-Chưa thích: N_p patches × 4 byte floats × D-dim vectors per page = lưu trữ tăng nhanh. Giảm thiểu bởi PQ / OPQ quantization.
+Khối thấu: $N_p$Các bản vá × 4 byte floats × $D$-dim vector per page = lưu trữ tăng nhanh.
 
 ### ColQwen2 và ColSmol
 
@@ -128,7 +128,7 @@ Bài học này sẽ mang lại kết quả `outputs/skill-vision-rag-designer.m
 
 1. Một báo cáo hàng năm 200 trang với 729 bản vá trên mỗi trang, 128-dimen emb, floats 4 byte.
 
-2. MaxSim là Σ_i max_j cos(q_i, p_j).
+2. MaxSim là $\sum_i \max_j \cos(q_i, p_j)$Số lượng này nắm bắt được gì mà một sự tương đồng đơn giản không thể?
 
 3. ColPali chỉ mục các trang như bộ vá. Những thay đổi gì nếu chúng ta chỉ mục ở mức từ (như ColBERT làm)?
 
@@ -143,7 +143,7 @@ Bài học này sẽ mang lại kết quả `outputs/skill-vision-rag-designer.m
 | Late interaction | "ColBERT-style" | Retrieval using per-token or per-patch embeddings + MaxSim, not a single doc vector |
 | MaxSim | "Max-over-patches" | For each query token, pick the highest-similarity document token; sum across query |
 | Bi-encoder | "Single-vector" | One vector per document; faster but loses granularity |
-| Multi-vector | "Many-vectors-per-doc" | Store N_p vectors per document / page; storage cost grows but recall improves |
+| Multi-vector | "Many-vectors-per-doc" | Store $N_p$ vectors per document / page; storage cost grows but recall improves |
 | Patch embedding | "Page feature" | One vector per image patch from a VLM encoder, cached per page |
 | ViDoRe | "Vision doc bench" | ColPali's benchmark suite for visual document retrieval |
 | PQ quantization | "Product quantization" | Compression that maintains vector similarity while shrinking storage ~8x |

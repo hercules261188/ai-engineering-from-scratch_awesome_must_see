@@ -62,9 +62,9 @@ M[i, j] = 1 if:
 Thiếu độ phân tán là tiêu chuẩn: thêm tiếng ồn vào một bộ vá hình ảnh, yêu cầu mô hình dự đoán tiếng ồn (hoặc bộ vá sạch, tương đương). Phiên bản truyền sử dụng tương thích dòng chảy  dự đoán trường tốc độ từ tiếng ồn đến sạch.
 
 Trong quá trình đào tạo:
-1. Đối với mỗi bản vá hình ảnh x0, lấy mẫu bước thời gian ngẫu nhiên t.
-2. Phản ứng âm thanh mẫu ε, tính xt = (1-t) * x0 + t * ε (sự phân cực tuyến tính để phù hợp dòng chảy).
-3. Bộ biến đổi dự đoán v_theta(xt, t); mất mát = MSE(v_theta(xt, t), ε - x0).
+1. Đối với mỗi bản vá hình ảnh $x_0$, lấy mẫu một bước thời gian ngẫu nhiên $t$- Tôi không biết.
+2. Phản ứng tiếng ồn$\epsilon$, tính toán$x_t = (1-t) \cdot x_0 + t \cdot \epsilon$(sự phân cực tuyến tính để phù hợp dòng chảy).
+3. Bộ biến đổi dự đoán $v_\theta(x_t, t)$$\text{loss} = \mathop{\mathrm{MSE}}(v_\theta(x_t, t), \epsilon - x_0)$- Tôi không biết.
 4. Backprop cùng với text NTP mất từ cùng một chuỗi.
 
 Theo kết luận, thế hệ là:
