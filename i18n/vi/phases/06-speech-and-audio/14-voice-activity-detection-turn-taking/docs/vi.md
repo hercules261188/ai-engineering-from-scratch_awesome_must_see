@@ -170,7 +170,7 @@ Cứ như `outputs/skill-vad-tuner.md`Chọn mô hình VAD, ngưỡng, ngứa, c
 ## Đọc thêm
 
 - [Silero VAD](https://github.com/snakers4/silero-vad) VAD mở tham chiếu.
-- [Picovoice Cobra VAD](https://picovoice.ai/products/cobra/) nhà lãnh đạo chính xác thương mại.
+- [Picovoice Cobra VAD](https://picovoice.ai/products/voice/voice-activity-detection/) nhà lãnh đạo chính xác thương mại.
 - [Kyutai — Unmute + flush trick](https://kyutai.org/stt) thủ thuật kỹ thuật sub-200 ms.
 - [LiveKit — turn detection](https://docs.livekit.io/agents/logic/turns/) chỉ ra kết thúc ngữ nghĩa trong sản xuất.
 - [WebRTC VAD](https://webrtc.googlesource.com/src/) dòng cơ sở thừa kế.

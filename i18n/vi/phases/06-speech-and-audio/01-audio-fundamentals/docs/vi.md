@@ -137,6 +137,6 @@ Cứ như `outputs/skill-audio-loader.md`Kỹ năng này giúp bạn kiểm tra 
 
 - [Shannon (1949). Communication in the Presence of Noise](https://people.math.harvard.edu/~ctm/home/text/others/shannon/entropy/entropy.pdf) bài báo đằng sau định lý lấy mẫu.
 - [Smith — The Scientist and Engineer's Guide to Digital Signal Processing](https://www.dspguide.com/ch8.htm) sách giáo khoa DSP miễn phí, theo luật.
-- [librosa docs — audio primer](https://librosa.org/doc/latest/tutorial.html) thực tế đi bộ với mã.
-- [Heinrich Kuttruff — Room Acoustics (6th ed.)](https://www.routledge.com/Room-Acoustics/Kuttruff/p/book/9781482260434) tham khảo lý do tại sao âm thanh trong thế giới thực không phải là một sinus sạch.
+- [librosa docs — audio primer](https://librosa.org/doc/latest/auto_tutorials/index.html) thực tế đi bộ với mã.
+- [Heinrich Kuttruff — Room Acoustics (6th ed.)](https://www.taylorfrancis.com/books/mono/10.1201/9781315372150/room-acoustics-heinrich-kuttruff) tham khảo lý do tại sao âm thanh trong thế giới thực không phải là một sinus sạch.
 - [Steve Eddins — FFT Interpretation notebook](https://blogs.mathworks.com/steve/2020/03/30/fft-spectrum-and-spectral-densities/) Nhận thức của con số tần số đã được giải quyết trong 10 phút.

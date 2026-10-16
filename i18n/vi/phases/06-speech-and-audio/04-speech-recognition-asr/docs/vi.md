@@ -37,7 +37,7 @@ Lợi ích: chất lượng cao nhất trên ASR ngoài khơi, dễ đào tạo 
 
 ### WER: số một
 
-**Word Error Rate**= `(S + D + I) / N`, nơi S = thay thế, D = xóa, I = nhập, N = số từ tham chiếu. Hình dung tương ứng khoảng cách chỉnh sửa Levenshtein ở mức từ. thấp hơn là tốt hơn. WER trên 20% thường không thể sử dụng; dưới 5% là bình đẳng con người cho bài đọc.
+**Word Error Rate**= $(S + D + I) / N$, nơi $S$= thay thế,$D$=trong bỏ,$I$=lên vào,$N$=những từ tham chiếu. Đáp ứng với khoảng cách chỉnh sửa Levenshtein ở mức từ. Thấp hơn là tốt hơn. WER trên 20% thường không thể sử dụng; dưới 5% là bình đẳng con người cho bài đọc.
 
 | Model | LibriSpeech test-clean | LibriSpeech test-other | Size |
 |-------|------------------------|------------------------|------|

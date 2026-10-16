@@ -193,4 +193,4 @@ Cứ như `outputs/skill-spoof-defender.md`. Chọn mô hình phát hiện, dấ
 - [Chen et al. (2025). WaveVerify](https://arxiv.org/abs/2507.21150) Bộ dò MoE cho các cuộc tấn công thời gian.
 - [Jung et al. (2022). AASIST](https://arxiv.org/abs/2110.01200) xương sống phát hiện SOTA.
 - [AudioMarkBench (2024)](https://proceedings.neurips.cc/paper_files/paper/2024/file/5d9b7775296a641a1913ab6b4425d5e8-Paper-Datasets_and_Benchmarks_Track.pdf) Đánh giá độ bền.
-- [C2PA specification](https://c2pa.org/specifications/specifications/) định dạng biểu hiện xuất xứ.
+- [C2PA specification](https://spec.c2pa.org/specifications/specifications/2.4/index.html) định dạng biểu hiện xuất xứ.

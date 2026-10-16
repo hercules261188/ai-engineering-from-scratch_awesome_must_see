@@ -169,4 +169,4 @@ Cứ như `outputs/skill-music-designer.md`. Chọn mô hình, chiến lược c
 - [ACE-Step](https://github.com/ace-step/ACE-Step) mở máy phát điện 4B đầy nhạc, tháng 4 năm 2026.
 - [Suno v5 platform docs](https://suno.com) nhà lãnh đạo chất lượng thương mại.
 - [AudioLDM2](https://arxiv.org/abs/2308.05734) Phân phối ẩn cho âm nhạc + hiệu ứng âm thanh.
-- [WMG-Suno settlement coverage](https://www.musicbusinessworldwide.com/suno-warner-music-settlement/) Tháng 11 năm 2025 tiền lệ.
+- [WMG-Suno settlement coverage](https://www.musicbusinessworldwide.com/warner-music-group-settles-with-suno-strikes-first-of-its-kind-deal-with-ai-song-generator/) Tháng 11 năm 2025 tiền lệ.

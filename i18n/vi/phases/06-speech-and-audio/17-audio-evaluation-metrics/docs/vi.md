@@ -106,7 +106,7 @@ Không cân bằng: **macro F1**+ **per-class recall**. Báo cáo cho mỗi lớ
 | Open ASR Leaderboard (HF) | English + multilingual + long-form | `huggingface.co/spaces/hf-audio/open_asr_leaderboard` |
 | TTS Arena (HF) | English TTS | `huggingface.co/spaces/TTS-AGI/TTS-Arena` |
 | Artificial Analysis Speech | TTS + STT, ELO from paired votes | `artificialanalysis.ai/speech` |
-| MMAU-Pro | LALM reasoning | `mmaubenchmark.github.io` |
+| MMAU-Pro | LALM reasoning | `sonalkum.github.io/mmau-pro` |
 | SpeakerBench / VoxSRC | Speaker recognition | `voxsrc.github.io` |
 | MMAU music subset | Music LALM | (within MMAU) |
 | HEAR benchmark | Self-supervised audio | `hearbenchmark.com` |
@@ -224,5 +224,5 @@ Cứ như `outputs/skill-audio-evaluator.md`Chọn số liệu, chuẩn và đ�
 - [Fréchet Audio Distance (Kilgour et al. 2019)](https://arxiv.org/abs/1812.08466) tiêu chuẩn âm nhạc.
 - [Open ASR Leaderboard](https://huggingface.co/spaces/hf-audio/open_asr_leaderboard) Định vị trực tiếp năm 2026
 - [TTS Arena](https://huggingface.co/spaces/TTS-AGI/TTS-Arena) bảng xếp hạng TTS với số phiếu của con người.
-- [MMAU-Pro benchmark](https://mmaubenchmark.github.io/) Đơn vị xếp hạng lý luận LALM.
+- [MMAU-Pro benchmark](https://sonalkum.github.io/mmau-pro/) Đơn vị xếp hạng lý luận LALM.
 - [HEAR benchmark](https://hearbenchmark.com/) các tiêu chuẩn SSL âm thanh.

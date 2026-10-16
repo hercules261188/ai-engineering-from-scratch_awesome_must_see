@@ -24,7 +24,7 @@ Những thông tin sâu sắc về năm 2024-2026: **a pure reconstruction codec
 
 ### Tránh cốt lõi: Quantization Vektor còn lại (RVQ)
 
-Thay vì một cuốn sách mã lớn (có thể cần hàng triệu mã để có chất lượng tốt), tất cả các codec âm thanh hiện đại sử dụng **RVQ**: một loạt các codebook nhỏ. codebook đầu tiên định lượng sản xuất encoder; thứ hai định lượng dư thừa; vv Mỗi codebook là 1024 codebook. 8 codebook = từ vựng hiệu quả của 1024 ^ 8 = 10^24.
+Thay vì một cuốn sách mã lớn (có thể cần hàng triệu mã để có chất lượng tốt), tất cả các codec âm thanh hiện đại sử dụng **RVQ**: một loạt các codebook nhỏ. codebook đầu tiên định lượng sản xuất encoder; thứ hai định lượng dư lượng; vv Mỗi codebook là 1024 codebook. 8 codebook = từ vựng hiệu quả của $1024^8 = 10^{24}$- Tôi không biết.
 
 Vào thời điểm suy luận, bộ giải mã tổng hợp tất cả các mã được chọn cho mỗi khung để tái cấu trúc.
 
@@ -129,8 +129,8 @@ Bộ mã ngữ nghĩa 0 được sắp xếp với WavLM. Bạn có thể đào 
 
 Đối với một clip phát biểu 10 giây tại 12.5 Hz của Mimi × 8 codebook:
 
-```
-N_tokens = 10 * 12.5 * 8 = 1000 tokens
+```math
+N_{\text{tokens}} = 10 \times 12.5 \times 8 = 1000 \text{ tokens}
 ```
 
 1000 token là một bối cảnh tầm thường cho một bộ biến đổi. Một bộ biến đổi tham số 256M có thể tạo ra 10 giây nói chuyện trong vài millisecond trên một GPU hiện đại.

@@ -129,17 +129,18 @@ class AudioProjector(nn.Module):
 
 ```python
 from datasets import load_dataset
-mmau = load_dataset("MMAU/MMAU-Pro")
+mmau = load_dataset("gamma-lab-umd/MMAU-Pro", split="test")
+mcq = mmau.filter(lambda item: len(item["choices"] or []) > 1)
 
 correct = 0
-for item in mmau["test"]:
-    answer = call_model(item["audio"], item["question"], item["choices"])
-    if answer == item["correct_choice"]:
+for item in mcq:
+    answer = call_model(item["audio_path"], item["question"], item["choices"])
+    if answer == item["answer"]:
         correct += 1
-print(f"Accuracy: {correct / len(mmau['test']):.3f}")
+print(f"Accuracy: {correct / len(mcq):.3f}")
 ```
 
-Báo cáo cho từng loại (nhân ngữ / âm thanh / âm nhạc / đa âm thanh) riêng biệt.
+`audio_path`chỉ vào repo của bộ dữ liệu `data.zip`(khoảng 47 GB), nên tải xuống và mở zip trước khi ghi điểm. Loop phù hợp chính xác này là kiểm tra tinh thần, không phải là điểm điểm tham khảo, vì vậy số lượng của nó không thể so sánh với kết quả MMAU-Pro được công bố. Người đánh giá chính thức phù hợp với các câu trả lời nhiều lựa chọn bằng cách nhúng sự tương đồng (NV-Embed-v2), đánh giá các câu trả lời mở với một thẩm phán LLM, và kiểm tra các câu trả lời theo hướng dẫn với các quy tắc regex: viết dự đoán cho một `model_output`cột và chạy `evaluate_mmau_pro_comprehensive.py`từ [MMAU-Pro repo](https://github.com/sonalkum/MMAUPro)- Báo cáo mỗi người`category`(khót nói, âm thanh, âm nhạc, đa và những thứ khác) riêng biệt.
 
 ## Sử dụng nó
 
@@ -187,4 +188,4 @@ Cứ như `outputs/skill-alm-picker.md`. Chọn LALM + phân nhóm tham chiếu 
 - [NVIDIA (2025). Audio Flamingo 3](https://arxiv.org/abs/2507.08128) người dẫn đầu âm thanh mở dài.
 - [NVIDIA (2026). Audio Flamingo Next](https://arxiv.org/abs/2604.10905) LongAudioBench SOTA.
 - [Tang et al. (2023). SALMONN](https://arxiv.org/abs/2310.13289) tiên phong trong việc mã hóa kép.
-- [MMAU-Pro leaderboard](https://mmaubenchmark.github.io/) Live 2026 xếp hạng.
+- [MMAU-Pro leaderboard](https://sonalkum.github.io/mmau-pro/) Live 2026 xếp hạng.

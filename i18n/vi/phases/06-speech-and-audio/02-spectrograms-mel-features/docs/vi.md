@@ -23,7 +23,7 @@ Các quang phổ mel đẩy xa hơn. Con người nhận thức âm thanh theo c
 
 **Log-magnitude.**Tầm độ lớn có thể dao động từ 5-6 bậc.`log(|X| + 1e-6)`hoặc `20 * log10(|X|)`Mỗi đường ống sản xuất sử dụng log magnitude, không phải là nguyên liệu.
 
-**Mel scale.**Tần suất `f`trong bản đồ Hz đến mel `m`bởi `m = 2595 * log10(1 + f / 700)`. Bản đồ là đường thẳng dưới 1 kHz và logarithmic trên. 80 mel bins bao gồm 08 kHz là đầu vào ASR tiêu chuẩn.
+**Mel scale.**Tần suất `f`trong bản đồ Hz đến mel `m`bởi $m = 2595 \cdot \log_{10}(1 + f / 700)$. Bản đồ là đường thẳng dưới 1 kHz và logarithmic trên. 80 mel bins bao gồm 08 kHz là đầu vào ASR tiêu chuẩn.
 
 **Mel filterbank.**Một bộ bộ bộ lọc tam giác nằm trong khoảng cách bằng nhau trên thang mel. Mỗi bộ lọc là tổng cân của các thùng FFT lân cận.
 
@@ -170,5 +170,5 @@ Cứ như `outputs/skill-feature-extractor.md`. Khả năng chọn loại tính 
 - [Davis, Mermelstein (1980). Comparison of parametric representations for monosyllabic word recognition](https://ieeexplore.ieee.org/document/1163420) báo cáo của MFCC.
 - [Stevens, Volkmann, Newman (1937). A Scale for the Measurement of the Psychological Magnitude Pitch](https://pubs.aip.org/asa/jasa/article-abstract/8/3/185/735757/) thang điểm mel ban đầu.
 - [OpenAI — Whisper source, log_mel_spectrogram](https://github.com/openai/whisper/blob/main/whisper/audio.py) đọc thực hiện tham chiếu.
-- [librosa feature extraction docs](https://librosa.org/doc/main/feature.html) tham chiếu cho `mfcc`- `melspectrogram`, và nhảy / cửa sổ.
+- [librosa feature extraction docs](https://librosa.org/doc/latest/api/feature.html) tham chiếu cho `mfcc`- `melspectrogram`, và nhảy / cửa sổ.
 - [NVIDIA NeMo — audio preprocessing](https://docs.nvidia.com/deeplearning/nemo/user-guide/docs/en/main/asr/asr_all.html#featurizers) đường ống quy mô sản xuất cho các mô hình Parakeet + Canary.
