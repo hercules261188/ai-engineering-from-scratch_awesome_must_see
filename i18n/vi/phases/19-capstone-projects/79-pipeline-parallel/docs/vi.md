@@ -16,7 +16,7 @@
 
 ## Vấn đề
 
-Một mô hình 70B trong fp16 chỉ cần 140 GB các tham số. Không có GPU nào của người tiêu dùng có thể giữ được nó. ZeRO-3 cắt giảm các thông số qua các bậc nhưng vẫn cần mỗi bậc để thu thập toàn bộ lớp cho mỗi bước tiến, trả log ((N) hops cho mỗi lớp. Phương song đường ống dẫn đường đi một tuyến đường khác: cắt mô hình thành N giai đoạn và đặt một giai đoạn trên mỗi bậc. Trước của lớp 1 kết thúc ở cấp 0 và trao tensor kích hoạt cho cấp 1; cấp 1 chạy lớp 2 và bàn tay cho cấp 2; v.v. Lối chảy ngược lại. Khoảnh khắc giảm theo đường thẳng bởi vì mỗi bậc chỉ giữ một giai đoạn; tính toán là theo trình tự, đó là vấn đề bong bóng.
+Một mô hình 70B-pharameter trong fp16 chỉ cần 140 GB các tham số. Không GPU nào của người tiêu dùng giữ nó. ZeRO-3 cắt các tham số qua các hàng nhưng vẫn cần mỗi hàng để thu thập toàn bộ lớp cho mỗi bước tiến, trả tiền$\log(N)$Húp theo mỗi lớp. Phương song đường ống dẫn đi một tuyến khác: cắt mô hình thành N giai đoạn và đặt một giai đoạn trên mỗi bậc. phía trước của lớp 1 hoàn thành ở bậc 0 và giao tensor kích hoạt cho hạng 1; hạng 1 chạy lớp 2 và tay cho hạng 2; vv. Hành ngược chảy ngược lại. Khoảnh khắc giảm tuyến tính vì mỗi bậc chỉ giữ một giai đoạn; tính toán là theo trình, đó là vấn đề bong bóng.
 
 bong bóng là thời gian trống rỗng ở đầu đường ống dẫn (ngợi đợi microbatch đầu tiên đến giai đoạn cuối cùng) và ở cuối (ngợi đợi microbatch cuối cùng thoát ra trở lại). Với các microbatches M và các giai đoạn N, tỷ lệ bong bóng mỗi giai đoạn là (N-1) /(M+N-1). Ở M=8, N=4 là 27%. Ở M=64, N=4 nó là 4,5%. bong bóng sẽ thu hẹp khi bạn có nhiều microbatch mỗi bước, có nghĩa là kích thước nhỏ mỗi microbatch, đó là sự hạn chế thúc đẩy thiết kế microbatch.
 

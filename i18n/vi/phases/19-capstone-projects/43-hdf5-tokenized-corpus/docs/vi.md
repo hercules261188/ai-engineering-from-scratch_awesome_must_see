@@ -16,7 +16,7 @@
 
 ## Vấn đề
 
-Một chương trình đào tạo ngôn ngữ hiện đại đọc mã thông báo với hàng trăm ngàn mẫu mỗi giây trên hàng chục công nhân. JSONL trên đĩa chết khi lỗi trang lưu trữ lạnh đầu tiên: trình phân tích JSON chậm, ranh giới tài liệu không thể địa chỉ, và tìm kiếm "chọn mẫu 4,217,884" đòi hỏi phải quét tệp. Ngay cả Parquet, mà nén tốt, là một sự phù hợp kém bởi vì huấn luyện viên không muốn cột; nó muốn một dòng token phẳng với O(1) truy cập ngẫu nhiên.
+Một chương trình đào tạo ngôn ngữ hiện đại đọc mã thông báo với hàng trăm ngàn mẫu mỗi giây trên hàng chục công nhân. JSONL trên đĩa chết khi lỗi trang lưu trữ lạnh đầu tiên: trình phân tích JSON chậm, ranh giới tài liệu không thể địa chỉ, và tìm kiếm "chọn mẫu 4,217,884" đòi hỏi phải quét tệp. Ngay cả Parquet, mà nén tốt, là một sự phù hợp kém bởi vì huấn luyện viên không muốn cột; nó muốn một dòng token phẳng với $O(1)$truy cập ngẫu nhiên.
 
 HDF5 phù hợp bởi vì nó cung cấp một bộ dữ liệu nhỏ, có thể kích thước, chỉ có số nguyên, các mảnh của nó là trang cache thân thiện tại thời điểm đọc.`tokens[3,200,000 : 3,200,8192]`và HDF5 sao chép các hyperslab yêu cầu từ bộ nhớ cache trang vào một mảng NumPy vừa được phân bổ. Chi phí là một tay xử lý tập tin mở và một dấu chân bộ nhớ cache trang kích thước nhỏ cho mỗi người lao động, điều này là không đáng kể so với chi phí giải mã JSONL.
 

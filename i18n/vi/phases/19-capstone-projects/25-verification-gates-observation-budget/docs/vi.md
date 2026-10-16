@@ -82,7 +82,7 @@ Máy tính biểu tượng này cố ý là một kẻ ngu ngốc`len(text) // 4
 
 ## Tại sao sự sắp xếp chuỗi quan trọng
 
-Một lời phủ nhận rẻ hơn một lời cho phép.`WhitelistGate`chạy trong O(1) tìm kiếm hash. `RegexGate`chạy trong O(phát hình * argv). `RecencyGate`đọc một mảnh nhỏ của cửa hàng tin nhắn. `BudgetGate`Bạn đặt hàng chúng bằng cách tăng chi phí để một cuộc gọi từ chối chuyển mạch ngắn trước khi làm công việc đắt tiền.
+Một lời phủ nhận rẻ hơn một lời cho phép.`WhitelistGate`chạy vào $O(1)$Tìm kiếm.`RegexGate`chạy vào $O(\text{pattern} \cdot \text{argv})$- `RecencyGate`đọc một mảnh nhỏ của cửa hàng tin nhắn. `BudgetGate`Bạn đặt hàng chúng bằng cách tăng chi phí để một cuộc gọi từ chối chuyển mạch ngắn trước khi làm công việc đắt tiền.
 
 Bạn cũng đặt hàng theo vòng bán kính blast. Whitelist là tuyên bố mạnh nhất: công cụ này không có trong hợp đồng. Cổng regex là tiếp theo: lập luận này không có trong hợp đồng.
 

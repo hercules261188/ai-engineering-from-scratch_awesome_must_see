@@ -49,15 +49,14 @@ Xây dựng `(N, N)`Matrix tương đồng cosine giữa các hình ảnh và b�
 
 ### BLEU-4
 
-```text
-BLEU-4 = BP * exp(mean(log p1, log p2, log p3, log p4))
+```math
+\text{BLEU-4} = \text{BP} \cdot \exp\big(\text{mean}(\log p_1, \log p_2, \log p_3, \log p_4)\big)
 ```
 
 Ở đâu `p_n`là độ chính xác n-gram được sửa đổi (đếm số n-gram được tạo ra trong bất kỳ tham chiếu nào, chia bằng tổng n-gram được tạo ra), và `BP`là hình phạt ngắn hạn:
 
-```text
-BP = 1                if generated length > reference length
-   = exp(1 - r/g)     otherwise, where r is reference length and g is generated
+```math
+\text{BP} = \begin{cases} 1 & \text{if generated length} > \text{reference length} \\ \exp(1 - r/g) & \text{otherwise, where } r \text{ is reference length and } g \text{ is generated} \end{cases}
 ```
 
 Mới lỏng là cần thiết cho các mẫu nhỏ nơi một số `p_n`thực hiện sử dụng Chen và Cherry "chế độ 1" (làm thêm 1 cho số và tên cho bất kỳ số không), đó là mặc định an toàn nhất cho chế độ số thấp.

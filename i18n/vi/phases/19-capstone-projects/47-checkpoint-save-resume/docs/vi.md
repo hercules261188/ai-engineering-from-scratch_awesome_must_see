@@ -90,7 +90,7 @@ cc-atomic-checkpoint
 
 ### Bước 1: bắt và khôi phục trạng thái RNG
 
-`capture_rng_state`trả lời một lệnh với Python `random.getstate`, NumPy `np.random.get_state`, và PyTorch CPU và CUDA RNG byte. `restore_rng_state`CPU tensor là một bộ đệm uint8 byte mà RNG của PyTorch biết tiêu thụ.
+`capture_rng_state`trả lời một lệnh với Python `random.getstate`, NumPy `np.random.get_state`, và PyTorch CPU và CUDA RNG byte. Mỗi phần được lưu trữ như các số Python đơn giản, tuples, và danh sách (nhiệm khóa của NumPy đi qua `tolist()`), để bộ tải ở bước 3 có thể đọc lại nó mà không cần phải chọn ra các đối tượng tùy tiện. `restore_rng_state`CPU tensor là một bộ đệm uint8 byte mà RNG của PyTorch biết tiêu thụ.
 
 ### Bước 2: tiết kiệm nguyên tử
 
@@ -100,9 +100,11 @@ cc-atomic-checkpoint
 
 `save_checkpoint`gói mô hình, tối ưu hóa, lập trình, trạng thái tàu, và RNG vào một dict. `load_checkpoint`đảo ngược nó và trả lại một `TrainState`. Vùng schema là cái nón nâng cấp: thay đổi định dạng trong tương lai làm đập chuỗi phiên bản và bộ tải phát.
 
+`load_checkpoint`gọi`torch.load(..., weights_only=True)`. A `.pt`File là một cái đốm, và giải quyết một file không đáng tin cậy với `weights_only=False`chạy bất cứ mã tên tệp. Loader chỉ có trọng lượng chấp nhận tensor và container nguyên thủy và từ chối tất cả mọi thứ khác, đó là lý do tại sao bước 1 giữ trạng thái RNG trong danh sách đơn giản. kiểm tra tính toàn vẹn tăng `ValueError`thay vì sử dụng `assert`, bởi vì`python -O`sử dụng ngọn đuốc 2.6 hoặc mới hơn: trước khi phát hành `weights_only=True`có một vòng bỏ được biết (CVE-2025-32434), vì vậy đảm bảo bài học này dựa vào chỉ giữ từ 2,6 tiếp theo.
+
 ### Bước 4: biến thể bị chia nhỏ
 
-`save_sharded_checkpoint`round-robins các phím tham số trên các mảnh N, viết mỗi mảnh với lưu nguyên tử riêng của nó, viết một tệp meta với tối ưu hóa và lập trình và trạng thái tàu, và viết chỉ số JSON với các mảnh sha256s. `load_sharded_checkpoint`xác minh từng mảnh trước khi sáp nhập.
+`save_sharded_checkpoint`round-robins các phím tham số trên các mảnh N, viết mỗi mảnh với lưu nguyên tử riêng của nó, viết một tệp meta với tối ưu hóa và lập trình và trạng thái tàu, và viết chỉ số JSON với các mảnh sha256s. `load_sharded_checkpoint`xác minh từng mảnh trước khi sáp nhập và từ chối bất kỳ đường đi mảnh nào giải quyết bên ngoài thư mục kiểm soát.
 
 ### Bước 5: trình diễn tiếp tục
 
@@ -120,8 +122,9 @@ Các tập tin đơn và các bản demo từng mảnh đều khẳng định s�
 
 Các thiết kế sản xuất xếp chồng để kiểm soát tàu như một phần của huấn luyện viên. hình dạng giống nhau: mô hình + tối ưu hóa + lập trình + đếm + RNG, được viết bằng nguyên tử, được đặt tên theo từng bước để dễ dàng tìm thấy.
 
-Ba mô hình để thực thi:
+Bốn mô hình để thực thi:
 
+- **Load with `weights_only=True`.**Một điểm kiểm tra được rút từ ổ đĩa chia sẻ hoặc tải xuống là đầu vào không đáng tin cậy.
 - **Schema is a string in the payload.**Không có nó, bạn không thể phát triển định dạng mà không phá vỡ các đường chạy cũ.
 - **Sha256 every shard.**Một tải xuống được cắt giảm âm thầm là loại lỗi tồi tệ nhất; bộ tải thất bại nhanh hoặc nó thất bại muộn.
 - **Keep checkpoint cadence honest.**Hãy lưu lại từng bước N và mỗi phút đồng hồ, tùy thuộc vào bước nào ngắn hơn.
@@ -151,7 +154,7 @@ Ba mô hình để thực thi:
 ## Đọc thêm
 
 - POSIX `rename`ngữ nghĩa cho tính nguyên tử tuyên bố rằng `os.replace`dựa vào.
-- Tài liệu PyTorch về `torch.save`và `torch.load`, bao gồm `map_location`cho các thiết bị phục hồi chéo.
+- Tài liệu PyTorch về `torch.save`và `torch.load`, bao gồm `map_location`cho các thiết bị phục hồi và`weights_only`để tải các tệp không đáng tin cậy.
 - Chương 46 của giai đoạn 19 bao gồm sự tích lũy gradient mà tải trọng điểm kiểm soát của bài học này tồn tại qua.
 - Giai đoạn 19 bài học 48 bao gồm các gói phân phối có định dạng quy định của nhà nước phù hợp với chương trình này.
 - Lòng lõi Linux `fsync`Tài liệu bảo đảm độ bền đằng sau đổi tên nguyên tử.

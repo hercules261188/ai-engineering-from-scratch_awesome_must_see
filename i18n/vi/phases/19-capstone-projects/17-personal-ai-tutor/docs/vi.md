@@ -151,7 +151,7 @@ learner: "6"
 
 - [Khanmigo (Khan Academy)](https://www.khanmigo.ai) người tiêu dùng tham khảo K-12 tutor
 - [Duolingo Max](https://blog.duolingo.com/duolingo-max/) Giáo viên học ngôn ngữ tham khảo
-- [Google LearnLM / Gemini for Education](https://blog.google/technology/google-deepmind/learnlm) mô hình tham chiếu được lưu trữ
+- [Google LearnLM / Gemini for Education](https://blog.google/products-and-platforms/products/education/google-learnlm-gemini-generative-ai/) mô hình tham chiếu được lưu trữ
 - [Quizlet Q-Chat](https://quizlet.com) tham chiếu thay thế
 - [Synthesis Tutor](https://www.synthesis.com) Khán giả khởi nghiệp
 - [FSRS algorithm](https://github.com/open-spaced-repetition/fsrs4anki) lập trình lặp lại khoảng cách

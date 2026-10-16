@@ -105,7 +105,7 @@ def lcs_length(a, b):
     return int(dp[n, m])
 ```
 
-Bảng numpy làm cho việc thực hiện dễ đọc; danh sách Python tinh khiết cũng sẽ hoạt động. Các nhiệm vụ chọn ROUGE-L trả chi phí O(n m) cho mỗi nhiệm vụ. Đối với độ dài tổng kết điển hình ở dưới một millisecond.
+Bảng numpy làm cho việc thực hiện dễ đọc; danh sách Python tinh khiết cũng sẽ hoạt động.$O(n m)$Chi phí cho mỗi nhiệm vụ. cho các chiều dài tổng kết điển hình ở dưới một millisecond.
 
 ## Độ chính xác
 

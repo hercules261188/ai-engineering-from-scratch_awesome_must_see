@@ -27,42 +27,46 @@ DPO thay thế cả hai giai đoạn bằng một lỗ duy nhất được giám
 
 Bắt đầu từ mô hình Bradley-Terry.`x`và hai hoàn thành `y_w`(được chọn) và `y_l`(được từ chối), khả năng mà con người thích `y_w`là
 
-```text
-P(y_w > y_l | x) = sigmoid( r(x, y_w) - r(x, y_l) )
+```math
+P(y_w > y_l \mid x) = \sigma\big( r(x, y_w) - r(x, y_l) \big)
 ```
 
 nơi `r`là một chức năng thưởng ẩn.`r`từ sở thích, sau đó đào tạo một chính sách `pi`để tối đa hóa `r`Với neo KL:
 
-```text
-max_pi   E_{x, y~pi} [ r(x, y) ] - beta * KL(pi || pi_ref)
+```math
+\max_{\pi} \; \mathbb{E}_{x, y \sim \pi} \big[ r(x, y) \big] - \beta \, \mathrm{KL}(\pi \,\|\, \pi_{\text{ref}})
 ```
 
 Các dẫn xuất DPO lưu ý rằng chính sách tối ưu `pi*`theo mục tiêu này có hình thức đóng cửa theo các`r`- Có thể là:
 
-```text
-pi*(y | x) = (1/Z(x)) * pi_ref(y | x) * exp( r(x, y) / beta )
+```math
+\pi^*(y \mid x) = \frac{1}{Z(x)} \, \pi_{\text{ref}}(y \mid x) \exp\!\left( \frac{r(x, y)}{\beta} \right)
 ```
 
 Chuẩn bị lại cho `r`- Có thể là:
 
-```text
-r(x, y) = beta * ( log pi*(y | x) - log pi_ref(y | x) ) + beta * log Z(x)
+```math
+r(x, y) = \beta \big( \log \pi^*(y \mid x) - \log \pi_{\text{ref}}(y \mid x) \big) + \beta \log Z(x)
 ```
 
 - `log Z(x)`thuật ngữ là giống nhau cho cả hai `y_w`và `y_l`(đáng tùy vào `x`Không .`y`), do đó nó bị hủy bỏ khi bạn tính toán sự khác biệt ưu tiên:
 
-```text
-r(x, y_w) - r(x, y_l) = beta * ( log pi_theta(y_w|x) - log pi_ref(y_w|x)
-                                - log pi_theta(y_l|x) + log pi_ref(y_l|x) )
+```math
+\begin{aligned}
+r(x, y_w) - r(x, y_l) = \beta \big( &\log \pi_\theta(y_w \mid x) - \log \pi_{\text{ref}}(y_w \mid x) \\
+&- \log \pi_\theta(y_l \mid x) + \log \pi_{\text{ref}}(y_l \mid x) \big)
+\end{aligned}
 ```
 
 Thay vào Bradley-Terry sigmoid và lấy xác suất log âm so với cặp ưu tiên:
 
-```text
-L_DPO(theta) = - E_{(x, y_w, y_l)} [
-  log sigmoid( beta * ( log pi_theta(y_w|x) - log pi_ref(y_w|x)
-                       - log pi_theta(y_l|x) + log pi_ref(y_l|x) ) )
-]
+```math
+\begin{aligned}
+L_{\text{DPO}}(\theta) = -\mathbb{E}_{(x, y_w, y_l)} \Big[
+  \log \sigma\big( \beta \big( &\log \pi_\theta(y_w \mid x) - \log \pi_{\text{ref}}(y_w \mid x) \\
+  &- \log \pi_\theta(y_l \mid x) + \log \pi_{\text{ref}}(y_l \mid x) \big) \big)
+\Big]
+\end{aligned}
 ```
 
 Đây là lỗ. Nó là một sigmoid trên một scalar đơn lẻ ví dụ, tính từ bốn log-chỉ có thể. Không mô hình phần thưởng riêng biệt. Không có PPO. Không có thuật ngữ KL trong lỗ; ràng buộc KL được nướng vào dẫn dạng đóng.
@@ -87,8 +91,8 @@ flowchart LR
 
 Một kiểm tra tinh thần hữu ích trước bất kỳ cuộc tập luyện nào.`log pi_theta(y_w | x)`- Có thể là:
 
-```text
-d L_DPO / d log pi_theta(y_w | x) = - beta * (1 - sigmoid(z))
+```math
+\frac{\partial L_{\text{DPO}}}{\partial \log \pi_\theta(y_w \mid x)} = -\beta \big(1 - \sigma(z)\big)
 ```
 
 nơi `z`là lập luận của sigmoid.`z`, có nghĩa là: tăng khả năng ghi chép của chính sách về việc hoàn thành được lựa chọn làm giảm tổn thất.`log pi_theta(y_l | x)`là tích cực: tăng khả năng log bị từ chối làm tăng tổn thất. đào tạo đẩy người được chọn lên và người bị từ chối xuống.

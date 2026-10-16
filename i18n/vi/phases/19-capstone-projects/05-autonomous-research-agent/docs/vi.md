@@ -156,4 +156,4 @@ $ ai-scientist run --seed "attention sparsity in sub-1B transformers" --budget 3
 - [LangGraph documentation](https://langchain-ai.github.io/langgraph/) Lớp dàn nhạc tham chiếu
 - [Semantic Scholar Graph API](https://api.semanticscholar.org/) Tìm kiếm văn học
 - [E2B sandboxes](https://e2b.dev) Cách ly thử nghiệm tham chiếu
-- [NeurIPS reviewer guidelines](https://neurips.cc/Conferences/2026/Reviewer-Guidelines) Rubric mà nhóm nhà phê bình mã hóa
+- [NeurIPS reviewer guidelines](https://neurips.cc/Conferences/2026/ReviewerGuidelines) Rubric mà nhóm nhà phê bình mã hóa
