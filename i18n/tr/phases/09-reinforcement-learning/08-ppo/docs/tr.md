@@ -9,11 +9,11 @@
 
 ## Sorun
 
-A2C (Desin 07) politikada: gradient `E_{π_θ}[A · ∇ log π_θ]`*kurrent*'den örnek alınan verileri gerektirir.`π_θ`Bir güncellemesi yapın ve`π_θ`Bu değişiklikler, kullandığınız veriler artık politika dışı.
+A2C (Desin 07) politikada: gradient $\mathbb E_{\pi_\theta}[A \cdot \nabla \log \pi_\theta]$*kurrent*'den örnek alınan verileri gerektirir.$\pi_\theta$Bir güncellemesi yapın ve$\pi_\theta$Bu değişiklikler, kullandığınız veriler artık politika dışı.
 
 Atari'de 8 envs × 128 adım boyunca bir rolü = 1024 geçiş ve bir düzine saniye çevre zamanı.
 
-Güven Bölgesi Politikası Optimize edilmesi (TRPO, Schulman 2015) ilk çözümdür: her güncellemeyi kısıtlayın, böylece eski ve yeni politikalar arasındaki KL farklılığı aşağıda kalır `δ`Teorik olarak temiz ama her güncelleme için bir konjugat-gradyen çözümü gerektirir.
+Güven Bölgesi Politikası Optimize edilmesi (TRPO, Schulman 2015) ilk çözümdür: her güncellemeyi kısıtlayın, böylece eski ve yeni politikalar arasındaki KL farklılığı aşağıda kalır $\delta$Teorik olarak temiz ama her güncelleme için bir konjugat-gradyen çözümü gerektirir.
 
 PPO (Schulman et al. 2017) sert güven bölgesinin kısıtlamasını basit bir kesilmiş hedef ile değiştirir. Bir ekstra kod satırı. Her dağıtım için on dönem. Konjugat gradient yoktur. Yeterince iyi teorik garantiler.
 
@@ -23,43 +23,49 @@ PPO (Schulman et al. 2017) sert güven bölgesinin kısıtlamasını basit bir k
 
 **The importance ratio.**
 
-`r_t(θ) = π_θ(a_t | s_t) / π_{θ_old}(a_t | s_t)`
+```math
+r_t(\theta) = \frac{\pi_\theta(a_t \mid s_t)}{\pi_{\theta_{\text{old}}}(a_t \mid s_t)}
+```
 
-Bu yeni politika ile verileri toplayan politika arasındaki olasılık oranıdır. `r_t = 1`Değişiklik yok demektir.`r_t = 2`Yeni politika iki kat daha fazla süre alacak.`a_t`Eski gibi.
+Bu yeni politika ile verileri toplayan politika arasındaki olasılık oranıdır. $r_t = 1$Değişiklik yok demektir.$r_t = 2$Yeni politika iki kat daha fazla süre alacak.$a_t$Eski gibi.
 
 **The clipped surrogate.**
 
-`L^{CLIP}(θ) = E_t [ min( r_t(θ) A_t, clip(r_t(θ), 1-ε, 1+ε) A_t ) ]`
+```math
+L^{\text{CLIP}}(\theta) = \mathbb{E}_t \left[ \min\left( r_t(\theta) A_t, \mathop{\mathrm{clip}}(r_t(\theta), 1-\epsilon, 1+\epsilon) A_t \right) \right]
+```
 
 İki dönem:
 
-- Eğer avantajı `A_t > 0`ve oranın ötesine çıkmaya çalışması `1 + ε`, klipi eğilimi düzeltir  iyi bir eylem daha fazla itmemek `+ε`Eski olasılıkların üstünde.
-- Eğer avantajı `A_t < 0`ve oranın ötesine çıkmaya çalışması `1 - ε`(yani kötü bir eylemin kesilmiş azaltılmasına kıyasla daha olası hale getirileceğini gösterir) Klip, gradiyenti kapatır  kötü bir eylemin aşağıya itirilmesini engellemez `-ε`- Evet .
+- Eğer avantajı $A_t > 0$ve oranın ötesine çıkmaya çalışması $1 + \epsilon$, klipi eğilimi düzeltir  iyi bir eylem daha fazla itmemek $+\epsilon$Eski olasılıkların üstünde.
+- Eğer avantajı $A_t < 0$ve oranın ötesine çıkmaya çalışması $1 - \epsilon$(yani kötü bir eylemin kesilmiş azaltılmasına kıyasla daha olası hale getirileceğini gösterir) Klip, gradiyenti kapatır  kötü bir eylemin aşağıya itirilmesini engellemez $-\epsilon$- Evet .
 
 - Evet .`min`Diğer yönü ele alır: oran * yararlı* yönde hareket ettiyse, hala eğilimi alırsınız (bölgeye bir kesim yapmamak sizi incitebilir).
 
-Tipik `ε = 0.2`. Hedefi bir fonksiyon olarak çiz .`r_t`: "iyi tarafta" düz bir çatı ve "kötü tarafta" düz bir zemin ile parça-düzsel bir işlev.
+Tipik $\epsilon = 0.2$. Hedefi bir fonksiyon olarak çiz .$r_t$: "iyi tarafta" düz bir çatı ve "kötü tarafta" düz bir zemin ile parça-düzsel bir işlev.
 
 **The full PPO loss.**
 
-`L(θ, φ) = L^{CLIP}(θ) - c_v · (V_φ(s_t) - V_t^{target})² + c_e · H(π_θ(·|s_t))`
+```math
+L(\theta, \phi) = L^{\text{CLIP}}(\theta) - c_v \cdot (V_\phi(s_t) - V_t^{\text{target}})^2 + c_e \cdot H(\pi_\theta(\cdot \mid s_t))
+```
 
-Aynı aktör-kritik yapı A2C ile.`c_v = 0.5`- Evet .`c_e = 0.01`- Evet .`ε = 0.2`- Evet .
+Aynı aktör-kritik yapı A2C ile.$c_v = 0.5$- Evet .$c_e = 0.01$- Evet .$\epsilon = 0.2$- Evet .
 
 **The training loop.**
 
-1. Toplayın .`N × T``N`paralel ortamlar için`T`Her adım.
+1. Toplayın .$N \times T$$N$paralel ortamlar için$T$Her adım.
 2. Gelirleri hesaplayın (GAE), onları sabit olarak dondurun.
-3. Dondurma`π_{θ_old}``π_θ`- Evet .
-4. - Evet .`K`                        `(s, a, A, V_target, log π_old(a|s))`- ...
-   - Hesaplama`r_t(θ) = exp(log π_θ(a|s) - log π_old(a|s))`- Evet .
-   - Uygula`L^{CLIP}`+ değer kaybı + entropi.
+3. Dondurma$\pi_{\theta_{\text{old}}}$$\pi_\theta$- Evet .
+4. - Evet .$K$                        `(s, a, A, V_target, log π_old(a|s))`- ...
+   - Hesaplama$r_t(\theta) = \exp(\log \pi_\theta(a \mid s) - \log \pi_{\text{old}}(a \mid s))$- Evet .
+   - Uygula$L^{\text{CLIP}}$+ değer kaybı + entropi.
    - - İlerleyici adım.
 5. Çıkarmayı atın ve adım 1'e dönün.
 
-`K = 10`PPO güçlüdür: tam sayı nadiren ±50%'lik bir değer içerir.
+$K = 10$PPO güçlüdür: tam sayı nadiren ±50%'lik bir değer içerir.
 
-**KL-penalty variant.**Orijinal makalede adapte KL cezası kullanan bir alternatif önerildi: `L = L^{PG} - β · KL(π_θ || π_old)`- Evet .`β`KL'ye göre ayarlanmıştır. Klipleme sürümü baskın hale geldi; KL variansı RLHF'de hayatta kalıyor (RLHF'de KL'ye göre referans politikası her zaman istediğiniz ayrı bir kısıtlama olduğu).
+**KL-penalty variant.**Orijinal makalede adapte KL cezası kullanan bir alternatif önerildi: $L = L^{\text{PG}} - \beta \cdot \mathrm{KL}(\pi_\theta \Vert \pi_{\text{old}})$- Evet .$\beta$KL'ye göre ayarlanmıştır. Klipleme sürümü baskın hale geldi; KL variansı RLHF'de hayatta kalıyor (RLHF'de KL'ye göre referans politikası her zaman istediğiniz ayrı bir kısıtlama olduğu).
 
 ```figure
 ppo-clip
@@ -124,19 +130,19 @@ Kritik hedefe standart MSE ve A2C ile aynı şekilde aktörde entropi bonusu ekl
 
 Her güncellemeyi izlemek için üç şey:
 
-- **Mean KL** `E[log π_old - log π_θ]`İçeride kalmalıydım .`[0, 0.02]`- Eğer geçmişte uçarsa .`0.1`, azaltmak`K_EPOCHS`veya `LR`- Evet .
-- **Clip fraction** oranı dışta bulunan örneklerin bölümü `[1-ε, 1+ε]`Olmalı .`~0.1-0.3`- Eğer ...`~0`, klipi asla                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          `LR`veya `K_EPOCHS`- Eğer ...`~0.5+`- Bu yüzden, onları aşağı düşürmek için çok fazla ayarlıyorsun.
-- **Explained variance** `1 - Var(V_target - V_pred) / Var(V_target)`Eleştirmen öğrendiği gibi 1'e doğru tırmanmalı.
+- **Mean KL** $\mathbb{E}[\log \pi_{\text{old}} - \log \pi_\theta]$İçeride kalmalıydım .`[0, 0.02]`- Eğer geçmişte uçarsa .`0.1`, azaltmak`K_EPOCHS`veya `LR`- Evet .
+- **Clip fraction** oranı dışta bulunan örneklerin bölümü $[1-\epsilon, 1+\epsilon]$Olmalı .`~0.1-0.3`- Eğer ...`~0`, klipi asla                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          `LR`veya `K_EPOCHS`- Eğer ...`~0.5+`- Bu yüzden, onları aşağı düşürmek için çok fazla ayarlıyorsun.
+- **Explained variance** $1 - \text{Var}(V_{\text{target}} - V_{\text{pred}}) / \text{Var}(V_{\text{target}})$Eleştirmen öğrendiği gibi 1'e doğru tırmanmalı.
 
 ## Tuzaklar
 
-- **Clip coefficient mistuned.** `ε = 0.2`Bu gerçek standart.`0.1`güncellemeleri çok çekingen kılar .`0.3+`- Durum dengesizliği.
-- **Too many epochs.** `K > 20`politikası uzaklaşır.`π_old`Özellikle büyük ağlar için sınırlama dönemleri.
+- **Clip coefficient mistuned.** $\epsilon = 0.2$Bu gerçek standart.`0.1`güncellemeleri çok çekingen kılar .`0.3+`- Durum dengesizliği.
+- **Too many epochs.** $K > 20$politikası uzaklaşır.$\pi_{\text{old}}$Özellikle büyük ağlar için sınırlama dönemleri.
 - **No reward normalization.**Büyük ödül ölçekleri, video aralığında yer alır.
 - **Forgetting advantage normalization.**Satır başına sıfır ortalama/birlik std normallaştırma standarttır.
 - **Learning rate not decayed.**PPO, doğrusal LR'nin sıfıra düşmesinden yararlanır.
 - **Importance ratio math errors.**Her zaman .`exp(log_new - log_old)`sayısal istikrar için değil `new / old`- Evet .
-- **Wrong gradient sign.**Yeraltı anneni en üst seviyeye çıkar = *minimize* `-L^{CLIP}`- Dönüştürülmüş bir işaret en yaygın PPO virüsüdür.
+- **Wrong gradient sign.**Yeraltı anneni en üst seviyeye çıkar = *minimize* $-L^{\text{CLIP}}$- Dönüştürülmüş bir işaret en yaygın PPO virüsüdür.
 
 ## Kullan
 
@@ -180,18 +186,18 @@ Refuse `K > 30` or `ε > 0.3` (unsafe trust region). Refuse any PPO run without 
 
 ## Egzersizler
 
-1. **Easy.**4×4 GridWorld ' da PPO çalıştır `ε=0.2, K=4`. Örnek verimliliğini A2C ile (her bir atılım için bir dönem) eşleşen çevre adımlarında karşılaştırın.
-2. **Medium.**Tarama`K ∈ {1, 4, 10, 30}`- Plan geri dönüşü vs. çevre adımları ve takip ortalaması KL güncelleme başına.`K`KL bu görevde patlayacak mı?
-3. **Hard.**Kısaltılan yer değiştiricisini uyarlayıcı bir KL cezası ile değiştirin (`β`iki katına çıkarılır.`KL > 2·target`, yarıya düştü`KL < target/2`) Son dönüşü, istikrarı ve çubuksuzluğu karşılaştırın.
+1. **Easy.**4×4 GridWorld ' da PPO çalıştır $\epsilon=0.2, K=4$. Örnek verimliliğini A2C ile (her bir atılım için bir dönem) eşleşen çevre adımlarında karşılaştırın.
+2. **Medium.**Tarama$K \in \lbrace 1, 4, 10, 30 \rbrace$- Plan geri dönüşü vs. çevre adımları ve takip ortalaması KL güncelleme başına.$K$KL bu görevde patlayacak mı?
+3. **Hard.**Kısaltılan yer değiştiricisini uyarlayıcı bir KL cezası ile değiştirin ($\beta$iki katına çıkarılır.$\mathrm{KL} > 2 \cdot \text{target}$, yarıya düştü$\mathrm{KL} < \text{target}/2$) Son dönüşü, istikrarı ve çubuksuzluğu karşılaştırın.
 
 ## Anahtar Terimler
 
 | Term | What people say | What it actually means |
 |------|-----------------|-----------------------|
-| Importance ratio | "r_t(θ)" | `π_θ(a\|s) / π_old(a\|s)`; deviation from the policy that collected the data. |
-| Clipped surrogate | "PPO's main trick" | `min(r·A, clip(r, 1-ε, 1+ε)·A)`; flat gradient past the clip on beneficial side. |
+| Importance ratio | "r_t(θ)" | $\pi_\theta(a \mid s) / \pi_{\text{old}}(a \mid s)$; deviation from the policy that collected the data. |
+| Clipped surrogate | "PPO's main trick" | $\min(r \cdot A, \mathop{\mathrm{clip}}(r, 1-\epsilon, 1+\epsilon) \cdot A)$; flat gradient past the clip on beneficial side. |
 | Trust region | "TRPO / PPO intent" | Limit each update's KL to guarantee monotone improvement. |
-| KL penalty | "Soft trust region" | Alternative PPO: `L - β · KL(π_θ \|\| π_old)`. Adaptive `β`. |
+| KL penalty | "Soft trust region" | Alternative PPO: $L - \beta \cdot \mathrm{KL}(\pi_\theta \Vert \pi_{\text{old}})$. Adaptive $\beta$. |
 | Clip fraction | "How often clipping triggers" | Diagnostic — should be 0.1-0.3; outside means mistuned. |
 | Multi-epoch training | "Data reuse" | K epochs on each rollout; variance cost traded for sample efficiency. |
 | On-policy-ish | "Mostly on-policy" | PPO is nominally on-policy but K>1 epochs uses slightly-off-policy data safely. |

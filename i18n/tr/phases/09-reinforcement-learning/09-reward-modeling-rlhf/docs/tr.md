@@ -21,31 +21,31 @@ RLHF (Christiano et al. 2017; Ouyang et al. 2022) tercihleri bir ödül modeli h
 
 ![Three-stage RLHF: SFT, RM training on pairwise prefs, PPO with KL penalty](../assets/rlhf.svg)
 
-**Stage 1: Supervised Fine-Tuning (SFT).**Önceden eğitilmiş bir temel modelden başlayın. Hedef davranışının insan tarafından yazılmış gösterileri (özetleri takip eden cevaplar, yardımcı cevaplar vb.) ince ayarlayın. Sonuç: bir model `π_SFT`Bu, * iyi davranışlara karşı önyargılı* ama yine de sınırsız bir eylem alanı vardır.
+**Stage 1: Supervised Fine-Tuning (SFT).**Önceden eğitilmiş bir temel modelden başlayın. Hedef davranışının insan tarafından yazılmış gösterileri (özetleri takip eden cevaplar, yardımcı cevaplar vb.) ince ayarlayın. Sonuç: bir model $\pi_{\text{SFT}}$Bu, * iyi davranışlara karşı önyargılı* ama yine de sınırsız bir eylem alanı vardır.
 
 **Stage 2: Reward Model training.**
 
-- Cevap çiftlerini topla `(y_+, y_-)`İsteklere karşı .`x`, insanlar tarafından "y_+ y_-." olarak etiketlenmiştir.
-- Ödül modelini eğit `R_φ(x, y)`                        `y_+`- Evet .
+- Cevap çiftlerini topla $(y_+, y_-)$İsteklere karşı .$x$, insanlar tarafından "y_+ y_-." olarak etiketlenmiştir.
+- Ödül modelini eğit $R_\phi(x, y)$                        $y_+$- Evet .
 - Kayıp:**Bradley-Terry pairwise logistic**- ...
 
-  `L(φ) = -E[ log σ(R_φ(x, y_+) - R_φ(x, y_-)) ]`
+  $L(\phi) = -\mathbb{E}[ \log \sigma(R_\phi(x, y_+) - R_\phi(x, y_-)) ]$
 
-  BT, 1952'den beri standarttır (Bradley-Terry) ve modern RLHF'de baskın seçimdir.
+  $\sigma$BT, 1952'den beri standarttır (Bradley-Terry) ve modern RLHF'de baskın seçimdir.
 
-- `R_φ`SFT modelinden genellikle üstte bir skalar başlı olarak başlatılır. Aynı transformatör omurgası; tek bir doğrusal katman ödülünü çıkarır.
+- $R_\phi$SFT modelinden genellikle üstte bir skalar başlı olarak başlatılır. Aynı transformatör omurgası; tek bir doğrusal katman ödülünü çıkarır.
 
 **Stage 3: PPO against the RM with KL penalty.**
 
-- Eğitilebilir politika başlatılsın `π_θ`-`π_SFT`- Dondurulmuş bir referans tut.`π_ref = π_SFT`- Evet .
-- Cevapın sonunda ödül`y`- ...
+- Eğitilebilir politika başlatılsın $\pi_\theta$-$\pi_{\text{SFT}}$- Dondurulmuş bir referans tut.$\pi_{\text{ref}} = \pi_{\text{SFT}}$- Evet .
+- Cevapın sonunda ödül$y$- ...
 
-  `r_total(x, y) = R_φ(x, y) - β · KL(π_θ(·|x) || π_ref(·|x))`
+  $r_{\text{total}}(x, y) = R_\phi(x, y) - \beta \cdot \mathrm{KL}(\pi_\theta(\cdot \mid x) \Vert \pi_{\text{ref}}(\cdot \mid x))$
 
-  KL cezası önler .`π_θ``π_SFT` bu *regularizer* bir bölge, zor güven bölgesi değil. `β`Genellikle `0.01`- Ne oldu ?`0.05`- Evet .
+  KL cezası önler .$\pi_\theta$$\pi_{\text{SFT}}$ bu *regularizer* bir bölge, zor güven bölgesi değil. $\beta$Genellikle 0.01-0.05.
 - PPO (Denevi 08) bu ödülle çalıştırın. Avantajlar token seviyesindeki yoldaki hesaplanır, ancak RM sadece tam yanıt puanlar.
 
-**Why the KL?**Bu yöntem olmadan, PPO mutlulukla ödül hakerliği stratejileri bulacaktır. RM sadece dağıtım içi tamamlamalarda eğitilmiştir.`π_θ`RM'nin eğitildiği manifold yakınında.
+**Why the KL?**Bu yöntem olmadan, PPO mutlulukla ödül hakerliği stratejileri bulacaktır. RM sadece dağıtım içi tamamlamalarda eğitilmiştir.$\pi_\theta$RM'nin eğitildiği manifold yakınında.
 
 **2026 status:**
 
@@ -97,7 +97,7 @@ Birkaç yüz güncelleme sonrasında,`w`İyi kelime simgeleri için olumlu ve k�
 
 ### Adım 3: RM'nin üstündeki PPO gibi politika
 
-Oyuncak politikamız kelime birikimiyle tek bir simge üretiyor.`log π_θ(token | prompt)`, KL referans cezası ekle ve kesilmiş PPO yedekini uygula.
+Oyuncak politikamız kelime birikimiyle tek bir simge üretiyor.$\log \pi_\theta(\text{token} \mid \text{prompt})$, KL referans cezası ekle ve kesilmiş PPO yedekini uygula.
 
 ```python
 def rlhf_step(theta, ref, w, prompt, rng, eps=0.2, beta=0.1, lr=0.05):
@@ -113,7 +113,7 @@ def rlhf_step(theta, ref, w, prompt, rng, eps=0.2, beta=0.1, lr=0.05):
 
 ### Dördüncü adım: KL'yi izle
 
-İz ortalaması`KL(π_θ || π_ref)`Her güncelleme.`~5-10`politika çok uzakta `π_SFT` daha düşük `β`Bu gerçek RLHF'deki en iyi teşhis.
+İz ortalaması$\mathrm{KL}(\pi_\theta \Vert \pi_{\text{ref}})$Her güncelleme.`~5-10`politika çok uzakta $\pi_{\text{SFT}}$ daha düşük $\beta$Bu gerçek RLHF'deki en iyi teşhis.
 
 ### Adım 5: TRL ile üretim tarifi
 
@@ -163,7 +163,7 @@ Kütüphane senin için üç şey yapar.`adap_kl_ctrl=True`Adaptif-β programın
 
 ## Tuzaklar
 
-- **Over-optimization / reward hacking.**RM kusurlu .`π_θ`Bu nedenle, bu durumun bir sonraki döneminde, bir kişinin, bir kişinin, bir kişinin, bir kişinin, bir kişinin, bir kişinin, bir kişinin, bir kişinin, bir kişinin, bir kişinin, bir kişinin, bir kişinin, bir kişinin, bir kişinin, bir kişinin, bir kişinin, bir kişinin, bir kişinin, bir kişinin, bir kişinin, bir kişinin, bir kişinin, bir kişinin, bir kişinin, bir kişinin, bir kişinin, bir kişinin, bir kişinin, bir kişinin, bir kişinin, bir kişinin, bir kişinin, bir kişinin, bir kişinin, bir kişinin, bir kişinin, bir kişinin, bir kişinin, bir kişinin, bir kişinin, bir kişinin, bir kişinin, bir kişinin, bir kişinin, bir kişinin, bir kişinin, bir kişinin, bir kişinin, bir kişinin, bir kişinin, bir kişinin veya bir kişinin, bir kişinin, bir kişinin, bir kişinin, bir kişinin, bir kişinin, bir kişinin, bir kişinin, bir kişinin, bir kişinin, bir kişinin, bir kişinin, bir diğerinin, bir diğerinin, bir diğerinin, bir diğerinin, bir diğerinin, bir diğerinin, bir diğerinin, bir diğerinin, bir diğerinin, bir diğerinin, bir diğerinin, bir diğerinin, bir diğerinin, bir diğerinin, bir diğerinin, bir diğerinin, bir diğerinin, bir diğerinin, bir diğerinin, bir diğerinin, bir diğerinin, bir diğerine, bir diğerine, bir diğerine, bir diğerine, bir diğerine, bir diğerine, bir diğerine, bir diğerine, bir diğer, bir diğer, bir diğer, bir diğer, bir diğer, bir diğer, bir diğer, bir diğer, bir diğer, bir diğer, bir diğer, bir diğer, bir diğer, diğer, diğer, diğer, diğer, diğer, diğer, diğer, diğer, diğer, diğer, diğer, diğer, diğer, diğer, diğer, diğer, diğer, diğer, diğer, diğer, diğer, diğer, diğer, diğer, diğer, diğer, diğer, diğer, diğer, diğer, diğer, diğer, diğer, diğer, diğer, diğer, diğer, diğer, diğer, diğer, diğer, diğer, diğer, diğer, diğer, diğer, diğer, diğer, diğer, diğer, diğer, diğer, diğer, diğer, diğer, diğer, diğer, diğer, diğer, diğer, diğer, diğer, diğer, diğer, diğer, diğer, diğer, diğer, diğer, diğer, diğer, diğer, diğer, diğer, diğer, diğer, diğer, diğer`β`, RM eğitim verilerini genişletmek.
+- **Over-optimization / reward hacking.**RM kusurlu .$\pi_\theta$Bu nedenle, bu durumun bir sonraki döneminde, bir kişinin, bir kişinin, bir kişinin, bir kişinin, bir kişinin, bir kişinin, bir kişinin, bir kişinin, bir kişinin, bir kişinin, bir kişinin, bir kişinin, bir kişinin, bir kişinin, bir kişinin, bir kişinin, bir kişinin, bir kişinin, bir kişinin, bir kişinin, bir kişinin, bir kişinin, bir kişinin, bir kişinin, bir kişinin, bir kişinin, bir kişinin, bir kişinin, bir kişinin, bir kişinin, bir kişinin, bir kişinin, bir kişinin, bir kişinin, bir kişinin, bir kişinin, bir kişinin, bir kişinin, bir kişinin, bir kişinin, bir kişinin, bir kişinin, bir kişinin, bir kişinin, bir kişinin, bir kişinin, bir kişinin, bir kişinin, bir kişinin, bir kişinin, bir kişinin veya bir kişinin, bir kişinin, bir kişinin, bir kişinin, bir kişinin, bir kişinin, bir kişinin, bir kişinin, bir kişinin, bir kişinin, bir kişinin, bir kişinin, bir diğerinin, bir diğerinin, bir diğerinin, bir diğerinin, bir diğerinin, bir diğerinin, bir diğerinin, bir diğerinin, bir diğerinin, bir diğerinin, bir diğerinin, bir diğerinin, bir diğerinin, bir diğerinin, bir diğerinin, bir diğerinin, bir diğerinin, bir diğerinin, bir diğerinin, bir diğerinin, bir diğerinin, bir diğerine, bir diğerine, bir diğerine, bir diğerine, bir diğerine, bir diğerine, bir diğerine, bir diğerine, bir diğer, bir diğer, bir diğer, bir diğer, bir diğer, bir diğer, bir diğer, bir diğer, bir diğer, bir diğer, bir diğer, bir diğer, bir diğer, diğer, diğer, diğer, diğer, diğer, diğer, diğer, diğer, diğer, diğer, diğer, diğer, diğer, diğer, diğer, diğer, diğer, diğer, diğer, diğer, diğer, diğer, diğer, diğer, diğer, diğer, diğer, diğer, diğer, diğer, diğer, diğer, diğer, diğer, diğer, diğer, diğer, diğer, diğer, diğer, diğer, diğer, diğer, diğer, diğer, diğer, diğer, diğer, diğer, diğer, diğer, diğer, diğer, diğer, diğer, diğer, diğer, diğer, diğer, diğer, diğer, diğer, diğer, diğer, diğer, diğer, diğer, diğer, diğer, diğer, diğer, diğer, diğer, diğer, diğer, diğer, diğer, diğer$\beta$, RM eğitim verilerini genişletmek.
 - **Length hacking.**Yardımcı cevaplar üzerinde eğitilmiş RM'ler genellikle dolaylı olarak uzunluğu ödüllendirir. Politikası cevapları doldurmayı öğrenir. Düzeltme: uzunluk normallaştırılmış ödül veya uzunluk bilinci RM ile RLAIF.
 - **Too-small RM.**Küçük bir RM, polis çıkışlarını doğru bir şekilde değerlendirebilir.
 - **KL tuning.**Çok düşük β → drift ve ödül hackeri. Çok yüksek β → politika neredeyse değişmez. Standart numara adım başına sabit bir KL'yi hedef alan * adaptif* β.
@@ -213,7 +213,7 @@ Refuse to ship RLHF-PPO without a KL monitor. Refuse to use an RM smaller than t
 ## Egzersizler
 
 1. **Easy.**Bradley-Terry ödül modeli eğit .`code/main.py`500 sentetik tercih çiftinde. 100 çift üzerinde çiftlik doğruluğunu ölçün. %90'dan fazla olmalıdır.
-2. **Medium.**Oyuncak PPO-RLHF döngüsünü kullan `β ∈ {0.0, 0.1, 1.0}`Her biri için, yeniliklerde RM puanı ile KL referans karşılaştırın.
+2. **Medium.**Oyuncak PPO-RLHF döngüsünü kullan $\beta \in \lbrace 0.0, 0.1, 1.0 \rbrace$Her biri için, yeniliklerde RM puanı ile KL referans karşılaştırın.
 3. **Hard.**Aynı tercih verilerine göre DPO (closed-form preference-likelities loss) uygulayın ve hesaplama kullanımı ve elde edilen son RM puanı ile RLHF-PPO borusuna karşılaştırın.
 
 ## Anahtar Terimler
@@ -222,8 +222,8 @@ Refuse to ship RLHF-PPO without a KL monitor. Refuse to use an RM smaller than t
 |------|-----------------|-----------------------|
 | RLHF | "Alignment RL" | Three-stage SFT + RM + PPO pipeline (Christiano 2017, Ouyang 2022). |
 | Reward Model (RM) | "The scoring net" | Learned scalar function fit to pairwise preferences via Bradley-Terry. |
-| Bradley-Terry | "Pairwise logistic loss" | `P(y_+ ≻ y_-) = σ(R(y_+) - R(y_-))`; the standard RM objective. |
-| KL penalty | "Stay near the reference" | `β · KL(π_θ \|\| π_ref)` in the reward; the anti-reward-hacking regularizer. |
+| Bradley-Terry | "Pairwise logistic loss" | $P(y_+ \succ y_-) = \sigma(R(y_+) - R(y_-))$; the standard RM objective. |
+| KL penalty | "Stay near the reference" | $\beta \cdot \mathrm{KL}(\pi_\theta \Vert \pi_{\text{ref}})$ in the reward; the anti-reward-hacking regularizer. |
 | Reward hacking | "Goodhart's law" | Policy exploits RM flaws; symptoms: reward up, human eval flat. |
 | RLAIF | "AI-labeled preferences" | RLHF where labels come from another LM instead of humans. |
 | PRM | "Process Reward Model" | Scores partial reasoning steps; used in reasoning pipelines. |

@@ -21,20 +21,24 @@ Bu akıştan, bunu resmileştirmeden öğrenemezsiniz. "Ne gördüm", "ne yaptı
 
 **The five objects.**
 
-- **States** `S`Agentin karar vermesi gereken her şey. GridWorld'da hücre, satrançta tahta, LLM'de bağlam penceresi ve herhangi bir hafıza.
-- **Actions** `A`Seçenekler, yukarı/ aşağı/ sola/ sağa hareket et.
-- **Transitions** `P(s' | s, a)`- Durum verildiğinde .`s`ve eylemler`a`Satrançta belirgin, stokastik envanterde, LLM'de neredeyse belirgin.
-- **Rewards** `R(s, a, s')`- Skalaar sinyal. Kazanç = +1, Kayıp = -1. Gelir eksi maliyet.
-- **Discount** `γ ∈ [0, 1)`Gelecekteki ödülün ne kadarı var ?`γ = 0.99`~ 100 adımlık ufuk alır; `γ = 0.9`- 10'u alır.
+- **States** $S$Agentin karar vermesi gereken her şey. GridWorld'da hücre, satrançta tahta, LLM'de bağlam penceresi ve herhangi bir hafıza.
+- **Actions** $A$Seçenekler, yukarı/ aşağı/ sola/ sağa hareket et.
+- **Transitions** $P(s' \mid s, a)$- Durum verildiğinde .$s$ve eylemler$a$Satrançta belirgin, stokastik envanterde, LLM'de neredeyse belirgin.
+- **Rewards** $R(s, a, s')$- Skalaar sinyal. Kazanç = +1, Kayıp = -1. Gelir eksi maliyet.
+- **Discount** $\gamma \in [0, 1)$Gelecekteki ödülün ne kadarı var ?$\gamma = 0.99$~ 100 adımlık ufuk alır; $\gamma = 0.9$- 10'u alır.
 
-**The Markov property** `P(s_{t+1} | s_t, a_t) = P(s_{t+1} | s_0, a_0, …, s_t, a_t)`Gelecek sadece mevcut durumdan bağlıdır. Eğer öyle değilse, devlet temsilcisi eksiktir.
+**The Markov property** $P(s_{t+1} \mid s_t, a_t) = P(s_{t+1} \mid s_0, a_0, \ldots, s_t, a_t)$Gelecek sadece mevcut durumdan bağlıdır. Eğer öyle değilse, devlet temsilcisi eksiktir.
 
-**Policies and returns.**Bir politika`π(a | s)`Haritalar, hareket dağılımlarına ilişkin durumları gösterir.`G_t = r_t + γ r_{t+1} + γ² r_{t+2} + …`gelecek ödüllerin indirimli toplamıdır.`V^π(s) = E[G_t | s_t = s]``s`Politikası altında`π`- Q değerini .`Q^π(s, a) = E[G_t | s_t = s, a_t = a]`Bu iki işlemden birini tahmin eden her RL algoritması, daha sonra iyileştirir.`π`Bu yüzden.
+**Policies and returns.**Bir politika$\pi(a \mid s)$Haritalar, hareket dağılımlarına ilişkin durumları gösterir.$G_t = r_t + \gamma r_{t+1} + \gamma^2 r_{t+2} + \ldots$gelecek ödüllerin indirimli toplamıdır.$V^\pi(s) = \mathbb{E}[G_t \mid s_t = s]$$s$Politikası altında$\pi$- Q değerini .$Q^\pi(s, a) = \mathbb{E}[G_t \mid s_t = s, a_t = a]$Bu iki işlemden birini tahmin eden her RL algoritması, daha sonra iyileştirir.$\pi$Bu yüzden.
 
 **The Bellman equations.**Bu aşamada her şeyin kullandığı sabit nokta denklemleri:
 
-`V^π(s) = Σ_a π(a|s) Σ_{s', r} P(s', r | s, a) [r + γ V^π(s')]`
-`Q^π(s, a) = Σ_{s', r} P(s', r | s, a) [r + γ Σ_{a'} π(a'|s') Q^π(s', a')]`
+```math
+\begin{aligned}
+V^\pi(s) &= \sum_a \pi(a \mid s) \sum_{s', r} P(s', r \mid s, a) [r + \gamma V^\pi(s')] \\
+Q^\pi(s, a) &= \sum_{s', r} P(s', r \mid s, a) [r + \gamma \sum_{a'} \pi(a' \mid s') Q^\pi(s', a')]
+\end{aligned}
+```
 
 Bu bölünme beklenen "bu adım ödül" artı "hiç yere düştüğünüz yerin indirim değeri" olarak geri döner. Tekrarlı. 9. aşamada her algoritma bu denklemi ya bir yaklaşım (dinamik programlama), ondan örnekler (Monte Carlo) veya bir adım (zaman farkı) ile yeniden başlatır.
 
@@ -113,16 +117,16 @@ Bu, Sutton & Barto'daki ilk algoritmadır ve ardından gelen her RL yöntemi iç
 
 ### Dördüncü adım:`γ`fiziksel anlamı olan bir hiperparametre
 
-Etkili ufuk yaklaşık olarak `1 / (1 - γ)`- Evet .`γ = 0.9`→ 10 adım. `γ = 0.99`→ 100 adım. `γ = 0.999`→ 1000 adım.
+Etkili ufuk yaklaşık olarak $1 / (1 - \gamma)$- Evet .$\gamma = 0.9$→ 10 adım. $\gamma = 0.99$→ 100 adım. $\gamma = 0.999$→ 1000 adım.
 
-Çok düşük ve ajan kısa görüşlü davranır. Çok yüksek ve kredi tahsis gürültülü hale gelir, çünkü birçok erken adım uzun vadeli ödül için sorumluluk paylaşır. LLM RLHF tipik olarak kullanır `γ = 1`Çünkü bölümler kısa ve sınırlı.`0.95–0.99`Uzun üfüre strateji oyunları kullanıyor`0.999`- Evet .
+Çok düşük ve ajan kısa görüşlü davranır. Çok yüksek ve kredi tahsis gürültülü hale gelir, çünkü birçok erken adım uzun vadeli ödül için sorumluluk paylaşır. LLM RLHF tipik olarak kullanır $\gamma = 1$Çünkü bölümler kısa ve sınırlı.`0.95–0.99`Uzun üfüre strateji oyunları kullanıyor`0.999`- Evet .
 
 ## Tuzaklar
 
 - **Non-Markovian state.**Eğer son üç gözlemden karar vermek istiyorsanız, "devlet" sadece mevcut gözlem değildir.
 - **Sparse rewards.**Sadece kazançlı ödüller, büyük devlet alanlarında öğrenmeyi neredeyse imkansız hale getirir.
 - **Reward hacking.**Bir vekil ödülünü optimize etmek genellikle patolojik bir davranış üretir. OpenAI'nin tekne yarışları ajanı yarışı bitirmek yerine sonsuza dek güç toplayarak çevrelerde döner.
-- **Discount mis-spec.** `γ = 1`Sonsuz ufuklı bir görevin her değerini sonsuz yapar.`γ < 1`- Evet .
+- **Discount mis-spec.** $\gamma = 1$Sonsuz ufuklı bir görevin her değerini sonsuz yapar.$\gamma < 1$- Evet .
 - **Reward scale.**{+100, -100} vs {+1, -1} ödülleri aynı optimum politikaları verir ama büyük ölçüde farklı gradient büyüklükleri.`[-1, 1]`-PPO/DQN'e bağlanmadan önce.
 
 ## Kullan
@@ -167,21 +171,21 @@ Refuse to ship any MDP where the state is non-Markovian without explicit mention
 ## Egzersizler
 
 1. **Easy.**4×4 GridWorld ve rastgele politika uygulaması uygulamak `code/main.py`- 10.000 bölüm çalıştırın. Geri dönüş ortalaması ve STD rapor edin.
-2. **Medium.**Çık .`policy_evaluation`- Evet .`γ ∈ {0.5, 0.9, 0.99}`- Üniformal rastgelelik politikası için.`V`Her biri için 4×4 şebekesi olarak. Terminal yakınındaki durum değerlerinin neden daha büyük olan daha hızlı büyüdüğünü açıklayın.`γ`- Evet .
-3. **Hard.**GridWorld ' i stohastik çevir: her eylem olasılık ile bitişik bir yöne kayar `p = 0.1`- Üniforma politikasını yeniden değerlendirmek.`V[start]`- Daha iyi mi kötü mi?
+2. **Medium.**Çık .`policy_evaluation`- Evet .$\gamma \in \lbrace 0.5, 0.9, 0.99 \rbrace$- Üniformal rastgelelik politikası için.`V`Her biri için 4×4 şebekesi olarak. Terminal yakınındaki durum değerlerinin neden daha büyük olan daha hızlı büyüdüğünü açıklayın.$\gamma$- Evet .
+3. **Hard.**GridWorld ' i stohastik çevir: her eylem olasılık ile bitişik bir yöne kayar $p = 0.1$- Üniforma politikasını yeniden değerlendirmek.`V[start]`- Daha iyi mi kötü mi?
 
 ## Anahtar Terimler
 
 | Term | What people say | What it actually means |
 |------|-----------------|-----------------------|
-| MDP | "Reinforcement learning setup" | Tuple `(S, A, P, R, γ)` satisfying the Markov property. |
+| MDP | "Reinforcement learning setup" | Tuple $(S, A, P, R, \gamma)$ satisfying the Markov property. |
 | State | "What the agent sees" | Sufficient statistic for future dynamics under the chosen policy class. |
-| Policy | "Agent's behavior" | Conditional distribution `π(a \| s)` or deterministic map `s → a`. |
-| Return | "Total reward" | Discounted sum `Σ γ^t r_t` from the current step. |
-| Value | "How good a state is" | Expected return under `π` starting from `s`. |
-| Q-value | "How good an action is" | Expected return under `π` starting from `s` with first action `a`. |
+| Policy | "Agent's behavior" | Conditional distribution $\pi(a \mid s)$ or deterministic map $s \to a$. |
+| Return | "Total reward" | Discounted sum $\sum \gamma^t r_t$ from the current step. |
+| Value | "How good a state is" | Expected return under $\pi$ starting from $s$. |
+| Q-value | "How good an action is" | Expected return under $\pi$ starting from $s$ with first action $a$. |
 | Bellman equation | "Dynamic programming recursion" | Fixed-point decomposition of value / Q into one-step reward plus discounted successor value. |
-| Discount `γ` | "Future vs present" | Geometric weight on far-future reward; effective horizon `~1/(1-γ)`. |
+| Discount $\gamma$ | "Future vs present" | Geometric weight on far-future reward; effective horizon $\approx 1/(1-\gamma)$. |
 
 ## Daha Fazla Okumak
 
@@ -189,4 +193,4 @@ Refuse to ship any MDP where the state is non-Markovian without explicit mention
 - [Bellman (1957). Dynamic Programming](https://press.princeton.edu/books/paperback/9780691146683/dynamic-programming) Bellman denkleminin kökeni.
 - [OpenAI Spinning Up — Part 1: Key Concepts](https://spinningup.openai.com/en/latest/spinningup/rl_intro.html) derin bir RL açısından kısa bir MDP primer.
 - [Puterman (2005). Markov Decision Processes](https://onlinelibrary.wiley.com/doi/book/10.1002/9780470316887) MDP'ler ve tam çözüm yöntemleri ile ilgili operasyon-kağıt araştırma referansı.
-- [Littman (1996). Algorithms for Sequential Decision Making (PhD thesis)](https://www.cs.rutgers.edu/~mlittman/papers/thesis-main.pdf) dinamik programlama uzmanlığı olarak MDP'lerin en temiz türü.
+- [Littman (1996). Algorithms for Sequential Decision Making (PhD thesis)](https://cs.brown.edu/media/filer_public/d1/a6/d1a6f66a-289a-4b81-9596-417114843489/littman.pdf) dinamik programlama uzmanlığı olarak MDP'lerin en temiz türü.

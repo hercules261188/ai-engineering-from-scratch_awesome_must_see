@@ -9,7 +9,7 @@
 
 ## Sorun
 
-Dinamik programlama zarif ama sorular sorulabilir.`P(s' | s, a)`Bu, bir robotun kamera piksellerinin dağılımını analizle hesaplayamadığı anlamına gelir. Bir fiyatlandırma algoritması her olası müşteri tepkisine dahil edemez. Bir LLM bir token sonrası tüm olası devamları sayamaz.
+Dinamik programlama zarif ama sorular sorulabilir.$P(s' \mid s, a)$Bu, bir robotun kamera piksellerinin dağılımını analizle hesaplayamadığı anlamına gelir. Bir fiyatlandırma algoritması her olası müşteri tepkisine dahil edemez. Bir LLM bir token sonrası tüm olası devamları sayamaz.
 
 Sadece çevreye örnek alma yeteneğine ihtiyacınız var.`s_0, a_0, r_1, s_1, a_1, r_2, …, s_T`- Değerleri tahmin etmek için kullan.
 
@@ -19,30 +19,32 @@ DP'den MC'ye geçiş felsefi açıdan önemlidir: * bilinmiş modelden + tam yed
 
 ![Monte Carlo: rollout, compute returns, average; first-visit vs every-visit](../assets/monte-carlo.svg)
 
-**The core idea, in one line:** `V^π(s) = E_π[G_t | s_t = s] ≈ (1/N) Σ_i G^{(i)}(s)`nerede`G^{(i)}(s)` ziyaretlerden sonra yapılan ziyaretler`s`Politikası altında`π`- Evet .
+**The core idea, in one line:** $V^\pi(s) = \mathbb E_\pi[G_t \mid s_t = s] \approx (1/N) \sum_i G^{(i)}(s)$nerede$G^{(i)}(s)$ ziyaretlerden sonra yapılan ziyaretler$s$Politikası altında$\pi$- Evet .
 
-**First-visit vs every-visit MC.**Bir bölümü göz önüne alarak , devletin ziyaretlerini yapıyorlar .`s`İlk ziyaret MC'si sadece ilk ziyaretten gelen geri dönüşü sayır; her ziyaret MC tüm ziyaretleri sayır. Her ikisi de sınırda tarafsızdır. İlk ziyaret analiz etmek daha kolaydır (iid örnekleri). Her ziyaret bölüm başına daha fazla veri kullanır ve genellikle uygulamada daha hızlı bir şekilde birleşti.
+**First-visit vs every-visit MC.**Bir bölümü göz önüne alarak , devletin ziyaretlerini yapıyorlar .$s$İlk ziyaret MC'si sadece ilk ziyaretten gelen geri dönüşü sayır; her ziyaret MC tüm ziyaretleri sayır. Her ikisi de sınırda tarafsızdır. İlk ziyaret analiz etmek daha kolaydır (iid örnekleri). Her ziyaret bölüm başına daha fazla veri kullanır ve genellikle uygulamada daha hızlı bir şekilde birleşti.
 
 **Incremental mean.**Tüm gönderileri depolamak yerine, çalışkan ortalamayı güncelle:
 
-`V_n(s) = V_{n-1}(s) + (1/n) [G_n - V_{n-1}(s)]`
+```math
+V_n(s) = V_{n-1}(s) + (1/n) [G_n - V_{n-1}(s)]
+```
 
-Yeniden düzenlenir: `V_new = V_old + α · (target - V_old)`- Evet .`α = 1/n`- Değiş .`1/n`sabit bir adım boyutu için `α ∈ (0, 1)`ve bir istasyonel olmayan MC tahmincisi elde edersiniz ki değişimleri izler `π`Bu hareket, MC'den TD'ye ve modern RL algoritmasına kadar bir atlama.
+Yeniden düzenlenir: $V_{\text{new}} = V_{\text{old}} + \alpha \cdot (\text{target} - V_{\text{old}})$- Evet .$\alpha = 1/n$- Değiş .$1/n$sabit bir adım boyutu için $\alpha \in (0, 1)$ve bir istasyonel olmayan MC tahmincisi elde edersiniz ki değişimleri izler $\pi$Bu hareket, MC'den TD'ye ve modern RL algoritmasına kadar bir atlama.
 
-**Exploration is now a problem.**DP, her eyalete sayım yoluyla dokundu. MC sadece eyaletlerin politika ziyaretlerini görüyor.`π`Bu durum, bir devlet alanının tüm bölgelerinin asla örneklenmemesi ve değer tahminleri sonsuza kadar sıfırda kalması anlamına gelir.
+**Exploration is now a problem.**DP, her eyalete sayım yoluyla dokundu. MC sadece eyaletlerin politika ziyaretlerini görüyor.$\pi$Bu durum, bir devlet alanının tüm bölgelerinin asla örneklenmemesi ve değer tahminleri sonsuza kadar sıfırda kalması anlamına gelir.
 
 1. **Exploring starts.**Her bölümü rastgele bir çiftten başlatın.
-2. **ε-greedy.**Açgözlü davranın.`ε`Tüm durum eylem çiftleri asimptotik olarak örneklenir.
-3. **Off-policy MC.**Davranış politikası çerçevesinde veriler toplayın `μ`, hedef politika hakkında bilgi edinmek `π`Yüksek farklılık, ama DQN gibi tekrar oynatma tamponu yöntemlerine bir köprü.
+2. **ε-greedy.**Açgözlü davranın.$\epsilon$Tüm durum eylem çiftleri asimptotik olarak örneklenir.
+3. **Off-policy MC.**Davranış politikası çerçevesinde veriler toplayın $\mu$, hedef politika hakkında bilgi edinmek $\pi$Yüksek farklılık, ama DQN gibi tekrar oynatma tamponu yöntemlerine bir köprü.
 
 **Monte Carlo Control.**Değerlendirme → geliştirme → değerlendirme, politika tekrarlaması gibi, ancak değerlendirme örnekleme tabanlı:
 
-1. Çık .`π`Bir bölüm al.
-2. Güncelleme`Q(s, a)`Görülen sonuçlardan.
-3. Yap .`π`E-cinsel açgözlülük.`Q`- Evet .
+1. Çık .$\pi$Bir bölüm al.
+2. Güncelleme$Q(s, a)$Görülen sonuçlardan.
+3. Yap .$\pi$E-cinsel açgözlülük.$Q$- Evet .
 4. Tekrar ediyorum.
 
-`Q*`ve `π*`Hafif koşullarda 1 olasılıkla (her çiftin sonsuz sıklıkla ziyaret edildiği)`α`Robbins-Monro'yu tatmin eder.
+$Q^{\ast}$ve $\pi^{\ast}$Hafif koşullarda 1 olasılıkla (her çiftin sonsuz sıklıkla ziyaret edildiği)$\alpha$Robbins-Monro'yu tatmin eder.
 
 ```figure
 epsilon-greedy
@@ -80,7 +82,7 @@ def returns_from(trajectory, gamma):
     return list(reversed(returns))
 ```
 
-Bir geçiş.`O(T)`Geriye dönme .`G_t = r_{t+1} + γ G_{t+1}`Yeniden toplama yapmaktan kaçınır.
+Bir geçiş.$O(T)$Geriye dönme .$G_t = r_{t+1} + \gamma G_{t+1}$Yeniden toplama yapmaktan kaçınır.
 
 ### Adım 3: İlk ziyaret MC değerlendirme
 
@@ -130,15 +132,15 @@ def mc_control(env, episodes, gamma=0.99, epsilon=0.1):
 
 ### Adım 5: DP altın standardı ile karşılaştır
 
-MC tahmininiz`V^π`Ders 02'nin DP sonuçlarıyla aynı fikirde olmalısınız.`~0.1`DP cevabının.
+MC tahmininiz$V^\pi$Ders 02'nin DP sonuçlarıyla aynı fikirde olmalısınız.`~0.1`DP cevabının.
 
 ## Tuzaklar
 
 - **Infinite episodes.**MC'nin bölümleri sona erdirmesi gerekiyor.`max_steps`GridWorld'in rastgele politikası normal olarak 'yi çıkartır.
-- **Variance.**MC'nin tam geri dönüşleri kullanıyor. Uzun bölümlerde, fark büyük  bir şanssız ödül sonunda varyasyon `V(s_0)`TD yöntemleri (Leçon 04) bunu bootstrapping ile azaltıyor.
+- **Variance.**MC'nin tam geri dönüşleri kullanıyor. Uzun bölümlerde, fark büyük  bir şanssız ödül sonunda varyasyon $V(s_0)$TD yöntemleri (Leçon 04) bunu bootstrapping ile azaltıyor.
 - **State coverage.**Açgözlü MC'ler, yeni bir Q'da bir kere bir şey yapmayı deneyecekler.
-- **Non-stationary policies.**- Eğer`π`Bu durumlar, sürekli-α MC tarafından ele alınırken örnek ortalama MC tarafından ele alınmaz.
-- **Off-policy importance sampling.**Ağırlıkları .`π(a|s)/μ(a|s)`Bir yörüngede çarpma. Varians ufukta patlar. Kapı, karar başına ağırlıklı IS veya TD'ye geçiş.
+- **Non-stationary policies.**- Eğer$\pi$Bu durumlar, sürekli-α MC tarafından ele alınırken örnek ortalama MC tarafından ele alınmaz.
+- **Off-policy importance sampling.**Ağırlıkları .$\pi(a \mid s)/\mu(a \mid s)$Bir yörüngede çarpma. Varians ufukta patlar. Kapı, karar başına ağırlıklı IS veya TD'ye geçiş.
 
 ## Kullan
 
@@ -150,10 +152,10 @@ MC tahmininiz`V^π`Ders 02'nin DP sonuçlarıyla aynı fikirde olmalısınız.`~
 | Offline evaluation of a logged policy | Average discounted returns over stored trajectories. |
 | Monte Carlo Tree Search (AlphaZero) | MC rollouts from tree leaves guide selection. |
 | LLM RL evaluation | Compute average reward over sampled completions for a given policy. |
-| Baseline estimation in PPO | The advantage target `A_t = G_t - V(s_t)` uses an MC `G_t`. |
+| Baseline estimation in PPO | The advantage target $A_t = G_t - V(s_t)$ uses an MC $G_t$. |
 | Teaching RL | Simplest algorithm that actually works — strip bootstrapping to see the core. |
 
-Modern derin-RL algoritmaları (PPO, SAC) saf MC (tam geri dönüş) ve saf TD (bir adımlı başlangıç) arasında aralar.`n`- step return veya GAE. Her iki uç noktası da aynı tahminçinin örnekleri.
+Modern derin-RL algoritmaları (PPO, SAC) saf MC (tam geri dönüş) ve saf TD (bir adımlı başlangıç) arasında aralar.$n$- step return veya GAE. Her iki uç noktası da aynı tahminçinin örnekleri.
 
 ## Gönder
 
@@ -182,20 +184,20 @@ Refuse to run MC on non-episodic tasks without a finite horizon cap. Refuse to r
 
 ## Egzersizler
 
-1. **Easy.**4×4 GridWorld'da ilk ziyaret MC değerlendirmesini uygulayın. 10.000 bölüm çalıştırın.`V(0,0)`Bölüm sayısının DP cevabına göre bir fonksiyonu olarak.
-2. **Medium.**                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             `ε ∈ {0.01, 0.1, 0.3}`20.000 bölümden sonra ortalama geri dönüşü karşılaştırın.
-3. **Hard.***Politik dışı* MC'yi önemli örnekleme ile uygula: Teker teker rastgele politika çerçevesinde veriler toplamak `μ`, tahmin`V^π`Determinizm en iyi politika için `π`- Basit IS vs. Kararlama IS vs. Ağır IS. En düşük varyansa hangisi?
+1. **Easy.**4×4 GridWorld'da ilk ziyaret MC değerlendirmesini uygulayın. 10.000 bölüm çalıştırın.$V(0,0)$Bölüm sayısının DP cevabına göre bir fonksiyonu olarak.
+2. **Medium.**                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             $\epsilon \in \lbrace 0.01, 0.1, 0.3 \rbrace$20.000 bölümden sonra ortalama geri dönüşü karşılaştırın.
+3. **Hard.***Politik dışı* MC'yi önemli örnekleme ile uygula: Teker teker rastgele politika çerçevesinde veriler toplamak $\mu$, tahmin$V^\pi$Determinizm en iyi politika için $\pi$- Basit IS vs. Kararlama IS vs. Ağır IS. En düşük varyansa hangisi?
 
 ## Anahtar Terimler
 
 | Term | What people say | What it actually means |
 |------|-----------------|-----------------------|
 | Monte Carlo | "Random sampling" | Estimate expectations by averaging over iid samples from the distribution. |
-| Return `G_t` | "Future reward" | Sum of discounted rewards from step `t` to episode end: `Σ_{k≥0} γ^k r_{t+k+1}`. |
+| Return $G_t$ | "Future reward" | Sum of discounted rewards from step $t$ to episode end: $\sum_{k\ge 0} \gamma^k r_{t+k+1}$. |
 | First-visit MC | "Count each state once" | Only the first visit in an episode contributes to the value estimate. |
 | Every-visit MC | "Use all visits" | Every visit contributes; slightly biased but more sample-efficient. |
-| ε-greedy | "Exploration noise" | Pick greedy action with prob `1-ε`; random action with prob `ε`. |
-| Importance sampling | "Correcting for sampling from the wrong distribution" | Reweight returns by `π(a\|s)/μ(a\|s)` products to estimate `V^π` from `μ` data. |
+| ε-greedy | "Exploration noise" | Pick greedy action with prob $1-\epsilon$; random action with prob $\epsilon$. |
+| Importance sampling | "Correcting for sampling from the wrong distribution" | Reweight returns by $\pi(a \mid s)/\mu(a \mid s)$ products to estimate $V^\pi$ from $\mu$ data. |
 | On-policy | "Learn from my own data" | Target policy = behavior policy. Vanilla MC, PPO, SARSA. |
 | Off-policy | "Learn from someone else's data" | Target policy ≠ behavior policy. Importance-sampled MC, Q-learning, DQN. |
 

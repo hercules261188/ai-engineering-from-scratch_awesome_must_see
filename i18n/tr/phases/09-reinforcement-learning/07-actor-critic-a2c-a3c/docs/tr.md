@@ -1,6 +1,6 @@
 # Aktör-Kritik  A2C ve A3C
 
-> ReINFORCE gürültülü, öğrenen bir eleştirmen ekle.`V̂(s)`A2C, sinkron olarak çalışır, A3C ise ipler arasında çalışır. Her ikisi de modern derin-RL yönteminin zihinsel modelidir.
+> ReINFORCE gürültülü, öğrenen bir eleştirmen ekle.$\hat{V}(s)$A2C, sinkron olarak çalışır, A3C ise ipler arasında çalışır. Her ikisi de modern derin-RL yönteminin zihinsel modelidir.
 
 **Type:** Build
 **Languages:** Python
@@ -9,11 +9,13 @@
 
 ## Sorun
 
-Vanilla REINFORCE işe yarıyor ama farkı korkunç.`G_t`Bu sesleri 10 katına çarparak çarpıyor.`∇ log π`ve ortalama bir gradient tahmincisi üretir. Bu politikaları daha az DQN güncellemeleri ile taşıyabileceğiniz mesafeyi taşımak için binlerce bölüm alıyor.
+Vanilla REINFORCE işe yarıyor ama farkı korkunç.$G_t$Bu sesleri 10 katına çarparak çarpıyor.$\nabla \log \pi$ve ortalama bir gradient tahmincisi üretir. Bu politikaları daha az DQN güncellemeleri ile taşıyabileceğiniz mesafeyi taşımak için binlerce bölüm alıyor.
 
-Değişiklik çiğ geri dönüş kullanılarak ortaya çıkar.`b(s_t)` öğrenilen bir değer de dahil olmak üzere herhangi bir durum fonksiyonu  beklenti değişmez ve varyansa düşer. En iyi ele alınan temel çizgi `V̂(s_t)`Şimdi miktar çarpı.`∇ log π`* avantaj*:
+Değişiklik çiğ geri dönüş kullanılarak ortaya çıkar.$b(s_t)$ öğrenilen bir değer de dahil olmak üzere herhangi bir durum fonksiyonu  beklenti değişmez ve varyansa düşer. En iyi ele alınan temel çizgi $\hat{V}(s_t)$Şimdi miktar çarpı.$\nabla \log \pi$* avantaj*:
 
-`A(s, a) = G - V̂(s)`
+```math
+A(s, a) = G - \hat{V}(s)
+```
 
 Bir eylem ortalama üzerinde bir getiri üretirse iyi olur; aşağıda ise kötüdür. Öğrenmiş bir eleştirmen ile REINFORCE *actor-critic*. eleştirmen, aktörü düşük değişkenlik öğretmeni yapar. Bu 2015'ten sonra tüm derin politika yöntemleri (A2C, A3C, PPO, SAC, IMPALA).
 
@@ -23,33 +25,39 @@ Bir eylem ortalama üzerinde bir getiri üretirse iyi olur; aşağıda ise köt�
 
 **Two networks, one shared loss:**
 
-- **Actor** `π_θ(a | s)`Politikası. Yürümeye örneklenmiş. Politikası derecesi ile eğitilmiş.
-- **Critic** `V_φ(s)`Bu nedenle, bu durumun en az bir şekilde azaltılması için eğitilmiştir.`(V_φ(s) - target)²`- Evet .
+- **Actor** $\pi_\theta(a \mid s)$Politikası. Yürümeye örneklenmiş. Politikası derecesi ile eğitilmiş.
+- **Critic** $V_\phi(s)$Bu nedenle, bu durumun en az bir şekilde azaltılması için eğitilmiştir.$(V_\phi(s) - \text{target})^2$- Evet .
 
 **The advantage.**İki standart form:
 
-- *MC avantajı:* `A_t = G_t - V_φ(s_t)`Tarafsız, daha yüksek bir değişim.
-- *TD avantajı:* `A_t = r_{t+1} + γ V_φ(s_{t+1}) - V_φ(s_t)`. Tarafsız (kullanımlar `V_φ`*TD geri kalanı* olarak da adlandırılır.`δ_t`- Evet .
+- *MC avantajı:* $A_t = G_t - V_\phi(s_t)$Tarafsız, daha yüksek bir değişim.
+- *TD avantajı:* $A_t = r_{t+1} + \gamma V_\phi(s_{t+1}) - V_\phi(s_t)$. Tarafsız (kullanımlar $V_\phi$*TD geri kalanı* olarak da adlandırılır.$\delta_t$- Evet .
 
 **n-step advantage.**İkisi arasında bir arada dur:
 
-`A_t^{(n)} = r_{t+1} + γ r_{t+2} + … + γ^{n-1} r_{t+n} + γ^n V_φ(s_{t+n}) - V_φ(s_t)`
+```math
+A_t^{(n)} = r_{t+1} + \gamma r_{t+2} + \ldots + \gamma^{n-1} r_{t+n} + \gamma^n V_\phi(s_{t+n}) - V_\phi(s_t)
+```
 
-`n = 1`saf TD.`n = ∞`MC'dir. Çoğu uygulamada kullanılır `n = 5`Atari için,`n = 2048`MuJoCo'da PPO için.
+$n = 1$saf TD.$n = \infty$MC'dir. Çoğu uygulamada kullanılır $n = 5$Atari için,$n = 2048$MuJoCo'da PPO için.
 
 **Generalized Advantage Estimation (GAE).**Schulman et al. (2016) tüm n-adım avantajları üzerinde eksponensel olarak ağırlanan bir ortalama önerdi:
 
-`A_t^{GAE} = Σ_{l=0}^{∞} (γλ)^l δ_{t+l}`
+```math
+A_t^{\text{GAE}} = \sum_{l=0}^{\infty} (\gamma \lambda)^l \delta_{t+l}
+```
 
-- Evet .`λ ∈ [0, 1]`- Evet .`λ = 0`TD ( düşük değişkenlik, yüksek önyargı). `λ = 1`MC (yüksek farklılık, tarafsızlık)`λ = 0.95`2026'da, öntanımlı  ayarı, öntanımlı/varians diyalığı istediğiniz yere kadar.
+- Evet .$\lambda \in [0, 1]$- Evet .$\lambda = 0$TD ( düşük değişkenlik, yüksek önyargı). $\lambda = 1$MC (yüksek farklılık, tarafsızlık)$\lambda = 0.95$2026'da, öntanımlı  ayarı, öntanımlı/varians diyalığı istediğiniz yere kadar.
 
-**A2C: synchronous advantage actor-critic.**Toplayın .`T`Dönüşümler `N`Paralel ortamlar. Her adım için avantajlar hesaplayın. Birleştirilmiş seri için aktör ve eleştirmeni güncelleyin. Tekrarla.
+**A2C: synchronous advantage actor-critic.**Toplayın .$T$Dönüşümler $N$Paralel ortamlar. Her adım için avantajlar hesaplayın. Birleştirilmiş seri için aktör ve eleştirmeni güncelleyin. Tekrarla.
 
-**A3C: asynchronous advantage actor-critic.**Mnih et al. (2016). Spawn `N`İşçi ipleri, her biri bir çevre çalıştırır. Her işçi kendi dağıtımında yerel olarak gradientleri hesaplar, sonra eşzamanlı olarak paylaşılan bir parametre sunucusuna uyguluyor. Hiçbir tekrarlama tamponu gerekmez  işçiler farklı yörüngeler çalıştırarak dekorrele. A3C ölçekte CPU'larda eğitim alabileceğini kanıtladı. 2026'da, GPU tabanlı A2C (batched parallel envs) baskın çünkü GPU'lar büyük partiler istiyor.
+**A3C: asynchronous advantage actor-critic.**Mnih et al. (2016). Spawn $N$İşçi ipleri, her biri bir çevre çalıştırır. Her işçi kendi dağıtımında yerel olarak gradientleri hesaplar, sonra eşzamanlı olarak paylaşılan bir parametre sunucusuna uyguluyor. Hiçbir tekrarlama tamponu gerekmez  işçiler farklı yörüngeler çalıştırarak dekorrele. A3C ölçekte CPU'larda eğitim alabileceğini kanıtladı. 2026'da, GPU tabanlı A2C (batched parallel envs) baskın çünkü GPU'lar büyük partiler istiyor.
 
 **The combined loss.**
 
-`L(θ, φ) = -E[ A_t · log π_θ(a_t | s_t) ]  +  c_v · E[(V_φ(s_t) - G_t)²]  -  c_e · E[H(π_θ(·|s_t))]`
+```math
+L(\theta, \phi) = -\mathbb{E}[ A_t \cdot \log \pi_\theta(a_t \mid s_t) ] + c_v \cdot \mathbb{E}[(V_\phi(s_t) - G_t)^2] - c_e \cdot \mathbb{E}[H(\pi_\theta(\cdot \mid s_t))]
+```
 
 Üç şart: politika derecesi kaybı, değer gerileme, entropi bonusu. `c_v ~ 0.5`- Evet .`c_e ~ 0.01`Kanonik başlangıç noktalarıdır.
 
@@ -61,7 +69,7 @@ actor-critic
 
 ### Adım 1: eleştirmen
 
-Düzsel eleştirmen`V_φ(s) = w · features(s)`MSE ile güncelleştirilmiştir:
+Düzsel eleştirmen$V_\phi(s) = w \cdot \text{features}(s)$MSE ile güncelleştirilmiştir:
 
 ```python
 def critic_update(w, x, target, lr):
@@ -76,7 +84,7 @@ Bir tablo ortamında eleştirmen birkaç yüz bölümde bir araya gelir. Atari'd
 
 ### Adım 2: N-adım avantajı
 
-Uzunluktan dolayı .`T`Ve bir de bir final.`V(s_T)`- ...
+Uzunluktan dolayı .$T$Ve bir de bir final.$V(s_T)$- ...
 
 ```python
 def compute_advantages(rewards, values, gamma=0.99, lam=0.95, last_value=0.0):
@@ -91,7 +99,7 @@ def compute_advantages(rewards, values, gamma=0.99, lam=0.95, last_value=0.0):
     return advantages, returns
 ```
 
-`returns`eleştirmen hedef.`advantages`- Çokluyor.`∇ log π`- Evet .
+`returns`eleştirmen hedef.`advantages`- Çokluyor.$\nabla \log \pi$- Evet .
 
 ### Adım 3: birleşik güncelleme
 
@@ -114,8 +122,8 @@ Politikada, her güncelleme için bir çıkış, aktör ve eleştirmen için ayr
 
 ### Adım 4: paralellik (A3C vs. A2C)
 
-- **A3C:**Çekil `N`Her biri kendi env ve kendi ileri geçişini yürütür. Periodik olarak gradient güncelleştirmeleri paylaşılmış bir usta.
-- **A2C:**Çıkış`N`Tek bir süreçte örnekler oluşturmak, gözlemleri bir `[N, obs_dim]`Batch, batch forward pass, batch backward pass daha yüksek GPU kullanımı, belirleyici, akıl yürütmek daha kolay.
+- **A3C:**Çekil $N$Her biri kendi env ve kendi ileri geçişini yürütür. Periodik olarak gradient güncelleştirmeleri paylaşılmış bir usta.
+- **A2C:**Çıkış$N$Tek bir süreçte örnekler oluşturmak, gözlemleri bir `[N, obs_dim]`Batch, batch forward pass, batch backward pass daha yüksek GPU kullanımı, belirleyici, akıl yürütmek daha kolay.
 
 Oyuncak kodumuz netlik için tek iplik; A2C'ye yeniden yazmak üç satır numpy.
 
@@ -125,7 +133,7 @@ Oyuncak kodumuz netlik için tek iplik; A2C'ye yeniden yazmak üç satır numpy.
 - **Advantage normalization.**Parçaya sıfır ortalama/birlik std'ye avantajları normalleştirir.
 - **Shared trunk.**Görüntü girişlerinde oyuncu ve eleştirmen için ortak bir özellik çıkarıcı kullanın. Ayrı başlar. Paylaşılan özellikler her iki kayıpta da serbest sürüş.
 - **On-policy contract.**A2C, verileri tam bir güncelleme için tekrar kullanır. Daha fazla ve gradiyenti tarafsızdır (PPO'nun eklediği önemlilik örneği düzeltmesidir).
-- **Entropy collapse.**- Hayır .`c_e > 0`Bu politika birkaç yüz güncelleme ile neredeyse belirlenmiş hale gelir ve araştırmayı bırakır.
+- **Entropy collapse.**- Hayır .$c_e > 0$Bu politika birkaç yüz güncelleme ile neredeyse belirlenmiş hale gelir ve araştırmayı bırakır.
 - **Reward scale.**Avantaj büyüklükleri ödül ölçeğine bağlıdır. Görevler arasında tutarlı gradient büyüklükleri için ödülleri (örneğin, çalıştırma-std bölüşmesi) normallaştırın.
 
 ## Kullan
@@ -170,22 +178,22 @@ Refuse single-worker A2C on environments with horizon > 1000 (too on-policy, too
 
 ## Egzersizler
 
-1. **Easy.**MC avantajı olan aktör-kritik tren (`G_t - V(s_t)`Örnek verimliliğini ders 06'tan REINFORCE-with-running-mean baseline ile karşılaştırın.
-2. **Medium.**TD-salı avantajına geçiş (`r + γ V(s') - V(s)`En iyisi, avantaj partilerinin farkını ölçmek.
-3. **Hard.**GAE'yi uygula.`λ ∈ {0, 0.5, 0.9, 0.95, 1.0}`Bu görevin önyargısı/varians tatlı noktası nerede?
+1. **Easy.**MC avantajı olan aktör-kritikleri eğit $(G_t - V(s_t))$Örnek verimliliğini ders 06'tan REINFORCE-with-running-mean baseline ile karşılaştırın.
+2. **Medium.**TD-salı avantajına geçin $(r + \gamma V(s') - V(s))$- Avantaj partilerinin farkını ölç.
+3. **Hard.**GAE'yi uygula.$\lambda \in \lbrace 0, 0.5, 0.9, 0.95, 1.0 \rbrace$Bu görevin önyargısı/varians tatlı noktası nerede?
 
 ## Anahtar Terimler
 
 | Term | What people say | What it actually means |
 |------|-----------------|-----------------------|
-| Actor | "The policy net" | `π_θ(a\|s)`, updated by policy gradient. |
-| Critic | "The value net" | `V_φ(s)`, updated by MSE regression to returns / TD targets. |
-| Advantage | "How much better than average" | `A(s, a) = Q(s, a) - V(s)` or its estimators. Multiplier for `∇ log π`. |
-| TD residual | "δ" | `δ_t = r + γ V(s') - V(s)`; one-step advantage estimate. |
-| GAE | "The interpolation knob" | Exponentially weighted sum of n-step advantages, parameterized by `λ`. |
+| Actor | "The policy net" | $\pi_\theta(a \mid s)$, updated by policy gradient. |
+| Critic | "The value net" | $V_\phi(s)$, updated by MSE regression to returns / TD targets. |
+| Advantage | "How much better than average" | $A(s, a) = Q(s, a) - V(s)$ or its estimators. Multiplier for $\nabla \log \pi$. |
+| TD residual | "δ" | $\delta_t = r + \gamma V(s') - V(s)$; one-step advantage estimate. |
+| GAE | "The interpolation knob" | Exponentially weighted sum of n-step advantages, parameterized by $\lambda$. |
 | A2C | "Synchronous actor-critic" | Batched across envs; one gradient step per rollout. |
 | A3C | "Async actor-critic" | Worker threads push gradients to a shared param server. Original paper; less common in 2026. |
-| Bootstrap | "Use V at the horizon" | Truncate the rollout, add `γ^n V(s_{t+n})` to close the sum. |
+| Bootstrap | "Use V at the horizon" | Truncate the rollout, add $\gamma^n V(s_{t+n})$ to close the sum. |
 
 ## Daha Fazla Okumak
 

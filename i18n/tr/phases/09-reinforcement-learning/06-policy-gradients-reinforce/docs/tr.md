@@ -11,9 +11,9 @@
 
 Q-learning ve DQN *value* fonksiyonunu parametre eder.`argmax Q`Bu, ayrı eylemler ve ayrı durumlar için iyi.`argmax`10 boyutlu bir topu üzerinde?) veya stokast politikası istediğinizde (`argmax`Bu, yapısal olarak belirleyici bir yöntemdir.
 
-Politika gradiyentiler yerine *politik* parametrelidir. `π_θ(a | s)`Bu, bir işlem üzerinde bir dağılım üreten bir sinir ağıdır.`θ`- Yukarı çık.`argmax`Bellman'ın geri dönüşü yok, sadece gradient yükselme.`J(θ) = E_{π_θ}[G]`- Evet .
+Politika gradiyentiler yerine *politik* parametrelidir. $\pi_\theta(a \mid s)$Bu, bir işlem üzerinde bir dağılım üreten bir sinir ağıdır.$\theta$- Yukarı çık.`argmax`Bellman'ın geri dönüşü yok, sadece gradient yükselme.$J(\theta) = \mathbb E_{\pi_\theta}[G]$- Evet .
 
-REINFORCE teoremi (Williams 1992) size bu gradiyentin hesaplanabileceğini söylüyor:`∇J(θ) = E_π[ G · ∇_θ log π_θ(a | s) ]`Bir bölüm çalıştır, geri dönüşü hesapla, çarpı ile çarpı.`∇ log π_θ(a | s)`Her adımda ortalama, derecelendirme, tamam.
+REINFORCE teoremi (Williams 1992) size bu gradiyentin hesaplanabileceğini söylüyor:$\nabla J(\theta) = \mathbb E_\pi[ G \cdot \nabla_\theta \log \pi_\theta(a \mid s) ]$Bir bölüm çalıştır, geri dönüşü hesapla, çarpı ile çarpı.$\nabla \log \pi_\theta(a \mid s)$Her adımda ortalama, derecelendirme, tamam.
 
 2026'da LLM-RL algoritması olan her bir algoritma REINFORCE'nin bir gelişmesidir. Parmaklarınızla anlamak bu aşamanın geri kalanında ve 10 · 07 aşamasında (RLHF uygulaması) ve 10 · 08 aşamasında (DPO) ön koşuldur.
 
@@ -21,36 +21,44 @@ REINFORCE teoremi (Williams 1992) size bu gradiyentin hesaplanabileceğini söyl
 
 ![Policy gradient: softmax policy, log-π gradient, return-weighted update](../assets/policy-gradient.svg)
 
-**The policy gradient theorem.**Herhangi bir politika için .`π_θ`parametrelidir `θ`- ...
+**The policy gradient theorem.**Herhangi bir politika için .$\pi_\theta$parametrelidir $\theta$- ...
 
-`∇J(θ) = E_{τ ~ π_θ}[ Σ_{t=0}^{T} G_t · ∇_θ log π_θ(a_t | s_t) ]`
+```math
+\nabla J(\theta) = \mathbb{E}_{\tau \sim \pi_\theta}[ \sum_{t=0}^{T} G_t \cdot \nabla_\theta \log \pi_\theta(a_t \mid s_t) ]
+```
 
-nerede`G_t = Σ_{k=t}^{T} γ^{k-t} r_{k+1}`step'ten düşen düşüştür.`t`Beklentiler tam yollardan geçti .`τ``π_θ`- Evet .
+nerede$G_t = \sum_{k=t}^{T} \gamma^{k-t} r_{k+1}$step'ten düşen düşüştür.$t$Beklentiler tam yollardan geçti .$\tau$$\pi_\theta$- Evet .
 
-**The proof is short.**Farklılaştır `J(θ) = Σ_τ P(τ; θ) G(τ)`- Kullanım.`∇P(τ; θ) = P(τ; θ) ∇ log P(τ; θ)`(log-derivat hilesi).`log P(τ; θ) = Σ log π_θ(a_t | s_t) + environment terms that do not depend on θ`İki cebir çizgisi teoremi verir.
+**The proof is short.**Farklılaştır $J(\theta) = \sum_\tau P(\tau; \theta) G(\tau)$- Kullanım.$\nabla P(\tau; \theta) = P(\tau; \theta) \nabla \log P(\tau; \theta)$(log-derivat hilesi).$\log P(\tau; \theta) = \sum \log \pi_\theta(a_t \mid s_t) + \text{environment terms that do not depend on } \theta$İki cebir çizgisi teoremi verir.
 
-**Variance reduction tricks.**Vanilla REINFORCE'nin cinayetçi bir değişikliği var.`∇ log π`Şiddetli bir sesli, ürünleri çok gürültülü.
+**Variance reduction tricks.**Vanilla REINFORCE'nin cinayetçi bir değişikliği var.$\nabla \log \pi$Şiddetli bir sesli, ürünleri çok gürültülü.
 
-1. **Baseline subtraction.**Değiştir `G_t`- Evet .`G_t - b(s_t)`herhangi bir başlangıç için `b(s_t)`Bu da `a_t`Tarafsızlık çünkü`E[b(s_t) · ∇ log π(a_t | s_t)] = 0`Tipik seçim:`b(s_t) = V̂(s_t)`Bir eleştirmen tarafından öğrenilen → aktör- eleştirmen (Denevi 07).
-2. **Reward-to-go.**Değiştir `Σ_t G_t · ∇ log π_θ(a_t | s_t)`- Evet .`Σ_t G_t^{from t} · ∇ log π_θ(a_t | s_t)`. Sadece gelecekte elde edilen kazançlar belirli bir eylem için önemli  Geçmişteki ödüller sıfır ortalama gürültüye katkıda bulunur.
+1. **Baseline subtraction.**Değiştir $G_t$- Evet .$G_t - b(s_t)$herhangi bir başlangıç için $b(s_t)$Bu da $a_t$Tarafsızlık çünkü$\mathbb{E}[b(s_t) \cdot \nabla \log \pi(a_t \mid s_t)] = 0$Tipik seçim:$b(s_t) = \hat{V}(s_t)$Bir eleştirmen tarafından öğrenilen → aktör- eleştirmen (Denevi 07).
+2. **Reward-to-go.**Değiştir $\sum_t G_t \cdot \nabla \log \pi_\theta(a_t \mid s_t)$- Evet .$\sum_t G_t^{\text{from } t} \cdot \nabla \log \pi_\theta(a_t \mid s_t)$. Sadece gelecekte elde edilen kazançlar belirli bir eylem için önemli  Geçmişteki ödüller sıfır ortalama gürültüye katkıda bulunur.
 
 Birleştirildiğinde:
 
-`∇J ≈ (1/N) Σ_{i=1}^{N} Σ_{t=0}^{T_i} [ G_t^{(i)} - V̂(s_t^{(i)}) ] · ∇_θ log π_θ(a_t^{(i)} | s_t^{(i)})`
+```math
+\nabla J \approx (1/N) \sum_{i=1}^{N} \sum_{t=0}^{T_i} [ G_t^{(i)} - \hat{V}(s_t^{(i)}) ] \cdot \nabla_\theta \log \pi_\theta(a_t^{(i)} \mid s_t^{(i)})
+```
 
 Bu, A2C (Desin 07) ve PPO (Desin 08) 'nin doğrudan ataları olan bir temel  ile REINFORCE'dir.
 
 **Softmax policy parameterization.**Ayrı işlemler için standart seçim:
 
-`π_θ(a | s) = exp(f_θ(s, a)) / Σ_{a'} exp(f_θ(s, a'))`
+```math
+\pi_\theta(a \mid s) = \exp(f_\theta(s, a)) / \sum_{a'} \exp(f_\theta(s, a'))
+```
 
-nerede`f_θ`Bu, her hareket için bir puan çıkaran herhangi bir sinir ağıdır.
+nerede$f_\theta$Bu, her hareket için bir puan çıkaran herhangi bir sinir ağıdır.
 
-`∇_θ log π_θ(a | s) = ∇_θ f_θ(s, a) - Σ_{a'} π_θ(a' | s) ∇_θ f_θ(s, a')`
+```math
+\nabla_\theta \log \pi_\theta(a \mid s) = \nabla_\theta f_\theta(s, a) - \sum_{a'} \pi_\theta(a' \mid s) \nabla_\theta f_\theta(s, a')
+```
 
 Yani, alınan eylemlerin puanı, polisin altında beklenen değeri eksik.
 
-**Gaussian policy for continuous actions.** `π_θ(a | s) = N(μ_θ(s), σ_θ(s))`- Evet .`∇ log N(a; μ, σ)`Bu, 9. · 07 aşamasının SAC ihtiyaçları.
+**Gaussian policy for continuous actions.** $\pi_\theta(a \mid s) = N(\mu_\theta(s), \sigma_\theta(s))$- Evet .$\nabla \log N(a; \mu, \sigma)$Bu, 9. · 07 aşamasının SAC ihtiyaçları.
 
 ```figure
 policy-gradient-landscape
@@ -119,19 +127,19 @@ def reinforce_step(theta, trajectory, gamma, lr, baseline=0.0):
                 theta[i][j] += lr * advantage * grad_log_pi_a[i] * s[j]
 ```
 
-- Yolu `∇ log π(a|s) = e_a - π(·|s)`(birincisi `a`- olasılık) softmax politik gradientlerin kalbidir.
+- Yolu $\nabla \log \pi(a \mid s) = e_a - \pi(\cdot \mid s)$(birincisi $a$- olasılık) softmax politik gradientlerin kalbidir.
 
 ### Adım 5: Temel çizgiler
 
-Bir ortalama `G`Son bölümler üzerinde 4×4 GridWorld çalıştırmak için yeterli varyansa azaltılması; bir araya gelmek için ~500 bölüm gerekir.`V̂(s)`Ve sen aktör eleştirmenini alıyorsun.
+Bir ortalama $G$Son bölümler üzerinde 4×4 GridWorld çalıştırmak için yeterli varyansa azaltılması; bir araya gelmek için ~500 bölüm gerekir.$\hat{V}(s)$Ve sen aktör eleştirmenini alıyorsun.
 
 ## Tuzaklar
 
-- **Exploding gradients.**Geri dönüşler büyük olabilir.`G`- ...`~N(0, 1)``∇ log π`- Evet .
-- **Entropy collapse.**Politikası çok erken bir kararlılık eylemine dönüşür, keşif yapmayı bırakır, sıkışır.`β · H(π(·|s))`Amaca ulaşmak için.
+- **Exploding gradients.**Geri dönüşler büyük olabilir.$G$- ...`~N(0, 1)`$\nabla \log \pi$- Evet .
+- **Entropy collapse.**Politikası çok erken bir kararlılık eylemine dönüşür, keşif yapmayı bırakır, sıkışır.$\beta \cdot H(\pi(\cdot \mid s))$Amaca ulaşmak için.
 - **High variance.**Vanilla REINFORCE binlerce bölüm gerektirir. Kritik bir temel (Denevi 07) veya TRPO/PPO'nun güven bölgesini (Denevi 08) standart düzeltme.
 - **Sample inefficiency.**Politika üzerindeki değişiklikler, bir güncelleme sonrasında her geçişi atmak anlamına gelir.Polis dışındaki düzeltmeler, önemi örneği ile veriyi geri getirir, değişikliğin bedeliyle (PPO'nun oranı, bir kısaltılmış IS ağırlığıdır).
-- **Non-stationary gradients.**100 bölüm önceki aynı gradient eski kullanıyor .`π`Bu nedenle politika yöntemleri her birkaç çıkışta güncelleştirilir.
+- **Non-stationary gradients.**100 bölüm önceki aynı gradient eski kullanıyor .$\pi$Bu nedenle politika yöntemleri her birkaç çıkışta güncelleştirilir.
 - **Credit assignment.**Ödüller olmadan, geçmiş ödüller gürültüye katkıda bulunur.
 
 ## Kullan
@@ -178,20 +186,20 @@ Refuse REINFORCE-no-baseline on horizons > 500 steps. Refuse continuous-action c
 
 1. **Easy.**4×4 GridWorld'de lineer softmax politikası ile REINFORCE uygulamak. Temel çizgi olmadan 1.000 bölüm için eğit. Öğrenme eğriyi çiz; varyans ölç (sd of returns).
 2. **Medium.**Baseline'i bir daha çalıştırın. Yeniden çalıştırın. Örnek verimliliğini ve varyansiyonunu vanilya çalıştırması ile karşılaştırın. Baseline, dönüşüm adımlarını ne kadar azaltır?
-3. **Hard.**Bir entropi bonusu ekleyin `β · H(π)`- Arama .`β ∈ {0, 0.01, 0.1, 1.0}`Bu işin en iyi noktası nerede?
+3. **Hard.**Bir entropi bonusu ekleyin $\beta \cdot H(\pi)$- Arama .$\beta \in \lbrace 0, 0.01, 0.1, 1.0 \rbrace$Bu işin en iyi noktası nerede?
 
 ## Anahtar Terimler
 
 | Term | What people say | What it actually means |
 |------|-----------------|-----------------------|
-| Policy gradient | "Train the policy directly" | `∇J(θ) = E[G · ∇ log π_θ(a\|s)]`; derived from the log-derivative trick. |
+| Policy gradient | "Train the policy directly" | $\nabla J(\theta) = \mathbb{E}[G \cdot \nabla \log \pi_\theta(a \mid s)]$; derived from the log-derivative trick. |
 | REINFORCE | "The original PG algorithm" | Williams (1992); Monte Carlo returns multiplied by log-policy gradient. |
-| Log-derivative trick | "Score function estimator" | `∇P(τ;θ) = P(τ;θ) · ∇ log P(τ;θ)`; makes gradients of expectations tractable. |
-| Baseline | "Variance reduction" | Any `b(s)` subtracted from `G`; unbiased because `E[b · ∇ log π] = 0`. |
-| Reward-to-go | "Only future returns count" | `G_t^{from t}` instead of the full `G_0`; correct and lower-variance. |
-| Entropy bonus | "Encourage exploration" | `+β · H(π(·\|s))` term keeps the policy from collapsing. |
+| Log-derivative trick | "Score function estimator" | $\nabla P(\tau;\theta) = P(\tau;\theta) \cdot \nabla \log P(\tau;\theta)$; makes gradients of expectations tractable. |
+| Baseline | "Variance reduction" | Any $b(s)$ subtracted from $G$; unbiased because $\mathbb{E}[b \cdot \nabla \log \pi] = 0$. |
+| Reward-to-go | "Only future returns count" | $G_t^{\text{from } t}$ instead of the full $G_0$; correct and lower-variance. |
+| Entropy bonus | "Encourage exploration" | $+\beta \cdot H(\pi(\cdot \mid s))$ term keeps the policy from collapsing. |
 | On-policy | "Train on what you just saw" | Gradient expectation is w.r.t. the current policy — cannot reuse old data directly. |
-| Advantage | "How much better than average" | `A(s, a) = G(s, a) - V(s)`; the signed quantity REINFORCE-with-baseline multiplies. |
+| Advantage | "How much better than average" | $A(s, a) = G(s, a) - V(s)$; the signed quantity REINFORCE-with-baseline multiplies. |
 
 ## Daha Fazla Okumak
 

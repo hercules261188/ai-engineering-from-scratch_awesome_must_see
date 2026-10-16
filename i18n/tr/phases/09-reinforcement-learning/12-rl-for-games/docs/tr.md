@@ -30,19 +30,19 @@ while True:
 
 **AlphaZero (2017).**Silver et al. Bilinen kurallarla bir oyun (şah, shogi, Go) verildiğinde:
 
-- Politika değerleri ağı: bir kule `f_θ(s) → (p, v)`- Evet .`p`- Hukuk hareketleri konusunda öncü.`v`Bu oyunun beklenen sonucu.
-- Monte Carlo Ağacı Arama (MCTS): Her harekette, olası devamlar ağacını genişlet.`(p, v)`UCB (PUCT) tarafından düğümleri seçin: `a* = argmax Q(s, a) + c · p(a|s) · √N(s) / (1 + N(s, a))`- Evet .
-- Kendi oyununu oynayın: ajan karşısına oyun oynayın.`t`, MCTS ziyaret dağıtımı `π_t`politika eğitim hedefi haline gelir.
-- Kayıp:`L = (v - z)² - π · log p + c · ||θ||²`- Evet .`z`oyunun sonucu (+1 / 0 / -1).
+- Politika değerleri ağı: bir kule $f_\theta(s) \to (p, v)$- Evet .$p$- Hukuk hareketleri konusunda öncü.$v$Bu oyunun beklenen sonucu.
+- Monte Carlo Ağacı Arama (MCTS): Her harekette, olası devamlar ağacını genişlet.$(p, v)$UCB (PUCT) tarafından düğümleri seçin: $a^{\ast} = \arg\max_a Q(s, a) + c \cdot p(a \mid s) \cdot \sqrt{N(s)} / (1 + N(s, a))$- Evet .
+- Kendi oyununu oynayın: ajan karşısına oyun oynayın.$t$, MCTS ziyaret dağıtımı $\pi_t$politika eğitim hedefi haline gelir.
+- Kayıp:$L = (v - z)^2 - \pi \cdot \log p + c \cdot \lVert \theta \rVert^2$- Evet .$z$oyunun sonucu (+1 / 0 / -1).
 
 İnsan bilgisi sıfır, el yapımı heuristik sıfır, tek bir tarif, her biri birkaç on milyon kendi oyunundan sonra satranç, shogi ve go ustası.
 
 **MuZero (2019).**Schrittwieser et al. Kurallar bilinmesi gerekliliğini kaldırır.
 
-- Sıkı bir ortam yerine *latent dinamik modeli öğrenin*`(h, g, f)`- ...
-  - `h(s)`: gözlemleri gizli bir duruma kodlama.
-  - `g(s_latent, a)`: bir sonraki gizli durumu + ödül öngör.
-  - `f(s_latent)`: politika öncesi tahmin + değer.
+- Sıkı bir ortam yerine *latent dinamik modeli öğrenin*$(h, g, f)$- ...
+  - $h(s)$: gözlemleri gizli bir duruma kodlama.
+  - $g(s_{\text{latent}}, a)$: bir sonraki gizli durumu + ödül öngör.
+  - $f(s_{\text{latent}})$: politika öncesi tahmin + değer.
 - MCTS * öğrenilen gizli alanda* çalışır. Aynı arama, aynı eğitim döngüsü.
 - Go, satranç, shogi ve Atari'de çalışır. Bir algoritma, kural bilgisine sahip değil.
 
@@ -54,11 +54,11 @@ while True:
 
 - "Game": bir matematik / kodlama / akıl yürütme sorunu cevaplayın. "Win" = doğrulayıcı (test vakaları geçiyor, sayısal cevap eşleşir) 1 gönderir.
 - Politikası: LLM. Eylemler: tokenler. Devlet: hızlı + tepki-bkz.
-- Hiçbir eleştirmen yok (PPO tarzı V_φ).`G`Politika'nın tamamlanması.**group-relative advantage** `A_i = (r_i - mean_r) / std_r`REINFORCE tarzında güncelleme için sinyal olarak.
+- Eleştirmen yok (PPO tarzı $V_\phi$Bunun yerine, her seferinde örnek alın.$G$Politika'nın tamamlanması.**group-relative advantage** $A_i = (r_i - \text{mean}_r) / \text{std}_r$REINFORCE tarzında güncelleme için sinyal olarak.
 - KL'nin geri çekilmeyi önlemek için referans politikasına yönelik ceza (RLHF gibi).
 - Tam kaybı:
 
-  `L_GRPO(θ) = -E_{q, {o_i}} [ (1/G) Σ_i A_i · log π_θ(o_i | q) ] + β · KL(π_θ || π_ref)`
+  $L_{\text{GRPO}}(\theta) = -\mathbb E_{q, \lbrace o_i \rbrace} \left[ \frac{1}{G} \sum_i A_i \cdot \log \pi_\theta(o_i \mid q) \right] + \beta \cdot \mathrm{KL}(\pi_\theta \Vert \pi_{\text{ref}})$
 
 Ödül modeli, eleştirmen, MCTS yoktur. Grup-sâlamlı temel üçü de değiştirir. Hesaplamaların bir kısmında akıl yürütme referansları üzerinde PPO-RLHF kalitesi ile eşleşir veya üstlenir.
 
@@ -144,7 +144,7 @@ RLHF ile aynı teşhisler: referans için KL, politika entropi, ödül-over-time
 ## Tuzaklar
 
 - **Reward hacking via verifier gaming.**GRPO, RLHF'nin riskini miras alır: Eğer doğrulayıcı yanlış ya da sömürülebilirse, LLM sömürüyü bulacaktır.
-- **Group size too small.**Grup başlangıç çizgisinin değişimi şöyle `1/√G`Aşağıda .`G = 4`, avantaj sinyali gürültülü , standart seçenek `G = 8`- ...`64`- Evet .
+- **Group size too small.**Grup başlangıç çizgisinin değişimi şöyle $1/\sqrt{G}$Aşağıda .$G = 4$, avantaj sinyali gürültülü , standart seçenek $G = 8$64'e kadar.
 - **Length bias.**Farklı uzunluklarda LLM tamamlamaları farklı log- olasılıklara sahiptir. Token sayısına göre normalleştirin veya dizi düzeyde log-prob kullanın veya maksimum uzunlukta kesin.
 - **Pure self-play cycles.**AlphaZero tarzı eğitim genel toplam oyunlarında egemenlik döngüsünde sıkışabilir.
 - **Search-policy mismatch.**AlphaZero, arama sonuçlarını taklit etmek için politikaları eğitir. Eğer politika ağı aramaların dağılımını temsil etmek için çok küçükse, eğitim stallları.
@@ -195,7 +195,7 @@ Refuse AlphaZero on imperfect-info games (route to CFR). Refuse GRPO without a t
 
 ## Egzersizler
 
-1. **Easy.**GRPO ' yu kullanın .`code/main.py`. 2 çağrıda + 4 cevap simgesi her biri üzerinde çalış.`G=8`- Evet .
+1. **Easy.**GRPO ' yu kullanın .`code/main.py`. 2 çağrıda + 4 cevap simgesi her biri üzerinde çalış.$G=8$- Evet .
 2. **Medium.**PPO ve vanilya REINFORCE'yi bağlayın.
 3. **Hard.**Bir uzunluk-2 "düşünme zinciri"ne kadar uzan: ajan iki token gönderir ve doğrulayıcı çiftini ödüllendirir. GRPO'nun iki adımlı diziler boyunca kredi tahsisini nasıl ele aldığını ölç. (Tavsiye: * tam dizide hesap grup avantajı*, her iki token pozisyonuna yayıl.)
 
@@ -203,11 +203,11 @@ Refuse AlphaZero on imperfect-info games (route to CFR). Refuse GRPO without a t
 
 | Term | What people say | What it actually means |
 |------|-----------------|-----------------------|
-| MCTS | "Tree search with learned net" | Monte Carlo Tree Search; UCB1/PUCT selection with learned `(p, v)` priors. |
+| MCTS | "Tree search with learned net" | Monte Carlo Tree Search; UCB1/PUCT selection with learned $(p, v)$ priors. |
 | AlphaZero | "Self-play + MCTS" | Policy-value net trained to match MCTS visits and game outcome. |
 | MuZero | "Learned-model AlphaZero" | Same loop but in latent space via learned dynamics. |
 | GRPO | "Critic-free PPO" | Group Relative Policy Optimization; REINFORCE with group-mean baseline + KL. |
-| PUCT | "AlphaZero's UCB" | `Q + c · p · √N / (1 + N_a)` — balances value estimate with prior. |
+| PUCT | "AlphaZero's UCB" | $Q + c \cdot p \cdot \sqrt{N} / (1 + N_a)$ — balances value estimate with prior. |
 | Self-play | "Agent vs past self" | Standard for zero-sum; symmetric training signal. |
 | League play | "Population-based self-play" | Past + current + exploiters sampled as opponents. |
 | Verifier reward | "Verifiable RL" | Reward comes from a deterministic checker (tests pass, answer matches). |

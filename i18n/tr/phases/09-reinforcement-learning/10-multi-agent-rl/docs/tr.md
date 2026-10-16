@@ -21,31 +21,31 @@ Bu, tablolar birleştirme kanıtlarını kırar (Q-learning'in garantisi sabit b
 
 ![Four MARL regimes: indep, centralized critic, self-play, league](../assets/marl.svg)
 
-**Formalism: Markov Game.**MDP'nin genelleşmesi: devletler `S`, ortak bir eylemdir.`a = (a_1, …, a_n)`, geçiş`P(s' | s, a)`, ve ajan başına ödüller .`R_i(s, a, s')`Her ajan .`i`Kendi politikası altında kendi getiriyi en üst düzeye çıkarır.`π_i`Eğer ödüller aynı ise, o da aynı.**fully cooperative**Eğer sıfır toplamsa, o da **adversarial**Karışıksa, öyle.**general-sum**- Evet .
+**Formalism: Markov Game.**MDP'nin genelleşmesi: devletler $S$, ortak bir eylemdir.$a = (a_1, \ldots, a_n)$, geçiş$P(s' \mid s, a)$, ve ajan başına ödüller .$R_i(s, a, s')$Her ajan .$i$Kendi politikası altında kendi getiriyi en üst düzeye çıkarır.$\pi_i$Eğer ödüller aynı ise, o da aynı.**fully cooperative**Eğer sıfır toplamsa, o da **adversarial**Karışıksa, öyle.**general-sum**- Evet .
 
 **Core challenges:**
 
-- **Non-stationarity.** `P(s' | s, a_i)`Ajanın .`i`Görüşün değişeceğine .`π_{-i}`, değişen bir durum.
+- **Non-stationarity.** $P(s' \mid s, a_i)$Ajanın .$i$Görüşün değişeceğine .$\pi_{-i}$, değişen bir durum.
 - **Credit assignment.**Paylaşılan bir ödülle, hangi ajanın nedeni buydu?
 - **Exploration coordination.**Ajanlar, aynı durumu gereksiz yere araştırmak yerine, tamamlayıcı stratejileri keşfetmelidir.
-- **Scalability.**Ortak eylem alanı `n`- Evet .
+- **Scalability.**Ortak eylem alanı $n$- Evet .
 - **Partial observability.**Her ajan sadece kendi gözlemini görür; küresel durum gizlidir.
 
 **Four dominant regimes:**
 
 **1. Independent Q-learning / independent PPO (IQL, IPPO).**Her ajan kendi Q veya politikasını öğrenir, diğerlerini çevrenin bir parçası olarak görüyor. Basit, bazen işe yarıyor (özellikle deneyim tekrarlamasıyla akıcı bir ajan modeli hilesi olarak hareket eder).
 
-**2. Centralized training, decentralized execution (CTDE).**Modern paradigmaların en yaygını.`π_i`Yerel gözlem koşulları `o_i` standard merkezi olmayan uygulamalar dağıtım sırasında.`Q(s, a_1, …, a_n)`Dünya durumu ve ortak eylem konusunda koşullar.
+**2. Centralized training, decentralized execution (CTDE).**Modern paradigmaların en yaygını.$\pi_i$Yerel gözlem koşulları $o_i$ standard merkezi olmayan uygulamalar dağıtım sırasında.$Q(s, a_1, \ldots, a_n)$Dünya durumu ve ortak eylem konusunda koşullar.
 - **MADDPG**(Lowe et al. 2017): DDPG, her ajan için merkezi bir eleştirmen ile.
-- **COMA**(Foerster et al. 2017): karşı gerçekli bir başlangıç  sor "Eğer harekete geçseydim ödülüm ne olurdu `a'`Bunun yerine?"  katkılarımı bir kenara ayırır.
+- **COMA**(Foerster et al. 2017): karşı gerçekli bir başlangıç  sor "Eğer harekete geçseydim ödülüm ne olurdu $a'$Bunun yerine?"  katkılarımı bir kenara ayırır.
 - **MAPPO**- Ne ?**IPPO**ortak eleştirmenle (Yu et al. 2022): Merkezi bir değer fonksiyonu olan PPO. 2026 yılında kooperatif MARL için baskın.
-- **QMIX**(Rashid et al. 2018): değer parçalanması  `Q_tot(s, a) = f(Q_1(s, a_1), …, Q_n(s, a_n))`- Tek kelimeyle karıştır.
+- **QMIX**(Rashid et al. 2018): değer parçalanması  $Q_{\text{tot}}(s, a) = f(Q_1(s, a_1), \ldots, Q_n(s, a_n))$- Tek kelimeyle karıştır.
 
 **3. Self-play.**Aynı ajanın iki kopyası birbirini oynar. Rahatsız eden politika * geçmiş bir anlık fotoğrafımdan benim politikamdır. AlphaGo / AlphaZero / MuZero. OpenAI Beş.
 
 **4. League play.**Self-play'ın genel toplam / karşıma ortamlara genişletilmesi: geçmiş ve mevcut politikaların bir nüfusunu tutun, ligten bir rakibi örnekleyin, onlara karşı eğitiniz. İstifadeleri (sağlam en iyiyi yenmek için uzmanlaşmış) ve ana sömürücüleri (sömürücüleri yenmek için uzmanlaşmış) ekler. AlphaStar (StarCraft II).
 
-**Communication.**Ajanların öğrenilmiş mesajlar göndermesine izin verin .`m_i`Foerster et al. (2016) farklılaştırılabilir ajanlar arası iletişimin sonundan sona kadar eğitilebileceğini gösterdi. Bugünün LLM tabanlı çoklu ajan sistemleri (Fase 16) esasen doğal dilde iletişim kurar.
+**Communication.**Ajanların öğrenilmiş mesajlar göndermesine izin verin .$m_i$Foerster et al. (2016) farklılaştırılabilir ajanlar arası iletişimin sonundan sona kadar eğitilebileceğini gösterdi. Bugünün LLM tabanlı çoklu ajan sistemleri (Fase 16) esasen doğal dilde iletişim kurar.
 
 ```figure
 f3-marl-orbit
@@ -101,11 +101,11 @@ Bu görevde çalışır çünkü ödüller yoğun ve uyumludur. Yakından ilişk
 
 ### Adım 3: Çürütülen değer güncelleme ile merkezi Q
 
-Birlikte yapılan eylemlere bir Q kullanın `Q(s, a_1, a_2)`. Paylaşılan ödülden güncelleme.`π_i(s) = argmax_{a_i} max_{a_{-i}} Q(s, a_1, a_2)`* Doğru* küresel görüş için eksponensel ortak eylem alanı ticaret.
+Birlikte yapılan eylemlere bir Q kullanın $Q(s, a_1, a_2)$. Paylaşılan ödülden güncelleme.$\pi_i(s) = \arg\max_{a_i} \max_{a_{-i}} Q(s, a_1, a_2)$* Doğru* küresel görüş için eksponensel ortak eylem alanı ticaret.
 
 ### Adım 4: Basit kendi oyun (adversarial 2-agent)
 
-Aynı ajan, iki rol.`K`A'nın ağırlıklarını B'ye kopyalayıp simetrik eğitim, sürekli ilerleme.
+Aynı ajan, iki rol.$K$A'nın ağırlıklarını B'ye kopyalayıp simetrik eğitim, sürekli ilerleme.
 
 ## Tuzaklar
 
@@ -167,11 +167,11 @@ Refuse independent Q-learning on tightly-coupled cooperative tasks. Refuse to re
 
 | Term | What people say | What it actually means |
 |------|-----------------|-----------------------|
-| Markov game | "Multi-agent MDP" | `(S, A_1, …, A_n, P, R_1, …, R_n)`; each agent has its own reward. |
+| Markov game | "Multi-agent MDP" | $(S, A_1, \ldots, A_n, P, R_1, \ldots, R_n)$; each agent has its own reward. |
 | CTDE | "Centralized training, decentralized execution" | Joint critic at training time; each agent's policy uses only local obs. |
 | IPPO | "Independent PPO" | Each agent runs PPO separately. Simple baseline; often underrated. |
 | MAPPO | "Multi-agent PPO" | PPO with a centralized value function conditioned on global state. |
-| QMIX | "Monotonic value decomposition" | `Q_tot = f_monotone(Q_1, …, Q_n)` allows decentralized argmax. |
+| QMIX | "Monotonic value decomposition" | $Q_{\text{tot}} = f_{\text{monotone}}(Q_1, \ldots, Q_n)$ allows decentralized argmax. |
 | COMA | "Counterfactual multi-agent" | Advantage = my Q minus expected Q marginalizing over my action. |
 | Self-play | "Agent vs past self" | Single agent, two roles; standard for zero-sum games. |
 | League play | "Population training" | Cache past policies, sample opponents from the pool; handles strategy cycles. |

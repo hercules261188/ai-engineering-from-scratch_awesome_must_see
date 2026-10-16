@@ -11,7 +11,7 @@
 
 Tablolar Q öğrenme, her çift için ayrı bir Q değere ihtiyaç duyar. Bir satranç tahtasında ~1043 devlet vardır. Atari çerçevesinin 210 × 160 × 3 = 100,800 özellik vardır. Tablolar RL binlerce devlette ölür, milyarlarca bile olmaz.
 
-Çözüm, geriye bakıldığında açık: Q-tabloyu nöral ağla değiştirin.`Q(s, a; θ)`Ancak açık-görünen geriye bakış on yıllar sürdü. Saçma fonksiyon yaklaşımı ve Q öğrenimi "ölümlü üçlü"  fonksiyon yaklaşımı + başlangıç + politika dışı öğrenme altında ayrılır. Mnih et al. (2013, 2015) öğrenmeyi istikrarlandıran üç mühendislik hilesi tanımladı:
+Çözüm, geriye bakıldığında açık: Q-tabloyu nöral ağla değiştirin.$Q(s, a; \theta)$Ancak açık-görünen geriye bakış on yıllar sürdü. Saçma fonksiyon yaklaşımı ve Q öğrenimi "ölümlü üçlü"  fonksiyon yaklaşımı + başlangıç + politika dışı öğrenme altında ayrılır. Mnih et al. (2013, 2015) öğrenmeyi istikrarlandıran üç mühendislik hilesi tanımladı:
 
 1. **Experience replay**Decorrelates geçişler.
 2. **Target network**Başlangıç hedefini dondururur.
@@ -25,25 +25,29 @@ Atari'deki DQN, tek bir hiperparametre seti ile tek bir mimarinin ilk kez çiğ 
 
 **The objective.**DQN, sinirsel bir Q fonksiyonunda tek adımlı TD kaybını en aza indirgerir:
 
-`L(θ) = E_{(s,a,r,s')~D} [ (r + γ max_{a'} Q(s', a'; θ^-) - Q(s, a; θ))² ]`
+```math
+L(\theta) = \mathbb{E}_{(s,a,r,s') \sim D}[ (r + \gamma \max_{a'} Q(s', a'; \theta^-) - Q(s, a; \theta))^2 ]
+```
 
-`θ`= çevrimiçi ağ, her adım gradient düşüşe göre güncellenir. `θ^-`= hedef ağ, düzenli olarak kopyalanır `θ`(Her ~ 10.000 adım).`D`= geçmiş geçişlerin yeniden oynatma tamponu.
+$\theta$= çevrimiçi ağ, her adım gradient düşüşe göre güncellenir. $\theta^-$= hedef ağ, düzenli olarak kopyalanır $\theta$(Her ~ 10.000 adım).$D$= geçmiş geçişlerin yeniden oynatma tamponu.
 
 **The three tricks, in order of importance:**
 
 **Experience replay.**Bir yüzük tamponu .`~10⁶`Bu, zamansal ilişkiyi kırar (sükseces çerçeveler neredeyse aynıdır), ağın nadir ödüllendirici geçişlerden birçok kez öğrenmesine izin verir ve ardıcıl gradient güncellemelerini dekorele eder.
 
-**Target network.**Aynı ağı kullanıyor `Q(·; θ)`Bellman denkleminin her iki tarafında hedef her güncelleme hareket eder  "kendin kuyruk peşinde".`Q(·; θ^-)`Dondurulmuş ağırlıklarla.`C`Adımlar, kopya `θ → θ^-`Bu, gerileme hedefini bir seferde binlerce gradient adımları için istikrarlı hale getirir.`θ^- ← τ θ + (1-τ) θ^-`(DDPG, SAC'da kullanılır) daha düzgün bir variandır.
+**Target network.**Aynı ağı kullanıyor $Q(\cdot; \theta)$Bellman denkleminin her iki tarafında hedef her güncelleme hareket eder  "kendin kuyruk peşinde".$Q(\cdot; \theta^-)$Dondurulmuş ağırlıklarla.$C$Adımlar, kopya $\theta \to \theta^-$Bu, gerileme hedefini bir seferde binlerce gradient adımları için istikrarlı hale getirir.$\theta^- \leftarrow \tau \theta + (1-\tau) \theta^-$(DDPG, SAC'da kullanılır) daha düzgün bir variandır.
 
-**Reward clipping.**Atari ödül büyüklükleri 1 ila 1000 + arasında değişir.`{-1, 0, +1}`Ödül büyüklüğü önemli olduğunda yanlış, sadece imza önemli olduğunda Atari için iyi.
+**Reward clipping.**Atari ödül büyüklükleri 1 ila 1000 + arasında değişir.$\lbrace-1, 0, +1 \rbrace$Ödül büyüklüğü önemli olduğunda yanlış, sadece imza önemli olduğunda Atari için iyi.
 
 **Double DQN.**Hasselt (2016) maksimum önyargıyı düzeltir: eylem * seçmek için çevrimiçi ağ kullanın, hedef ağ * değerlendirmek için.
 
-`target = r + γ Q(s', argmax_{a'} Q(s', a'; θ); θ^-)`
+```math
+\text{target} = r + \gamma Q(s', \arg\max_{a'} Q(s', a'; \theta); \theta^-)
+```
 
 Değiştirme, sürekli daha iyi.
 
-**Other improvements (Rainbow, 2017):**öncelikli tekrarlama (öntem yüksek TD hata geçişleri daha fazla), düello mimarisi (ayrı `V(s)`ve avantaj başları), gürültülü ağlar (öğrenmiş keşif), n-adım geri dönüşü, dağılımlı Q (C51/QR-DQN), çok adımlı başlangıç. Her biri birkaç yüzde ekler; kazançlar yaklaşık olarak eklenir.
+**Other improvements (Rainbow, 2017):**öncelikli tekrarlama (öntem yüksek TD hata geçişleri daha fazla), düello mimarisi (ayrı $V(s)$ve avantaj başları), gürültülü ağlar (öğrenmiş keşif), n-adım geri dönüşü, dağılımlı Q (C51/QR-DQN), çok adımlı başlangıç. Her biri birkaç yüzde ekler; kazançlar yaklaşık olarak eklenir.
 
 ```figure
 f3-dqn-stability
@@ -104,11 +108,11 @@ def train_step(online, target, batch, gamma, lr):
     apply_sgd(online, grads, lr / len(batch))
 ```
 
-Şekil, iki farklılık ile Ders 04'ten Q-öğrenme şeklidir: (a) farklılıklara sahip bir `Q(·; θ)`Bir tabloyu indeksilemek yerine, (b) hedef kullanımı `Q(·; θ^-)`- Evet .
+Şekil, iki farklılık ile Ders 04'ten Q-öğrenme şeklidir: (a) farklılıklara sahip bir $Q(\cdot; \theta)$Bir tabloyu indeksilemek yerine, (b) hedef kullanımı $Q(\cdot; \theta^-)$- Evet .
 
 ### Dördüncü adım: Dış döngü
 
-Her bölümde, `Q(·; θ)`, tampona geçişleri itmek, minibatch örneğini almak, bir gradient adımını atmak, zaman zaman senkronize etmek`θ^- ← θ`- Şablon:
+Her bölümde, $Q(\cdot; \theta)$, tampona geçişleri itmek, minibatch örneğini almak, bir gradient adımını atmak, zaman zaman senkronize etmek$\theta^- \leftarrow \theta$- Şablon:
 
 ```python
 for episode in range(N):
@@ -181,7 +185,7 @@ Refuse to ship a DQN with no target network, no replay buffer, or ε held at 1. 
 
 1. **Easy.**Çık .`code/main.py`-Episod başına geri dönüş eğriyi çiz.
 2. **Medium.**Hedef ağını devre dışı bırakın (Bellman hedefinin her iki tarafı için çevrimiçi ağ kullanın).
-3. **Hard.**Çift DQN ekle: seçmek için çevrimiçi ağ kullan `argmax a'`, hedef ağ değerlendirmek için.`Q(s_0, best_a)`Gerçek karşısında`V*(s_0)`1000 bölümden sonra gürültülü bir ödül GridWorld'da Double DQN'de karşı karşıya kalmadı.
+3. **Hard.**Çift DQN ekle: seçmek için çevrimiçi ağ kullan `argmax a'`, hedef ağ değerlendirmek için.`Q(s_0, best_a)`Gerçek karşısında$V^{\ast}(s_0)$1000 bölümden sonra gürültülü bir ödül GridWorld'da Double DQN'de karşı karşıya kalmadı.
 
 ## Anahtar Terimler
 
@@ -203,6 +207,5 @@ Refuse to ship a DQN with no target network, no replay buffer, or ε held at 1. 
 - [Hasselt, Guez, Silver (2016). Deep Reinforcement Learning with Double Q-learning](https://arxiv.org/abs/1509.06461) DDQN.
 - [Wang et al. (2016). Dueling Network Architectures](https://arxiv.org/abs/1511.06581)DQN'de dövüş.
 - [Hessel et al. (2018). Rainbow: Combining Improvements in Deep RL](https://arxiv.org/abs/1710.02298)- Yapacakları kağıt.
-- [OpenAI Spinning Up — DQN](https://spinningup.openai.com/en/latest/algorithms/dqn.html) Modern açıklama.
 - [Sutton & Barto (2018). Ch. 9 — On-policy Prediction with Approximation](http://incompleteideas.net/book/RLbook2020.pdf) DQN'nin hedef ağının ve tekrarlama tamponu tarafından kontrol altına alınması için tasarlanmış olan "ölümlü üçlü" (fonksiyon yaklaşımı + başlatma + politika dışı) ders kitabı tedavisi.
 - [CleanRL DQN implementation](https://docs.cleanrl.dev/rl-algorithms/dqn/) Ablation çalışmalarında kullanılan tek dosya DQN referansı; bu dersin sıfırdan versiyonu ile birlikte okumak iyi.

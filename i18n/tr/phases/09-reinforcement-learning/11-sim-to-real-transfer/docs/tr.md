@@ -31,7 +31,7 @@ Simülatörler yanlış. Doldurmalar MuJoCo modellerinden daha fazla sürtünme 
 
 **Domain Adaptation.**Sim yaparak, az miktarda gerçek veriyle ince ayarlama yaparak.
 
-- **Real2Sim2Real:**Geri kalan simülatörü öğrenin .`f(s, a, z) - f_sim(s, a)`Gerçek devreye girişimleri kullanarak, düzeltilmiş simletimde çalıştırmak.
+- **Real2Sim2Real:**Geri kalan simülatörü öğrenin .$f(s, a, z) - f_{\text{sim}}(s, a)$Gerçek devreye girişimleri kullanarak, düzeltilmiş simletimde çalıştırmak.
 - **Observation adaptation:**Öğrenilmiş bir özellik çıkarıcı (örneğin, GAN pikselden piksel) aracılığıyla gerçek obs → sim benzeri obs haritasını yapan bir politika eğitmek.
 
 **Privileged learning / teacher-student.**Miki et al. 2022 (Yeni dörtlü). * öğretmen *'yi simülasyonda eğit, böylece özel bilgilere erişebilir (yerin gerçeği sürtünmesi, arazi yüksekliği, IMU sürüklenmesi). * Öğrenci *'yi sadece gerçek sensör gözlemlerini gören bir *isteden ayırın. Öğrenci, fiziksel parametreler arasında sağlam olan özel özellikleri tarihten çıkarmayı öğrenir.
@@ -128,7 +128,7 @@ Refuse to deploy without (a) a zero-shot sim-variant test, (b) a safety shield, 
 
 ## Egzersizler
 
-1. **Easy.**Bir Q-öğrenme ajanını sabit kaydırma GridWorld'de eğit (slip=0.0).
+1. **Easy.**Bir Q-öğrenme ajanını sabit kaydırma GridWorld'da eğit (slip=0.0).$\text{slip} \in \lbrace 0.0, 0.1, 0.3, 0.5 \rbrace$- Plan geri dönüşü vs. kayış.
 2. **Medium.**DR Q öğrenme ajanı örneklemesini eğit `slip ~ Uniform[0, 0.3]`DR'nin dağıtım dışı fiyatı 0,5'dir.
 3. **Hard.**Bir eğitim programı uygulayın: slip=0.0 ile başlayın, politikaların %90'a ulaştığında DR aralığını genişletin.
 
