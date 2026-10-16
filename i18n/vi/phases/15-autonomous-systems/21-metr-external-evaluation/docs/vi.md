@@ -30,7 +30,7 @@ Phương pháp (từ blog và bài báo của METR):
 
 1. Thu thập một bộ nhiệm vụ trải dài từ thời gian hoàn thành chuyên gia theo quy mô phút đến giờ.
 2. Thực hiện mô hình cho mỗi nhiệm vụ; ghi thành công hoặc thất bại.
-3. Đưa ra một đường cong hậu cần: P(sự thành công) như một hàm của log(người chuyên gia hoàn thành thời gian).
+3. Đưa ra một đường cong hậu cần: $P(\text{success})$như một chức năng của $\log(\text{expert completion time})$- Tôi không biết.
 4. Khía cảnh là thời gian chuyên môn khi P ((success) = 0,5.
 
 Hình thức phù hợp với hậu cần là đúng vì khả năng thường có mối quan hệ tăng lên, tiếp cận cao nguyên với khó khăn nhiệm vụ. Điểm 50% là một sự lựa chọn (có thể là 10%, 90%); METR báo cáo nhiều ngưỡng trong bài báo chi tiết nhưng dẫn đầu với 50% vì nó là trực quan nhất.
@@ -79,7 +79,7 @@ a5-horizon-fit
 
 ## Sử dụng nó
 
-`code/main.py`thực hiện một sự phù hợp hậu cần của nhiệm vụ thành công so với log(thời gian chuyên gia), với một tập kết quả tổng hợp. Nó báo cáo chân trời 50% (tựa của METR), chân trời 10% (tâm lý), và chân trời 90% ( lạc quan).
+`code/main.py`thực hiện một sự phù hợp hậu cần của thành công công công việc vs $\log(\text{expert time})$, cho một tập kết quả tổng hợp. Nó báo cáo chân trời 50% (tựa đề của METR), chân trời 10% (tâm lý bảo thủ) và chân trời 90% (tự lạc quan).
 
 ## Chuyển nó
 

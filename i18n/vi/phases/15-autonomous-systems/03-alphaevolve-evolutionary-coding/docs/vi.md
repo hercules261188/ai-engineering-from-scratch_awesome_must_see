@@ -58,7 +58,7 @@ Sự cố trong AlphaEvolve: gửi một nhà đánh giá đã được tổ ch�
 
 LLM có thể tạo ra các thay đổi có thể biên dịch, có thể xác thực về ngữ nghĩa. GA đột biến ngẫu nhiên trên một tệp Python 2000 dòng gần như luôn tạo ra lỗi tổng hợp. LLM cũng tập trung tìm kiếm vào các khu phố có thể xác thực (hóa một hàm, không phải là các byte ngẫu nhiên) làm giảm đáng kể các cuộc gọi đánh giá lãng phí.
 
-Người đánh giá, lần lượt, nhận được những sự kết luận của LLM. LLM sẽ tự tin tuyên bố rằng một hàm "đã là O(n log n) trong giới hạn" khi nó thực sự là O(n^2); một điểm chuẩn của đồng hồ tường giải quyết câu hỏi.
+Người đánh giá, lần lượt, nhận được những sự kết luận của LLM. LLM sẽ tự tin tuyên bố rằng một chức năng "đó là$O(n \log n)$trong giới hạn" khi nó thực sự là $O(n^2)$; một điểm chuẩn của đồng hồ tường giải quyết câu hỏi.
 
 ### AlphaEvolve phù hợp với hàng rào biên giới
 
