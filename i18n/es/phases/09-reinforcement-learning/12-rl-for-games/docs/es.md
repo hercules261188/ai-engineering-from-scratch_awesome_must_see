@@ -30,19 +30,19 @@ while True:
 
 **AlphaZero (2017).**Silver et al. Dado un juego (ajedrez, shogi, Go) con reglas conocidas:
 
-- Red de valor político: una torre `f_θ(s) → (p, v)`- ¿ Qué ?`p`Es un precursor de los movimientos legales.`v`es el resultado esperado del juego.
-- Buscar árboles de Monte Carlo (MCTS): con cada movimiento, expanda un árbol de posibles continuas.`(p, v)`Seleccione los nodos por UCB (PUCT): `a* = argmax Q(s, a) + c · p(a|s) · √N(s) / (1 + N(s, a))`¿ Qué ?
-- Juego de persona: juego de agente contra agente.`t`, la distribución de las visitas del MCTS `π_t`La formación política se convierte en el objetivo.
-- Perdida:`L = (v - z)² - π · log p + c · ||θ||²`- ¿ Qué ?`z`es el resultado del juego (+1 / 0 / -1).
+- Red de valor político: una torre $f_\theta(s) \to (p, v)$- ¿ Qué ?$p$Es un precursor de los movimientos legales.$v$es el resultado esperado del juego.
+- Buscar árboles de Monte Carlo (MCTS): con cada movimiento, expanda un árbol de posibles continuas.$(p, v)$Seleccione los nodos por UCB (PUCT): $a^{\ast} = \arg\max_a Q(s, a) + c \cdot p(a \mid s) \cdot \sqrt{N(s)} / (1 + N(s, a))$¿ Qué ?
+- Juego de persona: juego de agente contra agente.$t$, la distribución de las visitas del MCTS $\pi_t$La formación política se convierte en el objetivo.
+- Perdida:$L = (v - z)^2 - \pi \cdot \log p + c \cdot \lVert \theta \rVert^2$- ¿ Qué ?$z$es el resultado del juego (+1 / 0 / -1).
 
 Cero conocimiento humano, cero heurísticas hechas a mano, una sola receta que dominaba el ajedrez, el shogi y el go después de unas decenas de millones de juegos de autojuego cada uno.
 
 **MuZero (2019).**Schrittwieser et al. Elimina el requisito de que las reglas sean conocidas.
 
-- En lugar de un entorno fijo, aprenda un modelo de dinámica latente.`(h, g, f)`¿Qué es esto ?
-  - `h(s)`: codificar la observación en estado latente.
-  - `g(s_latent, a)`: predecir el próximo estado latente + recompensa.
-  - `f(s_latent)`El valor de la política previo + valor.
+- En lugar de un entorno fijo, aprenda un modelo de dinámica latente.$(h, g, f)$¿Qué es esto ?
+  - $h(s)$: codificar la observación en estado latente.
+  - $g(s_{\text{latent}}, a)$: predecir el próximo estado latente + recompensa.
+  - $f(s_{\text{latent}})$El valor de la política previo + valor.
 - El MCTS se ejecuta en el *espacio latente aprendido*.
 - Funciona en Go, ajedrez, shogi y Atari un algoritmo, sin conocimiento de reglas.
 
@@ -54,11 +54,11 @@ Cero conocimiento humano, cero heurísticas hechas a mano, una sola receta que d
 
 - "Juego": responder a un problema de matemáticas / codificación / razonamiento. "Gan" = verificador (pasos de prueba, coincidencias numéricas de respuesta) devuelve 1.
 - Política: el LLM. Acciones: tokens. Estado: rápido + respuesta-hasta ahora.
-- No hay crítico (V_φ estilo PPO).`G`El precio de la póliza es el precio de la póliza.**group-relative advantage** `A_i = (r_i - mean_r) / std_r`como señal para la actualización de tipo REINFORCE.
+- No hay críticos (estilo PPO $V_\phi$En cambio, para cada instante, muestra.$G$El precio de la póliza es el precio de la póliza.**group-relative advantage** $A_i = (r_i - \text{mean}_r) / \text{std}_r$como señal para la actualización de tipo REINFORCE.
 - KL penalización a la política de referencia para evitar la deriva (como RLHF).
 - Perdida total:
 
-  `L_GRPO(θ) = -E_{q, {o_i}} [ (1/G) Σ_i A_i · log π_θ(o_i | q) ] + β · KL(π_θ || π_ref)`
+  $L_{\text{GRPO}}(\theta) = -\mathbb E_{q, \lbrace o_i \rbrace} \left[ \frac{1}{G} \sum_i A_i \cdot \log \pi_\theta(o_i \mid q) \right] + \beta \cdot \mathrm{KL}(\pi_\theta \Vert \pi_{\text{ref}})$
 
 No hay modelo de recompensa, no hay crítico, no hay MCTS. La línea de base relativa al grupo reemplaza a las tres.
 
@@ -144,7 +144,7 @@ Los mismos diagnósticos que el RLHF: KL medio para referencia, entropía polít
 ## Las trampas
 
 - **Reward hacking via verifier gaming.**GRPO hereda el riesgo de RLHF: si el verificador es erróneo o explotable, la MLL encontrará el exploit.
-- **Group size too small.**La variación de la línea de base del grupo es de `1/√G`- Por debajo .`G = 4`, la señal de ventaja es ruidosa; la elección estándar es `G = 8`¿ Qué ?`64`¿ Qué ?
+- **Group size too small.**La variación de la línea de base del grupo es de $1/\sqrt{G}$- Por debajo .$G = 4$, la señal de ventaja es ruidosa; la elección estándar es $G = 8$a 64.
 - **Length bias.**Las terminaciones de LLM de diferentes longitudes tienen diferentes probabilidades de registro. Normaliza por cuenta de tokens, o usa el log-prob de nivel de secuencia, o truncate a la longitud máxima.
 - **Pure self-play cycles.**El entrenamiento al estilo AlphaZero puede quedar atrapado en los bucles de dominio en los juegos de suma general.
 - **Search-policy mismatch.**AlphaZero entrena la política para imitar el resultado de búsqueda. Si la red de políticas es demasiado pequeña para representar la distribución de la búsqueda, la capacitación se detiene.
@@ -195,7 +195,7 @@ Refuse AlphaZero on imperfect-info games (route to CFR). Refuse GRPO without a t
 
 ## Los ejercicios
 
-1. **Easy.**Implemente el bandido del GRPO en `code/main.py`. Entrenamiento en 2 instrucciones × 4 tokens de respuesta cada uno. Convergen en < 1.000 actualizaciones con `G=8`¿ Qué ?
+1. **Easy.**Implemente el bandido del GRPO en `code/main.py`. Entrenamiento en 2 instrucciones × 4 tokens de respuesta cada uno. Convergen en < 1.000 actualizaciones con $G=8$¿ Qué ?
 2. **Medium.**Enchufe PPO (cortado) y vanilla REINFORCE. Compara la eficiencia de la muestra y la variación de la recompensa con GRPO en el mismo bandido.
 3. **Hard.**Extensión a una "cadena de razonamiento" de longitud-2: el agente emite dos tokens y el verificador recompensa el par. Medir cómo GRPO maneja la asignación de crédito en dos secuencias de pasos. (Punta: ventaja del grupo de cálculo por *secuencia completa*, propagación a ambas posiciones de tokens.)
 
@@ -203,11 +203,11 @@ Refuse AlphaZero on imperfect-info games (route to CFR). Refuse GRPO without a t
 
 | Term | What people say | What it actually means |
 |------|-----------------|-----------------------|
-| MCTS | "Tree search with learned net" | Monte Carlo Tree Search; UCB1/PUCT selection with learned `(p, v)` priors. |
+| MCTS | "Tree search with learned net" | Monte Carlo Tree Search; UCB1/PUCT selection with learned $(p, v)$ priors. |
 | AlphaZero | "Self-play + MCTS" | Policy-value net trained to match MCTS visits and game outcome. |
 | MuZero | "Learned-model AlphaZero" | Same loop but in latent space via learned dynamics. |
 | GRPO | "Critic-free PPO" | Group Relative Policy Optimization; REINFORCE with group-mean baseline + KL. |
-| PUCT | "AlphaZero's UCB" | `Q + c · p · √N / (1 + N_a)` — balances value estimate with prior. |
+| PUCT | "AlphaZero's UCB" | $Q + c \cdot p \cdot \sqrt{N} / (1 + N_a)$ — balances value estimate with prior. |
 | Self-play | "Agent vs past self" | Standard for zero-sum; symmetric training signal. |
 | League play | "Population-based self-play" | Past + current + exploiters sampled as opponents. |
 | Verifier reward | "Verifiable RL" | Reward comes from a deterministic checker (tests pass, answer matches). |

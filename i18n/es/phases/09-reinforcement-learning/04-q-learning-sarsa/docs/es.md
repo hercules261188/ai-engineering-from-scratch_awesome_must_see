@@ -13,7 +13,7 @@ Monte Carlo funciona pero tiene dos demandas caras. Necesita episodios que termi
 
 La programación dinámica tiene el perfil opuesto  copias de seguridad de boot de varianza cero  pero requiere un modelo conocido.
 
-El aprendizaje de la diferencia temporal (TD) divide la diferencia.`(s, a, r, s')`, formar un objetivo de un paso .`r + γ V(s')`y empujar .`V(s)`No hay modelo, no hay episodios completos, ni sesgo de usar una aproximación.`V`en el RHS, pero con una variación dramáticamente menor que MC y actualizaciones en línea desde el primer paso.
+El aprendizaje de la diferencia temporal (TD) divide la diferencia.$(s, a, r, s')$, formar un objetivo de un paso .$r + \gamma V(s')$y empujar .$V(s)$No hay modelo, no hay episodios completos, ni sesgo de usar una aproximación.$V$en el RHS, pero con una variación dramáticamente menor que MC y actualizaciones en línea desde el primer paso.
 
 Este es el pivote en el que se giran todas las modernas RL  DQN, A2C, PPO, SAC . El resto de la Fase 9 son capas de aproximación de funciones y trucos construidos sobre la actualización TD de un paso que escribirás en esta lección.
 
@@ -23,31 +23,39 @@ Este es el pivote en el que se giran todas las modernas RL  DQN, A2C, PPO, SAC .
 
 **The TD(0) update for V:**
 
-`V(s) ← V(s) + α [r + γ V(s') - V(s)]`
+```math
+V(s) \leftarrow V(s) + \alpha [r + \gamma V(s') - V(s)]
+```
 
-La cantidad entre paréntesis es el error TD `δ = r + γ V(s') - V(s)`Es el análogo en línea de `G_t - V(s_t)`en MC. La convergencia requiere`α`satisfacer a Robbins-Monro (`Σ α = ∞`¿ Qué ?`Σ α² < ∞`) y todos los estados visitados con infinita frecuencia.
+La cantidad entre paréntesis es el error TD $\delta = r + \gamma V(s') - V(s)$Es el análogo en línea de $G_t - V(s_t)$en MC. La convergencia requiere$\alpha$satisfacer a Robbins-Monro ($\sum \alpha = \infty$¿ Qué ?$\sum \alpha^2 < \infty$) y todos los estados visitados con infinita frecuencia.
 
 **Q-learning.**Un método de control TD fuera de la política:
 
-`Q(s, a) ← Q(s, a) + α [r + γ max_{a'} Q(s', a') - Q(s, a)]`
+```math
+Q(s, a) \leftarrow Q(s, a) + \alpha [r + \gamma \max_{a'} Q(s', a') - Q(s, a)]
+```
 
-El `max`La política de la "compromisora" se seguirá desde`s'`El desacoplamiento hace que el aprendizaje Q aprenda.`Q*`Mnih et al. (2015) convirtió esto en aprendizaje profundo de Q en Atari (Ley 05).
+El `max`La política de la "compromisora" se seguirá desde$s'$El desacoplamiento hace que el aprendizaje Q aprenda.$Q^{\ast}$Mnih et al. (2015) convirtió esto en aprendizaje profundo de Q en Atari (Ley 05).
 
 **SARSA.**Un método de TD en política:
 
-`Q(s, a) ← Q(s, a) + α [r + γ Q(s', a') - Q(s, a)]`
+```math
+Q(s, a) \leftarrow Q(s, a) + \alpha [r + \gamma Q(s', a') - Q(s, a)]
+```
 
-El nombre es el tuple`(s, a, r, s', a')`. SARSA utiliza la acción `a'`El agente toma el siguiente, no el codicioso.`argmax`- Converge a`Q^π`Por lo que sea que sea avaro.`π`está funcionando, que en el límite `ε → 0`Se convierte en`Q*`¿ Qué ?
+El nombre es el tuple$(s, a, r, s', a')$. SARSA utiliza la acción $a'$El agente toma el siguiente, no el codicioso.`argmax`- Converge a$Q^\pi$Por lo que sea que sea avaro.$\pi$está funcionando, que en el límite $\epsilon \to 0$Se convierte en$Q^{\ast}$¿ Qué ?
 
-**The cliff-walking difference.**En la tarea clásica de caminar por acantilados (caída-descance-acantilado = recompensa -100), el aprendizaje Q aprende el camino óptimo a lo largo del borde del acantilado, pero ocasionalmente toma la penalidad durante la exploración. SARSA aprende un camino más seguro a un paso del acantilado porque tiene en cuenta el ruido de exploración en su valor Q.`ε → 0`En la práctica importa: cuando la exploración se realiza en realidad en el despliegue, el comportamiento de SARSA es más conservador.
+**The cliff-walking difference.**En la tarea clásica de caminar por acantilados (caída-descance-acantilado = recompensa -100), el aprendizaje Q aprende el camino óptimo a lo largo del borde del acantilado, pero ocasionalmente toma la penalidad durante la exploración. SARSA aprende un camino más seguro a un paso del acantilado porque tiene en cuenta el ruido de exploración en su valor Q.$\epsilon \to 0$En la práctica importa: cuando la exploración se realiza en realidad en el despliegue, el comportamiento de SARSA es más conservador.
 
-**Expected SARSA.**Reemplazar`Q(s', a')`con su valor esperado inferior a `π`¿Qué es esto ?
+**Expected SARSA.**Reemplazar$Q(s', a')$con su valor esperado inferior a $\pi$¿Qué es esto ?
 
-`Q(s, a) ← Q(s, a) + α [r + γ Σ_{a'} π(a'|s') Q(s', a') - Q(s, a)]`
+```math
+Q(s, a) \leftarrow Q(s, a) + \alpha [r + \gamma \sum_{a'} \pi(a' \mid s') Q(s', a') - Q(s, a)]
+```
 
-Varianza menor que la SARSA (no hay muestra de `a'`), el mismo objetivo en materia de política.
+Varianza menor que la SARSA (no hay muestra de $a'$), el mismo objetivo en materia de política.
 
-**n-step TD and TD(λ).**Interpolar entre TD(0) y MC esperando `n`pasos antes de arrancar. `n=1`es TD, `n=∞`es MC. TD(λ) promedios sobre todos `n`con pesos geométricos `(1-λ)λ^{n-1}`La mayoría de los usos de RL profundos`n`entre 3 y 20.
+**n-step TD and TD(λ).**Interpolar entre TD(0) y MC esperando $n$pasos antes de arrancar. $n=1$es TD, $n=\infty$es MC. TD(λ) promedios sobre todos $n$con pesos geométricos $(1-\lambda)\lambda^{n-1}$La mayoría de los usos de RL profundos$n$entre 3 y 20.
 
 ```figure
 qlearning-gridworld
@@ -104,18 +112,18 @@ El `max`El símbolo es la diferencia entre la política y la política.
 
 ### Paso 3: Curvas de aprendizaje
 
-El estudio de la C.A.R.S.A. se ha desarrollado en el campo de la C.A.R.S.A. en el campo de la C.A.R.S.A.R.S.A. en el campo de la C.A.R.S.A.R.S.A. en el campo de la C.A.R.S.A.R.S.A. en el campo de la C.A.R.S.A.R.S.A.R.S.A. en el campo de la C.A.R.S.A.R.S.A. en el campo de la C.A.R.S.A.R.S.A. en el campo de la C.A.R.S.A.R.S.A. en el campo de la C.A.R.S.A.R.S.A.R.S.A. en el campo de la C.A.R.S.R.S.A.R.S.R.S.A.R.R.S.R.S.R.R.S.R.R.R.R.S.R.R.R.R.R.R.R.R.R.R.R.R.R.R.R.R.R.R.R.R.R.R.R.R.R.R.R.R.R.R.R.R.R.R.R.R.R.R.R.R.R.R.R.R.R.R.R.R.R.R.R.R.R.R.R.R.R.R.R.R.R.R.R.R.R.R.R.R.R.R.R.R.R.R.R.R.R.R.R.R.R.R.R.R.R.R.R.R.R.R.R.R.R.R.R.R.R.R.R.R.R.R.R.R.R.R.R.R.R.R.R.R.R.R.R.R.R.R.R.R.R`code/main.py`, ambos son casi óptimos después de ~ 2.000 episodios con `α=0.1, ε=0.1`¿ Qué ?
+El estudio de la C.A.R.S.A. se ha desarrollado en el campo de la C.A.R.S.A. en el campo de la C.A.R.S.A.R.S.A. en el campo de la C.A.R.S.A.R.S.A. en el campo de la C.A.R.S.A.R.S.A. en el campo de la C.A.R.S.A.R.S.A.R.S.A. en el campo de la C.A.R.S.A.R.S.A. en el campo de la C.A.R.S.A.R.S.A. en el campo de la C.A.R.S.A.R.S.A. en el campo de la C.A.R.S.A.R.S.A.R.S.A. en el campo de la C.A.R.S.R.S.A.R.S.R.S.A.R.R.S.R.S.R.R.S.R.R.R.R.S.R.R.R.R.R.R.R.R.R.R.R.R.R.R.R.R.R.R.R.R.R.R.R.R.R.R.R.R.R.R.R.R.R.R.R.R.R.R.R.R.R.R.R.R.R.R.R.R.R.R.R.R.R.R.R.R.R.R.R.R.R.R.R.R.R.R.R.R.R.R.R.R.R.R.R.R.R.R.R.R.R.R.R.R.R.R.R.R.R.R.R.R.R.R.R.R.R.R.R.R.R.R.R.R.R.R.R.R.R.R.R.R.R.R.R.R.R.R.R.R.R`code/main.py`, ambos son casi óptimos después de ~ 2.000 episodios con $\alpha=0.1, \epsilon=0.1$¿ Qué ?
 
 ### Paso 4: comparación con la verdad de DP
 
-Ejecutar la iteración del valor (lección 02) para obtener `Q*`- ¿ Qué ?`max_{s,a} |Q_learned(s,a) - Q*(s,a)|`Un agente TD saludable tabulear aterriza dentro de la`~0.5`en el 4×4 GridWorld después de 10.000 episodios.
+Ejecutar la iteración del valor (lección 02) para obtener $Q^{\ast}$- ¿ Qué ?$\max_{s,a} \lvert Q_{\text{learned}}(s,a) - Q^{\ast}(s,a) \rvert$Un agente TD saludable tabulear aterriza dentro de la`~0.5`en el 4×4 GridWorld después de 10.000 episodios.
 
 ## Las trampas
 
-- **Initial Q values matter.**Inicialmente optimista (`Q = 0`El principio pesimista puede atrapar una política codiciosa para siempre.
-- **α schedule.**Constantemente .`α`Es bueno para problemas no estacionarios.`α_n = 1/n`da convergencia en teoría pero es demasiado lento en la práctica  pin `α`En el`[0.05, 0.3]`y monitorear la curva de aprendizaje.
-- **ε schedule.**Comienza con alto (`ε=1.0`), la descomposición a `ε=0.05`. "GLIE" (compulsivo en el límite con una exploración infinita) es la condición de convergencia.
-- **Max bias in Q-learning.**El `max`el operador está sesgado hacia arriba cuando `Q`El doble aprendizaje Q de Hasselt (utilizado por DDQN en la Lección 05) corrige esto con dos tablas de Q.
+- **Initial Q values matter.**Inicialmente optimista ($Q = 0$El principio pesimista puede atrapar una política codiciosa para siempre.
+- **α schedule.**Constantemente .$\alpha$Es bueno para problemas no estacionarios.$\alpha_n = 1/n$da convergencia en teoría pero es demasiado lento en la práctica  pin $\alpha$En el`[0.05, 0.3]`y monitorear la curva de aprendizaje.
+- **ε schedule.**Comienza con alto ($\epsilon=1.0$), la descomposición a $\epsilon=0.05$. "GLIE" (compulsivo en el límite con una exploración infinita) es la condición de convergencia.
+- **Max bias in Q-learning.**El `max`el operador está sesgado hacia arriba cuando $Q$El doble aprendizaje Q de Hasselt (utilizado por DDQN en la Lección 05) corrige esto con dos tablas de Q.
 - **Non-terminating episodes.**TD puede aprender sin terminales, pero debe captar los pasos o manejar correctamente la banda de arranque en la banda.
 - **State hashing.**Si los estados son tuples/tensores, utilice una clave hashable (tuplo, no lista; tuple de flotantes redondeados, no crudo).
 
@@ -163,17 +171,17 @@ Refuse to apply tabular TD to state spaces > 10⁶. Refuse to ship a Q-learning 
 
 1. **Easy.**Implemente Q-learning y SARSA en el GridWorld 4×4. Plot de curvas de aprendizaje (retorno medio por 100 episodios) para 2.000 episodios. ¿Quién converge más rápido?
 2. **Medium.**Construir un entorno de caminar en acantilados (4×12, la última fila es el acantilado con recompensa -100 y restablecer para comenzar). Comparar las políticas finales de Q-learning y SARSA.
-3. **Hard.**Implementar doble aprendizaje Q. En un GridWorld de recompensas ruidosas (ruido gaussiano σ=5 añadido a la recompensa por paso), muestra sobrevaloraciones de Q-learning `V*(0,0)`En el caso de los estudiantes de doble Q, el aprendizaje no es un aprendizaje de doble Q.
+3. **Hard.**Implementar el doble aprendizaje Q. En un GridWorld (ruido gaussiano)$\sigma=5$se añade a la recompensa por paso), muestra sobrevaloraciones de Q-learning $V^{\ast}(0,0)$En el caso de los estudiantes de doble Q, el aprendizaje no es un aprendizaje de doble Q.
 
 ## Términos clave
 
 | Term | What people say | What it actually means |
 |------|-----------------|-----------------------|
-| TD error | "The update signal" | `δ = r + γ V(s') - V(s)`, the bootstrapped residual. |
+| TD error | "The update signal" | $\delta = r + \gamma V(s') - V(s)$, the bootstrapped residual. |
 | TD(0) | "One-step TD" | Update after every transition using only the next state's estimate. |
-| Q-learning | "Off-policy RL 101" | TD update with `max` over next-state actions; learns `Q*` regardless of behavior policy. |
-| SARSA | "On-policy Q-learning" | TD update using the actual next action; learns `Q^π` for current ε-greedy π. |
-| Expected SARSA | "The low-variance SARSA" | Replace sampled `a'` with its expectation under π. |
+| Q-learning | "Off-policy RL 101" | TD update with `max` over next-state actions; learns $Q^{\ast}$ regardless of behavior policy. |
+| SARSA | "On-policy Q-learning" | TD update using the actual next action; learns $Q^\pi$ for current ε-greedy π. |
+| Expected SARSA | "The low-variance SARSA" | Replace sampled $a'$ with its expectation under π. |
 | GLIE | "Correct exploration schedule" | Greedy in the Limit with Infinite Exploration; needed for Q-learning convergence. |
 | Bootstrapping | "Using current estimate in the target" | What distinguishes TD from MC. Source of bias but massive variance reduction. |
 | Maximization bias | "Q-learning overestimates" | `max` over noisy estimates is upward-biased; fixed by Double Q-learning. |

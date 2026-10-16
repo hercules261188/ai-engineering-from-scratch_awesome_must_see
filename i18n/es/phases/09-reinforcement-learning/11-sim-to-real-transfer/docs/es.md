@@ -31,7 +31,7 @@ Necesitas una política que sea *robusta para el cambio de distribución sim-rea
 
 **Domain Adaptation.**Entrenamiento en sim, ajuste fino con una pequeña cantidad de datos reales.
 
-- **Real2Sim2Real:**Aprender un simulador residual `f(s, a, z) - f_sim(s, a)`usando implementaciones reales, entrenar en el simulador corregido.
+- **Real2Sim2Real:**Aprender un simulador residual $f(s, a, z) - f_{\text{sim}}(s, a)$usando implementaciones reales, entrenar en el simulador corregido.
 - **Observation adaptation:**entrenar una política que mapea los obsos reales → sim-like obs a través de un extractor de características aprendido (por ejemplo, GAN píxel a píxel).
 
 **Privileged learning / teacher-student.**Miki et al. 2022 (ANYmal quadruped). Entrenar a un *enseñador* en la simulación que tiene acceso a información privilegiada (frito de la verdad del suelo, altura del terreno, deriva IMU). Distilla a un *estudiante* que sólo ve observaciones de sensores reales. El estudiante aprende a inferir características privilegiadas de la historia, sólidas a través de parámetros físicos.
@@ -128,7 +128,7 @@ Refuse to deploy without (a) a zero-shot sim-variant test, (b) a safety shield, 
 
 ## Los ejercicios
 
-1. **Easy.**Entrenar a un agente de aprendizaje Q en el GridWorld de deslizamiento fijo (slip=0.0). Evalúa en deslizamiento ∈ {0.0, 0.1, 0.3, 0.5}.
+1. **Easy.**Entrenamiento de un agente de aprendizaje Q en el GridWorld de deslizamiento fijo (deslizamiento = 0,0).$\text{slip} \in \lbrace 0.0, 0.1, 0.3, 0.5 \rbrace$- El retorno de la trama vs. el deslizamiento.
 2. **Medium.**Entrenar un agente de aprendizaje DR Q muestreo `slip ~ Uniform[0, 0.3]`¿Cuánto compra DR a un slip=0.5 (fuera de distribución)?
 3. **Hard.**Implementar un plan de estudios: empezar con slip=0.0, ampliar el rango de DR cada vez que la política alcanza el 90% de la óptima. Medir los pasos totales del entorno para alcanzar slip=0.3 de tiro cero frente a un baseline de DR fijo.
 

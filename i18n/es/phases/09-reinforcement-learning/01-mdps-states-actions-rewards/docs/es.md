@@ -21,20 +21,24 @@ No puedes aprender de esta corriente hasta que no la formalizes. "Lo que vi", "l
 
 **The five objects.**
 
-- **States** `S`Todo lo que el agente necesita decidir en el GridWorld, la célula, en el ajedrez, la tabla, en un LLM, la ventana de contexto más cualquier memoria.
-- **Actions** `A`Las opciones, subir/bajar/izquierda/derecha, jugar un movimiento, emitir un token.
-- **Transitions** `P(s' | s, a)`- Dado el estado .`s`y la acción `a`Determinista en ajedrez, estocástico en inventario, casi determinista en decodificación LLM.
-- **Rewards** `R(s, a, s')`La señal escalar. ganancia = +1, pérdida = -1. ingresos menos costo. El término de la relación log-probabilidad en GRPO.
-- **Discount** `γ ∈ [0, 1)`¿Cuánto cuentan las recompensas futuras frente al presente?`γ = 0.99`compra un horizonte de ~ 100 pasos; `γ = 0.9`Comprará ~10.
+- **States** $S$Todo lo que el agente necesita decidir en el GridWorld, la célula, en el ajedrez, la tabla, en un LLM, la ventana de contexto más cualquier memoria.
+- **Actions** $A$Las opciones, subir/bajar/izquierda/derecha, jugar un movimiento, emitir un token.
+- **Transitions** $P(s' \mid s, a)$- Dado el estado .$s$y la acción $a$Determinista en ajedrez, estocástico en inventario, casi determinista en decodificación LLM.
+- **Rewards** $R(s, a, s')$La señal escalar. ganancia = +1, pérdida = -1. ingresos menos costo. El término de la relación log-probabilidad en GRPO.
+- **Discount** $\gamma \in [0, 1)$¿Cuánto cuentan las recompensas futuras frente al presente?$\gamma = 0.99$compra un horizonte de ~ 100 pasos; $\gamma = 0.9$Comprará ~10.
 
-**The Markov property** `P(s_{t+1} | s_t, a_t) = P(s_{t+1} | s_0, a_0, …, s_t, a_t)`El futuro depende sólo del estado presente. Si no lo hace, la representación del estado es incompleta.
+**The Markov property** $P(s_{t+1} \mid s_t, a_t) = P(s_{t+1} \mid s_0, a_0, \ldots, s_t, a_t)$El futuro depende sólo del estado presente. Si no lo hace, la representación del estado es incompleta.
 
-**Policies and returns.**Una política`π(a | s)`Los estados de mapas a las distribuciones de acción.`G_t = r_t + γ r_{t+1} + γ² r_{t+2} + …`Es la suma descuentada de las recompensas futuras.`V^π(s) = E[G_t | s_t = s]`es el rendimiento esperado a partir de `s`en el marco de la política `π`El valor Q`Q^π(s, a) = E[G_t | s_t = s, a_t = a]`El algoritmo RL estima uno de estos dos, y luego mejora `π`En consecuencia.
+**Policies and returns.**Una política$\pi(a \mid s)$Los estados de mapas a las distribuciones de acción.$G_t = r_t + \gamma r_{t+1} + \gamma^2 r_{t+2} + \ldots$Es la suma descuentada de las recompensas futuras.$V^\pi(s) = \mathbb{E}[G_t \mid s_t = s]$es el rendimiento esperado a partir de $s$en el marco de la política $\pi$El valor Q$Q^\pi(s, a) = \mathbb{E}[G_t \mid s_t = s, a_t = a]$El algoritmo RL estima uno de estos dos, y luego mejora $\pi$En consecuencia.
 
 **The Bellman equations.**Las ecuaciones de punto fijo que todo en esta fase utiliza:
 
-`V^π(s) = Σ_a π(a|s) Σ_{s', r} P(s', r | s, a) [r + γ V^π(s')]`
-`Q^π(s, a) = Σ_{s', r} P(s', r | s, a) [r + γ Σ_{a'} π(a'|s') Q^π(s', a')]`
+```math
+\begin{aligned}
+V^\pi(s) &= \sum_a \pi(a \mid s) \sum_{s', r} P(s', r \mid s, a) [r + \gamma V^\pi(s')] \\
+Q^\pi(s, a) &= \sum_{s', r} P(s', r \mid s, a) [r + \gamma \sum_{a'} \pi(a' \mid s') Q^\pi(s', a')]
+\end{aligned}
+```
 
 Estos divididos esperados regresan a "la recompensa de este paso" más "valor descuento de donde aterrizas". Recursivo. Cada algoritmo en la Fase 9 o bien repite esta ecuación a convergencia (programación dinámica), muestras de ella (Monte Carlo), o arranca un paso (diferencia temporal).
 
@@ -113,16 +117,16 @@ Este es el primer algoritmo en Sutton & Barto y la base teórica de cada método
 
 ### Paso 4:`γ`es un hiperparámetro con significado físico
 
-El horizonte efectivo es aproximadamente `1 / (1 - γ)`- ¿ Qué ?`γ = 0.9`→ 10 pasos. `γ = 0.99`→ 100 pasos. `γ = 0.999`→ 1000 pasos.
+El horizonte efectivo es aproximadamente $1 / (1 - \gamma)$- ¿ Qué ?$\gamma = 0.9$→ 10 pasos. $\gamma = 0.99$→ 100 pasos. $\gamma = 0.999$→ 1000 pasos.
 
-El agente actúa de manera miope y la asignación de créditos se vuelve ruidosa, ya que muchos pasos iniciales comparten la responsabilidad de la recompensa de un futuro lejano.`γ = 1`Los controles de las tareas de control utilizan`0.95–0.99`Los juegos de estrategia de largo horizonte usan`0.999`¿ Qué ?
+El agente actúa de manera miope y la asignación de créditos se vuelve ruidosa, ya que muchos pasos iniciales comparten la responsabilidad de la recompensa de un futuro lejano.$\gamma = 1$Los controles de las tareas de control utilizan`0.95–0.99`Los juegos de estrategia de largo horizonte usan`0.999`¿ Qué ?
 
 ## Las trampas
 
 - **Non-Markovian state.**Si necesita las últimas tres observaciones para decidir, el "estado" no es solo la observación actual.
 - **Sparse rewards.**Las recompensas sólo para ganar hacen que el aprendizaje sea casi imposible en grandes espacios de estado.
 - **Reward hacking.**Optimizar una recompensa por proxy a menudo produce comportamiento patológico. El agente de carreras de barcos de OpenAI gira en círculos recogiendo powerups para siempre en lugar de terminar la carrera. Siempre define la recompensa por el resultado objetivo, no por el proxy.
-- **Discount mis-spec.** `γ = 1`En una tarea de horizonte infinito hace que cada valor sea infinito.`γ < 1`¿ Qué ?
+- **Discount mis-spec.** $\gamma = 1$En una tarea de horizonte infinito hace que cada valor sea infinito.$\gamma < 1$¿ Qué ?
 - **Reward scale.**Las recompensas de {+100, -100} vs {+1, -1} dan políticas óptimas idénticas pero magnitudes de gradiente muy diferentes.`[-1, 1]`- antes de conectarse a PPO/DQN.
 
 ## Usalo
@@ -167,21 +171,21 @@ Refuse to ship any MDP where the state is non-Markovian without explicit mention
 ## Los ejercicios
 
 1. **Easy.**Implementar el 4×4 GridWorld y el despliegue de políticas aleatorias en `code/main.py`- Cancelar 10.000 episodios. Informar el promedio y el std de retorno. Comparar con el retorno óptimo (-6).
-2. **Medium.**- ¿ Qué ?`policy_evaluation`con`γ ∈ {0.5, 0.9, 0.99}`para la política uniforme aleatoria.`V`Explique por qué los valores de estado cerca de la terminal crecen más rápido con mayor tamaño.`γ`¿ Qué ?
-3. **Hard.**Vuelve la GridWorld estocástica: cada acción se desliza hacia una dirección adyacente con probabilidad `p = 0.1`Reevaluar la política de uniforme.`V[start]`¿Mejor o peor?
+2. **Medium.**- ¿ Qué ?`policy_evaluation`con$\gamma \in \lbrace 0.5, 0.9, 0.99 \rbrace$para la política uniforme aleatoria.`V`Explique por qué los valores de estado cerca de la terminal crecen más rápido con mayor tamaño.$\gamma$¿ Qué ?
+3. **Hard.**Vuelve la GridWorld estocástica: cada acción se desliza hacia una dirección adyacente con probabilidad $p = 0.1$Reevaluar la política de uniforme.`V[start]`¿Mejor o peor?
 
 ## Términos clave
 
 | Term | What people say | What it actually means |
 |------|-----------------|-----------------------|
-| MDP | "Reinforcement learning setup" | Tuple `(S, A, P, R, γ)` satisfying the Markov property. |
+| MDP | "Reinforcement learning setup" | Tuple $(S, A, P, R, \gamma)$ satisfying the Markov property. |
 | State | "What the agent sees" | Sufficient statistic for future dynamics under the chosen policy class. |
-| Policy | "Agent's behavior" | Conditional distribution `π(a \| s)` or deterministic map `s → a`. |
-| Return | "Total reward" | Discounted sum `Σ γ^t r_t` from the current step. |
-| Value | "How good a state is" | Expected return under `π` starting from `s`. |
-| Q-value | "How good an action is" | Expected return under `π` starting from `s` with first action `a`. |
+| Policy | "Agent's behavior" | Conditional distribution $\pi(a \mid s)$ or deterministic map $s \to a$. |
+| Return | "Total reward" | Discounted sum $\sum \gamma^t r_t$ from the current step. |
+| Value | "How good a state is" | Expected return under $\pi$ starting from $s$. |
+| Q-value | "How good an action is" | Expected return under $\pi$ starting from $s$ with first action $a$. |
 | Bellman equation | "Dynamic programming recursion" | Fixed-point decomposition of value / Q into one-step reward plus discounted successor value. |
-| Discount `γ` | "Future vs present" | Geometric weight on far-future reward; effective horizon `~1/(1-γ)`. |
+| Discount $\gamma$ | "Future vs present" | Geometric weight on far-future reward; effective horizon $\approx 1/(1-\gamma)$. |
 
 ## Leer más
 
@@ -189,4 +193,4 @@ Refuse to ship any MDP where the state is non-Markovian without explicit mention
 - [Bellman (1957). Dynamic Programming](https://press.princeton.edu/books/paperback/9780691146683/dynamic-programming) el origen de la ecuación de Bellman.
 - [OpenAI Spinning Up — Part 1: Key Concepts](https://spinningup.openai.com/en/latest/spinningup/rl_intro.html) Primer conciso de MDP desde un ángulo de RL profundo.
 - [Puterman (2005). Markov Decision Processes](https://onlinelibrary.wiley.com/doi/book/10.1002/9780470316887) la referencia de investigación de operaciones sobre los PMP y los métodos de solución exactos.
-- [Littman (1996). Algorithms for Sequential Decision Making (PhD thesis)](https://www.cs.rutgers.edu/~mlittman/papers/thesis-main.pdf) la derivación más limpia de los MDP como especialización de programación dinámica.
+- [Littman (1996). Algorithms for Sequential Decision Making (PhD thesis)](https://cs.brown.edu/media/filer_public/d1/a6/d1a6f66a-289a-4b81-9596-417114843489/littman.pdf) la derivación más limpia de los MDP como especialización de programación dinámica.

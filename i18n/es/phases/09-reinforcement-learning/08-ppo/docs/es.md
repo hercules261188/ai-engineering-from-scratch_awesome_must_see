@@ -9,11 +9,11 @@
 
 ## El problema
 
-A2C (lección 07) es sobre la política: el gradiente `E_{π_θ}[A · ∇ log π_θ]`Requiere datos recogidos de la *current* `π_θ`. Toma una actualización, y `π_θ`los cambios; los datos que usaste ahora están fuera de política.
+A2C (lección 07) es sobre la política: el gradiente $\mathbb E_{\pi_\theta}[A \cdot \nabla \log \pi_\theta]$Requiere datos recogidos de la *current* $\pi_\theta$. Toma una actualización, y $\pi_\theta$los cambios; los datos que usaste ahora están fuera de política.
 
 En Atari, un despliegue en 8 envs × 128 pasos = 1024 transiciones y una docena de segundos de tiempo ambiental.
 
-La optimización de las políticas de la región de confianza (TRPO, Schulman 2015) fue la primera solución: restringir cada actualización para que la divergencia entre las políticas antiguas y nuevas de KL se mantenga por debajo `δ`Teóricamente limpio, pero requiere una solución de gradiente conjugado por actualización.
+La optimización de las políticas de la región de confianza (TRPO, Schulman 2015) fue la primera solución: restringir cada actualización para que la divergencia entre las políticas antiguas y nuevas de KL se mantenga por debajo $\delta$Teóricamente limpio, pero requiere una solución de gradiente conjugado por actualización.
 
 PPO (Schulman et al. 2017) reemplaza la restricción de la región de confianza dura con un objetivo simple recortado. Una línea extra de código. Diez épocas por implementación. No hay gradientes conjugados.
 
@@ -23,43 +23,49 @@ PPO (Schulman et al. 2017) reemplaza la restricción de la región de confianza 
 
 **The importance ratio.**
 
-`r_t(θ) = π_θ(a_t | s_t) / π_{θ_old}(a_t | s_t)`
+```math
+r_t(\theta) = \frac{\pi_\theta(a_t \mid s_t)}{\pi_{\theta_{\text{old}}}(a_t \mid s_t)}
+```
 
-Esta es la proporción de probabilidad de la nueva política frente a la política que recopiló los datos. `r_t = 1`significa que no hay cambio.`r_t = 2`significa que la nueva política tiene el doble de probabilidades de tomar`a_t`como el viejo.
+Esta es la proporción de probabilidad de la nueva política frente a la política que recopiló los datos. $r_t = 1$significa que no hay cambio.$r_t = 2$significa que la nueva política tiene el doble de probabilidades de tomar$a_t$como el viejo.
 
 **The clipped surrogate.**
 
-`L^{CLIP}(θ) = E_t [ min( r_t(θ) A_t, clip(r_t(θ), 1-ε, 1+ε) A_t ) ]`
+```math
+L^{\text{CLIP}}(\theta) = \mathbb{E}_t \left[ \min\left( r_t(\theta) A_t, \mathop{\mathrm{clip}}(r_t(\theta), 1-\epsilon, 1+\epsilon) A_t \right) \right]
+```
 
 Dos términos:
 
-- Si la ventaja es`A_t > 0`y la proporción trata de crecer más allá `1 + ε`, el clip aplanar el gradiente  no empujar una buena acción más allá de `+ε`por encima de la antigua probabilidad.
-- Si la ventaja es`A_t < 0`y la proporción trata de crecer más allá `1 - ε`(lo que significa que haríamos una mala acción más probable en comparación con su reducción recortada), el clip tapa el gradiente  no empujar una mala acción por debajo `-ε`¿ Qué ?
+- Si la ventaja es$A_t > 0$y la proporción trata de crecer más allá $1 + \epsilon$, el clip aplanar el gradiente  no empujar una buena acción más allá de $+\epsilon$por encima de la antigua probabilidad.
+- Si la ventaja es$A_t < 0$y la proporción trata de crecer más allá $1 - \epsilon$(lo que significa que haríamos una mala acción más probable en comparación con su reducción recortada), el clip tapa el gradiente  no empujar una mala acción por debajo $-\epsilon$¿ Qué ?
 
 El `min`maneja la otra dirección: si la relación se ha movido en la dirección *beneficial* , todavía obtiene el gradiente (no hay recorte en el lado que le perjudique).
 
-Típico`ε = 0.2`. Describir el objetivo como función de `r_t`: una función lineal de pieza con un techo plano en el "lado bueno" y un piso plano en el "lado malo".
+Típico$\epsilon = 0.2$. Describir el objetivo como función de $r_t$: una función lineal de pieza con un techo plano en el "lado bueno" y un piso plano en el "lado malo".
 
 **The full PPO loss.**
 
-`L(θ, φ) = L^{CLIP}(θ) - c_v · (V_φ(s_t) - V_t^{target})² + c_e · H(π_θ(·|s_t))`
+```math
+L(\theta, \phi) = L^{\text{CLIP}}(\theta) - c_v \cdot (V_\phi(s_t) - V_t^{\text{target}})^2 + c_e \cdot H(\pi_\theta(\cdot \mid s_t))
+```
 
-La misma estructura actor-crítica que A2C. Tres coeficientes, por lo general `c_v = 0.5`¿ Qué ?`c_e = 0.01`¿ Qué ?`ε = 0.2`¿ Qué ?
+La misma estructura actor-crítica que A2C. Tres coeficientes, por lo general $c_v = 0.5$¿ Qué ?$c_e = 0.01$¿ Qué ?$\epsilon = 0.2$¿ Qué ?
 
 **The training loop.**
 
-1. Recolectar`N × T`transiciones en el transcurso de la`N`Envistas paralelas para `T`cada uno de los pasos.
+1. Recolectar$N \times T$transiciones en el transcurso de la$N$Envistas paralelas para $T$cada uno de los pasos.
 2. Computa ventajas (GAE), congelarlas como constantes.
-3. Se congela .`π_{θ_old}`como una instantánea de la corriente `π_θ`¿ Qué ?
-4. Para`K`La Comisión ha adoptado una directiva relativa a la protección de los animales en el sector de la pesca.`(s, a, A, V_target, log π_old(a|s))`¿Qué es esto ?
-   - Computación`r_t(θ) = exp(log π_θ(a|s) - log π_old(a|s))`¿ Qué ?
-   - Aplicar`L^{CLIP}`+ pérdida de valor + entropía.
+3. Se congela .$\pi_{\theta_{\text{old}}}$como una instantánea de la corriente $\pi_\theta$¿ Qué ?
+4. Para$K$La Comisión ha adoptado una directiva relativa a la protección de los animales en el sector de la pesca.`(s, a, A, V_target, log π_old(a|s))`¿Qué es esto ?
+   - Computación$r_t(\theta) = \exp(\log \pi_\theta(a \mid s) - \log \pi_{\text{old}}(a \mid s))$¿ Qué ?
+   - Aplicar$L^{\text{CLIP}}$+ pérdida de valor + entropía.
    - Un paso gradual.
 5. Desecha el despliegue y vuelve al paso 1.
 
-`K = 10`El PPO es robusto: los números exactos rara vez importan dentro de ±50%.
+$K = 10$El PPO es robusto: los números exactos rara vez importan dentro de ±50%.
 
-**KL-penalty variant.**El documento original propuso una alternativa mediante una penalidad KL adaptativa: `L = L^{PG} - β · KL(π_θ || π_old)`con`β`La versión de recorte se convirtió en dominante; la variante KL sobrevive en RLHF (donde KL a la política de referencia es una restricción separada que siempre quieres de todos modos).
+**KL-penalty variant.**El documento original propuso una alternativa mediante una penalidad KL adaptativa: $L = L^{\text{PG}} - \beta \cdot \mathrm{KL}(\pi_\theta \Vert \pi_{\text{old}})$con$\beta$La versión de recorte se convirtió en dominante; la variante KL sobrevive en RLHF (donde KL a la política de referencia es una restricción separada que siempre quieres de todos modos).
 
 ```figure
 ppo-clip
@@ -124,19 +130,19 @@ Añadir MSE estándar al objetivo crítico y una bonificación de entropía en e
 
 Tres cosas para ver en cada actualización:
 
-- **Mean KL** `E[log π_old - log π_θ]`Debería quedarse .`[0, 0.02]`Si pasa por ahí`0.1`, reducir `K_EPOCHS`o `LR`¿ Qué ?
-- **Clip fraction** la fracción de muestras cuya proporción se encuentra fuera `[1-ε, 1+ε]`- Deberían ser .`~0.1-0.3`Si ...`~0`, el clip nunca activa → aumento `LR`o `K_EPOCHS`Si ...`~0.5+`, estás sobre-ajustando el despliegue → bajarlos.
-- **Explained variance** `1 - Var(V_target - V_pred) / Var(V_target)`- Metrica de calidad crítica. Debería subir hacia 1 a medida que el crítico aprende.
+- **Mean KL** $\mathbb{E}[\log \pi_{\text{old}} - \log \pi_\theta]$Debería quedarse .`[0, 0.02]`Si pasa por ahí`0.1`, reducir `K_EPOCHS`o `LR`¿ Qué ?
+- **Clip fraction** la fracción de muestras cuya proporción se encuentra fuera $[1-\epsilon, 1+\epsilon]$- Deberían ser .`~0.1-0.3`Si ...`~0`, el clip nunca activa → aumento `LR`o `K_EPOCHS`Si ...`~0.5+`, estás sobre-ajustando el despliegue → bajarlos.
+- **Explained variance** $1 - \text{Var}(V_{\text{target}} - V_{\text{pred}}) / \text{Var}(V_{\text{target}})$- Metrica de calidad crítica. Debería subir hacia 1 a medida que el crítico aprende.
 
 ## Las trampas
 
-- **Clip coefficient mistuned.** `ε = 0.2`Es el estándar de facto.`0.1`hace que las actualizaciones sean demasiado tímidas; `0.3+`Invita a la inestabilidad.
-- **Too many epochs.** `K > 20`La política de la UE se desestabiliza de forma rutinaria porque la política se deriva lejos de la`π_old`- Epocas de límite, especialmente para las redes grandes.
+- **Clip coefficient mistuned.** $\epsilon = 0.2$Es el estándar de facto.`0.1`hace que las actualizaciones sean demasiado tímidas; `0.3+`Invita a la inestabilidad.
+- **Too many epochs.** $K > 20$La política de la UE se desestabiliza de forma rutinaria porque la política se deriva lejos de la$\pi_{\text{old}}$- Epocas de límite, especialmente para las redes grandes.
 - **No reward normalization.**Las grandes escalas de recompensa se incorporan al rango de los clip. Normaliza las recompensas (con std) antes de las ventajas de la computación.
 - **Forgetting advantage normalization.**La normalización de la media cero/unidad-std por lote es estándar.
 - **Learning rate not decayed.**La PPO se beneficia de la decadencia de la LR lineal a cero.
 - **Importance ratio math errors.**Siempre .`exp(log_new - log_old)`para la estabilidad numérica, no `new / old`¿ Qué ?
-- **Wrong gradient sign.**Maximizar la madre sustitua = *minimizar* `-L^{CLIP}`Un letrero invertido es el virus más común.
+- **Wrong gradient sign.**Maximizar la madre sustitua = *minimizar* $-L^{\text{CLIP}}$Un letrero invertido es el virus más común.
 
 ## Usalo
 
@@ -180,18 +186,18 @@ Refuse `K > 30` or `ε > 0.3` (unsafe trust region). Refuse any PPO run without 
 
 ## Los ejercicios
 
-1. **Easy.**Ejecutar PPO en 4×4 GridWorld con `ε=0.2, K=4`. Comparar la eficiencia de la muestra con A2C (una época por lanzamiento) en etapas de entorno iguales.
-2. **Medium.**Especialización`K ∈ {1, 4, 10, 30}`. Retorno de la trama vs. pasos env y seguimiento de media KL por actualización.`K`¿KL explotará en esta tarea?
-3. **Hard.**En el caso de las personas que no tengan derecho a la prestación de servicios, el importe de la prestación de servicios de servicios de servicios de servicios de servicios de servicios de servicios de servicios de servicios de servicios de servicios de servicios de servicios de servicios de servicios de servicios de servicios de servicios de servicios de servicios de servicios de servicios de servicios de servicios de servicios de servicios de servicios de servicios de servicios de servicios de servicios de servicios de servicios de servicios de servicios de servicios de servicios de servicios de servicios de servicios de servicios de servicios de servicios de servicios de servicios de servicios de servicios de servicios de servicios de servicios de servicios de servicios de servicios de servicios de servicios de servicios de servicios de servicios de servicios de servicios de servicios de servicios de servicios de servicios de servicios de servicios de servicios de servicios de servicios de servicios de servicios de servicios de servicios de servicios de servicios de servicios de servicios de servicios de servicios de servicios de servicios de servicios de servicios de servicios de servicios de servicios de servicios de servicios de servicios de servicios de servicios de servicios de servicios de servicios de servicios de servicios de servicios de servicios de servicios de servicios de servicios de servicios de servicios de servicios de servicios de servicios de servicios de servicios de servicios de servicios de servicios de servicios de servicios de servicios de servicios de servicios de servicios de servicios de servicios de servicios de servicios de servicios de servicios de servicios de servicios de servicios de servicios de servicios de servicios de servicios de servicios de servicios de servicios de servicios de servicios de servicios de servicios de servicios de servicios de servicios de servicios de servicios de servicios de servicios de servicios de servicios de servicios de servicios de servicios de servicios de servicios de servicios de servicios de servicios de servicios de servicios de servicios de servicios de servicios de servicios de servicios de servicios de servicios de servicios de servicios de servicios de servicios de servicios de servicios de servicios de servicios de servicios de servicios de servicios de servicios de servicios de servicios de servicios de servicios de servicios de servicios de servicios de servicios de servicios de servicios de servicios de servicios de servicios de servicios de servicios de servicios de servicios de servicios de servicios de servicios de servicios de servicios de servicios de servicios de servicios de servicios de servicios de servicios de servicios de servicios de servicios de la Unión.`β`duplicado si `KL > 2·target`, se redujeron a la mitad si `KL < target/2`) Compare el rendimiento final, la estabilidad y la libre de clip.
+1. **Easy.**Ejecutar PPO en 4×4 GridWorld con $\epsilon=0.2, K=4$. Comparar la eficiencia de la muestra con A2C (una época por lanzamiento) en etapas de entorno iguales.
+2. **Medium.**Especialización$K \in \lbrace 1, 4, 10, 30 \rbrace$. Retorno de la trama vs. pasos env y seguimiento de media KL por actualización.$K$¿KL explotará en esta tarea?
+3. **Hard.**En el caso de las personas que no tengan derecho a la prestación de servicios, el importe de la prestación de servicios de servicios de servicios de servicios de servicios de servicios de servicios de servicios de servicios de servicios de servicios de servicios de servicios de servicios de servicios de servicios de servicios de servicios de servicios de servicios de servicios de servicios de servicios de servicios de servicios de servicios de servicios de servicios de servicios de servicios de servicios de servicios de servicios de servicios de servicios de servicios de servicios de servicios de servicios de servicios de servicios de servicios de servicios de servicios de servicios de servicios de servicios de servicios de servicios de servicios de servicios de servicios de servicios de servicios de servicios de servicios de servicios de servicios de servicios de servicios de servicios de servicios de servicios de servicios de servicios de servicios de servicios de servicios de servicios de servicios de servicios de servicios de servicios de servicios de servicios de servicios de servicios de servicios de servicios de servicios de servicios de servicios de servicios de servicios de servicios de servicios de servicios de servicios de servicios de servicios de servicios de servicios de servicios de servicios de servicios de servicios de servicios de servicios de servicios de servicios de servicios de servicios de servicios de servicios de servicios de servicios de servicios de servicios de servicios de servicios de servicios de servicios de servicios de servicios de servicios de servicios de servicios de servicios de servicios de servicios de servicios de servicios de servicios de servicios de servicios de servicios de servicios de servicios de servicios de servicios de servicios de servicios de servicios de servicios de servicios de servicios de servicios de servicios de servicios de servicios de servicios de servicios de servicios de servicios de servicios de servicios de servicios de servicios de servicios de servicios de servicios de servicios de servicios de servicios de servicios de servicios de servicios de servicios de servicios de servicios de servicios de servicios de servicios de servicios de servicios de servicios de servicios de servicios de servicios de servicios de servicios de servicios de servicios de servicios de servicios de servicios de servicios de servicios de servicios de servicios de servicios de servicios de servicios de servicios de servicios de servicios de servicios de servicios de servicios de servicios de servicios de servicios de servicios de servicios de servicios de servicios de servicios de servicios de servicios de servicios de servicios de servicios de servicios de servicios de servicios de servicios de la Unión.$\beta$duplicado si $\mathrm{KL} > 2 \cdot \text{target}$, se redujeron a la mitad si $\mathrm{KL} < \text{target}/2$) Compare el rendimiento final, la estabilidad y la libre de clip.
 
 ## Términos clave
 
 | Term | What people say | What it actually means |
 |------|-----------------|-----------------------|
-| Importance ratio | "r_t(θ)" | `π_θ(a\|s) / π_old(a\|s)`; deviation from the policy that collected the data. |
-| Clipped surrogate | "PPO's main trick" | `min(r·A, clip(r, 1-ε, 1+ε)·A)`; flat gradient past the clip on beneficial side. |
+| Importance ratio | "r_t(θ)" | $\pi_\theta(a \mid s) / \pi_{\text{old}}(a \mid s)$; deviation from the policy that collected the data. |
+| Clipped surrogate | "PPO's main trick" | $\min(r \cdot A, \mathop{\mathrm{clip}}(r, 1-\epsilon, 1+\epsilon) \cdot A)$; flat gradient past the clip on beneficial side. |
 | Trust region | "TRPO / PPO intent" | Limit each update's KL to guarantee monotone improvement. |
-| KL penalty | "Soft trust region" | Alternative PPO: `L - β · KL(π_θ \|\| π_old)`. Adaptive `β`. |
+| KL penalty | "Soft trust region" | Alternative PPO: $L - \beta \cdot \mathrm{KL}(\pi_\theta \Vert \pi_{\text{old}})$. Adaptive $\beta$. |
 | Clip fraction | "How often clipping triggers" | Diagnostic — should be 0.1-0.3; outside means mistuned. |
 | Multi-epoch training | "Data reuse" | K epochs on each rollout; variance cost traded for sample efficiency. |
 | On-policy-ish | "Mostly on-policy" | PPO is nominally on-policy but K>1 epochs uses slightly-off-policy data safely. |
