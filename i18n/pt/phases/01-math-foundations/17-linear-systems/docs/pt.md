@@ -1,6 +1,6 @@
 # Sistemas Lineares
 
-> Resolver Ax = b é o problema mais antigo da matemática que ainda dirige a sua rede neural.
+> Resolução $Ax = b$É o problema mais antigo da matemática que ainda controla a rede neural.
 
 **Type:** Build
 **Language:**Python
@@ -9,7 +9,7 @@
 
 ## Objetivos de aprendizagem
 
-- Resolver Ax = b usando a eliminação de Gaussian com rotação parcial e substituição de volta
+- Resolver$Ax = b$utilizando a eliminação de Gaussian com rotação parcial e substituição de volta
 - Matriz de fatores com decomposições LU, QR e Cholesky e explicar quando cada uma é apropriada
 - Derivar as equações normais para os mínimos quadrados e conectá-los à regressão linear e de cresta
 - Diagnóstico de sistemas mal condicionados usando o número de condição e aplicar regularização para estabilizá-los
@@ -18,7 +18,7 @@
 
 Cada vez que você treina uma regressão linear, você resolve um sistema linear.`y = Wx + b`Quando você adiciona regularização, você modifica o sistema. Quando você usa processos de Gaussian, você faz uma matriz. Quando você inverte uma matriz de covariância para a distância de Mahalanobis, você resolve um sistema linear.
 
-A equação Ax = b aparece em todos os lugares. A é uma matriz de coeficientes conhecidos. b é um vetor de saídas conhecidas. x é o vetor de desconhecidos que você quer encontrar. Na regressão linear, A é sua matriz de dados, b é seu vetor de destino e x é o vetor de peso. Todo o modelo se reduz a: encontrar x de tal forma que Ax esteja o mais próximo de b possível.
+A equação $Ax = b$Aparece em todos os lugares.$A$é uma matriz de coeficientes conhecidos. $b$é um vetor de saídas conhecidas. $x$é o vetor de desconhecidos que você quer encontrar.$A$é a sua matriz de dados,$b$é o seu vetor de destino, e $x$O modelo inteiro se reduz a: encontrar $x$Tal como isso .$Ax$É o mais próximo de $b$- O mais possível.
 
 Esta lição constrói todos os principais métodos para resolver essa equação a partir do zero. Você entenderá por que alguns métodos são rápidos e outros são estáveis, por que alguns funcionam apenas para sistemas quadrados e outros lidam com sistemas sobredeterminados, e por que o número de condição de sua matriz determina se sua resposta significa alguma coisa.
 
@@ -54,15 +54,15 @@ graph TD
     end
 ```
 
-Na forma de matriz, "uma solução" significa que A é invertível. "Nenhuma solução" significa que o sistema é inconsistente. "Soluções infinitas" significa que A tem um espaço nulo. A maioria dos problemas ML se enquadra na categoria "não há solução exata" porque você tem mais equações (pontos de dados) do que desconhecidos (parâmetros). É aí que menos quadrados entram.
+Na forma de matriz, "uma solução" significa $A$"Não há solução" significa que o sistema é inconsistente.$A$A maioria dos problemas de ML caem na categoria "sem solução exata" porque você tem mais equações (pontos de dados) do que desconhecidos (parâmetros).
 
 ### Imagens de coluna vs imagens de linha
 
-Existem duas maneiras de ler Ax = b.
+Há duas maneiras de ler .$Ax = b$- Não .
 
-**Row picture.**Cada linha de A define uma equação. Cada equação é um hiperplano. A solução é onde todos eles se cruzam.
+**Row picture.**Cada linha de $A$Cada equação é um hiperplano. A solução é onde todos eles se cruzam.
 
-**Column picture.**Cada coluna de A é um vetor. A questão se torna: qual combinação linear das colunas de A produz b?
+**Column picture.**Cada coluna de $A$A questão se torna: qual combinação linear das colunas de $A$produz $b$- Não .
 
 ```
 A = | 2  1 |    b = | 5 |
@@ -75,11 +75,11 @@ Column picture: find x1, x2 such that:
   2 * [2, 1] + 1 * [1, -1] = [4+1, 2-1] = [5, 1]   check.
 ```
 
-A imagem de coluna é mais fundamental. Se b estiver no espaço de coluna de A, o sistema tem uma solução. Se b não estiver, você encontrará o ponto mais próximo no espaço de coluna.
+A imagem de coluna é mais fundamental.$b$encontra-se no espaço de coluna de $A$O sistema tem uma solução.$b$Se não, você encontra o ponto mais próximo no espaço coluna.
 
 ### Eliminação gaussiana
 
-A eliminação de Gaussian transforma Ax = b em um sistema triangular superior Ux = c que você resolve pela substituição de volta. É o método mais direto.
+A eliminação gaussiana transforma-se .$Ax = b$num sistema triangular superior $Ux = c$O que é mais direto é o método de substitução de volta.
 
 O algoritmo:
 
@@ -111,7 +111,7 @@ Back substitute:
   2*x1 + 2 + 2 = 8 --> x1 = 2
 ```
 
-A eliminação gaussiana custa operações O ((n^3). Para um sistema 1000x1000, isso é cerca de um bilhão de operações de ponto flutuante. Rápido, mas você pode fazer melhor se você precisar resolver vários sistemas com o mesmo A.
+Custos de eliminação Gaussian $O(n^3)$- a) a) a) a) a) a) a) a) a) a) a) a) a) a) a) a) a) a) a) a) a) a) a) a) a) a) a) a) a) a) a) a) a) a) a) a) a) a) a) a) a) a) a) a) a) a) a) a) a) a) a) a) a) a) a) a) a) a) a) a) a) a) a) a) a) a) a) a) a) a) a) a) a) a) a) a) a) a) a) a) a) a) a) a) a) a) a) a) a) a) a) a) a) a) a) a) a) a) a) a) a) a) a) a) a) a) a) a) a) a) a) a) a) a) a) a) a) a) a) a) a) a) a) a) a) a) a) a) a) a) a) a) a) a) a) a) a) a) a) a) a) a) a) a) a) a) a) a) a) a) a) a) a) a) a) a) a) a) a) a) a) a) a) a) a) a) a) a) a) a) a) a) a) a) a) a) a) a) a) a) a) a) a) a) a) a) a) a) a) a) a) a) a) a) a) a) a) a) a) a) a) a) a) a) a) a) a) a) a) a) a) a) a) a) a) a) a) a) a) a) a) a) a) a) a) a) a) a) a) a) a) a) a) a) a) a) a) a) a) a) a)$1000 \times 1000$sistema, que é cerca de um bilhão de operações de ponto flutuante. Rapido, mas você pode fazer melhor se você precisa resolver vários sistemas com o mesmo$A$- Não .
 
 ### Pivagem parcial: por que é importante
 
@@ -136,7 +136,7 @@ Na aritmética de pontos flutuantes com precisão limitada, a versão não pivot
 
 ### Descomposição de LU
 
-A matriz de decomposição de LU A em uma matriz triangular inferior L e uma matriz triangular superior U: A = LU. A matriz L armazena os multiplicadores da eliminação de Gaussian. A matriz U é o resultado da eliminação.
+Fatores de decomposição de LU $A$em uma matriz triangular inferior $L$e uma matriz triangular superior $U$- Não .$A = LU$- O .$L$A matriz armazena os multiplicadores da eliminação de Gaussian.$U$A matriz é o resultado da eliminação.
 
 ```
 A = L @ U
@@ -146,25 +146,27 @@ A = L @ U
 | 2  3  1 |   | 1  2  1 |   | 0  0  -2 |
 ```
 
-Porque, uma vez que você tem L e U, resolver Ax = b para qualquer novo b custa apenas O ((n^2):
+Porque é que o fator em vez de apenas eliminar?$L$E ...$U$, resolver$Ax = b$para qualquer novo $b$apenas custos $O(n^2)$- Não .
 
+```math
+\begin{aligned}
+Ax &= b \\
+LUx &= b \\
+&\text{Let } y = Ux\text{:} \\
+Ly &= b \quad \text{(forward substitution, } O(n^2)\text{)} \\
+Ux &= y \quad \text{(back substitution, } O(n^2)\text{)}
+\end{aligned}
 ```
-Ax = b
-LUx = b
-Let y = Ux:
-  Ly = b    (forward substitution, O(n^2))
-  Ux = y    (back substitution, O(n^2))
-```
 
-O custo O ((n^3) é pago uma vez durante a factorization. Cada solução subsequente é O ((n^2). Se você precisa resolver 1000 sistemas com os mesmos vectores A mas diferentes b, LU economiza um fator de 1000/3 no trabalho total.
+O $O(n^3)$O custo é pago uma vez durante a factorization.$O(n^2)$Se precisares de resolver mil sistemas com o mesmo$A$Mas diferente.$b$O valor de trabalho total é de 1000/3.
 
-Com a rotação parcial, você obtém PA = LU onde P é uma matriz de permutação gravando os swaps de fila.
+Com a rotação parcial, você obtém$PA = LU$onde$P$é uma matriz de permutação que registra os swaps de fila.
 
 ### Descomposição QR
 
-Os fatores de decomposição QR A em uma matriz ortogonal Q e uma matriz triangular superior R: A = QR.
+Fatores de decomposição QR $A$em uma matriz ortogonais $Q$e uma matriz triangular superior $R$- Não .$A = QR$- Não .
 
-Uma matriz ortogonal tem a propriedade Q^T Q = I. Suas colunas são vetores ortônormais.
+Uma matriz ortogonais tem a propriedade$Q^T Q = I$As colunas são vetores ortônormais.$Q$Preserva os comprimentos e os ângulos.
 
 ```
 A = Q @ R
@@ -178,7 +180,7 @@ To solve Ax = b:
   Back substitute to get x.
 ```
 
-QR é numericamente mais estável do que LU para resolver problemas de mínimos quadrados.
+O QR é numericamente mais estável do que o LU para resolver os problemas de mínimos quadrados.$Q$Coluna por coluna:
 
 ```
 Given columns a1, a2, ... of A:
@@ -194,11 +196,11 @@ q3 = q3 / ||q3||
 R[i][j] = qi . aj    for i <= j
 ```
 
-Cada passo remove o componente ao longo de todos os vetores q anteriores, deixando apenas a nova direção ortogonais.
+Cada passo remove o componente ao longo de todos os anteriores $q$Vectores, deixando apenas a nova direcção ortogonais.
 
 ### Cholesky decomposição
 
-Quando A é simétrica (A = A^T) e positiva definida (todos os valores próprios positivos), você pode fatorizá-la como A = L L^T onde L é triangular inferior.
+Quando ?$A$é simétrica ($A = A^T$) e positivo definido (todos os valores próprios positivos), pode-se factorizá-lo como $A = L L^T$onde$L$É o triângulo inferior.
 
 ```
 A = L @ L^T
@@ -215,13 +217,13 @@ Cholesky é duas vezes mais rápido do que LU e requer metade do armazenamento.
 - Matriz de covariância são semi-definidas positivas simétricas (definidas positivas com regularização).
 - A matriz do núcleo nos processos de Gaussian é simétrica positiva definida.
 - O Hessiano de uma função convexa no mínimo é simétrico positivo definido.
-- A^T A é sempre semi-definida positiva simétrica.
+- $A^T A$é sempre semi-definido positivo simétrico.
 
-Em processos de Gaussian, você faz a matriz do núcleo K com Cholesky, então resolve K alfa = y para obter a média preditiva. O fator Cholesky também lhe dá o log-determinante para a probabilidade marginal: log det(K) = 2 * soma(log(diag(L))).
+Em processos gaussianos, você faz factorizar a matriz do núcleo $K$Com Cholesky, resolva-o.$K \alpha = y$O fator Cholesky também dá-lhe o log-determinante para a probabilidade marginal:$\log \det(K) = 2 \sum \log(\mathop{\mathrm{diag}}(L))$- Não .
 
 ### Quadrados mínimos: quando Ax = b não tem solução exata
 
-Se A é m x n com m > n (mais equações do que desconhecidas), o sistema é sobredeterminado. Não há solução exata. Em vez disso, você minimiza o erro quadrado:
+Se$A$É o que é$m \times n$com$m > n$(mais equações do que desconhecidas), o sistema é sobredeterminado. Não há solução exata. Em vez disso, você minimiza o erro quadrado:
 
 ```
 minimize ||Ax - b||^2
@@ -232,11 +234,11 @@ This is the sum of squared residuals:
 
 O minimizador satisfaz as equações normais:
 
-```
+```math
 A^T A x = A^T b
 ```
 
-Derivação: expandir a Ax - b b b b b b b 2 = (Ax - b) ^ T (Ax - b) = x^T A^T A x - 2 x^T A^T b + b^T b. Tomar o gradiente em relação a x, definir para zero: 2 A^T A x - 2 A^T b = 0.
+Derivação: expandir $\lVert Ax - b \rVert^2 = (Ax - b)^T (Ax - b) = x^T A^T A x - 2 x^T A^T b + b^T b$- Tome o gradiente em relação a$x$, definir para zero: $2 A^T A x - 2 A^T b = 0$- Não .
 
 ```
 Original system (overdetermined, 4 equations, 2 unknowns):
@@ -256,35 +258,40 @@ This is linear regression. x[0] is the intercept, x[1] is the slope.
 
 ### Equações normais = regressão linear
 
-A conexão é exata. Na regressão linear, a matriz de dados X tem uma linha por amostra e uma coluna por característica. O vector-alvo y tem uma entrada por amostra. O vector de peso w satisfaz:
+A conexão é exata.$X$Tem uma linha por amostra e uma coluna por característica.$y$O vector de peso $w$satisfaz:
 
-```
-X^T X w = X^T y
-w = (X^T X)^(-1) X^T y
+```math
+\begin{aligned}
+X^T X w &= X^T y \\
+w &= (X^T X)^{-1} X^T y
+\end{aligned}
 ```
 
 Esta é a solução fechada para a regressão linear.`sklearn.linear_model.LinearRegression.fit()`computa esta (ou um equivalente através de QR ou SVD).
 
-Adicione um termo de regularização lambda * I à matriz e você obtém regressão de cresta:
+Adicionar um termo de regularização $\lambda I$para a matriz e você obtém regressão de cresta:
 
-```
-(X^T X + lambda * I) w = X^T y
-w = (X^T X + lambda * I)^(-1) X^T y
+```math
+\begin{aligned}
+(X^T X + \lambda I) w &= X^T y \\
+w &= (X^T X + \lambda I)^{-1} X^T y
+\end{aligned}
 ```
 
-A regularização torna a matriz melhor condicionada (mais fácil de inverter com precisão) e evita o sobreajuste reduzindo os pesos para zero. A matriz X^T X + lambda * I é sempre simétrica positiva definida quando lambda > 0, então você pode usar Cholesky para resolvê-la.
+A regularização torna a matriz melhor condicionada (mais fácil de inverter com precisão) e evita o sobreajuste reduzindo os pesos para zero.$X^T X + \lambda I$é sempre simétrico positivo definido quando $\lambda > 0$, para que possa usar Cholesky para resolvê-lo.
 
 ### Pseudoinversos (Moore-Penrose)
 
-O pseudoinverso A+ generaliza a inversão de matriz para matrizes não quadradas e singulares.
+O pseudo-inverso .$A^+$generaliza a inversão de matriz para matrizes não quadradas e singulares.$A$- Não .
 
+```math
+\begin{aligned}
+x &= A^+ b \\[4pt]
+\text{where } A^+ &= V \Sigma^+ U^T \quad \text{(computed via SVD)}
+\end{aligned}
 ```
-x = A+ b
 
-where A+ = V Sigma+ U^T    (computed via SVD)
-```
-
-Sigma+ é formado tomando o recíproco de cada valor singular não zero e transpondo o resultado.
+$\Sigma^+$O resultado é o resultado da transpostação do valor singular de cada valor não zero.$A = U \Sigma V^T$, então$A^+ = V \Sigma^+ U^T$- Não .
 
 ```
 A = U Sigma V^T        (SVD)
@@ -297,21 +304,21 @@ A+ = V Sigma+ U^T
 ```
 
 O pseudoinverso dá a solução de mínimos mínimos quadrados.
-- Uma solução: A + b dá.
-- Nenhuma solução: A + b dá a solução de mínimos quadrados.
-- Soluções infinitas: A+ b dá a solução com o menor número de soluções.
+- Uma solução: $A^+ b$Dá-lhe.
+- Não há solução: $A^+ b$dá a solução de mínimos quadrados.
+- Soluções infinitas: $A^+ b$dá a quem tem o menor .$\lVert x \rVert$- Não .
 
 NumPy's `np.linalg.lstsq`E ...`np.linalg.pinv`Ambos usam o SVD internamente.
 
 ### Número de condição
 
-O número de condição mede o quão sensível a solução é a pequenas mudanças na entrada.
+O número de condição mede o quão sensível a solução é a pequenas alterações na entrada.$A$, o número da condição é:
 
-```
-kappa(A) = ||A|| * ||A^(-1)|| = sigma_max / sigma_min
+```math
+\kappa(A) = \lVert A \rVert \cdot \lVert A^{-1} \rVert = \frac{\sigma_{\max}}{\sigma_{\min}}
 ```
 
-onde sigma_max e sigma_min são os valores singulares maiores e menores.
+onde$\sigma_{\max}$E ...$\sigma_{\min}$são os valores singulares maiores e menores.
 
 ```
 Well-conditioned (kappa ~ 1):        Ill-conditioned (kappa ~ 10^15):
@@ -323,17 +330,17 @@ small change in x                    huge change in x
 ```
 
 Regras de execução:
-- Kappa < 100: seguro, solução precisa.
-- Kappa ~ 10^k: você perde cerca de k dígitos de precisão de sua aritmética de ponto flutuante.
-- Kappa ~ 10^16 (para float64): a solução é sem sentido.
+- $\kappa < 100$: seguro, solução precisa.
+- $\kappa \approx 10^k$Perdes cerca de $k$Digitos de precisão da sua aritmética de pontos flutuantes.
+- $\kappa \approx 10^{16}$(para float64): a solução é sem sentido. A matriz é efetivamente singular.
 
-No ML, a mal-condicionamento ocorre quando as características são quase colineares. A regularização (adindo lambda * I) melhora o número de condição de sigma_max / sigma_min para (sigma_max + lambda) / (sigma_min + lambda).
+No ML, a má condição ocorre quando as características são quase colineares.$\lambda I$) melhora o número de condições a partir de $\sigma_{\max} / \sigma_{\min}$- Não .$(\sigma_{\max} + \lambda) / (\sigma_{\min} + \lambda)$- Não .
 
 ### Métodos iterativos: gradiente conjugado
 
 Para sistemas muito grandes e raros (milhões de desconhecidos), métodos diretos como LU ou Cholesky são muito caros.
 
-O gradiente conjugado (CG) resolve Ax = b quando A é simétrico positivo definido. Ele encontra a solução exata em no máximo n iterações (em aritmética exata), mas normalmente converge muito mais rápido se os valores próprios de A são agrupados.
+Gradiente de conjugação (CG) resolve $Ax = b$Quando ?$A$é simétrico positivo definido.$n$Iterações (em aritmética exata), mas normalmente converge muito mais rápido se os valores próprios de $A$estão agrupados.
 
 ```
 Algorithm sketch:
@@ -362,29 +369,29 @@ A taxa de convergência depende do número de condições. Os sistemas melhor co
 
 | Method | Requirements | Cost | Use case |
 |--------|-------------|------|----------|
-| Gaussian elimination | Square, nonsingular A | O(n^3) | One-off solve of a square system |
-| LU decomposition | Square, nonsingular A | O(n^3) factor + O(n^2) solve | Multiple solves with the same A |
-| QR decomposition | Any A (m >= n) | O(mn^2) | Least squares, numerically stable |
-| Cholesky | Symmetric positive definite A | O(n^3/3) | Covariance matrices, Gaussian processes, ridge regression |
-| Normal equations | Overdetermined (m > n) | O(mn^2 + n^3) | Linear regression (small n) |
-| SVD / pseudoinverse | Any A | O(mn^2) | Rank-deficient systems, minimum-norm solutions |
-| Conjugate gradient | Symmetric positive definite, sparse A | O(n * k * nnz) | Large sparse systems, k = iterations |
+| Gaussian elimination | Square, nonsingular $A$ | $O(n^3)$ | One-off solve of a square system |
+| LU decomposition | Square, nonsingular $A$ | $O(n^3)$ factor + $O(n^2)$ solve | Multiple solves with the same $A$ |
+| QR decomposition | Any $A$ ($m \ge n$) | $O(mn^2)$ | Least squares, numerically stable |
+| Cholesky | Symmetric positive definite $A$ | $O(n^3/3)$ | Covariance matrices, Gaussian processes, ridge regression |
+| Normal equations | Overdetermined ($m > n$) | $O(mn^2 + n^3)$ | Linear regression (small $n$) |
+| SVD / pseudoinverse | Any $A$ | $O(mn^2)$ | Rank-deficient systems, minimum-norm solutions |
+| Conjugate gradient | Symmetric positive definite, sparse $A$ | $O(n \cdot k \cdot \text{nnz})$ | Large sparse systems, $k$ = iterations |
 
 ### Conexão com a ML
 
 Cada método desta lição aparece na ML de produção:
 
-**Linear regression.**A solução de forma fechada resolve as equações normais X^T X w = X^T y. Isso é feito através de Cholesky (se n é pequeno) ou QR (se a estabilidade numérica importa) ou SVD (se a matriz pode ser deficiente em grau).
+**Linear regression.**A solução fechada resolve as equações normais $X^T X w = X^T y$Isto é feito através de Cholesky (se$n$é pequena) ou QR (se a estabilidade numérica é importante) ou SVD (se a matriz pode ser deficiente em grau).
 
-**Ridge regression.**Adiciona lambda * I a X^T X. O sistema regularizado (X^T X + lambda * I) w = X^T y é sempre resolvivel através de Cholesky porque X^T X + lambda * I é simétrico positivo definido para lambda > 0.
+**Ridge regression.**Adiciona$\lambda I$- Não .$X^T X$O sistema regularizado$(X^T X + \lambda I) w = X^T y$É sempre resolvel através de Cholesky porque$X^T X + \lambda I$é simétrico positivo definido para $\lambda > 0$- Não .
 
-**Gaussian processes.**A média preditiva requer resolver K alfa = y onde K é a matriz do kernel. A fatorização de Cholesky de K é a abordagem padrão.
+**Gaussian processes.**A média preditiva requer solução $K \alpha = y$onde$K$é a matriz do núcleo.$K$A logarínea de probabilidade marginal utiliza$\log \det(K) = 2 \sum \log(\mathop{\mathrm{diag}}(L))$- Não .
 
 **Neural network initialization.**A inicialização ortogonal usa a decomposição QR para criar matrizes de peso cujas colunas são ortônormais.
 
 **Preconditioning.**Os optimizadores de grande escala usam Cholesky incompleto ou LU incompleto como pré-condições para os solventes de gradiente conjugados.
 
-**Feature engineering.**O número de condição de X^T X diz-lhe se suas características são colineares.
+**Feature engineering.**O número de condição de $X^T X$Diz-lhe se as suas características são colineares.$\kappa$é grande, deixa cair as características ou adiciona regularização.
 
 ```figure
 linear-system-conditioning
@@ -545,37 +552,49 @@ Esta lição produz:
 
 1. Resolva o sistema .`[[1,2,3],[4,5,6],[7,8,10]] x = [6, 15, 27]`usando a sua eliminação Gaussian, o seu solvente LU, e `np.linalg.solve`Verifique se os três dão a mesma resposta dentro da tolerância de ponto flutuante.
 
-2. Gerenar uma matriz aleatória X 50x5 e alvo y = X @ w_true + ruído. Resolver para w usando equações normais, QR (via `np.linalg.qr`), SVD (via `np.linalg.svd`), e `np.linalg.lstsq`Compare as quatro soluções, mensure o número de condição de X^T X e explique como isso afeta o método em que você confia.
+2. Gerenar uma matriz aleatória X 50x5 e alvo y = X @ w_true + ruído. Resolver para w usando equações normais, QR (via `np.linalg.qr`), SVD (via `np.linalg.svd`), e `np.linalg.lstsq`Comparar as quatro soluções.$X^T X$e explicar como afeta o método em que você confia.
 
-3. Crie uma matriz quase singular fazendo duas colunas quase idênticas (por exemplo, coluna 2 = coluna 1 + 1e-10 * ruído). Calcule seu número de condição. Resolva Ax = b com e sem regularização (adjunto 0,01 * I). Comparar as soluções e resíduos. Explique por que a regularização ajuda.
+3. Crie uma matriz quase singular, fazendo duas colunas quase idênticas (por exemplo, coluna 2 = coluna 1 + 1e-10 * ruído).$Ax = b$com e sem regularização (adj $0.01 I$O estudo da análise de soluções e resíduos foi realizado em dois grupos de pacientes.
 
-4. Implementar o algoritmo de gradiente conjugado para uma matriz definida positiva simétrica aleatória 100x100. Conte quantas iterações é necessário para convergir para a tolerância 1e-8. Compare com o máximo teórico de n iterações.
+4. Implementar o algoritmo de gradiente conjugado para uma matriz definida positiva simétrica aleatória de 100x100. Conte quantas iterações é necessário para convergir para a tolerância 1e-8. Compare com o máximo teórico de $n$Iterações.
 
 5. Tempo do seu solvente Cholesky vs. seu solvente LU vs.`np.linalg.solve`Em matrizes definidas positivas simétricas de tamanho 10, 50, 200, 500.
+
+### Indicios
+
+**Exercise 1.**Liga-me .`gaussian_elimination(A, b)`, então`lu_decompose(A)`seguida por `lu_solve(P, L, U, b)`, então`np.linalg.solve(A, b)`Verifique cada resposta com`np.allclose(A @ x, b)`e comparar as três respostas com `np.allclose`- Não .
+
+**Exercise 2.**Utilização`least_squares_normal`Para as equações normais e as três funções NumPy para os outros métodos.`w_true`- Comparar .`condition_number(X.T @ X)`com`condition_number(X)`A primeira é o quadrado da segunda, por isso as equações normais perdem a maior precisão.
+
+**Exercise 3.**Espera um número de condição acima .$10^{9}$Resolva com`np.linalg.solve`E com`ridge_regression(A, b, 0.01)`, então compare `np.linalg.norm(x)`Os dois resíduos podem ser pequenos, mas a solução sem regularização geralmente tem entradas muito grandes.
+
+**Exercise 4.**Faça uma matriz definida positiva simétrica com `B @ B.T + n * np.eye(n)`, para que cada valor próprio seja positivo. Adicione um contador ao loop em sua cópia de `conjugate_gradient`, verificem que a norma residual final seja inferior a 1e-8 e que a contagem seja no máximo 100.
+
+**Exercise 5.**Use o mesmo .`B @ B.T + n * np.eye(n)`matrizes para os três solventes e tempo cada resolver com `time.perf_counter`Cholesky precisa de cerca de metade da aritmética de LU, então a relação é mais clara nos tamanhos maiores.
 
 ## Termos-chave
 
 | Term | What people say | What it actually means |
 |------|----------------|----------------------|
-| Linear system | "Solve for x" | A set of linear equations Ax = b. Finding x means finding the input that produces output b under transformation A. |
-| Gaussian elimination | "Row reduce" | Systematically zero out entries below the diagonal using row operations, producing an upper triangular system solvable by back substitution. O(n^3). |
-| Partial pivoting | "Swap rows for stability" | Before eliminating in column k, swap the row with the largest absolute value in that column to the pivot position. Prevents division by small numbers. |
-| LU decomposition | "Factor into triangles" | Write A = LU where L is lower triangular (stores multipliers) and U is upper triangular (the eliminated matrix). Amortizes the O(n^3) cost over multiple solves. |
-| QR decomposition | "Orthogonal factorization" | Write A = QR where Q has orthonormal columns and R is upper triangular. More stable than LU for least squares. |
-| Cholesky decomposition | "Square root of a matrix" | For symmetric positive definite A, write A = LL^T. Half the cost of LU. Used for covariance matrices, kernel matrices, and ridge regression. |
-| Least squares | "Best fit when exact is impossible" | Minimize the sum of squared residuals ||Ax - b||^2 when the system is overdetermined (more equations than unknowns). |
-| Normal equations | "The calculus shortcut" | A^T A x = A^T b. Setting the gradient of ||Ax - b||^2 to zero. This IS the closed-form solution to linear regression. |
-| Pseudoinverse | "Inversion for non-square matrices" | A+ = V Sigma+ U^T via SVD. Gives the minimum-norm least-squares solution for any matrix, square or rectangular, singular or not. |
-| Condition number | "How trustworthy is this answer" | kappa = sigma_max / sigma_min. Measures sensitivity to input perturbations. Lose about log10(kappa) digits of precision. |
-| Ridge regression | "Regularized least squares" | Solve (X^T X + lambda I) w = X^T y. Adding lambda I improves conditioning and shrinks weights toward zero. Prevents overfitting. |
-| Conjugate gradient | "Iterative Ax=b for big matrices" | An iterative solver for symmetric positive definite systems. Converges in at most n steps. Practical for large sparse systems where factorization is too expensive. |
-| Overdetermined system | "More data than parameters" | m > n in an m-by-n system. No exact solution exists. Least squares finds the best approximation. This is every regression problem. |
-| Back substitution | "Solve from the bottom up" | Given an upper triangular system, solve the last equation first, then substitute backward. O(n^2). |
-| Forward substitution | "Solve from the top down" | Given a lower triangular system, solve the first equation first, then substitute forward. O(n^2). Used in the L step of LU solves. |
+| Linear system | "Solve for x" | A set of linear equations $Ax = b$. Finding $x$ means finding the input that produces output $b$ under transformation $A$. |
+| Gaussian elimination | "Row reduce" | Systematically zero out entries below the diagonal using row operations, producing an upper triangular system solvable by back substitution. $O(n^3)$. |
+| Partial pivoting | "Swap rows for stability" | Before eliminating in column $k$, swap the row with the largest absolute value in that column to the pivot position. Prevents division by small numbers. |
+| LU decomposition | "Factor into triangles" | Write $A = LU$ where $L$ is lower triangular (stores multipliers) and $U$ is upper triangular (the eliminated matrix). Amortizes the $O(n^3)$ cost over multiple solves. |
+| QR decomposition | "Orthogonal factorization" | Write $A = QR$ where $Q$ has orthonormal columns and $R$ is upper triangular. More stable than LU for least squares. |
+| Cholesky decomposition | "Square root of a matrix" | For symmetric positive definite $A$, write $A = LL^T$. Half the cost of LU. Used for covariance matrices, kernel matrices, and ridge regression. |
+| Least squares | "Best fit when exact is impossible" | Minimize the sum of squared residuals $\lVert Ax - b \rVert^2$ when the system is overdetermined (more equations than unknowns). |
+| Normal equations | "The calculus shortcut" | $A^T A x = A^T b$. Setting the gradient of $\lVert Ax - b \rVert^2$ to zero. This IS the closed-form solution to linear regression. |
+| Pseudoinverse | "Inversion for non-square matrices" | $A^+ = V \Sigma^+ U^T$ via SVD. Gives the minimum-norm least-squares solution for any matrix, square or rectangular, singular or not. |
+| Condition number | "How trustworthy is this answer" | $\kappa = \sigma_{\max} / \sigma_{\min}$. Measures sensitivity to input perturbations. Lose about $\log_{10}(\kappa)$ digits of precision. |
+| Ridge regression | "Regularized least squares" | Solve $(X^T X + \lambda I) w = X^T y$. Adding $\lambda I$ improves conditioning and shrinks weights toward zero. Prevents overfitting. |
+| Conjugate gradient | "Iterative Ax=b for big matrices" | An iterative solver for symmetric positive definite systems. Converges in at most $n$ steps. Practical for large sparse systems where factorization is too expensive. |
+| Overdetermined system | "More data than parameters" | $m > n$ in an $m\text{-by-}n$ system. No exact solution exists. Least squares finds the best approximation. This is every regression problem. |
+| Back substitution | "Solve from the bottom up" | Given an upper triangular system, solve the last equation first, then substitute backward. $O(n^2)$. |
+| Forward substitution | "Solve from the top down" | Given a lower triangular system, solve the first equation first, then substitute forward. $O(n^2)$. Used in the L step of LU solves. |
 
 ## Mais leitura
 
 - [MIT 18.06: Linear Algebra](https://ocw.mit.edu/courses/18-06-linear-algebra-spring-2010/)(Gilbert Strang) - o curso definitivo sobre sistemas lineares e factorizations de matriz
 - [Numerical Linear Algebra](https://people.maths.ox.ac.uk/trefethen/text.html)(Trefethen & Bau) -- a referência padrão para entender a estabilidade numérica, condicionamento, e por que os algoritmos falham
-- [Matrix Computations](https://www.cs.cornell.edu/cv/GolubVanLoan4/golubandvanloan.htm)(Golub & Van Loan) -- a referência enciclopédica para cada algoritmo de matriz
-- [3Blue1Brown: Inverse Matrices](https://www.3blue1brown.com/lessons/inverse-matrices)-- intuição visual para o que resolver Ax = b significa geométricamente
+- [Matrix Computations](https://www.press.jhu.edu/books/title/10678/matrix-computations)(Golub & Van Loan) -- a referência enciclopédica para cada algoritmo de matriz
+- [3Blue1Brown: Inverse Matrices](https://www.3blue1brown.com/lessons/inverse-matrices)- Intuição visual para resolver o que .$Ax = b$significa geométricamente

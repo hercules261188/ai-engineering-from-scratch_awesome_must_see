@@ -38,9 +38,9 @@ Dimension    Avg distance ratio (max/min between random points)
 1000         ~1.02
 ```
 
-**Volume concentrates in corners.**Um hipercubo unitário em dimensões d tem curvas 2^d. Em 100 dimensões, quase todo o volume está nos curvas, longe do centro.
+**Volume concentrates in corners.**Um hipercubo unitário em $d$dimensões tem $2^d$Em 100 dimensões, quase todo o volume está nos cantos, longe do centro.
 
-**You need exponentially more data.**Para manter a mesma densidade de amostras em um espaço, passar de 2D para 20D significa que você precisa de 10×18 vezes mais dados. Você nunca tem o suficiente. Dimensões reduzidas traz a densidade de dados de volta para algo viável.
+**You need exponentially more data.**Para manter a mesma densidade de amostras num espaço, ir de 2D para 20D significa que você precisa $10^{18}$A redução de dimensões traz a densidade de dados de volta para algo viável.
 
 ### PCA: encontrar as direções que importam
 
@@ -88,7 +88,7 @@ Três estratégias:
 
 1. **Threshold.**Mantenha componentes suficientes para explicar 90-95% da variação.
 2. **Elbow method.**A trama explicou a variação por componente.
-3. **Downstream performance.**Use o PCA como pré-processamento, varre o k e mede a precisão do seu modelo.
+3. **Downstream performance.**Usar PCA como pré- processamento.$k$E medir a precisão do seu modelo.$k$É onde quer que seja, precisão é um problema.
 
 ### T-SNE: preservar os bairros
 
@@ -101,7 +101,7 @@ Propriedades-chave do t-SNE:
 - As corridas diferentes produzem layouts diferentes.
 - O parâmetro de perplexidade controla quantos vizinhos devem ser considerados (intervalo típico: 5-50).
 - As distâncias entre os aglomerados na saída não são significativas.
-- Lenta em grandes conjuntos de dados.
+- Lento em grandes conjuntos de dados. $O(n^2)$por defeito.
 
 ### UMAP: estrutura global mais rápida e melhor
 
@@ -135,27 +135,27 @@ O PCA padrão encontra subespaços lineares. Ele gira o seu sistema de coordenad
 O PCA do núcleo aplica o PCA em um espaço de características de alta dimensão induzido por uma função do núcleo, sem calcular explicitamente as coordenadas nesse espaço.
 
 O algoritmo:
-1. Calcule a matriz do kernel K onde K_ij = k(x_i, x_j)
+1. Calcule a matriz do kernel $K$onde$K_{ij} = k(x_i, x_j)$
 2. Centrar a matriz do kernel no espaço de recursos
 3. Eigendecompose a matriz do kernel centrado
-4. Os vetores próprios superiores (escalados por 1/sqrt(eigenvalue)) são as projeções
+4. Os vetores próprios superiores (escalados por $1/\sqrt{\text{eigenvalue}}$) são as projecções
 
 Funções comuns do kernel:
 
 | Kernel | Formula | Good for |
 |--------|---------|----------|
-| RBF (Gaussian) | exp(-gamma * \|\|x - y\|\|^2) | Most nonlinear data, smooth manifolds |
-| Polynomial | (x . y + c)^d | Polynomial relationships |
-| Sigmoid | tanh(alpha * x . y + c) | Neural network-like mappings |
+| RBF (Gaussian) | $\exp(-\gamma \lVert x - y \rVert^2)$ | Most nonlinear data, smooth manifolds |
+| Polynomial | $(x \cdot y + c)^d$ | Polynomial relationships |
+| Sigmoid | $\tanh(\alpha x \cdot y + c)$ | Neural network-like mappings |
 
 Quando utilizar PCA do kernel versus PCA padrão:
 
 | Criterion | Standard PCA | Kernel PCA |
 |-----------|-------------|------------|
 | Data structure | Linear subspace | Nonlinear manifold |
-| Speed | O(min(n^2 d, d^2 n)) | O(n^2 d + n^3) |
+| Speed | $O(\min(n^2 d, d^2 n))$ | $O(n^2 d + n^3)$ |
 | Interpretability | Components are linear combinations of features | Components lack direct feature interpretation |
-| Scalability | Works on millions of samples | Kernel matrix is n x n, memory-limited |
+| Scalability | Works on millions of samples | Kernel matrix is $n \times n$, memory-limited |
 | Reconstruction | Direct inverse transform | Requires pre-image approximation |
 
 O exemplo clássico: círculos concêntricos em 2D. Dois anéis de pontos, um dentro do outro. PCA padrão projeta ambos na mesma linha - inútil para classificação. PCA kernel com um kernel RBF mapeia o círculo interno e o círculo externo em diferentes regiões, tornando-os linearmente separáveis.
@@ -165,22 +165,24 @@ O exemplo clássico: círculos concêntricos em 2D. Dois anéis de pontos, um de
 Comprei 784 dimensões para 50.
 
 Meter o erro de reconstrução:
-1. Dados do projeto para dimensões k: X_reduzido = X @ W_k
-2. Reconstruir: X_hat = X_reduzido @ W_k^T
-3. MSE de cálculo: média (X - X_hat) ^2)
+1. Dados do projecto$k$dimensões: $X_{\text{reduced}} = X W_k$
+2. Reconstruir: $\hat{X} = X_{\text{reduced}} W_k^T$
+3. Computação de MSE: $\text{mean}((X - \hat{X})^2)$
 
 Para PCA, o erro de reconstrução tem uma relação clara com a variância explicada:
 
-```
-Reconstruction error = sum of eigenvalues NOT included
-Total variance = sum of ALL eigenvalues
-Fraction lost = (sum of dropped eigenvalues) / (sum of all eigenvalues)
+```math
+\begin{aligned}
+\text{Reconstruction error} &= \text{sum of eigenvalues NOT included} \\
+\text{Total variance} &= \text{sum of ALL eigenvalues} \\
+\text{Fraction lost} &= \frac{\text{sum of dropped eigenvalues}}{\text{sum of all eigenvalues}}
+\end{aligned}
 ```
 
 A relação de variância explicada para cada componente é:
 
-```
-explained_ratio_k = eigenvalue_k / sum(all eigenvalues)
+```math
+\text{explained\_ratio}_k = \frac{\text{eigenvalue}_k}{\sum \text{all eigenvalues}}
 ```
 
 A traçação da variância explicada acumulativa contra o número de componentes dá-lhe a curva "cotovelo".
@@ -188,7 +190,7 @@ A traçação da variância explicada acumulativa contra o número de componente
 - A variância acumulada ultrapassa o seu limiar (geralmente 0,90 ou 0,95)
 - Planícies de desempenho de tarefas a jusante
 
-O erro de reconstrução é útil além da escolha de k. Você pode usá-lo para a detecção de anomalias: amostras com alto erro de reconstrução são anormais que não se encaixam no subspaço aprendido. Esta é a base da detecção de anomalias baseada em PCA em sistemas de produção.
+Erro de reconstrução é útil além de escolher $k$. Pode ser utilizado para a detecção de anomalias: amostras com alto erro de reconstrução são de valores fora do espaço aprendido.
 
 ```figure
 pca-axes
@@ -353,6 +355,14 @@ Esta lição produz:
 
 3. Tomar um conjunto de dados com 50 características onde apenas 5 são informativas (gerar um com `sklearn.datasets.make_classification`) Aplicar PCA e verificar se a curva de variância explicada identifica corretamente que os dados são efetivamente 5D.
 
+### Indicios
+
+**Exercise 1.**Leia `inverse_transform`No`PCA`A classe de componentes e o modelo de cada componente.`reconstruction_error`para os componentes 10, 50 e 200; o erro deve diminuir à medida que o número de componentes aumenta.
+
+**Exercise 2.**- Apto .`sklearn.manifold.TSNE`três vezes no mesmo subconjunto, mudando apenas `perplexity`, e usar o mesmo `random_state`A baixa perplexidade observa poucos vizinhos, por isso, espere pequenos grupos apertados; a alta perplexidade observa mais vizinhos, por isso, espere grupos maiores e mais suaves.
+
+**Exercise 3.**Liga-me .`make_classification(n_features=50, n_informative=5, n_redundant=45)`, adequado`PCA`As características redundantes são combinações lineares das informações, então a curva chega a quase 1,0 em 5 componentes.`n_redundant=0`A curva não se aplania.
+
 ## Termos-chave
 
 | Term | What people say | What it actually means |
@@ -360,8 +370,8 @@ Esta lição produz:
 | Curse of dimensionality | "Too many features" | Distances, volumes, and data density all behave counterintuitively as dimensions grow. Models need exponentially more data to compensate. |
 | PCA | "Reduce dimensions" | Rotate your coordinate system so the axes align with the directions of maximum variance, then drop the low-variance axes. |
 | Principal component | "An important direction" | An eigenvector of the covariance matrix. The direction in feature space along which the data varies most. |
-| Explained variance ratio | "How much info this component has" | The fraction of total variance captured by one principal component. Sum the top k ratios to see how much k components preserve. |
-| Covariance matrix | "How features correlate" | A symmetric matrix where entry (i,j) measures how feature i and feature j move together. Diagonal entries are individual variances. |
+| Explained variance ratio | "How much info this component has" | The fraction of total variance captured by one principal component. Sum the top $k$ ratios to see how much $k$ components preserve. |
+| Covariance matrix | "How features correlate" | A symmetric matrix where entry $(i,j)$ measures how feature $i$ and feature $j$ move together. Diagonal entries are individual variances. |
 | t-SNE | "That cluster plot" | A nonlinear method that maps high-dimensional data to 2D by preserving pairwise neighborhood probabilities. Good for visualization, not for preprocessing. |
 | UMAP | "Faster t-SNE" | A nonlinear method based on topological data analysis. Preserves both local and some global structure. Scales better than t-SNE. |
 | Perplexity | "A t-SNE knob" | Controls the effective number of neighbors each point considers. Low perplexity focuses on very local structure. High perplexity captures broader patterns. |

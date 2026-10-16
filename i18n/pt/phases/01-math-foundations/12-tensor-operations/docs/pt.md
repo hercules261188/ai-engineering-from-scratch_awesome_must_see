@@ -36,7 +36,7 @@ graph LR
     T3 --> T4["4D Tensor<br/>rank 4<br/>shape: (B,C,H,W)"]
 ```
 
-Elementos totais = produto de todos os tamanhos.`(2, 3, 4)`- É o que se passa .`2 * 3 * 4 = 24`elementos.
+Elementos totais = produto de todos os tamanhos.`(2, 3, 4)`- É o que se passa .$2 \cdot 3 \cdot 4 = 24$elementos.
 
 ### Formas de tensão no aprendizado profundo
 
@@ -232,7 +232,7 @@ batch_B = np.random.randn(4, 5, 2)
 batch_mm = np.einsum("bij,bjk->bik", batch_A, batch_B)
 ```
 
-O custo computacional de uma contracção é o produto de todos os tamanhos dos índices (conservados e somados).`bij,bjk->bik`com B=32, I=128, J=64, K=128: `32 * 128 * 64 * 128 = 33,554,432`multiplicadores adicionais.
+O custo computacional de uma contracção é o produto de todos os tamanhos dos índices (conservados e somados).`bij,bjk->bik`com$B=32$- Não .$I=128$- Não .$J=64$- Não .$K=128$- Não .$32 \cdot 128 \cdot 64 \cdot 128 = 33{,}554{,}432$multiplicadores adicionais.
 
 ### Passo 7: Mecanismo de atenção através do einsum
 
@@ -319,6 +319,16 @@ Esta lição produz duas instruções reutilizáveis:
 3. **Hard -- Build einsum from scratch.**Implementar um sistema básico `einsum(subscripts, *tensors)`função que lida pelo menos com: produto ponto (`i,i->`), multiplicar matriz (`ij,jk->ik`), produto externo (`i,j->ij`), e transponder (`ij->ji`O resultado é comparado com o resultado de um estudo de um estudo de um estudo de um estudo de um estudo de um estudo de um estudo de um estudo de um estudo de um estudo de um estudo de um estudo de um estudo de um estudo de um estudo de um estudo de um estudo de um estudo de um estudo de um estudo de um estudo de um estudo de um estudo de um estudo de um estudo de um estudo de um estudo de um estudo de um estudo de um estudo de um estudo de um estudo de um estudo de um estudo de um estudo de um estudo de um estudo de um estudo de um estudo de um estudo de um estudo de um estudo de um estudo de um estudo de um estudo de um estudo de um estudo de um estudo de um estudo de um estudo de um estudo de um estudo de um estudo de um estudo de um estudo de um estudo de um estudo de um estudo de um estudo de um estudo de um estudo de um estudo de um estudo de um estudo de um estudo de um estudo de um estudo de um estudo de um estudo de um estudo de um estudo de um estudo de um estudo de um estudo de um estudo de um estudo de um estudo de um estudo de um estudo de um estudo de um estudo de um estudo de um estudo de um estudo de um estudo de um estudo de um estudo de um estudo de um estudo de um estudo de um estudo de um estudo de um estudo de um estudo de um estudo de um estudo de um estudo de um estudo de um estudo de um estudo de um estudo de um estudo de um estudo de um estudo de um estudo de um estudo de um estudo de um estudo de um estudo de um estudo de um estudo de um estudo de um estudo de um estudo de um estudo de um estudo de um estudo de um estudo de um estudo de um estudo de um estudo de um estudo de um estudo de um estudo de um estudo de um estudo de um estudo de um estudo de um estudo de um estudo de um estudo de um estudo de um estudo de um estudo de um estudo de um estudo de um estudo de um estudo de um estudo de um estudo de um estudo de um estudo de um estudo de um estudo de um estudo de um estudo de um estudo de um estudo de um estudo de um estudo de um estudo de um estudo de um estudo de um estudo de um sobre sobre sobre sobre sobre sobre sobre sobre o assunto.`np.einsum`- Não .
 
 4. **Hard -- Attention shape tracker.**Escreva uma função que leva `batch_size`- Não .`seq_len`- Não .`embed_dim`, e `num_heads`As informações são fornecidas por meio de uma análise de dados e de uma análise de dados, de dados e de dados, de dados e de dados, de dados e de dados, de dados e de dados, de dados e de dados, de dados e de dados, de dados e de dados, de dados e de dados, de dados e de dados, de dados e de dados, de dados e de dados, de dados e de dados, de dados e de dados, de dados e de dados, de dados e de dados, de dados e de dados, de dados e de dados, de dados e de dados, de dados e de dados, de dados e de dados, de dados e de dados, de dados e de dados, de dados e de dados, de dados e de dados, de dados e de dados, de dados e de dados, de dados e de dados, de dados e de dados, de dados e de dados, de dados e de dados, de dados e de dados, de dados e de dados, de dados e de dados, de dados e de dados, de dados e de dados, de dados e de dados, de dados e de dados, de dados e de dados, de dados e de dados, de dados e de dados, de dados e de dados, de dados e de dados, de dados e de dados, de dados e de dados, de dados, de dados e de dados, de dados e de dados, de dados, de dados, de dados e de dados, de dados, de dados, de dados, de dados e de dados, de dados, de dados, de dados, de dados, de dados, de dados, de dados, de dados, de dados, de dados, de dados, de dados, de dados, de dados, de dados, de dados, de dados, de dados, de dados, de dados, de dados, de dados, de dados, de dados, de dados, de dados, de dados, de dados, de dados, de dados, de dados, de dados, de dados, de dados, de dados, de dados, de dados, de dados, de dados, de dados, de dados, de dados, de dados, de dados, de dados, de dados, de dados, de dados, de dados, de dados, de dados, de dados, de dados, de dados, de dados, de dados, de dados, de dados, de dados, de dados, de, de dados,`demo_attention_einsum()`- A saída.
+
+### Indicios
+
+**Exercise 1.**Construir o tensor a partir de `list(range(24))`Assim, cada elemento mostra a sua posição.`reshape`- Chamem, imprimem.`flatten().to_list()`e verifique se ainda está 0 a 23 em ordem.
+
+**Exercise 2.**Uma dimensão só pode ser transmitida quando os dois tamanhos são iguais ou um deles é 1, então verifique essa regra primeiro e levante um erro quando falha.`(3, 1)`E ...`(1, 4)`, verifique essa entrada .`[i][j]`do resultado é igual `a[i][0] + b[0][j]`, e comparar o resultado completo com NumPy.
+
+**Exercise 3.**Divide os subscritores em `->`Uma letra que está nas entradas mas não na saída é um índice sumado, então, enrolem todos os valores de cada letra e adicione na posição de saída. Teste cada um dos quatro casos em pequenas matrizes aleatórias com `np.allclose(mine, np.einsum(...))`- Não .
+
+**Exercise 4.**Comece com o tamanho da cabeça .`embed_dim // num_heads`E afirmam isso.`embed_dim % num_heads == 0`As pontuações de atenção têm forma .`(batch_size, num_heads, seq_len, seq_len)`, por isso verifique a sua impressão contra essa forma e contra as formas que`demo_attention_einsum()`- Impressões.
 
 ## Termos-chave
 

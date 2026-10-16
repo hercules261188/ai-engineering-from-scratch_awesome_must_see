@@ -24,7 +24,7 @@ Cada previsão que um modelo faz é uma distribuição de probabilidade. Cada fu
 
 ### Eventos, Espaços de Amostra e Probabilidade
 
-O espaço de amostra S é o conjunto de todos os resultados possíveis. Um evento é um subconjunto do espaço de amostra.
+O espaço de amostra $S$O conjunto de resultados possíveis é um conjunto de eventos. Um evento é um subconjunto do espaço de amostra.
 
 ```
 Coin flip:
@@ -37,15 +37,15 @@ Single die roll:
 ```
 
 Três axiomas definem toda a probabilidade:
-1. P(A) >= 0 para qualquer evento A
-2. P(S) = 1 (algo acontece sempre)
-3. P(A ou B) = P(A) + P(B) quando A e B não podem ocorrer ambos
+1. $P(A) \ge 0$Para qualquer evento .$A$
+2. $P(S) = 1$(algo acontece sempre)
+3. $P(A \text{ or } B) = P(A) + P(B)$Quando ?$A$E ...$B$Não podem ocorrer ambas as coisas
 
 Tudo o resto (teorema de Bayes, expectativas, distribuições) segue-se dessas três regras.
 
 ### Probabilidade condicional e independência
 
-P ((A) B) é a probabilidade de A dada que B aconteceu.
+$P(A \mid B)$é a probabilidade de $A$Dado que$B$- O que aconteceu?
 
 ```
 P(A|B) = P(A and B) / P(B)
@@ -58,9 +58,11 @@ Example: deck of cards
 
 Dois eventos são independentes quando saber um não diz nada sobre o outro:
 
-```
-Independent:   P(A|B) = P(A)
-Equivalent to: P(A and B) = P(A) * P(B)
+```math
+\begin{aligned}
+\text{Independent:} \quad & P(A \mid B) = P(A) \\
+\text{Equivalent to:} \quad & P(A \text{ and } B) = P(A) \cdot P(B)
+\end{aligned}
 ```
 
 As moedas são independentes, mas não os cartões sem substituição.
@@ -98,27 +100,33 @@ Esta distinção é importante no ML. As saídas de classificação são PMFs (o
 
 **Bernoulli:**Um ensaio, dois resultados.
 
-```
-P(X = 1) = p
-P(X = 0) = 1 - p
-Mean = p,  Variance = p(1-p)
+```math
+\begin{aligned}
+P(X = 1) &= p \\
+P(X = 0) &= 1 - p \\
+\text{Mean} = p, &\quad \text{Variance} = p(1-p)
+\end{aligned}
 ```
 
-**Categorical:**Os modelos de classificação multi-classe (output softmax).
+**Categorical:**Um julgamento,$k$Os modelos são classificados em várias classes (output de softmax).
 
-```
-P(X = i) = p_i,  where sum of p_i = 1
-Example: P(cat) = 0.7,  P(dog) = 0.2,  P(bird) = 0.1
+```math
+\begin{aligned}
+& P(X = i) = p_i, \quad \text{where } \textstyle\sum_i p_i = 1 \\
+& \text{Example: } P(\text{cat}) = 0.7, \quad P(\text{dog}) = 0.2, \quad P(\text{bird}) = 0.1
+\end{aligned}
 ```
 
 **Uniform:**Todos os resultados são igualmente prováveis.
 
-```
-Discrete: P(X = k) = 1/n for k in {1, ..., n}
-Continuous: f(x) = 1/(b-a) for x in [a, b]
+```math
+\begin{aligned}
+\text{Discrete:} \quad & P(X = k) = 1/n \text{ for } k \in \lbrace 1, \ldots, n \rbrace \\
+\text{Continuous:} \quad & f(x) = 1/(b-a) \text{ for } x \in [a, b]
+\end{aligned}
 ```
 
-**Normal (Gaussian):**A curva de campanha, parametrizada por média (mu) e variância (sigma^2).
+**Normal (Gaussian):**a curva da campanha. Parametrizada pela média ($\mu$) e variação ($\sigma^2$)).
 
 ```
 f(x) = (1 / sqrt(2*pi*sigma^2)) * exp(-(x - mu)^2 / (2*sigma^2))
@@ -131,45 +139,51 @@ Standard normal: mu = 0, sigma = 1
 
 **Poisson:**Contas de eventos raros em um intervalo fixo.
 
-```
-P(X = k) = (lambda^k * e^(-lambda)) / k!
-Mean = lambda,  Variance = lambda
+```math
+\begin{aligned}
+P(X = k) &= \frac{\lambda^k e^{-\lambda}}{k!} \\
+\text{Mean} = \lambda, &\quad \text{Variance} = \lambda
+\end{aligned}
 ```
 
 ### Valor esperado e variação
 
 O valor esperado é o resultado médio ponderado.
 
-```
-Discrete:   E[X] = sum of x_i * P(X = x_i)
-Continuous: E[X] = integral of x * f(x) dx
+```math
+\begin{aligned}
+\text{Discrete:} \quad & \mathbb{E}[X] = \sum_i x_i \, P(X = x_i) \\
+\text{Continuous:} \quad & \mathbb{E}[X] = \int x \, f(x) \, dx
+\end{aligned}
 ```
 
 Medidas de variação espalhadas em torno da média.
 
-```
-Var(X) = E[(X - E[X])^2] = E[X^2] - (E[X])^2
-Standard deviation = sqrt(Var(X))
+```math
+\begin{aligned}
+\mathrm{Var}(X) &= \mathbb{E}[(X - \mathbb{E}[X])^2] = \mathbb{E}[X^2] - (\mathbb{E}[X])^2 \\
+\text{Standard deviation} &= \sqrt{\mathrm{Var}(X)}
+\end{aligned}
 ```
 
 Em ML, o valor esperado aparece como a função de perda (perda média sobre a distribuição de dados).
 
 ### Distribuições conjuntas e marginais
 
-Uma distribuição conjunta P ((X, Y) descreve duas variáveis aleatórias juntas.
+Uma distribuição conjunta $P(X, Y)$descreve duas variáveis aleatórias juntas.
 
-Exemplo de PMF comum (X = clima, Y = guarda-chuva):
+Exemplo de PMF comum ($X$= tempo,$Y$= guarda-chuva):
 
-| | Y=0 (no umbrella) | Y=1 (umbrella) | Marginal P(X) |
+| | $Y=0$ (no umbrella) | $Y=1$ (umbrella) | Marginal $P(X)$ |
 |---|---|---|---|
-| X=0 (sun) | 0.40 | 0.10 | P(X=0) = 0.50 |
-| X=1 (rain) | 0.05 | 0.45 | P(X=1) = 0.50 |
-| **Marginal P(Y)** | P(Y=0) = 0.45 | P(Y=1) = 0.55 | 1.00 |
+| $X=0$ (sun) | 0.40 | 0.10 | $P(X=0) = 0.50$ |
+| $X=1$ (rain) | 0.05 | 0.45 | $P(X=1) = 0.50$ |
+| **Marginal $P(Y)$** | $P(Y=0) = 0.45$ | $P(Y=1) = 0.55$ | 1.00 |
 
 A distribuição marginal soma a outra variável:
 
-```
-P(X = x) = sum over all y of P(X = x, Y = y)
+```math
+P(X = x) = \sum_{y} P(X = x, Y = y)
 ```
 
 Os números totais de filas e colunas da tabela acima são os marginais.
@@ -196,23 +210,27 @@ This works for ANY starting distribution.
 
 As probabilidades crudas causam problemas numéricos. Multiplicar muitas probabilidades pequenas juntas rapidamente desce para zero.
 
-```
-P(sentence) = P(word1) * P(word2) * ... * P(word_n)
-            = 0.01 * 0.003 * 0.02 * ...
-            -> 0.0 (underflow after ~30 terms)
+```math
+\begin{aligned}
+P(\text{sentence}) &= P(\text{word}_1) \cdot P(\text{word}_2) \cdot \ldots \cdot P(\text{word}_n) \\
+&= 0.01 \cdot 0.003 \cdot 0.02 \cdot \ldots \\
+&\to 0.0 \quad \text{(underflow after } \sim 30 \text{ terms)}
+\end{aligned}
 ```
 
 As probabilidades de registro corrigem isto.
 
-```
-log P(sentence) = log P(word1) + log P(word2) + ... + log P(word_n)
-                = -4.6 + -5.8 + -3.9 + ...
-                -> finite number (no underflow)
+```math
+\begin{aligned}
+\log P(\text{sentence}) &= \log P(\text{word}_1) + \log P(\text{word}_2) + \ldots + \log P(\text{word}_n) \\
+&= -4.6 + -5.8 + -3.9 + \ldots \\
+&\to \text{finite number (no underflow)}
+\end{aligned}
 ```
 
 Regras:
-- log(a * b) = log(a) + log(b)
-- As probabilidades de log são sempre <= 0 (desde 0 < P <= 1)
+- $\log(a \cdot b) = \log(a) + \log(b)$
+- As probabilidades de log são sempre $\le 0$(depois de $0 < P \le 1$)
 - Mais negativo = menos provável
 - A perda de entropia cruzada é a probabilidade de registro negativo da classe correta
 
@@ -430,24 +448,34 @@ Construíste isto do zero, agora sabes o que fazem as chamadas da biblioteca.
 
 4. Escreva uma função que tome uma lista de probabilidades de registro e retorna a sequência mais provável, a probabilidade total de registro e a probabilidade bruta equivalente. Teste com uma frase de 50 palavras onde cada palavra tem probabilidade de 0,01.
 
+### Indicios
+
+**Exercise 1.**Desenhar`u`de uma distribuição e retorno uniformes $-\ln(1 - u) / \lambda$Verifique se a média da amostra está próxima de$1/\lambda$e que os canhões de histograma seguem $\lambda e^{-\lambda x}$- Não .
+
+**Exercise 2.**Preencha uma tabela de 6x6 onde cada célula é uma probabilidade e a soma de todas as células é 1, então ligue `joint_to_marginals`- Usar .`check_independence`A probabilidade de um dado ser independente é de que cada célula seja igual ao produto de suas duas margens.
+
+**Exercise 3.**Aplicar`softmax`Para as logites e levar $-\ln$O resultado deve ser próximo de 0,421, que é o valor `nn.CrossEntropyLoss`dá para os mesmos logits e alvo.
+
+**Exercise 4.**Adicione as probabilidades de registro; não multiplica probabilidades brutas. Para 50 palavras com probabilidade 0.01, o total deve ser $50 \ln(0.01) \approx -230.26$, e a probabilidade bruta é $10^{-100}$- Não .
+
 ## Termos-chave
 
 | Term | What people say | What it actually means |
 |------|----------------|----------------------|
-| Sample space | "All the possibilities" | The set S of every possible outcome of an experiment |
+| Sample space | "All the possibilities" | The set $S$ of every possible outcome of an experiment |
 | PMF | "The probability function" | A function that gives the exact probability of each discrete outcome, summing to 1 |
 | PDF | "The probability curve" | A density function for continuous variables. Integrate it over an interval to get probability |
-| Conditional probability | "Probability given something" | P(A\|B) = P(A and B) / P(B). The foundation of Bayesian thinking and Bayes' theorem |
-| Independence | "They don't affect each other" | P(A and B) = P(A) * P(B). Knowing one event tells you nothing about the other |
+| Conditional probability | "Probability given something" | $P(A \mid B) = P(A \text{ and } B) / P(B)$. The foundation of Bayesian thinking and Bayes' theorem |
+| Independence | "They don't affect each other" | $P(A \text{ and } B) = P(A) \cdot P(B)$. Knowing one event tells you nothing about the other |
 | Expected value | "The average" | The probability-weighted sum of all outcomes. The loss function is an expected value |
 | Variance | "How spread out" | The expected squared deviation from the mean. High variance = noisy, unstable estimates |
-| Normal distribution | "The bell curve" | f(x) = (1/sqrt(2*pi*sigma^2)) * exp(-(x-mu)^2/(2*sigma^2)). Appears everywhere due to the CLT |
+| Normal distribution | "The bell curve" | $f(x) = (1/\sqrt{2\pi\sigma^2}) \cdot \exp(-(x-\mu)^2/(2\sigma^2))$. Appears everywhere due to the CLT |
 | Central Limit Theorem | "Averages become normal" | The mean of many independent samples converges to a normal distribution regardless of the source |
-| Joint distribution | "Two variables together" | P(X, Y) describes the probability of every combination of X and Y outcomes |
-| Marginal distribution | "Sum out the other variable" | P(X) = sum_y P(X, Y). Recovers one variable's distribution from the joint |
-| Log probability | "Log of the probability" | log P(x). Turns products into sums, preventing numerical underflow in long sequences |
-| Softmax | "Turn scores into probabilities" | softmax(z_i) = exp(z_i) / sum(exp(z_j)). Maps real-valued logits to a valid probability distribution |
-| Cross-entropy | "The loss function" | -sum(p_true * log(p_predicted)). Measures how different two distributions are. Lower is better |
+| Joint distribution | "Two variables together" | $P(X, Y)$ describes the probability of every combination of $X$ and $Y$ outcomes |
+| Marginal distribution | "Sum out the other variable" | $P(X) = \sum_y P(X, Y)$. Recovers one variable's distribution from the joint |
+| Log probability | "Log of the probability" | $\log P(x)$. Turns products into sums, preventing numerical underflow in long sequences |
+| Softmax | "Turn scores into probabilities" | $\text{softmax}(z_i) = \exp(z_i) / \sum_j \exp(z_j)$. Maps real-valued logits to a valid probability distribution |
+| Cross-entropy | "The loss function" | $-\sum p_{\text{true}} \cdot \log(p_{\text{predicted}})$. Measures how different two distributions are. Lower is better |
 | Logits | "Raw model outputs" | Unnormalized scores before softmax. Named after the logistic function |
 | Sampling | "Drawing random values" | Generating values according to a probability distribution. How models generate output |
 

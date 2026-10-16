@@ -34,9 +34,9 @@ Precisas de quatro coisas:
 
 ### Gráficos: nós e bordas
 
-Um gráfico G = (V, E) consiste em vértices (nodos) V e bordas E. Cada bordo conecta dois nós.
+Um gráfico .$G = (V, E)$Consiste em vértices (nodos) $V$e bordas $E$Cada borda liga dois nós.
 
-**Directed vs undirected.**Em um gráfico não direcionado, o limite (u, v) significa que u se conecta a v E v se conecta a u. Em um gráfico direcionado (digrafo), o limite (u, v) significa que u aponta para v, mas não necessariamente o contrário.
+**Directed vs undirected.**Em um gráfico não direcionado, borda $(u, v)$- Meio$u$liga-se a $v$E ...$v$liga-se a $u$Em um gráfico direcionado (digrafo), borda $(u, v)$- Meio$u$aponta para $v$, mas não necessariamente o contrário.
 
 **Weighted vs unweighted.**Em um gráfico não ponderado, existem bordas ou não. Em um gráfico ponderado, cada bordas tem um peso numérico - uma distância, um custo, uma força.
 
@@ -49,14 +49,13 @@ Um gráfico G = (V, E) consiste em vértices (nodos) V e bordas E. Cada bordo co
 
 ### A Matriz de Adjacência
 
-A matriz de adjacência A é a representação do núcleo. Para um gráfico com n nós:
+A matriz de adjacência $A$é a representação do núcleo.$n$Nodos:
 
-```
-A[i][j] = 1    if there is an edge from node i to node j
-A[i][j] = 0    otherwise
+```math
+A[i][j] = \begin{cases} 1 & \text{if there is an edge from node } i \text{ to node } j \\ 0 & \text{otherwise} \end{cases}
 ```
 
-Para gráficos não direcionados, A é simétrico: A[i][j] = A[j][i]. Para gráficos ponderados, A[i][j] = peso da borda (i, j).
+Para gráficos não direcionados, $A$é simétrica: $A[i][j] = A[j][i]$Para gráficos ponderados,$A[i][j]$= peso da borda $(i, j)$- Não .
 
 **Example -- a triangle:**
 
@@ -69,20 +68,22 @@ A = [[0, 1, 1],
      [1, 1, 0]]
 ```
 
-A matriz de adjacência é a entrada para cada GNN. As operações de matriz em A correspondem às operações no gráfico.
+A matriz de adjacência é a entrada para cada GNN.$A$correspondem às operações no gráfico.
 
 ### Graduação
 
 O grau de um nó é o número de bordas conectadas a ele. Para gráficos direcionados, você tem grau (edges entering) e grau (edges going out).
 
-A matriz de graus D é diagonal:
+A matriz de graus $D$é diagonal:
 
-```
-D[i][i] = degree of node i
-D[i][j] = 0    for i != j
+```math
+\begin{aligned}
+D[i][i] &= \text{degree of node } i \\
+D[i][j] &= 0 \quad \text{for } i \ne j
+\end{aligned}
 ```
 
-Para o exemplo triangular: D = diag(2, 2, 2) porque cada nó se conecta a outros dois.
+Para o exemplo do triângulo: $D = \mathop{\mathrm{diag}}(2, 2, 2)$Porque cada nó se conecta a outros dois.
 
 Graus diz-lhe sobre a importância do nó. Graus alto = nó de hub. A distribuição de graus de uma rede revela sua estrutura. Redes sociais seguem leis de potência (poucos hubs, muitos nós de folha). Graus aleatórios têm graus distribuídos por Poisson.
 
@@ -132,19 +133,17 @@ O DFS é útil para:
 
 ### O gráfico laplaciano
 
-L = D - A. A matriz mais importante na teoria dos gráficos espectrais.
+$L = D - A$A matriz mais importante na teoria dos gráficos espectrais.
 
 Para o triângulo:
 
-```
-D = [[2, 0, 0],    A = [[0, 1, 1],    L = [[2, -1, -1],
-     [0, 2, 0],         [1, 0, 1],         [-1, 2, -1],
-     [0, 0, 2]]         [1, 1, 0]]         [-1, -1,  2]]
+```math
+D = \begin{bmatrix} 2 & 0 & 0 \\ 0 & 2 & 0 \\ 0 & 0 & 2 \end{bmatrix} \qquad A = \begin{bmatrix} 0 & 1 & 1 \\ 1 & 0 & 1 \\ 1 & 1 & 0 \end{bmatrix} \qquad L = \begin{bmatrix} 2 & -1 & -1 \\ -1 & 2 & -1 \\ -1 & -1 & 2 \end{bmatrix}
 ```
 
 O Laplaciano tem propriedades notáveis:
 
-1. **L is positive semi-definite.**Todos os valores próprios são >= 0.
+1. **$L$ is positive semi-definite.**Todos os valores próprios são$\ge 0$- Não .
 
 2. **The number of zero eigenvalues equals the number of connected components.**Um gráfico conectado tem exatamente um valor próprio zero. Um gráfico com 3 componentes desconectados tem três valores próprios zero.
 
@@ -174,12 +173,12 @@ graph TD
 Os valores próprios da matriz adjacente e do laplaciano revelam propriedades estruturais sem qualquer travessia.
 
 **Spectral clustering**funciona assim:
-1. Calcule o Laplacian L
-2. Encontre os k menores vetores próprios de L (salte o primeiro, que é todos-one para gráficos conectados)
+1. Calcule o Laplaciano $L$
+2. Encontrar o$k$os menores vetores próprios de $L$(salte o primeiro, que é todos-ones para gráficos conectados)
 3. Use esses vetores próprios como novas coordenadas para cada nó
-4. Execute k-media nessas coordenadas
+4. Corra .$k$- media nessas coordenadas
 
-Os próprios vetores de L codificam as funções "mais suaves" no gráfico. Os nós que estão bem conectados obtêm valores próprios semelhantes. Os nós separados por um gargalo de engarrafamento obtêm valores diferentes. Os próprios vetores naturalmente separam aglomerados.
+Por que isto funciona? Os próprios vetores de$L$Os nodos que estão bem conectados obtêm valores próprios similares. Os nodos separados por um gargalo de engarrafamento obtêm valores diferentes. Os próprios vetores separam naturalmente aglomerados.
 
 **Random walk connection.**O laplaciano normalizado se relaciona com caminhadas aleatórias no gráfico. A distribuição estática de uma caminhada aleatória é proporcional ao grau de nó. O tempo de mistura (a rapidez com que a caminhada converge) depende da lacuna espectral.
 
@@ -187,25 +186,25 @@ Os próprios vetores de L codificam as funções "mais suaves" no gráfico. Os n
 
 A operação central das redes neurais gráficas. Cada nó coleta mensagens de seus vizinhos, as agrega e atualiza seu próprio estado.
 
-```
-h_v^(k+1) = UPDATE(h_v^(k), AGGREGATE({h_u^(k) : u in neighbors(v)}))
+```math
+h_v^{(k+1)} = \text{UPDATE}\left(h_v^{(k)}, \text{AGGREGATE}\left(\{h_u^{(k)} : u \in \text{neighbors}(v)\}\right)\right)
 ```
 
 Na forma mais simples, AGGREGATE = média e UPDATE = transformação linear + ativação:
 
-```
-h_v^(k+1) = sigma(W * mean({h_u^(k) : u in neighbors(v)}))
-```
-
-Esta é a multiplicação de matriz disfarçada. Se H é a matriz de todas as características do nó e A é a matriz adjacente:
-
-```
-H^(k+1) = sigma(A_norm * H^(k) * W)
+```math
+h_v^{(k+1)} = \sigma\left(W \cdot \text{mean}\left(\{h_u^{(k)} : u \in \text{neighbors}(v)\}\right)\right)
 ```
 
-onde A_norm é a matriz de adjacência normalizada (cada linha soma a 1).
+Isto é multiplicação de matriz disfarçada.$H$é a matriz de todas as características do nó e $A$é a matriz de adjacência:
 
-Uma rodada de mensagem permite que cada nó "veja" seus vizinhos imediatos. Duas rodadas permitem que veja vizinhos de vizinhos.
+```math
+H^{(k+1)} = \sigma\left(A_{\text{norm}} H^{(k)} W\right)
+```
+
+onde$A_{\text{norm}}$é a matriz de adjacência normalizada (cada linha é somada a 1).
+
+Uma rodada de mensagem permite que cada nó "veja" seus vizinhos imediatos.$K$Rondas dão a cada nó informações de seu $K$- No bairro do Hop.
 
 ```mermaid
 graph LR
@@ -326,7 +325,7 @@ def dfs(graph, start):
     return order
 ```
 
-O BFS usa um deque (fila de dois extremos) para O(1) pop-left. O DFS usa uma lista como uma pilha. Ambos visitam cada nó exatamente uma vez - O(V + E) tempo.
+O BFS utiliza uma fila de dois limites para $O(1)$DFS usa uma lista como uma pilha. Ambos visitam cada nó exatamente uma vez -$O(V + E)$- O tempo.
 
 ### Passo 3: Componentes conectados e valores próprios laplacianos
 
@@ -369,7 +368,7 @@ def spectral_clustering(graph, k=2):
     return labels
 ```
 
-Para k=2, o signo do vetor Fiedler divide o gráfico em dois aglomerados. Para k>2, você executaria k-media nos primeiros k vetores próprios (excluindo o vetor próprio trivial de todos os).
+Para o$k=2$, o sinal do vetor Fiedler divide o gráfico em dois aglomerados.$k>2$, você iria correr .$k$- significa na primeira.$k$Vêctores próprios (excluindo o vetor próprio trivial de todos os únicos).
 
 ### Passo 5: Passagem de mensagem
 
@@ -462,13 +461,13 @@ Esta lição produz:
 | Connected components | Preprocessing, handling disconnected graphs |
 | PageRank | Node importance ranking, attention initialization |
 
-GNNs merecem menção especial. A operação de convolução do gráfico em GCN (Kipf & Welling, 2017) usa a matriz de adjacência com loops auto adicionados, A_hat = A + I:
+As GNN merecem menção especial. A operação de convolução do gráfico em GCN (Kipf & Welling, 2017) usa a matriz de adjacência com loops auto adicionados, $\hat{A} = A + I$- Não .
 
-```text
-H^(l+1) = sigma(D_hat^(-1/2) * A_hat * D_hat^(-1/2) * H^(l) * W^(l))
+```math
+H^{(l+1)} = \sigma\left(\hat{D}^{-1/2} \hat{A} \hat{D}^{-1/2} H^{(l)} W^{(l)}\right)
 ```
 
-onde A_hat = A + I (adjacência mais auto-loops) e D_hat é a matriz de graus de A_hat. Os circuitos autônomos asseguram que cada nó inclui suas próprias características durante a agregação. Esta é exatamente a mensagem que passa com normalização simétrica. D_hat^(-1/2) * A_hat * D_hat^(-1/2) é a matriz de adjacência normalizada. O Laplaciano aparece porque esta normalização está relacionada a L_sym = I - D^(-1/2) * A * D^(-1/2). Entender o Laplaciano significa entender por que funcionam as GCN.
+onde$\hat{A} = A + I$(adjacência mais auto-loops) e $\hat{D}$é a matriz de graus de $\hat{A}$Os circuitos automáticos garantem que cada nó inclui suas próprias características durante a agregação.$\hat{D}^{-1/2} \hat{A} \hat{D}^{-1/2}$A Laplacian aparece porque esta normalização está relacionada com$L_{\text{sym}} = I - D^{-1/2} A D^{-1/2}$Entender o Laplaciano significa entender porque funcionam as GCN.
 
 ## Exercícios
 
@@ -482,15 +481,27 @@ onde A_hat = A + I (adjacência mais auto-loops) e D_hat é a matriz de graus de
 
 5. **Analyze a real-world graph.**Use o gráfico do Clube de Karate (34 nós, 78 bordas). Compute distribuição de graus, valores próprios laplacianos e agrupamento espectral. Compare o resultado do agrupamento espectral com a divisão de verdade do solo conhecida.
 
+### Indicios
+
+**Exercise 1.**Use a fórmula do exercício. Um nó sem bordas saindo deve compartilhar sua pontuação igualmente com todos os nós, ou o total cai abaixo de 1. Verifique se as pontuações somam até 1 após cada passo e compare seu resultado com `pagerank(graph)`- Não .
+
+**Exercise 2.**Construir duas camaradas com `add_edge`Conecte-os com uma borda e ligue.`spectral_clustering(graph, k=2)`Verifique se cada clique recebe um rótulo. Quando você adicionar bordas cruzadas, imprimir o segundo menor valor próprio de `laplacian()`, que cresce à medida que os dois grupos se juntam.
+
+**Exercise 3.**Mantenha uma fila de prioridade com `heapq`E sempre expandir o nó com a menor distância conhecida. Faça cada peso 1 e verifique se cada distância Dijkstra é igual à camada BFS do nó de `bfs(graph, start)`- Não .
+
+**Exercise 4.**Use a matriz de identidade como `features`, para que cada coluna marque um nó, e aplicar `message_passing`Depois as entradas não-zero na linha para nós $v$Mostre quais nós chegaram $v$Compare esse conjunto com os nós a distância 2 de uma primeira busca de largura.
+
+**Exercise 5.** `networkx.karate_club_graph()`dá a lista de bordas e a verdade do solo no atributo do nó `club`- Copie as bordas num`Graph`e verifique se tem 34 nós e 78 bordas.`spectral_clustering`com o `club`Os valores são alterados e os dois nomes de rótulos são trocados.
+
 ## Termos-chave
 
 | Term | What people say | What it actually means |
 |------|----------------|----------------------|
-| Graph | "Nodes and edges" | A mathematical structure G=(V,E) encoding pairwise relationships |
-| Adjacency matrix | "The connection table" | An n x n matrix where A[i][j] = 1 if nodes i and j are connected |
+| Graph | "Nodes and edges" | A mathematical structure $G=(V,E)$ encoding pairwise relationships |
+| Adjacency matrix | "The connection table" | An $n \times n$ matrix where $A[i][j] = 1$ if nodes $i$ and $j$ are connected |
 | Degree | "How connected a node is" | The number of edges touching a node |
-| Laplacian | "D minus A" | L = D - A, the matrix whose eigenvalues reveal graph structure |
-| Fiedler value | "The algebraic connectivity" | The smallest non-zero eigenvalue of L, measuring how well-connected the graph is |
+| Laplacian | "D minus A" | $L = D - A$, the matrix whose eigenvalues reveal graph structure |
+| Fiedler value | "The algebraic connectivity" | The smallest non-zero eigenvalue of $L$, measuring how well-connected the graph is |
 | BFS | "Level-by-level search" | Traversal that visits all neighbors before going deeper, finds shortest paths |
 | DFS | "Go deep first" | Traversal that follows one path to its end before backtracking |
 | Message passing | "Nodes talk to neighbors" | Each node aggregates information from its neighbors, the core of GNNs |

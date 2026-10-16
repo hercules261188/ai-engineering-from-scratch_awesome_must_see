@@ -96,7 +96,7 @@ Relative error: 19.2%
 
 Isso é um erro relativo de 19% de uma subtração única.
 
-- Computação de variação de dados com grande média: `E[x^2] - E[x]^2`quando E[x] é grande
+- Computação de variação de dados com grande média: $\mathbb{E}[x^2] - \mathbb{E}[x]^2$Quando ?$\mathbb{E}[x]$é grande
 - Subtrair probabilidades de registro quase iguais
 - Calcule gradientes de diferença finita com epsilon muito pequeno
 
@@ -141,20 +141,22 @@ Computação`log(sum(exp(x_i)))`- O que é que é?`x_i`é grande,`exp(x_i)`- Se 
 
 O truque: subtrair o valor máximo antes de exponenciar.
 
-```
-log(sum(exp(x_i))) = max(x) + log(sum(exp(x_i - max(x))))
+```math
+\log\left(\sum_i \exp(x_i)\right) = \max(x) + \log\left(\sum_i \exp(x_i - \max(x))\right)
 ```
 
 Por que isto funciona: depois de subtrair `max(x)`, o maior exponente é `exp(0) = 1`Não é possível sobrecarregar. Pelo menos um termo da soma é 1, portanto a soma é pelo menos 1, e`log(1) = 0`Não há fluxo de água para o`-inf`É possível.
 
 Prova:
 
-```
-log(sum(exp(x_i)))
-= log(sum(exp(x_i - c + c)))                    (add and subtract c)
-= log(sum(exp(x_i - c) * exp(c)))               (exp(a+b) = exp(a)*exp(b))
-= log(exp(c) * sum(exp(x_i - c)))               (factor out exp(c))
-= c + log(sum(exp(x_i - c)))                    (log(a*b) = log(a) + log(b))
+```math
+\begin{aligned}
+& \log\left(\sum_i \exp(x_i)\right) \\
+&= \log\left(\sum_i \exp(x_i - c + c)\right) && \text{(add and subtract } c\text{)} \\
+&= \log\left(\sum_i \exp(x_i - c) \cdot \exp(c)\right) && (\exp(a+b) = \exp(a) \cdot \exp(b)) \\
+&= \log\left(\exp(c) \cdot \sum_i \exp(x_i - c)\right) && \text{(factor out } \exp(c)\text{)} \\
+&= c + \log\left(\sum_i \exp(x_i - c)\right) && (\log(a \cdot b) = \log(a) + \log(b))
+\end{aligned}
 ```
 
 Set `c = max(x)`E o excesso de água é eliminado.
@@ -170,8 +172,8 @@ Este truque aparece em todo o ML:
 
 Softmax converte logits em probabilidades:
 
-```
-softmax(x_i) = exp(x_i) / sum(exp(x_j))
+```math
+\mathop{\mathrm{softmax}}(x_i) = \frac{\exp(x_i)}{\sum_j \exp(x_j)}
 ```
 
 Sem o truque, logits de [100, 101, 102] causam desbordamento:
@@ -242,18 +244,18 @@ Os gradientes analíticos (de backpropagation) podem ter bugs.
 
 A fórmula da diferença centralizada:
 
-```
-df/dx ~= (f(x + h) - f(x - h)) / (2h)
+```math
+\frac{df}{dx} \approx \frac{f(x + h) - f(x - h)}{2h}
 ```
 
-Isto é O ((h^2) preciso, muito melhor do que a diferença para a frente `(f(x+h) - f(x)) / h`que é apenas O(h).
+Isto é ...$O(h^2)$É muito melhor do que a diferença de avanço.$(f(x+h) - f(x)) / h$O que é apenas $O(h)$- Não .
 
-A escolha de h: grande demais e a aproximação errada.`h = 1e-5`- Não .`1e-7`É típico.
+Escolher$h$A alteração do Conselho de Ministros da Agricultura, do Meio Ambiente e do Meio Ambiente, da Agricultura e do Meio Ambiente, da Agricultura, da Alimentação e do Meio Ambiente, da Agricultura e do Meio Ambiente, da Agricultura, da Alimentação e do Meio Ambiente, da Agricultura e do Meio Ambiente, da Agricultura e da Alimentação, da Alimentação e do Meio Ambiente, da Agricultura e da Alimentação, da Alimentação e do Meio Ambiente, da Agricultura e da Alimentação, da Alimentação e da Alimentação, da Agricultura e da Alimentação, da Agricultura e da Alimentação, da Agricultura e da Alimentação, da Agricultura e da Alimentação, da Agricultura e da Alimentação, da Agricultura e da Alimentação, da Agricultura e da Alimentação, da Agricultura e da Alimentação, da Agricultura e da Saúde, da Agricultura e da Agricultura e da Agricultura, da Agricultura e da Saúde, da Agricultura e da Agricultura, da Agricultura e da Saúde, da Agricultura e da Agricultura, da Agricultura e da Agricultura, da Agricultura, da Agricultura e da Agricultura, da Agricultura e da Agricultura, da Agricultura, da Agricultura, da Agricultura e da Agricultura, da Agricultura, da Agricultura e da Agricultura, da Agricultura, da Agricultura, da Agricultura, da Agricultura e da Agricultura, da Agricultura, da Agricultura, da Agricultura.`h = 1e-5`- Não .`1e-7`É típico.
 
 O controlo: calcular a diferença relativa entre os gradientes analíticos e numéricos.
 
-```
-relative_error = |grad_analytical - grad_numerical| / max(|grad_analytical|, |grad_numerical|, 1e-8)
+```math
+\text{relative\_error} = \frac{\lvert \text{grad}_{\text{analytical}} - \text{grad}_{\text{numerical}} \rvert}{\max(\lvert \text{grad}_{\text{analytical}} \rvert, \lvert \text{grad}_{\text{numerical}} \rvert, 10^{-8})}
 ```
 
 Regras de execução:
@@ -289,7 +291,7 @@ A solução é a escalação de perdas:
 5. Net effect: same update, but no underflow
 ```
 
-A escalação dinâmica de perda ajusta automaticamente o fator de escala. Comece com um valor grande (65536).`inf`Se N passam sem sobrecarga, dobrem-no.
+A escalação dinâmica de perda ajusta automaticamente o fator de escala. Comece com um valor grande (65536).`inf`- Se o fizer, reduz-o à metade.$N$Passa os passos sem sobrecarga, dobra-o.
 
 ### Bfloat16 vs. Float16: Por que Bfloat16 Ganha para Treinamento
 
@@ -350,8 +352,8 @@ Layer 50: values in [0, inf]
 
 Normalização de recentes e re-escala a ativação em cada camada:
 
-```
-LayerNorm(x) = (x - mean(x)) / (std(x) + epsilon) * gamma + beta
+```math
+\mathop{\mathrm{LayerNorm}}(x) = \frac{x - \mathop{\mathrm{mean}}(x)}{\mathop{\mathrm{std}}(x) + \epsilon} \cdot \gamma + \beta
 ```
 
 O `epsilon`(tipicamente 1e-5) impede a divisão por zero quando todas as ativações são idênticas.`gamma`E ...`beta`Deixe a rede restaurar qualquer escala que precise.
@@ -568,7 +570,7 @@ Estas implementações estáveis reaparecem na fase 3 na construção do ciclo d
 
 ## Exercícios
 
-1. **Catastrophic cancellation.**Calcule a variância de [1000000.0, 1000001.0, 1000002.0] usando a fórmula ingênua `E[x^2] - E[x]^2`Em float32. Então, compute-o usando o algoritmo online de Welford. Compare os erros com a variância verdadeira (0.6667).
+1. **Catastrophic cancellation.**Calcule a variância de [1000000.0, 1000001.0, 1000002.0] usando a fórmula ingênua $\mathbb{E}[x^2] - \mathbb{E}[x]^2$Em float32. Então, compute-o usando o algoritmo online de Welford. Compare os erros com a variância verdadeira (0.6667).
 
 2. **Precision hunt.**Encontre o menor valor positivo float32 `x`Tal como isso .`1.0 + x == 1.0`Esta é a máquina epsilon. Verifique se coincide.`numpy.finfo(numpy.float32).eps`- Não .
 
@@ -578,17 +580,29 @@ Estas implementações estáveis reaparecem na fase 3 na construção do ciclo d
 
 5. **Loss scaling experiment.**Simulação de treinamento com float16: criar gradientes aleatórios na faixa [1e-9, 1e-3], converter em float16, e medir qual fração se torna zero.
 
+### Indicios
+
+**Exercise 1.**Converter os três valores com `np.float32`Antes de os quadrar, depois liga.`variance_naive`E ...`welford_variance`Um valor próximo de$10^{12}$no float32 tem um espaçamento muito maior que 1, então espere que o resultado ingênuo seja longe de 0,6667 e o resultado Welford seja próximo.
+
+**Exercise 2.**Começa com `x = np.float32(1.0)`E meia-lo enquanto `np.float32(1.0) + x != np.float32(1.0)`. Mantenha todos os valores em float32, e depois compare o último valor que ainda mudou a soma com `numpy.finfo(numpy.float32).eps`, que é $2^{-23}$- Não .
+
+**Exercise 3.**Previnha primeiro cada resposta.$n$valores iguais $c$, o resultado é $c + \ln n$Para um valor grande, o resultado é próximo a esse valor.$-1000 + \ln n$, enquanto `logsumexp_naive`Retorno `-inf`Porque cada exponencial desce para 0.
+
+**Exercise 4.**Para o$y = Wx + b$com uma perda.$L$, o gradiente para $W$é o produto externo do gradiente ascendente e $x$- Envolver a perda como função do aplanado$W$- Não , não .`numerical_gradient`, e passar ambos os resultados para `check_gradient`- Não .
+
+**Exercise 5.**Amostra das magnitudes em uma escala de log com `10 ** np.random.uniform(-9, -3, n)`e converter com `np.float16`. Float16 não pode manter valores abaixo de aproximadamente $6 \times 10^{-8}$, então espere que cerca de um quarto dos valores se tornem zero antes de escalar e quase nenhum depois de você multiplicar por 1024.
+
 ## Termos-chave
 
 | Term | What people say | What it actually means |
 |------|----------------|----------------------|
 | IEEE 754 | "The float standard" | International standard defining binary floating point formats, rounding rules, and special values (inf, nan). Every modern CPU and GPU implements it. |
-| Machine epsilon | "The precision limit" | The smallest value e such that 1.0 + e != 1.0 in a given float format. For float32, it is about 1.19e-7. |
+| Machine epsilon | "The precision limit" | The smallest value $e$ such that $1.0 + e \ne 1.0$ in a given float format. For float32, it is about 1.19e-7. |
 | Catastrophic cancellation | "Precision loss from subtraction" | When subtracting nearly equal floating point numbers, significant digits cancel and rounding noise dominates the result. |
 | Overflow | "Number too big" | A result exceeds the maximum representable value and becomes inf. exp(89) overflows float32. |
 | Underflow | "Number too small" | A result is closer to zero than the smallest representable positive number and becomes 0.0. exp(-104) underflows float32. |
-| Log-sum-exp trick | "Subtract the max first" | Computing log(sum(exp(x))) by factoring out exp(max(x)) to prevent overflow and underflow. Used in softmax, cross-entropy, and log-probability math. |
-| Stable softmax | "Softmax that does not explode" | Subtracting max(logits) before exponentiating. Numerically identical result, no overflow possible. |
+| Log-sum-exp trick | "Subtract the max first" | Computing $\log(\sum \exp(x))$ by factoring out $\exp(\max(x))$ to prevent overflow and underflow. Used in softmax, cross-entropy, and log-probability math. |
+| Stable softmax | "Softmax that does not explode" | Subtracting $\max(\text{logits})$ before exponentiating. Numerically identical result, no overflow possible. |
 | Gradient checking | "Verify your backprop" | Comparing analytical gradients from backpropagation against numerical gradients from finite differences to catch implementation bugs. |
 | Mixed precision | "Float16 forward, float32 backward" | Using lower-precision floats for speed-critical operations and higher-precision floats for numerically sensitive operations. Typical speedup is 2-3x. |
 | Loss scaling | "Prevent gradient underflow" | Multiplying the loss by a large constant before backprop so gradients stay in float16's representable range, then dividing by the same constant before weight updates. |
@@ -596,7 +610,7 @@ Estas implementações estáveis reaparecem na fase 3 na construção do ciclo d
 | Gradient clipping | "Cap the gradient norm" | Scaling the gradient vector so its norm does not exceed a threshold. Prevents exploding gradients from ruining weights. |
 | NaN | "Not a Number" | Special float value from undefined operations (0/0, inf-inf, sqrt(-1)). Propagates through all subsequent arithmetic. |
 | Inf | "Infinity" | Special float value from overflow or division by zero. Can combine to produce NaN (inf - inf, inf * 0). |
-| Numerical gradient | "Brute force derivative" | Approximating a derivative by evaluating f(x+h) and f(x-h) and dividing by 2h. Slow but reliable for verification. |
+| Numerical gradient | "Brute force derivative" | Approximating a derivative by evaluating $f(x+h)$ and $f(x-h)$ and dividing by $2h$. Slow but reliable for verification. |
 
 ## Mais leitura
 

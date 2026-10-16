@@ -44,7 +44,7 @@ Mode:   most frequent value
         Useful for categorical data. For continuous data, rarely informative.
 ```
 
-A média é o ponto de equilíbrio. A média é a marca de meio caminho. Quando divergem, sua distribuição é distorcida. As distribuições de renda têm média >> mediana (distribuição direita dos bilionários). As distribuições de perdas durante o treinamento muitas vezes têm média << mediana (distribuição esquerda de amostras fáceis).
+A média é o ponto de equilíbrio. A média é a marca de meio caminho. Quando divergem, a sua distribuição é distorcida.$\text{mean} \gg \text{median}$As distribuições de perdas durante o treino muitas vezes têm$\text{mean} \ll \text{median}$(desvio esquerdo de amostras fáceis).
 
 **Measures of spread**Resposta: "Quão disperso está o dados?"
 
@@ -75,14 +75,16 @@ For latency monitoring:
 
 Em ML, você se importa com percentil para latência de inferência, distribuições de confiança de previsão e distribuições de erro de compreensão. Um modelo com erro médio baixo, mas erro P99 terrível pode ser inútil para aplicações críticas à segurança.
 
-**Sample vs population statistics.**Quando você calcula a variância de uma amostra, divide por (n-1) em vez de n. Esta é a correção de Bessel. Ele compensa o fato de que a média da amostra não é a média da população verdadeira. Com n no denominador, você subestima sistematicamente a variância verdadeira. Com (n-1), a estimativa é imparcial.
+**Sample vs population statistics.**Ao calcular a variância de uma amostra, divide por $(n-1)$Em vez de$n$Esta correcção de Bessel compensa o facto de a média da amostra não ser a média da população.$n$No denominador, subestimamos sistematicamente a verdadeira variância.$(n-1)$A estimativa é imparcial.
 
-```
-Population variance: sigma^2 = (1/N) * sum((x_i - mu)^2)
-Sample variance:     s^2     = (1/(n-1)) * sum((x_i - x_bar)^2)
+```math
+\begin{aligned}
+\text{Population variance:} \quad \sigma^2 &= \frac{1}{N} \sum (x_i - \mu)^2 \\
+\text{Sample variance:} \quad s^2 &= \frac{1}{n-1} \sum (x_i - \bar{x})^2
+\end{aligned}
 ```
 
-Na prática: se n é grande (milhares de amostras), a diferença é insignificante.
+Na prática: se $n$Se a diferença é grande (milhares de amostras), é insignificante.$n$É pequeno (dezenas de amostras), importa.
 
 ### Correlação: Como as variáveis se movem juntas
 
@@ -100,7 +102,7 @@ r =  0:  no linear relationship (but there might be a nonlinear one!)
 Range: [-1, 1]
 ```
 
-Pearson assume que a relação é linear e ambas as variáveis são aproximadamente normalmente distribuídas. É sensível a valores fora do horizonte.
+Pearson assume que a relação é linear e ambas as variáveis são distribuídas aproximadamente normalmente. É sensível a valores fora do horizonte.$r$de 0,1 a 0,9.
 
 **Spearman rank correlation**Medidas de associação monótona:
 
@@ -139,7 +141,7 @@ Cov(X, Y) < 0:  when X increases, Y tends to decrease
 Cov(X, Y) = 0:  no linear co-movement
 ```
 
-Para d características, a matriz de covariância C é uma matriz d x d onde C[i][j] = Cov(feature_i, feature_j). As entradas diagonais C[i][i] são as variâncias de cada característica.
+Para o$d$características, a matriz de covariância $C$é um $d \times d$matriz onde $C[i][j] = \mathop{\mathrm{Cov}}(\text{feature}_i, \text{feature}_j)$As entradas diagonais$C[i][i]$são as variações de cada característica.
 
 ```
 C = | Var(x1)      Cov(x1,x2)  Cov(x1,x3) |
@@ -155,7 +157,7 @@ Properties:
 
 **Connection to PCA.**O PCA compõe a matriz de covariância. Os vetores próprios são os componentes principais (direções de variância máxima). Os valores próprios dizem-lhe quanta variância cada componente capta. Isto é exatamente o que a lição 10 cobriu, mas agora você vê por que a matriz de covariância é a coisa certa para se descompor: ele codifica todas as relações lineares em pares em seus dados.
 
-**Connection to correlation.**A matriz de correlação é a matriz de covariância de variáveis padronizadas (cada uma dividida por seu desvio padrão).
+**Connection to correlation.**A matriz de correlação é a matriz de covariância de variáveis padronizadas (cada uma dividida por seu desvio padrão).$[-1, 1]$- Não .
 
 ### Teste de hipóteses
 
@@ -205,10 +207,11 @@ O teste t compara os meios.
 
 **One-sample t-test:**A média populacional é diferente de um valor hipotético?
 
-```
-t = (x_bar - mu_0) / (s / sqrt(n))
-
-degrees of freedom = n - 1
+```math
+\begin{aligned}
+t &= \frac{\bar{x} - \mu_0}{s / \sqrt{n}} \\[4pt]
+\text{degrees of freedom} &= n - 1
+\end{aligned}
 ```
 
 **Two-sample t-test (independent):**São dois grupos significados diferentes?
@@ -297,19 +300,20 @@ engineering cost of deploying a new model.
 
 **Effect size**quantifica a grandeza da diferença, independentemente do tamanho da amostra:
 
-```
-Cohen's d = (mean_1 - mean_2) / pooled_std
-
-d = 0.2:  small effect
-d = 0.5:  medium effect
-d = 0.8:  large effect
+```math
+\begin{aligned}
+\text{Cohen's } d &= \frac{\text{mean}_1 - \text{mean}_2}{\text{pooled\_std}} \\[4pt]
+d &= 0.2: \quad \text{small effect} \\
+d &= 0.5: \quad \text{medium effect} \\
+d &= 0.8: \quad \text{large effect}
+\end{aligned}
 ```
 
 Sempre informe o p-valor e o tamanho do efeito. O p-valor diz-lhe se a diferença é real.
 
 ### Problemas de Comparação múltipla
 
-Quando você testa muitas hipóteses, algumas serão "significativas" por acaso. Se você testar 20 coisas em alfa = 0,05, você espera 1 falso positivo mesmo quando nada é real.
+Quando testamos muitas hipóteses, algumas serão "significativas" por acaso.$\alpha = 0.05$, você espera 1 falso positivo mesmo quando nada é real.
 
 ```
 P(at least one false positive) = 1 - (1 - alpha)^m
@@ -320,7 +324,7 @@ P(false positive) = 1 - 0.95^20 = 0.64
 You have a 64% chance of at least one false positive.
 ```
 
-**Bonferroni correction:**Dividir o alfa pelo número de testes.
+**Bonferroni correction:**Dividir$\alpha$pelo número de testes.
 
 ```
 Adjusted alpha = alpha / m = 0.05 / 20 = 0.0025
@@ -417,11 +421,11 @@ Kruskal-Wallis:     compares multiple groups (replaces ANOVA)
 - More statistical power (better at detecting real differences)
 ```
 
-Em experimentos de ML, normalmente há pequenas n (5 ou 10 dobras de validação cruzada), por isso, os testes não paramétricos como o Wilcoxon-signature-rank são muitas vezes mais apropriados do que os testes t.
+Em experiências de ML, normalmente temos pequenos$n$(5 ou 10 dobras de validação cruzada), por isso os testes não paramétricos como o de classificação assinada da Wilcoxon são muitas vezes mais adequados do que os testes t.
 
 ### Teorema do limite central: implicações práticas
 
-A CLT diz que a distribuição de amostras se aproxima de uma distribuição normal à medida que a n cresce, independentemente da distribuição populacional subjacente.
+O CLT diz que a distribuição da amostra se aproxima de uma distribuição normal como $n$A população cresce, independentemente da distribuição subjacente.
 
 ```
 If X_1, X_2, ..., X_n are iid with mean mu and variance sigma^2:
@@ -473,7 +477,7 @@ For highly skewed distributions, you might need n >= 100.
 
 9. **Assuming independence when data is not independent.**Imagens médicas do mesmo paciente, várias frases do mesmo documento.
 
-10. **P-hacking.**Tentar diferentes testes, subconjuntos ou critérios de exclusão até obter p < 0,05. O resultado é um artefato da pesquisa.
+10. **P-hacking.**Tentar diferentes testes, subconjuntos ou critérios de exclusão até conseguir.$p < 0.05$O resultado é um artefato da busca.
 
 ## Construindo-o
 
@@ -484,7 +488,7 @@ Implementarão:
 3. **Hypothesis tests**(teste de uma amostra, teste de duas amostras, teste de chi-quadrado)
 4. **Bootstrap confidence intervals**(para qualquer estatística, não são necessárias suposições)
 5. **A/B test simulator**(Generar dados, testar, verificar os erros de tipo I e tipo II)
-6. **Statistical vs practical significance demo**(mostrando que grande n faz tudo "significante")
+6. **Statistical vs practical significance demo**(mostrando que grande $n$torna tudo "significativo")
 
 Tudo do zero, usando apenas`math`E ...`random`Não há cretinos, nem cretinos.
 
@@ -501,7 +505,7 @@ f3-bootstrap-resample
 | Standard deviation | Square root of variance. Measures spread in original units. |
 | Percentile | Value below which a given percentage of data falls. |
 | IQR | Interquartile range. Q3 minus Q1. The spread of the middle 50%. |
-| Pearson correlation | Measures linear association between two variables. Range [-1, 1]. |
+| Pearson correlation | Measures linear association between two variables. Range $[-1, 1]$. |
 | Spearman correlation | Measures monotonic association using ranks. |
 | Covariance matrix | Matrix of pairwise covariances between all features. |
 | Null hypothesis | Default assumption of no effect or no difference. |

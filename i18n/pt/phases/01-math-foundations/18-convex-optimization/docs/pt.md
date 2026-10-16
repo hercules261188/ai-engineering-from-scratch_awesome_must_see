@@ -26,7 +26,7 @@ Compreender a convexidade faz três coisas. Primeiro, ele diz quando o seu probl
 
 ### Sete convexos
 
-Um conjunto S é convexo se, para quaisquer dois pontos em S, o segmento de linha entre eles também se encontra inteiramente em S.
+Um conjunto .$S$é convexa se para qualquer dois pontos em $S$, o segmento de linha entre eles também se encontra inteiramente em $S$- Não .
 
 | Convex sets | Not convex |
 |---|---|
@@ -34,12 +34,12 @@ Um conjunto S é convexo se, para quaisquer dois pontos em S, o segmento de linh
 | **Triangle**: same property holds for all interior points | **Donut/annulus**: the hole means some line segments leave the set |
 | The line segment between any two points stays within the set | The line segment between some pairs of points exits the set |
 
-Teste formal: para qualquer ponto x, y em S e qualquer t em [0, 1], o ponto tx + (1-t) y também está em S.
+Teste formal: para qualquer ponto $x, y$em $S$E qualquer outro .$t \in [0, 1]$, o ponto .$tx + (1-t)y$Também está em $S$- Não .
 
 Exemplos de conjuntos convexos:
-- Uma linha, um plano, todos os R^n
+- Uma linha, um avião, tudo.$\mathbb{R}^n$
 - Uma bola (círculo, esfera, hiperesfera)
-- Um espaço de meia-fase: {x: a^T x <= b}
+- Um meio espaço:$\lbrace x : a^T x \le b \rbrace$
 - A intersecção de qualquer número de conjuntos convexos
 
 Exemplos de conjuntos não convexos:
@@ -49,10 +49,10 @@ Exemplos de conjuntos não convexos:
 
 ### Funções convexas
 
-Uma função f é convexa se o seu domínio é um conjunto convexo e para qualquer dois pontos x, y no seu domínio e qualquer t em [0, 1]:
+Uma função$f$é convexa se o seu domínio é um conjunto convexo e para quaisquer dois pontos $x, y$em seu domínio e em qualquer$t \in [0, 1]$- Não .
 
-```
-f(tx + (1-t)y) <= t*f(x) + (1-t)*f(y)
+```math
+f(tx + (1-t)y) \le t f(x) + (1-t) f(y)
 ```
 
 Geometricamente: o segmento de linha entre quaisquer dois pontos no gráfico fica acima ou no gráfico.
@@ -64,26 +64,26 @@ Geometricamente: o segmento de linha entre quaisquer dois pontos no gráfico fic
 | **Local minima** | Every local minimum is the global minimum | Multiple local minima may exist at different heights |
 
 Funções convexas comuns:
-- f ((x) = x^2 (parabola)
-- f(x) = ↓x (valor absoluto)
-- f(x) = e^x (exponencial)
-- f(x) = max(0, x) (ReLU, embora linear em pedaços)
-- f(x) = -log(x) para x > 0 (log negativo)
-- Qualquer função linear f ((x) = a^T x + b (tanto convexa quanto côncava)
+- $f(x) = x^2$- Não .
+- $f(x) = \lvert x \rvert$(valor absoluto)
+- $f(x) = e^x$(exponencial)
+- $f(x) = \max(0, x)$(ReLU, embora linear em pedaços)
+- $f(x) = -\log(x)$Para$x > 0$(registro negativo)
+- Qualquer função linear $f(x) = a^T x + b$(tanto convexa quanto côncava)
 
 ### Teste de convexidade
 
 Três testes práticos, do mais fácil ao mais rigoroso.
 
-**Test 1: Second derivative test (1D).**Se f'(x) >= 0 para todos os x, então f é convexa.
+**Test 1: Second derivative test (1D).**Se$f''(x) \ge 0$Para todos .$x$, então$f$é convexa.
 
-- F'''(x) = 2 >= 0.
-- f''(x) = x^3: f''(x) = 6x. Negativo para x < 0. Não é convexo.
-- F''(x) = e^x: f''(x) = e^x > 0.
+- $f(x) = x^2$- Não .$f''(x) = 2 \ge 0$- Convexa.
+- $f(x) = x^3$- Não .$f''(x) = 6x$- Negativo para$x < 0$Não é convexa.
+- $f(x) = e^x$- Não .$f''(x) = e^x > 0$- Convexa.
 
-**Test 2: Hessian test (multivariate).**Se a matriz hessiana H ((x) é semidefinita positiva para todos os x, então f é convexa.
+**Test 2: Hessian test (multivariate).**Se a matriz hessiana $H(x)$é semidefinito positivo para todos $x$, então$f$O Hessiano é a matriz de derivadas parciais.
 
-**Test 3: Definition test.**Verifique a desigualdade f ((tx + (1-t) y) <= t * f ((x) + (1-t) * f ((y) diretamente. Útil para funções onde as derivadas são difíceis de calcular.
+**Test 3: Definition test.**Verifique a desigualdade .$f(tx + (1-t)y) \le t f(x) + (1-t) f(y)$É útil para funções onde as derivadas são difíceis de calcular.
 
 ### Por que a convexidade é importante
 
@@ -129,20 +129,22 @@ Os modelos lineares com perdas convexas são convexas.
 
 ### A Matriz Hessiana
 
-O Hessiano de uma função f: R^n -> R é a matriz n x n de derivadas parciais de segunda.
+O Hessiano $H$de uma função $f: \mathbb{R}^n \to \mathbb{R}$É o $n \times n$Matriz de derivados parciais de segunda ordem.
 
+```math
+H_{ij} = \frac{\partial^2 f}{\partial x_i \, \partial x_j}
 ```
-H[i][j] = d^2 f / (dx_i dx_j)
-```
 
-Para f ((x, y) = x^2 + 3xy + y^2:
+Para o$f(x, y) = x^2 + 3xy + y^2$- Não .
 
-```
-df/dx = 2x + 3y       d^2f/dx^2 = 2      d^2f/dxdy = 3
-df/dy = 3x + 2y       d^2f/dydx = 3      d^2f/dy^2 = 2
-
-H = [ 2  3 ]
-    [ 3  2 ]
+```math
+\begin{gathered}
+\begin{aligned}
+\frac{\partial f}{\partial x} &= 2x + 3y & \frac{\partial^2 f}{\partial x^2} &= 2 & \frac{\partial^2 f}{\partial x \, \partial y} &= 3 \\
+\frac{\partial f}{\partial y} &= 3x + 2y & \frac{\partial^2 f}{\partial y \, \partial x} &= 3 & \frac{\partial^2 f}{\partial y^2} &= 2
+\end{aligned} \\[8pt]
+H = \begin{bmatrix} 2 & 3 \\ 3 & 2 \end{bmatrix}
+\end{gathered}
 ```
 
 O Hessiano fala-lhe sobre a curvatura:
@@ -151,18 +153,17 @@ O Hessiano fala-lhe sobre a curvatura:
 - Sinais mistos: ponto de sela (curvas para cima em algumas direções, para baixo em outras)
 - Valor próprio zero: plano nessa direcção (degenerado)
 
-Para a convexidade, o Hessiano deve ser semidefinito positivo (todos os valores próprios >= 0) em todos os lugares, não apenas em um ponto.
+Para convexidade, o Hessiano deve ser semidefinito positivo (todos os valores próprios $\ge 0$) em todos os lugares, não apenas num ponto.
 
 ### Método de Newton
 
 A descida gradiente usa informações de primeira ordem (o gradiente). O método de Newton usa informações de segunda ordem (o Hessiano).
 
-```
-Update rule:
-  x_new = x - H^(-1) * gradient
-
-Compare to gradient descent:
-  x_new = x - lr * gradient
+```math
+\begin{aligned}
+\text{Update rule:} \quad & x_{\text{new}} = x - H^{-1} \cdot \text{gradient} \\
+\text{Compare to gradient descent:} \quad & x_{\text{new}} = x - \text{lr} \cdot \text{gradient}
+\end{aligned}
 ```
 
 O método de Newton substitui a taxa de aprendizagem escalar pelo Hessiano inverso.
@@ -190,14 +191,14 @@ Benefícios:
 - Invariante de escala (funciona independentemente de como você parâmetre o problema)
 
 Desvantagens:
-- O cálculo do Hessian custa O  n^2) memória e O  n^3) para inverter
-- Para uma rede neural com 1 milhão de pesos, isto é, 10^12 entradas e 10^18 operações
+- Calculação dos custos hessianos $O(n^2)$Memória e $O(n^3)$para inverter
+- Para uma rede neural com 1 milhão de pesos, isto é$10^{12}$- e$10^{18}$Operações
 - Não prático para aprendizagem profunda
 
 ### Optimização limitada
 
-Optimização sem restrições: minimizar f ((x) sobre todos os x.
-Otimizamento restrito: minimizar f ((x) sujeito a restrições.
+Optimização sem restrições: minimizar $f(x)$em tudo .$x$- Não .
+Otimizar com restrições: minimizar $f(x)$sujeito a restrições.
 
 Os problemas reais têm limitações. Você quer minimizar os custos, mas o seu orçamento é limitado. Você quer minimizar os erros, mas a sua complexidade do modelo é limitada.
 
@@ -216,22 +217,24 @@ graph LR
 
 O método dos multiplicadores de Lagrange converte um problema restrito em um sem restrições.
 
-Problema: minimizar f ((x) sujeito a g ((x) = 0.
+O problema é minimizar .$f(x)$Submetido a$g(x) = 0$- Não .
 
-Solução: introduzir uma nova variável (o lambda do multiplicador de Lagrange) e resolver o problema sem restrições:
+Solução: introduzir uma nova variável (o multiplicador de Lagrange $\lambda$) e resolver o problema sem restrições:
 
-```
-L(x, lambda) = f(x) + lambda * g(x)
-```
-
-Na solução, o gradiente de L é zero:
-
-```
-dL/dx = df/dx + lambda * dg/dx = 0
-dL/dlambda = g(x) = 0
+```math
+L(x, \lambda) = f(x) + \lambda g(x)
 ```
 
-Intuição geométrica: no mínimo restrito, o gradiente de f deve ser paralelo ao gradiente da restrição g. Se não forem paralelas, você pode se mover ao longo da superfície da restrição e reduzir f ainda mais.
+Na solução, o gradiente de $L$é zero:
+
+```math
+\begin{aligned}
+\frac{\partial L}{\partial x} &= \frac{\partial f}{\partial x} + \lambda \frac{\partial g}{\partial x} = 0 \\
+\frac{\partial L}{\partial \lambda} &= g(x) = 0
+\end{aligned}
+```
+
+Intuição geométrica: no mínimo limitado, o gradiente de $f$Deve ser paralelo ao gradiente da restrição $g$Se não fossem paralelas, podíamos mover-nos ao longo da superfície da restrição e reduzir$f$Mais longe.
 
 ```mermaid
 graph LR
@@ -240,39 +243,41 @@ graph LR
     S --- C["At the solution, gradient of f is parallel to gradient of g"]
 ```
 
-Exemplo: minimizar f ((x,y) = x^2 + y^2 sujeito a x + y = 1.
+Exemplo: minimizar $f(x,y) = x^2 + y^2$Submetido a$x + y = 1$- Não .
 
+```math
+\begin{aligned}
+L &= x^2 + y^2 + \lambda(x + y - 1) \\[4pt]
+\frac{\partial L}{\partial x} &= 2x + \lambda = 0 \implies x = -\lambda/2 \\
+\frac{\partial L}{\partial y} &= 2y + \lambda = 0 \implies y = -\lambda/2 \\
+\frac{\partial L}{\partial \lambda} &= x + y - 1 = 0 \\[4pt]
+&\text{From first two: } x = y \\
+&\text{Substituting: } 2x = 1, \text{ so } x = y = 0.5, \ \lambda = -1
+\end{aligned}
 ```
-L = x^2 + y^2 + lambda(x + y - 1)
 
-dL/dx = 2x + lambda = 0  =>  x = -lambda/2
-dL/dy = 2y + lambda = 0  =>  y = -lambda/2
-dL/dlambda = x + y - 1 = 0
-
-From first two: x = y
-Substituting: 2x = 1, so x = y = 0.5, lambda = -1
-```
-
-O ponto mais próximo da linha x + y = 1 à origem é (0,5, 0,5).
+O ponto mais próximo da linha .$x + y = 1$A origem é $(0.5, 0.5)$- Não .
 
 ### Condições da KKT
 
 As condições Karush-Kuhn-Tucker estendem os multiplicadores de Lagrange a restrições de desigualdade.
 
-Problema: minimizar f  x) sujeito a g  i  x) <= 0 para i = 1, ..., m.
+O problema é minimizar .$f(x)$Submetido a$g_i(x) \le 0$Para$i = 1, \ldots, m$- Não .
 
 As condições de KKT (necessárias para a otimização):
 
-```
-1. Stationarity:    df/dx + sum(lambda_i * dg_i/dx) = 0
-2. Primal feasibility:  g_i(x) <= 0  for all i
-3. Dual feasibility:    lambda_i >= 0  for all i
-4. Complementary slackness:  lambda_i * g_i(x) = 0  for all i
+```math
+\begin{aligned}
+&\text{1. Stationarity:} && \frac{\partial f}{\partial x} + \sum_i \lambda_i \frac{\partial g_i}{\partial x} = 0 \\
+&\text{2. Primal feasibility:} && g_i(x) \le 0 \quad \text{for all } i \\
+&\text{3. Dual feasibility:} && \lambda_i \ge 0 \quad \text{for all } i \\
+&\text{4. Complementary slackness:} && \lambda_i \, g_i(x) = 0 \quad \text{for all } i
+\end{aligned}
 ```
 
-A lenteza complementar é a principal noção: ou a restrição é ativa (g_i = 0, a solução fica na fronteira) ou o multiplicador é zero (a restrição não importa).
+A flexibilidade complementar é a principal noção: ou a restrição é activa ($g_i = 0$, a solução fica na fronteira) ou o multiplicador é zero (a restrição não importa).$\lambda = 0$- Não .
 
-As condições KKT são fundamentais para os SVM. Os vetores de apoio são os pontos de dados onde a restrição é ativa (lambda > 0).
+As condições KKT são fundamentais para os SVM. Os vetores de apoio são os pontos de dados onde a restrição está activa ($\lambda > 0$Todos os outros pontos de dados têm$\lambda = 0$e não afetam a fronteira de decisão.
 
 ### Regularização como otimização limitada
 
@@ -280,25 +285,27 @@ A regularização L1 e L2 não são truques arbitrários, são problemas de otim
 
 **L2 regularization (Ridge):**
 
+```math
+\begin{aligned}
+&\text{minimize } \text{Loss}(w) \text{ subject to } \lVert w \rVert^2 \le t \\[4pt]
+&\text{Equivalent unconstrained form:} \\
+&\text{minimize } \text{Loss}(w) + \lambda \lVert w \rVert^2
+\end{aligned}
 ```
-minimize  Loss(w)  subject to  ||w||^2 <= t
 
-Equivalent unconstrained form:
-minimize  Loss(w) + lambda * ||w||^2
-```
-
-A restrição de desvio em desvio <= t define uma bola (círculo em 2D, esfera 3D).
+A restrição$\lVert w \rVert^2 \le t$A solução é onde os contornos de perda tocam primeiro esta bola.
 
 **L1 regularization (LASSO):**
 
+```math
+\begin{aligned}
+&\text{minimize } \text{Loss}(w) \text{ subject to } \lVert w \rVert_1 \le t \\[4pt]
+&\text{Equivalent unconstrained form:} \\
+&\text{minimize } \text{Loss}(w) + \lambda \lVert w \rVert_1
+\end{aligned}
 ```
-minimize  Loss(w)  subject to  ||w||_1 <= t
 
-Equivalent unconstrained form:
-minimize  Loss(w) + lambda * ||w||_1
-```
-
-A restrição de que não é necessário <= t define um diamante (quadrado rotativo em 2D).
+A restrição$\lVert w \rVert_1 \le t$define um diamante (quadrado rotativo em 2D).
 
 | Property | L2 constraint (circle) | L1 constraint (diamond) |
 |---|---|---|
@@ -315,11 +322,13 @@ Cada problema de otimização restrita (o primário) tem um problema companheiro
 
 A função dupla de Lagrange:
 
-```
-Primal: minimize f(x) subject to g(x) <= 0
-Lagrangian: L(x, lambda) = f(x) + lambda * g(x)
-Dual function: d(lambda) = min_x L(x, lambda)
-Dual problem: maximize d(lambda) subject to lambda >= 0
+```math
+\begin{aligned}
+&\text{Primal:} && \text{minimize } f(x) \text{ subject to } g(x) \le 0 \\
+&\text{Lagrangian:} && L(x, \lambda) = f(x) + \lambda g(x) \\
+&\text{Dual function:} && d(\lambda) = \min_x L(x, \lambda) \\
+&\text{Dual problem:} && \text{maximize } d(\lambda) \text{ subject to } \lambda \ge 0
+\end{aligned}
 ```
 
 Por que a dualidade é importante:
@@ -346,7 +355,7 @@ As funções de perda de rede neural são muito não convexas. Por todas as medi
 
 **Most local minima are good enough.**Em espaços de alta dimensão, pontos críticos aleatórios (onde o gradiente é zero) são em grande parte pontos de sela, não mínimos locais. Os poucos mínimos locais que existem tendem a ter valores de perda próximos ao mínimo global. Ficar preso em um mínimo local terrível é extremamente improvável quando o espaço de parâmetros tem milhões de dimensões.
 
-**Saddle points, not local minima, are the real obstacle.**Em uma função com n parâmetros, um ponto de sela tem uma mistura de direções de curvatura positiva e negativa. Para um ponto crítico aleatório em dimensões altas, a probabilidade de todos os n valores próprios serem positivos (mínimo local) é aproximadamente 2 ^ - n. Quase todos os pontos críticos são pontos de sela.
+**Saddle points, not local minima, are the real obstacle.**Em função com $n$Para um ponto crítico aleatório em dimensões elevadas, a probabilidade de todas as$n$Os valores próprios sendo positivos (mínimo local) são aproximadamente $2^{-n}$Quase todos os pontos críticos são pontos de sela.
 
 **Overparameterization smooths the landscape.**As redes com mais parâmetros do que os exemplos de treinamento têm superfícies de perda mais suaves e conectadas.
 
@@ -365,21 +374,21 @@ As funções de perda de rede neural são muito não convexas. Por todas as medi
 
 O método de Newton puro é impraticável para grandes modelos. Várias aproximações tornam a informação de segunda ordem útil.
 
-**L-BFGS (Limited-memory BFGS):**Aproxima o Hessiano inverso usando as últimas diferenças de gradiente m. Requer memória O(mn em vez de O(n^2). Funciona bem para problemas com até ~ 10.000 parâmetros.
+**L-BFGS (Limited-memory BFGS):**Aproxima o Hessiano inverso usando o último $m$Diferenças de gradientes.$O(mn)$Memória em vez de $O(n^2)$Funciona bem para problemas com até ~ 10.000 parâmetros. Utilizado em ML clássico (regressão logística, CRFs), mas não em aprendizagem profunda.
 
 **Natural gradient:**Utiliza a matriz de informação Fisher (esperado Hessian da probabilidade de log) em vez do Hessian padrão. Isso explica a geometria das distribuições de probabilidade. K-FAC (Curvatura aproximada de Cronécker-Fatorado) aproxima a matriz Fisher como um produto de Cronécker, tornando-a prática para redes neurais.
 
-**Hessian-free optimization:**Utiliza gradiente conjugado para resolver Hx = g sem nunca formar H. Só requer produtos de vetor Hessiano, que podem ser calculados em tempo O ((n) através de diferenciação automática.
+**Hessian-free optimization:**Utiliza gradiente conjugado para resolver $Hx = g$sem nunca formar .$H$. Só requer produtos de vetores hessianos, que podem ser calculados em $O(n)$tempo através de diferenciação automática.
 
 **Diagonal approximations:**O segundo momento de Adam é uma aproximação diagonal da diagonal de Hessian. AdaHessian estende isso usando elementos diagonais de Hessian reais através do estimador de Hutchinson.
 
 | Method | Memory | Per-step cost | When to use |
 |--------|--------|--------------|-------------|
-| Gradient descent | O(n) | O(n) | Baseline, large models |
-| Newton's method | O(n^2) | O(n^3) | Small convex problems |
-| L-BFGS | O(mn) | O(mn) | Medium convex problems |
-| Adam | O(n) | O(n) | Deep learning default |
-| K-FAC | O(n) | O(n) per layer | Research, large-batch training |
+| Gradient descent | $O(n)$ | $O(n)$ | Baseline, large models |
+| Newton's method | $O(n^2)$ | $O(n^3)$ | Small convex problems |
+| L-BFGS | $O(mn)$ | $O(mn)$ | Medium convex problems |
+| Adam | $O(n)$ | $O(n)$ | Deep learning default |
+| K-FAC | $O(n)$ | $O(n)$ per layer | Research, large-batch training |
 
 ```figure
 convex-vs-nonconvex
@@ -516,15 +525,27 @@ print(f"Support vectors: {svm.n_support_}")
 
 ## Exercícios
 
-1. **Convexity gallery.**Teste estas funções para convexidade usando o comprovador: f(x) = x^4, f(x) = sin(x), f(x,y) = x^2 + y^2, f(x,y) = x*y, f(x) = max(x, 0). Explique por que cada resultado faz sentido.
+1. **Convexity gallery.**Teste estas funções para convexidade usando o compressor: $f(x) = x^4$- Não .$f(x) = \sin(x)$- Não .$f(x,y) = x^2 + y^2$- Não .$f(x,y) = xy$- Não .$f(x) = \max(x, 0)$Explicar porque cada resultado faz sentido.
 
-2. **Newton vs gradient descent race.**Execute ambos os métodos em f ((x,y) = 50*x^2 + y^2 a partir do ponto de partida (10, 10). Quantas etapas cada um precisa para alcançar a perda < 1e-10? O que acontece com a descida de gradiente quando o número de condição (ratio do maior ao menor valor próprio hessiano) aumenta?
+2. **Newton vs gradient descent race.**Aplique ambos os métodos.$f(x,y) = 50x^2 + y^2$do ponto de partida $(10, 10)$Quantos passos cada um precisa para alcançar a perda < 1e-10? O que acontece com a descida de gradiente quando o número de condição (ratio do maior ao menor valor próprio hessiano) aumenta?
 
-3. **Lagrange multiplier geometry.**Minimizar f ((x,y) = (x-3) ^ 2 + (y-3) ^ 2 sujeito a x + 2y = 4. Verificar a solução verificando que o gradiente de f é paralelo ao gradiente de g na solução.
+3. **Lagrange multiplier geometry.**Minimizar$f(x,y) = (x-3)^2 + (y-3)^2$Submetido a$x + 2y = 4$Verificar a solução verificando que o gradiente de $f$é paralelo ao gradiente de $g$- A solução.
 
-4. **Regularization constraint.**Implementar a otimização com restrição L1: minimizar (x-3)^2 + (y-2)^2 sujeito a ≠x ≠x ≠y ≠ <= 1. Mostre que a solução tem uma coordenada igual a zero (sparidade da restrição de diamante).
+4. **Regularization constraint.**Implementar a otimização limitada L1: minimizar $(x-3)^2 + (y-2)^2$Submetido a$\lvert x \rvert + \lvert y \rvert \le 1$. Mostre que a solução tem uma coordenada igual a zero (sparsia da restrição do diamante).
 
 5. **Hessian eigenvalue analysis.**Calcule o Hessiano da função Rosenbrock em (1,1) e em (-1,1). Calcule os valores próprios em ambos os pontos. O que os valores próprios lhe dizem sobre a curvatura no mínimo versus longe dele?
+
+### Indicios
+
+**Exercise 1.**Previnha cada resultado antes de correr .`check_convexity`: numa dimensão, olha para o sinal de$f''(x)$- em duas dimensões, veja os valores próprios do Hessiano.$f(x,y) = xy$, o Hessian tem valores próprios 1 e -1, por isso o verificador deve relatar que não é convexa.
+
+**Exercise 2.**Liga-me .`optimize_gd`E ...`newtons_method`com o gradiente e o Hessiano de $f$O método de Newton resolve um quadrático em um passo.$2/100$Por causa do $50x^2$O termo, então o $y$A direcção se move lentamente.$100x^2$E contar os passos novamente.
+
+**Exercise 3.**Utilização`lagrange_solve`com$g(x,y) = x + 2y - 4$Na resposta, verifique isso.$x + 2y = 4$E isso .$\nabla f = (2(x-3), 2(y-3))$é um múltiplo de $\nabla g = (1, 2)$- Não .
+
+**Exercise 4.**O mínimo não restrito (3, 2) está fora do diamante, então a resposta está em sua fronteira. Use descida de gradiente projetada: dê um passo de gradiente, e depois projetar de volta para o$\lvert x \rvert + \lvert y \rvert \le 1$Verifique se o resultado satisfaz a restrição de igualdade e compare-o com `demo_regularization_geometry`- Não .
+
+**Exercise 5.**Liga-me .`rosenbrock_hessian`em cada ponto e passar o resultado para `hessian_eigenvalues_2d`. Em (1, 1), ambos os valores próprios são positivos e sua relação é muito grande, então o vale é estreito em uma direção e plano na outra.
 
 ## Termos-chave
 
@@ -543,7 +564,7 @@ print(f"Support vectors: {svm.n_support_}")
 | Complementary slackness | At the solution, either a constraint is active or its multiplier is zero. Never both nonzero |
 | Duality | Every constrained problem has a companion dual problem. For convex problems, both have the same optimal value |
 | Strong duality | Primal and dual optimal values are equal. Holds for convex problems satisfying Slater's condition |
-| L-BFGS | Approximate second-order method that stores the last m gradient differences instead of the full Hessian |
+| L-BFGS | Approximate second-order method that stores the last $m$ gradient differences instead of the full Hessian |
 | Saddle point | A point where the gradient is zero but it is a minimum in some directions and a maximum in others |
 | Overparameterization | Using more parameters than training examples. Smooths the loss landscape and reduces bad local minima |
 

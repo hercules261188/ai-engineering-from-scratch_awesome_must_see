@@ -28,10 +28,10 @@ Esta lição construiu todas as fórmulas a partir do zero para que você veja d
 
 Quando algo improvável acontece, ele carrega mais informações.
 
-O conteúdo de informação de um evento com probabilidade p é:
+O conteúdo de informação de um evento com probabilidade $p$é:
 
-```
-I(x) = -log(p(x))
+```math
+I(x) = -\log(p(x))
 ```
 
 Usando o log base 2 dá bits, usando o log natural dá nats, a mesma ideia, unidades diferentes.
@@ -50,98 +50,104 @@ Alguns eventos não contêm informação, já sabias que acontecerão.
 
 Entropia é a surpresa esperada em todos os resultados possíveis de uma distribuição.
 
-```
-H(P) = -sum( p(x) * log(p(x)) )  for all x
+```math
+H(P) = -\sum_{x} p(x) \log(p(x))
 ```
 
 Uma moeda justa tem entropia máxima para uma variável binária: 1 bit. Uma moeda tendenciosa (99% de cabeças) tem entropia baixa: 0,08 bits. Você já sabe o que vai acontecer, então cada virada diz-lhe quase nada.
 
-```
-Fair coin:    H = -(0.5 * log2(0.5) + 0.5 * log2(0.5)) = 1.0 bit
-Biased coin:  H = -(0.99 * log2(0.99) + 0.01 * log2(0.01)) = 0.08 bits
+```math
+\begin{aligned}
+\text{Fair coin:} \quad & H = -(0.5 \log_2(0.5) + 0.5 \log_2(0.5)) = 1.0 \text{ bit} \\
+\text{Biased coin:} \quad & H = -(0.99 \log_2(0.99) + 0.01 \log_2(0.01)) = 0.08 \text{ bits}
+\end{aligned}
 ```
 
 A entropia mede a incerteza irredutível numa distribuição.
 
 ### A entropia cruzada (a função de perda que você usa todos os dias)
 
-A entropia cruzada mede a surpresa média quando se usa a distribuição Q para codificar eventos que realmente vêm da distribuição P.
+A entropia cruzada mede a surpresa média quando se usa a distribuição $Q$para codificar eventos que realmente vêm da distribuição $P$- Não .
 
+```math
+H(P, Q) = -\sum_{x} p(x) \log(q(x))
 ```
-H(P, Q) = -sum( p(x) * log(q(x)) )  for all x
-```
 
-P é a distribuição verdadeira (as etiquetas). Q é a previsão do seu modelo. Se Q coincide perfeitamente com P, a entropia cruzada é igual à entropia. Qualquer desajuste a torna maior.
+$P$É a distribuição verdadeira (os rótulos). $Q$É a previsão do seu modelo.$Q$- Correntes$P$Perfeitamente, a entropia cruzada é igual à entropia. Qualquer desajuste torna-a maior.
 
-Na classificação, P é um vetor de um só calor (a classe verdadeira tem probabilidade 1, tudo o resto 0).
+Em classificação, $P$é um vetor de um só calor (a classe verdadeira tem probabilidade 1, tudo o resto 0).
 
-```
-H(P, Q) = -log(q(true_class))
+```math
+H(P, Q) = -\log(q(\text{true\_class}))
 ```
 
 Isso é toda a fórmula de perda de entropia cruzada para classificação. Maximizar a probabilidade prevista da classe correta.
 
 ### KL Divergência (Distança entre Distribuições)
 
-A divergência KL mede a quantidade de surpresa extra que você obtém usando Q em vez de P.
+A divergência KL mede a quantidade de surpresa extra que você recebe ao usar $Q$Em vez de$P$- Não .
 
-```
-D_KL(P || Q) = sum( p(x) * log(p(x) / q(x)) )  for all x
-             = H(P, Q) - H(P)
+```math
+\begin{aligned}
+D_{KL}(P \,\|\, Q) &= \sum_{x} p(x) \log(p(x) / q(x)) \\
+&= H(P, Q) - H(P)
+\end{aligned}
 ```
 
 A entropia cruzada é entropia mais divergência KL. Como a entropia da distribuição verdadeira é constante durante o treinamento, minimizar a entropia cruzada é o mesmo que minimizar a divergência KL. Você está empurrando a distribuição do seu modelo para a distribuição verdadeira.
 
-A divergência KL não é simétrica: D_KL(P ∫ Q) != D_KL(Q ∫ P). Não é uma métrica de distância verdadeira.
+A divergência KL não é simétrica: $D_{KL}(P \Vert Q) \ne D_{KL}(Q \Vert P)$Não é uma métrica de distância real.
 
 ### Informações mútuas
 
 A informação mútua mede o quanto saber uma variável diz-lhe sobre outra.
 
-```
-I(X; Y) = H(X) - H(X|Y)
-        = H(X) + H(Y) - H(X, Y)
+```math
+\begin{aligned}
+I(X; Y) &= H(X) - H(X \mid Y) \\
+&= H(X) + H(Y) - H(X, Y)
+\end{aligned}
 ```
 
-Se X e Y são independentes, a informação mútua é zero. Saber um não diz nada sobre o outro. Se eles estão perfeitamente correlacionados, a informação mútua é igual à entropia de qualquer uma das variáveis.
+Se$X$E ...$Y$Se eles estão perfeitamente correlacionados, a informação mútua é igual à entropia de qualquer uma das variáveis.
 
 Na seleção de características, uma alta informação mútua entre uma característica e o alvo significa que a característica é útil.
 
 ### Entropia condicional
 
-H(Y de X) mede a quantidade de incerteza que permanece sobre Y após a observação de X.
+$H(Y \mid X)$Medem a incerteza que permanece sobre o$Y$Depois de observares.$X$- Não .
 
-```
-H(Y|X) = H(X,Y) - H(X)
+```math
+H(Y \mid X) = H(X,Y) - H(X)
 ```
 
 Dois extremos:
-- Se X determina completamente Y, então H(Y ≠X) = 0. Conhecer X elimina toda a incerteza sobre Y. Exemplo: X = temperatura em Celsius, Y = temperatura em Fahrenheit.
-- Se X não lhe diz nada sobre Y, então H(YX não) = H(Y). Saber X não reduz sua incerteza em tudo.
+- Se$X$Determina completamente.$Y$, então$H(Y \mid X) = 0$- Saber .$X$Elimina toda a incerteza sobre o$Y$- Exemplo:$X$= temperatura em Celsius,$Y$= temperatura em Fahrenheit.
+- Se$X$Não lhe diz nada sobre isso .$Y$, então$H(Y \mid X) = H(Y)$- Saber .$X$Não reduz a sua incerteza.$X$= lançamento de moeda,$Y$= o tempo de amanhã.
 
-A entropia condicional é sempre não negativa e nunca excede H(Y):
+A entropia condicional é sempre não negativa e nunca excede .$H(Y)$- Não .
 
+```math
+0 \le H(Y \mid X) \le H(Y)
 ```
-0 <= H(Y|X) <= H(Y)
-```
 
-Em aprendizado de máquina, a entropia condicional aparece em árvores de decisão. Em cada divisão, o algoritmo escolhe a característica X que minimiza H(Y X) - a característica que remove a maior incerteza sobre o rótulo Y.
+Em aprendizado de máquina, a entropia condicional aparece nas árvores de decisão.$X$que minimiza $H(Y \mid X)$-- a característica que elimina a maior incerteza sobre o rótulo $Y$- Não .
 
 ### Entropia conjunta
 
-H ((X,Y) é a entropia da distribuição conjunta de X e Y juntos.
+$H(X,Y)$é a entropia da distribuição conjunta de $X$E ...$Y$- juntos.
 
-```
-H(X,Y) = -sum sum p(x,y) * log(p(x,y))   for all x, y
+```math
+H(X,Y) = -\sum_{x} \sum_{y} p(x,y) \log(p(x,y))
 ```
 
 Propriedade chave:
 
-```
-H(X,Y) <= H(X) + H(Y)
+```math
+H(X,Y) \le H(X) + H(Y)
 ```
 
-A igualdade é válida quando X e Y são independentes. Se eles compartilham informações, a entropia conjunta é menor que a soma de entropias individuais. A entropia "missente" é exatamente a informação mútua.
+A igualdade é válida quando $X$E ...$Y$A entropia conjunta é menor que a soma das entropías individuais.
 
 ```mermaid
 graph TD
@@ -167,50 +173,52 @@ graph TD
 ```
 
 As relações:
-- H(X,Y) = H(X) + H(Y que seja X) = H(Y) + H(X que seja)
-- O valor de um valor de um valor de um valor de um valor de um valor de um valor de um valor de um valor de um valor de um valor de um valor de um valor de um valor de um valor de um valor de um valor de um valor de um valor de um valor de um valor de um valor de um valor de um valor de um valor de um valor de um valor de um valor de um valor de um valor de um valor de um valor de um valor de um valor de um valor de um valor de um valor de um valor de um valor de um valor de um valor de um valor de um valor de um valor de um valor de um valor de um valor de um valor de um valor de um valor de um valor de um valor de um valor de um valor de um valor de um valor de um valor de um valor de um valor de um valor de um valor de um valor de um valor de um valor de um valor de um valor de um valor de um valor de um valor de um valor de um valor de um valor de um valor de um valor de um valor de um valor de um valor de um valor de um valor de um valor de um valor de um valor de um valor de um valor de um valor de um valor de um valor de um valor de um valor de um valor de um valor de um valor de um valor de um valor de um valor de um valor de um valor de um valor de um valor de um valor de um valor de um valor de um valor de um valor de um valor de um valor de um valor de um valor de um valor de um valor de um valor de um valor de um valor de um valor de um valor de um valor de um valor de um valor de um valor de um valor de um valor de um valor de um valor de um valor de um valor de um valor de um valor de um valor de um valor de um valor de um valor de um valor de um valor de um valor de um valor de um valor de um valor de um valor de um valor de valor de valor de valor de um valor de valor de um valor de valor de valor de valor de um valor de valor de um valor de valor de valor de valor de valor de valor de valor de valor de valor de valor de valor de valor de valor de valor de valor de valor de valor de valor de valor de valor de valor de valor de valor de valor de valor de valor de valor de valor de valor de valor de valor de valor de valor de valor
-- H(X,Y) = H(X) + H(Y) - I(X;Y)
+- $H(X,Y) = H(X) + H(Y \mid X) = H(Y) + H(X \mid Y)$
+- $I(X;Y) = H(X) - H(X \mid Y) = H(Y) - H(Y \mid X)$
+- $H(X,Y) = H(X) + H(Y) - I(X;Y)$
 
 ### Informações mútuas (mergulho profundo)
 
-Informação mútua I  X; Y) quantifica o quanto o conhecimento de uma variável reduz a incerteza sobre a outra.
+Informação mútua $I(X;Y)$quantifica o quanto o conhecimento de uma variável reduz a incerteza sobre a outra.
 
-```
-I(X;Y) = H(X) - H(X|Y)
-       = H(Y) - H(Y|X)
-       = H(X) + H(Y) - H(X,Y)
-       = sum sum p(x,y) * log(p(x,y) / (p(x) * p(y)))
+```math
+\begin{aligned}
+I(X;Y) &= H(X) - H(X \mid Y) \\
+&= H(Y) - H(Y \mid X) \\
+&= H(X) + H(Y) - H(X,Y) \\
+&= \sum_{x} \sum_{y} p(x,y) \log\left(\frac{p(x,y)}{p(x) \, p(y)}\right)
+\end{aligned}
 ```
 
 Propriedades:
-- I ((X;Y) >= 0 sempre. Você nunca perde informações observando algo.
-- I ((X;Y) = 0 se e apenas se X e Y são independentes.
-- I(X;Y) = I(Y;X). É simétrico, ao contrário da divergência KL.
-- I ((X;X) = H ((X). Uma variável compartilha todas as suas informações consigo mesma.
+- $I(X;Y) \ge 0$Nunca perdemos informações observando alguma coisa.
+- $I(X;Y) = 0$Se e somente se $X$E ...$Y$são independentes.
+- $I(X;Y) = I(Y;X)$É simétrico, ao contrário da divergência KL.
+- $I(X;X) = H(X)$Uma variável compartilha todas as suas informações consigo mesma.
 
 **Mutual information for feature selection.**Em ML, você quer recursos que sejam informativos sobre o alvo.
 
-1. Para cada característica X_i, calcular I(X_i; Y) onde Y é a variável alvo.
+1. Para cada característica $X_i$, computação $I(X_i; Y)$onde$Y$é a variável-alvo.
 2. Características de classificação por pontuação MI.
-3. Mantém as características de cima.
+3. Mantém o topo .$k$características.
 
 Isto funciona para qualquer relação entre característica e alvo -- linear, não linear, monótono ou não. A correlação só capta relações lineares.
 
 | Method | Detects | Computational cost | Handles categorical? |
 |--------|---------|-------------------|---------------------|
-| Pearson correlation | Linear relationships | O(n) | No |
-| Spearman correlation | Monotonic relationships | O(n log n) | No |
-| Mutual information | Any statistical dependency | O(n log n) with binning | Yes |
+| Pearson correlation | Linear relationships | $O(n)$ | No |
+| Spearman correlation | Monotonic relationships | $O(n \log n)$ | No |
+| Mutual information | Any statistical dependency | $O(n \log n)$ with binning | Yes |
 
 ### Limeamento de etiquetas e entropia cruzada
 
 A classificação padrão usa alvos duros: [0, 0, 1, 0]. A classe verdadeira recebe probabilidade 1, tudo o resto recebe 0.
 
-```
-soft_target = (1 - epsilon) * hard_target + epsilon / num_classes
+```math
+\text{soft\_target} = (1 - \epsilon) \cdot \text{hard\_target} + \epsilon / \text{num\_classes}
 ```
 
-Com epsilon = 0,1 e 4 classes:
+Com o$\epsilon = 0.1$e 4 classes:
 - Alvo duro: [0, 0, 1, 0]
 - Alvo suave: [0,025, 0,025, 0,925, 0,025]
 
@@ -224,8 +232,8 @@ Por que isso ajuda:
 
 A perda de entropia cruzada com o suavização da etiqueta torna-se:
 
-```
-L = (1 - epsilon) * CE(hard_target, prediction) + epsilon * H_uniform(prediction)
+```math
+L = (1 - \epsilon) \cdot \text{CE}(\text{hard\_target}, \text{prediction}) + \epsilon \cdot H_{\text{uniform}}(\text{prediction})
 ```
 
 O segundo termo penaliza previsões que estão longe de ser uniformes -- uma regularização direta da confiança.
@@ -236,12 +244,14 @@ Três perspectivas, a mesma conclusão.
 
 **Information theory view.**A entropia cruzada mede quantos bits você desperdiça usando a distribuição do modelo em vez da distribuição real. Minimizando isso, o modelo torna-se o codificador mais eficiente da realidade.
 
-**Maximum likelihood view.**Para amostras de formação N com classes verdadeiras y_i:
+**Maximum likelihood view.**Para o$N$- de formação de amostras com classes reais $y_i$- Não .
 
-```
-Likelihood     = product( q(y_i) )
-Log-likelihood = sum( log(q(y_i)) )
-Negative log-likelihood = -sum( log(q(y_i)) )
+```math
+\begin{aligned}
+\text{Likelihood} &= \prod_i q(y_i) \\
+\text{Log-likelihood} &= \sum_i \log(q(y_i)) \\
+\text{Negative log-likelihood} &= -\sum_i \log(q(y_i))
+\end{aligned}
 ```
 
 Minimizar a entropia cruzada = maximizar a probabilidade dos dados de treinamento sob o seu modelo.
@@ -258,15 +268,17 @@ log base e   -> nats      (machine learning convention)
 log base 10  -> hartleys  (rarely used)
 ```
 
-1 nat = 1/ln(2) bits = 1,4427 bits. PyTorch e TensorFlow usam log natural (nats) por padrão.
+1 nat = $1/\ln(2)$PyTorch e TensorFlow usam logs naturais (nats) por padrão.
 
 ### Perplexidade
 
 A perplexidade é o exponencial da entropia cruzada.
 
-```
-Perplexity = 2^H(P,Q)   (if using bits)
-Perplexity = e^H(P,Q)   (if using nats)
+```math
+\begin{aligned}
+\text{Perplexity} &= 2^{H(P,Q)} \quad \text{(if using bits)} \\
+\text{Perplexity} &= e^{H(P,Q)} \quad \text{(if using nats)}
+\end{aligned}
 ```
 
 Um modelo de linguagem com perplexidade 50 é, em média, tão confuso como se tivesse que escolher uniformemente entre 50 tokens possíveis.
@@ -445,19 +457,29 @@ Construiste a partir do nada o que ?`torch.nn.CrossEntropyLoss()`Agora sabe por 
 
 2. Um modelo produz logits [5,0, 2.0, 0.5] para uma amostra com classe verdadeira 1. Calcule a perda de entropia cruzada à mão, em seguida, verifique com o seu `cross_entropy_loss`Qual logite daria perda zero?
 
-3. Mostre que a divergência KL não é simétrica. Escolha duas distribuições P e Q e calcula D_K_K  Q) e DL  Q  P). Explique por que elas diferem.
+3. Mostre que a divergência KL não é simétrica.$P$E ...$Q$e computação .$D_{KL}(P \Vert Q)$E ...$D_{KL}(Q \Vert P)$Explica porque são diferentes.
 
 4. Construir uma função que calcula a perplexidade para uma sequência de previsões de tokens. Dada uma lista de pares (true_token_index, predicted_logits), retorne a perplexidade da sequência.
+
+### Indicios
+
+**Exercise 1.**Liga-me .`entropy`com 26 probabilidades iguais; o resultado deve ser $\log_2 26 \approx 4.70$As frequências reais das letras não são uniformes, por isso a entropia com elas deve ser menor.
+
+**Exercise 2.**Computação`softmax`das logites, então $-\ln$de probabilidade no índice 1, e comparar com `cross_entropy_loss(1, logits)`• ambas devem estar próximas de 3,06. A perda aproxima-se de 0, apenas quando a logite para a classe 1 é muito maior do que as outras duas.
+
+**Exercise 3.**Usar duas pequenas distribuições com formas diferentes, por exemplo $P = [0.9, 0.1]$E ...$Q = [0.5, 0.5]$, e ligar`kl_divergence`Os dois valores devem ser diferentes, porque cada direcção pesa a relação log por uma distribuição diferente.
+
+**Exercise 4.**Para cada par, calcular `cross_entropy_loss(true_token_index, predicted_logits)`, tomar o meio, e passar para `perplexity`Verifique com os registos uniformes .$V$Tokens: a perplexidade deve ser $V$- Não .
 
 ## Termos-chave
 
 | Term | What people say | What it actually means |
 |------|----------------|----------------------|
-| Information content | "Surprise" | The number of bits (or nats) needed to encode an event: -log(p) |
+| Information content | "Surprise" | The number of bits (or nats) needed to encode an event: $-\log(p)$ |
 | Entropy | "Randomness" | The average surprise across all outcomes of a distribution. Measures irreducible uncertainty. |
-| Cross-entropy | "The loss function" | Average surprise when using model distribution Q to encode events from true distribution P. |
-| KL divergence | "Distance between distributions" | Extra bits wasted by using Q instead of P. Equals cross-entropy minus entropy. Not symmetric. |
-| Mutual information | "How related are X and Y" | Reduction in uncertainty about X from knowing Y. Zero means independent. |
+| Cross-entropy | "The loss function" | Average surprise when using model distribution $Q$ to encode events from true distribution $P$. |
+| KL divergence | "Distance between distributions" | Extra bits wasted by using $Q$ instead of $P$. Equals cross-entropy minus entropy. Not symmetric. |
+| Mutual information | "How related are X and Y" | Reduction in uncertainty about $X$ from knowing $Y$. Zero means independent. |
 | Softmax | "Turn logits into probabilities" | Exponentiate and normalize. Maps any real-valued vector to a valid probability distribution. |
 | Perplexity | "How confused the model is" | Exponential of cross-entropy. The effective vocabulary size the model is choosing from at each step. |
 | Bits | "Shannon's unit" | Information measured with log base 2. One bit resolves one fair coin flip. |

@@ -28,14 +28,14 @@ Esta lição construi todas as principais funções de distância a partir do ze
 
 ### Normas: medição da magnitude do vetor
 
-Norma mede o " tamanho " de um vetor. Cada função de distância entre dois vetores pode ser escrita como a norma de sua diferença: d  a, b) = a - b                                                                                                                                                                                                                                         
+Uma norma mede o " tamanho " de um vetor.$d(a, b) = \lVert a - b \rVert$Então, entender as normas é entender as distâncias.
 
 ### L1 Norma (distância de Manhattan)
 
 A norma L1 soma os valores absolutos de todos os componentes.
 
-```
-||x||_1 = |x_1| + |x_2| + ... + |x_n|
+```math
+\lVert x \rVert_1 = |x_1| + |x_2| + \cdots + |x_n|
 ```
 
 Chama-se distância de Manhattan porque mede a distância que percorre numa rede de cidades onde só pode mover-se ao longo de eixos.
@@ -54,7 +54,7 @@ Quando utilizar L1:
 - Quando você quer robustez para outliers (uma única grande diferença não domina)
 - Problemas de selecção de características (a regularização de L1 promove a esparcidade)
 
-Conexão a L1 regularização: adicionando a sua função de perda (Lasso) a desvio de peso total penaliza a soma dos valores de peso absoluto. Isso empurra pequenos pesos para exatamente zero, realizando seleção automática de características. A penalidade L1 cria regiões de restrição em forma de diamante no espaço de peso, e os cantos dos diamantes estão nos eixos onde alguns pesos são zero.
+Conexão à regularização L1 (Lasso): adição $\lVert w \rVert_1$A função de perda de uma peça de peso em massa de uma peça de peso de peso de peso de peso de peso de peso de peso de peso de peso de peso de peso de peso de peso de peso de peso de peso de peso de peso de peso de peso de peso de peso de peso de peso de peso de peso de peso de peso de peso de peso de peso de peso de peso de peso de peso de peso de peso de peso de peso de peso de peso de peso de peso de peso de peso de peso de peso de peso de peso de peso de peso de peso de peso de peso de peso de peso de peso de peso de peso de peso de peso de peso de peso de peso de peso de peso de peso de peso de peso de peso de peso de peso de peso de peso de peso de peso de peso de peso de peso de peso de peso de peso de peso de peso de peso de peso de peso de peso de peso de peso de peso de peso de peso de peso de peso de peso de peso de peso de peso de peso de peso de peso de peso de peso de peso de peso de peso de peso de peso de peso de peso de peso de peso de peso de peso de peso de peso de peso de peso de peso de peso de peso de peso de peso de peso de peso de peso de peso de peso de peso de peso de peso de peso de peso de peso de peso de peso de peso de peso de peso de peso de peso de peso de peso de peso de peso de peso de peso de peso de peso de peso de peso de peso de peso de peso de peso de peso de peso de peso de peso de peso de peso de peso de peso de peso de peso de peso de peso de peso de peso de peso de peso de peso de peso de peso de peso de peso de peso de peso de peso de peso de peso de peso de peso de peso de peso de peso de peso de peso de peso de peso de peso de peso de peso de peso de peso de peso de peso de peso de peso de peso de peso de peso de peso de peso de peso de peso de peso de peso de peso de peso de peso de peso de peso de peso de peso de peso de peso de peso de peso de peso de peso de peso de peso de peso de peso de peso de peso de peso de peso de peso de peso de peso de peso de peso de peso de peso de peso de peso de peso de peso de peso de peso de peso de peso de peso de peso de
 
 Conexão a funções de perda: Erro absoluto médio (MAE) é a distância média L1 entre previsões e metas.
 
@@ -62,11 +62,11 @@ Conexão a funções de perda: Erro absoluto médio (MAE) é a distância média
 
 A norma L2 é a distância de linha reta.
 
-```
-||x||_2 = sqrt(x_1^2 + x_2^2 + ... + x_n^2)
+```math
+\lVert x \rVert_2 = \sqrt{x_1^2 + x_2^2 + \cdots + x_n^2}
 ```
 
-Esta é a distância que aprendeste na aula de geometria.
+Esta é a distância que aprendeste na aula de geometria.$n$dimensões.
 
 ```
 Point A = (1, 1)
@@ -83,24 +83,26 @@ Quando utilizar L2:
 - Distâncias físicas (dados espaciais, leituras de sensores)
 - Similaridade de imagem no nível de pixels
 
-Conexão a L2 regularização (Ridge): adicionando a UnwwE2 para a sua função de perda penaliza grandes pesos.Como L1, não empurra pesos para zero. Ele encolhe todos os pesos para zero proporcionalmente. A penalidade L2 cria regiões de restrição circular, então não há cantos nos eixos. Pesos ficam pequenos, mas raramente exatamente zero.
+Conexão à regularização L2 (Ridge): adição $\lVert w \rVert_2^2$A função de perda penaliza grandes pesos. Ao contrário de L1, não empurra pesos para zero. Ele encolhe todos os pesos para zero proporcionalmente. A penalidade L2 cria regiões de restrição circular, então não há cantos nos eixos. Pesos ficam pequenos, mas raramente exatamente zero.
 
 Conexão a funções de perda: Erro médio quadrado (MSE) é a média de distâncias L2 quadradas.
 
-```
-MAE (L1 loss):  |y - y_hat|         Linear penalty. Robust to outliers.
-MSE (L2 loss):  (y - y_hat)^2       Quadratic penalty. Sensitive to outliers.
+```math
+\begin{aligned}
+\text{MAE (L1 loss):} \quad & |y - \hat{y}| && \text{Linear penalty. Robust to outliers.} \\
+\text{MSE (L2 loss):} \quad & (y - \hat{y})^2 && \text{Quadratic penalty. Sensitive to outliers.}
+\end{aligned}
 ```
 
 ### Normas de Lp: família geral
 
 L1 e L2 são casos especiais da norma Lp:
 
-```
-||x||_p = (|x_1|^p + |x_2|^p + ... + |x_n|^p)^(1/p)
+```math
+\lVert x \rVert_p = (|x_1|^p + |x_2|^p + \cdots + |x_n|^p)^{1/p}
 ```
 
-Os valores diferentes de p produzem "bolas de unidade" de diferentes formas (o conjunto de todos os pontos a distância 1 da origem):
+Valores diferentes de $p$produzir "bolas de unidade" de diferentes formas (o conjunto de todos os pontos na distância 1 da origem):
 
 ```
 p=1:    Diamond shape      (corners on axes)
@@ -111,19 +113,20 @@ p=inf:  Square/hypercube   (flat sides along axes)
 
 ### Norma de infinidade L (distância Chebyshev)
 
-À medida que p se aproxima do infinito, a norma Lp converge para o componente absoluto máximo.
+Como ...$p$Quando se aproxima do infinito, a norma Lp converge para o componente absoluto máximo.
 
-```
-||x||_inf = max(|x_1|, |x_2|, ..., |x_n|)
+```math
+\lVert x \rVert_\infty = \max(|x_1|, |x_2|, \ldots, |x_n|)
 ```
 
 A distância entre dois pontos é determinada pela dimensão única em que eles diferem mais.
 
-```
-Point A = (1, 1)
-Point B = (4, 5)
-
-L-inf distance = max(|4-1|, |5-1|) = max(3, 4) = 4
+```math
+\begin{aligned}
+\text{Point } A &= (1, 1) \\
+\text{Point } B &= (4, 5) \\[6pt]
+L_\infty \text{ distance} &= \max(|4-1|, |5-1|) = \max(3, 4) = 4
+\end{aligned}
 ```
 
 Quando utilizar L-infinity:
@@ -135,19 +138,20 @@ Quando utilizar L-infinity:
 
 A semelhança cosínica mede o ângulo entre dois vetores, ignorando suas magnitudes.
 
-```
-cos_sim(a, b) = (a . b) / (||a||_2 * ||b||_2)
+```math
+\text{cos\_sim}(a, b) = \frac{a \cdot b}{\lVert a \rVert_2 \, \lVert b \rVert_2}
 ```
 
 Ele varia de -1 (direções opostas) a +1 (sima direção).
 
 A distância cosínea converte-a em distância: cosínea_distância = 1 - cosínea_similância.
 
-```
-a = (1, 0)    b = (1, 1)
-
-cos_sim = (1*1 + 0*1) / (1 * sqrt(2)) = 1/sqrt(2) = 0.707
-cos_dist = 1 - 0.707 = 0.293
+```math
+\begin{aligned}
+& a = (1, 0) \qquad b = (1, 1) \\[6pt]
+& \text{cos\_sim} = \frac{1 \cdot 1 + 0 \cdot 1}{1 \cdot \sqrt{2}} = \frac{1}{\sqrt{2}} = 0.707 \\
+& \text{cos\_dist} = 1 - 0.707 = 0.293
+\end{aligned}
 ```
 
 Por que o cosino domina a PNL e as incorporações: no texto, o comprimento do documento não deve afetar a semelhança. Um documento sobre gatos que seja o dobro do comprimento de outro documento sobre gatos deve ainda ser "similar". A semelhança cosínica ignora a magnitude (longoura) e só se importa com a direção. Dois documentos com a mesma distribuição de palavras, mas comprimentos diferentes apontam na mesma direção e obtêm similaridade cosínica 1.0.
@@ -162,16 +166,17 @@ Quando utilizar a semelhança cosínica:
 
 O produto de pontos de dois vetores é:
 
-```
-a . b = a_1*b_1 + a_2*b_2 + ... + a_n*b_n
-      = ||a|| * ||b|| * cos(angle)
+```math
+\begin{aligned}
+a \cdot b &= a_1 b_1 + a_2 b_2 + \cdots + a_n b_n \\
+&= \lVert a \rVert \, \lVert b \rVert \cos(\text{angle})
+\end{aligned}
 ```
 
 A semelhança cosínica é o produto de pontos normalizado por ambas as magnitudes. Quando ambos os vetores já são normalizados por unidade (magnitude = 1), o produto de pontos e a semelhança cosínica são idênticos.
 
-```
-If ||a|| = 1 and ||b|| = 1:
-    a . b = cos(angle between a and b)
+```math
+\text{If } \lVert a \rVert = 1 \text{ and } \lVert b \rVert = 1: \quad a \cdot b = \cos(\text{angle between } a \text{ and } b)
 ```
 
 Quando eles diferem: produto de pontos inclui informações de magnitude. Um vetor com maior magnitude obtém uma pontuação de produto de pontos mais alta. Isso importa em alguns sistemas de recuperação onde você quer que itens "populares" se classificem mais alto. A magnitude age como um sinal implícito de qualidade ou importância.
@@ -197,13 +202,13 @@ A distância euclidiana trata todas as dimensões de forma igual, mas se as suas
 
 A distância de Mahalanobis explica a estrutura de covariância dos dados.
 
-```
-d_M(x, y) = sqrt((x - y)^T * S^(-1) * (x - y))
+```math
+d_M(x, y) = \sqrt{(x - y)^T S^{-1} (x - y)}
 ```
 
-onde S é a matriz de covariância dos dados.
+onde$S$é a matriz de covariância dos dados.
 
-Intuitivamente: a distância de Mahalanobis primeiro descorrela e normaliza os dados (branquização), em seguida, calcula a distância L2 nesse espaço transformado. Se S é a matriz de identidade (não-correlacionada, características de variância unitária), a distância de Mahalanobis se reduz à distância euclidiana.
+Intuitivamente: a distância de Mahalanobis primeiro descorrela e normaliza os dados (branqueamento), depois calcula a distância L2 nesse espaço transformado.$S$é a matriz de identidade (não correlacionada, características de variância unitária), a distância de Mahalanobis reduz-se à distância euclidiana.
 
 ```
 Example: height and weight are correlated.
@@ -225,8 +230,8 @@ Quando utilizar a distância de Mahalanobis:
 
 As medidas de similaridade de Jaccard se sobrepõem entre dois conjuntos.
 
-```
-J(A, B) = |A intersect B| / |A union B|
+```math
+J(A, B) = \frac{|A \cap B|}{|A \cup B|}
 ```
 
 O valor da distância Jaccard é igual a 1 - Semelhança Jaccard.
@@ -263,7 +268,7 @@ sittin -> sitting (insert g)
 Edit distance = 3
 ```
 
-Computação usando programação dinâmica. Preencha uma matriz onde entrada (i, j) é a distância de edição entre os primeiros i caracteres da cadeia A e os primeiros j caracteres da cadeia B.
+Computação com programação dinâmica. Preencha uma matriz onde entrada $(i, j)$é a distância de edição entre o primeiro $i$caracteres da cadeia A e da primeira $j$caracteres da linha B.
 
 ```
         ""  s  i  t  t  i  n  g
@@ -286,20 +291,20 @@ Quando usar a distância de edição:
 
 A divergência KL mede como uma distribuição de probabilidade difere de outra.
 
-```
-D_KL(P || Q) = sum(p(x) * log(p(x) / q(x)))
+```math
+D_{KL}(P \,\|\, Q) = \sum_x p(x) \log\frac{p(x)}{q(x)}
 ```
 
 Propriedade crítica: A divergência KL NÃO é simétrica.
 
-```
-D_KL(P || Q) != D_KL(Q || P)
+```math
+D_{KL}(P \,\|\, Q) \ne D_{KL}(Q \,\|\, P)
 ```
 
 Isto significa que não satisfaz o requisito básico de uma métrica de distância.
 
-A KL (D_KL(P ∫ Q)) é "busca de sentido": a Q tenta abranger todos os modos de P.
-A KL inversa (D_KL(Q propr P)) é "requisita de modo": Q concentra-se num único modo de P.
+Forward KL $(D_{KL}(P \Vert Q))$é "buscar o significado": $Q$tenta abranger todos os modos de$P$- Não .
+Reversão KL $(D_{KL}(Q \Vert P))$é "requisitação de modo": $Q$concentra-se num único modo de$P$- Não .
 
 Quando vês a divergência KL:
 - VAEs (o termo KL no ELBO empurra a distribuição latente para um anterior)
@@ -311,14 +316,14 @@ Quando vês a divergência KL:
 
 A distância de Wasserstein mede o mínimo de "trabalho" necessário para transformar uma distribuição de probabilidades em outra.
 
-```
-W(P, Q) = inf over all transport plans gamma of E[d(x, y)]
+```math
+W(P, Q) = \inf_{\gamma} \mathbb{E}[d(x, y)] \quad \text{(over all transport plans } \gamma\text{)}
 ```
 
 Para distribuições 1D, simplifica para a integral da diferença absoluta das funções de distribuição cumulativa:
 
-```
-W_1(P, Q) = integral |CDF_P(x) - CDF_Q(x)| dx
+```math
+W_1(P, Q) = \int |\text{CDF}_P(x) - \text{CDF}_Q(x)| \, dx
 ```
 
 Por que Wasserstein importa:
@@ -353,7 +358,7 @@ Quando utilizar Wasserstein:
 | Set overlap (tags, categories) | Jaccard | Data is naturally set-valued, not vectorial |
 | String matching | Edit distance | Operations map to human editing intuition |
 | Outlier detection | Mahalanobis | Accounts for feature correlations and scales |
-| Comparing distributions | KL divergence | Measures information lost by using Q instead of P |
+| Comparing distributions | KL divergence | Measures information lost by using $Q$ instead of $P$ |
 | GAN training | Wasserstein | Provides gradients even when distributions do not overlap |
 | Embeddings (vector DB) | Cosine or dot product | Embeddings are trained to encode meaning in direction |
 | Recommendation | Dot product | Magnitude can encode popularity or confidence |
@@ -404,7 +409,7 @@ Por que L1 produz escassez, mas L2 não: imagine a região de restrição em esp
 
 Cada função de distância implica um problema de busca de vizinho mais próximo: dado um ponto de consulta, encontrar os pontos mais próximos de um conjunto de dados.
 
-A busca de vizinho mais próxima é O(n * d) por consulta em um conjunto de dados de n pontos com dimensões d. Para grandes conjuntos de dados, isso é muito lento.
+A busca mais próxima do vizinho é exactamente$O(n \cdot d)$por consulta num conjunto de dados de $n$pontos com $d$Para grandes conjuntos de dados, isto é muito lento.
 
 Algoritmos de Vezinho Mais Próximo (ANN) aproximados trocam uma pequena quantidade de precisão para ganhos de velocidade maciços:
 
@@ -469,7 +474,7 @@ Quando ligares .`model.encode(text)`O modelo de incorporação mapeia o texto pa
 
 ## Exercícios
 
-1. Calcule as distâncias L1, L2 e L-infinito entre (1, 2, 3) e (4, 0, 6). Verifique que L-inf <= L2 <= L1 sempre vale para qualquer par de pontos.
+1. Calcule as distâncias L1, L2 e L-infinito entre (1, 2, 3) e (4, 0, 6). Verifique que $L_\infty \le L_2 \le L_1$Prova porque é que esta ordem é garantida.
 
 2. Crie dois vetores onde a semelhança cosínica é alta (> 0,9) mas a distância L2 é grande (> 10). Explique geometricamente o que está acontecendo.
 
@@ -479,6 +484,18 @@ Quando ligares .`model.encode(text)`O modelo de incorporação mapeia o texto pa
 
 5. Implemente MinHash para a semelhança aproximada com Jaccard. Gerencie 100 conjuntos aleatórios, compute o Jaccard exato para todos os pares e compare com a aproximação MinHash usando funções de hash 50, 100 e 200.
 
+### Indicios
+
+**Exercise 1.**O vector de diferença é (-3, 2, -3), então, calcular as três normas desse vector com `l1_norm`- Não .`l2_norm`, e `linf_norm`Para a prova, compare o maior.$\lvert d_i \rvert$Com a soma dos quadrados, e comparar a soma dos quadrados com o quadrado da soma dos valores absolutos.
+
+**Exercise 2.**A semelhança cosínica ignora a comprimento, então comece com dois vetores que apontam quase na mesma direção e faça um deles muito mais longo. Para o segundo caso, use dois vetores curtos perto da origem que apontam em direções diferentes, depois verifique ambas as condições com `cosine_similarity`E ...`l2_distance`- Não .
+
+**Exercise 3.**Liga-me .`find_nearest_neighbor(query, dataset, distance_fn)`Uma vez por cada um .`l1_distance`- Não .`l2_distance`- Não .`cosine_distance`, e `mahalanobis_distance`- Não .`demo_different_neighbors`mostra um conjunto de dados onde as métricas discordam, então leia primeiro e depois mude os pontos até que as quatro respostas diferam.
+
+**Exercise 4.**Escreva a soma cumulativa de cada distribuição, adicione as diferenças absolutas das duas somas cumulativas.`wasserstein_1d(p, q)`, então explicar o valor maior por quão longe a massa de probabilidade deve mover.
+
+**Exercise 5.**Para cada função hash, a assinatura MinHash de um conjunto é o valor hash mínimo sobre seus elementos, e a fração de funções hash onde dois conjuntos obtêm as mesmas estimativas mínimas de sua semelhança com Jaccard.`jaccard_similarity`O erro deve ser aproximadamente $1/\sqrt{k}$Para$k$funções hash.
+
 ## Termos-chave
 
 | Term | What people say | What it actually means |
@@ -486,15 +503,15 @@ Quando ligares .`model.encode(text)`O modelo de incorporação mapeia o texto pa
 | Norm | "Size of a vector" | A function that maps a vector to a non-negative scalar, satisfying triangle inequality, absolute homogeneity, and zero only for the zero vector |
 | L1 norm | "Manhattan distance" | Sum of absolute component values. Produces sparsity in optimization. Robust to outliers |
 | L2 norm | "Euclidean distance" | Square root of sum of squared components. The straight-line distance in Euclidean space |
-| Lp norm | "Generalized norm" | The p-th root of the sum of p-th powers of absolute components. L1 and L2 are special cases |
-| L-infinity norm | "Max norm" or "Chebyshev distance" | The maximum absolute component value. The limit of Lp as p approaches infinity |
+| Lp norm | "Generalized norm" | The $p$-th root of the sum of $p$-th powers of absolute components. L1 and L2 are special cases |
+| L-infinity norm | "Max norm" or "Chebyshev distance" | The maximum absolute component value. The limit of Lp as $p$ approaches infinity |
 | Cosine similarity | "Angle between vectors" | Dot product normalized by both magnitudes. Ranges from -1 to +1. Ignores vector length |
 | Cosine distance | "1 minus cosine similarity" | Converts cosine similarity to a distance. Ranges from 0 to 2 |
 | Dot product | "Unnormalized cosine" | Sum of component-wise products. Equals cosine similarity times both magnitudes |
 | Mahalanobis distance | "Correlation-aware distance" | L2 distance in a space that has been whitened (decorrelated and normalized) using the data covariance matrix |
 | Jaccard similarity | "Set overlap" | Size of intersection divided by size of union. For sets, not vectors |
 | Edit distance | "Levenshtein distance" | Minimum insertions, deletions, and substitutions to transform one string into another |
-| KL divergence | "Distance between distributions" | Not a true distance (not symmetric). Measures extra bits from using Q to encode P |
+| KL divergence | "Distance between distributions" | Not a true distance (not symmetric). Measures extra bits from using $Q$ to encode $P$ |
 | Wasserstein distance | "Earth mover's distance" | Minimum work to transport mass from one distribution to another. A true metric |
 | Approximate nearest neighbor | "ANN search" | Algorithms (HNSW, LSH, IVF) that find approximately closest points much faster than exact search |
 | HNSW | "The vector DB algorithm" | Hierarchical Navigable Small World graph. Multi-layer graph for fast approximate nearest neighbor search |

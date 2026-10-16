@@ -43,11 +43,10 @@ Um vetor 2D `[3, 4]`A sua extensão (magnitude) é de 5 (o triângulo 3-4-5).
 
 ### Matrizes: grades de números
 
-Uma matriz é uma grade 2D. fileiras e colunas. uma matriz m x n tem m fileiras e n colunas.
+Uma matriz é uma grade 2D.$m \times n$A matriz tem $m$- e$n$Colunas.
 
-```
-A = | 1  2  3 |     -- 2x3 matrix (2 rows, 3 columns)
-    | 4  5  6 |
+```math
+A = \begin{bmatrix} 1 & 2 & 3 \\ 4 & 5 & 6 \end{bmatrix} \quad \text{2x3 matrix (2 rows, 3 columns)}
 ```
 
 Em redes neurais, matrizes de peso transformam vetores de entrada em vetores de saída. Uma camada com 784 entradas e 128 saídas usa uma matriz de peso de 128x784.
@@ -83,16 +82,14 @@ Esta distinção atrapalha os iniciantes constantemente.
 
 Elementos-wise: multiplicar posições correspondentes. Ambas as matrizes devem ser da mesma forma.
 
-```
-| 1  2 |   | 5  6 |   | 5  12 |
-| 3  4 | * | 7  8 | = | 21 32 |
+```math
+\begin{bmatrix} 1 & 2 \\ 3 & 4 \end{bmatrix} * \begin{bmatrix} 5 & 6 \\ 7 & 8 \end{bmatrix} = \begin{bmatrix} 5 & 12 \\ 21 & 32 \end{bmatrix}
 ```
 
 Multiplicação de matriz: produtos de pontos de linhas e colunas.
 
-```
-| 1  2 |   | 5  6 |   | 1*5+2*7  1*6+2*8 |   | 19  22 |
-| 3  4 | @ | 7  8 | = | 3*5+4*7  3*6+4*8 | = | 43  50 |
+```math
+\begin{bmatrix} 1 & 2 \\ 3 & 4 \end{bmatrix} @ \begin{bmatrix} 5 & 6 \\ 7 & 8 \end{bmatrix} = \begin{bmatrix} 1 \cdot 5 + 2 \cdot 7 & 1 \cdot 6 + 2 \cdot 8 \\ 3 \cdot 5 + 4 \cdot 7 & 3 \cdot 6 + 4 \cdot 8 \end{bmatrix} = \begin{bmatrix} 19 & 22 \\ 43 & 50 \end{bmatrix}
 ```
 
 Diferentes operações, resultados diferentes, regras diferentes.
@@ -325,6 +322,14 @@ A classe Matrix construída aqui é a base para a estrutura de rede neural mini 
 
 3. **Build a two-layer network.**Usando apenas a sua classe Matrix (sem NumPy), crie uma rede neural de duas camadas: entrada (3) -> oculta (4) -> saída (2). Inicie pesos aleatórios, execute uma passagem para a frente e verifique se todas as formas são corretas.
 
+### Indicios
+
+**Exercise 1.**Multiplicar`A @ A.inverse_2x2()`para três matrizes e comparar cada célula com a identidade dentro `1e-9`. Para uma matriz com um determinante de 0, como [[1, 2], [2, 4]], `inverse_2x2`Levanta um `ValueError`, e este é o resultado esperado.
+
+**Exercise 2.**Calcule a matriz de cofatores 3x3, transponha-a para obter o adjugado, e depois divide cada célula por `determinant()`- Vê isso .`A @ A_inv`dá a identidade e que cada célula coincide `np.linalg.inv(A)`dentro de`1e-9`- Não .
+
+**Exercise 3.**Escreva a forma de cada matriz antes de multiplicar: `W1`é 4x3 e `W2`é 2x4, como em `demo_neural_network_layer`Uma entrada 3x1 deve dar um vetor oculto 4x1 e uma saída 2x1.
+
 ## Termos-chave
 
 | Term | What people say | What it actually means |
@@ -332,7 +337,7 @@ A classe Matrix construída aqui é a base para a estrutura de rede neural mini 
 | Vector | "An arrow" | An ordered list of numbers. In AI: a point in high-dimensional space. |
 | Matrix | "A table of numbers" | A linear transformation. It maps vectors from one space to another. |
 | Matrix multiply | "Just multiply the numbers" | Dot products between every row of the first matrix and every column of the second. Order matters. |
-| Transpose | "Flip it" | Swap rows and columns. Turns an m x n matrix into n x m. Critical in backpropagation. |
+| Transpose | "Flip it" | Swap rows and columns. Turns an $m \times n$ matrix into $n \times m$. Critical in backpropagation. |
 | Determinant | "Some number from the matrix" | Measures how much the matrix scales area (2D) or volume (3D). Zero means the transformation crushes a dimension. |
 | Inverse | "Undo the matrix" | The matrix that reverses the transformation. Only exists when the determinant is not zero. |
 | Identity matrix | "The boring matrix" | The matrix equivalent of multiplying by 1. Used in residual connections (ResNets). |
