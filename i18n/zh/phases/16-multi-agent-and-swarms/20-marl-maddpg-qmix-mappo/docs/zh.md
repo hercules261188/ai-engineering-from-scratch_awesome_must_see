@@ -44,8 +44,8 @@ critic update:   TD on Q_i(x, a_1..n) given next-state joint estimate
 
 总奖项是每代理Q值的单调函数的总和:
 
-```
-Q_tot(tau, a) = f(Q_1(tau_1, a_1), ..., Q_n(tau_n, a_n)),   df/dQ_i >= 0
+```math
+Q_{\text{tot}}(\tau, a) = f\big(Q_1(\tau_1, a_1), \ldots, Q_n(\tau_n, a_n)\big), \quad \frac{\partial f}{\partial Q_i} \ge 0
 ```
 
 调性保证`argmax_a Q_tot`任何代理选择的可计算`argmax_{a_i} Q_i`独立的.**exactly the decentralized execution property**在训练时,一个混合网络产生了`Q_tot`根据每位代理的Qs.

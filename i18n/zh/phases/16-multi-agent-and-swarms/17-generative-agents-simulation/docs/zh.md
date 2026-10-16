@@ -117,7 +117,7 @@ python3 code/main.py
 
 - **Memory is the database.**选择一个真正的商店 (向量DB, Postgres) 尺度. 内存的SDLB是为原型.
 - **Log the retrieval trace.**每次行动,记录驱动的最顶级记忆.这是你的调试能力.
-- **Budget per-agent tokens.**每个代理的每次检索+反射+计划是O(k) LLM电话.
+- **Budget per-agent tokens.**每个代理的每次点的回收+反射+计划是$O(k)$士号码,N代理 ×T子 ×每子的调用可以使你的预算变得矮小.
 - **Compact memory periodically.**简单地摘要,并剪除重要小项.
 - **Detect spatial / social norm violations**建筑不会学到它们.
 
