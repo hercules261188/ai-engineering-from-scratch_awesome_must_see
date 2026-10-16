@@ -214,7 +214,6 @@ python3 code/main.py
 - [preprints.org, Harness Engineering for Language Agents (March 2026)](https://www.preprints.org/manuscript/202603.1756)الإطار الأكاديمي كسيطرة / وكالة / وقت التشغيل
 - [walkinglabs/awesome-harness-engineering](https://github.com/walkinglabs/awesome-harness-engineering) قائمة قراءة منتظمة عبر السياق، التقييم، قابلية الملاحظة، التنسيق
 - [ai-boost/awesome-harness-engineering](https://github.com/ai-boost/awesome-harness-engineering) قائمة مختصة بديلة (الأدوات، التقييمات، الذاكرة، MCP، الإذن)
-- [andrewgarst/agentic_harness](https://github.com/andrewgarst/agentic_harness) تنفيذ مرجع جاهز للإنتاج مع مجموعة الذاكرة والقياس المدعومة من Redis
 - [HKUDS/OpenHarness](https://github.com/HKUDS/OpenHarness) حزمة عامل مفتوحة مع عامل شخصي مدمج
 
 خيوط الأخبار الفاسدة تستحق القراءة بسبب الخلافات، وليس الإجماع:

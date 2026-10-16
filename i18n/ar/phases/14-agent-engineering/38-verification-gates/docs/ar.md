@@ -140,7 +140,6 @@ python3 code/main.py
 - [Type-Checked Compliance: Deterministic Guardrails (arXiv 2604.01483)](https://arxiv.org/pdf/2604.01483) الركبة 4 كحدود أعلى من البوابات المحددة
 - [logi-cmd/agent-guardrails — merge gate spec](https://github.com/logi-cmd/agent-guardrails) نطاق + بوابات اختبار الطفرات
 - [Guardrails AI x MLflow](https://guardrailsai.com/blog/guardrails-mlflow) مؤكدون تحديديات كمسجلين للمعايير
-- [Akira, Real-Time Guardrails for Agentic Systems](https://www.akira.ai/blog/real-time-guardrails-agentic-systems)بوابات ما قبل/ بعد الأدوات
 - المرحلة 14 · 27  الدفاعات المسرعة للحقن (زوج المواجهة في البوابة)
 - المرحلة 14 · 36  العقد الذي تنفذه هذه البوابة
 - المرحلة 14 · 37  سجل الملاحظات هذا البوابة تسجل

@@ -90,7 +90,7 @@ python3 -m unittest discover code/tests -v
 ## المزيد من القراءة
 
 - [Nuseibeh and Easterbrook, Requirements Engineering: A Roadmap](https://www.cs.toronto.edu/~sme/papers/2000/ICSE2000.pdf)، للعلاقة بين الأهداف، والتفاصيل الدقيقة، والتحقق من المصادقة، والاتفاق، والتطور.
-- [Zave and Jackson, Four Dark Corners of Requirements Engineering](https://doi.org/10.1145/267895.267896)، لفرق الافتراضات والمتطلبات والتفاصيل البيئية.
+- [Zave and Jackson, Four Dark Corners of Requirements Engineering](https://doi.org/10.1145/237432.237434)، لفرق الافتراضات والمتطلبات والتفاصيل البيئية.
 - [Gotel and Finkelstein, An Analysis of the Requirements Traceability Problem](https://doi.org/10.1109/ICRE.1994.292398)، للحفاظ على سبب وجود متطلب ومن أين جاء
 
 ## ما تحافظ عليه

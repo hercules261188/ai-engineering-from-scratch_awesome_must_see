@@ -133,7 +133,7 @@ python3 code/main.py
 
 - [JSON Schema specification](https://json-schema.org/specification.html)
 - [LangGraph checkpointers](https://langchain-ai.github.io/langgraph/concepts/persistence/)
-- [Letta memory blocks](https://docs.letta.com/concepts/memory)
+- [Letta memory blocks](https://docs.letta.com/v1-sdk/memory/memory-blocks)
 - [Fast.io, AI Agent State Checkpointing: A Practical Guide](https://fast.io/resources/ai-agent-state-checkpointing/) التفتيش الأول للخطط مع عدم القدرة على التفوق
 - [Fast.io, AI Agent Workflow State Persistence: Best Practices 2026](https://fast.io/resources/ai-agent-workflow-state-persistence/) التحكم في التزامن، TTL، مصادر الأحداث
 - [Hive Issue #6263 — non-atomic state.json writes silently ignored](https://github.com/aden-hive/hive/issues/6263) وضع الفشل في مشروع حقيقي
