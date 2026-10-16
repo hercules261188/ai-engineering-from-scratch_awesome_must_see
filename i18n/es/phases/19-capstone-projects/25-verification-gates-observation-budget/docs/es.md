@@ -82,7 +82,7 @@ El contador de tokens es intencionalmente un estúpido .`len(text) // 4`El punto
 
 ## Por qué importa el orden de la cadena
 
-Una negación es más barata que una autorización.`WhitelistGate`se ejecuta en O(1) búsqueda de hash. `RegexGate`se ejecuta en O(patrón * argv). `RecencyGate`lee una pequeña rebanada de la tienda de mensajes. `BudgetGate`Los pedimos al subir el costo, así que una llamada rechazada corta el circuito antes de hacer el trabajo caro.
+Una negación es más barata que una autorización.`WhitelistGate`Se ejecuta en$O(1)$Buscar el hash.`RegexGate`Se ejecuta en$O(\text{pattern} \cdot \text{argv})$- ¿ Qué ?`RecencyGate`lee una pequeña rebanada de la tienda de mensajes. `BudgetGate`Los pedimos al subir el costo, así que una llamada rechazada corta el circuito antes de hacer el trabajo caro.
 
 El proyecto de ley de la Unión Europea, que se aplica a las empresas de la industria de la construcción, se ha convertido en un proyecto de ley de la Unión Europea, que se ha desarrollado en el ámbito de la industria de la construcción, y que se ha desarrollado en el ámbito de la industria de la construcción.
 

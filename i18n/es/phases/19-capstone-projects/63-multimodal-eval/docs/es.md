@@ -49,15 +49,14 @@ Para cada una (imagen, pregunta, respuesta), codifica la imagen, incrusta la pre
 
 ### BLEEU-4
 
-```text
-BLEU-4 = BP * exp(mean(log p1, log p2, log p3, log p4))
+```math
+\text{BLEU-4} = \text{BP} \cdot \exp\big(\text{mean}(\log p_1, \log p_2, \log p_3, \log p_4)\big)
 ```
 
 ¿ Dónde ?`p_n`es la precisión modificada de n-gram (conto reducido de n-gramos generados que aparecen en cualquier referencia, dividido por n-gramos generados totales), y `BP`es la pena de brevedad:
 
-```text
-BP = 1                if generated length > reference length
-   = exp(1 - r/g)     otherwise, where r is reference length and g is generated
+```math
+\text{BP} = \begin{cases} 1 & \text{if generated length} > \text{reference length} \\ \exp(1 - r/g) & \text{otherwise, where } r \text{ is reference length and } g \text{ is generated} \end{cases}
 ```
 
 Se requiere suavizamiento para muestras pequeñas donde algunas `p_n`La implementación utiliza el "método 1" de Chen y Cherry (agrega 1 al numerador y denominador para cualquier conteo cero), que es el estándar más seguro para regímenes de bajo conteo.

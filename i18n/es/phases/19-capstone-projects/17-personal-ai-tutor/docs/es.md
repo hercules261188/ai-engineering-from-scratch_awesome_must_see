@@ -151,7 +151,7 @@ learner: "6"
 
 - [Khanmigo (Khan Academy)](https://www.khanmigo.ai) tutor de referencia de los consumidores K-12
 - [Duolingo Max](https://blog.duolingo.com/duolingo-max/) tutor de referencia para el aprendizaje de idiomas
-- [Google LearnLM / Gemini for Education](https://blog.google/technology/google-deepmind/learnlm) modelo de referencia alojado
+- [Google LearnLM / Gemini for Education](https://blog.google/products-and-platforms/products/education/google-learnlm-gemini-generative-ai/) modelo de referencia alojado
 - [Quizlet Q-Chat](https://quizlet.com) Referencia alternativa
 - [Synthesis Tutor](https://www.synthesis.com) Referencia de inicio
 - [FSRS algorithm](https://github.com/open-spaced-repetition/fsrs4anki) Programación de repeticiones espaciadas

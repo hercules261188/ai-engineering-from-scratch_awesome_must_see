@@ -105,7 +105,7 @@ def lcs_length(a, b):
     return int(dp[n, m])
 ```
 
-La tabla numpy hace que la implementación sea legible; las listas de Python puras también funcionarían. Las tareas que optan por ROUGE-L pagan el costo O(n) por tarea. Para longitudes de resumen típicas que permanecen por debajo de un milisegundo.
+La tabla de numpy hace que la implementación sea legible; las listas de Python puras también funcionarían.$O(n m)$El costo por tarea. para longitudes de resumen típicas que permanecen por debajo de un milisegundo.
 
 ## Precisión
 

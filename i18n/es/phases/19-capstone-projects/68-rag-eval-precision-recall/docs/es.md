@@ -182,7 +182,7 @@ La lección 69 conecta toda la tubería (cunker, retriever, reranker, generador)
 - Buckley, Voorhees, "Evaluación de la estabilidad de las medidas de evaluación", SIGIR 2000 - el documento canónico sobre las métricas de clasificación
 - Jarvelin, Kekalainen, "Evaluación acumulada de las técnicas de IR basadas en ganancias" - el documento nDCG
 - [Ragas: Automated Evaluation of RAG Pipelines](https://docs.ragas.io)
-- [Anthropic, Evaluating RAG](https://www.anthropic.com/news/evaluating-rag)
+- [Anthropic, Introducing Contextual Retrieval](https://www.anthropic.com/engineering/contextual-retrieval)- Punto de recuperación con 1 menos recall@20
 - Fase 11 Lección 10 - Fundamentos del marco de evaluación
 - Fase 19 lecciones 64-67 - componentes evaluados aquí
 - Fase 19 lección 69 - la línea de extremo a extremo de este evaluaciones

@@ -61,8 +61,8 @@ flowchart TB
 
 La fórmula UCB utilizada en esta lección es la clásica UCB1.
 
-```text
-ucb(branch) = mean_reward(branch) + c * sqrt( ln(total_runs) / runs(branch) )
+```math
+\text{ucb}(\text{branch}) = \text{mean\_reward}(\text{branch}) + c \sqrt{ \frac{\ln(\text{total\_runs})}{\text{runs}(\text{branch})} }
 ```
 
 `total_runs`es el recuento de todos los experimentos realizados en todas las ramas. `c`es el peso de exploración; la lección se descompone a `sqrt(2)`Una rama con cero carreras obtiene`+inf`Una rama con una recompensa media alta mantiene una puntuación alta hasta que otras ramas se pongan al día; una rama que se ejecuta muchas veces sin mucha recompensa es eclipsada por alternativas menos ejecutadas.
