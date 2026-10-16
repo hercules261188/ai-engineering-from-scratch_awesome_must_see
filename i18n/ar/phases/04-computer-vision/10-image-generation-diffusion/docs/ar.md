@@ -26,35 +26,32 @@
 
 ### العملية المقبلة
 
-خذ صورة`x_0`أضف كمية صغيرة من الضوضاء الغاسية للحصول على`x_1`إضافة كمية صغيرة أكثر للحصول على`x_2`استمر في خطوات T حتى`x_T`هو تقريبا لا يمكن التمييز عن الضوضاء الغاوسية النقية.
+خذ صورة`x_0`أضف كمية صغيرة من الضوضاء الغاسية للحصول على`x_1`إضافة كمية صغيرة أكثر للحصول على`x_2`استمر في التقدم$T$خطوات حتى`x_T`هو تقريبا لا يمكن التمييز عن الضوضاء الغاوسية النقية.
 
-```
-q(x_t | x_{t-1}) = N(x_t; sqrt(1 - beta_t) * x_{t-1},  beta_t * I)
+```math
+q(x_t \mid x_{t-1}) = \mathcal{N}\left(x_t; \sqrt{1 - \beta_t} \, x_{t-1}, \; \beta_t I\right)
 ```
 
-`beta_t`هو جدول متغير صغير، عادة خطي من 0.0001 إلى 0.02 على T = 1000 خطوات. كل خطوة تقلص قليلا من الإشارة وتحقق ضجيج جديد.
+`beta_t`هو جدول متغير صغير، عادة خطي من 0.0001 إلى 0.02 على $T=1000$كل خطوة تقلص قليلاً الإشارة وتُحقق ضوضاء جديدة
 
 ### قفزة الشكل المغلق
 
 إضافة الضوضاء خطوة واحدة في كل مرة هي سلسلة ماركوف، ولكن الرياضيات تطوي: يمكنك أن تأخذ عينات`x_t`مباشرة من`x_0`في خطوة واحدة.
 
-```
-Define alpha_t = 1 - beta_t
-Define alpha_bar_t = prod_{s=1..t} alpha_s
-
-Then:
-  q(x_t | x_0) = N(x_t; sqrt(alpha_bar_t) * x_0,  (1 - alpha_bar_t) * I)
-
-Equivalently:
-  x_t = sqrt(alpha_bar_t) * x_0 + sqrt(1 - alpha_bar_t) * epsilon
-  where epsilon ~ N(0, I)
+```math
+\begin{aligned}
+&\text{Define } \alpha_t = 1 - \beta_t \\
+&\text{Define } \bar{\alpha}_t = \prod_{s=1}^{t} \alpha_s \\[6pt]
+&\text{Then: } q(x_t \mid x_0) = \mathcal{N}\left(x_t; \sqrt{\bar{\alpha}_t} \, x_0, \; (1 - \bar{\alpha}_t) I\right) \\[6pt]
+&\text{Equivalently: } x_t = \sqrt{\bar{\alpha}_t} \, x_0 + \sqrt{1 - \bar{\alpha}_t} \, \epsilon \quad \text{where } \epsilon \sim \mathcal{N}(0, I)
+\end{aligned}
 ```
 
 هذه المعادلة الوحيدة هي السبب كله للتوزيع هو عملي. أثناء التدريب تحصل على عشوائية`t`، عينة`x_t`مباشرة من`x_0`، وتركّب في خطوة واحدة لا حاجة إلى محاكاة سلسلة ماركوف الكاملة
 
 ### العملية العكسية
 
-العملية الأمامية ثابتة. العملية العكسية `p(x_{t-1} | x_t)`هذا ما تتعلمه الشبكة العصبية.`x_{t-1}`مباشرة ، إنهم يتوقعون الضجيج`epsilon`و يضاف في الخطوة t، و النتائج الرياضية`x_{t-1}`من ذلك.
+العملية الأمامية ثابتة. العملية العكسية `p(x_{t-1} | x_t)`هذا ما تتعلمه الشبكة العصبية.`x_{t-1}`مباشرة ، إنهم يتوقعون الضجيج`epsilon`إضافة في خطوة $t$و النتائج الرياضية`x_{t-1}`من ذلك.
 
 ```mermaid
 flowchart LR
@@ -79,7 +76,7 @@ flowchart LR
 لكل خطوة تدريبية:
 
 1. عينة صورة حقيقية`x_0`. . .
-2. عينة خطوة زمنية `t`بشكل متساوي من [1, T].
+2. عينة خطوة زمنية `t`بشكل متساوي من$[1, T]$. . .
 3. النموذج الضجيج`epsilon ~ N(0, I)`. . .
 4. الحساب`x_t = sqrt(alpha_bar_t) * x_0 + sqrt(1 - alpha_bar_t) * epsilon`. . .
 5. التنبؤ`epsilon_theta(x_t, t)`مع الشبكة.
@@ -103,7 +100,7 @@ return x_0
 
 ### لماذا 1000 خطوة
 
-يتم اختيار جدول الضوضاء المقبلة بحيث تضيف كل خطوة ما يكفي من الضوضاء بحيث يكون الخطوة العكسية تقريبا غوسية. قليلة جداً والخطوة العكسية بعيدة عن غوسية، لا يمكن للشبكة أن تقوم بتصميمها بشكل جيد. تصبح الخطوات والعينة كثيرة جداً مكلفة مع زيادة تقلص. T = 1000 مع جدول خطي هو DDPM افتراضي.
+يتم اختيار جدول الضوضاء المقبلة بحيث تضيف كل خطوة ما يكفي من الضوضاء بحيث تكون الخطوة العكسية تقريبا غوسية. قليلة جداً والخطوة العكسية بعيدة عن غوسية، لا يمكن أن تكون شبكة النموذج بشكل جيد. تصبح الخطوات والعينة باهظة الثمن مع الانتفاع المتناقص. $T=1000$مع جدول خطي هو DDPM الافتراضي.
 
 ### الـ DDIM: 20 مرة أسرع أخذ العينات
 
@@ -313,14 +310,14 @@ scheduler = DDPMScheduler(num_train_timesteps=1000)
 
 | Term | What people say | What it actually means |
 |------|----------------|----------------------|
-| Forward process | "Add noise over time" | Fixed Markov chain that corrupts an image into Gaussian noise over T steps |
+| Forward process | "Add noise over time" | Fixed Markov chain that corrupts an image into Gaussian noise over $T$ steps |
 | Reverse process | "Denoise step by step" | Learned distribution that walks back from noise to image |
-| Epsilon prediction | "Predict the noise" | The training target: `epsilon_theta(x_t, t)` predicts the noise added at step t |
-| Beta schedule | "Noise amounts" | Sequence of T small variances that define how much noise enters per step |
-| alpha_bar_t | "Cumulative retain factor" | Product of (1 - beta_s) up to time t; bigger t means less signal left |
-| DDPM sampler | "Ancestral, stochastic" | Samples each x_{t-1} from its conditional Gaussian; 1000 steps |
+| Epsilon prediction | "Predict the noise" | The training target: `epsilon_theta(x_t, t)` predicts the noise added at step $t$ |
+| Beta schedule | "Noise amounts" | Sequence of $T$ small variances that define how much noise enters per step |
+| $\bar{\alpha}_t$ | "Cumulative retain factor" | Product of $(1 - \beta_s)$ up to time $t$; bigger $t$ means less signal left |
+| DDPM sampler | "Ancestral, stochastic" | Samples each $x_{t-1}$ from its conditional Gaussian; 1000 steps |
 | DDIM sampler | "Deterministic, fast" | Rewrites sampling as a deterministic ODE; 20-100 steps with similar quality |
-| Time conditioning | "Tell the model which t" | Sinusoidal embedding of t injected into the U-Net so it knows the noise level |
+| Time conditioning | "Tell the model which t" | Sinusoidal embedding of $t$ injected into the U-Net so it knows the noise level |
 
 ## المزيد من القراءة
 

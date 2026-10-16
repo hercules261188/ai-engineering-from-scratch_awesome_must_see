@@ -270,5 +270,5 @@ def compare_regimes():
 
 - [EfficientNet (Tan & Le, 2019)](https://arxiv.org/abs/1905.11946) التوسع المركب لهياكل معمارية فعالة
 - [MobileNetV3 (Howard et al., 2019)](https://arxiv.org/abs/1905.02244) الهندسة المعمارية المتنقلة أولاً مع h-swish و squeeze-excite
-- [A Practical Guide to TensorRT Optimization (NVIDIA)](https://developer.nvidia.com/blog/accelerating-model-inference-with-tensorrt-tips-and-best-practices-for-pytorch-users/) كيفية الحصول على أرقام التدفق في الورقة
+- [Accelerating Inference Up to 6x Faster in PyTorch with Torch-TensorRT (NVIDIA)](https://developer.nvidia.com/blog/accelerating-inference-up-to-6x-faster-in-pytorch-with-torch-tensorrt/) كيفية الحصول على أرقام التدفق في الورقة
 - [ONNX Runtime docs](https://onnxruntime.ai/docs/) تعريف المعدلات، تحسين الرسم البياني، اختيار المقدمين

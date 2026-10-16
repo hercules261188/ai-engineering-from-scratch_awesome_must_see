@@ -50,8 +50,8 @@ flowchart LR
 
 بدلاً من التراجع`(x, y)`مباشرة، التنبؤ`H x W`خريطة حرارة لكل نقطة مفتاحية مع قنبلة غوسية مركزة في الموقع الحقيقي.
 
-```
-target[k, y, x] = exp(-((x - cx_k)^2 + (y - cy_k)^2) / (2 sigma^2))
+```math
+\text{target}[k, y, x] = \exp\left(-\frac{(x - \mathit{cx}_k)^2 + (y - \mathit{cy}_k)^2}{2 \sigma^2}\right)
 ```
 
 عند الاستنتاج، فإن argmax لكل خريطة حرارة هو الموقع المتوقع لمفتاح.

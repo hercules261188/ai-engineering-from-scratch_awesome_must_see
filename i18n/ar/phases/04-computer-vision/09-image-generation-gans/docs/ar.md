@@ -9,7 +9,7 @@
 
 ## أهداف التعلم
 
-- شرح اللعبة الحد الأدنى بين المولد والتمييز و لماذا يتوافق التوازن مع p_model = p_data
+- شرح لعبة الحد الأدنى بين المولد والتمييز و لماذا يتوافق التوازن مع $p_{\text{model}} = p_{\text{data}}$
 - تنفيذ DCGAN في PyTorch وجعله يخلق صور اصطناعية متماسكة 32x32 في أقل من 60 سطر
 - استقرار تدريب GAN مع ثلاث حيل قياسية: فقدان غير المشبعة، المعيار الطيفي، TTUR (قاعدة تحديث مرتين)
 - قراءة منحنى التدريب التي تميز التقارب الصحي من انهيار النظام، التذبذب، والتمييز-الفوز-كامل
@@ -45,8 +45,8 @@ flowchart LR
 
 (ج) يريد أن يكون (د) خاطئاً (د) يريد أن يكون محقاً
 
-```
-min_G max_D  E_x[log D(x)] + E_z[log(1 - D(G(z)))]
+```math
+\min_G \max_D \; \mathbb{E}_x[\log D(x)] + \mathbb{E}_z[\log(1 - D(G(z)))]
 ```
 
 اقرأ من اليمين إلى اليسار: D هو زيادة دقة على الحقيقي (`log D(real)`(و) وهمية`log (1 - D(fake))`(G) يقلل من دقة D على المزيفات`D(G(z))`أن تكون عالقاً
@@ -57,9 +57,11 @@ min_G max_D  E_x[log D(x)] + E_z[log(1 - D(G(z)))]
 
 النموذج أعلاه غير مستقرة عدداً في بداية التدريب`D(G(z))`هو قريب من الصفر لكل مزيف، لذلك `log(1 - D(G(z)))`لديه تراجعات تختفي فيما يتعلق بـ G. الإصلاح: ضياع فليب G.
 
-```
-L_D = -E_x[log D(x)] - E_z[log(1 - D(G(z)))]
-L_G = -E_z[log D(G(z))]                          # non-saturating
+```math
+\begin{aligned}
+L_D &= -\mathbb{E}_x[\log D(x)] - \mathbb{E}_z[\log(1 - D(G(z)))] \\
+L_G &= -\mathbb{E}_z[\log D(G(z))] \qquad \text{(non-saturating)}
+\end{aligned}
 ```
 
 الآن متى`D(G(z))`إنّه قريب من الصفر، فقدان G كبير و تراجعها معلوميّ.
@@ -299,8 +301,8 @@ def build_sn_discriminator(img_channels=3, feat=64):
 |------|----------------|----------------------|
 | Generator (G) | "The draws-stuff net" | Maps noise to images; trained to fool the discriminator |
 | Discriminator (D) | "The critic" | Binary classifier; trained to distinguish real from generated images |
-| Minimax | "The game" | min over G, max over D of an adversarial loss; equilibrium is p_G = p_data |
-| Non-saturating loss | "The numerically sane version" | G's loss is -log(D(G(z))) instead of log(1 - D(G(z))) to avoid vanishing gradients early in training |
+| Minimax | "The game" | min over G, max over D of an adversarial loss; equilibrium is $p_G = p_{\text{data}}$ |
+| Non-saturating loss | "The numerically sane version" | G's loss is $-\log(D(G(z)))$ instead of $\log(1 - D(G(z)))$ to avoid vanishing gradients early in training |
 | Mode collapse | "Generator makes one thing" | G produces only a small subset of the data distribution; fix with SN, minibatch discrimination, or larger batch |
 | TTUR | "Two learning rates" | D learns faster than G, typically by a factor of 2-4; stabilises training |
 | Spectral norm | "1-Lipschitz layer" | A weight-normalisation that bounds each layer's Lipschitz constant; stops D from becoming arbitrarily steep |

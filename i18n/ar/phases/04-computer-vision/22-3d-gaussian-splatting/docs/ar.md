@@ -61,12 +61,13 @@ flowchart LR
 
 غوسيان ثلاثي الأبعاد في وضع العالم`mu`مع تغطية ثلاثية الأبعاد `Sigma`المشروعات إلى غوسيان 2D في وضع الشاشة `mu'`مع تغطية ثنائية الأبعاد `Sigma'`:
 
-```
-mu' = project(mu)
-Sigma' = J W Sigma W^T J^T          (2 x 2)
-
-W = viewing transform (rotation + translation of camera)
-J = Jacobian of the perspective projection at mu'
+```math
+\begin{aligned}
+\mu' &= \mathop{\mathrm{project}}(\mu) \\
+\Sigma' &= J W \Sigma W^T J^T \qquad (2 \times 2) \\[6pt]
+W &= \text{viewing transform (rotation + translation of camera)} \\
+J &= \text{Jacobian of the perspective projection at } \mu'
+\end{aligned}
 ```
 
 بصمة غوسيان 2D هي كُرُشٍ تُعد محورها متجهات خاصة`Sigma'`كل بكسل داخل تلك الكتل تتلقى مساهمة غوسيان، وزنها`exp(-0.5 * (p - mu')^T Sigma'^-1 (p - mu'))`. . .
@@ -75,12 +76,13 @@ J = Jacobian of the perspective projection at mu'
 
 بالنسبة لبرمجة واحدة ، يتم فرز غوسيانات تغطيها من الأمام إلى الأمام (أو بمعادل ذلك من الأمام إلى الأمام مع الصيغة المعاكسة). يتم تجميع اللون بنفس المعادلة التي تمثل كل رسطير شبه شفاف منذ الثمانينيات:
 
-```
-C_pixel = sum_i alpha_i * T_i * c_i
-
-T_i = prod_{j < i} (1 - alpha_j)       transmittance up to i
-alpha_i = opacity_i * exp(-0.5 * d^T Sigma'^-1 d)   local contribution
-c_i = eval_SH(SH_i, view_direction)    view-dependent colour
+```math
+\begin{aligned}
+C_{\text{pixel}} &= \sum_i \alpha_i T_i c_i \\[6pt]
+T_i &= \prod_{j < i} (1 - \alpha_j) && \text{transmittance up to } i \\
+\alpha_i &= \text{opacity}_i \cdot \exp\left(-0.5 \, d^T \Sigma'^{-1} d\right) && \text{local contribution} \\
+c_i &= \mathop{\mathrm{eval\_SH}}(\text{SH}_i, \text{view\_direction}) && \text{view-dependent colour}
+\end{aligned}
 ```
 
 هذا هو**the same equation as NeRF's volumetric render**هذا هو السبب في أن الجودة التي تم تقديمها تطابق مع NeRF  كلاهما يدمج نفس المعادلة من حقل الإشعاع.
@@ -97,7 +99,7 @@ c_i = eval_SH(SH_i, view_direction)    view-dependent colour
 - **Split**غوسيان واسع النطاق إلى اثنين أصغر عندما يكون تراجعها مرتفع غوسيان كبير كبير جداً ليس مناسب للمنطقة.
 - **Prune**غوسيان الذين ينخفض ضبابيتهم تحت عتبة لا يسهمون
 
-يدير التكثيف كل تكرار N. ينمو المشهد عادة من ~ 100k غوسيانات أولية (التي تم زرعها من نقاط SfM) إلى 1-5M في نهاية التدريب.
+التكثيف يمر كل مرة$N$تكرارات. ينمو المشهد عادة من ~ 100k غوسيانات أولية (مزرعة من نقاط SfM) إلى 1-5M في نهاية التدريب.
 
 ### المنسيقات الكهرومونية في فقرة واحدة
 

@@ -74,11 +74,13 @@ At each grid cell, every anchor emits (tx, ty, tw, th, obj, c_1, ..., c_C).
 
 الخام`tx, ty, tw, th`ليست إحداثيات مربع، بل هي أهداف تراجع يجب تحويلها قبل التخطيط:
 
-```
-centre x  = (sigmoid(tx) + cell_x) * stride
-centre y  = (sigmoid(ty) + cell_y) * stride
-width     = anchor_w * exp(tw)
-height    = anchor_h * exp(th)
+```math
+\begin{aligned}
+\text{centre } x &= (\sigma(t_x) + \text{cell}_x) \cdot \text{stride} \\
+\text{centre } y &= (\sigma(t_y) + \text{cell}_y) \cdot \text{stride} \\
+\text{width} &= \text{anchor}_w \cdot \exp(t_w) \\
+\text{height} &= \text{anchor}_h \cdot \exp(t_h)
+\end{aligned}
 ```
 
 `sigmoid`يحتفظ بالتعديلات المركزية داخل الخلية. `exp`يسمح للمقياس العريض بحرية من المرسوم دون تحويل إشارة. `stride`يُقَدِّم خطوات الشبكة إلى بيكسلات. هذه الخطوة في فك الشفرة هي نفسها في كل إصدار من YOLO منذ v2.
@@ -87,11 +89,11 @@ height    = anchor_h * exp(th)
 
 المقياس الشبيه العالمي للكشف بين مربعتين:
 
-```
-IoU(A, B) = area(A intersect B) / area(A union B)
+```math
+\mathrm{IoU}(A, B) = \frac{\mathop{\mathrm{area}}(A \cap B)}{\mathop{\mathrm{area}}(A \cup B)}
 ```
 
-IoU = 1 يعني متطابقة؛ IoU = 0 يعني عدم التداخل. IoU بين التنبؤ والصندوق الحقيقي الأساسي هو ما يقرر ما إذا كان التنبؤ يعتبر إيجابيًا صحيحًا (عادة IoU > = 0.5). IoU بين التنبؤين هو ما يستخدمه NMS للتقليص.
+$\mathrm{IoU} = 1$تعني نفس الشيء$\mathrm{IoU} = 0$يعني عدم التداخل. IoU بين التنبؤ والصندوق الحقيقي الأساسي هو ما يقرر ما إذا كان التنبؤ يعتبر إيجابيا حقيقيا (عادة$\mathrm{IoU} \ge 0.5$(). إن المعدل بين توقعاتين هو ما يستخدمه NMS للتقليد.
 
 ### القمع غير القصوى
 
@@ -113,11 +115,13 @@ NMS(boxes, scores, iou_threshold):
 
 خسارة YOLO هي ثلاثة خسائر مضافة مع الوزن:
 
-```
-L = lambda_coord * L_box(pred, target, where obj=1)
-  + lambda_obj   * L_obj(pred, 1,     where obj=1)
-  + lambda_noobj * L_obj(pred, 0,     where obj=0)
-  + lambda_cls   * L_cls(pred, target, where obj=1)
+```math
+\begin{aligned}
+L = {} & \lambda_{\text{coord}} \cdot L_{\text{box}}(\text{pred}, \text{target}, \text{where obj}=1) \\
++ {} & \lambda_{\text{obj}} \cdot L_{\text{obj}}(\text{pred}, 1, \text{where obj}=1) \\
++ {} & \lambda_{\text{noobj}} \cdot L_{\text{obj}}(\text{pred}, 0, \text{where obj}=0) \\
++ {} & \lambda_{\text{cls}} \cdot L_{\text{cls}}(\text{pred}, \text{target}, \text{where obj}=1)
+\end{aligned}
 ```
 
 تساهم الخلايا التي تحتوي على كائن فقط في خسائر التراجعة والتصنيف. تساهم الخلايا التي لا تحتوي على كائن فقط في خسارة الكائن (تعليم النموذج على الصمت). `lambda_noobj`عادة ما تكون صغيرة (~ 0.5) لأن الغالبية العظمى من الخلايا فارغة وإلا سيهيمن على الخسارة الكلية.

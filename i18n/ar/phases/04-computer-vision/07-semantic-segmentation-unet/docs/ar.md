@@ -87,10 +87,10 @@ flowchart LR
 
 ### التشابه المتقاطع على شبكة البيكسل
 
-بالنسبة للتقسيم الدلالي مع فئات C، فإن النموذج الخارجي هو `(N, C, H, W)`الهدف هو`(N, H, W)`مع أرقام تعريف فئة كاملة. التشابه المتقاطع هو نفس حالة التصنيف، فقط تطبيق في كل موقع فضائي:
+للتقسيم التجاري مع $C$فصول، إنتاج النموذج هو `(N, C, H, W)`الهدف هو`(N, H, W)`مع أرقام تعريف فئة كاملة. التشابه المتقاطع هو نفس حالة التصنيف، فقط تطبيق في كل موقع فضائي:
 
-```
-Loss = mean over (n, h, w) of -log( softmax(logits[n, :, h, w])[target[n, h, w]] )
+```math
+\text{Loss} = \mathop{\mathrm{mean}}\limits_{(n, h, w)} \left[ -\log\left( \mathop{\mathrm{softmax}}(\text{logits}[n, :, h, w])[\text{target}[n, h, w]] \right) \right]
 ```
 
 `F.cross_entropy`في (بيتورش) يتعامل مع هذا الشكل بشكل طبيعي، لا حاجة لإعادة تشكيل.
@@ -101,17 +101,19 @@ Loss = mean over (n, h, w) of -log( softmax(logits[n, :, h, w])[target[n, h, w]]
 
 فقدان الارقام يحل هذا الأمر عن طريق تحسين التداخل بين القناع المتوقع والحقيقي مباشرة:
 
-```
-Dice(p, y) = 2 * sum(p * y) / (sum(p) + sum(y) + epsilon)
-Dice_loss = 1 - Dice
+```math
+\begin{aligned}
+\mathop{\mathrm{Dice}}(p, y) &= \frac{2 \sum (p \cdot y)}{\sum p + \sum y + \epsilon} \\
+\text{Dice}_{\text{loss}} &= 1 - \text{Dice}
+\end{aligned}
 ```
 
 أين`p`هو خريطة الاحتمالات sigmoid/softmax لفئة و `y`هو قناع الحقيقة الأرضية الثنائية. الخسارة هي صفر فقط عندما التداخل هو مثالية. لأنه يعتمد على النسب، عدم التوازن الطبقي غير ذي صلة.
 
 في الممارسة العملية، استخدم**combined loss**:
 
-```
-L = L_cross_entropy + lambda * L_dice       (lambda ~ 1)
+```math
+L = L_{\text{cross\_entropy}} + \lambda \cdot L_{\text{dice}} \qquad (\lambda \approx 1)
 ```
 
 يعطي التشابك المتقاطع تراجعات مستقرة في وقت مبكر من التدريب؛ يركز ديس ذيل التدريب على مطابقة شكل القناع. هذه المجموعة هي الاختيار الطبية للتصوير الصحي ومن الصعب هزيمتها على أي مجموعة بيانات غير متوازنة من الفصول.
@@ -120,7 +122,7 @@ L = L_cross_entropy + lambda * L_dice       (lambda ~ 1)
 
 - **Pixel accuracy**% من البيكسلات تم التنبؤ بها بشكل صحيح. رخيص. تم كسر البيانات غير المتوازنة لسبب نفسه الذي يجعلها دقيقة في التصنيف.
 - **IoU per class** التقاطع على الاتحاد للكلة الواحدة من قناع كل فئة؛ متوسط بين الفئات = mIoU.
-- **Dice (F1 on pixels)** مشابهة لـ IoU`Dice = 2 * IoU / (1 + IoU)`التصوير الطبي يفضل القليل، والجماعة القيادة تفضل الـ IoU؛ فهي مرتبطة بشكل متزايد.
+- **Dice (F1 on pixels)** مشابهة لـ IoU$\text{Dice} = 2 \cdot \text{IoU} / (1 + \text{IoU})$التصوير الطبي يفضل القليل، والجماعة القيادة تفضل الـ IoU؛ فهي مرتبطة بشكل متزايد.
 - **Boundary F1** تقيس مدى قرب الحدود المتوقعة من الحدود الحقيقية الأرضية، مع تعاقب حتى التحولات الصغيرة.
 
 تقرير IUI لكل فئة، وليس فقط MIoU. متوسط IUI يخفي فئة عند 15% بينما تسعة آخرين على 85%.
@@ -400,4 +402,4 @@ model = smp.Unet(
 - [U-Net: Convolutional Networks for Biomedical Image Segmentation (Ronneberger et al., 2015)](https://arxiv.org/abs/1505.04597) الورق الأصلي، والرقم الذي ينسخ كل شخص هو على الصفحة 2
 - [Fully Convolutional Networks (Long et al., 2015)](https://arxiv.org/abs/1411.4038) الورقة التي جعلت أول قسم مشكلة نهاية إلى نهاية
 - [segmentation_models_pytorch](https://github.com/qubvel/segmentation_models.pytorch) الإشارة لتقسيم الإنتاج؛ كل بنية قياسية بالإضافة إلى كل خسارة قياسية
-- [Lessons learned from training SOTA segmentation (kaggle.com competitions)](https://www.kaggle.com/code/iafoss/carvana-unet-pytorch) دراسة لمَ تُعتبر TTA، التسمية السائدة، ووزن الفئة مهمة في البيانات الحقيقية
+- [iafoss, Unet34 submission with TTA (Kaggle notebook)](https://www.kaggle.com/code/iafoss/unet34-submission-tta-0-699-new-public-lb) زيادة وقت الاختبار لشبكة U-Net في مسابقة تقسيم حقيقية

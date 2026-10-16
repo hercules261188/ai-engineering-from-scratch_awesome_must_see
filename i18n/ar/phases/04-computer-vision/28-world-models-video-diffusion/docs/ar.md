@@ -60,7 +60,7 @@ Resulting tokens:      (T / P_t) * (H / P_h) * (W / P_w) tokens
 
 التشفير الموضعي هو 3D: إدخال مدير أو تعلم لكل إحداثيات (t، h، w).
 
-- **Full joint** جميع الرموز الاحتياطية على جميع الرموز الاحتياطية. O ((N^2) مع الرموز الاحتياطية. محظور على مقاطع الفيديو الطويلة.
+- **Full joint** جميع الرموز تلتحق بجميع الرموز. $O(N^2)$مع$N$الـ (توكينز) ، محظور على مقاطع الفيديو الطويلة
 - **Divided** التناوب التناوبي (الموقف الفضائي نفسه عبر الزمن: `(H*W) * T^2`) والاهتمام بالمساحة (المساوية في الوقت، عبر الفضاء: `T * (H*W)^2`يستخدمها TimeSformer ومعظم المشاهد الفيديو
 - **Window** نوافذ محلية في (t, h, w). يستخدمها فيديو سوين.
 
@@ -213,7 +213,7 @@ class DividedAttentionBlock(nn.Module):
         return xs
 ```
 
-الاهتمام بالوقت يصل داخل كل موقف فضائي عبر الزمن. الاهتمام بالمكان يصل داخل كل إطار عبر المواقع. عمليات O  T ^ 2 + (HW) ^ 2) بدلاً من O  THW) ^ 2). هذا هو جوهر TimeSformer وكل فيديو حديث DiT.
+الاهتمام بالوقت يصل في كل موقف فضائي عبر الزمن، والاهتمام بالمكان يصل في كل إطار عبر المواقع.$O(T^2 + (HW)^2)$عمليات بدلاً من واحدة$O((THW)^2)$هذا هو جوهر TimeSformer وكل فيديو حديث DiT.
 
 ### الخطوة الرابعة: قم بتأليف مقطع فيديو صغير
 
@@ -286,7 +286,7 @@ print(f"output {tuple(out.shape)}")
 | World model | "Learned simulator" | A model that predicts future observations given state and action |
 | Video DiT | "Spacetime transformer" | Diffusion transformer with 3D patchification and divided attention |
 | Latent action | "Inferred control" | Discrete or continuous action latent inferred from frame pairs; used to condition next-frame generation |
-| Divided attention | "Time then space" | Two attention operations per block — across time then across space — to keep O(N^2) manageable |
+| Divided attention | "Time then space" | Two attention operations per block — across time then across space — to keep $O(N^2)$ manageable |
 | Object permanence | "Things stay real" | Scene property that video models must learn; classic failure mode on food, glassware |
 | FVD | "Fréchet Video Distance" | Video equivalent of FID; primary visual quality metric |
 | Inverse dynamics model | "Observations to actions" | Given (state, next state), output the action that connects them; closes robotics loop |

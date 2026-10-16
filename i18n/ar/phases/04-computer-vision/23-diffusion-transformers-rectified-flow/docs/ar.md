@@ -59,8 +59,8 @@ flowchart LR
 
 تدفق المصلح يحدد **straight-line**التقاط بين البيانات النظيفة والضوضاء النظيفة:
 
-```
-x_t = (1 - t) * x_0 + t * epsilon,     t in [0, 1]
+```math
+x_t = (1 - t) \, x_0 + t \, \epsilon, \qquad t \in [0, 1]
 ```
 
 تدريب شبكة للتنبؤ بالسرعة`v_theta(x_t, t) = epsilon - x_0` الاتجاه الأمامي على طول المسار المستقيم من البيانات النظيفة إلى الضجيج (`dx_t/dt`أثناء أخذ العينات، تقوم بتكامل هذه السرعة إلى الوراء لتحرك من الضوضاء نحو البيانات. ODE الناتجة أقرب بكثير إلى خط مستقيم، لذلك هناك حاجة إلى أقل خطوات تكامل لعينة.
@@ -338,7 +338,7 @@ out = pipe(prompt, guidance_scale=3.5, num_inference_steps=28).images[0]
 | DiT | "Diffusion transformer" | Transformer that replaces the U-Net as the diffusion denoiser; operates on patchified latents |
 | AdaLN | "Adaptive layer norm" | Timestep/text conditioning via learned scale, shift, gate applied after LayerNorm; standard in every modern DiT |
 | MMDiT | "Multi-modal DiT (SD3)" | Separate weight streams for text and image tokens that share a joint self-attention |
-| Single-stream / double-stream | "FLUX trick" | First N blocks double-stream (separate weights per modality), later blocks single-stream (concat + shared weights) for efficiency |
+| Single-stream / double-stream | "FLUX trick" | First $N$ blocks double-stream (separate weights per modality), later blocks single-stream (concat + shared weights) for efficiency |
 | Rectified flow | "Straight-line noise-to-data" | Linear interpolation between data and noise; network predicts velocity; fewer ODE steps needed at inference |
 | Velocity target | "epsilon - x_0" | The regression target in rectified flow; points from clean data to noise |
 | CFG guidance | "classifier-free guidance" | Mix conditional and unconditional predictions; still used in rectified-flow models |

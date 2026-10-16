@@ -42,7 +42,7 @@ flowchart LR
 
 ### الهدف
 
-نظراً لفرقة من أزواج N (الصورة، الأسطح) ، قم ببناء ماتريكس تشابه NxN. قم بتدريب كلا المرموزين بحيث يكون للشبهة العرضية (أزواج متطابقة) تشابه كبير والشبهات خارج الشبهة (غير متطابقة) تشابه منخفض.
+نظراً لـ (بارت)$N$(صورة، عنوان) أزواج، بناء $N \times N$المصفوفة المماثلة. قم بتدريب كلا المرموزين بحيث يكون للشبهة العرضية (أزواج متطابقة) مماثلة عالية والشبهة غير العرضية (غير متطابقة) منخفضة.
 
 ```
 sim_matrix = image_embeddings @ text_embeddings.T / tau
@@ -58,9 +58,11 @@ loss = (loss_i2t + loss_t2i) / 2
 
 استبدل SigLIP (Zhai et al., 2023) softmax بـ sigmoid لكل زوج:
 
-```
-loss = mean over pairs of log(1 + exp(-y_ij * sim_ij))
-y_ij = +1 if matching, -1 otherwise
+```math
+\begin{aligned}
+\text{loss} &= \mathop{\mathrm{mean}}\limits_{\text{pairs}} \log\left(1 + \exp(-y_{ij} \cdot \text{sim}_{ij})\right) \\
+y_{ij} &= \begin{cases} +1 & \text{if matching} \\ -1 & \text{otherwise} \end{cases}
+\end{aligned}
 ```
 
 يزيل الخسارة لكل زوج التطبيق على مستوى الحزمة الذي يتطلبه CLIP. يتدرب SigLIP بشكل أفضل في أحجام الحزم الصغيرة ويتطابق أو يتجاوز CLIP عند البيانات المتساوية.
@@ -224,4 +226,4 @@ print(probs)
 - [CLIP: Learning Transferable Visual Models from Natural Language Supervision (Radford et al., 2021)](https://arxiv.org/abs/2103.00020)
 - [SigLIP: Sigmoid Loss for Language-Image Pre-Training (Zhai et al., 2023)](https://arxiv.org/abs/2303.15343)
 - [OpenCLIP](https://github.com/mlfoundations/open_clip)قاعدة التعليمات المجتمعية
-- [DINOv2 vs CLIP vs MAE: a features comparison](https://huggingface.co/blog/dinov2) دليل HF مع حالات الاستخدام جنبا إلى جنب
+- [Oquab et al. (2023). DINOv2: Learning Robust Visual Features without Supervision](https://arxiv.org/abs/2304.07193) الورقة، مع مقارنات ميزات مقابل نماذج على الطراز CLIP و على الطراز MAE

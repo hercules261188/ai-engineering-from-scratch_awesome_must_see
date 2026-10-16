@@ -173,8 +173,8 @@ RGB هو شكل التقاط ولكن ليس دائماً هو التمثيل ا
 
 مقياس الرمادي من RGB هو مبلغ معين، وليس متوسط، لأن العين البشرية أكثر حساسية للخضراء من الأحمر أو الأزرق:
 
-```
-Y = 0.299 R + 0.587 G + 0.114 B       (ITU-R BT.601, the classic weights)
+```math
+Y = 0.299 R + 0.587 G + 0.114 B \qquad \text{(ITU-R BT.601, the classic weights)}
 ```
 
 ### نسبة الجوانب، وإعادة الحجم، والتربية
@@ -440,7 +440,7 @@ print(f"per-channel std:  {batch.std(dim=(0, 2, 3)).tolist()}")
 
 ## المزيد من القراءة
 
-- [Charles Poynton — A Guided Tour of Color Space](https://poynton.ca/PDFs/Guided_tour.pdf) أكثر التعاملات الفنية وضوحا لماذا هناك العديد من المساحات اللونية ومتى كل واحدة مهمة
+- [Charles Poynton — A Guided Tour of Color Space](https://web.archive.org/web/20251220000525/https://poynton.ca/PDFs/Guided_tour.pdf) أكثر التعاملات الفنية وضوحا لماذا هناك العديد من المساحات اللونية ومتى كل واحدة مهمة
 - [PyTorch Vision Transforms Docs](https://pytorch.org/vision/stable/transforms.html) أنبوب كامل من التحويلات سوف تكوين في الواقع في الإنتاج
 - [How JPEG Works (Colt McAnlis)](https://www.youtube.com/watch?v=F1kYBnY6mwg) جولة بصرية حادة من خريطة الكروم، DCT، ولماذا JPEG ترمز YCbCr بدلا من RGB
 - [ImageNet Preprocessing Conventions (torchvision models)](https://pytorch.org/vision/stable/models.html)مصدر الحقيقة`mean=[0.485, 0.456, 0.406]`و لماذا كل نموذج في حديقة الحيوان يتوقع ذلك
