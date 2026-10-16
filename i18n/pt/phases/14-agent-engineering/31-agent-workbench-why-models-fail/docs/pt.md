@@ -214,7 +214,6 @@ Livros, artigos e implementações de referência:
 - [preprints.org, Harness Engineering for Language Agents (March 2026)](https://www.preprints.org/manuscript/202603.1756) enquadramento acadêmico como controlo / agência / tempo de execução
 - [walkinglabs/awesome-harness-engineering](https://github.com/walkinglabs/awesome-harness-engineering) Lista de leitura curada em todo o contexto, avaliação, observabilidade, orquestração
 - [ai-boost/awesome-harness-engineering](https://github.com/ai-boost/awesome-harness-engineering) lista de seleção alternativa (ferramentas, avaliações, memória, MCP, permissões)
-- [andrewgarst/agentic_harness](https://github.com/andrewgarst/agentic_harness) implementação de referência pronta para produção com suíte de memória e avaliação com apoio da Redis
 - [HKUDS/OpenHarness](https://github.com/HKUDS/OpenHarness) Arnes de agente aberto com agente pessoal incorporado
 
 Os fios de Hacker News vale a pena ler para os desentendimentos, não para o consenso:

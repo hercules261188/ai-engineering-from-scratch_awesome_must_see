@@ -90,7 +90,7 @@ Mover a decisão de produção-escrever de bloqueado para delegado. Explique por
 ## Mais leitura
 
 - [Nuseibeh and Easterbrook, Requirements Engineering: A Roadmap](https://www.cs.toronto.edu/~sme/papers/2000/ICSE2000.pdf), para a relação entre metas, especificações precisas, validação, acordo e evolução.
-- [Zave and Jackson, Four Dark Corners of Requirements Engineering](https://doi.org/10.1145/267895.267896), para a separação de pressupostos, requisitos e especificações ambientais.
+- [Zave and Jackson, Four Dark Corners of Requirements Engineering](https://doi.org/10.1145/237432.237434), para a separação de pressupostos, requisitos e especificações ambientais.
 - [Gotel and Finkelstein, An Analysis of the Requirements Traceability Problem](https://doi.org/10.1109/ICRE.1994.292398), para preservar o porquê de existir uma exigência e de onde veio.
 
 ## O que você guarda

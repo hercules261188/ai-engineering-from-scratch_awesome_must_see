@@ -32,7 +32,7 @@ Mem0 (arXiv:2504.19413, Abril 2025) em `add(text, user_id, metadata)`- Não .
 
 1. Extrair os factos candidatos do texto (um passo orientado pelo Mestrado em Direito Jurídico).
 2. Escreva cada fato no armazenamento vetorial (embedding) para pesquisa semântica.
-3. Escreva cada fato para o armazém KV teclado em (user_id, fact_type, entity) para pesquisa O(1).
+3. Escrever cada fato para o armazém KV com teclado (user_id, fact_type, entity) para $O(1)$- Não.
 4. Escreva cada fato no gráfico de armazenamento (Mem0g) como bordas digitalizadas para consultas de relacionamento.
 
 - Sim .`search(query, user_id)`- Não .

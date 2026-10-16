@@ -140,7 +140,6 @@ O portão é a borda decisiva no fluxo do banco de trabalho.
 - [Type-Checked Compliance: Deterministic Guardrails (arXiv 2604.01483)](https://arxiv.org/pdf/2604.01483) Lean 4 como limite superior da abertura determinista
 - [logi-cmd/agent-guardrails — merge gate spec](https://github.com/logi-cmd/agent-guardrails) Ámbito de aplicação + portas de teste de mutação
 - [Guardrails AI x MLflow](https://guardrailsai.com/blog/guardrails-mlflow) Validadores deterministas como marcadores de CI
-- [Akira, Real-Time Guardrails for Agentic Systems](https://www.akira.ai/blog/real-time-guardrails-agentic-systems) Portas pré/pós-ferramentas
 - Fase 14 · 27  Defesa de injecção rápida (par adversária do portal)
 - Fase 14 · 36  o contrato de âmbito que esta porta aplica
 - Fase 14 · 37  o registro de feedback este portal pontua

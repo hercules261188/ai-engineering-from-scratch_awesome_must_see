@@ -13,6 +13,7 @@
 - Enfiar os esquemas, scripts e modelos para que um novo repo obtenha uma linha de base conhecida.
 - Adicionar um único script de instalação que coloque o pacote idempotentemente.
 - Decida o que fica no rebanho e o que fica fora, defendendo o corte para cada um.
+- Demonstrar uma alteração no repositório assistida por um agente com evidências que um revisor possa reproduzir.
 
 ## O problema
 
@@ -133,6 +134,78 @@ O pacote é a receita, cada instalação é uma porção.
 4. Adicionar um`lint_pack.py`que falha quando o pacote se desloca de `VERSION`Entregue-o para a CI para o repo do grupo.
 5. Autor do manual de migração de um banco de trabalho rolado à mão para este pacote.
 
+## Prática de carreira: provar uma mudança de arquivo
+
+A demonstração de embalagem prova que o montador executa e produz arquivos. Não prova que seu agente possa completar uma nova tarefa, que os controles gerados comprovam essa tarefa ou que um sistema implantado funciona.
+
+Escolha uma pequena tarefa real num repositório que você possui ou tem permissão para alterar. Use um agente de codificação ao qual você já tem acesso. Uma correção de bugs, um recurso limitado ou uma melhoria operacional é suficiente; instalar vários agentes não faz parte do exercício.
+
+Prestação de um orçamento para uma sessão de trabalho separada para além do laboratório de embalagens.`learning-artifacts/`Preserva o modelo de entrada e embalagem como material de referência.
+
+### 1. Enquadrar a tarefa e escolher a autonomia
+
+Use o quadro de tarefas da lição 43 e o plano de evidências da lição 44. Registre a revisão inicial, o objetivo observável, os não-alvos, os caminhos permitidos e a evidência de aceitação. Identifique o usuário ou operador real que precisa do comportamento.
+
+Escolha um modo de funcionamento: passos guiados, implementação com ponto de controle ou uma execução autónoma limitada. Explique por que a incerteza, as consequências e a reversão justificam isso.
+
+Defina um orçamento de tempo de parede e um token ou limite de custo se o agente expõe um. Registre as medições não disponíveis honestamente. Defina uma condição de parada para falhas repetidas, novas permissões, exaustão do orçamento ou uma decisão de contrato não resolvida; nome quem pode resolvê-la.
+
+### 2. Preparar o menor ambiente útil
+
+Retire a implementação relevante, o chamador, o teste e as instruções locais. Registre por que cada fonte pertence ao contexto e quais evidências atuais substituiriam uma nota obsoleta. Não carregue todo o repositório por padrão.
+
+Faça uma escolha explícita para cada extensão relevante: uma habilidade fornece um procedimento repetível; uma ferramenta MCP fornece acesso; um gancho executa uma verificação determinista; um plugin pacotes de recursos. Mantenha uma extensão apenas quando a tarefa precisa, com as menores permissões que permitem que ela funcione.
+
+Registre o contexto ou o custo de manutenção de uma adição proposta que você rejeita. Reverifique uma memória ou instrução obsoleta, depois retire ou substitua-a na configuração de propriedade do aluno quando as evidências apoiarem essa decisão. Reinicie o controle afetado para confirmar que a remoção não perdeu uma restrição necessária.
+
+### 3. Capturar a linha de base e implementar
+
+Antes de editar, execute a verificação existente mais próxima e demonstre o estado atual do comportamento solicitado. Mantenha o comando, revisão, resultado e localização da evidência. Uma característica que não existe ainda ainda tem uma linha de base: gravar a resposta observada ou operação não suportada.
+
+Deixe o agente implementar dentro do contrato. Mantenha um registro de intervenção com a razão de cada correção, alteração de permissão ou revisão do plano. A delegação é opcional; se útil, aplique o contrato de propriedade e integração da lição 45 antes de adicionar outro trabalhador.
+
+### 4. Desafie as provas
+
+Escolha a prova que observa a superfície alterada. Para uma interface de interface, reconstruir e inspecionar a viagem servida em largura relevantes. Para uma API, inspecione a solicitação e resposta serializada. Para um CLI, execute o comando construído e verifique seu código de saída e saída. Selecione as verificações que sua tarefa precisa e explique seus limites.
+
+Escreva um resultado esperado do contrato de tarefa independentemente da implementação do agente. Em uma cópia descartável, introduzir um resultado incorreto específico, como aceitar um valor inválido ou deixar cair um campo de resposta exigido.
+
+Se ficar verde, reforce a afirmação ou observação antes de confiar nela. Restaurar a implementação correta e reiniciar com sucesso. Mantenha ambos os recibos. Um erro de sintaxe ou configuração de teste quebrada não conta como detecção da regressão.
+
+Revisar a diferença final, incluindo testes alterados, contra o objetivo original e os caminhos permitidos. Pega a um colega ou uma sessão de revisor separado para desafiar a prova mais fraca sem editar a implementação. Você ainda possui o julgamento final; o acordo de outro agente não é evidência de execução.
+
+### 5. Operação e recuperação de ensaio
+
+Exercer o artefato alterado num ambiente local descartável ou de colocação em cena.`local`- Não .`staging`, ou `live`Uma ensaio local apoia uma reivindicação local; não é necessário o desdobramento da produção para este exercício.
+
+Escolha um sinal de falha relacionado à tarefa, um limiar, uma janela de observação e um proprietário. Explique a resposta quando esse limiar é cruzado.
+
+Reexercite o retrocesso a um artefato conhecido e verifique se o comportamento anterior é restaurado. Considere dados persistentes quando aplicável; substituir um binário sozinho não pode reverter uma mudança de dados. Registre qualquer etapa de recuperação que você não conseguiu verificar.
+
+### 6. Melhora a próxima corrida e entrega-a
+
+Comparar o resultado com a linha de base, incluindo o tempo passado, dados de uso disponíveis e intervenções humanas.
+
+Promover uma correção observada em um teste, um limite de permissão menor, uma automação ou um exemplo mais claro usando a lição 46. Recurrir o controle afetado. Remover mutações temporárias e deixar o ramo final, arquivos alterados, abrir riscos e a próxima ação explícita para a próxima sessão.
+
+### Rubrico de revisão manual
+
+Faça com que o revisor inspecione os ficheiros de provas e reproduza pelo menos o controlo de aceitação mais fraco.`demonstrated`- Não .`needs revision`, ou `unverified`Os campos preenchidos e os scripts de embalagem não substituem estas observações.
+
+| Dimension | Evidence the reviewer should challenge |
+|---|---|
+| Task and autonomy | Starting behavior, bounded goal, justified permissions, budget, and a usable stop rule |
+| Context and environment | Relevant sources, justified tool access, and a rechecked retirement decision |
+| Verification | Actual before/after behavior and a deliberate incorrect result that the same check rejects |
+| Review and operation | Inspected diff, independent challenge, labeled runtime observation, and rehearsed recovery |
+| Iteration and handoff | One verified improvement, honest limits, clean final state, and a reproducible next action |
+
+Resolva .`needs revision`- a conclusão antes de reivindicar a conclusão da tarefa.`unverified`O portfólio demonstra o seu julgamento de engenharia sobre uma tarefa limitada; não é uma garantia de contratação ou implantação.
+
+## Artigo enviado
+
+Mantenha a embalagem reutilizável e a sua cópia completa de [career-agent-evidence.md](https://github.com/rohitg00/ai-engineering-from-scratch/blob/main/phases/14-agent-engineering/42-agent-workbench-capstone/outputs/career-agent-evidence.md). O modelo conecta o quadro de tarefa, o plano de execução, os recibos de execução, a revisão, o ensaio de recuperação e a entrega num estudo de caso revisable.
+
 ## Termos-chave
 
 | Term | What people say | What it actually means |
@@ -150,7 +223,6 @@ O pacote é a receita, cada instalação é uma porção.
 - [Nx Blog, Teach Your AI Agent How to Work in a Monorepo](https://nx.dev/blog/nx-ai-agent-skills) Gerador de fonte única em seis ferramentas
 - [agents.md — the open spec](https://agents.md/) o que o roteador da sua embalagem deve implementar
 - [HKUDS/OpenHarness](https://github.com/HKUDS/OpenHarness) Implementação de referência de um equivalente de embalagem
-- [andrewgarst/agentic_harness](https://github.com/andrewgarst/agentic_harness) Referência com back-up redis com suite eval
 - [Augment Code, A good AGENTS.md is a model upgrade](https://www.augmentcode.com/blog/how-to-write-good-agents-dot-md-files) embalagem de documentos bar de qualidade
 - [Anthropic, Effective harnesses for long-running agents](https://www.anthropic.com/engineering/effective-harnesses-for-long-running-agents)
 - [Anthropic, Harness design for long-running application development](https://www.anthropic.com/engineering/harness-design-long-running-apps)
