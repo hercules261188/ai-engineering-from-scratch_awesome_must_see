@@ -119,7 +119,7 @@ class AudioCNN(nn.Module):
 
 Parâmetros 3M. Trens em ~ 10 min no ESC-50 com uma única RTX 4090.
 
-### Passo 5: os 2026 padrão  de ajuste fino BEATs
+### Passo 5: ajustar de forma fina um transformador de áudio pré-treinado (AST mostrado)
 
 ```python
 from transformers import ASTFeatureExtractor, ASTForAudioClassification
@@ -135,7 +135,7 @@ inputs = ext(audio, sampling_rate=16000, return_tensors="pt")
 logits = model(**inputs).logits
 ```
 
-Para BEATs, use `microsoft/BEATs-base`através do `beats`biblioteca; a API dos transformadores é da mesma forma.
+O exemplo de sintonização fina AST do Hub. BEATs, o padrão de 2026, não está no Hugging Face Hub: baixar um checkpoint do [BEATs release in microsoft/unilm](https://github.com/microsoft/unilm/tree/master/beats)E carregá-lo com o repo.`BEATs`E ...`BEATsConfig`classes; o ciclo de ajuste fino mantém a mesma forma.
 
 ## Usá-lo
 

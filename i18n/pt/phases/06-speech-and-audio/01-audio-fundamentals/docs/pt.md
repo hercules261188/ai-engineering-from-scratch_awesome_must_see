@@ -137,6 +137,6 @@ Salva como`outputs/skill-audio-loader.md`A habilidade ajuda a verificar se a ent
 
 - [Shannon (1949). Communication in the Presence of Noise](https://people.math.harvard.edu/~ctm/home/text/others/shannon/entropy/entropy.pdf) o papel por trás do teorema de amostragem.
 - [Smith — The Scientist and Engineer's Guide to Digital Signal Processing](https://www.dspguide.com/ch8.htm)Livro de texto livre e canônico de DSP.
-- [librosa docs — audio primer](https://librosa.org/doc/latest/tutorial.html) Passagem prática com código.
-- [Heinrich Kuttruff — Room Acoustics (6th ed.)](https://www.routledge.com/Room-Acoustics/Kuttruff/p/book/9781482260434) referência para o motivo pelo qual o áudio do mundo real não é um sinusoide limpo.
+- [librosa docs — audio primer](https://librosa.org/doc/latest/auto_tutorials/index.html) Passagem prática com código.
+- [Heinrich Kuttruff — Room Acoustics (6th ed.)](https://www.taylorfrancis.com/books/mono/10.1201/9781315372150/room-acoustics-heinrich-kuttruff) referência para o motivo pelo qual o áudio do mundo real não é um sinusoide limpo.
 - [Steve Eddins — FFT Interpretation notebook](https://blogs.mathworks.com/steve/2020/03/30/fft-spectrum-and-spectral-densities/)Intuição do bin de frequência resolvido em 10 minutos.

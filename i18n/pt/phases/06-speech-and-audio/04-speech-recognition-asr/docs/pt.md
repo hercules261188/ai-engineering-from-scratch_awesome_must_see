@@ -37,7 +37,7 @@ Vantagens: alta qualidade em ASR offline, fácil de treinar com ferramentas seq2
 
 ### WER: o número único
 
-**Word Error Rate**- Não .`(S + D + I) / N`, onde S=substituições, D=eliminações, I=inserções, N=conto de palavras de referência. Correspondem à distância de edição Levenshtein no nível de palavras. Baixo é melhor. Um WER acima de 20% é geralmente inutilizável; abaixo de 5% é a paridade humana para a fala de leitura. Números 2026 em benchmarks padrão:
+**Word Error Rate**- Não .$(S + D + I) / N$, onde$S$=substituições, $D$= eliminações, $I$=inserções, $N$=conto de palavras de referência. Correspondem com a distância de edição Levenshtein no nível das palavras. Mais baixo é melhor. Um WER acima de 20% é geralmente inutilizável; abaixo de 5% é a paridade humana para a fala de leitura. Números 2026 em referências padrão:
 
 | Model | LibriSpeech test-clean | LibriSpeech test-other | Size |
 |-------|------------------------|------------------------|------|

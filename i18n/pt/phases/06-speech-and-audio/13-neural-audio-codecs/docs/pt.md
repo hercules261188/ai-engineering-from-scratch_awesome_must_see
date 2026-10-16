@@ -24,7 +24,7 @@ A perspectiva de 2024-2026: **a pure reconstruction codec gives you blurry speec
 
 ### O truque principal: Quantização de VECTORES RESIDUALES (RVQ)
 
-Em vez de um grande livro de códigos (que precisaria de milhões de códigos para uma boa qualidade), todos os códigos de áudio modernos usam **RVQ**O primeiro livro quantiza a saída do codificador; o segundo quantiza o residual; etc. Cada livro de códigos é de 1024 códigos.
+Em vez de um grande livro de códigos (que precisaria de milhões de códigos para uma boa qualidade), todos os códigos de áudio modernos usam **RVQ**O primeiro livro quantiza a saída do codificador; o segundo quantiza o residual; etc. Cada livro de códigos é de 1024 códigos.$1024^8 = 10^{24}$- Não .
 
 No momento da inferência, o decodificador soma todos os códigos escolhidos por quadro para reconstruir.
 
@@ -129,8 +129,8 @@ O livro de código semântico 0 é alinhado com o WavLM. Você pode treinar um t
 
 Para um clip de fala de 10 segundos nos livros de códigos de Mimi de 12,5 Hz × 8:
 
-```
-N_tokens = 10 * 12.5 * 8 = 1000 tokens
+```math
+N_{\text{tokens}} = 10 \times 12.5 \times 8 = 1000 \text{ tokens}
 ```
 
 1000 tokens é um contexto trivial para um transformador. Um transformador de parâmetro de 256M pode gerar 10 segundos de fala em milissegundos em uma GPU moderna.

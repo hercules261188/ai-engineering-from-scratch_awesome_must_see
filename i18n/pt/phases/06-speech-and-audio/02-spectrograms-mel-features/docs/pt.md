@@ -23,7 +23,7 @@ Os espectrogramas mel empurram mais longe. Os seres humanos percebem o pitch log
 
 **Log-magnitude.**Grandes dimensões cruas variam entre 5 e 6 ordens de magnitude.`log(|X| + 1e-6)`ou `20 * log10(|X|)`Cada linha de produção usa magnitude de log, não magnitude bruta.
 
-**Mel scale.**Frequência`f`em mapas Hz para mel `m`Por`m = 2595 * log10(1 + f / 700)`O mapeamento é aproximadamente linear abaixo de 1 kHz e aproximadamente logarítmico acima. 80 melbins cobrindo 08 kHz é a entrada ASR padrão.
+**Mel scale.**Frequência`f`em mapas Hz para mel `m`Por$m = 2595 \cdot \log_{10}(1 + f / 700)$O mapeamento é aproximadamente linear abaixo de 1 kHz e aproximadamente logarítmico acima. 80 melbins cobrindo 08 kHz é a entrada ASR padrão.
 
 **Mel filterbank.**Um conjunto de filtros triangulares espaçados igualmente na escala mel. Cada filtro é uma soma ponderada de contenedores FFT adjacentes. Multiplicando a magnitude STFT pela matriz filterbank dá o espectrograma mel em um matmul.
 
@@ -170,5 +170,5 @@ Salva como`outputs/skill-feature-extractor.md`A habilidade seleciona o tipo de c
 - [Davis, Mermelstein (1980). Comparison of parametric representations for monosyllabic word recognition](https://ieeexplore.ieee.org/document/1163420) o documento do MFCC.
 - [Stevens, Volkmann, Newman (1937). A Scale for the Measurement of the Psychological Magnitude Pitch](https://pubs.aip.org/asa/jasa/article-abstract/8/3/185/735757/)- A escala mel original.
 - [OpenAI — Whisper source, log_mel_spectrogram](https://github.com/openai/whisper/blob/main/whisper/audio.py) ler a aplicação de referência.
-- [librosa feature extraction docs](https://librosa.org/doc/main/feature.html) referência para `mfcc`- Não .`melspectrogram`, e salto/janela.
+- [librosa feature extraction docs](https://librosa.org/doc/latest/api/feature.html) referência para `mfcc`- Não .`melspectrogram`, e salto/janela.
 - [NVIDIA NeMo — audio preprocessing](https://docs.nvidia.com/deeplearning/nemo/user-guide/docs/en/main/asr/asr_all.html#featurizers) Pipeline em escala de produção para os modelos Parakeet + Canary.

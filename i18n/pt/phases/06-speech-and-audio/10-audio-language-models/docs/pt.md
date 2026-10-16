@@ -129,17 +129,18 @@ class AudioProjector(nn.Module):
 
 ```python
 from datasets import load_dataset
-mmau = load_dataset("MMAU/MMAU-Pro")
+mmau = load_dataset("gamma-lab-umd/MMAU-Pro", split="test")
+mcq = mmau.filter(lambda item: len(item["choices"] or []) > 1)
 
 correct = 0
-for item in mmau["test"]:
-    answer = call_model(item["audio"], item["question"], item["choices"])
-    if answer == item["correct_choice"]:
+for item in mcq:
+    answer = call_model(item["audio_path"], item["question"], item["choices"])
+    if answer == item["answer"]:
         correct += 1
-print(f"Accuracy: {correct / len(mmau['test']):.3f}")
+print(f"Accuracy: {correct / len(mcq):.3f}")
 ```
 
-Relacione por categoria (discurso / som / música / multi-audio) separadamente.
+`audio_path`Pontos para os repo do conjunto de dados `data.zip`(cerca de 47 GB), então baixe e desligue antes de marcar. Este ciclo de correspondência exacta é um teste de sanidade, não o marcador de referência, por isso o seu número não é comparável aos resultados publicados do MMAU-Pro. O avaliador oficial corresponde às respostas de escolha múltipla incorporando semelhança (NV-Embed-v2), classifica respostas de prazo aberto com um juiz de LLM e verifica as respostas que seguem instruções com regras regex: escrever previsões para um `model_output`coluna e execução `evaluate_mmau_pro_comprehensive.py`do [MMAU-Pro repo](https://github.com/sonalkum/MMAUPro)- Reportai cada um .`category`Os números agregados escondem-se onde o modelo falha.
 
 ## Usá-lo
 
@@ -187,4 +188,4 @@ Salva como`outputs/skill-alm-picker.md`. Selecione LALM + subconjunto de referê
 - [NVIDIA (2025). Audio Flamingo 3](https://arxiv.org/abs/2507.08128)O líder de áudio aberto.
 - [NVIDIA (2026). Audio Flamingo Next](https://arxiv.org/abs/2604.10905) LongAudioBench SOTA.
 - [Tang et al. (2023). SALMONN](https://arxiv.org/abs/2310.13289)Pioneiro de duplo codificador.
-- [MMAU-Pro leaderboard](https://mmaubenchmark.github.io/) classificação ao vivo de 2026.
+- [MMAU-Pro leaderboard](https://sonalkum.github.io/mmau-pro/) classificação ao vivo de 2026.
