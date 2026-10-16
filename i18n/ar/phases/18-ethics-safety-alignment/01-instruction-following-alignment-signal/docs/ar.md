@@ -32,8 +32,8 @@
 
 لكل طلب، عينة K الإكمالات من نموذج SFT. يقوم المصنفون بتصنيفها. قم بتدريب نموذج مكافأة يسجل أي زوج استجابة طلب بحيث، بالنسبة للزوجات حيث `y_w`كان مفضلاً على`y_l`:
 
-```
-L_RM = -log sigmoid(r(x, y_w) - r(x, y_l))
+```math
+L_{\text{RM}} = -\log \sigma\big(r(x, y_w) - r(x, y_l)\big)
 ```
 
 هذه هي فقدان تفضيل برادلي تيري بالتزاوج. عادة ما يتم تشغيل RM من نموذج SFT مع استبدال رأس LM بال رأس متزاوج.
@@ -44,8 +44,8 @@ L_RM = -log sigmoid(r(x, y_w) - r(x, y_l))
 
 تحديد الهدف:
 
-```
-J(pi) = E_{x~D, y~pi(.|x)} [ r(x, y) ] - beta * KL(pi(.|x) || pi_SFT(.|x))
+```math
+J(\pi) = \mathbb{E}_{x \sim D,\, y \sim \pi(\cdot \mid x)} \big[ r(x, y) \big] - \beta \, \mathrm{KL}\big(\pi(\cdot \mid x) \,\|\, \pi_{\text{SFT}}(\cdot \mid x)\big)
 ```
 
 أقصى مع PPO. مصطلح KL يحتفظ`pi`بدونها، يجد المحسن أمثلة معادلة  السلاسل التي تسجل عالية تحت RM لأن RM لم يرها أبدا، وليس لأن البشر يفضلونها في الواقع.
@@ -56,8 +56,8 @@ J(pi) = E_{x~D, y~pi(.|x)} [ r(x, y) ] - beta * KL(pi(.|x) || pi_SFT(.|x))
 
 بعد RLHF ، يفضل البشر النموذج ولكن يتراجع على المعايير القياسية (SQuAD ، HellaSwag ، DROP). يطلق على Ouyang et al. هذا ضريبة التنظيم ويحللها مع PPO-ptx: مزج تراجعات ما قبل التدريب في هدف RL حتى لا ينسى النموذج كيفية القيام بالمهام المتدفقة التي لم يتم مكافأتها من أجلها.
 
-```
-J_ptx(pi) = J(pi) + gamma * E_{x~D_pretrain} [ log pi(x) ]
+```math
+J_{\text{ptx}}(\pi) = J(\pi) + \gamma \, \mathbb{E}_{x \sim D_{\text{pretrain}}} \big[ \log \pi(x) \big]
 ```
 
 أصبح PPO-ptx قياسياً. إنثروپي، ديب ميند، و ميتا تستخدم جميعها بعض التغيرات.
@@ -84,7 +84,7 @@ al-instruct-pipeline
 ما الذي يجب أن ننظر إليه:
 
 - مسار مكافأة مع `beta = 0.1`و`beta = 0.0`. . .
-- (بالتالي، فإنّه من المفترض أن يكون هناك إمكانية إضافة المزيد من التدريبات إلى خطوات التدريب.
+- $\mathrm{KL}(\pi \Vert \pi_{\text{SFT}})$على خطوات التدريب
 - توزيع العمل النهائي مقارنة مع تفضيل الملصق.
 
 ## أرسله
@@ -109,7 +109,7 @@ al-instruct-pipeline
 |------|-----------------|------------------------|
 | SFT | "instruction tuning" | Stage 1: cross-entropy fine-tune on prompt-response pairs |
 | Reward model | "the RM" | Scalar regressor over (prompt, response) trained with Bradley-Terry on pairwise labels |
-| Bradley-Terry | "pairwise preference loss" | -log sigmoid(r_w - r_l); reduces pairwise ranking to binary classification |
+| Bradley-Terry | "pairwise preference loss" | $-\log \sigma(r_w - r_l)$; reduces pairwise ranking to binary classification |
 | KL penalty | "the regularizer" | `beta * KL(pi \|\| pi_SFT)` — keeps the RL policy near the SFT anchor |
 | PPO-ptx | "PPO with pretraining mix" | Adds a fraction of pre-training log-likelihood to the PPO objective to offset the alignment tax |
 | Alignment tax | "the RLHF regression" | Post-RLHF drop on standard benchmarks that RLHF did not target |

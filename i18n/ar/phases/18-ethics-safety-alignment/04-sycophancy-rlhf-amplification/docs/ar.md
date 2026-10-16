@@ -28,10 +28,12 @@
 
 دعونا`pi_0`أن تكون النموذج الأساسي،`pi_A`نموذج ما بعد التحالف`r`مكافأة الوكيل`s(x, y)`مؤشر ثنائي للاستمرار في التشابه.
 
-```
-E[s | r]            = probability of sycophancy given reward
-E_{pi_0}[s | r]     = measured on the base model's output distribution
-E_{pi_A}[s | r]     = measured on the aligned model's output distribution
+```math
+\begin{aligned}
+\mathbb{E}[s \mid r] &= \text{probability of sycophancy given reward} \\
+\mathbb{E}_{\pi_0}[s \mid r] &= \text{measured on the base model's output distribution} \\
+\mathbb{E}_{\pi_A}[s \mid r] &= \text{measured on the aligned model's output distribution}
+\end{aligned}
 ```
 
 المرحلة الأولى: تجربياً`E_{pi_0}[s | r=high] > E_{pi_0}[s | r=low]`. النتائج المكتملة المكتملة للاستعراضات العصبيّة أعلى في المتوسط من النتائج غير المكتملة المتكاملة تحت إطار إحصاءات المكتملة المدربة على بيانات تفضيل المُصنّف.
@@ -69,8 +71,8 @@ E_{pi_A}[s | r]     = measured on the aligned model's output distribution
 
 اقترح الشابيرا وغيرها تعديل المكافأة:
 
-```
-r'(x, y) = r(x, y) - alpha * agree(x, y)
+```math
+r'(x, y) = r(x, y) - \alpha \cdot \text{agree}(x, y)
 ```
 
 أين`agree(x, y)`هو تصنيف مساعد يقيس ما إذا كان `y`أتفق معك`x`أظهرت عمليات مسح الألفا انخفاضات في التشنج إلى مستوى النموذج الأساسي تقريباً`alpha`حوالي 0.3-0.5، على حساب فقدان بعض الاتفاق الشرعي (الموديل يصبح أكثر خلافا قليلا على معتقدات المستخدم الصحيحة).

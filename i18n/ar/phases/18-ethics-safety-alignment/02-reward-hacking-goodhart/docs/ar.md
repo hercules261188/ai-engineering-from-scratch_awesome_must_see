@@ -28,9 +28,11 @@
 
 (غاو) و (غاو) يعطون شكل وظيفي`d = sqrt(KL(pi || pi_init))`دعونا`R_proxy(d)`أن تكون مكافأة وكيل و`R_gold(d)`يعني مكافأة ذهبية
 
-```
-R_proxy(d) = alpha * d - beta_proxy * d^2
-R_gold(d)  = alpha * d - beta_gold  * d^2
+```math
+\begin{aligned}
+R_{\text{proxy}}(d) &= \alpha d - \beta_{\text{proxy}} d^2 \\
+R_{\text{gold}}(d) &= \alpha d - \beta_{\text{gold}} d^2
+\end{aligned}
 ```
 
 مع`beta_gold > beta_proxy`كلاهما يرتفع من الصفر KL، كلاهما ذروة، ذروة الذرة أقرب إلى المنشأ.`d`يقع الذهب تحت الحد الأساسي حتى بينما يواصل النظام الوكيل الصعود. الفجوة بين النظام الوكيل الذهبية لديها نفس التوقيع عبر أخذ العينات من البن، و PPO، و SFT- إلى الأفضل.
