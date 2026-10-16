@@ -140,7 +140,6 @@ python3 code/main.py
 - [Type-Checked Compliance: Deterministic Guardrails (arXiv 2604.01483)](https://arxiv.org/pdf/2604.01483) निर्धारक गेटिंग की ऊपरी सीमा के रूप में लीन 4
 - [logi-cmd/agent-guardrails — merge gate spec](https://github.com/logi-cmd/agent-guardrails) दायरा + उत्परिवर्तन परीक्षण के द्वार
 - [Guardrails AI x MLflow](https://guardrailsai.com/blog/guardrails-mlflow) आईसी स्कोरर के रूप में निर्धारक सत्यापितकर्ता
-- [Akira, Real-Time Guardrails for Agentic Systems](https://www.akira.ai/blog/real-time-guardrails-agentic-systems) उपकरण से पहले/पश्चात के द्वार
 - चरण 14 · 27  शीघ्र इंजेक्शन रक्षा (गेट का विरोधी जोड़ा)
 - चरण 14 · 36  इस गेट द्वारा लागू किए जाने वाले दायरे के अनुबंध
 - चरण 14 · 37  प्रतिक्रिया लॉग इस गेट स्कोर

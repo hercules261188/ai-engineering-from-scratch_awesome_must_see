@@ -90,7 +90,7 @@ python3 -m unittest discover code/tests -v
 ## आगे पढ़ना
 
 - [Nuseibeh and Easterbrook, Requirements Engineering: A Roadmap](https://www.cs.toronto.edu/~sme/papers/2000/ICSE2000.pdf), लक्ष्य, सटीक विनिर्देशों, सत्यापन, सहमति और विकास के बीच संबंध के लिए।
-- [Zave and Jackson, Four Dark Corners of Requirements Engineering](https://doi.org/10.1145/267895.267896), पर्यावरण परिकल्पनाओं, आवश्यकताओं और विनिर्देशों को अलग करने के लिए।
+- [Zave and Jackson, Four Dark Corners of Requirements Engineering](https://doi.org/10.1145/237432.237434), पर्यावरण परिकल्पनाओं, आवश्यकताओं और विनिर्देशों को अलग करने के लिए।
 - [Gotel and Finkelstein, An Analysis of the Requirements Traceability Problem](https://doi.org/10.1109/ICRE.1994.292398), यह संरक्षित करने के लिए कि आवश्यकता क्यों मौजूद है और यह कहां से आई है।
 
 ## जो आप रखते हैं

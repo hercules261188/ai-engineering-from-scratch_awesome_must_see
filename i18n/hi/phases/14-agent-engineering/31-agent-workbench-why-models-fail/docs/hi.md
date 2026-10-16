@@ -214,7 +214,6 @@ python3 code/main.py
 - [preprints.org, Harness Engineering for Language Agents (March 2026)](https://www.preprints.org/manuscript/202603.1756) नियंत्रण / एजेंसी / रनटाइम के रूप में शैक्षणिक ढांचे
 - [walkinglabs/awesome-harness-engineering](https://github.com/walkinglabs/awesome-harness-engineering) संदर्भ, मूल्यांकन, अवलोकन, संगठनात्मकता के अनुसार चुनिंदा पठन सूची
 - [ai-boost/awesome-harness-engineering](https://github.com/ai-boost/awesome-harness-engineering) वैकल्पिक क्युरेट सूची (उपकर, मूल्यांकन, मेमोरी, एमसीपी, अनुमति)
-- [andrewgarst/agentic_harness](https://github.com/andrewgarst/agentic_harness) Redis समर्थित मेमोरी और eval सूट के साथ उत्पादन के लिए तैयार संदर्भ कार्यान्वयन
 - [HKUDS/OpenHarness](https://github.com/HKUDS/OpenHarness) अंतर्निहित व्यक्तिगत एजेंट के साथ खुला एजेंट हर्न
 
 हैकर न्यूज के विषयों को मतभेदों के लिए पढ़ने लायक है, मतभेदों के लिए नहींः
