@@ -259,6 +259,16 @@ bash phases/00-setup-and-tooling/06-python-environments/code/env_setup.sh
 3. एक लिखें `pyproject.toml`एक परियोजना के लिए जो PyTorch और मानव SDK दोनों की आवश्यकता है
 4. जानबूझकर एक पैकेज को वैश्विक रूप से स्थापित करें (विनव को सक्रिय किए बिना), नोट करें कि यह कहां जाता है, फिर इसे अनइंस्टॉल करें
 
+### संकेत
+
+**Exercise 1.**दौड़ें`bash phases/00-setup-and-tooling/06-python-environments/code/env_setup.sh`भंडारण मूल से. प्रत्येक आउटपुट पंक्ति पढ़ें; जब एक जांच विफल हो जाती है, उस एक आइटम को ठीक करें और कोई जांच विफल होने तक स्क्रिप्ट को फिर से चलाएं।
+
+**Exercise 2.** के साथ एक नए फ़ोल्डर में दूसरा वातावरण बनाएं`uv venv`, इसे सक्रिय करें, और एक पुराने numpy के साथ एक संस्करण पिन स्थापित करें जैसे `numpy==1.26.4`. दौड़ `python -c "import numpy; print(numpy.__version__)"`प्रत्येक वातावरण में; दोनों संस्करण अलग-अलग होना चाहिए।
+
+**Exercise 3.**pyproject.toml में उदाहरण से शुरू करें मूल बातें और सूची `torch`और `anthropic``dependencies`. दौड़ `uv pip install -e .`या `uv sync`एक नए वातावरण में; फ़ाइल सही है जब दोनों पैकेज त्रुटि के बिना आयात करते हैं।
+
+**Exercise 4.**हर वातावरण को निष्क्रिय करें, चलाएँ `pip install --user <small package>`, फिर भाग `pip show <package>`और पढ़ें `Location`लाइन. इसे अनइंस्टॉल करें `pip uninstall <package>`और दौड़ें`pip show`यह पुष्टि करने के लिए कि यह चला गया है।
+
 ## प्रमुख शर्तें
 
 | Term | What people say | What it actually means |

@@ -49,7 +49,7 @@ xcode-select --install
 brew install git curl wget
 
 # Ubuntu/Debian
-sudo apt update && sudo apt install -y build-essential git curl wget
+sudo apt update && sudo apt install -y build-essential git curl wget unzip
 
 # Windows (use WSL2)
 wsl --install -d Ubuntu-24.04
@@ -95,6 +95,8 @@ npm install -g pnpm
 
 node -e "console.log('Node', process.version)"
 ```
+
+fnm इंस्टॉलर की जाँच करता है`unzip`पहले और बाहर निकलता है `Not installing fnm due to missing dependencies.`जब यह अनुपस्थित हैः लिनक्स पर यह एक ज़िप संग्रह को अनपैक करता है, macOS पर यह Homebrew के माध्यम से स्थापित करता है। macOS जहाज `unzip`; उबंटू, डेबियन, और WSL2 इसे चरण 1 apt लाइन से प्राप्त करें (`sudo apt install -y unzip`यदि आप उस कदम को छोड़ दिया है) ।
 
 **macOS / Apple Silicon (M1/M2/M3/M4):**यदि इंस्टॉलर के साथ बंद हो जाता है `Error: Cannot install under Rosetta 2 in ARM default prefix (/opt/homebrew)`, आपका टर्मिनल Rosetta 2 के तहत चल रहा है (`arch`छापें `i386`जबकि Homebrew एक मूल arm64 निर्माण है. fnm बल arm64 स्थापित करें, इसे अपने खोल में तार, फिर ऊपर से आदेशों को फिर से चलाएँ.`fnm install 22`:
 
@@ -218,3 +220,11 @@ Next: python3 phases/01-math-foundations/01-linear-algebra-intuition/code/vector
 1. सत्यापन स्क्रिप्ट चलाएँ और किसी भी विफलता को ठीक करें
 2. इस पाठ्यक्रम के लिए एक पायथन आभासी वातावरण बनाएं और PyTorch स्थापित करें
 3. चार भाषाओं में "हैलो वर्ल्ड" लिखें और प्रत्येक को चलाएं
+
+### संकेत
+
+**Exercise 1.**दौड़ें`python3 phases/00-setup-and-tooling/01-dev-environment/code/verify.py --route beginner`आप अगले एक पर नज़र रखने से पहले पहले पहले विफल पंक्ति को ठीक करें। जांच तब की जाती है जब आप स्क्रिप्ट को फिर से चलाते हैं और हर आवश्यक जांच गुजरता है।
+
+**Exercise 2.**पर्यावरण को `uv venv`भंडारण रूट में, इसे सक्रिय करें, फिर चरण 6 से कमांड के साथ PyTorch स्थापित करें जो आपके हार्डवेयर से मेल खाता है। चलाएँ `python -c "import torch; print(torch.__version__)"`पर्यावरण के भीतर; एक संस्करण संख्या का अर्थ है कि स्थापना काम किया।
+
+**Exercise 3.**अवधारणा में स्टैक से चार रनटाइम का उपयोग करेंः पायथन, नोड.जेएस पर टाइपस्क्रिप्ट, रुस्ट और जूलिया। प्रत्येक के लिए एक छोटी फ़ाइल लिखें और इसे चलाएं `python3`,`npx tsx`(Node.js एक `.ts`सीधे फाइल), `cargo run`या `rustc`और `julia`. प्रत्येक रन को अपने संदेश प्रिंट और कोड 0 के साथ बाहर निकलना चाहिए .

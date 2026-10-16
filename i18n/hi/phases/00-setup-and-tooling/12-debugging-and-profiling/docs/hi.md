@@ -395,3 +395,15 @@ python phases/00-setup-and-tooling/12-debugging-and-profiling/code/debug_tools.p
 3. उपयोग करें`tracemalloc`यह पता लगाने के लिए कि आपके डेटा लोडिंग पाइपलाइन में कौन सी लाइन सबसे अधिक मेमोरी आवंटित करती है।
 4. एक साधारण प्रशिक्षण रन के लिए TensorBoard सेट करें और यह पता लगाएं कि मॉडल अति उपयुक्त है या नहीं।
 5. उपयोग करें`breakpoint()`प्रशिक्षण लूप के अंदर। डिबगर प्रॉम्प्ट से टेन्सर के आकार, उपकरणों और ग्रेडिएंट मानों का निरीक्षण करने का अभ्यास करें।
+
+### संकेत
+
+**Exercise 1.**दौड़ें`python3 phases/00-setup-and-tooling/12-debugging-and-profiling/code/debug_tools.py`और प्रत्येक डेमो समारोह के आउटपुट पढ़ें. फिर मॉडल में बदलें `demo_nan_detection`ताकि इसका आउटपुट शून्य से विभाजित हो जाए, और फिर से चलाया जाए; `detect_nan`चरण संख्या के साथ एक एनएएन चेतावनी प्रिंट करना होगा।
+
+**Exercise 2.**लूप नीचे चलाएँ `python -m cProfile -s cumtime your_script.py`, या इसे लपेट `cProfile.Profile()`.                                    `cumtime`कॉलम; सबसे बड़ा समय के साथ कार्य जो अपने स्वयं के कोड है सबसे धीमा है।
+
+**Exercise 3.**कॉल`tracemalloc.start()`डेटा लोड कोड से पहले और `tracemalloc.take_snapshot()`इसके बाद, जैसे `demo_memory_tracking`. प्रिंट `snapshot.statistics("lineno")[:5]`; पहली पंक्ति में सबसे अधिक आवंटन वाली फ़ाइल और पंक्ति संख्या दिखाई देती है।
+
+**Exercise 4.**प्रशिक्षण हानि और सत्यापन हानि को एक तक रिकॉर्ड करें `SummaryWriter`हर युग में, फिर दौड़ `tensorboard --logdir=runs`यदि प्रमाणीकरण हानि बढ़ते हुए प्रशिक्षण हानि घटती रहती है, तो मॉडल ओवरटाइप हो जाता है।
+
+**Exercise 5.**डाल `breakpoint()`लूप के अंदर के बाद `loss.backward()`और स्क्रिप्ट चलाओ.`(Pdb)`शीघ्र, प्रिंट `x.shape`,`x.device`और `next(model.parameters()).grad`, फिर टाइप `c`अगले कदम पर आगे बढ़ें।
