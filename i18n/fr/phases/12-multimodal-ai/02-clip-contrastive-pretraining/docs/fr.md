@@ -35,10 +35,10 @@ CLIP a deux tours:
 
 Les deux tours normalisent leurs sorties à la longueur d'unité.`cos(f(x), g(y)) = f(x)^T g(y)`puisque les deux sont la norme de l'unité.
 
-Pour un lot de paires N (image, sous-titre), construire la matrice de similitude `S`de forme `(N, N)`- Le numéro de la liste:
+Pour un lot de $N$(image, sous-titre) paires, construire la matrice de similitude `S`de forme `(N, N)`- Le numéro de la liste:
 
-```
-S[i, j] = cos(f(x_i), g(y_j)) / tau
+```math
+S[i, j] = \cos(f(x_i), g(y_j)) / \tau
 ```
 
 où `tau`est une température apprise (CLIP s'initialise à 0,07; apprise dans l'espace log).
@@ -57,7 +57,7 @@ Le softmax de la CE force chaque image à correspondre à sa légende plus que t
 
 ### Température
 
-`tau`La couche de la couche de la couche de couche de couche de couche de couche de couche de couche de couche de couche de couche de couche de couche de couche de couche de couche de couche de couche de couche de couche de couche de couche de couche de couche de couche de couche de couche de couche de couche de couche de couche de couche de couche de couche de couche de couche de couche de couche de couche de couche de couche de couche de couche de couche de couche de couche de couche de couche de couche de couche de couche de couche de couche de couche de couche de couche de couche de couche de couche de couche de couche de couche de couche de couche de couche de couche de couche de couche de couche de couche de couche de couche de couche de couche de couche de couche de couche de couche de couche de couche de couche de couche de couche de couche de couche de couche de couche de couche de couche de couche de couche de couche de couche de couche de couche de couche de couche de couche de couche de couche de couche de couche de couche de couche de couche de couche de couche de couche de couche de couche de couche de couche de couche de couche de couche de couche de couche de couche de couche de couche de couche de couche de couche de couche de couche de couche de couche de couche de couche de couche de couche de couche de couche de couche de couche de couche de couche de couche de couche de couche de couche de couche de couche de couche de couche de couche de couche de couche de couche de couche de couche de couche de couche de couche de couche de couche de couche de couche de couche de couche de couche de couche de couche de couche de couche de couche de couche de couche de
+`tau`La température de la douceur maximale est réduite.$\tau$→ une distribution nette, un effet minéral négatif dur.$\tau$→ doux, tous les échantillons contribuent.$\log(1/\tau)$SigLIP 2 répare l' initiel$\tau$et utilise un biais appris à la place.
 
 ### Pourquoi les sigmoïdes sont mieux étalés (SigLIP)
 
@@ -65,8 +65,8 @@ Softmax a besoin de la matrice de similitude entière en synchronisation. Dans l
 
 SigLIP remplace softmax par un sigmoïde à base d' éléments: pour chaque paire `(i, j)`, la perte est une classification binaire de "sont-ce la paire correspondante?" les étiquettes de classe positive sont la diagonale, tout le reste est négatif.
 
-```
-L = -1/N sum over (i, j) [ y_ij log sigmoid(S[i,j]) + (1-y_ij) log sigmoid(-S[i,j]) ]
+```math
+L = -\frac{1}{N} \sum_{(i, j)} \Big[ y_{ij} \log \mathop{\mathrm{sigmoid}}(S[i,j]) + (1-y_{ij}) \log \mathop{\mathrm{sigmoid}}(-S[i,j]) \Big]
 ```
 
 `y_ij = 1`si `i == j`Chaque GPU calcule son bloc local et ses sommes. SigLIP 2 évolue à 32k-512k à moindre coût où CLIP aurait besoin d'une communication proportionnelle plus grande.
@@ -132,7 +132,7 @@ Cette leçon produit `outputs/skill-clip-zero-shot.md`. Compte tenu d'un ensembl
 
 3. Construisez un classifiateur de cats contre chiens.`a photo of a {class}`et `a picture of a {class}`- Mesurer la précision sur 100 images de test.
 
-4. Comptez le coût de communication de softmax InfoNCE vs sigmoid par paire pour une course à 512 GPU à 32k lots.
+4. Comptez le coût de communication de softmax InfoNCE vs sigmoid par paire pour une course à 512 GPU à 32k lot.$O(N)$, qui comme $O(N^2)$Citez la section 4 du Siglip.
 
 5. Lisez le document OpenCLIP sur les lois d'échelle (arXiv:2212.07143, Cherti et al.).
 

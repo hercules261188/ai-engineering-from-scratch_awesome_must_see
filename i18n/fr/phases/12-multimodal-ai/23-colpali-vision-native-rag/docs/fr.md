@@ -36,28 +36,28 @@ Correction de ColPali: sauter OCR, intégrer directement l'image de page. Utilis
 
 ColBERT (Khattab & Zaharia, arXiv:2004.12832) est une méthode de récupération de texte. Au lieu d'un vecteur par document, il produit un vecteur par jeton.
 
-- Les jetons de requête obtiennent leurs propres emplacements (vecteurs N_q).
-- Les jetons de document obtiennent des emblèmes (vecteurs N_d, généralement en cache).
-- Score = somme sur les jetons de requête de max sur les jetons de document de similitude cosine: Σ_i max_j cos(q_i, d_j).
+- Les jetons de requête obtiennent leurs propres emplacements ($N_q$Les vecteurs).
+- Les jetons de document obtiennent des emplacements ($N_d$vecteurs, généralement en cache).
+- Score = somme sur les jetons de requête de max sur les jetons de document de similitude cosine: $\sum_i \max_j \cos(q_i, d_j)$- Je suis désolé .
 
 C'est l'opération MaxSim. chaque jeton de requête "choisit" son jeton de document le mieux correspondant. Le score final est la somme.
 
-Avantages: rappel fort, gère la sémantique au niveau des termes.
+Avantages: rappel fort, gère la sémantique au niveau des termes.$N_d$Vecteurs par document, stockage coûteux.
 
 ### ColPali
 
 ColPali (Faysse et coll., arXiv:2407.01449) applique le modèle ColBERT aux images.
 
-- Chaque page est codée par PaliGemma (langue ViT+) en emblèmes de correctifs: vecteurs N_p par page.
-- Chaque requête utilisateur (texte) est codée dans des emblèmes de jetons de requête: vecteurs N_q.
-- Score = Σ_i max_j cos(q_i, p_j), c'est-à-dire MaxSim sur les jetons de texte de requête et les patchs d'image de page.
+- Chaque page est codée par PaliGemma (langue ViT +) dans des emplacements de correctifs: $N_p$vecteurs par page.
+- Chaque requête utilisateur (texte) est codée dans des emplacements de jetons de requête: $N_q$Les vecteurs.
+- Score = $\sum_i \max_j \cos(q_i, p_j)$, c'est-à-dire MaxSim sur les jetons de texte de requête et les patchs d'image de page.
 - Récupérez les pages de premier ordre par score total.
 
 Au moment de l'ingestion du document: intégrer chaque page avec PaliGemma, stocker toutes les intégrations de correctifs. au moment de la requête: intégrer les jetons de requête, calculer MaxSim par rapport à toutes les intégrations de page stockées, retourner les pages top-k.
 
 Les avantages: le texte de bout en bout dépasse le RAG de 20 à 40% sur les documents riches en visuel.
 
-Cons: N_p patches × 4 bytes flottant × D-dim vecteurs par page = stockage croît rapidement. Atténuée par la quantification PQ / OPQ.
+Les inconvénients: $N_p$patches × 4 bytes flottantes × $D$-dim vecteurs par page = stockage croît rapidement.
 
 ### ColQwen2 et ColSmol
 
@@ -128,7 +128,7 @@ Cette leçon produit `outputs/skill-vision-rag-designer.md`. Dans le cadre d'un 
 
 1. Un rapport annuel de 200 pages à 729 patches par page, un emb 128 dimensions, des floats de 4 bytes.
 
-2. MaxSim est Σ_i max_j cos(q_i, p_j). Que capture cette somme qu'une simple moyenne de similitude ne fait pas?
+2. MaxSim est $\sum_i \max_j \cos(q_i, p_j)$Que cette somme capture qu'une simple signification de similitude ne le fait pas ?
 
 3. ColPali indice les pages comme des ensembles de correctifs. Quels changements si nous indexons au niveau des mots (comme ColBERT le fait)?
 
@@ -143,7 +143,7 @@ Cette leçon produit `outputs/skill-vision-rag-designer.md`. Dans le cadre d'un 
 | Late interaction | "ColBERT-style" | Retrieval using per-token or per-patch embeddings + MaxSim, not a single doc vector |
 | MaxSim | "Max-over-patches" | For each query token, pick the highest-similarity document token; sum across query |
 | Bi-encoder | "Single-vector" | One vector per document; faster but loses granularity |
-| Multi-vector | "Many-vectors-per-doc" | Store N_p vectors per document / page; storage cost grows but recall improves |
+| Multi-vector | "Many-vectors-per-doc" | Store $N_p$ vectors per document / page; storage cost grows but recall improves |
 | Patch embedding | "Page feature" | One vector per image patch from a VLM encoder, cached per page |
 | ViDoRe | "Vision doc bench" | ColPali's benchmark suite for visual document retrieval |
 | PQ quantization | "Product quantization" | Compression that maintains vector similarity while shrinking storage ~8x |

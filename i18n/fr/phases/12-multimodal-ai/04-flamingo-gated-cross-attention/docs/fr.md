@@ -30,18 +30,18 @@ Flamingo commence par un LLM de Chinchilla 70B gelé. Tous les poids 70B intacts
 
 ### Remplacement de l'échantillon de percepteur
 
-Pour chaque image dans le prompt, le ViT produit N patch tokens. Le resampler Percepteur a K fixes latences apprenables (Flamingo utilise K=64).
+Pour chaque image dans le prompt, le ViT produit $N$Le rééchantillon du percepteur a$K$Les données de formation sont à l'origine de données de formation.$K=64$) Chaque bloc de repérage est constitué de deux sous-étapes:
 
-1. Attention croisée: les K latences sont présentes sur les N patch tokens (Q des latences, K/V des patches).
+1. Attention croisée: le $K$Les latents assistent à la$N$les jetons de patch (Q à partir de latences, K/V à partir de patches).
 2. Autotentification + FFN dans les latences.
 
-Après 6 blocs de repérage, la sortie est K = 64 jetons visuels de dim 1024, quel que soit le nombre de correctifs produits par le ViT. Une image 224x224 (196 patches) et une image 480x480 (900 patches) sortent tous deux en 64 jetons de repérage.
+Après 6 blocs de repérage, la sortie est $K=64$Les images de la vitesse de vie de l'image de l'image de l'image de l'image de l'image de l'image de l'image de l'image de l'image de l'image de l'image de l'image de l'image de l'image de l'image de l'image de l'image de l'image de l'image de l'image de l'image de l'image de l'image de l'image de l'image de l'image de l'image de l'image de l'image de l'image de l'image de l'image de l'image de l'image de l'image de l'image de l'image de l'image de l'image de l'image de l'image de l'image de l'image de l'image de l'image de l'image de l'image de l'image de l'image de l'image de l'image de l'image de l'image de l'image de la vitesse de l'image de l'image de la vitesse de l'image de l'image de la vitesse de l'image de la vitesse de l'image de l'image de la vitesse de l'image de la vitesse de l'image de l'image de la vitesse de l'image de la vitesse de l'image de la vitesse de l'image de la vitesse de l'image de la vitesse de l'image de la vitesse de l'image de la vitesse de l'image de la vitesse de l'image de la vitesse de la vit de l'image de la vitesse de l'image de la vitesse de la vitesse de l'image de la vitesse de l'image de la vit de la vitesse de la vit de la vit de la vitesse de la vit de la vitesse de l'image de la vit de l'image de la vitesse de la vit de la vitesse de la vitesse de la vitesse de la vitesse de la vitesse de la vitesse de la vitesse de la vit à la vit.
 
-Pour la vidéo, le resampler est appliqué temporairement: les patchs de chaque cadre produisent 64 latences, et un codage positionnel temporel permet au modèle de distinguer t=0 de t=N. La vidéo complète devient des jetons visuels T * 64.
+Pour la vidéo, le resampler est appliqué temporairement: les patchs de chaque cadre produisent 64 latences, et un codage positionnel temporel permet au modèle de distinguer $t=0$de $t=N$La vidéo complète devient$T \cdot 64$des jetons visuels.
 
 ### Attention croisée par voie ferrée
 
-Entre chaque couche M du LLM gelé (Flamingo utilise M=4), insérer un nouveau bloc de l'attention croisée fermé:
+Entre chaque$M$Les couches de la MLL gelée (utilisées par Flamingo $M=4$), insérer un nouveau bloc de l'attention croisée fermé:
 
 ```
 x_after_llm_block = llm_block(x_before)
@@ -148,7 +148,7 @@ Cette leçon produit `outputs/skill-gated-bridge-diagnostic.md`. Compte tenu de 
 | OBELICS | "Interleaved web corpus" | Open dataset of 141M web pages with images and text in reading order |
 | Chinchilla | "70B frozen base" | Flamingo's frozen text LLM, from DeepMind's Chinchilla paper |
 | Gate schedule | "How alpha moves" | The rate at which the cross-attention gate opens during training |
-| Cross-attn frequency | "Every M layers" | How often a gated cross-attention block is inserted; Flamingo uses M=4 |
+| Cross-attn frequency | "Every M layers" | How often a gated cross-attention block is inserted; Flamingo uses $M=4$ |
 | OpenFlamingo | "Open reproduction" | MosaicML/LAION open checkpoint at 3-9B; architecture-identical to Flamingo |
 
 ## Pour en savoir plus

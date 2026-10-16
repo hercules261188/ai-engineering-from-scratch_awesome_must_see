@@ -63,7 +63,7 @@ Qwen2-VL a introduit l'intégration de position rotative multimodal. Au lieu des
 
 M-RoPE envoie une résolution dynamique native sans recyclage. À l'inférence, vous nourrissez une image HxW, le patch embedder produit des jetons H/14 x W/14, chaque jeton obtient sa position (t=0, r=row, c=col), le RoPE fait tourner l'attention avec les bonnes fréquences, fait. Qwen2.5-VL et Qwen3-VL continuent ainsi.
 
-Contrairement à AnyRes, M-RoPE est O(H x W / P^2) jetons à résolution native  pas de charge de carrelage multiplicative. Contrairement à NaViT, il attend toujours une seule image par avance.
+Contrairement à AnyRes, M-RoPE est $O(H \times W / P^2)$Les jetons à résolution native  pas de charge de carreaux multiplicative. contrairement à NaViT, il s'attend toujours à une seule image par transfert.
 
 ### Le produit est le NaFlex (SigLIP 2)
 

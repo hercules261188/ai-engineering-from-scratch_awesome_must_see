@@ -36,7 +36,7 @@ Chaque encodeur audio commence par la même fonctionnalité: un spectrogramme lo
 2. Transformation Fourier à court terme avec des fenêtres de 25 ms, saut de 10 ms.
 3. Prenez l'ampleur du résultat de la FFT.
 4. Appliquer des bancs de filtres Mel (habituellement 80 filtres à intervalles logs de 0 à 8000 Hz) pour déformer la fréquence perceptuelle.
-5. Compresseur de log (log(1 + x)) pour la plage dynamique.
+5. Compresseur de logs$(\log(1 + x))$pour la portée dynamique.
 
 Résultat: un tableau en 2D de forme (T, 80) où T est le nombre de cadres temporels. Pour un clip de 30 secondes à la fréquence d'image de 100 Hz: (3000, 80).
 

@@ -69,11 +69,11 @@ La capacité d'inpeinture est gratuite grâce à la formation de prédiction mas
 
 Le calendrier du nombre de jetons à démasquer par étape forme la qualité.
 
-```
-mask_ratio(t) = cos(pi * t / (2 * T))   # t = 0..T
+```math
+\text{mask\_ratio}(t) = \cos\left(\frac{\pi t}{2T}\right) \qquad t = 0, \ldots, T
 ```
 
-À l'étape 0, tous les jetons masqués (ratio 1.0). à l'étape T, aucun masqué. Cosine concentre la masse sur des ratios de milieu de gamme où la prédiction est la plus informative.
+À l'étape 0, tous les jetons masqués (ratio 1.0).$T$Les calendriers linéaires fonctionnent aussi mais à un rythme plus rapide.
 
 ### Le spectacle
 
@@ -117,7 +117,7 @@ Cette leçon produit `outputs/skill-unified-gen-model-picker.md`. Étant donné 
 
 3. Calendrier cosine vs calendrier linéaire: tracer le nombre de jetons non masqués par étape pour T=8.
 
-4. Une image 512x512 Show-o est de 1024 jetons. À la voyelle K = 16384, le modèle émet 1024 * log2(16384) = 14.336 bits (~1.75 KiB) de données.
+4. Une image 512x512 est de 1024 jetons.$K=16384$, le modèle émet$1024 \cdot \log_2(16384) = 14{,}336$Les données de diffusion stable produisent 512*512*24 bits = 6 291 456 bits (~768 KiB) de pixels bruts. Quel est le ratio de compression et quelle qualité achète-t-il ?
 
 5. Comment le modèle d'image autorégressive classal de LlamaGen diffère-t-il de l'approche masquée de Show-o ?
 

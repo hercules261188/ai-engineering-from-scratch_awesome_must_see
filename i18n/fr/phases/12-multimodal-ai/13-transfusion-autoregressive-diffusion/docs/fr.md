@@ -62,9 +62,9 @@ Appliqué comme masque triangulaire à l'entraînement et à l'inférence.
 La perte de diffusion est standard: ajouter du bruit à un patch d'image, demander au modèle de prédire le bruit (ou le patch propre, équivalemment).
 
 Pendant la formation:
-1. Pour chaque patch d'image x0, prenez un échantillon d'un pas de temps aléatoire t.
-2. L'échantillon de bruit ε, calcul xt = (1-t) * x0 + t * ε (interpolation linéaire pour l'ajustement des flux).
-3. Le transformateur prédit v_theta(xt, t); perte = MSE(v_theta(xt, t), ε - x0).
+1. Pour chaque patch d' image $x_0$, échantillonnage d' un pas de temps aléatoire $t$- Je suis désolé .
+2. L' échantillon de bruit $\epsilon$, calcul$x_t = (1-t) \cdot x_0 + t \cdot \epsilon$(interpolation linéaire pour l'équivalence des débits).
+3. Le transformateur prévoit .$v_\theta(x_t, t)$- le président .$\text{loss} = \mathop{\mathrm{MSE}}(v_\theta(x_t, t), \epsilon - x_0)$- Je suis désolé .
 4. L'arrière-proposition aux côtés du texte NTP perd de la même séquence.
 
 En inférence, la génération est:
