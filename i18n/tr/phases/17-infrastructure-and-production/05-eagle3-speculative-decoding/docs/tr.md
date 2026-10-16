@@ -57,7 +57,7 @@ P99'un ayarlanmaması durumunda daha da kötü olabilir. reddedilen taslaklar ik
 
 ### EAGLE-3'ün zaten kullanıldığı yerler
 
-Google 2025 yılında AI Özetlerinde spekülatör çözümü (aynı kalite, daha hızlı yanıt) yerleştirdi. vLLM V1 gemileri `speculative_config`V1'de N-gram GPU spekülatif çözümü, parçalanmış prefill ile uyumlu olan bir variandır. SGLang, prefix ağır iş yükleri için önerilirken EAGLE-3'yi önerilen taslak yolu olarak destekler.
+Google 2025 yılında AI Özetlerinde spekülatör çözümü (aynı kalite, daha hızlı yanıt) yerleştirdi. vLLM V1 gemileri `speculative_config`SGLang, önleme ağır iş yükleri için önerilen taslak yolu olarak EAGLE-3'i destekler.
 
 ### Bir satırdaki matematikleri düzeltmek
 
@@ -68,7 +68,7 @@ Beklenen hızlandırma: `S(alpha, K) = (1 + K*alpha) / (1 + verify_overhead)`- Y
 - Batch-1 offline jenerasyonu, gecikme önemi olmayan.
 - Çok kısa çıkışlar (50 token altında) Draft overhead ve verification cost baskın.
 - Özel alanlar, alan eğitimi olmayan bir başlık.
-- vLLM v0.18.0 ve taslak model özellikleri çözme ve `--enable-chunked-prefill`Bu kombinasyon birleştirilmez. Belli bir istisna V1'deki N-gram GPU spesifikasyonunu çözme.
+- Her özellik çiftinin oluştuğunu varsayarak. Versiyonunuz için vLLM uyumluluk matrisini kontrol edin: v0.18.0 parçacık prefill ile uyumlu spekülasyonlu çözümü işaretler.
 
 ```figure
 mx-speculative-tree
@@ -86,7 +86,7 @@ Bu ders bize çok yararlı .`outputs/skill-eagle3-rollout.md`. Hedef model, traf
 
 1. Çık .`code/main.py`K=5'te 2x hızlandırmak için hangi alfa'ya ihtiyacınız var? 3x hızlandırmak için?
 2. Üretim trafiğinin %70 genel sohbet, %30 kod bölüştüğünü düşünün. Genel sohbet, ShareGPT'de eğitilmiş EAGLE-3 ile alfa 0.7'e ulaşır; kod alfa 0.4'e ulaşır.
-3. VLLM oku `speculative_config`Dokümanlama. Üç modun (önerge modeli, EAGLE, N-gram) ve hangi bir mod parçalanmış prefill ile uyumlu olduğunu belirtin.
+3. VLLM oku `speculative_config`Doküman. Üç modun (Müzikli model, EAGLE, N-gram) adını verin ve vLLM versiyonunuzda her birinin hangi özellikleri oluşturduğunu kontrol edin.
 4. EAGLE-3'i etkinleştirdikten sonra ortalama ITL'de %25 düşüş görüyorsunuz ama P99 ITL'de %15 artış var.
 5. Llama 3.3 70B için EAGLE-3 çekim başlığının hafıza maliyetini hesaplayın.
 

@@ -30,7 +30,7 @@ Round-robin, devletsiz hizmetler için optimaldir. LLM sonucu tasarımı ile dev
 
 İstek bir istekle gelir. Router öntanımlıyı (örneğin ilk 512 jetonu) hash eder; her replikadan "bu öntanımlıyı önbelleğe kaydetmiş misiniz?" sorar. Replikler blokları tahsis ederken ve çıkarırken bir pub / alt kanalda KV-cache olaylarını yayınlar. Router replikayı eşleşme ile seçer, kimse yapmazsa GPU-util tabanlı bir bağ kırıcıya düşer.
 
-**vLLM Router**(Rust, 2026 üretim aşaması):`kv.cache.block_added`O'll) 1 araması ile yollar. Hiç bir eşleşme olmadığı zaman en az sırada derinliklere düşer.
+**vLLM Router**(Rust, 2026 üretim aşaması):`kv.cache.block_added`Events, prefix-hash → replika indeksini sürdürür,  ile yollar$O(1)$- Hiç eşleşmediğinde en az sırada kalır.
 
 **llm-d router**: aynı desen, Kubernetes-dev. ControlPlane API üzerinden etkinlikleri yayınlar.
 

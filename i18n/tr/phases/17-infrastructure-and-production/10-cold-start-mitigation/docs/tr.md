@@ -125,6 +125,6 @@ Bu ders bize çok yararlı .`outputs/skill-cold-start-planner.md`SLA, model boyu
 - [Modal — Cold start performance](https://modal.com/docs/guide/cold-start) Modal'ın yayınladığı referans değerleri ve kontrol nokta mimarisi.
 - [AWS Bottlerocket](https://github.com/bottlerocket-os/bottlerocket) Önceden ekilen veri hacmi anında görüntüsü örneği.
 - [NVIDIA Run:ai Model Streamer](https://github.com/run-ai/runai-model-streamer) hesaplama ayarıyla birlikte örtüşen ağırlıklar yüklenir.
-- [Baseten — Cold-start mitigation](https://www.baseten.co/blog/cold-start-mitigation/)                                                                                                                                                                                                                                                              
+- [Baseten — Cold starts](https://docs.baseten.co/deployment/autoscaling/cold-starts)                                                                                                                                                                                                                                                              
 - [ServerlessLLM paper (USENIX OSDI'24)](https://www.usenix.org/conference/osdi24/presentation/fu) Dört katlı yükleme tasarımı.
 - [NVIDIA — Disaggregated LLM Inference on Kubernetes](https://developer.nvidia.com/blog/deploying-disaggregated-llm-inference-workloads-on-kubernetes/) ayrıntılı yerleştirmeler için canlı göç.
