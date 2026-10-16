@@ -26,36 +26,36 @@ Bu sadece basit sorunlar için değil. Linyer gerileme talep tahminleri, A / B t
 
 ### Örnek
 
-Düzsel gerileme giriş (x) ve çıkış (y) arasındaki düzsel bir ilişkiyi varsayır:
+Düzsel gerileme girişler arasındaki düzsel bir ilişkiyi varsayır ($x$) ve çıkış ($y$):
 
-```
+```math
 y = wx + b
 ```
 
-- `w`(koleksiyon/eğim): x 1 arttığında y'nin değişimi
-- `b`(bias/intercept): x = 0 olduğunda y'nin değeri
+- `w`(koşul/kaynak): ne kadar $y$değişir.$x$1 artış
+- `b`(Örküt/Kısıtlama): $y$Ne zaman ?$x = 0$
 
 Çoklu girişler (karakterlikler) için, bu aşağıdakilere kadar uzanır:
 
-```
-y = w1*x1 + w2*x2 + ... + wn*xn + b
+```math
+y = w_1 x_1 + w_2 x_2 + \cdots + w_n x_n + b
 ```
 
-Ya da vektör biçiminde: `y = w^T * x + b`
+Ya da vektör biçiminde: $y = w^T x + b$
 
-Amaç: tüm eğitim örneklerinde öngörülen y'yi mümkün olduğunca gerçek y'ye yakın hale getiren w ve b değerlerini bulmak.
+Amaç: değerleri bulmak $w$ve $b$Bu tahminleri gerçekleştirir.$y$- Evet. - Evet.$y$Tüm eğitim örnekleri.
 
 ### Maliyet işlevi (Orta Çekirde Hata)
 
 "Mümkün olduğunca yakın" ölçmek için nasıl bir sayı gerekir? Öncülüklerinizin ne kadar yanlış olduğunu anlatan tek bir sayı gerekir. En yaygın seçenek ortalama kare hatadır (MSE):
 
-```
-MSE = (1/n) * sum((y_predicted - y_actual)^2)
+```math
+\text{MSE} = \frac{1}{n} \sum (y_{\text{predicted}} - y_{\text{actual}})^2
 ```
 
 Neden kare? İki neden. Birincisi, büyük hataları küçük hatalardan daha fazla cezalandırır (10'un hatası 1'den 100 kat daha kötüdür, 10'un hatasından daha kötüdür).
 
-Masraf fonksiyonu bir yüzey oluşturur. Tek bir ağırlık w ve önyargı b için, MSE yüzeyi bir kase gibi görünür (konveks bir paraboloid).
+Masraf fonksiyonu bir yüzeyin oluşmasını sağlar.$w$ve önyargı$b$MSE'nin en az olduğu yere, o yere ulaşmak için bir tası bulmak gerekir.
 
 ### Aralıklı Düşüş
 
@@ -74,18 +74,22 @@ flowchart TD
 
 Değişkenler size iki şeyi söyler: her parametreyi hangi yönde hareket ettirmek ve ne kadar hareket etmek.
 
-Y_hat = wx + b ile MSE için:
+ ile MSE için$\hat{y} = wx + b$- ...
 
-```
-dMSE/dw = (2/n) * sum((y_hat - y) * x)
-dMSE/db = (2/n) * sum(y_hat - y)
+```math
+\begin{aligned}
+\frac{\partial \text{MSE}}{\partial w} &= \frac{2}{n} \sum (\hat{y} - y) \, x \\
+\frac{\partial \text{MSE}}{\partial b} &= \frac{2}{n} \sum (\hat{y} - y)
+\end{aligned}
 ```
 
 Güncelleme kuralı:
 
-```
-w = w - learning_rate * dMSE/dw
-b = b - learning_rate * dMSE/db
+```math
+\begin{aligned}
+w &= w - \text{learning\_rate} \cdot \frac{\partial \text{MSE}}{\partial w} \\
+b &= b - \text{learning\_rate} \cdot \frac{\partial \text{MSE}}{\partial b}
+\end{aligned}
 ```
 
 Öğrenme hızı adım boyutunu kontrol eder. Çok büyük: minimumı aşarsınız ve ayrılığa düşersiniz. Çok küçük: eğitim sonsuza kadar sürer. Tipik başlangıç değerleri: 0.01, 0.001, veya 0.0001.
@@ -94,18 +98,18 @@ b = b - learning_rate * dMSE/db
 
 Özellikle doğrusal gerileme için, herhangi bir iterasyon olmadan en iyi ağırlıkları veren doğrudan bir formül vardır:
 
-```
-w = (X^T * X)^(-1) * X^T * y
+```math
+w = (X^T X)^{-1} X^T y
 ```
 
-Bu, bir adım içinde w için çözülecek bir matrisin tersine çevirir. Küçük veri kümeleri için mükemmel bir şekilde çalışır. Büyük veri kümeleri için (milyonlarca satır veya binlerce özellik), gradient düşüşü özellik sayısı için tercih edilir.
+Bu çözülecek bir matrisin tersine çevirir.$w$Küçük veri kümeleri için mükemmel bir şekilde çalışır. Büyük veri kümeleri için (milyonlarca satır veya binlerce özellik), gradient düşüşü tercih edilir çünkü matris inversyonu $O(n^3)$Özellik sayısı.
 
 ### Çoklu Düzsel Geri Dönüş
 
 Çoklu özelliklerle, model:
 
-```
-y = w1*x1 + w2*x2 + ... + wn*xn + b
+```math
+y = w_1 x_1 + w_2 x_2 + \cdots + w_n x_n + b
 ```
 
 Her şey aynı şekilde çalışır: MSE maliyet fonksiyonu, gradient düşüşü tüm ağırlıkları aynı anda güncelleyebilir. Tek fark, bir çizgi yerine bir hiper düzlem yerleştirmek.
@@ -116,36 +120,38 @@ Her şey aynı şekilde çalışır: MSE maliyet fonksiyonu, gradient düşüş�
 
 Eğer ilişki doğrusal değilse ne olacak?
 
-```
-y = w1*x + w2*x^2 + w3*x^3 + b
+```math
+y = w_1 x + w_2 x^2 + w_3 x^3 + b
 ```
 
-Bu hala "lineer" geri dönüştür, çünkü model ağırlıklarda (w1, w2, w3) doğrusaldır.
+Bu hala "lineer" geri dönüştür, çünkü model ağırlıklarda lineer ($w_1, w_2, w_3$Sen sadece $x$- Evet .
 
 Yüksek dereceleri polinomlar daha karmaşık eğriye uyum sağlayabilir, ancak aşırı uyum sağlama riski vardır. 10 dereceli bir polinom 10 nokta verisi kümesindeki her noktayı geçecek, ancak yeni veriler üzerinde kötü tahmin edecektir.
 
 ### R-Squared puanı
 
-MSE size ne kadar yanıldığınızı söyler, ancak sayı y'in ölçeğine bağlıdır. R kare (R^2) ölçek bağımsız bir ölçüm verir:
+MSE size ne kadar yanıldığınızı söyler, ama sayı $y$R kare ($R^2$) ölçek bağımsız bir önlem verir:
 
-```
-R^2 = 1 - (sum of squared residuals) / (sum of squared deviations from mean)
-    = 1 - SS_res / SS_tot
+```math
+\begin{aligned}
+R^2 &= 1 - \frac{\text{sum of squared residuals}}{\text{sum of squared deviations from mean}} \\
+&= 1 - \frac{SS_{\text{res}}}{SS_{\text{tot}}}
+\end{aligned}
 ```
 
-- R^2 = 1.0: mükemmel tahminler
-- R^2 = 0.0: model her seferinde ortalamayı tahmin etmekten daha iyi değildir
-- R^2 < 0.0: model ortalama tahmininden daha kötüdür
+- $R^2 = 1.0$: mükemmel tahminler
+- $R^2 = 0.0$: model her seferinde ortalama tahmininden daha iyi değil
+- $R^2 < 0.0$: model ortalama tahmininden daha kötü
 
 ### Düzenleme Önbellek (Ridge Regression)
 
 Çok sayıda özellik varsa, model büyük ağırlıklar tahsis ederek aşırı uyum sağlayabilir.
 
-```
-Cost = MSE + lambda * sum(w_i^2)
+```math
+\text{Cost} = \text{MSE} + \lambda \sum w_i^2
 ```
 
-Ceza terimi büyük ağırlıkları engeller. Hiperparametr lambda, ödemeyi kontrol eder: daha yüksek lambda daha küçük ağırlıkları ve daha fazla düzenlenmeyi ifade eder. Bu daha sonraki bir dersde derinlemesine ele alınacaktır.
+Ceza terimi büyük ağırlıkları engeller.$\lambda$Aralıklar: daha yüksek$\lambda$Bu, daha sonraki derslerde daha derin bir şekilde ele alınacak.
 
 ```figure
 linear-regression-fit
@@ -520,24 +526,24 @@ Bu ders şunları ortaya çıkarır:
 ## Egzersizler
 
 1. Parçelerdaki gradient düşüşünü, stohastik gradient düşüşünü (SGD) ve mini-parçelerdeki gradient düşüşünü uygulayın. Aynı veri kümesinde yakınlaşma hızını karşılaştırın. Hangisi en hızlı yakınlaşır? Hangisinin en düzgün maliyet eğri var?
-2. Bir küp fonksiyonundan veri oluşturmak (y = ax^3 + bx^2 + cx + d + gürültü). 1, 3 ve 10 dereceye ait uyumlu polinomlar.
-3. Lasso geri dönüşü uygulayın (L1 düzenlenmesi: ceza alfa *((sümesi = çiğnemesi)). Çoklu özellikli konut verilerini çalıştırın. Hangi ağırlıkların sıfır vs. Ridge'e gittiğini karşılaştırın. L1 neden nadir çözümler üretir, L2 neden yapmaz?
+2. Küp bir fonksiyondan veriler oluşturur ($y = ax^3 + bx^2 + cx + d + \text{noise}$) 1, 3 ve 10 dereceye uygun polinomlar.$R^2$ve test$R^2$- Ne kadar fazla uygunluk açıkça görülüyor?
+3. Lasso geri dönüşünü uygula (L1 düzenlenmesi: $\text{penalty} = \alpha \sum \lvert w_i \rvert$L1 neden nadir çözümler üretir, L2 neden değil?
 
 ## Anahtar Terimler
 
 | Term | What people say | What it actually means |
 |------|----------------|----------------------|
-| Linear regression | "Draw a line through data" | Find weight w and bias b that minimize the sum of squared differences between wx+b and actual y values |
+| Linear regression | "Draw a line through data" | Find weight $w$ and bias $b$ that minimize the sum of squared differences between $wx+b$ and actual $y$ values |
 | Cost function | "How bad the model is" | A function that maps model parameters to a single number measuring prediction error, which optimization minimizes |
-| Mean squared error | "Average of squared errors" | (1/n) * sum of (predicted - actual)^2, penalizing large errors disproportionately |
+| Mean squared error | "Average of squared errors" | $\frac{1}{n} \sum (\text{predicted} - \text{actual})^2$, penalizing large errors disproportionately |
 | Gradient descent | "Walk downhill" | Iteratively adjust parameters in the direction that reduces the cost function, using partial derivatives |
 | Learning rate | "Step size" | A scalar that controls how much parameters change per gradient descent step |
-| Normal equation | "Solve it directly" | The closed-form solution w = (X^T X)^-1 X^T y that gives optimal weights without iteration |
-| R-squared | "How good the fit is" | The fraction of variance in y explained by the model, ranging from negative infinity to 1.0 |
+| Normal equation | "Solve it directly" | The closed-form solution $w = (X^T X)^{-1} X^T y$ that gives optimal weights without iteration |
+| R-squared | "How good the fit is" | The fraction of variance in $y$ explained by the model, ranging from negative infinity to 1.0 |
 | Feature scaling | "Make features comparable" | Transforming features to similar ranges (e.g., zero mean, unit variance) so gradient descent converges faster |
 | Regularization | "Penalize complexity" | Adding a term to the cost function that shrinks weights, preventing overfitting |
-| Ridge regression | "L2 regularization" | Linear regression with a penalty of lambda * sum(w_i^2) added to MSE |
-| Polynomial regression | "Fitting curves with linear math" | Linear regression on polynomial features (x, x^2, x^3, ...), still linear in the weights |
+| Ridge regression | "L2 regularization" | Linear regression with a penalty of $\lambda \sum w_i^2$ added to MSE |
+| Polynomial regression | "Fitting curves with linear math" | Linear regression on polynomial features ($x, x^2, x^3, \ldots$), still linear in the weights |
 | Overfitting | "Memorizing training data" | Using a model so complex that it fits noise in training data and fails on new data |
 
 ## Daha Fazla Okumak

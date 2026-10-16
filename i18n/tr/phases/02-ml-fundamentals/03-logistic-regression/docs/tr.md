@@ -18,7 +18,7 @@
 
 Bir tümörün büyüklüğü bakıldığında kötü huylu veya iyi huylu olup olmadığını tahmin etmek istersiniz. Düzsel geri dönüş denersiniz. 0.3 veya 1.7 veya -0.5 gibi sayılarda sonuçlar verir. Bunlar ne anlama gelir? 1.7 "çok kötü huylu" mu? -0.5 "çok iyi huylu" mu? Düzsel geri dönüş sınırsız sayılarda sonuçlar verir. Sınıflandırmaya 0 ile 1 arasında sınırlı olasılıklar ve net bir karar gerekir: evet veya hayır.
 
-Logistik gerileme bunu çözür. Aynı doğrusal kombinasyonu (wx + b) alır ve herhangi bir sayıyı (0, 1) aralığına sıyrarak sigmoid işlevi üzerinden geçer.
+Logistik gerileme bunu çözür.$wx + b$Bu sayede, bir olasılık çıkışını oluşturur.
 
 Bu uygulamalarda en yaygın kullanılan algoritmalardan biridir. Adına rağmen, lojistik gerileme bir sınıflandırma algoritması, gerileme algoritması değil. Adı kullanıldığı lojistik (sigmoid) işleviyle gelir.
 
@@ -44,22 +44,22 @@ Sınıflandırma, aşağıdaki fonksiyona ihtiyaç duyar:
 
 Sigmoid fonksiyonu tam olarak bunu yapar:
 
-```
-sigmoid(z) = 1 / (1 + e^(-z))
+```math
+\sigma(z) = \frac{1}{1 + e^{-z}}
 ```
 
 Özellikleri:
-- Z büyük ve pozitif olduğunda, sigmoid ((z) 1'e yaklaşır.
-- Z büyük ve negatif olduğunda, sigmoid ((z) 0'ya yaklaşır.
-- Z = 0, sigmoid(z) = 0,5 olduğunda
+- Ne zaman ?$z$büyük ve olumlu.$\sigma(z)$yaklaşımlar 1
+- Ne zaman ?$z$büyük ve negatif.$\sigma(z)$yaklaşım 0
+- Ne zaman ?$z = 0$- Evet .$\sigma(z) = 0.5$
 - Çıktı her zaman 0 ile 1 arasında
 - İşlev her yerde düzgün ve farklılık gösterir
 
-Delivyenin uygun bir şekli vardır: sigmoid'(z) = sigmoid(z) * (1 - sigmoid(z)). Bu gradient hesaplamasını verimli kılar.
+Devirenin uygun bir şekli vardır: $\sigma'(z) = \sigma(z) (1 - \sigma(z))$Bu gradient hesaplamalarını verimli hale getirir.
 
 ### Logistik Geri Dönüş = Düzsel Model + Sigmoid
 
-Model z = wx + b (sadece doğrusal gerileme olarak) hesaplar ve sonra sigmoid uyguluyor:
+Modeldeki hesaplamalar $z = wx + b$(sadece doğrusal gerileme gibi), sonra sigmoid uygulanır:
 
 ```mermaid
 flowchart LR
@@ -70,21 +70,21 @@ flowchart LR
     D -->|No| N[Predict 0]
 ```
 
-Çıktı p P ((y=1)) olarak yorumlanır. Girişlerin 1. sınıfına ait olma olasılığı. Karar sınırı wx + b = 0 olduğu yerde, bu da sigmoid çıkışını tam olarak 0.5 yapar.
+Çıktı $p$Bu ifade $P(y=1 \mid x)$, girişlerin 1. sınıfına ait olma olasılığı.$wx + b = 0$, Sigmoid çıkışı tam olarak 0.5 yapar.
 
 ### Biner çapraz entropik kaybı
 
 MSE'yi lojistik gerileme için kullanamazsınız. Sigmoid ile MSE, birçok yerel minimum ile konveks olmayan bir maliyet yüzeyini oluşturur.
 
-```
-Loss = -(1/n) * sum(y * log(p) + (1-y) * log(1-p))
+```math
+\text{Loss} = -\frac{1}{n} \sum \left( y \log(p) + (1-y) \log(1-p) \right)
 ```
 
 Neden işe yarıyor:
-- Y=1 ve p 1: log(1) = 0'ya yakın olduğunda, kaybı 0'ya yakın olur (doğru, düşük maliyet)
-- Y=1 ve p 0'ya yakın olduğunda: log(0) negatif sonsuzluk yaklaşır, bu yüzden kayıp büyüktür (hatalı, yüksek maliyet)
-- Y=0 ve p 0'ya yakın olduğunda: log(1) = 0, bu nedenle kaybı 0'ya yakın (doğru, düşük maliyet)
-- Y=0 ve p 1: log(0) yakın olduğunda negatif sonsuzluk yaklaşır, bu yüzden kayıp büyüktür (hatalı, yüksek maliyet)
+- Ne zaman ?$y=1$ve $p$1'e yakın.$\log(1) = 0$, yani kaybı 0 yakın (doğru, düşük maliyet)
+- Ne zaman ?$y=1$ve $p$0'ya yakın: $\log(0)$Negatif sonsuzluk yaklaşır, bu yüzden kayıp büyüktür ( yanlışı, yüksek maliyet)
+- Ne zaman ?$y=0$ve $p$0'ya yakın: $\log(1) = 0$, yani kaybı 0 yakın (doğru, düşük maliyet)
+- Ne zaman ?$y=0$ve $p$1'e yakın.$\log(0)$Negatif sonsuzluk yaklaşır, bu yüzden kayıp büyüktür ( yanlışı, yüksek maliyet)
 
 Bu kayıp işlevi, lojistik gerileme için eğri ve tek bir küresel minimum garanti eder.
 
@@ -92,12 +92,14 @@ Bu kayıp işlevi, lojistik gerileme için eğri ve tek bir küresel minimum gar
 
 Sigmoid ile ikili çapraz entropi için gradientler temiz bir formda bulunur:
 
-```
-dL/dw = (1/n) * sum((p - y) * x)
-dL/db = (1/n) * sum(p - y)
+```math
+\begin{aligned}
+\frac{\partial L}{\partial w} &= \frac{1}{n} \sum (p - y) \, x \\
+\frac{\partial L}{\partial b} &= \frac{1}{n} \sum (p - y)
+\end{aligned}
 ```
 
-Bunlar doğrusal gerileme gradiyentilerine benzer görünüyor. Fark ise p = sigmoid(wx + b) yerine p = wx + b. Sigmoid doğrusal olmayanlığı tanıtır, ancak gradient güncelleme kuralı aynı kalır.
+Bu çizgisi gerileme gradiyenti ile aynı görünüyor.$p = \sigma(wx + b)$yerine$p = wx + b$Sigmoid, doğrusal olmayanlığı tanıtır, ama gradient güncelleme kuralı aynı kalır.
 
 ```mermaid
 flowchart TD
@@ -114,29 +116,29 @@ flowchart TD
 
 2D giriş için (iki özellik), karar sınırı, aşağıdaki çizgidir:
 
-```
-w1*x1 + w2*x2 + b = 0
+```math
+w_1 x_1 + w_2 x_2 + b = 0
 ```
 
 Bir tarafta noktalar 1 olarak sınıflandırılır, diğer tarafta 0 olarak sınıflandırılır. Logistik geri dönüş her zaman doğrusal bir karar sınırı üretir. Eğer eğri bir sınırı istiyorsanız, ya polinom özellikleri eklersiniz ya da doğrusal olmayan bir model kullanırsınız.
 
 ### Softmax ile çok sınıf sınıflandırma
 
-İkili lojistik gerileme iki sınıfı ele alır. k sınıfları için softmax fonksiyonunu kullanın:
+İkili lojistik gerileme iki sınıfı ele alır.$k$sınıflar, softmax fonksiyonunu kullanın:
 
-```
-softmax(z_i) = e^(z_i) / sum(e^(z_j) for all j)
+```math
+\text{softmax}(z_i) = \frac{e^{z_i}}{\sum_j e^{z_j}}
 ```
 
-Her sınıfın kendi ağırlık vektörü vardır. Model her sınıf için bir puan z_i hesaplar, sonra softmax puanları 1'e toplam olasılıklara dönüştürür.
+Her sınıfın kendi ağırlık vektörü vardır.$z_i$Her sınıf için, softmax puanları 1'e denk olan olasılıklara dönüştürür.
 
 Kayıp işlevi kategorik çapraz entropiye dönüşür:
 
-```
-Loss = -(1/n) * sum(sum(y_k * log(p_k)))
+```math
+\text{Loss} = -\frac{1}{n} \sum \sum_k y_k \log(p_k)
 ```
 
-y_k gerçek sınıf için 1 ve diğer tüm sınıflar için 0 (bir sıfır kodlama) olduğu yerlerde.
+nerede$y_k$gerçek sınıf için 1 ve diğer tüm sınıflar için 0 (bir sıcaktan kodlama).
 
 ### Değerlendirme Metrikleri
 
@@ -150,18 +152,18 @@ Sadece doğruluk yeterli değildir. %95 negatif ve %5 pozitif olan bir veri küm
 | Actually Negative | False Positive (FP) | True Negative (TN) |
 
 **Precision**Tüm öngörülen olumlu sonuçlardan kaçı aslında olumlu?
-```
-Precision = TP / (TP + FP)
+```math
+\text{Precision} = \frac{TP}{TP + FP}
 ```
 
 **Recall**(Sensitivite): Tüm olumlu sonuçlardan kaç tane yakaladık?
-```
-Recall = TP / (TP + FN)
+```math
+\text{Recall} = \frac{TP}{TP + FN}
 ```
 
 **F1 Score**: Harmonik kesim kesimleri, doğru ve geri çağırma.
-```
-F1 = 2 * (Precision * Recall) / (Precision + Recall)
+```math
+F_1 = 2 \cdot \frac{\text{Precision} \cdot \text{Recall}}{\text{Precision} + \text{Recall}}
 ```
 
 Öncelikleri ne zaman belirleyin:
@@ -504,7 +506,7 @@ Bu ders şunları ortaya çıkarır:
 
 ## Egzersizler
 
-1. Düzsel olarak ayırılabilir olmayan bir veri kümesi oluşturun (örneğin iki konsentrik döngü). Logistik gerilemeyi çalıştırın ve başarısızlığını gözlemleyin.
+1. Düzsel olarak ayırılamaz bir veri kümesi oluşturun (örneğin iki konsentrik döngü).$x_1^2, x_2^2, x_1 x_2$Düzgünlüğün iyileştiğini göster.
 2. 3 sınıf softmax modeli için bir çok sınıf karışıklık matrisi uygulayın.
 3. 0'dan 1'e kadar 100 eşiğin değerleri için gerçek pozitif oranı ve yanlış pozitif oranı hesaplayın.
 
@@ -513,14 +515,14 @@ Bu ders şunları ortaya çıkarır:
 | Term | What people say | What it actually means |
 |------|----------------|----------------------|
 | Logistic regression | "Regression for classification" | A linear model followed by a sigmoid function that outputs class probabilities |
-| Sigmoid function | "The S-curve" | The function 1/(1+e^(-z)) that maps any real number to the range (0, 1) |
-| Binary cross-entropy | "Log loss" | The loss function -[y*log(p) + (1-y)*log(1-p)] that penalizes confident wrong predictions severely |
+| Sigmoid function | "The S-curve" | The function $1/(1+e^{-z})$ that maps any real number to the range (0, 1) |
+| Binary cross-entropy | "Log loss" | The loss function $-[y \log(p) + (1-y) \log(1-p)]$ that penalizes confident wrong predictions severely |
 | Decision boundary | "The dividing line" | The surface where the model's output probability equals 0.5, separating predicted classes |
 | Softmax | "Multi-class sigmoid" | A function that converts a vector of scores into probabilities that sum to 1 |
-| Precision | "How many selected are relevant" | TP / (TP + FP), the fraction of positive predictions that are actually positive |
-| Recall | "How many relevant are selected" | TP / (TP + FN), the fraction of actual positives that the model correctly identifies |
-| F1 score | "Balanced accuracy" | The harmonic mean of precision and recall: 2*P*R / (P+R) |
+| Precision | "How many selected are relevant" | $TP / (TP + FP)$, the fraction of positive predictions that are actually positive |
+| Recall | "How many relevant are selected" | $TP / (TP + FN)$, the fraction of actual positives that the model correctly identifies |
+| F1 score | "Balanced accuracy" | The harmonic mean of precision and recall: $2PR / (P+R)$ |
 | Confusion matrix | "The error breakdown" | A table showing TP, TN, FP, FN counts for each class pair |
 | Threshold | "The cutoff" | The probability value above which the model predicts class 1 (default 0.5, tunable) |
-| One-hot encoding | "Binary columns for categories" | Representing class k as a vector of zeros with a 1 at position k |
-| Categorical cross-entropy | "Multi-class log loss" | The extension of binary cross-entropy to k classes using one-hot encoded labels |
+| One-hot encoding | "Binary columns for categories" | Representing class $k$ as a vector of zeros with a 1 at position $k$ |
+| Categorical cross-entropy | "Multi-class log loss" | The extension of binary cross-entropy to $k$ classes using one-hot encoded labels |

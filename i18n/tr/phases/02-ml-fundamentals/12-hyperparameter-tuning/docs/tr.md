@@ -16,7 +16,7 @@
 
 ## Sorun
 
-Bu, altı hiperparametre anlamına gelir. Eğer her birinin 5 makul değeri varsa, ağ 5^6 = 15.625 kombinasyonlara sahiptir. Her birinin eğitimi 10 saniye alır. Bu, hepsini denemek için 43 saat hesaplama demektir.
+Gradyent artıran modeliniz öğrenme oranına, ağaç sayısına, maksimum derinliğine, yaprak başına minimum numuneye, alt numune oranına ve sütun numune oranına sahiptir.$5^6 = 15{,}625$Her bir antrenman 10 saniye sürer.
 
 Grid arama, açık bir yaklaşımdır ve ölçekte en kötüdür. Kaç hesaplama ile rastgele arama daha iyi yapar. Bayesian optimizasyonu geçmiş değerlendirmelerden öğrenerek daha da iyi yapar. Hangi stratejiyi kullanmak gerektiğini ve hangi hiperparametreyi gerçekten önemli olarak bilmek, günlerce CPU zamanının boşa harcanmasını sağlar.
 
@@ -31,7 +31,7 @@ Parametre eğitim sırasında öğrenilir (koşullar, tarafsızlıklar, bölünm
 | Learning rate | Step size per update | 0.001 to 1.0 |
 | Number of trees/epochs | How long to train | 10 to 10,000 |
 | Max depth | Model complexity | 1 to 30 |
-| Regularization (lambda) | Overfitting prevention | 0.0001 to 100 |
+| Regularization ($\lambda$) | Overfitting prevention | 0.0001 to 100 |
 | Batch size | Gradient estimation noise | 16 to 512 |
 | Dropout rate | Fraction of neurons dropped | 0.0 to 0.5 |
 
@@ -125,7 +125,7 @@ Hyperband özellikle etkili. Her biri 1 dönem ile 81 yapılandırmayı başlat�
 | Scheduler | Formula | When to use |
 |-----------|---------|-------------|
 | Step decay | Multiply by 0.1 every N epochs | Classic CNN training |
-| Cosine annealing | lr * 0.5 * (1 + cos(pi * t / T)) | Modern default |
+| Cosine annealing | $\text{lr} \cdot 0.5 \cdot (1 + \cos(\pi t / T))$ | Modern default |
 | Warmup + decay | Linear increase then cosine decay | Transformers |
 | One-cycle | Increase then decrease over one cycle | Fast convergence |
 | Reduce on plateau | Reduce by factor when metric stalls | Safe default |

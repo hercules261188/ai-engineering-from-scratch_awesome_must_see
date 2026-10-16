@@ -28,15 +28,15 @@ SVM'ler doğrudan 1'inci aşamaya bağlanır: optimizasyon konveks (Dene 18), ke
 
 ### Maksimum marjin sınıflandırıcısı
 
-{-1, +1} etiketleri y_i ve özellik vektörleri x_i ile doğrusal olarak ayırılabilir veriler verildiğinde sınıfları ayıran bir hiper düzlem w^T x + b = 0 istiyoruz.
+Etiketlerle doğrusal olarak ayırılabilir veriler verildi $y_i \in \lbrace -1, +1 \rbrace$ve özellik vektörleri $x_i$, hiper uçağı istiyoruz .$w^T x + b = 0$Bu sınıfları ayırır.
 
-Bir noktadan x_i'ye hiper düzlemine olan mesafe:
+Bir noktadan uzaklık$x_i$hiper düzlemde:
 
+```math
+\text{distance} = \frac{\lvert w^T x_i + b \rvert}{\lVert w \rVert}
 ```
-distance = |w^T x_i + b| / ||w||
-```
 
-Doğru sınıflandırılmış bir nokta için: y_i * (w^T x_i + b) > 0. Marj iki katı, hiper düzlemden her iki tarafta en yakın noktaya kadar olan mesafedir.
+Doğru sınıflandırılmış bir nokta için: $y_i (w^T x_i + b) > 0$- Bozukluk, her iki tarafta en yakın noktaya kadar hiper düzlemden iki kat uzaklıkta.
 
 ```mermaid
 graph LR
@@ -51,19 +51,23 @@ graph LR
 
 Optimizeleme sorunu:
 
-```
-maximize    2 / ||w||     (the margin width)
-subject to  y_i * (w^T x_i + b) >= 1  for all i
-```
-
-Benzer şekilde (minimize edilmek, optimize edilmek için daha kolay):
-
-```
-minimize    (1/2) ||w||^2
-subject to  y_i * (w^T x_i + b) >= 1  for all i
+```math
+\begin{aligned}
+\text{maximize} \quad & \frac{2}{\lVert w \rVert} \quad \text{(the margin width)} \\
+\text{subject to} \quad & y_i (w^T x_i + b) \ge 1 \quad \text{for all } i
+\end{aligned}
 ```
 
-Bu bir konveks kareli programdır. Bu programın eşsiz bir küresel çözümü vardır. Sınır sınırlarında tam olarak yer alan veri noktaları (y_i * (w^T x_i + b) = 1) destek vektörleri.
+Dönüşüm (minimize etmek)$\lVert w \rVert^2$Optimize edilmesi daha kolay:
+
+```math
+\begin{aligned}
+\text{minimize} \quad & \frac{1}{2} \lVert w \rVert^2 \\
+\text{subject to} \quad & y_i (w^T x_i + b) \ge 1 \quad \text{for all } i
+\end{aligned}
+```
+
+Bu bir konveks kareli programdır. Bu benzersiz bir küresel çözüme sahiptir.$y_i (w^T x_i + b) = 1$) destek vektörleri. karar sınırını belirleyen tek noktalardır.
 
 ### Destek vektörleri: kritik birkaç
 
@@ -85,30 +89,32 @@ Destek vektörlerinin sayısı genelleştirme hatası için de bir sınır sağl
 
 Gerçek veriler nadiren mükemmel bir şekilde ayrılabilir. Bazı noktalar sınırın yanlış tarafında veya kenarın içinde olabilir. Yumuşak kenar formülasyonu gevşek değişkenleri ekleyerek ihlallere izin verir.
 
-```
-minimize    (1/2) ||w||^2 + C * sum(xi_i)
-subject to  y_i * (w^T x_i + b) >= 1 - xi_i
-            xi_i >= 0  for all i
+```math
+\begin{aligned}
+\text{minimize} \quad & \frac{1}{2} \lVert w \rVert^2 + C \sum_i \xi_i \\
+\text{subject to} \quad & y_i (w^T x_i + b) \ge 1 - \xi_i \\
+& \xi_i \ge 0 \quad \text{for all } i
+\end{aligned}
 ```
 
-Bu değerler, bu değerlerin değerini belirlerken, bu değerlerin değerini belirler.
+Sıkıntı değişkeni $\xi_i$Ne kadar puan ölçer $i$- Marjinin bozulması.$C$İşlemleri kontrol eder:
 
-| C value | Behavior |
+| $C$ value | Behavior |
 |---------|----------|
-| Large C | Penalizes violations heavily. Narrow margin, fewer misclassifications. Overfits |
-| Small C | Allows more violations. Wide margin, more misclassifications. Underfits |
+| Large $C$ | Penalizes violations heavily. Narrow margin, fewer misclassifications. Overfits |
+| Small $C$ | Allows more violations. Wide margin, more misclassifications. Underfits |
 
-C, düzenlenme gücü, tersine. Büyük C = daha az düzenlenme. Küçük C = daha fazla düzenlenme.
+$C$- normalleşme gücü, tersine.$C$= daha az düzenlenme.$C$= daha düzenli.
 
 ### Çakışıklık kaybı: SVM kaybı fonksiyonu
 
 Yumuşak Marjin SVM, kısıtlama dışı bir optimizasyon olarak yeniden yazılabilir:
 
-```
-minimize    (1/2) ||w||^2 + C * sum(max(0, 1 - y_i * (w^T x_i + b)))
+```math
+\text{minimize} \quad \frac{1}{2} \lVert w \rVert^2 + C \sum_i \max(0, 1 - y_i (w^T x_i + b))
 ```
 
-Max(0, 1 - y_i * f(x_i)) terimi, bir nokta doğru bir şekilde sınıflandırıldığında ve kenardan öte olduğunda sıfırdır.
+Terim $\max(0, 1 - y_i f(x_i))$Bu, nokta doğru bir şekilde sınıflandırıldığında ve kenardan öte olduğunda sıfırdır.
 
 ```
 Hinge loss for a single point:
@@ -130,9 +136,11 @@ Linear penalty when y*f(x) < 1.
 
 Logistik kayıplarla (logistik gerileme) karşılaştırın:
 
-```
-Hinge:     max(0, 1 - y*f(x))          Hard cutoff at margin
-Logistic:  log(1 + exp(-y*f(x)))        Smooth, never exactly zero
+```math
+\begin{aligned}
+\text{Hinge:} \quad & \max(0, 1 - y f(x)) && \text{Hard cutoff at margin} \\
+\text{Logistic:} \quad & \log(1 + \exp(-y f(x))) && \text{Smooth, never exactly zero}
+\end{aligned}
 ```
 
 Hinge kaybı nadir çözümler üretir (sadece destek vektörleri sıfır dışı katkılara sahiptir).
@@ -141,36 +149,40 @@ Hinge kaybı nadir çözümler üretir (sadece destek vektörleri sıfır dış�
 
 Sınırlı QP çözmeden, bir doğrusal SVM'yi, zarf kaybı ve L2 düzenlenmesi üzerinde gradient düşüşü kullanarak antrene edebilirsiniz:
 
+```math
+\begin{aligned}
+& L(w, b) = \frac{\lambda}{2} \lVert w \rVert^2 + \frac{1}{n} \sum_i \max(0, 1 - y_i (w^T x_i + b)) \\[6pt]
+& \text{Gradient with respect to } w\text{:} \\
+& \quad \text{If } y_i (w^T x_i + b) \ge 1\text{:} \quad \frac{\partial L}{\partial w} = \lambda w \\
+& \quad \text{If } y_i (w^T x_i + b) < 1\text{:} \quad \frac{\partial L}{\partial w} = \lambda w - y_i x_i \\[6pt]
+& \text{Gradient with respect to } b\text{:} \\
+& \quad \text{If } y_i (w^T x_i + b) \ge 1\text{:} \quad \frac{\partial L}{\partial b} = 0 \\
+& \quad \text{If } y_i (w^T x_i + b) < 1\text{:} \quad \frac{\partial L}{\partial b} = -y_i
+\end{aligned}
 ```
-L(w, b) = (lambda/2) * ||w||^2 + (1/n) * sum(max(0, 1 - y_i * (w^T x_i + b)))
 
-Gradient with respect to w:
-  If y_i * (w^T x_i + b) >= 1:  dL/dw = lambda * w
-  If y_i * (w^T x_i + b) < 1:   dL/dw = lambda * w - y_i * x_i
-
-Gradient with respect to b:
-  If y_i * (w^T x_i + b) >= 1:  dL/db = 0
-  If y_i * (w^T x_i + b) < 1:   dL/db = -y_i
-```
-
-Bu, ilk formülasyon olarak adlandırılır. O(n * d) epoca başına çalışır, burada n örnek sayısı ve d özellik sayısıdır. Büyük, nadir, yüksek boyutlu veriler (metin sınıflandırması) için bu hızlıdır.
+Buna ilk formülasyon denir.$O(n \cdot d)$Zaman başına, nerede $n$örneklerin sayısı ve $d$Büyük, nadir, yüksek boyutlu veriler için (metin sınıflandırması), bu hızlı.
 
 ### Çift formülasyon ve çekirdek hilesi
 
 SVM sorununun Lagrangian çiftliği (Fase 1 Ders 18, KKT koşullarından) şunlardır:
 
-```
-maximize    sum(alpha_i) - (1/2) * sum_ij(alpha_i * alpha_j * y_i * y_j * (x_i . x_j))
-subject to  0 <= alpha_i <= C
-            sum(alpha_i * y_i) = 0
+```math
+\begin{aligned}
+\text{maximize} \quad & \sum_i \alpha_i - \frac{1}{2} \sum_{i,j} \alpha_i \alpha_j y_i y_j (x_i \cdot x_j) \\
+\text{subject to} \quad & 0 \le \alpha_i \le C \\
+& \sum_i \alpha_i y_i = 0
+\end{aligned}
 ```
 
-Dual sadece nokta ürünleri x_i. x_j ile veri noktaları arasında içerir. Bu ana bilgilerdir. Her nokta ürünü bir çekirdek fonksiyonu K(x_i, x_j ile değiştirin ve SVM, dönüşümün açıkça hesaplanmadan doğrusal olmayan sınırları öğrenebilir.
+Dual sadece nokta ürünleri içerir $x_i \cdot x_j$Bu anahtar anlayış. Her nokta ürünü bir çekirdek fonksiyonu ile değiştirin.$K(x_i, x_j)$ve SVM, dönüşümün açıkça hesaplanmadan asgari sınırları öğrenebilir.
 
-```
-Linear kernel:      K(x, z) = x . z
-Polynomial kernel:  K(x, z) = (x . z + c)^d
-RBF (Gaussian):     K(x, z) = exp(-gamma * ||x - z||^2)
+```math
+\begin{aligned}
+\text{Linear kernel:} \quad & K(x, z) = x \cdot z \\
+\text{Polynomial kernel:} \quad & K(x, z) = (x \cdot z + c)^d \\
+\text{RBF (Gaussian):} \quad & K(x, z) = \exp(-\gamma \lVert x - z \rVert^2)
+\end{aligned}
 ```
 
 RBF çekirdeği verileri sonsuz boyutlu bir alanın haritasına yerleştiriyor. Giriş alanında yakın olan noktaların çekirdeğin değeri 1.
@@ -186,20 +198,22 @@ graph LR
     A -->|"Kernel trick<br>K(x,z) = phi(x).phi(z)"| B
 ```
 
-Kernelik hilesi, yüksek boyutlu alanın nokta ürünü'ni hiç oraya gitmeden hesaplar. D boyutlarında derece d'li polinom çekirdeği için açık özellik alanının O(D^d) boyutları vardır.
+Yüklü çekirdek numarası, yüksek boyutlu alanın nokta ürünü ile hesaplanır.$d$İçeride$D$boyutları, açık özellik alanı $O(D^d)$Boyutları.$K(x, z)$$O(D)$Zamanı.
 
 ### Geri dönüş için SVM (SVR)
 
-Destek vektörü Geri dönüşü, verilerin etrafında genişliğinde epsilon bir tüp tutar. tüp içindeki noktaların sıfır kaybı vardır. tüp dışındaki noktalar doğrusal olarak cezalandırılır.
+Destek vektörü Geri dönüşü genişliğin bir tüpüyle uyumludur .$\epsilon$Bu, birer nokta için bir ceza olarak belirlenir.
 
-```
-minimize    (1/2) ||w||^2 + C * sum(xi_i + xi_i*)
-subject to  y_i - (w^T x_i + b) <= epsilon + xi_i
-            (w^T x_i + b) - y_i <= epsilon + xi_i*
-            xi_i, xi_i* >= 0
+```math
+\begin{aligned}
+\text{minimize} \quad & \frac{1}{2} \lVert w \rVert^2 + C \sum_i (\xi_i + \xi_i^*) \\
+\text{subject to} \quad & y_i - (w^T x_i + b) \le \epsilon + \xi_i \\
+& (w^T x_i + b) - y_i \le \epsilon + \xi_i^* \\
+& \xi_i, \xi_i^* \ge 0
+\end{aligned}
 ```
 
-Epsilon parametri tüp genişliğini kontrol eder. Geniş tüp = daha az destek vektörü = daha düzgün uyum. dar tüp = daha fazla destek vektörü = daha sıkı uyum.
+- Evet .$\epsilon$Parametre, tüp genişliğini kontrol eder. Geniş tüp = daha az destek vektörü = daha düzgün uyum. dar tüp = daha fazla destek vektörü = daha sıkı uyum.
 
 ### Neden SVM'ler derin öğrenme karşısında kaybediyor (ve hala ne zaman kazanıyorlar)
 
@@ -208,7 +222,7 @@ SVM'ler 1990'ların sonundan 2010'ların başlarına kadar ML'de egemenlik göst
 | Factor | SVMs | Deep learning |
 |--------|------|---------------|
 | Feature engineering | Requires it | Learns features |
-| Scalability | O(n^2) to O(n^3) for kernel | O(n) per epoch with SGD |
+| Scalability | $O(n^2)$ to $O(n^3)$ for kernel | $O(n)$ per epoch with SGD |
 | Image/text/audio | Needs handcrafted features | Learns from raw data |
 | Large datasets (>100k) | Slow | Scales well |
 | GPU acceleration | Limited benefit | Massive speedup |
@@ -324,9 +338,9 @@ print(f"Accuracy: {clf.score(X_test, y_test):.4f}")
 print(f"Support vectors: {clf['svm'].n_support_}")
 ```
 
-Önemli: SVM'yi eğitmeden önce her zaman özelliklerinizi ölçeklendirin. SVM'ler özellik büyüklüklerine hassasdır çünkü kenarlık ölçeklenmemiş özelliklere bağlıdır ve geometriyi çarpıtır.
+Önemli: SVM'yi eğitmeden önce her zaman özelliklerinizi ölçeklendirin.$\lVert w \rVert$, ve ölçülmemiş özellikler geometriyi çarpıtır.
 
-Büyük veri kümeleri için kullan `LinearSVC`(başlangıç formu, O(n) dönem başına) yerine `SVC`(ikili formülasyon, O(n^2) ile O(n^3)):
+Büyük veri kümeleri için kullan `LinearSVC`(başlangıç formu, $O(n)$(Epoha başına) yerine `SVC`(ikili formülasyon, $O(n^2)$- ...$O(n^3){}$):
 
 ```python
 from sklearn.svm import LinearSVC
@@ -341,13 +355,13 @@ clf = Pipeline([
 
 1. 2D doğrusal olarak ayırılabilir bir veri kümesi oluşturun. LinearSVM'inizi çalıştırın ve destek vektörlerini tanımlayın. Destek vektörlerinin karar sınırına en yakın noktaları olup olmadığını kontrol edin.
 
-2. C'nin değişimi 0.001'den 1000'e kadar gürültülü bir veri kümesi üzerinde. Her C değeri için karar sınırını çiz. Geniş marjinden (kilitsiz) dar marjine (kilitsiz) geçişi gözlemleyin.
+2. Çeşitli $C$0.001'den 1000'e kadar gürültülü bir veri kümesi üzerinde.$C$değer. Geniş marjiden (kilitlenme) dar marj (kilitlenme) geçişini gözlemleyin.
 
 3. Sınıf sınırlarının yuvarlak (lineer olmayan) bir veri kümesi oluşturun. Düzsel bir SVM'nin başarısız olduğunu gösterin. RBF çekirdek matrisini hesaplayın ve sınıfların çekirdek indüksiyonlu özellik alanında ayrılabilir olduğunu gösterin.
 
 4. Aynı veri kümesi üzerinde kargaşa kaybı ile lojistik kaybı karşılaştırın. Düzsel SVM ve lojistik gerilemeyi eğitiniz. Her modelin karar sınırına kaç eğitim noktası katkıda bulunduğunu sayın (dayanım vektörleri vs. tüm noktalar).
 
-5. SVR (epsilon-ansansitif kaybı) uygulayın. Y = sin(x) + gürültü ayarlayın. epsilon tüpünü tahminlerin etrafında çizin ve destek vektörlerini (tubanın dışındaki noktaları) vurgulayın.
+5. SVR (epsilon- duyarsızlık kaybı) uygulamak.$y = \sin(x) + \text{noise}$Epsilon tüpünü tahminlerin etrafında çiz ve destek vektörlerini (tubanın dışındaki noktaları) vurgulayın.
 
 ## Anahtar Terimler
 
@@ -355,16 +369,16 @@ clf = Pipeline([
 |------|----------------------|
 | Support vectors | The training points closest to the decision boundary. The only points that determine the hyperplane |
 | Margin | The distance between the decision boundary and the nearest support vectors. SVMs maximize this |
-| Hinge loss | max(0, 1 - y*f(x)). Zero when correctly classified and outside the margin. Linear penalty otherwise |
-| C parameter | Trade-off between margin width and classification errors. Large C = narrow margin, small C = wide margin |
+| Hinge loss | $\max(0, 1 - y f(x))$. Zero when correctly classified and outside the margin. Linear penalty otherwise |
+| C parameter | Trade-off between margin width and classification errors. Large $C$ = narrow margin, small $C$ = wide margin |
 | Soft margin | SVM formulation that allows margin violations via slack variables. Handles non-separable data |
 | Kernel trick | Computing dot products in a high-dimensional feature space without explicitly mapping to that space |
-| Linear kernel | K(x, z) = x . z. Equivalent to standard dot product. For linearly separable data |
-| RBF kernel | K(x, z) = exp(-gamma * \|\|x-z\|\|^2). Maps to infinite dimensions. Learns any smooth boundary |
-| Polynomial kernel | K(x, z) = (x . z + c)^d. Maps to a feature space of polynomial combinations |
+| Linear kernel | $K(x, z) = x \cdot z$. Equivalent to standard dot product. For linearly separable data |
+| RBF kernel | $K(x, z) = \exp(-\gamma \Vert x-z \Vert^2)$. Maps to infinite dimensions. Learns any smooth boundary |
+| Polynomial kernel | $K(x, z) = (x \cdot z + c)^d$. Maps to a feature space of polynomial combinations |
 | Dual formulation | Reformulation of the SVM problem that depends only on dot products between data points. Enables kernels |
 | SVR | Support Vector Regression. Fits an epsilon-tube around the data. Points inside the tube have zero loss |
-| Slack variables | xi_i: measures how much a point violates the margin. Zero for correctly classified points outside margin |
+| Slack variables | $\xi_i$: measures how much a point violates the margin. Zero for correctly classified points outside margin |
 | Maximum margin | The principle of choosing the hyperplane that maximizes the distance to the nearest points of each class |
 
 ## Daha Fazla Okumak

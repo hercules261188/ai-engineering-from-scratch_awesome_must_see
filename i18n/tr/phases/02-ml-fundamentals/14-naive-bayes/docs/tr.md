@@ -30,8 +30,8 @@ Yanlış bir varsaymanın neden iyi tahminlere yol açtığını anlamak, makine
 
 Bayes teoremi koşullu olasılıkları tersine çevirir:
 
-```
-P(class | features) = P(features | class) * P(class) / P(features)
+```math
+P(\text{class} \mid \text{features}) = \frac{P(\text{features} \mid \text{class}) \cdot P(\text{class})}{P(\text{features})}
 ```
 
 İstiyoruz .`P(class | features)`- bir belgenin içindeki kelimeleri göz önüne alarak bir sınıfın birine ait olma olasılığı.
@@ -43,15 +43,15 @@ En yüksek sınıfı .`P(class | features)`- Kazandı.
 
 ### Saf Bir Bağımsızlık Farkında
 
-Bilgisayar `P(features | class)`Bu, tüm özelliklerin ortak olasılığını tahmin etmenizi gerektirir. 10.000 kelimelik bir kelime birikimi ile, 2^10.000 olası kombinasyonların dağılımını tahmin etmeniz gerekir.
+Bilgisayar `P(features | class)`Bu, tüm özelliklerin ortak olasılığını tahmin etmenizi gerektirir.$2^{10{,}000}$- Olabilir kombinasyonlar.
 
 Saf bir varsayım: her özellik sınıfı göz önüne alındığında koşullarla bağımsızdır.
 
-```
-P(w1, w2, ..., wn | class) = P(w1 | class) * P(w2 | class) * ... * P(wn | class)
+```math
+P(w_1, w_2, \ldots, w_n \mid \text{class}) = P(w_1 \mid \text{class}) \cdot P(w_2 \mid \text{class}) \cdots P(w_n \mid \text{class})
 ```
 
-Bir imkansız ortak dağılım yerine, n basit özellik başına dağılım tahmin ediyorsunuz.
+Bir ortak imkansız dağılım yerine, tahmin ediyorsunuz$n$Her birinin sadece bir sayıma ihtiyacı var.
 
 Bu varsayım açıkça yanlış. "makine" ve "öğrenme" kelimeleri hiçbir belgede bağımsız değildir. Ama sınıflandırıcı doğru olasılık tahminlerine ihtiyaç duymaz. Doğru sıralamalara ihtiyaç duyar. Hangi sınıfın en yüksek olasılıkları vardır. Bağımsızlık varsayımı sistematik hatalar getiriyor, ancak bu hatalar tüm sınıfları benzer şekilde etkilemektedir, bu nedenle sıralama doğru kalır.
 
@@ -59,7 +59,7 @@ Bu varsayım açıkça yanlış. "makine" ve "öğrenme" kelimeleri hiçbir belg
 
 Üç neden:
 
-1. **Ranking over calibration.**Sınıflandırma sadece en yüksek sıralamalı sınıfın doğru olması gerekir. Gerçek olasılık 0.7 olduğunda P(spam) = 0.99999 olsa bile, sınıflandırıcı hala spam'i doğru seçer. Doğru olasılıklara ihtiyacımız yok. Doğru kazananı ihtiyacımız var.
+1. **Ranking over calibration.**Sınıflandırma sadece en yüksek sınıfın doğru olması gerekiyor.$P(\text{spam}) = 0.99999$Eğer gerçek olasılık 0.7 ise, sınıflandırıcı spam'i doğru seçer.
 
 2. **High bias, low variance.**Bağımsızlık varsayımı güçlü bir önlemdir. Modelli ağır bir şekilde kısıtlar ve bu da aşırı uyum sağlamayı önler. sınırlı eğitim verileri ile, hafif yanlış ama istikrarlı bir model teorik olarak doğru ama çok istikrarlı bir modelden daha üstün bir modeldir. Bu, aksiyonda önyargı-varians pazarlamasıdır.
 
@@ -76,31 +76,33 @@ Eğitim verileri:
 - Spam olmayan e-postalarda "be bedava" 5 kez, "para" 10 kez, "bir araya gelme" 100 kez (115 kelimenin toplamı)
 - E-postaların %40'ı spam, %60'ı spam değil.
 
-Laplace düzeltmesi ile (alfa=1):
+Laplace düzeltmesi ile ($\alpha=1$):
 
-```
-P(free | spam)    = (80 + 1) / (150 + 3) = 81/153 = 0.529
-P(money | spam)   = (60 + 1) / (150 + 3) = 61/153 = 0.399
-P(meeting | spam) = (10 + 1) / (150 + 3) = 11/153 = 0.072
-
-P(free | not-spam)    = (5 + 1) / (115 + 3) = 6/118 = 0.051
-P(money | not-spam)   = (10 + 1) / (115 + 3) = 11/118 = 0.093
-P(meeting | not-spam) = (100 + 1) / (115 + 3) = 101/118 = 0.856
+```math
+\begin{aligned}
+P(\text{free} \mid \text{spam}) &= (80 + 1) / (150 + 3) = 81/153 = 0.529 \\
+P(\text{money} \mid \text{spam}) &= (60 + 1) / (150 + 3) = 61/153 = 0.399 \\
+P(\text{meeting} \mid \text{spam}) &= (10 + 1) / (150 + 3) = 11/153 = 0.072 \\[6pt]
+P(\text{free} \mid \text{not-spam}) &= (5 + 1) / (115 + 3) = 6/118 = 0.051 \\
+P(\text{money} \mid \text{not-spam}) &= (10 + 1) / (115 + 3) = 11/118 = 0.093 \\
+P(\text{meeting} \mid \text{not-spam}) &= (100 + 1) / (115 + 3) = 101/118 = 0.856
+\end{aligned}
 ```
 
 Yeni e-posta: "be bedava" (2 kez), "para" (1 kez), "bir toplantı" (0 kez).
 
+```math
+\begin{aligned}
+\log P(\text{spam} \mid \text{email}) &= \log(0.4) + 2 \log(0.529) + 1 \log(0.399) + 0 \log(0.072) \\
+&= -0.916 + 2(-0.637) + (-0.919) + 0 \\
+&= -3.109 \\[6pt]
+\log P(\text{not-spam} \mid \text{email}) &= \log(0.6) + 2 \log(0.051) + 1 \log(0.093) + 0 \log(0.856) \\
+&= -0.511 + 2(-2.976) + (-2.375) + 0 \\
+&= -8.838
+\end{aligned}
 ```
-log P(spam | email) = log(0.4) + 2*log(0.529) + 1*log(0.399) + 0*log(0.072)
-                    = -0.916 + 2*(-0.637) + (-0.919) + 0
-                    = -3.109
 
-log P(not-spam | email) = log(0.6) + 2*log(0.051) + 1*log(0.093) + 0*log(0.856)
-                        = -0.511 + 2*(-2.976) + (-2.375) + 0
-                        = -8.838
-```
-
-Spam büyük bir farkla kazanır. "Özgür" kelimesi iki kez ortaya çıkmak spam için güçlü bir kanıtdır. "Dörüşme" görünmemesinin her iki log toplamına sıfır katkıda bulunduğunu unutmayın (0 * log(P)) - Multinomial NB'de, yok kelimelerin hiçbir etkisi yoktur.
+Spam büyük bir farkla kazanır. "Özgür" kelimesinin iki kez ortaya çıkması spam için güçlü bir kanıtdır.$0 \cdot \log P$) - Multinomial NB'de, yok kelimelerin hiçbir etkisi yoktur.
 
 ### Üç Çeşit
 
@@ -110,8 +112,8 @@ Naive Bayes üç tadda gelir.`P(feature | class)`Farklı bir şekilde.
 
 Modeller her özelliği bir sayım olarak oluşturur. Özellikleri kelimeler sıklığı veya TF-IDF değerleri olan metin verileri için en iyisidir.
 
-```
-P(word_i | class) = (count of word_i in class + alpha) / (total words in class + alpha * vocab_size)
+```math
+P(\text{word}_i \mid \text{class}) = \frac{\text{count of } \text{word}_i \text{ in class} + \alpha}{\text{total words in class} + \alpha \cdot \text{vocab\_size}}
 ```
 
 - Evet .`alpha`Bu variant metin sınıflandırması için iş atıdır.
@@ -120,8 +122,8 @@ P(word_i | class) = (count of word_i in class + alpha) / (total words in class +
 
 Her bir özellik normal bir dağılım olarak modeller.
 
-```
-P(x_i | class) = (1 / sqrt(2 * pi * var)) * exp(-(x_i - mean)^2 / (2 * var))
+```math
+P(x_i \mid \text{class}) = \frac{1}{\sqrt{2 \pi \cdot \text{var}}} \cdot \exp\left(-\frac{(x_i - \text{mean})^2}{2 \cdot \text{var}}\right)
 ```
 
 Her sınıfın özelliği ve farklılığı vardır. Bu, özellikler her sınıf içinde gerçekten bir çan eğrisini takip ettiğinde iyi çalışır.
@@ -130,8 +132,8 @@ Her sınıfın özelliği ve farklılığı vardır. Bu, özellikler her sınıf
 
 Modeller her özelliği ikili ( mevcut veya yok) olarak oluşturur. Kısa metin veya ikili özelliği vektörleri için en iyisi.
 
-```
-P(word_i | class) = (docs in class containing word_i + alpha) / (total docs in class + 2 * alpha)
+```math
+P(\text{word}_i \mid \text{class}) = \frac{\text{docs in class containing } \text{word}_i + \alpha}{\text{total docs in class} + 2 \alpha}
 ```
 
 Multinomial'den farklı olarak, Bernoulli bir kelimenin yokluğuna açıkça cezalandırır. Eğer "belir" tipik olarak spam'de görünür ancak bu e-postada yoksa, Bernoulli bunu spam karşı bir kanıt olarak sayır.
@@ -152,11 +154,11 @@ Düzeltmeden:`P(word | class) = 0/N = 0`. Tüm ürünün çarpıtıyla bir sıf�
 
 Laplace düzeltmesi küçük bir sayıyı ekler .`alpha`(genellikle 1) her özellik sayısına:
 
-```
-P(word_i | class) = (count(word_i, class) + alpha) / (total_words_in_class + alpha * vocab_size)
+```math
+P(\text{word}_i \mid \text{class}) = \frac{\text{count}(\text{word}_i, \text{class}) + \alpha}{\text{total\_words\_in\_class} + \alpha \cdot \text{vocab\_size}}
 ```
 
-Alpha = 1 ile her kelime en az küçük bir olasılık elde eder. Test e-postalarında görünen "discombobulate" kelimesi artık spam olasılığını öldürmez. Düzeltmenin Bayesian bir yorumuna sahiptir: kelime dağılımlarına bir benzer Dirichlet ön koymaya eşittir.
+- Evet .$\alpha=1$Bu, bir test e-postalarında görünen "discombobulate" kelimesinin spam olasılığını öldürmediğini gösterir.
 
 Daha yüksek alfa, daha güçlü bir düzeltme (daha benzer dağılımlar) anlamına gelir. Daha düşük alfa, modelin verilere daha fazla güvendiğini gösterir.
 
@@ -175,8 +177,8 @@ Yüzlerce olasılık (her biri 1'den daha az) çarpması, yüzen noktaların aş
 
 Çözüm: log alanında çalış. Muhtemelenlikleri çarpmak yerine, logaritmlerini ekleyin:
 
-```
-log P(class | x1, x2, ..., xn) = log P(class) + sum_i log P(xi | class)
+```math
+\log P(\text{class} \mid x_1, x_2, \ldots, x_n) = \log P(\text{class}) + \sum_i \log P(x_i \mid \text{class})
 ```
 
 Bu tahminleri nokta ürünü haline getirir:
@@ -194,7 +196,7 @@ Her ikisi de metin için doğrusal sınıflandırıcılar. Fark, modellemelerind
 
 | Aspect | Naive Bayes | Logistic Regression |
 |--------|------------|-------------------|
-| Type | Generative (models P(X\|Y)) | Discriminative (models P(Y\|X)) |
+| Type | Generative (models $P(X \mid Y){}$) | Discriminative (models $P(Y \mid X){}$) |
 | Training | Count frequencies | Optimize loss function |
 | Small data | Better (strong prior helps) | Worse (not enough to estimate weights) |
 | Large data | Worse (wrong assumption hurts) | Better (flexible boundary) |
@@ -221,8 +223,8 @@ flowchart LR
 
 Bu nedenle, bu işlemler, bir süre sonra bir süre sonra bir süre sonra bir süre sonra bir süre sonra bir süre sonra bir süre sonra bir süre sonra bir süre sonra bir süre sonra bir süre sonra bir süre sonra bir süre sonra bir süre sonra bir süre sonra bir süre sonra bir süre sonra bir süre sonra bir süre sonra bir süre sonra bir süre sonra bir süre sonra bir süre sonra bir süre sonra bir süre sonra bir süre sonra bir süre sonra bir süre sonra bir süre sonra bir süre sonra bir süre sonra bir süre sonra bir süre sonra bir süre sonra bir süre sonra bir süre sonra bir süre sonra bir süre sonra bir süre sonra bir süre sonra bir süre sonra bir süre sonra bir süre sonra bir süre sonra bir süre sonra bir süre sonra bir süre sonra bir süre sonra bir süre sonra bir süre sonra bir süre sonra bir süre daha daha daha daha daha daha daha daha daha daha daha daha daha daha daha daha daha daha daha daha daha daha daha daha daha daha daha daha daha daha daha daha daha daha daha daha daha daha daha daha daha daha daha daha daha daha daha daha daha daha daha daha daha daha daha daha daha daha daha daha daha daha daha daha daha daha daha daha daha daha daha daha daha daha daha daha daha daha daha daha daha daha daha daha daha daha daha daha daha daha daha daha daha daha daha daha daha daha daha daha daha daha daha daha daha daha daha daha daha daha daha daha daha daha daha daha daha daha daha daha daha daha daha daha daha daha daha daha daha daha daha daha daha daha daha daha daha daha daha daha daha daha daha daha daha daha daha daha daha daha daha daha daha daha daha daha daha daha daha daha daha daha daha daha daha daha daha daha daha daha daha daha daha daha daha daha daha daha daha daha daha daha daha daha daha daha daha daha daha daha daha daha daha daha daha daha daha daha daha daha daha daha daha daha daha daha daha daha daha daha daha daha daha daha daha daha daha daha daha daha daha daha daha daha daha daha daha daha daha daha daha daha daha daha daha daha daha daha daha daha daha daha daha daha daha daha daha daha daha daha daha daha daha daha daha daha daha daha daha daha daha daha daha daha daha daha daha daha daha daha daha daha daha daha daha daha daha daha daha daha daha daha daha daha daha daha daha daha daha daha daha daha daha daha daha daha daha daha daha daha daha daha daha daha daha daha daha daha daha daha daha daha daha daha daha daha daha daha daha daha daha daha daha daha daha daha daha daha daha daha daha daha daha daha daha daha daha daha daha daha daha daha daha daha daha daha daha daha
 
-```
-log P(class | features) = log P(class) + sum_i log P(feature_i | class)
+```math
+\log P(\text{class} \mid \text{features}) = \log P(\text{class}) + \sum_i \log P(\text{feature}_i \mid \text{class})
 ```
 
 ```figure
@@ -239,7 +241,7 @@ Baştan başlayan uygulama:
 
 1. **fit(X, y)**: Her sınıf için, her özelliğin sıklığını sayın. Laplace düzeltmesini ekleyin. Log olasılıklarını hesaplayın. Sınıf önceleri (sınıf frekanslarının logu)
 
-2. **predict_log_proba(X)**: Her örnek için, hesap log P(sınıf) + tüm sınıflar için log P(kaynak_i sınıfı) toplamı. Bu bir matris çarpımı: X @ log_probs.T + log_priors.
+2. **predict_log_proba(X)**: Her örnek için hesaplayın $\log P(\text{class})$+ toplamı $\log P(\text{feature}_i \mid \text{class})$Bu bir matris çarpımı: X @ log_probs.T + log_priors.
 
 3. **predict(X)**: En yüksek log olasılığı olan sınıfı geri gönderin.
 
@@ -312,9 +314,9 @@ Kod ayrıca şunları gösterir:
 
 ### Tahmin Hızı
 
-Naive Bayes tahminleri bir matris çarpımıdır.
-- MultinomialNB: bir matris çarpı (n x d) @ (d x k) = O(n * d * k)
-- GaussianNB: n * k Gaussian PDF değerlendirmeleri, her biri d özellikler = O(n * d * k)
+Naive Bayes tahmininin bir matris çarpımı olduğu için.$n$ ile örnekler$d$Özellikleri ve $k$sınıflar:
+- MultinomialNB: bir matris çarpı $(n \times d) \mathbin{@} (d \times k) = O(n \cdot d \cdot k)$
+- GaussianNB: $n \cdot k$Gaussian PDF değerlendirmeleri, her biri $d$Özellikler = $O(n \cdot d \cdot k)$
 
 Her iki boyutda da doğrusaldır. Bunu KNN ile (bütün eğitim noktalarına uzaklık hesaplama gerektiren) veya RBF çekirdeği ile SVM ile (bütün destek vektörlerine karşı çekirdeği değerlendirme gerektiren) karşılaştırın. NB, tahmin zamanında büyüklük sıralamaları ile daha hızlıdır.
 
@@ -387,7 +389,7 @@ text_clf = Pipeline([
 
 ### Kalibrasyon NB Muhtemelenlikler
 
-NB olasılıkları kötü kalibrlenmiştir. NB'de P(spam) = 0.95 olduğu zaman, gerçek olasılık 0.7 olabilir.
+NB olasılıkları kötü kalibrlenmiştir.$P(\text{spam}) = 0.95$Eğer güvenilir olasılık tahminlerine ihtiyacınız varsa (örneğin bir eşiği belirlemek veya diğer modellerle birleştirmek için), sklearn'ın KalibrasyonSınıflandırıcısıCV'yi kullanın:
 
 ```python
 from sklearn.calibration import CalibratedClassifierCV
@@ -405,7 +407,7 @@ Bu, NB'nin çiğ puanlarının üstündeki bir lojistik geri dönüşe karşıl�
 
 2. **Zero variance features.**GaussianNB, bir sınıf için sıfır bir değişikliğe sahipse (tüm değerler aynıdır), olasılık hesaplaması bozulur.
 
-3. **Class imbalance.**Eğer e-postaların %99'u spam değilse, önceki P(not-spam) = 0.99 o kadar güçlüdür ki olasılık kanıtlarını aşıyor.
+3. **Class imbalance.**Eğer e-postaların %99'u spam değilse, önceki e-postalar$P(\text{not-spam}) = 0.99$Klas öncesini elle ayarlayabilir veya sklearn'da class_prior parametresini kullanabilirsiniz.
 
 4. **Feature scaling.**MultinomialNB'nin ölçeklendirmeye ihtiyacı yoktur (sayılar üzerinde çalışır). GaussianNB'nin de ölçeklendirmeye ihtiyacı yoktur (sözümlü özellik istatistiklerini tahmin eder). Bu, özellik ölçeklerine duyarlı olan lojistik gerileme ve SVM'ye göre bir avantaj.
 
@@ -431,7 +433,7 @@ Bu tür hata modları metin sınıflandırması için nadirdir. Metin özellikle
 
 1. **Smoothing experiment.**MultinomialNB'yi 0.01, 0.1, 1.0, 10.0 ve 100.0 alfa değerleri olan metin verilerine çalıştır.
 
-2. **Feature independence test.**Gerçek bir metin veri kümesi alın. Açıkça ilişkili olan iki kelimeyi seçin ("makine" ve "öğrenme"). P  word1  class * P  word2  class) hesaplayın ve P  word1 AND word2  class ile karşılaştırın. Bağımsızlık varsayımı ne kadar yanlış?
+2. **Feature independence test.**Gerçek bir metin veri kümesi alın. Açıkça ilişkili olan iki kelimeyi seçin ("makine" ve "öğrenme"). Hesaplama $P(\text{word}_1 \mid \text{class}) \cdot P(\text{word}_2 \mid \text{class})$ve karşılaştırın $P(\text{word}_1 \text{ AND } \text{word}_2 \mid \text{class})$Bağımsızlık varsayımı ne kadar yanlış?
 
 3. **Bernoulli implementation.**BernoulliNB sınıfıyla kodu genişlet. Sözcük çantalarını ikili ( mevcut/ yok) olarak dönüştürün ve metin verilerindeki MultinomialNB ile doğruluğu karşılaştırın. Bernoulli ne zaman kazanır?
 
@@ -444,14 +446,14 @@ Bu tür hata modları metin sınıflandırması için nadirdir. Metin özellikle
 | Term | What people say | What it actually means |
 |------|----------------|----------------------|
 | Naive Bayes | "Simple probabilistic classifier" | A classifier that applies Bayes' theorem with the assumption that features are conditionally independent given the class |
-| Conditional independence | "Features don't affect each other" | P(A, B \| C) = P(A \| C) * P(B \| C) -- knowing B tells you nothing new about A once you know C |
+| Conditional independence | "Features don't affect each other" | $P(A, B \mid C) = P(A \mid C) \cdot P(B \mid C)$ -- knowing $B$ tells you nothing new about $A$ once you know $C$ |
 | Laplace smoothing | "Add-one smoothing" | Adding a small count to every feature to prevent zero probabilities from dominating the prediction |
-| Prior | "What you believed before seeing data" | P(class) -- the probability of each class before observing any features |
-| Likelihood | "How well the data fits" | P(features \| class) -- the probability of observing these features if the class is known |
-| Posterior | "What you believe after seeing data" | P(class \| features) -- the updated probability of the class after observing the features |
-| Generative model | "Models how data is generated" | A model that learns P(X \| Y) and P(Y), then uses Bayes' theorem to get P(Y \| X) |
-| Discriminative model | "Models the decision boundary" | A model that directly learns P(Y \| X) without modeling how X is generated |
-| Log probability | "Avoid underflow" | Working with log P instead of P to prevent the product of many small numbers from becoming zero in floating point |
+| Prior | "What you believed before seeing data" | $P(\text{class})$ -- the probability of each class before observing any features |
+| Likelihood | "How well the data fits" | $P(\text{features} \mid \text{class})$ -- the probability of observing these features if the class is known |
+| Posterior | "What you believe after seeing data" | $P(\text{class} \mid \text{features})$ -- the updated probability of the class after observing the features |
+| Generative model | "Models how data is generated" | A model that learns $P(X \mid Y)$ and $P(Y)$, then uses Bayes' theorem to get $P(Y \mid X)$ |
+| Discriminative model | "Models the decision boundary" | A model that directly learns $P(Y \mid X)$ without modeling how $X$ is generated |
+| Log probability | "Avoid underflow" | Working with $\log P$ instead of $P$ to prevent the product of many small numbers from becoming zero in floating point |
 
 ## Daha Fazla Okumak
 

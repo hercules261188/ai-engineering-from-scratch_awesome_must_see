@@ -56,12 +56,12 @@ K tek hiperparametre.
 
 | K | Behavior |
 |---|----------|
-| K = 1 | Decision boundary follows every point. Zero training error. High variance. Overfits |
+| $K = 1$ | Decision boundary follows every point. Zero training error. High variance. Overfits |
 | Small K (3-5) | Sensitive to local structure. Can capture complex boundaries |
 | Large K | Smoother boundaries. More robust to noise. May underfit |
-| K = N | Predicts the majority class for every point. Maximum bias |
+| $K = N$ | Predicts the majority class for every point. Maximum bias |
 
-Bir ortak başlangıç noktası, N noktaları olan bir veri kümesi için K = sqrt(N'dir.
+Ortak bir başlangıç noktası $K = \sqrt{N}$$N$İkili sınıflandırma için çift K kullanın.
 
 ```mermaid
 graph LR
@@ -83,32 +83,33 @@ Mesafe fonksiyonu "yaklaş" ne anlama geldiğini belirler.
 
 **L2 (Euclidean)**- Düz çizgi mesafesini.
 
-```
-d(a, b) = sqrt(sum((a_i - b_i)^2))
+```math
+d(a, b) = \sqrt{\sum_i (a_i - b_i)^2}
 ```
 
 Özellik ölçekine duyarlı. KNN ile L2 kullanmadan önce özellikleri her zaman standartlaştırın.
 
 **L1 (Manhattan)**L2'den daha güçlü, çünkü farklılıkları karıştırmaz.
 
-```
-d(a, b) = sum(|a_i - b_i|)
+```math
+d(a, b) = \sum_i \lvert a_i - b_i \rvert
 ```
 
 **Cosine distance**Vectörler arasındaki açıyı ölçerken büyüklüğü görmezden gelir.
 
-```
-d(a, b) = 1 - (a . b) / (||a|| * ||b||)
+```math
+d(a, b) = 1 - \frac{a \cdot b}{\lVert a \rVert \, \lVert b \rVert}
 ```
 
-**Minkowski**L1 ve L2'yi p parametri ile genelleştirir.
+**Minkowski**L1 ve L2 ' yi parametre ile genelleştirir $p$- Evet .
 
-```
-d(a, b) = (sum(|a_i - b_i|^p))^(1/p)
-
-p=1: Manhattan
-p=2: Euclidean
-p->inf: Chebyshev (max absolute difference)
+```math
+\begin{aligned}
+& d(a, b) = \left( \sum_i \lvert a_i - b_i \rvert^p \right)^{1/p} \\[6pt]
+& p=1\text{: Manhattan} \\
+& p=2\text{: Euclidean} \\
+& p \to \infty\text{: Chebyshev (max absolute difference)}
+\end{aligned}
 ```
 
 Hangi metrik kullanılması verilere bağlıdır:
@@ -127,14 +128,15 @@ Standart KNN tüm K komşular için eşit ağırlık verir.
 
 **Distance-weighted KNN**Her komşunun mesafe ile tersine ağırlıkları:
 
+```math
+\begin{aligned}
+& \text{weight}_i = \frac{1}{\text{distance}_i + \epsilon} \\[6pt]
+& \text{For classification: weighted vote} \\
+& \text{For regression: weighted average} = \frac{\sum_i w_i y_i}{\sum_i w_i}
+\end{aligned}
 ```
-weight_i = 1 / (distance_i + epsilon)
 
-For classification: weighted vote
-For regression:     weighted average = sum(w_i * y_i) / sum(w_i)
-```
-
-Epsilon, bir sorgu noktası eğitim noktasıyla tam olarak eşleştiğinde sıfırla bölünmeyi engeller.
+- Evet .$\epsilon$bir sorgu noktası eğitim noktasıyla tam olarak eşleşirken sıfırla bölünmeyi önler.
 
 K seçeneğine göre ağır KNN daha az duyarlıdır çünkü uzak komşular ne olursa olsun çok az katkı sağlar.
 
@@ -162,7 +164,7 @@ Pratik sonuç: KNN yaklaşık 20-50 özelliklere kadar iyi çalışır. Bundan d
 
 ### KD ağaçları: en yakın komşu arayışı
 
-Kötü kuvvet KNN, sorgudan her eğitim noktasına kadarki mesafeyi hesaplar. Bu sorgu başına O(n * d) demektir. Büyük veri kümeleri için bu çok yavaş.
+Kötü kuvvet KNN, sorgudan her eğitim noktasına kadarki mesafeyi hesaplar.$O(n \cdot d)$Büyük veri kümeleri için bu çok yavaş.
 
 Bir KD ağacı, alanı özellik ekseleri boyunca geri dönüşlü olarak bölüyor. Her seviyede, ortalama değerde bir boyutta bölünür.
 
@@ -178,7 +180,7 @@ graph TD
 
 En yakın komşunu bulmak için, ağaçtan soruyu içeren yaprağa geçin, sonra geriye dönün ve komşu bölmelerini sadece daha yakın noktaları içerebilecekleri durumlarda kontrol edin.
 
-Ortalama sorgu süresi: düşük boyutlarda O(log n). Ancak KD- ağaçları yüksek boyutlarda (d > 20) O(n'e düşer, çünkü geriye doğru ilerleme giderek daha az dalı ortadan kaldırır.
+Ortalama sorgu süresi: $O(\log n)$Ama KD ağaçları aşağı düşüyor.$O(n)$Yüksek boyutlarda ($d > 20$) çünkü geriye doğru ilerleme giderek daha az şubayı ortadan kaldırır.
 
 ### Top ağaçları: Orta boyutlu için daha iyi
 
@@ -197,8 +199,8 @@ KNN tembel bir öğrenci: eğitim sırasında çalışmaz ve tüm çalışmalar 
 
 | Aspect | Lazy (KNN) | Eager (SVM, neural net) |
 |--------|------------|------------------------|
-| Training time | O(1) just store data | O(n * epochs) |
-| Prediction time | O(n * d) per query | O(d) or O(parameters) |
+| Training time | $O(1)$ just store data | $O(n \cdot \text{epochs})$ |
+| Prediction time | $O(n \cdot d)$ per query | $O(d)$ or $O(\text{parameters})$ |
 | Memory at prediction | Store entire training set | Store model parameters only |
 | Adapts to new data | Add points instantly | Retrain the model |
 | Decision boundary | Implicit, computed on the fly | Explicit, fixed after training |
@@ -213,12 +215,12 @@ Uykucu öğrenme idealdir:
 
 Çoğunlukla oy kullanmak yerine, K komşularının hedef değerlerini gerileme için KNN ortalamalar.
 
-```
-prediction = (1/K) * sum(y_i for i in K nearest neighbors)
-
-Or with distance weighting:
-prediction = sum(w_i * y_i) / sum(w_i)
-where w_i = 1 / distance_i
+```math
+\begin{aligned}
+& \text{prediction} = \frac{1}{K} \sum_{i \in K \text{ nearest neighbors}} y_i \\[6pt]
+& \text{Or with distance weighting:} \\
+& \text{prediction} = \frac{\sum_i w_i y_i}{\sum_i w_i} \quad \text{where } w_i = \frac{1}{\text{distance}_i + \epsilon}
+\end{aligned}
 ```
 
 KNN geri dönüşü, parça-sasta (veya parça-sımsıkı ağırlık ile) tahminler üretir. Eğitim verilerinin aralığı ötesinde ekstrapolasyon yapamaz. Eğitim hedeflerinin hepsi 0 ile 100 arasında ise, KNN asla 200'ü tahmin edemez.
@@ -345,7 +347,7 @@ distances, indices = index.search(query_vectors, k=5)
 
 ## Egzersizler
 
-1. 3 sınıflı 2 boyutlu bir veri kümesine KNN sınıflandırmasını uygulayın. K=1, K=5, K=15, ve K=N için karar sınırını çizin.
+1. 3 sınıflı 2 boyutlu bir veri kümesine KNN sınıflandırmasını uygulayın.$K=1$- Evet .$K=5$- Evet .$K=15$ve$K=N$- Üstü uyumdan aşağı uyum geçişini gözlemle.
 
 2. 2, 5, 10, 50, 100, ve 500 boyutlarda 1000 rastgele nokta oluşturun. Her boyut için maksimum çiftlik mesafesinin en az çiftlik mesafesine oranını hesaplayın. Boyutsuzluk lanetini görselleştirmek için boyutsuzluk karşılığı oranı çizin.
 
@@ -353,7 +355,7 @@ distances, indices = index.search(query_vectors, k=5)
 
 4. KD ağacını uygulayın ve 2D, 10D ve 50D'de 1k, 10k ve 100k noktaları olan veri kümeleri için sorgu zamanını ve kaba kuvvetini ölçün. KD ağacı hangi boyutlarda kaba kuvvetten daha hızlı olmaktan vazgeçir?
 
-5. Y = sin(x) + gürültü için ağırlıklı KNN gerici oluşturun. K=3, 10, 30 için ağırlıklı olmayan KNN ile karşılaştırın.
+5.  için ağır KNN geri dönüşçüsü oluşturun$y = \sin(x) + \text{noise}$- KNN ile karşılaştırın .$K=3, 10, 30$.Keylemlerin özellikle büyük K'lar için daha düzgün tahminler ürettiğini göster.
 
 ## Anahtar Terimler
 
@@ -363,14 +365,14 @@ distances, indices = index.search(query_vectors, k=5)
 | Lazy learning | No computation at training time. All work happens at prediction time. KNN is the canonical example |
 | Eager learning | Heavy computation at training time to build a compact model. Most ML algorithms are eager |
 | Curse of dimensionality | In high dimensions, distances converge and neighborhoods expand to cover most of the space, making KNN ineffective |
-| KD-tree | Binary tree that recursively partitions space along feature axes. O(log n) queries in low dimensions |
+| KD-tree | Binary tree that recursively partitions space along feature axes. $O(\log n)$ queries in low dimensions |
 | Ball tree | Tree of nested hyperspheres. Works better than KD-trees in moderate dimensions (up to ~50) |
 | Weighted KNN | Neighbors weighted inversely by distance. Closer neighbors have more influence on the prediction |
 | Feature scaling | Normalizing features to comparable ranges. Required for distance-based methods like KNN |
 | Majority vote | Classification by counting which class is most common among K neighbors |
-| Brute force search | Computing distance to every training point. O(n*d) per query. Exact but slow for large n |
+| Brute force search | Computing distance to every training point. $O(n \cdot d)$ per query. Exact but slow for large $n$ |
 | Approximate nearest neighbor | Algorithms (HNSW, LSH, IVF) that find approximately nearest points much faster than exact search |
-| Voronoi diagram | The partition of space where each region contains all points closer to one training point than any other. K=1 KNN produces Voronoi boundaries |
+| Voronoi diagram | The partition of space where each region contains all points closer to one training point than any other. $K=1$ KNN produces Voronoi boundaries |
 
 ## Daha Fazla Okumak
 

@@ -35,25 +35,27 @@ Doğru bir işlemin doğru bir şekilde etiketlenmesi ve sahtekarlığı doğru 
 | Actually Positive | 0 (TP) | 10 (FN) |
 | Actually Negative | 0 (FP) | 990 (TN) |
 
-Kesinlik = (0 + 990) / 1000 = 99,0%
+```math
+\text{Accuracy} = (0 + 990) / 1000 = 99.0\%
+```
 
 Model, hiçbir dolandırıcılık, hiçbir hastalık, hiçbir hata, ama doğruluk %99'u gösteriyor.
 
 ### Daha İyi Ölçümler
 
-**Precision**TP + FP. Pozitif olarak işaretlenen her şeyden, aslında kaç tane var?
+**Precision**= $\text{TP} / (\text{TP} + \text{FP})$- Evet, evet, evet, evet, evet, evet, evet, evet, evet, evet, evet, evet, evet, evet, evet, evet, evet, evet, evet, evet, evet, evet, evet, evet, evet, evet, evet, evet, evet, evet, evet, evet, evet, evet, evet, evet, evet, evet, evet, evet, evet, evet, evet, evet, evet, evet, evet, evet, evet, evet, evet, evet, evet, evet, evet, evet, evet, evet, evet, evet, evet, evet, evet, evet, evet, evet, evet, evet, evet, evet, evet, evet, evet, evet, evet, evet, evet, evet, evet, evet, evet, evet, evet, evet, evet, evet, evet, evet, evet, evet, evet, evet, evet, evet, evet, evet, evet, evet, evet, evet, evet, evet, evet, evet, evet, evet, evet, evet, evet, evet, evet, evet, evet, evet, evet, evet, evet, evet, evet, evet, evet, evet, evet, evet, evet, evet, evet, evet, evet, evet, evet, evet, evet, evet, evet, evet, evet, evet, evet, evet, evet, evet, evet, evet, evet, evet, evet, evet, evet, evet, evet, evet, evet, evet, evet, evet, evet, evet, evet, evet, evet, evet, evet, evet, evet, evet, evet, evet, evet, evet, evet, evet, evet, evet, evet, evet, evet, evet, evet, evet, evet, evet, evet, evet, evet, evet, evet, evet, evet, evet, evet, evet, evet, evet, evet, evet, evet, evet, evet, evet, evet, evet, evet, evet, evet, evet, evet, evet, evet, evet, evet, evet, evet, evet, evet, evet, evet, evet, evet, evet, evet, evet, evet, evet, evet, evet, evet, evet, evet, evet, evet, evet, evet, evet, evet, evet, evet, evet, evet, evet, evet, evet, evet, evet, evet, evet, evet, evet, evet, evet, evet, evet...
 
-**Recall**= TP / (TP + FN). Aslında olumlu olan her şeyden kaç tane yakaladık? Yüksek hatırlama kaç kaç kaç olumlu kaybedildiği anlamına gelir.
+**Recall**= $\text{TP} / (\text{TP} + \text{FN})$- Yüksek hatırlama, kaç kaç kaç olumlu kaybedilen anlamına gelir.
 
-**F1 Score**= 2 * doğruluk * geri çağırma / (doğrulık + geri çağırma). Harmonik ortalama.
+**F1 Score**= $2 \cdot \text{precision} \cdot \text{recall} / (\text{precision} + \text{recall})$Harmonik ortalama, hassasiyet ve hatırlama arasındaki aşırı dengesizliği aritmetik ortalamanın yapmasından daha fazla cezalandırır.
 
-**F-beta Score**= (1 + beta^2) * doğruluk * hatırlama / (beta^2 * doğruluk + hatırlama). Beta > 1 olduğunda hatırlama daha önemlidir. Beta < 1 olduğunda doğruluk daha önemlidir.
+**F-beta Score**= $(1 + \beta^2) \cdot \text{precision} \cdot \text{recall} / (\beta^2 \cdot \text{precision} + \text{recall})$Ne zaman ?$\beta > 1$- Ne zaman hatırlayacaksın?$\beta < 1$F2 dolandırıcılık tespitinde yaygın (kaybolan dolandırıcılık, yanlış alarmdan daha kötüdür).
 
 **AUPRC**(Precision-Recall Curve altında alan). AUC-ROC gibi ancak dengesiz veriler için daha bilgilendirici. Bir rastgele sınıflandırıcının AUPRC'si pozitif sınıf oranına eşit (ROC gibi 0.5 değil). Bu gelişmeleri daha kolay görmesini sağlar.
 
-**Matthews Correlation Coefficient**= (TP * TN - FP * FN) / sqrt((TP+FP)(TP+FN)(TN+FP)(TN+FN)). -1 ila +1 arasında değişir. Sadece model her iki sınıfta iyi çalışırken yüksek puan verir.
+**Matthews Correlation Coefficient**= $(\text{TP} \cdot \text{TN} - \text{FP} \cdot \text{FN}) / \sqrt{(\text{TP}+\text{FP})(\text{TP}+\text{FN})(\text{TN}+\text{FP})(\text{TN}+\text{FN})}$- -1'den +1'e kadar değişir. Sadece model her iki sınıfta da iyi çalışırsa yüksek puan verir.
 
-Yukarıdaki "her zaman negatif tahmin" modeli için: hassasiyet = 0/0 (tanımsız, genellikle 0 olarak ayarlanmış), hatırlama = 0/10 = 0, F1 = 0, MCC = 0. Bu ölçümler modeli değersiz olarak doğru bir şekilde tanımlar.
+Yukarıdaki "her zaman negatif tahmin" modeli için: $\text{precision} = 0/0$(Beklenmemiş, genellikle 0 olarak ayarlanmıştır), $\text{recall} = 0/10 = 0$- Evet .$\text{F1} = 0$- Evet .$\text{MCC} = 0$Bu ölçümler modelin değersiz olduğunu doğru bir şekilde belirler.
 
 ### Dengezelenmiş Veriler Kökü
 
@@ -79,9 +81,9 @@ Rastgele aşırı örnekleme mevcut azınlık örneklerini çoğaltır. Bu çal�
 
 SMOTE, inanılmaz ama kopya olmayan yeni sentetik azınlık örnekleri oluşturur.
 
-1. Her azınlık örneği x için, diğer azınlık örnekleri arasında k'nin en yakın komşularını bul
+1. Her azınlık örneği için $x$, bul .$k$Diğer azınlık örnekleri arasında en yakın komşuları
 2. Bir komşunu rastgele seç .
-3. X ile komşu arasındaki çizgi segmentinde yeni bir örnek oluştur
+3. Aralıklar arasında çizgi segmentinde yeni bir örnek oluşturmak $x$Ve komşumuz.
 
 Şekil: `new_sample = x + random(0, 1) * (neighbor - x)`
 
@@ -137,24 +139,24 @@ flowchart LR
 Verileri değiştirmek yerine, modelin hatalarla nasıl ilgilendiğini değiştirin.
 
 950 negatif ve 50 pozitif örnekle ikili bir sorun için:
-- Negatif sınıf için ağırlık = n_sampel / (2 * n_negatif) = 1000 / (2 * 950) = 0.526
-- Pozitif sınıf için ağırlık = n_sampel / (2 * n_pozitif) = 1000 / (2 * 50) = 10,0
+- Negatif sınıf için ağırlık = $n_{\text{samples}} / (2 \cdot n_{\text{negative}}) = 1000 / (2 \cdot 950) = 0.526$
+- Pozitif sınıf için ağırlık = $n_{\text{samples}} / (2 \cdot n_{\text{positive}}) = 1000 / (2 \cdot 50) = 10.0$
 
 Pozitif sınıfın ağırlığı 19 kat olur. Bir pozitif örneği yanlış sınıflandırmak 19 negatif örneği yanlış sınıflandırmak kadar maliyetlidir.
 
 Logistik gerileme sırasında, bu kayıp işlevi değiştirir:
 
-```
-weighted_loss = -sum(w_i * [y_i * log(p_i) + (1-y_i) * log(1-p_i)])
+```math
+\text{weighted\_loss} = -\sum \bigl( w_i \cdot [y_i \log(p_i) + (1-y_i) \log(1-p_i)] \bigr)
 ```
 
-w_i örnek sınıfına bağlı olduğu yer.
+nerede$w_i$Örnek sınıfına bağlıdır $i$- Evet .
 
 Sınıf ağırlıkları, matematiksel olarak beklenmedik bir şekilde fazla örnekleme ile eşdeğer, ancak yeni veri noktaları yaratmadan. Bu onları daha hızlı yapar ve çift örneklerin aşırı uygun olma riskini önler.
 
 ### Sınır ayarlama
 
-Çoğu sınıflandırıcı bir olasılık çıkarır. Varsayılan eşiği 0.5: eğer P ((pozitif) >= 0.5, pozitif tahmin eder. Ama 0.5 keyfiyetlidir. Sınıflar dengesiz olduğunda, en uygun eşiği genellikle çok daha düşüktür.
+Çoğu sınıflandırıcı bir olasılık çıkarır. Varsayılan eşiği 0.5'dir: eğer $P(\text{positive}) \ge 0.5$Bu da, sınıfların dengesiz olduğu zaman, en iyi eşiğin genellikle çok daha düşük olması anlamına gelir.
 
 Süreç:
 1. Bir model eğit
@@ -172,7 +174,7 @@ flowchart LR
     E --> F[Use in Production]
 ```
 
-Bir model dolandırıcı işlem için P ((sahtekârlık) = 0.15 üretebilir. 0.5 eşiğinde bu dolandırıcılık olarak sınıflandırılır. 0.10 eşiğinde doğru yakalanır. Muhtemelen kalibrasyon sıralamadan daha az önemlidir - dolandırıcılık, dolandırıcılık olmayanlardan daha yüksek olasılıkla sonuçlanırsa, onları ayıran bir eşiği vardır.
+Bir model çıkarabilir $P(\text{fraud}) = 0.15$0.5 e kadar, bu dolandırıcılık değil. 0.10 e kadar, doğru şekilde yakalanır. Muhtemelen kalibrasyon sıralamadan daha az önemlidir.
 
 ### Masraflara Çok Yakışıklı Öğrenme
 
@@ -180,8 +182,8 @@ Klas ağırlıklarının genelleştirilmesi.
 
 | | Predict Positive | Predict Negative |
 |--|---|---|
-| Actually Positive | 0 (correct) | C_FN = 100 |
-| Actually Negative | C_FP = 1 | 0 (correct) |
+| Actually Positive | 0 (correct) | $C_{\text{FN}} = 100$ |
+| Actually Negative | $C_{\text{FP}} = 1$ | 0 (correct) |
 
 Sahte bir işlemin (FN) kaçırılması, yanlış bir alarmdan (FP) 100 kat daha fazla maliyet verir.
 

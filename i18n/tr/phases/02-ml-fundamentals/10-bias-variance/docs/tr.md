@@ -54,23 +54,24 @@ High variance (overfitting):
 
 ### Çürümesi
 
-Herhangi bir x noktası için, karesi kaybı altında beklenen tahmin hatası tam olarak parçalanır:
+Herhangi bir noktaya .$x$, tahmin hatası , karesi kaybı altında tam olarak parçalanır:
 
+```math
+\begin{aligned}
+& \text{Expected Error} = \text{Bias}^2 + \text{Variance} + \text{Irreducible Noise} \\[6pt]
+& \text{where:} \\
+& \quad \text{Bias}^2 = (\mathbb{E}[\hat{f}(x)] - f(x))^2 \\
+& \quad \text{Variance} = \mathbb{E}[(\hat{f}(x) - \mathbb{E}[\hat{f}(x)])^2] \\
+& \quad \text{Noise} = \mathbb{E}[(y - f(x))^2] \quad (\sigma^2)
+\end{aligned}
 ```
-Expected Error = Bias^2 + Variance + Irreducible Noise
 
-where:
-  Bias^2   = (E[f_hat(x)] - f(x))^2
-  Variance = E[(f_hat(x) - E[f_hat(x)])^2]
-  Noise    = E[(y - f(x))^2]             (sigma^2)
-```
+- $f(x)$gerçek fonksiyon
+- $\hat{f}(x)$modelinizin tahminidir.
+- $\mathbb{E}[\ldots]$farklı eğitim setleri karşı beklentiler
+- $y$gözlemlenen etiket (gerçek işlev artı gürültü)
 
-- `f(x)`gerçek fonksiyon
-- `f_hat(x)`modelinizin tahminidir.
-- `E[...]`farklı eğitim setleri karşı beklentiler
-- `y`gözlemlenen etiket (gerçek işlev artı gürültü)
-
-Bu nedenle, sesli verilerde sigma^2'den daha iyi bir model bulunamaz.
+Bu ses terimi azaltılamaz.$\sigma^2$İşin doğru dengeyi bulmak.$\text{bias}^2$Ve farklılık.
 
 ### Modelleştirilmişlik vs Hata
 
@@ -131,9 +132,9 @@ Neden böyle oluyor? Interpolasyon eşiğinde, model tüm eğitim noktalarına u
 
 | Regime | Parameters vs Samples | Behavior |
 |--------|----------------------|----------|
-| Underparameterized | p << n | Classical tradeoff applies |
-| Interpolation threshold | p ~ n | Variance peaks, test error spikes |
-| Overparameterized | p >> n | Implicit regularization kicks in, test error drops |
+| Underparameterized | $p \ll n$ | Classical tradeoff applies |
+| Interpolation threshold | $p \sim n$ | Variance peaks, test error spikes |
+| Overparameterized | $p \gg n$ | Implicit regularization kicks in, test error drops |
 
 Pratik amaçla: sinir ağlarını veya büyük ağaç gruplarını kullanıyorsanız, interpolasyon eşiğinde durmayın. Ya çok aşağıda kalın (aşırı düzenleyerek) ya da çok geçin.
 
@@ -180,7 +181,7 @@ Birleştirme yöntemleri, farklılıklarla mücadele için en pratik araçtır.
 
 **Bagging (Bootstrap Aggregating)**Bu, eğitim verilerinin farklı başlangıç örnekleri üzerinde birden fazla model yetiştirir, sonra tahminlerini ortalamalar. Her bireysel model yüksek varyansa, ancak ortalama çok daha düşük varyansa.
 
-Matematik olarak neden çalışır: Eğer her biri varyansa sigma^2 ile N bağımsız tahminleri ortalama yaparsanız, ortalamanın varyansa sigma^2 / N. Modeller gerçekten bağımsız değildir (hepsi benzer verileri görür), bu nedenle azalım 1/N'den daha azdır, ancak hala önemli.
+Matematik olarak neden çalışır: ortalama olarak $N$Her biri farklılık göstererek bağımsız tahminler yapmaktadır.$\sigma^2$, ortalamanın değişimi $\sigma^2 / N$. Modeller gerçekten bağımsız değildir (her biri benzer verileri görür), bu nedenle azalım $1/N$Ama hala önemli.
 
 **Boosting**Bu nedenle, her yeni modelin en az iki farklı modelleştirilmesi ve birbiriyle uyumlu olması için, birbiriyle uyumlu olarak modeller oluşturarak önyargıyı azaltır.
 
@@ -306,10 +307,10 @@ variance = np.mean(predictions.var(axis=0))
 total_error = np.mean(np.mean((predictions - y_true) ** 2, axis=1))
 ```
 
-- `mean_pred`E[f_hat(x) başlangıç örneğinden tahmin edilmiştir
+- `mean_pred`- Evet .$\mathbb{E}[\hat{f}(x)]$Başlangıç çizgisi örneklerinden tahmin edilen
 - `bias_sq`ortalama tahmin ve gerçek arasındaki karede boşluk
 - `variance`bu, başlangıç örneği üzerinde tahminlerin ortalama yayılmasıdır
-- `total_error`yaklaşık olarak eşit bir önyargı^2 + varyansa + gürültü
+- `total_error`yaklaşık olarak eşit olmalıdır $\text{bias}^2 + \text{variance} + \text{noise}$
 
 ### Dördüncü Adım: Öğrenme Kurbalıkları
 
@@ -440,7 +441,7 @@ Bu ders şu sonuçları verir: `outputs/prompt-model-diagnostics.md`
 
 2. Eğitim setinin büyüklüğünü 30'dan 300'e çıkarmak, bu değişim bileşenini nasıl etkiler?
 
-3. Deneye L2 düzenlenmesini (Ridge gerileme) ekleyin. sabit yüksek dereceli bir polinom için (degre 15) lambda'yı 0'dan 100'e kadar süpürün.
+3. Deneye L2 düzenlenmesini (Ridge gerileme) ekleyin. sabit yüksek dereceli bir polinom için (derece 15) lambda'yı 0'dan 100'e doğru tarayın.$\text{bias}^2$ve lambda fonksiyonu olarak varyansa.
 
 4. Gerçek işlevi bir polinomdan `sin(x)`- Taraf-varians parçalanması nasıl değişir?
 

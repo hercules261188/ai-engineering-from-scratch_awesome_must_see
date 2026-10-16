@@ -91,8 +91,8 @@ Bir zaman dizisi, istatistik özellikleri (ortalama, varyans, otokorrelasyon) za
 
 **How to fix:**Farklılaştırma. Çöm değerleri modelleme yerine, ardılı değerler arasındaki değişimi modelleme:
 
-```
-diff[t] = value[t] - value[t-1]
+```math
+\text{diff}[t] = \text{value}[t] - \text{value}[t-1]
 ```
 
 Eğer bir farklılık döngüsü dizini sabitleştirmezse, tekrar uygulayın (ikinci sıradaki farklılık).
@@ -109,7 +109,7 @@ Orijinal seri: [100, 102, 106, 112, 120]
 
 ### Otomatik ilişki
 
-Otokorelasyon, t zamanındaki bir değerin t-k zamanındaki değerle ne kadar ilişkili olduğunu ölçer (geçmişteki k adımlar).
+Otokorelasyon , bir değerin zaman içinde ne kadar olduğunu ölçer $t$Zaman değerine ilişkilidir $t-k$($k$Otokorelasyon fonksiyonu (ACF) bu korelasyonu her gecikme için çizer.$k$- Evet .
 
 **ACF tells you:**
 - Eğer ACF 5'den sonra sıfıra düşerse, 5 adımdan fazla öncesinin değerleri önemi yoktur.
@@ -142,7 +142,7 @@ Yapabileceğiniz ek özellikler:
 
 **How many lags?**Otokorelasyon fonksiyonunu kullanın. ACF 10'a kadar önemli ise en az 10 gecikme kullanın. Haftalik mevsimsellik varsa, 7 (ve muhtemelen 14) gecikme dahil edin.
 
-**The target alignment trap.**Geçmiş özellikleri oluştururken hedef t zaman değer olmalıdır ve tüm özellikler t-1 veya daha önceki zaman değerlerini kullanmalıdır. Eğer yanlışlıkla t zaman değerini bir özellik olarak dahil ederseniz, mükemmel bir tahminci ve tamamen işe yaramaz bir modeliniz vardır. Bu, zaman dizisi özellik mühendisliği en yaygın hata.
+**The target alignment trap.**Gecikme özellikleri oluştururken hedef zaman değer olmalıdır $t$, ve tüm özellikler zamanında değerler kullanmalıdır $t-1$Eğer yanlışlıkla değerleri zamanında eklersen$t$Bu, zaman dizisi özellik mühendisliği'nde en yaygın hata.
 
 ### İleride Değerlendirme
 
@@ -178,8 +178,8 @@ flowchart TD
 ```
 
 Önceki onaylama:
-1. Zamanına kadar veriyi trenle
-2. Zaman t+1 (veya t+1'den t+k'ye kadar çok adımlı)
+1. Veriler konusunda zamanında çalışın $t$
+2. Zamanında tahmin et .$t+1$(veya $t+1$- ...$t+k$Çok adımlı)
 3. Pencereyi ileriye kaydır
 4. Tekrarla
 
@@ -191,11 +191,11 @@ Her test katmanı sadece tüm eğitim verilerinden sonra gelen verileri içerir.
 
 ARIMA klasik zaman dizisi modelidir.
 
-- **AR (Autoregressive):**Geçmiş değerlerden tahmin. AR(p) son p değerlerini kullanır.
-- **I (Integrated):**D) Dönüştürme d) Dönüştürme d) Dönüştürme d) D) D) D) D) D) D) D) D) D) D) D) D) D) D) D) D) D) D) D) D) D) D) D) D) D) D) D) D) D) D) D) D) D) D) D) D) D) D) D) D) D) D) D) D) D) D) D) D) D) D) D) D) D) D) D) D) D) D) D) D) D) D) D) D) D) D) D) D) D) D) D) D) D) D) D) D) D) D) D) D) D) D) D) D) D) D) D) D) D) D) D) D) D) D) D) D) D) D) D) D) D) D) D) D) D) D) D) D) D) D) D) D) D) D) D) D) D) D) D) D) D) D) D) D) D) D) D) D) D) D) D) D) D) D) D) D) D) D) D) D) D) D) D) D) D) D) D) D) D) D) D) D) D) D) D) D) D) D) D) D) D) D) D) D) D) D) D) D) D) D) D) D) D) D) D) D) D) D) D) D) D) D) D) D) D) D) D) D) D) D) D) D) D) D) D) D) D) D) D) D) D) D) D) D) D) D) D) D) D) D) D) D) D) D) D) D) D) D) D) D) D) D) D) D) D) D) D) D) D) D) D) D) D) D) D) D) D) D) D) D) D) D) D) D
-- **MA (Moving Average):**Geçmiş tahmin hatalarından tahmin. MA(q) son q hataları kullanır.
+- **AR (Autoregressive):**Geçmiş değerlerden tahmin. AR(p) sonuncu kullanır $p$değerleri.
+- **I (Integrated):**Düzgünlüğü elde etmek için farklılaştırma.$d$Farklılık döngeleri.
+- **MA (Moving Average):**Geçmiş tahmin hatalarından tahmin. MA(q) sonuncu kullanır $q$hatalar.
 
-ARIMA ((p, d, q) üçü de birleştirir. ACF/PACF analizi veya otomatik arama (auto-ARIMA) üzerine kurulmuş olarak p, d, q seçilir.
+ARIMA ((p, d, q) üçü de birleştirir.$p$- Evet .$d$- Evet .$q$ACF/PACF analizine veya otomatik arama (auto-ARIMA) temelinde.
 
 ARIMA'yı sıfırdan uygulamayacağız. Bu ders kapsamının ötesinde olan sayısal optimizasyonu gerektirir. Anahtar anlayış, her bileşenin ne yaptığını anlamak, böylece ARIMA sonuçlarını yorumlayabilir ve ne zaman kullanacağınızı bilebilirsiniz.
 
@@ -217,7 +217,7 @@ Tek adımlı tahminler bir adım ileriyi tahmin eder. Çok adımlı tahminler ç
 
 **Recursive (iterated):**Bir adım ileriyi tahmin edin, bir sonraki adım için giriş olarak tahmin kullanın. Basit ama hatalar birikir -- her tahmin önceki tahminleri kullanır, bu yüzden hatalar karışık.
 
-**Direct:**Her ufuk için ayrı bir model eğit. Model-1 t+1 tahmin eder, Model-5 t+5 tahmin eder. Hata birikimi yoktur, ancak her model daha az eğitim örneğine sahiptir ve bilgi paylaşmazlar.
+**Direct:**Her ufukta ayrı bir model hazırlayın.$t+1$Model-5 tahmin ediyor .$t+5$- Hata birikimi yok, ancak her model daha az eğitim örneği ve bilgi paylaşmaz.
 
 **Multi-output:**Tüm ufukları aynı anda çıkaran bir model eğit. ufuklar arasında bilgi paylaşır, ancak birden fazla çıkışı destekleyen bir model (veya özel bir kayıp fonksiyonu) gerektirir.
 
@@ -228,7 +228,7 @@ Tek adımlı tahminler bir adım ileriyi tahmin eder. Çok adımlı tahminler ç
 | Mistake | Why it happens | How to fix |
 |---------|---------------|-----------|
 | Random train/test split | Habit from standard ML | Use walk-forward or temporal split |
-| Using future features | Feature at time t included by mistake | Audit every feature for temporal alignment |
+| Using future features | Feature at time $t$ included by mistake | Audit every feature for temporal alignment |
 | Overfitting to seasonality | Model memorizes calendar patterns | Hold out a full seasonal cycle in the test set |
 | Ignoring scale changes | Revenue doubles but patterns stay | Model percentage change instead of absolute |
 | Too many lag features | "More history is better" | Use ACF to determine relevant lags |
@@ -386,7 +386,7 @@ print(f"Mean score: {scores.mean():.4f} +/- {scores.std():.4f}")
 
 Zaman dizisi tahminleri regresyon metriklerini kullanır, ancak zaman farkında bağlamla:
 
-- **MAE (Mean Absolute Error):**"Y_true - y_pred diction" ortalaması. "Orijinal birimlerde yorumlanmak kolaydır.
+- **MAE (Mean Absolute Error):**Ortalama $\lvert y_{\text{true}} - y_{\text{pred}} \rvert$"Örtüsel olarak tahminler 3.2 dereceye düşüyor".
 - **RMSE (Root Mean Squared Error):**Ortalama kare hataların kare kökü. Büyük hataların MAE'den daha fazla cezalandırılması. Büyük hataların birçok küçük hatalardan daha kötü olduğu zaman kullanın.
 - **MAPE (Mean Absolute Percentage Error):**Ortalama hata / gerçek değer = 100 * 100 . Ölçüsünden bağımsız, farklı diziler arasında karşılaştırmak için yararlı. Ama gerçek değerler sıfır olduğunda tanımlanmamış.
 - **Naive baseline comparison:**Her zaman basit temel çizgilerle karşılaştırın. Mevsimsel naif temel çizgi bir dönemden önceki değeri tahmin eder (dün, geçen hafta).
@@ -444,10 +444,10 @@ Eğer süslü ML modeliniz mevsimsel saf bir başlangıç çizgisine kaybedirse,
 | Term | What people say | What it actually means |
 |------|----------------|----------------------|
 | Stationarity | "The stats don't change over time" | A series whose mean, variance, and autocorrelation structure are constant over time |
-| Differencing | "Subtract consecutive values" | Computing y[t] - y[t-1] to remove trends and achieve stationarity |
+| Differencing | "Subtract consecutive values" | Computing $y[t] - y[t-1]$ to remove trends and achieve stationarity |
 | Autocorrelation (ACF) | "How a series correlates with itself" | The correlation between a time series and a lagged copy of itself, as a function of the lag |
-| Partial autocorrelation (PACF) | "Direct correlation only" | Autocorrelation at lag k after removing the effect of all shorter lags |
-| Lag features | "Past values as inputs" | Using y[t-1], y[t-2], ..., y[t-k] as features to predict y[t] |
+| Partial autocorrelation (PACF) | "Direct correlation only" | Autocorrelation at lag $k$ after removing the effect of all shorter lags |
+| Lag features | "Past values as inputs" | Using $y[t-1], y[t-2], \ldots, y[t-k]$ as features to predict $y[t]$ |
 | Walk-forward validation | "Time-respecting cross-validation" | Evaluation where training data always precedes test data chronologically |
 | ARIMA | "The classic time series model" | AutoRegressive Integrated Moving Average: combines past values (AR), differencing (I), and past errors (MA) |
 | Seasonality | "Repeating calendar patterns" | Regular, predictable cycles in a time series tied to calendar periods (daily, weekly, yearly) |

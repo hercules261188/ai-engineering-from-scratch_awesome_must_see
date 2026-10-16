@@ -24,10 +24,10 @@ Birleştirme yöntemleri tam olarak bunu yapar. Tablolar veriler üzerinde Kaggl
 
 ### Grupların Neden Çalışması
 
-N bağımsız sınıflandırıcılarınız var, her biri p > 0.5 doğruluğuna sahip.
+- Diyelim ki öyle .$N$Her biri doğru bir şekilde bağımsız sınıflandırıcılar.$p > 0.5$Çoğunluk doğru:
 
-```
-P(majority correct) = sum over k > N/2 of C(N,k) * p^k * (1-p)^(N-k)
+```math
+P(\text{majority correct}) = \sum_{k > N/2} \binom{N}{k} p^k (1-p)^{N-k}
 ```
 
 Her biri %60 doğruluğu olan 21 sınıflandırıcı için çoğunluk oylarının doğruluğu yaklaşık %74'dir. 101 sınıflandırıcı ile %84'e yükselmektedir.
@@ -132,7 +132,7 @@ Gradyent artırma, keyfi kayıp fonksiyonlarına yükseltmeyi genelleştirir. Ö
 3. Final prediction: F_T(x)
 ```
 
-Karakter hata kaybı için, sahte kalıntılar sadece gerçek kalıntılardır: `r_i = y_i - F_{t-1}(x_i)`Her ağaç, öncekilerin hatalarına uyuyor.
+Karakter hata kaybı için, sahte kalıntılar sadece gerçek kalıntılardır: $r_i = y_i - F_{t-1}(x_i)$Her ağaç, öncekilerin hatalarına uyuyor.
 
 Öğrenme hızı (kısaltma) her ağacın ne kadar katkıda bulunduğunu kontrol eder. Daha küçük öğrenme hızı daha fazla ağaç gerektirir ancak daha iyi genelleştirir. Tipik değerler: 0.01 ila 0.3.
 
@@ -349,7 +349,7 @@ Bu ders bize çok yararlı .`outputs/prompt-ensemble-selector.md`- bir veri küm
 ## Daha Fazla Okumak
 
 - [Schapire & Freund: Boosting: Foundations and Algorithms](https://mitpress.mit.edu/9780262526036/)-- AdaBoost'un yaratıcılarının kitabı
-- [Friedman: Greedy Function Approximation: A Gradient Boosting Machine (2001)](https://statweb.stanford.edu/~jhf/ftp/trebst.pdf)-- orijinal gradient artıran kağıt
+- [Friedman: Greedy Function Approximation: A Gradient Boosting Machine (2001)](https://doi.org/10.1214/aos/1013203451)-- orijinal gradient artıran kağıt
 - [Chen & Guestrin: XGBoost (2016)](https://arxiv.org/abs/1603.02754)-- XGBoost kağıdı
 - [Wolpert: Stacked Generalization (1992)](https://www.sciencedirect.com/science/article/abs/pii/S0893608005800231)-- orijinal yığma kağıdı
 - [scikit-learn Ensemble Methods](https://scikit-learn.org/stable/modules/ensemble.html)-- pratik referans

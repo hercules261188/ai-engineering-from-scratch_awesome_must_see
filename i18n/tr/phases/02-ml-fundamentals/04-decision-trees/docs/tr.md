@@ -48,10 +48,8 @@ Her düğümde bir dizi örnek var. Onları bölmek istiyoruz, böylece elde edi
 
 **Gini impurity**Bu, rastgele seçilen bir örneğin, bu düğümdeki sınıf dağılımına göre etiketlenmesi durumunda yanlış sınıflandırılma olasılığını ölçer.
 
-```
-Gini(S) = 1 - sum(p_k^2)
-
-where p_k is the proportion of class k in set S.
+```math
+\text{Gini}(S) = 1 - \sum_k p_k^2 \quad \text{where } p_k \text{ is the proportion of class } k \text{ in set } S.
 ```
 
 Saf bir düğüm için (her biri bir sınıf), Gini = 0. 50/50 sınıflı bir ikili bölünme için Gini = 0.5.
@@ -64,8 +62,8 @@ Gini = 1 - (0.6^2 + 0.4^2) = 1 - (0.36 + 0.16) = 0.48
 
 **Entropy**Bir düğümdeki bilgi içeriğini (bozukluğu) ölçer.
 
-```
-Entropy(S) = -sum(p_k * log2(p_k))
+```math
+\text{Entropy}(S) = -\sum_k p_k \log_2(p_k)
 ```
 
 saf bir düğüm için entropy = 0. 50/50 çift bölünme için entropy = 1.0.
@@ -81,20 +79,21 @@ Entropy = -(0.6 * log2(0.6) + 0.4 * log2(0.4))
 
 **Information gain**bölünmeden sonra kirlilik (entropy veya Gini) azalmasıdır.
 
-```
-IG(S, feature, threshold) = Impurity(S) - weighted_avg(Impurity(S_left), Impurity(S_right))
-
-where the weights are the proportions of samples in each child.
+```math
+\begin{aligned}
+& IG(S, \text{feature}, \text{threshold}) = \text{Impurity}(S) - \text{weighted\_avg}(\text{Impurity}(S_{\text{left}}), \text{Impurity}(S_{\text{right}})) \\[4pt]
+& \text{where the weights are the proportions of samples in each child.}
+\end{aligned}
 ```
 
 Her düğümde açgözlü algoritma: her özelliği ve olası her eşiği deneyin. Bilgi kazanımını en üst düzeye çıkaran (söz, eşiği) çiftini seçin.
 
 ### Bölünme nasıl çalışır
 
-N özellikleri ve m örnekleri olan bir veri kümesi için geçerli düğümde:
+ ile bir veri kümesi için$n$Özellikleri ve $m$Akım düğümünde örnekler:
 
-1. Her bir özellik için j (j = 1 ila n):
-   - Örnekleri j özelliğine göre sıralayın
+1. Her özellik için $j$($j = 1$- ...$n$):
+   - Örnekleri özelliklere göre sıralayın $j$
    - Ardından farklı değerler arasındaki her orta noktayı bir eşiği olarak deneyin
    - Her eşiğin bilgi kazanımını hesaplayın
 2. En yüksek bilgi kazancı olan özellik ve eşiği seçin
@@ -109,7 +108,7 @@ Ağaç, her yaprak saf olana kadar (yarrak başına bir örnek) durmadan büyür
 
 **Pre-pruning**ağaç tamamen büyümeden önce durdurur:
 - Maksimum derinlik: ağaç belirlenmiş bir derinliğe ulaştığında bölünmeyi durdurur
-- Yaprak başına minimum örnekler: bir düğüm k örnekten daha az varsa durur
+- Yarpaq başına en az örnek: bir düğümün ' dan daha azı varsa dur.$k$örnekler
 - En az bilgi kazanımı: en iyi bölünme pisliği bir eşiğinden daha az iyileştirirse durur
 - Maksimum yaprak düğümleri: toplam yaprak sayısını sınırlayın
 
@@ -125,8 +124,8 @@ Regresiyon için, yaprak tahminleri bu yapraktaki hedef değerlerin ortalamasıd
 
 **Variance reduction**bilgi kazanımı yerine:
 
-```
-VR(S, feature, threshold) = Var(S) - weighted_avg(Var(S_left), Var(S_right))
+```math
+VR(S, \text{feature}, \text{threshold}) = \text{Var}(S) - \text{weighted\_avg}(\text{Var}(S_{\text{left}}), \text{Var}(S_{\text{right}}))
 ```
 
 Ağaç giriş alanını bölgeye ayırır ve her bölgede sabit (ortalama) tahmin eder.
@@ -155,7 +154,7 @@ graph TD
 
 **Bagging (bootstrap aggregating):**Her ağaç, eğitim verilerinden değiştirilen rastgele bir örnek olan bir başlangıç örneği üzerinde eğitilir.
 
-**Feature randomization:**Her bölünmede, yalnızca rastgele bir alt dizi özellik göz önünde bulundurulur. sınıflandırma için, varsayılan özellik sqrt(n_features). Geri dönüş için, n_features/3. Bu, tüm ağaçların aynı baskın özellik üzerinde bölünmesini engeller.
+**Feature randomization:**Her bölünmede, yalnızca rastgele bir özellik alt kümesi dikkate alınır.$\sqrt{n_{\text{features}}}$Geri dönüş için.$n_{\text{features}}/3$Bu, tüm ağaçların aynı baskın özellik üzerinde bölünmesini engeller.
 
 Anahtar bir anlayış: ortalama bir çok koraylı ağaç, önyargıyı arttırmadan farklılığı azaltır.
 
@@ -165,9 +164,8 @@ Rastgele ormanlar doğal olarak özellik önem puanları sağlar.
 
 **Mean Decrease in Impurity (MDI):**Her bir özellik için, tüm ağaçlar ve bu özellik kullanıldığı tüm düğümlerdeki kirliliklerin toplam azalmasını toplamlayın.
 
-```
-importance(feature_j) = sum over all nodes where feature_j is used:
-    (n_samples_at_node / n_total_samples) * impurity_decrease
+```math
+\text{importance}(\text{feature}_j) = \sum_{\text{nodes where feature}_j \text{ is used}} \frac{n_{\text{samples at node}}}{n_{\text{total samples}}} \cdot \text{impurity\_decrease}
 ```
 
 Bu hızlı (öğrenme sırasında hesaplanır), ancak yüksek kardinalite özelliklerine ve birçok olası bölünme noktasına yönelen özelliklere yönlendirilir.
@@ -444,7 +442,7 @@ Bu ders bize çok yararlı .`outputs/prompt-tree-interpreter.md`-- bir istek, ka
 
 1. 3 sınıflı 2 boyutlu bir veri kümesinde tek bir karar ağacını çalıştırın. Bölümleri elca izleyin ve dikdörtgen karar sınırlarını çizin. Sınırları max_depth=2 vs max_depth=10'da karşılaştırın.
 
-2. Gerileme ağaçları için varyansa azaltma bölümü uygulayın. Y = sin(x) + 200 nokta için gürültü oluşturun ve gerileme ağacınıza uyun. Ağaçın parça-sıra sabit tahminlerini gerçek eğriyle çizin.
+2. Regresyon ağaçları için varyansa azaltma bölünmesini uygulayın.$y = \sin(x) + \text{noise}$200 puan için ve gerileme ağacına uyumlu olarak ağacın parça-daimi tahminlerini gerçek eğri ile çizin.
 
 3. 1, 5, 10, 50 ve 200 ağaçla rastgele bir orman inşa edin. Plan eğitimi doğruluğu ve test doğruluğu vs. ağaç sayısına karşı.
 

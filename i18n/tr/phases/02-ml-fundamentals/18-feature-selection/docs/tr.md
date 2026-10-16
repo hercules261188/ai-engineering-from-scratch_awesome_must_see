@@ -62,8 +62,8 @@ Bir özellik örnekler arasında az değişirse, neredeyse hiçbir bilgi taşım
 
 1000 örnekten 999'un 0.0 oranında bir özelliği düşünün.
 
-```
-variance(x) = mean((x - mean(x))^2)
+```math
+\text{variance}(x) = \text{mean}\bigl((x - \text{mean}(x))^2\bigr)
 ```
 
 Bir eşiği (örneğin, 0.01) belirleyin. Onun altında varyansiyesi olan her özelliği bırakın. Bu, hedef değişkenine bakmadan sabit veya neredeyse sabit özellikleri çıkarır.
@@ -74,17 +74,17 @@ Sınırlama: bir özellik yüksek bir değişikliğe sahip olabilir ve yine de s
 
 ### Karşılıklı Bilgi
 
-Karşılıklı bilgi, X özelliğinin değerini bilmek ile Y hedefi hakkında belirsizliklerin ne kadar azaldığını ölçer.
+Karşılıklı bilgi , bir özelliğin değerini ne kadar bilmenin ölçüsünü ölçer $X$hedef hakkında belirsizlikleri azaltır $Y$- Evet .
 
-```
-I(X; Y) = sum_x sum_y p(x, y) * log(p(x, y) / (p(x) * p(y)))
+```math
+I(X; Y) = \sum_x \sum_y p(x, y) \cdot \log \frac{p(x, y)}{p(x) \cdot p(y)}
 ```
 
-Eğer X ve Y bağımsız ise, p(x, y) = p(x) * p(y), yani log terimi sıfır ve I(X; Y) = 0. X size Y hakkında ne kadar çok şey söylerse, karşılıklı bilgi o kadar yüksek olur.
+- Eğer$X$ve $Y$bağımsızdırlar.$p(x, y) = p(x) \cdot p(y)$, yani log term sıfır ve $I(X; Y) = 0$Ne kadar çok olursa .$X$Sana anlatıyor .$Y$, karşılıklı bilgi daha yüksek.
 
 Bir özelliğin hedefe sıfır bir korelasyonu olabilir, ancak ilişki kare veya periyodik olduğu için yüksek karşılıklı bilgi olabilir.
 
-Sürekli özellikler için önce kutulara ayırt edin (istogram tabanlı tahmin). kutuların sayısı tahmine etkiler - çok az kutu bilgiyi kaybeder, çok fazla kutu gürültü ekler.
+Sürekli özellikler için önce kutulara ayırt edin (istogram tabanlı tahmin). kutuların sayısı tahminleri etkiler - çok az kutu bilgiyi kaybeder, çok fazla kutu gürültü ekler.$\sqrt{n}$kutular veya Sturges'in kuralları ($1 + \log_2 n$)
 
 ```mermaid
 flowchart LR
@@ -116,14 +116,14 @@ flowchart TD
 
 RFE, özellik etkileşimlerini göz önünde bulundurur çünkü model kalan tüm özellikleri bir araya getirir. Bir özellikten çıkarılması diğerlerinin önemini değiştirir. Bu, filtre yöntemlerinden daha kapsamlı hale getirir.
 
-Masraf: model N - hedef zamanları eğitirsiniz. 500 özellik ve 10 hedef ile, yani 490 eğitim koşusu. Pahalı modeller için bu yavaş. Adım başına birden fazla özellik çıkararak hızlandırabilirsiniz (örneğin, her turda alt 10% çıkarın).
+Masraf: model eğitimi $N - \text{target}$Bu, 5 aylık bir trenin en yüksek seviyesinde olması anlamına gelir. 500 özellik ve 10'un hedefi ile 490 eğitim koşusu. Pahalı modeller için bu yavaş.
 
 ### L1 (Lasso) Düzenleme
 
 L1 düzenlenmesi, kayıp fonksiyonuna ağırlıkların mutlak değerini ekler:
 
-```
-loss = prediction_error + alpha * sum(|w_i|)
+```math
+\text{loss} = \text{prediction\_error} + \alpha \cdot \sum \lvert w_i \rvert
 ```
 
 Alfa parametri, özelliklerin ne kadar agresif olarak kesildiğini kontrol eder.
@@ -140,12 +140,10 @@ Sınırlama: Sadece doğrusal modeller için çalışır.
 
 Karar ağaçları ve onların ansamblları (hassasi ormanlar, gradient artışı) doğal olarak özellikleri sıralar. Her bölünme kirliliği azaltır (sınıflama için Gini veya entropy, geri dönüş için varians).
 
-T ağaçları olan rastgele bir orman için:
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             $T$ağaçlar:
 
-```
-importance(feature_j) = (1/T) * sum over all trees of
-    sum over all nodes splitting on feature_j of
-        (n_samples * impurity_decrease)
+```math
+\text{importance}(\text{feature}_j) = \frac{1}{T} \sum_{\text{all trees}} \; \sum_{\text{all nodes splitting on } \text{feature}_j} (\text{n\_samples} \cdot \text{impurity\_decrease})
 ```
 
 Bu, her özellik için normallaştırılmış bir önem puanı verir.
@@ -524,7 +522,7 @@ Bu ders şunları ortaya çıkarır:
 | Filter method | "Score features independently" | A feature selection approach that ranks features using a statistical measure without training a model, evaluating each feature in isolation |
 | Wrapper method | "Use the model to pick features" | A feature selection approach that evaluates feature subsets by training a model and using its performance as the selection criterion |
 | Embedded method | "The model selects features during training" | Feature selection that happens as part of model fitting, such as L1 regularization driving weights to zero |
-| Mutual information | "How much one variable tells you about another" | A measure of the reduction in uncertainty about Y given knowledge of X, capturing both linear and nonlinear dependencies |
+| Mutual information | "How much one variable tells you about another" | A measure of the reduction in uncertainty about $Y$ given knowledge of $X$, capturing both linear and nonlinear dependencies |
 | Recursive Feature Elimination | "Train, rank, prune, repeat" | An iterative wrapper method that trains a model, removes the least important feature(s), and repeats until a target count is reached |
 | L1 / Lasso regularization | "Penalty that kills features" | Adding the sum of absolute weight values to the loss function, which drives unimportant feature weights to exactly zero |
 | Variance threshold | "Remove constant features" | Dropping features whose variance across samples falls below a specified threshold, filtering out features that carry no information |

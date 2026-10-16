@@ -176,7 +176,7 @@ flowchart LR
 
 Test setinin kutsal olduğu için, tam bir kez bakarsınız. Eğer test performansına göre modelinizi düzenlemeye devam ederseniz, test setinde etkili bir şekilde eğitim veriyorsunuz ve rapor edilen rakamlarınız anlamsızdır.
 
-Küçük veri kümeleri için k katlı çapraz onay kullanın: verileri k parçalara ayırın, k-1 parçaları üzerinde çalışın, kalan kısmını onaylayın, döndürün ve ortalama sonuçlar.
+Küçük veri kümeleri için k katlı çapraz onay kullanın: verileri bölün$k$Parçalar, tren devam ediyor.$k-1$Parçalara, kalan parçaya doğrulamayı, dönüşü ve ortalama sonuçları.
 
 ### Üstü vs. Altı
 
@@ -242,9 +242,9 @@ Bu, aşırı ve düşük uyum altında kalmanın arkasındaki matematiksel çer�
 | Just right | Medium | Medium | Good generalization |
 | Too high (degree-20 polynomial for 10 points) | Low | High | Overfitting |
 
-Toplam hata = Tarafsızlık^2 + Varians + Kısıtlanamayan gürültü
+$\text{Total error} = \text{Bias}^2 + \text{Variance} + \text{Irreducible noise}$
 
-Kısıtlanamayan gürültüyi azaltamazsınız (bu verilerin kendisinde rastlantı) ve önyargının en az olarak azaltıldığı tatlı noktayı bulmak istiyorsunuz.
+Kısıtlanamayan gürültüyi azaltamazsınız (bu verilerin kendisinde rastlantı)$\text{bias}^2 + \text{variance}$- En azı.
 
 ### Ücretsiz Öğle Öğle Teoremi Yok
 

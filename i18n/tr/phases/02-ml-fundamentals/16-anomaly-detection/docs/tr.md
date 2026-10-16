@@ -82,7 +82,7 @@ Uygulamalarda en iyi sistemler her ikisini birleştirir: geniş kapsamlılık i�
 
 ### Z-Score Yöntem
 
-En basit yaklaşım. Her bir özelliğin ortalama ve standart sapmalarını hesaplayın. Ortalama standart sapmalardan k'den fazla herhangi bir noktayı işaretleyin.
+En basit yaklaşım. Her bir özelliğin ortalama ve standart sapmalarını hesaplayın.$k$ortalama standart sapma.
 
 ```text
 z_score = (x - mean) / std
@@ -148,11 +148,11 @@ flowchart TD
 
 Anomaly skor, tüm ağaçlardaki ortalama yol uzunluğuna dayanır. Bu normal bir rastgele ikili arama ağacının beklenen yol uzunluğuna göre normalleştirilmiştir.
 
-```
-score(x) = 2^(-average_path_length(x) / c(n))
+```math
+\text{score}(x) = 2^{-\text{average\_path\_length}(x) / c(n)}
 ```
 
-Nerede ?`c(n)`n örnekler için beklenen yol uzunluğu. 1 yakınında puan anormallik demektir. 0.5 yakınında puan normal anlamına gelir. 0 yakınında puan çok normal anlamına gelir (sıkı kümelerde derinliklerde).
+Nerede ?`c(n)` için beklenen yol uzunluğu$n$Örnekler. 1 yakın puan anomali demektir. 0.5 yakın puan normal anlamına gelir. 0 yakın puan çok normal anlamına gelir (sıkı kümelerde derinliklerde).
 
 **Strengths:**Yayınlama varsayımları yoktur. Yüksek boyutlarda çalışır. İyi ölçekler (her ağaç bir alt örnek kullanırken örnek boyutunda alt çizgilidir). Karışık özellik türlerini ele alır.
 
@@ -168,7 +168,7 @@ Nerede ?`c(n)`n örnekler için beklenen yol uzunluğu. 1 yakınında puan anorm
 LOF, bir noktadan çevresindeki yerel yoğunluğu komşularının yoğunluğuna karşılaştırır.
 
 **How it works:**
-1. Her noktaya en yakın komşu k'yi bul
+1. Her nokta için, onun $k$En yakın komşuları
 2. Yerel erişilebilirlik yoğunluğunu hesaplayın (komşunun ne kadar yoğun olduğu)
 3. Her noktanın yoğunluğunu komşularının yoğunluklarıyla karşılaştır
 4. Bir noktanın komşularından çok daha düşük yoğunluğu varsa, bu bir dışarıdır.
@@ -182,7 +182,7 @@ LOF, bir noktadan çevresindeki yerel yoğunluğu komşularının yoğunluğuna 
 
 **Strengths:**Yerel anormallikleri (globa olarak sıradışı olmasalar da, komşularında olağandışı olan noktaları) tespit eder.
 
-**Weaknesses:**Büyük veri kümeleri üzerinde yavaş (O(n^2) saf uygulama için. k'nin seçimine duyarlı. Çok yüksek boyutlarda iyi çalışmaz (ölümsellik laneti mesafe hesaplamalarını etkiler).
+**Weaknesses:**Büyük veri kümeleri üzerinde yavaş ($O(n^2)$Bu nedenle, bu konuda çok fazla bilgi almak için,$k$Çok yüksek boyutlarda iyi çalışmaz (boyutsuzluk laneti mesafe hesaplamalarını etkiler).
 
 ### Karşılaştırma
 
@@ -199,7 +199,7 @@ Anomalyeler denetleyicilerini değerlendirmek sınıflandırıcıları değerlen
 
 - **Extreme class imbalance.**%0,1 anomali ile her şey için "normal" tahmin ederek %99,9 doğruluk elde edilir.
 - **AUROC is misleading.**Ağır dengesizlik durumunda, AUROC, model pratik eşiğinde çoğu anomaliyi kaçırırken bile iyi görünebilir.
-- **Better metrics:**Precision@k (yukarıda k işaretli öğelerin, kaç tane gerçek anomali), AUPRC (tamamlı geri çağırma eğri altında alan) ve sabit yanlış pozitif oranla geri çağırma.
+- **Better metrics:**Precision@k (yukarıdan $k$işaretli öğeler, kaç tane gerçek anomali), AUPRC (tamamlı geri çağırma eğri altında alan) ve sabit yanlış pozitif oranla geri çağırma.
 
 ```mermaid
 flowchart LR
@@ -317,7 +317,7 @@ class IsolationForest:
         return scores
 ```
 
-Normalleşme faktörü`c(n)`n elementli bir ikili arama ağacında başarısız bir arama için beklenen yol uzunluğu.`2 * H(n-1) - 2*(n-1)/n`nerede`H`Bu normallaştırma, farklı boyutlarda veri kümeleri arasında puanların karşılaştırılabilir olmasını sağlar.
+Normalleşme faktörü`c(n)` ile biner arama ağacında başarısız bir arama için beklenen yol uzunluğu$n$Bu da aynı.`2 * H(n-1) - 2*(n-1)/n`nerede`H`Bu normallaştırma, farklı boyutlarda veri kümeleri arasında puanların karşılaştırılabilir olmasını sağlar.
 
 ### Demo Szenaryoları
 
@@ -433,7 +433,7 @@ Her iki durumda da, en uygun eşiğin fiyatı yanlış olumlu ve yanlış olumsu
 
 2. **Multivariate anomalies.**Her bir özelliğin bireysel olarak normal göründüğü, ancak kombinasyonun anormal olduğu 2 boyutlu veriler oluşturun (örneğin, ana kümenin diyagonalından uzak noktalar).
 
-3. **LOF from scratch.**K-nezar komşuları kullanarak Yerel Dışarıdaki Factor uygulamak. Aynı veriler üzerinde sklearn'ın Yerel Dışarıdaki Factor ile karşılaştırın. k=10 ve k=50 kullanın - k seçimi sonuçları nasıl etkiler?
+3. **LOF from scratch.**K- en yakın komşuları kullanarak Local Outlier Factor uygulaması.$k=10$ve $k=50$-- nasıl seçilir $k$sonuçları etkiler mi?
 
 4. **Streaming anomaly detection.**Z-score detektörü akış ayarında çalışmak için değiştirin: yeni noktalar geldiğinde çalışan ortalama ve varyansı güncelleyin (Welford'un çevrimiçi algoritması).
 
@@ -448,10 +448,10 @@ Her iki durumda da, en uygun eşiğin fiyatı yanlış olumlu ve yanlış olumsu
 | Contextual anomaly | "Normal value, wrong context" | An observation that is unusual given its context (time, location, etc.) but might be normal in another context |
 | Isolation Forest | "Random splits to find outliers" | An ensemble of random trees that isolates anomalies with fewer splits than normal points |
 | Local Outlier Factor | "Compare density to neighbors" | A method that flags points whose local density is much lower than their neighbors' density |
-| Z-score | "Standard deviations from mean" | (x - mean) / std, measuring how far a point is from the center in units of standard deviation |
-| IQR | "Interquartile range" | Q3 - Q1, measuring the spread of the middle 50% of data, used for robust outlier detection |
+| Z-score | "Standard deviations from mean" | $(x - \text{mean}) / \text{std}$, measuring how far a point is from the center in units of standard deviation |
+| IQR | "Interquartile range" | $Q3 - Q1$, measuring the spread of the middle 50% of data, used for robust outlier detection |
 | Contamination | "Expected fraction of anomalies" | A hyperparameter telling the detector what proportion of the data it should flag as anomalous |
-| Precision@k | "Of the top k flags, how many are real" | Precision computed on only the k most suspicious points, useful for imbalanced anomaly detection |
+| Precision@k | "Of the top k flags, how many are real" | Precision computed on only the $k$ most suspicious points, useful for imbalanced anomaly detection |
 | AUPRC | "Area under precision-recall curve" | A metric that summarizes precision-recall performance across all thresholds, better than AUROC for imbalanced data |
 
 ## Daha Fazla Okumak

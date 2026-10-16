@@ -81,11 +81,11 @@ flowchart TB
     Fold5 --> R
 ```
 
-1. Verileri K eşit boyutlu katlara bölün
-2. Her kat için K-1 katlarında çalıştırın ve kalan kat üzerinde doğrulayın
-3. K doğrulama puanlarının ortalaması
+1. Verileri bölün .$K$Aynı boyutlu katlanmalar
+2. Her katlanış için, tren devam et.$K-1$katlanır ve kalan katlanmada onaylanır
+3. Ortalama $K$Valide puanları
 
-K=5 veya K=10 standart seçimlerdir. Her veri noktası doğrulamak için tam olarak bir kez kullanılır. Ortalama puan herhangi bir tek bölünmeden daha istikrarlı bir tahmindir.
+$K=5$veya $K=10$Bu, her veri noktasının doğrulamada bir kez kullanıldığı anlamına gelir.
 
 **Stratified K-fold**Eğer veri kümeniz %70 sınıf A ve %30 sınıf B ise, her katlama yaklaşık olarak aynı oranı olacaktır. Bu, rastgele bir bölünme tüm azınlık örneklerini bir katmaya koyabileceği dengesiz veri kümeleri için önemlidir.
 
@@ -100,18 +100,18 @@ K=5 veya K=10 standart seçimlerdir. Her veri noktası doğrulamak için tam ola
 
 Bu matristen, diğer tüm metrikler aşağıdakiler:
 
-- **Accuracy**= (TP + TN) / (TP + TN + FP + FN). Doğru tahminlerin bir kısmı. Sınıfların dengesiz olduğu zaman yanıltıcı.
-- **Precision**= TP / (TP + FP). Tüm tahmin edilen olumlu şeylerden, kaç tane aslında olumluydu? Yanlış olumlu olanlar pahalı olduğunda kullanın (örneğin, gerçek e-postaları spam olarak işaretleyen spam filtre).
-- **Recall**(hisslilik) = TP / (TP + FN). Tüm gerçek olumlu sonuçlardan kaç taneyi yakaladık? Yanlış negatifler pahalı olduğunda kullanın (örneğin, kanser taraması tümörün eksik olduğunu gösterir).
-- **F1 score**= 2 * doğruluk * geri çağırma / (doğrulık + geri çağırma).
+- **Accuracy**= $(TP + TN) / (TP + TN + FP + FN)$Doğru tahminlerin küçük bir kısmı sınıfların dengesiz olduğu zaman yanıltıcıdır.
+- **Precision**= $TP / (TP + FP)$Yanlış pozitiflerin pahalı olduğu durumlarda kullanılır (örneğin gerçek e-postaları spam olarak işaretleyen spam filtre).
+- **Recall**(hisslilik) = $TP / (TP + FN)$- Tüm gerçek olumlu sonuçlardan kaç taneyi yakaladık? - Yanlış negatifler pahalı olduğunda kullanın (örneğin kanser taraması tümörün eksikliği).
+- **F1 score**= $2 \cdot \text{precision} \cdot \text{recall} / (\text{precision} + \text{recall})$- Harmoni bir doğruluk ve hatırlama aracı.
 - **AUC-ROC**Alıcı İşlem Karakteristik Küresi Altındaki Alan. Farklı sınıflandırma eşiğinde gerçek pozitif oranla yanlış pozitif oranı gösterir. AUC = 0.5 rastgele tahmin anlamına gelir, AUC = 1.0 mükemmel ayrım anlamına gelir. Eşiği bağımsız: modelin ne kadar iyi olduğunu ölçer.
 
 ### Gerileme Metrikleri
 
-- **MSE**(Mean Square Error) = mean((y_true - y_pred) ^ 2). Büyük hataları karadrat olarak cezalandırır.
-- **RMSE**(Kök ortalama kare hatası) = sqrt(MSE). Hedef değişken ile aynı birim.
-- **MAE**(Medi Absolute Error) = ortalama y_true - y_pred y). Tüm hataları doğrusal olarak ele alır.
-- **R-squared**= 1 - SS_res / SS_tot, burada SS_res = toplam((y_true - y_pred) ^2) ve SS_tot = toplam(((y_true - y_mean) ^2).
+- **MSE**(Orta Çekirde Hata) = $\text{mean}((y_{\text{true}} - y_{\text{pred}})^2)$Büyük hataları karkatik olarak cezalandırır.
+- **RMSE**(Kök ortalama kare hatası) = $\sqrt{\text{MSE}}$Hedef değişkeninin aynı birimleri, MSE'den daha kolay yorumlanabilir.
+- **MAE**(Yarıncı Kesin Hata) = $\text{mean}(\lvert y_{\text{true}} - y_{\text{pred}} \rvert)$- Tüm hataları doğrusal olarak ele alır.
+- **R-squared**= $1 - SS_{\text{res}} / SS_{\text{tot}}$, nerede $SS_{\text{res}} = \sum (y_{\text{true}} - y_{\text{pred}})^2$ve $SS_{\text{tot}} = \sum (y_{\text{true}} - y_{\text{mean}})^2$.Model ile açıklanan varyansa oranı. $R^2 = 1.0$- Mükemmel.$R^2 = 0.0$Yani model her zaman ortalama tahmininden daha iyi değildir.$R^2$Eğer model ortalamadan daha kötüse negatif olabilir.
 
 ### Öğrenme Kurbalıkları
 
@@ -664,10 +664,10 @@ Bu ders şunları ortaya çıkarır:
 |------|----------------|----------------------|
 | Overfitting | "Memorizing the training data" | The model captures noise in the training data, performing well on training but poorly on unseen data |
 | Cross-validation | "Testing on different subsets" | Systematically rotating which portion of data is used for validation, averaging results across all rotations |
-| Precision | "How many predicted positives are correct" | TP / (TP + FP): the fraction of positive predictions that are actually positive |
-| Recall | "How many actual positives we found" | TP / (TP + FN): the fraction of actual positives that were correctly identified |
+| Precision | "How many predicted positives are correct" | $TP / (TP + FP)$: the fraction of positive predictions that are actually positive |
+| Recall | "How many actual positives we found" | $TP / (TP + FN)$: the fraction of actual positives that were correctly identified |
 | AUC-ROC | "How well the model separates classes" | The area under the curve of true positive rate vs false positive rate across all thresholds, from 0.5 (random) to 1.0 (perfect) |
-| R-squared | "How much variance is explained" | 1 - (sum of squared residuals / total sum of squares): the fraction of target variance captured by the model |
+| R-squared | "How much variance is explained" | $1 - (\text{sum of squared residuals} / \text{total sum of squares})$: the fraction of target variance captured by the model |
 | Data leakage | "The model cheated" | Using information during training that would not be available at prediction time, leading to optimistic evaluation |
 | Learning curve | "How performance changes with more data" | A plot of training and validation scores vs training set size, revealing underfitting or overfitting |
 | Stratified split | "Keeping class ratios balanced" | Splitting data so each subset has the same proportion of each class as the full dataset |
