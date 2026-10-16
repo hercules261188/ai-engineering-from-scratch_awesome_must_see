@@ -13,6 +13,7 @@
 - Enrutar cada señal al contexto, evaluación, política, tiempo de ejecución o atrasos.
 - Priorizar la recurrencia por gravedad y frecuencia.
 - Dar a todos los controles una condición de jubilación.
+- Comunicar una decisión de entrega con pruebas, compromisos y un propietario responsable.
 
 ## La retroalimentación es infraestructura
 
@@ -95,6 +96,84 @@ python3 -m unittest discover code/tests -v
 
 Añadir una señal de tiempo de espera de tiempo de ejecución y confirmar que se dirige a la hora de ejecución en lugar de la cartera general.
 
+## Laboratorio de práctica: tomar una decisión después de un revés
+
+Elige un flujo de trabajo de tu proyecto de cartera de carrera.[career delivery template](https://github.com/rohitg00/ai-engineering-from-scratch/blob/main/phases/14-agent-engineering/54-build-the-feedback-ratchet/outputs/career-delivery-evidence.md)¿ Qué ?
+
+El laboratorio de Python genera acciones de ejemplo de retraso. No observa a los usuarios, no mide una intervención ni prueba la preparación para la carrera.
+
+### 1. Determine lo que sucedió
+
+Registra el usuario, la tarea, el flujo de trabajo actual y el resultado que desea mejorar. Enlace una observación consentida, un registro de soporte editado o un rastro de tareas reproducible. Separa lo que observó de lo que alguien informó y lo que deducido.
+
+Busque un revés: una suposición fallida, un resultado inutilizable, un costo inesperado o una entrega tardía. Explique qué pruebas cambiaron su comprensión.
+
+Si no puede trabajar con los usuarios, ejecute una simulación claramente etiquetada con un escenario de pares o indicado. Mantenga las observaciones simuladas separadas de las pruebas de los usuarios reales. No invente entrevistas, aprobaciones, adopción o impacto comercial.
+
+### 2. Haga progresos dentro de su autoridad
+
+Enumera las incógnitas y escoge la acción reversible más barata que pueda resolver la más importante, indique qué puede decidir, qué está limitado por un acuerdo existente y qué necesita autorización antes de su ejecución.
+
+Por ejemplo, puede preparar una reproducción fuera de línea editada mientras espera permiso para usar los datos de los clientes. Tomar iniciativa significa avanzar en el trabajo autorizado y dejar clara la decisión bloqueada.
+
+### 3. Comparar opciones y informar al titular de la decisión
+
+Escriba un breve resumen de la decisión para alguien que no necesita los detalles de la implementación.
+
+- el problema del usuario y las pruebas que modificaron el plan;
+- al menos dos opciones, incluida una opción manual más barata o sin construcción, cuando sea creíble;
+- calidad, diseño de interacción, esfuerzo, coste operativo y compensación de riesgos;
+- su recomendación, la incertidumbre que sigue existiendo y la decisión necesaria;
+- el titular de la decisión, las partes interesadas afectadas y la fecha en que se necesita la decisión.
+
+Pida a un compañero que represente a una de las partes interesadas afectadas y desafíe una compensación. Regístrese la objeción y cómo cambia, o no cambia, su recomendación. Etiquete el feedback de juego de roles como simulado; no puede representar el acuerdo de una parte interesada real.
+
+### 4. Realice un experimento limitado
+
+Seleccione el prototipo, el piloto o el trabajo de producción en función de la pregunta a la que necesita responder. Defina la audiencia, los datos, la autoridad, la duración, el retroceso y las condiciones para continuar, cambiar o detener antes de recoger el resultado.
+
+Recorre la interacción desde el punto de partida del usuario hasta una tarea terminada. Incluye un caso de salida incorrecto o de datos faltantes. Observe si el usuario puede notar el fallo, corregirlo y recuperarse sin ayuda oculta de usted.
+
+Cuente el tiempo de revisión y corrección por parte de los humanos como parte del flujo de trabajo.
+
+### 5. Comparar los resultados con la economía
+
+Registre una línea de base y un seguimiento utilizando la misma definición métrica, población de tareas, método de recogida y ventanas de observación comparables. Mantenga el recuento de muestras, las exclusiones y los enlaces de evidencia junto a los números. Si estas condiciones cambian, explique por qué la comparación es limitada.
+
+Incluye un resultado de usuario, una barrera de seguridad o de calidad y un esfuerzo total de revisión por parte de los humanos. Registra el resultado incluso cuando se pierde el objetivo. Muestras pequeñas o simuladas respaldan una afirmación de aprendizaje limitada, no una afirmación de impacto empresarial comprobado.
+
+Estimar el costo por tarea completada con éxito utilizando llamadas de modelo, retemplazos, servicios de soporte y revisión humana. Indique la suposición de tasa de trabajo y separa el uso medido de las estimaciones. Compara ese costo con la alternativa manual o la suposición de valor detrás del proyecto.
+
+Utilice el existente [FinOps for LLMs lesson](https://aiengineeringfromscratch.com/lesson?path=phases/17-infrastructure-and-production/27-finops-llms)El cambio del modelo es sólo una respuesta posible; restringir el flujo de trabajo o mantener un paso manual puede ser la mejor decisión del producto.
+
+### 6. Cierra el bucle
+
+Utilice los criterios pre-declarados para recomendar continuar, cambiar o detener. Si la evidencia no es concluyente, mencione la observación que falta y la siguiente prueba limitada. Registre la respuesta del responsable responsable de la decisión; deje pendiente si no se ha tomado ninguna decisión.
+
+Elige una mejora en el proceso de entrega en sí: un marco de tareas más claro, un proceso de usuario más temprano, una mejor lista de revisión, una entrega de agentes más pequeña o un caso de evaluación más estricto.
+
+En el proceso de revisión, decide si debe mantener, revisar o retirar esa mejora. Registra las pruebas para la elección. Una nueva lista de verificación que crea más trabajo sin evitar el fracaso del objetivo no ha ganado permanencia.
+
+## Artículo enviado
+
+Copia .[career-delivery-evidence.md](https://github.com/rohitg00/ai-engineering-from-scratch/blob/main/phases/14-agent-engineering/54-build-the-feedback-ratchet/outputs/career-delivery-evidence.md)En el caso de los proyectos de investigación, incluye el informe de decisión, el proceso de interacción, la comparación de mediciones y el seguimiento de su cartera profesional.
+
+## Verifique el hecho
+
+Use esta rúbrica de aceptación manual con un par. Marque cada fila **met**¿ Qué ?**needs work**, o**not observed**Un campo lleno no es prueba de que el juicio fuera válido.
+
+| Check | Evidence that meets it |
+|---|---|
+| Workflow grounded | A traceable observation supports the problem; reported claims, inference, and simulation are labeled. |
+| Authority respected | Reversible next work is clear, and any restricted action waits for its actual decision owner. |
+| Tradeoffs communicated | Credible alternatives, a stakeholder objection, a recommendation, and an explicit decision request are recorded. |
+| Interaction tested | The walkthrough covers success, failure, recovery, and human review effort. |
+| Outcome compared | Baseline and follow-up definitions align; samples, guardrails, costs, and comparison limits are visible. |
+| Setback owned | The evidence changes a continue/change/stop decision and an accountable next action. |
+| Process improved | One workflow improvement has an owner, review date, and an evidence-based keep/revise/retire decision. |
+
+El comportamiento de los usuarios reales no observado sigue siendo un hueco incluso cuando cada paso simulado pasa.
+
 ## Los ejercicios
 
 1. Convierta un incidente y una queja de usuario en acciones de ratchet.
@@ -111,4 +190,4 @@ Añadir una señal de tiempo de espera de tiempo de ejecución y confirmar que s
 
 ## Lo que guardas
 
-Mantenga .`outputs/feedback-backlog.json`. Es el artefacto final del camino de evaluación y entrega del producto y la entrada al siguiente marco de resultados.
+Mantenga .`outputs/feedback-backlog.json`En el caso de los productos, el resultado de la evaluación de los resultados de la evaluación de los resultados de la evaluación de los resultados de la evaluación de los resultados de la evaluación de los resultados de la evaluación de los resultados de la evaluación de los resultados de la evaluación de los resultados de la evaluación de los resultados de la evaluación de los resultados de la evaluación de los resultados de la evaluación de los resultados de la evaluación de los resultados de la evaluación de los resultados de la evaluación de los resultados de la evaluación de los resultados de la evaluación de la evaluación de los resultados de la evaluación de los resultados de la evaluación de la evaluación de los resultados de la evaluación de la evaluación de los resultados de la evaluación de la evaluación de los resultados de la evaluación de la evaluación de los resultados de la evaluación de los resultados de la evaluación de la evaluación de los resultados de la evaluación de la evaluación de los resultados de la evaluación de la evaluación de los resultados de la evaluación de la evaluación de los resultados de la evaluación de la evaluación de los resultados de la evaluación de la evaluación de los resultados de la evaluación de la evaluación de la evaluación de los resultados de la evaluación de la evaluación de la evaluación de la evaluación de los resultados de la evaluación de la evaluación de la evaluación de la evaluación de la evaluación de la evaluación de la evaluación de la evaluación de la evaluación de la evaluación de la evaluación de la evaluación de la evaluación de la evaluación de la evaluación de la evaluación de la evaluación de la evaluación de la evaluación de la evaluación de la evaluación de la evaluación de la evaluación de la evaluación de la evaluación de la evaluación de la evaluación de la evaluación de la evaluación de la evaluación de la evaluación de la evaluación de la evaluación de la evaluación de la evaluación de la evaluación de la evaluación de la evaluación de la evaluación de la evaluación de la evaluación de la evaluación de la evaluación de la evaluación de la evaluación de la evaluación de la evaluación de la evaluación de la evaluación de la evaluación de la evaluación de la evaluación de la evaluación de la evaluación de la cuento de la evaluación de la evaluación de la cuento de la evaluación de la cuento de la cuento de la cuento de la cuento de la cuento de la cuento de la cuento de la cuento de la cuento de la cuento de la cuento de la cuento de la cuento de la cuento de la cuento de la cuento de la cuento de la cuento de la cuento de la cuento de la cuento de la cuento

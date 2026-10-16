@@ -140,7 +140,6 @@ La puerta es el borde decisivo en el flujo del banco de trabajo.
 - [Type-Checked Compliance: Deterministic Guardrails (arXiv 2604.01483)](https://arxiv.org/pdf/2604.01483) Lean 4 como el límite superior de la cerradura determinista
 - [logi-cmd/agent-guardrails — merge gate spec](https://github.com/logi-cmd/agent-guardrails) alcance + puertas de prueba de mutaciones
 - [Guardrails AI x MLflow](https://guardrailsai.com/blog/guardrails-mlflow) Validadores deterministas como puntuación de CI
-- [Akira, Real-Time Guardrails for Agentic Systems](https://www.akira.ai/blog/real-time-guardrails-agentic-systems) Puertas de pre-o post-herramienta
 - Fase 14 · 27  Defensa de inyección rápida (par adversarial de la puerta)
 - Fase 14 · 36  el contrato de alcance que esta puerta ejecuta
 - Fase 14 · 37  el registro de retroalimentación este portal marca
