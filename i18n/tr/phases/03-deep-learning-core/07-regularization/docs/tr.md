@@ -41,21 +41,23 @@ graph LR
 
 ### İptal
 
-Eğitim sırasında, her nöronun çıkışını rastgele olarak p olasılığı ile sıfıra ayarlayın.
+Eğitim sırasında, her nöronun çıkışını olasılık ile sıfıra ayarlayın.$p$- Evet .
 
+```math
+\text{output} = \text{activation}(z) \cdot \text{mask} \quad \text{where }\text{mask}[i] \sim \text{Bernoulli}(1 - p)
 ```
-output = activation(z) * mask    where mask[i] ~ Bernoulli(1 - p)
-```
 
-P = 0.5'te, nöronların yarısı her ileri geçişte sıfırlanır. Ağ, neyronların hangi nöronların bulunacağını tahmin edemediği için fazladan temsilleri öğrenmelidir. Bu, uyumlu olmayı engeller - nöronlar belirli diğer nöronlara güvenmeyi öğrenir.
+- Evet .$p = 0.5$Bu, neyronların hangi nöronların bulunacağını tahmin edemediği için, ağın redundant temsilleri öğrenmesi gerekir. Bu, ko-adaptasyonu engeller.
 
-Ensemsel yorum: N nöronu ve çıkışa sahip bir ağ 2^N olası alt ağlar (nöronların açılıp kapalı olduğu her kombinasyon) oluşturur. Eğitim, yaklaşık olarak her iki N alt ağını aynı anda, her biri farklı mini-batch'larda trenleştiriyor. Test sırasında tüm nöronları kullanır (bırakma) ve hazırlık sırasında beklenen değerle eşleşmek için çıkışları (1 - p) oranında ölçebilirsiniz. Bu, 2^N alt ağlarının tahminlerinin ortalamasına eşittir -- tek bir modelden oluşan büyük bir ansambl.
+Anset yorum:  ile bir ağ$N$Nöronlar ve bırakma yaratır $2^N$Bu nedenle, bu programın tümü, bir araya gelerek, bir araya gelerek, bir araya gelerek ve bir araya gelerek, bir araya gelerek, bir araya gelerek, bir araya gelerek, bir araya gelerek, bir araya gelerek, bir araya gelerek, bir araya gelerek, bir araya gelerek, bir araya gelerek, bir araya gelerek, bir araya gelerek, bir araya gelerek, bir araya gelerek, bir araya gelerek, bir araya gelerek, bir araya gelerek, bir araya gelerek, bir araya gelerek, bir araya gelerek, bir araya gelerek, bir araya gelerek, bir araya gelerek, bir araya gelerek, bir araya gelerek, bir araya gelerek, bir araya gelerek, bir araya gelerek, bir araya gelerek, bir araya gelerek, bir araya gelerek, bir araya gelişe, bir araya gelerek, bir araya gelerek, bir araya gelerek, bir araya gelebilir, bir araya gelebilir, bir araya gelebilir, bir araya gelebilir, bir araya gelebilir, bir araya gelebilir, bir araya gelebilir, bir araya gelebilir, bir araya gelebilir, bir araya gelebilir, bir araya gelebilir, bir araya gelebilir, bir araya gelebilir, bir araya gelebilir, bir araya gelebilir, bir araya gelebilir, bir araya gelebilir.$2^N$Test sırasında tüm nöronları kullanıyorsunuz (kaybolunmaz) ve çıkışları ölçeklendiriyorsunuz.$(1 - p)$Bu, eğitim sırasında beklenen değere eşittir.$2^N$alt ağlar -- tek bir modelden oluşan büyük bir grup.
 
 Pratikte, test yerine eğitim sırasında ölçeklendirme uygulanır (i ters düşüş):
 
-```
-During training:  output = activation(z) * mask / (1 - p)
-During testing:   output = activation(z)   (no change needed)
+```math
+\begin{aligned}
+\text{During training:} \quad & \text{output} = \text{activation}(z) \cdot \text{mask} / (1 - p) \\
+\text{During testing:} \quad & \text{output} = \text{activation}(z) \quad \text{(no change needed)}
+\end{aligned}
 ```
 
 Bu daha temiz çünkü test kodu hiç de terk edilme hakkında bilgi sahibi olmamalı.
@@ -66,15 +68,15 @@ Bu daha temiz çünkü test kodu hiç de terk edilme hakkında bilgi sahibi olma
 
 Tüm ağırlıkların karede büyüklüğünü kaybına ekleyin:
 
-```
-total_loss = task_loss + (lambda / 2) * sum(w_i^2)
+```math
+\text{total\_loss} = \text{task\_loss} + \frac{\lambda}{2} \sum_i w_i^2
 ```
 
-Normalleştirme terimin gradiyenti lambda * w. Bu, her adımda her ağırlığın büyüklüğüne orantılı bir bölümle sıfıra doğru küçültüldüğü anlamına gelir. Büyük ağırlıklar daha fazla cezalandırılır.
+Düzenleme teriminin gradiyenti $\lambda w$Bu, her adımda her ağırlık büyüklüğüne nispeten bir bölümle sıfıra doğru küçültülür. Büyük ağırlıklar daha fazla cezalandırılır.
 
 Bu neden genelleşmeye yardımcı olur: Overfit modellerin eğitim verilerinde gürültüyi artırmak için büyük ağırlıklara sahip olma eğilimindedir.
 
-Lambda hiperparametri sertliği kontrol eder.
+- Evet .$\lambda$Hiperparametr güç kontrolü.
 
 - AdamW için transformatörler için 0.01
 - 1e-4 için SGD CNN'de
@@ -88,16 +90,18 @@ Mini-batch'ın her katmanının çıkışını bir sonraki katmana geçmeden ön
 
 Bir katman üzerinde mini seri aktivasyonlar için:
 
-```
-mu = (1/B) * sum(x_i)           (batch mean)
-sigma^2 = (1/B) * sum((x_i - mu)^2)   (batch variance)
-x_hat = (x_i - mu) / sqrt(sigma^2 + eps)   (normalize)
-y = gamma * x_hat + beta        (scale and shift)
+```math
+\begin{aligned}
+\mu &= \frac{1}{B} \sum_i x_i && \text{(batch mean)} \\
+\sigma^2 &= \frac{1}{B} \sum_i (x_i - \mu)^2 && \text{(batch variance)} \\
+\hat{x} &= \frac{x_i - \mu}{\sqrt{\sigma^2 + \epsilon}} && \text{(normalize)} \\
+y &= \gamma \hat{x} + \beta && \text{(scale and shift)}
+\end{aligned}
 ```
 
 Gamma ve beta, ağın normalleşmeyi iptal etmesine izin veren öğrenilebilir parametrelerdir.
 
-**Training vs inference split:**Eğitim sırasında, mu ve sigma mevcut mini-batch'ten gelir. Tahmin sırasında, eğitim sırasında birikmiş koşuş ortalamalarını kullanırsınız (eğlence = 0,1 ile esponansel hareketli ortalama, yani 90% eski + 10% yeni).
+**Training vs inference split:**Eğitim sırasında,$\mu$ve $\sigma$Sonuclama sırasında, eğitim sırasında birikmiş koşuş ortalamalarını kullanırsınız (eğlence = 0,1'lik esponansal hareketli ortalama, yani %90 eski + %10 yeni).
 
 BatchNorm'un neden işe yaradığını tartışıyoruz. Orijinal makalede "içi kovariyet değişimi"ni (daha önceki katmanların güncelleşmesiyle değişen katman girişlerinin dağılımını) azaltıyor. Santurkar et al. (2018) bu açıklamanın yanlış olduğunu gösterdi. Gerçek neden: BatchNorm kayıpları daha da kolaylaştırıyor. Gradyentler daha öngörücüdür, Lipschitz sabitleri daha küçüktür ve optimizer daha büyük adımları güvenli bir şekilde atabilir. Bu yüzden BatchNorm daha yüksek öğrenme oranlarını kullanmanıza ve daha hızlı bir şekilde bir araya gelmenize izin verir.
 
@@ -107,14 +111,16 @@ BatchNorm'un temel bir sınırlaması vardır: seri istatistiklerine bağlıdır
 
 Bir numune için, parti yerine özellikler arasında normalleştirin:
 
-```
-mu = (1/D) * sum(x_j)           (feature mean)
-sigma^2 = (1/D) * sum((x_j - mu)^2)   (feature variance)
-x_hat = (x_j - mu) / sqrt(sigma^2 + eps)
-y = gamma * x_hat + beta
+```math
+\begin{aligned}
+\mu &= \frac{1}{D} \sum_j x_j && \text{(feature mean)} \\
+\sigma^2 &= \frac{1}{D} \sum_j (x_j - \mu)^2 && \text{(feature variance)} \\
+\hat{x} &= \frac{x_j - \mu}{\sqrt{\sigma^2 + \epsilon}} \\
+y &= \gamma \hat{x} + \beta
+\end{aligned}
 ```
 
-D özellik boyutudur. Her örnek bağımsız olarak normallaştırılır - parti boyutundan bağımsız değildir. Bu nedenle transformatörler BatchNorm yerine LayerNorm kullanır. Sequence değişken uzunluklara sahiptir, parti boyutları genellikle küçüktür (veya 1 jenerasyon sırasında), ve hesaplama eğitim ve sonuçlama arasında aynıdır.
+$D$Bu nedenle, transformasyoncular BatchNorm yerine LayerNorm kullanır. Sequence değişken uzunluklara sahiptir, parti boyutları genellikle küçüktür (veya 1 jenerasyon sırasında), ve hesaplama eğitim ve sonuçlama arasında aynıdır.
 
 Transformatorlarda LayerNorm, her kendi dikkat blokunun ve her ileriye aktarma blokunun (Post-LN) ardından veya öncesinde (Evrim eğitimi için daha istikrarlı olan Pre-LN) uygulanır.
 
@@ -122,9 +128,11 @@ Transformatorlarda LayerNorm, her kendi dikkat blokunun ve her ileriye aktarma b
 
 LayerNorm ortalama çıkarmadan. Zhang & Sennrich tarafından önerilen (2019).
 
-```
-rms = sqrt((1/D) * sum(x_j^2))
-y = gamma * x / rms
+```math
+\begin{aligned}
+\text{rms} &= \sqrt{\frac{1}{D} \sum_j x_j^2} \\
+y &= \gamma \cdot \frac{x}{\text{rms}}
+\end{aligned}
 ```
 
 Bu da. Ortalama hesaplama yok, beta parametri yok. gözlem: LayerNorm'daki yeniden merkeze (ortalama çıkarma) modelin performansına çok az katkıda bulunur, ancak hesaplama maliyetleri vardır.
@@ -515,8 +523,8 @@ Bu ders şunları ortaya çıkarır:
 |------|----------------|----------------------|
 | Overfitting | "Model memorized the data" | When a model's training performance significantly exceeds its test performance, indicating it learned noise rather than signal |
 | Regularization | "Preventing overfitting" | Any technique that constrains model complexity to improve generalization: dropout, weight decay, normalization, augmentation |
-| Dropout | "Random neuron deletion" | Zeroing random neurons during training with probability p, forcing redundant representations; equivalent to training an ensemble |
-| Weight decay | "L2 penalty" | Shrinking all weights toward zero by subtracting lambda * w at each step; penalizes complexity through weight magnitude |
+| Dropout | "Random neuron deletion" | Zeroing random neurons during training with probability $p$, forcing redundant representations; equivalent to training an ensemble |
+| Weight decay | "L2 penalty" | Shrinking all weights toward zero by subtracting $\lambda w$ at each step; penalizes complexity through weight magnitude |
 | Batch normalization | "Normalize per batch" | Normalizing layer outputs across the batch dimension using batch statistics during training and running averages during inference |
 | Layer normalization | "Normalize per sample" | Normalizing across features within each sample; batch-independent, used in transformers where batch size varies |
 | RMSNorm | "LayerNorm without the mean" | Root mean square normalization; drops the mean subtraction from LayerNorm for 10% speedup with equal accuracy |

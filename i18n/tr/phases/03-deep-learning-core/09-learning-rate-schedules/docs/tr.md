@@ -30,8 +30,8 @@ Bu nedenle, programları anlamalısınız çünkü öntanımlı programlar sorun
 
 En basit yaklaşım, bir sayı seçip her adımda kullan.
 
-```
-lr(t) = lr_0
+```math
+\text{lr}(t) = \text{lr}_0
 ```
 
 Bu, eğitim sonuna kadar çok yüksek (minimum civarında kayganlık) veya başlangıç için çok düşük (küçük adımlarda boşa harcanmış hesaplama).
@@ -40,11 +40,11 @@ Bu, eğitim sonuna kadar çok yüksek (minimum civarında kayganlık) veya başl
 
 ResNet döneminden gelen eski okul yaklaşımı.
 
-```
-lr(t) = lr_0 * gamma^(floor(epoch / step_size))
+```math
+\text{lr}(t) = \text{lr}_0 \cdot \gamma^{\lfloor \text{epoch} / \text{step\_size} \rfloor}
 ```
 
-Gamma = 0.1 ve step_size = 30'un anlamı: lr her 30 dönemde 10 kat düşüyor. ResNet-50 bunu kullanıyor -- lr = 0.1, 30, 60 ve 90 dönemlerde 10 kat düşüyor.
+Nerede ?$\gamma = 0.1$ve step_size = 30 demek: lr her 30 dönemde 10 kat düşer. ResNet-50 bunu kullanıyor -- lr = 0.1, 30, 60 ve 90 dönemlerde 10 kat düşer.
 
 Sorun: optimal çöküş noktaları veri kümesine ve mimarlığa bağlıdır. Farklı bir soruna geçin ve düşme zamanı yeniden ayarlamanız gerekir. Değişiklikler ani bir şekilde gerçekleşir.
 
@@ -52,24 +52,24 @@ Sorun: optimal çöküş noktaları veri kümesine ve mimarlığa bağlıdır. F
 
 En yüksek öğrenme hızından en azına doğru, cosine eğri boyunca düzgün bir çöküş:
 
+```math
+\text{lr}(t) = \text{lr}_{\min} + 0.5 \cdot (\text{lr}_{\max} - \text{lr}_{\min}) \cdot \left(1 + \cos\left(\frac{\pi t}{T}\right)\right)
 ```
-lr(t) = lr_min + 0.5 * (lr_max - lr_min) * (1 + cos(pi * t / T))
-```
 
-Burada t mevcut adım ve T toplam adım sayısıdır.
+Nerede ?$t$Bu adım şu anda devam ediyor ve $T$Adım sayısı.
 
-t=0, kozin terimi 1'dir, bu nedenle lr = lr_max. t=T'de, kozin terimi -1, bu nedenle lr = lr_min.
+- Evet .$t=0$, cosine terimi 1'dir, yani $\text{lr} = \text{lr} _{\max}$- Ne ?$t=T$, cosine terimi -1, yani $\text{lr} = \text{lr} _{\min}$Çürüme başlangıçta hafif, ortalarda hızlanır ve sonun yakınlarında tekrar hafif hale gelir.
 
-Bu, çoğu modern eğitim için varsayılan standart. lr_max ve lr_min'in ötesinde ayarlanacak hiperparametre yoktur. Kosinus şekli, çoğu öğrenmenin eğitimin ortasında gerçekleşeceği empiriyel gözlemle uyuyor. Bu kritik dönemde makul adım boyutlarını istiyorsunuz.
+Bu, çoğu modern eğitim için varsayılan bir seçenek.$\text{lr} _{\max}$ve $\text{lr} _{\min}$Kosinus şekli, çoğu öğrenmenin eğitimin ortasında olduğu empiriyel gözlemle uyuşur. Bu kritik dönemde makul adım boyutlarını istiyorsunuz.
 
 ### İhmal: Neden Küçük Başlayın
 
 Adam ve diğer uyarlayıcı optimizörler gradient ortalama ve varyansın çalışkan tahminlerini sürdürürler. 0 adımda bu tahminler sıfıra initialize edilir. İlk birkaç gradient güncelleştirmesi çöp istatistiklerine dayanır. Eğer bu dönemde öğrenme hızınız büyükse, model büyük, kötü yönlendirilmiş adımlar atar.
 
-Warmup bunu düzeltir. Küçük bir öğrenme hızıyla başlayın (sık sık lr_max / warmup_steps veya hatta sıfır) ve ilk N adımlar boyunca lineer olarak lr_max'e yükseltsin. Tam öğrenme hızına ulaştığınızda, Adam'ın istatistikleri istikrarlanmıştır.
+Warmup bunu düzeltir. Küçük bir öğrenme hızıyla başlayın (genellikle lr_max / warmup_steps veya hatta sıfır) ve doğrusal olarak $\text{lr}_{\max}$İlk kez .$N$Tam öğrenme hızına ulaştığınızda, Adam'ın istatistikleri istikrarlı hale geldi.
 
-```
-lr(t) = lr_max * (t / warmup_steps)     for t < warmup_steps
+```math
+\text{lr}(t) = \text{lr}_{\max} \cdot \frac{t}{\text{warmup\_steps}} \quad \text{for } t < \text{warmup\_steps}
 ```
 
 Tipik ısınma: toplam eğitim adımlarının %1-5. Llama 3 yaklaşık 1.8 trilyon token için eğitim aldı ve 2000 adım için ısındı. GPT-3 375 milyon tokenden fazla ısındı.
@@ -398,13 +398,13 @@ Bu ders şunları ortaya çıkarır:
 
 ## Egzersizler
 
-1. Eksponansiyel bozulma uygulayın: lr(t) = lr_0 * gamma^t burada gamma = 0,999.
+1. Eksponansiyel çöküş uygula: $\text{lr}(t) = \text{lr}_0 \cdot \gamma^t$nerede$\gamma = 0.999$- Çember veri kümesindeki cosine annealing ile karşılaştırın.
 
 2. Öğrenme hız aralığı testi uygulayın (Leslie Smith): LR'yi 1e-7'den 1'e artırken birkaç yüz adım için eğit.
 
 3.                                                                                                                                                                                                                                                               
 
-4. Sıcak yeniden başlatma ile kozin annealing uygulamak: öğrenme hızını her T adımında lr_max'e yeniden ayarlayın ve tekrar bozulun.
+4.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              $\text{lr}_{\max}$Her zaman$T$Daha uzun bir antrenman sırasında standart kosine karşılaştırın.
 
 5. Eğitim kaybını izleyen ve kaybı istikrarlı olduğunda otomatik olarak ısıtmadan cosine geçen ve kaybı çok uzun sürerse lr azaltan bir "şerur programı" oluşturun.
 
@@ -414,12 +414,12 @@ Bu ders şunları ortaya çıkarır:
 |------|----------------|----------------------|
 | Learning rate | "How fast the model learns" | The scalar that multiplies the gradient to determine the parameter update size |
 | Schedule | "Change the LR over time" | A function that maps training step to learning rate, designed to optimize convergence |
-| Warmup | "Start with a small LR" | Linearly ramping the LR from near-zero to the target value over the first N steps to stabilize optimizer statistics |
-| Cosine annealing | "Smooth LR decay" | Decreasing the LR following a cosine curve from lr_max to lr_min over training |
+| Warmup | "Start with a small LR" | Linearly ramping the LR from near-zero to the target value over the first $N$ steps to stabilize optimizer statistics |
+| Cosine annealing | "Smooth LR decay" | Decreasing the LR following a cosine curve from $\text{lr} _{\max}$ to $\text{lr} _{\min}$ over training |
 | Step decay | "Drop LR at milestones" | Multiplying the LR by a factor (usually 0.1) at fixed epoch intervals |
 | 1cycle policy | "Up then down" | Leslie Smith's method of ramping LR up then down in a single cycle for faster convergence |
 | LR range test | "Find the best learning rate" | Training briefly while increasing LR to find the value where loss starts diverging |
-| Cosine with warm restarts | "Reset and repeat" | Periodically resetting the LR to lr_max and decaying again (SGDR) |
+| Cosine with warm restarts | "Reset and repeat" | Periodically resetting the LR to $\text{lr} _{\max}$ and decaying again (SGDR) |
 | Eta min | "The floor for the LR" | The minimum learning rate that the schedule decays to |
 | Peak learning rate | "The maximum LR" | The highest LR reached during training, typically after warmup |
 

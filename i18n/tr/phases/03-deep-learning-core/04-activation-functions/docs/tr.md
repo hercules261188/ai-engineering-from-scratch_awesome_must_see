@@ -16,7 +16,7 @@
 
 ## Sorun
 
-İki doğrusal dönüşüm y = W2 ((W1x + b1) + b2. Genişle: y = W2W1x + W2b1 + b2. Bu sadece y = Ax + c - tek bir doğrusal dönüşümdür. Ne kadar doğrusal katmanı yığarsanız, sonuç bir matris çarpması olarak çökür. 100 katlı ağınızın tek bir katla aynı temsil gücü vardır.
+İki doğrusal dönüşüm toplayın: $y = W_2(W_1 x + b_1) + b_2$- Genişlet:$y = W_2 W_1 x + W_2 b_1 + b_2$- Bu sadece...$y = Ax + c$- tek bir çizgi dönüşüm. Ne kadar çizgi katmanı yığarsanız yığın, sonuç bir matris çarpması olarak çöker. 100 katlı ağınızın tek katlı bir temsil gücü vardır.
 
 Bu teorik bir merak değil. Bu anlamı derin bir çizgisi ağı kelimenin tam anlamıyla XOR öğrenemez, bir spiral veri kümesini sınıflandıramaz, bir yüzü tanımamaktadır.
 
@@ -26,52 +26,58 @@ Aktiflik fonksiyonları çizgisini kırıyor. Her katmanın çıkışını çizg
 
 ### Neden Düzgün Olmamalı
 
-Matrix çarpımı bileşilebilir. Bir vektörü A ile çarpmak, sonra B ile çarpmak AB ile çarpmaya eşittir. Bu, 10 doğrusal katmanı yığmanın bir büyük matrisle bir doğrusal katmanın matematiksel olarak eşdeğer olduğunu gösterir. Tüm bu parametreler, tüm bu derinlik - boşa harcanmış. Zinciri kırmak için bir şeye ihtiyacınız var.
+Matrix çarpımı bileşilebilir.$A$Sonra matris .$B$ ile çarpmakla aynıdır.$AB$Bu, 10 doğrusal katmanı yığmanın matematik açısından bir büyük matrisle bir doğrusal katman ile eşdeğer olduğunu gösterir. Tüm bu parametreler, tüm bu derinlikler - boşa harcanır. Zinciri kırmak için bir şeye ihtiyacınız var.
 
-Bu kanıt. Bir doğrusal katman f ((x) = Wx + b hesaplar.
+İşte kanıt. Bir çizgi katman hesaplar.$f(x) = Wx + b$İkinci yığın:
 
-```
-Layer 1: h = W1 * x + b1
-Layer 2: y = W2 * h + b2
+```math
+\begin{aligned}
+\text{Layer 1:} \quad h &= W_1 x + b_1 \\
+\text{Layer 2:} \quad y &= W_2 h + b_2
+\end{aligned}
 ```
 
 Yer değiştiren:
 
-```
-y = W2 * (W1 * x + b1) + b2
-y = (W2 * W1) * x + (W2 * b1 + b2)
-y = A * x + c
-```
-
-Bir katman. Katmanlar arasında bir çizgi olmayan aktivasyon g() ekleyin:
-
-```
-h = g(W1 * x + b1)
-y = W2 * h + b2
+```math
+\begin{aligned}
+y &= W_2 (W_1 x + b_1) + b_2 \\
+y &= (W_2 W_1) x + (W_2 b_1 + b_2) \\
+y &= A x + c
+\end{aligned}
 ```
 
-Şimdi yerine getirme kesildi. W2 * g(W1 * x + b1) + b2 tek bir doğrusal dönüşümle azaltılamaz. Ağ doğrusal olmayan fonksiyonları temsil edebilir. Bir etkinleştirme ile her ek katman temsil kapasiteyi ekler.
+Bir katman.$g()$katmanlar arasında:
+
+```math
+\begin{aligned}
+h &= g(W_1 x + b_1) \\
+y &= W_2 h + b_2
+\end{aligned}
+```
+
+Şimdi de yerine getirme işlemi bitmiştir.$W_2 g(W_1 x + b_1) + b_2$Bir ağın tek bir doğrusal dönüşümüne indirgenmesi mümkün değildir. Ağ doğrusal olmayan fonksiyonları temsil edebilir.
 
 ### Sigmoid
 
 Nöral ağlar için orijinal etkinleştirme fonksiyonu.
 
-```
-sigmoid(x) = 1 / (1 + e^(-x))
+```math
+\text{sigmoid}(x) = \frac{1}{1 + e^{-x}}
 ```
 
 Çıktı aralığı: (0, 1). Düzgün, farklılaştırılabilir, herhangi bir gerçek sayıyı olasılık benzeri bir değere haritası yapar.
 
 Derivat:
 
-```
-sigmoid'(x) = sigmoid(x) * (1 - sigmoid(x))
+```math
+\text{sigmoid}'(x) = \text{sigmoid}(x) \cdot (1 - \text{sigmoid}(x))
 ```
 
-Bu türevin maksimum değeri 0,25'dir, x = 0'da meydana gelir. Geri yayılmada, gradientler katmanlar boyunca çoğalabilir.
+Bu türevin en yüksek değeri 0.25'dir.$x = 0$Geri yayılma sırasında, gradientler katmanlar boyunca çoğalır.
 
-```
-0.25^10 = 0.000000953674
+```math
+0.25^{10} = 0.000000953674
 ```
 
 İlk sinyalin milyonda birinden azı. Bu kaybolan gradient sorunu. İlk katmanlarda gradientler o kadar küçük olur ki ağırlıklar neredeyse güncellenmez. Ağ öğrenir gibi görünüyor - daha sonraki katmanlarda kayıp azalır - ama ilk katmanlar donmuştur. Derin sigmoid ağlar sadece eğitim görmez.
@@ -82,33 +88,32 @@ Ek bir sorun: sigmoid çıkışlar her zaman pozitifdir (0 ila 1), bu da ağırl
 
 Sigmoid'in merkezi versiyonu.
 
-```
-tanh(x) = (e^x - e^(-x)) / (e^x + e^(-x))
+```math
+\tanh(x) = \frac{e^x - e^{-x}}{e^x + e^{-x}}
 ```
 
 Çıktı aralığı: (-1, 1). Zıfır merkezli, bu da zig-zag sorunu ortadan kaldırır.
 
 Derivat:
 
-```
-tanh'(x) = 1 - tanh(x)^2
+```math
+\tanh'(x) = 1 - \tanh(x)^2
 ```
 
-Maksimum türev, x = 0'da 1.0'dur. Sigmoid'den dört kat daha iyidir. Ama kaybolan gradient sorunu hala var. Büyük olumlu veya negatif girişler için, türev sıfıra yaklaşır. On kat hala gradienti ezir, sadece daha az agresifce.
+Maksimum türev 1.0' dır.$x = 0$Bu, bir simgelik, bir simgelik, bir simgelik, bir simgelik, bir simgelik, bir simgelik, bir simgelik, bir simgelik, bir simgelik, bir simgelik, bir simgelik, bir simgelik, bir simgelik, bir simgelik, bir simgelik, bir simgelik, bir simgelik, bir simgelik, bir simgelik, bir simgelik, bir simgelik, bir simgelik, bir simgelik, bir simgelik, bir simgelik, bir simgelik, bir simgelik, bir simgelik, bir simgelik, bir simgelik, bir simgelik, bir simgelik, bir simgelik, bir simgelik, bir simgelik, bir simgelik, bir simgelik, bir simgelik, bir simgelik, bir simgelik, bir simgelik, bir simgelik, bir simgelik, bir simgelik, bir simgelik, bir simgelik, bir simgelik, bir simgelik, bir simgelik, bir simgelik, bir simgelik, bir simgelik, bir simgelik, bir simgelik, bir simgelik, bir simgelik, bir simgelik, bir simgelik, bir simgelik, bir simgelik, bir simgelik, bir simgelik, bir simgelik, bir simgelik, bir simgelik, bir simgelik, bir simgelik, bir simgelik, bir simgelik, bir simgelik, bir simgelik, bir simgelik, bir simgelik, bir simgelik, bir simgelik, bir simgelik, bir simgelik, bir simgelik, bir simgelik, bir simgelik, bir simgelik, bir simgelik, bir simgelik, bir simgelik, bir simgelik, bir simgelik, bir simgelik, bir simgelik, bir simgelik, bir simgelik, bir simgelik, bir simgelik, bir simgelik, bir simgelik, bir simgelik, bir simgelik, bir simgelik, bir simgelik, bir simgelik,
 
 ### ReLU: Önemli Bir Devam
 
 Düzeltilmiş Hattı Birim. 2010'da Nair ve Hinton tarafından derin öğrenme için popülerleştirilmiştir (fonksiyonun kendisi Fukushima'nın 1969 çalışmalarına dayanıyor), her şeyi değiştirmiştir.
 
-```
-relu(x) = max(0, x)
+```math
+\text{relu}(x) = \max(0, x)
 ```
 
-Çıktı aralığı: [0, sonsuzluk).
+Çıktıran aralığı: $[0, \infty)$- Devirim basit bir şey:
 
-```
-relu'(x) = 1  if x > 0
-            0  if x <= 0
+```math
+\text{relu}'(x) = \begin{cases} 1 & \text{if } x > 0 \\ 0 & \text{if } x \le 0 \end{cases}
 ```
 
 Pozitif girişler için kaybolan bir gradient yok. gradient tam olarak 1, doğruca geçiyor. Bu yüzden derin ağlar çalışılabilir hale geldi. ReLU katmanlar boyunca gradient büyüklüğünü korur.
@@ -119,25 +124,24 @@ Ancak bir başarısızlık modudur: ölü nöron sorunu. Eğer bir nöronun ağ�
 
 Ölü nöronlar için en basit çözüm.
 
-```
-leaky_relu(x) = x        if x > 0
-                alpha * x if x <= 0
+```math
+\text{leaky\_relu}(x) = \begin{cases} x & \text{if } x > 0 \\ \alpha x & \text{if } x \le 0 \end{cases}
 ```
 
-Alfa küçük bir sabit olduğu yerde, tipik olarak 0.01. Negatif tarafı sıfır yerine küçük bir eğilime sahiptir, bu yüzden ölü nöronlar hala bir gradient sinyali alır ve iyileşebilir.
+Nerede ?$\alpha$Bu, normalde 0.01'dir. Negatif tarafı sıfır yerine küçük bir eğilime sahiptir.
 
 ### GELU: Modern Default
 
 Gaussian Error Linear Unit. 2016 yılında Hendrycks ve Gimpel tarafından tanıtıldı. BERT, GPT ve çoğu modern transformörde öntanımlı etkinleştirme.
 
-```
-gelu(x) = x * Phi(x)
+```math
+\text{gelu}(x) = x \cdot \Phi(x)
 ```
 
-Phi ((x) standart normal dağılımın kumülatyonel dağılım fonksiyonu olduğu yerde.
+Nerede ?$\Phi(x)$Standart normal dağılımın kumülatyonel dağılım fonksiyonu.
 
-```
-gelu(x) ~= 0.5 * x * (1 + tanh(sqrt(2/pi) * (x + 0.044715 * x^3)))
+```math
+\text{gelu}(x) \approx 0.5 \cdot x \cdot \left(1 + \tanh\left(\sqrt{2/\pi} \cdot (x + 0.044715 \cdot x^3)\right)\right)
 ```
 
 GELU her yerde düzdür, küçük negatif değerlere izin verir (ReLU'dan farklı olarak sıfıra sabitleme yapar) ve olasılıklı bir yorumuna sahiptir: Gaussian dağılım altında ne kadar olumlu olması olasılığı ile her giriş ağırlaştırır. Bu düz kaplama, daha iyi bir gradient akışı sağladığı ve ölü nöron sorununu tamamen önlediği için transformatör mimarlıklarında ReLU'yu üst kat eder.
@@ -146,11 +150,11 @@ GELU her yerde düzdür, küçük negatif değerlere izin verir (ReLU'dan farkl�
 
 Ramachandran et al. tarafından 2017 yılında otomatik arama yoluyla keşfedilen kendi kendine kapalı etkinleştirme.
 
-```
-swish(x) = x * sigmoid(x)
+```math
+\text{swish}(x) = x \cdot \text{sigmoid}(x)
 ```
 
-Swish resmi olarak x * sigmoid ((x) olarak tanımlanır. Google bunu aktifleştirme fonksiyon alanındaki otomatik arama yoluyla keşfetti.
+Swish resmi olarak $x \cdot \text{sigmoid}(x)$Google bunu etkinleştirme fonksiyon alanında otomatik arama yoluyla keşfetti. Nöral ağların parçalarını tasarlayan nöral ağ.
 
 GELU gibi, düz, monoton olmayan ve küçük negatif değerlere izin verir. Fark hafif: Swish, kaplama için sigmoid kullanırken GELU Gaussian CDF kullanır.
 
@@ -158,8 +162,8 @@ GELU gibi, düz, monoton olmayan ve küçük negatif değerlere izin verir. Fark
 
 Gizli katmanlarda kullanılmıyor. Softmax, ham puan vektörünü (logits) olasılık dağılımına dönüştürür.
 
-```
-softmax(x_i) = e^(x_i) / sum(e^(x_j) for all j)
+```math
+\text{softmax}(x_i) = \frac{e^{x_i}}{\sum_j e^{x_j}}
 ```
 
 Her çıkış 0 ile 1 arasında olur. Tüm çıkışlar toplamı 1'e çıkar. Bu da onu çok sınıf sınıflandırma için standart son etkinleştirme yapar. En büyük logit en yüksek olasılığı alır, ancak argmax'den farklı olarak softmax farklılaştırılabilir ve göreceli güvenle ilgili bilgileri korur.
@@ -500,11 +504,11 @@ Bu ders şunları ortaya çıkarır:
 
 ## Egzersizler
 
-1. Negatif eğim alfa öğrenilebilir bir parametreden ibaret olan parametrik ReLU (PReLU) uygulayın.
+1. Parametrik RELU (PRELU) uygulamak için , negatif eğim $\alpha$Bu bir öğrenilebilir parametredir. Onu döngü verisi üzerine çalıştırın ve sabit Leaky ReLU ile karşılaştırın.
 
 2. Kayıp gradient deneyini 10 yerine 50 kat ile çalıştırın. Sigmoid, tanh, ReLU ve GELU için her kattaki büyüklüğü çizin.
 
-3. ELU (Eksponansiyel Düzsel Birim) uygulamak: elu(x) = x > 0, alfa * (e^x - 1) x <= 0. Eğer ölü nöron oranını aynı ağdaki ReLU ile karşılaştırın.
+3. ELU (Özlemsel Düzsel Birim) uygulaması: $\text{elu}(x) = x$Eğer$x \gt 0$- Evet .$\alpha (e^x - 1)$Eğer$x \le 0$Ölü nöron oranını aynı ağdaki ReLU ile karşılaştır.
 
 4. Eğitim sırasında çalışacak bir "gradyen sağlığı monitörü" oluşturun: her dönem boyunca, her katmanın ortalama gradient büyüklüğünü hesaplayın.
 
@@ -518,12 +522,12 @@ Bu ders şunları ortaya çıkarır:
 | Vanishing gradient | "Gradients disappear in deep networks" | Gradients shrink exponentially through layers when the activation's derivative is less than 1, making early layers untrainable |
 | Exploding gradient | "Gradients blow up" | Gradients grow exponentially through layers when the effective multiplier exceeds 1, causing unstable training |
 | Dead neuron | "A neuron that stopped learning" | A ReLU neuron whose input is permanently negative, producing zero output and zero gradient |
-| Sigmoid | "Squishes values to 0-1" | The logistic function 1/(1+e^-x), historically important but causes vanishing gradients in deep networks |
-| ReLU | "Clips negatives to zero" | max(0, x) -- the activation that made deep learning practical by preserving gradient magnitude |
+| Sigmoid | "Squishes values to 0-1" | The logistic function $1/(1+e^{-x})$, historically important but causes vanishing gradients in deep networks |
+| ReLU | "Clips negatives to zero" | $\max(0, x)$ -- the activation that made deep learning practical by preserving gradient magnitude |
 | GELU | "The transformer activation" | Gaussian Error Linear Unit, a smooth activation that weights inputs by their probability of being positive |
-| Swish/SiLU | "Self-gated ReLU" | x * sigmoid(x), discovered through automated search, used in EfficientNet |
+| Swish/SiLU | "Self-gated ReLU" | $x \cdot \text{sigmoid}(x)$, discovered through automated search, used in EfficientNet |
 | Softmax | "Turns scores into probabilities" | Normalizes a vector of logits into a probability distribution where all values are in (0,1) and sum to 1 |
-| Leaky ReLU | "ReLU that doesn't die" | max(alpha*x, x) where alpha is small (0.01), preventing dead neurons by allowing small negative gradients |
+| Leaky ReLU | "ReLU that doesn't die" | $\max(\alpha x, x)$ where $\alpha$ is small (0.01), preventing dead neurons by allowing small negative gradients |
 | Saturation | "The flat part of sigmoid" | Regions where an activation's derivative approaches zero, blocking gradient flow |
 | Logit | "The raw score before softmax" | The unnormalized output of the final layer before applying softmax or sigmoid |
 

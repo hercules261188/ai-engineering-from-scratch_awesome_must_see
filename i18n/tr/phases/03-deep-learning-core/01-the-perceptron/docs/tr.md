@@ -26,7 +26,7 @@ Perceptron'u anlamak aslında kodda "öğrenme" ne anlama geldiğini anlamak dem
 
 ### Tek Bir Nöron, Tek Bir Karar
 
-Bir perceptron n giriş alır, her birini bir ağırlıkla çarpır, onları toplar, bir önyargıyı ekler ve sonucu bir etkinleştirme fonksiyonu aracılığıyla geçer.
+Bir perceptron alır.$n$Girişler, her birini bir ağırlık ile çarpır, onları toplar, bir önyargıyı ekler ve sonucu bir etkinleştirme fonksiyonu üzerinden geçer.
 
 ```mermaid
 graph LR
@@ -38,11 +38,10 @@ graph LR
     step --> out["output (0 or 1)"]
 ```
 
-Adım fonksiyonu vahşi: ağırlıklı toplam artı önyargı >= 0, çıkış 1. Aksi takdirde çıkış 0.
+Adım fonksiyonu vahşi: Eğer ağırlıklı toplam artı önyargı $\ge 0$, çıkış 1. Aksi takdirde çıkış 0.
 
-```
-step(z) = 1  if z >= 0
-           0  if z < 0
+```math
+\text{step}(z) = \begin{cases} 1 & \text{if } z \ge 0 \\ 0 & \text{if } z < 0 \end{cases}
 ```
 
 Bu bir çizgülü sınıflandırıcıdır. Ağırlıklar ve tarafsızlık giriş alanını iki bölgeye ayıran bir çizgiyi (veya daha yüksek boyutlarda hiper düzlem) tanımlar.
@@ -80,7 +79,7 @@ For each training example (x, y_true):
     bias = bias + learning_rate * error
 ```
 
-Eğer tahmin doğruysa, hata = 0, hiçbir şey değişmez. Eğer 0'u tahmin ederse, ama 1 olması gerekiyorsa, ağırlıklar artır. 1'i tahmin ederse, ama 0 olması gerekiyorsa, ağırlıklar azalır. Öğrenme hızı her ayarın ne kadar büyük olduğunu kontrol eder.
+Eğer tahmin doğruysa,$\text{error} = 0$Eğer 0'u tahmin ederse, 1'e göre ağırlık artıyor. Eğer 1'i tahmin ederse, 0'u göre ağırlık azalıyor.
 
 ### XOR Sorunu
 
@@ -213,7 +212,7 @@ Bu tek bir algılayıcı XOR'u öğrenemeyeceğinin kanıtı.
 
 ### Adım 4: XOR'u iki katmanla çöz
 
-XOR = (x1 YA da x2) ve NOT (x1 YEN x2)
+- Yaptığımız şey:$\text{XOR} = (x_1 \text{ OR } x_2) \text{ AND NOT } (x_1 \text{ AND } x_2)$Üç algılayıcıyı birleştirin:
 
 ```mermaid
 graph LR
@@ -359,7 +358,7 @@ Bu ders şunları ortaya çıkarır:
 ## Egzersizler
 
 1. Bir perceptron'u NAND kapısı (üçbirsel kapı - herhangi bir mantıksal devrenin NAND'den inşa edilebileceği) üzerinde eğit.
-2. Perceptron sınıfını değiştirin ve karar sınırını (w1*x1 + w2*x2 + b = 0) her dönemde takip edin.
+2. Karar sınırını izlemek için Perceptron sınıfını değiştir ($w_1 x_1 + w_2 x_2 + b = 0$Dönüşüm sırasında çizgiyi nasıl değiştirdiğini basın.
 3. 3 girişi algılayıcıyı oluşturun ve 3 girişi içinden en az 2'si 1 olduğunda 1 çıkarabilir.
 
 ## Anahtar Terimler
@@ -372,7 +371,7 @@ Bu ders şunları ortaya çıkarır:
 | Activation function | "The thing that squishes values" | A function applied after the weighted sum - step function for perceptrons, sigmoid/ReLU for modern networks |
 | Linearly separable | "You can draw a line between them" | A dataset where a single hyperplane can perfectly separate the classes |
 | XOR problem | "The thing perceptrons can't do" | Proof that single-layer networks cannot learn non-linearly-separable functions |
-| Decision boundary | "Where the classifier switches" | The hyperplane w*x + b = 0 that divides input space into two classes |
+| Decision boundary | "Where the classifier switches" | The hyperplane $w \cdot x + b = 0$ that divides input space into two classes |
 | Multi-layer perceptron | "A real neural network" | Perceptrons stacked in layers, where each layer's output feeds the next layer's input |
 
 ## Daha Fazla Okumak

@@ -38,40 +38,40 @@ Ancak "hassasiyet" yeterli değildir. *hassasiyetin ölçeği* ağın tren olup 
 
 Fan_in girişleri olan tek bir katman düşünün:
 
-```
-z = w1*x1 + w2*x2 + ... + w_n*x_n
-```
-
-Eğer her ağırlık wi Var(w) varanslı bir dağılımdan çıkarılırsa ve her girişi xi Var(x varanslıysa, çıkış varansı:
-
-```
-Var(z) = fan_in * Var(w) * Var(x)
+```math
+z = w_1 x_1 + w_2 x_2 + \cdots + w_n x_n
 ```
 
-Var(w) = 1 ve fan_in = 512, çıkış varyansi girişi varyansi 512x. 10 kat sonra: 512^10 = 1.2e27.
+Eğer her ağırlık $w_i$değişkenlik ile bir dağılımdan elde edilir.$\mathrm{Var}(w)$ve her giriş$x_i$değişikliği var.$\mathrm{Var}(x)$, çıkış varyansi:
 
-Var ((w) = 0.001 ise, çıkış varyansi katman başına 0.001 * 512 = 0.512 ile küçülür. 10 katman sonra: 0.512^10 = 0.00013. Sinyaliniz kayboldu.
+```math
+\mathrm{Var}(z) = \text{fan}_{\text{in}} \cdot \mathrm{Var}(w) \cdot \mathrm{Var}(x)
+```
 
-Amaç: Var(w) seçin, böylece Var(z) = Var(x). Sinyal büyüklüğü katmanlar boyunca sabit kalır.
+- Eğer$\mathrm{Var}(w) = 1$ve $\text{fan}_{\text{in}} = 512$, çıkış varyansi giriş varyansiyasının 512x'idir. 10 katman sonra: $512^{10} = 1.2 \times 10^{27}$- Siyalınız patladı.
+
+- Eğer$\mathrm{Var}(w) = 0.001$, çıkış varyansiyası $0.001 \cdot 512 = 0.512$10 katman sonra:$0.512^{10} = 0.00013$- Sinyalınız kayboldu.
+
+Amaç: seçmek$\mathrm{Var}(w)$Yani bu$\mathrm{Var}(z) = \mathrm{Var}(x)$Sinyal büyüklüğü katmanlar arasında sabit kalır.
 
 ### Xavier/Glorot Başlangıç
 
 Glorot ve Bengio (2010) sigmoid ve tanh aktivasyonları için çözüm elde ettiler.
 
-```
-Var(w) = 2 / (fan_in + fan_out)
+```math
+\mathrm{Var}(w) = \frac{2}{\text{fan}_{\text{in}} + \text{fan}_{\text{out}}}
 ```
 
 Uygulamalarda ağırlıklar aşağıdakilerden alınır:
 
-```
-w ~ Uniform(-limit, limit)  where limit = sqrt(6 / (fan_in + fan_out))
+```math
+w \sim \text{Uniform}(-\text{limit}, \text{limit}) \quad \text{where } \text{limit} = \sqrt{\frac{6}{\text{fan}_{\text{in}} + \text{fan}_{\text{out}}}}
 ```
 
 veya:
 
-```
-w ~ Normal(0, sqrt(2 / (fan_in + fan_out)))
+```math
+w \sim \text{Normal}\left(0, \sqrt{\frac{2}{\text{fan}_{\text{in}} + \text{fan}_{\text{out}}}}\right)
 ```
 
 Bu, sigmoid ve tanh'ın sıfır yakınlarında yaklaşık olarak doğrusal olduğu için çalışır.
@@ -82,27 +82,27 @@ ReLU çıkışların yarısını öldürür (eşitsiz olan her şey sıfır olur
 
 He et al. (2015) formülü düzeltti:
 
-```
-Var(w) = 2 / fan_in
+```math
+\mathrm{Var}(w) = \frac{2}{\text{fan}_{\text{in}}}
 ```
 
 Ağırlıklar aşağıdakilerden alınır:
 
-```
-w ~ Normal(0, sqrt(2 / fan_in))
+```math
+w \sim \text{Normal}\left(0, \sqrt{\frac{2}{\text{fan}_{\text{in}}}}\right)
 ```
 
-2 katı, ReLU'nun aktifleşmelerin yarısını sıfırlamasını telafi eder. Bu olmadan, sinyal kat başına ~0.5x küçülür. 50 katı ile: 0.5^50 = 8.8e-16. Kaiming init bunu önler.
+2 katı, ReLU'nun aktifleşmelerin yarısını sıfırlamasını telafi eder.$0.5^{50} = 8.8 \times 10^{-16}$Kaiming init bunu önler.
 
 ### Transformer Başlatma
 
 GPT-2 farklı bir desen ortaya koydu. Geri kalan bağlantılar her alt katmanın çıkışını girişine ekler:
 
-```
-x = x + sublayer(x)
+```math
+x = x + \text{sublayer}(x)
 ```
 
-Her eklem varyansiyi arttırır. N kalan katmanlarla varyansi N'ye oranla büyür. GPT-2 kalan katmanların ağırlığını 1/sqrt(2N ile ölçeyor, burada N katman sayısıdır. Bu, toplanan sinyal büyüklüğünü istikrarlı tutar.
+Her eklem, değişimi arttırır.$N$Kalıntı katmanları, varans oranla büyür $N$. GPT-2 , kalıntı katmanlarının ağırlığını $1/\sqrt{2N}$, nerede $N$Bu, birikmiş sinyal büyüklüğünü istikrarlı tutar.
 
 Llama 3 (405B parametreleri, 126 katman) benzer bir şema kullanır. Bu ölçeklendirme olmadan, kalan akım 126 katman dikkat ve geri dönüş blokları boyunca sınırsız büyüyecektir.
 
@@ -341,7 +341,7 @@ nn.init.zeros_(layer.bias)
 
 Aradığın zaman .`nn.Linear(512, 256)`Bu yüzden çoğu basit ağ "sadece çalışır" - PyTorch zaten doğru seçim yaptı. Ama özel mimarileri oluşturduğunuzda veya 20 katmadan daha derinlere giderseniz, ne olduğunu anlamanız ve potansiyel olarak öntanımlı olanı geçersiz kılmanız gerekir.
 
-Transformatörler için HuggingFace modelleri genellikle özleri ile başlangıç yapmayı işliyor.`_init_weights`GPT-2 uygulaması geri kalan projeksiyonları 1/sqrt ((N) ile ölçeyor. Eğer sıfırdan bir transformatör inşa ediyorsanız, bunu kendiniz eklemelisiniz.
+Transformatörler için HuggingFace modelleri genellikle özleri ile başlangıç yapmayı işliyor.`_init_weights`GPT-2 uygulaması, kalan projeksyonları $1/\sqrt{N}$Eğer sıfırdan bir transformatör inşa ediyorsanız, bunu kendiniz eklemelisiniz.
 
 ## Gönder
 
@@ -350,13 +350,13 @@ Bu ders şunları ortaya çıkarır:
 
 ## Egzersizler
 
-1. LeCun başlangıcı ekleyin (Var = 1/fan_in, SELU etkinleştirme için tasarlanmıştır). LeCun init + tanh ile 50 katlı deneyi çalıştırın ve Xavier + tanh ile karşılaştırın.
+1. LeCun başlangıçını ekle ($\mathrm{Var} = 1/\text{fan}_{\text{in}}$LeCun init + tanh ile 50 katlı deneyi çalıştırın ve Xavier + tanh ile karşılaştırın.
 
-2. GPT-2 kalıntı ölçeklemesini uygulayın: kalıntı akımına eklemeden önce her katmanın çıkışını 1/sqrt ((2*N) ile çarpın. 50 katı ölçeklemeden ve ölçeklemeden çalıştırın, kalıntı büyüklüğünün ne kadar hızlı büyüdüğünü ölçün.
+2. GPT-2 kalıntı ölçeklemesini uygulayın: her katmanın çıkışını $1/\sqrt{2N}$50 katmanı, ölçeklendirme ile ve ölçeklendirme olmadan çalıştırın ve kalıntı büyüklüğünün ne kadar hızlı büyüdüğünü ölçün.
 
 3. Bir ağın katman boyutlarını ve etkinleştirme türünü alan, ardından doğru başlangıç önerilen ve mevcut init sorunlara neden olacaksa uyarılan bir "init sağlık kontrolü" işlevi oluşturun.
 
-4. Xavier ve Kaiming fan_in'e uyarlar, ama rastgele init yapmaz. "işler" ve "sıkıntılar" arasındaki boşluğu daha büyük katmanlarla nasıl genişletiyor olduğunu gösterin.
+4. Deneyi $\text{fan} _{\text{in}} = 16$vs $\text{fan} _{\text{in}} = 1024$Xavier ve Kaiming fan_in'e uyarlar, ama rastgele init yapmaz. "işler" ve "sıkıntılar" arasındaki boşluk daha büyük katmanlarla nasıl genişlediğini göster.
 
 5. Ortogonal başlangıç uygulaması (hassasi bir matris oluşturun, SVD'sini hesaplayın, ortogonal matris U'yu kullanın). 50 katmanlı ReLU ağları için Kaiming ile karşılaştırın.
 
@@ -368,10 +368,10 @@ Bu ders şunları ortaya çıkarır:
 | Symmetry breaking | "Make neurons different" | Using random initialization to ensure neurons learn distinct features instead of computing identical functions |
 | Fan-in | "Number of inputs to a neuron" | The number of incoming connections, which determines how input variance accumulates in the weighted sum |
 | Fan-out | "Number of outputs from a neuron" | The number of outgoing connections, relevant for maintaining gradient variance during backpropagation |
-| Xavier/Glorot init | "The sigmoid initialization" | Var(w) = 2/(fan_in + fan_out), designed to preserve variance through sigmoid and tanh activations |
-| Kaiming/He init | "The ReLU initialization" | Var(w) = 2/fan_in, accounts for ReLU zeroing half the activations |
+| Xavier/Glorot init | "The sigmoid initialization" | $\mathrm{Var}(w) = 2/(\text{fan} _{\text{in}} + \text{fan} _{\text{out}})$, designed to preserve variance through sigmoid and tanh activations |
+| Kaiming/He init | "The ReLU initialization" | $\mathrm{Var}(w) = 2/\text{fan}_{\text{in}}$, accounts for ReLU zeroing half the activations |
 | Variance propagation | "How signals grow or shrink through layers" | The mathematical analysis of how activation variance changes layer by layer based on weight scale |
-| Residual scaling | "GPT-2's init trick" | Scaling residual connection weights by 1/sqrt(2N) to prevent variance growth through N transformer layers |
+| Residual scaling | "GPT-2's init trick" | Scaling residual connection weights by $1/\sqrt{2N}$ to prevent variance growth through $N$ transformer layers |
 | Dead network | "Nothing trains" | A network where poor initialization causes all gradients to be zero or all activations to saturate |
 | Exploding activations | "Values go to infinity" | When weight variance is too high, causing activation magnitudes to grow exponentially through layers |
 

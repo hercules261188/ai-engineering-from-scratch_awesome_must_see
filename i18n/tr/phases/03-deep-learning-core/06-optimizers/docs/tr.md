@@ -18,7 +18,7 @@
 
 Eğer bu değerleri hesapladığınızda, 4.721'in ağırlığının kaybı azaltmak için 0.003'e düşmesi gerektiğini biliyorsunuz. Ama 0.003 hangi birimlerde? Ne kadar ölçeklendirilmiş? Ve 1. adımda 1.000'de olduğu kadar aynı miktarı hareket ettirmek mi gerekiyor?
 
-Vanilla gradient düşüşü, her adımdaki her parametrede aynı öğrenme hızını uyguluyor: w = w - lr * gradient. Bu, pratikte sinir ağlarını eğitmeyi acı verici hale getiren üç sorun yaratır.
+Vanilla gradient düşüşü her adımda her parametre aynı öğrenme hızını uyguluyor: $w = w - \text{lr} \cdot \text{gradient}$Bu, nöral ağların eğitimiyle ilgili pratikte acı verici olan üç sorunu ortaya çıkarır.
 
 Öncelikle, titreşim. Kayıp manzarası nadiren bir kavanoz şeklinde oluşur. Daha çok uzun ve dar bir vadide. Merdiven, vadinin üzerinden (tırtlak yönde) değil, onun boyunca (kuyu yönde) işaretler. Devamlı düşüş, dar boyut boyunca ileri-geri atlayıp yararlı boyut boyunca küçük ilerlemeler yaparken. Bunu gördünüz: kayıp platolardan daha hızlı düşer, modelin birleştiği için değil, dalgalanması nedeniyle.
 
@@ -34,8 +34,8 @@ Adam üçünü de çözer. Parametre başına iki çalışkan ortalama tutar - o
 
 En basit optimizör. Mini seri üzerinde gradient hesaplayın ve ters yöne adım atın.
 
-```
-w = w - lr * gradient
+```math
+w = w - \text{lr} \cdot \text{gradient}
 ```
 
 "Stochastik" demek, tüm veri kümesi yerine, gradiyenti tahmin etmek için rastgele bir alt kümesi (mini-batch) verileri kullanmak demektir. Bu gürültü aslında yararlıdır - keskin yerel minimumlardan kaçmaya yardımcı olur. Ama gürültü aynı zamanda titreşimlere neden olur.
@@ -46,27 +46,31 @@ w = w - lr * gradient
 
 Top-tükük-tük analogiyi çok fazla kullanır ama doğru. Sadece gradiyenti geçmek yerine, past gradients toplanan bir hız koruruz.
 
-```
-m_t = beta * m_{t-1} + gradient
-w = w - lr * m_t
+```math
+\begin{aligned}
+m_t &= \beta \, m_{t-1} + \text{gradient} \\
+w &= w - \text{lr} \cdot m_t
+\end{aligned}
 ```
 
-Beta (genellikle 0.9) ne kadar tarih tutmak için kontrol eder. beta = 0.9, momentum yaklaşık olarak son 10 gradientlerin ortalamasıdır (1 / (1 - 0.9) = 10.
+Beta (genellikle 0.9) ne kadar geçmiş tutmak için kontrol eder.$\beta = 0.9$, momentum yaklaşık olarak son 10 gradientin ortalamasıdır ($1 / (1 - 0.9) = 10$)
 
 Bu neden dalgalanmayı düzeltir: aynı yönde gösteren gradientler birikir. Kötü yönde ters giden gradientler iptal edilir. O dar vadide, "çetesi" bileşen her adımını işaret eder ve dümdüz edilir. "Yüzde" bileşen tutarlı kalır ve güçlenir. Sonuç yararlı yönde düzgün bir hızlandırma olur.
 
-Gerçek rakamlar: SGD'nin tek başına kötü koşullu bir kayıp manzarasında 10.000 adım alabilir. İstihbaratlı SGD (beta = 0,9) genellikle aynı sorunda 3.000-5.000 adım alır. Hızlanma sınırlı değildir.
+Gerçek rakamlar: Yalnızca kötü koşullarda kayıplar alanında SGD 10.000 adım alabilir.$\beta = 0.9$Bu nedenle, bu süreçte, bu süreçte, bu süreçte, bu süreçte, bu süreçte, bu süreçte, bu süreçte, bu süreçte, bu süreçte, bu süreçte, bu süreçte, bu süreçte, bu süreçte, bu süreçte, bu süreçte, bu süreçte, bu süreçte, bu süreçte, bu süreçte, bu süreçte, bu süreçte, bu süreçte, bu süreçte, bu süreçte, bu süreçte, bu süreçte, bu süreçte, bu süreçte, bu süreçte, bu süreçte, bu süreçte, bu süreçte, bu süreçte, bu süreçte, bu süreçte, bu süreçte, bu süreçte, bu süreçte, bu süreçte, bu süreçte, bu süreçte, bu süreçte, bu süreçte, bu süreçte, bu süreçte, bu süreçte, bu süreçte, bu süreçte, bu süreçte, bu süreçte, bu süreçte, bu süreçte, bu süreçte, bu süreçte, bu süreçte, bu, bu, bu, bu, bu, bu, bu, bu, bu, bu, bu, bu, bu, bu, bu, bu, bu, bu, bu, için, bu, bu, bu, bu, bu, bu, bu, bu, bu, bu, bu, bu, bu, bu, bu, bu, bu, bu, bu, bu, bu, bu, bu, bu, bu, bu, bu, bu, bu, bu, bu, bu, bu, bu, bu, bu, bu, bu, bu, bu, bu, bu, bu, bu, bu, bu, bu, bu, bu, bu, bu, bu, bu, bu, bu, bu, bu, bu, bu, bu, bu, bu, bu, bu, bu, bu, bu, bu, bu, bu, bu, bu, bu, bu, bu, bu, bu, bu, bu, bu, bu, bu, bu, bu, bu, bu, bu, bu, bu, bu, bu, bu, bu, bu, bu, bu, bu, bu, bu, bu, bu, bu, bu, bu, bu, bu, bu, bu, bu, bu, bu, bu, bu, bu, bu, bu, bu, bu, bu, bu, bu, bu, bu, bu
 
 ### RMSProp
 
 Hinton tarafından Coursera dersi (resmi olarak hiç yayınlanmamış) önerilen, gerçekte işe yarayan ilk parametreki adaptatif öğrenme oranı yöntemi.
 
-```
-s_t = beta * s_{t-1} + (1 - beta) * gradient^2
-w = w - lr * gradient / (sqrt(s_t) + epsilon)
+```math
+\begin{aligned}
+s_t &= \beta \, s_{t-1} + (1 - \beta) \cdot \text{gradient}^2 \\
+w &= w - \text{lr} \cdot \frac{\text{gradient}}{\sqrt{s_t} + \epsilon}
+\end{aligned}
 ```
 
-s_t, karede gradientlerin geçerli ortalamasını takip eder. Sürekli büyük gradientler olan parametreler büyük bir sayıyla bölünür (küçük etkili öğrenme oranı). Küçük gradientler olan parametreler küçük bir sayıyla bölünür (yüksek etkili öğrenme oranı).
+$s_t$Bu, bir dizi farklılık gösterir: bir dizi farklılık gösterirken, bir dizi farklılık gösterirken, bir dizi farklılık gösterirken, bir dizi farklılık gösterirken, bir dizi farklılık gösterirken, bir dizi farklılık gösterirken, bir dizi farklılık gösterirken, bir dizi farklılık gösterirken, bir dizi farklılık gösterirken, bir dizi farklılık gösterirken, bir dizi farklılık gösterirken, bir dizi farklılık gösterirken, bir dizi farklılık gösterirken, bir dizi farklılık gösterirken, bir dizi farklılık gösterirken, bir dizi farklılık gösterirken, bir dizi farklılık gösterirken, bir dizi farklılık gösterirken, bir dizi farklılık gösterirken, bir dizi farklılık gösterirken, bir dizi farklılık gösterirken, bir dizi farklılık gösterirken, bir dizi farklılık gösterirken, bir dizi farklılık gösterirken, bir dizi farklılık gösterirken, bir dizi farklılık gösterirken, bir dizi farklılık gösterirken, bir dizi farklılık gösterirken, bir dizi farklılık gösterirken, bir dizi farklılık gösterirken, bir dizi farklılık gösterirken, bir dizi farklılık gösterirken, bir diğer bir diğer bir diğer diğer diğer diğer diğer diğerine benzerliği gösterir.
 
 Bu, "her parametre için bir öğrenme hızı" sorunu çözüyor. Büyük güncellemeler alıyor olan bir ağırlık muhtemelen hedefine yakın -- yavaşlatıyor. Küçük güncellemeler alan bir ağırlık az eğitimli olabilir -- hızlandırıyor.
 
@@ -76,41 +80,45 @@ Epsilon (genellikle 1e-8) bir parametrenin güncelleştirilmediği zaman sıfır
 
 Adam her parametre için iki eksponensial hareketli ortalama tutar.
 
-```
-m_t = beta1 * m_{t-1} + (1 - beta1) * gradient        (first moment: mean)
-v_t = beta2 * v_{t-1} + (1 - beta2) * gradient^2       (second moment: variance)
-```
-
-**Bias correction**Bu, bir açıklama atlatmadığı anahtar ayrıntıdır. 1 adım, m_1 = (1 - beta1) * gradient. beta1 = 0.9 ile, bu 0.1 * gradient -- on kat daha küçük. Hareketli ortalama henüz ısınmadı.
-
-```
-m_hat = m_t / (1 - beta1^t)
-v_hat = v_t / (1 - beta2^t)
+```math
+\begin{aligned}
+m_t &= \beta_1 m_{t-1} + (1 - \beta_1) \cdot \text{gradient} && \text{(first moment: mean)} \\
+v_t &= \beta_2 v_{t-1} + (1 - \beta_2) \cdot \text{gradient}^2 && \text{(second moment: variance)}
+\end{aligned}
 ```
 
-Beta1 = 0.9 olan 1. adımda: m_hat = m_1 / (1 - 0.9) = m_1 / 0.1 = gerçek kaydırma. 100'de: (1 - 0.9^100) yaklaşık 1.0'dır, bu nedenle düzeltme ortadan kalkar.
+**Bias correction**Bu, çoğu açıklamanın atlattığı ana detay.$m_1 = (1 - \beta_1) \cdot \text{gradient}$- Evet .$\beta_1 = 0.9$- Bu da...$0.1 \cdot \text{gradient}$- 10 kat daha küçük. Hareketli ortalama henüz ısıtılmamış.
+
+```math
+\begin{aligned}
+\hat{m} &= \frac{m_t}{1 - \beta_1^t} \\
+\hat{v} &= \frac{v_t}{1 - \beta_2^t}
+\end{aligned}
+```
+
+1 . Adımda $\beta_1 = 0.9$- Evet .$\hat{m} = m_1 / (1 - 0.9) = m_1 / 0.1 =$Gerçek derecede.$(1 - 0.9^{100})$Bu nedenle, bir kısım olarak, bir kısım olarak, bir kısım olarak, bir kısım olarak, bir kısım olarak, bir kısım olarak, bir kısım olarak, bir kısım olarak, bir kısım olarak, bir kısım olarak, bir kısım olarak, bir kısım olarak, bir kısım olarak, bir kısım olarak, bir kısım olarak, bir kısım olarak, bir kısım olarak, bir kısım olarak, bir kısım olarak, bir kısım olarak, bir kısım olarak, bir kısım olarak, bir kısım olarak, bir kısım olarak, bir kısım olarak, bir kısım olarak, bir kısım olarak, bir kısım olarak, bir kısım olarak, bir kısım olarak, bir kısım olarak, bir kısım olarak, bir kısım olarak, bir kısım olarak, bir kısım olarak, bir kısım olarak, bir kısım olarak, bir kısım olarak, bir kısım olarak, bir kısmını, bir kısmını, bir kısmını, bir diğerine, bir diğerine, bir diğerine, bir diğerine, bir diğerine, bir diğerine, bir diğerine, bir diğerine, bir diğerine, diğerine, diğerine, diğerine, diğerine, diğerine, diğerine, diğerine, diğerine, diğerine, diğerine, diğerine, diğerine, diğerine, diğerine, diğerine, diğerine, diğerine, diğerine, diğerine, diğerine, diğerine, diğerine, diğerine, diğerine, diğerine, diğerine, diğerine, diğerine, diğerine, diğerine, diğerine, diğerine, diğerine, diğerine, diğerine, diğerine, diğerine, diğerine, diğerine, diğerine, diğerine, diğerine, de, diğerine, de, diğerine, diğerine, de, diğerine, diğerine, de, diğerine, de, de, diğerine, de, diğerine, diğerine, de, diğerine, diğerine, diğerine, diğerine, de, de, diğerine, de, diğer diğerine, de, de, diğerine, de, de, diğerine, de, de, diğer, diğer diğerine, diğer diğerine, de, de, de, de, diğer diğer diğer diğer diğer diğerine, de, de, de, de, de, de, de, de, de, diğer diğer diğer diğer diğer, de,
 
 Güncelleme:
 
-```
-w = w - lr * m_hat / (sqrt(v_hat) + epsilon)
+```math
+w = w - \text{lr} \cdot \frac{\hat{m}}{\sqrt{\hat{v}} + \epsilon}
 ```
 
-Adam'ın öntanımlı özellikleri: lr = 0.001, beta1 = 0.9, beta2 = 0.999, epsilon = 1e-8. Bu öntanımlı özellikler sorunların %80'inde çalışır.
+Öntanımlı olarak: $\text{lr} = 0.001$- Evet .$\beta_1 = 0.9$- Evet .$\beta_2 = 0.999$- Evet .$\epsilon = 10^{-8}$Bu öntanımlı sorunların %80'inde işe yarıyor.$\beta_2$Neredeyse hiç değişmez .$\beta_1$veya $\epsilon$- Evet .
 
 ### Ağırlık kaybı doğru şekilde yapıldı
 
-L2 düzenlenmesi kaybı lambda * w^2 ekler. vanilya SGD'de bu ağırlık kaybına eşittir (her adımda lambda * w'yi ağırlıktan çıkarır).
+L2 düzenlenmesi eklenir $\lambda w^2$Vanilya SGD'de bu, ağırlık kaybına eşittir (çıkartmak $\lambda w$Adam'da bu eşdeğerlik kırılır.
 
 Loshchilov & Hutter'ın anlayışı: L2'yi kaybına eklediğinizde ve sonra Adam gradiyenti işlediğinde, adaptatif öğrenme hızı düzenleme terimini de ölçeyor. Büyük gradiyent varyasyonu olan parametreler daha az düzenlenir. Küçük varyasyonu olan parametreler daha fazla düzenlenir. Bu istediğiniz şey değil - gradiyent istatistiklerine bakılmaksızın birer düzenlenme istiyorsunuz.
 
 AdamW, bu durumu, Adam güncelleştirmesinden sonra ağırlık kaybını doğrudan ağırlıklara uygulayarak düzeltir:
 
-```
-w = w - lr * m_hat / (sqrt(v_hat) + epsilon) - lr * lambda * w
+```math
+w = w - \text{lr} \cdot \frac{\hat{m}}{\sqrt{\hat{v}} + \epsilon} - \text{lr} \cdot \lambda w
 ```
 
-Ağırlık kaybı terimi (lr * lambda * w) Adem'in uyarlama faktörü ile ölçemez.
+Ağırlık kaybı terimi ($\text{lr} \cdot \lambda w$Bu, bir değişkenlik oranı olarak belirlenir.
 
 Bu küçük bir detay gibi görünüyor. Hayır. AdamW neredeyse her görevde Adam + L2 düzenlenmesinden daha iyi çözümlere yaklaşıyor. PyTorch'de dönüştürücülerin, difüzyon modellerinin ve çoğu modern mimarinin eğitimi için varsayılan optimizördür. BERT, GPT, LLaMA, Stable Diffusion - hepsi AdamW ile eğitilmiştir.
 
@@ -424,11 +432,11 @@ Bu ders şunları ortaya çıkarır:
 
 ## Egzersizler
 
-1. Nesterov momentum uygulamak, mevcut pozisyon yerine "lookhead" pozisyonunda (w - lr * beta * v) gradiyenti hesaplamak.
+1. Nesterov momentumu uygulamak, burada "görüş açısı" pozisyonunda eğilimi hesaplarsınız ($w - \text{lr} \cdot \beta v$Dört veri kümesindeki standart momentum ile yakınlığı karşılaştırın.
 
 2. Öğrenme hızı ısınma programını uygulayın: eğitim adımlarının ilk 10%'inde 0'dan maksimum_lr'e kadar çizgi ramp, sonra kozin çöküşü 0. Adam + ısınma ile ısınmadan ısınma ile ısınma.
 
-3. Adam eğitiminde her parametrenin etkili öğrenme oranını takip edin. Etkin oran lr * m_hat / (sqrt(v_hat) + eps). 10, 50 ve 200 adımdan sonra etkili oranların dağılımını çizin. Tüm parametreler aynı hızda güncellenir mi?
+3. Adam eğitiminde her parametreden etkili öğrenme oranını takip edin.$\text{lr} \cdot \hat{m} / (\sqrt{\hat{v}} + \epsilon)$10.50 ve 200 adımdan sonra etkin oranların dağılımını çizin.
 
 4. Yüksek öğrenme oranı (lr=0.01 için Adam) kullanarak ve kesmeden eğitilmek. Ne kadar koşunun ayrıldığı (kayıp NaN'e gider) sayın.
 
@@ -439,12 +447,12 @@ Bu ders şunları ortaya çıkarır:
 | Term | What people say | What it actually means |
 |------|----------------|----------------------|
 | Learning rate | "Step size" | The scalar multiplier on the gradient update; the single most impactful hyperparameter in training |
-| SGD | "Basic gradient descent" | Stochastic gradient descent: update weights by subtracting lr * gradient, computed on a mini-batch |
+| SGD | "Basic gradient descent" | Stochastic gradient descent: update weights by subtracting $\text{lr} \cdot \text{gradient}$, computed on a mini-batch |
 | Momentum | "Rolling ball analogy" | Exponential moving average of past gradients; dampens oscillation and accelerates consistent directions |
 | RMSProp | "Adaptive learning rate" | Divides each parameter's gradient by the running RMS of its recent gradients; equalizes learning rates |
 | Adam | "The default optimizer" | Combines momentum (first moment) and RMSProp (second moment) with bias correction for the initial steps |
 | AdamW | "Adam done right" | Adam with decoupled weight decay; applies regularization directly to weights rather than through the gradient |
-| Bias correction | "Warmup for running averages" | Dividing by (1 - beta^t) to compensate for the zero-initialization of Adam's moment estimates |
+| Bias correction | "Warmup for running averages" | Dividing by $(1 - \beta^t)$ to compensate for the zero-initialization of Adam's moment estimates |
 | Weight decay | "Shrink the weights" | Subtracting a fraction of the weight value at each step; a regularizer that penalizes large weights |
 | Learning rate schedule | "Changing lr over time" | A function that adjusts the learning rate during training; warmup + cosine decay is the modern default |
 | Gradient clipping | "Capping the gradient norm" | Scaling down the gradient vector when its norm exceeds a threshold; prevents exploding gradient updates |

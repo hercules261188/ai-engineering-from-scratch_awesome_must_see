@@ -75,8 +75,8 @@ Her nöron üç şey yapar:
 
 Şimdilik, etkinleştirme sigmoid:
 
-```
-sigmoid(z) = 1 / (1 + e^(-z))
+```math
+\text{sigmoid}(z) = \frac{1}{1 + e^{-z}}
 ```
 
 Sigmoid herhangi bir sayıyı (0,1) aralığına sıfırlıyor. Büyük olumlu girişler 1. büyük negatif girişler 0.5'e doğru sıfır haritelerine doğru ilerliyor. Bu düz eğri öğrenmeyi mümkün kılan şey.
@@ -99,9 +99,11 @@ graph TD
 
 Her katman, üç işlem sırayla gerçekleşir:
 
-```
-z = W * input + b       (linear transformation)
-a = sigmoid(z)           (activation)
+```math
+\begin{aligned}
+z &= W \cdot \text{input} + b \quad \text{(linear transformation)} \\
+a &= \text{sigmoid}(z) \quad \text{(activation)}
+\end{aligned}
 ```
 
 Bir katmanın çıkışı bir sonraki katmanın girişine dönüşür.
@@ -112,13 +114,13 @@ Arkaplan boyutları derin öğrenmede en önemli defegleme becerisidir.
 
 | Step | Operation | Dimensions | Result Shape |
 |------|-----------|------------|-------------|
-| Input | x | -- | (2,) |
-| Hidden linear | W1 * x + b1 | W1: (3, 2), b1: (3,) | (3,) |
-| Hidden activation | sigmoid(z1) | -- | (3,) |
-| Output linear | W2 * h + b2 | W2: (1, 3), b2: (1,) | (1,) |
-| Output activation | sigmoid(z2) | -- | (1,) |
+| Input | $x$ | -- | (2,) |
+| Hidden linear | $W_1 x + b_1$ | $W_1$: (3, 2), $b_1$: (3,) | (3,) |
+| Hidden activation | $\text{sigmoid}(z_1)$ | -- | (3,) |
+| Output linear | $W_2 h + b_2$ | $W_2$: (1, 3), $b_2$: (1,) | (1,) |
+| Output activation | $\text{sigmoid}(z_2)$ | -- | (1,) |
 
-Kural: katman k'deki ağırlık matrisi W'nin şekli vardır (neurons_in_layer_k, neurons_in_layer_k_minus_1). Satırlar mevcut katmanla eşleşir. sütunlar önceki katmanla eşleşir. Eğer şekiller sırayla gelmezse, bir hata vardır.
+Kural: ağırlık matrisi $W$katmanında$k$Sıralar mevcut katmanla eşleşir. Sütunlar önceki katmanla eşleşir. Şekiller sıraya geçmezse bir hata var.
 
 ### Evrensel Yaklaşım Teoremi
 
@@ -168,7 +170,7 @@ def sigmoid(x):
 
 ### Adım 2: Katman sınıfı
 
-Derin öğrenme'de en önemli işlem matris çarpımı. Her katman, her dikkat başlığı, her ileri geçiş - aşağıya kadar matmuls. Bir doğrusal katman bir giriş vektörü alır, ağırlık matrisine çarpır ve bir önyargı vektörü ekler: y = Wx + b. Bu tek denklem sinir ağındaki hesaplamanın %90'ını oluşturur.
+Derin öğrenme'de en önemli işlem matris çarpımı. Her katman, her dikkat başlığı, her ileri geçiş - aşağıya kadar tüm matmuls.$y = Wx + b$Bu tek denklem sinir ağındaki hesaplamaların %90'ını oluşturur.
 
 Bir katman bir ağırlık matrisi ve bir önyargı vektörü tutar. Önüne yönlendirme bir giriş vektörü alır ve etkin çıkışı iade eder.
 
@@ -204,7 +206,7 @@ Ağırlık matrisi şekli vardır (n_neurons, n_inputs). Her satır tüm girişl
 
 ### Adım 3: Ağ Sınıfı
 
-Bir ağ katmanların bir listesi. Ön geçiş onları zincirler: katman k çıkışı katman k + 1 olarak beslenir.
+Bir ağ katmanların bir listesidir. Ön geçiş onları zincirlemektedir: katman çıkışı $k$katman olarak beslenir $k+1$- Evet .
 
 ```python
 class Network:
@@ -346,11 +348,11 @@ Bir sorun için kaç katman, her katman için kaç nöron ve hangi etkinleştirm
 | Hidden layer | "The middle part" | Any layer between input and output whose values are not directly observed in the data |
 | Multi-layer network | "A deep neural network" | Layers of neurons stacked sequentially, where each layer's output feeds the next layer's input |
 | Activation function | "The nonlinearity" | A function applied after the linear transformation that introduces curves into the decision boundary |
-| Sigmoid | "The S-curve" | sigma(z) = 1/(1+e^(-z)), squashes any real number to (0,1), smooth and differentiable everywhere |
-| Weight matrix | "The parameters" | A matrix W of shape (current_layer_neurons, previous_layer_neurons) containing learnable connection strengths |
+| Sigmoid | "The S-curve" | $\sigma(z) = 1/(1+e^{-z})$, squashes any real number to (0,1), smooth and differentiable everywhere |
+| Weight matrix | "The parameters" | A matrix $W$ of shape (current_layer_neurons, previous_layer_neurons) containing learnable connection strengths |
 | Bias vector | "The offset" | A vector added after the matrix multiply that lets neurons activate even when all inputs are zero |
 | Universal approximation | "Neural nets can learn anything" | A single hidden layer with enough neurons can approximate any continuous function -- but "enough" can mean billions |
-| Linear transformation | "The matrix multiply step" | z = W * x + b, the computation before activation, which maps inputs to a new space |
+| Linear transformation | "The matrix multiply step" | $z = W x + b$, the computation before activation, which maps inputs to a new space |
 | Decision boundary | "Where the classifier switches" | The surface in input space where the network output crosses the classification threshold |
 
 ## Daha Fazla Okumak

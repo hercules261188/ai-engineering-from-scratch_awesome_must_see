@@ -26,7 +26,7 @@ Geriye yayılma bunu çözüyor. Bir ileri geçiş, bir geri geçiş, tüm gradi
 
 ### Ağlar için uygulanan zincir kuralı
 
-Dönem 01, Ders 05'te zincir kuralını gördünüz. Hızlı bir şekilde özetle: eğer y = f(g(x) ise, dy/dx = f'(g(x)) * g'(x.
+01-ci aşamada zincir kuralını gördün. 5. Ders.$y = f(g(x))$O zaman ...$\frac{dy}{dx} = f'(g(x)) \cdot g'(x)$- Dolayıları zincir boyunca çoğaltıyorsun.
 
 Bir sinir ağında, " zincir " girişten kayba kadar işlemlerin sırasıdır. Her katman ağırlık uyguluyor, tarafsızlıklar ekliyor, bir etkinleştirme üzerinden geçiyor. Kayıp işlevi son çıkışı hedefe karşılaştırır. Geri yayılma bu zinciri geriye doğru izler ve her işlemin hataya nasıl katkıda bulunduğunu hesaplar.
 
@@ -45,9 +45,9 @@ graph LR
     y["target"] --> loss
 ```
 
-Önceki geçiş: değerler soldan sağa akıyor. x ve w z1 = w*x elde eder. z2 elde etmek için b ekleyin. Sigmoid aktivasyonu a verir. Kayıp işlevi kullanarak a ile hedefi y ile karşılaştırın.
+Ön geçiş: değerler sola sağa akıyor. $x$ve $w$ürünler$z_1 = w x$Ekle .$b$Almak için$z_2$Sigmoid aktive eder .$a$- Ben de .$a$Hedef olarak$y$Kayıp fonksiyonunu kullanmak.
 
-Geriye geç: gradientler sağdan sola akıyor. dL/da ile başlayın (aktifikasyonla kayıpların nasıl değişmesi). da/dz2 ile çarpın (sigmoid türev). Bu dL/dz2 verir. dL/dz2'ye bölün (dL/dz2'ye eşit olduğundan z2 = z1 + b) ve dL/dz1.
+Geriye geçiş: eğrilikler sağdan sola akıyor.$\partial L/\partial a$(aktifikasyonla birlikte kayıpların değişimi).$\partial a/\partial z_2$Bu da verir.$\partial L/\partial z_2$- Bölünmüş .$\partial L/\partial b$(Bu da $\partial L/\partial z_2$, o zamandan beri$z_2 = z_1 + b$) ve $\partial L/\partial z_1$- O zaman ...$\partial L/\partial w = \partial L/\partial z_1 \cdot x$ve $\partial L/\partial x = \partial L/\partial z_1 \cdot w$- Evet .
 
 Grafdaki her düğümün geriye geçiş sırasında bir işi vardır: yukarıdan gelen eğilimi alın, yerel türevine çarpın ve aşağıya geçin.
 
@@ -84,7 +84,7 @@ graph RL
     L1 -- "dL/dz1 = dL/da1 * sigmoid'(z1)" --> I["Input"]
 ```
 
-Her katman, gradient sigmoid türevli tarafından çarpılır. Sigmoid türevli bir * (1 - a) olarak, maksimum 0.25'te (a = 0.5) çıkarılır.
+Her katman, gradient sigmoid türevliyle çarpılır.$a(1 - a)$, en yüksek 0.25 ($a = 0.5$3 kat derinlikte, en fazla bir kat daha fazla merdiven çarpılmıştır.$0.25^3 = 0.0156$- 10 kat derinlik:$0.25^{10} = 0.000001$- Evet .
 
 ### Kaybolan Değillikler
 
@@ -102,32 +102,35 @@ Bu nedenle derin sigmoid ağları eğitmek neredeyse imkansızdır. Bu düzeltme
 
 ### İki katmanlı ağ için gradiyent çıkarmak
 
-Giriş x, sigmoid ile gizli katman, sigmoid ile çıkış katman ve MSE kaybı ile bir ağ için beton matematik.
+Giriş ile bir ağ için beton matematik $x$Sigmoid ile gizli katman, sigmoid ile çıkış katman ve MSE kaybı.
 
 Ön geçit:
-```
-z1 = W1 * x + b1
-a1 = sigmoid(z1)
-z2 = W2 * a1 + b2
-a2 = sigmoid(z2)
-L = (a2 - y)^2
+
+```math
+\begin{aligned}
+z_1 &= W_1 x + b_1 \\
+a_1 &= \text{sigmoid}(z_1) \\
+z_2 &= W_2 a_1 + b_2 \\
+a_2 &= \text{sigmoid}(z_2) \\
+L &= (a_2 - y)^2
+\end{aligned}
 ```
 
 Geriye geçiş (çeşitli bir zincir kuralını adım adım uygulayarak):
-```
-dL/da2 = 2(a2 - y)
-da2/dz2 = a2 * (1 - a2)
-dL/dz2 = dL/da2 * da2/dz2 = 2(a2 - y) * a2 * (1 - a2)
 
-dL/dW2 = dL/dz2 * a1
-dL/db2 = dL/dz2
-
-dL/da1 = dL/dz2 * W2
-da1/dz1 = a1 * (1 - a1)
-dL/dz1 = dL/da1 * da1/dz1
-
-dL/dW1 = dL/dz1 * x
-dL/db1 = dL/dz1
+```math
+\begin{aligned}
+\frac{\partial L}{\partial a_2} &= 2(a_2 - y) \\
+\frac{\partial a_2}{\partial z_2} &= a_2 (1 - a_2) \\
+\frac{\partial L}{\partial z_2} &= \frac{\partial L}{\partial a_2} \cdot \frac{\partial a_2}{\partial z_2} = 2(a_2 - y) \cdot a_2 (1 - a_2) \\[6pt]
+\frac{\partial L}{\partial W_2} &= \frac{\partial L}{\partial z_2} \cdot a_1 \\
+\frac{\partial L}{\partial b_2} &= \frac{\partial L}{\partial z_2} \\[6pt]
+\frac{\partial L}{\partial a_1} &= \frac{\partial L}{\partial z_2} \cdot W_2 \\
+\frac{\partial a_1}{\partial z_1} &= a_1 (1 - a_1) \\
+\frac{\partial L}{\partial z_1} &= \frac{\partial L}{\partial a_1} \cdot \frac{\partial a_1}{\partial z_1} \\[6pt]
+\frac{\partial L}{\partial W_1} &= \frac{\partial L}{\partial z_1} \cdot x \\
+\frac{\partial L}{\partial b_1} &= \frac{\partial L}{\partial z_1}
+\end{aligned}
 ```
 
 Her gradient kayıptan sonra gelen yerel türevlerin bir ürünüdür.
@@ -185,9 +188,9 @@ def __mul__(self, other):
     return out
 ```
 
-Eklemek için: d(a+b)/da = 1, d(a+b)/db = 1. Yani her iki giriş de çıkışın gradiyentiyi doğrudan alır.
+Ekleyici için: $\partial(a+b)/\partial a = 1$- Evet .$\partial(a+b)/\partial b = 1$Yani her iki giriş de çıkışın gradiyentiyi doğrudan alır.
 
-Karıştırma için: d(a*b)/da = b, d(a*b)/db = a. Her giriş diğerinin değerini çıkış gradiyentiyle çarpır.
+Karıştırma için: $\partial(ab)/\partial a = b$- Evet .$\partial(ab)/\partial b = a$Her giriş diğerinin değerini çıkış gradiyentiyle çarpıyor.
 
 - Evet .`+=`Bir değer birden fazla işlemde kullanılabilir.
 
@@ -209,7 +212,7 @@ def sigmoid(self):
     return out
 ```
 
-Sigmoid türev: sigmoid(x) * (1 - sigmoid(x)). Biz ileri geçiş sırasında sigmoid(x) = s hesapladık.
+Sigmoid türevli: $\text{sigmoid}(x) \cdot (1 - \text{sigmoid}(x))$- Bilgisayar yaptık .$\text{sigmoid}(x) = s$- Ön geçiş sırasında tekrar kullan.
 
 ```python
 def mse_loss(predicted, target):
@@ -217,7 +220,7 @@ def mse_loss(predicted, target):
     return diff * diff
 ```
 
-Tek bir çıkış için MSE: ( öngörülmüş - hedef) ^ 2. Kısıtlama, bir negatif değer ile bir ek olarak ifade edilir.
+Tek çıkış için MSE: $(\text{predicted} - \text{target})^2$Kısıtlama, bir değerle eklenmiş bir değer olarak ifade edilir.
 
 ### Dördüncü Adım: Geriye Geç
 
@@ -241,7 +244,7 @@ def backward(self):
         v._backward()
 ```
 
-Kayıptan başlayın (gradient = 1.0, dL/dL = 1).`_backward`Çocuklarına doğru eğilimi zorlar.
+Kayıptan başlayın (gradiyent = 1.0, çünkü $dL/dL = 1$Arka tarafa doğru yürü, sıralanmış grafik boyunca.`_backward`Çocuklarına doğru eğilimi zorlar.
 
 ### Adım 5: Katman ve ağ
 
@@ -301,7 +304,7 @@ class Network:
             p.grad = 0.0
 ```
 
-Bir nöron girişleri alır, ağırlıklı toplam + tarafsızlığı hesaplar ve sigmoid uyguluyor. Daha derin ağlarda sigmoid doymuşluğunun önlenmesi için kilo başlangıç ölçekleri sqrt(2/n_input) ile. Bir katman nöronların bir listesi. Bir ağ katmanların bir listesi.`parameters()`Metod, öğrenilebilir değerleri toplar böylece onları güncelleyebiliriz.
+Bir nöron girişleri alır, ağırlıklı toplam + tarafsızlığı hesaplar ve sigmoid uyguluyor.$\sqrt{2/n_{\text{inputs}}}$Bir katman nöronların bir listesidir. Bir ağ katmanların bir listesidir.`parameters()`Metod, öğrenilebilir değerleri toplar böylece onları güncelleyebiliriz.
 
 ### Adım 6: XOR'da tren
 
@@ -439,9 +442,9 @@ Bu ders şunları ortaya çıkarır:
 
 ## Egzersizler
 
-1. Bir ekle`__sub__`Değer sınıfına (a - b = a + (-1 * b)).`__neg__`A - b) ^ 2 gibi basit bir ifade için manuel hesaplama ile karşılaştırarak gradientlerin doğru olduğunu kontrol edin.
+1. Bir ekle`__sub__`Değer sınıfına yöntemi $(a - b = a + (-1 \cdot b))$Sonra bir `__neg__`Bu yöntem, gradientlerin doğru olup olmadığını basit bir ifade için el hesabı ile karşılaştırarak doğrulayabilir.$(a - b)^2$- Evet .
 
-2. Bir ekle`relu`Bu, bir simgelik olarak, bir simgelik olarak, bir simgelik olarak, bir simgelik olarak, bir simgelik olarak, bir simgelik olarak, bir simgelik olarak, bir simgelik olarak, bir simgelik olarak, bir simgelik olarak, bir simgelik olarak, bir simgelik olarak, bir simgelik olarak, bir simgelik olarak, bir simgelik olarak, bir simgelik olarak, bir simgelik olarak, bir simgelik olarak, bir simgelik olarak, bir simgelik olarak, bir simgelik olarak, bir simgelik olarak, bir simgelik olarak, bir simgelik olarak, bir simgelik olarak, bir simgelik olarak, bir simgelik olarak, bir simgelik olarak, bir simgelik olarak, bir simgelik hızını karşılaştırın.
+2. Bir ekle`relu`Değer (çıkış)$\max(0, x)$, türev 1 ise $x \gt 0$Sigmoid'i gizli katmanlarda relü ile değiştirin ve tekrar XOR'da çalıştırın.
 
 3. A.`__pow__`Tam sayı güçleri için değer üzerinde yöntem.`mse_loss`- Evet.`(predicted - target) ** 2`Bu ifade, orijinal uygulamaya uygun olduğunu doğrula.
 
@@ -453,14 +456,14 @@ Bu ders şunları ortaya çıkarır:
 
 | Term | What people say | What it actually means |
 |------|----------------|----------------------|
-| Backpropagation | "The network learns" | An algorithm that computes dL/dw for every weight by applying the chain rule backward through the computational graph |
+| Backpropagation | "The network learns" | An algorithm that computes $\partial L/\partial w$ for every weight by applying the chain rule backward through the computational graph |
 | Computational graph | "The network structure" | A directed acyclic graph where nodes are operations and edges carry values (forward) and gradients (backward) |
-| Chain rule | "Multiply the derivatives" | If y = f(g(x)), then dy/dx = f'(g(x)) * g'(x) -- the mathematical foundation of backpropagation |
+| Chain rule | "Multiply the derivatives" | If $y = f(g(x))$, then $\frac{dy}{dx} = f'(g(x)) \cdot g'(x)$ -- the mathematical foundation of backpropagation |
 | Gradient | "The direction of steepest ascent" | The partial derivative of the loss with respect to a parameter -- tells you how to change that parameter to reduce the loss |
 | Vanishing gradient | "Deep networks don't learn" | Gradients shrink exponentially as they propagate through layers with saturating activations like sigmoid |
 | Forward pass | "Running the network" | Computing the output from inputs by sequentially applying each layer's operations and storing intermediate values |
 | Backward pass | "Computing gradients" | Traversing the computational graph in reverse, accumulating gradients at each node using the chain rule |
-| Learning rate | "How fast it learns" | A scalar that controls the step size when updating weights: w_new = w_old - lr * gradient |
+| Learning rate | "How fast it learns" | A scalar that controls the step size when updating weights: $w_{\text{new}} = w_{\text{old}} - \text{lr} \cdot \text{gradient}$ |
 | Topological sort | "The right order" | An ordering of graph nodes where each node appears after all nodes it depends on -- ensures gradients are fully accumulated before propagation |
 | Autograd | "Automatic differentiation" | A system that builds computational graphs during forward computation and automatically computes gradients -- what PyTorch's engine does |
 

@@ -30,8 +30,8 @@ Daha da kötüleşir. Kendini denetleyen öğrenmede etiketlerin bile bulunmuyor
 
 Geri dönüş için varsayılan. Tahmin ve hedef arasındaki kareden farkı hesaplayın, tüm örnekler üzerinde ortalama.
 
-```
-MSE = (1/n) * sum((y_pred - y_true)^2)
+```math
+\text{MSE} = \frac{1}{n} \sum (y_{\text{pred}} - y_{\text{true}})^2
 ```
 
 Neden karıştırmak önemlidir: büyük hataları karadrat olarak cezalandırır. 2'nin bir hatası 1'in bir hatası kadar 4 kat pahalı. 10'un bir hatası 100 kat pahalı. Bu da MSE'yi dış değerlere karşı hassas hale getirir.
@@ -40,8 +40,8 @@ Gerçek rakamlar: Eğer modeliniz konut fiyatlarını tahmin ederse ve $10,000 o
 
 Bir tahminle ilgili MSE'nin eğilimi:
 
-```
-dMSE/dy_pred = (2/n) * (y_pred - y_true)
+```math
+\frac{\partial \text{MSE}}{\partial y_{\text{pred}}} = \frac{2}{n} (y_{\text{pred}} - y_{\text{true}})
 ```
 
 Hatada doğrusal. Büyük hatalar daha büyük gradientler elde eder. Bu bir gerileme özelliği (büyük hatalar büyük düzeltmeler gerektirir) ve sınıflandırma için bir hata (güvenli yanlış cevapları doğrusal değil, eksponensel olarak cezalandırmak istiyorsunuz).
@@ -52,31 +52,31 @@ Klasifikasyon için kayıp fonksiyonu. Bilgi teorisi'nde kök salmış -- tahmin
 
 **Binary Cross-Entropy (BCE):**
 
-```
-BCE = -(y * log(p) + (1 - y) * log(1 - p))
+```math
+\text{BCE} = -\left(y \log(p) + (1 - y) \log(1 - p)\right)
 ```
 
-Burada y gerçek etiket (0 veya 1) ve p öngörülen olasılık.
+Nerede ?$y$gerçek etiket (0 veya 1) ve $p$tahmin edilen olasılık.
 
--log(p) neden işe yarıyor: gerçek etiket 1 olduğunda ve p = 0.99 olduğunu tahmin ettiğinizde, kaybı -log(0.99) = 0.01 olur.
+Neden ?$-\log(p)$İşler: gerçek etiket 1 olduğunda ve tahmin ettiğinizde $p = 0.99$Kayıp ,$-\log(0.99) = 0.01$- Önceden tahmin ettiğinde .$p = 0.01$Kayıp ,$-\log(0.01) = 4.6$460x farkı, çapraz entropi'nin işe yaramasının nedeni.
 
 Bu eğilimi aynı hikayeyi anlatıyor:
 
-```
-dBCE/dp = -(y/p) + (1-y)/(1-p)
+```math
+\frac{\partial \text{BCE}}{\partial p} = -\frac{y}{p} + \frac{1-y}{1-p}
 ```
 
-Y = 1 ve p sıfıra yakın olduğunda, gradient -1/p'dir ve bu da negatif sonsuzluğu yaklaşır. Modelle hatalarını düzeltmek için muazzam bir sinyal verilir. p 1'e yakın olduğunda gradient küçüktür.
+Ne zaman ?$y = 1$ve $p$sıfırın yakınında, eğrilik ise $-1/p$Bu model, yanlışını düzeltmek için devasa bir sinyal alır.$p$- 1'e yakın, gradient küçük.
 
 **Categorical Cross-Entropy:**
 
 Tek sıcak kodlanmış hedeflerle çoklu sınıflandırma için.
 
-```
-CCE = -sum(y_i * log(p_i))
+```math
+\text{CCE} = -\sum_i y_i \log(p_i)
 ```
 
-Sadece gerçek sınıf kaybına katkıda bulunur (çünkü diğer tüm y_i sıfırdır). Eğer 10 sınıf varsa ve doğru sınıf 0.1 olasılığı alırsa (hassasi tahmin), kaybı -log(0.1) = 2.3. Doğru sınıf 0.9 olasılığı alırsa, kaybı -log(0.9) = 0.105.
+Sadece gerçek sınıf kaybına katkıda bulunur (çünkü diğer tüm $y_i$Eğer 10 sınıf varsa ve doğru sınıf 0.1 olasılığı alırsa (hassasi tahmin), kaybı $-\log(0.1) = 2.3$Eğer doğru sınıf 0.9 olasılığı alırsa kaybı $-\log(0.9) = 0.105$Model olasılık kütlesini doğru cevaba odaklamayı öğrenir.
 
 ### MSE'nin sınıflandırılmamasının nedeni
 
@@ -96,19 +96,19 @@ graph TD
     C3 -->|"CE gradient<br/>explodes near<br/>wrong answer"| Fast["Fast correction"]
 ```
 
-MSE gradiyentiler, tahminlerin 0 veya 1 yakın olduğu zaman düzlenir (sigmoid doymuşluğu nedeniyle).
+MSE gradiyenti tahminler 0 veya 1 yakın olduğunda düzlenir (sigmoid doymuşluğu nedeniyle).$-\log$Sigmoid'in düz bölgelerini iptal ederek en çok ihtiyaç duyulan yerde güçlü gradientler verir.
 
 ### Etiket Düzeltme
 
 Standart bir sıcak etiketler "Bu %100 sınıf 3 ve %0 diğer her şey". diyor.
 
-```
-smooth_label = (1 - alpha) * one_hot + alpha / num_classes
+```math
+\text{smooth\_label} = (1 - \alpha) \cdot \text{one\_hot} + \frac{\alpha}{\text{num\_classes}}
 ```
 
-Alfa = 0,1 ve 10 sınıfları ile: [0, 0, 1, 0, ...] yerine hedef [0, 01, 0.01, 0.91, 0.01, ...] olur.
+- Evet .$\alpha = 0.1$ve 10 sınıf: [0, 0, 1, 0, ... yerine hedef [0.01, 0.01, 0.91, 0.01, ...] olur.
 
-Bu neden işe yarıyor: tam olarak 1.0'u softmax üzerinden çıkartmaya çalışan bir model logitleri sonsuzluğa doğru itmek zorunda. Bu aşırı güven neden olur, genelleşmeyi incitir ve modelin dağılım kayması için kırılgan hale gelir. Etiket düzeltme hedefi 0.9'a (alfa = 0.1) kapatır, logitleri makul bir aralığında tutar. GPT ve çoğu modern model etiket düzeltmesini veya eşdeğerini kullanır.
+Bu neden işe yarıyor: tam olarak 1.0'u softmax üzerinden çıkartmaya çalışan bir model logitleri sonsuzluğa doğru itmek zorunda. Bu aşırı güven neden olur, genelleşmeyi incitir ve modelin dağılım değişiminde kırılganlığını sağlar. Etiket düzeltmesi hedefi 0.9'a ($\alpha = 0.1$GPT ve çoğu modern model etiket düzeltmesini veya eşdeğerini kullanır.
 
 ### Karşılıklı Kayıp
 
@@ -118,20 +118,20 @@ Etiketler yok, sınıflar yok, sadece giriş çiftleri ve soru: bunlar birbirine
 
 Bir görüntü alın. İki artı görüntü oluşturun (çırpın, döndürün, renk kaygısı). Bunlar "pozitif çift"lerdir - benzer yerleşimlere sahip olmalıdırlar.
 
-```
-L = -log(exp(sim(z_i, z_j) / tau) / sum(exp(sim(z_i, z_k) / tau)))
+```math
+L = -\log \frac{\exp(\text{sim}(z_i, z_j) / \tau)}{\sum_k \exp(\text{sim}(z_i, z_k) / \tau)}
 ```
 
-Sim() kozin benzerliği olduğu yerde, z_i ve z_j pozitif çiftlerdir, toplam tüm negatiflerin üzerinde ve tau (temperatür) dağılımın ne kadar keskin olduğunu kontrol eder.
+Nerede ?$\text{sim}()$- cosine benzerliği$z_i$ve $z_j$Eğer bu sayı, pozitif çiftin toplamı tüm negatiflerin üzerinde ise,$\tau$Daha düşük sıcaklık = daha sert negatif = daha agresif ayrım.
 
-Gerçek sayılar: parti boyutu 256 pozitif çift başına 255 negatif anlamına gelir. Temperatür tau = 0.07 (SimCLR varsayılan). Kayıp benzerliklere karşı yumuşak bir maksimum gibi görünüyor - pozitif çiftin benzerliği tüm 256 seçenek arasında en yüksek olmasını istiyor.
+Gerçek sayılar: 256 seri boyutu, pozitif çift başına 255 negatif anlamına gelir.$\tau = 0.07$Kayıp benzerliklerin üzerinde yumuşak bir maksimum gibi görünüyor -- pozitif çiftin benzerliği tüm 256 seçenek arasında en yüksek olmasını istiyor.
 
 **Triplet Loss:**
 
 Üç giriş alır: demir, pozitif (aynı sınıf), negatif (farklı sınıf).
 
-```
-L = max(0, d(anchor, positive) - d(anchor, negative) + margin)
+```math
+L = \max\left(0, d(\text{anchor}, \text{positive}) - d(\text{anchor}, \text{negative}) + \text{margin}\right)
 ```
 
 Marj (genellikle 0.2-1.0) pozitif ve negatif mesafeler arasında minimum bir boşluk zorlar. Negatif yeterince uzakta ise, kayıp sıfırdır - hiçbir gradient, hiçbir güncelleme yoktur. Bu eğitimleri verimli yapar, ancak dikkatli üçlü madencilik gerektirir (ankre yakın olan sert negatifleri seçmek).
@@ -140,14 +140,14 @@ Marj (genellikle 0.2-1.0) pozitif ve negatif mesafeler arasında minimum bir bo�
 
 Düzsel olmayan veri kümeleri için. Standart çapraz entropi tüm doğru sınıflandırılmış örneklere eşit şekilde davranır.
 
-```
-FL = -alpha * (1 - p_t)^gamma * log(p_t)
+```math
+\text{FL} = -\alpha (1 - p_t)^\gamma \log(p_t)
 ```
 
-P_t gerçek sınıfın öngörülen olasılık olduğu ve gamma odaklanmayı kontrol ettiği yerde. gamma = 0, bu standart çapraz entropi. gamma = 2 (devayla):
+Nerede ?$p_t$gerçek sınıfın tahmin edilen olasılığı ve $\gamma$odaklanmayı kontrol eder.$\gamma = 0$Bu standart çapraz entropi.$\gamma = 2$(durdurdurma):
 
-- Basit örnek (p_t = 0,9): ağırlık = (0,1) ^ 2 = 0,01. Etkili olarak göz ardı edildi.
-- Sert örnek (p_t = 0.1): ağırlık = (0.9) ^ 2 = 0.81. Tam gradient sinyali.
+- Basit bir örnek ($p_t = 0.9$): ağırlık $= (0.1)^2 = 0.01$- Etkili olarak görmezden geleni yapıyorlar.
+- Zor bir örnek ($p_t = 0.1$): ağırlık $= (0.9)^2 = 0.81$Tam bir şifre.
 
 Lin ve diğerleri tarafından hedef kaybı, nesnelerin tespit edilmesi için kullanılmıştır. Bu durumda, aday bölgelerin %99'u arka plan (sadece negatif) olarak kullanılır.
 
@@ -213,7 +213,7 @@ def mse_gradient(predictions, targets):
 
 ### Adım 2: İkili çapraz entropiyası
 
-log(0) sorunu gerçek. Eğer model pozitif bir örnek için tam olarak 0'yu öngörürse, log(0) = negatif sonsuzluk.
+log ((0) sorunu gerçek. Eğer model doğru bir örnek için tam olarak 0 öngörürse,$\log(0) = -\infty$- Klipleme bunu önler.
 
 ```python
 import math
@@ -425,15 +425,15 @@ Bu ders şunları ortaya çıkarır:
 
 ## Egzersizler
 
-1. Küçük hatalar için MSE ve büyük hatalar için MAE olan Huber kaybını uygulayın. Y = sin(x'i tahmin eden bir gerileme ağı eğitmek için MSE vs Huber ile eğitim hedeflerinin% 5'inin rastgele gürültü eklendiği zaman (outliers) çalıştırın.
+1. Küçük hatalar için MSE ve büyük hatalar için MAE olan Huber kaybını (sımsıkı L1 kaybı) uygulayın.$y = \sin(x)$MSE vs Huber ile eğitim hedeflerinin% 5'inde rastgele gürültü eklendiğinde (outliers).
 
-2. İkili sınıflandırma eğitim döngüsüne odak kaybını ekleyin. Dengezsiz bir veri kümesi oluşturun (90% sınıf 0, 10% sınıf 1). 200 dönemden sonra azınlık sınıfı geri çağırışında standart BCE vs. odak kaybı (gamma=2) karşılaştırın.
+2. İkili sınıflandırma eğitim döngüsüne odak kaybını ekleyin.$\gamma = 2$) 200 dönemden sonra azınlık sınıfının geri çağırılması.
 
 3. Yarım sert negatif madencilik ile üçlü kaybı uygulayın. 5 sınıf için 2D gömleme verileri oluşturun. Her bir demir için, pozitifden daha uzak olan en sert negatif bulun.
 
 4. MSE vs. çapraz entropi karşılaştırmasını çalıştırın, ancak eğitim sırasında her katmandaki gradient büyüklüklerini izleyin.
 
-5. KL farklılık kaybını uygulayın ve KL(gerçek olarak tahmin edilen) KL'yi en aza indirmenin gerçek dağılım bir sıcak olduğunda çapraz entropi ile aynı gradientler verdiğini kontrol edin.
+5. KL farklılık kaybını uygulayın ve bu kaybı en aza indirgenmeyi doğrulayın $\mathrm{KL}(\text{true} \Vert \text{predicted})$Bu, gerçek dağılım tek sıcak olduğunda, çapraz entropiyaya benzer dereceleri verir.
 
 ## Anahtar Terimler
 
@@ -441,12 +441,12 @@ Bu ders şunları ortaya çıkarır:
 |------|----------------|----------------------|
 | Loss function | "How wrong the model is" | A differentiable function mapping predictions and targets to a scalar that the optimizer minimizes |
 | MSE | "Average squared error" | Mean of squared differences between predictions and targets; penalizes large errors quadratically |
-| Cross-entropy | "The classification loss" | Measures divergence between predicted probability distribution and true distribution using -log(p) |
-| Binary cross-entropy | "BCE" | Cross-entropy for two classes: -(y*log(p) + (1-y)*log(1-p)) |
+| Cross-entropy | "The classification loss" | Measures divergence between predicted probability distribution and true distribution using $-\log(p)$ |
+| Binary cross-entropy | "BCE" | Cross-entropy for two classes: $-(y \log(p) + (1-y) \log(1-p))$ |
 | Label smoothing | "Softening the targets" | Replacing hard 0/1 targets with soft values (e.g., 0.1/0.9) to prevent overconfidence and improve generalization |
 | Contrastive loss | "Pull together, push apart" | A loss that learns representations by making similar pairs close and dissimilar pairs far in embedding space |
 | InfoNCE | "The CLIP/SimCLR loss" | Normalized temperature-scaled cross-entropy over similarity scores; treats contrastive learning as classification |
-| Focal loss | "The imbalanced data fix" | Cross-entropy weighted by (1-p_t)^gamma to down-weight easy examples and focus on hard ones |
+| Focal loss | "The imbalanced data fix" | Cross-entropy weighted by $(1-p_t)^\gamma$ to down-weight easy examples and focus on hard ones |
 | Triplet loss | "Anchor-positive-negative" | Pushes anchor closer to positive than negative by at least a margin in embedding space |
 | Temperature | "Sharpness knob" | A scalar divisor on logits/similarities that controls how peaked the resulting distribution is; lower = sharper |
 
