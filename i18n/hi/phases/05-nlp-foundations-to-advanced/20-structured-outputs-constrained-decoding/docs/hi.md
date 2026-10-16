@@ -29,7 +29,7 @@
 
 2026 में कार्यान्वयनः
 
-- **Outlines.**JSON Schema या Regex को एक परिमित-राज्य मशीन में संकलित करता है. प्रत्येक टोकन को O(1) वैध-अगले टोकन खोज मिलती है। FSM आधारित, इसलिए पुनरावर्ती योजनाओं को सपाट करने की आवश्यकता होती है।
+- **Outlines.**JSON योजना या regex एक अंत-राज्य मशीन में संकलित करता है. प्रत्येक टोकन एक प्राप्त करता है$O(1)$FSM आधारित, इसलिए पुनरावर्ती योजनाओं को सपाट करने की जरूरत है.
 - **XGrammar / llguidance.**संदर्भ मुक्त व्याकरण इंजन। पुनरावर्ती JSON योजना को संभालें। लगभग शून्य डिकोडिंग ओवरहेड। OpenAI ने 2025 में अपने संरचित आउटपुट कार्यान्वयन में मार्गदर्शन का श्रेय दिया।
 - **vLLM guided decoding.**अंतर्निहित`guided_json`,`guided_regex`,`guided_choice`,`guided_grammar`रूपरेखा, XGrammar, या lm प्रारूप-प्रवर्तन बैकेंड के माध्यम से।
 - **Instructor.**किसी भी LLM पर Pydantic आधारित रैपर। सत्यापन विफलता पर पुनः प्रयास करता है। क्रॉस-प्रोवाइडर, लेकिन लॉजिट को संशोधित नहीं करता है  यह पुनः प्रयासों + संरचित-आउटपुट-जागरूक संकेतों पर निर्भर करता है।
@@ -210,7 +210,7 @@ Refuse any design that puts `answer` or `decision` before reasoning fields. Refu
 |------|-----------------|-----------------------|
 | Constrained decoding | Force valid output | Mask invalid-token logits at every generation step. |
 | Logit processor | The thing that constrains | Function: `(logits, state) -> masked_logits`. |
-| FSM | Finite-state machine | Compiled grammar representation; O(1) valid-next-token lookup. |
+| FSM | Finite-state machine | Compiled grammar representation; $O(1)$ valid-next-token lookup. |
 | CFG | Context-free grammar | Grammar that handles recursion; slower but more expressive than FSM. |
 | Schema field order | Does it matter? | Yes — first field commits; always put reasoning before answer. |
 | Guided decoding | vLLM's name for it | Same concept, integrated into the inference server. |

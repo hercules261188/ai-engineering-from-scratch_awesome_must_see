@@ -41,8 +41,8 @@ prediction-game
 
 **N-gram probability:** `P(w_i | w_{i-n+1}, ..., w_{i-1})`. ठीक करें `n`(आमतौर पर त्रिकोण के लिए 3 और चार ग्राम के लिए 4) गणना से करेंः
 
-```text
-P(w | context) = count(context, w) / count(context)
+```math
+P(w \mid \text{context}) = \frac{\mathop{\mathrm{count}}(\text{context}, w)}{\mathop{\mathrm{count}}(\text{context})}
 ```
 
 **The zero-count problem.**प्रशिक्षण में न देखे गए किसी भी n-ग्राम को शून्य संभावना मिलती है। ब्राउन कॉर्पस पर 2007 के एक अध्ययन में पाया गया कि 4 ग्राम मॉडल में भी प्रशिक्षण में न देखे गए 4 ग्राम का 30% था। आप बिना चिकनाई के किसी भी वास्तविक पाठ पर मूल्यांकन नहीं कर सकते।
@@ -60,8 +60,8 @@ Kneser-Ney अंतर्दृष्टि गहरी है। "सैन �
 
 **Evaluation: perplexity.**एक लंबे समय तक चलने वाले परीक्षण सेट पर प्रति शब्द औसत नकारात्मक लॉग-संभाव्यता का एक्सपोनेंट। कम बेहतर है। 100 की उलझन का मतलब है कि मॉडल 100 शब्दों के बीच समान रूप से चुनता है।
 
-```text
-perplexity = exp(- (1/N) * Σ log P(w_i | context_i))
+```math
+\text{perplexity} = \exp\left(-\frac{1}{N} \sum_i \log P(w_i \mid \text{context}_i)\right)
 ```
 
 ```figure
