@@ -42,11 +42,11 @@ INT8:  [1 sign] [7 value]                   = 8  bits (uniform steps)
 INT4:  [1 sign] [3 value]                   = 4  bits (16 levels total)
 ```
 
-**FP32**距离:大约1.2 x 10^-38 到 3.4 x 10^38.以前的训练仅在FP32中进行.它仍然适用于积累 (矩阵乘法时运行的数量).
+**FP32**距离:大约7个十位数.$1.2 \times 10^{-38}$为了$3.4 \times 10^{38}$训练以前仅在FP32中进行. 训练仍然适用于积累 (矩阵乘法时运行的数量).
 
 **FP16**分数为10个,使得分数大约为3.3个. 指数缩小到5个,大大减少范围 (最大值为65.504). 这对于重量 (接近零的集群) 很好,但对于在训练过程中可能会升的激活和梯度是危险的. FP16训练需要减小损失,以防止下流.
 
-**BF16**(大脑浮动16),保持8位指数从FP32,但缩小了7位. 与FP32相同的范围,比FP16更精确. 谷歌专门为深度学习设计. 对于神经网络来说, 距离比精度更重要. 在FP16中下流到零的10^-20梯度在BF16中存活. 在BF16中,重量为0.07342圆到0.0734是足够接近的. 每个现代训练运行都使用BF16或BF16/FP32混合物.
+**BF16**脑浮16保持8位指数从FP32,但缩小了 mantissa到7位.与FP32相同的范围,比FP16更少精度.谷歌专门为深度学习设计.直觉:范围比神经网络的精度更重要.$10^{-20}$在FP16中,下流到零的体重在BF16中存活.在BF16中,0.07342的体重在0.0734左右是足够接近的.每一个现代训练运行都使用BF16或BF16/FP32混合.
 
 **FP8**子的子是子,子是子,子是子,子是子,子是子,子是子,子是子,子是子,子是子,子是子,子是子,子是子,子是子,子是子,子是子,子是子,子是子,子是子,子是子,子是子,子是子,子是子,子是子,子是子,子是子,子是子,子是子,子是子,子是子,子,子,子,子,子,子,子,子,子,子,子,子,子,子,子,子,子,子,子,子,子,子,子,子,子,子,子,子,子,子,子,子,子,子,子,子,子,子,子,子,子,子,子,子,子,子,子,子,子,子,子,子,子,子,子,子,子,子,子,子,子,子,子,子,子,子,子,子,子,子,子,子,子,子,子,子,子,子,子,子,子,子,子,子,子,子,子,子,子,子,子,子,子,子,子,子,子,子,子,子,子,子,子,子,子,子,子,子,子,子,子
 
@@ -773,59 +773,73 @@ if __name__ == "__main__":
 
 ## 用它
 
-### 使用AutoGPTQ进行量化
+### 通过GPTQModel进行量化
 
 ```python
-# pip install auto-gptq transformers
-# from auto_gptq import AutoGPTQForCausalLM, BaseQuantizeConfig
-# from transformers import AutoTokenizer
+# pip install gptqmodel
+# from gptqmodel import GPTQConfig, GPTQModel
 #
 # model_id = "meta-llama/Llama-3.1-8B"
-# quantize_config = BaseQuantizeConfig(
-#     bits=4,
-#     group_size=128,
-#     desc_act=False,
+# quant_config = GPTQConfig(bits=4, group_size=128)
+#
+# model = GPTQModel.load(model_id, quant_config)
+# model.quantize(calibration_texts[:128], batch_size=1)
+# model.save("llama-8b-gptq-int4")
+```
+
+### 通过LLM压缩机对 AWQ进行量化
+
+```python
+# pip install llmcompressor
+# from transformers import AutoModelForCausalLM, AutoTokenizer
+# from llmcompressor import oneshot
+# from llmcompressor.modifiers.quantization import QuantizationModifier
+# from llmcompressor.modifiers.transform.awq import AWQModifier
+#
+# model_id = "meta-llama/Llama-3.1-8B"
+# model = AutoModelForCausalLM.from_pretrained(model_id)
+# tokenizer = AutoTokenizer.from_pretrained(model_id)
+#
+# recipe = [
+#     AWQModifier(duo_scaling="both"),
+#     QuantizationModifier(ignore=["lm_head"], scheme="W4A16_ASYM", targets=["Linear"]),
+# ]
+# oneshot(
+#     model=model,
+#     dataset="perfectblend",
+#     splits="train[:512]",
+#     recipe=recipe,
+#     max_seq_length=512,
+#     num_calibration_samples=256,
 # )
-#
-# tokenizer = AutoTokenizer.from_pretrained(model_id)
-# model = AutoGPTQForCausalLM.from_pretrained(model_id, quantize_config)
-#
-# calibration = [tokenizer(t, return_tensors="pt") for t in calibration_texts[:128]]
-# model.quantize(calibration)
-# model.save_quantized("llama-8b-gptq-int4")
+# model.save_pretrained("llama-8b-awq-int4", save_compressed=True)
+# tokenizer.save_pretrained("llama-8b-awq-int4")
 ```
 
-### 通过AutoAWQ进行量化
-
-```python
-# pip install autoawq
-# from awq import AutoAWQForCausalLM
-# from transformers import AutoTokenizer
-#
-# model_id = "meta-llama/Llama-3.1-8B"
-# model = AutoAWQForCausalLM.from_pretrained(model_id)
-# tokenizer = AutoTokenizer.from_pretrained(model_id)
-#
-# model.quantize(tokenizer, quant_config={"zero_point": True, "q_group_size": 128, "w_bit": 4})
-# model.save_quantized("llama-8b-awq-int4")
-```
+存档了这些方法的原始工具,AutoGPTQ和AutoAWQ. GPTQModel和LLM Compressor是保持后代.
 
 ### 转换为GGUF
 
 ```bash
-# pip install llama-cpp-python
-# python convert_hf_to_gguf.py meta-llama/Llama-3.1-8B --outtype q4_k_m --outfile llama-8b-q4km.gguf
-# llama-server -m llama-8b-q4km.gguf -c 4096 -ngl 99
+# git clone https://github.com/ggml-org/llama.cpp
+# cmake -S llama.cpp -B llama.cpp/build && cmake --build llama.cpp/build --config Release
+# pip install -r llama.cpp/requirements.txt
+# hf download meta-llama/Llama-3.1-8B --local-dir Llama-3.1-8B
+# python llama.cpp/convert_hf_to_gguf.py Llama-3.1-8B --outtype f16 --outfile llama-8b-f16.gguf
+# llama.cpp/build/bin/llama-quantize llama-8b-f16.gguf llama-8b-q4km.gguf Q4_K_M
+# llama.cpp/build/bin/llama-server -m llama-8b-q4km.gguf -c 4096 -ngl 99
 ```
+
+转换器没有K量子输出 (`--outtype`接受`f32`现在`f16`现在`bf16`现在`q8_0`现在`tq1_0`现在`tq2_0`其他`auto`),所以`llama-quantize`产生Q4_K_M文件.
 
 ### 提供量化模型
 
 ```python
 # pip install vllm
-# vllm serve model-awq --quantization awq --dtype half --max-model-len 8192
+# vllm serve llama-8b-awq-int4 --max-model-len 8192
 ```
 
-vLLM本地支持 AWQ 和 GPTQ 模型.它处理矩阵乘法过程中的分量化,并使用页面关注为KV缓存.在H100上的FP8中,添加 `--dtype float8_e4m3fn`现在,我们要去.
+ vLLM原来支持 AWQ 和 GPTQ 模型,并从检查点的配置中读取量化方法,所以没有`--quantization`需要旗.它处理矩阵乘法过程中的分量化,并使用页面关注 KV缓存.在H100上的FP8中,添加`--quantization fp8_per_tensor`量化16位检查点在加载时间的重量.
 
 ## 运送它
 

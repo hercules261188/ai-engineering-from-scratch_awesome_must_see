@@ -36,8 +36,8 @@
 
 让我们`α`预期的每项预订代币的接受率.`c = cost(draft) / cost(verifier)`预期的每向验证器接受的代币数量为:
 
-```
-E[accepted] = (1 - α^(N+1)) / (1 - α)
+```math
+\mathbb{E}[\text{accepted}] = \frac{1 - \alpha^{N+1}}{1 - \alpha}
 ```
 
 预期的每个接受的代币的 Wall Time `(N * c + 1) / E[accepted]`减少对`N`你会得到一个好处.`α = 0.8, c = 0.05`优质`N`速度是3.2x.`α = 0.95, c = 0.02`优质`N`速度增长速度是5x.

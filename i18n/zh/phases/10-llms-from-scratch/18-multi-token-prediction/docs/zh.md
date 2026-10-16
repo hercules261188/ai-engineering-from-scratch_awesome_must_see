@@ -39,27 +39,29 @@
 
 在训练中,一个前通过位置`i`隐藏状态是:
 
-```
-h_i^(0) = main model backbone at position i
-h_i^(k) = T_k( M_k * concat(RMSNorm(h_i^(k-1)), RMSNorm(E(t_{i+k}))) )   for k >= 1
+```math
+\begin{aligned}
+h_i^{(0)} &= \text{main model backbone at position } i \\
+h_i^{(k)} &= T_k\Big( M_k \cdot \mathop{\mathrm{concat}}\big(\mathop{\mathrm{RMSNorm}}(h_i^{(k-1)}), \mathop{\mathrm{RMSNorm}}(E(t_{i+k}))\big) \Big) \quad \text{for } k \ge 1
+\end{aligned}
 ```
 
 预测是:
 
-```
-logits_{i+k} = Out(h_i^(k-1))   for k = 1..D
+```math
+\text{logits}_{i+k} = \mathop{\mathrm{Out}}(h_i^{(k-1)}) \quad \text{for } k = 1, \ldots, D
 ```
 
 对于深度的损失,是与真相相相反的交叉透.`t_{i+k}`其他:
 
-```
-L_k = CE(logits_{i+k}, t_{i+k})
+```math
+L_k = \mathop{\mathrm{CE}}(\text{logits}_{i+k}, t_{i+k})
 ```
 
 关节损失在深度:
 
-```
-L_MTP = (lambda / D) * sum_{k=1..D} L_k
+```math
+L_{\text{MTP}} = \frac{\lambda}{D} \sum_{k=1}^{D} L_k
 ```
 
 `lambda`                                                                                                                                                                                                                                                              `L_main + L_MTP`现在,我们要去.
@@ -174,7 +176,7 @@ def combine(prev_hidden, next_token_embed, M_k):
 
 2. 计算密集70B模型 (隐藏8192,80层) 的参数上层费用.与D=1MTP模块的DepSeek-V3报告的14B上层费用进行比较.解释为什么DepSeek的数量更高:MTP变压器块继承了相同的MoE结构,从而增加了每个模块参数数数.
 
-3. 运用 D=2 在玩具中:添加第二个MTP模块,它取 h^(1) 并预测`t_{i+2}`检查联合损失和参数会计符合深度搜索论文19-21的方程.
+3. 插入玩具中的D=2:添加第二个MTP模块,$h^{(1)}$预测`t_{i+2}`检查联合损失和参数会计符合深度搜索论文19-21的方程.
 
 4. 切换玩具为平行MTP (Gloeckle式):在主要隐藏状态之上添加D输出头,每个都预测不同的偏移.测量每深度的损失与同一合成信号的连续版本相比较.连续版本应该产生较低的 k > 1的深度损失,因为它会对中间预测进行条件.
 
@@ -190,8 +192,8 @@ def combine(prev_hidden, next_token_embed, M_k):
 | Sequential MTP | "DeepSeek-V3 style" | Each module conditions on the previous depth's hidden state plus the next token's embedding; preserves causal chain |
 | Shared output head | "Reuse the main head" | The MTP modules call the main model's LM head, not a separate output projection |
 | Shared embedding | "Reuse the main table" | Same vocabulary embedding table is used everywhere; no duplicate parameters |
-| Projection matrix M_k | "Combine hidden + next-token" | An `h x 2h` linear layer that folds the previous hidden state and the target-token embedding into the next depth's input |
-| Joint loss L_MTP | "Averaged extra losses" | Arithmetic mean of per-depth cross-entropy losses, scaled by `lambda` |
+| Projection matrix $M_k$ | "Combine hidden + next-token" | An `h x 2h` linear layer that folds the previous hidden state and the target-token embedding into the next depth's input |
+| Joint loss $L_{\text{MTP}}$ | "Averaged extra losses" | Arithmetic mean of per-depth cross-entropy losses, scaled by `lambda` |
 | Acceptance rate at depth 1 | "How often MTP draft is right" | The rate at which the D=1 MTP module's top-1 prediction equals the main model's top-1 prediction; 80%+ on DeepSeek-V3 |
 | Lambda weighting | "Extra-loss importance" | Per-depth scaling factor; 0.3 at start of training, 0.1 later on DeepSeek-V3 |
 

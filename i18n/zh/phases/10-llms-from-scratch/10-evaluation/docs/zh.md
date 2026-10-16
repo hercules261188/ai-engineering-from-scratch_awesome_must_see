@@ -67,8 +67,8 @@ graph TD
 
 度是测量模型对代币的顺序有多惊.
 
-```
-PPL = exp(-1/N * sum(log P(token_i | context)))
+```math
+\text{PPL} = \exp\left(-\frac{1}{N} \sum_i \log P(\text{token}_i \mid \text{context})\right)
 ```
 
 曲率为10意味着模型平均不确定,就像在每个代币位置中均地选择10个选项.较低更好.GPT-2在WikiText-103上得到了30个曲率.GPT-3得到了20个.Llama 3 8B得到了7个.
@@ -503,7 +503,7 @@ RAGAS测量一般评估所缺少的内容:模型的答案是否基于检索的�
 | MMLU | "The benchmark" | Massive Multitask Language Understanding -- 15,908 multiple choice questions across 57 subjects, saturated above 88% by 2025 |
 | HumanEval | "Code eval" | 164 Python function-completion problems from OpenAI, tests only isolated function generation |
 | SWE-bench | "Real coding eval" | 2,294 GitHub issues from 12 Python repos, measures end-to-end bug fixing including test generation |
-| Perplexity | "How confused the model is" | exp(-avg(log P(token_i given context))) -- lower means the model assigns higher probability to the actual tokens |
+| Perplexity | "How confused the model is" | $\exp(-\mathop{\mathrm{avg}}(\log P(\text{token}_i \text{ given context})))$ -- lower means the model assigns higher probability to the actual tokens |
 | ELO rating | "Chess ranking for models" | A relative skill rating computed from pairwise win/loss records, used by Chatbot Arena to rank 100+ models |
 | LLM-as-judge | "Using AI to grade AI" | A strong model scores a weaker model's outputs against a rubric, ~80% agreement with human judges at ~$0.01/judgment |
 | Data contamination | "The model saw the test" | Training data includes benchmark questions, inflating scores without improving real capability |
@@ -516,4 +516,4 @@ RAGAS测量一般评估所缺少的内容:模型的答案是否基于检索的�
 - [Hendrycks et al., 2021 -- "Measuring Massive Multitask Language Understanding"](https://arxiv.org/abs/2009.03300)尽管其度很高,但仍是最受引用的LLM基准.
 - [Chen et al., 2021 -- "Evaluating Large Language Models Trained on Code"](https://arxiv.org/abs/2107.03374)-- 开通AI的HumanEval论文,建立了代码生成评估方法
 - [Zheng et al., 2023 -- "Judging LLM-as-a-Judge"](https://arxiv.org/abs/2306.05685)--系统分析使用LLM来评估LLM,包括位置偏差和语句偏差的发现
-- [LMSYS Chatbot Arena](https://chat.lmsys.org/)-- 群众共享的模型比较平台,有2M+的投票,
+- [Arena (formerly LMSYS Chatbot Arena)](https://arena.ai/leaderboard)-- 群众共享的模型比较平台,有2M+的投票,

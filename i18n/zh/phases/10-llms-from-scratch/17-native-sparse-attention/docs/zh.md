@@ -36,8 +36,8 @@
 
 通过学习的位置通道,三个分支输出组合在一起:
 
-```
-out = g_cmp * out_cmp + g_sel * out_sel + g_win * out_win
+```math
+\text{out} = g_{\text{cmp}} \cdot \text{out}_{\text{cmp}} + g_{\text{sel}} \cdot \text{out}_{\text{sel}} + g_{\text{win}} \cdot \text{out}_{\text{win}}
 ```
 
 `g_cmp, g_sel, g_win`它们不必总和到1 ,它们可以独立权重分支.
@@ -171,7 +171,7 @@ def compress(K, l):
 
 | Term | What people say | What it actually means |
 |------|----------------|------------------------|
-| Compressed branch | "Coarse view" | Attention over block-averaged keys that provides global context in O(N/l) keys per query |
+| Compressed branch | "Coarse view" | Attention over block-averaged keys that provides global context in $O(N/l)$ keys per query |
 | Selected branch | "Top-k blocks" | Fine-grained attention over the `k` blocks with highest compressed-branch scores |
 | Sliding window | "Local context" | Attention over the last `W` tokens for short-range patterns |
 | Native trainability | "Pre-train with the sparsity on" | The sparsity pattern is learned during pre-training, not bolted on at inference |

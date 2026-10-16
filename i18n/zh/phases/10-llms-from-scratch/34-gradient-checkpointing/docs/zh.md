@@ -37,13 +37,13 @@
 - 存储器:32层输入 (小) 与32 * (每个层的激活量) (巨大).
 - 额外计算:每段额外的前进1个,即前进FLOP总数增加了 ~33% (由于向后是前进2倍,完整步骤将成为1 + 1 + 2 = 4个单位而不是1 + 2 = 3).
 
-这就是陈等人2016年的原始食谱:每一个检查点`sqrt(L)`对于L=64,那就是8个检查点.
+这就是陈等人2016年的原始食谱:每一个检查点`sqrt(L)`为了平衡记忆和计算.$L=64$这就是8个检查站.
 
 ### 选择性检查 (科尔蒂坎蒂 2022)
 
 没有所有激活成本相同.`B*L*L*heads`随着序列长度的 * 方形化 * 增长.`B*L*4d`长序列中,软max 主导.
 
-选择性检查点将廉价的存储激活 (线性投影,残余) 保持,只会重新计算昂贵的激活 (注意).
+选择性检查点将廉价的存储激活 (线性预测,残余) 保持,只会重新计算昂贵的 (注意).$O(L^2)$记忆.
 
 梅加特龙-核心将其作为"选择性"激活重计算.
 
@@ -293,8 +293,8 @@ def should_recompute(layer_type, activation_bytes, recompute_flops_ratio):
 | Block checkpointing | "Coarse-grained" | Checkpoint whole transformer blocks; largest granularity |
 | FLOP overhead | "The compute tax" | Extra FLOPs per step = (recompute FLOPs) / (fwd + bwd FLOPs); 33% naive, 5% selective |
 | Activation offload | "Ship to CPU" | Move activations to CPU RAM across forward->backward; alternative to recompute |
-| sqrt-L rule | "The classical optimum" | For uniform-cost layers, optimal checkpoint spacing is sqrt(L) layers |
-| Attention-softmax volume | "The O(L^2) problem" | L^2 * heads * batch floats; dominates activation memory at long contexts |
+| sqrt-L rule | "The classical optimum" | For uniform-cost layers, optimal checkpoint spacing is $\sqrt{L}$ layers |
+| Attention-softmax volume | "The O(L^2) problem" | $L^2 \cdot \text{heads} \cdot \text{batch}$ floats; dominates activation memory at long contexts |
 
 ## 进一步阅读
 
@@ -303,4 +303,4 @@ def should_recompute(layer_type, activation_bytes, recompute_flops_ratio):
 - [Pudipeddi et al., 2020 -- "Training Large Neural Networks with Constant Memory using a New Execution Algorithm"](https://arxiv.org/abs/2002.05645)--通过反向模式重现物质化来替代常设存储方法
 - [Ren et al., 2021 -- "ZeRO-Offload: Democratizing Billion-Scale Model Training"](https://arxiv.org/abs/2101.06840)-- 激活放电量
 - [PyTorch torch.utils.checkpoint docs](https://pytorch.org/docs/stable/checkpoint.html)--标准的API
-- [Megatron-Core activation recomputation documentation](https://docs.nvidia.com/nemo-framework/user-guide/latest/nemotoolkit/features/memory_optimizations.html)--选择性,完整和区块模式
+- [Megatron Bridge activation recomputation documentation](https://docs.nvidia.com/nemo/megatron-bridge/latest/training/activation-recomputation.html)--选择性,完整和区块模式

@@ -80,8 +80,8 @@ graph TD
 
 损失函数使用布拉德利-特里模型的对式偏好:
 
-```
-loss = -log(sigmoid(reward(preferred) - reward(rejected)))
+```math
+\text{loss} = -\log\big(\mathop{\mathrm{sigmoid}}(\text{reward}(\text{preferred}) - \text{reward}(\text{rejected}))\big)
 ```
 
 这就是关键方程.`sigmoid(reward(A) - reward(B))`给出A反应比B反应更好的可能性. 损失推动奖励模型将更高的分数分配给所优先的反应.
@@ -96,8 +96,8 @@ loss = -log(sigmoid(reward(preferred) - reward(rejected)))
 
 目标:
 
-```
-maximize: E[R(prompt, response)] - beta * KL(policy || reference)
+```math
+\text{maximize:} \quad \mathbb{E}[R(\text{prompt}, \text{response})] - \beta \cdot \mathrm{KL}(\text{policy} \,\|\, \text{reference})
 ```
 
 第一个术语推动模型产生高收益反应. 第二个术语 (KL分离处罚) 防止模型偏离SFT检查点太远.
@@ -110,7 +110,7 @@ maximize: E[R(prompt, response)] - beta * KL(policy || reference)
 
 卡拉斯卡拉斯卡拉斯卡拉斯卡拉斯卡拉斯卡拉斯卡拉斯卡拉斯卡拉斯卡拉斯卡拉斯卡拉斯卡拉斯卡拉斯卡拉斯卡拉斯卡拉斯卡拉斯卡拉斯卡拉斯卡拉斯卡拉斯卡拉斯卡拉斯卡拉斯卡拉斯卡拉斯卡拉斯卡拉斯卡拉斯卡拉斯卡拉斯卡拉斯卡拉斯卡拉斯卡拉斯卡拉斯卡拉斯卡拉斯卡拉斯卡拉斯卡拉斯卡拉斯卡拉斯卡拉斯卡拉斯卡拉斯卡拉斯卡拉斯卡拉斯卡拉斯卡拉斯卡拉斯卡拉斯卡拉斯卡拉斯卡拉斯卡拉斯卡拉斯卡拉斯卡拉斯卡拉斯卡拉斯卡拉斯卡拉斯卡拉斯卡拉斯卡拉斯卡拉斯卡拉斯卡拉斯卡拉斯卡拉斯卡拉斯卡拉斯卡拉斯卡拉斯卡拉斯卡拉斯卡拉斯卡拉斯卡拉斯卡拉斯卡拉斯卡拉斯卡拉斯卡拉斯卡拉斯卡拉斯卡拉斯卡拉斯卡拉斯卡拉斯卡拉斯卡拉斯卡拉斯卡拉斯卡拉斯卡拉斯卡拉斯卡斯卡拉斯卡斯卡拉斯卡拉斯卡斯卡拉斯卡拉斯卡斯卡斯卡斯卡拉斯卡斯卡斯卡斯卡斯卡拉斯卡斯卡斯卡斯卡斯卡斯卡斯卡斯卡斯卡斯卡斯卡拉斯卡斯卡斯卡斯卡斯卡斯卡斯卡斯卡斯卡斯卡斯卡斯卡斯卡斯卡斯卡斯卡斯卡斯卡斯卡斯卡斯卡斯卡斯卡斯卡斯卡斯卡斯卡斯卡斯卡斯卡斯卡斯卡斯卡斯卡斯卡斯卡斯卡斯卡斯卡斯卡斯卡斯卡斯卡斯卡斯卡斯卡斯卡斯卡斯卡斯卡斯卡斯卡斯卡斯卡斯卡斯卡斯卡斯卡斯卡斯卡斯卡斯卡斯卡斯卡斯卡斯卡斯卡斯卡斯卡斯卡斯卡斯
 
-**InstructGPT numbers:**采用lr=1.5e-5,KL系数beta=0.02,256K集 (即时响应对),每批次使用4个PPO时代.整个RLHF管道在GPU集群上花了几天.
+**InstructGPT numbers:**经过PPO训练使用的lr=1.5e-5,KL系数$\beta=0.02$整个RLHF管道需要几天的时间,在一个集群的GPU.
 
 ```mermaid
 graph LR
@@ -133,12 +133,14 @@ graph LR
 
 ### 详细的PPO目标
 
-为了防止过度大规模更新,PPO使用"切割替代目标".新政策和旧政策概率之间的比率被切割到范围 [1 - epsilon, 1 + epsilon],而 epsilon通常为0.2.
+为了防止过度大规模的更新,PPO使用"减产替代目标".新政策和旧政策概率之间的比率被减小到范围$[1 - \epsilon, 1 + \epsilon]$在哪里$\epsilon$平均值为0.2.
 
-```
-ratio = pi_new(action | state) / pi_old(action | state)
-clipped_ratio = clip(ratio, 1 - epsilon, 1 + epsilon)
-loss = -min(ratio * advantage, clipped_ratio * advantage)
+```math
+\begin{aligned}
+\text{ratio} &= \pi_{\text{new}}(\text{action} \mid \text{state}) / \pi_{\text{old}}(\text{action} \mid \text{state}) \\
+\text{clipped\_ratio} &= \mathop{\mathrm{clip}}(\text{ratio}, 1 - \epsilon, 1 + \epsilon) \\
+\text{loss} &= -\min(\text{ratio} \cdot \text{advantage}, \text{clipped\_ratio} \cdot \text{advantage})
+\end{aligned}
 ```
 
 优势函数估计当前反应与预期质量相比要好得多.
@@ -606,9 +608,9 @@ if __name__ == "__main__":
 
 3. 模拟奖励黑客.创建一个奖励模型,给长响应高分 (奖励 = len(响应) / 100).运行PPO使用这个缺陷的奖励模型,观察政策模型产生越来越长,重复的输出.然后添加一个KL罚款0.1并显示它防止退化行为.
 
-4. 实现多目标奖励.训练两个奖励模型 - 一个用于帮助和一个用于简洁.将它们结合为R = 0.7 * R_helpful + 0.3 * R_concise. 展示结合目标产生既有用又简洁的反应,避免单个帮助奖励的词语陷.
+4. 实施一个多目标的奖励. 训练两个奖励模式 - 一个是帮助的,一个是简洁的.$R = 0.7 \cdot R_{\text{helpful}} + 0.3 \cdot R_{\text{concise}}$证明,结合目标产生了既有帮助,又简洁的反应,避免了单一的帮助奖励的词语陷.
 
-5. 进行比较.运行PPO与beta=0.001 (过低,奖励黑客),beta=0.02 (标准),和beta=0.5 (过高,没有学习).图表奖励曲线和KL曲线为每一个.beta=0.02运行应该显示与有限的KL的稳定奖励改善.
+5. 运行PPO与$\beta=0.001$钱的价格也很低,$\beta=0.02$(标准) 和$\beta=0.5$给每一个人绘制奖励曲线和KL曲线.$\beta=0.02$运行应该显示与有限的KL的稳定奖励改善.
 
 ## 关键词
 
@@ -616,10 +618,10 @@ if __name__ == "__main__":
 |------|----------------|----------------------|
 | RLHF | "Training with human feedback" | Reinforcement Learning from Human Feedback: a three-stage pipeline (SFT, reward model, PPO) that optimizes language model outputs using human preference signals |
 | Reward model | "A model that scores responses" | A transformer with a scalar output head, trained on pairwise human preferences using the Bradley-Terry loss |
-| Bradley-Terry | "The comparison model" | A probabilistic model where P(A > B) = sigmoid(score(A) - score(B)), converting pairwise preferences into a consistent scoring function |
+| Bradley-Terry | "The comparison model" | A probabilistic model where $P(A > B) = \mathop{\mathrm{sigmoid}}(\text{score}(A) - \text{score}(B))$, converting pairwise preferences into a consistent scoring function |
 | PPO | "The RL algorithm" | Proximal Policy Optimization: updates the policy to maximize reward while clipping the update magnitude to prevent instability |
 | KL divergence | "How different two distributions are" | A measure of the difference between the policy model's token distribution and the reference model's -- used as a penalty to prevent reward hacking |
-| KL penalty | "The leash on the model" | Beta * KL(policy \|\| reference) subtracted from the reward signal -- prevents the policy from diverging too far from the SFT checkpoint |
+| KL penalty | "The leash on the model" | $\beta \cdot \mathrm{KL}(\text{policy} \Vert \text{reference})$ subtracted from the reward signal -- prevents the policy from diverging too far from the SFT checkpoint |
 | Reward hacking | "Gaming the reward" | When the policy finds degenerate high-reward outputs by exploiting weaknesses in the reward model instead of genuinely improving |
 | Preference pair | "Which is better, A or B?" | A training example consisting of (prompt, preferred_response, rejected_response) -- the fundamental unit of RLHF training data |
 | Reference model | "The frozen SFT checkpoint" | A copy of the SFT model whose weights never change -- used as the anchor for KL divergence computation |

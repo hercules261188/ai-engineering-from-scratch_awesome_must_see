@@ -53,8 +53,8 @@ For each drafted token x_t:
 
 如果草案模型的代币级接受率为`α`预期每次目标前进通行产生的代币为:
 
-```
-E[tokens] = (1 - α^{K+1}) / (1 - α)        # K = draft length, α in [0, 1]
+```math
+\mathbb{E}[\text{tokens}] = \frac{1 - \alpha^{K+1}}{1 - \alpha} \qquad K = \text{draft length}, \ \alpha \in [0, 1]
 ```
 
 在`α = 0.8, K = 4`其他`(1 - 0.8^5)/(1 - 0.8) = 3.36`预期期期货的代币.`cost_q * K + cost_p`(K草案步骤加上一个目标验证).`cost_p >> cost_q * K`速度增速率为`3.36× / 1 = 3.36×`通过量.
@@ -162,9 +162,9 @@ def speculative_step(p_target, q_draft, K, temperature=1.0):
 
 ## 用它
 
-- **vLLM**其他**SGLang**飞船第一级的猜测解码.`--speculative_model`现在`--num_speculative_tokens`通过 `--spec_decoding_algorithm eagle`旗.
+- **vLLM**其他**SGLang**在vLLM中,通过`--speculative-config`具有 JSON 对象`method`现在`model`其他`num_speculative_tokens`3是`"method": "eagle3"`现在,我们要去.
 - **NVIDIA TensorRT-LLM**支持梅杜萨和树的本土.
-- **Reference draft models**其他`Qwen/Qwen3-0.6B-spec`(Qwen3-32B草案),`meta-llama/Llama-3.2-1B-Instruct-spec`(70B草案)
+- **Reference draft models**其他`Qwen/Qwen3-0.6B`(Qwen3-32B草案),`meta-llama/Llama-3.2-1B-Instruct`(关于Llama 3.x 70B的草案)
 - **Medusa heads**(Cai et al. 2024,"Medusa:简单的LLM推理加速框架与多个解码头"):而不是一个草案模型,将K平行预测头添加到目标本身.更简单的部署,接受度略低于EAGLE.
 
 ## 运送它
@@ -175,7 +175,7 @@ def speculative_step(p_target, q_draft, K, temperature=1.0):
 
 1. 执行确切的拒绝规则,经验验证它.`speculative_decode`通过简单的目标样本采集,计算两个输出分布之间的电视距离. 应为<0.01.
 
-2. 计算加快公式,给定了`α`其他`K`图表预期的代币每目标前进. 找出α ∈ {0.5,0.7,0.9} 的最佳K.
+2. 计算加快公式,给定了`α`其他`K`预期的代币按目标前进. 找到最佳的代币$K$为了$\alpha \in \lbrace 0.5, 0.7, 0.9 \rbrace$现在,我们要去.
 
 3. 训练一个小的草稿. 拿一个124MGPT-2目标,并在100M代币上除一个30MGPT-2草稿.`α`预期:0.6至0.7.
 

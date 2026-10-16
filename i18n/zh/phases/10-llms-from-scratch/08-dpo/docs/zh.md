@@ -32,51 +32,53 @@
 
 利率率优化这一目标:
 
-```
-maximize: E[R(x, y)] - beta * KL(pi || pi_ref)
-```
-
-在此,R是奖励模型,pi是政策,pi_ref是参考模型,beta是KL系数.
-
-对于任何奖励函数R,最佳政策是:
-
-```
-pi*(y | x) = pi_ref(y | x) * exp(R(x, y) / beta) / Z(x)
+```math
+\text{maximize:} \quad \mathbb{E}[R(x, y)] - \beta \cdot \mathrm{KL}(\pi \,\|\, \pi_{\text{ref}})
 ```
 
-在 Z(x) 是正常化常数.
+在哪里$R$是奖励模型,$\pi$政策是什么?$\pi_{\text{ref}}$是参考模型,并且$\beta$是KL系数.
 
+对于任何奖励函数,$R$优质的政策是:
+
+```math
+\pi^*(y \mid x) = \pi_{\text{ref}}(y \mid x) \cdot \exp(R(x, y) / \beta) / Z(x)
 ```
-R(x, y) = beta * log(pi*(y | x) / pi_ref(y | x)) + beta * log Z(x)
+
+在哪里$Z(x)$调整: 调整:
+
+```math
+R(x, y) = \beta \log \frac{\pi^*(y \mid x)}{\pi_{\text{ref}}(y \mid x)} + \beta \log Z(x)
 ```
 
 奖励完全表达在政策模型的概率和参考模型的概率方面.你不需要训练一个独立的奖励模型.奖励是*隐含*在概率比.
 
 取代这个为布拉德利-特里偏好模型:
 
-```
-P(y_w > y_l | x) = sigmoid(R(x, y_w) - R(x, y_l))
-                  = sigmoid(beta * (log pi(y_w|x)/pi_ref(y_w|x) - log pi(y_l|x)/pi_ref(y_l|x)))
+```math
+\begin{aligned}
+P(y_w > y_l \mid x) &= \mathop{\mathrm{sigmoid}}(R(x, y_w) - R(x, y_l)) \\
+&= \mathop{\mathrm{sigmoid}}\left(\beta \left(\log \frac{\pi(y_w \mid x)}{\pi_{\text{ref}}(y_w \mid x)} - \log \frac{\pi(y_l \mid x)}{\pi_{\text{ref}}(y_l \mid x)}\right)\right)
+\end{aligned}
 ```
 
-由于两个答案都在同一提示x上,Z(x) 术语取消了.剩下的只是政策模型的日志概率和参考模型的日志概率的函数.
+其他$Z(x)$由于两个答案都在同一提示下条件,$x$剩下的只是政策模型的记录概率和参考模型的记录概率的函数,
 
 ### 局的损失
 
-```
-L_DPO = -log(sigmoid(beta * (log pi(y_w|x)/pi_ref(y_w|x) - log pi(y_l|x)/pi_ref(y_l|x))))
+```math
+L_{\text{DPO}} = -\log \mathop{\mathrm{sigmoid}}\left(\beta \left(\log \frac{\pi(y_w \mid x)}{\pi_{\text{ref}}(y_w \mid x)} - \log \frac{\pi(y_l \mid x)}{\pi_{\text{ref}}(y_l \mid x)}\right)\right)
 ```
 
 我们要打开每一块包装:
 
-- **y_w**= 首选 (获胜) 反应
-- **y_l**= 拒绝 (输掉) 的反应
-- **x**快速
-- **pi**=当前模型 (正在接受培训)
-- **pi_ref**=参考模型 (结的SFT检查点)
-- **beta**=控制偏差的温度参数 (通常是0.1至0.5)
+- **$y_w$**= 首选 (获胜) 反应
+- **$y_l$**= 拒绝 (输掉) 的反应
+- **$x$**快速
+- **$\pi$**=当前模型 (正在接受培训)
+- **$\pi_{\text{ref}}$**=参考模型 (结的SFT检查点)
+- **$\beta$**=控制偏差的温度参数 (通常是0.1至0.5)
 
-比例`log pi(y|x) / pi_ref(y|x)`当这个比率是正确的时,当前模型将比参考结果更高的概率分配给响应 y.当负时,当前模型将更低的概率分配给.
+比例`log pi(y|x) / pi_ref(y|x)`当这个比率是正面时,当前模型将更高的可能性分配给响应.$y$如果是负,当前模型将更低的概率分配给.
 
 由于DPO损失,模型可以增加优先响应的日志概率比,并减少拒绝响应的日志概率. 贝塔参数控制模型可以如何积极偏离参考 - 小贝塔意味着允许大偏差,大贝塔使模型接近参考.
 
@@ -641,7 +643,7 @@ if __name__ == "__main__":
 | DPO | "RLHF without RL" | Direct Preference Optimization: a supervised learning algorithm that optimizes the language model directly on preference pairs, bypassing the reward model and PPO |
 | Implicit reward | "The reward is in the model" | The reward function is determined by the log-probability ratio between the policy and reference models -- no separate reward model needed |
 | Beta (DPO) | "The temperature" | Controls how far the policy can deviate from the reference model -- small beta allows large deviations, large beta keeps the model close |
-| Log-probability ratio | "How much the model changed" | log pi(y\|x) - log pi_ref(y\|x) -- positive means the current model assigns higher probability than the reference |
+| Log-probability ratio | "How much the model changed" | $\log \pi(y \mid x) - \log \pi_{\text{ref}}(y \mid x)$ -- positive means the current model assigns higher probability than the reference |
 | Reference model | "The frozen checkpoint" | A copy of the SFT model whose weights never change -- serves as the anchor for computing probability ratios |
 | KTO | "DPO without pairs" | Kahneman-Tversky Optimization: works with unpaired "good" or "bad" labels instead of requiring preference pairs |
 | ORPO | "One-step alignment" | Odds Ratio Preference Optimization: combines SFT and alignment into a single training loop by adding a preference term to the SFT loss |

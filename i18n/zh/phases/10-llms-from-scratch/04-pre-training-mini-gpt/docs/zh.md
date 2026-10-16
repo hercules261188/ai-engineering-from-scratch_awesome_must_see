@@ -141,13 +141,13 @@ graph LR
     style V fill:#1a1a2e,stroke:#0f3460,color:#fff
 ```
 
-没有它,点产品会变得更大,使软max 进入渐变率接近零的区域.这是最初的"注意力是你需要的"论文中的关键见解之一.
+通过$\sqrt{d_k}$现在,$\sqrt{64} = 8$没有它,点产品会变得更大,使软max 进入渐变率接近零的区域.这是最初的"注意力就是你需要的"论文中的一个关键见解.
 
 ### 基维缓存:为什么推理是快速的
 
-在训练过程中,你一次处理整个序列.在推断过程中,你一次生成一个代币.没有优化,生成代币N需要重新计算所有N-1前代币的注意力.这就是每生成的代币O(N^2) 或为长度N的序列O(N^3) 总数.
+在训练期间,你一次处理整个序列.在推断过程中,你一次生成一个代币.没有优化,生成代币.$N$需要重新计算所有人的注意力$N-1$之前的代币.$O(N^2)$按生成的代币,或$O(N^3)$长度序列的总数$N$现在,我们要去.
 
-凯维缓存解决了这个问题. 计算每个代币的K和V后,存储它们. 在生成代币N+1时,你只需要计算Q为新代币,并从所有之前的代币中查找缓存的K和V. 这将每代币成本从O(N) 降低到O(1) 对于K和V计算. 关注分数计算仍然是O(N) 因为你关注所有前位置,但你避免输入上的冗余矩阵乘法.
+通过 KV缓存来解决这个问题. 计算每个代币的 K 和 V 后,存储它们.$N+1$现在,你只需要计算Q的新代币,然后从所有以前的代币中查看缓存的K和V. 这可以减少每代币的成本$O(N)$为了$O(1)$对于K和V计算.$O(N)$因为你关注所有前位置,但你避免输入时的冗余矩阵乘法.
 
 对于12层和12个头的GPT-2,KV缓存存储2 (K + V) x12层 x12头 x64个值 =每代币的18.432值.对于1024代币序列,这在FP32中约为75MB.对于128层的Llama 3 405B,单个序列的KV缓存存量可以超过10GB.这就是为什么长文本推理是内存绑定的原因.
 
@@ -211,7 +211,7 @@ graph LR
 |-----------|-------|------------|
 | Token embeddings | (50257, 768) | 38,597,376 |
 | Position embeddings | (1024, 768) | 786,432 |
-| Per-block attention (W_q, W_k, W_v, W_out) | 4 x (768, 768) | 2,359,296 |
+| Per-block attention ($W_q, W_k, W_v, W_{\text{out}}$) | 4 x (768, 768) | 2,359,296 |
 | Per-block FFN (up + down) | (768, 3072) + (3072, 768) | 4,718,592 |
 | Per-block LayerNorms (2x) | 2 x 768 x 2 | 3,072 |
 | Final LayerNorm | 768 x 2 | 1,536 |
@@ -258,7 +258,7 @@ def attention(Q, K, V, mask=None):
     return weights @ V
 ```
 
-软max实现将最大值减去,然后将其减去.如果没有, exp(large_number) 过度流到无限.这是一个数值稳定技巧,不会改变输出,因为软max(x - c) =软max(x) 对任何常数 c.
+软max 实现在指数化之前减去最大值.如果没有, exp(large_number) 过度流到无限.这是一个数值稳定技巧,它不会改变输出,因为$\mathop{\mathrm{softmax}}(x - c) = \mathop{\mathrm{softmax}}(x)$对于任何常数$c$现在,我们要去.
 
 ### 步骤3:多头注意力
 
@@ -504,7 +504,7 @@ print(f"\nGenerated: {generated_text}")
 
 1. 修改模型以使用24层和16个头,而不是12/12. 计算参数. 翻倍深度与翻倍宽度 (嵌入维度) 相比如何?
 
-2. 执行GELU激活函数 (GELU(x) = x * 0.5 * (1 + erf(x / sqrt(2)))) 并在输送网络中取代ReLU. 每次激活时进行500步的训练,并比较最终损失.
+2. 执行GELU激活功能$(\mathop{\mathrm{GELU}}(x) = x \cdot 0.5 \cdot (1 + \mathop{\mathrm{erf}}(x / \sqrt{2})))$运行训练500步,每次激活,并比较最终损失.
 
 3. 添加一个KV缓存到生成函数. 存储K和V缩器在第一次前传后,然后再用于后续代币. 测量加快速度:生成200个代币,无论是没有缓存,并比较墙钟时间.
 
@@ -525,7 +525,7 @@ print(f"\nGenerated: {generated_text}")
 | Weight tying | "Sharing embeddings" | Using the same matrix for input token embeddings and the output projection head -- saves 38M params in GPT-2 |
 | Residual connection | "Skip connection" | Adding the input directly to the output of a sublayer (x + sublayer(x)) -- enables gradient flow in deep networks |
 | Layer normalization | "Normalizing activations" | Normalizing across the feature dimension to mean 0 and variance 1, with learnable scale and bias parameters |
-| Cross-entropy loss | "How wrong the predictions are" | -log(probability assigned to the correct next token), averaged over all positions -- the standard LLM training objective |
+| Cross-entropy loss | "How wrong the predictions are" | $-\log(\text{probability assigned to the correct next token})$, averaged over all positions -- the standard LLM training objective |
 
 ## 进一步阅读
 
