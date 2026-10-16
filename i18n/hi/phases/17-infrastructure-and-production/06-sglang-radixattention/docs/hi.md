@@ -125,4 +125,4 @@ roofline
 - [SGLang documentation](https://sgl-project.github.io/) Radix ध्यान और समय सारिणी विवरण।
 - [SGLang paper — Efficiently Programming Large Language Models (arXiv:2312.07104)](https://arxiv.org/abs/2312.07104) डिजाइन संदर्भ।
 - [LMSYS blog — SGLang with RadixAttention](https://www.lmsys.org/blog/2024-01-17-sglang/) बेंचमार्क संख्या और शेड्यूलर तर्क।
-- [vLLM — Prefix Caching](https://docs.vllm.ai/en/latest/features/prefix_caching.html) तुलना के लिए vLLM का स्वयं का रेडिक्स-जैसा कार्यान्वयन।
+- [vLLM — Prefix Caching](https://docs.vllm.ai/en/latest/features/automatic_prefix_caching/) तुलना के लिए vLLM का स्वयं का रेडिक्स-जैसा कार्यान्वयन।

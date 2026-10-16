@@ -125,6 +125,6 @@ cold-start-pipeline
 - [Modal — Cold start performance](https://modal.com/docs/guide/cold-start) मोडल के प्रकाशित बेंचमार्क और चेकपॉइंट आर्किटेक्चर।
 - [AWS Bottlerocket](https://github.com/bottlerocket-os/bottlerocket) पूर्व-बुना डेटा मात्रा स्नैपशॉट पैटर्न।
 - [NVIDIA Run:ai Model Streamer](https://github.com/run-ai/runai-model-streamer) गणना सेटअप के साथ ओवरलैप भार लोड।
-- [Baseten — Cold-start mitigation](https://www.baseten.co/blog/cold-start-mitigation/) पूर्व-गर्म होने का खेल पुस्तिका।
+- [Baseten — Cold starts](https://docs.baseten.co/deployment/autoscaling/cold-starts) पूर्व-गर्म होने का खेल पुस्तिका।
 - [ServerlessLLM paper (USENIX OSDI'24)](https://www.usenix.org/conference/osdi24/presentation/fu) स्तरीय लोड डिजाइन।
 - [NVIDIA — Disaggregated LLM Inference on Kubernetes](https://developer.nvidia.com/blog/deploying-disaggregated-llm-inference-workloads-on-kubernetes/) विखंडित तैनाती के लिए लाइव माइग्रेशन।
