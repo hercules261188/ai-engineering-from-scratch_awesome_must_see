@@ -9,7 +9,7 @@
 
 ## Le problème
 
-Un échantillonnage de 70B LLM d'un jeton prend ~ 30 ms sur un H100. Un modèle de projet 3B prend ~ 3 ms. Si nous laissons le projet 3B 5 jetons en avant, puis exécutez le 70B * une fois * pour vérifier tous les 5, le total est `5×3 + 30 = 45 ms`pour un maximum de 5 jetons acceptés  versus `5×30 = 150 ms`C'est le pitch complet du décoding spéculatif: échanger une petite quantité de mémoire de GPU supplémentaire (modèle de projet) pour une latence de décoding inférieure de 24x.
+Un échantillonnage de 70B LLM d'un jeton prend ~ 30 ms sur un H100. Un modèle de projet 3B prend ~ 3 ms. Si nous laissons le projet 3B 5 jetons en avant, puis exécutez le 70B * une fois * pour vérifier tous les 5, le total est $5 \times 3 + 30 = 45$ms pour un maximum de 5 jetons acceptés  versus `5×30 = 150 ms`C'est le pitch complet du décoding spéculatif: échanger une petite quantité de mémoire de GPU supplémentaire (modèle de projet) pour une latence de décoding inférieure de 24x.
 
 L'échantillonnage spéculatif, introduit par Leviathan et coll. (2023) et par Chen et coll. simultanément, garantit que la séquence de sortie est **identically distributed**Il n'y a pas de compromis de qualité, juste plus vite.
 
@@ -26,30 +26,30 @@ Chaque pile d'inférence de production en 2026 envoie par défaut un décodeur s
 
 ### L'algorithme de base
 
-En raison d' un vérificateur `M_q`et un projet moins cher `M_p`- Le numéro de la liste:
+En raison d' un vérificateur $M_q$et un projet moins cher $M_p$- Le numéro de la liste:
 
-1. Je vous laisse .`x_1..x_k`être le préfixe déjà décodé.
-2. **Draft**: utilisation `M_p`à proposer de manière autorégressive `d_{k+1}, d_{k+2}, ..., d_{k+N}`avec des probabilités de projet `p_1..p_N`- Je suis désolé .
-3. **Verify in parallel**: courir `M_q`Une fois de plus .`x_1..x_k, d_{k+1}, ..., d_{k+N}`, obtenir des probabilités de vérification `q_1..q_{N+1}`pour les positions `k+1..k+N+1`- Je suis désolé .
-4. **Accept/reject each draft token left to right**: pour chacun `i`, accepter avec probabilité `min(1, q_i(d_i) / p_i(d_i))`- Je suis désolé .
-5. Au premier rejet à la position `j`: échantillon `t_j`de la distribution "résiduelle" `(q_j - p_j)_+`Tous les projets après`j`sont jetés.
-6. En acceptant tout .`N`: échantillon d' un jeton supplémentaire `t_{N+1}`de `q_{N+1}`(le jeton bonus gratuit).
+1. Je vous laisse .$x_1 \ldots x_k$être le préfixe déjà décodé.
+2. **Draft**: utilisation $M_p$à proposer de manière autorégressive $d_{k+1}, d_{k+2}, \ldots, d_{k+N}$avec des probabilités de projet $p_1 \ldots p_N$- Je suis désolé .
+3. **Verify in parallel**: courir $M_q$Une fois de plus .$x_1 \ldots x_k, d_{k+1}, \ldots, d_{k+N}$, obtenir des probabilités de vérification $q_1 \ldots q_{N+1}$pour les positions $k+1 \ldots k+N+1$- Je suis désolé .
+4. **Accept/reject each draft token left to right**: pour chacun $i$, accepter avec probabilité $\min(1, q_i(d_i) / p_i(d_i))$- Je suis désolé .
+5. Au premier rejet à la position $j$: échantillon $t_j$de la distribution "résiduelle" $(q_j - p_j)_+$Tous les projets après$j$sont jetés.
+6. En acceptant tout .$N$: échantillon d' un jeton supplémentaire $t_{N+1}$de $q_{N+1}$(le jeton bonus gratuit).
 
-Le truc de distribution résiduelle est la compréhension mathématique qui maintient la sortie distribuée exactement comme si `M_q`J'avais pris des échantillons à partir de zéro.
+Le truc de distribution résiduelle est la compréhension mathématique qui maintient la sortie distribuée exactement comme si $M_q$J'avais pris des échantillons à partir de zéro.
 
 ### Ce qui détermine la vitesse
 
-Je vous laisse .`α`= taux d'acceptation attendu par jeton projet.`c`= rapport coût entre projet et vérificateur.
+Je vous laisse .$\alpha$= taux d'acceptation attendu par jeton projet.$c$= rapport coût entre projet et vérificateur.
 
 - La génération naïve fait un appel de modèle par jeton.
-- La spéculative fait un appel de modèle par personne .`(1 - α^{N+1}) / (1 - α) ≈ 1/(1-α)`les jetons quand `α`C'est élevé.
+- La spéculative fait un appel de modèle par personne .$(1 - \alpha^{N+1}) / (1 - \alpha) \approx 1/(1-\alpha)$les jetons quand $\alpha$C'est élevé.
 
-La règle typique est que `α = 0.75`et `N = 5`Le coût du projet est 5 fois moins cher.
+La règle typique est que $\alpha = 0.75$et $N = 5$Le coût du projet est 5 fois moins cher.
 
-**α depends on:**
+**$\alpha$ depends on:**
 
-- La qualité de la rédaction approximative du vérificateur.
-- Stratégie de décoding: projet avide contre vérificateur avide: élevé α. Prélèvement d'échantillons à température: plus difficile à faire correspondre; acceptation diminue.
+- La qualité de la rédaction approximative du vérificateur.$\alpha$- Il y a beaucoup de choses.
+- Stratégie de décoding.$\alpha$- Prise d'échantillons à température: plus difficile à comparer; acceptation diminue.
 - Type de tâche: le code et la sortie structurée acceptent plus (prévisible); l'écriture créative sous forme libre accepte moins.
 
 ### Medusa  projets sans modèle de projet
@@ -76,9 +76,9 @@ EAGLE-3 (2025) a ajouté la recherche d'arbres sur les continuations candidates.
 
 ### La danse du cache KV
 
-Feeds de vérification `N`Les jetons de projet dans le vérificateur en un seul passage.`N`Si certains projets sont rejetés, vous devez faire glisser le cache à la longueur du préfixe accepté.
+Feeds de vérification $N$Les jetons de projet dans le vérificateur en un seul passage.$N$Si certains projets sont rejetés, vous devez faire glisser le cache à la longueur du préfixe accepté.
 
-Les actions de production (vLLM) `--speculative-model`Je suis en train de faire une réflexion sur le sujet, et je suis en train de faire une réflexion sur le sujet.
+Les actions de production (vLLM) `--speculative-config`Je suis en train de faire une réflexion sur le sujet, et je suis en train de faire une réflexion sur le sujet.
 
 ```figure
 draft-verify-tokens
@@ -160,14 +160,11 @@ Produit:
 ```bash
 # vLLM with EAGLE
 vllm serve meta-llama/Llama-3.1-70B-Instruct \
-    --speculative-model /models/llama-3.1-eagle-70b \
-    --speculative-draft-tensor-parallel-size 1 \
-    --num-speculative-tokens 5
+    --speculative-config '{"method": "eagle", "model": "/models/llama-3.1-eagle-70b", "draft_tensor_parallel_size": 1, "num_speculative_tokens": 5}'
 
 # vLLM with vanilla draft model
 vllm serve meta-llama/Llama-3.1-70B-Instruct \
-    --speculative-model meta-llama/Llama-3.2-1B-Instruct \
-    --num-speculative-tokens 5
+    --speculative-config '{"method": "draft_model", "model": "meta-llama/Llama-3.2-1B-Instruct", "num_speculative_tokens": 5}'
 ```
 
 TensorRT-LLM a le chemin le plus rapide de Méduse à partir de la mi-2026. `faster-whisper`Enveloppe le décodeur spéculatif pour Whisper-large avec un petit morceau.
@@ -184,7 +181,7 @@ TensorRT-LLM a le chemin le plus rapide de Méduse à partir de la mi-2026. `fas
 **When NOT to spec-decode:**
 
 - Génération de 15 jetons en séquence unique.
-- Prise d'échantillons à haute température (â gouttes).
+- Prise d'échantillons à haute température ($\alpha$des gouttes).
 - Déploiements limités par mémoire (modèle de projet ajoute VRAM).
 
 ## La faire partir
@@ -194,7 +191,7 @@ Regardez !`outputs/skill-spec-decode-picker.md`. La compétence choisit une stra
 ## Exercices
 
 1. **Easy.**On court .`code/main.py`. Confirmer que la distribution de jetons spéculatifs correspond à la distribution de l'échantillon direct du vérificateur sur 50 000 jetons dans un espace de p = 0,05 en chi-quare.
-2. **Medium.**Accélération de l'intrigue (tokens par grand modèle à l' avance) en fonction de `N`pour `α = 0.5, 0.7, 0.85`- Identifier le meilleur`N`pour chaque α. (indice: jetons attendus par appel de vérification = `(1 - α^{N+1}) / (1 - α)`(dont le nom est
+2. **Medium.**Accélération de l'intrigue (tokens par grand modèle à l' avance) en fonction de $N$pour $\alpha = 0.5, 0.7, 0.85$- Identifier le meilleur$N$pour chacun $\alpha$. (Parole: jetons attendus par appel de vérification = $(1 - \alpha^{N+1}) / (1 - \alpha)$(dont le nom est
 3. **Hard.**Mettez en œuvre une minuscule méduse: prenez la pierre angulaire GPT de la leçon 14, ajoutez 3 têtes LM supplémentaires qui prédisent les positions t+2, t+3, t+4.
 4. **Hard.**Retour à l'emploi: commencez par un préfixe KV de 10 jetons, alimentez 5 jetons de projet, simuliez un rejet à la position 3. Vérifiez que vos lectures de cache correspondent correctement au " préfixe + 2 premiers projets acceptés " à la prochaine itération.
 
@@ -204,7 +201,7 @@ Regardez !`outputs/skill-spec-decode-picker.md`. La compétence choisit une stra
 |------|-----------------|-----------------------|
 | Draft model | "The cheap one" | A smaller model that proposes candidate tokens; usually 10–50× cheaper than the verifier. |
 | Verifier | "The big one" | The target model whose distribution we preserve; runs once per speculative step. |
-| Acceptance rate (α) | "How often the draft is right" | Per-token probability that the verifier accepts the draft. 0.7–0.9 typical. |
+| Acceptance rate ($\alpha$) | "How often the draft is right" | Per-token probability that the verifier accepts the draft. 0.7–0.9 typical. |
 | Residual distribution | "The rejection fallback" | `(q - p)_+` normalized; sampling from this on rejection preserves the verifier's distribution. |
 | Bonus token | "The free one" | When all N drafts accepted, sample one more from the verifier's next-step distribution. |
 | Medusa | "Draft-less speculative" | Multiple LM heads on the verifier predict positions t+1..t+k in parallel. |

@@ -30,22 +30,24 @@ Llama 3 8B a été formé sur 15 billions de jetons, un ratio de 1 875 jetons pa
 
 Dans le journal Chinchilla, la perte est suivante:
 
-```
-L(N, D) = A / N^α + B / D^β + E
+```math
+L(N, D) = \frac{A}{N^\alpha} + \frac{B}{D^\beta} + E
 ```
 
-- `N`= paramètres (non intégrés).
-- `D`= jetons de formation.
-- `α ≈ 0.34`- Je suis là .`β ≈ 0.28`(à peu près symétrique).
-- `E ≈ 1.69`, le plafond irréductible de perte.
-- `A ≈ 406`- Je suis là .`B ≈ 411`- Je suis désolé .
+- $N$= paramètres (non intégrés).
+- $D$= jetons de formation.
+- $\alpha \approx 0.34$- Je suis là .$\beta \approx 0.28$(à peu près symétrique).
+- $E \approx 1.69$, le plafond irréductible de perte.
+- $A \approx 406$- Je suis là .$B \approx 411$- Je suis désolé .
 
-Deux termes sont négociés l'un contre l'autre à mesure que vous étaliez.`N`à calcul fixe (C = 6ND) et résoudre:
+Deux termes sont négociés l'un contre l'autre à mesure que vous étaliez.$N$à calcul fixe ($C = 6ND$) et résoudre:
 
-```
-N_opt ≈ 0.6 × (C/6)^0.5
-D_opt ≈ 0.6 × (C/6)^0.5
-D_opt / N_opt ≈ 20
+```math
+\begin{aligned}
+N_{\text{opt}} &\approx 0.6 \times (C/6)^{0.5} \\
+D_{\text{opt}} &\approx 0.6 \times (C/6)^{0.5} \\
+D_{\text{opt}} / N_{\text{opt}} &\approx 20
+\end{aligned}
 ```
 
 Optimisé pour le calcul: 20 jetons par paramètre.
@@ -90,7 +92,7 @@ scaling-laws
 
 ## Faites-le
 
-Regardez !`code/main.py`Nous mettons en œuvre l' équation de perte de Chinchilla et résolvons pour calcul-optimal`(N, D)`à chacun des différents budgets informatiques.
+Regardez !`code/main.py`Nous mettons en œuvre l' équation de perte de Chinchilla et résolvons pour calcul-optimal$(N, D)$à chacun des différents budgets informatiques.
 
 ### Étape 1: Perte de la chinchilla
 
@@ -99,11 +101,11 @@ def chinchilla_loss(N, D, A=406.4, B=410.7, alpha=0.34, beta=0.28, E=1.69):
     return A / N ** alpha + B / D ** beta + E
 ```
 
-Le film`L`comme un contour sur `(N, D)`à fixé `C = 6ND`Trouvez le minimum.
+Le film$L$comme un contour sur $(N, D)$à fixé $C = 6ND$Trouvez le minimum.
 
 ### Étape 2: frontière optimale en matière de calcul
 
-Pour les budgets informatiques de `1e17`à `1e25`Les FLOPs, trouvez `(N, D)`qui réduisent au minimum les pertes, sous réserve de `6ND = C`- Vérifiez le rapport `D/N ≈ 20`- Je suis désolé .
+Pour les budgets informatiques de `1e17`à `1e25`Les FLOPs, trouvez $(N, D)$qui réduisent au minimum les pertes, sous réserve de $6ND = C$- Vérifiez le rapport $D/N \approx 20$- Je suis désolé .
 
 ### Étape 3: coût de la surentraînement
 
@@ -133,9 +135,9 @@ Regardez !`outputs/skill-training-budget-estimator.md`- Les compétences sont ch
 
 ## Exercices
 
-1. **Easy.**On court .`code/main.py`Imprimez Chinchilla-optimal`(N, D)`pour les budgets informatiques `1e20`- Je suis là .`1e22`- Je suis là .`1e24`Comparer avec la vraie table de modèle.
-2. **Medium.**Implémenter la courbe de perte de fonction de calcul Hoffmann.`log10(C)`Identifier quand la loi prédit que nous aurons besoin de`>10^28`Les PLOP pour la prochaine réduction de 0,1 de l'entropie croisée.
-3. **Hard.**Appliquez votre propre loi d'échelle sur 5 modèles minuscules (100 000 à 10 millions de params) formés sur le même ensemble de données.`α`et `E`- Vos exposants correspondent-ils à ceux publiés ?
+1. **Easy.**On court .`code/main.py`Imprimez Chinchilla-optimal$(N, D)$pour les budgets informatiques `1e20`- Je suis là .`1e22`- Je suis là .`1e24`Comparer avec la vraie table de modèle.
+2. **Medium.**Implémenter la courbe de perte de fonction de calcul Hoffmann.`log10(C)`Identifier quand la loi prédit que nous aurons besoin de$>10^{28}$Les PLOP pour la prochaine réduction de 0,1 de l'entropie croisée.
+3. **Hard.**Appliquez votre propre loi d'échelle sur 5 modèles minuscules (100 000 à 10 millions de params) formés sur le même ensemble de données.$\alpha$et $E$- Vos exposants correspondent-ils à ceux publiés ?
 
 ## Les termes clés
 
@@ -146,7 +148,7 @@ Regardez !`outputs/skill-training-budget-estimator.md`- Les compétences sont ch
 | Compute (C) | "FLOPs spent" | Approximately `6 × N × D` for a standard transformer. |
 | Chinchilla-optimal | "D/N ≈ 20" | Ratio that minimizes loss per FLOP of pretraining. |
 | Over-training | "Past Chinchilla" | Spend extra training FLOPs to save inference FLOPs; D/N >> 20. |
-| Irreducible loss | "The floor" | The `E` term in the scaling law; the entropy of the data itself. |
+| Irreducible loss | "The floor" | The $E$ term in the scaling law; the entropy of the data itself. |
 | Emergent capability | "Sudden jumps at scale" | Often a scorer artifact; continuous loss is smooth. |
 | Effective compute | "Training-efficiency multiplier" | Better data / optimizer / architecture multiplies how far a FLOP goes. |
 

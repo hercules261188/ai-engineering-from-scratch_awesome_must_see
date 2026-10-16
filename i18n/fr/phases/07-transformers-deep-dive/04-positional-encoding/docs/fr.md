@@ -29,25 +29,25 @@ En 2026, pratiquement tous les modèles frontaliers ouverts utilisent le RoPE: L
 
 Précompte une matrice fixe `PE`de forme `(max_len, d_model)`- Le numéro de la liste:
 
-```
-PE[pos, 2i]   = sin(pos / 10000^(2i / d_model))
-PE[pos, 2i+1] = cos(pos / 10000^(2i / d_model))
+```math
+\begin{aligned}
+PE_{(pos, 2i)} &= \sin\left(pos / 10000^{2i / d_{\text{model}}}\right) \\
+PE_{(pos, 2i+1)} &= \cos\left(pos / 10000^{2i / d_{\text{model}}}\right)
+\end{aligned}
 ```
 
 Alors ...`X' = X + PE[:N]`Chaque dimension est un sinus à une fréquence différente.`max_len`: rien n'a dit au modèle ce qui se passe à la position 2048 quand il ne voyait que les positions 02047.
 
 ### REPE
 
-Rotation des vecteurs Q et K (pas intégrés). Pour une paire de dimensions `(2i, 2i+1)`- Le numéro de la liste:
+Rotation des vecteurs Q et K (pas intégrés). Pour une paire de dimensions $(2i, 2i+1)$- Le numéro de la liste:
 
-```
-[q'_2i    ]   [ cos(pos·θ_i)  -sin(pos·θ_i) ] [q_2i   ]
-[q'_2i+1  ] = [ sin(pos·θ_i)   cos(pos·θ_i) ] [q_2i+1 ]
-
-θ_i = base^(-2i / d_head),  base = 10000 by default
+```math
+\begin{bmatrix} q'_{2i} \\ q'_{2i+1} \end{bmatrix} = \begin{bmatrix} \cos(pos \cdot \theta_i) & -\sin(pos \cdot \theta_i) \\ \sin(pos \cdot \theta_i) & \cos(pos \cdot \theta_i) \end{bmatrix} \begin{bmatrix} q_{2i} \\ q_{2i+1} \end{bmatrix}
+\qquad \theta_i = \text{base}^{-2i / d_{\text{head}}}, \quad \text{base} = 10000 \text{ by default}
 ```
 
-Appliquer la même rotation aux touches avec position `pos_k`Le produit de la dot`q'_m · k'_n`devient une fonction de `(m - n)`Je suis seul.**the attention score depends only on the relative distance**Même si la rotation était bloquée.
+Appliquer la même rotation aux touches avec position `pos_k`Le produit de la dot$q'_m \cdot k'_n$devient une fonction de $(m - n)$Je suis seul.**the attention score depends only on the relative distance**Même si la rotation était bloquée.
 
 Extension de l' ROPE: `base`Llama 3 est étendu de 8K à 128K de cette façon.
 
@@ -55,11 +55,11 @@ Extension de l' ROPE: `base`Llama 3 est étendu de 8K à 128K de cette façon.
 
 Laissez tomber le truc de l'intégration.
 
-```
-attn_score[i, j] = (q_i · k_j) / √d  -  m_h · |i - j|
+```math
+\text{attn\_score}[i, j] = \frac{q_i \cdot k_j}{\sqrt{d}} - m_h \cdot |i - j|
 ```
 
-Où ?`m_h`est une pente spécifique à la tête (par exemple `1 / 2^(8·h/H)`Les jetons plus proches sont renforcés; les jetons plus éloignés sont pénalisés. Aucun coût de temps d'entraînement.
+Où ?$m_h$est une pente spécifique à la tête (par exemple $1 / 2^{8h/H}$Les jetons plus proches sont renforcés; les jetons plus éloignés sont pénalisés. Aucun coût de temps d'entraînement.
 
 ### Que choisir en 2026
 
@@ -113,7 +113,7 @@ def apply_rope(x, pos, base=10000):
     return out
 ```
 
-Crucial: appliquer la même fonction à Q à la position `m`et K à la position `n`Leur produit dot prend un`cos((m-n)·θ_i)`L'attention apprend gratuitement la position relative.
+Crucial: appliquer la même fonction à Q à la position $m$et K à la position $n$Leur produit dot prend un$\cos((m-n) \cdot \theta_i)$L'attention apprend gratuitement la position relative.
 
 ### Étape 3: Pistes et biais ALiBi
 
@@ -168,7 +168,7 @@ Regardez !`outputs/skill-positional-encoding-picker.md`. La compétence choisit 
 | Positional encoding | "Tells attention about order" | Any signal added to embeddings or attention that encodes position. |
 | Sinusoidal | "The original one" | `sin/cos` at geometric frequencies added to embeddings; doesn't extrapolate. |
 | RoPE | "Rotary embeddings" | Rotate Q, K by position-dependent angle; dot product encodes relative distance. |
-| ALiBi | "Linear bias trick" | Add `-m·\|i-j\|` to attention scores; no embedding needed, great extrapolation. |
+| ALiBi | "Linear bias trick" | Add $-m \cdot \lvert i-j \rvert$ to attention scores; no embedding needed, great extrapolation. |
 | base | "RoPE's knob" | The frequency scaler in RoPE; increase to extend context at inference. |
 | NTK-aware | "A RoPE scaling trick" | Rescale `base` so high-frequency dims aren't squeezed when context expands. |
 | YaRN | "The fancy one" | Per-dimension interpolation+extrapolation that preserves attention entropy. |

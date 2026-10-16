@@ -9,13 +9,13 @@
 
 ## Le problème
 
-Un décodeur autorégressif naïf le fait .`O(N²)`travail à générer `N`Les jetons: à chaque étape, il recompte l'attention sur le préfixe complet. Pour une réponse à jetons 4K qui est 16M opérations d'attention, la plupart d'entre eux redondants. Chaque état caché d'un jeton préfixe est déterministe une fois calculé  vous avez seulement besoin d'exécuter la requête du nouveau jeton contre les clés cachées et les valeurs de tout avant.
+Un décodeur autorégressif naïf le fait .$O(N^2)$travail à générer $N$Les jetons: à chaque étape, il recompte l'attention sur le préfixe complet. Pour une réponse à jetons 4K qui est 16M opérations d'attention, la plupart d'entre eux redondants. Chaque état caché d'un jeton préfixe est déterministe une fois calculé  vous avez seulement besoin d'exécuter la requête du nouveau jeton contre les clés cachées et les valeurs de tout avant.
 
 En plus de cela, l'attention elle-même déplace beaucoup de données. L'attention standard matérialise une matrice de score N×N, une sortie de softmax N×d, une sortie finale N×d  trop de lecture et d'écriture à HBM. Pour N≥2K, l'attention devient liée à la mémoire avant de devenir liée à FLOP.
 
 Deux optimisations, toutes deux de Dao et coll., ont poussé l'inférence de frontière de "lente" à "rapide":
 
-1. **KV cache.**Enregistrer les vecteurs K et V de chaque jeton préfixe.`O(N²)`à `O(N)`par étape de génération.
+1. **KV cache.**Enregistrer les vecteurs K et V de chaque jeton préfixe.$O(N^2)$à $O(N)$par étape de génération.
 2. **Flash Attention.**Le calcul de l'attention est calculé de telle sorte que la matrice N×N complète ne touche jamais le HBM. Tout le softmax + matmul se produit dans le SRAM. 24× accélération de l'horloge murale sur A100; 510× sur H100 avec FP8.
 
 D'ici 2026, les deux sont universels. Chaque pile d'inférence de production (vLLM, TensorRT-LLM, SGLang, llama.cpp) les assume.
@@ -84,7 +84,7 @@ for each block of Q (tile size ~128 × 128):
     write O_tile to HBM
 ```
 
-Un HBM par carrelage, une trace de mémoire totale en baisse.`O(N²)`à `O(N)`. Pass arrière recompte certaines valeurs de la passe avant au lieu de les stocker  une autre mémoire gagne.
+Un HBM par carrelage, une trace de mémoire totale en baisse.$O(N^2)$à $O(N)$. Pass arrière recompte certaines valeurs de la passe avant au lieu de les stocker  une autre mémoire gagne.
 
 **Numerical trick.**La durée de fonctionnement de la softmax est maintenue `(max, sum)`L'attention flash compute une sortie identique à l'attention standard (modulo fp16 non-associativité).
 
@@ -126,8 +126,8 @@ flash-attention-memory
 
 Regardez !`code/main.py`Nous mettons en œuvre:
 
-1. Une naïve .`O(N²)`décodeur incrémentiel.
-2. Une .`O(N)`Décoder en cache KV.
+1. Une naïve .$O(N^2)$décodeur incrémentiel.
+2. Une .$O(N)$Décoder en cache KV.
 3. Une softmax en carreaux qui simule l'algorithme de fonctionnement maximal de Flash Attention.
 
 ### Étape 1: cache KV
@@ -174,7 +174,7 @@ Sortie par bits identiques à `softmax(qK) V`dans un seul coup, mais à tout mom
 
 ### Étape 3: comparer le décoding naïf et le décoding en cache sur la génération de 100 jetons
 
-On compte les opérations d'attention.`O(N²)`- 5050 en caisse:`O(N)`Le code imprime les deux.
+On compte les opérations d'attention.$O(N^2)$- 5050 en caisse:$O(N)$Le code imprime les deux.
 
 ## Utilisez-le
 
