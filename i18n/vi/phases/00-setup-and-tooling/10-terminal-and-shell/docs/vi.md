@@ -336,6 +336,16 @@ env | grep -i torch
 3. Tạo một nhật ký đào tạo giả với `for i in $(seq 1 100); do echo "epoch $i loss: $(echo "scale=4; 1/$i" | bc)"; sleep 0.1; done > fake_train.log`và sau đó sử dụng `grep`- `tail`, và`awk`để lấy chỉ các giá trị mất mát.
 4. Thiết lập mục cấu hình SSH cho một máy chủ mà bạn có quyền truy cập (hoặc sử dụng `localhost`để thực hành ngữ pháp).
 
+### Những gợi ý
+
+**Exercise 1.**Bắt đầu với `tmux new -s practice`, sau đó chia với tiền tố`Ctrl+B`tiếp theo là `"`và `%`, và di chuyển giữa các tấm với `Ctrl+B`Và một chìa khóa mũi tên.`Ctrl+B`Vậy thì`d`, chạy`tmux ls`, và gắn lại với `tmux attach -t practice`- Cả ba chương trình vẫn phải chạy.
+
+**Exercise 2.**Tải lại các dòng từ `code/shell_aliases.sh`đến cuối năm`~/.zshrc`hoặc `~/.bashrc`, sau đó chạy`source`trên hồ sơ đó.`alias`hoặc `type <name>`cho một trong những tên đếm mới để xác nhận rằng con vỏ biết điều đó.
+
+**Exercise 3.**Lần đầu tiên`tail -5 fake_train.log`để xem định dạng đường. Sau đó lọc với `grep loss`và in chỉ trường cuối cùng với `awk '{print $NF}'`; đầu ra phải là 100 số nhỏ hơn.
+
+**Exercise 4.**Tải lại `Host gpu`khối từ bài học đến `~/.ssh/config`và thay đổi`HostName`và `User`cho máy chủ của bạn, hoặc để `localhost`và tên người dùng của bạn.`ssh -G gpu`để in các cài đặt mà SSH sẽ sử dụng. Nếu bạn có một máy chủ SSH tiếp cận được chấp nhận khóa của bạn, chạy `ssh gpu`để kết nối.
+
 ## Các điều khoản chính
 
 | Term | What people say | What it actually means |

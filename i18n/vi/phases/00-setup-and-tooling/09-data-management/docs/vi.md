@@ -61,7 +61,7 @@ print(dataset["train"][0])
 Một số bộ dữ liệu quá lớn để chứa trên đĩa. Streaming tải chúng hàng xét mà không tải toàn bộ.
 
 ```python
-dataset = load_dataset("wikimedia/wikipedia", "20220301.en", split="train", streaming=True)
+dataset = load_dataset("wikimedia/wikipedia", "20231101.en", split="train", streaming=True)
 
 for i, example in enumerate(dataset):
     print(example["title"])
@@ -244,6 +244,16 @@ Bài học này mang lại:
 2. Chuyển `c4`tập dữ liệu và đếm bao nhiêu ví dụ bạn có thể xử lý trong 10 giây
 3. Chuyển đổi một tập dữ liệu thành Parquet và so sánh kích thước tập tin với CSV
 4. Tạo một phân chia đường sắt/val/test 70/15/15 với hạt cố định và xác minh kích thước
+
+### Những gợi ý
+
+**Exercise 1.**Gọi`load_and_inspect("glue", "mrpc")`từ `code/data_utils.py`, hoặc`load_dataset("glue", "mrpc")`trực tiếp, và in `ds["train"][:5]`Mỗi ví dụ phải có`sentence1`- `sentence2`, và`label`các cánh đồng.
+
+**Exercise 2.**Lắp bộ dữ liệu với `streaming=True`, như `stream_dataset`làm, và đọc các ví dụ trong vòng lặp dừng lại khi `time.time()`in số; chạy nó hai lần, bởi vì lần đầu tiên bao gồm khởi động kết nối.
+
+**Exercise 3.**Lưu trữ cùng bộ dữ liệu với `to_csv`và `to_parquet`, như `convert_format`làm, sau đó so sánh các kích thước với `ls -lh`hoặc `os.path.getsize`Lắp lại hồ sơ của Parquet với `load_from_parquet`và kiểm tra rằng số hàng không thay đổi.
+
+**Exercise 4.**Sử dụng `train_test_split`hai lần với một cố định `seed`: đầu tiên chia ra 30% , sau đó chia ra 30% vào nửa. ba chiều dài phải cộng với chiều dài ban đầu, và một lần chạy thứ hai với giống giống nhau phải đưa ra cùng hàng đầu trong mỗi chia.
 
 ## Các điều khoản chính
 

@@ -81,11 +81,11 @@ Mỗi người làm gì:
 | Black Formatter | Auto-format on save, consistent style |
 | Ruff | Fast linting, catches common mistakes |
 
-Lưu tập`code/.vscode/extensions.json`trong bài học này chứa danh sách khuyến nghị đầy đủ. Khi bạn mở thư mục dự án, VS Code sẽ yêu cầu bạn cài đặt chúng.
+Lưu tập`code/vscode/extensions.json`Bài học này chứa danh sách khuyến nghị đầy đủ.`.vscode/extensions.json`trong thư mục dự án của bạn, và VS Code yêu cầu bạn cài đặt chúng khi bạn mở thư mục đó.
 
 ### Bước 3: Cài đặt cài đặt
 
-Tải lại cài đặt từ `code/.vscode/settings.json`trong bài học này, hoặc áp dụng chúng bằng tay qua `Settings > Open Settings (JSON)`- Tôi không biết.
+Tải lại cài đặt từ `code/vscode/settings.json`trong bài học này, hoặc áp dụng chúng bằng tay qua `Settings > Open Settings (JSON)`- Tôi không biết.
 
 Các thiết lập chính cho công việc AI:
 
@@ -200,6 +200,16 @@ Với thiết lập này, dòng công việc hàng ngày của bạn sẽ trông
 2. Tải lại `settings.json`từ bài học này vào cấu hình VS Code của bạn
 3. Mở một tệp Python và xác minh rằng Pylance hiển thị các gợi ý kiểu và định dạng đen trên lưu
 4. Nếu bạn có quyền truy cập vào máy tính từ xa, thiết lập Remote SSH và mở một thư mục trên nó
+
+### Những gợi ý
+
+**Exercise 1.**Lắp đặt các phần mở rộng từ bảng ở bước 2, hoặc cài đặt mỗi ID trong `code/vscode/extensions.json`với `code --install-extension <id>`- Đi chạy`code --list-extensions`và kiểm tra từng ID với tập tin.
+
+**Exercise 2.**Open Settings > Open Settings (JSON) và sao chép nội dung của `code/vscode/settings.json`Nếu tập tin đã có cài đặt, kết hợp các phím và giữ hợp lệ JSON; VS Code đánh dấu một tập tin bị hỏng với một đường đỏ.
+
+**Exercise 3.**Viết một hàm với một chú thích kiểu, sau đó lướt qua một cuộc gọi cho nó; Pylance cho thấy loại suy luận. Thêm thêm không gian trong một dòng và lưu tệp; Đen phải định dạng lại dòng trên lưu.
+
+**Exercise 4.**Thêm máy chủ vào `~/.ssh/config`Đầu tiên và xác nhận rằng `ssh <host>`sau đó sử dụng lệnh Remote SSH để kết nối; thanh trạng thái hiển thị tên máy chủ khi VS Code chạy trên máy từ xa.
 
 ## Các điều khoản chính
 

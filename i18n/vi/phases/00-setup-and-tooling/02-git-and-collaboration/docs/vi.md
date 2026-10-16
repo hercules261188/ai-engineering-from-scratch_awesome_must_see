@@ -106,6 +106,14 @@ git push origin my-progress
 2. Tạo ra một `.gitignore`Không bao gồm các tập tin kiểm soát mẫu (`.pt`- `.pth`- `.safetensors`(văn)
 3. Nhìn vào lịch sử tham gia của repo này với `git log --oneline`và đọc những bài học được thêm vào
 
+### Những gợi ý
+
+**Exercise 1.**Nhấp vào Fork trên GitHub, sau đó `git clone`URL của fork của bạn.`git push -u origin my-progress`, mở fork của bạn trên GitHub và xác nhận rằng danh sách chi nhánh hiển thị `my-progress`với hồ sơ của anh.
+
+**Exercise 2.**Thêm một mẫu cho mỗi mở rộng, ví dụ như `*.pt`, đến một `.gitignore`file trong nguồn kho. tạo một file trống với mỗi phần mở rộng và chạy `git status`; không có một trong số đó có thể xuất hiện trong danh sách các tệp không theo dõi.
+
+**Exercise 3.**Đi chạy`git log --oneline`Và sau đó`git log --oneline -- phases/00-setup-and-tooling`chỉ hiển thị các commit đã thay đổi giai đoạn này. chọn một commit và chạy`git show --stat <hash>`để xem nó thêm vào những tập tin bài học nào.
+
 ## Các điều khoản chính
 
 | Term | What people say | What it actually means |

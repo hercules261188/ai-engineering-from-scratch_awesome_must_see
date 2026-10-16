@@ -130,6 +130,14 @@ if torch.cuda.is_available():
 2. Nếu bạn không có GPU, chạy nó trên Google Colab và so sánh
 3. Kiểm tra lượng bộ nhớ GPU bạn có và ước tính mô hình lớn nhất bạn có thể phù hợp (quyền ngón tay: 2 byte cho mỗi tham số cho fp16)
 
+### Những gợi ý
+
+**Exercise 1.**Hãy chạy mã từ phần Build It như hiện tại, sau đó ghi lại thời gian CPU, thời gian GPU và dòng tăng tốc.
+
+**Exercise 2.**Trong Colab, chọn Runtime > Thay đổi loại runtime > GPU, sau đó dán điểm tham chiếu vào một tế bào.`!nvidia-smi`trong một tế bào khác trước tiên; nó phải hiển thị một tên GPU trước khi kết quả tham chiếu có ý nghĩa gì.
+
+**Exercise 3.**Đọc bộ nhớ tổng thể với `torch.cuda.get_device_properties(0).total_memory / 1e9`, như trong `code/gpu_check.py`Chia bộ nhớ thành byte bằng 2 để có được số parameter cho fp16, sau đó giữ một biên, bởi vì các kích hoạt và ngữ cảnh CUDA cũng sử dụng bộ nhớ.
+
 ## Các điều khoản chính
 
 | Term | What people say | What it actually means |

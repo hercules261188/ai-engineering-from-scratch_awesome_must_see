@@ -239,6 +239,14 @@ Bài học này mang lại:
 2. Tạo một sổ ghi chép với cả các tế bào dấu và mã tải một CSV, hiển thị một khung dữ liệu và vẽ biểu đồ. Sau đó chạy Kernel > Restart & Run All để xác minh nó hoạt động từ trên xuống
 3. lấy mã từ `code/notebook_tips.py`, dán nó vào một máy tính xách tay Colab, và chạy nó với một GPU miễn phí
 
+### Những gợi ý
+
+**Exercise 1.**Bắt đầu JupyterLab với `jupyter lab`, sau đó đặt mỗi phiên bản trong tế bào riêng của nó bắt đầu với `%timeit`Sử dụng cùng một kích thước 100.000 trong cả hai tế bào để hai lần đo cùng một công việc.
+
+**Exercise 2.**Sử dụng `pd.read_csv`cho dữ liệu, hiển thị khung dữ liệu như đường cuối cùng của một tế bào, và vẽ với `df.plot()`Sau Kernel > Restart & Run All, mỗi tế bào phải hiển thị một số trong bộ tính xử lý của nó và không có tế bào nào có thể hiển thị lỗi.
+
+**Exercise 3.**Trong Colab, chọn Runtime > Thay đổi loại runtime > GPU trước khi dán mã.`code/notebook_tips.py`in phần của nó, và `torch.cuda.is_available()`trả lại `True`trong một cái cốt.
+
 ## Các điều khoản chính
 
 | Term | What people say | What it actually means |

@@ -305,3 +305,15 @@ s0-process-fork
 3. Bắt đầu một buổi tập tmux, chạy `sleep 300`bên trong nó, tách ra, liệt kê các phiên, và gắn lại.
 4. Sử dụng `df -h`để kiểm tra không gian đĩa có sẵn, sau đó sử dụng `du -sh ~/.cache/*`để tìm ra những gì đang chiếm chỗ trong kho lưu trữ của bạn.
 5. Chuyển tập tin từ máy tính địa phương của bạn sang máy tính từ xa bằng cách sử dụng `scp`, sau đó thực hiện cùng một chuyển nhượng với `rsync`và so sánh kinh nghiệm.
+
+### Những gợi ý
+
+**Exercise 1.**Sử dụng `cd ~`- `mkdir`, và`cd`vào thư mục mới, sau đó chạy `touch`với ba tên tập tin.`ls -la`output, kiểm tra rằng ba tập tin hiển thị kích thước 0 và tên người dùng của bạn như chủ sở hữu.
+
+**Exercise 2.**Lắp đặt với `sudo apt install -y htop`, bắt đầu nó, và nhấn `F6`(hoặc nhấp vào tên cột) để sắp xếp theo `MEM%`Quá trình ở đầu danh sách sử dụng bộ nhớ nhiều nhất.
+
+**Exercise 3.**Sử dụng `tmux new -s train`Từ bài học, chạy `sleep 300`, và tách ra với `Ctrl+B`Vậy thì`d`- Đi chạy`tmux ls`để xem phiên, sau đó `tmux attach -t train`; `sleep`vẫn phải chạy.
+
+**Exercise 4.**Đi chạy`df -h`và đọc `Avail`cột cho hệ thống tệp chứa thư mục chính của bạn.`du -sh ~/.cache/* | sort -h`để thư mục lớn nhất nằm ở dòng cuối.
+
+**Exercise 5.**Tải lại một tập tin với `scp file.txt user@host:~/`, sau đó chạy`rsync -avP file.txt user@host:~/`cho cùng một tệp.`rsync`lệnh lần thứ hai: nó gửi hầu như không có gì, bởi vì tập tin trên phía xa không thay đổi.

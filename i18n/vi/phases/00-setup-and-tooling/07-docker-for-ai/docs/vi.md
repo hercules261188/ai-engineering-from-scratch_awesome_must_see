@@ -155,7 +155,7 @@ python:3.12-slim
 Đây là hồ sơ Docker trong `code/Dockerfile`Đi qua nó:
 
 ```dockerfile
-FROM nvidia/cuda:12.4.1-devel-ubuntu22.04
+FROM --platform=linux/amd64 nvidia/cuda:12.4.1-devel-ubuntu22.04
 
 ENV DEBIAN_FRONTEND=noninteractive
 ENV PYTHONUNBUFFERED=1
@@ -215,6 +215,8 @@ docker build -t ai-dev -f phases/00-setup-and-tooling/07-docker-for-ai/code/Dock
 ```
 
 Điều này mất một thời gian lần đầu tiên (tải xuống hình ảnh cơ sở CUDA + PyTorch).
+
+**macOS / Apple Silicon (M1/M2/M3/M4):**- `--platform=linux/amd64`trên `FROM`dòng là điều làm cho xây dựng này thành công trên một Mac. Hình nền CUDA cũng gửi một biến thể arm64 và Docker Desktop chọn nó tự động trên Apple Silicon, nhưng PyTorch xuất bản `cu124`bánh xe chỉ cho x86_64, vì vậy `pip install torch==2.6.0+cu124`lớp thất bại với `No matching distribution found for torch==2.6.0+cu124`. Đẹp nền tảng kéo hình ảnh x86_64 và chạy nó dưới mô phỏng: xây dựng chậm hơn và container không có GPU (không có CUDA trên Mac dù cách nào). Drop `--gpus all`từ `docker run`Để làm việc GPU trên Apple Silicon, chạy các bài học theo bản địa với cấu trúc MPS từ bài học 01 và giữ hình ảnh này cho các máy chủ x86_64 Linux với GPU NVIDIA.
 
 Đi đi.
 
@@ -372,6 +374,16 @@ Tắt `--gpus all`Trình chứa vẫn hoạt động cho các bài học dựa t
 2. Bắt đầu các tập hợp docker và xác minh Qdrant là có thể truy cập từ container AI tại `http://qdrant:6333/collections`
 3. Thêm `flask`để Dockerfile, xây dựng lại, và chạy một máy chủ API đơn giản trên cổng 5000.`-p 5000:5000`
 4. Đo kích thước hình ảnh bằng `docker images`Hãy thử chuyển hình ảnh cơ bản từ`devel`đến`runtime`và so sánh kích thước
+
+### Những gợi ý
+
+**Exercise 1.**Xây dựng với `docker build -t ai-dev -f phases/00-setup-and-tooling/07-docker-for-ai/code/Dockerfile .`lệnh từ bài học, sau đó chạy nhập vào `docker run --rm ai-dev`- Trên máy Mac, bỏ qua.`--gpus all`Container phải in một phiên bản bắt đầu với`2.6.0`- Tôi không biết.
+
+**Exercise 2.**Đi chạy`docker compose up -d`trong `code/`thư mục, sau đó mở một vỏ trong `ai-dev`dịch vụ với `docker compose exec ai-dev bash`Bên trong, chạy đi.`curl http://qdrant:6333/collections`; một câu trả lời JSON có nghĩa là tên dịch vụ được giải quyết trên mạng viết.
+
+**Exercise 3.**Thêm một `RUN pip install flask`dòng đến Dockerfile, xây dựng lại, và khởi động máy chủ với `host="0.0.0.0"`, bởi vì một máy chủ kết nối với localhost bên trong container không thể tiếp cận từ bên ngoài.`http://localhost:5000`trên máy của bạn để xác nhận rằng bản đồ cổng hoạt động.
+
+**Exercise 4.**Đi chạy`docker images ai-dev`và viết xuống cột SIZE.`devel`đến`runtime`trong `FROM`dòng, xây dựng với một thẻ mới, và so sánh hai kích thước; hình ảnh runtime bỏ qua các trình biên dịch và tiêu đề.
 
 ## Các điều khoản chính
 

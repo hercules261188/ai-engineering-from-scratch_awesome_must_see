@@ -395,3 +395,15 @@ Nhìn xem`outputs/prompt-debug-ai-code.md`cho một lời nhắc giúp chẩn đ
 3. Sử dụng `tracemalloc`để tìm ra dòng nào trong đường ống tải dữ liệu của bạn phân bổ bộ nhớ nhiều nhất.
 4. Thiết lập TensorBoard cho một cuộc tập luyện đơn giản và xác định xem mô hình có quá phù hợp hay không.
 5. Sử dụng `breakpoint()`Thực hành kiểm tra hình dạng tensor, thiết bị và giá trị gradient từ prompt debugger.
+
+### Những gợi ý
+
+**Exercise 1.**Đi chạy`python3 phases/00-setup-and-tooling/12-debugging-and-profiling/code/debug_tools.py`và đọc đầu ra của mỗi hàm demo. Sau đó thay đổi mô hình trong `demo_nan_detection`để sản lượng của nó chia bằng không, và chạy lại;`detect_nan`phải in một cảnh báo NaN với số bước.
+
+**Exercise 2.**Đi vòng dưới `python -m cProfile -s cumtime your_script.py`, hoặc bọc nó trong `cProfile.Profile()`. Đọc các hàng đầu của `cumtime`cột; hàm có thời gian lớn nhất là mã của bạn là chậm nhất.
+
+**Exercise 3.**Gọi`tracemalloc.start()`trước mã tải dữ liệu và `tracemalloc.take_snapshot()`sau đó, như trong `demo_memory_tracking`- Bác in`snapshot.statistics("lineno")[:5]`; dòng đầu tiên cho thấy số tập tin và dòng với phân bổ lớn nhất.
+
+**Exercise 4.**Đăng ký sự mất tập và sự mất chứng thực cho một `SummaryWriter`Mỗi thời đại, sau đó chạy `tensorboard --logdir=runs`Nếu mất tập luyện tiếp tục giảm trong khi mất xác nhận tăng lên, mô hình vượt quá.
+
+**Exercise 5.**Đặt`breakpoint()`trong vòng lặp sau đó `loss.backward()`và chạy kịch bản.`(Pdb)`nhanh chóng, in `x.shape`- `x.device`, và`next(model.parameters()).grad`, sau đó gõ `c`để tiếp tục đến bước tiếp theo.

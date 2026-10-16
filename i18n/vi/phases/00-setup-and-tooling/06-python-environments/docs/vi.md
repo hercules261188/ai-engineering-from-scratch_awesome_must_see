@@ -259,6 +259,16 @@ bash phases/00-setup-and-tooling/06-python-environments/code/env_setup.sh
 3. Hãy viết một `pyproject.toml`cho một dự án cần cả PyTorch và SDK Anthropic
 4. Chuẩn bị cài đặt một gói trên toàn cầu (không kích hoạt venv), nhận thức nó đi đâu, sau đó gỡ bỏ cài đặt nó
 
+### Những gợi ý
+
+**Exercise 1.**Đi chạy`bash phases/00-setup-and-tooling/06-python-environments/code/env_setup.sh`đọc mỗi dòng đầu ra; khi kiểm tra thất bại, sửa chữa một mục đó và chạy kịch bản lại cho đến khi không kiểm tra thất bại.
+
+**Exercise 2.**Tạo môi trường thứ hai trong thư mục mới với `uv venv`, kích hoạt nó, và cài đặt một numpy cũ với một pin phiên bản như `numpy==1.26.4`- Đi chạy`python -c "import numpy; print(numpy.__version__)"`trong mỗi môi trường; hai phiên bản phải khác nhau.
+
+**Exercise 3.**Bắt đầu từ ví dụ trong pyproject.toml`torch`và `anthropic`dưới `dependencies`- Đi chạy`uv pip install -e .`hoặc `uv sync`trong một môi trường mới; file là chính xác khi cả hai gói nhập khẩu mà không có lỗi.
+
+**Exercise 4.**Tháo động mọi môi trường, chạy `pip install --user <small package>`, sau đó chạy`pip show <package>`và đọc `Location`dòng. gỡ bỏ nó với `pip uninstall <package>`và chạy`pip show`Một lần nữa để xác nhận rằng nó đã biến mất.
+
 ## Các điều khoản chính
 
 | Term | What people say | What it actually means |
