@@ -137,6 +137,6 @@ Règle de décision: **match sample rate before you match anything else**S'il vo
 
 - [Shannon (1949). Communication in the Presence of Noise](https://people.math.harvard.edu/~ctm/home/text/others/shannon/entropy/entropy.pdf) le document derrière le théorème de l'échantillonnage.
 - [Smith — The Scientist and Engineer's Guide to Digital Signal Processing](https://www.dspguide.com/ch8.htm) livre de cours canonique gratuit sur les SPD.
-- [librosa docs — audio primer](https://librosa.org/doc/latest/tutorial.html) un parcours pratique avec le code.
-- [Heinrich Kuttruff — Room Acoustics (6th ed.)](https://www.routledge.com/Room-Acoustics/Kuttruff/p/book/9781482260434) référence pour expliquer pourquoi l'audio du monde réel n'est pas un sinus propre.
+- [librosa docs — audio primer](https://librosa.org/doc/latest/auto_tutorials/index.html) un parcours pratique avec le code.
+- [Heinrich Kuttruff — Room Acoustics (6th ed.)](https://www.taylorfrancis.com/books/mono/10.1201/9781315372150/room-acoustics-heinrich-kuttruff) référence pour expliquer pourquoi l'audio du monde réel n'est pas un sinus propre.
 - [Steve Eddins — FFT Interpretation notebook](https://blogs.mathworks.com/steve/2020/03/30/fft-spectrum-and-spectral-densities/)L'intuition du bac à fréquences a été nettoyée en 10 minutes.

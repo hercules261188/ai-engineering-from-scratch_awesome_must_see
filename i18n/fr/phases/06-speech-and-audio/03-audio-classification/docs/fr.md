@@ -119,7 +119,7 @@ class AudioCNN(nn.Module):
 
 Paramètres 3M. Trains en 10 minutes sur ESC-50 avec une seule RTX 4090.
 
-### Étape 5: les BEATs de 2026 par défaut  fine-tune
+### Étape 5: régler un transformateur audio prétrainé (AAST montré)
 
 ```python
 from transformers import ASTFeatureExtractor, ASTForAudioClassification
@@ -135,7 +135,7 @@ inputs = ext(audio, sampling_rate=16000, return_tensors="pt")
 logits = model(**inputs).logits
 ```
 
-Pour les BEAT, utilisez `microsoft/BEATs-base`par le `beats`bibliothèque; l'API des transformateurs est de la même forme.
+L'exemple de réglage fin AST du Hub. BEATs, la version par défaut de 2026, n'est pas sur le Hub Hugging Face: téléchargez un point de contrôle du [BEATs release in microsoft/unilm](https://github.com/microsoft/unilm/tree/master/beats)et le charger avec ce repo.`BEATs`et `BEATsConfig`les classes; la boucle de réglage fin conserve la même forme.
 
 ## Utilisez-le
 

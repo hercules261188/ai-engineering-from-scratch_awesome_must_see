@@ -24,7 +24,7 @@ Les perspectives de 2024 à 2026: **a pure reconstruction codec gives you blurry
 
 ### Le truc principal: quantification des vecteurs résiduels (RVQ)
 
-Au lieu d'un seul codec (qui nécessiterait des millions de codes pour une bonne qualité), tous les codecs audio modernes utilisent **RVQ**Le premier codebook quantifie la sortie du codeur; le second quantifie le résiduel; etc. Chaque codebook est constitué de 1024 codes.
+Au lieu d'un seul codec (qui nécessiterait des millions de codes pour une bonne qualité), tous les codecs audio modernes utilisent **RVQ**Le premier codebook quantifie la sortie du codeur; le second quantifie le résiduel; etc. Chaque codebook est constitué de 1024 codes.$1024^8 = 10^{24}$- Je suis désolé .
 
 Au moment de l'inférence, le décodeur additionne tous les codes choisis par cadre pour la reconstruction.
 
@@ -129,8 +129,8 @@ Le codebook sémantique 0 est aligné avec WavLM. Vous pouvez former un transfor
 
 Pour un clip de 10 secondes à 12,5 Hz × 8 codes de Mimi:
 
-```
-N_tokens = 10 * 12.5 * 8 = 1000 tokens
+```math
+N_{\text{tokens}} = 10 \times 12.5 \times 8 = 1000 \text{ tokens}
 ```
 
 1000 jetons est un contexte trivial pour un transformateur. Un transformateur de 256M-paramètre peut générer 10 secondes de parole en millisecondes sur un GPU moderne.

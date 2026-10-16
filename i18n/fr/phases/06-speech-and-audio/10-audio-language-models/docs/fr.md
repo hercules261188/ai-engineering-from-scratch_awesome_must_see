@@ -129,17 +129,18 @@ C'est tout. Le projecteur est généralement de 1 à 3 couches linéaires.
 
 ```python
 from datasets import load_dataset
-mmau = load_dataset("MMAU/MMAU-Pro")
+mmau = load_dataset("gamma-lab-umd/MMAU-Pro", split="test")
+mcq = mmau.filter(lambda item: len(item["choices"] or []) > 1)
 
 correct = 0
-for item in mmau["test"]:
-    answer = call_model(item["audio"], item["question"], item["choices"])
-    if answer == item["correct_choice"]:
+for item in mcq:
+    answer = call_model(item["audio_path"], item["question"], item["choices"])
+    if answer == item["answer"]:
         correct += 1
-print(f"Accuracy: {correct / len(mmau['test']):.3f}")
+print(f"Accuracy: {correct / len(mcq):.3f}")
 ```
 
-Rapportez-le par catégorie (speech / sound / music / multi-audio) séparément.
+`audio_path`points dans les repo de l'ensemble de données `data.zip`(environ 47 Go), alors téléchargez-le et déchiffrez-le avant de marquer. Cette boucle de correspondance exacte est une vérification de la santé mentale, et non le scoreur de référence, de sorte que son nombre n'est pas comparable aux résultats publiés de MMAU-Pro. L'évaluateur officiel compare les réponses à choix multiples en intégrant des similitudes (NV-Embed-v2), note les réponses à fin ouverte avec un juge de LLM et vérifie les réponses suivant les instructions avec des règles de régex:`model_output`colonne et courir `evaluate_mmau_pro_comprehensive.py`de la [MMAU-Pro repo](https://github.com/sonalkum/MMAUPro)- Rapportez chacun`category`Les nombres agrégés se cachent là où le modèle échoue.
 
 ## Utilisez-le
 
@@ -187,4 +188,4 @@ Rapportez-le par catégorie (speech / sound / music / multi-audio) séparément.
 - [NVIDIA (2025). Audio Flamingo 3](https://arxiv.org/abs/2507.08128)Le leader de longue voix ouverte.
 - [NVIDIA (2026). Audio Flamingo Next](https://arxiv.org/abs/2604.10905) LongAudioBench SOTA.
 - [Tang et al. (2023). SALMONN](https://arxiv.org/abs/2310.13289) pionnier du double encodeur.
-- [MMAU-Pro leaderboard](https://mmaubenchmark.github.io/) classement en direct en 2026.
+- [MMAU-Pro leaderboard](https://sonalkum.github.io/mmau-pro/) classement en direct en 2026.

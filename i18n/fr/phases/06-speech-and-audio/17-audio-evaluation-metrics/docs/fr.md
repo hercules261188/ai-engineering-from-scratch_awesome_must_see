@@ -106,7 +106,7 @@ Exclusifs pour plusieurs classes: **top-1, top-5 accuracy**- Commande de parole 
 | Open ASR Leaderboard (HF) | English + multilingual + long-form | `huggingface.co/spaces/hf-audio/open_asr_leaderboard` |
 | TTS Arena (HF) | English TTS | `huggingface.co/spaces/TTS-AGI/TTS-Arena` |
 | Artificial Analysis Speech | TTS + STT, ELO from paired votes | `artificialanalysis.ai/speech` |
-| MMAU-Pro | LALM reasoning | `mmaubenchmark.github.io` |
+| MMAU-Pro | LALM reasoning | `sonalkum.github.io/mmau-pro` |
 | SpeakerBench / VoxSRC | Speaker recognition | `voxsrc.github.io` |
 | MMAU music subset | Music LALM | (within MMAU) |
 | HEAR benchmark | Self-supervised audio | `hearbenchmark.com` |
@@ -224,5 +224,5 @@ Parler chaque déploiement avec un harnais d'évaluation fixe qui fonctionne sur
 - [Fréchet Audio Distance (Kilgour et al. 2019)](https://arxiv.org/abs/1812.08466) la norme de la génération musicale.
 - [Open ASR Leaderboard](https://huggingface.co/spaces/hf-audio/open_asr_leaderboard) 2026 classement en direct.
 - [TTS Arena](https://huggingface.co/spaces/TTS-AGI/TTS-Arena) Le classement des TTS par vote humain.
-- [MMAU-Pro benchmark](https://mmaubenchmark.github.io/) Tableau de classement de raisonnement LALM.
+- [MMAU-Pro benchmark](https://sonalkum.github.io/mmau-pro/) Tableau de classement de raisonnement LALM.
 - [HEAR benchmark](https://hearbenchmark.com/) les références SSL audio.

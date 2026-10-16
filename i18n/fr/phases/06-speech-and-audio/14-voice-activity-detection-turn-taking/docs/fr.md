@@ -170,7 +170,7 @@ Règle générale: ne jamais expédier de VAD à usage énergétique uniquement 
 ## Pour en savoir plus
 
 - [Silero VAD](https://github.com/snakers4/silero-vad) l'ouverture de référence du VAD.
-- [Picovoice Cobra VAD](https://picovoice.ai/products/cobra/) leader de la précision commerciale.
+- [Picovoice Cobra VAD](https://picovoice.ai/products/voice/voice-activity-detection/) leader de la précision commerciale.
 - [Kyutai — Unmute + flush trick](https://kyutai.org/stt)- Le truc de l'ingénierie sous 200 ms.
 - [LiveKit — turn detection](https://docs.livekit.io/agents/logic/turns/) définition sémantique de la production.
 - [WebRTC VAD](https://webrtc.googlesource.com/src/) la ligne de base héritée.

@@ -193,4 +193,4 @@ Chaque génération de navires: (1) marque d'eau, (2) manifeste signé, (3) jour
 - [Chen et al. (2025). WaveVerify](https://arxiv.org/abs/2507.21150)Détecteur de détection de température.
 - [Jung et al. (2022). AASIST](https://arxiv.org/abs/2110.01200) l'épine dorsale de détection de SOTA.
 - [AudioMarkBench (2024)](https://proceedings.neurips.cc/paper_files/paper/2024/file/5d9b7775296a641a1913ab6b4425d5e8-Paper-Datasets_and_Benchmarks_Track.pdf) évaluation de la robustesse.
-- [C2PA specification](https://c2pa.org/specifications/specifications/) format du manifeste de provenance.
+- [C2PA specification](https://spec.c2pa.org/specifications/specifications/2.4/index.html) format du manifeste de provenance.

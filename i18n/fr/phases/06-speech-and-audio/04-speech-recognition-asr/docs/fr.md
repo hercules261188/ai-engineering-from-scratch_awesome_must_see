@@ -37,7 +37,7 @@ Avantage: la plus haute qualité sur ASR hors ligne, facile à entraîner avec d
 
 ### WER: le numéro unique
 
-**Word Error Rate**- Je suis là.`(S + D + I) / N`, où S = substitutions, D = suppressions, I = insertions, N = nombre de mots de référence. Correspond à la distance de modification de Levenshtein au niveau des mots. Plus bas est mieux. Un WER supérieur à 20% est généralement inutilisable; inférieur à 5% est la parité humaine pour le discours de lecture.
+**Word Error Rate**- Je suis là.$(S + D + I) / N$Où ?$S$= les remplacements, $D$= les suppressions, $I$=insert, $N$=conte de mots de référence. Correspond à la distance de modification de Levenshtein au niveau des mots. Plus bas est mieux. Un WER supérieur à 20% est généralement inutilisable; inférieur à 5% est la parité humaine pour le langage de lecture.
 
 | Model | LibriSpeech test-clean | LibriSpeech test-other | Size |
 |-------|------------------------|------------------------|------|
