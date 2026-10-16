@@ -71,10 +71,12 @@ Soy alınması: 2025 yılına kadar Qwen-VL mimarisi istikrarlı hale geldi.
 
 Klasik RoPE bir sorguyu döndürür `q`boyutlu `d`Konumlara göre`m`Çift koordinatları kullanılarak:
 
-```
-q_rot[2i]   = q[2i]   * cos(m * theta_i) - q[2i+1] * sin(m * theta_i)
-q_rot[2i+1] = q[2i]   * sin(m * theta_i) + q[2i+1] * cos(m * theta_i)
-theta_i     = 10000^(-2i/d)
+```math
+\begin{aligned}
+q_{\text{rot}}[2i] &= q[2i] \cos(m \theta_i) - q[2i+1] \sin(m \theta_i) \\
+q_{\text{rot}}[2i+1] &= q[2i] \sin(m \theta_i) + q[2i+1] \cos(m \theta_i) \\
+\theta_i &= 10000^{-2i/d}
+\end{aligned}
 ```
 
 M-RoPE gizli karanlığı üç gruba ayırır.`d = 96`. 32 dims'i temporal, 32'i yükseklik ve 32'i genişlik olarak belirleyin. Her bant kendi eksesi pozisyonu ile döner.`R_t(5)`- Evet .`R_h(10)`- Evet .`R_w(20)`Üç bandına uygulanır.

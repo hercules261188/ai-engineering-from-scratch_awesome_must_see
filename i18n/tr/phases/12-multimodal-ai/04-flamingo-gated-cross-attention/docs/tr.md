@@ -30,18 +30,18 @@ Flamingo, dondurulmuş bir Chinchilla 70B LLM ile başlar. Tüm 70B ağırlıkla
 
 ### Algılayıcı resampler
 
-ViT, isteklendirme içindeki her görüntü için N patch tokenleri üretir. Perceiver resamplerinde K sabit öğrenilebilir latenlar vardır (Flamingo K=64 kullanır).
+Bu istekle ilgili her görüntü için ViT üretir.$N$- Farkçı resampler'in var.$K$sabit öğrenilme yeteneği (Flamingo kullanıyor $K=64$). Her resampler bloğu iki alt adımdan oluşur:
 
-1. Çelişkili dikkat: K latentleri N patch tokens'e karşı katılır (Q latentlerden, K/V patchlerden).
+1. Çelişkili dikkat:$K$$N$Patch tokens (Q latenti, K/V patchlerden).
 2. Kendine dikkat + FFN gizlilerde.
 
-6 resampler blokundan sonra, ViT'nin ürettiği kaç yama olursa olsun, çıkış K=64 görsel token, 64 resampler tokeni olarak çıkar.
+6 resampler bloktan sonra, çıkış $K=64$ViT'nin ürettiği kaç tane token olursa olsun, dim 1024'lik görsel tokenler. 224x224 görüntü (196 token) ve 480x480 görüntü (900 token) her ikisi de 64 resampler token olarak çıkıyor.
 
-Video için resampler zamanlı olarak uygulanır: her çerçevenin yamaları 64 laten üretir ve zamanlı konum kodlaması modeli t=0 ile t=N arasında ayırt etmesine izin verir. Tam video T * 64 görsel jetonlar haline gelir.
+Video için resampler zamanlı olarak uygulanır: her çerçevenin yamaları 64 laten üretir ve zamanlı konum kodlaması modeli ayırt eder.$t=0$-$t=N$- Tüm videolar $T \cdot 64$Görsel simgeler.
 
 ### Çaplaklı dikkat
 
-Dondurulmuş LLM'nin her M katmanının arasına (Flamingo M=4 kullanıyor), yeni kapalı çapraz dikkat blokunu yerleştirin:
+Her biri arasında .$M$Dondurulmuş LLM katmanları (Flamingo kullanımı $M=4$), yeni kapalı çapraz dikkat blokunu ekler:
 
 ```
 x_after_llm_block = llm_block(x_before)
@@ -148,7 +148,7 @@ Bu ders bize çok yararlı .`outputs/skill-gated-bridge-diagnostic.md`Açık bir
 | OBELICS | "Interleaved web corpus" | Open dataset of 141M web pages with images and text in reading order |
 | Chinchilla | "70B frozen base" | Flamingo's frozen text LLM, from DeepMind's Chinchilla paper |
 | Gate schedule | "How alpha moves" | The rate at which the cross-attention gate opens during training |
-| Cross-attn frequency | "Every M layers" | How often a gated cross-attention block is inserted; Flamingo uses M=4 |
+| Cross-attn frequency | "Every M layers" | How often a gated cross-attention block is inserted; Flamingo uses $M=4$ |
 | OpenFlamingo | "Open reproduction" | MosaicML/LAION open checkpoint at 3-9B; architecture-identical to Flamingo |
 
 ## Daha Fazla Okumak

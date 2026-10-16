@@ -62,9 +62,9 @@ Eğitim ve sonuçlama için blok üçgenli bir maske olarak uygulanır.
 Düzünlük kaybı standarttır: bir görüntü yamağına gürültü ekleyin, modelden gürültüyü (veya temiz yama, eşdeğer olarak) tahmin etmesini isteyin. Transfüzyon'un versiyonu akış eşleşmesini kullanır  gürültüden temizliğe hız alanını tahmin edin.
 
 Eğitim sırasında:
-1. Her görüntü yama x0 için rastgele bir zaman adım t örneği.
-2. Örnek gürültü ε, hesap xt = (1-t) * x0 + t * ε (akış eşleşmesi için doğrusal interpolasyon).
-3. Transformatör v_theta(xt, t) tahmin eder; kaybı = MSE(v_theta(xt, t), ε - x0).
+1. Her görüntü yama için $x_0$, rastgele bir zaman adımını örnekleyin .$t$- Evet .
+2. Örnek gürültü$\epsilon$, hesaplama$x_t = (1-t) \cdot x_0 + t \cdot \epsilon$(çıkış eşleşimi için doğrusal interpolasyon).
+3. Transformatör tahmin ediyor .$v_\theta(x_t, t)$- ...$\text{loss} = \mathop{\mathrm{MSE}}(v_\theta(x_t, t), \epsilon - x_0)$- Evet .
 4. Tekst ile birlikte arka tarafa NTP kayıpları aynı diziden.
 
 Sonuç olarak, nesil:

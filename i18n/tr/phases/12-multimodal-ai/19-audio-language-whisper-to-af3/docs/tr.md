@@ -36,7 +36,7 @@ Her ses kodlayıcı aynı özellikle başlar: bir log-Mel spektrogramı.
 2. Kısa süreli Fourier dönüşümü 25 ms pencereleri ile, 10 ms atlama.
 3. FFT sonucu büyüklüğünü alın.
 4. Merak frekansına warp için Mel filtre bankalarını (genellikle 0-8000 Hz log-spaced 80 filtre) uygulayın.
-5. Dinamik aralığı için log kompres (log(1 + x))
+5. Çap kompressi$(\log(1 + x))$Dinamik aralığı için.
 
 Sonuç: T'nin zaman çerçeveleri sayısının olduğu şekil 2 boyutlu bir dizi (T, 80) .
 

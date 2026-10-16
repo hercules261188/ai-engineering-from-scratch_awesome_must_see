@@ -69,11 +69,11 @@ VQ-token şebekesi bölgesini maske, geri kalanını besle ve bir metin istek, m
 
 Adım başına kaç tane simge açılması programı kaliteyi şekillendirir.
 
-```
-mask_ratio(t) = cos(pi * t / (2 * T))   # t = 0..T
+```math
+\text{mask\_ratio}(t) = \cos\left(\frac{\pi t}{2T}\right) \qquad t = 0, \ldots, T
 ```
 
-T'de hiçbir şey maskeli değildir. Cosine, kütleyi tahminlerin en bilgilendirici olduğu orta aralık oranlarında yoğunlaştırır. Düzsel programlar da çalışır ancak plato daha hızlıdır.
+Adım 0, tüm simgeler maskeli (sare 1.0) Adım $T$Kosinus kütleyi orta aralığın oranlarında yoğunlaştırır ve tahminlerin en çok bilgilendirilebileceği yerlerde.
 
 ### Gösterme
 
@@ -117,7 +117,7 @@ Bu ders bize çok yararlı .`outputs/skill-unified-gen-model-picker.md`. Açık 
 
 3. Kosine planı vs. doğrusal plan: T=8 için adım başına maskeli olmayan token sayısını izleyin. Hangisi daha dengeli?
 
-4. 512x512 Gösterme görüntü 1024 simgeliktir. K=16384 sözcükte, model 1024 * log2(16384) = 14.336 bit (~1.75 KiB) veri yayar.
+4. 512x512 gösterim görüntü 1024 simgelik.$K=16384$, model yayıyor $1024 \cdot \log_2(16384) = 14{,}336$Stabil Diffusion çıkışları 512*512*24 bit = 6.291.456 bit (~768 KiB) çiğ pikseli.
 
 5. LlamaGen'in sınıf koşullu autoregressive görüntü modeli Show-o'nun maskeli yaklaşımından nasıl farklıdır?
 

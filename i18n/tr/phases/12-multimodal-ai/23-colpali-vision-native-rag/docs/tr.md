@@ -36,28 +36,28 @@ ColPali'nin düzeni: OCR'yi atlayın, sayfa resmini doğrudan yerleştirin. Aram
 
 ColBERT (Khattab & Zaharia, arXiv:2004.12832) bir metin kurtarma yöntemi.
 
-- Sorgu simgelerinin kendi gömülmeleri (N_q vektörleri) vardır.
-- Belge simgelerinin gömülmeleri (N_d vektörleri, tipik olarak önbelleğe alınır).
-- Not = cosine benzerliği olan dosya tokenlerine karşı maksimum sorgu tokenlerinin toplamı: Σ_i max_j cos(q_i, d_j).
+- Sorgulama simgelerinin kendi yerleşimleri vardır ($N_q$(vector)
+- Belge tokenleri yerleştirilmiştir ($N_d$vectörler, genellikle önbelleğe alınmıştır).
+- Skor = dosya tokenlerinin üstündeki maksimum sorgu tokenlerinin toplamı: $\sum_i \max_j \cos(q_i, d_j)$- Evet .
 
 Bu MaxSim işlevi. Her sorgu simgesi en uygun belge simgesini "seçiyor". Son puan toplamdır.
 
-Avantajlar: güçlü hatırlama, terim seviyesindeki semantikleri ele alır. Eksileri: Doküman başına N_d vektörleri, depolama pahalı.
+Avantajlar: güçlü hatırlama, terim seviyesindeki semantikleri ele alır.$N_d$Doküman başına vektörler, depolama pahalı.
 
 ### KolPali
 
 ColPali (Faysse et al., arXiv:2407.01449) ColBERT örneğini görüntülere uyguluyor.
 
-- Her sayfa PaliGemma (ViT + dili) tarafından patch yerleştirmelerine kodlanır: Sayfa başına N_p vektörleri.
-- Her kullanıcı sorgu (metin) sorgu-tökeni yerleştirmelerinde kodlanır: N_q vektörleri.
-- Skor = Σ_i max_j cos(q_i, p_j), yani, MaxSim sorgu metin-token ve sayfa-resim-patçlar üzerinde.
+- Her sayfa PaliGemma (ViT + dili) tarafından patch yerleştirmelerine kodlanır: $N_p$sayfa başına vektörler.
+- Her kullanıcı sorgu (metin) sorgu-token gömülmelerinde kodlanır: $N_q$vektörler.
+- Not = $\sum_i \max_j \cos(q_i, p_j)$Bu, MaxSim'in sorgu metni-token ve sayfa-resim-patch'leri üzerine.
 - Top-k sayfaları toplam puanla alın.
 
 Belgeyi yedikten sonra: her sayfayı PaliGemma ile yerleştirin, tüm patch yerleştirmelerini saklayın. Sorgu zamanı: sorgu simgelerini yerleştirin, MaxSim'i tüm kaydedilen sayfa yerleştirmelerine karşı hesaplayın, üst-k sayfaları geri gönderin.
 
 Avantajlar: görsel açıdan zengin belgelerde son-sonun RAK metnini %20-40'a geçiyor. Her patch-vector yerel düzen ve içeriği yakalar.
 
-Eksiler: N_p yamalar × 4 bayt yüzen × D-dim vektörleri sayfaya = depolama hızla büyüyor.
+Eksiler: $N_p$Çizgiçeler × 4 baytlı yüzenler × $D$-dim vektörleri sayfaya = depolama hızla büyüyor.
 
 ### ColQwen2 ve ColSmol
 
@@ -128,7 +128,7 @@ Bu ders bize çok yararlı .`outputs/skill-vision-rag-designer.md`. Bir belge-RA
 
 1. 200 sayfalık yıllık rapor, sayfaya 729 patch, 128 boyutlu emb, 4 baytlı yüzen.
 
-2. MaxSim Σ_i max_j cos(q_i, p_j) Bu toplam basit bir benzerlik anlamı olmayan neyi yakalar?
+2. MaxSim ' in adı $\sum_i \max_j \cos(q_i, p_j)$Bu toplamda basit bir benzerlik anlamı bulunmadığı neyi bulmuştur?
 
 3. ColPali sayfaları birleştirme seti olarak indeksiyor.
 
@@ -143,7 +143,7 @@ Bu ders bize çok yararlı .`outputs/skill-vision-rag-designer.md`. Bir belge-RA
 | Late interaction | "ColBERT-style" | Retrieval using per-token or per-patch embeddings + MaxSim, not a single doc vector |
 | MaxSim | "Max-over-patches" | For each query token, pick the highest-similarity document token; sum across query |
 | Bi-encoder | "Single-vector" | One vector per document; faster but loses granularity |
-| Multi-vector | "Many-vectors-per-doc" | Store N_p vectors per document / page; storage cost grows but recall improves |
+| Multi-vector | "Many-vectors-per-doc" | Store $N_p$ vectors per document / page; storage cost grows but recall improves |
 | Patch embedding | "Page feature" | One vector per image patch from a VLM encoder, cached per page |
 | ViDoRe | "Vision doc bench" | ColPali's benchmark suite for visual document retrieval |
 | PQ quantization | "Product quantization" | Compression that maintains vector similarity while shrinking storage ~8x |

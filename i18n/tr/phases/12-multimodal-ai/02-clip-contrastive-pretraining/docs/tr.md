@@ -35,10 +35,10 @@ CLIP'in iki kulesi var:
 
 İki kule de çıkışlarını birim uzunluğuna normalleştirir.`cos(f(x), g(y)) = f(x)^T g(y)`Her ikisi de birim normudur.
 
-N (resim, başlık) çiftleri bir parti için benzerlik matrisi oluşturun `S`şekli ile`(N, N)`- ...
+Bir parti için .$N$(resim, başlık) çiftler, benzerlik matrisi oluşturun `S`şekli ile`(N, N)`- ...
 
-```
-S[i, j] = cos(f(x_i), g(y_j)) / tau
+```math
+S[i, j] = \cos(f(x_i), g(y_j)) / \tau
 ```
 
 nerede`tau`öğrenilen bir sıcaklık (CLIP 0.07 olarak initializes; log- uzayda öğrenilen).
@@ -57,7 +57,7 @@ Bu InfoNCE. CE'deki yumuşak maksimum, her resmin batch'taki diğer tüm başlı
 
 ### Temperatür
 
-`tau`Bu nedenle, bu testler, bir diğer testin en yüksek seviyesinde, bir diğer testin en yüksek seviyesinde, bir diğer testin en yüksek seviyesinde, bir diğer testin en yüksek seviyesinde, bir diğer testin en yüksek seviyesinde, bir diğer testin en yüksek seviyesinde, bir diğer testin en yüksek seviyesinde, bir diğer testin en yüksek seviyesinde, bir diğer testin en yüksek seviyesinde, bir diğer testin en yüksek seviyesinde, bir diğer testin en yüksek seviyesinde, bir diğer testin en yüksek seviyesinde, bir diğer testin en yüksek seviyesinde, bir diğer testin en yüksek seviyesinde, bir diğer testin en yüksek seviyesinde, bir diğer testin en yüksek seviyesinde, bir diğer testin en yüksek seviyesinde, bir diğer seviyesinde, bir diğer seviyesinde, bir diğer seviyesinde, bir diğer seviye olarak, bir diğer seviye olarak, bir diğer seviye olarak, bir diğer seviye olarak, bir diğer seviye olarak, bir diğer seviye olarak, bir diğer seviye olarak, bir diğer seviye olarak, bir diğer seviye olarak, bir diğer seviye olarak, diğer seviye olarak, diğer seviye olarak, diğer seviye olarak, diğer seviye olarak, diğer seviye olarak, diğer seviye olarak, diğer seviye olarak, diğer seviye olarak, diğer seviye olarak, diğer seviye olarak, diğer seviye olarak, diğer seviye olarak, diğer seviye olarak, diğer seviye olarak, diğer seviye olarak, diğer seviye olarak, diğer seviye olarak, diğer seviyeye olarak, diğer seviyeyeyeyeyeyeyeyeyeyeyeyeyeyeye, diğer seviyeyeyeyeyeyeyeyeyeye, diğer seviyeyeyeyeyeyeyeyeyeyeyeyeyeyeyeyeyeyeyeyeyeyeyeyeyeyeyeyeyeyeyeyeyeyeyeyeyeyeyeyeyeyeyeyeyeyeyeyeyeyeyeyeyeyeyeyeyeyeyeyeyeyeyeyeyeyeyeyeyeyeyeyeyeyeyeyeyeyeyeyeyeyeyeyeyeyeyeyeyeyeyeyeyeyeyeyeyeyeyeyeyeyeyeyeyeyeyeyeyeyeyeyeyeyeyeyeyeyeyeyeyeyeyeyeyeyeyeyeyeyeye
+`tau`yumuşaklık maksimum keskinliğini kontrol eder.$\tau$→ keskin dağılım, sert negatif madencilik etkisi.$\tau$→ yumuşak, tüm örnekler katkıda bulunur. CLIP öğrenir $\log(1/\tau)$SigLIP 2 başlangıçta olanları düzeltir.$\tau$Ve bunun yerine öğrenilmiş bir önyargıyı kullanıyor.
 
 ### Sigmoid neden daha iyi ölçekler (SigLIP)
 
@@ -65,8 +65,8 @@ Softmax bütün benzerlik matrisini senkronize ederek kullanır. dağıtılmış
 
 SigLIP softmax ' i elementli sigmoid ile değiştirir: her çift için `(i, j)`, kaybı "bu eşleşen çift mi?" ikili sınıf sınıflandırmasıdır.
 
-```
-L = -1/N sum over (i, j) [ y_ij log sigmoid(S[i,j]) + (1-y_ij) log sigmoid(-S[i,j]) ]
+```math
+L = -\frac{1}{N} \sum_{(i, j)} \Big[ y_{ij} \log \mathop{\mathrm{sigmoid}}(S[i,j]) + (1-y_{ij}) \log \mathop{\mathrm{sigmoid}}(-S[i,j]) \Big]
 ```
 
 `y_ij = 1`Eğer`i == j`Her GPU'nun yerel blok ve toplamlarını hesaplaması gerekir. SigLIP 2 32k-512k'lık bir seri olarak ucuz bir şekilde ölçebilir. CLIP'in nispeten daha fazla iletişim gerekecektir.
@@ -132,7 +132,7 @@ Bu ders bize çok yararlı .`outputs/skill-clip-zero-shot.md`. Bir görüntü k�
 
 3. Kediler ve köpekler için sıfır atış sınıflandırıcısı oluşturun.`a photo of a {class}`ve `a picture of a {class}`Test görüntülerinin 100'ü üzerinde doğruluğu ölçün. Şablonların ansamblının tek bir çarpması var mı?
 
-4. 512-GPU çalıştırma için 32k partide softmax InfoNCE vs sigmoid iletişim maliyetini hesaplayın. Hangi ölçekler O(N), hangi O(N ^ 2) olarak? SigLIP Bölümü 4.
+4. 512-GPU çalıştırma için softmax InfoNCE vs sigmoid iletişim maliyetini 32k partide çift olarak hesaplayın.$O(N)$, ki bu $O(N^2)$Siglip Bölüm 4'ü alın.
 
 5. OpenCLIP ölçekleme yasaları kağıdını okuyun (arXiv:2212.07143, Cherti et al.). Verilerin ölçeklenmesi için sonuçlarını rakamlardan üretin: sabit model boyutunda, ImageNet sıfır çekim doğruluğu ile eğitim verileri boyutu arasındaki log-lineer ilişki nedir?
 

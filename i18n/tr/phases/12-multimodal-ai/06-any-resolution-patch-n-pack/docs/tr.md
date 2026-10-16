@@ -63,7 +63,7 @@ Qwen2-VL, Multimodal Rotary Position Embedding'i tanıttı. NaViT'in kıramlı p
 
 M-RoPE, yeniden eğitim almadan yerel dinamik çözünürlük gönderir. Herhangi bir HxW görüntüsünü beslediğinizde, yama ekleyici H/14 x W/14 jetonları üretir, her jeton (t=0, r=sır, c=col) konumunu alır, RoPE dikkatini doğru frekanslarla döndürür, yapılır. Qwen2.5-VL ve Qwen3-VL bunu sürdürür. InternVL3'in V2PE'si değişken kodlama ile aynı fikirdir.
 
-AnyRes'den farklı olarak, M-RoPE, doğuşsal çözünürlükte O(H x W / P^2) tokensidir  çarpıcı bir plitel overhead yoktur. NaViT'den farklı olarak, hala ileriye bir görüntü bekler.
+AnyRes' den farklı olarak, M-RoPE $O(H \times W / P^2)$Bu, NaViT'in diğer tüm teknolojilerden farklı olarak, önüme bir görüntü bekliyor.
 
 ### NaFlex (SigLIP 2)
 

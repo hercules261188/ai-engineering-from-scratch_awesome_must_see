@@ -41,10 +41,10 @@ Ayrılma önemlidir. İyi bir mantık yürütmek için düşünen büyük olmal�
 
 İkisini de paralel olarak çalıştırmak:
 
-1. Düşünceci, metin simgesi t_i gönderir.
-2. Konuşmacı t_i (streaming yoluyla) tüketir ve konuşma işaretlerini s_i, s_{i+1}, ..., s_{i+k} gönderir.
+1. Düşünceci metin işaretini gönderir .$t_i$- Evet .
+2. Konuşmacı tüketir .$t_i$(streaming yoluyla) ve konuşma simgelerini gönderir $s_i, s_{i+1}, \ldots, s_{i+k}$- Evet .
 3. Konuşma dekodörü, konuşma işaretlerini geldiğinde tüketir ve ses örneklerini yayar.
-4. Düşünceci'nin metin simgesinde olduğu zaman, Konuşmacı t_0..t_{i+2} için ses akışı yapmış.
+4. Düşünceci mesaj atışına varırken .$t_{i+3}$, Talker zaten ses yayını yaptı .$t_0, \ldots, t_{i+2}$- Evet .
 
 ### TMRoPE  Zaman doğrultusunda çok modal pozisyonlar
 
