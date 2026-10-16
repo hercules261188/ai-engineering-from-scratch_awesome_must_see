@@ -170,7 +170,7 @@ Salvo como`outputs/skill-vad-tuner.md`Seleccione el modelo VAD, el umbral, la re
 ## Leer más
 
 - [Silero VAD](https://github.com/snakers4/silero-vad) el VAD de referencia abierto.
-- [Picovoice Cobra VAD](https://picovoice.ai/products/cobra/) líder en precisión comercial.
+- [Picovoice Cobra VAD](https://picovoice.ai/products/voice/voice-activity-detection/) líder en precisión comercial.
 - [Kyutai — Unmute + flush trick](https://kyutai.org/stt) el truco de ingeniería sub-200 ms.
 - [LiveKit — turn detection](https://docs.livekit.io/agents/logic/turns/) Endpointing semántico en la producción.
 - [WebRTC VAD](https://webrtc.googlesource.com/src/) el nivel de base heredado.

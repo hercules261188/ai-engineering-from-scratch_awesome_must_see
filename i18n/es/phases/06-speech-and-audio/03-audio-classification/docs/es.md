@@ -119,7 +119,7 @@ class AudioCNN(nn.Module):
 
 Parámetros 3M. Trenes en ~10 min en ESC-50 con una sola RTX 4090. 80% + precisión.
 
-### Paso 5: los 2026 por defecto  de ajuste fino BEATs
+### Paso 5: ajustar a la perfección un transformador de audio pre-entrenado (EST mostrado)
 
 ```python
 from transformers import ASTFeatureExtractor, ASTForAudioClassification
@@ -135,7 +135,7 @@ inputs = ext(audio, sampling_rate=16000, return_tensors="pt")
 logits = model(**inputs).logits
 ```
 
-Para los BEATs, utilizar `microsoft/BEATs-base`por medio de la`beats`la biblioteca; la API de los transformadores es de la misma forma.
+El ejemplo de ajustes finos AST desde el Hub. BEATs, el 2026 predeterminado, no está en el Hub de Cara Encuadrada: descarga un punto de control desde el [BEATs release in microsoft/unilm](https://github.com/microsoft/unilm/tree/master/beats)y cargarlo con ese repo.`BEATs`y `BEATsConfig`las clases; el bucle de ajuste fino mantiene la misma forma.
 
 ## Usalo
 

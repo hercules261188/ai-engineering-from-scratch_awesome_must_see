@@ -23,7 +23,7 @@ Los espectrogramas mel empujan más lejos. Los humanos perciben el tono logaritm
 
 **Log-magnitude.**Las magnitudes primas abarcan entre 5 y 6 órdenes de magnitud.`log(|X| + 1e-6)`o `20 * log10(|X|)`Cada línea de producción utiliza la magnitud de registro, no la magnitud en bruto.
 
-**Mel scale.**Frecuencia `f`en mapas Hz a mel `m`por `m = 2595 * log10(1 + f / 700)`. El mapeo es aproximadamente lineal por debajo de 1 kHz y aproximadamente logaritmico por encima. 80 melbins que cubren 08 kHz es la entrada estándar de ASR.
+**Mel scale.**Frecuencia `f`en mapas Hz a mel `m`por $m = 2595 \cdot \log_{10}(1 + f / 700)$. El mapeo es aproximadamente lineal por debajo de 1 kHz y aproximadamente logaritmico por encima. 80 melbins que cubren 08 kHz es la entrada estándar de ASR.
 
 **Mel filterbank.**Un conjunto de filtros triangulares espaciados igualmente en la escala mel. Cada filtro es una suma ponderada de contenedores FFT adyacentes. Multiplicando la magnitud STFT por la matriz de filtro banco se da el espectrograma mel en un matmul.
 
@@ -170,5 +170,5 @@ Salvo como`outputs/skill-feature-extractor.md`La habilidad selecciona el tipo de
 - [Davis, Mermelstein (1980). Comparison of parametric representations for monosyllabic word recognition](https://ieeexplore.ieee.org/document/1163420) el documento de la MFCC.
 - [Stevens, Volkmann, Newman (1937). A Scale for the Measurement of the Psychological Magnitude Pitch](https://pubs.aip.org/asa/jasa/article-abstract/8/3/185/735757/) la escala mel original.
 - [OpenAI — Whisper source, log_mel_spectrogram](https://github.com/openai/whisper/blob/main/whisper/audio.py) leer la aplicación de referencia.
-- [librosa feature extraction docs](https://librosa.org/doc/main/feature.html) referencia para `mfcc`¿ Qué ?`melspectrogram`, y salta / ventana.
+- [librosa feature extraction docs](https://librosa.org/doc/latest/api/feature.html) referencia para `mfcc`¿ Qué ?`melspectrogram`, y salta / ventana.
 - [NVIDIA NeMo — audio preprocessing](https://docs.nvidia.com/deeplearning/nemo/user-guide/docs/en/main/asr/asr_all.html#featurizers) tubería a escala de producción para los modelos Parakeet + Canary.

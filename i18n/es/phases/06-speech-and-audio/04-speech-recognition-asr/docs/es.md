@@ -37,7 +37,7 @@ Ventajas: la más alta calidad en ASR fuera de línea, fácil de entrenar con he
 
 ### WER: el número uno
 
-**Word Error Rate**¿ Qué es esto ?`(S + D + I) / N`, donde S=substituciones, D=eliminaciones, I=inserciones, N=conto de palabras de referencia.
+**Word Error Rate**¿ Qué es esto ?$(S + D + I) / N$, donde $S$=substituciones, $D$=Delecciones, $I$=inserciones, $N$=conto de palabras de referencia. Mejora la distancia de edición de Levenshtein a nivel de palabras. Más bajo es mejor. Un WER superior al 20% es generalmente inutilizable; por debajo del 5% es la paridad humana para el habla de lectura.
 
 | Model | LibriSpeech test-clean | LibriSpeech test-other | Size |
 |-------|------------------------|------------------------|------|
