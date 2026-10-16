@@ -13,6 +13,7 @@
 - Routez chaque signal vers le contexte, l'évaluation, la politique, le temps d'exécution ou le backlog.
 - Faites priorité à la récurrence par gravité et fréquence.
 - Donnez à chaque contrôle une condition de retraite.
+- Communiquer une décision de livraison avec des preuves, des compromis et un propriétaire responsable.
 
 ## Les commentaires sont des infrastructures
 
@@ -95,6 +96,84 @@ python3 -m unittest discover code/tests -v
 
 Ajoutez un signal de temps d'arrêt de l'exécution et confirmez qu'il est en route vers l'exécution plutôt que vers le backlog général.
 
+## Laboratoire de pratique: prendre une décision après un revers
+
+Choisissez un flux de travail dans le projet de votre carrière.[career delivery template](https://github.com/rohitg00/ai-engineering-from-scratch/blob/main/phases/14-agent-engineering/54-build-the-feedback-ratchet/outputs/career-delivery-evidence.md)- Je suis désolé .
+
+Le laboratoire Python génère des actions de backlog d'exemple. Il n'observe pas les utilisateurs, ne mesure pas une intervention ou ne prouve pas la préparation à la carrière.
+
+### 1. Découvrez ce qui s'est passé
+
+Enregistrez l'utilisateur, la tâche, le flux de travail actuel et le résultat que vous souhaitez améliorer. Lier une observation consentée, un enregistrement de support édité ou une trace de tâche reproduisable. Séparer ce que vous avez observé de ce que quelqu'un a rapporté et ce que vous avez déduit.
+
+Trouvez un échec: une hypothèse ratée, un résultat inutilisable, un coût inattendu ou un délai de livraison.
+
+Si vous ne pouvez pas travailler avec les utilisateurs, exécutez une simulation clairement étiquetée avec un scénario spécifié. Gardez les observations simulées séparées des preuves des utilisateurs réels. N'inventez pas d'entretiens, d'approbations, d'adoption ou d'impact sur l'entreprise.
+
+### 2. Fais des progrès dans ton autorité
+
+Faites une liste des inconnus et choisissez l'action la moins chère et réversible qui pourrait résoudre la plus conséquente.
+
+Par exemple, vous pouvez préparer une reproduction hors ligne édité en attendant l'autorisation d'utiliser les données des clients. Prendre l'initiative signifie faire avancer le travail autorisé et rendre la décision bloquée claire. Cela n'élargit pas vos droits d'accès ou d'approbation.
+
+### 3. Comparer les options et informer le décideur
+
+Écrivez un bref résumé de la décision pour quelqu'un qui n'a pas besoin de détails sur la mise en œuvre.
+
+- le problème de l'utilisateur et les éléments de preuve qui ont modifié le plan;
+- au moins deux options, y compris une option manuelle moins chère ou sans construction, si cela est crédible;
+- la qualité, la conception des interactions, l'effort, les coûts d'exploitation et les compromis de risque;
+- votre recommandation, l'incertitude qui subsiste et la décision requise;
+- le titulaire de la décision, les parties prenantes concernées et la date à laquelle la décision est requise.
+
+Demandez à un collègue de représenter un acteur concerné et de défier un compromis. Enregistrez l'objection et la façon dont elle change, ou ne change pas, votre recommandation. Étiquettez les commentaires de jeu de rôle comme simulés; il ne peut pas représenter l'accord réel d'un acteur concerné.
+
+### 4. Une expérience limitée
+
+Choisissez un prototype, un projet pilote ou un projet de production en fonction de la question à laquelle vous devez répondre. Définissez le public, les données, l'autorité, la durée, le renversement et les conditions pour continuer, changer ou arrêter avant de recueillir le résultat.
+
+Passez à travers l'interaction depuis le point de départ de l'utilisateur jusqu'à une tâche terminée. Inclure une sortie incorrecte ou un cas de données manquantes. Observez si l'utilisateur peut remarquer l'échec, le corriger et récupérer sans votre aide cachée.
+
+Comptez le temps d'examen et de correction par l'homme dans le cadre du flux de travail.
+
+### 5. Comparer les résultats avec l'économie
+
+Enregistrer une ligne de base et un suivi en utilisant la même définition métrique, la population de tâches, la méthode de collecte et des fenêtres d'observation comparables.
+
+Incluez un résultat utilisateur, une barrière de sécurité ou de qualité et un effort total d'examen humain. Enregistrez le résultat même lorsqu'il manque l'objectif.
+
+Évaluer le coût par tâche accomplie avec succès en utilisant des appels de modèle, des essais répétés, des services de soutien et une évaluation humaine. Indiquer l'hypothèse du taux de travail et séparer l'utilisation mesurée des estimations. Comparer ce coût avec l'alternative manuelle ou l'hypothèse de valeur derrière le projet.
+
+Utilisez les données existantes [FinOps for LLMs lesson](https://aiengineeringfromscratch.com/lesson?path=phases/17-infrastructure-and-production/27-finops-llms)La modification du modèle n'est qu'une réponse possible; réduire le flux de travail ou conserver une étape manuelle peut être la meilleure décision de produit.
+
+### 6. Fermez le boucle
+
+Utilisez les critères prédéclarés pour recommander de continuer, de changer ou de cesser. Si les preuves sont inconclusives, nommez l'observation manquante et le prochain test limité.
+
+Choisissez une amélioration du processus de livraison lui-même: un cadre de tâches plus clair, une mise en œuvre plus précoce de l'utilisateur, une meilleure liste de contrôle des examens, une remise plus petite d'agents ou un cas d'évaluation plus rigoureux.
+
+Lors de l'examen, décidez de conserver, de réviser ou de retirer cette amélioration. Enregistrez les preuves du choix.
+
+## Artéfacts expédiés
+
+- C' est vrai .[career-delivery-evidence.md](https://github.com/rohitg00/ai-engineering-from-scratch/blob/main/phases/14-agent-engineering/54-build-the-feedback-ratchet/outputs/career-delivery-evidence.md)En outre, il est important de noter que les données de base de votre projet sont disponibles dans votre propre projet et de les compléter avec des liens de preuve.
+
+## Vérifiez
+
+Utilisez cette rubrique d'acceptation manuelle avec un homologue.**met**- Je suis là .**needs work**ou **not observed**Un champ rempli ne prouve pas que le jugement était fondé.
+
+| Check | Evidence that meets it |
+|---|---|
+| Workflow grounded | A traceable observation supports the problem; reported claims, inference, and simulation are labeled. |
+| Authority respected | Reversible next work is clear, and any restricted action waits for its actual decision owner. |
+| Tradeoffs communicated | Credible alternatives, a stakeholder objection, a recommendation, and an explicit decision request are recorded. |
+| Interaction tested | The walkthrough covers success, failure, recovery, and human review effort. |
+| Outcome compared | Baseline and follow-up definitions align; samples, guardrails, costs, and comparison limits are visible. |
+| Setback owned | The evidence changes a continue/change/stop decision and an accountable next action. |
+| Process improved | One workflow improvement has an owner, review date, and an evidence-based keep/revise/retire decision. |
+
+Le comportement des utilisateurs réels non observé reste un écart même après chaque étape simulée.
+
 ## Exercices
 
 1. Transformer un incident et une plainte d'utilisateur en actions de ratchet.
@@ -111,4 +190,4 @@ Ajoutez un signal de temps d'arrêt de l'exécution et confirmez qu'il est en ro
 
 ## Ce que vous gardez
 
-Je le garde .`outputs/feedback-backlog.json`. Il s'agit de l'artefact de clôture du parcours de jugement et de livraison du produit et de l'entrée dans le cadre de résultats suivant.
+Je le garde .`outputs/feedback-backlog.json`Les résultats de la recherche et de la recherche sont les suivants:

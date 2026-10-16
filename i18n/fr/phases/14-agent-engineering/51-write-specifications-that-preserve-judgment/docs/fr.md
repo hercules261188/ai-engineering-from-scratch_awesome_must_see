@@ -90,7 +90,7 @@ Mettre la décision de production-écriture de verrouillé à délégué. Expliq
 ## Pour en savoir plus
 
 - [Nuseibeh and Easterbrook, Requirements Engineering: A Roadmap](https://www.cs.toronto.edu/~sme/papers/2000/ICSE2000.pdf), pour la relation entre les objectifs, les spécifications précises, la validation, l'accord et l'évolution.
-- [Zave and Jackson, Four Dark Corners of Requirements Engineering](https://doi.org/10.1145/267895.267896), pour séparer les hypothèses, les exigences et les spécifications environnementales.
+- [Zave and Jackson, Four Dark Corners of Requirements Engineering](https://doi.org/10.1145/237432.237434), pour séparer les hypothèses, les exigences et les spécifications environnementales.
 - [Gotel and Finkelstein, An Analysis of the Requirements Traceability Problem](https://doi.org/10.1109/ICRE.1994.292398), pour préserver la raison pour laquelle une exigence existe et d'où elle vient.
 
 ## Ce que vous gardez

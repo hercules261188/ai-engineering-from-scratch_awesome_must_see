@@ -13,6 +13,7 @@
 - Pin les schémas, scripts et modèles afin qu'un nouveau repo ait une base connue.
 - Ajoutez un script d'installation unique qui dépose le pack idempotemment.
 - Décidez ce qui reste dans le sac et ce qui reste dehors, en défendant la coupe pour chacun.
+- Démontre un changement de référentiel assisté par un agent avec des preuves qu'un examinateur peut reproduire.
 
 ## Le problème
 
@@ -133,6 +134,78 @@ Le paquet est la recette, chaque installation est une portion.
 4. Ajouter un `lint_pack.py`qui échoue lorsque le colis dérive de `VERSION`- Envoyez-le à l'IC pour le repos du groupe.
 5. L'auteur du manuel de migration d'un bureau roulé à la main à ce paquet.
 
+## Pratique de carrière: prouver un changement de référentiel
+
+La démo d'emballage prouve que l'assembleur exécute et produit des fichiers. Il ne prouve pas que votre agent peut accomplir une nouvelle tâche, que les contrôles générés prouvent cette tâche, ou qu'un système déployé fonctionne. Gardez ces revendications séparées.
+
+Choisissez une petite tâche réelle dans un référentiel que vous possédez ou que vous avez l'autorisation de modifier. Utilisez un agent de codage auquel vous avez déjà accès. Une correction de bug, une fonctionnalité limitée ou une amélioration opérationnelle suffisent; l'installation de plusieurs agents ne fait pas partie de l'exercice.
+
+Prévoir une séance de travail séparée au-delà du laboratoire d'emballage.`learning-artifacts/`conserver le modèle enregistré et l'emballer comme matériel de référence.
+
+### 1. Encadrez la tâche et choisissez l'autonomie
+
+Utilisez le cadre de tâches de la leçon 43 et le plan de preuve de la leçon 44. Enregistrer la révision initiale, l'objectif observable, les non-objectifs, les chemins autorisés et les preuves d'acceptation. Identifiez l'utilisateur ou l'opérateur réel qui a besoin du comportement.
+
+Choisissez un mode de travail: étapes guidées, mise en œuvre avec un point de contrôle ou une conduite autonome limitée. Expliquez pourquoi l'incertitude, les conséquences et la réversibilité le justifient.
+
+Définissez un budget de temps de paroi et un jeton ou une limite de coûts si l'agent en expose un. Enregistrez honnêtement les mesures non disponibles. Définissez une condition d'arrêt pour une défaillance répétée, de nouveaux permis, l'épuisement du budget ou une décision de contrat non résolue; nommez qui peut la résoudre.
+
+### 2. Préparez le plus petit environnement utile
+
+Retrouvez les instructions de mise en œuvre, d'appel, de test et locales pertinentes. Enregistrez pourquoi chaque source appartient au contexte et quelles preuves actuelles pourraient remplacer une note obsolète. Ne chargez pas l'ensemble du référentiel par défaut.
+
+Faites un choix explicite pour chaque extension pertinente: une compétence fournit une procédure répétable; un outil MCP fournit un accès; un crochet exécute un contrôle déterministe; un plugin emballe les capacités. Gardez une extension seulement lorsque la tâche en a besoin, avec le moins d'autorisations qui la permettent de fonctionner.
+
+Enregistrer le contexte ou le coût de maintenance d'une addition proposée que vous rejetez. Revoir une mémoire ou une instruction obsolète, puis retirer ou la remplacer dans votre configuration appartenant à l'apprenant lorsque les preuves soutiennent cette décision. Refaire le contrôle affecté pour confirmer que la suppression n'a pas perdu une contrainte nécessaire.
+
+### 3. Capture de la ligne de base et mise en œuvre
+
+Avant de modifier, effectuez la vérification existante la plus proche et montrez l'état actuel du comportement demandé. Conservez la commande, la révision, le résultat et l'emplacement des preuves. Une fonctionnalité qui n'existe pas encore a toujours une ligne de base: enregistrer la réponse observée ou l'opération non prise en charge.
+
+Laissez l'agent mettre en œuvre l'intérieur du contrat. Gardez un journal d'intervention avec la raison de chaque correction, changement de permis ou révision du plan. La délégation est facultative; si nécessaire, appliquez le contrat de propriété et d'intégration de la leçon 45 avant d'ajouter un autre travailleur.
+
+### 4. Défiez les preuves
+
+Choisissez une preuve qui observe la surface modifiée. Pour une interface utilisateur, reconstruisez et inspectez le parcours servi à des largeurs pertinentes. Pour une API, inspectez la demande et la réponse sérialisée. Pour un CLI, exécutez la commande intégrée et vérifiez son code de sortie et sa sortie. Sélectionnez les contrôles dont vous avez besoin et expliquez leurs limites.
+
+Écrivez un résultat attendu du contrat de tâche indépendamment de la mise en œuvre de l'agent. Dans une copie jetable, entrez un résultat incorrect spécifique, comme accepter une valeur invalide ou laisser tomber un champ de réponse requis.
+
+Si elle reste verte, renforcez l'affirmation ou l'observation avant de la faire confiance. Retournez la bonne mise en œuvre et redémarrez avec succès. Gardez les deux reçus. Une erreur de syntaxe ou une configuration de test cassée ne compte pas comme détection de la régression.
+
+Examiner la différence finale, y compris les tests modifiés, par rapport à l'objectif initial et aux chemins autorisés. Demandez à un analyste ou à une session séparée de contester la preuve la plus faible sans modifier la mise en œuvre. Vous possédez toujours le jugement final; l'accord d'un autre agent n'est pas une preuve d'exécution.
+
+### 5. Opération et récupération des répétitions
+
+Exécutez l'artefact modifié dans un environnement local jetable ou de mise en scène.`local`- Je suis là .`staging`ou `live`Une répétition locale appuie une revendication locale; un déploiement de production n'est pas nécessaire pour cet exercice.
+
+Choisissez un signal d'échec lié à la tâche, un seuil, une fenêtre d'observation et un propriétaire. Expliquez la réponse lorsque ce seuil est franchi.
+
+Reprenez le retour à un artefact connu et vérifiez que le comportement précédent est restauré. Prenez en compte les données persistantes lorsque cela est applicable; le remplacement d'un binaire seul ne peut pas inverser un changement de données. Enregistrez toute étape de récupération que vous n'avez pas pu vérifier.
+
+### 6. Améliorez la prochaine course et remettez-la
+
+Comparer le résultat avec le résultat de base, y compris le temps écoulé, les données d'utilisation disponibles et les interventions humaines.
+
+Promuer une correction observée dans un test, une limite d'autorisation plus petite, une automatisation ou un exemple plus clair en utilisant la leçon 46. Retournez le contrôle affecté. Retirez les mutations temporaires et laissez la branche finale, les fichiers modifiés, ouvrez les risques et la prochaine action explicite pour la prochaine session.
+
+### Rubrique de révision manuelle
+
+Demandez à l'examinateur d'inspecter les dossiers de preuve et de reproduire au moins le contrôle d'acceptation le plus faible.`demonstrated`- Je suis là .`needs revision`ou `unverified`Les champs remplis et les scripts d'emballage ne remplacent pas ces observations.
+
+| Dimension | Evidence the reviewer should challenge |
+|---|---|
+| Task and autonomy | Starting behavior, bounded goal, justified permissions, budget, and a usable stop rule |
+| Context and environment | Relevant sources, justified tool access, and a rechecked retirement decision |
+| Verification | Actual before/after behavior and a deliberate incorrect result that the same check rejects |
+| Review and operation | Inspected diff, independent challenge, labeled runtime observation, and rehearsed recovery |
+| Iteration and handoff | One verified improvement, honest limits, clean final state, and a reproducible next action |
+
+Déterminer `needs revision`Les résultats obtenus avant de prétendre que la tâche est terminée.`unverified`Le portefeuille démontre votre jugement technique sur une tâche limitée; il ne s'agit pas d'une garantie d'embauche ou de déploiement.
+
+## Artéfacts expédiés
+
+Gardez l' emballage réutilisable et votre copie complète de [career-agent-evidence.md](https://github.com/rohitg00/ai-engineering-from-scratch/blob/main/phases/14-agent-engineering/42-agent-workbench-capstone/outputs/career-agent-evidence.md). Le modèle relie le cadre de tâche, le plan d'exécution, les reçus de temps d'exécution, l'examen, la répétition de récupération et la présentation dans une étude de cas révisable.
+
 ## Les termes clés
 
 | Term | What people say | What it actually means |
@@ -150,7 +223,6 @@ Le paquet est la recette, chaque installation est une portion.
 - [Nx Blog, Teach Your AI Agent How to Work in a Monorepo](https://nx.dev/blog/nx-ai-agent-skills) Générateur à source unique sur six outils
 - [agents.md — the open spec](https://agents.md/) ce que doit mettre en œuvre le routeur de votre paquet
 - [HKUDS/OpenHarness](https://github.com/HKUDS/OpenHarness) mise en œuvre de référence d'un équivalent de conditionnement
-- [andrewgarst/agentic_harness](https://github.com/andrewgarst/agentic_harness) Références réutilisées avec suite eval
 - [Augment Code, A good AGENTS.md is a model upgrade](https://www.augmentcode.com/blog/how-to-write-good-agents-dot-md-files) les documents de package
 - [Anthropic, Effective harnesses for long-running agents](https://www.anthropic.com/engineering/effective-harnesses-for-long-running-agents)
 - [Anthropic, Harness design for long-running application development](https://www.anthropic.com/engineering/harness-design-long-running-apps)

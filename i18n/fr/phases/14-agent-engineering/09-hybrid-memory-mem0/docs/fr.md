@@ -32,7 +32,7 @@ Mem0 (arXiv:2504.19413, avril 2025) sur `add(text, user_id, metadata)`- Le numé
 
 1. Extraire des faits candidats du texte (étape axée sur le LLM).
 2. Écrivez chaque fait dans le vecteur de stockage (embedding) pour la recherche sémantique.
-3. Écrivez chaque fait dans le magasin KV sur lequel vous avez mis la touche (user_id, fact_type, entité) pour la recherche O(1).
+3. Écrire chaque fait dans le magasin KV à clé (user_id, fact_type, entité) pour $O(1)$Je suis en train de chercher.
 4. Écrivez chaque fait dans le graph store (Mem0g) comme des bords taillés pour les requêtes de relation.
 
 Je suis en train de`search(query, user_id)`- Le numéro de la liste:

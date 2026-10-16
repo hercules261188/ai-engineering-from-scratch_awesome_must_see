@@ -214,7 +214,6 @@ Livres, documents et mises en œuvre de référence:
 - [preprints.org, Harness Engineering for Language Agents (March 2026)](https://www.preprints.org/manuscript/202603.1756) Cadrage académique en tant que contrôle / agence / temps de fonctionnement
 - [walkinglabs/awesome-harness-engineering](https://github.com/walkinglabs/awesome-harness-engineering) Liste de lecture organisée en fonction du contexte, de l'évaluation, de l'observabilité, de l'orchestration
 - [ai-boost/awesome-harness-engineering](https://github.com/ai-boost/awesome-harness-engineering) liste de sélection alternative (outils, évaluations, mémoire, MCP, autorisations)
-- [andrewgarst/agentic_harness](https://github.com/andrewgarst/agentic_harness) Implémentation de référence prête à la production avec la mémoire et la suite d'évaluation prises en charge par Redis
 - [HKUDS/OpenHarness](https://github.com/HKUDS/OpenHarness) harnais d'agent ouvert avec agent personnel intégré
 
 Les thèmes de Hacker News valent la peine d'être lus pour les désaccords, pas pour le consensus:

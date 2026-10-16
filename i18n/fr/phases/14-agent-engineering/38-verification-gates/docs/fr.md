@@ -140,7 +140,6 @@ La porte est le bord décisif du flux de la table de travail.
 - [Type-Checked Compliance: Deterministic Guardrails (arXiv 2604.01483)](https://arxiv.org/pdf/2604.01483) Lean 4 comme limite supérieure de la délimitation déterministe
 - [logi-cmd/agent-guardrails — merge gate spec](https://github.com/logi-cmd/agent-guardrails) portée + portes de test de mutation
 - [Guardrails AI x MLflow](https://guardrailsai.com/blog/guardrails-mlflow) validateurs déterministes en tant que scoreurs d'IC
-- [Akira, Real-Time Guardrails for Agentic Systems](https://www.akira.ai/blog/real-time-guardrails-agentic-systems) Ports de pré/post-outil
 - Phase 14 · 27  Défense à injection rapide (parue de la porte)
 - Phase 14 · 36  le contrat de portée que cette porte impose
 - Phase 14 · 37  le journal de rétroaction ce portail marque
