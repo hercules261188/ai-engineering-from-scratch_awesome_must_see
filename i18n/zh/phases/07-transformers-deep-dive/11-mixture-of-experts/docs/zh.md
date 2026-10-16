@@ -11,7 +11,7 @@
 
 密集变压器的FLOP在推断时等于其参数数数量 (前进传输的2倍). 扩展密集模型,每个代币都支付了全部账单.到2024年,边界正在撞击计算墙:要更聪明,你需要每代币的FLOP数量呈指数.
 
-专家组合打破了这个联系.`E`独立专家 + 选择路由器`k`标记的专家.`E × FFN_size`每代币的活跃参数 = `k × FFN_size`典型的2026配置:`E=256`现在`k=8`存储量量`E`计算规模`k`现在,我们要去.
+专家组合打破了这个联系.$E$独立专家 + 选择路由器$k$标记的专家.$E \times \text{FFN size}$每代币的活跃参数 = $k \times \text{FFN size}$典型的2026配置:$E=256$现在$k=8$存储量量$E$计算规模$k$现在,我们要去.
 
 2026年边界几乎完全是MoE:DeepSeek-V3 (671B总量 / 37B活跃),Mixtral 8×22B,Qwen2.5-MoE,Llama 4,Kimi K2,gpt-oss.在人工分析的独立领先榜单上,前10个开源模型都是MoE.
 
@@ -46,7 +46,7 @@ h = h + sum_{e in top_k}(
 如果路由器通过专家3将90%的代币,其他专家就会饿死.
 
 1. **Auxiliary load-balancing loss**根据专家使用的差异,加一个惩罚. 工作,但增加了一个超参数和第二个梯度信号.
-2. **Expert capacity + token dropping**每个专家最多处理`C × N/E`标记,过度标记跳过层. 损害质量.
+2. **Expert capacity + token dropping**每个专家最多处理$C \times N/E$标记,过度标记跳过层. 损害质量.
 3. **Auxiliary-loss-free balancing**通过"深度搜索" (DeepSeek-V3) 增加一个学习的专家偏见,改变路由器的顶级k选择.偏见在训练损失之外更新.没有罚款在主要目标.2024年大解锁.
 
 对于每位专家,在每一步培训后,检查其使用是否超越目标或低于目标.`±γ`选择用途`scores + bias`专家使用的概率是原料`scores`没有变化. 脱离路由与表达.
@@ -59,7 +59,7 @@ h = h + sum_{e in top_k}(
 
 经典MoE (GShard,Switch):每个专家的宽度就像一个完整的FFN. `E`只有小的 (864),`k`是小的 (12).
 
-现代细粒度的MoE (DeepSeek-V3,Qwen-MoE):每个专家的尺寸较窄 (1/8FFN). `E`是大 (256+),`k`总参数相同,但组合规模更快. `C(256, 8) = 400 trillion`质量上升,延迟保持平稳.
+现代细粒度的MoE (DeepSeek-V3,Qwen-MoE):每个专家的尺寸较窄 (1/8FFN). $E$是大 (256+),$k$总参数相同,但组合规模更快. $\binom{256}{8} \approx 400$质量上升,延迟保持平稳.
 
 ### 成本概况
 
@@ -159,7 +159,7 @@ model = AutoModelForCausalLM.from_pretrained("mistralai/Mixtral-8x22B-v0.1")
 | Auxiliary-loss-free | "DeepSeek-V3's trick" | Balance via per-expert bias on the router's selection only; no extra gradient. |
 | Shared expert | "Always on" | Extra expert through which every token passes; captures common knowledge. |
 | Expert parallelism | "Shard by expert" | Distribute different experts to different GPUs; route tokens across the network. |
-| Sparsity | "Active params < total params" | The ratio `k × expert_size / (E × expert_size)`; 37/671 ≈ 5.5% for DeepSeek-V3. |
+| Sparsity | "Active params < total params" | The ratio $k \times \text{expert size} / (E \times \text{expert size})$; 37/671 ≈ 5.5% for DeepSeek-V3. |
 
 ## 进一步阅读
 

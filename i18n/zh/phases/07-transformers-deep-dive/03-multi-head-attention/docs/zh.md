@@ -11,7 +11,7 @@
 
 一个自我注意力头计算一个注意力矩阵.那个矩阵捕捉到一种关系,通常是减少任何训练信号的损失.如果你的数据有主体verb协议,共参考,长距离的演讲和语法分断,都在一起,一个头将它们成一个软最大分布,失去了一半的信号.
 
-2017年瓦斯瓦尼论文的修正:并行运行几个注意力函数,每个都具有自己的Q,K,V投影,并连接输出.每个头部都在更小的子空间中运行.`d_model / n_heads`总参数保持相同,表达功率上升.
+2017年瓦斯瓦尼论文的修正:并行运行几个注意力函数,每个都具有自己的Q,K,V投影,并连接输出.每个头部都在更小的子空间中运行.$d_{\text{model}} / n_{\text{heads}}$总参数保持相同,表达功率上升.
 
 单个论点是关于*多少头,以及键和值是否共享投影 (组列查询注意力,多查询注意力,多头潜伏注意力).
 
@@ -19,7 +19,7 @@
 
 ![Multi-head attention splits, attends, concatenates](../assets/multi-head-attention.svg)
 
-**Split.**接下来`X`形状`(N, d_model)`项目到Q,K,V,每个形状`(N, d_model)`改装到`(N, n_heads, d_head)`在哪里`d_head = d_model / n_heads`转移到`(n_heads, N, d_head)`现在,我们要去.
+**Split.**接下来`X`形状`(N, d_model)`项目到Q,K,V,每个形状`(N, d_model)`改装到`(N, n_heads, d_head)`在哪里$d_{\text{head}} = d_{\text{model}} / n_{\text{heads}}$转移到`(n_heads, N, d_head)`现在,我们要去.
 
 **Attend in parallel.**运行一个级别的点产品注意力在每个头脑.`(N, d_head)`头部在嵌入器的不同子空间上运行,并且在注意力计算过程中永远不会说话.
 
@@ -36,7 +36,7 @@
 | Grouped-query (GQA) | N | G (e.g. N/8) | Llama 2 70B, Llama 3+, Qwen 2+, Mistral |
 | Multi-head latent (MLA) | N | compressed to low-rank | DeepSeek-V2, V3 |
 
-由于它削减了KV缓存存储量`N/G`通过将K/V压缩到隐藏空间,然后在计算时间上投影回来,
+由于它削减了KV缓存存储量$N/G$通过将K/V压缩到隐藏空间,然后在计算时间上投影回来,
 
 ```figure
 multihead-split
@@ -129,7 +129,7 @@ out = scaled_dot_product_attention(q, k, v, is_causal=True, enable_gqa=True)
 | Large (~1B) | 2048 | 16 | 128 |
 | Frontier (~70B) | 8192 | 64 | 128 |
 
-`d_head`几乎总是降落在64或128位.这是一个头能"看到"多少的单位.`sqrt(d_head)`您将失去"许多小专家"的福利.
+`d_head`几乎总是降落在64或128位.这是一个头能"看到"多少的单位.$\sqrt{d_{\text{head}}}$您将失去"许多小专家"的福利.
 
 ## 运送它
 
@@ -145,7 +145,7 @@ out = scaled_dot_product_attention(q, k, v, is_causal=True, enable_gqa=True)
 
 | Term | What people say | What it actually means |
 |------|-----------------|-----------------------|
-| Head | "A single attention circuit" | One Q/K/V projection of dimension `d_head = d_model / n_heads` with its own attention matrix. |
+| Head | "A single attention circuit" | One Q/K/V projection of dimension $d_{\text{head}} = d_{\text{model}} / n_{\text{heads}}$ with its own attention matrix. |
 | d_head | "Head dimension" | Per-head hidden width; almost always 64 or 128 in production. |
 | Split / combine | "Reshape tricks" | `(N, d_model) ↔ (n_heads, N, d_head)` reshape+transpose around attention. |
 | W_o | "Output projection" | `(d_model, d_model)` matrix applied after concatenating heads; where heads mix. |

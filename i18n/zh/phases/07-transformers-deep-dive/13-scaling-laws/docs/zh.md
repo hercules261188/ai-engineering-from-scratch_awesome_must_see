@@ -30,22 +30,24 @@
 
 根据"辛奇拉报"的报道,
 
-```
-L(N, D) = A / N^α + B / D^β + E
+```math
+L(N, D) = \frac{A}{N^\alpha} + \frac{B}{D^\beta} + E
 ```
 
-- `N`=参数 (非嵌入式).
-- `D`训练令牌
-- `α ≈ 0.34`现在`β ≈ 0.28`它们的位置是相对的.
-- `E ≈ 1.69`没有任何可能的损失.
-- `A ≈ 406`现在`B ≈ 411`现在,我们要去.
+- $N$=参数 (非嵌入式).
+- $D$训练令牌
+- $\alpha \approx 0.34$现在$\beta \approx 0.28$它们的位置是相对的.
+- $E \approx 1.69$没有任何可能的损失.
+- $A \approx 406$现在$B \approx 411$现在,我们要去.
 
-根据你的规模,两个术语对彼此进行交易.`N`在固定计算 (C = 6ND) 上,解决:
+根据你的规模,两个术语对彼此进行交易.$N$在固定计算 ($C = 6ND$) 并解决:
 
-```
-N_opt ≈ 0.6 × (C/6)^0.5
-D_opt ≈ 0.6 × (C/6)^0.5
-D_opt / N_opt ≈ 20
+```math
+\begin{aligned}
+N_{\text{opt}} &\approx 0.6 \times (C/6)^{0.5} \\
+D_{\text{opt}} &\approx 0.6 \times (C/6)^{0.5} \\
+D_{\text{opt}} / N_{\text{opt}} &\approx 20
+\end{aligned}
 ```
 
 计算最佳:每参数20个代币.
@@ -90,7 +92,7 @@ scaling-laws
 
 ## 建立它
 
-看到`code/main.py`我们将吉拉损失方程运行,并解决计算最佳问题.`(N, D)`在每一个数个计算预算中.
+看到`code/main.py`我们将吉拉损失方程运行,并解决计算最佳问题.$(N, D)$在每一个数个计算预算中.
 
 ### 步骤1: 虫的损失
 
@@ -99,11 +101,11 @@ def chinchilla_loss(N, D, A=406.4, B=410.7, alpha=0.34, beta=0.28, E=1.69):
     return A / N ** alpha + B / D ** beta + E
 ```
 
-剧情`L`作为一个轮`(N, D)`在固定`C = 6ND`找最少的东西.
+剧情$L$作为一个轮$(N, D)$在固定$C = 6ND$找最少的东西.
 
 ### 步骤2:计算最佳边界
 
-对于从 `1e17`为了`1e25`找出`(N, D)`减少损失`6ND = C`检查比率`D/N ≈ 20`现在,我们要去.
+对于从 `1e17`为了`1e25`找出$(N, D)$减少损失$6ND = C$检查比率$D/N \approx 20$现在,我们要去.
 
 ### 步骤3:过度培训成本
 
@@ -133,9 +135,9 @@ def chinchilla_loss(N, D, A=406.4, B=410.7, alpha=0.34, beta=0.28, E=1.69):
 
 ## 运动
 
-1. **Easy.**跑步`code/main.py`打印西拉最佳`(N, D)`计算预算`1e20`现在`1e22`现在`1e24`比较真实模型表.
-2. **Medium.**执行霍夫曼的损失函数计算曲线.`log10(C)`确定法律预测我们需要什么时候`>10^28`对于下一个0.1的交叉缩减.
-3. **Hard.**根据你自己的规模法, 根据同一数据集训练的5个小模型 (100K到10M参数).`α`其他`E`你的表达符与出版的表达符有多好?
+1. **Easy.**跑步`code/main.py`打印西拉最佳$(N, D)$计算预算`1e20`现在`1e22`现在`1e24`比较真实模型表.
+2. **Medium.**执行霍夫曼的损失函数计算曲线.`log10(C)`确定法律预测我们需要什么时候$>10^{28}$对于下一个0.1的交叉缩减.
+3. **Hard.**根据你自己的规模法, 根据同一数据集训练的5个小模型 (100K到10M参数).$\alpha$其他$E$你的表达符与出版的表达符有多好?
 
 ## 关键词
 
@@ -146,7 +148,7 @@ def chinchilla_loss(N, D, A=406.4, B=410.7, alpha=0.34, beta=0.28, E=1.69):
 | Compute (C) | "FLOPs spent" | Approximately `6 × N × D` for a standard transformer. |
 | Chinchilla-optimal | "D/N ≈ 20" | Ratio that minimizes loss per FLOP of pretraining. |
 | Over-training | "Past Chinchilla" | Spend extra training FLOPs to save inference FLOPs; D/N >> 20. |
-| Irreducible loss | "The floor" | The `E` term in the scaling law; the entropy of the data itself. |
+| Irreducible loss | "The floor" | The $E$ term in the scaling law; the entropy of the data itself. |
 | Emergent capability | "Sudden jumps at scale" | Often a scorer artifact; continuous loss is smooth. |
 | Effective compute | "Training-efficiency multiplier" | Better data / optimizer / architecture multiplies how far a FLOP goes. |
 

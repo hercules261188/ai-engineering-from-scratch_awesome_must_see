@@ -23,14 +23,13 @@
 
 ### 面具
 
-由于长度的顺序`N`建立一个`N × N`矩阵:
+由于长度的顺序$N$建立一个$N \times N$矩阵:
 
-```
-M[i, j] = 0       if j <= i
-M[i, j] = -inf    if j > i
+```math
+M_{ij} = \begin{cases} 0 & \text{if } j \le i \\ -\infty & \text{if } j > i \end{cases}
 ```
 
-加入`M`软max之前的注意力分数. `exp(-inf) = 0`关注矩阵的每个行是仅对前位置的概率分布.
+加入`M`软max之前的注意力分数. $\exp(-\infty) = 0$关注矩阵的每个行是仅对前位置的概率分布.
 
 实施成本:一 `torch.tril()`电话,计算时间:纳秒,现场影响:一切.
 
@@ -38,7 +37,7 @@ M[i, j] = -inf    if j > i
 
 面具通常以注意力上的补丁呈现. 运行衍生在另一方向,它不再神秘:注意力是预सर्ग平均的第三个精炼,三角形是该平均的循环边界,写成矩阵.
 
-**Stage 1 — prefix average.**顺序的最愚蠢的因果总结:位置`i`成为位置的平均值`0…i`作为一个循环,这是`out[i] = X[:i+1].mean(0)`按一个矩阵乘以一个矩阵,然后把每个行分为数,然后乘以
+**Stage 1 — prefix average.**顺序的最愚蠢的因果总结:位置$i$成为位置的平均值$0 \ldots i$作为一个循环,这是`out[i] = X[:i+1].mean(0)`按一个矩阵乘以一个矩阵,然后把每个行分为数,然后乘以
 
 ```python
 import numpy as np
@@ -48,7 +47,7 @@ A = A / A.sum(axis=1, keepdims=True)
 out = A @ X
 ```
 
-排列`i`其他`A`是`[1/(i+1), …, 1/(i+1), 0, …, 0]`未来的任何东西都没有被掩盖,未来从来没有在总数中.
+排列$i$其他$A$是$[1/(i+1), \ldots, 1/(i+1), 0, \ldots, 0]$未来的任何东西都没有被掩盖,未来从来没有在总数中.
 
 **Stage 2 — learned weights.**统一的平均值将过去的每个代币都视为同样相关.`S`现在,行列不再按构造算数积为一个,所以将每个行列正常化为软max,而不是按数量分.软max从来没有输出精确的零,这会破坏因果关系,除非未来的分数进入为`-inf`因为`exp(-inf) = 0`其他:
 
@@ -166,7 +165,7 @@ print(tok.decode(out[0]))
 
 在帽子下,`generate()`运行前进传递,拉出最后位置的记录,样本下一个代币,添加它,并重复.每个生产LLM推理堆 (vLLM,TensorRT-LLM, llama.cpp,Ollama,MLX) 实现相同的循环,重量优化批量预填,连续批量,KV缓存页面,投机解码.
 
-**GPT vs BERT, one line each:**GPT预测`P(x_t | x_{<t})`伯特预测`P(x_masked | x_unmasked)`损失决定模型是否能产生.
+**GPT vs BERT, one line each:**GPT预测$P(x_t \mid x_{<t})$伯特预测$P(x_{\text{masked}} \mid x_{\text{unmasked}})$损失决定模型是否能产生.
 
 ## 运送它
 
@@ -186,8 +185,8 @@ print(tok.decode(out[0]))
 | Next-token prediction | "The loss" | Cross-entropy of the model's distribution against the true next token at every position. |
 | Autoregressive | "Generate one at a time" | Feed output back as input; parallelism only during training, not during generation. |
 | Logits | "Pre-softmax scores" | Raw output of the LM head before softmax; sampling happens on these. |
-| Temperature | "Creativity knob" | Divide logits by T; T→0 = greedy, T→∞ = uniform. |
-| Top-p | "Nucleus sampling" | Truncate distribution to smallest set summing to ≥p; sample from what remains. |
+| Temperature | "Creativity knob" | Divide logits by $T$; $T \to 0$ = greedy, $T \to \infty$ = uniform. |
+| Top-p | "Nucleus sampling" | Truncate distribution to smallest set summing to $\ge p$; sample from what remains. |
 | Min-p | "Better than top-p" | Keep tokens where `p ≥ min_p × max_p`; adapts cutoff to sharpness of distribution. |
 | Speculative decoding | "Draft + verify" | Cheap model proposes N tokens; big model verifies in parallel. |
 | Teacher forcing | "Training trick" | During training, feed the true previous token, not the model's prediction. Standard for every seq2seq LM. |

@@ -11,7 +11,7 @@
 
 - 实现从零开始的点产品自注意,仅使用NumPy,包括查询/关键/值预测和软max权重的总和
 - 构建一个多头注意力层,分开头头,计算并行注意力,并连接结果
-- 追踪注意力矩阵如何捕获代币关系,并解释为什么按sqrt(d_k) 缩小可以防止软max 和
+- 追踪注意力矩阵如何捕获代币关系,并解释为什么通过扩展$\sqrt{d_k}$防止软max 和
 - 应用因果掩饰,将双向注意力转换为自动降低 (解码器式) 的注意力
 
 ## 问题
@@ -109,10 +109,10 @@ attention-matrix
 
 ### 为什么要扩大规模?
 
-如果dk=64,点产品可以在数十范围内,将软max推向渐变消失的区域.
+点产品随着尺寸的增长$d_k$如果$d_k = 64$它们可以在数十之间,将软max推向渐变消失的区域.$\sqrt{d_k}$现在,我们要去.
 
-```
-Scaled scores = (Q @ K^T) / sqrt(dk)
+```math
+\text{Scaled scores} = \frac{Q K^T}{\sqrt{d_k}}
 ```
 
 这将值保持在软max产生有用的梯度范围.
@@ -159,8 +159,8 @@ flowchart LR
 
 一行公式:
 
-```
-Attention(Q, K, V) = softmax( Q @ K^T / sqrt(dk) ) @ V
+```math
+\text{Attention}(Q, K, V) = \mathop{\mathrm{softmax}}\left( \frac{Q K^T}{\sqrt{d_k}} \right) V
 ```
 
 ```figure
@@ -302,7 +302,7 @@ print(f"\nAttn weights (averaged over heads):")
 print(attn_weights[0].detach().numpy().round(3))
 ```
 
-关键区别:多头注意力并行运行多个注意力函数,每个具有自己的Q,K,V投影大小 dk = d_model / n_heads,然后连接结果. 这使模型可以同时关注不同的关系类型.
+关键区别:多头注意力同时运行多个注意力功能,每个功能都有自己的Q,K,V尺寸投影.$d_k = d_{\text{model}} / n_{\text{heads}}$模型可以同时关注不同的关系类型.
 
 ## 运送它
 
@@ -322,7 +322,7 @@ print(attn_weights[0].detach().numpy().round(3))
 | Query (Q) | "The question vector" | A learned projection of the input that represents what information this token is looking for |
 | Key (K) | "The label vector" | A learned projection that represents what information this token contains, matched against queries |
 | Value (V) | "The content vector" | A learned projection carrying the actual information that gets aggregated based on attention scores |
-| Scaled dot-product attention | "The attention formula" | softmax(QK^T / sqrt(dk)) @ V - scaling prevents softmax saturation in high dimensions |
+| Scaled dot-product attention | "The attention formula" | $\mathop{\mathrm{softmax}}(QK^T / \sqrt{d_k}) V$ - scaling prevents softmax saturation in high dimensions |
 | Self-attention | "The token looks at itself and others" | Attention where Q, K, V all come from the same sequence, letting every position attend to every other position |
 | Attention weights | "How much focus" | A probability distribution over positions, produced by softmax over scaled dot products |
 | Multi-head attention | "Parallel attention" | Running multiple attention functions with different projections, then concatenating results for richer representations |

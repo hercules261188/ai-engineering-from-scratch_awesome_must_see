@@ -29,25 +29,25 @@
 
 预先计算一个固定矩阵`PE`形状`(max_len, d_model)`其他:
 
-```
-PE[pos, 2i]   = sin(pos / 10000^(2i / d_model))
-PE[pos, 2i+1] = cos(pos / 10000^(2i / d_model))
+```math
+\begin{aligned}
+PE_{(pos, 2i)} &= \sin\left(pos / 10000^{2i / d_{\text{model}}}\right) \\
+PE_{(pos, 2i+1)} &= \cos\left(pos / 10000^{2i / d_{\text{model}}}\right)
+\end{aligned}
 ```
 
 那么`X' = X + PE[:N]`模型学会从相模式中读取位置. 失败超出了`max_len`没有什么告诉模型在2048位置发生什么,当它只看到位置02047时.
 
 ### 子
 
-转换Q和K向量 (不是嵌入式).`(2i, 2i+1)`其他:
+转换Q和K向量 (不是嵌入式).$(2i, 2i+1)$其他:
 
-```
-[q'_2i    ]   [ cos(pos·θ_i)  -sin(pos·θ_i) ] [q_2i   ]
-[q'_2i+1  ] = [ sin(pos·θ_i)   cos(pos·θ_i) ] [q_2i+1 ]
-
-θ_i = base^(-2i / d_head),  base = 10000 by default
+```math
+\begin{bmatrix} q'_{2i} \\ q'_{2i+1} \end{bmatrix} = \begin{bmatrix} \cos(pos \cdot \theta_i) & -\sin(pos \cdot \theta_i) \\ \sin(pos \cdot \theta_i) & \cos(pos \cdot \theta_i) \end{bmatrix} \begin{bmatrix} q_{2i} \\ q_{2i+1} \end{bmatrix}
+\qquad \theta_i = \text{base}^{-2i / d_{\text{head}}}, \quad \text{base} = 10000 \text{ by default}
 ```
 
-按位置的键进行相同的旋转`pos_k`点的产品`q'_m · k'_n`成为一个函数`(m - n)`只有一个人.**the attention score depends only on the relative distance**虽然旋转是绝对位置的.
+按位置的键进行相同的旋转`pos_k`点的产品$q'_m \cdot k'_n$成为一个函数$(m - n)$只有一个人.**the attention score depends only on the relative distance**虽然旋转是绝对位置的.
 
 扩展ROPE: `base`通过这种方式,Llama 3从8K到128K的环境扩展.
 
@@ -55,11 +55,11 @@ PE[pos, 2i+1] = cos(pos / 10000^(2i / d_model))
 
 忽略嵌入技巧. 偏见的注意力直接得分:
 
-```
-attn_score[i, j] = (q_i · k_j) / √d  -  m_h · |i - j|
+```math
+\text{attn\_score}[i, j] = \frac{q_i \cdot k_j}{\sqrt{d}} - m_h \cdot |i - j|
 ```
 
-在哪里?`m_h`是一个特定的头斜率 (例如 `1 / 2^(8·h/H)`报纸显示,长度抽出比较像座形状,与RoPE在原始训练长度上相匹配.
+在哪里?$m_h$是一个特定的头斜率 (例如 $1 / 2^{8h/H}$报纸显示,长度抽出比较像座形状,与RoPE在原始训练长度上相匹配.
 
 ### 2026年要选择什么
 
@@ -113,7 +113,7 @@ def apply_rope(x, pos, base=10000):
     return out
 ```
 
-关键:在位置上将相同的函数应用到Q`m`,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,.`n`他们的点产品接收了一个`cos((m-n)·θ_i)`关注可以免费学习相对位置.
+关键:在位置上将相同的函数应用到Q$m$,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,.$n$他们的点产品接收了一个$\cos((m-n) \cdot \theta_i)$关注可以免费学习相对位置.
 
 ### 步骤3:ALiBi斜率和偏差
 
@@ -168,7 +168,7 @@ model = AutoModel.from_pretrained("meta-llama/Llama-3.2-3B")
 | Positional encoding | "Tells attention about order" | Any signal added to embeddings or attention that encodes position. |
 | Sinusoidal | "The original one" | `sin/cos` at geometric frequencies added to embeddings; doesn't extrapolate. |
 | RoPE | "Rotary embeddings" | Rotate Q, K by position-dependent angle; dot product encodes relative distance. |
-| ALiBi | "Linear bias trick" | Add `-m·\|i-j\|` to attention scores; no embedding needed, great extrapolation. |
+| ALiBi | "Linear bias trick" | Add $-m \cdot \lvert i-j \rvert$ to attention scores; no embedding needed, great extrapolation. |
 | base | "RoPE's knob" | The frequency scaler in RoPE; increase to extend context at inference. |
 | NTK-aware | "A RoPE scaling trick" | Rescale `base` so high-frequency dims aren't squeezed when context expands. |
 | YaRN | "The fancy one" | Per-dimension interpolation+extrapolation that preserves attention entropy. |

@@ -25,13 +25,13 @@
 
 ![RNN sequential compute vs Transformer parallel attention](../assets/rnn-vs-transformer.svg)
 
-**Recurrence as a bottleneck.**电脑计算器`h_t = f(h_{t-1}, x_t)`每一步都取决于前一步.`h_5`在之前`h_4`在现代GPU上,有10,000多个并行芯,
+**Recurrence as a bottleneck.**电脑计算器$h_t = f(h_{t-1}, x_t)$每一步都取决于前一步.$h_5$在之前$h_4$在现代GPU上,有10,000多个并行芯,
 
-**Attention as a broadcast.**自我注意力计算`output_i = sum_j(a_ij * v_j)`对于每一个对`(i, j)`整个N×N注意力矩阵都填充了一个批量的. 没有一步取决于另一个. GPU 很喜欢它.
+**Attention as a broadcast.**自我注意力计算`output_i = sum_j(a_ij * v_j)`对于每一个对$(i, j)$整个N×N注意力矩阵都填充了一个批量的. 没有一步取决于另一个. GPU 很喜欢它.
 
-**The speedup is not a constant.**它们的区别是`O(N)`系列深度和`O(1)`在实践中,变压器在N=512的匹配硬件上每时训练510倍快,并且随着序列长度的增加,间隙会扩大,直到你达到`O(N²)`记忆注意力墙 (后者被Flash Attention修复了见12课).
+**The speedup is not a constant.**它们的区别是$O(N)$系列深度和$O(1)$在实践中,变压器在N=512的匹配硬件上每时训练510倍快,并且随着序列长度的增加,间隙会扩大,直到你达到$O(N^2)$记忆注意力墙 (后者被Flash Attention修复了见12课).
 
-**What transformers cost.**关注记忆规模如`O(N²)`对于2K文本来说,很好.对于128K文本来说,你需要滑窗,ROPE外分,闪光注意力,或线性注意力变体.`O(N)`转换器将时间换取记忆,然后通过平行性获取时间.
+**What transformers cost.**关注记忆规模如$O(N^2)$对于2K文本来说,很好.对于128K文本来说,你需要滑窗,ROPE外分,闪光注意力,或线性注意力变体.$O(N)$转换器将时间换取记忆,然后通过平行性获取时间.
 
 **The inductive bias shift.**变压器认为没有什么每个对都是关注的候选人.这就是为什么变压器需要更多的数据来训练好,但一旦有了更大的规模.辛奇拉 (2022) 正式化了这一点:给出足够的代币,变压器总是击败一个相同参数数数的RNN.
 
@@ -58,7 +58,7 @@ def attention_style(xs):
     return sum(xs) / len(xs)  # every x is independent
 ```
 
-我们在连续上都能计时到10万个元素.RNN版本是O(N) 和单个CPU管道.即使在纯Python中,注意力式的减小也超过了1000,因为Python的`sum()`执行C语言,并且每步无解释器的代价.
+我们在一万个元素的序列上都会记录.$O(N)$即使在纯Python中,注意力式的减小超过了1000以上的长度,因为Python的`sum()`执行C语言,并且每步无解释器的代价.
 
 ### 步骤2:计算理论操作
 
@@ -66,7 +66,7 @@ def attention_style(xs):
 
 ### 步骤3:长序列的经验规模化
 
-我们打印了一个时间表,使得O(N) 差距可见.在2026 Mac笔记本电脑上,1000个元素以下的序列太快以测量.100,000的序列显示了清洁的线性扫描.将其量化为16,384个代币变压器和12层LSTM等级,你会看到为什么训练墙钟在2016年是阻碍者.
+我们打印了一个时间表,$O(N)$在2026年Mac笔记本电脑上,1000个元素以下的序列太快了以测量.100,000的序列显示了清洁的线性扫描.将其量化为16,384个代币变压器,并配备12层LSTM等级,你会看到为什么训练墙钟在2016年是阻碍物.
 
 ## 用它
 
@@ -79,7 +79,7 @@ def attention_style(xs):
 | Edge device with no matmul accelerator | Depthwise-separable RNN still wins on FLOPs/watt |
 | Anything else (training, batched inference, context up to 128K) | Transformer |
 
-像Mamba这样的国家空间模型 (SSM) 基本上是具有结构化参数化的RNN,`O(N)`通过选择性扫描,他们恢复了变压器质量的90%通过更好的长文本扩展. 2026年,大多数边境实验室都将混合型SSM+变压器模型 (例如Jamba,Samba) 训练.
+像Mamba这样的国家空间模型 (SSM) 基本上是具有结构化参数化的RNN,$O(N)$通过选择性扫描,他们恢复了变压器质量的90%通过更好的长文本扩展. 2026年,大多数边境实验室都将混合型SSM+变压器模型 (例如Jamba,Samba) 训练.
 
 ## 运送它
 
@@ -97,11 +97,11 @@ def attention_style(xs):
 |------|-----------------|-----------------------|
 | Recurrence | "RNNs are sequential" | Computation where step `t` depends on step `t-1`, forcing serial execution along the time axis. |
 | Serial depth | "How deep the graph is" | Longest chain of dependent ops; bounds wall-clock even on infinite hardware. |
-| Attention | "Let tokens look at each other" | Weighted sum `sum_j a_ij v_j` where `a_ij` comes from a similarity score between positions i and j. |
+| Attention | "Let tokens look at each other" | Weighted sum $\sum_j a_{ij} v_j$ where $a_{ij}$ comes from a similarity score between positions $i$ and $j$. |
 | Context window | "How much the model sees" | Number of positions an attention layer can take as input; quadratic memory cost scales here. |
 | Inductive bias | "Assumptions baked into the architecture" | Prior about what the data looks like; CNNs assume translation invariance, RNNs assume recency. |
 | State-space model | "RNN with algebra behind it" | Recurrence parameterized for parallel training via structured state-space matrices. |
-| Quadratic bottleneck | "Why context costs so much" | Attention memory = `O(N²)` in sequence length; Flash Attention hides the constants, not the scaling. |
+| Quadratic bottleneck | "Why context costs so much" | Attention memory = $O(N^2)$ in sequence length; Flash Attention hides the constants, not the scaling. |
 
 ## 进一步阅读
 

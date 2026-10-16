@@ -9,7 +9,7 @@
 
 ## 问题
 
-如果我们让3B草案5个代币前进,然后运行70B *一次*验证所有5,总数是`5×3 + 30 = 45 ms`对于最多5个被接受的代币`5×30 = 150 ms`这就是完全的投机解码比率:换取少量的额外的GPU内存 (草案模型) 为24x较低的解码延迟.
+如果我们让3B草案5个代币前进,然后运行70B *一次*验证所有5,总数是$5 \times 3 + 30 = 45$对于最大5个被接受的代币`5×30 = 150 ms`这就是完全的投机解码比率:换取少量的额外的GPU内存 (草案模型) 为24x较低的解码延迟.
 
 投机性样本采集,由Leviathan等 (2023) 和陈等同时引入,确保输出序列是**identically distributed**没有质量妥协,只是更快.
 
@@ -26,30 +26,30 @@
 
 ### 核心算法
 
-鉴于验证器`M_q`并且更便宜的草稿`M_p`其他:
+鉴于验证器$M_q$并且更便宜的草稿$M_p$其他:
 
-1. 让我们`x_1..x_k`已解码的前.
-2. **Draft**:使用 `M_p`推出自动推移`d_{k+1}, d_{k+2}, ..., d_{k+N}`具有草案概率`p_1..p_N`现在,我们要去.
-3. **Verify in parallel**运行`M_q`一次就这样了`x_1..x_k, d_{k+1}, ..., d_{k+N}`获得验证器概率`q_1..q_{N+1}`对于职位`k+1..k+N+1`现在,我们要去.
-4. **Accept/reject each draft token left to right**对于每一个`i`接受一个可能的`min(1, q_i(d_i) / p_i(d_i))`现在,我们要去.
-5. 在第一次拒绝位置`j`: 样本`t_j`由于"残留"分布而导致的`(q_j - p_j)_+`之后的所有草案都正常化了.`j`它们被丢弃.
-6. 接受一切`N`: 样本一个额外的代币`t_{N+1}`其他`q_{N+1}`(免费奖金代币)
+1. 让我们$x_1 \ldots x_k$已解码的前.
+2. **Draft**:使用 $M_p$推出自动推移$d_{k+1}, d_{k+2}, \ldots, d_{k+N}$具有草案概率$p_1 \ldots p_N$现在,我们要去.
+3. **Verify in parallel**运行$M_q$一次就这样了$x_1 \ldots x_k, d_{k+1}, \ldots, d_{k+N}$获得验证器概率$q_1 \ldots q_{N+1}$对于职位$k+1 \ldots k+N+1$现在,我们要去.
+4. **Accept/reject each draft token left to right**对于每一个$i$接受一个可能的$\min(1, q_i(d_i) / p_i(d_i))$现在,我们要去.
+5. 在第一次拒绝位置$j$: 样本$t_j$由于"残留"分布而导致的$(q_j - p_j)_+$之后的所有草案都正常化了.$j$它们被丢弃.
+6. 接受一切$N$: 样本一个额外的代币$t_{N+1}$其他$q_{N+1}$(免费奖金代币)
 
-剩余分布技巧是保持输出分布的数学洞察力`M_q`没有任何东西.
+剩余分布技巧是保持输出分布的数学洞察力$M_q$没有任何东西.
 
 ### 什么决定了加速
 
-让我们`α`预期的每项项目代币的接受率.`c`项目/验证人成本比例.
+让我们$\alpha$预期的每项项目代币的接受率.$c$项目/验证人成本比例.
 
 - 无辜的世代每代币都会做一个大型号.
-- 投机者每次打一个大型号电话`(1 - α^{N+1}) / (1 - α) ≈ 1/(1-α)`什么时候的代币`α`了.
+- 投机者每次打一个大型号电话$(1 - \alpha^{N+1}) / (1 - \alpha) \approx 1/(1-\alpha)$什么时候的代币$\alpha$了.
 
-典型的指南`α = 0.75`其他`N = 5`现在,我们在线观看,我们在线观看,我们在线观看,我们在线观看,我们在线观看,我们在线观看,我们在线观看,我们在线观看,我们在线观看,我们在线观看,我们在线观看,我们在线观看,我们在线观看,我们在线观看,我们在线观看,我们在线观看,我们在线观看,我们在线观看,我们在线观看,我们在线观看,我们在线观看,我们在线观看,我们在线观看,我们在线观看,我们在线观看,我们在线观看,我们在线观看,我们在线观看,我们在线观看,我们在线观看,我们在线观看,我们在线观看,我们在线观看,我们在线观看,我们在线观看,我们在线观看,我们在线观看,我们在线观看,我们在线观看,我们在线观看,我们在线观看,我们在线观看,我们在线观看,我们在线观看,我们在线观看,我们在线观看,我们在线观看.
+典型的指南$\alpha = 0.75$其他$N = 5$现在,我们在线观看,我们在线观看,我们在线观看,我们在线观看,我们在线观看,我们在线观看,我们在线观看,我们在线观看,我们在线观看,我们在线观看,我们在线观看,我们在线观看,我们在线观看,我们在线观看,我们在线观看,我们在线观看,我们在线观看,我们在线观看,我们在线观看,我们在线观看,我们在线观看,我们在线观看,我们在线观看,我们在线观看,我们在线观看,我们在线观看,我们在线观看,我们在线观看,我们在线观看,我们在线观看,我们在线观看,我们在线观看,我们在线观看,我们在线观看,我们在线观看,我们在线观看,我们在线观看,我们在线观看,我们在线观看,我们在线观看,我们在线观看,我们在线观看,我们在线观看,我们在线观看,我们在线观看,我们在线观看,我们在线观看.
 
-**α depends on:**
+**$\alpha$ depends on:**
 
-- 如何接近验证器的草案.同一个家庭/同一个培训数据显著增强α.
-- 解码策略:贪的草案与贪的验证器:高 α.温度采样:难以匹配;接受度下降.
+- 如何接近验证器的草案.$\alpha$显著.
+- 贪的草案与贪的验证器:高$\alpha$温度采样:难以匹配;接受度下降.
 - 任务类型:代码和结构化输出接受更多 (可预测);自由形式的创意写作接受少.
 
 ### 梅杜萨  草案没有草案模型
@@ -76,9 +76,9 @@ shared trunk → hidden h_t
 
 ### 的舞蹈
 
-验证数据`N`通过一个前进传输,将验证器的KV缓存扩大到 `N`如果一些草案被拒绝,则必须将缓存重新滚动到接受的预写长度.
+验证数据$N$通过一个前进传输,将验证器的KV缓存扩大到 $N$如果一些草案被拒绝,则必须将缓存重新滚动到接受的预写长度.
 
-生产实施 (vLLM 项目)`--speculative-model`首先写一下,承诺接受.这不是概念上很难,但它很难.
+生产实施 (vLLM 项目)`--speculative-config`首先写一下,承诺接受.这不是概念上很难,但它很难.
 
 ```figure
 draft-verify-tokens
@@ -160,14 +160,11 @@ def spec_step(prefix, q_model, p_model, N, rng):
 ```bash
 # vLLM with EAGLE
 vllm serve meta-llama/Llama-3.1-70B-Instruct \
-    --speculative-model /models/llama-3.1-eagle-70b \
-    --speculative-draft-tensor-parallel-size 1 \
-    --num-speculative-tokens 5
+    --speculative-config '{"method": "eagle", "model": "/models/llama-3.1-eagle-70b", "draft_tensor_parallel_size": 1, "num_speculative_tokens": 5}'
 
 # vLLM with vanilla draft model
 vllm serve meta-llama/Llama-3.1-70B-Instruct \
-    --speculative-model meta-llama/Llama-3.2-1B-Instruct \
-    --num-speculative-tokens 5
+    --speculative-config '{"method": "draft_model", "model": "meta-llama/Llama-3.2-1B-Instruct", "num_speculative_tokens": 5}'
 ```
 
 据悉,在2026年中旬,TensorRT-LLM将拥有最快的梅杜萨路径.`faster-whisper`语大的猜测解码用一个小的草稿.
@@ -184,7 +181,7 @@ vllm serve meta-llama/Llama-3.1-70B-Instruct \
 **When NOT to spec-decode:**
 
 - 单次序列生成15个代币.
-- 极具创意/高温采样 (α滴).
+- 非常有创意/高温采样 ($\alpha$子
 - 存储量限制的部署 (草案模型添加VRAM).
 
 ## 运送它
@@ -194,7 +191,7 @@ vllm serve meta-llama/Llama-3.1-70B-Instruct \
 ## 运动
 
 1. **Easy.**跑步`code/main.py`确认投机代币分布与验证人在50万代币中直接样本分布相匹配,在平平面 p >0.05内.
-2. **Medium.**作为一个函数的图片加速 (每大模型前进的代币)`N`为了`α = 0.5, 0.7, 0.85`确定最佳的方法`N`对于每一个 α. (提示:每次验证调用预期的代币 = `(1 - α^{N+1}) / (1 - α)`)
+2. **Medium.**作为一个函数的图片加速 (每大模型前进的代币)$N$为了$\alpha = 0.5, 0.7, 0.85$确定最佳的方法$N$每个$\alpha$. (提示:每次验证调用预期的代币 = $(1 - \alpha^{N+1}) / (1 - \alpha)$)
 3. **Hard.**执行一个小的梅杜萨:从14课中取下顶石GPT,添加3个额外的LM头,预测位置t+2,t+3,t+4. 训练小克斯佩尔,并进行多头损失.比较接受率与尼拉草图,通过缩小相同模型.
 4. **Hard.**实现反弹:从10代标前标KV缓存开始,输入5个草案代标,模拟在3位的拒绝.在下一次回复时,检查缓存读数正确匹配"前标+第2个接受草案".
 
@@ -204,7 +201,7 @@ vllm serve meta-llama/Llama-3.1-70B-Instruct \
 |------|-----------------|-----------------------|
 | Draft model | "The cheap one" | A smaller model that proposes candidate tokens; usually 10–50× cheaper than the verifier. |
 | Verifier | "The big one" | The target model whose distribution we preserve; runs once per speculative step. |
-| Acceptance rate (α) | "How often the draft is right" | Per-token probability that the verifier accepts the draft. 0.7–0.9 typical. |
+| Acceptance rate ($\alpha$) | "How often the draft is right" | Per-token probability that the verifier accepts the draft. 0.7–0.9 typical. |
 | Residual distribution | "The rejection fallback" | `(q - p)_+` normalized; sampling from this on rejection preserves the verifier's distribution. |
 | Bonus token | "The free one" | When all N drafts accepted, sample one more from the verifier's next-step distribution. |
 | Medusa | "Draft-less speculative" | Multiple LM heads on the verifier predict positions t+1..t+k in parallel. |
