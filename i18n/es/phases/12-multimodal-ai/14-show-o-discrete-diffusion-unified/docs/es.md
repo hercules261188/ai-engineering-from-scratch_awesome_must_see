@@ -69,11 +69,11 @@ La capacidad de pintura viene de forma gratuita de la formación de predicción 
 
 El calendario de cuántos tokens desmascarar por paso forma la calidad.
 
-```
-mask_ratio(t) = cos(pi * t / (2 * T))   # t = 0..T
+```math
+\text{mask\_ratio}(t) = \cos\left(\frac{\pi t}{2T}\right) \qquad t = 0, \ldots, T
 ```
 
-En el paso 0, todos los tokens están enmascarados (ratio 1.0). en el paso T, ninguno está enmascarado. Cosino concentra la masa en proporciones de medio rango donde la predicción es más informativa.
+En el paso 0, todos los tokens enmascarados (ratio 1.0).$T$Los horarios lineales también funcionan pero se colocan más rápidamente.
 
 ### El programa de trabajo
 
@@ -117,7 +117,7 @@ Esta lección produce`outputs/skill-unified-gen-model-picker.md`. Dado un produc
 
 3. Calendario cosino vs calendario lineal: rastrear el número de tokens desmascarados por paso para T=8. ¿Cuál es más equilibrado?
 
-4. Una imagen de 512x512 Show-o es de 1024 tokens. En la vocab K=16384, el modelo emite 1024 * log2(16384) = 14.336 bits (~1.75 KiB) de datos.
+4. Una imagen de 512x512 muestra 1024 tokens.$K=16384$, el modelo emite $1024 \cdot \log_2(16384) = 14{,}336$Los bits (~ 1,75 KiB) de datos. La difusión estable de 512*512*24 bits = 6,291,456 bits (~ 768 KiB) de píxeles crudos. ¿Cuál es la relación de compresión y qué calidad compra?
 
 5. ¿En qué se diferencia el modelo de imagen autorregresista con condiciones de clase de LlamaGen del enfoque enmascarado de Show-o?
 

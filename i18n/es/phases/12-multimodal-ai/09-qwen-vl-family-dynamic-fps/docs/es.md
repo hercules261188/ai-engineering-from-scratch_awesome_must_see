@@ -71,10 +71,12 @@ El resultado de la línea: para 2025 la arquitectura Qwen-VL se había estabiliz
 
 El RoPE clásico gira una consulta `q`de dimensiones `d`por posición `m`utilizando coordenadas emparejadas:
 
-```
-q_rot[2i]   = q[2i]   * cos(m * theta_i) - q[2i+1] * sin(m * theta_i)
-q_rot[2i+1] = q[2i]   * sin(m * theta_i) + q[2i+1] * cos(m * theta_i)
-theta_i     = 10000^(-2i/d)
+```math
+\begin{aligned}
+q_{\text{rot}}[2i] &= q[2i] \cos(m \theta_i) - q[2i+1] \sin(m \theta_i) \\
+q_{\text{rot}}[2i+1] &= q[2i] \sin(m \theta_i) + q[2i+1] \cos(m \theta_i) \\
+\theta_i &= 10000^{-2i/d}
+\end{aligned}
 ```
 
 M-RoPE divide el oscuro escondido en tres bandas.`d = 96`. Asesinar 32 puntos de menor tamaño a la altura, 32 a la anchura. Cada banda gira por su propia posición en el eje.`R_t(5)`¿ Qué ?`R_h(10)`¿ Qué ?`R_w(20)`se aplica a sus tres bandas.

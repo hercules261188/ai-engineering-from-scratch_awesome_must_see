@@ -63,7 +63,7 @@ Qwen2-VL introdujo el embebimiento de posición rotativa multimodal. En lugar de
 
 M-RoPE envía una resolución dinámica nativa sin reentrenamiento. En la inferencia de que se alimenta cualquier imagen HxW, el embebedador de parches produce tokens H/14 x W/14, cada token obtiene su posición (t=0, r=row, c=col), RoPE gira la atención con las frecuencias correctas, hecho. Qwen2.5-VL y Qwen3-VL continúan esto.
 
-A diferencia de AnyRes, M-RoPE es O(H x W / P^2) tokens en resolución nativa  sin gastos generales multiplicativos de las baldosas. A diferencia de NaViT, todavía espera una sola imagen por adelante.
+A diferencia de AnyRes, el M-RoPE es $O(H \times W / P^2)$No hay cargas generales multiplicativas. a diferencia de NaViT, todavía espera una sola imagen por adelantado.
 
 ### NaFlex (SigLIP 2)
 

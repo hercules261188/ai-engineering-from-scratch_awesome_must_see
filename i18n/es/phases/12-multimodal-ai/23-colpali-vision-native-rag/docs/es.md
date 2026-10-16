@@ -36,28 +36,28 @@ Corrección de ColPali: omite OCR, embebegue la imagen de la página directament
 
 ColBERT (Khattab & Zaharia, arXiv:2004.12832) es un método de recuperación de texto. En lugar de un vector por documento, produce un vector por token.
 
-- Los tokens de consulta obtienen sus propios embeddings (vectores N_q).
-- Los tokens de documentos obtienen embebidos (vectores N_d, típicamente almacenados en caché).
-- Score = suma sobre las fichas de consulta de max sobre las fichas de documento de similitud cosina: Σ_i max_j cos(q_i, d_j).
+- Los tokens de consulta obtienen sus propias incorporaciones ($N_q$de los vectores).
+- Los tokens de documentos obtienen embebidos ($N_d$vectores, típicamente almacenados en caché).
+- Score = suma sobre los tokens de consulta de max sobre los tokens de documento de similitud cosina: $\sum_i \max_j \cos(q_i, d_j)$¿ Qué ?
 
 Esta es la operación MaxSim. Cada token de consulta "escoge" su mejor token de documento.
 
-Pros: fuerte recuerdo, maneja la semántica a nivel de términos.
+Pros: fuerte recuerdo, maneja la semántica a nivel de términos.$N_d$vectores por documento, almacenamiento caro.
 
 ### ColPali
 
 ColPali (Faysse et al., arXiv:2407.01449) aplica el patrón ColBERT a las imágenes.
 
-- Cada página está codificada por PaliGemma (idioma ViT +) en embebedidos de parches: N_p vectores por página.
-- Cada consulta de usuario (texto) se codifica en embeddings de marcas de consulta: N_q vectores.
-- Score = Σ_i max_j cos(q_i, p_j), es decir, MaxSim sobre los tokens de texto de consulta y parches de imagen de página.
+- Cada página está codificada por PaliGemma (idioma ViT +) en parches: $N_p$vectores por página.
+- Cada consulta de usuario (texto) se codifica en las incorporaciones de los tokens de consulta: $N_q$vectores.
+- Punto = $\sum_i \max_j \cos(q_i, p_j)$, es decir, MaxSim sobre las marcas de texto de consulta y las parches de imagen de página.
 - Recupera las páginas de primer nivel por puntaje total.
 
 En el momento de ingestión de documentos: embebar cada página con PaliGemma, almacenar todas las incorporaciones de parches. En el momento de la consulta: embebar los tokens de consulta, calcular MaxSim contra todas las incorporaciones de página almacenadas, devolver páginas top-k.
 
 Pros: de extremo a extremo supera el texto-RAG en un 20-40% en documentos ricos en visualización.
 
-Los inconvenientes: parches N_p × 4 bytes flotantes × vectores D-dim por página = almacenamiento crece rápidamente. Mitigado por la cuantización PQ / OPQ.
+Contras: $N_p$parches × floats de 4 bytes × $D$-dim vectores por página = almacenamiento crece rápidamente. Mitigado por la cuantización de PQ / OPQ.
 
 ### ColQwen2 y ColSmol
 
@@ -128,7 +128,7 @@ Esta lección produce`outputs/skill-vision-rag-designer.md`. Dado un proyecto de
 
 1. Un informe anual de 200 páginas en 729 parches por página, emblemas de 128 dimensiones, floats de 4 bytes.
 
-2. MaxSim es Σ_i max_j cos(q_i, p_j). ¿Qué captura esta suma que una similitud media simple no?
+2. MaxSim es$\sum_i \max_j \cos(q_i, p_j)$¿Qué capta esta suma que una simple significa similaridad no?
 
 3. ColPali indexa las páginas como conjuntos de parches. ¿Qué cambios si en su lugar indexamos a nivel de palabras (como ColBERT hace)?
 
@@ -143,7 +143,7 @@ Esta lección produce`outputs/skill-vision-rag-designer.md`. Dado un proyecto de
 | Late interaction | "ColBERT-style" | Retrieval using per-token or per-patch embeddings + MaxSim, not a single doc vector |
 | MaxSim | "Max-over-patches" | For each query token, pick the highest-similarity document token; sum across query |
 | Bi-encoder | "Single-vector" | One vector per document; faster but loses granularity |
-| Multi-vector | "Many-vectors-per-doc" | Store N_p vectors per document / page; storage cost grows but recall improves |
+| Multi-vector | "Many-vectors-per-doc" | Store $N_p$ vectors per document / page; storage cost grows but recall improves |
 | Patch embedding | "Page feature" | One vector per image patch from a VLM encoder, cached per page |
 | ViDoRe | "Vision doc bench" | ColPali's benchmark suite for visual document retrieval |
 | PQ quantization | "Product quantization" | Compression that maintains vector similarity while shrinking storage ~8x |

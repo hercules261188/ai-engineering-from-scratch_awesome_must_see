@@ -62,9 +62,9 @@ Implementado como una máscara triangular en el entrenamiento y la inferencia.
 La pérdida de difusión es estándar: añadir ruido a un parche de imagen, pedir al modelo que predica el ruido (o el parche limpio, equivalentemente).
 
 Durante la formación:
-1. Para cada parche de imagen x0, muestra un paso de tiempo aleatorio t.
-2. Muestra de ruido ε, calcular xt = (1-t) * x0 + t * ε (interpolación lineal para la coincidencia de flujo).
-3. El transformador predice v_theta(xt, t); pérdida = MSE(v_theta(xt, t), ε - x0).
+1. Para cada parche de imagen $x_0$, muestra un paso de tiempo aleatorio $t$¿ Qué ?
+2. Muestra de ruido$\epsilon$, computación $x_t = (1-t) \cdot x_0 + t \cdot \epsilon$(interpolación lineal para el coincidencia de flujo).
+3. El transformador predice .$v_\theta(x_t, t)$¿ Qué es ?$\text{loss} = \mathop{\mathrm{MSE}}(v_\theta(x_t, t), \epsilon - x_0)$¿ Qué ?
 4. La retroprop junto con el texto NTP pérdidas de la misma secuencia.
 
 En la inferencia, la generación es:

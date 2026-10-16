@@ -36,7 +36,7 @@ Cada codificador de audio comienza con la misma característica: un espectrogram
 2. La transformación de Fourier de corto tiempo con ventanas de 25 ms, salto de 10 ms.
 3. Tomemos la magnitud del resultado de FFT.
 4. Aplicar bancos de filtros Mel (normalmente 80 filtros con espacio de registro de 0-8000 Hz) para warp a la frecuencia perceptiva.
-5. Compreso de registro (log(1 + x)) para el rango dinámico.
+5. Compresora de registro $(\log(1 + x))$para el rango dinámico.
 
 Resultado: una matriz 2D de forma (T, 80) donde T es el número de marcos de tiempo. Para un clip de 30 segundos a 100 Hz: (3000, 80).
 

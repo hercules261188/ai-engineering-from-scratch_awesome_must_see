@@ -41,10 +41,10 @@ La separación es importante. El pensador tiene que ser grande para un buen razo
 
 Correr ambos en paralelo:
 
-1. El pensador emite un token de texto.
-2. El hablante consume t_i (a través de streaming) y emite tokens de habla s_i, s_{i+1}, ..., s_{i+k}.
+1. El pensador emite un token de texto .$t_i$¿ Qué ?
+2. El hablador consume .$t_i$(a través de transmisión) y emite tokens de voz $s_i, s_{i+1}, \ldots, s_{i+k}$¿ Qué ?
 3. El decodificador de voz consume tokens de voz a medida que vienen y emite muestras de audio.
-4. Para cuando Thinker esté en el token de texto, Talker ya ha transmitido audio para t_0..t_{i+2}.
+4. Para cuando el Pensador esté en el token de texto .$t_{i+3}$, Talker ya ha transmitido audio para$t_0, \ldots, t_{i+2}$¿ Qué ?
 
 ### Posiciones multimodal TMRoPE  alineadas en el tiempo
 

@@ -35,10 +35,10 @@ CLIP tiene dos torres:
 
 Ambas torres normalizan sus salidas a la longitud de la unidad.`cos(f(x), g(y)) = f(x)^T g(y)`ya que ambos son la norma de unidad.
 
-Para un lote de pares N (imagen, leyenda) construye la matriz de similitud `S`de forma`(N, N)`¿Qué es esto ?
+Para un lote de$N$(imagen, capción) pares, construir la matriz de similitud `S`de forma`(N, N)`¿Qué es esto ?
 
-```
-S[i, j] = cos(f(x_i), g(y_j)) / tau
+```math
+S[i, j] = \cos(f(x_i), g(y_j)) / \tau
 ```
 
 donde`tau`es una temperatura aprendida (CLIP inicializa a 0.07; aprendida en el espacio log).
@@ -57,7 +57,7 @@ Esto es InfoNCE. La máxima suave en CE obliga a cada imagen a coincidir con su 
 
 ### Temperatura
 
-`tau`Controló la nitidez de la suavidad. La distribución de tau baja → nitidez, efecto minero negativo duro. La temperatura de tau alta → suavidad, todas las muestras contribuyen. CLIP aprende log(1/tau), recortado para evitar el colapso. SigLIP 2 fija el tau inicial y utiliza un sesgo aprendido en su lugar.
+`tau`controlando la nitidez de la suavidad máxima.$\tau$→ Distribución aguda, efecto minero negativo duro.$\tau$→ suave, todas las muestras contribuyen. CLIP aprende $\log(1/\tau)$SigLIP 2 corrige la inicial$\tau$y utiliza un sesgo aprendido en su lugar.
 
 ### ¿Por qué la sigmoide se mide mejor (SigLIP)
 
@@ -65,8 +65,8 @@ Softmax necesita toda la matriz de similitud en sincronización. En el entrenami
 
 SigLIP sustituye softmax por sigmoide con base en elementos: para cada par `(i, j)`, la pérdida es una clasificación binaria de "es que estos son el par de coincidencia?" las etiquetas de clase positiva son la diagonal, todo lo demás es negativo.
 
-```
-L = -1/N sum over (i, j) [ y_ij log sigmoid(S[i,j]) + (1-y_ij) log sigmoid(-S[i,j]) ]
+```math
+L = -\frac{1}{N} \sum_{(i, j)} \Big[ y_{ij} \log \mathop{\mathrm{sigmoid}}(S[i,j]) + (1-y_{ij}) \log \mathop{\mathrm{sigmoid}}(-S[i,j]) \Big]
 ```
 
 `y_ij = 1`si`i == j`Cada GPU calcula su bloque local y sumas. SigLIP 2 escala para lotes de 32k-512k a bajo costo donde CLIP necesitaría proporcionalmente más comunicación.
@@ -132,7 +132,7 @@ Esta lección produce`outputs/skill-clip-zero-shot.md`. Dado un conjunto de imá
 
 3. Construye un clasificador de disparos cero para gatos vs perros. Prueba dos plantillas rápidas: `a photo of a {class}`y `a picture of a {class}`¿El conjunto de plantillas bate solo?
 
-4. Calcule el costo de comunicación de softmax InfoNCE vs sigmoid en pareja para una carrera de 512 GPU en lote 32k. ¿Qué escalas como O(N), que como O(N^2)? Cite SigLIP Sección 4.
+4. Calcule el costo de comunicación de softmax InfoNCE vs sigmoid en pareja para una carrera de 512 GPU en lote 32k.$O(N)$, que como $O(N^2)$Cita la sección 4 de Siglip.
 
 5. Leer el documento de OpenCLIP sobre las leyes de escala (arXiv:2212.07143, Cherti et al.). Reproduce su conclusión para la escala de datos a partir de las cifras: en el tamaño fijo del modelo, ¿cuál es la relación log-lineal entre la precisión de captura cero de ImageNet y el tamaño de los datos de entrenamiento?
 
