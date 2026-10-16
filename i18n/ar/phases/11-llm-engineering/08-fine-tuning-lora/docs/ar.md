@@ -11,7 +11,7 @@
 ## أهداف التعلم
 
 - تنفيذ LoRA عن طريق حقن مصفوفات المعدلات منخفضة الصف (A و B) في طبقات الاهتمام الخاصة بالنموذج المُدرب مسبقاً
-- حساب وفورات المعلمات من LoRA مقابل التنظيم الدقيق الكامل: ترتيب r مع d_مثل الأبعاد القطارات 2*r*d المعلمات بدلا من d^2
+- الحساب من خفض المعايير لـ LoRA مقابل التكيف الدقيق الكامل: رتبة $r$مع$d_{\text{model}}$أبعاد القطارات $2 \cdot r \cdot d$المعلمات بدلاً من$d^2$
 - ضبط النموذج باستخدام QLoRA (4 بت قاعدة كمية + مكيّفات LoRA) لتناسب مع ذاكرة GPU المستهلك
 - دمج وزنات LoRA مرة أخرى في النموذج الأساسي لتنفيذ وتقارن سرعة الاستنتاج مع ودون مُعدات
 
@@ -37,21 +37,21 @@ A100 80GB بالكاد يمكن أن تستوعب هذا.$3-4/hour on cloud prov
 
 هذه هي الرياضيات، طبقة خطية قياسية تحسب:
 
-```
+```math
 y = Wx
 ```
 
-حيث W هو d_out x d_in المصفوفة. بالنسبة لمبادرة 4096x4096 الاهتمام، هذا هو 16،777،216 ملامح.
+أين$W$هو$d_{\text{out}} \times d_{\text{in}}$المصفوفة. بالنسبة لمبادرة 4096x4096، هذا هو 16،777,216 ملامح.
 
-لورا تجميد W و يضيف تدمير منخفض الدرجة:
+(لورا) تتجمد$W$و يضيف تدمير منخفض الدرجة:
 
-```
+```math
 y = Wx + BAx
 ```
 
-حيث B هو (d_out x r) و A هو (r x d_in). صفوف r أصغر بكثير من d -- عادة 8, 16 أو 32.
+أين$B$هو$(d_{\text{out}} \times r)$و$A$هو$(r \times d_{\text{in}})$. الرتب$r$هو أصغر بكثير من$d$-- عادةً 8، 16، أو 32.
 
-ل r=16 على طبقة 4096x4096:
+لأجل$r=16$على طبقة 4096x4096:
 - المعلمات الأصلية: 4096 × 4096 = 16،777،216
 - معايير لورا: (4096 × 16) + (16 × 4096) = 65536 + 65536 = 131 072
 - الخصم: 131,072 / 16,777,216 = 0.78%
@@ -76,18 +76,18 @@ A يتم تشغيله مع غوسيان عشوائي. B يتم تشغيله إل
 
 ### عامل الحجم: ألفا
 
-LoRA يقدم عامل مقياس ألفا الذي يتحكم في مدى تأثير التحديث المنخفض على الخروج:
+(لورا) تعرض عامل التوسع$\alpha$الذي يتحكم في مدى تأثير التحديث المنخفض على الخروج:
 
-```
-y = Wx + (alpha / r) * BAx
+```math
+y = Wx + \frac{\alpha}{r} \cdot BAx
 ```
 
-عندما يكون ألفا = r، فإن التوسع هو 1x. عندما يكون ألفا = 2r (المتباعدة المشتركة) ، فإن التوسع هو 2x. هذه المعلمة المفرطة تحكم معدل التعلم من مسار LoRA بشكل مستقل عن معدل التعلم الأساسي.
+متى$\alpha = r$، والتنمية هي 1x. متى $\alpha = 2r$(المتخلفة المشتركة) ، فإن التوسع هو 2x. هذه المعلمة المفرطة تحكم معدل التعلم من مسار LoRA بشكل مستقل عن معدل التعلم الأساسي.
 
 الإرشادات العملية:
-- الف = 2 * رتبة هو اتفاقية مجتمعية شائعة (الورقة الأصلية المستخدمة الف = رتبة في معظم التجارب)
-- الفا = رتبة يعطي 1x مقياس، المحافظة ولكن مستقرة
-- الفا العليا تعني تحديثات أكبر لكل خطوة، والتي يمكن أن تسريع التقارب أو تسبب عدم الاستقرار
+- $\alpha = 2 \cdot \text{rank}$هو اتفاقية مجتمعية مشتركة (الورقة الأصلية المستخدمة$\alpha = \text{rank}$في معظم التجارب)
+- $\alpha = \text{rank}$يعطي 1x مقياس، المحافظة ولكن مستقرة
+- أعلى$\alpha$يعني تحديثات أكبر لكل خطوة، والتي يمكن أن تسريع التقارب أو تسبب عدم الاستقرار.
 
 ### أين تطبيق LoRA
 
@@ -104,7 +104,7 @@ y = Wx + (alpha / r) * BAx
 
 ### اختيار الرتب
 
-الدرجة r تحكم التعبير من التكيف:
+الرتبة$r$يسيطر على التعبير عن التكيف:
 
 | Rank | Trainable Params (per layer) | Best For |
 |------|---------------------------|----------|
@@ -115,7 +115,7 @@ y = Wx + (alpha / r) * BAx
 | 64 | 524,288 | Diminishing returns for most tasks |
 | 128 | 1,048,576 | Rarely justified |
 
-أظهرت هوو وآخرون أن r=4 يحتوي بالفعل على معظم التكيف للمهام البسيطة. r=8 و r=16 هي الخيارات الأكثر شيوعا في الممارسة. تجاوز r=64 نادرا ما يحسن الجودة ويبدأ في فقدان ميزة الذاكرة للورا.
+هوتل) أظهر ذلك)$r=4$يحتوي بالفعل على معظم التكيف للمهام البسيطة. $r=8$و$r=16$هذه هي الخيارات الأكثر شيوعاً في الممارسة.$r=64$نادرا ما تحسن الجودة و تبدأ في فقدان ميزة الذاكرة لـ LoRA
 
 ### QLoRA: 4-bit كمية + LoRA
 
@@ -148,7 +148,7 @@ y = Wx + (alpha / r) * BAx
 | QLoRA r=16 (NF4) | 47.5 | 6.61 | 13.4 |
 | QLoRA r=64 (NF4) | 48.1 | 6.70 | 14.2 |
 
-يقع مقياس LoRA عند r=16 ضمن 1% من التنسيق الدقيق الكامل على معظم المعايير. يفقد QLoRA عند r=16 جزءًا آخر من المئة. يطابق QLoRA عند r=64 في الأساس التنسيق الدقيق الكامل مع استخدام 90٪ أقل من الذاكرة.
+(لورا)$r=16$يقع ضمن نسبة 1% من التكيف الكامل على معظم المعايير.$r=16$يُفقد جزء آخر من نسبة مئوية.$r=64$يطابق بشكل أساسي التنسيق الكامل مع استخدام 90٪ أقل من الذاكرة.
 
 ### التكاليف الحقيقية
 
@@ -183,7 +183,7 @@ y = Wx + (alpha / r) * BAx
 
 1. **Keep them separate**: تحميل النموذج الأساسي، تحميل المعدل فوق. تبادل المعدلات للمهام المختلفة. هكذا يمكنك تقديم العديد من التغيرات المعدلة من النموذج الأساسي واحد.
 
-2. **Merge them permanently**: حساب W' = W + (ألفا / ر) * BA و حفظ النتيجة كنموذج جديد كامل. النموذج المدمج هو نفس الحجم من الأصلي. لا تكلفة استنتاجية. لا يوجد مكيّف لإدارة.
+2. **Merge them permanently**: الحساب $W' = W + (\alpha/r) \cdot BA$ونحن نحتفظ بالنتيجة كنموذج جديد كامل، النموذج المدمج هو نفس الحجم من الأصلي، لا تكلفة استنتاجية، لا مُعدل لإدارة.
 
 لخدمة مهام متعددة (معدل دعم العملاء، معدل رمز، معدل ترجمة) ، حافظ على تفاصيلها. لتنفيذ نموذج متخصص واحد، دمج.
 
@@ -531,11 +531,11 @@ model.save_pretrained("./lora-adapter")
 | LoRA | "Efficient fine-tuning" | Low-Rank Adaptation: freeze base weights, train two small matrices A and B whose product approximates the full weight update |
 | QLoRA | "Fine-tune on a laptop" | Quantized LoRA: load the base model in 4-bit NF4, train LoRA adapters in fp16 on top, enabling 7B fine-tuning in 6GB VRAM |
 | Rank (r) | "How much the model can learn" | The inner dimension of the A and B matrices; controls expressiveness vs. parameter count |
-| Alpha | "LoRA learning rate" | Scaling factor applied to the LoRA output; alpha/r scales the adaptation's contribution to the final output |
+| Alpha | "LoRA learning rate" | Scaling factor applied to the LoRA output; $\alpha/r$ scales the adaptation's contribution to the final output |
 | NF4 | "4-bit quantization" | Normal Float 4: a 4-bit data type with quantization levels at normal distribution quantiles, optimal for neural network weights |
 | Adapter | "The small trained part" | The LoRA A and B matrices saved as a separate file (10-100MB), loadable on top of any copy of the base model |
 | Target modules | "Which layers to LoRA" | The specific linear layers (q_proj, v_proj, etc.) where LoRA adapters are injected |
-| Merging | "Bake it in" | Computing W + (alpha/r) * BA and replacing the original weight, eliminating the adapter overhead at inference |
+| Merging | "Bake it in" | Computing $W + (\alpha/r) \cdot BA$ and replacing the original weight, eliminating the adapter overhead at inference |
 | Paged optimizers | "Don't OOM during training" | Offloading optimizer states (Adam momentum, variance) to CPU when GPU memory is exhausted |
 | Catastrophic forgetting | "Fine-tuning broke everything else" | When updating all weights causes the model to lose previously learned capabilities |
 

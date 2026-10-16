@@ -937,24 +937,24 @@ if __name__ == "__main__":
 ### جوجل: التوأم مع إعدادات السلامة
 
 ```python
-# import google.generativeai as genai
+# from google import genai
+# from google.genai import types
 #
-# genai.configure(api_key="your-key")
+# client = genai.Client()
 #
-# model = genai.GenerativeModel(
-#     "gemini-1.5-pro",
-#     system_instruction="You are a technical analyst. Be precise and cite sources.",
-#     generation_config=genai.GenerationConfig(
+# response = client.models.generate_content(
+#     model="gemini-3.8-flash",
+#     contents="Compare PostgreSQL and MySQL for write-heavy workloads.",
+#     config=types.GenerateContentConfig(
+#         system_instruction="You are a technical analyst. Be precise and cite sources.",
 #         temperature=0.3,
 #         max_output_tokens=2048,
 #     ),
 # )
-#
-# response = model.generate_content("Compare PostgreSQL and MySQL for write-heavy workloads.")
 # print(response.text)
 ```
 
-تعالج Gemini تعليمات النظام كجزء من تكوين النموذج ، وليس كرسالة. يعني نافذة سياق رمز 2M أنه يمكنك تضمين مجموعات مثالية ضخمة قليلة الصور التي لن تناسب GPT-4o أو Claude.
+تعالج Gemini تعليمات النظام كجزء من تكوين النموذج ، وليس كرسالة. يعني نافذة سياق رمز 1M أنه يمكنك تضمين مجموعات مثالية ضخمة قليلة الصور التي لن تناسب نافذة 128K GPT-4o.
 
 ### نماذج الإشارة المزودة
 
@@ -1023,6 +1023,6 @@ if __name__ == "__main__":
 - [Wei et al., 2022 -- "Chain-of-Thought Prompting Elicits Reasoning in Large Language Models"](https://arxiv.org/abs/2201.11903)-- ورقة الأساسية التي تظهر أن "التفكير خطوة بخطوة" يحسن دقة ماجستير في القانون بنسبة 10-40% في مهام التفكير
 - [Zamfirescu-Pereira et al., 2023 -- "Why Johnny Can't Prompt"](https://arxiv.org/abs/2304.13529)-- بحث حول كيفية صراع غير الخبراء مع الهندسة السريعة وما يجعل الإشعار فعالة
 - [Shin et al., 2023 -- "Prompt Engineering a Prompt Engineer"](https://arxiv.org/abs/2311.05661)-- استخدام الـ LLM لتحسين الإشارات تلقائيًا، أساس الإشارة التلفزيونية
-- [LMSYS Chatbot Arena](https://chat.lmsys.org/)-- مقارنة عمياء حية من LLM حيث يمكنك اختبار نفس الإستعراض عبر النماذج والتصويت على أي رد أفضل
+- [Arena (formerly LMSYS Chatbot Arena)](https://arena.ai/)-- مقارنة عمياء حية من LLM حيث يمكنك اختبار نفس الإستعراض عبر النماذج والتصويت على أي رد أفضل
 - [DAIR.AI Prompt Engineering Guide](https://www.promptingguide.ai/)-- قائمة شاملة من التقنيات السريعة مع أمثلة (صفر الصور، قليل الصور، CoT، ReAct، التوافق الذاتي) ؛ الممارسين المرجعيين يستخدمونها للمساحة الأوسع "الهندسة السريعة".
-- [Anthropic prompt library](https://docs.anthropic.com/en/prompt-library)-- تحفيز، معروفة جيدة الإشارات حسب حالة الاستخدام؛ يظهر الأنماط الهيكلية التي تشحن في الإنتاج.
+- [Claude prompting best practices](https://platform.claude.com/docs/en/build-with-claude/prompt-engineering/claude-prompting-best-practices)-- توجيهات الأنثروبيك حول هيكل الإستعلام، مع أمثلة عملت.

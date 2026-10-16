@@ -438,22 +438,20 @@ def tree_of_thought_solve(question, client, model, breadth=3, depth=3):
 
 ```python
 def solve_with_escalation(question, examples, client, model):
-    system, user = build_cot_prompt(question, examples)
-    single_response = call_llm(client, model, system, user, temperature=0.0)
-    single_answer = extract_answer(single_response)
+    single_answer, _ = few_shot_cot_solve(question, examples, client, model)
 
     sc_answer, confidence, _, _ = self_consistency_solve(
         question, examples, client, model, n_samples=5
     )
 
-    if confidence >= 0.8:
+    if confidence >= 0.8 and single_answer == sc_answer:
         return sc_answer, "self_consistency", confidence
 
     tot_answer, _ = tree_of_thought_solve(question, client, model)
     return tot_answer, "tree_of_thought", None
 ```
 
-منطق التصعيد: حاول رخيصا (Cot واحد) أولاً. إذا كان ثقة التوافق الذاتي أقل من 0.8 (أقل من 4 من 5 عينات توافق) ، تصاعد إلى ToT. هذا يوازن التكلفة والدقة - معظم المشاكل يتم حلها رخيصاً، المشاكل الصعبة تحصل على المزيد من الحسابات.
+منطق التصعيد: حاول الرخيص أولاً (CT) مسار محدد واحد لا يعطي حصة صوتية، لذلك فحص الجودة هو الاتفاق: يجب أن يطابق إجابة درجة الحرارة 0 مع إجابة الأغلبية من المسارات التي تم أخذ العينات. إذا لم يكن ذلك، أو إذا كان ثقة التوافق الذاتي أقل من 0.8 (أقل من 4 من 5 عينات توافق) ، تصاعد إلى ToT. هذا يوازن التكلفة والدقة -- معظم المشاكل يتم حلها رخيصة، المشاكل الصعبة تحصل على المزيد من الحوسبة.
 
 ## استخدمها
 

@@ -856,7 +856,7 @@ promptfoo هو أسرع طريق من الصفر إلى خط الأنابيب ا
 - [DeepEval Documentation](https://docs.confident-ai.com)-- إطار تقييم بيثون الأصلي مع 14+ مقياس، ودمج Pytest، واكتشاف الهلوسة
 - [Braintrust Eval Guide](https://www.braintrust.dev/docs)-- منصة تقييم الإنتاج مع تتبع التجارب، وظائف تسجيل، وإدارة مجموعة البيانات
 - [Ribeiro et al., 2020 -- "Beyond Accuracy: Behavioral Testing of NLP Models with CheckList"](https://arxiv.org/abs/2005.04118)-- طريقة اختبار السلوك المنهجية (الجهود الحد الأدنى، عدم التغيرات، التوقعات التوجيهية) المطبقة على تقييم ماجستير في التدريبات
-- [LMSYS Chatbot Arena](https://chat.lmsys.org)-- منصة تقييم بشري حية حيث يصوت المستخدمون على نتائج النموذج، أكبر مجموعة بيانات مقارنة في أزواج لبرامج التدريب على القانون
+- [Arena (formerly LMSYS Chatbot Arena)](https://arena.ai/)-- منصة تقييم بشري حية حيث يصوت المستخدمون على نتائج النموذج، أكبر مجموعة بيانات مقارنة في أزواج لبرامج التدريب على القانون
 - [Es et al., "RAGAS: Automated Evaluation of Retrieval Augmented Generation" (EACL 2024 demo)](https://arxiv.org/abs/2309.15217)-- مقاييس خالية من المرجعية لـ RAG (الوفاء، ملاءمة الإجابة، دقة السياق/التذكير) ؛ نمط تقييم يتناسب مع الدرجة دون علامات.
 - [Liu et al., "G-Eval: NLG Evaluation using GPT-4 with Better Human Alignment" (EMNLP 2023)](https://arxiv.org/abs/2303.16634)-- سلسلة الفكر + ملء النموذج كبروتوكول القاضي؛ نتائج التصفية والتحيز كل حاجات المُبني القاضي.
 - [Hugging Face LLM Evaluation Guidebook](https://huggingface.co/spaces/OpenEvals/evaluation-guidebook)-- المشورة العملية حول تلوث البيانات، واختيار المقاييس، والتكاثر من فريق الحفاظ على قائمة Open LLM.

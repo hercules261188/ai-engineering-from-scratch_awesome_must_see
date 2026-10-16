@@ -100,20 +100,20 @@ graph LR
 
 **Cosine similarity**: كوسين زاوية بين متجهين. يتراوح من -1 (العكس) إلى 1 (الجهة المماثلة). يتجاهل الحجم -- جملة 10 كلمات وثيقة 500 كلمة يمكن أن تسجل 1.0 إذا كانت تشير إلى نفس الاتجاه. هذا هو الافتراض المحدد ل90٪ من الحالات الاستخدامية.
 
-```
-cosine_sim(a, b) = dot(a, b) / (||a|| * ||b||)
+```math
+\mathop{\mathrm{cosine\_sim}}(a, b) = \frac{\mathop{\mathrm{dot}}(a, b)}{\lVert a \rVert \cdot \lVert b \rVert}
 ```
 
 **Dot product**: المنتج الداخلي الخام لمتجهين. متطابق مع التشابه الكوسيني عندما يتم تطبيع المتجهات (طول الوحدة). أسرع للحساب. يتم تطبيع تضمينات OpenAI ، لذلك يعطي منتج النقطة والكوسيني نفس التصنيف.
 
-```
-dot(a, b) = sum(a_i * b_i)
+```math
+\mathop{\mathrm{dot}}(a, b) = \sum_i a_i b_i
 ```
 
 **Euclidean (L2) distance**: مسافة خط مستقيم في الفضاء المتجه. أصغر = أكثر مماثلة. حساسة لفرق الكبيرة. استخدم عندما يكون الموقف المطلق في الفضاء مهمًا ، وليس فقط الاتجاه.
 
-```
-L2(a, b) = sqrt(sum((a_i - b_i)^2))
+```math
+\mathop{\mathrm{L2}}(a, b) = \sqrt{\sum_i (a_i - b_i)^2}
 ```
 
 متى تستخدم:
@@ -134,7 +134,7 @@ L2(a, b) = sqrt(sum((a_i - b_i)^2))
 2. الطبقات العليا نادرة -- الاتصالات طويلة المدى بين الكتائب البعيدة
 3. الطبقات السفلية كثيفة -- صلات حادة بين المتجهات القريبة
 4. البحث يبدأ في الطبقة العليا، ينزل طمعيا لتصميم
-5. يعيد نتائج مقربة من أعلى (k) في O(log n) وقت بدلا من O(n)
+5. يعود نتائج مقربة من أعلى ك في $O(\log n)$الوقت بدلاً من$O(n)$
 
 تتداول HNSW خسارة دقيقة صغيرة في الدقة (عادة ما تكون 95-99٪ من التذكر) لتحقيق مكاسب كبيرة في السرعة. عند 10 ملايين متجه، يستغرق القوة الخامث الثواني. تستغرق HNSW ميل ثانية.
 
@@ -491,7 +491,7 @@ embeddings = model.encode(["semantic search query", "another document"])
 | Embedding | "Text to numbers" | A dense vector where geometric proximity encodes semantic similarity |
 | Word2Vec | "The OG embedding" | 2013 model that learned word vectors by predicting context words; proved vector arithmetic encodes meaning |
 | Cosine similarity | "How similar are two vectors" | Cosine of the angle between vectors; 1 = identical direction, 0 = orthogonal, -1 = opposite |
-| HNSW | "Fast vector search" | Hierarchical Navigable Small World graph -- multi-layer structure enabling O(log n) approximate nearest neighbor search |
+| HNSW | "Fast vector search" | Hierarchical Navigable Small World graph -- multi-layer structure enabling $O(\log n)$ approximate nearest neighbor search |
 | Bi-encoder | "Embed separately, compare fast" | Encodes query and document independently into vectors; enables pre-computation and fast retrieval |
 | Cross-encoder | "Slow but accurate reranker" | Processes query-document pair jointly through the full model; higher accuracy, no pre-computation |
 | Matryoshka embeddings | "Truncatable vectors" | Embeddings trained so the first N dimensions capture the most important information, enabling variable-size storage |
