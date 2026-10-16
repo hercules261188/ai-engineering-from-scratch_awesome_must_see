@@ -18,20 +18,20 @@
 
 Mục tiêu RLHF (Lớp 1):
 
-```
-max_pi E_{x,y~pi} [ r(x, y) ] - beta * KL(pi || pi_ref)
+```math
+\max_{\pi} \; \mathbb{E}_{x, y \sim \pi} \big[ r(x, y) \big] - \beta \, \mathrm{KL}(\pi \,\|\, \pi_{\text{ref}})
 ```
 
 có một tối ưu được biết đến:
 
-```
-pi*(y|x) = (1/Z(x)) * pi_ref(y|x) * exp(r(x, y) / beta)
+```math
+\pi^*(y \mid x) = \frac{1}{Z(x)} \, \pi_{\text{ref}}(y \mid x) \exp\!\left(\frac{r(x, y)}{\beta}\right)
 ```
 
 Vì vậy, phần thưởng được xác định ngầm bởi tỷ lệ chính sách tối ưu với tham chiếu:
 
-```
-r(x, y) = beta * log(pi*(y|x) / pi_ref(y|x)) + beta * log Z(x)
+```math
+r(x, y) = \beta \log \frac{\pi^*(y \mid x)}{\pi_{\text{ref}}(y \mid x)} + \beta \log Z(x)
 ```
 
 Thay thế nó vào khả năng ưu tiên Bradley-Terry và chức năng phân vùng `Z(x)`hủy vì nó chỉ phụ thuộc vào `x`. Điều còn lại là một sự mất mát trong các tham số chính sách một mình không cần mô hình thưởng. Đó là DPO.
@@ -42,11 +42,11 @@ Sự nếp nhăn: dẫn xuất giả định tối ưu có thể đạt được
 
 ### DPO (Rafailov et al., 2023)
 
-```
-L_DPO = -log sigmoid(
-  beta * log(pi(y_w | x) / pi_ref(y_w | x))
-  - beta * log(pi(y_l | x) / pi_ref(y_l | x))
-)
+```math
+L_{\text{DPO}} = -\log \sigma\!\left(
+  \beta \log \frac{\pi(y_w \mid x)}{\pi_{\text{ref}}(y_w \mid x)}
+  - \beta \log \frac{\pi(y_l \mid x)}{\pi_{\text{ref}}(y_l \mid x)}
+\right)
 ```
 
 Có thể sai gì?
@@ -59,8 +59,8 @@ Có thể sai gì?
 
 Identity Preference Optimization thay thế log-sigmoid bằng một bản đồ danh tính trên xác suất ưu tiên.
 
-```
-L_IPO = (log(pi(y_w | x) / pi_ref(y_w | x)) - log(pi(y_l | x) / pi_ref(y_l | x)) - 1/(2 beta))^2
+```math
+L_{\text{IPO}} = \left( \log \frac{\pi(y_w \mid x)}{\pi_{\text{ref}}(y_w \mid x)} - \log \frac{\pi(y_l \mid x)}{\pi_{\text{ref}}(y_l \mid x)} - \frac{1}{2\beta} \right)^2
 ```
 
 Lợi nhuận được giới hạn bởi `1/(2 beta)`- Tăng cường ưu tiên và khoảng cách phần thưởng ngầm là tương xứng.
@@ -69,8 +69,8 @@ Lợi nhuận được giới hạn bởi `1/(2 beta)`- Tăng cường ưu tiên
 
 Kahneman-Tversky Optimization giảm cấu trúc đôi hoàn toàn. Với một đầu ra được dán nhãn duy nhất và một tín hiệu "thích" hoặc "không mong muốn" nhị phân, nó được lập bản đồ cho một tiện ích lý thuyết triển vọng:
 
-```
-v(x, y) = sigma(beta * log(pi(y|x) / pi_ref(y|x)) - z_ref)
+```math
+v(x, y) = \sigma\!\left(\beta \log \frac{\pi(y \mid x)}{\pi_{\text{ref}}(y \mid x)} - z_{\text{ref}}\right)
 ```
 
 lợi ích: bạn có thể sử dụng dữ liệu không cặp, đó là nhiều hơn nhiều.
@@ -79,12 +79,12 @@ lợi ích: bạn có thể sử dụng dữ liệu không cặp, đó là nhi�
 
 Simple Preference Optimization phù hợp tín hiệu đào tạo với hệ thống.
 
-```
-L_SimPO = -log sigmoid(
-  (beta / |y_w|) * log pi(y_w | x)
-  - (beta / |y_l|) * log pi(y_l | x)
-  - gamma
-)
+```math
+L_{\text{SimPO}} = -\log \sigma\!\left(
+  \frac{\beta}{|y_w|} \log \pi(y_w \mid x)
+  - \frac{\beta}{|y_l|} \log \pi(y_l \mid x)
+  - \gamma
+\right)
 ```
 
 với một biên giới`gamma`Việc bình thường hóa chiều dài loại bỏ động lực để khai thác chế độ thất bại về chiều dài của DPO (longer `y_w`cho một khoảng cách lớn hơn log-prob theo xây dựng).
@@ -93,9 +93,11 @@ với một biên giới`gamma`Việc bình thường hóa chiều dài loại b
 
 Optimization Preference Ratio Optimization thêm một thuật ngữ ưu tiên cho SFT tiêu chuẩn khả năng log âm:
 
-```
-L_ORPO = L_NLL(y_w) + lambda * L_OR
-L_OR = -log sigmoid(log(odds(y_w) / odds(y_l)))
+```math
+\begin{aligned}
+L_{\text{ORPO}} &= L_{\text{NLL}}(y_w) + \lambda L_{\text{OR}} \\
+L_{\text{OR}} &= -\log \sigma\!\left(\log \frac{\text{odds}(y_w)}{\text{odds}(y_l)}\right)
+\end{aligned}
 ```
 
 Không có chính sách tham chiếu  thuật ngữ SFT là điều chỉnh. Đường bộ trong một giai đoạn từ mô hình cơ sở đến mô hình được sắp xếp. Không có điểm kiểm soát SFT riêng biệt.

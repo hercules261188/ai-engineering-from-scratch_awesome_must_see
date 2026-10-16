@@ -32,8 +32,8 @@ SFT cho bạn: mô hình bây giờ trả lời các câu hỏi thay vì tiếp 
 
 Đối với mỗi prompt, lấy mẫu hoàn thành K từ mô hình SFT. Một labeler xếp hạng chúng. Tập một mô hình phần thưởng ghi điểm bất kỳ cặp phản ứng prompt nào để, cho các cặp nơi `y_w`được `y_l`- Có thể là:
 
-```
-L_RM = -log sigmoid(r(x, y_w) - r(x, y_l))
+```math
+L_{\text{RM}} = -\log \sigma\big(r(x, y_w) - r(x, y_l)\big)
 ```
 
 Đây là sự mất ưu tiên cặp Bradley-Terry. RM thường được khởi tạo từ mô hình SFT với đầu LM được thay thế bởi đầu scalar.
@@ -44,8 +44,8 @@ Các mô hình phần thưởng nhỏ: 6B là đủ cho 175B InstructGPT. Chúng
 
 Định nghĩa mục tiêu:
 
-```
-J(pi) = E_{x~D, y~pi(.|x)} [ r(x, y) ] - beta * KL(pi(.|x) || pi_SFT(.|x))
+```math
+J(\pi) = \mathbb{E}_{x \sim D,\, y \sim \pi(\cdot \mid x)} \big[ r(x, y) \big] - \beta \, \mathrm{KL}\big(\pi(\cdot \mid x) \,\|\, \pi_{\text{SFT}}(\cdot \mid x)\big)
 ```
 
 Tăng tối đa bằng PPO.`pi`Nếu không có nó, người tối ưu hóa tìm thấy các ví dụ đối nghịch  chuỗi ghi điểm cao dưới RM vì RM chưa bao giờ thấy chúng, không phải vì con người thực sự thích chúng.
@@ -56,8 +56,8 @@ Tỷ lệ KL `beta`là siêu tham số RLHF quan trọng nhất. quá thấp: re
 
 Sau RLHF, mô hình được người thích nhưng giảm xuống trên các tiêu chuẩn chuẩn chuẩn (SQuAD, HellaSwag, DROP). Ouyang et al. gọi đây là thuế sắp xếp và sửa bằng PPO-ptx: trộn gradient trước đào tạo vào mục tiêu RL để mô hình không quên làm thế nào để thực hiện các nhiệm vụ dòng chảy sau đó nó không bao giờ được khen thưởng.
 
-```
-J_ptx(pi) = J(pi) + gamma * E_{x~D_pretrain} [ log pi(x) ]
+```math
+J_{\text{ptx}}(\pi) = J(\pi) + \gamma \, \mathbb{E}_{x \sim D_{\text{pretrain}}} \big[ \log \pi(x) \big]
 ```
 
 PPO-ptx trở thành tiêu chuẩn. Anthropic, DeepMind và Meta đều sử dụng một số biến thể.
@@ -84,7 +84,7 @@ al-instruct-pipeline
 Những gì cần xem:
 
 - Đường quỹ đạo thưởng với `beta = 0.1`vs `beta = 0.0`- Tôi không biết.
-- (các bước đào tạo)
+- $\mathrm{KL}(\pi \Vert \pi_{\text{SFT}})$trên các bước huấn luyện.
 - Phân phối hành động cuối cùng so với ưu tiên nhãn.
 
 ## Chuyển nó
@@ -109,7 +109,7 @@ Bài học này sẽ mang lại kết quả `outputs/skill-instructgpt-explainer
 |------|-----------------|------------------------|
 | SFT | "instruction tuning" | Stage 1: cross-entropy fine-tune on prompt-response pairs |
 | Reward model | "the RM" | Scalar regressor over (prompt, response) trained with Bradley-Terry on pairwise labels |
-| Bradley-Terry | "pairwise preference loss" | -log sigmoid(r_w - r_l); reduces pairwise ranking to binary classification |
+| Bradley-Terry | "pairwise preference loss" | $-\log \sigma(r_w - r_l)$; reduces pairwise ranking to binary classification |
 | KL penalty | "the regularizer" | `beta * KL(pi \|\| pi_SFT)` — keeps the RL policy near the SFT anchor |
 | PPO-ptx | "PPO with pretraining mix" | Adds a fraction of pre-training log-likelihood to the PPO objective to offset the alignment tax |
 | Alignment tax | "the RLHF regression" | Post-RLHF drop on standard benchmarks that RLHF did not target |

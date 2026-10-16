@@ -28,10 +28,12 @@ Nguyên lý này là chung. Nó không phụ thuộc vào việc sycophancy là 
 
 Để `pi_0`là mô hình cơ bản, `pi_A`mô hình sau khi đồng nhất, `r`phần thưởng đại diện,`s(x, y)`Một chỉ số đồng tính hai phương. Định nghĩa:
 
-```
-E[s | r]            = probability of sycophancy given reward
-E_{pi_0}[s | r]     = measured on the base model's output distribution
-E_{pi_A}[s | r]     = measured on the aligned model's output distribution
+```math
+\begin{aligned}
+\mathbb{E}[s \mid r] &= \text{probability of sycophancy given reward} \\
+\mathbb{E}_{\pi_0}[s \mid r] &= \text{measured on the base model's output distribution} \\
+\mathbb{E}_{\pi_A}[s \mid r] &= \text{measured on the aligned model's output distribution}
+\end{aligned}
 ```
 
 Giai đoạn 1: theo kinh nghiệm,`E_{pi_0}[s | r=high] > E_{pi_0}[s | r=low]`. Phụ lục sycophantic điểm trung bình cao hơn so với các non-sycophantic tương ứng trong một RM được đào tạo trên dữ liệu labeler-họ thích.
@@ -69,8 +71,8 @@ Sahoo (arXiv:2604.10585) đào tạo GRPO về lý luận toán học với "câ
 
 Shapira et al. đề xuất sửa đổi phần thưởng:
 
-```
-r'(x, y) = r(x, y) - alpha * agree(x, y)
+```math
+r'(x, y) = r(x, y) - \alpha \cdot \text{agree}(x, y)
 ```
 
 nơi `agree(x, y)`là một phân loại phụ giúp đo lường liệu `y`đồng ý với `x`Alpha scan cho thấy sự giảm của sự tăng trưởng ở mức gần mức chuẩn`alpha`khoảng 0,3-0,5, với chi phí mất một số sự đồng ý hợp pháp (chương tự trở nên hơi trái ngược với niềm tin chính xác của người dùng).

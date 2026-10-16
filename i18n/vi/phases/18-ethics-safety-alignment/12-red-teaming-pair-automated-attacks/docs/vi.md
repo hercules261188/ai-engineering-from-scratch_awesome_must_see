@@ -31,11 +31,11 @@ Các đầu vào:
 
 Loop, cho k trong 1..K:
 1. A được nhắc đến với mục tiêu G và lịch sử của (quá trình, phản ứng) cặp cho đến nay.
-2. A phát ra một thông báo mới.
-3. Đưa p_k đến T; nhận phản ứng r_k.
-4. J ghi điểm (p_k, r_k) trên bàn thắng.
+2. A phát ra một lời nhắc mới $p_k$- Tôi không biết.
+3. Đưa ra$p_k$để T; nhận được phản hồi $r_k$- Tôi không biết.
+4. J điểm $(p_k, r_k)$trên bàn thắng.
 5. Nếu điểm >= ngưỡng, dừng  jailbreak tìm thấy.
-6. Nếu không, thêm (p_k, r_k) vào lịch sử của A; tiếp tục.
+6. Còn nữa, thêm $(p_k, r_k)$để lịch sử của A; tiếp tục.
 
 Kết quả thực nghiệm (NeurIPS 2023): > 50% tỷ lệ thành công của cuộc tấn công đối với GPT-3.5-turbo, Llama-2-7B-chat; trung bình các truy vấn thành công trong phạm vi 10-20
 

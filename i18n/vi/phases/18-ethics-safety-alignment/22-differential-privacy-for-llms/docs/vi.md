@@ -22,8 +22,11 @@ Các LLM ghi nhớ. Carlini et al. 2021 cho thấy các mô hình ngôn ngữ s�
 
 ### (ε, δ) - sự riêng tư khác biệt
 
-Một thuật toán ngẫu nhiên M là (ε, δ) -DP nếu cho bất kỳ hai tập dữ liệu khác nhau trong một ví dụ và bất kỳ sự kiện S nào:
-P(M(D) trong S) <= e^ε * P(M(D') trong S) + δ.
+Một thuật toán ngẫu nhiên $M$là $(\varepsilon, \delta)$-DP nếu cho bất kỳ hai tập dữ liệu khác nhau trong một ví dụ và bất kỳ sự kiện nào $S$- Có thể là:
+
+```math
+P(M(D) \in S) \le e^{\varepsilon} \cdot P(M(D') \in S) + \delta.
+```
 
 Giải thích: phân bố đầu ra là đủ gần (được định đo bằng ε) để không thể suy luận đáng tin cậy về sự đóng góp của bất kỳ cá nhân nào, ngoại trừ với xác suất δ.
 
@@ -33,7 +36,7 @@ Abadi et al. 2016. Công thức tiêu chuẩn:
 1. Hãy lấy một lô nhỏ.
 2. Xét các gradient cho mỗi ví dụ.
 3. Clip mỗi gradient mỗi ví dụ đến ngưỡng C.
-4. Kết hợp các gradient cắt và thêm tiếng ồn Gaussian với std σ * C.
+4. Kết hợp các gradient cắt và thêm tiếng ồn Gaussian với std $\sigma \cdot C$- Tôi không biết.
 5. Sử dụng số lượng tiếng ồn để cập nhật các tham số.
 
 Chi phí bảo mật được theo dõi bởi một kế toán viên (Tế toán viên Moment, kế toán viên Rényi DP). Các giá trị ε được báo cáo trong văn học LLM khác nhau rất nhiều theo mô hình đe dọa, độ nhạy cảm dữ liệu và mục tiêu hữu ích; không có mặc định "an toàn" chung ε. Các ví dụ được xuất bản khoảng ε ≈ 110 trong một số thiết lập đào tạo LLM, nhưng đây là minh họa  không được khuyến cáo mặc định. Low ε thường đòi hỏi nhiều tiếng ồn hơn và có thể làm tăng mất năng lượng.
@@ -84,9 +87,9 @@ Bài học này sẽ mang lại kết quả `outputs/skill-dp-audit.md`. Với m
 
 ## Các bài tập
 
-1. Đi chạy`code/main.py`. Quét σ trong {0,5, 1.0, 2.0} và báo cáo sự đổi giá chính xác (ε, δ).
+1. Đi chạy`code/main.py`- Tháo ra .$\sigma \in \lbrace 0.5, 1.0, 2.0 \rbrace$và báo cáo sự thỏa hiệp chính xác (ε, δ).
 
-2. Thực hiện một thử nghiệm canary và một thử nghiệm mất nhật ký. đo tốc độ phát hiện trước và sau DP-SGD ở σ = 1.0.
+2. Thực hiện một việc chèn canary và một thử nghiệm mất nhật ký.$\sigma = 1.0$- Tôi không biết.
 
 3. Đọc Nasr et al. 2025 về đào tạo-khai thác dữ liệu. Tại sao thành công khai thác không sụp đổ dưới mức trung bình ε? Điều này có nghĩa là gì về MIA-as-evaluation?
 

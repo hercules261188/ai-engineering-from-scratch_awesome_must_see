@@ -28,9 +28,11 @@ Công thức ban đầu của Goodhart: "Khi một biện pháp trở thành m�
 
 Gao et al. đưa ra một hình thức chức năng.`d = sqrt(KL(pi || pi_init))`- Để đi .`R_proxy(d)`là một phần thưởng đại diện và `R_gold(d)`- Đánh giá vàng.
 
-```
-R_proxy(d) = alpha * d - beta_proxy * d^2
-R_gold(d)  = alpha * d - beta_gold  * d^2
+```math
+\begin{aligned}
+R_{\text{proxy}}(d) &= \alpha d - \beta_{\text{proxy}} d^2 \\
+R_{\text{gold}}(d) &= \alpha d - \beta_{\text{gold}} d^2
+\end{aligned}
 ```
 
 với `beta_gold > beta_proxy`Cả hai đều tăng từ 0 KL, cả hai đỉnh, đỉnh vàng gần hơn với nguồn gốc.`d`, vàng giảm xuống dưới mức cơ sở ngay cả khi proxy tiếp tục leo lên. khoảng cách vàng proxy có cùng ký hiệu trên mẫu BON, PPO, và SFT-to-best.
