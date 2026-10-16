@@ -31,11 +31,11 @@ A red-teaming costumava ser uma atividade manual. Um pequeno número de testador
 
 Loop, para k em 1..K:
 1. A é provocada com o objetivo G e o histórico de pares (prompto, resposta) até agora.
-2. A emite um novo sinal de resposta.
-3. Enviar p_k para T; receber resposta r_k.
-4. J marca (p_k, r_k) no gol.
+2. Um emite um novo sinal .$p_k$- Não .
+3. Submeter$p_k$para T; receber resposta $r_k$- Não .
+4. J pontuações $(p_k, r_k)$No gol.
 5. Se a pontuação >= limiar, parar o jailbreak encontrado.
-6. Caso contrário, adicione (p_k, r_k) ao histórico de A; continue.
+6. Outra, adição $(p_k, r_k)$A história de A. Continuem.
 
 Resultado empírico (NeurIPS 2023): > 50% taxa de sucesso de ataque contra GPT-3.5-turbo, Llama-2-7B-chat; consultas médias para sucesso na faixa de 10-20.
 

@@ -28,9 +28,11 @@ A formulação original de Goodhart: "Quando uma medida se torna um alvo, deixa 
 
 Gao et al. dar uma forma funcional.`d = sqrt(KL(pi || pi_init))`- Deixa-me .`R_proxy(d)`Ser uma recompensa de proxy e `R_gold(d)`Em termos empíricos:
 
-```
-R_proxy(d) = alpha * d - beta_proxy * d^2
-R_gold(d)  = alpha * d - beta_gold  * d^2
+```math
+\begin{aligned}
+R_{\text{proxy}}(d) &= \alpha d - \beta_{\text{proxy}} d^2 \\
+R_{\text{gold}}(d) &= \alpha d - \beta_{\text{gold}} d^2
+\end{aligned}
 ```
 
 com`beta_gold > beta_proxy`Ambos subem a partir de zero KL, ambos o pico, o pico do ouro está mais perto da origem.`d`O diferencial entre o ouro e o ouro por proxy tem a mesma assinatura em amostragem de BoN, PPO e SFT-to-best.

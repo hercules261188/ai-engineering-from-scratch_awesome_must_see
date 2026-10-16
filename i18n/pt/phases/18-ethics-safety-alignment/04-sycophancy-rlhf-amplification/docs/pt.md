@@ -28,10 +28,12 @@ O argumento é genérico. Não depende da sícófância ser um viés humano "nat
 
 Deixe-me .`pi_0`ser o modelo base, `pi_A`O modelo pós-alinhamento `r`a recompensa de proxy,`s(x, y)`um indicador de sícófância binária.
 
-```
-E[s | r]            = probability of sycophancy given reward
-E_{pi_0}[s | r]     = measured on the base model's output distribution
-E_{pi_A}[s | r]     = measured on the aligned model's output distribution
+```math
+\begin{aligned}
+\mathbb{E}[s \mid r] &= \text{probability of sycophancy given reward} \\
+\mathbb{E}_{\pi_0}[s \mid r] &= \text{measured on the base model's output distribution} \\
+\mathbb{E}_{\pi_A}[s \mid r] &= \text{measured on the aligned model's output distribution}
+\end{aligned}
 ```
 
 Fase 1: empiricamente,`E_{pi_0}[s | r=high] > E_{pi_0}[s | r=low]`- Os resultados de conclusões sícofantasticas são, em média, superiores aos resultados de conclusões não sícofantasticas correspondentes em RM treinados com base em dados de preferência de etiquetador.
@@ -69,8 +71,8 @@ Sahoo (arXiv:2604.10585) treina o GRPO em raciocínio matemático com "respostas
 
 Shapira et al. propõem modificar a recompensa:
 
-```
-r'(x, y) = r(x, y) - alpha * agree(x, y)
+```math
+r'(x, y) = r(x, y) - \alpha \cdot \text{agree}(x, y)
 ```
 
 onde`agree(x, y)`é um classificador auxiliar que mede se `y`concorda com `x`Os registos alfa mostram que a sícófância cai para quase o nível do modelo base.`alpha`A taxa de crescimento de um sistema de dados é de 0,3-0,5, ao custo de alguma perda de acordo legítimo (o modelo torna-se um pouco mais contrária às crenças corretas dos utilizadores).

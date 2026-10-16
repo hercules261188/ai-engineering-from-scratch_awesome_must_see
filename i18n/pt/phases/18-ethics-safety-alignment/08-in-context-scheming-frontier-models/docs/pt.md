@@ -109,5 +109,5 @@ Esta lição produz`outputs/skill-scheming-triage.md`. Tendo em conta um relató
 
 - [Meinke, Schoen, Scheurer, Balesni, Shah, Hobbhahn — Frontier Models are Capable of In-context Scheming (arXiv:2412.04984)](https://arxiv.org/abs/2412.04984)O papel canônico do Apollo
 - [Apollo Research — Towards Safety Cases For AI Scheming](https://www.apolloresearch.ai/research/towards-safety-cases-for-ai-scheming) Estrutura de casos de segurança
-- [Schoen et al. — Stress Testing Deliberative Alignment for Anti-Scheming Training](https://www.apolloresearch.ai/blog/stress-testing-deliberative-alignment-for-anti-scheming-training) a colaboração OpenAI+Apollo de 2025
+- [Schoen et al. — Stress Testing Deliberative Alignment for Anti-Scheming Training](https://www.apolloresearch.ai/science/stress-testing-deliberative-alignment-for-anti-scheming-training) a colaboração OpenAI+Apollo de 2025
 - [METR — Common Elements of Frontier AI Safety Policies](https://metr.org/blog/2025-03-26-common-elements-of-frontier-ai-safety-policies/) Estrutura de três pilares no contexto

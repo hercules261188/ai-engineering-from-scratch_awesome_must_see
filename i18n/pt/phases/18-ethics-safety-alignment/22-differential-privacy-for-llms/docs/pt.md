@@ -22,8 +22,11 @@ Os LLM memorizam. Carlini et al. 2021 mostrou que os modelos de linguagem de pro
 
 ### (ε, δ) - privacidade diferencial
 
-Um algoritmo aleatório M é (ε, δ) -DP se para quaisquer dois conjuntos de dados que diferem em um exemplo e em qualquer evento S:
-P(M(D) em S) <= e^ε * P(M(D') em S) + δ.
+Um algoritmo aleatório .$M$É o que é$(\varepsilon, \delta)$-DP se for de dois conjuntos de dados diferentes num exemplo e em qualquer evento $S$- Não .
+
+```math
+P(M(D) \in S) \le e^{\varepsilon} \cdot P(M(D') \in S) + \delta.
+```
 
 Interpretação: a distribuição de saída é suficientemente próxima (parametrizada por ε) para que a contribuição de qualquer indivíduo não possa ser inferida de forma confiável, exceto com probabilidade δ.
 
@@ -33,7 +36,7 @@ Abadi et al. 2016. A receita padrão:
 1. Prove um mini-parce.
 2. Calcule os gradientes por exemplo.
 3. Clip cada gradiente por exemplo para um limiar C.
-4. Sumar os gradientes cortados e adicionar ruído gaussiano com std σ * C.
+4. Sumar os gradientes cortados e adicionar ruído gaussiano com std $\sigma \cdot C$- Não .
 5. Use a soma barulhenta para atualizar os parâmetros.
 
 O custo da privacidade é acompanhado por um contador (contador de Moments, contador de Rényi DP). Os valores ε relatados na literatura do LLM variam muito de acordo com o modelo de ameaça, a sensibilidade dos dados e o objetivo de utilidade; não há um padrão "seguro" universal ε. Os exemplos publicados abrangem aproximadamente ε ≈ 110 em algumas configurações de formação de LLM, mas estes são ilustrativos  não são recomendados. A menor ε geralmente requer mais ruído e pode aumentar a perda de utilidade.
@@ -84,9 +87,9 @@ Esta lição produz`outputs/skill-dp-audit.md`. Tendo em conta uma alegação de
 
 ## Exercícios
 
-1. Corra .`code/main.py`. Escolher σ em {0,5, 1.0, 2.0} e relatar a compensação de precisão (ε, δ).
+1. Corra .`code/main.py`- Esvaziar .$\sigma \in \lbrace 0.5, 1.0, 2.0 \rbrace$Identificar o ponto em que a utilidade desmorona.
 
-2. Realizar uma inserção de canários e um teste de perda de registro.
+2. Realizar uma inserção de canários e um teste de perda de registro.$\sigma = 1.0$- Não .
 
 3. Nasr et al. 2025 sobre a extracção de dados de formação. Por que o sucesso da extracção não desmorona em casos moderados?
 
