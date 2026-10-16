@@ -305,3 +305,15 @@ s0-process-fork
 3. 开始一个tmux会议,运行`sleep 300`在它里,脱离,列出会议,再连接.
 4. 使用`df -h`查看可用的磁盘空间,然后使用`du -sh ~/.cache/*`找出你存储器里有什么空间.
 5. 通过使用 移动一个文件从本地机器到远程机器`scp`然后与 `rsync`让我们比较经验.
+
+### 暗示
+
+**Exercise 1.**使用`cd ~`现在`mkdir`其他`cd`进入新的文件,然后运行`touch`文件名的三个字母.`ls -la`输出,检查三个文件是否显示0的尺寸和您的用户名作为所有者.
+
+**Exercise 2.**安装`sudo apt install -y htop`开始,然后按下`F6`(或点击列名) 按排序`MEM%`列表上最顶部的过程使用了最多的记忆.
+
+**Exercise 3.**使用`tmux new -s train`经过课程,跑步`sleep 300`除了除`Ctrl+B`然后`d`跑步`tmux ls`让我们看看会议.`tmux attach -t train` 其他`sleep`现在还要跑了.
+
+**Exercise 4.**跑步`df -h`阅读`Avail`运行文件系统,包含您的主文件.`du -sh ~/.cache/* | sort -h`并且最大的文件在最后一行.
+
+**Exercise 5.**复制一个文件`scp file.txt user@host:~/`然后跑去`rsync -avP file.txt user@host:~/`运行一个文件.`rsync`命令第二次:它几乎没有发送,因为远程端的文件没有改变.

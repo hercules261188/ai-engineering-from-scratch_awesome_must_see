@@ -336,6 +336,16 @@ env | grep -i torch
 3. 创建一个假的训练日志`for i in $(seq 1 100); do echo "epoch $i loss: $(echo "scale=4; 1/$i" | bc)"; sleep 0.1; done > fake_train.log`然后使用`grep`现在`tail`其他`awk`只有输出值.
 4. 设置一个SSH配置输入,为您访问 (或使用) 的服务器`localhost`实践语法).
 
+### 暗示
+
+**Exercise 1.**开始`tmux new -s practice`然后用前分开`Ctrl+B`接着是`"`其他`%`通过轮,`Ctrl+B`带一个箭头钥匙.`Ctrl+B`然后`d`走走`tmux ls`接下来将它连接到`tmux attach -t practice`必须继续运行.
+
+**Exercise 2.**复制从`code/shell_aliases.sh`截至最后`~/.zshrc`或`~/.bashrc`然后跑去`source`在那个文件上.`alias`或`type <name>`为了一个新的称来确认,
+
+**Exercise 3.**首先跑`tail -5 fake_train.log`查看线条格式.然后使用 `grep loss`打印最后一个字段`awk '{print $NF}'`输出必须是100个变小的数字.
+
+**Exercise 4.**复制`Host gpu`课程的区块`~/.ssh/config`改变`HostName`其他`User`您的服务器或`localhost`运行`ssh -G gpu`如果您有一个可访问的SSH服务器,它可以接受您的密钥,请运行`ssh gpu`让我们联系起来.
+
 ## 关键词
 
 | Term | What people say | What it actually means |

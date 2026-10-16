@@ -106,6 +106,14 @@ git push origin my-progress
 2. 创建一个`.gitignore`没有模拟检查站文件 (`.pt`现在`.pth`现在`.safetensors`)
 3. 查看这个回复的提交历史`git log --oneline`阅读如何增加教训
 
+### 暗示
+
+**Exercise 1.**按GitHub上的Fork,然后`git clone`之后,你会看到一个`git push -u origin my-progress`在 GitHub 打开叉,确认分支列表显示`my-progress`随着你的档案.
+
+**Exercise 2.**增加一个模式每个扩展,例如`*.pt`通过`.gitignore`在存储库根中的文件. 创建一个空格文件,并运行`git status`它们都不能出现在未追踪文件列表中.
+
+**Exercise 3.**跑步`git log --oneline`然后`git log --oneline -- phases/00-setup-and-tooling`选择一个提交,然后运行`git show --stat <hash>`为了看看它添加了哪些课程文件.
+
 ## 关键词
 
 | Term | What people say | What it actually means |

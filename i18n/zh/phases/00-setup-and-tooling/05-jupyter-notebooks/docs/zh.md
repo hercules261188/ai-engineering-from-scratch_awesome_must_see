@@ -239,6 +239,14 @@ display(Image(filename="architecture.png"))
 2. 创建一个包含分类和代码单元的笔记本,将 CSV 加载,显示数据框架,并绘制图表.然后运行Kernel>重启 & 运行所有,以验证它从上到下
 3. 取代代码`code/notebook_tips.py`粘贴在Colab笔记本,然后用免费的GPU运行
 
+### 暗示
+
+**Exercise 1.**开始使用 JupyterLab`jupyter lab`然后把每个版本都放在自己的细胞中,开始于`%timeit`两种细胞都用相同的100,000尺寸,使两次测量相同的工作.
+
+**Exercise 2.**使用`pd.read_csv`对于数据,显示数据框架作为一个细胞的最后一行,并使用 图`df.plot()`在Kernel>重启和运行所有之后,每个单元必须在执行计数器中显示一个数字,并且没有单元可能显示错误.
+
+**Exercise 3.**在 Colab 中,在粘贴代码之前,选择运行时间 > 改变运行时间类型 > GPU.`code/notebook_tips.py`印出其部分,`torch.cuda.is_available()`收益`True`在一个牢房里.
+
 ## 关键词
 
 | Term | What people say | What it actually means |

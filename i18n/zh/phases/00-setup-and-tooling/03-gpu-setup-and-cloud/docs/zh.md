@@ -130,6 +130,14 @@ if torch.cuda.is_available():
 2. 如果没有GPU,请在Google Colab上运行,然后比较
 3. 检查您有多少GPU内存,并估计您可以安装的最大模型 (指公规则:fp16的每个参数为2字节)
 
+### 暗示
+
+**Exercise 1.**运行从构建它部分的代码,然后写下CPU时间,GPU时间,加快线. 运行第二次;第一次GPU运行包括启动成本,所以第二个数字是比较的.
+
+**Exercise 2.**在 Colab 中,选择运行时间 > 改变运行时间类型 > GPU,然后将基准粘贴在一个细胞中.`!nvidia-smi`在其他细胞中,它必须显示一个GPU名称,
+
+**Exercise 3.**阅读全部记忆`torch.cuda.get_device_properties(0).total_memory / 1e9`其他`code/gpu_check.py`按2分别将内存分为字节,以获得fp16参数数,然后保留一个边缘,因为激活和CUDA文本也使用内存.
+
 ## 关键词
 
 | Term | What people say | What it actually means |

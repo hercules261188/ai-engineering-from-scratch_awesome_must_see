@@ -146,6 +146,14 @@ with urllib.request.urlopen(req) as resp:
 2. 试试原始 HTTP 版本,并将响应格式与 SDK 版本进行比较
 3. 故意使用错误的API键并读取错误信息
 
+### 暗示
+
+**Exercise 1.**在人类控制台中创建一个钥匙,放入`ANTHROPIC_API_KEY`按照课程的说明,然后跑去.`code/first_api_call.py`电话工作时,脚本打印了模型答案,没有错误.
+
+**Exercise 2.**两者都在`code/first_api_call.py`仅打印文字和符号数量.`print(response)`在`call_with_sdk()`其他`print(result)`在`call_raw_http()`进行测试,然后运行脚本来查看两个完整的响应.`content`现在`usage`其他`stop_reason` SDK 将这些字段转化为对象属性.
+
+**Exercise 3.**设置`ANTHROPIC_API_KEY`输出中找到HTTP状态代码和错误类型;一个身份验证失败返回401状态.
+
 ## 关键词
 
 | Term | What people say | What it actually means |

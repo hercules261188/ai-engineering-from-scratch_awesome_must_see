@@ -155,7 +155,7 @@ python:3.12-slim
 这里是Docker文件.`code/Dockerfile`走过它:
 
 ```dockerfile
-FROM nvidia/cuda:12.4.1-devel-ubuntu22.04
+FROM --platform=linux/amd64 nvidia/cuda:12.4.1-devel-ubuntu22.04
 
 ENV DEBIAN_FRONTEND=noninteractive
 ENV PYTHONUNBUFFERED=1
@@ -215,6 +215,8 @@ docker build -t ai-dev -f phases/00-setup-and-tooling/07-docker-for-ai/code/Dock
 ```
 
 后续构建使用缓存层.
+
+**macOS / Apple Silicon (M1/M2/M3/M4):**其他`--platform=linux/amd64`在`FROM`图像也发送一个 arm64 变体,Docker 桌面自动在 Apple Silicon 上选择它,但 PyTorch 发布了其`cu124`只有 x86_64 的轮子,所以 `pip install torch==2.6.0+cu124`层失败了`No matching distribution found for torch==2.6.0+cu124`上平台将x86_64图像拉出来,并运行在模拟下:构建速度较慢,容器没有GPU (Mac上无论如何都没有CUDA).`--gpus all`其他`docker run`在Mac上下面的命令.对于在Apple Silicon上进行GPU工作,用MPS构建从01课程进行本地运行课程,并为NVIDIAGPU的x86_64 Linux主机保存此图像.
 
 运行它:
 
@@ -372,6 +374,16 @@ docker logs -f <container_id>
 2. 启动Docker组合堆并验证Qdrant可以从AI容器访问`http://qdrant:6333/collections`
 3. 加入`flask`运行一个简单的API服务器在端口5000.`-p 5000:5000`
 4. 通过 测量图像大小`docker images`试试把基图从`devel`为了`runtime`并且比较尺寸
+
+### 暗示
+
+**Exercise 1.**使用它来建立`docker build -t ai-dev -f phases/00-setup-and-tooling/07-docker-for-ai/code/Dockerfile .`命令从课程,然后运行进口.`docker run --rm ai-dev`在Mac上,不要使用`--gpus all`收容器必须打印一个版本,`2.6.0`现在,我们要去.
+
+**Exercise 2.**跑步`docker compose up -d`在`code/`然后在文件中打开一个`ai-dev`服务`docker compose exec ai-dev bash`在里面,跑去`curl http://qdrant:6333/collections`;一个JSON答案意味着服务名称在编写网络上解决.
+
+**Exercise 3.**添加一个`RUN pip install flask`连接到Docker文件,重建,并启动服务器`host="0.0.0.0"`由于容器内部的服务器与本地主机联系在一起,无法从外部访问.`http://localhost:5000`在机器上确认端口映射是否有效.
+
+**Exercise 4.**跑步`docker images ai-dev`换个字母,然后写下大小列.`devel`为了`runtime`在`FROM`运行时间图像将编译器和标题排除在外.
 
 ## 关键词
 
