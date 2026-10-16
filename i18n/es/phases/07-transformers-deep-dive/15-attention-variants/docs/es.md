@@ -9,11 +9,11 @@
 
 ## El problema
 
-Costos de atención plena `O(N²)`memoria y `O(N²)`Para un Llama 3 70B de 128K de contexto que es 16 mil millones de entradas de atención por capa, veces 80 capas.`O(N²)`memoria de activación pero no cambia el costo aritmético  cada token todavía atende a cada otro token.
+Costos de atención plena $O(N^2)$memoria y $O(N^2)$Para un Llama 3 70B de 128K de contexto que es 16 mil millones de entradas de atención por capa, veces 80 capas.$O(N^2)$memoria de activación pero no cambia el costo aritmético  cada token todavía atende a cada otro token.
 
 Tres clases de variantes cambian la topología de la matriz de atención misma:
 
-1. **Sliding window attention (SWA).**Cada token se encuentra en una ventana fija de vecinos, no en el prefijo completo.`O(N · W)`donde`W`Gemma 2/3, las primeras capas del Mistral 7B, Phi-3-Long.
+1. **Sliding window attention (SWA).**Cada token se encuentra en una ventana fija de vecinos, no en el prefijo completo.$O(N \cdot W)$donde$W$Gemma 2/3, las primeras capas del Mistral 7B, Phi-3-Long.
 2. **Sparse / block attention.**Sólo pares seleccionados `(i, j)`Los demás se ven obligados a cero peso. Longformer, BigBird, OpenAI transformador escaso.
 3. **Differential attention.**Computa dos mapas de atención con proyecciones Q/K separadas, restar uno del otro. Mata el "sink de atención" que desangraza el peso en los primeros tokens.
 
@@ -23,7 +23,7 @@ Los modelos fronterizos de 2026 a menudo los mezclan: la mayoría de las capas s
 
 ### Atención a las ventanas deslizantes (SWA)
 
-Cada consulta en posición `i`sólo asiste a posiciones en `[i - W, i]`(SWA causal) o `[i - W/2, i + W/2]`Los tokens fuera de la ventana se ponen.`-inf`en la matriz de puntaje.
+Cada consulta en posición $i$sólo asiste a posiciones en $[i - W, i]$(SWA causal) o $[i - W/2, i + W/2]$Los tokens fuera de la ventana se ponen.$-\infty$en la matriz de puntaje.
 
 ```
 full causal:           sliding window (W=4):
@@ -39,17 +39,17 @@ positions 0-7          positions 0-7, W=4
 7 | x x x x x x x x  7 |          x x x x
 ```
 
-Para`N = 8192`y `W = 1024`, la matriz de puntaje tiene 1024 × 8192 filas no cero en la expectativa  una reducción de 8 ×.
+Para$N = 8192$y $W = 1024$, la matriz de puntaje tiene 1024 × 8192 filas no cero en la expectativa  una reducción de 8 ×.
 
-**KV cache shrinks with SWA.**Sólo el último .`W`Los tokens de K y V deben mantenerse por capa. Para una configuración Gemma-3-ish (1024 ventanas, contexto 128K), la caché KV cae 128x.
+**KV cache shrinks with SWA.**Sólo el último .$W$Los tokens de K y V deben mantenerse por capa. Para una configuración Gemma-3-ish (1024 ventanas, contexto 128K), la caché KV cae 128x.
 
-**Quality cost.**Los transformadores solo SWA luchan con la recuperación a largo alcance. La solución: intercalar capas SWA con capas de atención completa. Gemma 3 utiliza 5:1 SWA:global. Mistral 7B utilizó una pila de SWA causal donde la información "fluye hacia adelante" a través de ventanas superpuestas  cada capa extiende el campo receptivo efectivo por `W`, y después `L`las capas que el modelo puede asistir `L × W`los tokens de vuelta.
+**Quality cost.**Los transformadores solo SWA luchan con la recuperación a largo alcance. La solución: intercalar capas SWA con capas de atención completa. Gemma 3 utiliza 5:1 SWA:global. Mistral 7B utilizó una pila de SWA causal donde la información "fluye hacia adelante" a través de ventanas superpuestas  cada capa extiende el campo receptivo efectivo por $W$, y después `L`las capas que el modelo puede asistir `L × W`los tokens de vuelta.
 
 ### Atención de escasez / bloqueo
 
 Escoge una .`N × N`El patrón de esparcia anticipado.
 
-- **Local + strided (OpenAI sparse transformer).**Atender a la última .`W`fichas más cada `stride`-Todo el tiempo, capturando tanto a largo alcance como local.`O(N · sqrt(N))`¿Qué es eso?
+- **Local + strided (OpenAI sparse transformer).**Atender a la última .$W$fichas más cada `stride`-Todo el tiempo, capturando tanto a largo alcance como local.$O(N \cdot \sqrt{N})$¿Qué es eso?
 - **Longformer / BigBird.**Ventana local + un pequeño conjunto de tokens globales (por ejemplo `[CLS]`En el contexto empírico, el contexto 2x es de calidad igualitaria.
 - **Native Sparse Attention (DeepSeek, 2025).**Aprenda qué bloques de `(Q, K)`El bloqueo de cero en el núcleo es compatible con FlashAttention.
 
@@ -61,13 +61,15 @@ La atención regular tiene un problema de "senqueo de atención": softmax obliga
 
 La atención diferencial corrige esto mediante la computación **two**mapas de atención y restantes:
 
-```
-A1 = softmax(Q1 K1^T / √d)
-A2 = softmax(Q2 K2^T / √d)
-DiffAttn = (A1 - λ · A2) V
+```math
+\begin{aligned}
+A_1 &= \mathop{\mathrm{softmax}}(Q_1 K_1^T / \sqrt{d}) \\
+A_2 &= \mathop{\mathrm{softmax}}(Q_2 K_2^T / \sqrt{d}) \\
+\text{DiffAttn} &= (A_1 - \lambda \cdot A_2) V
+\end{aligned}
 ```
 
-donde`λ`Es un escalar aprendido (típicamente 0.50.8). A1 captura los pesos reales del contenido; A2 capta el fregadero.
+donde$\lambda$Es un escalar aprendido (típicamente 0.50.8). A1 captura los pesos reales del contenido; A2 capta el fregadero.
 
 Resultados reportados (Microsoft 2024): 510% menos perplejidad, contexto efectivo 1,52× más largo en la misma longitud entrenada, recuperación de aguja en haystack más nítida.
 
@@ -75,12 +77,12 @@ Resultados reportados (Microsoft 2024): 510% menos perplejidad, contexto efectiv
 
 | Variant | Compute | KV cache | Quality vs full | Production use |
 |---------|---------|----------|-----------------|----------------|
-| Full attention | O(N²) | O(N) per layer | baseline | every model's default layer |
-| SWA (window 1024) | O(N·W) | O(W) per layer | -0.1 ppl, good with global layers | Gemma 2/3, Phi-3-Long |
-| Local + strided sparse | O(N·√N) | mixed | similar to SWA | OpenAI sparse transformer, Longformer |
-| BigBird (local + global + random) | O(N) approx | mixed | matches full at 2× context | early long-context BERT |
-| Native Sparse (DeepSeek-V3.2) | O(N · active fraction) | O(N) | within 0.05 ppl | DeepSeek-V3.2, 2025 |
-| Differential | O(2·N²) | O(2N) | -5 to -10% ppl | DIFF Transformer, early 2026 models |
+| Full attention | $O(N^2)$ | $O(N)$ per layer | baseline | every model's default layer |
+| SWA (window 1024) | $O(N \cdot W)$ | $O(W)$ per layer | -0.1 ppl, good with global layers | Gemma 2/3, Phi-3-Long |
+| Local + strided sparse | $O(N \cdot \sqrt{N})$ | mixed | similar to SWA | OpenAI sparse transformer, Longformer |
+| BigBird (local + global + random) | $O(N)$ approx | mixed | matches full at 2× context | early long-context BERT |
+| Native Sparse (DeepSeek-V3.2) | $O(N \cdot \text{active fraction})$ | $O(N)$ | within 0.05 ppl | DeepSeek-V3.2, 2025 |
+| Differential | $O(2 \cdot N^2)$ | $O(2N)$ | -5 to -10% ppl | DIFF Transformer, early 2026 models |
 
 ```figure
 gqa-kv-sharing
@@ -142,7 +144,7 @@ En el código comparamos el mapa de calor de la concentración de la concentraci
 
 ### Paso 5: Tamaños de caché de KV
 
-Imprima el tamaño de la caché por capa en `N = 131072`Las variantes SWA y raras caen en 10 100 ×. Dobles diferenciales.
+Imprima el tamaño de la caché por capa en $N = 131072$Las variantes SWA y raras caen en 10 100 ×. Dobles diferenciales.
 
 ## Usalo
 
@@ -185,17 +187,17 @@ Esto se compiló a un núcleo Triton personalizado. dentro del 10% de la velocid
 1. **Easy.**- ¿ Qué ?`code/main.py`Verifique el SWA en`window=4`cero todo fuera de los últimos 4 tokens por fila.`window=n`reproducen la atención causal completa de forma bit-identica.
 2. **Medium.**Implementar la SWA causal con `window=1024`¿Cuánto disminuye la pérdida de val vs. plena atención? ¿Cuánto disminuye la memoria máxima?
 3. **Hard.**Implemente una mezcla de capas de 5:1 de estilo Gemma-3 (5 SWA, 1 global) en el modelo de piedra angular. Compara la calidad de pérdida, memoria y generación con las líneas de base de SWA pura y global pura en parámetros iguales.
-4. **Hard.**Implementar la atención diferencial con un aprendiz `λ`En el caso de los equipos de detección de datos, el equipo de detección de datos de detección de datos de datos de detección de datos de datos de detección de datos de datos de detección de datos de datos de detección de datos de datos de detección de datos de detección de datos de detección de datos de datos de detección de datos de detección de datos de detección de datos de detección de datos de detección de datos de detección de datos de detección de datos de detección de datos de detección de datos de detección de datos de detección de datos de detección de datos de detección de datos de detección de datos de detección de datos de detección de datos de detección de datos de detección de datos de detección de datos de detección de datos de detección de datos de detección de datos de detección de datos de detección de datos de detección de datos de detección de datos de detección de datos de detección de datos de detección de datos de detección de datos de detección de datos de detección de datos de datos de detección de datos de datos de datos de detección de datos de datos de datos de datos de datos de datos de datos de datos de datos de datos de datos de datos de datos de datos de datos de datos de datos de datos de datos de datos de datos de datos de datos de datos de datos de datos de datos de datos de datos de datos de datos de datos de datos de datos de datos de datos de datos de datos de datos de datos de datos de datos de datos de datos de datos de datos de datos de datos de datos de datos de datos de datos de datos de datos de datos de datos de datos de datos de datos de datos de datos de datos de datos de datos de datos de datos de datos de datos de datos de datos de datos de datos de datos de datos de datos de datos de datos de datos de datos de datos de datos de datos de datos de datos de datos de datos de datos de datos de datos de datos de datos de datos de datos de datos de datos de datos de datos de datos de datos de datos de datos de datos de datos de datos de datos de datos de datos de datos de datos de datos de datos de datos de datos de datos de datos de cuyo de cuyo de cuyo de cuyo cuyo cuyo cuyo cuyo cuyo cuyo cuyo cuyo cuyo cuyo cuyo cu
+4. **Hard.**Implementar la atención diferencial con un aprendiz $\lambda$En el caso de los equipos de detección de datos, el equipo de detección de datos de detección de datos de datos de detección de datos de datos de detección de datos de datos de detección de datos de datos de detección de datos de datos de detección de datos de detección de datos de detección de datos de datos de detección de datos de detección de datos de detección de datos de detección de datos de detección de datos de detección de datos de detección de datos de detección de datos de detección de datos de detección de datos de detección de datos de detección de datos de detección de datos de detección de datos de detección de datos de detección de datos de detección de datos de detección de datos de detección de datos de detección de datos de detección de datos de detección de datos de detección de datos de detección de datos de detección de datos de detección de datos de detección de datos de detección de datos de detección de datos de detección de datos de detección de datos de detección de datos de datos de detección de datos de datos de datos de detección de datos de datos de datos de datos de datos de datos de datos de datos de datos de datos de datos de datos de datos de datos de datos de datos de datos de datos de datos de datos de datos de datos de datos de datos de datos de datos de datos de datos de datos de datos de datos de datos de datos de datos de datos de datos de datos de datos de datos de datos de datos de datos de datos de datos de datos de datos de datos de datos de datos de datos de datos de datos de datos de datos de datos de datos de datos de datos de datos de datos de datos de datos de datos de datos de datos de datos de datos de datos de datos de datos de datos de datos de datos de datos de datos de datos de datos de datos de datos de datos de datos de datos de datos de datos de datos de datos de datos de datos de datos de datos de datos de datos de datos de datos de datos de datos de datos de datos de datos de datos de datos de datos de datos de datos de datos de datos de datos de datos de datos de datos de datos de datos de datos de datos de datos de cuyo de cuyo de cuyo de cuyo cuyo cuyo cuyo cuyo cuyo cuyo cuyo cuyo cuyo cuyo cuyo cu
 
 ## Términos clave
 
 | Term | What people say | What it actually means |
 |------|-----------------|-----------------------|
-| Sliding window attention (SWA) | "Local attention" | Each query attends to its last `W` tokens; KV cache shrinks to `O(W)`. |
-| Effective receptive field | "How far back the model sees" | In an `L`-layer SWA stack with window `W`, up to `L × W` tokens. |
+| Sliding window attention (SWA) | "Local attention" | Each query attends to its last $W$ tokens; KV cache shrinks to $O(W)$. |
+| Effective receptive field | "How far back the model sees" | In an $L$-layer SWA stack with window $W$, up to $L \times W$ tokens. |
 | Longformer / BigBird | "Local + global + random" | Sparse patterns with a few always-attending global tokens; early long-context approach. |
 | Native Sparse Attention | "DeepSeek's kernel trick" | Learn block-level sparsity; skip zero blocks at the kernel level while keeping quality. |
-| Differential attention | "Two maps, one subtracts" | DIFF Transformer: subtract a learned `λ` times a second attention map from the first to cancel attention sinks. |
+| Differential attention | "Two maps, one subtracts" | DIFF Transformer: subtract a learned $\lambda$ times a second attention map from the first to cancel attention sinks. |
 | Attention sink | "Weight bleeds to token 0" | Softmax normalization forces rows to sum to 1; uninformative queries dump weight on position 0. |
 | FlexAttention | "Mask-as-Python" | PyTorch 2.5+ API that compiles arbitrary mask functions into FlashAttention-shape kernels. |
 | Layer type mix | "5:1 SWA-to-global" | Interleave sparse and full attention layers in a stack to keep quality at lower memory. |

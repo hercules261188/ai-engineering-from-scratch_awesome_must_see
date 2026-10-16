@@ -9,13 +9,13 @@
 
 ## El problema
 
-Un descifrador autoregresor ingenuo sí .`O(N²)`trabajo para generar `N`Tokens: en cada paso recalcula la atención sobre el prefijo completo. Para una respuesta de tokens 4K que es 16M operaciones de atención, la mayoría de ellos redundantes. Cada estado oculto de un token prefijo es determinista una vez calculado.
+Un descifrador autoregresor ingenuo sí .$O(N^2)$trabajo para generar $N$Tokens: en cada paso recalcula la atención sobre el prefijo completo. Para una respuesta de tokens 4K que es 16M operaciones de atención, la mayoría de ellos redundantes. Cada estado oculto de un token prefijo es determinista una vez calculado.
 
 Además, la atención misma mueve muchos datos. La atención estándar materializa una matriz de puntaje N×N, salida de N×d softmax, salida final N×d  demasiadas lecturas y escrituras a HBM. Para N≥2K, la atención se vuelve limitada a la memoria antes de que se convierta en FLOP-bound.
 
 Dos optimizaciones, ambas de Dao et al., empujaron la inferencia fronteriza de "lento" a "rápido":
 
-1. **KV cache.**Almacenar los vectores K y V de cada token prefijo. la atención de cada nuevo token es una consulta contra las claves almacenadas en caché.`O(N²)`¿ Qué ?`O(N)`por cada paso de generación.
+1. **KV cache.**Almacenar los vectores K y V de cada token prefijo. la atención de cada nuevo token es una consulta contra las claves almacenadas en caché.$O(N^2)$¿ Qué ?$O(N)$por cada paso de generación.
 2. **Flash Attention.**El cálculo de la atención se realiza con una tela de tela para que la matriz completa de N×N nunca alcance el HBM. Todo el softmax + matmul ocurre en SRAM. 24× velocidad del reloj de pared en A100; 510× en H100 con FP8.
 
 Para 2026 ambos son universales. Cada pila de inferencias de producción (vLLM, TensorRT-LLM, SGLang, llama.cpp) los asume.
@@ -84,7 +84,7 @@ for each block of Q (tile size ~128 × 128):
     write O_tile to HBM
 ```
 
-Un viaje de HBM por baldosas.`O(N²)`¿ Qué ?`O(N)`. El pase hacia atrás recalcula algunos valores del pase hacia adelante en lugar de almacenarlos  otra ganancia de memoria.
+Un viaje de HBM por baldosas.$O(N^2)$¿ Qué ?$O(N)$. El pase hacia atrás recalcula algunos valores del pase hacia adelante en lugar de almacenarlos  otra ganancia de memoria.
 
 **Numerical trick.**El funcionamiento de softmax se mantiene `(max, sum)`La atención flash calcula la salida idéntica a la atención estándar (modulo fp16 no asociativa).
 
@@ -126,8 +126,8 @@ flash-attention-memory
 
 ¿ Qué ?`code/main.py`Implementamos:
 
-1. Un ingenuo .`O(N²)`decodificador incremental.
-2. ¿ Qué es esto ?`O(N)`Descriptor de caché KV.
+1. Un ingenuo .$O(N^2)$decodificador incremental.
+2. ¿ Qué es esto ?$O(N)$Descriptor de caché KV.
 3. Una softmax de tejas que simula el algoritmo de ejecución máxima de Flash Attention.
 
 ### Paso 1: Caché de KV
@@ -174,7 +174,7 @@ Una salida idéntica a bit `softmax(qK) V`en un solo disparo, pero en cualquier 
 
 ### Paso 3: Comparar la descifrado ingenuo vs caché en la generación de 100 tokens
 
-Cuenta las operaciones de atención.`O(N²)`= 5050. En caché: `O(N)`El código imprime ambas cosas.
+Cuenta las operaciones de atención.$O(N^2)$= 5050. En caché: $O(N)$El código imprime ambas cosas.
 
 ## Usalo
 

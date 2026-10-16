@@ -29,25 +29,25 @@ A partir de 2026, prácticamente todos los modelos abiertos fronterizos usan RoP
 
 Precomputa una matriz fija `PE`de forma`(max_len, d_model)`¿Qué es esto ?
 
-```
-PE[pos, 2i]   = sin(pos / 10000^(2i / d_model))
-PE[pos, 2i+1] = cos(pos / 10000^(2i / d_model))
+```math
+\begin{aligned}
+PE_{(pos, 2i)} &= \sin\left(pos / 10000^{2i / d_{\text{model}}}\right) \\
+PE_{(pos, 2i+1)} &= \cos\left(pos / 10000^{2i / d_{\text{model}}}\right)
+\end{aligned}
 ```
 
 Entonces ...`X' = X + PE[:N]`Cada dimensión es un sinusoide con una frecuencia diferente. El modelo aprende a leer la posición del patrón de fase.`max_len`: nada le dijo al modelo lo que pasaba en la posición 2048 cuando sólo veía posiciones 02047.
 
 ### RoPE
 
-Gira los vectores Q y K (no embeddings). Para un par de dimensiones `(2i, 2i+1)`¿Qué es esto ?
+Gira los vectores Q y K (no embeddings). Para un par de dimensiones $(2i, 2i+1)$¿Qué es esto ?
 
-```
-[q'_2i    ]   [ cos(pos·θ_i)  -sin(pos·θ_i) ] [q_2i   ]
-[q'_2i+1  ] = [ sin(pos·θ_i)   cos(pos·θ_i) ] [q_2i+1 ]
-
-θ_i = base^(-2i / d_head),  base = 10000 by default
+```math
+\begin{bmatrix} q'_{2i} \\ q'_{2i+1} \end{bmatrix} = \begin{bmatrix} \cos(pos \cdot \theta_i) & -\sin(pos \cdot \theta_i) \\ \sin(pos \cdot \theta_i) & \cos(pos \cdot \theta_i) \end{bmatrix} \begin{bmatrix} q_{2i} \\ q_{2i+1} \end{bmatrix}
+\qquad \theta_i = \text{base}^{-2i / d_{\text{head}}}, \quad \text{base} = 10000 \text{ by default}
 ```
 
-Aplicar la misma rotación a las teclas con posición `pos_k`. El producto de puntos `q'_m · k'_n`se convierte en una función de `(m - n)`Sólo.**the attention score depends only on the relative distance**, aunque la rotación estaba bloqueada en posiciones absolutas.
+Aplicar la misma rotación a las teclas con posición `pos_k`. El producto de puntos $q'_m \cdot k'_n$se convierte en una función de $(m - n)$Sólo.**the attention score depends only on the relative distance**, aunque la rotación estaba bloqueada en posiciones absolutas.
 
 Extender el RoPE: `base`El Llama 3 se extendió de 8K a 128K de esta manera.
 
@@ -55,11 +55,11 @@ Extender el RoPE: `base`El Llama 3 se extendió de 8K a 128K de esta manera.
 
 Salta el truco de incrustación.
 
-```
-attn_score[i, j] = (q_i · k_j) / √d  -  m_h · |i - j|
+```math
+\text{attn\_score}[i, j] = \frac{q_i \cdot k_j}{\sqrt{d}} - m_h \cdot |i - j|
 ```
 
-¿ Dónde ?`m_h`es una pendiente específica de la cabeza (por ejemplo `1 / 2^(8·h/H)`Los tokens más cercanos se incrementan; los tokens más lejanos se penalizan. No hay costo de tiempo de entrenamiento. El documento muestra que la extrapolación de longitud supera sinusoidal y coincide con el RoPE en su longitud entrenada original.
+¿ Dónde ?$m_h$es una pendiente específica de la cabeza (por ejemplo $1 / 2^{8h/H}$Los tokens más cercanos se incrementan; los tokens más lejanos se penalizan. No hay costo de tiempo de entrenamiento. El documento muestra que la extrapolación de longitud supera sinusoidal y coincide con el RoPE en su longitud entrenada original.
 
 ### Qué elegir en 2026
 
@@ -113,7 +113,7 @@ def apply_rope(x, pos, base=10000):
     return out
 ```
 
-Crucial: aplicar la misma función a Q en posición `m`y K en posición `n`Su producto de puntos recoge un`cos((m-n)·θ_i)`La atención aprende la posición relativa de forma gratuita.
+Crucial: aplicar la misma función a Q en posición $m$y K en posición $n$Su producto de puntos recoge un$\cos((m-n) \cdot \theta_i)$La atención aprende la posición relativa de forma gratuita.
 
 ### Paso 3: Pistas y sesgos de ALiBi
 
@@ -168,7 +168,7 @@ model = AutoModel.from_pretrained("meta-llama/Llama-3.2-3B")
 | Positional encoding | "Tells attention about order" | Any signal added to embeddings or attention that encodes position. |
 | Sinusoidal | "The original one" | `sin/cos` at geometric frequencies added to embeddings; doesn't extrapolate. |
 | RoPE | "Rotary embeddings" | Rotate Q, K by position-dependent angle; dot product encodes relative distance. |
-| ALiBi | "Linear bias trick" | Add `-m·\|i-j\|` to attention scores; no embedding needed, great extrapolation. |
+| ALiBi | "Linear bias trick" | Add $-m \cdot \lvert i-j \rvert$ to attention scores; no embedding needed, great extrapolation. |
 | base | "RoPE's knob" | The frequency scaler in RoPE; increase to extend context at inference. |
 | NTK-aware | "A RoPE scaling trick" | Rescale `base` so high-frequency dims aren't squeezed when context expands. |
 | YaRN | "The fancy one" | Per-dimension interpolation+extrapolation that preserves attention entropy. |

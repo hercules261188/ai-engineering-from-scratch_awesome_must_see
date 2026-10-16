@@ -11,7 +11,7 @@
 
 - Implementar la autoatención de producto punto escalada desde cero utilizando únicamente NumPy, incluidas las proyecciones de consulta/clave/valor y la suma ponderada por softmax
 - Construye una capa de atención multi-cabeza que divide cabezas, calcula la atención paralela y concatenar los resultados
-- Trazar cómo la matriz de atención capta las relaciones de tokens y explicar por qué la escalación por sqrt(d_k) evita la saturación de softmax
+- Trazar cómo la matriz de atención capta las relaciones simbólicas y explicar por qué la escalación por $\sqrt{d_k}$evita la saturación de softmax
 - Aplicar el enmascaramiento causal para convertir la atención bidireccional en la atención autoregresista (estilo de decodificador)
 
 ## El problema
@@ -109,10 +109,10 @@ attention-matrix
 
 ### ¿Por qué la escala?
 
-Los productos de puntos crecen con la dimensión dk. Si dk = 64, los productos de puntos pueden estar en el rango de decenas, empujando la softmax a regiones donde los gradientes desaparecen.
+Los productos de puntos crecen con la dimensión $d_k$Si ...$d_k = 64$, los productos de puntos pueden estar en el rango de decenas, empujando la suavidadmax a regiones donde los gradientes desaparecen.$\sqrt{d_k}$¿ Qué ?
 
-```
-Scaled scores = (Q @ K^T) / sqrt(dk)
+```math
+\text{Scaled scores} = \frac{Q K^T}{\sqrt{d_k}}
 ```
 
 Esto mantiene los valores en un rango en el que softmax produce gradientes útiles.
@@ -159,8 +159,8 @@ flowchart LR
 
 Formula en una línea:
 
-```
-Attention(Q, K, V) = softmax( Q @ K^T / sqrt(dk) ) @ V
+```math
+\text{Attention}(Q, K, V) = \mathop{\mathrm{softmax}}\left( \frac{Q K^T}{\sqrt{d_k}} \right) V
 ```
 
 ```figure
@@ -302,7 +302,7 @@ print(f"\nAttn weights (averaged over heads):")
 print(attn_weights[0].detach().numpy().round(3))
 ```
 
-La diferencia clave: la atención multi-cabeza ejecuta múltiples funciones de atención en paralelo, cada una con sus propias proyecciones Q, K, V de tamaño dk = d_modelo / n_cabezas, luego concatena los resultados. Esto permite que el modelo atienda a diferentes tipos de relación simultáneamente.
+La diferencia clave: la atención multi-cabeza ejecuta múltiples funciones de atención en paralelo, cada una con sus propias proyecciones de tamaño Q, K, V $d_k = d_{\text{model}} / n_{\text{heads}}$Esto permite que el modelo atienda a diferentes tipos de relación simultáneamente.
 
 ## Envío
 
@@ -322,7 +322,7 @@ Esta lección produce:
 | Query (Q) | "The question vector" | A learned projection of the input that represents what information this token is looking for |
 | Key (K) | "The label vector" | A learned projection that represents what information this token contains, matched against queries |
 | Value (V) | "The content vector" | A learned projection carrying the actual information that gets aggregated based on attention scores |
-| Scaled dot-product attention | "The attention formula" | softmax(QK^T / sqrt(dk)) @ V - scaling prevents softmax saturation in high dimensions |
+| Scaled dot-product attention | "The attention formula" | $\mathop{\mathrm{softmax}}(QK^T / \sqrt{d_k}) V$ - scaling prevents softmax saturation in high dimensions |
 | Self-attention | "The token looks at itself and others" | Attention where Q, K, V all come from the same sequence, letting every position attend to every other position |
 | Attention weights | "How much focus" | A probability distribution over positions, produced by softmax over scaled dot products |
 | Multi-head attention | "Parallel attention" | Running multiple attention functions with different projections, then concatenating results for richer representations |

@@ -9,7 +9,7 @@
 
 ## El problema
 
-Un 70B LLM muestreo de un token toma ~30 ms en un H100. Un modelo de borrador 3B toma ~3 ms. Si dejamos que el borrador 3B 5 tokens adelante, entonces ejecutar el 70B *una vez* para verificar todos los 5, el total es `5×3 + 30 = 45 ms`para hasta 5 tokens aceptados  versus `5×30 = 150 ms`Es el campo de la descodificación especulativa: intercambiar una pequeña cantidad de memoria extra de la GPU (modelo de borrador) por 24× menor latencia de decodificación.
+Un 70B LLM muestreo de un token toma ~30 ms en un H100. Un modelo de borrador 3B toma ~3 ms. Si dejamos que el borrador 3B 5 tokens adelante, entonces ejecutar el 70B *una vez* para verificar todos los 5, el total es $5 \times 3 + 30 = 45$ms para hasta 5 tokens aceptados  versus `5×30 = 150 ms`Es el campo de la descodificación especulativa: intercambiar una pequeña cantidad de memoria extra de la GPU (modelo de borrador) por 24× menor latencia de decodificación.
 
 El truco tiene que preservar la distribución. La muestreo especulativa, introducida por Leviathan et al. (2023) y por Chen et al. simultáneamente, garantiza que la secuencia de salida es **identically distributed**No hay compromiso de calidad, sólo más rápido.
 
@@ -26,30 +26,30 @@ Cada pila de inferencias de producción en 2026 envíe descifrado especulativo p
 
 ### El algoritmo central
 
-Dado un verificador `M_q`y un borrador más barato `M_p`¿Qué es esto ?
+Dado un verificador $M_q$y un borrador más barato $M_p$¿Qué es esto ?
 
-1. - ¿ Qué ?`x_1..x_k`sea el prefijo ya decodificado.
-2. **Draft**: uso `M_p`Proponer de forma autoregressiva `d_{k+1}, d_{k+2}, ..., d_{k+N}`con probabilidades de proyecto `p_1..p_N`¿ Qué ?
-3. **Verify in parallel**: correr `M_q`Una vez más .`x_1..x_k, d_{k+1}, ..., d_{k+N}`, obtener probabilidades de verificación `q_1..q_{N+1}`para posiciones `k+1..k+N+1`¿ Qué ?
-4. **Accept/reject each draft token left to right**: para cada uno `i`, acepta con probabilidad `min(1, q_i(d_i) / p_i(d_i))`¿ Qué ?
-5. En el primer rechazo en posición `j`: muestra `t_j`de la distribución "residual" `(q_j - p_j)_+`Todos los proyectos después de la`j`se descartan.
-6. Al aceptar todo .`N`: muestra de un token extra `t_{N+1}`de la`q_{N+1}`(el token de bonificación gratuito).
+1. - ¿ Qué ?$x_1 \ldots x_k$sea el prefijo ya decodificado.
+2. **Draft**: uso $M_p$Proponer de forma autoregressiva $d_{k+1}, d_{k+2}, \ldots, d_{k+N}$con probabilidades de proyecto $p_1 \ldots p_N$¿ Qué ?
+3. **Verify in parallel**: correr $M_q$Una vez más .$x_1 \ldots x_k, d_{k+1}, \ldots, d_{k+N}$, obtener probabilidades de verificación $q_1 \ldots q_{N+1}$para posiciones $k+1 \ldots k+N+1$¿ Qué ?
+4. **Accept/reject each draft token left to right**: para cada uno $i$, acepta con probabilidad $\min(1, q_i(d_i) / p_i(d_i))$¿ Qué ?
+5. En el primer rechazo en posición $j$: muestra $t_j$de la distribución "residual" $(q_j - p_j)_+$Todos los proyectos después de la$j$se descartan.
+6. Al aceptar todo .$N$: muestra de un token extra $t_{N+1}$de la$q_{N+1}$(el token de bonificación gratuito).
 
-El truco de distribución residual es la visión matemática que mantiene la salida distribuida exactamente como si `M_q`había tomado muestras desde cero.
+El truco de distribución residual es la visión matemática que mantiene la salida distribuida exactamente como si $M_q$había tomado muestras desde cero.
 
 ### Lo que determina la aceleración
 
-- ¿ Qué ?`α`= tasa de aceptación esperada por proyecto de token.`c`= relación de costes entre proyectos y verificadores.
+- ¿ Qué ?$\alpha$= tasa de aceptación esperada por proyecto de token.$c$= relación de costes entre proyectos y verificadores.
 
 - La generación ingenua hace una llamada de modelo grande por token.
-- Especulativo hace una llamada de modelo grande por ...`(1 - α^{N+1}) / (1 - α) ≈ 1/(1-α)`fichas cuando `α`Es muy alto.
+- Especulativo hace una llamada de modelo grande por ...$(1 - \alpha^{N+1}) / (1 - \alpha) \approx 1/(1-\alpha)$fichas cuando $\alpha$Es muy alto.
 
-La regla típica es que ...`α = 0.75`y `N = 5`El costo del proyecto es 5 veces más barato. El total del reloj de pared cae ~ 2,5 veces.
+La regla típica es que ...$\alpha = 0.75$y $N = 5$El costo del proyecto es 5 veces más barato. El total del reloj de pared cae ~ 2,5 veces.
 
-**α depends on:**
+**$\alpha$ depends on:**
 
-- La información de la misma familia/del mismo entrenamiento aumenta significativamente.
-- Estrategia de decodificación: Draft codicioso contra verificador codicioso: alto α. Muestreo de temperatura: más difícil de emparejar; disminuye la aceptación.
+- La información sobre la misma familia / formación aumenta$\alpha$- Es muy importante.
+- Estrategia de descifrado.$\alpha$- Muestreo de temperatura: más difícil de igualar; disminución de la aceptación.
 - Tipo de tarea: el código y la salida estructurada aceptan más (predictable); la escritura creativa de forma libre acepta menos.
 
 ### Medusa  proyectos sin modelo de proyecto
@@ -76,9 +76,9 @@ EAGLE-3 (2025) añadió la búsqueda de árboles sobre las continuas candidatos.
 
 ### El baile de caché KV
 
-Los datos de verificación `N`Los tokens de proyecto en el verificador en un solo pase hacia adelante. Esto extiende la caché KV del verificador en `N`Si algunos borrados son rechazados, debe volver a rodar el caché a la longitud del prefijo aceptado.
+Los datos de verificación $N$Los tokens de proyecto en el verificador en un solo pase hacia adelante. Esto extiende la caché KV del verificador en $N$Si algunos borrados son rechazados, debe volver a rodar el caché a la longitud del prefijo aceptado.
 
-Implementaciones de la producción (vLLM's `--speculative-model`Es un problema de la vida, pero no es difícil, pero es difícil.
+Implementaciones de la producción (vLLM's `--speculative-config`Es un problema de la vida, pero no es difícil, pero es difícil.
 
 ```figure
 draft-verify-tokens
@@ -160,14 +160,11 @@ Producción:
 ```bash
 # vLLM with EAGLE
 vllm serve meta-llama/Llama-3.1-70B-Instruct \
-    --speculative-model /models/llama-3.1-eagle-70b \
-    --speculative-draft-tensor-parallel-size 1 \
-    --num-speculative-tokens 5
+    --speculative-config '{"method": "eagle", "model": "/models/llama-3.1-eagle-70b", "draft_tensor_parallel_size": 1, "num_speculative_tokens": 5}'
 
 # vLLM with vanilla draft model
 vllm serve meta-llama/Llama-3.1-70B-Instruct \
-    --speculative-model meta-llama/Llama-3.2-1B-Instruct \
-    --num-speculative-tokens 5
+    --speculative-config '{"method": "draft_model", "model": "meta-llama/Llama-3.2-1B-Instruct", "num_speculative_tokens": 5}'
 ```
 
 TensorRT-LLM tiene la ruta más rápida de Medusa a mediados de 2026. `faster-whisper`Envuelve la descifrado especulativo para Whisper-large con un pequeño borrador.
@@ -184,7 +181,7 @@ TensorRT-LLM tiene la ruta más rápida de Medusa a mediados de 2026. `faster-wh
 **When NOT to spec-decode:**
 
 - Generación de secuencia única de 15 tokens.
-- Muestreo de alta temperatura / muy creativo (caídas de α).
+- Muestreo de alta temperatura ($\alpha$(se puede utilizar para el tratamiento de las
 - Despliegues con restricciones de memoria (el modelo de proyecto añade VRAM).
 
 ## Envío
@@ -194,7 +191,7 @@ TensorRT-LLM tiene la ruta más rápida de Medusa a mediados de 2026. `faster-wh
 ## Los ejercicios
 
 1. **Easy.**- ¿ Qué ?`code/main.py`. Confirmar que la distribución especulativa de tokens coincide con la distribución directa de muestras del verificador en 50.000 tokens dentro de un chi-cuadrado p > 0,05.
-2. **Medium.**Aceleración de gráfico (tokens por modelo grande hacia adelante) como función de `N`por`α = 0.5, 0.7, 0.85`Identificar el óptimo`N`para cada α. (Intención: tokens esperados por llamada de verificación = `(1 - α^{N+1}) / (1 - α)`(en inglés).
+2. **Medium.**Aceleración de gráfico (tokens por modelo grande hacia adelante) como función de $N$por$\alpha = 0.5, 0.7, 0.85$Identificar el óptimo$N$por cada uno $\alpha$. (Intención: tokens esperados por llamada de verificación = $(1 - \alpha^{N+1}) / (1 - \alpha)$(en inglés).
 3. **Hard.**Implemente una pequeña Medusa: toma la piedra angular GPT de la Lección 14, añada 3 cabezas LM adicionales que predicen las posiciones t+2, t+3, t+4. Entrenamiento en tinyshakespeare con una pérdida conjunta de múltiples cabezas. Compara las tasas de aceptación con un borrador de vainilla hecho mediante el truncado del mismo modelo.
 4. **Hard.**Implementar el rollback: comience con un prefijo KV de 10 tokens, alimenta 5 tokens de borrador, simula un rechazo en la posición 3. Verifique que sus lecturas de la caché coincidan correctamente con "prefijo + primeros 2 borradores aceptados" en la siguiente iteración.
 
@@ -204,7 +201,7 @@ TensorRT-LLM tiene la ruta más rápida de Medusa a mediados de 2026. `faster-wh
 |------|-----------------|-----------------------|
 | Draft model | "The cheap one" | A smaller model that proposes candidate tokens; usually 10–50× cheaper than the verifier. |
 | Verifier | "The big one" | The target model whose distribution we preserve; runs once per speculative step. |
-| Acceptance rate (α) | "How often the draft is right" | Per-token probability that the verifier accepts the draft. 0.7–0.9 typical. |
+| Acceptance rate ($\alpha$) | "How often the draft is right" | Per-token probability that the verifier accepts the draft. 0.7–0.9 typical. |
 | Residual distribution | "The rejection fallback" | `(q - p)_+` normalized; sampling from this on rejection preserves the verifier's distribution. |
 | Bonus token | "The free one" | When all N drafts accepted, sample one more from the verifier's next-step distribution. |
 | Medusa | "Draft-less speculative" | Multiple LM heads on the verifier predict positions t+1..t+k in parallel. |

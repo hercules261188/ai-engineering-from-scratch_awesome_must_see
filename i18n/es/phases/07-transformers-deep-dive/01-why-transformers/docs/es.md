@@ -25,13 +25,13 @@ El resultado domina todas las modalidades para 2026. lenguaje (GPT-5, Claude 4, 
 
 ![RNN sequential compute vs Transformer parallel attention](../assets/rnn-vs-transformer.svg)
 
-**Recurrence as a bottleneck.**Un RNN computa `h_t = f(h_{t-1}, x_t)`Cada paso depende del anterior. No puedes calcular.`h_5`antes de`h_4`En las GPU modernas con más de 10.000 núcleos paralelos, esto desperdicia el 99% del silicio en una larga secuencia.
+**Recurrence as a bottleneck.**Un RNN computa $h_t = f(h_{t-1}, x_t)$Cada paso depende del anterior. No puedes calcular.$h_5$antes de$h_4$En las GPU modernas con más de 10.000 núcleos paralelos, esto desperdicia el 99% del silicio en una larga secuencia.
 
-**Attention as a broadcast.**Cuentas de autoatención `output_i = sum_j(a_ij * v_j)`para cada par `(i, j)`La matriz de atención N×N completa un matmul en lote. Ningún paso depende de otro.
+**Attention as a broadcast.**Cuentas de autoatención `output_i = sum_j(a_ij * v_j)`para cada par $(i, j)$La matriz de atención N×N completa un matmul en lote. Ningún paso depende de otro.
 
-**The speedup is not a constant.**Es la diferencia entre `O(N)`profundidad en serie y `O(1)`En la práctica, los transformadores se entrenan 510x más rápido por época en hardware coincidente a N=512, y la brecha se amplía con la longitud de la secuencia hasta que se golpea el `O(N²)`pared de memoria de la atención (que Flash Attention posteriormente arregló  ver Lección 12).
+**The speedup is not a constant.**Es la diferencia entre $O(N)$profundidad en serie y $O(1)$En la práctica, los transformadores se entrenan 510x más rápido por época en hardware coincidente a N=512, y la brecha se amplía con la longitud de la secuencia hasta que se golpea el $O(N^2)$pared de memoria de la atención (que Flash Attention posteriormente arregló  ver Lección 12).
 
-**What transformers cost.**Escales de memoria de atención como `O(N²)`Para el contexto de 2K, bien. Para el contexto de 128K, necesitas ventanas correderas, extrapolación RoPE, mosaico de atención flash, o variantes de atención lineal.`O(N)`en tiempo y memoria; los transformadores intercambian tiempo por memoria y luego ganan el tiempo de vuelta a través del paralelismo.
+**What transformers cost.**Escales de memoria de atención como $O(N^2)$Para el contexto de 2K, bien. Para el contexto de 128K, necesitas ventanas correderas, extrapolación RoPE, mosaico de atención flash, o variantes de atención lineal.$O(N)$en tiempo y memoria; los transformadores intercambian tiempo por memoria y luego ganan el tiempo de vuelta a través del paralelismo.
 
 **The inductive bias shift.**Los transformadores no asumen nada.  cada par es un candidato a la atención. Es por eso que los transformadores necesitan más datos para entrenar bien, pero escalar más una vez que lo tengan. Chinchilla (2022) formalizó esto: dado suficientes tokens, un transformador siempre supera un RNN de igual número de parámetros.
 
@@ -58,7 +58,7 @@ def attention_style(xs):
     return sum(xs) / len(xs)  # every x is independent
 ```
 
-Los datos de la secuencia de la CPU son de un solo tipo, pero la secuencia de la CPU es de un solo tipo.`sum()`se implementa en C y se repite sin gastos generales de intérprete por paso.
+Los dos se cronometran en secuencias de hasta 100.000 elementos.$O(N)$Incluso en Python puro, la reducción de estilo de atención la supera en longitud ≥ 1,000 porque Python es`sum()`se implementa en C y se repite sin gastos generales de intérprete por paso.
 
 ### Paso 2: contar las operaciones teóricas
 
@@ -66,7 +66,7 @@ Los algoritmos añaden N. La diferencia es *profundidad de dependencia*: cuánta
 
 ### Paso 3: Escalación empírica en secuencias largas
 
-Impresamos una tabla de tiempo que hace que la brecha O(N) sea visible. En un portátil Mac 2026, las secuencias de menos de 1.000 elementos son demasiado rápidas para medir. Las secuencias de 100.000 muestran un escaneo lineal limpio. Escala eso a un transformador de 16.384 tokens con un equivalente LSTM de 12 capas y ves por qué el entrenamiento de relojes murales fue un bloqueador en 2016.
+Impresamos una tabla de tiempo que hace que el $O(N)$En un ordenador portátil Mac 2026 las secuencias de menos de 1.000 elementos son demasiado rápidas para medir. Las secuencias de 100.000 muestran un escaneo lineal limpio. Escala eso a un transformador de 16.384 tokens con un equivalente LSTM de 12 capas y ves por qué el entrenamiento de relojes de pared fue un bloqueador en 2016.
 
 ## Usalo
 
@@ -79,7 +79,7 @@ Impresamos una tabla de tiempo que hace que la brecha O(N) sea visible. En un po
 | Edge device with no matmul accelerator | Depthwise-separable RNN still wins on FLOPs/watt |
 | Anything else (training, batched inference, context up to 128K) | Transformer |
 
-Los modelos de espacio estatal (SSM) como Mamba son esencialmente RNNs con parametrización estructurada que les da lo mejor de ambos: `O(N)`La mayoría de los laboratorios fronterizos entrenan modelos híbridos de transformadores SSM+ (por ejemplo, Jamba, Samba)  la recurrencia no está muerta, es un componente.
+Los modelos de espacio estatal (SSM) como Mamba son esencialmente RNNs con parametrización estructurada que les da lo mejor de ambos: $O(N)$La mayoría de los laboratorios fronterizos entrenan modelos híbridos de transformadores SSM+ (por ejemplo, Jamba, Samba)  la recurrencia no está muerta, es un componente.
 
 ## Envío
 
@@ -97,11 +97,11 @@ Los modelos de espacio estatal (SSM) como Mamba son esencialmente RNNs con param
 |------|-----------------|-----------------------|
 | Recurrence | "RNNs are sequential" | Computation where step `t` depends on step `t-1`, forcing serial execution along the time axis. |
 | Serial depth | "How deep the graph is" | Longest chain of dependent ops; bounds wall-clock even on infinite hardware. |
-| Attention | "Let tokens look at each other" | Weighted sum `sum_j a_ij v_j` where `a_ij` comes from a similarity score between positions i and j. |
+| Attention | "Let tokens look at each other" | Weighted sum $\sum_j a_{ij} v_j$ where $a_{ij}$ comes from a similarity score between positions $i$ and $j$. |
 | Context window | "How much the model sees" | Number of positions an attention layer can take as input; quadratic memory cost scales here. |
 | Inductive bias | "Assumptions baked into the architecture" | Prior about what the data looks like; CNNs assume translation invariance, RNNs assume recency. |
 | State-space model | "RNN with algebra behind it" | Recurrence parameterized for parallel training via structured state-space matrices. |
-| Quadratic bottleneck | "Why context costs so much" | Attention memory = `O(N²)` in sequence length; Flash Attention hides the constants, not the scaling. |
+| Quadratic bottleneck | "Why context costs so much" | Attention memory = $O(N^2)$ in sequence length; Flash Attention hides the constants, not the scaling. |
 
 ## Leer más
 

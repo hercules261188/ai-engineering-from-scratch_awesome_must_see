@@ -11,7 +11,7 @@
 
 Una sola cabeza de autoatención calcula una matriz de atención. Esa matriz captura un tipo de relación  generalmente la que minimiza la pérdida en cualquier señal de entrenamiento. Si sus datos tienen acuerdo entre sujeto y verbo, co-referencia, discurso de largo alcance y fragmentos sintácticos enredados juntos, una sola cabeza los desprende en una sola distribución de máxima suave y pierde la mitad de la señal.
 
-La solución del artículo Vaswani de 2017: ejecuta varias funciones de atención en paralelo, cada una con sus propias proyecciones Q, K, V, y concatenar las salidas.`d_model / n_heads`Los parámetros totales permanecen iguales.
+La solución del artículo Vaswani de 2017: ejecuta varias funciones de atención en paralelo, cada una con sus propias proyecciones Q, K, V, y concatenar las salidas.$d_{\text{model}} / n_{\text{heads}}$Los parámetros totales permanecen iguales.
 
 La atención multi-cabeza es el predeterminado de cada transformador en los barcos de 2026. El único argumento es sobre *cuántas cabezas* y si las claves y valores comparten proyecciones (Attención de consulta grupada, Atención de consulta múltiple, Atención latente de múltiples cabezas).
 
@@ -19,7 +19,7 @@ La atención multi-cabeza es el predeterminado de cada transformador en los barc
 
 ![Multi-head attention splits, attends, concatenates](../assets/multi-head-attention.svg)
 
-**Split.**¿ Qué ?`X`de forma`(N, d_model)`Proyecto a Q, K, V de cada forma `(N, d_model)`- Reconfigurar para`(N, n_heads, d_head)`donde`d_head = d_model / n_heads`. Transponer a`(n_heads, N, d_head)`¿ Qué ?
+**Split.**¿ Qué ?`X`de forma`(N, d_model)`Proyecto a Q, K, V de cada forma `(N, d_model)`- Reconfigurar para`(N, n_heads, d_head)`donde$d_{\text{head}} = d_{\text{model}} / n_{\text{heads}}$. Transponer a`(n_heads, N, d_head)`¿ Qué ?
 
 **Attend in parallel.**ejecutar escalado producto de puntos de atención dentro de cada cabeza.`(N, d_head)`Las cabezas operan en diferentes subespacios de la incorporación y nunca hablan durante el cálculo de la atención.
 
@@ -36,7 +36,7 @@ La atención multi-cabeza es el predeterminado de cada transformador en los barc
 | Grouped-query (GQA) | N | G (e.g. N/8) | Llama 2 70B, Llama 3+, Qwen 2+, Mistral |
 | Multi-head latent (MLA) | N | compressed to low-rank | DeepSeek-V2, V3 |
 
-GQA es el estándar moderno porque reduce la memoria de caché KV en un factor de `N/G`MLA va más allá comprimiendo K/V en un espacio latente, luego proyectando de nuevo en tiempo de cálculo  cuesta FLOPs, ahorra mucho más memoria.
+GQA es el estándar moderno porque reduce la memoria de caché KV en un factor de $N/G$MLA va más allá comprimiendo K/V en un espacio latente, luego proyectando de nuevo en tiempo de cálculo  cuesta FLOPs, ahorra mucho más memoria.
 
 ```figure
 multihead-split
@@ -129,7 +129,7 @@ out = scaled_dot_product_attention(q, k, v, is_causal=True, enable_gqa=True)
 | Large (~1B) | 2048 | 16 | 128 |
 | Frontier (~70B) | 8192 | 64 | 128 |
 
-`d_head`casi siempre aterriza en 64 o 128. Es la unidad de cuánto una cabeza puede "ver". Baja por debajo de 32 y las cabezas comienzan a luchar contra el factor de escala.`sqrt(d_head)`Si se superan los 256 y se pierde el beneficio de "muchos especialistas pequeños".
+`d_head`casi siempre aterriza en 64 o 128. Es la unidad de cuánto una cabeza puede "ver". Baja por debajo de 32 y las cabezas comienzan a luchar contra el factor de escala.$\sqrt{d_{\text{head}}}$Si se superan los 256 y se pierde el beneficio de "muchos especialistas pequeños".
 
 ## Envío
 
@@ -145,7 +145,7 @@ out = scaled_dot_product_attention(q, k, v, is_causal=True, enable_gqa=True)
 
 | Term | What people say | What it actually means |
 |------|-----------------|-----------------------|
-| Head | "A single attention circuit" | One Q/K/V projection of dimension `d_head = d_model / n_heads` with its own attention matrix. |
+| Head | "A single attention circuit" | One Q/K/V projection of dimension $d_{\text{head}} = d_{\text{model}} / n_{\text{heads}}$ with its own attention matrix. |
 | d_head | "Head dimension" | Per-head hidden width; almost always 64 or 128 in production. |
 | Split / combine | "Reshape tricks" | `(N, d_model) ↔ (n_heads, N, d_head)` reshape+transpose around attention. |
 | W_o | "Output projection" | `(d_model, d_model)` matrix applied after concatenating heads; where heads mix. |

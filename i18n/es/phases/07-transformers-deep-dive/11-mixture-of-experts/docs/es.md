@@ -11,7 +11,7 @@
 
 Los FLOPs de un transformador denso a la inferencia son iguales al número de parámetros (de 2 veces para el pase hacia adelante). Escala un modelo denso y cada token paga la cuenta completa. Para 2024 la frontera estaba golpeando una pared de cálculo: para ser significativamente más inteligente, se necesitaban exponencialmente más FLOPs por token.
 
-La mezcla de expertos rompe este vínculo.`E`expertos independientes + un router que seleccione `k`Expertos por token. Parámetros totales = `E × FFN_size`. Parámetros activos por token = `k × FFN_size`. Configuración típica para 2026: `E=256`¿ Qué ?`k=8`. Escales de almacenamiento con `E`, calcular escalas con `k`¿ Qué ?
+La mezcla de expertos rompe este vínculo.$E$expertos independientes + un router que seleccione $k$Expertos por token. Parámetros totales = $E \times \text{FFN size}$. Parámetros activos por token = $k \times \text{FFN size}$. Configuración típica para 2026: $E=256$¿ Qué ?$k=8$. Escales de almacenamiento con $E$, calcular escalas con $k$¿ Qué ?
 
 La frontera de 2026 es casi completamente MoE: DeepSeek-V3 (671B total / 37B activo), Mixtral 8×22B, Qwen2.5-MoE, Llama 4, Kimi K2, gpt-oss. En el tablero de clasificación independiente de Análisis Artificial, los 10 modelos de código abierto más importantes son todos MoE.
 
@@ -46,7 +46,7 @@ Cada experto es un FFN independiente (típicamente SwiGLU). El router es una sol
 Si el router pone el 90% de los tokens a través del experto 3, los otros expertos pasan hambre.
 
 1. **Auxiliary load-balancing loss**Añade una penalidad proporcional a la variación en el uso experto. Funciona, pero añade un hiperparámetro y una segunda señal de gradiente.
-2. **Expert capacity + token dropping**Cada experto procesa como máximo`C × N/E`Los tokens de sobreflujo saltan la capa.
+2. **Expert capacity + token dropping**Cada experto procesa como máximo$C \times N/E$Los tokens de sobreflujo saltan la capa.
 3. **Auxiliary-loss-free balancing**(DeepSeek-V3). Agregar un sesgo aprendido por experto que cambia la selección de la parte superior del router.
 
 El enfoque de DeepSeek-V3: después de cada paso de formación, para cada experto, compruebe si su uso está por encima o por debajo del objetivo.`±γ`. Utilizaciones de selección `scores + bias`Las probabilidades expertas utilizadas para el gating son las primas .`scores`Desacopla el enrutamiento de la expresión.
@@ -59,7 +59,7 @@ DeepSeek-V2/V3 también divide a los expertos en *compartido* y *routed*. Cada t
 
 MoE clásico (GShard, Switch): cada experto tiene la anchura de un FFN completo. `E`es pequeño (864), `k`es pequeño (12).
 
-MoE moderno de granos finos (DeepSeek-V3, Qwen-MoE): cada experto es más estrecho (1/8 de FFN). `E`es grande (256+), `k`Es más grande (8+). Los mismos parámetros totales, pero las combinaciones escalar mucho más rápido. `C(256, 8) = 400 trillion`La calidad aumenta y la latencia se mantiene estable.
+MoE moderno de granos finos (DeepSeek-V3, Qwen-MoE): cada experto es más estrecho (1/8 de FFN). $E$es grande (256+), $k$Es más grande (8+). Los mismos parámetros totales, pero las combinaciones escalar mucho más rápido. $\binom{256}{8} \approx 400$El número de "expertos" por token aumenta y la latencia se mantiene estable.
 
 ### El perfil de costes
 
@@ -159,7 +159,7 @@ model = AutoModelForCausalLM.from_pretrained("mistralai/Mixtral-8x22B-v0.1")
 | Auxiliary-loss-free | "DeepSeek-V3's trick" | Balance via per-expert bias on the router's selection only; no extra gradient. |
 | Shared expert | "Always on" | Extra expert through which every token passes; captures common knowledge. |
 | Expert parallelism | "Shard by expert" | Distribute different experts to different GPUs; route tokens across the network. |
-| Sparsity | "Active params < total params" | The ratio `k × expert_size / (E × expert_size)`; 37/671 ≈ 5.5% for DeepSeek-V3. |
+| Sparsity | "Active params < total params" | The ratio $k \times \text{expert size} / (E \times \text{expert size})$; 37/671 ≈ 5.5% for DeepSeek-V3. |
 
 ## Leer más
 
