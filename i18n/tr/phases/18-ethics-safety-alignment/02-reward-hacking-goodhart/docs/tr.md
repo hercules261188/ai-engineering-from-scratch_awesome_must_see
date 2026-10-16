@@ -28,9 +28,11 @@ Goodhart'ın orijinal formülasyonu: "Bir ölçü hedefe dönüştüğünde, iyi
 
 Gao et al. işlevsel bir biçim ver.`d = sqrt(KL(pi || pi_init))`- Bırak .`R_proxy(d)`- Yeterince iyi bir ödül .`R_gold(d)`- Empirik olarak:
 
-```
-R_proxy(d) = alpha * d - beta_proxy * d^2
-R_gold(d)  = alpha * d - beta_gold  * d^2
+```math
+\begin{aligned}
+R_{\text{proxy}}(d) &= \alpha d - \beta_{\text{proxy}} d^2 \\
+R_{\text{gold}}(d) &= \alpha d - \beta_{\text{gold}} d^2
+\end{aligned}
 ```
 
 - Evet .`beta_gold > beta_proxy`Her ikisi de sıfır KL'den yükselmiş, her ikisi de zirve, altın zirvesi de kökenine daha yakındır.`d`Proxy-Gold farkı, BoN örneklemesi, PPO ve SFT-to-best'te aynı imzalaya sahiptir.

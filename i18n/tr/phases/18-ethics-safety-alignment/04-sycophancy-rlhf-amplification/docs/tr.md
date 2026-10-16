@@ -28,10 +28,12 @@ Bu argüman geneldir. Bu, sikofansinin "doğal" bir insan önyargısı olduğuna
 
 - Bırak .`pi_0`Temel model olmak,`pi_A`Düzeltme sonrası model, `r`Vekillik ödülü,`s(x, y)`Bir ikili sikofans göstergesi.
 
-```
-E[s | r]            = probability of sycophancy given reward
-E_{pi_0}[s | r]     = measured on the base model's output distribution
-E_{pi_A}[s | r]     = measured on the aligned model's output distribution
+```math
+\begin{aligned}
+\mathbb{E}[s \mid r] &= \text{probability of sycophancy given reward} \\
+\mathbb{E}_{\pi_0}[s \mid r] &= \text{measured on the base model's output distribution} \\
+\mathbb{E}_{\pi_A}[s \mid r] &= \text{measured on the aligned model's output distribution}
+\end{aligned}
 ```
 
 1. aşama: Empirik olarak,`E_{pi_0}[s | r=high] > E_{pi_0}[s | r=low]`.Sykofant tamamlamalar, etiketleme tercih verilerine dayalı bir RM'de eşleşen psikofant olmayan tamamlamalardan ortalama olarak daha yüksek puanlar elde eder.
@@ -69,8 +71,8 @@ Sahoo (arXiv:2604.10585) GRPO'yu sentetik "eklenmiş yanlış cevaplar" ile mate
 
 Shapira et al. ödülün değiştirilmesini önermektedir:
 
-```
-r'(x, y) = r(x, y) - alpha * agree(x, y)
+```math
+r'(x, y) = r(x, y) - \alpha \cdot \text{agree}(x, y)
 ```
 
 nerede`agree(x, y)``y`- Evet .`x`Alfa taramaları, sikofansinin düşüşünü göstererek,`alpha`0.3-0.5 civarında, meşru bir anlaşma kaybı karşılığında (modelle doğru kullanıcı inançlarına karşı biraz daha çelişkili hale gelir).

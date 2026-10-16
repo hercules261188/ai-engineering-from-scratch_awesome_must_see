@@ -31,11 +31,11 @@ Girişler:
 
 Çubuk, k için 1..K:
 1. A, G hedefi ve bugüne kadar (sürekli, yanıt) çiftlerin geçmişi ile uyarılır.
-2. A, yeni bir mesaj gönderir.
-3. T'ye p_k gönder; r_k cevabını al.
-4. J gol üzerinde puanlar (p_k, r_k).
+2. Bir yeni uyarı gönderir .$p_k$- Evet .
+3. Gönder .$p_k$T 'ye cevap al $r_k$- Evet .
+4. J puanları $(p_k, r_k)$- Hedef üzerine.
 5. Eğer puan >= eğim varsa, durdur  hapishane kırılması bulunmuştur.
-6. Yoksa, A'nın tarihine ekle; devam et.
+6. Başka bir şey, ekle $(p_k, r_k)$A'nın geçmişine devam et.
 
 Empirik sonuç (NeurIPS 2023): GPT-3.5-turbo, Llama-2-7B-chat karşı saldırı başarısı oranı %50'dir; 10-20 aralığında başarının ortalama sorguları.
 

@@ -32,8 +32,8 @@ SFT'nin size verdiği: model şimdi soruları devam etmek yerine cevaplar.
 
 SFT modelinden K tamamlamalarını örnekleyin. Bir etiketlemeci onları sıralar.`y_w`- Hayır .`y_l`- ...
 
-```
-L_RM = -log sigmoid(r(x, y_w) - r(x, y_l))
+```math
+L_{\text{RM}} = -\log \sigma\big(r(x, y_w) - r(x, y_l)\big)
 ```
 
 Bu Bradley-Terry çiftlik tercih kaybı. RM genellikle SFT modelinden başlangıç yapılır ve LM başı skalar başıyla değiştirilir.
@@ -44,8 +44,8 @@ Bu Bradley-Terry çiftlik tercih kaybı. RM genellikle SFT modelinden başlangı
 
 Hedef tanımlanın:
 
-```
-J(pi) = E_{x~D, y~pi(.|x)} [ r(x, y) ] - beta * KL(pi(.|x) || pi_SFT(.|x))
+```math
+J(\pi) = \mathbb{E}_{x \sim D,\, y \sim \pi(\cdot \mid x)} \big[ r(x, y) \big] - \beta \, \mathrm{KL}\big(\pi(\cdot \mid x) \,\|\, \pi_{\text{SFT}}(\cdot \mid x)\big)
 ```
 
 PPO ile maksimum artırın.`pi`Bu nedenle, bu sistemin en iyi yönleri, SFT politikasından uzaklaşmaktan uzaklaşmaktır.
@@ -56,8 +56,8 @@ KL katılamı `beta`Bu, RLHF'nin en önemli hiperparametresidir. Çok düşük: 
 
 RLHF'den sonra, model insan tarafından tercih edilir, ancak standart referans değerlerinde (SQuAD, HellaSwag, DROP) geri döner. Ouyang ve diğerleri buna uyum vergisi derler ve bunu PPO-ptx ile düzeltirler: RL hedefine önceden eğitim gradiyentlerini karıştırın, böylece model, hiçbir zaman ödüllendirilmediği aşağıdaki görevleri nasıl yapacağını unutmaz.
 
-```
-J_ptx(pi) = J(pi) + gamma * E_{x~D_pretrain} [ log pi(x) ]
+```math
+J_{\text{ptx}}(\pi) = J(\pi) + \gamma \, \mathbb{E}_{x \sim D_{\text{pretrain}}} \big[ \log \pi(x) \big]
 ```
 
 PPO-ptx standart haline geldi. Anthropic, DeepMind ve Meta hepsi bazı çeşitleri kullanıyor.
@@ -84,7 +84,7 @@ al-instruct-pipeline
 Neye bakılır:
 
 - Ödül yolculuğu `beta = 0.1`vs `beta = 0.0`- Evet .
-- Bu nedenle, eğitim adımları hakkında bilgi almak için daha fazla bilgi edinmek gerekir.
+- $\mathrm{KL}(\pi \Vert \pi_{\text{SFT}})$Eğitim adımları.
 - Son eylem dağılımı etiketleme tercihine göre.
 
 ## Gönder
@@ -109,7 +109,7 @@ Bu ders bize çok yararlı .`outputs/skill-instructgpt-explainer.md`RLHF boru ha
 |------|-----------------|------------------------|
 | SFT | "instruction tuning" | Stage 1: cross-entropy fine-tune on prompt-response pairs |
 | Reward model | "the RM" | Scalar regressor over (prompt, response) trained with Bradley-Terry on pairwise labels |
-| Bradley-Terry | "pairwise preference loss" | -log sigmoid(r_w - r_l); reduces pairwise ranking to binary classification |
+| Bradley-Terry | "pairwise preference loss" | $-\log \sigma(r_w - r_l)$; reduces pairwise ranking to binary classification |
 | KL penalty | "the regularizer" | `beta * KL(pi \|\| pi_SFT)` — keeps the RL policy near the SFT anchor |
 | PPO-ptx | "PPO with pretraining mix" | Adds a fraction of pre-training log-likelihood to the PPO objective to offset the alignment tax |
 | Alignment tax | "the RLHF regression" | Post-RLHF drop on standard benchmarks that RLHF did not target |

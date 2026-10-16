@@ -18,20 +18,20 @@
 
 RLHF amacı (Desin 1):
 
-```
-max_pi E_{x,y~pi} [ r(x, y) ] - beta * KL(pi || pi_ref)
+```math
+\max_{\pi} \; \mathbb{E}_{x, y \sim \pi} \big[ r(x, y) \big] - \beta \, \mathrm{KL}(\pi \,\|\, \pi_{\text{ref}})
 ```
 
 bilinen bir en iyisi vardır:
 
-```
-pi*(y|x) = (1/Z(x)) * pi_ref(y|x) * exp(r(x, y) / beta)
+```math
+\pi^*(y \mid x) = \frac{1}{Z(x)} \, \pi_{\text{ref}}(y \mid x) \exp\!\left(\frac{r(x, y)}{\beta}\right)
 ```
 
 Yani ödül, optimum politika ile referans oranı ile bilinçli olarak tanımlanır:
 
-```
-r(x, y) = beta * log(pi*(y|x) / pi_ref(y|x)) + beta * log Z(x)
+```math
+r(x, y) = \beta \log \frac{\pi^*(y \mid x)}{\pi_{\text{ref}}(y \mid x)} + \beta \log Z(x)
 ```
 
 Bunu Bradley-Terry tercih olasılığı ve partisyon fonksiyonuna değiştirin .`Z(x)`Sadece `x`. Geride kalan tek politika parametrelerinde bir kayıp  ödül modeli gerekmiyor.
@@ -42,11 +42,11 @@ Korkusu: Kökülme, en iyisini elde edilebilir olduğunu varsayır, tercih veril
 
 ### DPO (Rafailov et al., 2023)
 
-```
-L_DPO = -log sigmoid(
-  beta * log(pi(y_w | x) / pi_ref(y_w | x))
-  - beta * log(pi(y_l | x) / pi_ref(y_l | x))
-)
+```math
+L_{\text{DPO}} = -\log \sigma\!\left(
+  \beta \log \frac{\pi(y_w \mid x)}{\pi_{\text{ref}}(y_w \mid x)}
+  - \beta \log \frac{\pi(y_l \mid x)}{\pi_{\text{ref}}(y_l \mid x)}
+\right)
 ```
 
 Yanlış giden ne olabilir:
@@ -59,8 +59,8 @@ Yanlış giden ne olabilir:
 
 Kimlik Tercihi Optimizasyonu, log-sigmoid'i tercih olasılığı üzerindeki kimlik haritasıyla değiştirir. Kayıp sınırlı bir hedefte bir kare hatası haline gelir:
 
-```
-L_IPO = (log(pi(y_w | x) / pi_ref(y_w | x)) - log(pi(y_l | x) / pi_ref(y_l | x)) - 1/(2 beta))^2
+```math
+L_{\text{IPO}} = \left( \log \frac{\pi(y_w \mid x)}{\pi_{\text{ref}}(y_w \mid x)} - \log \frac{\pi(y_l \mid x)}{\pi_{\text{ref}}(y_l \mid x)} - \frac{1}{2\beta} \right)^2
 ```
 
 Marjinin sınırları `1/(2 beta)`-Prifesyon gücü ve içten ödül farkı orantılıdır.
@@ -69,8 +69,8 @@ Marjinin sınırları `1/(2 beta)`-Prifesyon gücü ve içten ödül farkı oran
 
 Kahneman-Tversky Optimizasyon, çiftlik yapısını tamamen düşürür. Tek bir etiketlenmiş çıkış ve ikili bir "istiği" veya "istiği olmayan" sinyal verildiğinde, bir prospek teorisi kullanımı için haritası yapar:
 
-```
-v(x, y) = sigma(beta * log(pi(y|x) / pi_ref(y|x)) - z_ref)
+```math
+v(x, y) = \sigma\!\left(\beta \log \frac{\pi(y \mid x)}{\pi_{\text{ref}}(y \mid x)} - z_{\text{ref}}\right)
 ```
 
 Fayda: çiftsiz verileri kullanabilirsiniz, bu çok daha boldur.
@@ -79,12 +79,12 @@ Fayda: çiftsiz verileri kullanabilirsiniz, bu çok daha boldur.
 
 Basit Seçenek Optimizasyonu eğitim sinyali ile jenerasyonu uyumlu hale getirir. İpucu politikasını tamamen kaldırın ve uzunlukla log olasılığını normalleştirin:
 
-```
-L_SimPO = -log sigmoid(
-  (beta / |y_w|) * log pi(y_w | x)
-  - (beta / |y_l|) * log pi(y_l | x)
-  - gamma
-)
+```math
+L_{\text{SimPO}} = -\log \sigma\!\left(
+  \frac{\beta}{|y_w|} \log \pi(y_w \mid x)
+  - \frac{\beta}{|y_l|} \log \pi(y_l \mid x)
+  - \gamma
+\right)
 ```
 
 bir kenara sahip`gamma`Uzunluk normallendirme DPO'nun uzunluk-bias başarısızlık modunu kullanma teşvikini ortadan kaldırır (daha uzun `y_w`Yapım yoluyla daha büyük bir log-prob boşluğu verir).
@@ -93,9 +93,11 @@ bir kenara sahip`gamma`Uzunluk normallendirme DPO'nun uzunluk-bias başarısızl
 
 Odds-Ratio Preference Optimization, standart SFT negatif kayıt olasılığına bir tercih terimi ekler:
 
-```
-L_ORPO = L_NLL(y_w) + lambda * L_OR
-L_OR = -log sigmoid(log(odds(y_w) / odds(y_l)))
+```math
+\begin{aligned}
+L_{\text{ORPO}} &= L_{\text{NLL}}(y_w) + \lambda L_{\text{OR}} \\
+L_{\text{OR}} &= -\log \sigma\!\left(\log \frac{\text{odds}(y_w)}{\text{odds}(y_l)}\right)
+\end{aligned}
 ```
 
 Referans politikası yok  SFT terimi düzenleyici. Üssü modelden uyumlu modeline tek bir aşamada tren. Ayrı bir SFT kontrol noktası yoktur.

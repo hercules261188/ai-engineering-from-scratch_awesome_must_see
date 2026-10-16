@@ -22,8 +22,11 @@ LLM'ler hafıza. Carlini et al. 2021 üretim dil modellerinin talep üzerine sö
 
 ### (ε, δ) - Farklı gizlilik
 
-Bir rastgele algoritma M (ε, δ) -DP eğer bir örnekte ve herhangi bir olayda farklı olan iki veri kümesi için S:
-S) <= e^ε * P(M(D') S) + δ.
+Bir rastgele algoritma .$M$- Evet .$(\varepsilon, \delta)$-DP eğer bir örnek ve herhangi bir olayda farklı olan herhangi iki veri kümesi için $S$- ...
+
+```math
+P(M(D) \in S) \le e^{\varepsilon} \cdot P(M(D') \in S) + \delta.
+```
 
 Anlatma: çıkış dağılımı, herhangi bir bireyin katkılarının, δ olasılığı hariç, güvenilir bir şekilde çıkarılamayacağı kadar yakın ( ε ile parametrelidir).
 
@@ -33,7 +36,7 @@ Abadi et al. 2016. Standart tarif:
 1. Küçük bir partiye örnek ver.
 2. Örnek başına gradient hesaplayın.
 3. Örnek başına her bir gradient C e bir eşiğine çıkar.
-4. Kısaltılan gradientleri toplamlayıp std σ * C ile Gaussian gürültüsü ekleyin.
+4. Kısaltılan gradientleri toplamla , Gaussian gürültüsünü std ile ekle .$\sigma \cdot C$- Evet .
 5. Parametreyi güncellemek için gürültülü miktarı kullanın.
 
 Gizlilik maliyetini bir muhasebeci (Moments Muhasebeci, Rényi DP muhasebeci) takip eder. LLM literatüründe bildirilen ε değerleri tehdit modeli, veri hassasiyeti ve kullanım hedefi ile çok farklıdır; evrensel olarak "güvenli" varsayılan ε yoktur. Yayınlanan örnekler bazı LLM eğitim ayarlarında yaklaşık ε ≈ 110'u kapsar, ancak bunlar örnekler  önerilmeyen varsayımlardır. Düşük ε genellikle daha fazla gürültü gerektirir ve kullanım kaybını artırabilir.
@@ -84,9 +87,9 @@ Bu ders bize çok yararlı .`outputs/skill-dp-audit.md`. Dil modelinin kullanıl
 
 ## Egzersizler
 
-1. Çık .`code/main.py`. {0,5, 1.0, 2.0}'da σ'yi tarayıp (ε, δ) doğruluk oranını rapor edin.
+1. Çık .`code/main.py`- Arama .$\sigma \in \lbrace 0.5, 1.0, 2.0 \rbrace$(ε, δ) doğruluk oranını rapor edin.
 
-2. Kanarya ekleme ve günlük kaybı testi uygulanır. DP-SGD'den önce ve sonra tespit oranını σ = 1.0 ile ölçün.
+2. Kanarya ekleme ve günlük kaybı testi uygulanır.$\sigma = 1.0$- Evet .
 
 3. Nasr et al. 2025'te eğitim verileri çıkarma üzerine okuyun. Neden çıkarma başarısı orta ε altında çökmez?
 
