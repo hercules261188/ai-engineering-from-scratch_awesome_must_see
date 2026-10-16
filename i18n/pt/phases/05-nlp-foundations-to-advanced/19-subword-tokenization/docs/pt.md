@@ -79,7 +79,7 @@ def encode_bpe(word, merges):
     return symbols
 ```
 
-Naívo O  n                                                                                                                                                                                                                                                            
+Ingênuo .$O(n \cdot \lvert \text{merges} \rvert)$. As implementações de produção (tiktoken, HF Tokenizers) utilizam uma pesquisa de posições de fusão com filas de prioridade e executam-se em tempo quase linear.
 
 ### Passo 3: SentençaPiece na prática
 

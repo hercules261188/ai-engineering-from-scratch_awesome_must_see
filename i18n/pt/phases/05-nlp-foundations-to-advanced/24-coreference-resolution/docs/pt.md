@@ -36,7 +36,7 @@ Por que é importante em 2026:
 **Architectures.**
 
 1. **Rule-based (Hobbs, 1978).**Resolução de pronome baseada em árvores sintáticas usando regras gramaticais. Boa linha de base. Surpreendentemente difícil de superar em pronome.
-2. **Mention-pair classifier.**Para cada par de menções (m_i, m_j), prevê se elas são mais básicas. Cluster por fechamento transitório. padrão pré-2016.
+2. **Mention-pair classifier.**Por cada par de menções .$(m_i, m_j)$O que é que se passa com o sistema de controle de dados?
 3. **Mention-ranking.**Para cada menção, classifique antecedentes candidatos (incluindo "sem antecedentes").
 4. **Span-based end-to-end (Lee et al., 2017).**Encoderador de transformador. Enumere todos os intervalos candidatos até um limite de comprimento. Previne a menção de pontuações. Previne a probabilidade de antecedentes para cada intervalos. Cluster com ganância. O padrão moderno.
 5. **Generative (2024+).**Promover um LLM: "Lista todos os pronúncios neste texto e seus antecedentes".

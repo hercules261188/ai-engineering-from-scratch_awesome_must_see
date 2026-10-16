@@ -80,8 +80,8 @@ No corpus Brown, esta linha de base atinge uma precisão de 85%.
 
 Modela a probabilidade conjunta da sequência:
 
-```
-P(tags, words) = prod P(tag_i | tag_{i-1}) * P(word_i | tag_i)
+```math
+P(\text{tags}, \text{words}) = \prod_i P(\text{tag}_i \mid \text{tag}_{i-1}) \cdot P(\text{word}_i \mid \text{tag}_i)
 ```
 
 Duas tabelas: probabilidades de transição (tag dada a tag anterior), probabilidades de emissão (tag dada a palavra). Estima ambas a partir de contagens com suavização Laplace. Decodificar com Viterbi (programação dinâmica sobre a rede de tag).

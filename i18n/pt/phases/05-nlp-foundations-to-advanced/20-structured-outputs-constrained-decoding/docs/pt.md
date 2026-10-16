@@ -29,7 +29,7 @@ Esta lição constrói a intuição para os três e nomes para quando alcançar.
 
 Implementações em 2026:
 
-- **Outlines.**Compila JSON Schema ou regex em uma máquina de estado finito. Cada token recebe uma busca O(1) válida para o próximo token. Baseado em FSM, por isso esquemas recorrentes precisam ser aplanados.
+- **Outlines.**Compila JSON Schema ou regex em uma máquina de estado finito.$O(1)$Baseado no FSM, os esquemas recorrentes precisam ser aplanados.
 - **XGrammar / llguidance.**Engenharia de gramática livre de contexto. Manusei esquema JSON recursivo. Descodagem quase zero. OpenAI creditou a orientação em sua implementação de saída estruturada de 2025.
 - **vLLM guided decoding.**- Incorporado .`guided_json`- Não .`guided_regex`- Não .`guided_choice`- Não .`guided_grammar`através de contornos, XGrammar, ou backends de formato Im-enforcer.
 - **Instructor.**Envolvimento baseado em Pydantic sobre qualquer LLM. Retracções em falhas de validação. Cross-provider, mas não modifica logits  ele depende de retracções + instruções estruturadas de consciência de saída.
@@ -210,7 +210,7 @@ Refuse any design that puts `answer` or `decision` before reasoning fields. Refu
 |------|-----------------|-----------------------|
 | Constrained decoding | Force valid output | Mask invalid-token logits at every generation step. |
 | Logit processor | The thing that constrains | Function: `(logits, state) -> masked_logits`. |
-| FSM | Finite-state machine | Compiled grammar representation; O(1) valid-next-token lookup. |
+| FSM | Finite-state machine | Compiled grammar representation; $O(1)$ valid-next-token lookup. |
 | CFG | Context-free grammar | Grammar that handles recursion; slower but more expressive than FSM. |
 | Schema field order | Does it matter? | Yes — first field commits; always put reasoning before answer. |
 | Guided decoding | vLLM's name for it | Same concept, integrated into the inference server. |
