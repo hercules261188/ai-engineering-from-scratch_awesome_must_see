@@ -9,11 +9,11 @@
 
 ## Vấn đề
 
-A2C (Dạy học 07) là chính sách: gradient `E_{π_θ}[A · ∇ log π_θ]`yêu cầu dữ liệu lấy mẫu từ *current* `π_θ`Hãy cập nhật một lần, và`π_θ`thay đổi; dữ liệu mà bạn đã sử dụng bây giờ là không chính sách. sử dụng lại nó và gradient của bạn là thiên vị.
+A2C (Dạy học 07) là chính sách: gradient $\mathbb E_{\pi_\theta}[A \cdot \nabla \log \pi_\theta]$yêu cầu dữ liệu lấy mẫu từ *current* $\pi_\theta$Hãy cập nhật một lần, và$\pi_\theta$thay đổi; dữ liệu mà bạn đã sử dụng bây giờ là không chính sách. sử dụng lại nó và gradient của bạn là thiên vị.
 
 Các rollout là đắt tiền. trên Atari, một rollout trên 8 envs × 128 bước = 1024 chuyển đổi và một chục giây thời gian môi trường. Thả đi sau một bước gradient là lãng phí.
 
-Tích cực chính sách khu vực tin cậy (TRPO, Schulman 2015) là sự khắc phục đầu tiên: hạn chế mỗi bản cập nhật để sự khác biệt KL giữa chính sách cũ và mới vẫn ở dưới `δ`Về lý thuyết sạch, nhưng đòi hỏi phải giải quyết các hàm kết hợp mỗi lần cập nhật.
+Tích cực chính sách khu vực tin cậy (TRPO, Schulman 2015) là sự khắc phục đầu tiên: hạn chế mỗi bản cập nhật để sự khác biệt KL giữa chính sách cũ và mới vẫn ở dưới $\delta$Về lý thuyết sạch, nhưng đòi hỏi phải giải quyết các hàm kết hợp mỗi lần cập nhật.
 
 PPO (Schulman et al. 2017) thay thế hạn chế khu vực tin tưởng cứng bằng một mục tiêu đơn giản. Một dòng mã thêm. Mười thời đại mỗi triển khai. Không có gradient kết hợp. Đảm bảo lý thuyết đủ tốt. Chín năm sau nó vẫn là thuật toán chính sách-gradient mặc định cho mọi thứ từ MuJoCo đến RLHF.
 
@@ -23,43 +23,49 @@ PPO (Schulman et al. 2017) thay thế hạn chế khu vực tin tưởng cứng 
 
 **The importance ratio.**
 
-`r_t(θ) = π_θ(a_t | s_t) / π_{θ_old}(a_t | s_t)`
+```math
+r_t(\theta) = \frac{\pi_\theta(a_t \mid s_t)}{\pi_{\theta_{\text{old}}}(a_t \mid s_t)}
+```
 
-Đây là tỷ lệ xác suất của chính sách mới so với chính sách thu thập dữ liệu. `r_t = 1`nghĩa là không có thay đổi.`r_t = 2`nghĩa là chính sách mới có khả năng gấp đôi`a_t`như cũ.
+Đây là tỷ lệ xác suất của chính sách mới so với chính sách thu thập dữ liệu. $r_t = 1$nghĩa là không có thay đổi.$r_t = 2$nghĩa là chính sách mới có khả năng gấp đôi$a_t$như cũ.
 
 **The clipped surrogate.**
 
-`L^{CLIP}(θ) = E_t [ min( r_t(θ) A_t, clip(r_t(θ), 1-ε, 1+ε) A_t ) ]`
+```math
+L^{\text{CLIP}}(\theta) = \mathbb{E}_t \left[ \min\left( r_t(\theta) A_t, \mathop{\mathrm{clip}}(r_t(\theta), 1-\epsilon, 1+\epsilon) A_t \right) \right]
+```
 
 Hai điều khoản:
 
-- Nếu lợi thế `A_t > 0`và tỷ lệ cố gắng tăng lên qua `1 + ε`, clip làm phẳng gradient  không đẩy một hành động tốt hơn `+ε`trên khả năng cũ.
-- Nếu lợi thế `A_t < 0`và tỷ lệ cố gắng tăng lên qua `1 - ε`(có nghĩa là chúng ta sẽ làm cho một hành động xấu có khả năng hơn so với việc cắt giảm), clip                                                                                                                                                                                                                                                   `-ε`- Tôi không biết.
+- Nếu lợi thế $A_t > 0$và tỷ lệ cố gắng tăng lên qua $1 + \epsilon$, clip làm phẳng gradient  không đẩy một hành động tốt hơn $+\epsilon$trên khả năng cũ.
+- Nếu lợi thế $A_t < 0$và tỷ lệ cố gắng tăng lên qua $1 - \epsilon$(có nghĩa là chúng ta sẽ làm cho một hành động xấu có khả năng hơn so với việc cắt giảm), clip                                                                                                                                                                                                                                                   $-\epsilon$- Tôi không biết.
 
 - `min`xử lý hướng khác: nếu tỷ lệ đã di chuyển theo hướng * hữu ích *, bạn vẫn nhận được độ nghiêng (không cắt trên mặt mà sẽ làm tổn thương bạn).
 
-Thông thường`ε = 0.2`- Định hướng mục tiêu như một hàm của`r_t`: một chức năng tuyến tính theo mảnh với mái nhà phẳng trên "mặt tốt" và sàn phẳng trên "mặt xấu".
+Thông thường$\epsilon = 0.2$- Định hướng mục tiêu như một hàm của$r_t$: một chức năng tuyến tính theo mảnh với mái nhà phẳng trên "mặt tốt" và sàn phẳng trên "mặt xấu".
 
 **The full PPO loss.**
 
-`L(θ, φ) = L^{CLIP}(θ) - c_v · (V_φ(s_t) - V_t^{target})² + c_e · H(π_θ(·|s_t))`
+```math
+L(\theta, \phi) = L^{\text{CLIP}}(\theta) - c_v \cdot (V_\phi(s_t) - V_t^{\text{target}})^2 + c_e \cdot H(\pi_\theta(\cdot \mid s_t))
+```
 
-Tương tự cấu trúc diễn viên-chính trị như A2C. Ba hệ số, thường `c_v = 0.5`- `c_e = 0.01`- `ε = 0.2`- Tôi không biết.
+Tương tự cấu trúc diễn viên-chính trị như A2C. Ba hệ số, thường $c_v = 0.5$- $c_e = 0.01$- $\epsilon = 0.2$- Tôi không biết.
 
 **The training loop.**
 
-1. Thu thập`N × T`chuyển đổi qua `N`các môi trường song song cho `T`từng bước.
+1. Thu thập$N \times T$chuyển đổi qua $N$các môi trường song song cho $T$từng bước.
 2. Xét lợi thế (GAE), đóng băng chúng như là các định vị.
-3. Đóng `π_{θ_old}`như một bức ảnh chụp của hiện tại `π_θ`- Tôi không biết.
-4. Vì `K`các thời đại, cho mỗi mini batch của `(s, a, A, V_target, log π_old(a|s))`- Có thể là:
-   - Lưu ý`r_t(θ) = exp(log π_θ(a|s) - log π_old(a|s))`- Tôi không biết.
-   - Đơn `L^{CLIP}`+ mất giá trị + entropy.
+3. Đóng $\pi_{\theta_{\text{old}}}$như một bức ảnh chụp của hiện tại $\pi_\theta$- Tôi không biết.
+4. Vì $K$các thời đại, cho mỗi mini batch của `(s, a, A, V_target, log π_old(a|s))`- Có thể là:
+   - Lưu ý$r_t(\theta) = \exp(\log \pi_\theta(a \mid s) - \log \pi_{\text{old}}(a \mid s))$- Tôi không biết.
+   - Đơn $L^{\text{CLIP}}$+ mất giá trị + entropy.
    - Bước tiến.
 5. Thả ra việc triển khai, quay lại bước 1.
 
-`K = 10`và các bộ mini 64 là một bộ siêu tham số tiêu chuẩn. PPO là mạnh mẽ: các con số chính xác hiếm khi quan trọng trong ± 50%.
+$K = 10$và các bộ mini 64 là một bộ siêu tham số tiêu chuẩn. PPO là mạnh mẽ: các con số chính xác hiếm khi quan trọng trong ± 50%.
 
-**KL-penalty variant.**Bài báo ban đầu đề xuất một lựa chọn thay thế bằng cách sử dụng một hình phạt KL thích nghi: `L = L^{PG} - β · KL(π_θ || π_old)`với `β`phiên bản cắt giảm trở nên thống trị; biến thể KL tồn tại trong RLHF (nơi KL đối với chính sách tham chiếu là một hạn chế riêng biệt bạn luôn muốn bất cứ lúc nào).
+**KL-penalty variant.**Bài báo ban đầu đề xuất một lựa chọn thay thế bằng cách sử dụng một hình phạt KL thích nghi: $L = L^{\text{PG}} - \beta \cdot \mathrm{KL}(\pi_\theta \Vert \pi_{\text{old}})$với $\beta$phiên bản cắt giảm trở nên thống trị; biến thể KL tồn tại trong RLHF (nơi KL đối với chính sách tham chiếu là một hạn chế riêng biệt bạn luôn muốn bất cứ lúc nào).
 
 ```figure
 ppo-clip
@@ -124,19 +130,19 @@ Thêm MSE tiêu chuẩn vào mục tiêu phê bình và một phần thưởng e
 
 Ba điều cần xem mỗi lần cập nhật:
 
-- **Mean KL** `E[log π_old - log π_θ]`- Tôi nên ở lại.`[0, 0.02]`Nếu nó qua đi`0.1`, giảm `K_EPOCHS`hoặc `LR`- Tôi không biết.
-- **Clip fraction** phần mẫu có tỷ lệ nằm bên ngoài `[1-ε, 1+ε]`- Phải .`~0.1-0.3`Nếu`~0`, clip không bao giờ kích hoạt → tăng `LR`hoặc `K_EPOCHS`Nếu`~0.5+`, bạn đang quá phù hợp với việc triển khai → hạ thấp chúng.
-- **Explained variance** `1 - Var(V_target - V_pred) / Var(V_target)`- Đường đo chất lượng quan trọng. nên tăng lên 1 khi người phê bình học.
+- **Mean KL** $\mathbb{E}[\log \pi_{\text{old}} - \log \pi_\theta]$- Tôi nên ở lại.`[0, 0.02]`Nếu nó qua đi`0.1`, giảm `K_EPOCHS`hoặc `LR`- Tôi không biết.
+- **Clip fraction** phần mẫu có tỷ lệ nằm bên ngoài $[1-\epsilon, 1+\epsilon]$- Phải .`~0.1-0.3`Nếu`~0`, clip không bao giờ kích hoạt → tăng `LR`hoặc `K_EPOCHS`Nếu`~0.5+`, bạn đang quá phù hợp với việc triển khai → hạ thấp chúng.
+- **Explained variance** $1 - \text{Var}(V_{\text{target}} - V_{\text{pred}}) / \text{Var}(V_{\text{target}})$- Đường đo chất lượng quan trọng. nên tăng lên 1 khi người phê bình học.
 
 ## Những bẫy
 
-- **Clip coefficient mistuned.** `ε = 0.2`là tiêu chuẩn thực tế.`0.1`làm cho các bản cập nhật quá nhút nhát; `0.3+`- Không ổn định.
-- **Too many epochs.** `K > 20`thường xuyên gây bất ổn vì chính sách di chuyển xa hơn `π_old`Thời đại giới hạn, đặc biệt là cho các mạng lớn.
+- **Clip coefficient mistuned.** $\epsilon = 0.2$là tiêu chuẩn thực tế.`0.1`làm cho các bản cập nhật quá nhút nhát; `0.3+`- Không ổn định.
+- **Too many epochs.** $K > 20$thường xuyên gây bất ổn vì chính sách di chuyển xa hơn $\pi_{\text{old}}$Thời đại giới hạn, đặc biệt là cho các mạng lớn.
 - **No reward normalization.**Tỷ lệ phần thưởng lớn ăn vào phạm vi clip.
 - **Forgetting advantage normalization.**Thường hợp bình thường hóa trung bình không/mức đơn vị là tiêu chuẩn.
 - **Learning rate not decayed.**PPO được hưởng lợi từ LR tuyến tính suy giảm đến không. LR liên tục thường tồi tệ hơn.
 - **Importance ratio math errors.**Luôn luôn`exp(log_new - log_old)`cho sự ổn định số, không `new / old`- Tôi không biết.
-- **Wrong gradient sign.**Tăng cường người thay thế = * giảm thiểu* `-L^{CLIP}`Một dấu hiệu đảo ngược là lỗi PPO phổ biến nhất.
+- **Wrong gradient sign.**Tăng cường người thay thế = * giảm thiểu* $-L^{\text{CLIP}}$Một dấu hiệu đảo ngược là lỗi PPO phổ biến nhất.
 
 ## Sử dụng nó
 
@@ -180,18 +186,18 @@ Refuse `K > 30` or `ε > 0.3` (unsafe trust region). Refuse any PPO run without 
 
 ## Các bài tập
 
-1. **Easy.**Tiếp tục PPO trên 4×4 GridWorld với `ε=0.2, K=4`So sánh hiệu quả mẫu với A2C (một thời đại mỗi lần triển khai) tại các bước môi trường phù hợp.
-2. **Medium.**Tháo `K ∈ {1, 4, 10, 30}`- Trình quay lại vs bước env và theo dõi trung bình KL mỗi bản cập nhật.`K`KL sẽ nổ tung trong nhiệm vụ này?
-3. **Hard.**Thay thế cho người thay thế bị cắt bằng một hình phạt KL thích ứng (`β`tăng gấp đôi nếu `KL > 2·target`, giảm một nửa nếu `KL < target/2`). So sánh lợi nhuận cuối cùng, ổn định và không clip.
+1. **Easy.**Tiếp tục PPO trên 4×4 GridWorld với $\epsilon=0.2, K=4$So sánh hiệu quả mẫu với A2C (một thời đại mỗi lần triển khai) tại các bước môi trường phù hợp.
+2. **Medium.**Tháo $K \in \lbrace 1, 4, 10, 30 \rbrace$- Trình quay lại vs bước env và theo dõi trung bình KL mỗi bản cập nhật.$K$KL sẽ nổ tung trong nhiệm vụ này?
+3. **Hard.**Thay thế cho người thay thế bị cắt bằng một hình phạt KL thích ứng ($\beta$tăng gấp đôi nếu $\mathrm{KL} > 2 \cdot \text{target}$, giảm một nửa nếu $\mathrm{KL} < \text{target}/2$). So sánh lợi nhuận cuối cùng, ổn định và không clip.
 
 ## Các điều khoản chính
 
 | Term | What people say | What it actually means |
 |------|-----------------|-----------------------|
-| Importance ratio | "r_t(θ)" | `π_θ(a\|s) / π_old(a\|s)`; deviation from the policy that collected the data. |
-| Clipped surrogate | "PPO's main trick" | `min(r·A, clip(r, 1-ε, 1+ε)·A)`; flat gradient past the clip on beneficial side. |
+| Importance ratio | "r_t(θ)" | $\pi_\theta(a \mid s) / \pi_{\text{old}}(a \mid s)$; deviation from the policy that collected the data. |
+| Clipped surrogate | "PPO's main trick" | $\min(r \cdot A, \mathop{\mathrm{clip}}(r, 1-\epsilon, 1+\epsilon) \cdot A)$; flat gradient past the clip on beneficial side. |
 | Trust region | "TRPO / PPO intent" | Limit each update's KL to guarantee monotone improvement. |
-| KL penalty | "Soft trust region" | Alternative PPO: `L - β · KL(π_θ \|\| π_old)`. Adaptive `β`. |
+| KL penalty | "Soft trust region" | Alternative PPO: $L - \beta \cdot \mathrm{KL}(\pi_\theta \Vert \pi_{\text{old}})$. Adaptive $\beta$. |
 | Clip fraction | "How often clipping triggers" | Diagnostic — should be 0.1-0.3; outside means mistuned. |
 | Multi-epoch training | "Data reuse" | K epochs on each rollout; variance cost traded for sample efficiency. |
 | On-policy-ish | "Mostly on-policy" | PPO is nominally on-policy but K>1 epochs uses slightly-off-policy data safely. |

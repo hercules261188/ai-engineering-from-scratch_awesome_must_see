@@ -30,19 +30,19 @@ while True:
 
 **AlphaZero (2017).**Silver et al. Với một trò chơi (chess, shogi, Go) với các quy tắc được biết đến:
 
-- Mạng lưới giá trị chính sách: một tháp `f_θ(s) → (p, v)`- `p`là một tiền nhiệm về các động thái pháp lý.`v`là kết quả trò chơi mong đợi.
-- Monte Carlo Tree Search (MCTS): với mỗi chuyển động, mở rộng một cây có thể tiếp tục. Sử dụng `(p, v)`như trước + bootstrap. Chọn các nút theo UCB (PUCT): `a* = argmax Q(s, a) + c · p(a|s) · √N(s) / (1 + N(s, a))`- Tôi không biết.
-- tự chơi: chơi trò chơi đại lý-về- đại lý.`t`, phân phối các chuyến thăm của MCTS `π_t`trở thành mục tiêu đào tạo chính sách.
-- Lối mất:`L = (v - z)² - π · log p + c · ||θ||²`- `z`là kết quả trò chơi (+1 / 0 / -1).
+- Mạng lưới giá trị chính sách: một tháp $f_\theta(s) \to (p, v)$- $p$là một tiền nhiệm về các động thái pháp lý.$v$là kết quả trò chơi mong đợi.
+- Monte Carlo Tree Search (MCTS): với mỗi chuyển động, mở rộng một cây có thể tiếp tục. Sử dụng $(p, v)$như trước + bootstrap. Chọn các nút theo UCB (PUCT): $a^{\ast} = \arg\max_a Q(s, a) + c \cdot p(a \mid s) \cdot \sqrt{N(s)} / (1 + N(s, a))$- Tôi không biết.
+- tự chơi: chơi trò chơi đại lý-về- đại lý.$t$, phân phối các chuyến thăm của MCTS $\pi_t$trở thành mục tiêu đào tạo chính sách.
+- Lối mất:$L = (v - z)^2 - \pi \cdot \log p + c \cdot \lVert \theta \rVert^2$- $z$là kết quả trò chơi (+1 / 0 / -1).
 
 Không có kiến thức con người, không có tính toán bằng tay, một công thức duy nhất làm chủ cờ vua, shogi và Go sau vài chục triệu trò chơi tự chơi.
 
 **MuZero (2019).**Schrittwieser et al. Tháo bỏ yêu cầu biết các quy tắc.
 
-- Thay vì một môi trường cố định, học một mô hình động lực tiềm ẩn`(h, g, f)`- Có thể là:
-  - `h(s)`: mã hóa quan sát vào trạng thái ẩn.
-  - `g(s_latent, a)`: dự đoán trạng thái ẩn chứa tiếp theo + phần thưởng.
-  - `f(s_latent)`: dự đoán chính sách trước + giá trị.
+- Thay vì một môi trường cố định, học một mô hình động lực tiềm ẩn$(h, g, f)$- Có thể là:
+  - $h(s)$: mã hóa quan sát vào trạng thái ẩn.
+  - $g(s_{\text{latent}}, a)$: dự đoán trạng thái ẩn chứa tiếp theo + phần thưởng.
+  - $f(s_{\text{latent}})$: dự đoán chính sách trước + giá trị.
 - MCTS chạy trong không gian ẩn học.
 - Làm việc trên Go, cờ vua, shogi và Atari một thuật toán, không có luật lệ.
 
@@ -54,11 +54,11 @@ Không có kiến thức con người, không có tính toán bằng tay, một 
 
 - "Game": trả lời một vấn đề toán học / mã hóa / lý luận. "Win" = xác minh (trình thử nghiệm vượt qua, số lượng trả lời phù hợp) trả lại 1.
 - Chính sách: LLM. Các hành động: token.
-- Không có nhà phê bình (v_φ kiểu PPO). thay vào đó, cho mỗi lời nhắc, mẫu `G`- Đánh giá tiền thưởng cho mỗi người.**group-relative advantage** `A_i = (r_i - mean_r) / std_r`như là tín hiệu cho việc cập nhật kiểu REINFORCE.
+- Không có nhà phê bình (tình thức của PPO $V_\phi$Thay vào đó, cho mỗi lần nhắc, lấy mẫu$G$- Đánh giá tiền thưởng cho mỗi người.**group-relative advantage** $A_i = (r_i - \text{mean}_r) / \text{std}_r$như là tín hiệu cho việc cập nhật kiểu REINFORCE.
 - KL phạt để chính sách tham chiếu để ngăn chặn trôi (như RLHF).
 - Lối mất hoàn toàn:
 
-  `L_GRPO(θ) = -E_{q, {o_i}} [ (1/G) Σ_i A_i · log π_θ(o_i | q) ] + β · KL(π_θ || π_ref)`
+  $L_{\text{GRPO}}(\theta) = -\mathbb E_{q, \lbrace o_i \rbrace} \left[ \frac{1}{G} \sum_i A_i \cdot \log \pi_\theta(o_i \mid q) \right] + \beta \cdot \mathrm{KL}(\pi_\theta \Vert \pi_{\text{ref}})$
 
 Không mô hình thưởng, không có nhà phê bình, không có MCTS. Tỷ lệ cơ sở liên quan đến nhóm thay thế cả ba.
 
@@ -144,7 +144,7 @@ Các chẩn đoán giống như RLHF: trung bình KL để tham chiếu, entropy
 ## Những bẫy
 
 - **Reward hacking via verifier gaming.**GRPO thừa hưởng rủi ro của RLHF: nếu người xác minh sai hoặc có thể khai thác, LLM sẽ tìm thấy lợi dụng.
-- **Group size too small.**Sự biến động của nhóm cơ sở là như `1/√G`- Ở dưới đây.`G = 4`, tín hiệu lợi thế là ồn ào; lựa chọn tiêu chuẩn là `G = 8`đến`64`- Tôi không biết.
+- **Group size too small.**Sự biến động của nhóm cơ sở là như $1/\sqrt{G}$- Ở dưới đây.$G = 4$, tín hiệu lợi thế là ồn ào; lựa chọn tiêu chuẩn là $G = 8$đến 64.
 - **Length bias.**LLM hoàn thành với độ dài khác nhau có khả năng log khác nhau. bình thường bằng số lượng token, hoặc sử dụng log-prob cấp độ chuỗi, hoặc cắt ngắn cho chiều dài tối đa.
 - **Pure self-play cycles.**Trình luyện theo kiểu AlphaZero có thể bị mắc kẹt trong vòng thống trị trong các trò chơi tổng cộng.
 - **Search-policy mismatch.**AlphaZero đào tạo chính sách để bắt chước kết quả tìm kiếm. Nếu mạng lưới chính sách quá nhỏ để đại diện cho phân phối tìm kiếm, đào tạo sẽ dừng lại.
@@ -195,7 +195,7 @@ Refuse AlphaZero on imperfect-info games (route to CFR). Refuse GRPO without a t
 
 ## Các bài tập
 
-1. **Easy.**Thực hiện hành vi của GRPO trong `code/main.py`. Đào tạo trên 2 lời nhắc × 4 mã thông báo trả lời mỗi.`G=8`- Tôi không biết.
+1. **Easy.**Thực hiện hành vi của GRPO trong `code/main.py`. Đào tạo trên 2 lời nhắc × 4 mã thông báo trả lời mỗi.$G=8$- Tôi không biết.
 2. **Medium.**Chuẩn bị PPO (cắt) và vanilla REINFORCE. So sánh hiệu quả mẫu và sự khác biệt phần thưởng với GRPO trên cùng một tên cướp.
 3. **Hard.**Tăng đến một "sợi dây chuyền lý luận" dài-2: đại lý phát ra hai token và người xác minh thưởng cho cặp. đo lường cách GRPO xử lý giao tín dụng qua chuỗi hai bước. (Công dẫn: tính toán lợi thế nhóm cho mỗi * chuỗi đầy đủ*, lan rộng đến cả hai vị trí token.)
 
@@ -203,11 +203,11 @@ Refuse AlphaZero on imperfect-info games (route to CFR). Refuse GRPO without a t
 
 | Term | What people say | What it actually means |
 |------|-----------------|-----------------------|
-| MCTS | "Tree search with learned net" | Monte Carlo Tree Search; UCB1/PUCT selection with learned `(p, v)` priors. |
+| MCTS | "Tree search with learned net" | Monte Carlo Tree Search; UCB1/PUCT selection with learned $(p, v)$ priors. |
 | AlphaZero | "Self-play + MCTS" | Policy-value net trained to match MCTS visits and game outcome. |
 | MuZero | "Learned-model AlphaZero" | Same loop but in latent space via learned dynamics. |
 | GRPO | "Critic-free PPO" | Group Relative Policy Optimization; REINFORCE with group-mean baseline + KL. |
-| PUCT | "AlphaZero's UCB" | `Q + c · p · √N / (1 + N_a)` — balances value estimate with prior. |
+| PUCT | "AlphaZero's UCB" | $Q + c \cdot p \cdot \sqrt{N} / (1 + N_a)$ — balances value estimate with prior. |
 | Self-play | "Agent vs past self" | Standard for zero-sum; symmetric training signal. |
 | League play | "Population-based self-play" | Past + current + exploiters sampled as opponents. |
 | Verifier reward | "Verifiable RL" | Reward comes from a deterministic checker (tests pass, answer matches). |

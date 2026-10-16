@@ -21,31 +21,31 @@ Trong mọi môi trường đa tác nhân, từ quan điểm của bất kỳ t�
 
 ![Four MARL regimes: indep, centralized critic, self-play, league](../assets/marl.svg)
 
-**Formalism: Markov Game.**Một khái quát hóa của MDP: các tiểu bang `S`, một hành động chung `a = (a_1, …, a_n)`, chuyển tiếp `P(s' | s, a)`, và phần thưởng cho mỗi đại lý `R_i(s, a, s')`Mỗi đại lý`i`tối đa hóa lợi nhuận của riêng mình theo chính sách của riêng mình `π_i`Nếu phần thưởng giống nhau, thì đó là**fully cooperative**Nếu số tiền bằng không, thì nó là**adversarial**Nếu trộn, thì nó là **general-sum**- Tôi không biết.
+**Formalism: Markov Game.**Một khái quát hóa của MDP: các tiểu bang $S$, một hành động chung $a = (a_1, \ldots, a_n)$, chuyển tiếp $P(s' \mid s, a)$, và phần thưởng cho mỗi đại lý $R_i(s, a, s')$Mỗi đại lý$i$tối đa hóa lợi nhuận của riêng mình theo chính sách của riêng mình $\pi_i$Nếu phần thưởng giống nhau, thì đó là**fully cooperative**Nếu số tiền bằng không, thì nó là**adversarial**Nếu trộn, thì nó là **general-sum**- Tôi không biết.
 
 **Core challenges:**
 
-- **Non-stationarity.** `P(s' | s, a_i)`từ đại lý `i`Quan điểm của anh phụ thuộc vào`π_{-i}`, mà đang thay đổi.
+- **Non-stationarity.** $P(s' \mid s, a_i)$từ đại lý $i$Quan điểm của anh phụ thuộc vào$\pi_{-i}$, mà đang thay đổi.
 - **Credit assignment.**Với phần thưởng chia sẻ, đại lý nào gây ra nó?
 - **Exploration coordination.**Các đại lý phải khám phá các chiến lược bổ sung, không phải khám phá một trạng thái tương tự.
-- **Scalability.**Không gian hành động chung tăng trưởng theo cấp sốt `n`- Tôi không biết.
+- **Scalability.**Không gian hành động chung tăng trưởng theo cấp sốt $n$- Tôi không biết.
 - **Partial observability.**Mỗi nhân viên chỉ thấy quan sát của riêng mình; tình trạng toàn cầu được che giấu.
 
 **Four dominant regimes:**
 
 **1. Independent Q-learning / independent PPO (IQL, IPPO).**Mỗi đại lý học được Q hoặc chính sách của riêng mình, đối xử với những người khác như là một phần của môi trường. đơn giản, đôi khi nó hoạt động (đặc biệt là với trải nghiệm lặp lại hoạt động như một thủ thuật mô hình hóa đại lý làm mượt mà).
 
-**2. Centralized training, decentralized execution (CTDE).**Phương pháp hiện đại phổ biến nhất.`π_i`Điều kiện về quan sát địa phương `o_i` thực hiện phân cấp tiêu chuẩn khi triển khai.`Q(s, a_1, …, a_n)`Điều kiện về tình trạng toàn cầu và hành động chung.
+**2. Centralized training, decentralized execution (CTDE).**Phương pháp hiện đại phổ biến nhất.$\pi_i$Điều kiện về quan sát địa phương $o_i$ thực hiện phân cấp tiêu chuẩn khi triển khai.$Q(s, a_1, \ldots, a_n)$Điều kiện về tình trạng toàn cầu và hành động chung.
 - **MADDPG**(Lowe et al. 2017): DDPG với một nhà phê bình tập trung cho mỗi đại lý.
-- **COMA**(Foerster et al. 2017): cơ sở phản thực  hỏi "bảo thưởng của tôi sẽ là gì nếu tôi đã hành động `a'`thay vì đó?"  cô lập sự đóng góp của tôi.
+- **COMA**(Foerster et al. 2017): cơ sở phản thực  hỏi "bảo thưởng của tôi sẽ là gì nếu tôi đã hành động $a'$thay vì đó?"  cô lập sự đóng góp của tôi.
 - **MAPPO**- **IPPO**với nhà phê bình chung (Yu et al. 2022): PPO với chức năng giá trị tập trung.
-- **QMIX**(Rashid et al. 2018): phân hủy giá trị  `Q_tot(s, a) = f(Q_1(s, a_1), …, Q_n(s, a_n))`với sự trộn lẫn đơn điệu.
+- **QMIX**(Rashid et al. 2018): phân hủy giá trị  $Q_{\text{tot}}(s, a) = f(Q_1(s, a_1), \ldots, Q_n(s, a_n))$với sự trộn lẫn đơn điệu.
 
 **3. Self-play.**Hai bản sao của cùng một đại lý chơi với nhau. Chính sách của đối thủ * là chính sách của tôi từ một snapshot trước đây. AlphaGo / AlphaZero / MuZero. OpenAI Năm.
 
 **4. League play.**Một sự mở rộng của tự chơi đến môi trường tổng / đối đầu: giữ một dân số của chính sách quá khứ và hiện tại, lấy mẫu đối thủ từ giải đấu, tập luyện chống lại họ. Thêm khai thác (khóa học chuyên đánh bại những người giỏi nhất hiện tại) và khai thác chính (khóa học chuyên đánh bại các khai thác). AlphaStar (StarCraft II).
 
-**Communication.**Cho phép các nhân viên gửi tin nhắn học hỏi `m_i`Các hệ thống đa đại lý dựa trên LLM ngày nay (Phase 16) về cơ bản giao tiếp bằng ngôn ngữ tự nhiên.
+**Communication.**Cho phép các nhân viên gửi tin nhắn học hỏi $m_i$Các hệ thống đa đại lý dựa trên LLM ngày nay (Phase 16) về cơ bản giao tiếp bằng ngôn ngữ tự nhiên.
 
 ```figure
 f3-marl-orbit
@@ -101,11 +101,11 @@ Làm việc trên nhiệm vụ này bởi vì phần thưởng dày đặc và p
 
 ### Bước 3: Q tập trung với cập nhật giá trị phân hủy
 
-Sử dụng một Q thay vì các hành động chung `Q(s, a_1, a_2)`. Cập nhật từ phần thưởng chia sẻ. Phân tâm hóa khi thực hiện bằng cách bìa: `π_i(s) = argmax_{a_i} max_{a_{-i}} Q(s, a_1, a_2)`. Giao dịch không gian hành động chung theo tỷ lệ thoáng để có một cái nhìn toàn cầu * đúng * .
+Sử dụng một Q thay vì các hành động chung $Q(s, a_1, a_2)$. Cập nhật từ phần thưởng chia sẻ. Phân tâm hóa khi thực hiện bằng cách bìa: $\pi_i(s) = \arg\max_{a_i} \max_{a_{-i}} Q(s, a_1, a_2)$. Giao dịch không gian hành động chung theo tỷ lệ thoáng để có một cái nhìn toàn cầu * đúng * .
 
 ### Bước 4: tự chơi đơn giản (nhân 2 đối thủ)
 
-- Cảnh sát A chống lại Cảnh sát B.`K`tập, sao chép trọng lượng của A thành B. Tập luyện đối xứng, tiến bộ liên tục.
+- Cảnh sát A chống lại Cảnh sát B.$K$tập, sao chép trọng lượng của A thành B. Tập luyện đối xứng, tiến bộ liên tục.
 
 ## Những bẫy
 
@@ -167,11 +167,11 @@ Refuse independent Q-learning on tightly-coupled cooperative tasks. Refuse to re
 
 | Term | What people say | What it actually means |
 |------|-----------------|-----------------------|
-| Markov game | "Multi-agent MDP" | `(S, A_1, …, A_n, P, R_1, …, R_n)`; each agent has its own reward. |
+| Markov game | "Multi-agent MDP" | $(S, A_1, \ldots, A_n, P, R_1, \ldots, R_n)$; each agent has its own reward. |
 | CTDE | "Centralized training, decentralized execution" | Joint critic at training time; each agent's policy uses only local obs. |
 | IPPO | "Independent PPO" | Each agent runs PPO separately. Simple baseline; often underrated. |
 | MAPPO | "Multi-agent PPO" | PPO with a centralized value function conditioned on global state. |
-| QMIX | "Monotonic value decomposition" | `Q_tot = f_monotone(Q_1, …, Q_n)` allows decentralized argmax. |
+| QMIX | "Monotonic value decomposition" | $Q_{\text{tot}} = f_{\text{monotone}}(Q_1, \ldots, Q_n)$ allows decentralized argmax. |
 | COMA | "Counterfactual multi-agent" | Advantage = my Q minus expected Q marginalizing over my action. |
 | Self-play | "Agent vs past self" | Single agent, two roles; standard for zero-sum games. |
 | League play | "Population training" | Cache past policies, sample opponents from the pool; handles strategy cycles. |

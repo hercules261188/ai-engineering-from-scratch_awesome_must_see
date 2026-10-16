@@ -21,31 +21,31 @@ Năm 2026, bước PPO chủ yếu được thay thế bởi DPO (Phase 10 · 08
 
 ![Three-stage RLHF: SFT, RM training on pairwise prefs, PPO with KL penalty](../assets/rlhf.svg)
 
-**Stage 1: Supervised Fine-Tuning (SFT).**Bắt đầu từ một mô hình cơ bản được đào tạo trước. Định chỉnh về các biểu hiện bằng văn bản của con người về hành vi mục tiêu (những phản ứng theo hướng dẫn, những câu trả lời hữu ích, v.v.). Kết quả: một mô hình `π_SFT`là *đối向 hành vi tốt* nhưng vẫn có không gian hành động không giới hạn.
+**Stage 1: Supervised Fine-Tuning (SFT).**Bắt đầu từ một mô hình cơ bản được đào tạo trước. Định chỉnh về các biểu hiện bằng văn bản của con người về hành vi mục tiêu (những phản ứng theo hướng dẫn, những câu trả lời hữu ích, v.v.). Kết quả: một mô hình $\pi_{\text{SFT}}$là *đối向 hành vi tốt* nhưng vẫn có không gian hành động không giới hạn.
 
 **Stage 2: Reward Model training.**
 
-- Thu thập các cặp phản hồi `(y_+, y_-)`để được nhắc nhở `x`, được đánh dấu bởi con người như "y_+ được ưa thích so với y_-. "
-- Trình hình thưởng`R_φ(x, y)`để gán điểm cao hơn cho `y_+`- Tôi không biết.
+- Thu thập các cặp phản hồi $(y_+, y_-)$để được nhắc nhở $x$, được đánh dấu bởi con người như "y_+ được ưa thích so với y_-. "
+- Trình hình thưởng$R_\phi(x, y)$để gán điểm cao hơn cho $y_+$- Tôi không biết.
 - Lối mất:**Bradley-Terry pairwise logistic**- Có thể là:
 
-  `L(φ) = -E[ log σ(R_φ(x, y_+) - R_φ(x, y_-)) ]`
+  $L(\phi) = -\mathbb{E}[ \log \sigma(R_\phi(x, y_+) - R_\phi(x, y_-)) ]$
 
-  BT đã là tiêu chuẩn từ năm 1952 (Bradley-Terry) và là lựa chọn thống trị trong RLHF hiện đại.
+  $\sigma$BT đã là tiêu chuẩn từ năm 1952 (Bradley-Terry) và là lựa chọn thống trị trong RLHF hiện đại.
 
-- `R_φ`thường được khởi tạo từ mô hình SFT với đầu scalar trên cùng.
+- $R_\phi$thường được khởi tạo từ mô hình SFT với đầu scalar trên cùng.
 
 **Stage 3: PPO against the RM with KL penalty.**
 
-- Tạo ra chính sách có thể đào tạo `π_θ`từ `π_SFT`- Giữ một cái băng lạnh`π_ref = π_SFT`- Tôi không biết.
-- Giải thưởng sau khi trả lời `y`- Có thể là:
+- Tạo ra chính sách có thể đào tạo $\pi_\theta$từ $\pi_{\text{SFT}}$- Giữ một cái băng lạnh$\pi_{\text{ref}} = \pi_{\text{SFT}}$- Tôi không biết.
+- Giải thưởng sau khi trả lời $y$- Có thể là:
 
-  `r_total(x, y) = R_φ(x, y) - β · KL(π_θ(·|x) || π_ref(·|x))`
+  $r_{\text{total}}(x, y) = R_\phi(x, y) - \beta \cdot \mathrm{KL}(\pi_\theta(\cdot \mid x) \Vert \pi_{\text{ref}}(\cdot \mid x))$
 
-  Lệnh phạt KL ngăn cản `π_θ`từ trôi dạt tùy ý từ `π_SFT` nó là một *regularizer*, không phải một vùng tin tưởng khó. `β`Thông thường `0.01`- Tôi không biết.`0.05`- Tôi không biết.
+  Lệnh phạt KL ngăn cản $\pi_\theta$từ trôi dạt tùy ý từ $\pi_{\text{SFT}}$ nó là một *regularizer*, không phải một vùng tin tưởng khó. $\beta$Thông thường là 0,01-0,05.
 - Tiếp tục chạy PPO (Dạy 08) với phần thưởng này.
 
-**Why the KL?**Nếu không có nó, PPO sẽ tìm ra chiến lược hack phần thưởng  RM chỉ được đào tạo về hoàn thành trong phân phối.`π_θ`gần các đa dạng nơi mà RM được đào tạo.
+**Why the KL?**Nếu không có nó, PPO sẽ tìm ra chiến lược hack phần thưởng  RM chỉ được đào tạo về hoàn thành trong phân phối.$\pi_\theta$gần các đa dạng nơi mà RM được đào tạo.
 
 **2026 status:**
 
@@ -97,7 +97,7 @@ Sau vài trăm bản cập nhật,`w`Đưa trọng lượng tích cực cho các
 
 ### Bước 3: Chính sách giống như PPO trên RM
 
-Chính sách đồ chơi của chúng tôi tạo ra một token từ một từ vựng.`log π_θ(token | prompt)`, thêm một hình phạt KL-to-reference, và áp dụng các cắt giảm PPO thay thế.
+Chính sách đồ chơi của chúng tôi tạo ra một token từ một từ vựng.$\log \pi_\theta(\text{token} \mid \text{prompt})$, thêm một hình phạt KL-to-reference, và áp dụng các cắt giảm PPO thay thế.
 
 ```python
 def rlhf_step(theta, ref, w, prompt, rng, eps=0.2, beta=0.1, lr=0.05):
@@ -113,7 +113,7 @@ def rlhf_step(theta, ref, w, prompt, rng, eps=0.2, beta=0.1, lr=0.05):
 
 ### Bước 4: Kiểm tra KL
 
-Đường trung bình đường`KL(π_θ || π_ref)`Nếu nó trượt qua`~5-10`Chính sách đã trôi dạt xa khỏi `π_SFT` thấp hơn `β`Đây là chẩn đoán hàng đầu trong RLHF thực.
+Đường trung bình đường$\mathrm{KL}(\pi_\theta \Vert \pi_{\text{ref}})$Nếu nó trượt qua`~5-10`Chính sách đã trôi dạt xa khỏi $\pi_{\text{SFT}}$ thấp hơn $\beta$Đây là chẩn đoán hàng đầu trong RLHF thực.
 
 ### Bước 5: công thức sản xuất với TRL
 
@@ -163,7 +163,7 @@ Ba điều thư viện làm cho bạn.`adap_kl_ctrl=True`thực hiện lịch tr
 
 ## Những bẫy
 
-- **Over-optimization / reward hacking.**RM là không hoàn hảo.`π_θ`tìm thấy kết quả đối kháng có điểm số cao nhưng xấu. Các triệu chứng: phần thưởng leo lên vô hạn trong khi điểm đánh giá của con người cao cấp hoặc giảm.`β`, mở rộng dữ liệu đào tạo RM.
+- **Over-optimization / reward hacking.**RM là không hoàn hảo.$\pi_\theta$tìm thấy kết quả đối kháng có điểm số cao nhưng xấu. Các triệu chứng: phần thưởng leo lên vô hạn trong khi điểm đánh giá của con người cao cấp hoặc giảm.$\beta$, mở rộng dữ liệu đào tạo RM.
 - **Length hacking.**RM được đào tạo về các phản ứng hữu ích thường vô nghĩa thưởng dài. Chính sách học cách đệm các phản ứng. Phong trào khắc phục: phần thưởng bình thường hóa chiều dài, hoặc RLAIF với một RM nhận thức về chiều dài.
 - **Too-small RM.**RM cần phải lớn bằng chính sách. một RM nhỏ không thể ghi điểm chính xác về sản phẩm chính sách.
 - **KL tuning.**quá thấp β → drift và phần thưởng hack. quá cao β → chính sách hầu như không thay đổi. thủ thuật tiêu chuẩn là một * thích nghi * β nhắm mục tiêu một KL cố định mỗi bước.
@@ -213,7 +213,7 @@ Refuse to ship RLHF-PPO without a KL monitor. Refuse to use an RM smaller than t
 ## Các bài tập
 
 1. **Easy.**Đào tạo mô hình giải thưởng Bradley-Terry vào `code/main.py`trên 500 cặp ưu tiên tổng hợp. đo độ chính xác đôi trên 100 cặp được giữ.
-2. **Medium.**Động hành vòng đồ chơi PPO-RLHF với `β ∈ {0.0, 0.1, 1.0}`Đối với mỗi người, ghi điểm RM so với KL-to-reference trên các bản cập nhật.
+2. **Medium.**Động hành vòng đồ chơi PPO-RLHF với $\beta \in \lbrace 0.0, 0.1, 1.0 \rbrace$Đối với mỗi người, ghi điểm RM so với KL-to-reference trên các bản cập nhật.
 3. **Hard.**Thực hiện DPO (các định giá trị ưu tiên trong dạng đóng) trên cùng một dữ liệu ưu tiên và so sánh với đường ống RLHF-PPO trong tính toán được sử dụng và điểm RM cuối cùng đạt được.
 
 ## Các điều khoản chính
@@ -222,8 +222,8 @@ Refuse to ship RLHF-PPO without a KL monitor. Refuse to use an RM smaller than t
 |------|-----------------|-----------------------|
 | RLHF | "Alignment RL" | Three-stage SFT + RM + PPO pipeline (Christiano 2017, Ouyang 2022). |
 | Reward Model (RM) | "The scoring net" | Learned scalar function fit to pairwise preferences via Bradley-Terry. |
-| Bradley-Terry | "Pairwise logistic loss" | `P(y_+ ≻ y_-) = σ(R(y_+) - R(y_-))`; the standard RM objective. |
-| KL penalty | "Stay near the reference" | `β · KL(π_θ \|\| π_ref)` in the reward; the anti-reward-hacking regularizer. |
+| Bradley-Terry | "Pairwise logistic loss" | $P(y_+ \succ y_-) = \sigma(R(y_+) - R(y_-))$; the standard RM objective. |
+| KL penalty | "Stay near the reference" | $\beta \cdot \mathrm{KL}(\pi_\theta \Vert \pi_{\text{ref}})$ in the reward; the anti-reward-hacking regularizer. |
 | Reward hacking | "Goodhart's law" | Policy exploits RM flaws; symptoms: reward up, human eval flat. |
 | RLAIF | "AI-labeled preferences" | RLHF where labels come from another LM instead of humans. |
 | PRM | "Process Reward Model" | Scores partial reasoning steps; used in reasoning pipelines. |

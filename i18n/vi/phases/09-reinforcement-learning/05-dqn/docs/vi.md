@@ -11,7 +11,7 @@
 
 Tablar Q-learning cần một giá trị Q riêng biệt cho mỗi cặp (thế độ, hành động). Một bảng cờ vua có ~1043 trạng thái. Một khung Atari là 210 × 160 × 3 = 100,800 tính năng. Tablar RL chết ở hàng ngàn trạng thái, chưa kể hàng tỷ.
 
-Sự khắc phục rõ ràng khi nhìn lại: thay thế bảng Q bằng một mạng lưới thần kinh,`Q(s, a; θ)`Nhưng việc gần gũi với hàm tính ngây thơ với việc học Q khác nhau dưới "triad chết người"  gần gũi với hàm tính + khởi động + học ngoài chính sách. Mnih et al. (2013, 2015) xác định ba thủ thuật kỹ thuật ổn định học tập:
+Sự khắc phục rõ ràng khi nhìn lại: thay thế bảng Q bằng một mạng lưới thần kinh,$Q(s, a; \theta)$Nhưng việc gần gũi với hàm tính ngây thơ với việc học Q khác nhau dưới "triad chết người"  gần gũi với hàm tính + khởi động + học ngoài chính sách. Mnih et al. (2013, 2015) xác định ba thủ thuật kỹ thuật ổn định học tập:
 
 1. **Experience replay**decorreates chuyển đổi.
 2. **Target network**làm đông lạnh mục tiêu khởi động.
@@ -25,25 +25,29 @@ DQN trên Atari là lần đầu tiên một kiến trúc duy nhất với một
 
 **The objective.**DQN giảm thiểu sự mất TD một bước trên chức năng Q thần kinh:
 
-`L(θ) = E_{(s,a,r,s')~D} [ (r + γ max_{a'} Q(s', a'; θ^-) - Q(s, a; θ))² ]`
+```math
+L(\theta) = \mathbb{E}_{(s,a,r,s') \sim D}[ (r + \gamma \max_{a'} Q(s', a'; \theta^-) - Q(s, a; \theta))^2 ]
+```
 
-`θ`= mạng trực tuyến, cập nhật từng bước theo độ giảm gradient. `θ^-`= mạng mục tiêu, thường xuyên sao chép từ `θ`(mỗi ~ 10.000 bước). `D`= Buffer play của quá trình chuyển đổi trước đây.
+$\theta$= mạng trực tuyến, cập nhật từng bước theo độ giảm gradient. $\theta^-$= mạng mục tiêu, thường xuyên sao chép từ $\theta$(mỗi ~ 10.000 bước). $D$= Buffer play của quá trình chuyển đổi trước đây.
 
 **The three tricks, in order of importance:**
 
 **Experience replay.**Một bộ đệm vòng của `~10⁶`mỗi bước đào tạo lấy mẫu một bộ nhỏ một cách ngẫu nhiên. Điều này phá vỡ mối tương quan thời gian (chốt khung liên tiếp gần như giống nhau), cho phép mạng học hỏi từ những chuyển đổi rác mẻ nhiều lần, và gỡ liên tục cập nhật gradient.
 
-**Target network.**Sử dụng mạng tương tự `Q(·; θ)`trên cả hai bên của phương trình Bellman làm cho mục tiêu di chuyển mỗi cập nhật  "cách đuôi của riêng bạn".`Q(·; θ^-)`Với trọng lượng đông lạnh.`C`bước, sao chép `θ → θ^-`Điều này ổn định mục tiêu hồi quy cho hàng ngàn bước gradient cùng một lúc.`θ^- ← τ θ + (1-τ) θ^-`(được sử dụng trong DDPG, SAC) là một biến thể mượt mà hơn.
+**Target network.**Sử dụng mạng tương tự $Q(\cdot; \theta)$trên cả hai bên của phương trình Bellman làm cho mục tiêu di chuyển mỗi cập nhật  "cách đuôi của riêng bạn".$Q(\cdot; \theta^-)$Với trọng lượng đông lạnh.$C$bước, sao chép $\theta \to \theta^-$Điều này ổn định mục tiêu hồi quy cho hàng ngàn bước gradient cùng một lúc.$\theta^- \leftarrow \tau \theta + (1-\tau) \theta^-$(được sử dụng trong DDPG, SAC) là một biến thể mượt mà hơn.
 
-**Reward clipping.**Tầm thưởng của Atari dao động từ 1 đến 1000+.`{-1, 0, +1}`sai khi mức độ thưởng quan trọng, tốt cho Atari khi chỉ cần ký kết quan trọng.
+**Reward clipping.**Tầm thưởng của Atari dao động từ 1 đến 1000+.$\lbrace-1, 0, +1 \rbrace$sai khi mức độ thưởng quan trọng, tốt cho Atari khi chỉ cần ký kết quan trọng.
 
 **Double DQN.**Hasselt (2016) khắc phục sự thiên vị tối đa hóa: sử dụng mạng trực tuyến để *chọn* hành động, mạng mục tiêu để *chánh giá* nó.
 
-`target = r + γ Q(s', argmax_{a'} Q(s', a'; θ); θ^-)`
+```math
+\text{target} = r + \gamma Q(s', \arg\max_{a'} Q(s', a'; \theta); \theta^-)
+```
 
 Đổi lại, luôn tốt hơn.
 
-**Other improvements (Rainbow, 2017):**phát lại ưu tiên (ví dụ chuyển đổi lỗi TD cao hơn), kiến trúc đấu đôi (lỗi `V(s)`và đầu lợi thế), mạng ồn ào (khám phá học tập), n- bước trả về, phân phối Q (C51/QR-DQN), multi- bước khởi động.
+**Other improvements (Rainbow, 2017):**phát lại ưu tiên (ví dụ chuyển đổi lỗi TD cao hơn), kiến trúc đấu đôi (lỗi $V(s)$và đầu lợi thế), mạng ồn ào (khám phá học tập), n- bước trả về, phân phối Q (C51/QR-DQN), multi- bước khởi động.
 
 ```figure
 f3-dqn-stability
@@ -104,11 +108,11 @@ def train_step(online, target, batch, gamma, lr):
     apply_sgd(online, grads, lr / len(batch))
 ```
 
-Hình dạng là Q-làm học từ Bài học 04 với hai khác biệt: (a) chúng ta backprop thông qua một phân biệt `Q(·; θ)`thay vì chỉ mục hóa một bảng, (b) mục tiêu sử dụng `Q(·; θ^-)`- Tôi không biết.
+Hình dạng là Q-làm học từ Bài học 04 với hai khác biệt: (a) chúng ta backprop thông qua một phân biệt $Q(\cdot; \theta)$thay vì chỉ mục hóa một bảng, (b) mục tiêu sử dụng $Q(\cdot; \theta^-)$- Tôi không biết.
 
 ### Bước 4: vòng ngoài
 
-Đối với mỗi tập, hãy hành động khiêu dâm.`Q(·; θ)`, đẩy chuyển đổi vào bộ đệm, lấy mẫu một mini batch, thực hiện một bước nghiêng, theo thời gian đồng bộ `θ^- ← θ`- Mẫu:
+Đối với mỗi tập, hãy hành động khiêu dâm.$Q(\cdot; \theta)$, đẩy chuyển đổi vào bộ đệm, lấy mẫu một mini batch, thực hiện một bước nghiêng, theo thời gian đồng bộ $\theta^- \leftarrow \theta$- Mẫu:
 
 ```python
 for episode in range(N):
@@ -181,7 +185,7 @@ Refuse to ship a DQN with no target network, no replay buffer, or ε held at 1. 
 
 1. **Easy.**Đi chạy`code/main.py`- Bước quay trở lại mỗi tập. bao nhiêu tập cho đến khi trung bình chạy vượt quá -10?
 2. **Medium.**Thiết lập mạng mục tiêu ( Sử dụng mạng trực tuyến cho cả hai bên của mục tiêu Bellman). đo sự bất ổn đào tạo  liệu trả lại dao động hay khác nhau?
-3. **Hard.**Thêm DQN TP: sử dụng mạng trực tuyến để chọn `argmax a'`, mục tiêu lưới để đánh giá. So sánh thiên vị của `Q(s_0, best_a)`Vâng đúng `V*(s_0)`Sau 1.000 tập với vs không có Double DQN trên một GridWorld có phần thưởng lớn.
+3. **Hard.**Thêm DQN TP: sử dụng mạng trực tuyến để chọn `argmax a'`, mục tiêu lưới để đánh giá. So sánh thiên vị của `Q(s_0, best_a)`Vâng đúng $V^{\ast}(s_0)$Sau 1.000 tập với vs không có Double DQN trên một GridWorld có phần thưởng lớn.
 
 ## Các điều khoản chính
 
@@ -203,6 +207,5 @@ Refuse to ship a DQN with no target network, no replay buffer, or ε held at 1. 
 - [Hasselt, Guez, Silver (2016). Deep Reinforcement Learning with Double Q-learning](https://arxiv.org/abs/1509.06461) DDQN.
 - [Wang et al. (2016). Dueling Network Architectures](https://arxiv.org/abs/1511.06581) Đấu đấu DQN.
 - [Hessel et al. (2018). Rainbow: Combining Improvements in Deep RL](https://arxiv.org/abs/1710.02298)- Báo đống thủ thuật.
-- [OpenAI Spinning Up — DQN](https://spinningup.openai.com/en/latest/algorithms/dqn.html) trình bày hiện đại rõ ràng.
 - [Sutton & Barto (2018). Ch. 9 — On-policy Prediction with Approximation](http://incompleteideas.net/book/RLbook2020.pdf) việc xử lý sách giáo khoa của "những phần ba chết người" (chấp gần chức năng + bootstrapping + ngoại lệ chính sách) mà mạng mục tiêu của DQN và bộ đệm lặp lại được thiết kế để làm đục.
 - [CleanRL DQN implementation](https://docs.cleanrl.dev/rl-algorithms/dqn/) DQN tài liệu đơn tham khảo được sử dụng trong các nghiên cứu ablation; tốt để đọc cùng với phiên bản đầu tiên của bài học này.

@@ -1,6 +1,6 @@
 # Đánh giá diễn viên  A2C và A3C
 
-> Đăng lực là tiếng ồn.`V̂(s)`A2C chạy nó đồng bộ; A3C chạy nó qua các chuỗi. Cả hai đều là mô hình tâm lý cho mọi phương pháp RL sâu hiện đại.
+> Đăng lực là tiếng ồn.$\hat{V}(s)$A2C chạy nó đồng bộ; A3C chạy nó qua các chuỗi. Cả hai đều là mô hình tâm lý cho mọi phương pháp RL sâu hiện đại.
 
 **Type:** Build
 **Languages:** Python
@@ -9,11 +9,13 @@
 
 ## Vấn đề
 
-Vanilla ReINFORCE có hiệu quả, nhưng sự khác biệt của nó là khủng khiếp.`G_t`có thể dao động qua một nhân tố 10 giữa các tập.`∇ log π`và trung bình tạo ra một ước tính gradient mất hàng ngàn tập để di chuyển chính sách cùng khoảng cách bạn có thể di chuyển nó với nhiều hơn cập nhật DQN.
+Vanilla ReINFORCE có hiệu quả, nhưng sự khác biệt của nó là khủng khiếp.$G_t$có thể dao động qua một nhân tố 10 giữa các tập.$\nabla \log \pi$và trung bình tạo ra một ước tính gradient mất hàng ngàn tập để di chuyển chính sách cùng khoảng cách bạn có thể di chuyển nó với nhiều hơn cập nhật DQN.
 
-Sự khác biệt xuất phát từ việc sử dụng các lợi nhuận nguyên liệu. Nếu bạn trừ một đường cơ bản `b(s_t)` bất kỳ hàm nào của trạng thái, bao gồm cả một giá trị được học  kỳ vọng không thay đổi và sự biến đổi giảm.`V̂(s_t)`Bây giờ số lượng nhân`∇ log π`là lợi thế:
+Sự khác biệt xuất phát từ việc sử dụng các lợi nhuận nguyên liệu. Nếu bạn trừ một đường cơ bản $b(s_t)$ bất kỳ hàm nào của trạng thái, bao gồm cả một giá trị được học  kỳ vọng không thay đổi và sự biến đổi giảm.$\hat{V}(s_t)$Bây giờ số lượng nhân$\nabla \log \pi$là lợi thế:
 
-`A(s, a) = G - V̂(s)`
+```math
+A(s, a) = G - \hat{V}(s)
+```
 
 Một hành động là tốt nếu nó tạo ra lợi nhuận trên mức trung bình; xấu nếu dưới. REINFORCE với một nhà phê bình học tập là *actor-critic*. Nhà phê bình cho diễn viên một giáo viên biến thể thấp. Đây là mọi phương pháp chính sách sâu sắc sau năm 2015 (A2C, A3C, PPO, SAC, IMPALA).
 
@@ -23,33 +25,39 @@ Một hành động là tốt nếu nó tạo ra lợi nhuận trên mức trung
 
 **Two networks, one shared loss:**
 
-- **Actor** `π_θ(a | s)`Các nhà nghiên cứu đã được đào tạo để làm việc.
-- **Critic** `V_φ(s)`: ước tính dự kiến thu hồi từ nhà nước.`(V_φ(s) - target)²`- Tôi không biết.
+- **Actor** $\pi_\theta(a \mid s)$Các nhà nghiên cứu đã được đào tạo để làm việc.
+- **Critic** $V_\phi(s)$: ước tính dự kiến thu hồi từ nhà nước.$(V_\phi(s) - \text{target})^2$- Tôi không biết.
 
 **The advantage.**Hai mẫu tiêu chuẩn:
 
-- *Lợi thế MC:* `A_t = G_t - V_φ(s_t)`Không thiên vị, sự khác biệt cao hơn.
-- *Lợi thế TD:* `A_t = r_{t+1} + γ V_φ(s_{t+1}) - V_φ(s_t)`. Nhận định (sử dụng)`V_φ`), sự biến động thấp hơn nhiều.`δ_t`- Tôi không biết.
+- *Lợi thế MC:* $A_t = G_t - V_\phi(s_t)$Không thiên vị, sự khác biệt cao hơn.
+- *Lợi thế TD:* $A_t = r_{t+1} + \gamma V_\phi(s_{t+1}) - V_\phi(s_t)$. Nhận định (sử dụng)$V_\phi$), sự biến động thấp hơn nhiều.$\delta_t$- Tôi không biết.
 
 **n-step advantage.**Chuyển đổi giữa hai:
 
-`A_t^{(n)} = r_{t+1} + γ r_{t+2} + … + γ^{n-1} r_{t+n} + γ^n V_φ(s_{t+n}) - V_φ(s_t)`
+```math
+A_t^{(n)} = r_{t+1} + \gamma r_{t+2} + \ldots + \gamma^{n-1} r_{t+n} + \gamma^n V_\phi(s_{t+n}) - V_\phi(s_t)
+```
 
-`n = 1`là TD tinh khiết. `n = ∞`là MC. Hầu hết các thực hiện sử dụng `n = 5`cho Atari, `n = 2048`cho PPO trên MuJoCo.
+$n = 1$là TD tinh khiết. $n = \infty$là MC. Hầu hết các thực hiện sử dụng $n = 5$cho Atari, $n = 2048$cho PPO trên MuJoCo.
 
 **Generalized Advantage Estimation (GAE).**Schulman et al. (2016) đề xuất một trung bình cân nặng theo tỷ lệ theo số lượng lớn trên tất cả các lợi thế của n- bước:
 
-`A_t^{GAE} = Σ_{l=0}^{∞} (γλ)^l δ_{t+l}`
+```math
+A_t^{\text{GAE}} = \sum_{l=0}^{\infty} (\gamma \lambda)^l \delta_{t+l}
+```
 
-với `λ ∈ [0, 1]`- `λ = 0`là TD (varian thấp, thiên vị cao). `λ = 1`là MC (trang độ cao, không thiên vị). `λ = 0.95`là âm thanh mặc định 2026  cho đến khi số số bias / biến số là nơi bạn muốn nó.
+với $\lambda \in [0, 1]$- $\lambda = 0$là TD (varian thấp, thiên vị cao). $\lambda = 1$là MC (trang độ cao, không thiên vị). $\lambda = 0.95$là âm thanh mặc định 2026  cho đến khi số số bias / biến số là nơi bạn muốn nó.
 
-**A2C: synchronous advantage actor-critic.**Thu thập`T`bước qua `N`Các môi trường song song tính lợi thế cho mỗi bước cập nhật diễn viên và nhà phê bình trên loạt kết hợp lặp lại.
+**A2C: synchronous advantage actor-critic.**Thu thập$T$bước qua $N$Các môi trường song song tính lợi thế cho mỗi bước cập nhật diễn viên và nhà phê bình trên loạt kết hợp lặp lại.
 
-**A3C: asynchronous advantage actor-critic.**Mnih et al. (2016). Spawn `N`Các work thread, mỗi người chạy một env. Mỗi worker tính toán gradient tại địa phương trên bản triển khai của riêng mình, sau đó áp dụng chúng theo cách không đồng bộ cho một máy chủ tham số chia sẻ. Không cần bộ đệm lặp lại  nhân viên giải khớp bằng cách chạy các quỹ đạo khác nhau. A3C chứng minh bạn có thể đào tạo trên CPU ở quy mô. Năm 2026, A2C dựa trên GPU (batched parallel envs) thống trị vì GPUs muốn các lô lớn.
+**A3C: asynchronous advantage actor-critic.**Mnih et al. (2016). Spawn $N$Các work thread, mỗi người chạy một env. Mỗi worker tính toán gradient tại địa phương trên bản triển khai của riêng mình, sau đó áp dụng chúng theo cách không đồng bộ cho một máy chủ tham số chia sẻ. Không cần bộ đệm lặp lại  nhân viên giải khớp bằng cách chạy các quỹ đạo khác nhau. A3C chứng minh bạn có thể đào tạo trên CPU ở quy mô. Năm 2026, A2C dựa trên GPU (batched parallel envs) thống trị vì GPUs muốn các lô lớn.
 
 **The combined loss.**
 
-`L(θ, φ) = -E[ A_t · log π_θ(a_t | s_t) ]  +  c_v · E[(V_φ(s_t) - G_t)²]  -  c_e · E[H(π_θ(·|s_t))]`
+```math
+L(\theta, \phi) = -\mathbb{E}[ A_t \cdot \log \pi_\theta(a_t \mid s_t) ] + c_v \cdot \mathbb{E}[(V_\phi(s_t) - G_t)^2] - c_e \cdot \mathbb{E}[H(\pi_\theta(\cdot \mid s_t))]
+```
 
 Ba điều khoản: lỗ theo mức chính sách, sự lùi giá trị, tiền thưởng entropy. `c_v ~ 0.5`- `c_e ~ 0.01`là các điểm khởi đầu theo luật pháp.
 
@@ -61,7 +69,7 @@ actor-critic
 
 ### Bước 1: một nhà phê bình
 
-Nhận xét tuyến tính`V_φ(s) = w · features(s)`được cập nhật với MSE:
+Nhận xét tuyến tính$V_\phi(s) = w \cdot \text{features}(s)$được cập nhật với MSE:
 
 ```python
 def critic_update(w, x, target, lr):
@@ -76,7 +84,7 @@ Trên một bảng xếp hạng, nhà phê bình hội tụ trong vài trăm t�
 
 ### Bước 2: lợi thế n- bước
 
-Với một sự triển khai dài `T`và một trận chung kết không được khởi động `V(s_T)`- Có thể là:
+Với một sự triển khai dài $T$và một trận chung kết không được khởi động $V(s_T)$- Có thể là:
 
 ```python
 def compute_advantages(rewards, values, gamma=0.99, lam=0.95, last_value=0.0):
@@ -91,7 +99,7 @@ def compute_advantages(rewards, values, gamma=0.99, lam=0.95, last_value=0.0):
     return advantages, returns
 ```
 
-`returns`là mục tiêu của những người phê bình.`advantages`là điều nhân lên.`∇ log π`- Tôi không biết.
+`returns`là mục tiêu của những người phê bình.`advantages`là điều nhân lên.$\nabla \log \pi$- Tôi không biết.
 
 ### Bước 3: cập nhật kết hợp
 
@@ -114,8 +122,8 @@ Chính sách, một lần phát hành mỗi bản cập nhật, tỷ lệ học 
 
 ### Bước 4: Phối tương đồng (A3C vs A2C)
 
-- **A3C:**quay lên `N`mỗi bộ chạy bản xoay của riêng mình và thông qua phía trước của riêng mình. định kỳ đẩy cập nhật gradient để một chủ shared. Không khóa trên chủ  đua là ok, họ chỉ thêm tiếng ồn.
-- **A2C:**chạy`N`Env các trường hợp trong một quá trình, xếp các quan sát thành một `[N, obs_dim]`Lượng lớn hơn, tính toán xác định, dễ lý luận hơn.
+- **A3C:**quay lên $N$mỗi bộ chạy bản xoay của riêng mình và thông qua phía trước của riêng mình. định kỳ đẩy cập nhật gradient để một chủ shared. Không khóa trên chủ  đua là ok, họ chỉ thêm tiếng ồn.
+- **A2C:**chạy$N$Env các trường hợp trong một quá trình, xếp các quan sát thành một `[N, obs_dim]`Lượng lớn hơn, tính toán xác định, dễ lý luận hơn.
 
 Mã đồ chơi của chúng tôi là một sợi đơn cho sự rõ ràng; viết lại cho A2C đúc là ba dòng numpy.
 
@@ -125,7 +133,7 @@ Mã đồ chơi của chúng tôi là một sợi đơn cho sự rõ ràng; vi�
 - **Advantage normalization.**Tiêu chuẩn hóa lợi thế cho số trung bình / đơn vị / std mỗi lô.
 - **Shared trunk.**Sử dụng bộ thu thập tính năng chung cho diễn viên và nhà phê bình trên đầu vào hình ảnh. Đầu tách biệt. Các tính năng chung tự lái trên cả hai lỗ.
 - **On-policy contract.**A2C sử dụng lại dữ liệu cho chính xác một bản cập nhật. Nhiều hơn và gradient của bạn bị thiên vị (chính xác lấy mẫu quan trọng là điều PPO thêm vào).
-- **Entropy collapse.**Không có`c_e > 0`, chính sách trở nên gần như quyết định trong vài trăm cập nhật và ngừng khám phá.
+- **Entropy collapse.**Không có$c_e > 0$, chính sách trở nên gần như quyết định trong vài trăm cập nhật và ngừng khám phá.
 - **Reward scale.**Tầm quan trọng lợi thế phụ thuộc vào quy mô phần thưởng. bình thường hóa phần thưởng (ví dụ, chia run-std) cho độ lớn gradient phù hợp giữa các nhiệm vụ.
 
 ## Sử dụng nó
@@ -170,22 +178,22 @@ Refuse single-worker A2C on environments with horizon > 1000 (too on-policy, too
 
 ## Các bài tập
 
-1. **Easy.**Đào tạo diễn viên-chính trị với lợi thế MC (`G_t - V(s_t)`So sánh hiệu quả mẫu với REINFORCE-with-running-median-baseline từ bài học 06.
-2. **Medium.**Chuyển sang lợi thế TD-`r + γ V(s') - V(s)`(Điều 1 - 2): đo sự khác biệt của các lô lợi thế.
-3. **Hard.**Thực hiện GAE ((λ).`λ ∈ {0, 0.5, 0.9, 0.95, 1.0}`Phản hồi cuối cùng của bản đồ so với hiệu quả mẫu.
+1. **Easy.**Đào tạo diễn viên-chính trị với lợi thế MC $(G_t - V(s_t))$So sánh hiệu quả mẫu với REINFORCE-with-running-median-baseline từ bài học 06.
+2. **Medium.**Chuyển sang lợi thế TD- residual $(r + \gamma V(s') - V(s))$- Đo sự khác biệt của các lô lợi thế.
+3. **Hard.**Thực hiện GAE ((λ).$\lambda \in \lbrace 0, 0.5, 0.9, 0.95, 1.0 \rbrace$Phản hồi cuối cùng của bản đồ so với hiệu quả mẫu.
 
 ## Các điều khoản chính
 
 | Term | What people say | What it actually means |
 |------|-----------------|-----------------------|
-| Actor | "The policy net" | `π_θ(a\|s)`, updated by policy gradient. |
-| Critic | "The value net" | `V_φ(s)`, updated by MSE regression to returns / TD targets. |
-| Advantage | "How much better than average" | `A(s, a) = Q(s, a) - V(s)` or its estimators. Multiplier for `∇ log π`. |
-| TD residual | "δ" | `δ_t = r + γ V(s') - V(s)`; one-step advantage estimate. |
-| GAE | "The interpolation knob" | Exponentially weighted sum of n-step advantages, parameterized by `λ`. |
+| Actor | "The policy net" | $\pi_\theta(a \mid s)$, updated by policy gradient. |
+| Critic | "The value net" | $V_\phi(s)$, updated by MSE regression to returns / TD targets. |
+| Advantage | "How much better than average" | $A(s, a) = Q(s, a) - V(s)$ or its estimators. Multiplier for $\nabla \log \pi$. |
+| TD residual | "δ" | $\delta_t = r + \gamma V(s') - V(s)$; one-step advantage estimate. |
+| GAE | "The interpolation knob" | Exponentially weighted sum of n-step advantages, parameterized by $\lambda$. |
 | A2C | "Synchronous actor-critic" | Batched across envs; one gradient step per rollout. |
 | A3C | "Async actor-critic" | Worker threads push gradients to a shared param server. Original paper; less common in 2026. |
-| Bootstrap | "Use V at the horizon" | Truncate the rollout, add `γ^n V(s_{t+n})` to close the sum. |
+| Bootstrap | "Use V at the horizon" | Truncate the rollout, add $\gamma^n V(s_{t+n})$ to close the sum. |
 
 ## Đọc thêm
 

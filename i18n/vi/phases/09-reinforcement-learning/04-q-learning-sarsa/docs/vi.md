@@ -13,7 +13,7 @@ Monte Carlo hoạt động nhưng nó có hai yêu cầu đắt tiền. Nó cầ
 
 Quá trình lập trình năng động có hồ sơ ngược lại  sao lưu khởi động không biến động  nhưng yêu cầu một mô hình được biết đến.
 
-Sự khác biệt thời gian (TD) học tập chia khác biệt.`(s, a, r, s')`, tạo ra một mục tiêu một bước `r + γ V(s')`và đẩy`V(s)`Không có mô hình, không có tập hoàn chỉnh, không có sự thiên vị khi sử dụng một mô hình`V`trên RHS, nhưng sự khác biệt thấp hơn đáng kể so với MC và cập nhật trực tuyến từ bước một.
+Sự khác biệt thời gian (TD) học tập chia khác biệt.$(s, a, r, s')$, tạo ra một mục tiêu một bước $r + \gamma V(s')$và đẩy$V(s)$Không có mô hình, không có tập hoàn chỉnh, không có sự thiên vị khi sử dụng một mô hình$V$trên RHS, nhưng sự khác biệt thấp hơn đáng kể so với MC và cập nhật trực tuyến từ bước một.
 
 Đây là khoang xoay mà tất cả các RL  DQN, A2C, PPO, SAC  hiện đại quay. Phần còn lại của giai đoạn 9 là các lớp gần gũi chức năng và thủ thuật được xây dựng trên đỉnh cập nhật TD một bước bạn sẽ viết trong bài học này.
 
@@ -23,31 +23,39 @@ Sự khác biệt thời gian (TD) học tập chia khác biệt.`(s, a, r, s')`
 
 **The TD(0) update for V:**
 
-`V(s) ← V(s) + α [r + γ V(s') - V(s)]`
+```math
+V(s) \leftarrow V(s) + \alpha [r + \gamma V(s') - V(s)]
+```
 
-Số lượng được xếp vào vòng đệm là lỗi TD `δ = r + γ V(s') - V(s)`Nó là analog trực tuyến của `G_t - V(s_t)`trong MC. Sự hội tụ đòi hỏi`α`làm hài lòng Robbins-Monro (`Σ α = ∞`- `Σ α² < ∞`) và tất cả các tiểu bang đã đến thăm vô hạn thường xuyên.
+Số lượng được xếp vào vòng đệm là lỗi TD $\delta = r + \gamma V(s') - V(s)$Nó là analog trực tuyến của $G_t - V(s_t)$trong MC. Sự hội tụ đòi hỏi$\alpha$làm hài lòng Robbins-Monro ($\sum \alpha = \infty$- $\sum \alpha^2 < \infty$) và tất cả các tiểu bang đã đến thăm vô hạn thường xuyên.
 
 **Q-learning.**Một phương pháp TD ngoài chính sách để kiểm soát:
 
-`Q(s, a) ← Q(s, a) + α [r + γ max_{a'} Q(s', a') - Q(s, a)]`
+```math
+Q(s, a) \leftarrow Q(s, a) + \alpha [r + \gamma \max_{a'} Q(s', a') - Q(s, a)]
+```
 
-- `max`cho rằng chính sách tham lam sẽ được theo đuổi từ`s'`tiếp theo, bất kể tác nhân thực sự thực hiện hành động nào.`Q*`Mnih et al. (2015) đã chuyển đổi điều này thành deep Q-learning trên Atari (Dạy 05).
+- `max`cho rằng chính sách tham lam sẽ được theo đuổi từ$s'$tiếp theo, bất kể tác nhân thực sự thực hiện hành động nào.$Q^{\ast}$Mnih et al. (2015) đã chuyển đổi điều này thành deep Q-learning trên Atari (Dạy 05).
 
 **SARSA.**Một phương pháp TD trên chính sách:
 
-`Q(s, a) ← Q(s, a) + α [r + γ Q(s', a') - Q(s, a)]`
+```math
+Q(s, a) \leftarrow Q(s, a) + \alpha [r + \gamma Q(s', a') - Q(s, a)]
+```
 
-Tên là tuple `(s, a, r, s', a')`SARSA sử dụng hành động này.`a'`- Không, không, không, không.`argmax`- Tương ứng với `Q^π`cho bất cứ điều gì `π`đang chạy, trong giới hạn `ε → 0`trở thành `Q*`- Tôi không biết.
+Tên là tuple $(s, a, r, s', a')$SARSA sử dụng hành động này.$a'$- Không, không, không, không.`argmax`- Tương ứng với $Q^\pi$cho bất cứ điều gì $\pi$đang chạy, trong giới hạn $\epsilon \to 0$trở thành $Q^{\ast}$- Tôi không biết.
 
-**The cliff-walking difference.**Trong nhiệm vụ đi bộ vách đá cổ điển (đánh vách đá = phần thưởng -100), Q-learning học được con đường tối ưu dọc theo bờ vách đá nhưng đôi khi nhận được hình phạt trong quá trình khám phá. SARSA học được một con đường an toàn hơn một bước từ vách đá vì nó tạo ra tiếng ồn khám phá vào giá trị Q của nó.`ε → 0`Trong thực tế nó quan trọng: khi việc khám phá thực sự diễn ra tại triển khai, hành vi của SARSA là bảo thủ hơn.
+**The cliff-walking difference.**Trong nhiệm vụ đi bộ vách đá cổ điển (đánh vách đá = phần thưởng -100), Q-learning học được con đường tối ưu dọc theo bờ vách đá nhưng đôi khi nhận được hình phạt trong quá trình khám phá. SARSA học được một con đường an toàn hơn một bước từ vách đá vì nó tạo ra tiếng ồn khám phá vào giá trị Q của nó.$\epsilon \to 0$Trong thực tế nó quan trọng: khi việc khám phá thực sự diễn ra tại triển khai, hành vi của SARSA là bảo thủ hơn.
 
-**Expected SARSA.**Thay thế `Q(s', a')`với giá trị dự kiến của nó dưới `π`- Có thể là:
+**Expected SARSA.**Thay thế $Q(s', a')$với giá trị dự kiến của nó dưới $\pi$- Có thể là:
 
-`Q(s, a) ← Q(s, a) + α [r + γ Σ_{a'} π(a'|s') Q(s', a') - Q(s, a)]`
+```math
+Q(s, a) \leftarrow Q(s, a) + \alpha [r + \gamma \sum_{a'} \pi(a' \mid s') Q(s', a') - Q(s, a)]
+```
 
-Sự biến động thấp hơn SARSA (không có mẫu `a'`), cùng một mục tiêu chính sách.
+Sự biến động thấp hơn SARSA (không có mẫu $a'$), cùng một mục tiêu chính sách.
 
-**n-step TD and TD(λ).**Chuyển đổi giữa TD(0) và MC bằng cách chờ `n`bước trước khi khởi động. `n=1`là TD, `n=∞`là MC. TD(λ) trung bình trên tất cả `n`với trọng lượng hình học `(1-λ)λ^{n-1}`Hầu hết các sử dụng RL sâu `n`từ 3 đến 20.
+**n-step TD and TD(λ).**Chuyển đổi giữa TD(0) và MC bằng cách chờ $n$bước trước khi khởi động. $n=1$là TD, $n=\infty$là MC. TD(λ) trung bình trên tất cả $n$với trọng lượng hình học $(1-\lambda)\lambda^{n-1}$Hầu hết các sử dụng RL sâu $n$từ 3 đến 20.
 
 ```figure
 qlearning-gridworld
@@ -104,18 +112,18 @@ def q_learning(env, episodes, alpha=0.1, gamma=0.99, epsilon=0.1):
 
 ### Bước 3: đường cong học tập
 
-Track trung bình trở lại mỗi 100 tập. Q-learning hội tụ nhanh hơn trên đơn giản xác định GridWorld; SARSA là bảo thủ hơn trên đáy.`code/main.py`, cả hai đều gần như tối ưu sau khoảng 2.000 tập với `α=0.1, ε=0.1`- Tôi không biết.
+Track trung bình trở lại mỗi 100 tập. Q-learning hội tụ nhanh hơn trên đơn giản xác định GridWorld; SARSA là bảo thủ hơn trên đáy.`code/main.py`, cả hai đều gần như tối ưu sau khoảng 2.000 tập với $\alpha=0.1, \epsilon=0.1$- Tôi không biết.
 
 ### Bước 4: so sánh với sự thật DP
 
-Tiến trình lặp lại giá trị chạy (Dạy 02) để có được `Q*`- Đánh giá`max_{s,a} |Q_learned(s,a) - Q*(s,a)|`Một chất tác dụng TD bảng hợp chất tốt sẽ rơi vào `~0.5`trên 4×4 GridWorld sau 10.000 tập.
+Tiến trình lặp lại giá trị chạy (Dạy 02) để có được $Q^{\ast}$- Đánh giá$\max_{s,a} \lvert Q_{\text{learned}}(s,a) - Q^{\ast}(s,a) \rvert$Một chất tác dụng TD bảng hợp chất tốt sẽ rơi vào `~0.5`trên 4×4 GridWorld sau 10.000 tập.
 
 ## Những bẫy
 
-- **Initial Q values matter.**Optimistic init (`Q = 0`(với một nhiệm vụ có phần thưởng tiêu cực) khuyến khích khám phá.
-- **α schedule.**- Không ngừng`α`Nó tốt cho các vấn đề không ổn định.`α_n = 1/n`cho sự hội tụ về mặt lý thuyết nhưng quá chậm trong thực tế  pin `α`trong `[0.05, 0.3]`và theo dõi đường cong học tập.
-- **ε schedule.**Bắt đầu cao (`ε=1.0`), phân rã đến `ε=0.05`"GLIE" (cười tham lam trong giới hạn với khám phá vô hạn) là điều kiện hội tụ.
-- **Max bias in Q-learning.**- `max`người vận hành bị thiên vị lên khi `Q`dẫn đến đánh giá quá mức  Hasselt's Double Q-learning (được DDQN sử dụng trong Bài học 05) khắc phục điều này bằng hai bảng Q.
+- **Initial Q values matter.**Optimistic init ($Q = 0$(với một nhiệm vụ có phần thưởng tiêu cực) khuyến khích khám phá.
+- **α schedule.**- Không ngừng$\alpha$Nó tốt cho các vấn đề không ổn định.$\alpha_n = 1/n$cho sự hội tụ về mặt lý thuyết nhưng quá chậm trong thực tế  pin $\alpha$trong `[0.05, 0.3]`và theo dõi đường cong học tập.
+- **ε schedule.**Bắt đầu cao ($\epsilon=1.0$), phân rã đến $\epsilon=0.05$"GLIE" (cười tham lam trong giới hạn với khám phá vô hạn) là điều kiện hội tụ.
+- **Max bias in Q-learning.**- `max`người vận hành bị thiên vị lên khi $Q$dẫn đến đánh giá quá mức  Hasselt's Double Q-learning (được DDQN sử dụng trong Bài học 05) khắc phục điều này bằng hai bảng Q.
 - **Non-terminating episodes.**TD có thể học mà không cần thiết bị kết thúc, nhưng bạn cần phải đóng cửa các bước hoặc xử lý bootstrap đúng ở đầu.
 - **State hashing.**Nếu các trạng thái là tuples/tensors, sử dụng một khóa có thể hash (tuple, không phải danh sách; tuple của floats tròn, không là nguyên liệu).
 
@@ -163,17 +171,17 @@ Refuse to apply tabular TD to state spaces > 10⁶. Refuse to ship a Q-learning 
 
 1. **Easy.**Thực hiện Q-learning và SARSA trên 4×4 GridWorld. Lập đường cong học tập (tỷ lệ thu về mỗi 100 tập) cho 2.000 tập. Ai hội tụ nhanh hơn?
 2. **Medium.**Xây dựng môi trường đi bộ vách đá (4x12, hàng cuối là vách đá với phần thưởng -100 và đặt lại để bắt đầu). So sánh các chính sách cuối cùng của Q-learning và SARSA.
-3. **Hard.**Thực hiện học Q đôi. Trên một GridWorld có phần thưởng tiếng ồn (giá tiếng Gaussian σ=5 thêm vào phần thưởng mỗi bước), cho thấy học Q đánh giá quá cao `V*(0,0)`bằng một số lượng có ý nghĩa trong khi học Double Q không.
+3. **Hard.**Thực hiện học tập Q hai lần. trên một GridWorld (chuồn Gaussian $\sigma=5$+ phần thưởng mỗi bước), cho thấy Q-làm học đánh giá quá cao $V^{\ast}(0,0)$bằng một số lượng có ý nghĩa trong khi học Double Q không.
 
 ## Các điều khoản chính
 
 | Term | What people say | What it actually means |
 |------|-----------------|-----------------------|
-| TD error | "The update signal" | `δ = r + γ V(s') - V(s)`, the bootstrapped residual. |
+| TD error | "The update signal" | $\delta = r + \gamma V(s') - V(s)$, the bootstrapped residual. |
 | TD(0) | "One-step TD" | Update after every transition using only the next state's estimate. |
-| Q-learning | "Off-policy RL 101" | TD update with `max` over next-state actions; learns `Q*` regardless of behavior policy. |
-| SARSA | "On-policy Q-learning" | TD update using the actual next action; learns `Q^π` for current ε-greedy π. |
-| Expected SARSA | "The low-variance SARSA" | Replace sampled `a'` with its expectation under π. |
+| Q-learning | "Off-policy RL 101" | TD update with `max` over next-state actions; learns $Q^{\ast}$ regardless of behavior policy. |
+| SARSA | "On-policy Q-learning" | TD update using the actual next action; learns $Q^\pi$ for current ε-greedy π. |
+| Expected SARSA | "The low-variance SARSA" | Replace sampled $a'$ with its expectation under π. |
 | GLIE | "Correct exploration schedule" | Greedy in the Limit with Infinite Exploration; needed for Q-learning convergence. |
 | Bootstrapping | "Using current estimate in the target" | What distinguishes TD from MC. Source of bias but massive variance reduction. |
 | Maximization bias | "Q-learning overestimates" | `max` over noisy estimates is upward-biased; fixed by Double Q-learning. |

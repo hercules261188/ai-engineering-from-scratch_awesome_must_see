@@ -21,20 +21,24 @@ Bạn không thể học hỏi từ dòng này cho đến khi bạn chính thứ
 
 **The five objects.**
 
-- **States** `S`Trong GridWorld, tế bào, cờ vua, bảng, trong LLM, cửa sổ ngữ cảnh cộng với bất kỳ ký ức nào.
-- **Actions** `A`Các lựa chọn, di chuyển lên/ xuống/ trái/ phải, chơi một động thái, phát hành một token.
-- **Transitions** `P(s' | s, a)`- Với tình trạng`s`và hành động`a`Định nghĩa trong cờ vua, stochastic trong hàng tồn kho, gần như quyết định trong giải mã LLM.
-- **Rewards** `R(s, a, s')`- Tín hiệu scalar. Win = +1, mất = -1. Thu nhập trừ chi phí.
-- **Discount** `γ ∈ [0, 1)`- Lương lai sẽ được thưởng bao nhiêu so với hiện tại.`γ = 0.99`mua một đường chân trời ~ 100 bước; `γ = 0.9`mua ~ 10.
+- **States** $S$Trong GridWorld, tế bào, cờ vua, bảng, trong LLM, cửa sổ ngữ cảnh cộng với bất kỳ ký ức nào.
+- **Actions** $A$Các lựa chọn, di chuyển lên/ xuống/ trái/ phải, chơi một động thái, phát hành một token.
+- **Transitions** $P(s' \mid s, a)$- Với tình trạng$s$và hành động$a$Định nghĩa trong cờ vua, stochastic trong hàng tồn kho, gần như quyết định trong giải mã LLM.
+- **Rewards** $R(s, a, s')$- Tín hiệu scalar. Win = +1, mất = -1. Thu nhập trừ chi phí.
+- **Discount** $\gamma \in [0, 1)$- Lương lai sẽ được thưởng bao nhiêu so với hiện tại.$\gamma = 0.99$mua một đường chân trời ~ 100 bước; $\gamma = 0.9$mua ~ 10.
 
-**The Markov property** `P(s_{t+1} | s_t, a_t) = P(s_{t+1} | s_0, a_0, …, s_t, a_t)`Tương lai chỉ phụ thuộc vào trạng thái hiện tại. Nếu không, đại diện của nhà nước là không đầy đủ không phải là một thất bại của phương pháp, một thất bại của nhà nước.
+**The Markov property** $P(s_{t+1} \mid s_t, a_t) = P(s_{t+1} \mid s_0, a_0, \ldots, s_t, a_t)$Tương lai chỉ phụ thuộc vào trạng thái hiện tại. Nếu không, đại diện của nhà nước là không đầy đủ không phải là một thất bại của phương pháp, một thất bại của nhà nước.
 
-**Policies and returns.**Một chính sách`π(a | s)`bản đồ các trạng thái để phân phối hành động.`G_t = r_t + γ r_{t+1} + γ² r_{t+2} + …`là tổng số tiền giảm giá của các phần thưởng trong tương lai.`V^π(s) = E[G_t | s_t = s]`là lợi nhuận dự kiến bắt đầu từ `s`trong chính sách`π`Giá trị Q`Q^π(s, a) = E[G_t | s_t = s, a_t = a]`là lợi nhuận dự kiến bắt đầu với một hành động cụ thể. Mỗi thuật toán RL ước tính một trong hai, sau đó cải thiện `π`Theo đó.
+**Policies and returns.**Một chính sách$\pi(a \mid s)$bản đồ các trạng thái để phân phối hành động.$G_t = r_t + \gamma r_{t+1} + \gamma^2 r_{t+2} + \ldots$là tổng số tiền giảm giá của các phần thưởng trong tương lai.$V^\pi(s) = \mathbb{E}[G_t \mid s_t = s]$là lợi nhuận dự kiến bắt đầu từ $s$trong chính sách$\pi$Giá trị Q$Q^\pi(s, a) = \mathbb{E}[G_t \mid s_t = s, a_t = a]$là lợi nhuận dự kiến bắt đầu với một hành động cụ thể. Mỗi thuật toán RL ước tính một trong hai, sau đó cải thiện $\pi$Theo đó.
 
 **The Bellman equations.**Các phương trình điểm cố định mà mọi thứ trong giai đoạn này sử dụng:
 
-`V^π(s) = Σ_a π(a|s) Σ_{s', r} P(s', r | s, a) [r + γ V^π(s')]`
-`Q^π(s, a) = Σ_{s', r} P(s', r | s, a) [r + γ Σ_{a'} π(a'|s') Q^π(s', a')]`
+```math
+\begin{aligned}
+V^\pi(s) &= \sum_a \pi(a \mid s) \sum_{s', r} P(s', r \mid s, a) [r + \gamma V^\pi(s')] \\
+Q^\pi(s, a) &= \sum_{s', r} P(s', r \mid s, a) [r + \gamma \sum_{a'} \pi(a' \mid s') Q^\pi(s', a')]
+\end{aligned}
+```
 
 Những chia dự kiến này trở lại vào "bước này phần thưởng" cộng với "đáng giá giảm giá của nơi bạn hạ cánh". Khôi phục. Mỗi thuật toán trong giai đoạn 9 hoặc lặp lại phương trình này để hội tụ (quá trình lập trình động), các mẫu từ nó (Monte Carlo), hoặc khởi động nó một bước (các biệt thời gian).
 
@@ -113,16 +117,16 @@ def policy_evaluation(policy, gamma=0.99, tol=1e-6):
 
 ### Bước 4: `γ`là một siêu tham số có ý nghĩa vật lý
 
-Tầm nhìn hiệu quả là khoảng `1 / (1 - γ)`- `γ = 0.9`→ 10 bước. `γ = 0.99`→ 100 bước. `γ = 0.999`→ 1000 bước.
+Tầm nhìn hiệu quả là khoảng $1 / (1 - \gamma)$- $\gamma = 0.9$→ 10 bước. $\gamma = 0.99$→ 100 bước. $\gamma = 0.999$→ 1000 bước.
 
-quá thấp và đại lý hành động cận thị. quá cao và giao tín dụng trở nên ồn ào, bởi vì nhiều bước đầu chia sẻ trách nhiệm cho phần thưởng trong tương lai xa. LLM RLHF thường sử dụng `γ = 1`vì các tập phim ngắn và giới hạn.`0.95–0.99`. Trò chơi chiến lược đường dài sử dụng`0.999`- Tôi không biết.
+quá thấp và đại lý hành động cận thị. quá cao và giao tín dụng trở nên ồn ào, bởi vì nhiều bước đầu chia sẻ trách nhiệm cho phần thưởng trong tương lai xa. LLM RLHF thường sử dụng $\gamma = 1$vì các tập phim ngắn và giới hạn.`0.95–0.99`. Trò chơi chiến lược đường dài sử dụng`0.999`- Tôi không biết.
 
 ## Những bẫy
 
 - **Non-Markovian state.**Nếu bạn cần ba quan sát cuối cùng để quyết định, "thế trạng" không chỉ là quan sát hiện tại.
 - **Sparse rewards.**Những phần thưởng chỉ dành cho người chiến thắng làm cho việc học gần như không thể trong không gian lớn.
 - **Reward hacking.**Tối ưu hóa phần thưởng đại diện thường tạo ra hành vi bệnh lý. Đại diện đua thuyền của OpenAI xoay quanh vòng tròn thu thập sức mạnh mãi mãi thay vì kết thúc cuộc đua. Luôn xác định phần thưởng từ kết quả mục tiêu, chứ không phải đại diện.
-- **Discount mis-spec.** `γ = 1`trong một nhiệm vụ đường chân trời vô hạn làm cho mọi giá trị vô hạn.`γ < 1`- Tôi không biết.
+- **Discount mis-spec.** $\gamma = 1$trong một nhiệm vụ đường chân trời vô hạn làm cho mọi giá trị vô hạn.$\gamma < 1$- Tôi không biết.
 - **Reward scale.**Các phần thưởng của {+100, -100} so với {+1, -1} cho các chính sách tối ưu giống nhau nhưng độ lớn gradient khác nhau.`[-1, 1]`- trước khi kết nối với PPO/DQN.
 
 ## Sử dụng nó
@@ -167,21 +171,21 @@ Refuse to ship any MDP where the state is non-Markovian without explicit mention
 ## Các bài tập
 
 1. **Easy.**Thực hiện 4×4 GridWorld và triển khai chính sách ngẫu nhiên trong `code/main.py`- chạy 10.000 tập. báo cáo trung bình và std của lợi nhuận. so sánh với lợi nhuận tối ưu (-6).
-2. **Medium.**Đi chạy`policy_evaluation`với `γ ∈ {0.5, 0.9, 0.99}`cho chính sách đồng bộ ngẫu nhiên.`V`Giải thích tại sao các giá trị trạng thái gần ga kết thúc tăng nhanh hơn với lớn hơn `γ`- Tôi không biết.
-3. **Hard.**Chuyển lại GridWorld stochastic: mỗi hành động trượt đến một hướng lân cận với xác suất `p = 0.1`- Đánh giá lại chính sách đồng phục.`V[start]`- Tốt hơn hay tồi tệ hơn?
+2. **Medium.**Đi chạy`policy_evaluation`với $\gamma \in \lbrace 0.5, 0.9, 0.99 \rbrace$cho chính sách đồng bộ ngẫu nhiên.`V`Giải thích tại sao các giá trị trạng thái gần ga kết thúc tăng nhanh hơn với lớn hơn $\gamma$- Tôi không biết.
+3. **Hard.**Chuyển lại GridWorld stochastic: mỗi hành động trượt đến một hướng lân cận với xác suất $p = 0.1$- Đánh giá lại chính sách đồng phục.`V[start]`- Tốt hơn hay tồi tệ hơn?
 
 ## Các điều khoản chính
 
 | Term | What people say | What it actually means |
 |------|-----------------|-----------------------|
-| MDP | "Reinforcement learning setup" | Tuple `(S, A, P, R, γ)` satisfying the Markov property. |
+| MDP | "Reinforcement learning setup" | Tuple $(S, A, P, R, \gamma)$ satisfying the Markov property. |
 | State | "What the agent sees" | Sufficient statistic for future dynamics under the chosen policy class. |
-| Policy | "Agent's behavior" | Conditional distribution `π(a \| s)` or deterministic map `s → a`. |
-| Return | "Total reward" | Discounted sum `Σ γ^t r_t` from the current step. |
-| Value | "How good a state is" | Expected return under `π` starting from `s`. |
-| Q-value | "How good an action is" | Expected return under `π` starting from `s` with first action `a`. |
+| Policy | "Agent's behavior" | Conditional distribution $\pi(a \mid s)$ or deterministic map $s \to a$. |
+| Return | "Total reward" | Discounted sum $\sum \gamma^t r_t$ from the current step. |
+| Value | "How good a state is" | Expected return under $\pi$ starting from $s$. |
+| Q-value | "How good an action is" | Expected return under $\pi$ starting from $s$ with first action $a$. |
 | Bellman equation | "Dynamic programming recursion" | Fixed-point decomposition of value / Q into one-step reward plus discounted successor value. |
-| Discount `γ` | "Future vs present" | Geometric weight on far-future reward; effective horizon `~1/(1-γ)`. |
+| Discount $\gamma$ | "Future vs present" | Geometric weight on far-future reward; effective horizon $\approx 1/(1-\gamma)$. |
 
 ## Đọc thêm
 
@@ -189,4 +193,4 @@ Refuse to ship any MDP where the state is non-Markovian without explicit mention
 - [Bellman (1957). Dynamic Programming](https://press.princeton.edu/books/paperback/9780691146683/dynamic-programming) nguồn gốc của phương trình Bellman.
 - [OpenAI Spinning Up — Part 1: Key Concepts](https://spinningup.openai.com/en/latest/spinningup/rl_intro.html) Nút đầu tiên MDP ngắn gọn từ góc RL sâu.
 - [Puterman (2005). Markov Decision Processes](https://onlinelibrary.wiley.com/doi/book/10.1002/9780470316887) tham chiếu nghiên cứu hoạt động về MDP và phương pháp giải pháp chính xác.
-- [Littman (1996). Algorithms for Sequential Decision Making (PhD thesis)](https://www.cs.rutgers.edu/~mlittman/papers/thesis-main.pdf) nguồn gốc sạch nhất của MDP như một chuyên môn lập trình động.
+- [Littman (1996). Algorithms for Sequential Decision Making (PhD thesis)](https://cs.brown.edu/media/filer_public/d1/a6/d1a6f66a-289a-4b81-9596-417114843489/littman.pdf) nguồn gốc sạch nhất của MDP như một chuyên môn lập trình động.

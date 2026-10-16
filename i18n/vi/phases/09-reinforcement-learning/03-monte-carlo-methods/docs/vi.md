@@ -9,7 +9,7 @@
 
 ## Vấn đề
 
-Quá trình lập trình năng động là thanh lịch, nhưng nó cho rằng bạn có thể truy vấn `P(s' | s, a)`Một robot không thể tính toán phân phối trên các pixel máy ảnh theo một mô-men xoắn chung. Một thuật toán định giá không thể tích hợp trên mọi phản ứng khách hàng có thể. Một LLM không thể liệt kê tất cả các tiếp tục có thể sau một token.
+Quá trình lập trình năng động là thanh lịch, nhưng nó cho rằng bạn có thể truy vấn $P(s' \mid s, a)$Một robot không thể tính toán phân phối trên các pixel máy ảnh theo một mô-men xoắn chung. Một thuật toán định giá không thể tích hợp trên mọi phản ứng khách hàng có thể. Một LLM không thể liệt kê tất cả các tiếp tục có thể sau một token.
 
 Bạn cần một phương pháp mà chỉ cần khả năng *mặt mẫu* từ môi trường.`s_0, a_0, r_1, s_1, a_1, r_2, …, s_T`- Sử dụng nó để ước tính giá trị.
 
@@ -19,30 +19,32 @@ Sự chuyển đổi từ DP sang MC là triết học quan trọng: chúng ta c
 
 ![Monte Carlo: rollout, compute returns, average; first-visit vs every-visit](../assets/monte-carlo.svg)
 
-**The core idea, in one line:** `V^π(s) = E_π[G_t | s_t = s] ≈ (1/N) Σ_i G^{(i)}(s)`nơi `G^{(i)}(s)`được quan sát về những lần thăm `s`trong chính sách`π`- Tôi không biết.
+**The core idea, in one line:** $V^\pi(s) = \mathbb E_\pi[G_t \mid s_t = s] \approx (1/N) \sum_i G^{(i)}(s)$nơi $G^{(i)}(s)$được quan sát về những lần thăm $s$trong chính sách$\pi$- Tôi không biết.
 
-**First-visit vs every-visit MC.**Với một tập phim đến thăm tiểu bang `s`nhiều lần, lần đầu tiên MC chỉ tính toán sự trở lại từ lần đầu tiên; mỗi lần truy cập MC tính tất cả các chuyến thăm. Cả hai đều không thiên vị trong giới hạn. lần đầu tiên dễ phân tích hơn (iid mẫu). Mỗi lần truy cập sử dụng nhiều dữ liệu hơn cho mỗi tập và thường hội tụ nhanh hơn trong thực tế.
+**First-visit vs every-visit MC.**Với một tập phim đến thăm tiểu bang $s$nhiều lần, lần đầu tiên MC chỉ tính toán sự trở lại từ lần đầu tiên; mỗi lần truy cập MC tính tất cả các chuyến thăm. Cả hai đều không thiên vị trong giới hạn. lần đầu tiên dễ phân tích hơn (iid mẫu). Mỗi lần truy cập sử dụng nhiều dữ liệu hơn cho mỗi tập và thường hội tụ nhanh hơn trong thực tế.
 
 **Incremental mean.**Thay vì lưu trữ tất cả các thông tin trả lại, cập nhật trung bình chạy:
 
-`V_n(s) = V_{n-1}(s) + (1/n) [G_n - V_{n-1}(s)]`
+```math
+V_n(s) = V_{n-1}(s) + (1/n) [G_n - V_{n-1}(s)]
+```
 
-Tái tổ chức: `V_new = V_old + α · (target - V_old)`với `α = 1/n`- Thay đổi`1/n`cho một bước kích thước liên tục `α ∈ (0, 1)`và bạn có một máy ước tính MC không tĩnh mà theo dõi thay đổi trong `π`Chuyển động đó là toàn bộ bước từ MC đến TD đến mọi thuật toán RL hiện đại.
+Tái tổ chức: $V_{\text{new}} = V_{\text{old}} + \alpha \cdot (\text{target} - V_{\text{old}})$với $\alpha = 1/n$- Thay đổi$1/n$cho một bước kích thước liên tục $\alpha \in (0, 1)$và bạn có một máy ước tính MC không tĩnh mà theo dõi thay đổi trong $\pi$Chuyển động đó là toàn bộ bước từ MC đến TD đến mọi thuật toán RL hiện đại.
 
-**Exploration is now a problem.**DP đã chạm vào mọi tiểu bang bằng cách đếm. MC chỉ nhìn thấy các tiểu bang các chuyến thăm chính sách. Nếu`π`là xác định, toàn bộ khu vực trong không gian nhà nước không bao giờ được lấy mẫu, và ước tính giá trị của chúng vẫn ở mức không mãi mãi.
+**Exploration is now a problem.**DP đã chạm vào mọi tiểu bang bằng cách đếm. MC chỉ nhìn thấy các tiểu bang các chuyến thăm chính sách. Nếu$\pi$là xác định, toàn bộ khu vực trong không gian nhà nước không bao giờ được lấy mẫu, và ước tính giá trị của chúng vẫn ở mức không mãi mãi.
 
 1. **Exploring starts.**Bắt đầu mỗi tập từ một cặp ngẫu nhiên (s, a). Giảm bảo bảo hiểm; không thực tế trong thực tế (bạn không thể "đưa lại" một robot vào trạng thái tùy tiện).
-2. **ε-greedy.**Tạo hành tham lam với Q hiện tại, nhưng với khả năng`ε`chọn một hành động ngẫu nhiên. tất cả các cặp hành động trạng thái được lấy mẫu theo cách không đồng nghĩa.
-3. **Off-policy MC.**Thu thập dữ liệu theo chính sách hành vi `μ`, tìm hiểu về chính sách mục tiêu `π`Sự khác biệt cao, nhưng nó là cầu nối với các phương pháp buffer như DQN.
+2. **ε-greedy.**Tạo hành tham lam với Q hiện tại, nhưng với khả năng$\epsilon$chọn một hành động ngẫu nhiên. tất cả các cặp hành động trạng thái được lấy mẫu theo cách không đồng nghĩa.
+3. **Off-policy MC.**Thu thập dữ liệu theo chính sách hành vi $\mu$, tìm hiểu về chính sách mục tiêu $\pi$Sự khác biệt cao, nhưng nó là cầu nối với các phương pháp buffer như DQN.
 
 **Monte Carlo Control.**Đánh giá → cải thiện → đánh giá, giống như lặp lại chính sách, nhưng đánh giá dựa trên mẫu:
 
-1. Đi chạy`π`, lấy một tập phim.
-2. Tới thiệu `Q(s, a)`từ những kết quả được quan sát.
-3. Làm `π`ε-cái tham lam w.r.t. `Q`- Tôi không biết.
+1. Đi chạy$\pi$, lấy một tập phim.
+2. Tới thiệu $Q(s, a)$từ những kết quả được quan sát.
+3. Làm $\pi$ε-cái tham lam w.r.t. $Q$- Tôi không biết.
 4. Lặp lại.
 
-Tương ứng với `Q*`và `π*`với xác suất 1 trong điều kiện nhẹ (mỗi cặp được truy cập vô hạn thường xuyên,`α`làm hài lòng Robbins-Monro).
+Tương ứng với $Q^{\ast}$và $\pi^{\ast}$với xác suất 1 trong điều kiện nhẹ (mỗi cặp được truy cập vô hạn thường xuyên,$\alpha$làm hài lòng Robbins-Monro).
 
 ```figure
 epsilon-greedy
@@ -80,7 +82,7 @@ def returns_from(trajectory, gamma):
     return list(reversed(returns))
 ```
 
-Một lần đi qua.`O(T)`Sự tái phát ngược lại`G_t = r_{t+1} + γ G_{t+1}`tránh tổng hợp lại.
+Một lần đi qua.$O(T)$Sự tái phát ngược lại$G_t = r_{t+1} + \gamma G_{t+1}$tránh tổng hợp lại.
 
 ### Bước 3: đánh giá MC lần đầu tiên
 
@@ -130,15 +132,15 @@ def mc_control(env, episodes, gamma=0.99, epsilon=0.1):
 
 ### Bước 5: so sánh với tiêu chuẩn vàng DP
 
-Đánh giá của MC của bạn về`V^π`nên đồng ý với kết quả DP từ Bài học 02 như các tập → ∞. Trong thực tế: 50.000 tập trên 4×4 GridWorld đưa bạn trong `~0.1`của câu trả lời DP.
+Đánh giá của MC của bạn về$V^\pi$nên đồng ý với kết quả DP từ Bài học 02 như các tập → ∞. Trong thực tế: 50.000 tập trên 4×4 GridWorld đưa bạn trong `~0.1`của câu trả lời DP.
 
 ## Những bẫy
 
 - **Infinite episodes.**MC cần các tập phim để chấm dứt. Nếu chính sách của bạn có thể lặp mãi mãi, cap `max_steps`và coi nắp như thất bại ngầm. GridWorld với một chính sách ngẫu nhiên thường xuyên thời gian ra  đó là bình thường, chỉ cần đảm bảo bạn đếm nó đúng.
-- **Variance.**MC sử dụng hoàn toàn trả lại. Trong các tập dài, sự khác biệt là rất lớn  một phần thưởng không may ở cuối các phiên `V(s_0)`Các phương pháp TD (Lớp 04) cắt giảm điều này bằng cách khởi động.
+- **Variance.**MC sử dụng hoàn toàn trả lại. Trong các tập dài, sự khác biệt là rất lớn  một phần thưởng không may ở cuối các phiên $V(s_0)$Các phương pháp TD (Lớp 04) cắt giảm điều này bằng cách khởi động.
 - **State coverage.**MC tham lam trên một Q mới với dây xích sẽ chỉ thử một hành động.
-- **Non-stationary policies.**Nếu`π`(như trong kiểm soát MC), các khoản trả lại cũ là từ một chính sách khác.
-- **Off-policy importance sampling.**Những trọng lượng `π(a|s)/μ(a|s)`Tăng bằng đường đi, biến động nổ với chân trời, giới hạn với IS/phát quyết hoặc chuyển sang TD.
+- **Non-stationary policies.**Nếu$\pi$(như trong kiểm soát MC), các khoản trả lại cũ là từ một chính sách khác.
+- **Off-policy importance sampling.**Những trọng lượng $\pi(a \mid s)/\mu(a \mid s)$Tăng bằng đường đi, biến động nổ với chân trời, giới hạn với IS/phát quyết hoặc chuyển sang TD.
 
 ## Sử dụng nó
 
@@ -150,10 +152,10 @@ Vai trò của phương pháp Monte Carlo năm 2026:
 | Offline evaluation of a logged policy | Average discounted returns over stored trajectories. |
 | Monte Carlo Tree Search (AlphaZero) | MC rollouts from tree leaves guide selection. |
 | LLM RL evaluation | Compute average reward over sampled completions for a given policy. |
-| Baseline estimation in PPO | The advantage target `A_t = G_t - V(s_t)` uses an MC `G_t`. |
+| Baseline estimation in PPO | The advantage target $A_t = G_t - V(s_t)$ uses an MC $G_t$. |
 | Teaching RL | Simplest algorithm that actually works — strip bootstrapping to see the core. |
 
-Các thuật toán sâu-RL hiện đại (PPO, SAC) liên kết giữa MC tinh khiết (cũng trả lại) và TD tinh khiết (một bước khởi động) thông qua `n`- bước trở lại hoặc GAE. Cả hai điểm cuối là các trường hợp của ước tính tương tự.
+Các thuật toán sâu-RL hiện đại (PPO, SAC) liên kết giữa MC tinh khiết (cũng trả lại) và TD tinh khiết (một bước khởi động) thông qua $n$- bước trở lại hoặc GAE. Cả hai điểm cuối là các trường hợp của ước tính tương tự.
 
 ## Chuyển nó
 
@@ -182,20 +184,20 @@ Refuse to run MC on non-episodic tasks without a finite horizon cap. Refuse to r
 
 ## Các bài tập
 
-1. **Easy.**Thực hiện đánh giá MC lần đầu tiên về chính sách đồng bộ ngẫu nhiên trên 4×4 GridWorld.`V(0,0)`như một hàm số tập so với câu trả lời DP.
-2. **Medium.**Thực hiện kiểm soát MC tham lam với `ε ∈ {0.01, 0.1, 0.3}`So sánh mức thu hồi trung bình sau 20.000 tập.
-3. **Hard.**Thực hiện các MC ngoài chính sách với việc lấy mẫu quan trọng: thu thập dữ liệu theo chính sách ngẫu nhiên đồng nhất `μ`, ước tính`V^π`cho chính sách tối ưu định nghĩa `π`So sánh IS đơn giản so với IS theo quyết định so với IS trọng lượng.
+1. **Easy.**Thực hiện đánh giá MC lần đầu tiên về chính sách đồng bộ ngẫu nhiên trên 4×4 GridWorld.$V(0,0)$như một hàm số tập so với câu trả lời DP.
+2. **Medium.**Thực hiện kiểm soát MC tham lam với $\epsilon \in \lbrace 0.01, 0.1, 0.3 \rbrace$So sánh mức thu hồi trung bình sau 20.000 tập.
+3. **Hard.**Thực hiện các MC ngoài chính sách với việc lấy mẫu quan trọng: thu thập dữ liệu theo chính sách ngẫu nhiên đồng nhất $\mu$, ước tính$V^\pi$cho chính sách tối ưu định nghĩa $\pi$So sánh IS đơn giản so với IS theo quyết định so với IS trọng lượng.
 
 ## Các điều khoản chính
 
 | Term | What people say | What it actually means |
 |------|-----------------|-----------------------|
 | Monte Carlo | "Random sampling" | Estimate expectations by averaging over iid samples from the distribution. |
-| Return `G_t` | "Future reward" | Sum of discounted rewards from step `t` to episode end: `Σ_{k≥0} γ^k r_{t+k+1}`. |
+| Return $G_t$ | "Future reward" | Sum of discounted rewards from step $t$ to episode end: $\sum_{k\ge 0} \gamma^k r_{t+k+1}$. |
 | First-visit MC | "Count each state once" | Only the first visit in an episode contributes to the value estimate. |
 | Every-visit MC | "Use all visits" | Every visit contributes; slightly biased but more sample-efficient. |
-| ε-greedy | "Exploration noise" | Pick greedy action with prob `1-ε`; random action with prob `ε`. |
-| Importance sampling | "Correcting for sampling from the wrong distribution" | Reweight returns by `π(a\|s)/μ(a\|s)` products to estimate `V^π` from `μ` data. |
+| ε-greedy | "Exploration noise" | Pick greedy action with prob $1-\epsilon$; random action with prob $\epsilon$. |
+| Importance sampling | "Correcting for sampling from the wrong distribution" | Reweight returns by $\pi(a \mid s)/\mu(a \mid s)$ products to estimate $V^\pi$ from $\mu$ data. |
 | On-policy | "Learn from my own data" | Target policy = behavior policy. Vanilla MC, PPO, SARSA. |
 | Off-policy | "Learn from someone else's data" | Target policy ≠ behavior policy. Importance-sampled MC, Q-learning, DQN. |
 

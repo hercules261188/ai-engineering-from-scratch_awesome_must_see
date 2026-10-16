@@ -31,7 +31,7 @@ Bạn cần một chính sách có khả năng chuyển đổi phân phối sim-
 
 **Domain Adaptation.**Trình luyện trong bộ Sim, điều chỉnh tinh tế với một lượng nhỏ dữ liệu thực.
 
-- **Real2Sim2Real:**học một mô phỏng dư thừa `f(s, a, z) - f_sim(s, a)`sử dụng các bản triển khai thực, tập luyện trong bộ nhớ sim đã sửa chữa.
+- **Real2Sim2Real:**học một mô phỏng dư thừa $f(s, a, z) - f_{\text{sim}}(s, a)$sử dụng các bản triển khai thực, tập luyện trong bộ nhớ sim đã sửa chữa.
 - **Observation adaptation:**đào tạo một chính sách lập bản đồ thực obs → sim-like obs thông qua một bộ trích dẫn tính năng học (ví dụ, GAN pixel-to-pixel).
 
 **Privileged learning / teacher-student.**Miki et al. 2022 (ANYmal quadruped). Trén một * giáo viên * trong mô phỏng có quyền truy cập vào thông tin đặc quyền (trận lưỡng lự chân lý mặt đất, độ cao địa hình, IMU drift). Chưa một * học sinh * chỉ nhìn thấy quan sát cảm biến thực. Học sinh học được suy luận các tính năng đặc quyền từ lịch sử, mạnh mẽ qua các tham số vật lý.
@@ -128,7 +128,7 @@ Refuse to deploy without (a) a zero-shot sim-variant test, (b) a safety shield, 
 
 ## Các bài tập
 
-1. **Easy.**Trình luyện một đại lý học Q trên GridWorld (slip=0.0).
+1. **Easy.**Trình luyện một đại lý học Q trên GridWorld (slip=0.0).$\text{slip} \in \lbrace 0.0, 0.1, 0.3, 0.5 \rbrace$- Đưa lại với trượt.
 2. **Medium.**Trình luyện một nhân viên học tập DR Q lấy mẫu `slip ~ Uniform[0, 0.3]`- Đánh giá cùng một loại. DR mua bao nhiêu ở slip=0.5 (không phân phối)?
 3. **Hard.**Thực hiện một chương trình giảng dạy: bắt đầu với slip=0.0, mở rộng phạm vi DR mỗi khi chính sách đạt 90% tối ưu. đo lường tổng bước môi trường để đạt slip=0.3 zero shot so với một đường cơ sở DR cố định.
 
