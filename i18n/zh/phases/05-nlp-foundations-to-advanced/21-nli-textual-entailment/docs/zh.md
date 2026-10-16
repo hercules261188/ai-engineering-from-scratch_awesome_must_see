@@ -71,7 +71,7 @@ print(result)
 #  {'label': 'contradiction', 'score': 0.01}]
 ```
 
-对于生产NLI,`facebook/bart-large-mnli`其他`microsoft/deberta-v3-large-mnli`德伯塔-v3是排名榜首.
+对于生产NLI,`facebook/bart-large-mnli`其他`MoritzLaurer/DeBERTa-v3-large-mnli-fever-anli-ling-wanli`德伯塔-v3是排名榜首.
 
 ### 步骤2:零射击分类
 
@@ -118,7 +118,7 @@ def is_faithful(answer, context, threshold=0.5):
 
 | Use case | Model |
 |---------|-------|
-| General-purpose NLI | `microsoft/deberta-v3-large-mnli` |
+| General-purpose NLI | `MoritzLaurer/DeBERTa-v3-large-mnli-fever-anli-ling-wanli` |
 | Fast / edge | `cross-encoder/nli-deberta-v3-base` |
 | Zero-shot classification (lightweight) | `facebook/bart-large-mnli` |
 | Document-level NLI | `MoritzLaurer/DeBERTa-v3-large-mnli-fever-anli-ling-wanli` |

@@ -29,7 +29,7 @@
 
 2026年实施:
 
-- **Outlines.**编译JSON Schema或regex到一个有限状态机器.每个代币得到一个O(1) 有效的下一个代币搜索.基于FSM,所以复制式的方案需要平坦化.
+- **Outlines.**编译JSON图案或regex到一个有限状态机器.每个代币得到一个$O(1)$基于FSM,所以复制方案需要平坦化.
 - **XGrammar / llguidance.**无文本语法引擎.处理复制 JSON 方案.近零的解码费用.OpenAI在他们的2025年结构化输出实施中获得了指导.
 - **vLLM guided decoding.**内部`guided_json`现在`guided_regex`现在`guided_choice`现在`guided_grammar`通过轮,XGrammar或lm格式执行后台.
 - **Instructor.**基于Pydantic的包装在任何LLM上. 检查验证失败.跨供应商,但不修改记录它依赖于检查 + 结构化输出意识提示.
@@ -210,7 +210,7 @@ Refuse any design that puts `answer` or `decision` before reasoning fields. Refu
 |------|-----------------|-----------------------|
 | Constrained decoding | Force valid output | Mask invalid-token logits at every generation step. |
 | Logit processor | The thing that constrains | Function: `(logits, state) -> masked_logits`. |
-| FSM | Finite-state machine | Compiled grammar representation; O(1) valid-next-token lookup. |
+| FSM | Finite-state machine | Compiled grammar representation; $O(1)$ valid-next-token lookup. |
 | CFG | Context-free grammar | Grammar that handles recursion; slower but more expressive than FSM. |
 | Schema field order | Does it matter? | Yes — first field commits; always put reasoning before answer. |
 | Guided decoding | vLLM's name for it | Same concept, integrated into the inference server. |

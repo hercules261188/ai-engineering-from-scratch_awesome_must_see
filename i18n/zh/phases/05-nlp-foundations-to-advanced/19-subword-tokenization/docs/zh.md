@@ -79,7 +79,7 @@ def encode_bpe(word, merges):
     return symbols
 ```
 
-无的O  时代 (N 时代) 制作实现,HF 托克尼斯人使用与优先排列的并列排列搜索,运行在近线性时间.
+简单的$O(n \cdot \lvert \text{merges} \rvert)$生产实现 (tiktoken,HF Tokenizers) 使用优先排列的并列排列查询,运行在近线时间.
 
 ### 步骤3:实践中的句子
 

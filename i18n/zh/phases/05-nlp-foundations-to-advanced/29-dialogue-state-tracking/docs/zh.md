@@ -147,7 +147,7 @@ def is_correction(utterance):
 
 ## 陷
 
-- **Full-history regeneration cost.**让LLM重建状态每轮成本 O ((n2) 总代币.
+- **Full-history regeneration cost.**让LLM重建状态每轮成本$O(n^2)$总代币. 值历史或总结较早的转折.
 - **Schema drift.**增加新的插槽后,会打破旧的训练数据.
 - **Case sensitivity.**意大利人对意大利人对意大利人,
 - **Implicit inheritance.**如果用户之前指定了"为4人",则新的请求不应该清除人数.
