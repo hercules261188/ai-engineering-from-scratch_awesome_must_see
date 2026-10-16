@@ -125,4 +125,4 @@ roofline
 - [SGLang documentation](https://sgl-project.github.io/) الاهتمام و التفاصيل في الجدول الزمني
 - [SGLang paper — Efficiently Programming Large Language Models (arXiv:2312.07104)](https://arxiv.org/abs/2312.07104) مرجع التصميم
 - [LMSYS blog — SGLang with RadixAttention](https://www.lmsys.org/blog/2024-01-17-sglang/) أرقام المرجعية وبرز المخطط
-- [vLLM — Prefix Caching](https://docs.vllm.ai/en/latest/features/prefix_caching.html) تنفيذ vLLM نفسه مثل الجذور، للمقارنة.
+- [vLLM — Prefix Caching](https://docs.vllm.ai/en/latest/features/automatic_prefix_caching/) تنفيذ vLLM نفسه مثل الجذور، للمقارنة.

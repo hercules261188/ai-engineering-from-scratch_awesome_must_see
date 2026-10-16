@@ -125,6 +125,6 @@ cold-start-pipeline
 - [Modal — Cold start performance](https://modal.com/docs/guide/cold-start) مقاييس ومعمارة نقاط التفتيش التي نشرتها مودال.
 - [AWS Bottlerocket](https://github.com/bottlerocket-os/bottlerocket) نمط تصوير مفاجئ حجم البيانات المسبقة.
 - [NVIDIA Run:ai Model Streamer](https://github.com/run-ai/runai-model-streamer) تعبئة الوزن المتداخل مع إعداد الحساب.
-- [Baseten — Cold-start mitigation](https://www.baseten.co/blog/cold-start-mitigation/) كتاب لعبة التدفئة المسبقة
+- [Baseten — Cold starts](https://docs.baseten.co/deployment/autoscaling/cold-starts) كتاب لعبة التدفئة المسبقة
 - [ServerlessLLM paper (USENIX OSDI'24)](https://www.usenix.org/conference/osdi24/presentation/fu) تصميم الشحن المرتبط.
 - [NVIDIA — Disaggregated LLM Inference on Kubernetes](https://developer.nvidia.com/blog/deploying-disaggregated-llm-inference-workloads-on-kubernetes/) الهجرة الحية لتنفيذات منفصلة.
