@@ -86,8 +86,8 @@ Muestre la máscara de 28x28 al tamaño original de píxeles de la propuesta par
 
 Mask R-CNN tiene cuatro pérdidas sumadas:
 
-```
-L = L_rpn_cls + L_rpn_box + L_box_cls + L_box_reg + L_mask
+```math
+L = L_{\text{rpn\_cls}} + L_{\text{rpn\_box}} + L_{\text{box\_cls}} + L_{\text{box\_reg}} + L_{\text{mask}}
 ```
 
 - `L_rpn_cls`¿ Qué ?`L_rpn_box` objetividad + recuento de regresión de las propuestas de RPN.

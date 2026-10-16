@@ -61,12 +61,13 @@ Cinco pasos, todos compatibles con la GPU, sin consulta MLP por píxel, un solo 
 
 El Gaussian 3D en posición mundial .`mu`con covarianza 3D `Sigma`proyectos a un Gaussian 2D en posición de pantalla `mu'`con covarianza 2D `Sigma'`¿Qué es esto ?
 
-```
-mu' = project(mu)
-Sigma' = J W Sigma W^T J^T          (2 x 2)
-
-W = viewing transform (rotation + translation of camera)
-J = Jacobian of the perspective projection at mu'
+```math
+\begin{aligned}
+\mu' &= \mathop{\mathrm{project}}(\mu) \\
+\Sigma' &= J W \Sigma W^T J^T \qquad (2 \times 2) \\[6pt]
+W &= \text{viewing transform (rotation + translation of camera)} \\
+J &= \text{Jacobian of the perspective projection at } \mu'
+\end{aligned}
 ```
 
 La huella de Gaussian 2D es una elipse cuyos ejes son los propios vectores de `Sigma'`Cada píxel dentro de esa elipse recibe la contribución de Gaussian, ponderada por`exp(-0.5 * (p - mu')^T Sigma'^-1 (p - mu'))`¿ Qué ?
@@ -75,12 +76,13 @@ La huella de Gaussian 2D es una elipse cuyos ejes son los propios vectores de `S
 
 Para un píxel, los gaussianos que lo cubren se ordenan de frente a frente (o equivalentemente de frente a atrás con fórmula invertida).
 
-```
-C_pixel = sum_i alpha_i * T_i * c_i
-
-T_i = prod_{j < i} (1 - alpha_j)       transmittance up to i
-alpha_i = opacity_i * exp(-0.5 * d^T Sigma'^-1 d)   local contribution
-c_i = eval_SH(SH_i, view_direction)    view-dependent colour
+```math
+\begin{aligned}
+C_{\text{pixel}} &= \sum_i \alpha_i T_i c_i \\[6pt]
+T_i &= \prod_{j < i} (1 - \alpha_j) && \text{transmittance up to } i \\
+\alpha_i &= \text{opacity}_i \cdot \exp\left(-0.5 \, d^T \Sigma'^{-1} d\right) && \text{local contribution} \\
+c_i &= \mathop{\mathrm{eval\_SH}}(\text{SH}_i, \text{view\_direction}) && \text{view-dependent colour}
+\end{aligned}
 ```
 
 Esto es ...**the same equation as NeRF's volumetric render**La identidad es por eso que la calidad de renderización coincide con la de NeRF  ambos están integrando la misma ecuación de campo de radiación.
@@ -97,7 +99,7 @@ Un conjunto fijo de Gaussianos no puede cubrir una escena compleja.
 - **Split**un gaussian a gran escala en dos más pequeños cuando su gradiente es alto  un gaussian grande es demasiado suave para encajar en la región.
 - **Prune**Los gaussianos cuya opacidad cae por debajo de un umbral no están contribuyendo.
 
-La densificación se ejecuta en todas las iteraciones N. Una escena generalmente crece de ~100k Gaussians iniciales (seededed from SfM points) a 1-5M al final del entrenamiento.
+La densificación se produce en todas partes .$N$Una escena suele crecer de ~100k Gaussians iniciales (seededed from SfM points) a 1-5M al final del entrenamiento.
 
 ### Armonías esféricas en un párrafo
 

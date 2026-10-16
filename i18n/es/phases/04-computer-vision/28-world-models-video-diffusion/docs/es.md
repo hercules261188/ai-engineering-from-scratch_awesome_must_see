@@ -60,7 +60,7 @@ Resulting tokens:      (T / P_t) * (H / P_h) * (W / P_w) tokens
 
 La codificación posicional es 3D: una incorporación rotativa o aprendida por (t, h, w) coordenadas.
 
-- **Full joint** todos los tokens atender a todos los tokens. O ((N ^ 2) con N tokens. Prohibido para videos largos.
+- **Full joint** todos los tokens atender a todos los tokens. $O(N^2)$con$N$Prohibido para vídeos largos.
 - **Divided** atención temporal alterna (la misma posición espacial, a lo largo del tiempo: `(H*W) * T^2`) y la atención espacial (el mismo paso de tiempo, a través del espacio: `T * (H*W)^2`Se utiliza por TimeSformer y la mayoría de los videos.
 - **Window** ventanas locales en (t, h, w). Usado por Video Swin.
 
@@ -213,7 +213,7 @@ class DividedAttentionBlock(nn.Module):
         return xs
 ```
 
-La atención temporal se concentra en cada posición espacial a través del tiempo; la atención espacial se concentra en cada marco a través de las posiciones. Dos operaciones O(T^2 + (HW) ^2) en lugar de una O((THW) ^2).
+La atención temporal se concentra en cada posición espacial a lo largo del tiempo; la atención espacial se concentra en cada marco a lo largo de las posiciones.$O(T^2 + (HW)^2)$operaciones en lugar de una $O((THW)^2)$Este es el núcleo de TimeSformer y de todos los vídeos modernos de DiT.
 
 ### Paso 4: Compón un pequeño video
 
@@ -286,7 +286,7 @@ Esta lección produce:
 | World model | "Learned simulator" | A model that predicts future observations given state and action |
 | Video DiT | "Spacetime transformer" | Diffusion transformer with 3D patchification and divided attention |
 | Latent action | "Inferred control" | Discrete or continuous action latent inferred from frame pairs; used to condition next-frame generation |
-| Divided attention | "Time then space" | Two attention operations per block — across time then across space — to keep O(N^2) manageable |
+| Divided attention | "Time then space" | Two attention operations per block — across time then across space — to keep $O(N^2)$ manageable |
 | Object permanence | "Things stay real" | Scene property that video models must learn; classic failure mode on food, glassware |
 | FVD | "Fréchet Video Distance" | Video equivalent of FID; primary visual quality metric |
 | Inverse dynamics model | "Observations to actions" | Given (state, next state), output the action that connects them; closes robotics loop |

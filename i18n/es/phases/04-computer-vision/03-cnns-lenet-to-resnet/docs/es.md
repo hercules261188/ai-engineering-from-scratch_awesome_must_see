@@ -72,7 +72,7 @@ stack:   conv 3x3 -> conv 3x3 -> pool 2x2
 repeat:  16 or 19 conv layers
 ```
 
-Dos convases 3x3 ven el mismo área de entrada 5x5 que una conva 5x5 pero con menos parámetros (2 * 9 * C^2 = 18C^2 vs 25 * C^2) y un ReLU adicional entre ambos. VGG convirtió esta observación en una arquitectura completa. La simplicidad  un tipo de bloque, repetido  lo convirtió en el punto de referencia para todo lo que vino después.
+Dos convectores 3x3 tienen el mismo área de entrada 5x5 que un convector 5x5 pero con menos parámetros ($2 \cdot 9 \cdot C^2 = 18C^2$- ¿ Qué ?$25 \cdot C^2$La simplicidad  un tipo de bloque, repetido  lo convirtió en el punto de referencia para todo lo que vino después.
 
 Costo: 138 millones de parámetros, lento en el entrenamiento, caro en la inferencia.
 
@@ -120,9 +120,11 @@ VGG trabajó en 19 capas porque la norma de lote (publicada simultáneamente) ma
 
 Él, Zhang, Ren, Sun propusieron un cambio que arregló todo:
 
-```
-standard block:   y = F(x)
-residual block:   y = F(x) + x
+```math
+\begin{aligned}
+\text{standard block:} \quad & y = F(x) \\
+\text{residual block:} \quad & y = F(x) + x
+\end{aligned}
 ```
 
 El `+ x`significa que la capa siempre puede optar por no hacer nada conduciendo.`F(x)`Un ResNet de 1.000 capas es ahora tan malo como una red de 1 capa, porque cada bloque extra tiene una escotilla de escape trivial. Con esa garantía, el optimizador está dispuesto a hacer que cada bloque *ligeramente* útil  y ligeramente útil, apilado 100 veces, es de última generación.

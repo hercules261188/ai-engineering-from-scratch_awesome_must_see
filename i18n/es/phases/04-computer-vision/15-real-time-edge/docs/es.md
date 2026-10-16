@@ -270,5 +270,5 @@ Esta lección produce:
 
 - [EfficientNet (Tan & Le, 2019)](https://arxiv.org/abs/1905.11946) escalación compuesta para arquitecturas eficientes
 - [MobileNetV3 (Howard et al., 2019)](https://arxiv.org/abs/1905.02244) Arquitectura móvil con h-swish y squeeze-excite
-- [A Practical Guide to TensorRT Optimization (NVIDIA)](https://developer.nvidia.com/blog/accelerating-model-inference-with-tensorrt-tips-and-best-practices-for-pytorch-users/) Cómo obtener los números de rendimiento en el papel
+- [Accelerating Inference Up to 6x Faster in PyTorch with Torch-TensorRT (NVIDIA)](https://developer.nvidia.com/blog/accelerating-inference-up-to-6x-faster-in-pytorch-with-torch-tensorrt/) Cómo obtener los números de rendimiento en el papel
 - [ONNX Runtime docs](https://onnxruntime.ai/docs/) Cuantificación, optimización de gráficos, selección de proveedores

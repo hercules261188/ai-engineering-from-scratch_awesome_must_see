@@ -87,10 +87,10 @@ Para una primera U-Net, bilinear es más seguro.
 
 ### Entropia cruzada en una cuadrícula de píxeles
 
-Para la segmentación semántica con clases C, la salida del modelo es `(N, C, H, W)`El objetivo es`(N, H, W)`La entropía cruzada es idéntica al caso de clasificación, sólo aplicada en cada posición espacial:
+Para la segmentación semántica con $C$las clases, el modelo de salida es `(N, C, H, W)`El objetivo es`(N, H, W)`La entropía cruzada es idéntica al caso de clasificación, sólo aplicada en cada posición espacial:
 
-```
-Loss = mean over (n, h, w) of -log( softmax(logits[n, :, h, w])[target[n, h, w]] )
+```math
+\text{Loss} = \mathop{\mathrm{mean}}\limits_{(n, h, w)} \left[ -\log\left( \mathop{\mathrm{softmax}}(\text{logits}[n, :, h, w])[\text{target}[n, h, w]] \right) \right]
 ```
 
 `F.cross_entropy`PyTorch maneja esta forma de forma nativa.
@@ -101,17 +101,19 @@ La entropía cruzada trata todos los píxeles de manera igual. Eso es incorrecto
 
 La pérdida de dados resuelve esto optimizando directamente la superposición entre la máscara predicha y la verdadera:
 
-```
-Dice(p, y) = 2 * sum(p * y) / (sum(p) + sum(y) + epsilon)
-Dice_loss = 1 - Dice
+```math
+\begin{aligned}
+\mathop{\mathrm{Dice}}(p, y) &= \frac{2 \sum (p \cdot y)}{\sum p + \sum y + \epsilon} \\
+\text{Dice}_{\text{loss}} &= 1 - \text{Dice}
+\end{aligned}
 ```
 
 donde`p`es el mapa de probabilidad sigmoide/softmax para una clase y `y`La pérdida es cero sólo cuando la superposición es perfecta. Porque está basada en la relación, el desequilibrio de clase es irrelevante.
 
 En la práctica, utilice el **combined loss**¿Qué es esto ?
 
-```
-L = L_cross_entropy + lambda * L_dice       (lambda ~ 1)
+```math
+L = L_{\text{cross\_entropy}} + \lambda \cdot L_{\text{dice}} \qquad (\lambda \approx 1)
 ```
 
 La entropía cruzada da gradientes estables al principio del entrenamiento; Dice centra la cola del entrenamiento en coincidir realmente con la forma de la máscara. Esta combinación es el estándar de imagen médica y difícil de superar en cualquier conjunto de datos desequilibrado de clase.
@@ -120,7 +122,7 @@ La entropía cruzada da gradientes estables al principio del entrenamiento; Dice
 
 - **Pixel accuracy**% de píxeles predicho correctamente. Baratos. Se rompen en datos desequilibrados por la misma razón que la precisión en la clasificación.
 - **IoU per class** intersección entre la unión de cada clase de máscara; promedio entre las clases = mIoU.
-- **Dice (F1 on pixels)** similar a IoU; `Dice = 2 * IoU / (1 + IoU)`La imagen médica prefiere los diés, la comunidad de conductores prefiere la IoU; están monótona.
+- **Dice (F1 on pixels)** similar a IoU; $\text{Dice} = 2 \cdot \text{IoU} / (1 + \text{IoU})$La imagen médica prefiere los diés, la comunidad de conductores prefiere la IoU; están monótona.
 - **Boundary F1** mide la proximidad de los límites previstos a los límites de la realidad del terreno, penalizando incluso pequeños cambios.
 
 La media de la UIE oculta una clase en 15% cuando otras nueve en 85%.
@@ -400,4 +402,4 @@ Esta lección produce:
 - [U-Net: Convolutional Networks for Biomedical Image Segmentation (Ronneberger et al., 2015)](https://arxiv.org/abs/1505.04597) el papel original; la figura que todos copian está en la página 2
 - [Fully Convolutional Networks (Long et al., 2015)](https://arxiv.org/abs/1411.4038) el papel que primero hizo de la segmentación un problema de con-
 - [segmentation_models_pytorch](https://github.com/qubvel/segmentation_models.pytorch) la referencia para la segmentación de la producción; cada arquitectura estándar más cada pérdida estándar
-- [Lessons learned from training SOTA segmentation (kaggle.com competitions)](https://www.kaggle.com/code/iafoss/carvana-unet-pytorch) una descripción de por qué TTA, pseudoetiquetado y pesos de clase importan en datos reales
+- [iafoss, Unet34 submission with TTA (Kaggle notebook)](https://www.kaggle.com/code/iafoss/unet34-submission-tta-0-699-new-public-lb) Aumento del tiempo de prueba de una U-Net en una competencia de segmentación real

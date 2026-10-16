@@ -50,8 +50,8 @@ Top-down (HRNet, ViTPose) es el líder de precisión; bottom-up (OpenPose, Highe
 
 En lugar de regredir `(x, y)`directamente, predicir un `H x W`mapa de calor por punto clave con una mancha gaussiana centrada en la ubicación real.
 
-```
-target[k, y, x] = exp(-((x - cx_k)^2 + (y - cy_k)^2) / (2 sigma^2))
+```math
+\text{target}[k, y, x] = \exp\left(-\frac{(x - \mathit{cx}_k)^2 + (y - \mathit{cy}_k)^2}{2 \sigma^2}\right)
 ```
 
 En la inferencia, el argmax de cada heatmap es la ubicación del punto clave prevista.

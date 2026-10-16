@@ -26,7 +26,7 @@ Las dos representaciones dominan por razones diferentes. Las nubes de puntos son
 
 ### Nube de punto
 
-Una nube de puntos es un conjunto desordenado de N puntos en R^3, opcionalmente cada uno con características (color, intensidad, normal).
+Una nube de puntos es un conjunto desordenado de$N$puntos en $\mathbb{R}^3$, opcionalmente cada uno con características (color, intensidad, normal).
 
 ```
 cloud = [
@@ -44,8 +44,8 @@ No hay red, no hay conectividad. Dos propiedades hacen que esto sea difícil par
 
 PointNet (Qi et al., 2017) resolvió ambos con una idea: aplicar un MLP compartido a cada punto, luego agregar con una función simétrica (pool máximo).
 
-```
-f(P) = max_{p in P} MLP(p)
+```math
+f(P) = \max_{p \in P} \mathop{\mathrm{MLP}}(p)
 ```
 
 Este es todo el núcleo de PointNet. Las variantes más profundas (PointNet++, Point Transformer) añaden muestreo jerárquico y agregación local, pero el truco de función simétrica no ha cambiado.
@@ -89,22 +89,23 @@ Una pérdida compara el píxel renderizado con el píxel de verdad en la tierra 
 
 Una vanilla con MLP en .`(x, y, z)`No puede representar detalles de alta frecuencia porque los MLP están espectralmente sesgados hacia las frecuencias bajas. NeRF corrige esto codificando cada coordenada en un vector de características de Fourier antes del MLP:
 
-```
-gamma(p) = (sin(2^0 pi p), cos(2^0 pi p), sin(2^1 pi p), cos(2^1 pi p), ...)
+```math
+\gamma(p) = \left(\sin(2^0 \pi p), \cos(2^0 \pi p), \sin(2^1 \pi p), \cos(2^1 \pi p), \ldots\right)
 ```
 
-Hasta niveles de frecuencia L=10. Este es el mismo truco que usan los transformadores para posiciones, y aparece de nuevo en el acondicionamiento del tiempo de difusión (lección 10).
+Hasta $L=10$Este es el mismo truco que usan los transformadores para posiciones, y aparece de nuevo en el acondicionamiento del tiempo de difusión (lección 10).
 
 ### Renderamiento volumétrico
 
+```math
+\begin{aligned}
+C(r) &= \sum_i T_i \left(1 - \exp(-\sigma_i \delta_i)\right) c_i \\[4pt]
+T_i &= \exp\left(-\sum_{j<i} \sigma_j \delta_j\right) \\
+\delta_i &= t_{i+1} - t_i
+\end{aligned}
 ```
-C(r) = sum_i T_i * (1 - exp(-sigma_i * delta_i)) * c_i
 
-T_i  = exp(- sum_{j<i} sigma_j * delta_j)
-delta_i = t_{i+1} - t_i
-```
-
-`T_i`es la transmisión  cuánto luz sobrevive al punto i. `(1 - exp(-sigma_i * delta_i))`es la opacidad en el punto i. `c_i`El píxel final es una suma ponderada a lo largo del rayo.
+`T_i`es la transmisión  cuánto luz sobrevive a la señal $i$- ¿ Qué ?`(1 - exp(-sigma_i * delta_i))`es la opacidad en el punto $i$- ¿ Qué ?`c_i`El píxel final es una suma ponderada a lo largo del rayo.
 
 ### Lo que sustituyó a las NERF
 

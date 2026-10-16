@@ -42,7 +42,7 @@ Ambos codificadores terminan con una proyección lineal a la misma dimensión de
 
 ### El objetivo
 
-Dado un lote de pares N (imagen, leyenda) construye una matriz de similitud NxN. Entrenar ambos codificadores para que la diagonal (pares coincidentes) tenga una alta similitud y los fuera de diagonales (no coincidentes) tengan una baja similitud.
+Dado un lote de $N$(imagen, captcha) parejas, construir un $N \times N$Matriz de similitud. Entrenar ambos codificadores para que la diagonal (pares coincidentes) tenga una alta similitud y las fuera de diagonales (no coincidentes) tengan una baja similitud.
 
 ```
 sim_matrix = image_embeddings @ text_embeddings.T / tau
@@ -58,9 +58,11 @@ Simétrico porque tanto la extracción de imagen a texto como de texto a imagen 
 
 SigLIP (Zhai et al., 2023) sustituyó la softmax por sigmoide por pareja:
 
-```
-loss = mean over pairs of log(1 + exp(-y_ij * sim_ij))
-y_ij = +1 if matching, -1 otherwise
+```math
+\begin{aligned}
+\text{loss} &= \mathop{\mathrm{mean}}\limits_{\text{pairs}} \log\left(1 + \exp(-y_{ij} \cdot \text{sim}_{ij})\right) \\
+y_{ij} &= \begin{cases} +1 & \text{if matching} \\ -1 & \text{otherwise} \end{cases}
+\end{aligned}
 ```
 
 La pérdida por pareja elimina la normalización a nivel de lote que requiere CLIP. SigLIP se entraña mejor en pequeños lotes y coincide o supera CLIP en datos iguales.
@@ -224,4 +226,4 @@ Esta lección produce:
 - [CLIP: Learning Transferable Visual Models from Natural Language Supervision (Radford et al., 2021)](https://arxiv.org/abs/2103.00020)
 - [SigLIP: Sigmoid Loss for Language-Image Pre-Training (Zhai et al., 2023)](https://arxiv.org/abs/2303.15343)
 - [OpenCLIP](https://github.com/mlfoundations/open_clip) la base de código de la comunidad
-- [DINOv2 vs CLIP vs MAE: a features comparison](https://huggingface.co/blog/dinov2) Guía de HF con casos de uso paralelos
+- [Oquab et al. (2023). DINOv2: Learning Robust Visual Features without Supervision](https://arxiv.org/abs/2304.07193) el papel, con puntos de referencia de características en comparación con los modelos CLIP y MAE

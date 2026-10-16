@@ -9,7 +9,7 @@
 
 ## Objetivos de aprendizaje
 
-- Explica el juego de mínimas entre generador y discriminador y por qué el equilibrio corresponde a p_modelo = p_datos
+- Explica el juego de mínimos entre generador y discriminador y por qué el equilibrio corresponde a $p_{\text{model}} = p_{\text{data}}$
 - Implemente un DCGAN en PyTorch y haga que genere imágenes sintéticas coherentes 32x32 en menos de 60 líneas
 - Estabilizar el entrenamiento en GAN con los tres trucos estándar: pérdida no saturante, norma espectral, TTUR (regla de actualización en dos escalas)
 - Lea curvas de entrenamiento que distinguen la convergencia saludable del colapso de modo, la oscilación y el discriminador-ganas-completamente
@@ -45,8 +45,8 @@ El **generator**G toma un vector de ruido `z`y saca una imagen.**discriminator**
 
 G quiere que D esté equivocado, D quiere que tenga razón.
 
-```
-min_G max_D  E_x[log D(x)] + E_z[log(1 - D(G(z)))]
+```math
+\min_G \max_D \; \mathbb{E}_x[\log D(x)] + \mathbb{E}_z[\log(1 - D(G(z)))]
 ```
 
 Leer de derecha a izquierda: D maximiza la precisión en real (`log D(real)`) y falsificados (`log (1 - D(fake))`G está minimizando la precisión de D en las falsificaciones  quiere `D(G(z))`para estar drogado.
@@ -57,9 +57,11 @@ Goodfellow demostró que este mínimo tiene un equilibrio global donde `p_G = p_
 
 La forma anterior es numéricamente inestable.`D(G(z))`es casi cero para cada falso, así que `log(1 - D(G(z)))`tiene gradientes desapareciendo con respecto a G. La solución: la pérdida de G.
 
-```
-L_D = -E_x[log D(x)] - E_z[log(1 - D(G(z)))]
-L_G = -E_z[log D(G(z))]                          # non-saturating
+```math
+\begin{aligned}
+L_D &= -\mathbb{E}_x[\log D(x)] - \mathbb{E}_z[\log(1 - D(G(z)))] \\
+L_G &= -\mathbb{E}_z[\log D(G(z))] \qquad \text{(non-saturating)}
+\end{aligned}
 ```
 
 Ahora , ¿ cuándo ?`D(G(z))`El tren GAN moderno tiene esta variante.
@@ -299,8 +301,8 @@ Esta lección produce:
 |------|----------------|----------------------|
 | Generator (G) | "The draws-stuff net" | Maps noise to images; trained to fool the discriminator |
 | Discriminator (D) | "The critic" | Binary classifier; trained to distinguish real from generated images |
-| Minimax | "The game" | min over G, max over D of an adversarial loss; equilibrium is p_G = p_data |
-| Non-saturating loss | "The numerically sane version" | G's loss is -log(D(G(z))) instead of log(1 - D(G(z))) to avoid vanishing gradients early in training |
+| Minimax | "The game" | min over G, max over D of an adversarial loss; equilibrium is $p_G = p_{\text{data}}$ |
+| Non-saturating loss | "The numerically sane version" | G's loss is $-\log(D(G(z)))$ instead of $\log(1 - D(G(z)))$ to avoid vanishing gradients early in training |
 | Mode collapse | "Generator makes one thing" | G produces only a small subset of the data distribution; fix with SN, minibatch discrimination, or larger batch |
 | TTUR | "Two learning rates" | D learns faster than G, typically by a factor of 2-4; stabilises training |
 | Spectral norm | "1-Lipschitz layer" | A weight-normalisation that bounds each layer's Lipschitz constant; stops D from becoming arbitrarily steep |

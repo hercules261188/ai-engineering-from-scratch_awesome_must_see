@@ -100,8 +100,8 @@ Para los conjuntos de datos pequeños, una sola capa lineal suele ser suficiente
 
 Una versión más suave de LR discriminativo utilizado en el ajuste fino moderno (BEiT, DINOv2, ViT-B). En lugar de agrupar las capas en etapas, dar a cada capa una LR ligeramente menor que la que está encima de ella:
 
-```
-lr_layer_k = base_lr * decay^(L - k)
+```math
+\text{lr\_layer}_k = \text{base\_lr} \cdot \text{decay}^{L - k}
 ```
 
 Con descomposición = 0,75 y L = 12 bloques de transformadores, los primeros bloques de trenes en `0.75^11 ≈ 0.04x`Es más importante para los transformeres de tono fino que para las CNN, donde los LR de grupo de escenario suelen ser suficientes.

@@ -97,7 +97,7 @@ Los primeros transformadores utilizados después de la LN (`x = LN(x + sublayer(
 
 - 16x16 parches -> 196 tokens, estándar.
 - 32x32 parches -> 49 tokens, más rápido pero con menor resolución.
-- 8x8 parches -> 784 tokens, más finos pero O(n^2) las escalas de costos de atención son muy malas.
+- 8x8 parches -> 784 tokens, más finos pero $O(n^2)$La atención cuesta mucho.
 
 Los parches más grandes = menos tokens = más rápido pero menos detalles espaciales. SwinV2 utiliza parches 4x4 en ventanas jerárquicas.
 

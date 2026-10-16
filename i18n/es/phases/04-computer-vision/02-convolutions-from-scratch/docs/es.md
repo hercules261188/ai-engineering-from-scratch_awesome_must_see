@@ -74,8 +74,8 @@ Esa fórmula  **shared weights, locality, sliding window**Todo lo demás es cont
 
 Dado el tamaño espacial de entrada `H`, tamaño del núcleo `K`, relleno .`P`, paso .`S`¿Qué es esto ?
 
-```
-H_out = floor( (H - K + 2P) / S ) + 1
+```math
+H_{\text{out}} = \left\lfloor \frac{H - K + 2P}{S} \right\rfloor + 1
 ```
 
 Recuerde esto, lo calculará docenas de veces por arquitectura.
@@ -88,7 +88,7 @@ Recuerde esto, lo calculará docenas de veces por arquitectura.
 | Pool 2x2 | 32 | 2 | 0 | 2 | 16 |
 | Large receptive field | 32 | 7 | 3 | 2 | 16 |
 
-"El mismo relleno" significa elegir P para que H_out == H cuando S == 1. Para K impar, es P = (K - 1) / 2.
+"El mismo relleno" significa escoger.$P$Así que eso$H_{\text{out}} = H$¿ Cuándo ?$S = 1$- Para extraño .$K$, es decir$P = (K - 1) / 2$Es por eso que los núcleos 3x3 dominan son el núcleo impar más pequeño que todavía tiene un centro.
 
 ### Padding
 
