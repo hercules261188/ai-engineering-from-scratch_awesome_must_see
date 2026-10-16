@@ -9,7 +9,7 @@
 
 ## Objectifs d'apprentissage
 
-- Simuler des promenades aléatoires 1D et 2D et vérifier l'échelle de déplacement
+- Simuler des promenades aléatoires en 1D et en 2D et vérifier les $\sqrt{n}$évolutions de la délocalisation
 - Construire un simulateur de chaîne Markov et calculer sa distribution stationnaire via une propre composition
 - Implementer la dynamique MCMC et Langevin de Metropolis-Hastings pour le prélèvement d'échantillons à partir de distributions cibles
 - Connectez le processus de diffusion avant au mouvement Brownien et expliquez comment le processus inverse génère des données
@@ -38,9 +38,9 @@ Tout cela repose sur quatre idées fondamentales:
 
 Commencez à la position 0. À chaque étape, lancez une pièce équitable.
 
-Après n étapes, votre position est la somme de n valeurs aléatoires +/-1. La position attendue est 0 (la marche est impartiale). Mais la distance attendue de l'origine augmente en sqrt(n).
+Après$n$Pas, votre position est la somme de $n$au hasard$\pm 1$Les valeurs de la position attendue est de 0 (la marche est impartiale).$\sqrt{n}$- Je suis désolé .
 
-C'est contre-intuitif. La marche est juste - pas de dérive dans les deux sens. Mais avec le temps, il va de plus en plus loin de l'endroit où il a commencé. L'écart standard après n étapes est sqrt(n.
+C'est contre-intuitif. La marche est juste - pas de dérive dans les deux sens. Mais avec le temps, il va de plus en plus loin de là où il a commencé.$n$les étapes sont $\sqrt{n}$- Je suis désolé .
 
 ```
 Step 0:  Position = 0
@@ -51,33 +51,33 @@ Step 100: Expected distance from origin ~ 10 (sqrt(100))
 Step 10000: Expected distance from origin ~ 100 (sqrt(10000))
 ```
 
-**In 2D**La même échelle s'applique à la distance de l'origine. Le chemin trace un motif fractale.
+**In 2D**, la marche se déplace vers le haut, vers le bas, à gauche ou à droite avec la même probabilité.$\sqrt{n}$La mise à l'échelle s'applique à la distance de l'origine.
 
-**Why sqrt(n)?**Chaque étape est +1 ou -1 avec une probabilité égale. Après n étapes, la position S_n = X_1 + X_2 + ... + X_n où chaque X_i est +/-1. La variance de chaque étape est 1, et les étapes sont indépendantes, donc Var(S_n) = n. Déviation standard = sqrt(n.
+**Why $\sqrt{n}$?**Chaque étape est +1 ou -1 avec la même probabilité.$n$étapes, la position $S_n = X_1 + X_2 + \cdots + X_n$où chacun $X_i$est $\pm 1$. La variance de chaque étape est de 1, et les étapes sont indépendantes, donc $\mathop{\mathrm{Var}}(S_n) = n$. Déviation standard = $\sqrt{n}$- Par le théorème de la limite centrale,$S_n / \sqrt{n}$converge à une distribution normale standard.
 
-Cette échelle de n est présente partout dans ML. SGD évalue le bruit comme 1/sqrt(batch_size).
+Ça ?$\sqrt{n}$L'échelle de dimensionnement apparaît partout dans le ML. Les échelles de bruit SGD sont 1/sqrt(taille de lot).$\sqrt{d}$La racine carrée est la signature des additions aléatoires indépendantes.
 
-**Connection to Brownian motion.**Prenez une marche aléatoire avec la taille des étapes 1/sqrt(n) et n étapes par unité de temps.
+**Connection to Brownian motion.**Faites une promenade aléatoire avec la taille des marches $1/\sqrt{n}$et $n$Les étapes par unité de temps.$n$va à l'infini, la marche converge au mouvement brownien$B(t)$-- un processus continu où $B(t)$est normalement réparti avec la moyenne 0 et la variance $t$- Je suis désolé .
 
 Le mouvement brownien est la base mathématique de la diffusion. Il modélise le vibration aléatoire des particules dans un fluide, les fluctuations des prix des actions et - crucialement - le processus sonore dans les modèles de diffusion.
 
-**Gambler's ruin.**Un marcheur aléatoire commençant à la position k, avec des barrières d'absorption à 0 et N. Quelle est la probabilité d'atteindre N avant 0? Pour une marche équitable: P(atteindre N) = k/N. C'est étonnamment simple et élégant. Il se connecte à la théorie des martingales - la marche aléatoire équitable est un martingale (valeur future attendue = valeur actuelle).
+**Gambler's ruin.**Un marcheur au hasard qui commence à la position .$k$, avec des barrières d' absorption à 0 et $N$Quelle est la probabilité d' atteindre$N$Pour une promenade équitable:$P(\text{reach } N) = k/N$C'est étonnamment simple et élégant. Il se connecte à la théorie des martingales - la marche aléatoire juste est un martingale (valeur future attendue = valeur actuelle).
 
 ### Chaînes de Markov
 
 Une chaîne de Markov est un système qui transite entre les états selon des probabilités fixes.
 
-```
-P(X_{t+1} = j | X_t = i, X_{t-1} = ...) = P(X_{t+1} = j | X_t = i)
-```
-
-C'est la propriété de Markov. Cela signifie que vous pouvez décrire toute la dynamique avec une matrice de transition P:
-
-```
-P[i][j] = probability of going from state i to state j
+```math
+P(X_{t+1} = j \mid X_t = i, X_{t-1} = \ldots) = P(X_{t+1} = j \mid X_t = i)
 ```
 
-Chaque rangée de P est une somme de 1 (vous devez aller quelque part).
+C'est la propriété de Markov, vous pouvez décrire toute la dynamique avec une matrice de transition.$P$- Le numéro de la liste:
+
+```math
+P[i][j] = \text{probability of going from state } i \text{ to state } j
+```
+
+Chaque rangée de $P$Les sommes sont à 1 (vous devez aller quelque part).
 
 **Example -- Weather:**
 
@@ -89,7 +89,7 @@ P = [[0.7, 0.1, 0.2],    (if sunny: 70% sunny, 10% rainy, 20% cloudy)
      [0.4, 0.2, 0.4]]    (if cloudy: 40% sunny, 20% rainy, 40% cloudy)
 ```
 
-Commencez dans n'importe quel état. Après de nombreuses transitions, la distribution des états converge à la distribution stationnaire pi, où pi * P = pi. C'est le propre vecteur gauche de P avec la valeur propre 1.
+Après de nombreuses transitions, la répartition des états converge à la répartition stationnaire.$\pi$Où ?$\pi P = \pi$C' est le propre vecteur gauche de$P$avec la valeur propre 1.
 
 Pour la chaîne météorologique, la répartition stationnaire est [0,55, 0,18, 0,27] -- à long terme, il est ensoleillé 55% du temps, quel que soit l'état de départ.
 
@@ -108,8 +108,8 @@ graph LR
 
 **Computing the stationary distribution.**Il existe deux approches:
 
-1. **Power method**: multipliez une distribution initiale par P à plusieurs reprises.
-2. **Eigenvalue method**: trouver le propre vecteur gauche de P avec la valeur propre 1.
+1. **Power method**: multiplier toute répartition initiale par $P$Après suffisamment d'itérations, il converge.
+2. **Eigenvalue method**: trouver le propre vecteur gauche de $P$avec la valeur propre 1. Ceci est le propre vecteur de $P^T$avec la valeur propre 1.
 
 Les deux approches exigent que la chaîne remplisse les conditions de convergence.
 
@@ -119,63 +119,63 @@ Les deux approches exigent que la chaîne remplisse les conditions de convergenc
 
 La plupart des chaînes rencontrées dans ML satisfont aux deux conditions.
 
-**Absorbing states.**Un état est absorbant si une fois que vous y entrez, vous ne quittez jamais (P[i][i] = 1).
+**Absorbing states.**Un état est absorbant si une fois que vous y entrez, vous ne sortez jamais ($P[i][i] = 1$L'absorption des processus de modélisation de chaînes de Markov avec des états terminaux - un jeu qui se termine, un client qui se révolte, une séquence de jetons qui frappe le jeton de fin de texte.
 
-**Mixing time.**Combien d'étapes jusqu'à ce que la chaîne soit "close" à la distribution stationnaire? Formellement, le nombre d'étapes jusqu'à ce que la distance totale de variation de la stationarité tombe en dessous d'un certain seuil.
+**Mixing time.**Combien d'étapes jusqu'à ce que la chaîne soit "close" à la distribution stationnaire?$P$(1 moins la deuxième plus grande valeur propre) contrôle le temps de mélange.
 
 ### Connexion avec les modèles linguistiques
 
 La génération de jetons dans un modèle de langage est approximativement un processus de Markov.
 
-```
-P(token_i) = exp(logit_i / temperature) / sum(exp(logit_j / temperature))
+```math
+P(\text{token}_i) = \frac{\exp(\text{logit}_i / \text{temperature})}{\sum_j \exp(\text{logit}_j / \text{temperature})}
 ```
 
 - Température = 1,0: répartition standard
 - Température < 1,0: plus nette (plus déterministe)
 - Température > 1,0: plus plate (plus aléatoire)
-- Température -> 0: argmax (comme l'avidité)
+- Température $\to 0$: argmax (compulsif)
 
-Le prélèvement d'échantillons top-k réduit à k les jetons de plus grande probabilité. Le prélèvement d'échantillons top-p (nucleus) réduit à la plus petite série de jetons dont la probabilité cumulée dépasse p. Les deux modifient les probabilités de transition de Markov.
+Le prélèvement d'échantillons de haut en bas à la$k$Les échantillons de pointe (nucleus) se réduisent à la plus petite série de jetons dont la probabilité cumulée dépasse $p$Les deux modifient les probabilités de transition de Markov.
 
 ### Motion brown
 
-La position B ((t) a trois propriétés:
-1. B(0) = 0
-2. B(t) - B(s) est normalement distribué avec la moyenne 0 et la variance t - s (pour t > s)
+La limite de temps continue de la marche aléatoire.$B(t)$a trois propriétés:
+1. $B(0) = 0$
+2. $B(t) - B(s)$est normalement réparti avec la moyenne 0 et la variance $t - s$(pour $t > s$)
 3. Les augmentations sur les intervalles non superposés sont indépendantes
 
 Le mouvement brownien est continu mais nulle part différenciable - il se balance à chaque échelle.
 
 Dans une simulation discrète, on approche le mouvement brownien par:
 
-```
-B(t + dt) = B(t) + sqrt(dt) * z,    where z ~ N(0, 1)
+```math
+B(t + dt) = B(t) + \sqrt{dt} \, z, \quad \text{where } z \sim \mathcal{N}(0, 1)
 ```
 
-L'échelle sqrt (dt) est importante. Elle vient du théorème de limite centrale appliqué aux promenades aléatoires.
+Le $\sqrt{dt}$L'échelle est importante. Elle vient du théorème limite centrale appliqué aux promenades aléatoires.
 
 ### Dynamique de Langevin
 
-La dynamique de Langevin trouve la distribution de probabilité proportionnelle à exp ((-U ((x) / T), où U est une fonction d'énergie et T est la température.
+La dynamique de Langevin trouve la distribution de probabilité proportionnelle à $\exp(-U(x)/T)$Où ?$U$est une fonction énergétique et $T$est la température.
 
-```
-x_{t+1} = x_t - dt * gradient(U(x_t)) + sqrt(2 * T * dt) * z_t
+```math
+x_{t+1} = x_t - dt \, \nabla U(x_t) + \sqrt{2 T \, dt} \, z_t
 ```
 
 Deux forces agissent sur la particule:
-1. **Gradient force**(-dt * gradient(U)): pousse vers une faible énergie (comme la descente du gradient)
-2. **Random force**(sqrt(2*T*dt) * z): pousse dans des directions aléatoires (exploration)
+1. **Gradient force**(le secteur de l'énergie)$-dt \cdot \nabla U$): pousse vers une faible énergie (comme la descente de la gradiente)
+2. **Random force**(le secteur de l'énergie)$\sqrt{2T dt} \cdot z$): pousse dans des directions aléatoires (exploration)
 
-À température T = 0, c'est une descente de gradient pure. À haute température, c'est presque une marche aléatoire. À la bonne température, la particule explore le paysage énergétique et passe plus de temps dans les régions à faible énergie.
+À température$T = 0$À haute température, c'est presque une marche aléatoire. À la bonne température, la particule explore le paysage énergétique et passe plus de temps dans les régions à faible énergie.
 
 **Connection to diffusion models.**Le processus avancé d'un modèle de diffusion est le suivant:
 
-```
-x_t = sqrt(alpha_t) * x_{t-1} + sqrt(1 - alpha_t) * noise
+```math
+x_t = \sqrt{\alpha_t} \, x_{t-1} + \sqrt{1 - \alpha_t} \cdot \text{noise}
 ```
 
-C'est une chaîne de Markov qui mélange progressivement les données avec le bruit.
+C'est une chaîne de Markov qui mélange progressivement les données avec le bruit.$x_T$C'est un bruit gaussien pur.
 
 Le processus inverse - passer du bruit à la data - est aussi une chaîne de Markov, mais ses probabilités de transition sont apprises par un réseau neuronal. Le réseau apprend à prédire le bruit qui a été ajouté à chaque étape, puis le soustrait.
 
@@ -195,27 +195,27 @@ graph LR
 
 ### MCMC: Chaîne de Markov à Monte Carlo
 
-Parfois, vous devez échantillonner à partir d'une distribution p ((x) que vous pouvez évaluer (jusqu'à une constante) mais ne peut pas échantillonner directement.
+Parfois, il faut prendre des échantillons d'une distribution.$p(x)$Les postérieurs bayésiens sont l'exemple classique -- vous connaissez la probabilité par la précédente, mais la constante de normalisation est difficile à résoudre.
 
-**Metropolis-Hastings**construit une chaîne de Markov dont la distribution stationnaire est p ((x):
+**Metropolis-Hastings**construit une chaîne de Markov dont la distribution stationnaire est$p(x)$- Le numéro de la liste:
 
-1. Commencez à une position x
-2. Proposer une nouvelle position x' à partir d'une distribution de proposition Q(x'
-3. Ratio d'acceptation de calcul: a(x') * Q(x
-4. Acceptez x' avec probabilité min ((1, a).
+1. Commencez par une position .$x$
+2. Proposez une nouvelle position $x'$de la distribution de propositions $Q(x' \mid x)$
+3. Ratio d' acceptation de calcul: $a = p(x') Q(x \mid x') / (p(x) Q(x' \mid x))$
+4. Je l' accepte .$x'$avec probabilité $\min(1, a)$- Sinon , restez à la .$x$- Je suis désolé .
 5. Je répète.
 
-Si Q est symétrique par exemple, Q(x' ( ( ( ( () ), Q(x (x) = N(x, sigma^2)), le rapport se simplifie à a = p(x') / p(x. Vous n'avez besoin que du rapport des probabilités - les constantes normalisantes annulent.
+Si vous$Q$est symétrique (p. ex., $Q(x' \mid x) = Q(x \mid x') = \mathcal{N}(x, \sigma^2){}$), le ratio est simplifié à $a = p(x') / p(x)$Il vous suffit de voir le ratio des probabilités, la constante de normalisation annulée.
 
-La chaîne est garantie de converger à p*x dans des conditions douces. Mais la convergence peut être lente si la proposition est trop petite (marche aléatoire) ou trop grande (rejettion élevée).
+La chaîne est garantie de converger à $p(x)$La convergence peut être lente si la proposition est trop petite (marche aléatoire) ou trop grande (rejetation élevée).
 
-**Why it works.**Le rapport d'acceptation garantit un équilibre détaillé: la probabilité d'être à x et de se déplacer à x' est égale à la probabilité d'être à x' et de se déplacer à x. L'équilibre détaillé implique que p(x) est la distribution stationnaire de la chaîne.
+**Why it works.**Le ratio d' acceptation assure un équilibre détaillé: la probabilité d' être à $x$et de se déplacer à $x'$est égale à la probabilité d' être à $x'$et de se déplacer à $x$Un équilibre détaillé implique que$p(x)$Donc après suffisamment de pas, les échantillons proviennent de$p(x)$- Je suis désolé .
 
 **Practical considerations:**
-- **Burn-in**La chaîne a besoin de temps pour atteindre la distribution stationnaire à partir de son point de départ.
-- **Thinning**: conserver chaque k-e échantillon pour réduire l'autocorrélation.
+- **Burn-in**: jeter le premier $N$La chaîne a besoin de temps pour atteindre la distribution stationnaire à partir de son point de départ.
+- **Thinning**Gardez tout .$k$- le 1er échantillon pour réduire l'autocorrélation.
 - **Multiple chains**Si elles convergent vers la même distribution, vous avez des preuves de convergence.
-- **Acceptance rate**Pour les propositions gaussiennes en dimension d, le taux d'acceptation optimal est d'environ 23% (Roberts & Rosenthal, 2001).
+- **Acceptance rate**: pour les propositions gaussiennes en$d$Les dimensions de la chaîne sont plus élevées que celles de la chaîne, le taux d'acceptation optimal est d'environ 23% (Roberts & Rosenthal, 2001).
 
 ### Processus stochastiques dans l'IA
 
@@ -260,7 +260,7 @@ def random_walk_2d(n_steps, seed=None):
     return x, y
 ```
 
-La marche 1D stocke les sommes cumulatives. Chaque étape est +1 ou -1. Après n étapes, la position est la somme. La variance augmente linéairement avec n, de sorte que l'écart standard augmente en sqrt(n).
+La marche 1D stocke les sommes cumulées. chaque étape est +1 ou -1.$n$La variance augmente linéairement avec $n$, donc l' écart standard augmente à mesure que $\sqrt{n}$- Je suis désolé .
 
 ### Étape 2: Chaîne de Markov
 
@@ -294,7 +294,7 @@ class MarkovChain:
         return np.abs(stationary)
 ```
 
-La distribution stationnaire est le propre vecteur gauche de P avec valeur propre 1. Nous le trouvons en calculant les propres vecteurs de P^T (transposant les propres vecteurs gauche en propres vecteurs droits).
+La distribution stationnaire est le propre vecteur gauche de $P$On le trouve en calculant des vecteurs propres de $P^T$(transposant les vecteurs propres gauche en vecteurs propres droits).
 
 ### Étape 3: Dynamique de Langevin
 
@@ -310,7 +310,7 @@ def langevin_dynamics(grad_U, x0, dt, temperature, n_steps, seed=None):
     return np.array(trajectory)
 ```
 
-Le gradient pousse x vers une faible énergie. Le bruit empêche qu'il ne se bloque. À l'équilibre, la distribution des échantillons est proportionnelle à exp ((-U ((x) / température).
+Le gradient pousse $x$Le bruit empêche la prise de poids.$\exp(-U(x)/\text{temperature})$- Je suis désolé .
 
 ### Étape 4: Métropole-Hastings
 
@@ -363,7 +363,7 @@ for _ in range(100):
 print(f"Stationary distribution: {np.round(distribution, 4)}")
 ```
 
-Multipliez la distribution initiale par P à plusieurs reprises. Après suffisamment d'itérations, elle converge à la distribution stationnaire indépendamment de l'endroit où vous avez commencé. C'est la méthode de puissance pour trouver le propre vecteur gauche dominant.
+Multipliez la répartition initiale par $P$Il est le système de puissance pour trouver le vecteur propre gauche dominant.
 
 ### Connexions avec des cadres réels
 
@@ -409,14 +409,14 @@ Cette leçon donne:
 
 Les modèles de diffusion méritent une attention particulière.
 
-```
-q(x_t | x_{t-1}) = N(x_t; sqrt(1-beta_t) * x_{t-1}, beta_t * I)
+```math
+q(x_t \mid x_{t-1}) = \mathcal{N}\left(x_t; \sqrt{1-\beta_t} \, x_{t-1}, \beta_t I\right)
 ```
 
-où beta_t est un calendrier de bruit. Après T étapes, x_T est approximativement N(0, I). Le processus inverse est paramétrifié par un réseau neuronal qui prédit le bruit:
+où $\beta_t$C'est un calendrier de bruit.$T$étapes,$x_T$est approximativement $\mathcal{N}(0, I)$Le processus inverse est paramétrifié par un réseau neural qui prédit le bruit:
 
-```
-p_theta(x_{t-1} | x_t) = N(x_{t-1}; mu_theta(x_t, t), sigma_t^2 * I)
+```math
+p_\theta(x_{t-1} \mid x_t) = \mathcal{N}\left(x_{t-1}; \mu_\theta(x_t, t), \sigma_t^2 I\right)
 ```
 
 Chaque étape de la génération est une étape dans une chaîne de Markov apprise.
@@ -427,15 +427,27 @@ L'idée clé de toutes ces connexions: les processus stochastiques ne sont pas s
 
 ## Exercices
 
-1. **Simulate 1000 random walks of 10000 steps.**Décrire la répartition des positions finales. Vérifiez qu'il est approximativement gaussien avec la moyenne 0 et l'écart standard sqrt ((10000) = 100.
+1. **Simulate 1000 random walks of 10000 steps.**Décrire la répartition des positions finales. Vérifiez qu'il est approximativement gaussien avec la moyenne 0 et l'écart standard $\sqrt{10000} = 100$- Je suis désolé .
 
 2. **Build a text generator using a Markov chain.**Formez un petit corpus: pour chaque mot, comptez les transitions vers le mot suivant. Construisez la matrice de transition. Générez de nouvelles phrases en prélèvant des échantillons de la chaîne.
 
 3. **Implement simulated annealing**En utilisant Metropolis-Hastings, commencez à haute température (acceptez presque tout) et refroidissez progressivement (acceptez seulement des améliorations).
 
-4. **Compare Langevin dynamics at different temperatures.**Pratique de l'échantillon à partir d'un potentiel de puits double U(x) = (x^2 - 1)^2. à basse température, les échantillons se regroupent dans un puits. à haute température, ils se propagent à travers les deux.
+4. **Compare Langevin dynamics at different temperatures.**Pratique d' un potentiel de puits double $U(x) = (x^2 - 1)^2$À basse température, les échantillons se regroupent dans un puits. À haute température, ils se répandent sur les deux.
 
 5. **Implement the forward diffusion process.**Commencez par un signal 1D (par exemple, une onde sinusoïde). Ajoutez progressivement le bruit sur 100 étapes avec un calendrier sonore linéaire. Montrez comment le signal se dégrade en bruit pur.
+
+### Des indices
+
+**Exercise 1.**Appel`random_walk_1d(10000, seed=i)`Pour 1000 graines, et conservez chaque position finale. Vérifiez que la moyenne est proche de 0, que l'écart standard est proche de 100, et que 68% des positions finales sont entre -100 et 100.
+
+**Exercise 2.**Comptez chaque paire de mots, puis divisez chaque rangée par son total de sorte que chaque rangée s'ajoute à 1. Passez la matrice à `MarkovChain(transition_matrix, state_names)`et appeler`simulate`Vérifiez que chaque paire de mots dans votre sortie se trouve également dans le corpus.
+
+**Exercise 3.**Acceptez un pire point avec la probabilité .$\exp(-\Delta / T)$et multiplier $T$Test sur une fonction dont vous connaissez le minimum, et vérifiez votre réponse contre une recherche fine grille.
+
+**Exercise 4.**Le gradient est $4x(x^2 - 1)$, alors passez ça à `langevin_dynamics(grad_U, x0, dt, temperature, n_steps)`La barrière à$x = 0$a une hauteur de 1, alors comptez la fréquence de la marque de$x$les changements de température de 0,05 à 1 et recherchez la température où le nombre commence à augmenter rapidement.
+
+**Exercise 5.**Appel`diffusion_forward(signal, 100)`et calculer $\bar{\alpha}$à la dernière étape comme produit de $(1 - \beta_t)$Si vous ...$\bar{\alpha}$est loin de 0, le signal n'est pas encore bruit pur, alors élève `beta_end`Testez votre dénoiseur d' abord avec le bruit réel:$(x_t - \sqrt{1 - \bar{\alpha}_t} \epsilon)/\sqrt{\bar{\alpha}_t}$doit rendre le signal original exactement.
 
 ## Les termes clés
 
@@ -443,9 +455,9 @@ L'idée clé de toutes ces connexions: les processus stochastiques ne sont pas s
 |------|----------------|----------------------|
 | Random walk | "Coin-flip movement" | A process where position changes by random increments at each step |
 | Markov property | "Memoryless" | The future depends only on the present state, not on the history |
-| Transition matrix | "The probability table" | P[i][j] = probability of moving from state i to state j |
-| Stationary distribution | "The long-run average" | The distribution pi where pi*P = pi -- the chain's equilibrium |
-| Brownian motion | "Random jiggling" | The continuous-time limit of a random walk, B(t) ~ N(0, t) |
+| Transition matrix | "The probability table" | $P[i][j]$ = probability of moving from state $i$ to state $j$ |
+| Stationary distribution | "The long-run average" | The distribution $\pi$ where $\pi P = \pi$ -- the chain's equilibrium |
+| Brownian motion | "Random jiggling" | The continuous-time limit of a random walk, $B(t) \sim \mathcal{N}(0, t)$ |
 | Langevin dynamics | "Gradient descent with noise" | Update rule that combines deterministic gradient and random perturbation |
 | MCMC | "Walking toward the target" | Constructing a Markov chain whose stationary distribution is the one you want |
 | Metropolis-Hastings | "Propose and accept/reject" | MCMC algorithm that uses acceptance ratios to ensure convergence |

@@ -28,29 +28,31 @@ C'est ainsi que PyTorch, TensorFlow et JAX fonctionnent. Vous construirez une ve
 
 ### La règle de la chaîne
 
-Si vous`y = f(g(x))`, le dérivé de `y`en ce qui concerne `x`est:
+Si vous$y = f(g(x))$, le dérivé de $y$en ce qui concerne $x$est:
 
-```
-dy/dx = dy/dg * dg/dx = f'(g(x)) * g'(x)
+```math
+\frac{dy}{dx} = \frac{dy}{dg} \cdot \frac{dg}{dx} = f'(g(x)) \cdot g'(x)
 ```
 
 Multipliez les dérivés le long de la chaîne.
 
-Exemple: `y = sin(x^2)`
+Exemple: $y = \sin(x^2)$
 
-```
-g(x) = x^2       g'(x) = 2x
-f(g) = sin(g)     f'(g) = cos(g)
-
-dy/dx = cos(x^2) * 2x
+```math
+\begin{aligned}
+g(x) &= x^2 \qquad & g'(x) &= 2x \\
+f(g) &= \sin(g) \qquad & f'(g) &= \cos(g) \\[4pt]
+\frac{dy}{dx} &= \cos(x^2) \cdot 2x
+\end{aligned}
 ```
 
 Pour les compositions plus profondes, la chaîne s'étend:
 
-```
-y = f(g(h(x)))
-
-dy/dx = f'(g(h(x))) * g'(h(x)) * h'(x)
+```math
+\begin{aligned}
+y &= f(g(h(x))) \\[4pt]
+\frac{dy}{dx} &= f'(g(h(x))) \cdot g'(h(x)) \cdot h'(x)
+\end{aligned}
 ```
 
 Chaque couche d'un réseau neuronal est un seul maillon de cette chaîne.
@@ -88,7 +90,7 @@ Le passage à l'arrière applique la règle de la chaîne à chaque nœud, propa
 
 Il y a deux façons d'appliquer la règle de la chaîne à travers un graphique.
 
-**Forward mode**Il commence par les entrées et pousse les dérivés vers l'avant.`dx/dx = 1`C'est bon quand on a peu d'entrée et beaucoup de sortie.
+**Forward mode**Il commence par les entrées et pousse les dérivés vers l'avant.$dx/dx = 1$C'est bon quand on a peu d'entrée et beaucoup de sortie.
 
 ```
 Forward mode: seed dx/dx = 1, propagate forward
@@ -98,7 +100,7 @@ Forward mode: seed dx/dx = 1, propagate forward
   y = sin(a)  (dy/dx = cos(a) * da/dx = cos(4) * 4 = -2.615)
 ```
 
-**Reverse mode**Il commence à la sortie et tire les gradients en arrière.`dy/dy = 1`Il est bon quand vous avez beaucoup d'entrées et peu de sorties.
+**Reverse mode**Il commence à la sortie et tire les gradients en arrière.$dy/dy = 1$Il est bon quand vous avez beaucoup d'entrées et peu de sorties.
 
 ```
 Reverse mode: seed dy/dy = 1, propagate backward
@@ -112,12 +114,12 @@ Les réseaux neuronaux ont des millions d'entrées (poids) et une sortie (perte)
 
 | Mode | Seed | Direction | Best when |
 |------|------|-----------|-----------|
-| Forward | `dx_i/dx_i = 1` | Input to output | Few inputs, many outputs |
-| Reverse | `dy/dy = 1` | Output to input | Many inputs, few outputs (neural nets) |
+| Forward | $dx_i/dx_i = 1$ | Input to output | Few inputs, many outputs |
+| Reverse | $dy/dy = 1$ | Output to input | Many inputs, few outputs (neural nets) |
 
 ### Numéros doubles pour le mode avant
 
-Le mode avant peut être mis en œuvre avec élégance avec des nombres doubles.`a + b*epsilon`où `epsilon^2 = 0`- Je suis désolé .
+Le mode avant peut être mis en œuvre avec élégance avec des nombres doubles.$a + b\epsilon$où $\epsilon^2 = 0$- Je suis désolé .
 
 ```
 Dual number: (value, derivative)
@@ -236,7 +238,7 @@ Chaque opération crée une fermeture qui sait calculer les gradients locaux et 
             v._backward()
 ```
 
-Le tri topologique assure que le gradient de chaque nœud est entièrement calculé avant de se propager à ses enfants.
+Le type topologique assure que le gradient de chaque nœud est entièrement calculé avant sa propagation à ses enfants.$dy/dy = 1$)
 
 ### Étape 4: Plus d'opérations pour un moteur complet
 
@@ -300,11 +302,11 @@ La classe de valeur de base traite l'addition, la multiplication et le relou. Un
 | Operation | Backward rule | Used in |
 |-----------|--------------|---------|
 | `__sub__` | Reuses add + neg | Loss computation (pred - target) |
-| `__pow__` | n * x^(n-1) | Polynomial activations, MSE (error^2) |
+| `__pow__` | $n \cdot x^{n-1}$ | Polynomial activations, MSE ($\text{error}^2$) |
 | `__truediv__` | Reuses mul + pow(-1) | Normalization, learning rate scaling |
-| `exp` | exp(x) * upstream | Softmax, log-likelihood |
-| `log` | (1/x) * upstream | Cross-entropy loss, log probabilities |
-| `tanh` | (1 - tanh^2) * upstream | Classic activation function |
+| `exp` | $\exp(x) \cdot \text{upstream}$ | Softmax, log-likelihood |
+| `log` | $(1/x) \cdot \text{upstream}$ | Cross-entropy loss, log probabilities |
+| `tanh` | $(1 - \tanh^2) \cdot \text{upstream}$ | Classic activation function |
 
 La partie intelligente:`__sub__`et `__truediv__`Les valeurs de la chaîne sont définies en termes d'opérations existantes.
 
@@ -489,13 +491,23 @@ La classe de valeur construite ici est la base pour la boucle d'entraînement du
 
 ## Exercices
 
-1. Ajouter `__pow__`à la classe de valeur pour pouvoir calculer `x ** n`Vérifiez ça .`d/dx(x^3)`à`x=2`égale `12.0`- Je suis désolé .
+1. Ajouter `__pow__`à la classe de valeur pour pouvoir calculer `x ** n`Vérifiez ça .$\frac{d}{dx}(x^3)$à$x=2$égale `12.0`- Je suis désolé .
 
-2. Ajouter `tanh`comme une fonction d'activation.`tanh'(0) = 1`et `tanh'(2) = 0.0707`- Je suis d'accord.
+2. Ajouter `tanh`comme une fonction d'activation.$\tanh'(0) = 1$et $\tanh'(2) = 0.0707$- Je suis d'accord.
 
 3. Construisez un graphique de calcul pour un seul neurone: `y = relu(w1*x1 + w2*x2 + b)`Compute les cinq gradients et vérifie contre PyTorch.
 
 4. Implémenter l'autodiff en mode avant en utilisant des numéros doubles.`Dual`classe et vérifier qu'il donne les mêmes dérivés que votre moteur en mode inverse.
+
+### Des indices
+
+**Exercise 1.** `Value`Définit déjà `__pow__`- Lisez son .`_backward`et confirmer qu' il s' applique $n x^{n-1}$- À la descente.`x = Value(2.0)`- Je suis là .`y = x ** 3`- Je suis là .`y.backward()`- le président .`x.grad`doit être de 12,0.
+
+**Exercise 2.**Utilisation $\tanh'(x) = 1 - \tanh(x)^2$dans `_backward`- Vérifiez votre différence finie:$\frac{\tanh(x + h) - \tanh(x - h)}{2h}$Il faut être d' accord à$x = 0$et $x = 2$- Je suis désolé .
+
+**Exercise 3.**Construire`w1*x1 + w2*x2 + b`de `Value`les objets, appliquer `relu`, et appeler`backward`Avant de comparer avec PyTorch, vérifiez à la main si l'entrée de `relu`est positif, le gradient pour `w1`égale `x1`; si elle est négative, les cinq gradients sont 0.
+
+**Exercise 4.**Conserver une valeur et un dérivé dans chacun `Dual`, et utiliser la règle du produit $(a, a')(b, b') = (ab, a'b + ab')$Pour la multiplication, séparez l'entrée avec la dérivé 1 et comparez le résultat avec `x.grad`du moteur en mode inverse pour la même fonction.
 
 ## Les termes clés
 
@@ -506,13 +518,13 @@ La classe de valeur construite ici est la base pour la boucle d'entraînement du
 | Forward mode | "Push derivatives forward" | Autodiff that propagates derivatives from inputs to outputs. One pass per input variable. |
 | Reverse mode | "Backpropagation" | Autodiff that propagates gradients from outputs to inputs. One pass per output variable. |
 | Autograd | "Automatic gradients" | A system that records operations on values, builds a graph, and computes exact gradients via the chain rule |
-| Dual numbers | "Value plus derivative" | Numbers of the form a + b*epsilon (epsilon^2 = 0) that carry derivative information through arithmetic |
+| Dual numbers | "Value plus derivative" | Numbers of the form $a + b\epsilon$ ($\epsilon^2 = 0$) that carry derivative information through arithmetic |
 | Topological sort | "Dependency order" | Ordering graph nodes so every node comes after all its dependencies. Required for correct gradient propagation. |
 | Gradient accumulation | "Add, don't replace" | When a value feeds into multiple operations, its gradient is the sum of all incoming gradient contributions |
 | Dynamic graph | "Define by run" | A computation graph rebuilt on every forward pass, allowing Python control flow inside models (PyTorch style) |
 | Gradient checking | "Numerical verification" | Comparing autodiff gradients against numerical finite-difference gradients to verify correctness. Essential for debugging. |
 | MLP | "Multi-layer perceptron" | A neural network with one or more hidden layers of neurons. Each neuron computes a weighted sum plus bias, then applies an activation function. |
-| Neuron | "Weighted sum + activation" | The basic unit: output = activation(w1*x1 + w2*x2 + ... + b). The weights and bias are learnable parameters. |
+| Neuron | "Weighted sum + activation" | The basic unit: $\text{output} = \text{activation}(w_1 x_1 + w_2 x_2 + \cdots + b)$. The weights and bias are learnable parameters. |
 
 ## Pour en savoir plus
 

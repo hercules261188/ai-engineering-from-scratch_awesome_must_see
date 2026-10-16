@@ -28,10 +28,10 @@ Cette leçon construit chaque formule à partir de zéro pour que vous puissiez 
 
 Quand quelque chose d'improbable se produit, il contient plus d'informations.
 
-Le contenu d'information d'un événement avec probabilité p est:
+Le contenu d' information d' un événement avec probabilité $p$est:
 
-```
-I(x) = -log(p(x))
+```math
+I(x) = -\log(p(x))
 ```
 
 L'utilisation de la base log 2 vous donne des bits.
@@ -50,98 +50,104 @@ Certains événements ne contiennent aucune information.
 
 L'entropie est la surprise attendue sur tous les résultats possibles d'une distribution.
 
-```
-H(P) = -sum( p(x) * log(p(x)) )  for all x
+```math
+H(P) = -\sum_{x} p(x) \log(p(x))
 ```
 
 Une pièce équitable a une entropie maximale pour une variable binaire: 1 bit. Une pièce biaisée (99% de tête) a une entropie faible: 0,08 bits. Vous savez déjà ce qui va se passer, donc chaque détour ne vous dit presque rien.
 
-```
-Fair coin:    H = -(0.5 * log2(0.5) + 0.5 * log2(0.5)) = 1.0 bit
-Biased coin:  H = -(0.99 * log2(0.99) + 0.01 * log2(0.01)) = 0.08 bits
+```math
+\begin{aligned}
+\text{Fair coin:} \quad & H = -(0.5 \log_2(0.5) + 0.5 \log_2(0.5)) = 1.0 \text{ bit} \\
+\text{Biased coin:} \quad & H = -(0.99 \log_2(0.99) + 0.01 \log_2(0.01)) = 0.08 \text{ bits}
+\end{aligned}
 ```
 
 L'entropie mesure l'incertitude irréductible dans une distribution.
 
 ### La fonction de perte que vous utilisez tous les jours
 
-L'entropie croisée mesure la surprise moyenne lorsque vous utilisez la distribution Q pour encoder des événements qui proviennent réellement de la distribution P.
+L' entropie croisée mesure la surprise moyenne lorsque vous utilisez la distribution $Q$pour encoder les événements qui proviennent réellement de la distribution $P$- Je suis désolé .
 
+```math
+H(P, Q) = -\sum_{x} p(x) \log(q(x))
 ```
-H(P, Q) = -sum( p(x) * log(q(x)) )  for all x
-```
 
-P est la répartition réelle (les étiquettes). Q est la prédiction de votre modèle. Si Q correspond parfaitement à P, l'entropie croisée est égale à l'entropie.
+$P$est la répartition réelle (les étiquettes). $Q$est la prédiction de votre modèle.$Q$les correspondances $P$La croisée est égale à l'entropie.
 
-En classification, P est un vecteur à une chaleur (la vraie classe a une probabilité de 1, tout le reste est 0.) Cela simplifie l'entropie croisée à:
+En classification, $P$est un vecteur à une chaleur (la vraie classe a une probabilité de 1, tout le reste est 0).
 
-```
-H(P, Q) = -log(q(true_class))
+```math
+H(P, Q) = -\log(q(\text{true\_class}))
 ```
 
 C'est la formule de perte de l'entropie croisée pour la classification.
 
 ### KL Divergence (distance entre les distributions)
 
-La divergence KL mesure la surprise supplémentaire que vous obtenez en utilisant Q au lieu de P.
+La divergence KL mesure la surprise supplémentaire que vous obtenez en utilisant $Q$Au lieu de $P$- Je suis désolé .
 
-```
-D_KL(P || Q) = sum( p(x) * log(p(x) / q(x)) )  for all x
-             = H(P, Q) - H(P)
+```math
+\begin{aligned}
+D_{KL}(P \,\|\, Q) &= \sum_{x} p(x) \log(p(x) / q(x)) \\
+&= H(P, Q) - H(P)
+\end{aligned}
 ```
 
 L'entropie croisée est l'entropie plus la divergence KL. Puisque l'entropie de la vraie distribution est constante pendant l'entraînement, minimiser l'entropie croisée est la même chose que minimiser la divergence KL. Vous poussez la distribution de votre modèle vers la vraie distribution.
 
-La divergence KL n'est pas symétrique: D_KL(P ∫ Q) != D_KL(Q ∫ P). Ce n'est pas une mesure de distance réelle.
+La divergence KL n' est pas symétrique: $D_{KL}(P \Vert Q) \ne D_{KL}(Q \Vert P)$Ce n'est pas une vraie mesure de distance.
 
 ### Informations mutuelles
 
 L'information mutuelle mesure la quantité de savoir une variable vous dit sur une autre.
 
-```
-I(X; Y) = H(X) - H(X|Y)
-        = H(X) + H(Y) - H(X, Y)
+```math
+\begin{aligned}
+I(X; Y) &= H(X) - H(X \mid Y) \\
+&= H(X) + H(Y) - H(X, Y)
+\end{aligned}
 ```
 
-Si X et Y sont indépendants, les informations mutuelles sont zéro. Le fait de connaître l'une ne vous dit rien de l'autre. Si elles sont parfaitement corrélées, les informations mutuelles sont égales à l'entropie de l'une ou l'autre des variables.
+Si vous$X$et $Y$Si elles sont parfaitement corrélatives, l'information mutuelle est égale à l'entropie de l'une des variables.
 
 Dans la sélection des caractéristiques, une information mutuelle élevée entre une caractéristique et la cible signifie que la caractéristique est utile.
 
 ### Entropie conditionnelle
 
-H(Y de X) mesure la quantité d'incertitude qui reste à propos de Y après l'observation de X.
+$H(Y \mid X)$mesure la quantité d'incertitude qui subsiste $Y$après que vous ayez observé$X$- Je suis désolé .
 
-```
-H(Y|X) = H(X,Y) - H(X)
+```math
+H(Y \mid X) = H(X,Y) - H(X)
 ```
 
 Deux extrêmes:
-- Si X détermine complètement Y, alors H(Y ≠X) = 0. Connaître X élimine toute incertitude à propos de Y. Exemple: X = température en Celsius, Y = température en Fahrenheit.
-- Si X ne vous dit rien sur Y, alors H(YX ) = H(Y). Savoir X ne réduit pas votre incertitude du tout. Exemple: X = retour de monnaie, Y = la météo de demain.
+- Si vous$X$détermine complètement $Y$Alors ...$H(Y \mid X) = 0$- Je sais .$X$élimine toute incertitude concernant$Y$- Exemple:$X$= température en centigrade,$Y$= température en Fahrenheit.
+- Si vous$X$Ça ne vous dit rien .$Y$Alors ...$H(Y \mid X) = H(Y)$- Je sais .$X$Il est important de noter que les données de l'analyse de la situation ne réduisent pas du tout votre incertitude.$X$= retourner la pièce,$Y$= la météo de demain.
 
-L'entropie conditionnelle est toujours non négative et ne dépasse jamais H(Y):
+L' entropie conditionnelle est toujours non négative et ne dépasse jamais $H(Y)$- Le numéro de la liste:
 
+```math
+0 \le H(Y \mid X) \le H(Y)
 ```
-0 <= H(Y|X) <= H(Y)
-```
 
-Dans l'apprentissage automatique, l'entropie conditionnelle apparaît dans les arbres de décision. À chaque fraction, l'algorithme choisit la fonction X qui minimise H(Y) - la fonction qui élimine la plus grande incertitude sur l'étiquette Y.
+Dans l'apprentissage automatique, l'entropie conditionnelle apparaît dans les arbres de décision.$X$qui réduit au minimum $H(Y \mid X)$-- la fonction qui élimine le plus d' incertitude sur l' étiquette $Y$- Je suis désolé .
 
 ### Entropie conjointe
 
-H ((X,Y) est l'entropie de la distribution commune de X et Y ensemble.
+$H(X,Y)$est l'entropie de la distribution commune de $X$et $Y$ensemble.
 
-```
-H(X,Y) = -sum sum p(x,y) * log(p(x,y))   for all x, y
+```math
+H(X,Y) = -\sum_{x} \sum_{y} p(x,y) \log(p(x,y))
 ```
 
 Propriété clé:
 
-```
-H(X,Y) <= H(X) + H(Y)
+```math
+H(X,Y) \le H(X) + H(Y)
 ```
 
-L'égalité est valable lorsque X et Y sont indépendants. Si ils partagent des informations, l'entropie commune est inférieure à la somme des entropies individuelles. L'entropie " manquante " est exactement l'information mutuelle.
+L'égalité est valable lorsque $X$et $Y$Si elles partagent des informations, l'entropie commune est inférieure à la somme des entropie individuelles.
 
 ```mermaid
 graph TD
@@ -167,50 +173,52 @@ graph TD
 ```
 
 Les relations:
-- H(X,Y) = H(X) + H(Y
-- Le nombre de personnes concernées est de 0,5% à 0,5%
-- H(X,Y) = H(X) + H(Y) - I(X;Y)
+- $H(X,Y) = H(X) + H(Y \mid X) = H(Y) + H(X \mid Y)$
+- $I(X;Y) = H(X) - H(X \mid Y) = H(Y) - H(Y \mid X)$
+- $H(X,Y) = H(X) + H(Y) - I(X;Y)$
 
 ### Informations mutuelles (couche profonde)
 
-L'information mutuelle I(X;Y) quantifie à quel point la connaissance d'une variable réduit l'incertitude quant à l'autre.
+Informations mutuelles $I(X;Y)$quantifie la mesure dans laquelle le fait de connaître une variable réduit l'incertitude sur l'autre.
 
-```
-I(X;Y) = H(X) - H(X|Y)
-       = H(Y) - H(Y|X)
-       = H(X) + H(Y) - H(X,Y)
-       = sum sum p(x,y) * log(p(x,y) / (p(x) * p(y)))
+```math
+\begin{aligned}
+I(X;Y) &= H(X) - H(X \mid Y) \\
+&= H(Y) - H(Y \mid X) \\
+&= H(X) + H(Y) - H(X,Y) \\
+&= \sum_{x} \sum_{y} p(x,y) \log\left(\frac{p(x,y)}{p(x) \, p(y)}\right)
+\end{aligned}
 ```
 
 Propriétés:
-- J'ai toujours X, Y, >= 0, vous ne perdez jamais d'information en observant quelque chose.
-- I(X;Y) = 0 si et seulement si X et Y sont indépendants.
-- Il est symétrique, contrairement à la divergence KL.
-- I(X;X) = H(X). Une variable partage toutes ses informations avec elle-même.
+- $I(X;Y) \ge 0$On ne perd jamais de l'information en observant quelque chose.
+- $I(X;Y) = 0$si et seulement si $X$et $Y$sont indépendantes.
+- $I(X;Y) = I(Y;X)$C'est symétrique, contrairement à la divergence KL.
+- $I(X;X) = H(X)$Une variable partage toutes ses informations avec elle-même.
 
 **Mutual information for feature selection.**Dans ML, vous voulez des fonctionnalités qui sont informatives sur la cible.
 
-1. Pour chaque fonction X_i, calculer I(X_i; Y) où Y est la variable cible.
+1. Pour chaque fonctionnalité $X_i$, calcul$I(X_i; Y)$où $Y$est la variable cible.
 2. Les caractéristiques de classement par score MI.
-3. Gardez les caractéristiques de haut.
+3. Gardez le dessus .$k$Les caractéristiques.
 
 Cela fonctionne pour toute relation entre fonction et cible -- linéaire, non linéaire, monotone, ou non. La corrélation ne capture que les relations linéaires.
 
 | Method | Detects | Computational cost | Handles categorical? |
 |--------|---------|-------------------|---------------------|
-| Pearson correlation | Linear relationships | O(n) | No |
-| Spearman correlation | Monotonic relationships | O(n log n) | No |
-| Mutual information | Any statistical dependency | O(n log n) with binning | Yes |
+| Pearson correlation | Linear relationships | $O(n)$ | No |
+| Spearman correlation | Monotonic relationships | $O(n \log n)$ | No |
+| Mutual information | Any statistical dependency | $O(n \log n)$ with binning | Yes |
 
 ### Légimentation des étiquettes et entropie croisée
 
 La classification standard utilise des cibles dures: [0, 0, 1, 0]. La vraie classe obtient la probabilité 1, tout le reste obtient 0.
 
-```
-soft_target = (1 - epsilon) * hard_target + epsilon / num_classes
+```math
+\text{soft\_target} = (1 - \epsilon) \cdot \text{hard\_target} + \epsilon / \text{num\_classes}
 ```
 
-Avec epsilon = 0,1 et 4 classes:
+Avec $\epsilon = 0.1$et 4 classes:
 - Cible difficile: [0, 0, 1, 0]
 - Cible douce: [0,025, 0,025, 0,925, 0,025]
 
@@ -224,8 +232,8 @@ Pourquoi cela aide- t- il ?
 
 La perte d'entropie croisée avec l'allumage des étiquettes devient:
 
-```
-L = (1 - epsilon) * CE(hard_target, prediction) + epsilon * H_uniform(prediction)
+```math
+L = (1 - \epsilon) \cdot \text{CE}(\text{hard\_target}, \text{prediction}) + \epsilon \cdot H_{\text{uniform}}(\text{prediction})
 ```
 
 Le deuxième terme pénalise les prédictions qui sont loin d'être uniformes -- une régularisation directe de la confiance.
@@ -236,12 +244,14 @@ Trois points de vue, la même conclusion.
 
 **Information theory view.**L'entropie croisée mesure le nombre de bits que vous gaspillez en utilisant la distribution de votre modèle au lieu de la réelle distribution.
 
-**Maximum likelihood view.**Pour les échantillons de formation N avec des classes vraies y_i:
+**Maximum likelihood view.**Pour $N$échantillons de formation avec des classes réelles $y_i$- Le numéro de la liste:
 
-```
-Likelihood     = product( q(y_i) )
-Log-likelihood = sum( log(q(y_i)) )
-Negative log-likelihood = -sum( log(q(y_i)) )
+```math
+\begin{aligned}
+\text{Likelihood} &= \prod_i q(y_i) \\
+\text{Log-likelihood} &= \sum_i \log(q(y_i)) \\
+\text{Negative log-likelihood} &= -\sum_i \log(q(y_i))
+\end{aligned}
 ```
 
 Cette dernière ligne est la perte d'entropie croisée.
@@ -258,15 +268,17 @@ log base e   -> nats      (machine learning convention)
 log base 10  -> hartleys  (rarely used)
 ```
 
-1 nat = 1/ln(2) bits = 1,4427 bits. PyTorch et TensorFlow utilisent par défaut des logs naturels (nats).
+1 nat = $1/\ln(2)$PyTorch et TensorFlow utilisent des logs naturels (nats) par défaut.
 
 ### La perplexité
 
 La perplexité est l'exponentiel de l'entropie croisée.
 
-```
-Perplexity = 2^H(P,Q)   (if using bits)
-Perplexity = e^H(P,Q)   (if using nats)
+```math
+\begin{aligned}
+\text{Perplexity} &= 2^{H(P,Q)} \quad \text{(if using bits)} \\
+\text{Perplexity} &= e^{H(P,Q)} \quad \text{(if using nats)}
+\end{aligned}
 ```
 
 Un modèle de langage avec une complexité de 50 est, en moyenne, aussi confus qu'il devait choisir uniformément parmi 50 prochains jetons possibles.
@@ -445,19 +457,29 @@ Tu as construit de rien .`torch.nn.CrossEntropyLoss()`Vous savez maintenant pour
 
 2. Un modèle donne des logits [5,0, 2.0, 0.5] pour un échantillon avec une classe vraie 1. Calculer la perte d'entropie croisée à la main, puis vérifier avec votre `cross_entropy_loss`Quelle logite donnerait zéro perte ?
 
-3. Montrez que la divergence KL n'est pas symétrique. Choisissez deux distributions P et Q et comptez D_KL_P_K  Q) et DL Q  P). Expliquez pourquoi elles diffèrent.
+3. Montrez que la divergence KL n'est pas symétrique.$P$et $Q$et calculer $D_{KL}(P \Vert Q)$et $D_{KL}(Q \Vert P)$Expliquez pourquoi ils sont différents.
 
 4. Construisez une fonction qui calcule la perplexité d'une séquence de prédictions de jetons.
+
+### Des indices
+
+**Exercise 1.**Appel`entropy`avec 26 probabilités égales; le résultat doit être $\log_2 26 \approx 4.70$Les fréquences réelles des lettres ne sont pas uniformes, donc l'entropie avec elles doit être inférieure.
+
+**Exercise 2.**Compte `softmax`de la logite, alors $-\ln$de la probabilité à l'indice 1, et comparer avec `cross_entropy_loss(1, logits)`La perte approche de 0 seulement lorsque la logite de la classe 1 est beaucoup plus grande que les deux autres.
+
+**Exercise 3.**Utilisez deux petites distributions de formes différentes, par exemple $P = [0.9, 0.1]$et $Q = [0.5, 0.5]$, et appeler`kl_divergence`Les deux valeurs doivent être différentes, car chaque direction pèse le rapport log par une distribution différente.
+
+**Exercise 4.**Pour chaque paire, calculer `cross_entropy_loss(true_token_index, predicted_logits)`, prendre la moyenne, et passer à `perplexity`Vérifiez avec les logs uniformes .$V$Les jetons: la perplexité doit être $V$- Je suis désolé .
 
 ## Les termes clés
 
 | Term | What people say | What it actually means |
 |------|----------------|----------------------|
-| Information content | "Surprise" | The number of bits (or nats) needed to encode an event: -log(p) |
+| Information content | "Surprise" | The number of bits (or nats) needed to encode an event: $-\log(p)$ |
 | Entropy | "Randomness" | The average surprise across all outcomes of a distribution. Measures irreducible uncertainty. |
-| Cross-entropy | "The loss function" | Average surprise when using model distribution Q to encode events from true distribution P. |
-| KL divergence | "Distance between distributions" | Extra bits wasted by using Q instead of P. Equals cross-entropy minus entropy. Not symmetric. |
-| Mutual information | "How related are X and Y" | Reduction in uncertainty about X from knowing Y. Zero means independent. |
+| Cross-entropy | "The loss function" | Average surprise when using model distribution $Q$ to encode events from true distribution $P$. |
+| KL divergence | "Distance between distributions" | Extra bits wasted by using $Q$ instead of $P$. Equals cross-entropy minus entropy. Not symmetric. |
+| Mutual information | "How related are X and Y" | Reduction in uncertainty about $X$ from knowing $Y$. Zero means independent. |
 | Softmax | "Turn logits into probabilities" | Exponentiate and normalize. Maps any real-valued vector to a valid probability distribution. |
 | Perplexity | "How confused the model is" | Exponential of cross-entropy. The effective vocabulary size the model is choosing from at each step. |
 | Bits | "Shannon's unit" | Information measured with log base 2. One bit resolves one fair coin flip. |

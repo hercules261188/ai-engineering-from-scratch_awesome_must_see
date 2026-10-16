@@ -45,7 +45,7 @@ graph LR
 
 ### Retour
 
-Une rotation 2D par angle theta maintient les distances et les angles intacts.
+Une rotation 2D par angle $\theta$Il maintient les distances et les angles intacts.
 
 ```mermaid
 graph LR
@@ -66,18 +66,12 @@ graph LR
 
 En 3D, vous tournez autour d'un axe.
 
-```
-Rz(theta) = | cos  -sin  0 |     Rotate around z-axis
-            | sin   cos  0 |     (x-y plane spins, z stays)
-            |  0     0   1 |
-
-Rx(theta) = | 1   0     0    |   Rotate around x-axis
-            | 0  cos  -sin   |   (y-z plane spins, x stays)
-            | 0  sin   cos   |
-
-Ry(theta) = |  cos  0  sin |     Rotate around y-axis
-            |   0   1   0  |     (x-z plane spins, y stays)
-            | -sin  0  cos |
+```math
+\begin{aligned}
+R_z(\theta) &= \begin{bmatrix} \cos\theta & -\sin\theta & 0 \\ \sin\theta & \cos\theta & 0 \\ 0 & 0 & 1 \end{bmatrix} \quad \text{Rotate around z-axis (x-y plane spins, z stays)} \\[6pt]
+R_x(\theta) &= \begin{bmatrix} 1 & 0 & 0 \\ 0 & \cos\theta & -\sin\theta \\ 0 & \sin\theta & \cos\theta \end{bmatrix} \quad \text{Rotate around x-axis (y-z plane spins, x stays)} \\[6pt]
+R_y(\theta) &= \begin{bmatrix} \cos\theta & 0 & \sin\theta \\ 0 & 1 & 0 \\ -\sin\theta & 0 & \cos\theta \end{bmatrix} \quad \text{Rotate around y-axis (x-z plane spins, y stays)}
+\end{aligned}
 ```
 
 ### Écalement
@@ -123,8 +117,8 @@ graph LR
 ```
 
 Matrices de découpe:
-- `Shx = [[1, k], [0, 1]]`délocalisations x par k * y
-- `Shy = [[1, 0], [k, 1]]`délocalises y par k * x
+- `Shx = [[1, k], [0, 1]]`les changements $x$par $k \cdot y$
+- `Shy = [[1, 0], [k, 1]]`les changements $y$par $k \cdot x$
 
 ### Réflexion
 
@@ -196,7 +190,7 @@ La matrice étend l'espace de 3x le long de [1, 1] et garde [1, -1] inchangé.
 
 ### Composition propre
 
-Si une matrice a n vecteurs propres indépendants linéairement, elle peut être décomposée:
+Si une matrice a$n$vecteurs propres indépendants linéairement, il peut être décomposé:
 
 ```
 A = V @ D @ V^(-1)
@@ -210,7 +204,7 @@ This says: rotate into eigenvector coordinates, scale along each axis, rotate ba
 
 ### Pourquoi les valeurs propres comptent
 
-**PCA.**Les propres vecteurs de la matrice de covariance sont les composants principaux. Les valeurs propres vous disent combien de variance chaque composant capture.
+**PCA.**Les propres vecteurs de la matrice de covariance sont les composants principaux. Les valeurs propres vous indiquent combien de variance chaque composant capture.$k$, et vous avez une réduction de dimensionnalité.
 
 **Stability.**Dans les réseaux récurrents et les systèmes dynamiques, les valeurs propres avec une magnitude > 1 provoquent une explosion des sorties. La magnitude < 1 les fait disparaître.
 
@@ -309,7 +303,7 @@ print(f"Same? {result1 == result2}")
 
 ### Étape 3: Value propre à partir de zéro (2x2)
 
-Pour une matrice 2x2 `[[a, b], [c, d]]`, les valeurs propres résolvent l'équation caractéristique: `lambda^2 - (a+d)*lambda + (ad - bc) = 0`- Je suis désolé .
+Pour une matrice 2x2 `[[a, b], [c, d]]`, les valeurs propres résolvent l'équation caractéristique: $\lambda^2 - (a+d)\lambda + (ad - bc) = 0$- Je suis désolé .
 
 ```python
 def eigenvalues_2x2(matrix):
@@ -443,6 +437,14 @@ Cette leçon construit les bases géométriques de l'analyse de la PCA (phase 2)
 
 3. Créer une composition de trois transformations (rotation de 30 degrés, échelle par [1,5, 0,8], coupe avec kx=0,3) et appliquer à 8 points disposés dans un cercle. Imprimer avant et après les coordonnées. Compute le déterminant de la matrice composée et vérifier qu'il est égal au produit des déterminants individuels.
 
+### Des indices
+
+**Exercise 1.**Appliquer `rotation_2d`- Je suis là .`scaling_2d`, et `shearing_2d`à chaque coin avec `mat_vec_mul`Pour la rotation, calculer les 4 longueurs latérales et les 2 diagonales avant et après; chacune doit rester la même.
+
+**Exercise 2.**Écrivez l' équation caractéristique $\lambda^2 - (\text{trace})\lambda + \det = 0$Vérifiez que vos deux valeurs s'ajoutent à la trace (7) et se multiplient par le déterminant (10), puis comparez avec `eigenvalues_2x2`et `np.linalg.eigvals`- Je suis désolé .
+
+**Exercise 3.**Construisez les trois matrices, avec `shearing_2d(0.3, 0)`pour la découpe, multipliez-les par `mat_mul`dans l'ordre de la demande, et appliquer le résultat à 8 points $(\cos\theta, \sin\theta)$La rotation a un déterminant de 1 et la découpe a un déterminant de 1, donc `det_2x2`de la composition doit être égale $1.5 \times 0.8 = 1.2$- Je suis désolé .
+
 ## Les termes clés
 
 | Term | What people say | What it actually means |
@@ -454,9 +456,9 @@ Cette leçon construit les bases géométriques de l'analyse de la PCA (phase 2)
 | Composition | "Do two things" | Multiplying transformation matrices to chain operations. Order matters: B @ A means apply A first, then B. |
 | Eigenvector | "Special direction" | A direction that the matrix only scales, never rotates. The transformation's fingerprint. |
 | Eigenvalue | "How much it stretches" | The scalar factor by which the matrix scales its eigenvector. Can be negative (flip) or complex (rotation). |
-| Eigendecomposition | "Break the matrix apart" | Writing a matrix as V @ D @ V^(-1), separating it into its fundamental scaling directions and magnitudes. |
+| Eigendecomposition | "Break the matrix apart" | Writing a matrix as $V D V^{-1}$, separating it into its fundamental scaling directions and magnitudes. |
 | Determinant | "A single number from a matrix" | The factor by which the transformation scales area (2D) or volume (3D). Zero means the transformation is irreversible. |
-| Characteristic equation | "Where eigenvalues come from" | det(A - lambda * I) = 0. The polynomial whose roots are the eigenvalues. |
+| Characteristic equation | "Where eigenvalues come from" | $\det(A - \lambda I) = 0$. The polynomial whose roots are the eigenvalues. |
 
 ## Pour en savoir plus
 

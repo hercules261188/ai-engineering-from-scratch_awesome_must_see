@@ -9,7 +9,7 @@
 
 ## Objectifs d'apprentissage
 
-- Mettre en œuvre la FFT à partir de zéro et la vérifier contre la FFT O(N log N) Cooley-Tukey
+- Mettre en œuvre la DFT à partir de zéro et la vérifier contre les $O(N \log N)$Cooley-Tukey FFT
 - Interpréter les coefficients de fréquence: extraire l'amplitude, la phase et le spectre de puissance d'un signal
 - Appliquer le théorème de la convolutions pour effectuer la convolutions par la multiplication FFT
 - Connectez la décomposition de fréquence Fourier aux couches de codage positionnel et de convolutions de CNN transformateurs
@@ -28,67 +28,64 @@ Cela importe pour ML parce que la pensée du domaine de fréquence apparaît par
 
 ### La définition de la DFT
 
-Compte tenu des échantillons N x[0], x[1], ..., x[N-1], la Transformation Fourier discrète produit des coefficients de fréquence N X[0], X[1], ..., X[N-1]:
+- Je vous en prie .$N$échantillons $x[0], x[1], \ldots, x[N-1]$, la Transformation Fourier discrète produit $N$coefficients de fréquence $X[0], X[1], \ldots, X[N-1]$- Le numéro de la liste:
 
-```
-X[k] = sum_{n=0}^{N-1} x[n] * e^(-2*pi*i*k*n/N)
-
-for k = 0, 1, ..., N-1
+```math
+X[k] = \sum_{n=0}^{N-1} x[n] \, e^{-2\pi i k n/N} \qquad \text{for } k = 0, 1, \ldots, N-1
 ```
 
-Chaque X [k] est un nombre complexe. Sa magnitude. X [k] détecte l'amplitude de la fréquence k. Son angle de phase ((X [k]) vous indique le décalage de phase de cette fréquence.
+Chacun d' eux .$X[k]$C'est un nombre complexe.$\lvert X[k] \rvert$vous indique l'amplitude de la fréquence $k$- C' est sa phase .$\angle X[k]$vous indique le décalage de phase de cette fréquence.
 
-Le point de vue clé: `e^(-2*pi*i*k*n/N)`est un phasor rotatif à la fréquence k. Le DFT calcule la corrélation entre le signal et chacune des fréquences N à espace égal. Si le signal contient de l'énergie à la fréquence k, la corrélation est grande.
+Le point de vue clé: $e^{-2\pi i k n/N}$est un phasor rotatif à fréquence $k$. Le DFT calcule la corrélation entre le signal et chacun des $N$Si le signal contient de l'énergie à la fréquence$k$Si ce n'est pas le cas, il est proche de zéro.
 
 ### Ce que chaque coefficient signifie
 
-**X[0]: the DC component.**C'est la somme de tous les échantillons, proportionnelle à la moyenne.
+**$X[0]$: the DC component.**C'est la somme de tous les échantillons, proportionnelle à la moyenne.
 
+```math
+X[0] = \sum_{n=0}^{N-1} x[n] \, e^0 = \text{sum of all samples}
 ```
-X[0] = sum_{n=0}^{N-1} x[n] * e^0 = sum of all samples
-```
 
-**X[k] for 1 <= k <= N/2: positive frequencies.**X[k] représente les cycles de fréquence k par échantillon N. Un k plus élevé signifie une fréquence plus élevée (oscillation plus rapide).
+**$X[k]$ for $1 \le k \le N/2$: positive frequencies.** $X[k]$représente la fréquence $k$cycles par$N$échantillons. plus élevé $k$signifie une fréquence plus élevée (oscillation plus rapide).
 
-**X[N/2]: the Nyquist frequency.**La fréquence la plus élevée que vous pouvez représenter avec des échantillons N. Au-dessus de cela, vous obtenez un aliasing -- des fréquences élevées masquant comme des fréquences basses.
+**$X[N/2]$: the Nyquist frequency.**La fréquence la plus élevée que vous puissiez représenter $N$Au-dessus de cela, vous obtenez un pseudonyme -- des fréquences élevées masquant des fréquences basses.
 
-**X[k] for N/2 < k < N: negative frequencies.**Pour les signaux à valeur réelle, X[N-k] = conj(X[k]). Les fréquences négatives sont des images miroir des signaux positifs. C'est pourquoi les informations utiles sont dans les premiers coefficients N/2 + 1.
+**$X[k]$ for $N/2 < k < N$: negative frequencies.**Pour les signaux de valeur réelle,$X[N-k] = \overline{X[k]}$Les fréquences négatives sont des images miroir des fréquences positives.$N/2 + 1$les coefficients.
 
 ### DFT inversé
 
 Le DFT inverse reconstruit le signal d'origine à partir de ses coefficients de fréquence:
 
-```
-x[n] = (1/N) * sum_{k=0}^{N-1} X[k] * e^(2*pi*i*k*n/N)
-
-for n = 0, 1, ..., N-1
+```math
+x[n] = \frac{1}{N} \sum_{k=0}^{N-1} X[k] \, e^{2\pi i k n/N} \qquad \text{for } n = 0, 1, \ldots, N-1
 ```
 
-Les seules différences du DFT avant: le signe dans l'exponent est positif (pas négatif), et il y a un facteur de normalisation 1/N.
+Les seules différences avec le DFT à terme: le signe dans l'exponent est positif (pas négatif), et il y a un $1/N$facteur de normalisation.
 
 Le DFT inverse est une reconstruction parfaite. Aucune information n'est perdue. Vous pouvez passer du domaine temporel au domaine de fréquence et retourner sans aucune erreur. Le DFT est un changement de base - il réexprime les mêmes informations dans un système de coordonnées différent.
 
 ### Le FFT: le rendre rapide
 
-Le DFT tel que défini ci-dessus est O(N^2): pour chacun des coefficients de sortie N, vous sumez sur N échantillons d'entrée.
+Le DFT tel que défini ci-dessus est $O(N^2)$: pour chacun d'eux $N$Les coefficients de sortie, vous les résumerez $N$Les échantillons d'entrée.$N$= 1 million, c'est-à-dire $10^{12}$les opérations.
 
-La transformation rapide de Fourier (FFT) calcule le même résultat en O(N log N. Pour N = 1 million, c'est environ 20 millions d'opérations au lieu d'un trillion.
+La transformation rapide de Fourier (FFT) compute le même résultat en $O(N \log N)$Pour ...$N$= 1 million, c'est environ 20 millions d'opérations au lieu d'un trillion.
 
 L'algorithme Cooley-Tukey (le FFT le plus courant) fonctionne par division et conquête:
 
 1. Divisez le signal en échantillons indexés par et par.
 2. Calculer le DFT de chaque moitié de manière récursive.
-3. Combinez les deux DFT de taille moyenne en utilisant des "facteurs à double" e^(-2*pi*i*k/N).
+3. Combinez les deux DFT de taille moyenne en utilisant des "facteurs jumeaux". $e^{-2\pi i k/N}$- Je suis désolé .
 
+```math
+\begin{aligned}
+X[k] &= E[k] + e^{-2\pi i k/N} \, O[k] && \text{for } k = 0, \ldots, N/2 - 1 \\
+X[k + N/2] &= E[k] - e^{-2\pi i k/N} \, O[k] && \text{for } k = 0, \ldots, N/2 - 1 \\[6pt]
+\text{where } E &= \text{DFT of even-indexed samples} \\
+O &= \text{DFT of odd-indexed samples}
+\end{aligned}
 ```
-X[k] = E[k] + e^(-2*pi*i*k/N) * O[k]          for k = 0, ..., N/2 - 1
-X[k + N/2] = E[k] - e^(-2*pi*i*k/N) * O[k]    for k = 0, ..., N/2 - 1
 
-where E = DFT of even-indexed samples
-      O = DFT of odd-indexed samples
-```
-
-La symétrie signifie que chaque niveau de récursion fonctionne O(N), et il y a des niveaux log2(N. Total: O(N log N).
+La symétrie signifie que chaque niveau de récursion fait$O(N)$Le travail, et il y a $\log_2(N)$Les niveaux.$O(N \log N)$- Je suis désolé .
 
 ```mermaid
 graph TD
@@ -110,23 +107,27 @@ La FFT exige que la longueur du signal soit de puissance 2.
 
 ### Analyse spectrale
 
-Le **power spectrum**est X [k] squares - la magnitude carrée de chaque coefficient de fréquence.
+Le **power spectrum**est $\lvert X[k] \rvert^2$-- la magnitude carrée de chaque coefficient de fréquence. Il montre combien d'énergie est à chaque fréquence.
 
-Le **phase spectrum**est angle ((X[k]) -- le décalage de phase de chaque fréquence. Pour la plupart des tâches d'analyse, vous vous souciez du spectre de puissance et ignorez la phase.
+Le **phase spectrum**est $\angle X[k]$Pour la plupart des tâches d'analyse, vous vous souciez du spectre de puissance et ignorez la phase.
 
-```
-Power at frequency k:  P[k] = |X[k]|^2 = X[k].real^2 + X[k].imag^2
-Phase at frequency k:  phi[k] = atan2(X[k].imag, X[k].real)
+```math
+\begin{aligned}
+\text{Power at frequency } k: \quad P[k] &= |X[k]|^2 = \mathop{\mathrm{Re}}(X[k])^2 + \mathop{\mathrm{Im}}(X[k])^2 \\
+\text{Phase at frequency } k: \quad \phi[k] &= \mathop{\mathrm{atan2}}(\mathop{\mathrm{Im}}(X[k]), \mathop{\mathrm{Re}}(X[k]))
+\end{aligned}
 ```
 
 ### Résolution de fréquence
 
-La résolution de fréquence du DFT dépend du nombre d'échantillons N et du taux d'échantillonnage fs.
+La résolution de fréquence du DFT dépend du nombre d' échantillons $N$et le taux d'échantillonnage $f_s$- Je suis désolé .
 
-```
-Frequency of bin k:      f_k = k * fs / N
-Frequency resolution:    delta_f = fs / N
-Maximum frequency:       f_max = fs / 2  (Nyquist)
+```math
+\begin{aligned}
+\text{Frequency of bin } k: \quad & f_k = k \cdot f_s / N \\
+\text{Frequency resolution:} \quad & \Delta f = f_s / N \\
+\text{Maximum frequency:} \quad & f_{\max} = f_s / 2 \quad \text{(Nyquist)}
+\end{aligned}
 ```
 
 Pour résoudre deux fréquences proches, il faut plus d'échantillons.
@@ -137,20 +138,21 @@ C'est l'un des résultats les plus importants dans le traitement des signaux et 
 
 **Convolution in the time domain equals pointwise multiplication in the frequency domain.**
 
-```
-x * h = IFFT(FFT(x) . FFT(h))
-
-where * is convolution and . is element-wise multiplication
+```math
+\begin{aligned}
+& x * h = \text{IFFT}(\text{FFT}(x) \cdot \text{FFT}(h)) \\[4pt]
+& \text{where } * \text{ is convolution and } \cdot \text{ is element-wise multiplication}
+\end{aligned}
 ```
 
 Pourquoi cela importe ?
 
-- La convolutions directes de deux signaux de longueur N et M effectuent des opérations O(N*M).
-- La convolutions basées sur FFT prennent O(N log N): transformer les deux, multiplier, transformer en arrière.
+- Convolutions directes de deux signaux de longueur $N$et $M$Il prend$O(NM)$les opérations.
+- La convulsion basée sur le FFT prend $O(N \log N)$: transformer les deux, multiplier, transformer de retour.
 - Pour les grands noyaux, la convolutions FFT sont considérablement plus rapides.
 - C'est exactement ce qui se passe dans les couches convolutives avec de grands champs réceptifs.
 
-Note: le DFT calcule la convulsion circulaire (le signal se retourne). Pour la convulsion linéaire (pas de contour), les deux signaux sont à zéro avant le calcul.
+Note: le DFT compute la convolutions circulaires (le signal se retourne). Pour la convolutions linéaires (pas de contour), la longueur des deux signaux est réduite à zéro.$N + M - 1$avant l'informatique.
 
 ```mermaid
 graph LR
@@ -170,7 +172,7 @@ graph LR
 
 ### Les fenêtres
 
-Le DFT suppose que le signal est périodique - il traite les échantillons N comme une période d'un signal infiniment répétitif. Si le signal ne commence pas et ne se termine pas à la même valeur, cela crée une discontinuité à la limite, qui apparaît comme un contenu à haute fréquence faux. Cela s'appelle fuite spectrale.
+Le DFT suppose que le signal est périodique - il traite le $N$Si le signal ne commence pas et ne se termine pas à la même valeur, cela crée une discontinuité à la limite, qui apparaît comme un contenu à haute fréquence faux.
 
 Le débit de la fenêtre réduit la fuite en réduisant le signal à zéro à chaque extrémité avant de calculer le DFT.
 
@@ -183,9 +185,11 @@ Les fenêtres communes:
 | Hamming | Modified cosine | Moderate | Lower (-42 dB) | Audio processing, speech analysis |
 | Blackman | Triple cosine | Wide | Very low (-58 dB) | When side lobe suppression is critical |
 
-```
-Hann window:    w[n] = 0.5 * (1 - cos(2*pi*n / (N-1)))
-Hamming window: w[n] = 0.54 - 0.46 * cos(2*pi*n / (N-1))
+```math
+\begin{aligned}
+\text{Hann window:} \quad & w[n] = 0.5 \left(1 - \cos\frac{2\pi n}{N-1}\right) \\
+\text{Hamming window:} \quad & w[n] = 0.54 - 0.46 \cos\frac{2\pi n}{N-1}
+\end{aligned}
 ```
 
 Appliquer la fenêtre en la multipliant par élément avec le signal avant le DFT: `X = DFT(x * w)`- Je suis désolé .
@@ -194,13 +198,13 @@ Appliquer la fenêtre en la multipliant par élément avec le signal avant le DF
 
 | Property | Time Domain | Frequency Domain |
 |----------|-------------|-----------------|
-| Linearity | a*x + b*y | a*X + b*Y |
-| Time shift | x[n - k] | X[f] * e^(-2*pi*i*f*k/N) |
-| Frequency shift | x[n] * e^(2*pi*i*f0*n/N) | X[f - f0] |
-| Convolution | x * h | X * H (pointwise) |
-| Multiplication | x * h (pointwise) | X * H (circular convolution, scaled by 1/N) |
-| Parseval's theorem | sum \|x[n]\|^2 | (1/N) * sum \|X[k]\|^2 |
-| Conjugate symmetry (real input) | x[n] real | X[k] = conj(X[N-k]) |
+| Linearity | $ax + by$ | $aX + bY$ |
+| Time shift | $x[n - k]$ | $X[f] e^{-2\pi i f k/N}$ |
+| Frequency shift | $x[n] e^{2\pi i f_0 n/N}$ | $X[f - f_0]$ |
+| Convolution | $x * h$ | $X \cdot H$ (pointwise) |
+| Multiplication | $x \cdot h$ (pointwise) | $X * H$ (circular convolution, scaled by $1/N$) |
+| Parseval's theorem | $\sum \lvert x[n] \rvert^2$ | $\frac{1}{N} \sum \lvert X[k] \rvert^2$ |
+| Conjugate symmetry (real input) | $x[n]$ real | $X[k] = \overline{X[N-k]}$ |
 
 Le théorème de Parseval dit que l'énergie totale est la même dans les deux domaines.
 
@@ -208,18 +212,20 @@ Le théorème de Parseval dit que l'énergie totale est la même dans les deux d
 
 Le Transformer original utilise des codes positionnels sinusoïdes:
 
-```
-PE(pos, 2i)   = sin(pos / 10000^(2i/d_model))
-PE(pos, 2i+1) = cos(pos / 10000^(2i/d_model))
+```math
+\begin{aligned}
+PE(pos, 2i) &= \sin\left(pos / 10000^{2i/d_{\text{model}}}\right) \\
+PE(pos, 2i+1) &= \cos\left(pos / 10000^{2i/d_{\text{model}}}\right)
+\end{aligned}
 ```
 
-Chaque paire de dimensions (2i, 2i+1) oscille à une fréquence différente. Les fréquences sont géométriquement séparées de haute (dimension 0,1) à basse (dernières dimensions). Cela donne à chaque position un motif unique dans toutes les bandes de fréquences - similaire à la façon dont les coefficients de Fourier identifient uniquement un signal.
+Chaque paire de dimensions $(2i, 2i+1)$Les fréquences sont géométriquement séparées de haute (dimension 0,1) à basse (dimension finale). Cela donne à chaque position un motif unique dans toutes les bandes de fréquences - similaire à la façon dont les coefficients de Fourier identifient un signal de manière unique.
 
 Les propriétés clés que cela fournit:
 
 - **Uniqueness:**Aucune position n'a le même code.
-- **Bounded values:**Le péché et le cos sont toujours dans [-1, 1].
-- **Relative position:**Le codage de la position p+k peut être exprimé comme une fonction linéaire du codage à la position p. Le modèle peut apprendre à attirer les positions relatives.
+- **Bounded values:**Le péché et le cos sont toujours là.$[-1, 1]$- Je suis désolé .
+- **Relative position:**Le codage de la position $p+k$peut être exprimée comme une fonction linéaire du codage à position $p$Le modèle peut apprendre à prendre des positions relatives.
 
 ### Connexion à la CNN
 
@@ -231,7 +237,7 @@ Selon le théorème de la convolutions, cela équivaut à:
 3. Multipliez dans le domaine de fréquence
 4. Si le résultat est
 
-Les implémentations standard de CNN utilisent la convulsion directe (plus rapide pour les petits noyaux 3x3). Mais pour les grands noyaux ou la convulsion globale, les approches basées sur FFT sont nettement plus rapides. Certaines architectures (comme FNet) remplacent entièrement l'attention par FFT, atteignant une précision concurrentielle avec O(N log N) au lieu de la complexité O(N^2).
+Les implémentations standard de CNN utilisent la convulsion directe (plus rapide pour les petits noyaux 3x3). Mais pour les grands noyaux ou la convulsion globale, les approches basées sur FFT sont nettement plus rapides. Certaines architectures (comme FNet) remplacent entièrement l'attention par FFT, atteignant une précision concurrentielle avec $O(N \log N)$Au lieu de $O(N^2)$La complexité.
 
 ### Les spectrogrammes et la transformation Fourier à court terme
 
@@ -254,7 +260,7 @@ Les spectrogrammes sont la représentation standard des entrées pour les modèl
 
 ### Le nom de l'alias
 
-Si un signal contient des fréquences supérieures à fs/2 (la fréquence de Nyquist), l'échantillonnage à la fréquence fs créera des copies alias. Un signal de 90 Hz échantillonné à 100 Hz ressemble à un signal de 10 Hz. Il n'y a aucun moyen de les distinguer des échantillons seuls.
+Si un signal contient des fréquences supérieures $f_s/2$(fréquence Nyquist), prélèvement à la vitesse $f_s$Un signal de 90 Hz échantillonné à 100 Hz ressemble à un signal de 10 Hz. Il n'y a aucun moyen de les distinguer des échantillons seuls.
 
 ```
 Example:
@@ -273,7 +279,7 @@ C'est pourquoi les convertisseurs analogiques vers numériques incluent des filt
 
 Un malentendu commun: le remplissage à zéro d'un signal avant FFT améliore la résolution de la fréquence. Ce n'est pas le cas. Le remplissage à zéro interpole entre les poubelles de fréquences existantes, ce qui vous donne un spectre plus lisse. Mais il ne peut pas révéler les détails de fréquence qui n'étaient pas présents dans les échantillons originaux.
 
-La résolution de la fréquence réelle dépend uniquement du temps d'observation T = N / fs. Pour résoudre deux fréquences séparées par delta_f, vous avez besoin d'au moins T = 1 / delta_f secondes de données. Aucune quantité de rembourrage zéro ne modifie cette limite fondamentale.
+La résolution de la fréquence réelle dépend uniquement du temps d' observation $T = N / f_s$- Pour résoudre deux fréquences séparées par$\Delta f$Tu as besoin du moins .$T = 1 / \Delta f$Aucune quantité de rembourrage à zéro ne modifie cette limite fondamentale.
 
 ```figure
 fourier-synthesis
@@ -283,7 +289,7 @@ fourier-synthesis
 
 ### Étape 1: DFT à partir de zéro
 
-Le DFT O ((N^2) dérive directement de la définition.
+Le $O(N^2)$Le DFT dérive directement de la définition.
 
 ```python
 import math
@@ -307,7 +313,7 @@ def dft(x):
 
 ### Étape 2: DFT inversé
 
-La même structure, l'exponent positif, divisé par N.
+La même structure, l'exponent positif, divisé par $N$- Je suis désolé .
 
 ```python
 def idft(X):
@@ -426,33 +432,45 @@ On court .`code/fourier.py`pour générer `outputs/prompt-spectral-analyzer.md`-
 
 1. **Pure tone identification.**Créer un signal avec une seule onde sinus à une fréquence inconnue (entre 1 et 50 Hz), échantillonné à 128 Hz pendant 1 seconde. Utilisez votre DFT pour identifier la fréquence. Vérifiez les correspondances de la réponse. Ajoutez maintenant le bruit gaussien avec déviation standard 0.5 et répète. Comment le bruit affecte-t-il le spectre?
 
-2. **FFT vs DFT verification.**Générer un signal aléatoire de longueur 64. Compute à la fois DFT (O(N^2)) et FFT. Vérifiez que tous les coefficients correspondent à 1e-10. Le temps fonctionne sur les signaux de longueur 256, 512, 1024, et 2048.
+2. **FFT vs DFT verification.**Générer un signal aléatoire de longueur 64.$O(N^2){}$) et FFT. Vérifiez que tous les coefficients correspondent à 1e-10. Le temps fonctionne sur les signaux de longueur 256, 512, 1024, et 2048.
 
 3. **Convolution theorem proof by example.**Créer le signal x = [1, 2, 3, 4, 0, 0, 0, 0] et filtrer h = [1, 1, 1, 0, 0, 0, 0, 0]. Computez leur convolutions circulaires directement (boucle nichée). Computez-le ensuite via FFT (transformation, multiplication, transformation inverse). Vérifiez la correspondance des résultats.
 
 4. **Windowing effects.**Créer un signal qui est la somme de deux ondes sinusoïdes à 10 Hz et 12 Hz (très proche). échantillonner à 128 Hz pendant 1 seconde. Compute le spectre de puissance sans fenêtre, fenêtre Hann et fenêtre Hamming. Quelle fenêtre rend le plus facile de distinguer les deux sommets? Pourquoi?
 
-5. **Positional encoding analysis.**Générer les codage positionnaires sinusoïdes pour d_model = 128 et max_pos = 512. Pour chaque paire de positions (p1, p2), calculer le produit des points de leurs codage. Montrez que le produit des points dépend uniquement de p1 - p2 et non des positions absolues. Que se passe-t-il au produit des points à mesure que la distance augmente?
+5. **Positional encoding analysis.**Générer les codage positionnaires sinusoïdes pour d_modèle = 128 et max_pos = 512. Pour chaque paire de positions $(p_1, p_2)$, calculer le produit des points de leurs codages.$\lvert p_1 - p_2 \rvert$Qu'arrive-t-il au produit des points à mesure que la distance augmente ?
+
+### Des indices
+
+**Exercise 1.**Avec 128 échantillons sur 1 seconde, bin $k$est $k$Hz, donc pour une fréquence entière l'indice de la plus grande valeur dans les poubelles 1 à 63 est la fréquence. Choisissez un nombre entier de hertz. Une fréquence entre deux poubelles se propage dans ses voisins, et le pic donne seulement la poubelle la plus proche. Utilisez `generate_signal`et `magnitude_spectrum`Après avoir ajouté du bruit, vérifiez que le pic est toujours au même coffre pendant que les autres coffres montent.
+
+**Exercise 2.**Utilisez une puissance de deux longues, parce que `fft`- Il divise le signal en deux.`max(abs(a - b))`Le ratio de temps devrait augmenter à peu près en fonction de la valeur de l'indice de coefficient.$N / \log_2 N$- Je suis désolé .
+
+**Exercise 3.**Pour la convolutions circulaires, calculer $y[n] = \sum_k h[k] x[(n-k) \bmod 8]$à la main pour $n$= 0, 1 et 2, et comparer les trois premières valeurs de `convolve_direct`et `convolve_fft`La convolutions linéaires ont une longueur de 4 + 3 - 1 = 6, alors vérifiez d'abord si la longueur 8 est déjà assez longue.
+
+**Exercise 4.**Utilisation `hann_window`- Je suis là .`hamming_window`- Je suis là .`apply_window`, et `power_spectrum`, et compter les pics séparés entre 9 et 13 Hz. Les 10 Hz et 12 Hz complètent des cycles entiers en 1 seconde, de sorte qu'aucune fenêtre ne peut avoir l'air la meilleure. Répétez avec 10,5 Hz et 12,5 Hz pour voir la fuite que les fenêtres réduisent.
+
+**Exercise 5.**Compute chaque codage avec `positional_encoding(pos, 128)`. Comparer le produit des points pour les positions (0, 10) avec le produit des points pour (100, 110): les deux valeurs doivent correspondre à environ 1e-10.$\lvert p_1 - p_2 \rvert$pour une seule fixation $p_1$- Je suis désolé .
 
 ## Les termes clés
 
 | Term | What it means |
 |------|---------------|
-| DFT (Discrete Fourier Transform) | Converts N time-domain samples into N frequency-domain coefficients. Each coefficient is the correlation with a complex sinusoid at that frequency |
-| FFT (Fast Fourier Transform) | An O(N log N) algorithm to compute the DFT. The Cooley-Tukey algorithm splits even/odd indices recursively |
-| Inverse DFT | Reconstructs the time-domain signal from frequency coefficients. Same formula as DFT with flipped exponent sign and 1/N scaling |
-| Frequency bin | Each index k in the DFT output represents frequency k*fs/N Hz. The "bin" is the discrete frequency slot |
-| DC component | X[0], the zero-frequency coefficient. Proportional to the signal mean |
-| Nyquist frequency | fs/2, the maximum frequency representable at sampling rate fs. Frequencies above this alias |
-| Power spectrum | \|X[k]\|^2, the squared magnitude of each frequency coefficient. Shows energy distribution across frequencies |
-| Phase spectrum | angle(X[k]), the phase offset of each frequency component. Often ignored in analysis |
+| DFT (Discrete Fourier Transform) | Converts $N$ time-domain samples into $N$ frequency-domain coefficients. Each coefficient is the correlation with a complex sinusoid at that frequency |
+| FFT (Fast Fourier Transform) | An $O(N \log N)$ algorithm to compute the DFT. The Cooley-Tukey algorithm splits even/odd indices recursively |
+| Inverse DFT | Reconstructs the time-domain signal from frequency coefficients. Same formula as DFT with flipped exponent sign and $1/N$ scaling |
+| Frequency bin | Each index $k$ in the DFT output represents frequency $k f_s/N$ Hz. The "bin" is the discrete frequency slot |
+| DC component | $X[0]$, the zero-frequency coefficient. Proportional to the signal mean |
+| Nyquist frequency | $f_s/2$, the maximum frequency representable at sampling rate $f_s$. Frequencies above this alias |
+| Power spectrum | $\lvert X[k] \rvert^2$, the squared magnitude of each frequency coefficient. Shows energy distribution across frequencies |
+| Phase spectrum | $\angle X[k]$, the phase offset of each frequency component. Often ignored in analysis |
 | Spectral leakage | Spurious frequency content caused by treating a non-periodic signal as periodic. Reduced by windowing |
 | Window function | A tapering function (Hann, Hamming, Blackman) applied before DFT to reduce spectral leakage |
-| Twiddle factor | The complex exponential e^(-2*pi*i*k/N) used to combine sub-DFTs in the FFT butterfly computation |
+| Twiddle factor | The complex exponential $e^{-2\pi i k/N}$ used to combine sub-DFTs in the FFT butterfly computation |
 | Convolution theorem | Convolution in time domain equals pointwise multiplication in frequency domain. Fundamental to signal processing and CNNs |
 | Circular convolution | Convolution where the signal wraps around. This is what the DFT naturally computes |
 | Linear convolution | Standard convolution without wraparound. Achieved by zero-padding before DFT |
-| Parseval's theorem | Total energy is preserved through the Fourier transform. sum \|x[n]\|^2 = (1/N) sum \|X[k]\|^2 |
+| Parseval's theorem | Total energy is preserved through the Fourier transform. $\sum \lvert x[n] \rvert^2 = \frac{1}{N} \sum \lvert X[k] \rvert^2$ |
 | Aliasing | When frequencies above Nyquist appear as lower frequencies due to insufficient sampling rate |
 
 ## Pour en savoir plus

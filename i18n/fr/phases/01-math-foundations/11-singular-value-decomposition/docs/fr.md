@@ -9,7 +9,7 @@
 
 ## Objectifs d'apprentissage
 
-- Implémenter le SVD par l'itération de puissance et expliquer la signification géométrique de U, Sigma et V^T
+- Implémenter le SVD par l' itération de puissance et expliquer la signification géométrique de $U$- Je suis là .$\Sigma$, et $V^T$
 - Appliquer des SVD tronqués pour la compression d'image et mesurer le rapport compression vs erreur de reconstruction
 - Compute la pseudo-inverse Moore-Penrose via SVD pour résoudre les systèmes de plus-quadrés définies
 - Connecter le SVD à la PCA, les systèmes de recommandation (facteurs latente) et l'analyse sémantique latente en PNL
@@ -26,17 +26,14 @@ Le SVD fonctionne sur n'importe quelle matrice, n'importe quelle forme, n'import
 
 Chaque matrice, quelle que soit sa forme, effectue trois opérations en séquence: tourner, échelle, tourner.
 
-```
-A = U * Sigma * V^T
-
-      m x n     m x m    m x n    n x n
-     (any)    (rotate)  (scale)  (rotate)
+```math
+\underset{\substack{m \times n \\ \text{(any)}}}{A} = \underset{\substack{m \times m \\ \text{(rotate)}}}{U} \cdot \underset{\substack{m \times n \\ \text{(scale)}}}{\Sigma} \cdot \underset{\substack{n \times n \\ \text{(rotate)}}}{V^T}
 ```
 
-En fonction de la matrice A, le SVD la classe en:
-- V^T fait tourner des vecteurs dans l'espace d'entrée (n-dimensionnel)
-- Scales sigma le long de chaque axe (étirement ou comprimé)
-- U fait tourner le résultat dans l'espace de sortie (m-dimensionnel)
+En fonction de la matrice $A$, le SVD le fait:
+- $V^T$rotation des vecteurs dans l'espace d'entrée ($n$-dimensionnel)
+- $\Sigma$des balances le long de chaque axe (étirement ou comprimé)
+- $U$rotation du résultat dans l'espace de sortie ($m$-dimensionnel)
 
 ```mermaid
 graph LR
@@ -44,35 +41,35 @@ graph LR
     B -->|"U\n(rotate)"| C["Output space (m-dim)\nRotated to output\norientation"]
 ```
 
-Vous donnez à SVD une matrice qui vous dit: " Cette matrice prend une sphère d'entrée, la tourne d'abord par V^T, puis la traîne dans un ellipsoïde par Sigma, puis tourne l'ellipsoïde par U. " Les valeurs singulières sont les longitudes des axes de l'ellipsoïde.
+Vous donnez à SVD une matrice qui vous dit: "Cette matrice prend une sphère d'entrées, la tourne d'abord par$V^T$, puis l' étend dans un ellipsoïde par$\Sigma$, puis tourne l' ellipsoïde par $U$. " Les valeurs singulières sont les longueurs des axes de l'ellipsoïde.
 
 ### La décomposition complète
 
-Pour une matrice A de forme m x n:
+Pour une matrice $A$avec forme $m \times n$- Le numéro de la liste:
 
+```math
+\begin{aligned}
+& A = U \cdot \Sigma \cdot V^T \\[6pt]
+& \text{where:} \\
+& \quad U \text{ is } m \times m, \text{ orthogonal } (U^T U = I) \\
+& \quad \Sigma \text{ is } m \times n, \text{ diagonal (singular values on the diagonal)} \\
+& \quad V \text{ is } n \times n, \text{ orthogonal } (V^T V = I) \\[6pt]
+& \text{The singular values } \sigma_1 \ge \sigma_2 \ge \cdots \ge \sigma_r > 0 \\
+& \text{where } r = \mathop{\mathrm{rank}}(A)
+\end{aligned}
 ```
-A = U * Sigma * V^T
 
-where:
-  U     is m x m, orthogonal (U^T U = I)
-  Sigma is m x n, diagonal (singular values on the diagonal)
-  V     is n x n, orthogonal (V^T V = I)
-
-The singular values sigma_1 >= sigma_2 >= ... >= sigma_r > 0
-where r = rank(A)
-```
-
-Les colonnes de U sont appelées vecteurs singuliers gauche. Les colonnes de V sont appelées vecteurs singuliers droites. Les entrées diagonales de Sigma sont appelées valeurs singulières. Elles sont toujours non négatives et classifiées conventionnellement dans un ordre décroissant.
+Les colonnes de $U$Les colonnes de $V$Les entrées diagonales de $\Sigma$Les valeurs sont toujours non négatives et classifiées de manière conventionnelle dans un ordre décroissant.
 
 ### Vecteurs singuliers gauche, valeurs singulières, vecteurs singuliers droits
 
 Chaque composant du SVD a une signification géométrique distincte.
 
-**Right singular vectors (columns of V):**Ces éléments constituent une base orthonormale pour l'espace d'entrée (R^n). Ce sont les directions dans l'espace d'entrée que la matrice trace vers des directions orthogonales dans l'espace de sortie.
+**Right singular vectors (columns of $V$):**Ces éléments constituent une base orthonormale pour l'espace d'entrée ($\mathbb{R}^n$Les directions de l'espace d'entrée sont celles que la matrice trace vers des directions orthogonales dans l'espace de sortie.
 
-**Singular values (diagonal of Sigma):**La valeur singulière de la matrice est la valeur de l'échelle de l'échelle.
+**Singular values (diagonal of $\Sigma$):**La valeur singulière de la matrice est la valeur de l'échelle de l'échelle.
 
-**Left singular vectors (columns of U):**Ces éléments constituent une base orthonormale pour l'espace de sortie (R^m). Le ième vecteur singulier gauche est la direction dans l'espace de sortie où le ième vecteur singulier droit atterrit (après l'échelle).
+**Left singular vectors (columns of $U$):**Ces éléments constituent une base orthonormale pour l'espace de sortie ($\mathbb{R}^m$Le ième vecteur singulier gauche est la direction dans l'espace de sortie où le ième vecteur singulier droit atterrit (après l'échelle).
 
 La relation entre eux:
 
@@ -98,20 +95,20 @@ The full matrix is the sum of r such matrices, where r is the rank.
 
 Cette forme est la base de l'approximation de rang inférieur. Chaque terme ajoute une couche de structure. Le premier terme capture le modèle le plus important. Le second capture le plus important suivant. Et ainsi de suite. Truncation de cette somme vous donne la meilleure approximation possible à un rang donné.
 
-```
-Rank-1 approx:    A_1 = sigma_1 * u_1 * v_1^T
-                  (captures the dominant pattern)
-
-Rank-2 approx:    A_2 = sigma_1 * u_1 * v_1^T + sigma_2 * u_2 * v_2^T
-                  (captures the two most important patterns)
-
-Rank-k approx:    A_k = sum of top k terms
-                  (optimal by the Eckart-Young theorem)
+```math
+\begin{aligned}
+\text{Rank-1 approx:} \quad & A_1 = \sigma_1 u_1 v_1^T \\
+& \text{(captures the dominant pattern)} \\[6pt]
+\text{Rank-2 approx:} \quad & A_2 = \sigma_1 u_1 v_1^T + \sigma_2 u_2 v_2^T \\
+& \text{(captures the two most important patterns)} \\[6pt]
+\text{Rank-}k\text{ approx:} \quad & A_k = \text{sum of top } k \text{ terms} \\
+& \text{(optimal by the Eckart-Young theorem)}
+\end{aligned}
 ```
 
 ### Relation avec la composition propre
 
-Les valeurs et vecteurs singuliers d'A proviennent directement des valeurs et vecteurs propres d'A^T A et A^T.
+Les valeurs et vecteurs singuliers de $A$proviennent directement des valeurs propres et des propres vecteurs de $A^T A$et $A A^T$- Je suis désolé .
 
 ```
 A^T A = V * Sigma^T * U^T * U * Sigma * V^T
@@ -135,41 +132,41 @@ So:
 
 Cette connexion vous dit trois choses:
 1. Les valeurs singulières sont toujours réelles et non négatives (elles sont des racines carrées des valeurs propres d'une matrice semi-définie positive).
-2. Vous pouvez calculer le SVD par la composition propre de l'A^T A, mais cela square le nombre de condition et perd la précision numérique.
-3. Lorsque A est carré et symétrique semi-définie, SVD et eigendecomposition sont la même chose.
+2. Vous pouvez calculer le SVD par votre propre composition de $A^T A$Les algorithmes SVD dédiés évitent cela.
+3. Quand ?$A$est carré et symétrique semi-définie positive, SVD et eigendecomposition sont la même chose.
 
 ### SVD tronqué: approximation de rang inférieur
 
-Le théorème d'Eckart-Young-Mirsky stipule que la meilleure approximation de rang k à A (à la fois Frobenius et la norme spectrale) est obtenue en conservant uniquement les valeurs singulières supérieures de k et leurs vecteurs correspondants:
+Le théorème d' Eckart-Young-Mirsky affirme que le meilleur$\text{rank-}k$approximation à $A$(à la fois Frobenius et spectral) est obtenu en conservant seulement le dessus $k$valeurs singulières et leurs vecteurs correspondants:
 
+```math
+\begin{aligned}
+& A_k = U_k \cdot \Sigma_k \cdot V_k^T \\[6pt]
+& \text{where:} \\
+& \quad U_k \text{ is } m \times k \quad \text{(first } k \text{ columns of } U\text{)} \\
+& \quad \Sigma_k \text{ is } k \times k \quad \text{(top-left } k \times k \text{ block of } \Sigma\text{)} \\
+& \quad V_k \text{ is } n \times k \quad \text{(first } k \text{ columns of } V\text{)} \\[6pt]
+& \text{Approximation error} = \sigma_{k+1} \quad \text{(in spectral norm)} \\
+& \text{Approximation error} = \sqrt{\sigma_{k+1}^2 + \cdots + \sigma_r^2} \quad \text{(in Frobenius norm)}
+\end{aligned}
 ```
-A_k = U_k * Sigma_k * V_k^T
 
-where:
-  U_k     is m x k  (first k columns of U)
-  Sigma_k is k x k  (top-left k x k block of Sigma)
-  V_k     is n x k  (first k columns of V)
-
-Approximation error = sigma_{k+1}  (in spectral norm)
-                    = sqrt(sigma_{k+1}^2 + ... + sigma_r^2)  (in Frobenius norm)
-```
-
-Ce n'est pas seulement une approximation "bonne". C'est probablement la meilleure approximation possible du rang k. Aucune autre matrice de rang-k n'est plus proche de A.
+Il s'agit non seulement d'une approximation "bonne", mais aussi de la meilleure approximation possible du rang.$k$- Pas d' autre .$\text{rank-}k$La matrice est plus proche de $A$- Je suis désolé .
 
 | Component | Relative magnitude | Kept in rank-3 approx? |
 |-----------|-------------------|------------------------|
-| sigma_1 | Largest | Yes |
-| sigma_2 | Large | Yes |
-| sigma_3 | Medium-large | Yes |
-| sigma_4 | Medium | No (error) |
-| sigma_5 | Medium-small | No (error) |
-| sigma_6 | Small | No (error) |
-| sigma_7 | Very small | No (error) |
-| sigma_8 | Tiny | No (error) |
+| $\sigma_1$ | Largest | Yes |
+| $\sigma_2$ | Large | Yes |
+| $\sigma_3$ | Medium-large | Yes |
+| $\sigma_4$ | Medium | No (error) |
+| $\sigma_5$ | Medium-small | No (error) |
+| $\sigma_6$ | Small | No (error) |
+| $\sigma_7$ | Very small | No (error) |
+| $\sigma_8$ | Tiny | No (error) |
 
-Restez au sommet 3: A_3 capture les trois plus grandes valeurs singulières. Error = valeurs restantes (sigma_4 à sigma_8).
+Gardez le top 3: $A_3$L'erreur = les valeurs restantes ($\sigma_4$à travers $\sigma_8$)
 
-Si les valeurs singulières se décomposent rapidement, une petite k capture la majeure partie de la matrice.
+Si les valeurs singulières se décomposent rapidement, une petite$k$Si elles se décomposent lentement, la matrice n'a pas de structure de rang inférieur.
 
 ### Compression d'image avec SVD
 
@@ -211,9 +208,9 @@ Le prix Netflix a rendu ce film célèbre. Vous avez une matrice de notation de 
 L'idée: cette matrice de notations a un faible rang. Les utilisateurs n'ont pas de goûts complètement indépendants. Il y a une poignée de facteurs latents (action contre drame, vieil contre nouveau, cérébral contre viscéral) qui expliquent la plupart des préférences.
 
 Le SVD de la matrice de notation (remplie) la décompose en:
-- U: profils d'utilisateurs dans l'espace de facteurs latents
-- Sigma: importance de chaque facteur latent
-- V^T: profils de films dans l'espace de facteurs latents
+- $U$: profils d'utilisateurs dans l'espace de facteurs latents
+- $\Sigma$: importance de chaque facteur latent
+- $V^T$: profils de films dans l'espace de facteurs latents
 
 La note prévue d'un utilisateur pour un film est le produit de point de son profil d'utilisateur avec le profil du film (poussé par des valeurs singulières).
 
@@ -253,23 +250,23 @@ Les données bruyantes ont un signal concentré dans les valeurs singulières su
 
 | Component | Magnitude | Type |
 |-----------|-----------|------|
-| sigma_1 | Very large | Signal |
-| sigma_2 | Large | Signal |
-| sigma_3 | Medium | Signal |
-| sigma_4 | Near zero | Negligible |
-| sigma_5 | Near zero | Negligible |
+| $\sigma_1$ | Very large | Signal |
+| $\sigma_2$ | Large | Signal |
+| $\sigma_3$ | Medium | Signal |
+| $\sigma_4$ | Near zero | Negligible |
+| $\sigma_5$ | Near zero | Negligible |
 
 **Noisy signal singular values (noise adds to all):**
 
 | Component | Magnitude | Type |
 |-----------|-----------|------|
-| sigma_1 | Very large | Signal |
-| sigma_2 | Large | Signal |
-| sigma_3 | Medium | Signal |
-| sigma_4 | Small | Noise |
-| sigma_5 | Small | Noise |
-| sigma_6 | Small | Noise |
-| sigma_7 | Small | Noise |
+| $\sigma_1$ | Very large | Signal |
+| $\sigma_2$ | Large | Signal |
+| $\sigma_3$ | Medium | Signal |
+| $\sigma_4$ | Small | Noise |
+| $\sigma_5$ | Small | Noise |
+| $\sigma_6$ | Small | Noise |
+| $\sigma_7$ | Small | Noise |
 
 ```mermaid
 graph TD
@@ -283,7 +280,7 @@ Cette méthode est utilisée dans le traitement des signaux, la mesure scientifi
 
 ### Pseudo-inverse par voie de SVD
 
-Le pseudo-inverse Moore-Penrose A+ généralise l'inversion de la matrice à des matrices non carrées et singulières.
+Le pseudo-inverse Moore-Penrose $A^+$Le SVD rend l'informatique trivial.
 
 ```
 If A = U * Sigma * V^T, then:
@@ -299,7 +296,7 @@ For A (m x n):      A+ is (n x m)
 For Sigma (m x n):  Sigma+ is (n x m)
 ```
 
-Si Ax = b n'a pas de solution exacte (système surdéterminé), alors x = A + b est la solution de moins de carrés (minimise le jeu de la fois Ax - b).
+Le pseudo-inverse résolve les problèmes des plus petits carrés.$Ax = b$n' a pas de solution précise (système surdéterminé), alors $x = A^+ b$est la solution des plus petits carrés (minime $\lVert Ax - b \rVert$)
 
 ```
 Overdetermined system (more equations than unknowns):
@@ -317,7 +314,7 @@ Overdetermined system (more equations than unknowns):
 
 ### Les avantages de la stabilité numérique
 
-Compteur de la composition propre d'A^T A squares les valeurs singulières (values propres d'A^T A sont sigma_i^2).
+Compte tenu de la composition propre de $A^T A$squares des valeurs singulières (valeurs propres de $A^T A$sont$\sigma_i^2$) Cela squadrée le nombre de condition, amplifiant les erreurs numériques.
 
 ```
 Example:
@@ -332,7 +329,7 @@ Example:
                            (6 extra digits of precision lost)
 ```
 
-Les algorithmes SVD modernes (bi-diagonalization Golub-Kahan) fonctionnent directement sur A, ne formant jamais A^T A. C'est pourquoi vous devriez toujours préférer`np.linalg.svd(A)`- Je suis passé .`np.linalg.eig(A.T @ A)`- Je suis désolé .
+Les algorithmes de SVD modernes (bi-diagonalization Golub-Kahan) fonctionnent directement sur $A$, jamais formant$A^T A$C' est pour ça que tu devrais toujours préférer`np.linalg.svd(A)`- Je suis passé .`np.linalg.eig(A.T @ A)`- Je suis désolé .
 
 ### Connexion à PCA
 
@@ -368,7 +365,7 @@ svd-rank-reconstruction
 
 ### Étape 1: SVD à partir de zéro en utilisant l'itération de puissance
 
-L'idée: pour trouver la plus grande valeur singulière et ses vecteurs, utiliser l'itération de puissance sur A^T A (ou A^T).
+L'idée: pour trouver la plus grande valeur singulière et ses vecteurs, utiliser l'itération de puissance sur $A^T A$(ou $A A^T$) Puis déflatez la matrice et répétez pour la valeur singulière suivante.
 
 ```python
 import numpy as np
@@ -513,7 +510,7 @@ Cette leçon donne:
 
 ## Exercices
 
-1. Implémenter la SVD complète à partir de zéro sans utiliser l'itération de puissance. Au lieu de cela, calculer la propre composition d'A^T A pour obtenir V et les valeurs singulières, puis calculer U = A V Sigma^{-1}. Comparer la précision numérique avec votre version d'itération de puissance et avec NumPy.
+1. Implémenter la SVD complète à partir de zéro sans utiliser l'itération de puissance.$A^T A$Pour obtenir$V$et les valeurs singulières, puis calculer $U = A V \Sigma^{-1}$Comparer la précision numérique avec votre version d'itération de puissance et avec NumPy.
 
 2. Chargez une image à l'échelle de gris réelle (ou convertissez-la en échelle de gris). Comprimez-la aux rangs 1, 5, 10, 25, 50, 100. Pour chaque rang, calculer le ratio de compression et l'erreur relative. Trouvez la rangée où l'image devient visuellement acceptable.
 
@@ -521,23 +518,35 @@ Cette leçon donne:
 
 4. Créer une matrice de 100x50 documents avec 3 sujets synthétiques. Chaque sujet a 5 termes associés. Ajoutez le bruit. Appliquez SVD et vérifiez que les 3 principales valeurs singulières sont beaucoup plus grandes que les autres. Projeter des documents dans l'espace latent 3D et vérifier que les documents du même groupe de sujets ensemble.
 
-5. Générez une matrice de bas rang propre (rang 3, taille 50x40) et ajoutez le bruit gaussien à différents niveaux (sigma = 0,1, 0,5, 1,0, 2.0). Pour chaque niveau de bruit, trouvez le rang de troncation optimal en balayant k de 1 à 40 et en mesurant l'erreur de reconstruction par rapport à la matrice propre.
+5. Générer une matrice de bas rang propre (rang 3, taille 50x40) et ajouter le bruit gaussien à différents niveaux ($\sigma$Pour chaque niveau de bruit, trouvez le rang de troncation optimal en balayant $k$Les résultats de la recherche ont été obtenus en 1 à 40 et ont été mesurés en fonction de l'erreur de reconstruction par rapport à la matrice propre.$k$les changements avec le niveau de bruit.
+
+### Des indices
+
+**Exercise 1.**Compte $A^T A$, obtenir ses valeurs propres et des propres vecteurs avec `np.linalg.eigh`Les valeurs singulières sont les racines carrées des valeurs propres; vérifiez que$U \Sigma V^T$reconstruction $A$et comparer l'erreur avec `svd_from_scratch`et `np.linalg.svd`- Je suis désolé .
+
+**Exercise 2.**Appel`truncated_svd`Pour chaque rang, reconstruisez l'image avec `reconstruct`, et utiliser `compression_ratio(m, n, k)`L'erreur relative doit diminuer à mesure que le rang augmente, et le premier rang où vous ne voyez pas de blocs clairs est la réponse.
+
+**Exercise 3.**Marquez les cellules manquantes, remplissez-les de la moyenne de rang, puis reconstruisez une approximation de rang 3 avec `truncated_svd`et `reconstruct`. Ensuite, mesurer le résultat: compter les prédictions en dehors de la plage de notation, et imprimer le plus grand changement dans une cellule connue. Une approximation de rang 3 ne garantit aucune des propriétés, donc cliquer les prédictions à la plage si vous avez besoin de notations valides.
+
+**Exercise 4.**Donnez à chaque sujet un bloc de 5 termes avec un nombre élevé pour ses documents, puis ajoutez un petit bruit. Imprimez les valeurs singulières: les 3 premières doivent être beaucoup plus grandes que la 4ème.
+
+**Exercise 5.**Faites la matrice propre comme le produit d'une matrice aléatoire 50x3 et 3x40, puis ajoutez du bruit pour chacune $\sigma$Pour chacun .$k$, comparer le rang $k$reconstruction avec la matrice propre; attendez-vous au meilleur $k$près de 3 pour le faible bruit et plus petit pour le bruit élevé.
 
 ## Les termes clés
 
 | Term | What people say | What it actually means |
 |------|----------------|----------------------|
-| SVD | "Factor any matrix" | Decompose A into U Sigma V^T where U and V are orthogonal and Sigma is diagonal with non-negative entries. Works for any matrix of any shape. |
-| Singular value | "How important this component is" | The i-th diagonal entry of Sigma. Measures how much the matrix stretches along the i-th principal direction. Always non-negative, sorted in decreasing order. |
-| Left singular vector | "Output direction" | A column of U. The direction in output space that the i-th right singular vector maps to (after scaling by sigma_i). |
-| Right singular vector | "Input direction" | A column of V. The direction in input space that the matrix maps to the i-th left singular vector (after scaling by sigma_i). |
-| Truncated SVD | "Low-rank approximation" | Keep only the top k singular values and their vectors. Produces the provably best rank-k approximation to the original matrix (Eckart-Young theorem). |
+| SVD | "Factor any matrix" | Decompose $A$ into $U \Sigma V^T$ where $U$ and $V$ are orthogonal and $\Sigma$ is diagonal with non-negative entries. Works for any matrix of any shape. |
+| Singular value | "How important this component is" | The $i$-th diagonal entry of $\Sigma$. Measures how much the matrix stretches along the i-th principal direction. Always non-negative, sorted in decreasing order. |
+| Left singular vector | "Output direction" | A column of $U$. The direction in output space that the $i$-th right singular vector maps to (after scaling by $\sigma_i$). |
+| Right singular vector | "Input direction" | A column of $V$. The direction in input space that the matrix maps to the $i$-th left singular vector (after scaling by $\sigma_i$). |
+| Truncated SVD | "Low-rank approximation" | Keep only the top $k$ singular values and their vectors. Produces the provably best $\text{rank-}k$ approximation to the original matrix (Eckart-Young theorem). |
 | Rank | "True dimensionality" | The number of non-zero singular values. Tells you how many independent directions the matrix actually uses. |
-| Pseudoinverse | "Generalized inverse" | V Sigma+ U^T. Inverts non-zero singular values, leaves zeros as zeros. Solves least-squares problems for non-square or singular matrices. |
-| Condition number | "How sensitive to errors" | sigma_max / sigma_min. A large condition number means small input changes cause large output changes. SVD reveals this directly. |
+| Pseudoinverse | "Generalized inverse" | $V \Sigma^+ U^T$. Inverts non-zero singular values, leaves zeros as zeros. Solves least-squares problems for non-square or singular matrices. |
+| Condition number | "How sensitive to errors" | $\sigma_{\max} / \sigma_{\min}$. A large condition number means small input changes cause large output changes. SVD reveals this directly. |
 | Latent factor | "Hidden variable" | A dimension in the low-rank space discovered by SVD. In recommendations, a latent factor might correspond to genre preference. In NLP, it might correspond to a topic. |
 | Frobenius norm | "Total matrix size" | Square root of the sum of squared entries. Equals the square root of the sum of squared singular values. Used to measure approximation error. |
-| Eckart-Young theorem | "SVD gives the best compression" | For any target rank k, the truncated SVD minimizes the approximation error over all possible rank-k matrices. |
+| Eckart-Young theorem | "SVD gives the best compression" | For any target rank $k$, the truncated SVD minimizes the approximation error over all possible $\text{rank-}k$ matrices. |
 | Power iteration | "Find the biggest eigenvector" | Repeatedly multiply a random vector by the matrix and normalize. Converges to the eigenvector with the largest eigenvalue. The building block of many SVD algorithms. |
 
 ## Pour en savoir plus

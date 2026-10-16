@@ -32,7 +32,7 @@ Un vecteur est juste une liste de nombres. Mais ces nombres signifient quelque c
 |---|---|-------|
 | 3 | 2 | The vector points from origin (0,0) to (3, 2) on the plane |
 
-Le vecteur a une magnitude carré ((3^2 + 2^2) = carré ((13) et pointe vers le haut et à droite.
+Le vecteur a une magnitude $\sqrt{3^2 + 2^2} = \sqrt{13}$et qui pointe vers le haut et vers la droite.
 
 Dans l'IA, les vecteurs représentent tout:
 - Un mot → un vecteur de 768 nombres (son "signe" dans l'espace d'intégration)
@@ -71,19 +71,20 @@ Dans l'IA, les matrices sont le modèle:
 
 Le produit des points de deux vecteurs vous indique à quel point ils sont similaires.
 
-```
-a · b = a₁×b₁ + a₂×b₂ + ... + aₙ×bₙ
-
-Same direction:      a · b > 0  (similar)
-Perpendicular:       a · b = 0  (unrelated)
-Opposite direction:  a · b < 0  (dissimilar)
+```math
+\begin{aligned}
+a \cdot b &= a_1 \times b_1 + a_2 \times b_2 + \cdots + a_n \times b_n \\[4pt]
+\text{Same direction:} \quad a \cdot b &> 0 \quad \text{(similar)} \\
+\text{Perpendicular:} \quad a \cdot b &= 0 \quad \text{(unrelated)} \\
+\text{Opposite direction:} \quad a \cdot b &< 0 \quad \text{(dissimilar)}
+\end{aligned}
 ```
 
 C'est littéralement ainsi que les moteurs de recherche, les systèmes de recommandation et RAG fonctionnent: trouver des vecteurs avec des produits à haute fréquence.
 
 ### Indépendance linéaire
 
-Les vecteurs sont linéairement indépendants si aucun vecteur dans l'ensemble ne peut être écrit comme une combinaison des autres. Si v1, v2, v3 sont indépendants, ils couvrent un espace 3D. Si l'un est une combinaison des autres, ils couvrent seulement un plan.
+Les vecteurs sont linéairement indépendants si aucun vecteur de l'ensemble ne peut être écrit comme une combinaison des autres.$v_1, v_2, v_3$Si l'un est une combinaison des autres, ils ne couvrent qu'un plan.
 
 Pourquoi cela importe pour l'IA: votre matrice de caractéristiques devrait avoir des colonnes linéairement indépendantes. Si deux caractéristiques sont parfaitement corrélées (linéairement dépendantes), le modèle ne peut pas distinguer leurs effets. Cela provoque une multicollinéarité en régression - la matrice de poids devient instable, et de petites modifications d'entrée produisent des oscillations de sortie sauvages.
 
@@ -95,7 +96,7 @@ v2 = [0, 1, 0]
 v3 = [2, 1, 0]   # v3 = 2*v1 + v2
 ```
 
-v1 et v2 sont indépendants - ni un multiple escalier ni une combinaison de l'autre. Mais v3 = 2 * v1 + v2, donc {v1, v2, v3} est un ensemble dépendant. Ces trois vecteurs sont tous situés dans le plan xy. Peu importe comment vous les combinez, vous ne pouvez pas atteindre [0, 0, 1]. Vous avez trois vecteurs mais seulement deux dimensions de liberté.
+$v_1$et $v_2$sont indépendantes - ni est un multiple escalier ni une combinaison de l'autre.$v_3 = 2 v_1 + v_2$Je suis un homme .$\lbrace v_1, v_2, v_3 \rbrace$Il y a trois vecteurs qui se trouvent dans le plan xy.
 
 Dans un ensemble de données: si feature_3 = 2*feature_1 + feature_2, l'ajout de feature_3 donne au modèle zéro nouvelles informations. Pire encore, il rend les équations normales singulières - il n'y a pas de solution unique pour les poids.
 
@@ -105,15 +106,15 @@ Une base est un ensemble minimal de vecteurs indépendants linéairement qui cou
 
 La base standard pour l'espace 3D est {[1,0,0], [0,1,0], [0,0,1]}. Mais n'importe quel vecteur indépendant en 3D forme une base valide.
 
-Rangoir d'une matrice = nombre de colonnes linéairement indépendantes = nombre de lignes linéairement indépendantes. Si le rang < min(lignes, colons), la matrice est déficient de rang.
+Rangoir d'une matrice = nombre de colonnes indépendantes linéairement = nombre de lignes indépendantes linéairement.$\text{rank} < \min(\text{rows}, \text{cols})$, la matrice est déficiente de rang.
 - Le système a infiniment de solutions (ou pas)
 - L'information est perdue dans la transformation
 - La matrice ne peut pas être inversée
 
 | Situation | Rank | What it means for ML |
 |-----------|------|---------------------|
-| Full rank (rank = min(m, n)) | Maximum possible | Unique least-squares solution exists. Model is well-conditioned. |
-| Rank deficient (rank < min(m, n)) | Below maximum | Features are redundant. Infinitely many weight solutions. Regularization needed. |
+| Full rank $(\text{rank} = \min(m, n))$ | Maximum possible | Unique least-squares solution exists. Model is well-conditioned. |
+| Rank deficient $(\text{rank} < \min(m, n))$ | Below maximum | Features are redundant. Infinitely many weight solutions. Regularization needed. |
 | Rank 1 | 1 | Every column is a scaled copy of one vector. All data lies on a line. |
 | Near rank-deficient (small singular values) | Numerically low | Matrix is ill-conditioned. Tiny input noise causes large output changes. Use SVD truncation or ridge regression. |
 
@@ -121,11 +122,11 @@ Rangoir d'une matrice = nombre de colonnes linéairement indépendantes = nombre
 
 Vecteur de projection **a**sur le vecteur **b**donne la composante de **a**dans la direction de **b**- Le numéro de la liste:
 
-```
-proj_b(a) = (a dot b / b dot b) * b
+```math
+\mathop{\mathrm{proj}}_b(a) = \frac{a \cdot b}{b \cdot b} \, b
 ```
 
-Le résidu (a - proj_b(a)) est perpendiculaire à b. Cette décomposition orthogonale est la base de l'ajustement des carrés les plus faibles.
+Le résidu$(a - \mathop{\mathrm{proj}}_b(a))$est perpendiculaire à $b$Cette décomposition orthogonale est la base de l'ajustement des plus petits carrés.
 
 La projection est partout dans ML:
 - La régression linéaire réduit au minimum la distance entre les observations et l'espace de colonne - la solution est une projection
@@ -143,9 +144,9 @@ graph LR
     end
 ```
 
-**Example:**a = [3, 4], b = [1, 0]
+**Example:** $a = [3, 4]$- Je suis là .$b = [1, 0]$
 
-Le nombre de points de référence est le nombre de points de référence.
+$\mathop{\mathrm{proj}}_b(a) = (3 \cdot 1 + 4 \cdot 0) / (1 \cdot 1 + 0 \cdot 0) \cdot [1, 0] = 3 \cdot [1, 0] = [3, 0]$
 
 La projection fait tomber la composante y. C'est la réduction de dimensionnalité sous sa forme la plus simple -- jeter les directions qui ne vous intéressent pas.
 
@@ -447,6 +448,20 @@ LoRA mérite une mention spéciale. Il affinera les grands modèles linguistique
 4. Vérifiez que la sortie Gram-Schmidt est vraiment orthonormale: vérifiez que chaque paire a un produit de point 0 et chaque vecteur a une magnitude 1
 5. Créer une matrice 3x3 avec rang 2. Vérifiez en utilisant le `rank()`Expliquez ensuite quel objet géométrique les colonnes couvrent.
 6. Le vecteur [1, 2, 3] est projeté sur [1, 1, 1].
+
+### Des indices
+
+**Exercise 1.**Commencez par `cosine_similarity`, garder la valeur entre -1 et 1, puis prendre le cosine d'arc et convertir les radians en degrés.`Vector([1, 0])`et `Vector([0, 1])`donner 90 et que le vecteur lui-même donne 0.
+
+**Exercise 2.**Mettez les deux facteurs d'échelle sur la diagonale d'une matrice 2x2 et mettez 0 dans les deux autres cellules. Le résultat pour [1, 1] doit être [2, 3].
+
+**Exercise 3.**Compute la similitude cosine pour chaque paire de 5 vecteurs (10 paires) et conserve la valeur la plus importante.
+
+**Exercise 4.**Utilisation `gram_schmidt`sur trois vecteurs indépendants, puis calculer `dot`pour chaque paire et `magnitude`Comparer avec une tolérance telle que `1e-9`, parce que le point flottant ne donne pas de zéros exacts.
+
+**Exercise 5.**Faites de la troisième rangée ou de la colonne la somme des deux premières, de sorte qu'une direction se répète. `rank()`doit retourner 2, et les colonnes ensuite couvrir un plan à travers l'origine.
+
+**Exercise 6.**Calculez l' échelle $\frac{a \cdot b}{b \cdot b}$et multiplier $b$par elle, ou appeler `project_onto`Vérifiez le reste .$a$moins la projection a un produit de point de 0 avec [1, 1, 1].
 
 ## Les termes clés
 

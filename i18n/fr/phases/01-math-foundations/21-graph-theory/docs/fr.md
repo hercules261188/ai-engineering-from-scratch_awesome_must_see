@@ -34,9 +34,9 @@ Il vous faut quatre choses:
 
 ### Graphiques: nœuds et bords
 
-Un graphique G = (V, E) est constitué de sommets (nœuds) V et de bords E. Chaque bord relie deux nœuds.
+Un graphique $G = (V, E)$est constitué de sommets (nœuds) $V$et les bords $E$Chaque bord relie deux nœuds.
 
-**Directed vs undirected.**Dans un graphique non dirigé, bord (u, v) signifie que u se connecte à v et v se connecte à u. Dans un graphe dirigé (digraphe), bord (u, v) signifie que u pointe vers v, mais pas nécessairement l'inverse.
+**Directed vs undirected.**Dans un graphique non dirigé, bord $(u, v)$les moyens $u$se connecte à $v$Et ...$v$se connecte à $u$Dans un graphique dirigé (digraphe), bord $(u, v)$les moyens $u$fait référence à $v$, mais pas nécessairement l'inverse.
 
 **Weighted vs unweighted.**Dans un graphique non pondéré, les bords existent ou non. Dans un graphique pondéré, chaque bord a un poids numérique - une distance, un coût, une force.
 
@@ -49,14 +49,13 @@ Un graphique G = (V, E) est constitué de sommets (nœuds) V et de bords E. Chaq
 
 ### La matrice d'adjacence
 
-La matrice d'adjacence A est la représentation du noyau. Pour un graphique avec n n nodes:
+La matrice d' adjacence $A$est la représentation du noyau.$n$les nœuds:
 
-```
-A[i][j] = 1    if there is an edge from node i to node j
-A[i][j] = 0    otherwise
+```math
+A[i][j] = \begin{cases} 1 & \text{if there is an edge from node } i \text{ to node } j \\ 0 & \text{otherwise} \end{cases}
 ```
 
-Pour les graphiques non dirigés, A est symétrique: A[i][j] = A[j][i]. Pour les graphiques pondérés, A[i][j] = poids de bord (i, j).
+Pour les graphiques non dirigés, $A$est symétrique: $A[i][j] = A[j][i]$Pour les graphiques pondérés,$A[i][j]$= poids du bord $(i, j)$- Je suis désolé .
 
 **Example -- a triangle:**
 
@@ -69,20 +68,22 @@ A = [[0, 1, 1],
      [1, 1, 0]]
 ```
 
-La matrice d'adjacence est l'entrée de chaque GNN. Les opérations de la matrice sur A correspondent aux opérations sur le graphique.
+La matrice d'adjacence est l'entrée de chaque GNN.$A$correspondent aux opérations sur le graphique.
 
 ### Diplôme
 
 Le degré d'un nœud est le nombre de bords qui y sont connectés. Pour les graphiques dirigés, vous avez des degrés in-grade (bords entrant) et out-grade (bords sortant).
 
-La matrice de degrés D est diagonale:
+La matrice de degrés $D$est diagonale:
 
-```
-D[i][i] = degree of node i
-D[i][j] = 0    for i != j
+```math
+\begin{aligned}
+D[i][i] &= \text{degree of node } i \\
+D[i][j] &= 0 \quad \text{for } i \ne j
+\end{aligned}
 ```
 
-Pour l'exemple du triangle: D = diag(2, 2, 2) parce que chaque nœud se connecte à deux autres.
+Pour l' exemple du triangle: $D = \mathop{\mathrm{diag}}(2, 2, 2)$Parce que chaque nœud se connecte à deux autres.
 
 Le degré vous indique l'importance des nœuds. Le degré élevé = nœud de hub. La distribution des degrés d'un réseau révèle sa structure. Les réseaux sociaux suivent les lois de puissance (peu de nœuds, beaucoup de nœuds de feuilles). Les graphiques aléatoires ont des degrés distribués par Poisson.
 
@@ -132,19 +133,17 @@ Le DFS est utile pour:
 
 ### Le graphe laplacien
 
-L = D - A. La matrice la plus importante dans la théorie des graphiques spectraux.
+$L = D - A$La matrice la plus importante de la théorie des graphiques spectraux.
 
 Pour le triangle:
 
-```
-D = [[2, 0, 0],    A = [[0, 1, 1],    L = [[2, -1, -1],
-     [0, 2, 0],         [1, 0, 1],         [-1, 2, -1],
-     [0, 0, 2]]         [1, 1, 0]]         [-1, -1,  2]]
+```math
+D = \begin{bmatrix} 2 & 0 & 0 \\ 0 & 2 & 0 \\ 0 & 0 & 2 \end{bmatrix} \qquad A = \begin{bmatrix} 0 & 1 & 1 \\ 1 & 0 & 1 \\ 1 & 1 & 0 \end{bmatrix} \qquad L = \begin{bmatrix} 2 & -1 & -1 \\ -1 & 2 & -1 \\ -1 & -1 & 2 \end{bmatrix}
 ```
 
 Le Laplacien possède des propriétés remarquables:
 
-1. **L is positive semi-definite.**Toutes les valeurs propres sont >= 0.
+1. **$L$ is positive semi-definite.**Toutes les valeurs propres sont $\ge 0$- Je suis désolé .
 
 2. **The number of zero eigenvalues equals the number of connected components.**Un graphique connecté a exactement une valeur propre zéro. Un graphique avec 3 composants déconnectés a trois valeurs propres zéro.
 
@@ -174,12 +173,12 @@ graph TD
 Les valeurs propres de la matrice adjacente et du Laplacien révèlent des propriétés structurelles sans aucune traversée.
 
 **Spectral clustering**fonctionne comme ceci:
-1. Compute le Laplacien L
-2. Trouvez les plus petits vecteurs propres de L (sautez le premier, qui est tous-un pour les graphiques connectés)
+1. Compute le Laplacien $L$
+2. Trouvez le $k$Les plus petits vecteurs propres de $L$(s'il vous plaît sauter la première, qui est tout-on pour les graphiques connectés)
 3. Utilisez ces propres vecteurs comme nouvelles coordonnées pour chaque nœud
-4. Exécutez des k-média sur ces coordonnées
+4. On court .$k$- les moyens sur ces coordonnées
 
-Pourquoi cela fonctionne-t-il ? Les propres vecteurs de L codent les fonctions " les plus lisses " du graphique. Les nœuds bien connectés obtiennent des valeurs propres similaires. Les nœuds séparés par un goulet d'étranglement obtiennent des valeurs différentes. Les propres vecteurs séparent naturellement des grappes.
+Pourquoi cela fonctionne-t-il ?$L$Les nœuds qui sont bien connectés obtiennent des valeurs propres vectorielles similaires. Les nœuds séparés par un goulet d'étranglement obtiennent des valeurs différentes. Les propres vecteurs séparent naturellement des grappes.
 
 **Random walk connection.**Le Laplacien normalisé se rapporte à des promenades aléatoires sur le graphique. La répartition stationnaire d'une marche aléatoire est proportionnelle au degré de nœud. Le temps de mélange (la rapidité avec laquelle la marche converge) dépend de l'écart spectrique.
 
@@ -187,25 +186,25 @@ Pourquoi cela fonctionne-t-il ? Les propres vecteurs de L codent les fonctions "
 
 Le fonctionnement principal des réseaux neuraux graphiques. Chaque nœud collecte des messages de ses voisins, les agrégera et met à jour son propre état.
 
-```
-h_v^(k+1) = UPDATE(h_v^(k), AGGREGATE({h_u^(k) : u in neighbors(v)}))
+```math
+h_v^{(k+1)} = \text{UPDATE}\left(h_v^{(k)}, \text{AGGREGATE}\left(\{h_u^{(k)} : u \in \text{neighbors}(v)\}\right)\right)
 ```
 
 Dans la forme la plus simple, AGGREGATE = moyenne et UPDATE = transformation linéaire + activation:
 
-```
-h_v^(k+1) = sigma(W * mean({h_u^(k) : u in neighbors(v)}))
-```
-
-C'est la multiplication de matrice déguisée. Si H est la matrice de toutes les caractéristiques du nœud et A est la matrice d'adjacence:
-
-```
-H^(k+1) = sigma(A_norm * H^(k) * W)
+```math
+h_v^{(k+1)} = \sigma\left(W \cdot \text{mean}\left(\{h_u^{(k)} : u \in \text{neighbors}(v)\}\right)\right)
 ```
 
-où A_norm est la matrice d'adjacentité normalisée (chaque ligne s'élève à 1).
+C'est une multiplication de matrice déguisée.$H$est la matrice de toutes les caractéristiques du nœud et $A$est la matrice d'adjacence:
 
-Une ronde de message de passage permet à chaque nœud de "voir" ses voisins immédiats. Deux rondes lui permettent de voir les voisins des voisins.
+```math
+H^{(k+1)} = \sigma\left(A_{\text{norm}} H^{(k)} W\right)
+```
+
+où $A_{\text{norm}}$est la matrice d'adjacentité normalisée (chaque ligne est une somme de 1).
+
+Une ronde de message permettant à chaque nœud de "voir" ses voisins immédiats.$K$Les ronds donnent à chaque nœud des informations de son $K$- dans le quartier du hop.
 
 ```mermaid
 graph LR
@@ -326,7 +325,7 @@ def dfs(graph, start):
     return order
 ```
 
-BFS utilise une déque (coupe double) pour O(1) pop-left. DFS utilise une liste comme une pile. Les deux visiter chaque nœud exactement une fois - O(V + E) temps.
+BFS utilise une déque (couche à double fin) pour $O(1)$DFS utilise une liste comme une pile.$O(V + E)$Le temps.
 
 ### Étape 3: Les composants connectés et les valeurs propres laplaciennes
 
@@ -369,7 +368,7 @@ def spectral_clustering(graph, k=2):
     return labels
 ```
 
-Pour k=2, le signe du vecteur Fiedler divise le graphique en deux graphes. Pour k>2, vous exécutez des moyens k sur les premiers vecteurs propres k (à l'exclusion du vecteur propre trivial tous-un).
+Pour $k=2$, le signe du vecteur Fiedler divise le graphique en deux graphes.$k>2$Tu courrais .$k$- signifie sur la première $k$vecteurs propres (à l'exclusion du vecteur propre trivial de tous les un).
 
 ### Étape 5: Transmission du message
 
@@ -462,13 +461,13 @@ Cette leçon donne:
 | Connected components | Preprocessing, handling disconnected graphs |
 | PageRank | Node importance ranking, attention initialization |
 
-Les GNN méritent une mention spéciale. L'opération de convolutions de graphes dans GCN (Kipf & Welling, 2017) utilise la matrice d'adjacence avec des boucles auto-ajoutées, A_hat = A + I:
+Les GNN méritent une mention spéciale. L'opération de convolutions de graphes dans GCN (Kipf & Welling, 2017) utilise la matrice d'adjacence avec des boucles auto-ajoutées, $\hat{A} = A + I$- Le numéro de la liste:
 
-```text
-H^(l+1) = sigma(D_hat^(-1/2) * A_hat * D_hat^(-1/2) * H^(l) * W^(l))
+```math
+H^{(l+1)} = \sigma\left(\hat{D}^{-1/2} \hat{A} \hat{D}^{-1/2} H^{(l)} W^{(l)}\right)
 ```
 
-où A_hat = A + I (adjacence plus auto-loops) et D_hat est la matrice de degrés de A_hat. Les boucles autonomes assurent que chaque nœud inclut ses propres caractéristiques lors de l'agrégation. C'est exactement le message qui passe avec une normalisation symétrique. D_hat^(-1/2) * A_hat * D_hat^(-1/2) est la matrice d'adjacence normalisée. Le Laplacien apparaît parce que cette normalisation est liée à L_sym = I - D^(-1/2) * A * D^(-1/2). Comprendre le Laplacien signifie comprendre pourquoi les GCN fonctionnent.
+où $\hat{A} = A + I$(adjacence plus auto-loops) et $\hat{D}$est la matrice de degrés de $\hat{A}$Les auto-loops assurent que chaque nœud inclut ses propres caractéristiques lors de l'agrégation.$\hat{D}^{-1/2} \hat{A} \hat{D}^{-1/2}$La Laplacienne apparaît parce que cette normalisation est liée à$L_{\text{sym}} = I - D^{-1/2} A D^{-1/2}$Comprendre le Laplacien signifie comprendre pourquoi les GCN fonctionnent.
 
 ## Exercices
 
@@ -482,15 +481,27 @@ où A_hat = A + I (adjacence plus auto-loops) et D_hat est la matrice de degrés
 
 5. **Analyze a real-world graph.**Utilisez le graphique du Karate Club (34 nœuds, 78 bords). Comptez la répartition des degrés, les valeurs propres de Laplace et le regroupement spectrique. Comparer le résultat du regroupement spectrique avec la fraction de vérité de la terre connue.
 
+### Des indices
+
+**Exercise 1.**Utilisez la formule de l'exercice. Un nœud sans bordes sortantes doit partager son score de manière égale avec tous les nœuds, ou le total tombe en dessous de 1. Vérifiez que les scores s'ajoutent à 1 après chaque étape et comparez votre résultat avec `pagerank(graph)`- Je suis désolé .
+
+**Exercise 2.**Construisez deux cliques avec `add_edge`, les connecter avec un bord, et appeler `spectral_clustering(graph, k=2)`Vérifiez que chaque clique obtient une étiquette. Lorsque vous ajoutez des bordures croisées, imprimez la deuxième plus petite valeur propre de `laplacian()`, qui grandit à mesure que les deux groupes se rejoignent.
+
+**Exercise 3.**Gardez une file d'attente prioritaire avec `heapq`et toujours étendre le nœud avec la plus petite distance connue.`bfs(graph, start)`- Je suis désolé .
+
+**Exercise 4.**Utilisez la matrice d' identité comme `features`, de sorte que chaque colonne marque un nœud, et appliquer `message_passing`Ensuite, les entrées non zéro dans la rangée pour le nœud $v$montrer quels nœuds ont atteint $v$Comparer cet ensemble avec les nœuds à distance 2 d'une première recherche de largeur.
+
+**Exercise 5.** `networkx.karate_club_graph()`donne la liste de bord et la vérité de base dans l' attribut noeud `club`- Copiez les bords dans un`Graph`et vérifier qu'il a 34 nœuds et 78 bords.`spectral_clustering`avec le `club`Les deux étiquettes doivent être échangées.
+
 ## Les termes clés
 
 | Term | What people say | What it actually means |
 |------|----------------|----------------------|
-| Graph | "Nodes and edges" | A mathematical structure G=(V,E) encoding pairwise relationships |
-| Adjacency matrix | "The connection table" | An n x n matrix where A[i][j] = 1 if nodes i and j are connected |
+| Graph | "Nodes and edges" | A mathematical structure $G=(V,E)$ encoding pairwise relationships |
+| Adjacency matrix | "The connection table" | An $n \times n$ matrix where $A[i][j] = 1$ if nodes $i$ and $j$ are connected |
 | Degree | "How connected a node is" | The number of edges touching a node |
-| Laplacian | "D minus A" | L = D - A, the matrix whose eigenvalues reveal graph structure |
-| Fiedler value | "The algebraic connectivity" | The smallest non-zero eigenvalue of L, measuring how well-connected the graph is |
+| Laplacian | "D minus A" | $L = D - A$, the matrix whose eigenvalues reveal graph structure |
+| Fiedler value | "The algebraic connectivity" | The smallest non-zero eigenvalue of $L$, measuring how well-connected the graph is |
 | BFS | "Level-by-level search" | Traversal that visits all neighbors before going deeper, finds shortest paths |
 | DFS | "Go deep first" | Traversal that follows one path to its end before backtracking |
 | Message passing | "Nodes talk to neighbors" | Each node aggregates information from its neighbors, the core of GNNs |

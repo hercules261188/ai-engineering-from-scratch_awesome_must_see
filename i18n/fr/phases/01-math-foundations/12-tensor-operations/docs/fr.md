@@ -36,7 +36,7 @@ graph LR
     T3 --> T4["4D Tensor<br/>rank 4<br/>shape: (B,C,H,W)"]
 ```
 
-Le nombre total d'éléments = produit de toutes tailles.`(2, 3, 4)`Il tient`2 * 3 * 4 = 24`Les éléments.
+Le nombre total d'éléments = produit de toutes tailles.`(2, 3, 4)`Il tient$2 \cdot 3 \cdot 4 = 24$Les éléments.
 
 ### Formes de tensions dans l'apprentissage profond
 
@@ -232,7 +232,7 @@ batch_B = np.random.randn(4, 5, 2)
 batch_mm = np.einsum("bij,bjk->bik", batch_A, batch_B)
 ```
 
-Le coût calculé d'une contraction est le produit de toutes les tailles d'indices (contenues et sumées).`bij,bjk->bik`avec B=32, I=128, J=64, K=128: `32 * 128 * 64 * 128 = 33,554,432`les multiples ajoutés.
+Le coût calculé d'une contraction est le produit de toutes les tailles d'indices (contenues et sumées).`bij,bjk->bik`avec $B=32$- Je suis là .$I=128$- Je suis là .$J=64$- Je suis là .$K=128$Le numéro de la liste:$32 \cdot 128 \cdot 64 \cdot 128 = 33{,}554{,}432$les multiples ajoutés.
 
 ### Étape 7: Mécanisme d'attention par l'insum
 
@@ -319,6 +319,16 @@ Cette leçon produit deux instructions réutilisables:
 3. **Hard -- Build einsum from scratch.**La mise en œuvre d'une base `einsum(subscripts, *tensors)`fonction qui gère au moins: produit à point (`i,i->`), le multiplicateur de matrice (`ij,jk->ik`), produit externe (`i,j->ij`), et transposer (`ij->ji`) Analysez la chaîne de sous-scripts, identifiez les indices contractés et faites une boucle sur toutes les combinaisons d'indices.`np.einsum`- Je suis désolé .
 
 4. **Hard -- Attention shape tracker.**Écrivez une fonction qui prend `batch_size`- Je suis là .`seq_len`- Je suis là .`embed_dim`, et `num_heads`Les données de l'interface de l'interface sont fournies par l'intermédiaire de l'interface de l'interface de l'interface de l'interface de l'interface de l'interface de l'interface de l'interface de l'interface de l'interface de l'interface de l'interface de l'interface de l'interface de l'interface de l'interface de l'interface de l'interface de l'interface de l'interface de l'interface de l'interface de l'interface de l'interface de l'interface de l'interface de l'interface de l'interface de l'interface de l'interface de l'interface de l'interface de l'interface de l'interface de l'interface de l'interface de l'interface de l'interface de l'interface de l'interface de l'interface de l'interface de l'interface de l'interface de l'interface de l'interface de l'interface de l'interface de l'interface de l'interface de l'interface de l'interface de l'interface de l'interface de l'interface de l'interface de l'interface de l'interface de l'interface de l'interface de l'interface de l'interface de l'interface de l'interface de l'interface de l'interface de l'interface de l'interface de l'interface de l'interface de l'interface de l'interface.`demo_attention_einsum()`la sortie.
+
+### Des indices
+
+**Exercise 1.**Construisez le tensor à partir de `list(range(24))`Ainsi chaque élément montre sa propre position.`reshape`Appel, imprimé`flatten().to_list()`et vérifier que c'est toujours 0 à 23 dans l'ordre.
+
+**Exercise 2.**Une dimension ne peut être diffusée que lorsque les deux tailles sont égales ou si l'une d'entre elles est 1, alors vérifiez cette règle d'abord et émettez une erreur lorsqu'elle échoue.`(3, 1)`et `(1, 4)`, vérifiez cette entrée `[i][j]`du résultat est égal `a[i][0] + b[0][j]`, et comparer le résultat complet avec NumPy.
+
+**Exercise 3.**Divisez les abonnements en `->`Une lettre qui est dans les entrées mais pas dans la sortie est un indice sumé, alors faites boucle sur toutes les valeurs de chaque lettre et ajoutez à la position de sortie.`np.allclose(mine, np.einsum(...))`- Je suis désolé .
+
+**Exercise 4.**Commencez par la taille de la tête `embed_dim // num_heads`et affirmer que `embed_dim % num_heads == 0`Les scores d' attention ont une forme .`(batch_size, num_heads, seq_len, seq_len)`, alors vérifiez votre impression contre cette forme et contre les formes qui`demo_attention_einsum()`Des empreintes.
 
 ## Les termes clés
 

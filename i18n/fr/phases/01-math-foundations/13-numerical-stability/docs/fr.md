@@ -96,7 +96,7 @@ Relative error: 19.2%
 
 C'est une erreur relative de 19% d'une seule soustraction.
 
-- Compute la variance des données avec une moyenne élevée: `E[x^2] - E[x]^2`lorsque E[x] est grand
+- Compute la variance des données avec une moyenne élevée: $\mathbb{E}[x^2] - \mathbb{E}[x]^2$quand ?$\mathbb{E}[x]$est grand
 - Soustraire des probabilités de logement presque égales
 - Compute les gradients de différence finie avec un epsilon trop petit
 
@@ -141,20 +141,22 @@ L' informatique `log(sum(exp(x_i)))`Le risque est numériquement élevé.`x_i`es
 
 Le truc: soustraire la valeur maximale avant d'exposer.
 
-```
-log(sum(exp(x_i))) = max(x) + log(sum(exp(x_i - max(x))))
+```math
+\log\left(\sum_i \exp(x_i)\right) = \max(x) + \log\left(\sum_i \exp(x_i - \max(x))\right)
 ```
 
 Pourquoi cela fonctionne-t-il: après soustraction `max(x)`, le plus grand exponent est `exp(0) = 1`- Aucun débordement n'est possible. Au moins un terme de la somme est 1, donc la somme est au moins 1, et`log(1) = 0`- Pas de sous-couleurs .`-inf`C'est possible.
 
 La preuve:
 
-```
-log(sum(exp(x_i)))
-= log(sum(exp(x_i - c + c)))                    (add and subtract c)
-= log(sum(exp(x_i - c) * exp(c)))               (exp(a+b) = exp(a)*exp(b))
-= log(exp(c) * sum(exp(x_i - c)))               (factor out exp(c))
-= c + log(sum(exp(x_i - c)))                    (log(a*b) = log(a) + log(b))
+```math
+\begin{aligned}
+& \log\left(\sum_i \exp(x_i)\right) \\
+&= \log\left(\sum_i \exp(x_i - c + c)\right) && \text{(add and subtract } c\text{)} \\
+&= \log\left(\sum_i \exp(x_i - c) \cdot \exp(c)\right) && (\exp(a+b) = \exp(a) \cdot \exp(b)) \\
+&= \log\left(\exp(c) \cdot \sum_i \exp(x_i - c)\right) && \text{(factor out } \exp(c)\text{)} \\
+&= c + \log\left(\sum_i \exp(x_i - c)\right) && (\log(a \cdot b) = \log(a) + \log(b))
+\end{aligned}
 ```
 
 Réglage `c = max(x)`et le débordement est éliminé.
@@ -170,8 +172,8 @@ Ce truc apparaît partout dans ML:
 
 Softmax convertit les logits en probabilités:
 
-```
-softmax(x_i) = exp(x_i) / sum(exp(x_j))
+```math
+\mathop{\mathrm{softmax}}(x_i) = \frac{\exp(x_i)}{\sum_j \exp(x_j)}
 ```
 
 Sans le truc, les logits de [100, 101, 102] provoquent un débordement:
@@ -242,18 +244,18 @@ Les gradients analytiques (de la propagation en arrière) peuvent avoir des bugs
 
 La formule de différence centrée:
 
-```
-df/dx ~= (f(x + h) - f(x - h)) / (2h)
+```math
+\frac{df}{dx} \approx \frac{f(x + h) - f(x - h)}{2h}
 ```
 
-C'est O(h^2) précis, beaucoup mieux que la différence avant `(f(x+h) - f(x)) / h`qui est seulement O(h).
+C' est ça .$O(h^2)$C'est bien plus précis que la différence avant.$(f(x+h) - f(x)) / h$Ce qui est seulement $O(h)$- Je suis désolé .
 
-Le choix de h: trop grand et l'approximation est erronée.`h = 1e-5`à `1e-7`C'est typique.
+Le choix$h$L'annulation trop petite et catastrophique détruit la réponse. `h = 1e-5`à `1e-7`C'est typique.
 
 Le contrôle: calculer la différence relative entre les gradients analytiques et numériques.
 
-```
-relative_error = |grad_analytical - grad_numerical| / max(|grad_analytical|, |grad_numerical|, 1e-8)
+```math
+\text{relative\_error} = \frac{\lvert \text{grad}_{\text{analytical}} - \text{grad}_{\text{numerical}} \rvert}{\max(\lvert \text{grad}_{\text{analytical}} \rvert, \lvert \text{grad}_{\text{numerical}} \rvert, 10^{-8})}
 ```
 
 Règles générales:
@@ -289,7 +291,7 @@ La solution est de réduire les pertes:
 5. Net effect: same update, but no underflow
 ```
 
-L'échelle dynamique de perte d'échelle ajuste automatiquement le facteur d'échelle. Commencez par une valeur importante (65536).`inf`Si N pas passent sans débordement, doubler.
+L'échelle dynamique de perte d'échelle ajuste automatiquement le facteur d'échelle. Commencez par une valeur importante (65536).`inf`- Si vous voulez.$N$Passez les marches sans débordement, doublons-le.
 
 ### Bfloat16 contre Bfloat16: Pourquoi Bfloat16 gagne pour l'entraînement
 
@@ -350,8 +352,8 @@ Layer 50: values in [0, inf]
 
 Normalité des récurrents et rééchelles d'activations à chaque couche:
 
-```
-LayerNorm(x) = (x - mean(x)) / (std(x) + epsilon) * gamma + beta
+```math
+\mathop{\mathrm{LayerNorm}}(x) = \frac{x - \mathop{\mathrm{mean}}(x)}{\mathop{\mathrm{std}}(x) + \epsilon} \cdot \gamma + \beta
 ```
 
 Le `epsilon`(typiquement 1e-5) empêche la division par zéro lorsque toutes les activations sont identiques.`gamma`et `beta`Laissez le réseau restaurer toute l'échelle dont il a besoin.
@@ -568,7 +570,7 @@ Ces mises en œuvre stables se réapparaissent à la phase 3 lors de la construc
 
 ## Exercices
 
-1. **Catastrophic cancellation.**Comptez la variance de [1000000.0, 1000001.0, 1000002.0] en utilisant la formule naïve `E[x^2] - E[x]^2`Comparer les erreurs avec la variance réelle (0,6667).
+1. **Catastrophic cancellation.**Comptez la variance de [1000000.0, 1000001.0, 1000002.0] en utilisant la formule naïve $\mathbb{E}[x^2] - \mathbb{E}[x]^2$Comparer les erreurs avec la variance réelle (0,6667).
 
 2. **Precision hunt.**Trouvez la plus petite valeur positive float32 `x`comme ça .`1.0 + x == 1.0`C'est la machine epsilon, vérifiez qu'elle correspond.`numpy.finfo(numpy.float32).eps`- Je suis désolé .
 
@@ -578,17 +580,29 @@ Ces mises en œuvre stables se réapparaissent à la phase 3 lors de la construc
 
 5. **Loss scaling experiment.**Simuler l'entraînement avec float16: créer des gradients aléatoires dans la plage [1e-9, 1e-3], convertir en float16, et mesurer quelle fraction devient zéro.
 
+### Des indices
+
+**Exercise 1.**Convertir les trois valeurs avec `np.float32`Avant de les écarter, alors appelez`variance_naive`et `welford_variance`Une valeur proche de$10^{12}$dans float32 a une distance beaucoup plus grande que 1, alors attendez-vous que le résultat naïf soit loin de 0,6667 et le résultat Welford soit proche.
+
+**Exercise 2.**Commencez par `x = np.float32(1.0)`et la réduire de moitié pendant que `np.float32(1.0) + x != np.float32(1.0)`. Conservez chaque valeur dans float32, puis comparez la dernière valeur qui a encore changé la somme avec `numpy.finfo(numpy.float32).eps`, qui est $2^{-23}$- Je suis désolé .
+
+**Exercise 3.**Prédire chaque réponse d'abord.$n$valeurs égales $c$, le résultat est $c + \ln n$Pour une valeur importante, le résultat est proche de cette valeur.$-1000 + \ln n$, alors que `logsumexp_naive`Retour `-inf`parce que chaque élément exponentiel descend à 0.
+
+**Exercise 4.**Pour $y = Wx + b$avec une perte $L$, le gradient pour $W$est le produit externe du gradient en amont et $x$- Remplir la perte en fonction de l' aplatissement$W$- Je vous appelle .`numerical_gradient`, et de passer les deux résultats à `check_gradient`- Je suis désolé .
+
+**Exercise 5.**Prenez des échantillons de la magnitude sur une échelle de jour avec `10 ** np.random.uniform(-9, -3, n)`et se convertir avec `np.float16`. Float16 ne peut pas maintenir les valeurs inférieures à environ $6 \times 10^{-8}$, alors attendez-vous à environ un quart des valeurs deviennent zéro avant l'échelle et presque aucun après que vous multipliez par 1024.
+
 ## Les termes clés
 
 | Term | What people say | What it actually means |
 |------|----------------|----------------------|
 | IEEE 754 | "The float standard" | International standard defining binary floating point formats, rounding rules, and special values (inf, nan). Every modern CPU and GPU implements it. |
-| Machine epsilon | "The precision limit" | The smallest value e such that 1.0 + e != 1.0 in a given float format. For float32, it is about 1.19e-7. |
+| Machine epsilon | "The precision limit" | The smallest value $e$ such that $1.0 + e \ne 1.0$ in a given float format. For float32, it is about 1.19e-7. |
 | Catastrophic cancellation | "Precision loss from subtraction" | When subtracting nearly equal floating point numbers, significant digits cancel and rounding noise dominates the result. |
 | Overflow | "Number too big" | A result exceeds the maximum representable value and becomes inf. exp(89) overflows float32. |
 | Underflow | "Number too small" | A result is closer to zero than the smallest representable positive number and becomes 0.0. exp(-104) underflows float32. |
-| Log-sum-exp trick | "Subtract the max first" | Computing log(sum(exp(x))) by factoring out exp(max(x)) to prevent overflow and underflow. Used in softmax, cross-entropy, and log-probability math. |
-| Stable softmax | "Softmax that does not explode" | Subtracting max(logits) before exponentiating. Numerically identical result, no overflow possible. |
+| Log-sum-exp trick | "Subtract the max first" | Computing $\log(\sum \exp(x))$ by factoring out $\exp(\max(x))$ to prevent overflow and underflow. Used in softmax, cross-entropy, and log-probability math. |
+| Stable softmax | "Softmax that does not explode" | Subtracting $\max(\text{logits})$ before exponentiating. Numerically identical result, no overflow possible. |
 | Gradient checking | "Verify your backprop" | Comparing analytical gradients from backpropagation against numerical gradients from finite differences to catch implementation bugs. |
 | Mixed precision | "Float16 forward, float32 backward" | Using lower-precision floats for speed-critical operations and higher-precision floats for numerically sensitive operations. Typical speedup is 2-3x. |
 | Loss scaling | "Prevent gradient underflow" | Multiplying the loss by a large constant before backprop so gradients stay in float16's representable range, then dividing by the same constant before weight updates. |
@@ -596,7 +610,7 @@ Ces mises en œuvre stables se réapparaissent à la phase 3 lors de la construc
 | Gradient clipping | "Cap the gradient norm" | Scaling the gradient vector so its norm does not exceed a threshold. Prevents exploding gradients from ruining weights. |
 | NaN | "Not a Number" | Special float value from undefined operations (0/0, inf-inf, sqrt(-1)). Propagates through all subsequent arithmetic. |
 | Inf | "Infinity" | Special float value from overflow or division by zero. Can combine to produce NaN (inf - inf, inf * 0). |
-| Numerical gradient | "Brute force derivative" | Approximating a derivative by evaluating f(x+h) and f(x-h) and dividing by 2h. Slow but reliable for verification. |
+| Numerical gradient | "Brute force derivative" | Approximating a derivative by evaluating $f(x+h)$ and $f(x-h)$ and dividing by $2h$. Slow but reliable for verification. |
 
 ## Pour en savoir plus
 
