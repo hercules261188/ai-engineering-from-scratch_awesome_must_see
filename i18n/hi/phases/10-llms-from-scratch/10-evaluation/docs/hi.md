@@ -67,8 +67,8 @@ graph TD
 
 विडंबना एक मॉडल टोकन के अनुक्रम द्वारा कितना आश्चर्यचकित है, यह मापता है। औपचारिक रूप से, यह एक्सपोनेंशियल औसत नकारात्मक लॉग-संभाव्यता हैः
 
-```
-PPL = exp(-1/N * sum(log P(token_i | context)))
+```math
+\text{PPL} = \exp\left(-\frac{1}{N} \sum_i \log P(\text{token}_i \mid \text{context})\right)
 ```
 
 10 की गुंतागुंत का मतलब है कि मॉडल औसत में, प्रत्येक टोकन स्थिति पर 10 विकल्पों के बीच समान रूप से चुनने के रूप में अनिश्चित है। निचला बेहतर है। GPT-2 को विकीटेक्सट -103 पर ~30 की गुंतागुंत मिलता है। GPT-3 को ~20 मिलता है। Llama 3 8B को ~7 मिलता है।
@@ -503,7 +503,7 @@ RAGAS मापता है कि क्या सामान्य मूल
 | MMLU | "The benchmark" | Massive Multitask Language Understanding -- 15,908 multiple choice questions across 57 subjects, saturated above 88% by 2025 |
 | HumanEval | "Code eval" | 164 Python function-completion problems from OpenAI, tests only isolated function generation |
 | SWE-bench | "Real coding eval" | 2,294 GitHub issues from 12 Python repos, measures end-to-end bug fixing including test generation |
-| Perplexity | "How confused the model is" | exp(-avg(log P(token_i given context))) -- lower means the model assigns higher probability to the actual tokens |
+| Perplexity | "How confused the model is" | $\exp(-\mathop{\mathrm{avg}}(\log P(\text{token}_i \text{ given context})))$ -- lower means the model assigns higher probability to the actual tokens |
 | ELO rating | "Chess ranking for models" | A relative skill rating computed from pairwise win/loss records, used by Chatbot Arena to rank 100+ models |
 | LLM-as-judge | "Using AI to grade AI" | A strong model scores a weaker model's outputs against a rubric, ~80% agreement with human judges at ~$0.01/judgment |
 | Data contamination | "The model saw the test" | Training data includes benchmark questions, inflating scores without improving real capability |
@@ -516,4 +516,4 @@ RAGAS मापता है कि क्या सामान्य मूल
 - [Hendrycks et al., 2021 -- "Measuring Massive Multitask Language Understanding"](https://arxiv.org/abs/2009.03300)-- एमएमएलयू पेपर, अभी भी इसकी संतृप्ति के बावजूद सबसे अधिक उल्लिखित एलएलएम बेंचमार्क
 - [Chen et al., 2021 -- "Evaluating Large Language Models Trained on Code"](https://arxiv.org/abs/2107.03374)-- ओपनएआई से मानव इवल पेपर, स्थापित कोड जनरेशन मूल्यांकन पद्धति
 - [Zheng et al., 2023 -- "Judging LLM-as-a-Judge"](https://arxiv.org/abs/2306.05685)-- स्थिति पूर्वाग्रह और शब्द पूर्वाग्रह के निष्कर्षों सहित LLM का मूल्यांकन करने के लिए LLM का उपयोग करने का व्यवस्थित विश्लेषण
-- [LMSYS Chatbot Arena](https://chat.lmsys.org/)-- 2M+ वोटों के साथ भीड़-भाड़ वाले मॉडल तुलना मंच, वास्तविक दुनिया में सबसे विश्वसनीय LLM रैंकिंग
+- [Arena (formerly LMSYS Chatbot Arena)](https://arena.ai/leaderboard)-- 2M+ वोटों के साथ भीड़-भाड़ वाले मॉडल तुलना मंच, वास्तविक दुनिया में सबसे विश्वसनीय LLM रैंकिंग

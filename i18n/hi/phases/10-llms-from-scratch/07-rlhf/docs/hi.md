@@ -80,8 +80,8 @@ graph TD
 
 हानि फ़ंक्शन जोड़ी-तरह के विकल्पों के ब्रैडली-टेरी मॉडल का उपयोग करता हैः
 
-```
-loss = -log(sigmoid(reward(preferred) - reward(rejected)))
+```math
+\text{loss} = -\log\big(\mathop{\mathrm{sigmoid}}(\text{reward}(\text{preferred}) - \text{reward}(\text{rejected}))\big)
 ```
 
 यह मुख्य समीकरण है।`sigmoid(reward(A) - reward(B))`यह संभावना देता है कि प्रतिक्रिया A को प्रतिक्रिया B के मुकाबले पसंद किया जाता है। हानि पुरस्कार मॉडल को प्राथमिकता प्राप्त प्रतिक्रिया को उच्च स्कोर देने के लिए धक्का देती है।
@@ -96,8 +96,8 @@ loss = -log(sigmoid(reward(preferred) - reward(rejected)))
 
 उद्देश्य:
 
-```
-maximize: E[R(prompt, response)] - beta * KL(policy || reference)
+```math
+\text{maximize:} \quad \mathbb{E}[R(\text{prompt}, \text{response})] - \beta \cdot \mathrm{KL}(\text{policy} \,\|\, \text{reference})
 ```
 
 पहला शब्द मॉडल को उच्च पुरस्कार प्रतिक्रिया उत्पन्न करने के लिए धक्का देता है। दूसरा शब्द (केएल विचलन दंड) मॉडल को एसएफटी चेकपॉइंट से बहुत दूर विचलित होने से रोकता है।
@@ -110,7 +110,7 @@ maximize: E[R(prompt, response)] - beta * KL(policy || reference)
 
 KL पेनल्टी कहती हैः आप सुधार कर सकते हैं, लेकिन आप एक पूरी तरह से अलग मॉडल नहीं बन सकते हैं। SFT संस्करण के करीब रहें, जो पहले से ही उचित था। बहुत दूर घूमना और KL लागत पुरस्कार पर हावी है।
 
-**InstructGPT numbers:**पीपीओ प्रशिक्षण में lr=1.5e-5, KL गुणांक बीटा=0.02, 256K एपिसोड (प्रॉम्प्ट-रिस्पॉन्स जोड़े) और 4 पीपीओ युग प्रति बैच का उपयोग किया गया। पूरे आरएलएचएफ पाइपलाइन में कई दिनों का समय लिया गया।
+**InstructGPT numbers:**पीपीओ प्रशिक्षण का उपयोग किया गया lr=1.5e-5, KL गुणांक $\beta=0.02$, 256K एपिसोड (प्रॉम्प्ट-रिस्पॉन्स जोड़े), और 4 पीपीओ युग प्रति बैच। पूरे आरएलएचएफ पाइपलाइन में कई दिनों का समय लिया गया।
 
 ```mermaid
 graph LR
@@ -133,12 +133,14 @@ graph LR
 
 ### पीपीओ लक्ष्य विस्तार से
 
-पीपीओ अत्यधिक बड़े अपडेट को रोकने के लिए एक "कटप सरोगेट ऑब्जेक्ट" का उपयोग करता है। नई नीति और पुरानी नीति की संभावनाओं के बीच अनुपात को [1 - epsilon, 1 + epsilon] सीमा तक काट दिया जाता है, जहां epsilon आमतौर पर 0.2 होता है।
+PPO एक "कट्टे सरोगेट उद्देश्य" का उपयोग अत्यधिक बड़े अपडेट को रोकने के लिए करता है। नई नीति और पुरानी नीति संभावनाओं के बीच अनुपात सीमा तक कटौती की जाती है $[1 - \epsilon, 1 + \epsilon]$, जहां $\epsilon$आमतौर पर 0.2 होता है।
 
-```
-ratio = pi_new(action | state) / pi_old(action | state)
-clipped_ratio = clip(ratio, 1 - epsilon, 1 + epsilon)
-loss = -min(ratio * advantage, clipped_ratio * advantage)
+```math
+\begin{aligned}
+\text{ratio} &= \pi_{\text{new}}(\text{action} \mid \text{state}) / \pi_{\text{old}}(\text{action} \mid \text{state}) \\
+\text{clipped\_ratio} &= \mathop{\mathrm{clip}}(\text{ratio}, 1 - \epsilon, 1 + \epsilon) \\
+\text{loss} &= -\min(\text{ratio} \cdot \text{advantage}, \text{clipped\_ratio} \cdot \text{advantage})
+\end{aligned}
 ```
 
 लाभ फ़ंक्शन अनुमान लगाता है कि वर्तमान प्रतिक्रिया अपेक्षित गुणवत्ता की तुलना में कितनी बेहतर है।
@@ -606,9 +608,9 @@ if __name__ == "__main__":
 
 3. इनाम हैकिंग का अनुकरण करें. एक इनाम मॉडल बनाएं जो लंबे उत्तरों (इनाम = len(उत्तर) / 100) को उच्च स्कोर देता है। इस दोषपूर्ण इनाम मॉडल के साथ पीपीओ चलाएं और नीति मॉडल का निरीक्षण करें जो तेजी से लंबे, दोहराए गए आउटपुट उत्पन्न करता है। फिर 0.1 का एक KL दंड जोड़ें और दिखाएं कि यह विघटनकारी व्यवहार को रोकता है।
 
-4. एक बहु-उद्देश्यीय पुरस्कार लागू करें. दो पुरस्कार मॉडल को प्रशिक्षित करें - एक उपयोगी और एक संक्षिप्तता के लिए। उन्हें R = 0.7 * R_helpful + 0.3 * R_concise के रूप में जोड़ें। दिखाएं कि संयुक्त उद्देश्य एक एकल उपयोगी पुरस्कार के शब्दबद्धता जाल से बचने के लिए उपयोगी और संक्षिप्त दोनों प्रतिक्रियाएं उत्पन्न करता है।
+4. एक बहु-उद्देश्यीय पुरस्कार लागू करें. दो पुरस्कार मॉडल प्रशिक्षित करें - एक मददगारता के लिए और एक संक्षिप्तता के लिए। उन्हें संयोजित करें जैसे कि$R = 0.7 \cdot R_{\text{helpful}} + 0.3 \cdot R_{\text{concise}}$. दिखाएं कि संयुक्त उद्देश्य उपयोगी और संक्षिप्त दोनों प्रतिक्रियाएं उत्पन्न करता है, जिससे एक ही उपयोगी पुरस्कार के शब्दार्थ जाल से बचा जाता है।
 
-5. अलग-अलग KL गुणांक की तुलना करें। बीटा = 0.001 (बहुत कम, इनाम हैकिंग), बीटा = 0.02 (मानक), और बीटा = 0.5 (बहुत अधिक, कोई सीखने) के साथ पीपीओ चलाएं। प्रत्येक के लिए इनाम वक्र और KL वक्र का ग्राफ करें। बीटा = 0.02 रन को सीमित KL के साथ निरंतर इनाम सुधार दिखाना चाहिए।
+5. विभिन्न KL गुणांकों की तुलना करें।$\beta=0.001$(बहुत कम, पुरस्कार हैकिंग), $\beta=0.02$(मानक) और$\beta=0.5$(बहुत उच्च, कोई सीखने) प्रत्येक के लिए पुरस्कार वक्र और KL वक्र का पता लगाएं।$\beta=0.02$रनिंग सीमित KL के साथ लगातार इनाम में सुधार दिखाना चाहिए।
 
 ## प्रमुख शर्तें
 
@@ -616,10 +618,10 @@ if __name__ == "__main__":
 |------|----------------|----------------------|
 | RLHF | "Training with human feedback" | Reinforcement Learning from Human Feedback: a three-stage pipeline (SFT, reward model, PPO) that optimizes language model outputs using human preference signals |
 | Reward model | "A model that scores responses" | A transformer with a scalar output head, trained on pairwise human preferences using the Bradley-Terry loss |
-| Bradley-Terry | "The comparison model" | A probabilistic model where P(A > B) = sigmoid(score(A) - score(B)), converting pairwise preferences into a consistent scoring function |
+| Bradley-Terry | "The comparison model" | A probabilistic model where $P(A > B) = \mathop{\mathrm{sigmoid}}(\text{score}(A) - \text{score}(B))$, converting pairwise preferences into a consistent scoring function |
 | PPO | "The RL algorithm" | Proximal Policy Optimization: updates the policy to maximize reward while clipping the update magnitude to prevent instability |
 | KL divergence | "How different two distributions are" | A measure of the difference between the policy model's token distribution and the reference model's -- used as a penalty to prevent reward hacking |
-| KL penalty | "The leash on the model" | Beta * KL(policy \|\| reference) subtracted from the reward signal -- prevents the policy from diverging too far from the SFT checkpoint |
+| KL penalty | "The leash on the model" | $\beta \cdot \mathrm{KL}(\text{policy} \Vert \text{reference})$ subtracted from the reward signal -- prevents the policy from diverging too far from the SFT checkpoint |
 | Reward hacking | "Gaming the reward" | When the policy finds degenerate high-reward outputs by exploiting weaknesses in the reward model instead of genuinely improving |
 | Preference pair | "Which is better, A or B?" | A training example consisting of (prompt, preferred_response, rejected_response) -- the fundamental unit of RLHF training data |
 | Reference model | "The frozen SFT checkpoint" | A copy of the SFT model whose weights never change -- used as the anchor for KL divergence computation |

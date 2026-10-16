@@ -42,11 +42,11 @@ INT8:  [1 sign] [7 value]                   = 8  bits (uniform steps)
 INT4:  [1 sign] [3 value]                   = 4  bits (16 levels total)
 ```
 
-**FP32**23 mantissa bits आपको सटीकता के लगभग 7 दशमलव अंकों देते हैं। रेंजः लगभग 1.2 x 10^-38 से 3.4 x 10^38. प्रशिक्षण पहले केवल FP32 में होता था। यह अभी भी संचय के लिए लागू होता है (मैट्रिक्स गुणा के दौरान चल रहे योग) ।
+**FP32**23 mantissa बिट्स आपको सटीकता के लगभग 7 दशमलव अंकों देता है। सीमाः लगभग$1.2 \times 10^{-38}$$3.4 \times 10^{38}$प्रशिक्षण पहले केवल FP32 में होता था। यह अभी भी संचय (मैट्रिक्स गुणा के दौरान चल रहे योग) के लिए होता है।
 
 **FP16**10 mantissa bits लगभग 3.3 दशमलव अंकों का परिणाम होते हैं। एक्सपोनेंट 5 bits तक कम हो जाता है, जो कि रेंज को नाटकीय रूप से कम करता है (max value ~65,504) । यह वजन के लिए ठीक है (जो शून्य के करीब क्लस्टर होता है) लेकिन सक्रियण और ग्रेडिएंट के लिए खतरनाक है जो प्रशिक्षण के दौरान बढ़ सकता है। FP16 प्रशिक्षण के दौरान निचले प्रवाह को रोकने के लिए नुकसान स्केलिंग की आवश्यकता होती है।
 
-**BF16**(मस्तिष्क तैरने 16) 8-बिट एक्सपोनेंट को FP32 से रखता है लेकिन mantissa को 7 बिट तक छोटा करता है। एफपी 32 की तरह ही रेंज, एफपी 16 की तुलना में कम सटीकता। गूगल ने इसे विशेष रूप से गहरे सीखने के लिए डिज़ाइन किया है। अंतर्ज्ञान: तंत्रिका नेटवर्क के लिए सटीकता से अधिक रेंज महत्वपूर्ण है। एफपी 16 में 10^-20 का ग्रेडिएंट जो शून्य तक बहता है, बीएफ 16 में जीवित रहता है। 0.07342 का वजन जो BF16 में 0.0734 तक घुमाता है पर्याप्त करीब है। प्रत्येक आधुनिक प्रशिक्षण रन में BF16 या BF16/FP32 मिश्रण का उपयोग किया जाता है।
+**BF16**(Brain Float 16) 8-बिट एक्सपोनेंटर को FP32 से रखता है लेकिन mantissa को 7 बिट तक कम करता है। FP32, FP16 की तुलना में कम सटीकता के समान सीमा। Google ने इसे विशेष रूप से गहरे सीखने के लिए डिज़ाइन किया है। अंतर्ज्ञानः सीमा तंत्रिका नेटवर्क के लिए सटीकता से अधिक मायने रखती है।$10^{-20}$BF16 में 0.07342 का वजन जो BF16 में 0.0734 तक गिरता है, पर्याप्त रूप से करीब है। प्रत्येक आधुनिक प्रशिक्षण रन में BF16 या BF16/FP32 मिश्रण का उपयोग किया जाता है।
 
 **FP8**E4M3 (4 एक्सपोनेंट, 3 मंटिस) का उपयोग अनुमान के दौरान वजन और सक्रियण के लिए किया जाता है। E5M2 (5 एक्सपोनेंट, 2 मंटिस) का उपयोग प्रशिक्षण के दौरान ग्रेडिएंट के लिए किया जाता है जहां रेंज सटीकता से अधिक मायने रखता है। H100 GPU पर FP8 अनुमान FP16 की तुलना में 30-50% गति प्राप्त करता है।
 
@@ -773,59 +773,73 @@ if __name__ == "__main__":
 
 ## इसका प्रयोग करें
 
-### ऑटोजीपीटीक्यू के साथ क्वांटिज़िंग
+### GPTQModel के साथ क्वांटिज़िंग
 
 ```python
-# pip install auto-gptq transformers
-# from auto_gptq import AutoGPTQForCausalLM, BaseQuantizeConfig
-# from transformers import AutoTokenizer
+# pip install gptqmodel
+# from gptqmodel import GPTQConfig, GPTQModel
 #
 # model_id = "meta-llama/Llama-3.1-8B"
-# quantize_config = BaseQuantizeConfig(
-#     bits=4,
-#     group_size=128,
-#     desc_act=False,
+# quant_config = GPTQConfig(bits=4, group_size=128)
+#
+# model = GPTQModel.load(model_id, quant_config)
+# model.quantize(calibration_texts[:128], batch_size=1)
+# model.save("llama-8b-gptq-int4")
+```
+
+### LLM कंप्रेसर के साथ AWQ को क्वांटिज़ करना
+
+```python
+# pip install llmcompressor
+# from transformers import AutoModelForCausalLM, AutoTokenizer
+# from llmcompressor import oneshot
+# from llmcompressor.modifiers.quantization import QuantizationModifier
+# from llmcompressor.modifiers.transform.awq import AWQModifier
+#
+# model_id = "meta-llama/Llama-3.1-8B"
+# model = AutoModelForCausalLM.from_pretrained(model_id)
+# tokenizer = AutoTokenizer.from_pretrained(model_id)
+#
+# recipe = [
+#     AWQModifier(duo_scaling="both"),
+#     QuantizationModifier(ignore=["lm_head"], scheme="W4A16_ASYM", targets=["Linear"]),
+# ]
+# oneshot(
+#     model=model,
+#     dataset="perfectblend",
+#     splits="train[:512]",
+#     recipe=recipe,
+#     max_seq_length=512,
+#     num_calibration_samples=256,
 # )
-#
-# tokenizer = AutoTokenizer.from_pretrained(model_id)
-# model = AutoGPTQForCausalLM.from_pretrained(model_id, quantize_config)
-#
-# calibration = [tokenizer(t, return_tensors="pt") for t in calibration_texts[:128]]
-# model.quantize(calibration)
-# model.save_quantized("llama-8b-gptq-int4")
+# model.save_pretrained("llama-8b-awq-int4", save_compressed=True)
+# tokenizer.save_pretrained("llama-8b-awq-int4")
 ```
 
-### ऑटोएडब्ल्यूक्यू के साथ क्वांटिज़िंग
-
-```python
-# pip install autoawq
-# from awq import AutoAWQForCausalLM
-# from transformers import AutoTokenizer
-#
-# model_id = "meta-llama/Llama-3.1-8B"
-# model = AutoAWQForCausalLM.from_pretrained(model_id)
-# tokenizer = AutoTokenizer.from_pretrained(model_id)
-#
-# model.quantize(tokenizer, quant_config={"zero_point": True, "q_group_size": 128, "w_bit": 4})
-# model.save_quantized("llama-8b-awq-int4")
-```
+इन दो तरीकों के लिए मूल उपकरण, ऑटोजीपीटीक्यू और ऑटोएडब्ल्यूक्यू, संग्रहीत किए जाते हैं। जीपीटीक्यू मॉडल और एलएलएम कंप्रेसर बनाए रखे गए उत्तराधिकारी हैं।
 
 ### GGUF में परिवर्तित करना
 
 ```bash
-# pip install llama-cpp-python
-# python convert_hf_to_gguf.py meta-llama/Llama-3.1-8B --outtype q4_k_m --outfile llama-8b-q4km.gguf
-# llama-server -m llama-8b-q4km.gguf -c 4096 -ngl 99
+# git clone https://github.com/ggml-org/llama.cpp
+# cmake -S llama.cpp -B llama.cpp/build && cmake --build llama.cpp/build --config Release
+# pip install -r llama.cpp/requirements.txt
+# hf download meta-llama/Llama-3.1-8B --local-dir Llama-3.1-8B
+# python llama.cpp/convert_hf_to_gguf.py Llama-3.1-8B --outtype f16 --outfile llama-8b-f16.gguf
+# llama.cpp/build/bin/llama-quantize llama-8b-f16.gguf llama-8b-q4km.gguf Q4_K_M
+# llama.cpp/build/bin/llama-server -m llama-8b-q4km.gguf -c 4096 -ngl 99
 ```
+
+कनवर्टर में कोई K-क्वांट आउटपुट नहीं है (`--outtype`स्वीकार करता है `f32`,`f16`,`bf16`,`q8_0`,`tq1_0`,`tq2_0`या `auto`), तो `llama-quantize`Q4_K_M फ़ाइल उत्पन्न करता है।
 
 ### क्वांटिज़्ड मॉडल की सेवा करना
 
 ```python
 # pip install vllm
-# vllm serve model-awq --quantization awq --dtype half --max-model-len 8192
+# vllm serve llama-8b-awq-int4 --max-model-len 8192
 ```
 
-vLLM नेटिव रूप से AWQ और GPTQ मॉडल का समर्थन करता है। यह मैट्रिक्स गुणन के दौरान डिक्वांटाइजेशन को संभालता है और KV कैश के लिए पेजड ध्यान का उपयोग करता है। H100 पर FP8 के लिए, जोड़ें `--dtype float8_e4m3fn`. .
+vLLM नेटिव रूप से AWQ और GPTQ मॉडल का समर्थन करता है और चेकपॉइंट के कॉन्फ़िग से क्वांटिज़ेशन विधि पढ़ता है, इसलिए नहीं `--quantization`यह मैट्रिक्स गुणन के दौरान डीक्वैंटाइजेशन को संभालता है और KV कैश के लिए पेजड ध्यान का उपयोग करता है। H100 पर FP8 के लिए, जोड़ें `--quantization fp8_per_tensor`लोड समय पर 16-बिट चेकपॉइंट के वजन को मात्राबद्ध करने के लिए।
 
 ## इसे भेजें
 

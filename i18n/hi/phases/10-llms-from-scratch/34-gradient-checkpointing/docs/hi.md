@@ -37,13 +37,13 @@
 - मेमोरीः 32 परत-इनपुट (छोटा) बनाम 32 * (प्रति परत सक्रियण मात्रा) (बड़ी) ।
 - अतिरिक्त गणनाः प्रति खंड 1 अतिरिक्त आगे, यानी, ~33% आगे FLOP कुल (क्योंकि पीछे 2x आगे है, पूर्ण चरण 1 + 1 + 2 = 4 इकाइयों के बजाय 1 + 2 = 3 हो जाता है) ।
 
-यह मूल Chen et al. 2016 नुस्खा हैः प्रत्येक एक चेक पॉइंट `sqrt(L)`L = 64 के लिए, यह 8 चेकपॉइंट है.
+यह मूल Chen et al. 2016 नुस्खा हैः प्रत्येक एक चेक पॉइंट `sqrt(L)`स्मृति और गणना के संतुलन के लिए परतों।$L=64$, जो 8 चेकपोस्ट है.
 
 ### चुनिंदा चेकपॉइंटिंग (कोर्तिकान्ती 2022)
 
 सभी सक्रियणों की लागत समान नहीं है। ध्यान softmax आउटपुट है`B*L*L*heads`और क्रम लंबाई के साथ *क्वाड्रैटिकली* बढ़ता है। FFN छिपे सक्रियण है `B*L*4d`लंबे अनुक्रमों के लिए softmax हावी है।
 
-चयनित चेकपोइंटिंग सस्ते-से-स्टोर सक्रियण (रेखीय अनुमान, अवशेष) को बनाए रखता है और केवल महंगे (ध्यान) को पुनः गणना करता है। आप पुनः गणना करने के लिए न्यूनतम FLOPs का भुगतान करते हैं लेकिन O(L^2) मेमोरी को सहेजते हैं।
+चयनित चेकपोइंटिंग सस्ते-से-स्टोर सक्रियण (रेखीय अनुमान, अवशेष) को बनाए रखता है और केवल महंगे (ध्यान) को पुनः गणना करता है। आप पुनः गणना करने के लिए न्यूनतम FLOP का भुगतान करते हैं लेकिन बचत करते हैं $O(L^2)$स्मृति।
 
 मेगाट्रॉन-कोर इसे "निर्णय" सक्रियण पुनः गणना के रूप में लागू करता है। अधिकांश 2024+ सीमा प्रशिक्षण रन में उपयोग किया जाता है।
 
@@ -293,8 +293,8 @@ def should_recompute(layer_type, activation_bytes, recompute_flops_ratio):
 | Block checkpointing | "Coarse-grained" | Checkpoint whole transformer blocks; largest granularity |
 | FLOP overhead | "The compute tax" | Extra FLOPs per step = (recompute FLOPs) / (fwd + bwd FLOPs); 33% naive, 5% selective |
 | Activation offload | "Ship to CPU" | Move activations to CPU RAM across forward->backward; alternative to recompute |
-| sqrt-L rule | "The classical optimum" | For uniform-cost layers, optimal checkpoint spacing is sqrt(L) layers |
-| Attention-softmax volume | "The O(L^2) problem" | L^2 * heads * batch floats; dominates activation memory at long contexts |
+| sqrt-L rule | "The classical optimum" | For uniform-cost layers, optimal checkpoint spacing is $\sqrt{L}$ layers |
+| Attention-softmax volume | "The O(L^2) problem" | $L^2 \cdot \text{heads} \cdot \text{batch}$ floats; dominates activation memory at long contexts |
 
 ## आगे पढ़ना
 
@@ -303,4 +303,4 @@ def should_recompute(layer_type, activation_bytes, recompute_flops_ratio):
 - [Pudipeddi et al., 2020 -- "Training Large Neural Networks with Constant Memory using a New Execution Algorithm"](https://arxiv.org/abs/2002.05645)-- रिवर्स मोड रीमैटेरियलाइज़ेशन के माध्यम से निरंतर स्मृति के वैकल्पिक दृष्टिकोण
 - [Ren et al., 2021 -- "ZeRO-Offload: Democratizing Billion-Scale Model Training"](https://arxiv.org/abs/2101.06840)-- सक्रियण उतार-चढ़ाव
 - [PyTorch torch.utils.checkpoint docs](https://pytorch.org/docs/stable/checkpoint.html)-- मानक एपीआई
-- [Megatron-Core activation recomputation documentation](https://docs.nvidia.com/nemo-framework/user-guide/latest/nemotoolkit/features/memory_optimizations.html)-- चयनात्मक, पूर्ण और ब्लॉक मोड
+- [Megatron Bridge activation recomputation documentation](https://docs.nvidia.com/nemo/megatron-bridge/latest/training/activation-recomputation.html)-- चयनात्मक, पूर्ण और ब्लॉक मोड

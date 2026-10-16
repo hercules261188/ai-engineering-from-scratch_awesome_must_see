@@ -28,8 +28,8 @@
 
 एक प्रश्न के लिए `q`और कुंजी `K = [k_1, ..., k_N]`, ध्यान वजन निम्नानुसार है:
 
-```
-w_i = exp(q . k_i / sqrt(d)) / sum_j exp(q . k_j / sqrt(d))
+```math
+w_i = \frac{\exp(q \cdot k_i / \sqrt{d})}{\sum_j \exp(q \cdot k_j / \sqrt{d})}
 ```
 
 नहीं`w_i`कभी शून्य है.`k_i``q`, स्कोर `q . k_i`0 नहीं है  यह शून्य के आसपास भिन्नता के साथ उतार-चढ़ाव करता है `||q||^2 / d`. softmax सामान्यीकरण के बाद, प्रत्येक संबंधित नहीं टोकन अभी भी योगदान `O(1/N)`अनलिंक्ड टोकन का कुल योगदान `O((N-1)/N) = O(1)` छोटी मात्रा नहीं।
@@ -38,17 +38,19 @@ w_i = exp(q . k_i / sqrt(d)) / sum_j exp(q . k_j / sqrt(d))
 
 ### अंतर विचार
 
-प्रत्येक सिर के Q और K प्रक्षेपणों को दो में विभाजित करेंः Q = (Q_1, Q_2) और K = (K_1, K_2) । दो ध्यान मानचित्रों की गणना करेंः
+प्रत्येक सिर के Q और K प्रक्षेपण को दो में विभाजित करेंः $Q = (Q_1, Q_2)$और $K = (K_1, K_2)$दो ध्यान मानचित्रों की गणना करेंः
 
-```
-A_1 = softmax(Q_1 K_1^T / sqrt(d))
-A_2 = softmax(Q_2 K_2^T / sqrt(d))
+```math
+\begin{aligned}
+A_1 &= \mathop{\mathrm{softmax}}(Q_1 K_1^T / \sqrt{d}) \\
+A_2 &= \mathop{\mathrm{softmax}}(Q_2 K_2^T / \sqrt{d})
+\end{aligned}
 ```
 
 आउटपुटः
 
-```
-DiffAttn = (A_1 - lambda * A_2) V
+```math
+\mathop{\mathrm{DiffAttn}} = (A_1 - \lambda \cdot A_2) V
 ```
 
 घटाव दोनों मानचित्रों के बीच जो भी शोर वितरण होता है उसे रद्द करता है। यदि दोनों मानचित्रों में 127k से संबंधित नहीं टोकन पर लगभग समान वजन होता है (जो वे यादृच्छिक आरंभिकरण पर करेंगे), तो वे रद्द कर देते हैं। कुछ वास्तव में प्रासंगिक टोकन पर संकेत  पीक वजन  केवल तभी रद्द होता है जब यह दोनों मानचित्रों में समान परिमाण पर दिखाई देता है, जो यह एक बार मॉडल ट्रेन नहीं करेगा।
@@ -63,7 +65,7 @@ DiffAttn = (A_1 - lambda * A_2) V
 
 V1 ने पैरामीटर की गिनती को बेसलाइन ट्रांसफार्मर के बराबर रखा। प्रति सिर दो क्वेरी प्राप्त करने के लिए यह सिर आयाम को आधा कर दिया। यह लागत सिर अभिव्यक्ति और  अधिक दर्दनाक  प्रति सिर मूल्य कैश को आधा कर दिया। डेकोड को प्रति चरण मूल्य कैश को दो बार लोड करना पड़ा (एक बार प्रति सॉफ्टमैक्स शाखा) । परिणामः पैरामीटर की गिनती के बावजूद मूल रेखा से धीमा डेकोड करना।
 
-V2 क्वेरी हेड की संख्या को दोगुना करता है और KV हेड को समान रखता है (ऊपर-प्रक्षेपण से मापदंडों को उधार लेना) । सिर आयाम मूल रेखा के समान रहता है। घटाए जाने के बाद, अतिरिक्त आयाम को मूल रेखा ट्रांसफार्मर के O_W प्रोजेक्शन से मेल खाने के लिए वापस नीचे परोसा जाता है। तीन चीजें एक साथ होती हैंः
+V2 क्वेरी हेड की संख्या को दोगुना करता है और KV हेड को समान रखता है (उपर-प्रक्षेपण से मापदंडों को उधार लेना) । हेड आयाम मूल रेखा के समान रहता है। घटाए जाने के बाद, अतिरिक्त आयाम को मूल रेखा ट्रांसफार्मर के अनुरूप करने के लिए नीचे पर प्रक्षेपित किया जाता है $O_W$तीन चीजें एक साथ होती हैंः
 
 1. डीकोडिंग गति बेसलाइन से मेल खाती है (केवी कैश एक बार लोड किया जाता है) ।
 2. FlashAttention अपरिवर्तित चलाता है (कोई कस्टम कर्नेल नहीं) ।
@@ -139,8 +141,8 @@ out = [[sum(w * v[j] for w, v in zip(row, V)) for j in range(d_v)] for row in di
 एक कॉन्फिग (छिपे हुए = 4096, हेड्स = 32, d_head = 128) को देखते हुए, प्रिंट करेंः
 
 - बेसलाइन ट्रांसफार्मर: Q, K, V प्रत्येक आकार `hidden * hidden`, 4 * पर MLP छिपा हुआ.
-- DIFF V1: Q, K प्रत्येक आकार `hidden * hidden`, V आकार `hidden * hidden`(अपरिवर्तित), सिर कम आधे से आंतरिक रूप से। प्रति सिर जोड़ता है`lambda`पैरामीटर (O(heads * d_head)).
-- डीआईएफएफ वी 2: क्यू आकार `2 * hidden * hidden`, K आकार `hidden * hidden`, V आकार `hidden * hidden`. अतिरिक्त मंद O_W से पहले वापस नीचे प्रक्षेपित .`lambda`पैरामीटर।
+- DIFF V1: Q, K प्रत्येक आकार `hidden * hidden`, V आकार `hidden * hidden`(अपरिवर्तित), सिर कम आधे से आंतरिक रूप से। प्रति सिर जोड़ता है`lambda`पैरामीटर $(O(\text{heads} \cdot d_{\text{head}}))$. .
+- डीआईएफएफ वी 2: क्यू आकार `2 * hidden * hidden`, K आकार `hidden * hidden`, V आकार `hidden * hidden`. अतिरिक्त मंद पहले वापस नीचे प्रक्षेपित .$O_W$. जोड़ता है वही `lambda`पैरामीटर।
 
 खिलौना V2 के लिए अतिरिक्त पैरामीटर लागत को मापता है (करीब `hidden * hidden`प्रति ध्यान ब्लॉक) और इसे प्रिंट करता है।
 
@@ -182,8 +184,8 @@ DIFF V2 अभी तक अप्रैल 2026 तक हर उत्पा�
 
 | Term | What people say | What it actually means |
 |------|----------------|------------------------|
-| Differential attention | "Two softmaxes minus each other" | Split Q, K into two halves, compute two softmax maps, subtract the second (scaled by lambda) from the first, then multiply by V |
-| Noise floor | "The non-zero tail of softmax" | The O(1/N) weight softmax puts on every unrelated token, which sums to O(1) across long contexts |
+| Differential attention | "Two softmaxes minus each other" | Split Q, K into two halves, compute two softmax maps, subtract the second (scaled by $\lambda$) from the first, then multiply by V |
+| Noise floor | "The non-zero tail of softmax" | The $O(1/N)$ weight softmax puts on every unrelated token, which sums to $O(1)$ across long contexts |
 | lambda | "The subtraction scale" | Per-head learnable scalar parameterized as `exp(lq1.lk1) - exp(lq2.lk2) + lambda_init`; can be negative |
 | DIFF V1 | "The ICLR 2025 version" | Original Differential Transformer; halves head dim to preserve parameter count, needs custom kernel, slower decode |
 | DIFF V2 | "The January 2026 fix" | Doubles Q heads keeping KV heads; matches baseline decode speed and works with FlashAttention |

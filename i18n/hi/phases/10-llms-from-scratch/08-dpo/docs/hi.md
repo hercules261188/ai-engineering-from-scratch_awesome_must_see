@@ -32,51 +32,53 @@
 
 आरएलएचएफ इस लक्ष्य को अनुकूलित करता हैः
 
-```
-maximize: E[R(x, y)] - beta * KL(pi || pi_ref)
-```
-
-जहां R इनाम मॉडल है, pi नीति है, pi_ref संदर्भ मॉडल है, और बीटा KL गुणांक है।
-
-डीपीओ पेपर से पता चला है कि इस उद्देश्य का एक बंद रूप में इष्टतम समाधान है। किसी भी इनाम समारोह R के लिए, इष्टतम नीति हैः
-
-```
-pi*(y | x) = pi_ref(y | x) * exp(R(x, y) / beta) / Z(x)
+```math
+\text{maximize:} \quad \mathbb{E}[R(x, y)] - \beta \cdot \mathrm{KL}(\pi \,\|\, \pi_{\text{ref}})
 ```
 
-जहां Z(x) एक सामान्यीकरण स्थिर है। पुनर्गठनः
+कहाँ$R$इनाम मॉडल है, $\pi$नीति है,$\pi_{\text{ref}}$संदर्भ मॉडल है, और $\beta$है KL गुणांक।
 
+डीपीओ पेपर से पता चला है कि इस लक्ष्य के पास एक बंद-रूप का इष्टतम समाधान है।$R$, इष्टतम नीति हैः
+
+```math
+\pi^*(y \mid x) = \pi_{\text{ref}}(y \mid x) \cdot \exp(R(x, y) / \beta) / Z(x)
 ```
-R(x, y) = beta * log(pi*(y | x) / pi_ref(y | x)) + beta * log Z(x)
+
+कहाँ$Z(x)$एक सामान्यीकरण निरंतर है. पुनर्गठनः
+
+```math
+R(x, y) = \beta \log \frac{\pi^*(y \mid x)}{\pi_{\text{ref}}(y \mid x)} + \beta \log Z(x)
 ```
 
 यह सफलता है. पुरस्कार पूरी तरह से नीति मॉडल की संभावनाओं और संदर्भ मॉडल की संभावनाओं के संदर्भ में व्यक्त किया जाता है। आपको एक अलग पुरस्कार मॉडल को प्रशिक्षित करने की आवश्यकता नहीं है। पुरस्कार * सम्मोहक * संभावना अनुपात में है।
 
 ब्रैडली-टेरी प्राथमिकता मॉडल में इसे प्रतिस्थापित करनाः
 
-```
-P(y_w > y_l | x) = sigmoid(R(x, y_w) - R(x, y_l))
-                  = sigmoid(beta * (log pi(y_w|x)/pi_ref(y_w|x) - log pi(y_l|x)/pi_ref(y_l|x)))
+```math
+\begin{aligned}
+P(y_w > y_l \mid x) &= \mathop{\mathrm{sigmoid}}(R(x, y_w) - R(x, y_l)) \\
+&= \mathop{\mathrm{sigmoid}}\left(\beta \left(\log \frac{\pi(y_w \mid x)}{\pi_{\text{ref}}(y_w \mid x)} - \log \frac{\pi(y_l \mid x)}{\pi_{\text{ref}}(y_l \mid x)}\right)\right)
+\end{aligned}
 ```
 
-Z(x) शब्द रद्द हो जाते हैं क्योंकि दोनों प्रतिक्रियाएं एक ही प्रॉम्प्ट x पर स्थित होती हैं। जो कुछ भी शेष है वह केवल नीति मॉडल की लॉग-संभाव्यताओं और संदर्भ मॉडल की पसंदीदा और अस्वीकृत प्रतिक्रियाओं पर लॉग-संभाव्यताओं का कार्य है।
+$Z(x)$शर्तें रद्द क्योंकि दोनों प्रतिक्रियाओं एक ही संकेत पर स्थिति $x$. जो कुछ भी शेष है वह केवल नीति मॉडल की लॉग-संभाव्यताओं और संदर्भ मॉडल की लॉग-संभाव्यताओं का एक कार्य है जो पसंदीदा और अस्वीकृत प्रतिक्रियाओं पर है।
 
 ### डीपीओ का नुकसान
 
-```
-L_DPO = -log(sigmoid(beta * (log pi(y_w|x)/pi_ref(y_w|x) - log pi(y_l|x)/pi_ref(y_l|x))))
+```math
+L_{\text{DPO}} = -\log \mathop{\mathrm{sigmoid}}\left(\beta \left(\log \frac{\pi(y_w \mid x)}{\pi_{\text{ref}}(y_w \mid x)} - \log \frac{\pi(y_l \mid x)}{\pi_{\text{ref}}(y_l \mid x)}\right)\right)
 ```
 
 चलो प्रत्येक टुकड़ा को उतार देंः
 
-- **y_w**= पसंदीदा (विजेता) प्रतिक्रिया
-- **y_l**= अस्वीकृत (हारे हुए) प्रतिक्रिया
-- **x**= शीघ्र
-- **pi**= वर्तमान मॉडल (शिक्षित होने)
-- **pi_ref**= संदर्भ मॉडल (मुस्कृत एसएफटी जांच बिंदु)
-- **beta**= संदर्भ से विचलन को नियंत्रित करने वाला तापमान पैरामीटर (आमतौर पर 0.1 से 0.5)
+- **$y_w$**= पसंदीदा (विजेता) प्रतिक्रिया
+- **$y_l$**= अस्वीकृत (हारे हुए) प्रतिक्रिया
+- **$x$**= शीघ्र
+- **$\pi$**= वर्तमान मॉडल (शिक्षित होने)
+- **$\pi_{\text{ref}}$**= संदर्भ मॉडल (मुस्कृत एसएफटी जांच बिंदु)
+- **$\beta$**= संदर्भ से विचलन को नियंत्रित करने वाला तापमान पैरामीटर (आमतौर पर 0.1 से 0.5)
 
-अनुपात `log pi(y|x) / pi_ref(y|x)`यह लॉग-प्रभाव्यता अनुपात है। जब यह अनुपात सकारात्मक होता है, तो वर्तमान मॉडल प्रतिक्रिया y को संदर्भ से अधिक संभावना देता है। जब ऋणात्मक होता है, तो वर्तमान मॉडल कम संभावना देता है।
+अनुपात `log pi(y|x) / pi_ref(y|x)`जब यह अनुपात सकारात्मक होता है, तो वर्तमान मॉडल प्रतिक्रिया की अधिक संभावना को सौंपता है $y$संदर्भ से कम है। जब नकारात्मक, वर्तमान मॉडल कम संभावना आवंटित करता है।
 
 डीपीओ हानि मॉडल को प्राथमिकता वाले उत्तरों के लिए लॉग-प्रभाव्यता अनुपात बढ़ाने और अस्वीकृत उत्तरों के लिए इसे कम करने के लिए धक्का देती है। बीटा पैरामीटर नियंत्रित करता है कि मॉडल संदर्भ से कितनी आक्रामक रूप से विचलित हो सकता है - छोटे बीटा का मतलब है कि बड़े विचलन की अनुमति है, बड़े बीटा मॉडल को संदर्भ के करीब रखता है।
 
@@ -641,7 +643,7 @@ if __name__ == "__main__":
 | DPO | "RLHF without RL" | Direct Preference Optimization: a supervised learning algorithm that optimizes the language model directly on preference pairs, bypassing the reward model and PPO |
 | Implicit reward | "The reward is in the model" | The reward function is determined by the log-probability ratio between the policy and reference models -- no separate reward model needed |
 | Beta (DPO) | "The temperature" | Controls how far the policy can deviate from the reference model -- small beta allows large deviations, large beta keeps the model close |
-| Log-probability ratio | "How much the model changed" | log pi(y\|x) - log pi_ref(y\|x) -- positive means the current model assigns higher probability than the reference |
+| Log-probability ratio | "How much the model changed" | $\log \pi(y \mid x) - \log \pi_{\text{ref}}(y \mid x)$ -- positive means the current model assigns higher probability than the reference |
 | Reference model | "The frozen checkpoint" | A copy of the SFT model whose weights never change -- serves as the anchor for computing probability ratios |
 | KTO | "DPO without pairs" | Kahneman-Tversky Optimization: works with unpaired "good" or "bad" labels instead of requiring preference pairs |
 | ORPO | "One-step alignment" | Odds Ratio Preference Optimization: combines SFT and alignment into a single training loop by adding a preference term to the SFT loss |

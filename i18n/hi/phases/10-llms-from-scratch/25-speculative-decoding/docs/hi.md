@@ -53,8 +53,8 @@ For each drafted token x_t:
 
 यदि मसौदा मॉडल के टोकन स्तर पर स्वीकृति दर `α`, प्रति लक्ष्य-अग्रिम पास उत्पन्न होने वाले अपेक्षित टोकन निम्न हैंः
 
-```
-E[tokens] = (1 - α^{K+1}) / (1 - α)        # K = draft length, α in [0, 1]
+```math
+\mathbb{E}[\text{tokens}] = \frac{1 - \alpha^{K+1}}{1 - \alpha} \qquad K = \text{draft length}, \ \alpha \in [0, 1]
 ```
 
 `α = 0.8, K = 4``(1 - 0.8^5)/(1 - 0.8) = 3.36`प्रति अग्रिम टोकन। एक एकल लक्ष्य अग्रिम लागत लगभग `cost_q * K + cost_p`(के ड्राफ्ट स्टेप्स प्लस एक लक्ष्य सत्यापन) यदि `cost_p >> cost_q * K`गति अनुपात `3.36× / 1 = 3.36×`संचलन पर।
@@ -162,9 +162,9 @@ def speculative_step(p_target, q_draft, K, temperature=1.0):
 
 ## इसका प्रयोग करें
 
-- **vLLM**और **SGLang**जहाज प्रथम श्रेणी के अनुमानित डिकोडिंग।`--speculative_model`,`--num_speculative_tokens`. ईगल-2/3 सहायता `--spec_decoding_algorithm eagle`ध्वज।
+- **vLLM**और **SGLang**VLLM में, पास `--speculative-config` के साथ एक JSON वस्तु`method`,`model`और `num_speculative_tokens`; ईगल-3 है `"method": "eagle3"`. .
 - **NVIDIA TensorRT-LLM**मेदुसा और ईगल के पेड़ों का मूल रूप से समर्थन करता है।
-- **Reference draft models**`Qwen/Qwen3-0.6B-spec`(Qwen3-32B के मसौदे), `meta-llama/Llama-3.2-1B-Instruct-spec`(70B के मसौदे) ।
+- **Reference draft models**`Qwen/Qwen3-0.6B`(Qwen3-32B के मसौदे), `meta-llama/Llama-3.2-1B-Instruct`(लामा 3.x 70B के मसौदे) ।
 - **Medusa heads**(Cai et al. 2024, "Medusa: Simple LLM Inference Acceleration Framework with Multiple Decoding Heads"): एक मसौदा मॉडल के बजाय, लक्ष्य के लिए K समानांतर भविष्यवाणी के सिर जोड़ें। तैनात करने के लिए सरल, EAGLE की तुलना में थोड़ा कम स्वीकृति।
 
 ## इसे भेजें
@@ -175,7 +175,7 @@ def speculative_step(p_target, q_draft, K, temperature=1.0):
 
 1. सही अस्वीकृति नियम लागू करें और अनुभवजन्य रूप से इसकी पुष्टि करें।`speculative_decode`और सादे लक्ष्य नमूनाकरण के माध्यम से; दो आउटपुट वितरणों के बीच टीवी दूरी की गणना करें। < 0.01 होना चाहिए।
 
-2. गति सूत्र की गणना करें।`α`और `K`, प्रति लक्ष्य-आगे प्रति अपेक्षित टोकन का ग्राफ करें। α ∈ {0.5, 0.7, 0.9} के लिए इष्टतम K खोजें।
+2. गति सूत्र की गणना करें।`α`और `K`, प्रति लक्ष्य आगे के लिए अपेक्षित टोकन का ग्राफ। इष्टतम खोजें $K$के लिए$\alpha \in \lbrace 0.5, 0.7, 0.9 \rbrace$. .
 
 3. एक छोटे से ड्राफ्ट को प्रशिक्षित करें, 124M GPT-2 लक्ष्य ले लो और KL हानि के साथ 100M टोकन पर 30M GPT-2 ड्राफ्ट को डिस्टिल करें।`α`अपेक्षितः 0.6-0.7.
 

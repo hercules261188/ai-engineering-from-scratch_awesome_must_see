@@ -39,27 +39,29 @@
 
 प्रशिक्षण में, पद के माध्यम से एक पूर्वावलोकन के लिए `i`, गहराई से छिपी हुई स्थिति हैः
 
-```
-h_i^(0) = main model backbone at position i
-h_i^(k) = T_k( M_k * concat(RMSNorm(h_i^(k-1)), RMSNorm(E(t_{i+k}))) )   for k >= 1
+```math
+\begin{aligned}
+h_i^{(0)} &= \text{main model backbone at position } i \\
+h_i^{(k)} &= T_k\Big( M_k \cdot \mathop{\mathrm{concat}}\big(\mathop{\mathrm{RMSNorm}}(h_i^{(k-1)}), \mathop{\mathrm{RMSNorm}}(E(t_{i+k}))\big) \Big) \quad \text{for } k \ge 1
+\end{aligned}
 ```
 
 गहन भविष्यवाणी हैः
 
-```
-logits_{i+k} = Out(h_i^(k-1))   for k = 1..D
+```math
+\text{logits}_{i+k} = \mathop{\mathrm{Out}}(h_i^{(k-1)}) \quad \text{for } k = 1, \ldots, D
 ```
 
 गहराई के प्रति हानि मूल सत्य के साथ क्रॉस-एंट्रोपी है `t_{i+k}`:
 
-```
-L_k = CE(logits_{i+k}, t_{i+k})
+```math
+L_k = \mathop{\mathrm{CE}}(\text{logits}_{i+k}, t_{i+k})
 ```
 
 गहराई पर जोड़ों का नुकसानः
 
-```
-L_MTP = (lambda / D) * sum_{k=1..D} L_k
+```math
+L_{\text{MTP}} = \frac{\lambda}{D} \sum_{k=1}^{D} L_k
 ```
 
 `lambda` डीपसेक-वी3 प्रशिक्षण के पहले 10% के लिए 0.3 और उसके बाद 0.1 का उपयोग करता है।`L_main + L_MTP`. .
@@ -174,7 +176,7 @@ def combine(prev_hidden, next_token_embed, M_k):
 
 2. डी = 1 एमटीपी मॉड्यूल के साथ घने 70 बी मॉडल (छिपे हुए 8192, 80 परतें) के लिए पैरामीटर ओवरहेड की गणना करें। डीपसेक-वी 3 द्वारा रिपोर्ट किए गए 14 बी ओवरहेड की तुलना करें। समझाएं कि डीपसेक की संख्या क्यों अधिक हैः एमटीपी ट्रांसफार्मर ब्लॉक एक ही एमओई संरचना को विरासत में देता है, प्रति मॉड्यूल पैरामीटर की गिनती को बढ़ाता है।
 
-3. खिलौना में D=2 लागू करेंः एक दूसरा MTP मॉड्यूल जो h^(1) लेता है और भविष्यवाणी करता है `t_{i+2}`संयुक्त हानि और पैरामीटर लेखांकन डीपसेक पेपर के समीकरण 19-21 से मेल खाती है।
+3. खिलौना में D=2 लागू करेंः एक दूसरा MTP मॉड्यूल जो लेता है $h^{(1)}$और भविष्यवाणी करता है `t_{i+2}`संयुक्त हानि और पैरामीटर लेखांकन डीपसेक पेपर के समीकरण 19-21 से मेल खाती है।
 
 4. खिलौना को समानांतर MTP (ग्लोकल शैली) पर स्विच करेंः मुख्य छिपे हुए राज्य के शीर्ष पर D आउटपुट हेड जोड़ें, प्रत्येक एक अलग ऑफसेट की भविष्यवाणी करते हुए। मापें कि एक ही सिंथेटिक सिग्नल पर अनुक्रमिक संस्करण के साथ गहराई के नुकसान की तुलना कैसे की जाती है। अनुक्रमिक संस्करण को k > 1 के लिए कम गहराई-k हानि पैदा करनी चाहिए क्योंकि यह मध्यवर्ती भविष्यवाणियों पर शर्त लगाता है।
 
@@ -190,8 +192,8 @@ def combine(prev_hidden, next_token_embed, M_k):
 | Sequential MTP | "DeepSeek-V3 style" | Each module conditions on the previous depth's hidden state plus the next token's embedding; preserves causal chain |
 | Shared output head | "Reuse the main head" | The MTP modules call the main model's LM head, not a separate output projection |
 | Shared embedding | "Reuse the main table" | Same vocabulary embedding table is used everywhere; no duplicate parameters |
-| Projection matrix M_k | "Combine hidden + next-token" | An `h x 2h` linear layer that folds the previous hidden state and the target-token embedding into the next depth's input |
-| Joint loss L_MTP | "Averaged extra losses" | Arithmetic mean of per-depth cross-entropy losses, scaled by `lambda` |
+| Projection matrix $M_k$ | "Combine hidden + next-token" | An `h x 2h` linear layer that folds the previous hidden state and the target-token embedding into the next depth's input |
+| Joint loss $L_{\text{MTP}}$ | "Averaged extra losses" | Arithmetic mean of per-depth cross-entropy losses, scaled by `lambda` |
 | Acceptance rate at depth 1 | "How often MTP draft is right" | The rate at which the D=1 MTP module's top-1 prediction equals the main model's top-1 prediction; 80%+ on DeepSeek-V3 |
 | Lambda weighting | "Extra-loss importance" | Per-depth scaling factor; 0.3 at start of training, 0.1 later on DeepSeek-V3 |
 

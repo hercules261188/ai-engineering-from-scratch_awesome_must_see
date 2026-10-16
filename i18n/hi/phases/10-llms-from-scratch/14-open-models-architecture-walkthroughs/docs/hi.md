@@ -52,8 +52,8 @@
 
 LayerNorm औसत घटाता है, std, पैमाने, और शिफ्ट द्वारा विभाजित। RMSNorm केवल पैमाने को रखता हैः
 
-```
-RMSNorm(x) = x / sqrt(mean(x^2) + eps) * gamma
+```math
+\mathop{\mathrm{RMSNorm}}(x) = \frac{x}{\sqrt{\mathop{\mathrm{mean}}(x^2) + \epsilon}} \cdot \gamma
 ```
 
 कोई औसत घटाव नहीं। कोई पूर्वाग्रह नहीं। प्रति टोकन एक मैमूल कम। Zhang और Sennrich (2019) ने तर्क दिया कि यह मशीन अनुवाद पर LayerNorm से मेल खाता है जबकि 10% तेज़ है। हर आधुनिक खुला मॉडल इसे चलाता है।
@@ -78,8 +78,8 @@ score = q_rotated . k_rotated
 
 जीपीटी-2 की एमएलपी है `x -> gelu(xW1 + b1) -> (...)W2 + b2`. SwiGLU (Shazeer 2020) सक्रियण को एक बंद उत्पाद से बदल देता हैः
 
-```
-SwiGLU(x) = (xW1) * sigmoid(xW1) * xV
+```math
+\mathop{\mathrm{SwiGLU}}(x) = (xW_1) \cdot \mathop{\mathrm{sigmoid}}(xW_1) \cdot xV
 ```
 
 एक के बजाय समानांतर दो प्रोजेक्शन, स्विश सक्रियण द्वारा गॉट किए गए। पैरामीटर प्रति भ्रम पर अनुभवजन्य रूप से मजबूत। Llama 2 ने इसे अपनाया, सभी ने इसका पालन किया। MLP का छिपा आकार आमतौर पर सेट किया जाता है ताकि कुल पैरामीटर की गिनती मूल घने MLP से मेल खाएः यदि GPT-2 का उपयोग किया गया था`ff_dim = 4 * hidden`, SwiGLU का उपयोग करता है `ff_dim = (2/3) * 4 * hidden = 8/3 * hidden`. .
@@ -90,7 +90,7 @@ GPT-2 का प्रयोग किया गया **Multi-Head Attention (M
 
 **Multi-Query Attention (MQA, Shazeer 2019)**सभी सिरों पर एक K और एक V साझा करता है। KV कैश को num_heads द्वारा काटता है, जो एक विशिष्ट मॉडल पर 12x से 32x तक की कमी है। हार्ड बेंचमार्क पर सटीकता थोड़ी गिर जाती है।
 
-**Grouped-Query Attention (GQA, Ainslie et al. 2023)**मध्य बिंदु हैः Q सिरों के G समूह एक K और एक V साझा करते हैं। Llama 3 8B 32 Q सिरों और 8 KV सिरों (G=8) के साथ GQA का उपयोग करता है, इसलिए KV कैश पूर्ण MHA के मुकाबले 4x छोटा होता है।
+**Grouped-Query Attention (GQA, Ainslie et al. 2023)**मध्यस्थता है: $G$Q सिरों के समूह एक K और एक V साझा करते हैं। Llama 3 8B 32 Q सिरों और 8 KV सिरों के साथ GQA का उपयोग करता है ($G=8$), तो KV कैश 4x पूर्ण MHA के मुकाबले कम हो जाता है।
 
 **Multi-Head Latent Attention (MLA, DeepSeek 2024)**यह एक साझा कम रैंक वाले लटेंट में K और V को संपीड़ित करता है, जिससे उन्हें प्रति सिर वापस प्रक्षेपित किया जाता है। यह प्रति सिर अभिव्यक्तिशीलता को बनाए रखते हुए KV कैश को और कम करता है। डीपसेक-वी 2 और वी 3 अपने लंबे संदर्भ प्रदर्शन के लिए इस पर निर्भर करते हैं।
 
@@ -154,6 +154,7 @@ graph LR
 | Qwen 2.5 72B | 2024 | 72B | 72B | RMSNorm | SwiGLU | RoPE (YaRN) | GQA (64/8) | no | 128k |
 | DeepSeek V2 236B | 2024 | 236B | 21B | RMSNorm | SwiGLU | RoPE | MLA | yes (160 experts, top-6) | 128k |
 | DeepSeek V3 | 2024 | 671B | 37B | RMSNorm | SwiGLU | RoPE | MLA | yes (256 experts, top-8) | 128k |
+| Spark-X2.5 4B | 2026 | 4.1B | 4.1B | RMSNorm | GeGLU | RoPE + sliding (3:1) | GQA (16/4), gated output | no | 1M |
 
 स्तंभों को स्कैन करें। RMSNorm सार्वभौमिक है। SwiGLU या इसके GeGLU चचेरे भाई सार्वभौमिक है। RoPE सार्वभौमिक है। GQA 7B से ऊपर सार्वभौमिक है, जब तक कि MLA द्वारा प्रतिस्थापित नहीं किया जाता है। MoE शीर्ष अंत में अंतर है।
 
@@ -176,6 +177,12 @@ Llama 3 8B कॉन्फ़िगरेशनः
 ```
 
 प्रत्येक क्षेत्र आपके द्वारा पहले से ही लागू किए गए किसी चीज़ के अनुरूप है।
+नए कॉन्फ़िग में कुछ फ़ील्ड जोड़े जाते हैं जो अंकगणित को बदलते हैं, इसलिए कैलकुलेटर
+जब वे उपस्थित हों तो उन्हें पढ़ता हैः
+
+- `head_dim`: स्पष्ट रूप से निर्धारित किया गया है जब यह नहीं है `hidden_size / num_attention_heads`. Gemma 2 9B 3584 और 16 सिर छिपाया है लेकिन `head_dim`256, तो इसका Q प्रक्षेपण 3584 x 4096 है, वर्ग नहीं है।
+- `tie_word_embeddings`Llama 3 8B नहीं बांधता है, जो 525M पैरामीटर आप याद करते हैं यदि आप केवल एक बार एम्बेडिंग गिनती है।
+- `layer_types`और `sliding_window`: जो परतें पूर्ण संदर्भ को ध्यान में रखती हैं और जो केवल अंतिम W टोकन तक ही।
 
 - `hidden_size`: सम्मिलित आयाम।
 - `intermediate_size`: एमएलपी छिपा आकार (3.5x छिपा -- SwiGLU गणित).
@@ -212,6 +219,15 @@ Llama 3 8B 128k संदर्भ में, BF16, head_dim = छिपा / nu
 
 8B वजन BF16 में 16 GB है। एकल 128k अनुक्रम के लिए KV कैश वजन से बड़ा है। यह GQA, MLA और KV कैश क्वांटिज़ेशन अनुसंधान को चलाने वाले मेमोरी दबाव है।
 
+सूत्र का मानना है कि प्रत्येक परत पूरे अनुक्रम को कैश करती है। स्लाइडिंग विंडो परत को केवल अंतिम W टोकन की आवश्यकता होती है, इसलिए हाइब्रिड मॉडल के लिए योग प्रति परत चलता हैः
+
+```
+kv_cache = 2 * num_kv_heads * head_dim * bytes_per_element
+           * (full_layers * max_seq_len + sliding_layers * min(W, max_seq_len))
+```
+
+स्पार्क-एक्स2.5 4बी तीन स्लाइडिंग विंडो परतों ($W = 512$) प्रत्येक पूर्ण-ध्यान परत के लिएः 9 पूर्ण और 27 36 से स्लाइडिंग। इसके 1M-टोकन संदर्भ में जो BF16 में क्रम में लगभग 38.7 GB (36 GiB) है। यदि सभी 36 परतों ने पूर्ण संदर्भ को कैश किया तो यह 154.6 GB (144 GiB) होगा। पूर्ण परतें लगभग पूरी लागत लेती हैं, यही कारण है कि पूर्ण से स्लाइडिंग परतों का अनुपात लंबी-संदर्भ मॉडल पर सबसे पहले पढ़ने वाली संख्या है।
+
 ### जब प्रत्येक मॉडल जीतता है
 
 - **Single 80GB GPU, no MoE**: लामा 3 8 बी, मिस्ट्रल 7 बी, जेम्मा 2 9 बी. सेवा करने में आसान, व्यापक उपकरण।
@@ -219,6 +235,7 @@ Llama 3 8B 128k संदर्भ में, BF16, head_dim = छिपा / nu
 - **Biggest open capability, accept MoE complexity**: डीप सीक V3, मिक्स्ट्रल 8x22B. प्रति सक्रिय FLOP में सर्वश्रेष्ठ क्षमता।
 - **Long-context needs**: Llama 3 (128k RoPE स्केलिंग के साथ), डीप सीक (MLA लाभ) ।
 - **Low-latency serving**: Gemma 2 9B (स्लाइडिंग विंडो लंबी-सामग्री गणना काटता है) ।
+- **Long context on a small memory budget**: हाइब्रिड स्लाइडिंग विंडो मॉडल जैसे कि स्पार्क-एक्स2.5 4बी, जहां केवल एक चौथाई परतें पूर्ण संदर्भ के लिए भुगतान करती हैं।
 
 ```figure
 rmsnorm-vs-layernorm
@@ -237,13 +254,17 @@ config = {
 }
 ```
 
-स्क्रिप्ट वास्तुकला क्षेत्र को क्षेत्र द्वारा चलाता है, एम्बेडिंग, ध्यान (जीक्यूए कमी के साथ), एमएलपी (स्विगल एक्सपेंशन के साथ), परत मानकों और सिर के लिए पैरामीटर गिनती की गणना करता है। फिर यह निर्दिष्ट संदर्भ लंबाई पर केवी कैश की गणना करता है और सारांश प्रिंट करता है।
+स्क्रिप्ट वास्तुकला क्षेत्र द्वारा क्षेत्र चलता है, एम्बेडिंग के लिए पैरामीटर गणना करता है, ध्यान (जीक्यूए कमी और स्पष्ट के साथ)`head_dim`जब कॉन्फ़िग एक सेट करता है), एमएलपी (स्विगलू या गेगलू विस्तार के साथ), लेयरनॉर्म्स, और एलएम हेड जब यह एम्बेडिंग से बंधा नहीं है। यह फिर निर्दिष्ट संदर्भ लंबाई पर केवी कैश की गणना करता है, परत-पर-परत ताकि स्लाइडिंग-विंडो परतें अपनी खिड़की पर कैप हो जाएं, और एक सारांश प्रिंट करता है।
+
+घने मॉडल के लिए कुल प्रकाशित पैरामीटर के अनुरूप सटीक गणना करता हैः Llama 3 8B 8,030,261,248 पर निकलता है, Gemma 2 9B 9,241,705,984 पर और स्पार्क-X2.5 4B 4,112,079,360 पर निकलता है। Qwen 2.5 72B 819,200 से बाहर है, जो व्यायाम 1 है।
 
 देखो`code/main.py`कार्यान्वयन के लिए।
 
 ## इसका प्रयोग करें
 
 स्क्रिप्ट में बंडल किए गए Llama 3 8B, Mistral 7B, Mixtral 8x7B और DeepSeek V3 कॉन्फ़िगरेशन पर कैलकुलेटर चलाएं। पैरामीटर ब्रेकडाउन की तुलना करें। ध्यान दें कि MoE मॉडल में एक कुल पैरामीटर काउंट है जो घने मॉडल को छोटा करता है लेकिन एक सक्रिय पैरामीटर काउंट जो अक्सर छोटा होता है। ध्यान दें कि DeepSeek V3 का KV कैश Llama 3 405B की तुलना में छोटा है।
+
+फिर Gemma 2 9B और Spark-X2.5 4B की तुलना करें। दोनों के लिए, स्क्रिप्ट KV कैश प्रिंट करता है जिसकी वास्तव में आवश्यकता होती है और KV कैश जिसकी आवश्यकता होती है यदि प्रत्येक परत पूरी ध्यान देती है। Gemma 2 8k संदर्भ में 1:1 को बदलता है, इसलिए बचत मामूली है। Spark-X2.5 1M पर 512-टोकन विंडो के साथ 3:1 जाता है, इसलिए बचत 4x है।
 
 फिर स्थानीय रूप से आपके पास मौजूद किसी भी मॉडल के लिए एक कॉन्फ़िग को प्लग करें, सारांश पढ़ें, और तय करें कि क्या यह आपके GPU के अनुरूप है।
 
@@ -275,7 +296,7 @@ config = {
 | MoE | "Sparse experts" | Mixture of Experts: N MLPs per block, router picks top-k per token — huge total params, small active params |
 | Top-k routing | "Pick k experts per token" | The router computes a score per expert and activates the k highest — typical k is 2 (Mixtral) to 8 (DeepSeek) |
 | YaRN | "Stretch RoPE" | Yet another RoPE extension — interpolates rotary angles to extend context from 8k to 128k+ at inference time |
-| Sliding-window attention | "Don't attend to everything" | Each token attends only to the last W tokens — caps attention cost at O(W) per token, used in Gemma 2 and early Mistral |
+| Sliding-window attention | "Don't attend to everything" | Each token attends only to the last $W$ tokens — caps attention cost at $O(W)$ per token, used in Gemma 2 and early Mistral |
 | Active params | "What runs per token" | For MoE models, the parameter count that sees a forward pass per token (much smaller than total params) — governs per-token FLOPs |
 
 ## आगे पढ़ना
