@@ -71,10 +71,12 @@
 
 经典的ROPE旋转查询`q`尺寸`d`按位置`m`使用对联坐标:
 
-```
-q_rot[2i]   = q[2i]   * cos(m * theta_i) - q[2i+1] * sin(m * theta_i)
-q_rot[2i+1] = q[2i]   * sin(m * theta_i) + q[2i+1] * cos(m * theta_i)
-theta_i     = 10000^(-2i/d)
+```math
+\begin{aligned}
+q_{\text{rot}}[2i] &= q[2i] \cos(m \theta_i) - q[2i+1] \sin(m \theta_i) \\
+q_{\text{rot}}[2i+1] &= q[2i] \sin(m \theta_i) + q[2i+1] \cos(m \theta_i) \\
+\theta_i &= 10000^{-2i/d}
+\end{aligned}
 ```
 
 光将隐藏的暗光分为三段.`d = 96`按时间点分配32个,高度32个,宽32个.每个带按自己的轴位置旋转.一个 (t=5,h=10,w=20) 的补丁得到旋转.`R_t(5)`现在`R_h(10)`现在`R_w(20)`它们的三条带.

@@ -35,10 +35,10 @@
 
 两座塔都将输出正常化到单位长度.`cos(f(x), g(y)) = f(x)^T g(y)`由于它们都是单位标准.
 
-对于一批N (图片,字幕) 对,构建类似性矩阵`S`形状`(N, N)`其他:
+为了一批$N$它们是对的,构建类似性矩阵.`S`形状`(N, N)`其他:
 
-```
-S[i, j] = cos(f(x_i), g(y_j)) / tau
+```math
+S[i, j] = \cos(f(x_i), g(y_j)) / \tau
 ```
 
 在哪里`tau`是学习温度 (CLIP初始化为0.07;在日记空间中学习).
@@ -57,7 +57,7 @@ loss = (loss_i2t + loss_t2i) / 2
 
 ### 温度
 
-`tau`控制软max的敏度.低tau →敏分布,硬负矿效应.高tau →软,所有样本都贡献.CLIP学习 log(1/tau),切断以防止崩.SigLIP 2修复初始tau,并使用学习偏见.
+`tau`低 低 低 低 低 低$\tau$矿产业的矿产业的矿产业的矿产业的矿产业的矿产业的矿产业的矿产业的矿产业的矿产业的矿产业的矿产业的矿产业的矿产业的矿产业的矿产业的矿产业的矿产业的矿产业的矿产业的矿产业的矿产业的矿产业的矿产业的矿产业的矿产业的矿产业的矿产业的矿产业的矿产业的矿产业$\tau$,所有样本都会有所贡献.$\log(1/\tau)$缩后,将其切断,以防止崩.$\tau$而是使用一种学会的偏见.
 
 ### 为什么sigmoid 尺度更好 (SigLIP)
 
@@ -65,8 +65,8 @@ loss = (loss_i2t + loss_t2i) / 2
 
 siglip取代 softmax 用元素智能sigmoid:为每对 `(i, j)`输出是"这些是匹配的对吗?"正数类标签是对角,其他的一切都是负数.
 
-```
-L = -1/N sum over (i, j) [ y_ij log sigmoid(S[i,j]) + (1-y_ij) log sigmoid(-S[i,j]) ]
+```math
+L = -\frac{1}{N} \sum_{(i, j)} \Big[ y_{ij} \log \mathop{\mathrm{sigmoid}}(S[i,j]) + (1-y_{ij}) \log \mathop{\mathrm{sigmoid}}(-S[i,j]) \Big]
 ```
 
 `y_ij = 1`如果`i == j`任何 GPU 都需要一个全集. 每个 GPU 都计算出其本地块和数量. SigLIP 2 量化为 32k-512k 批量便宜, CLIP 需要比较多的通信.
@@ -132,7 +132,7 @@ multimodal-fusion
 
 3. 建立一个零射击分类器, 试试两个提示模板:`a photo of a {class}`其他`a picture of a {class}`测量100个试图图的精度. 模板组单击吗?
 
-4. 计算软max InfoNCE 与 sigmoid 的通信成本,对 512GPU 运行在批量 32k. 什么规模为 O(N),哪个为 O(N ^ 2)? 引用 SigLIP 部分 4.
+4. 计算软max InfoNCE 与 sigmoid 的通信成本,为512GPU运行,在32k批量.$O(N)$作为一个$O(N^2)$引用西格利普第4节.
 
 5. 根据数据量化结果,再现他们对数据量化的结论:在固定模型尺寸下,ImageNet零截图精度和训练数据尺寸之间的日志线性关系是什么?
 

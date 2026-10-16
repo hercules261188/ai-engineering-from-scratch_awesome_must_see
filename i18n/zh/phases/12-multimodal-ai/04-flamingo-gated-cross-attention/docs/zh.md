@@ -30,18 +30,18 @@
 
 ### 感知器重新样本
 
-对于每一个提示图像,ViT生成N补丁代币.感知器复样器有K固定可学习的隐藏 (Flamingo使用K=64).每一个复样器块是两个子步骤:
+对于每一个提示图片,ViT产生了$N$感知器的重样标记$K$固定可学习的潜伏 (Flamingo使用$K=64$) 每个复样器块是两个子步骤:
 
-1. 交叉注意:K潜伏对N补丁代币 (Q来自潜伏,K/V来自补丁) 进行.
+1. 交叉注意:$K$幕上幕$N$补丁代码 (Q来自隐藏,K/V来自补丁).
 2. 自我注意力+FFN在隐藏中.
 
-输出后6个复制模块,输出为K=64的视觉代币,无论ViT产生了多少补丁. 224x224图像 (196补丁) 和480x480图像 (900补丁) 都作为64个复制模块代币.
+经过6个复样器块,输出是$K=64$视觉代币是dim1024的,无论 ViT产生了多少补丁. 224x224图像 (196补丁) 和 480x480图像 (900补丁) 都作为64个复样代币.
 
-视频的重样仪是时间应用的:每个框架的补丁产生64个隐藏,时间定位编码使模型能够区分t=0和t=N.完整的视频成为T * 64视觉代币.
+视频的重样采用时间:每个框架的补丁产生64个隐藏,而时间定位编码使模型能够区分$t=0$其他$t=N$完整的视频变成了$T \cdot 64$视觉代币.
 
 ### 门的跨度注意力
 
-在结的LLM的每一个M层之间 (Flamingo使用M=4),插入一个新的关闭的跨注意区块:
+在每一个之间$M$结的 LLM (Flamingo使用)$M=4$),将新的关闭横向注意力区块插入:
 
 ```
 x_after_llm_block = llm_block(x_before)
@@ -148,7 +148,7 @@ cross-attention-fusion
 | OBELICS | "Interleaved web corpus" | Open dataset of 141M web pages with images and text in reading order |
 | Chinchilla | "70B frozen base" | Flamingo's frozen text LLM, from DeepMind's Chinchilla paper |
 | Gate schedule | "How alpha moves" | The rate at which the cross-attention gate opens during training |
-| Cross-attn frequency | "Every M layers" | How often a gated cross-attention block is inserted; Flamingo uses M=4 |
+| Cross-attn frequency | "Every M layers" | How often a gated cross-attention block is inserted; Flamingo uses $M=4$ |
 | OpenFlamingo | "Open reproduction" | MosaicML/LAION open checkpoint at 3-9B; architecture-identical to Flamingo |
 
 ## 进一步阅读

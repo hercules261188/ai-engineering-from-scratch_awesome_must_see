@@ -36,28 +36,28 @@
 
 科尔伯特 (Khattab & Zaharia, arXiv:2004.12832) 是一个文本检索方法.它每文档的向量不是一个,而是每代币产生一个向量.
 
-- 查询代币得到自己的嵌入 (N_q向量).
-- 文件代币得到嵌入 (N_d向量,通常缓存).
-- 积分 = 查询代币的总数max对文件代币的共数相似性: Σ_i max_j cos(q_i, d_j).
+- 查询代币得到自己的嵌入 ($N_q$它们的导向
+- 文件代币得到嵌入 ($N_d$它们通常是缓存的.
+- 评分 = 查询代币的总数,最大为 代币的文件代币: $\sum_i \max_j \cos(q_i, d_j)$现在,我们要去.
 
 现在,我们要做什么?
 
-优点:强大的回忆,处理术语级语义. 缺点:每文档的N_d向量,存储成本昂贵.
+优势:强大的回忆,处理术语级的语义. 缺点:$N_d$文件的向量,存储成本高昂.
 
 ### 鱼
 
 科尔帕利 (Faysse等人, arXiv:2407.01449) 应用了科尔伯特模式到图像.
 
-- 每页面都通过PaliGemma (ViT+语言) 编码成补丁嵌入式:每页的N_p向量.
-- 每个用户查询 (文本) 都被编码成查询标志嵌入式:N_q向量.
-- 评分 = Σ_i max_j cos(q_i, p_j),即 MaxSim对查询文本标记和页面图像补丁.
+- 每个页面都通过PaliGemma (ViT+语言) 编码成补丁嵌入: $N_p$单页的向量.
+- 每个用户查询 (文本) 都被编码成查询标志嵌入式: $N_q$它们是向量.
+- 评分 = $\sum_i \max_j \cos(q_i, p_j)$查询文字标记和页面图像补丁.
 - 根据总分数,查看最好的页面.
 
 在文件吞时:将每页都使用PaliGemma嵌入,存储所有补丁嵌入.在查询时:嵌入查询代码,计算MaxSim与所有存储的页面嵌入,返回顶级k页面.
 
 优点:在视觉丰富的文档上,端到端比文字RAG20-40%更好.每个补丁向量捕捉到本地布局和内容.
 
-缺点:每页的N_p补丁 × 4 字节浮动 × D dim 矢量 = 存储速度增长快.
+缺点:$N_p$补丁 × 4 字节的浮动 × $D$由于PQ/OPQ量化,可缓解.
 
 ### 素2和素
 
@@ -128,7 +128,7 @@ mm-maxsim
 
 1. 报告每页有729个补丁,128维嵌入式,4字节的浮动.计算原料存储和PQ压缩存储 (8x).
 
-2. 什么是这个总和捕捉一个简单的平均相似性没有?
+2. 马克西姆是$\sum_i \max_j \cos(q_i, p_j)$什么是这个总数捕捉到一个简单的意思相似性没有?
 
 3.  ColPali 将页面索引为补丁组.如果我们以词级索引 (如ColBERT所做的) 为替代,会发生什么变化?
 
@@ -143,7 +143,7 @@ mm-maxsim
 | Late interaction | "ColBERT-style" | Retrieval using per-token or per-patch embeddings + MaxSim, not a single doc vector |
 | MaxSim | "Max-over-patches" | For each query token, pick the highest-similarity document token; sum across query |
 | Bi-encoder | "Single-vector" | One vector per document; faster but loses granularity |
-| Multi-vector | "Many-vectors-per-doc" | Store N_p vectors per document / page; storage cost grows but recall improves |
+| Multi-vector | "Many-vectors-per-doc" | Store $N_p$ vectors per document / page; storage cost grows but recall improves |
 | Patch embedding | "Page feature" | One vector per image patch from a VLM encoder, cached per page |
 | ViDoRe | "Vision doc bench" | ColPali's benchmark suite for visual document retrieval |
 | PQ quantization | "Product quantization" | Compression that maintains vector similarity while shrinking storage ~8x |
