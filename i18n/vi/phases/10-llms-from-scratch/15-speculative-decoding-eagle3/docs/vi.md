@@ -36,8 +36,8 @@ Những gì giai đoạn 7 · Bài học 16 đã cung cấp cho bạn là toán 
 
 Để `α`là tỷ lệ chấp nhận dự kiến cho mỗi token được dự thảo.`c = cost(draft) / cost(verifier)`Số lượng token được chấp nhận được dự kiến cho mỗi người xác minh trước là:
 
-```
-E[accepted] = (1 - α^(N+1)) / (1 - α)
+```math
+\mathbb{E}[\text{accepted}] = \frac{1 - \alpha^{N+1}}{1 - \alpha}
 ```
 
 Thời gian tường dự kiến tổng cộng cho mỗi token được chấp nhận là `(N * c + 1) / E[accepted]`Giảm thiểu điều đó với sự quan tâm của `N`và anh sẽ có điểm thích hợp.`α = 0.8, c = 0.05`: tối ưu `N`là khoảng 57, tốc độ là 3.2x.`α = 0.95, c = 0.02`: tối ưu `N`là khoảng 8x10, tăng tốc đẩy 5x.

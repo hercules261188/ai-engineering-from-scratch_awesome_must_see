@@ -28,8 +28,8 @@ DIFF V1 có ba vấn đề khiến nó không được đi đường ống dẫn
 
 Để hỏi `q`và chìa khóa`K = [k_1, ..., k_N]`, trọng lượng chú ý là:
 
-```
-w_i = exp(q . k_i / sqrt(d)) / sum_j exp(q . k_j / sqrt(d))
+```math
+w_i = \frac{\exp(q \cdot k_i / \sqrt{d})}{\sum_j \exp(q \cdot k_j / \sqrt{d})}
 ```
 
 Không .`w_i`là không.`k_i`hoàn toàn không liên quan đến `q`, điểm số `q . k_i`không phải là 0  nó dao động xung quanh 0 với sự biến động `||q||^2 / d`Sau khi softmax bình thường hóa, mỗi token không liên quan vẫn đóng góp.`O(1/N)`Tổng đóng góp của các token không liên quan là `O((N-1)/N) = O(1)`Không phải một lượng nhỏ.
@@ -38,17 +38,19 @@ Những gì mô hình muốn là một cái gì đó giống như một top-k c�
 
 ### Ý tưởng khác biệt
 
-Chia các dự đoán Q và K của mỗi đầu thành hai: Q = (Q_1, Q_2) và K = (K_1, K_2).
+Chia các dự đoán Q và K của mỗi đầu thành hai: $Q = (Q_1, Q_2)$và $K = (K_1, K_2)$- Xét hai bản đồ chú ý:
 
-```
-A_1 = softmax(Q_1 K_1^T / sqrt(d))
-A_2 = softmax(Q_2 K_2^T / sqrt(d))
+```math
+\begin{aligned}
+A_1 &= \mathop{\mathrm{softmax}}(Q_1 K_1^T / \sqrt{d}) \\
+A_2 &= \mathop{\mathrm{softmax}}(Q_2 K_2^T / \sqrt{d})
+\end{aligned}
 ```
 
 Tạo ra:
 
-```
-DiffAttn = (A_1 - lambda * A_2) V
+```math
+\mathop{\mathrm{DiffAttn}} = (A_1 - \lambda \cdot A_2) V
 ```
 
 Việc trừ bỏ bất kỳ phân phối tiếng ồn nào mà hai bản đồ chia sẻ. Nếu cả hai bản đồ có trọng lượng tương tự trên các token không liên quan 127k (mà họ sẽ, khi khởi đầu ngẫu nhiên), thì chúng sẽ hủy bỏ. tín hiệu  trọng lượng đỉnh trên vài token thực sự liên quan  chỉ hủy bỏ nếu nó xuất hiện trong cả hai bản đồ với cùng một cường độ, điều mà nó sẽ không làm khi mô hình được đào tạo.
@@ -63,7 +65,7 @@ Hãy nghĩ đến hai chiếc microphone ồn ào ghi lại cùng một giọng 
 
 V1 giữ số lượng tham số bằng với đường dẫn cơ bản Transformer. Để có được hai truy vấn mỗi đầu nó làm giảm một nửa chiều kích đầu. Điều đó chi phí đầu biểu hiện và  hơn đau đớn  giảm một nửa giá trị cache mỗi đầu. Decode phải tải giá trị cache hai lần mỗi bước (một lần mỗi chi nhánh softmax). Kết quả: decode chậm hơn đường dẫn cơ bản mặc dù số lượng tham số phù hợp.
 
-V2 tăng gấp đôi số đầu truy vấn và giữ cho các đầu KV tương tự (mượn các tham số từ dự đoán lên). chiều kích đầu vẫn giống như đường cơ sở. Sau khi trừ, chiều kích bổ sung được dự đoán xuống để phù hợp với dự đoán O_W của đường cơ sở Transformer. Ba điều xảy ra cùng một lúc:
+V2 tăng gấp đôi số đầu truy vấn và giữ cho các đầu KV tương tự (mượn các tham số từ dự đoán lên).$O_W$3 điều xảy ra cùng một lúc:
 
 1. Tốc độ giải mã phù hợp với đường cơ sở (KV cache được tải một lần).
 2. FlashAttention chạy không thay đổi (không có lõi tùy chỉnh).
@@ -139,8 +141,8 @@ Xây dựng một chuỗi tổng hợp dài 1024. Đặt tín hiệu ở một v
 Với một cấu hình (họp=4096, đầu=32, d_head=128), in:
 
 - Bộ biến đổi đường cơ bản: Q, K, V mỗi kích thước `hidden * hidden`, MLP ở 4 * ẩn.
-- DIFF V1: Q, K mỗi kích thước `hidden * hidden`, kích thước V `hidden * hidden`(không thay đổi), đầu mờ đi một nửa bên trong.`lambda`Các tham số (O(head * d_head)).
-- DIFF V2: kích thước Q `2 * hidden * hidden`, K kích thước `hidden * hidden`, kích thước V `hidden * hidden`. Tâm tối hơn dự kiến xuống trước O_W. Thêm tương tự `lambda`Các tham số.
+- DIFF V1: Q, K mỗi kích thước `hidden * hidden`, kích thước V `hidden * hidden`(không thay đổi), đầu mờ đi một nửa bên trong.`lambda`Các tham số $(O(\text{heads} \cdot d_{\text{head}}))$- Tôi không biết.
+- DIFF V2: kích thước Q `2 * hidden * hidden`, K kích thước `hidden * hidden`, kích thước V `hidden * hidden`Tâm tối hơn dự kiến xuống trước đây$O_W$Thêm cùng một.`lambda`Các tham số.
 
 Trò chơi đo chi phí phụ tham số cho V2 (khoảng `hidden * hidden`thêm mỗi khối chú ý) và in nó.
 
@@ -182,8 +184,8 @@ Bài học này sẽ mang lại kết quả `outputs/skill-diff-attention-integr
 
 | Term | What people say | What it actually means |
 |------|----------------|------------------------|
-| Differential attention | "Two softmaxes minus each other" | Split Q, K into two halves, compute two softmax maps, subtract the second (scaled by lambda) from the first, then multiply by V |
-| Noise floor | "The non-zero tail of softmax" | The O(1/N) weight softmax puts on every unrelated token, which sums to O(1) across long contexts |
+| Differential attention | "Two softmaxes minus each other" | Split Q, K into two halves, compute two softmax maps, subtract the second (scaled by $\lambda$) from the first, then multiply by V |
+| Noise floor | "The non-zero tail of softmax" | The $O(1/N)$ weight softmax puts on every unrelated token, which sums to $O(1)$ across long contexts |
 | lambda | "The subtraction scale" | Per-head learnable scalar parameterized as `exp(lq1.lk1) - exp(lq2.lk2) + lambda_init`; can be negative |
 | DIFF V1 | "The ICLR 2025 version" | Original Differential Transformer; halves head dim to preserve parameter count, needs custom kernel, slower decode |
 | DIFF V2 | "The January 2026 fix" | Doubles Q heads keeping KV heads; matches baseline decode speed and works with FlashAttention |

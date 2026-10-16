@@ -42,11 +42,11 @@ INT8:  [1 sign] [7 value]                   = 8  bits (uniform steps)
 INT4:  [1 sign] [3 value]                   = 4  bits (16 levels total)
 ```
 
-**FP32**là độ chính xác đầy đủ. 23 bit mantissa cho bạn khoảng 7 chữ số thập phân độ chính xác. phạm vi: khoảng 1,2 x 10^-38 đến 3,4 x 10^38.
+**FP32**là độ chính xác đầy đủ. 23 bit mantissa cho bạn khoảng 7 chữ số thập phân độ chính xác.$1.2 \times 10^{-38}$đến$3.4 \times 10^{38}$- Việc đào tạo trước đây chỉ diễn ra trong FP32. Nó vẫn còn hoạt động cho sự tích lũy (tổng chạy trong quá trình nhân tử liệu).
 
 **FP16**10 bit mantissa tạo ra khoảng 3,3 chữ số thập phân. Tỷ số giảm xuống còn 5 bit, làm giảm phạm vi đáng kể (tỷ lệ tối đa là ~65,504). Điều này rất tốt cho trọng lượng (cluster gần không) nhưng nguy hiểm cho các hoạt động và độ nghiêng có thể tăng trong quá trình đào tạo.
 
-**BF16**(Brain Float 16) giữ cho số lượng 8 bit từ FP32 nhưng thu hẹp mantissa xuống còn 7 bit. Phạm vi tương tự như FP32, ít chính xác hơn FP16. Google thiết kế nó đặc biệt cho việc học sâu. Hình giác quan: phạm vi quan trọng hơn là độ chính xác cho mạng thần kinh. Một gradient 10^-20 chảy xuống không trong FP16 tồn tại trong BF16. Một trọng lượng 0,07342 tròn đến 0,0734 trong BF16 là đủ gần. Mỗi cuộc tập luyện hiện đại sử dụng BF16 hoặc hỗn hợp BF16/FP32.
+**BF16**(Brain Float 16) giữ cho hàm số 8 bit từ FP32 nhưng thu hẹp mantissa xuống còn 7 bit. cùng phạm vi với FP32, ít chính xác hơn FP16. Google thiết kế nó đặc biệt cho việc học sâu.$10^{-20}$Một trọng lượng 0,07342 mà vòng quanh đến 0,0734 trong BF16 là đủ gần.
 
 **FP8**E4M3 (4 hàm, 3 mantissa) được sử dụng cho trọng lượng và kích hoạt trong quá trình suy luận. E5M2 (5 hàm, 2 mantissa) được sử dụng cho độ lệch trong quá trình đào tạo nơi phạm vi quan trọng hơn độ chính xác.
 
@@ -773,59 +773,73 @@ if __name__ == "__main__":
 
 ## Sử dụng nó
 
-### Quantizing với AutoGPTQ
+### Quantizing với GPTQModel
 
 ```python
-# pip install auto-gptq transformers
-# from auto_gptq import AutoGPTQForCausalLM, BaseQuantizeConfig
-# from transformers import AutoTokenizer
+# pip install gptqmodel
+# from gptqmodel import GPTQConfig, GPTQModel
 #
 # model_id = "meta-llama/Llama-3.1-8B"
-# quantize_config = BaseQuantizeConfig(
-#     bits=4,
-#     group_size=128,
-#     desc_act=False,
+# quant_config = GPTQConfig(bits=4, group_size=128)
+#
+# model = GPTQModel.load(model_id, quant_config)
+# model.quantize(calibration_texts[:128], batch_size=1)
+# model.save("llama-8b-gptq-int4")
+```
+
+### Quantizing đến AWQ với LLM Compressor
+
+```python
+# pip install llmcompressor
+# from transformers import AutoModelForCausalLM, AutoTokenizer
+# from llmcompressor import oneshot
+# from llmcompressor.modifiers.quantization import QuantizationModifier
+# from llmcompressor.modifiers.transform.awq import AWQModifier
+#
+# model_id = "meta-llama/Llama-3.1-8B"
+# model = AutoModelForCausalLM.from_pretrained(model_id)
+# tokenizer = AutoTokenizer.from_pretrained(model_id)
+#
+# recipe = [
+#     AWQModifier(duo_scaling="both"),
+#     QuantizationModifier(ignore=["lm_head"], scheme="W4A16_ASYM", targets=["Linear"]),
+# ]
+# oneshot(
+#     model=model,
+#     dataset="perfectblend",
+#     splits="train[:512]",
+#     recipe=recipe,
+#     max_seq_length=512,
+#     num_calibration_samples=256,
 # )
-#
-# tokenizer = AutoTokenizer.from_pretrained(model_id)
-# model = AutoGPTQForCausalLM.from_pretrained(model_id, quantize_config)
-#
-# calibration = [tokenizer(t, return_tensors="pt") for t in calibration_texts[:128]]
-# model.quantize(calibration)
-# model.save_quantized("llama-8b-gptq-int4")
+# model.save_pretrained("llama-8b-awq-int4", save_compressed=True)
+# tokenizer.save_pretrained("llama-8b-awq-int4")
 ```
 
-### Quantizing với AutoAWQ
-
-```python
-# pip install autoawq
-# from awq import AutoAWQForCausalLM
-# from transformers import AutoTokenizer
-#
-# model_id = "meta-llama/Llama-3.1-8B"
-# model = AutoAWQForCausalLM.from_pretrained(model_id)
-# tokenizer = AutoTokenizer.from_pretrained(model_id)
-#
-# model.quantize(tokenizer, quant_config={"zero_point": True, "q_group_size": 128, "w_bit": 4})
-# model.save_quantized("llama-8b-awq-int4")
-```
+AutoGPTQ và AutoAWQ, các công cụ ban đầu cho hai phương pháp này, được lưu trữ.
 
 ### Chuyển đổi thành GGUF
 
 ```bash
-# pip install llama-cpp-python
-# python convert_hf_to_gguf.py meta-llama/Llama-3.1-8B --outtype q4_k_m --outfile llama-8b-q4km.gguf
-# llama-server -m llama-8b-q4km.gguf -c 4096 -ngl 99
+# git clone https://github.com/ggml-org/llama.cpp
+# cmake -S llama.cpp -B llama.cpp/build && cmake --build llama.cpp/build --config Release
+# pip install -r llama.cpp/requirements.txt
+# hf download meta-llama/Llama-3.1-8B --local-dir Llama-3.1-8B
+# python llama.cpp/convert_hf_to_gguf.py Llama-3.1-8B --outtype f16 --outfile llama-8b-f16.gguf
+# llama.cpp/build/bin/llama-quantize llama-8b-f16.gguf llama-8b-q4km.gguf Q4_K_M
+# llama.cpp/build/bin/llama-server -m llama-8b-q4km.gguf -c 4096 -ngl 99
 ```
+
+Máy chuyển đổi không có đầu ra lượng K (`--outtype`chấp nhận `f32`- `f16`- `bf16`- `q8_0`- `tq1_0`- `tq2_0`, hoặc`auto`), vì vậy `llama-quantize`tạo ra tệp Q4_K_M.
 
 ### Dịch vụ các mô hình định lượng
 
 ```python
 # pip install vllm
-# vllm serve model-awq --quantization awq --dtype half --max-model-len 8192
+# vllm serve llama-8b-awq-int4 --max-model-len 8192
 ```
 
-vLLM hỗ trợ bản địa các mô hình AWQ và GPTQ. Nó xử lý việc phân số hóa trong quá trình nhân tử và sử dụng chú ý trang cho bộ nhớ cache KV. Đối với FP8 trên H100, thêm `--dtype float8_e4m3fn`- Tôi không biết.
+vLLM hỗ trợ bản chất mô hình AWQ và GPTQ và đọc phương pháp định lượng từ cấu hình của điểm kiểm soát, vì vậy không `--quantization`Flag là cần thiết. Nó xử lý việc phân số trong quá trình nhân tử và sử dụng chú ý trang cho bộ nhớ cache KV. Đối với FP8 trên H100, thêm `--quantization fp8_per_tensor`để định lượng trọng lượng của một điểm kiểm soát 16 bit tại thời điểm tải.
 
 ## Chuyển nó
 

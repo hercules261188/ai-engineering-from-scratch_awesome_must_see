@@ -52,8 +52,8 @@ Mọi thứ khác (kế hoạch học tập, hỗn hợp dữ liệu, kích thư
 
 LayerNorm trừ trung bình, chia bằng std, thang đo và thay đổi. RMSNorm chỉ giữ chỉ thang đo:
 
-```
-RMSNorm(x) = x / sqrt(mean(x^2) + eps) * gamma
+```math
+\mathop{\mathrm{RMSNorm}}(x) = \frac{x}{\sqrt{\mathop{\mathrm{mean}}(x^2) + \epsilon}} \cdot \gamma
 ```
 
 Không trừ trung bình. Không thiên vị. Một matmul ít hơn mỗi token. Zhang và Sennrich (2019) lập luận rằng nó phù hợp với LayerNorm trong dịch máy trong khi nhanh hơn 10%.
@@ -78,8 +78,8 @@ Mỗi Llama, Mistral, Qwen, DeepSeek và Gemma sử dụng RoPE. Gemma 2 sử d�
 
 MLP của GPT-2 là `x -> gelu(xW1 + b1) -> (...)W2 + b2`SwiGLU (Shazeer 2020) thay thế kích hoạt bằng một sản phẩm bị khóa:
 
-```
-SwiGLU(x) = (xW1) * sigmoid(xW1) * xV
+```math
+\mathop{\mathrm{SwiGLU}}(x) = (xW_1) \cdot \mathop{\mathrm{sigmoid}}(xW_1) \cdot xV
 ```
 
 Hai dự đoán song song thay vì một, được gát bởi kích hoạt Swish. Khác cảm nghiệm mạnh hơn về độ phức tạp mỗi tham số. Llama 2 đã chấp nhận nó, mọi người đều theo.`ff_dim = 4 * hidden`, SwiGLU sử dụng `ff_dim = (2/3) * 4 * hidden = 8/3 * hidden`- Tôi không biết.
@@ -90,7 +90,7 @@ GPT-2 được sử dụng **Multi-Head Attention (MHA)**Mỗi đầu có dự �
 
 **Multi-Query Attention (MQA, Shazeer 2019)**chia sẻ một K và một V trên tất cả các đầu. cắt bộ nhớ cache KV bằng số_heads, đó là giảm 12x đến 32x trên một mô hình điển hình. Độ chính xác giảm nhẹ trên các điểm chuẩn cứng.
 
-**Grouped-Query Attention (GQA, Ainslie et al. 2023)**là trung gian: các nhóm G của đầu Q chia sẻ một K và một V. Llama 3 8B sử dụng GQA với 32 đầu Q và 8 đầu KV (G = 8), do đó bộ nhớ cache KV thu hẹp 4x so với MHA đầy đủ.
+**Grouped-Query Attention (GQA, Ainslie et al. 2023)**là trung tâm: $G$Các nhóm đầu Q chia sẻ một đầu K và một đầu V. Llama 3 8B sử dụng GQA với 32 đầu Q và 8 đầu KV ($G=8$), do đó cache KV thu hẹp 4x so với MHA đầy đủ.
 
 **Multi-Head Latent Attention (MLA, DeepSeek 2024)**Tóm lại, bộ nhớ cache KV sẽ được sử dụng để thu thập thông tin về các tính năng của các máy tính.
 
@@ -154,6 +154,7 @@ Các biến thể ban đầu áp dụng các chuẩn lớp sau mỗi lớp phụ
 | Qwen 2.5 72B | 2024 | 72B | 72B | RMSNorm | SwiGLU | RoPE (YaRN) | GQA (64/8) | no | 128k |
 | DeepSeek V2 236B | 2024 | 236B | 21B | RMSNorm | SwiGLU | RoPE | MLA | yes (160 experts, top-6) | 128k |
 | DeepSeek V3 | 2024 | 671B | 37B | RMSNorm | SwiGLU | RoPE | MLA | yes (256 experts, top-8) | 128k |
+| Spark-X2.5 4B | 2026 | 4.1B | 4.1B | RMSNorm | GeGLU | RoPE + sliding (3:1) | GQA (16/4), gated output | no | 1M |
 
 Hình ảnh của các cột. RMSNorm là phổ quát. SwiGLU hoặc người anh em họ GeGLU của nó là phổ quát. RoPE là phổ quát. GQA là phổ quát trên 7B trừ khi được thay thế bởi MLA. MoE là phân biệt ở đầu đầu.
 
@@ -176,6 +177,12 @@ Llama 3 8B cấu hình:
 ```
 
 Mỗi lĩnh vực tương ứng với một cái gì đó bạn đã thực hiện.
+Các cấu hình mới hơn thêm một vài trường thay đổi toán học, vì vậy máy tính
+đọc chúng khi họ có mặt:
+
+- `head_dim`: được thiết lập rõ ràng khi không`hidden_size / num_attention_heads`Gemma 29B đã giấu 3584 và 16 đầu nhưng`head_dim`256, nên dự đoán Q của nó là 3584 x 4096, không phải vuông.
+- `tie_word_embeddings`Llama 3 8B không liên kết, đó là các tham số 525M bạn bỏ lỡ nếu bạn chỉ đếm các tích hợp một lần.
+- `layer_types`và `sliding_window`: những lớp nào giữ cho toàn bộ ngữ cảnh và những gì chỉ cho các token W cuối cùng.
 
 - `hidden_size`: kích thước nhúng.
 - `intermediate_size`: MLP kích thước ẩn (3.5x ẩn -- SwiGLU toán học).
@@ -212,6 +219,15 @@ Llama 3 8B ở ngữ cảnh 128k, BF16, head_dim = hidden / num_heads = 128:
 
 Các trọng lượng 8B là 16 GB trong BF16. Kho lưu trữ KV cho một chuỗi 128k duy nhất lớn hơn trọng lượng. Đây là áp suất bộ nhớ thúc đẩy nghiên cứu định lượng GQA, MLA và KV cache.
 
+Công thức cho rằng mỗi lớp lưu trữ toàn bộ chuỗi. Một lớp cửa sổ trượt chỉ cần các token W cuối cùng, vì vậy đối với các mô hình lai, tổng số chạy cho mỗi lớp:
+
+```
+kv_cache = 2 * num_kv_heads * head_dim * bytes_per_element
+           * (full_layers * max_seq_len + sliding_layers * min(W, max_seq_len))
+```
+
+Spark-X2.5 4B chạy ba lớp cửa sổ trượt ($W = 512$Trong bối cảnh 1M-token của nó là khoảng 38,7 GB (36 GiB) mỗi chuỗi trong BF16. Nếu tất cả 36 lớp lưu trữ toàn bộ bối cảnh, nó sẽ là 154,6 GB (144 GiB).
+
 ### Khi mỗi người mẫu thắng
 
 - **Single 80GB GPU, no MoE**Llama 3 8B, Mistral 7B, Gemma 2 9B. Mời phục vụ, công cụ rộng.
@@ -219,6 +235,7 @@ Các trọng lượng 8B là 16 GB trong BF16. Kho lưu trữ KV cho một chu�
 - **Biggest open capability, accept MoE complexity**: DeepSeek V3, Mixtral 8x22B. Khả năng tốt nhất cho mỗi FLOP hoạt động.
 - **Long-context needs**: Llama 3 (128k với quy mô RoPE), DeepSeek (MLA lợi thế).
 - **Low-latency serving**: Gemma 2 9B (trường trượt cắt tính toán ngữ cảnh dài).
+- **Long context on a small memory budget**: mô hình cửa sổ trượt lai hybrid như Spark-X2.5 4B, nơi chỉ có một phần tư các lớp trả cho toàn bộ ngữ cảnh.
 
 ```figure
 rmsnorm-vs-layernorm
@@ -237,13 +254,17 @@ config = {
 }
 ```
 
-Script đi bộ các trường kiến trúc theo trường, tính toán số param cho nhúng, chú ý (với giảm GQA), MLP (với mở rộng SwiGLU), các chuẩn lớp và đầu. Sau đó nó tính toán bộ nhớ cache KV ở chiều dài ngữ cảnh được nêu và in một bản tóm tắt.
+Các kịch bản đi bộ các trường kiến trúc theo trường, tính toán số param cho nhúng, chú ý (với GQA giảm và một rõ ràng `head_dim`khi cấu hình đặt một), MLP (với mở rộng SwiGLU hoặc GeGLU), các chuẩn lớp, và đầu LM khi nó không được gắn với nhúng. Sau đó nó tính toán bộ nhớ cache KV ở chiều dài ngữ cảnh được nêu, lớp cho lớp để các lớp cửa sổ trượt được che phủ tại cửa sổ của họ, và in một bản tóm tắt.
+
+Đối với các mô hình dày đặc tổng hợp phù hợp với tham số được công bố đếm chính xác: Llama 3 8B xuất hiện ở 8.030.261.248, Gemma 2 9B ở 9.241.705.984, và Spark-X2.5 4B ở 4.112.079.360. Qwen 2.5 72B bị mất bởi 819,200, đó là Tập 1.
 
 Nhìn xem`code/main.py`cho việc thực hiện.
 
 ## Sử dụng nó
 
 Hãy chạy máy tính trên Llama 3 8B, Mistral 7B, Mixtral 8x7B và DeepSeek V3 cấu hình được gói trong kịch bản. So sánh các sự cố tham số. Hãy chú ý rằng các mô hình MoE có tổng số tham số nhỏ hơn các mô hình dày đặc nhưng số tham số hoạt động thường nhỏ hơn. Hãy chú ý rằng bộ nhớ cache KV của DeepSeek V3 nhỏ hơn Llama 3 405B mặc dù có nhiều tham số tổng cộng hơn - đó là MLA đang hoạt động.
+
+Sau đó so sánh Gemma 2 9B và Spark-X2.5 4B. Đối với cả hai, kịch bản in bộ nhớ cache KV mà nó thực sự cần và bộ nhớ cache KV mà nó sẽ cần nếu mỗi lớp được chú ý đầy đủ. Gemma 2 thay thế 1:1 tại một bối cảnh 8k, do đó tiết kiệm là khiêm tốn. Spark-X2.5 đi 3:1 với một cửa sổ 512-token tại 1M, do đó tiết kiệm là 4x.
 
 Sau đó, cắm vào một cấu hình cho bất kỳ mô hình nào bạn có ở địa phương, đọc bản tóm tắt, và quyết định liệu nó phù hợp với GPU của bạn hay không.
 
@@ -275,7 +296,7 @@ Bài học này sẽ mang lại kết quả `outputs/skill-open-model-picker.md`
 | MoE | "Sparse experts" | Mixture of Experts: N MLPs per block, router picks top-k per token — huge total params, small active params |
 | Top-k routing | "Pick k experts per token" | The router computes a score per expert and activates the k highest — typical k is 2 (Mixtral) to 8 (DeepSeek) |
 | YaRN | "Stretch RoPE" | Yet another RoPE extension — interpolates rotary angles to extend context from 8k to 128k+ at inference time |
-| Sliding-window attention | "Don't attend to everything" | Each token attends only to the last W tokens — caps attention cost at O(W) per token, used in Gemma 2 and early Mistral |
+| Sliding-window attention | "Don't attend to everything" | Each token attends only to the last $W$ tokens — caps attention cost at $O(W)$ per token, used in Gemma 2 and early Mistral |
 | Active params | "What runs per token" | For MoE models, the parameter count that sees a forward pass per token (much smaller than total params) — governs per-token FLOPs |
 
 ## Đọc thêm

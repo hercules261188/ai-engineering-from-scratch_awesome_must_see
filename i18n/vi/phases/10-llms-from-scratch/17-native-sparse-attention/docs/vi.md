@@ -36,8 +36,8 @@ Native Sparse Attention (Yuan et al., DeepSeek + PKU + UW, ACL 2025 best paper, 
 
 Ba đầu ra của nhánh được kết hợp qua một cổng học được học theo vị trí:
 
-```
-out = g_cmp * out_cmp + g_sel * out_sel + g_win * out_win
+```math
+\text{out} = g_{\text{cmp}} \cdot \text{out}_{\text{cmp}} + g_{\text{sel}} \cdot \text{out}_{\text{sel}} + g_{\text{win}} \cdot \text{out}_{\text{win}}
 ```
 
 `g_cmp, g_sel, g_win`là trọng lượng cổng từ một MLP nhỏ trên truy vấn. Họ không phải cộng vào 1  họ có thể cân nặng các nhánh độc lập.
@@ -171,7 +171,7 @@ Bài học này sẽ mang lại kết quả `outputs/skill-nsa-integrator.md`. V
 
 | Term | What people say | What it actually means |
 |------|----------------|------------------------|
-| Compressed branch | "Coarse view" | Attention over block-averaged keys that provides global context in O(N/l) keys per query |
+| Compressed branch | "Coarse view" | Attention over block-averaged keys that provides global context in $O(N/l)$ keys per query |
 | Selected branch | "Top-k blocks" | Fine-grained attention over the `k` blocks with highest compressed-branch scores |
 | Sliding window | "Local context" | Attention over the last `W` tokens for short-range patterns |
 | Native trainability | "Pre-train with the sparsity on" | The sparsity pattern is learned during pre-training, not bolted on at inference |

@@ -39,27 +39,29 @@ Module `k`bao gồm:
 
 Trong buổi tập, cho một dấu tiền từ vị trí qua vị trí `i`, trạng thái ẩn sâu là:
 
-```
-h_i^(0) = main model backbone at position i
-h_i^(k) = T_k( M_k * concat(RMSNorm(h_i^(k-1)), RMSNorm(E(t_{i+k}))) )   for k >= 1
+```math
+\begin{aligned}
+h_i^{(0)} &= \text{main model backbone at position } i \\
+h_i^{(k)} &= T_k\Big( M_k \cdot \mathop{\mathrm{concat}}\big(\mathop{\mathrm{RMSNorm}}(h_i^{(k-1)}), \mathop{\mathrm{RMSNorm}}(E(t_{i+k}))\big) \Big) \quad \text{for } k \ge 1
+\end{aligned}
 ```
 
 Dự đoán sâu sắc là:
 
-```
-logits_{i+k} = Out(h_i^(k-1))   for k = 1..D
+```math
+\text{logits}_{i+k} = \mathop{\mathrm{Out}}(h_i^{(k-1)}) \quad \text{for } k = 1, \ldots, D
 ```
 
 Sự mất mát sâu sắc là sự thấu hiểu giữa sự thật và sự thật cơ bản .`t_{i+k}`- Có thể là:
 
-```
-L_k = CE(logits_{i+k}, t_{i+k})
+```math
+L_k = \mathop{\mathrm{CE}}(\text{logits}_{i+k}, t_{i+k})
 ```
 
 Sự mất khớp qua độ sâu:
 
-```
-L_MTP = (lambda / D) * sum_{k=1..D} L_k
+```math
+L_{\text{MTP}} = \frac{\lambda}{D} \sum_{k=1}^{D} L_k
 ```
 
 `lambda`là một yếu tố trọng lượng nhỏ  DeepSeek-V3 sử dụng 0,3 cho 10% đầu tiên của đào tạo và 0,1 sau đó.`L_main + L_MTP`- Tôi không biết.
@@ -174,7 +176,7 @@ Bài học này sẽ mang lại kết quả `outputs/skill-mtp-planner.md`. Vớ
 
 2. Xét số lượng trên của một mô hình 70B dày đặc (bỏ 8192, 80 lớp) với mô-đun D=1 MTP. So sánh với số lượng trên 14B được báo cáo của DeepSeek-V3. Giải thích lý do tại sao số lượng của DeepSeek cao hơn: khối biến đổi MTP thừa hưởng cấu trúc MoE tương tự, làm tăng số lượng các tham số mỗi mô-đun.
 
-3. Thực hiện D=2 trong đồ chơi: thêm một mô-đun MTP thứ hai lấy h^(1) và dự đoán `t_{i+2}`- Kiểm tra sự mất mát chung và tính toán các tham số phù hợp với phương trình 19-21 của bài DeepSeek.
+3. Thực hiện D=2 trong đồ chơi: thêm một mô-đun MTP thứ hai$h^{(1)}$và dự đoán`t_{i+2}`- Kiểm tra sự mất mát chung và tính toán các tham số phù hợp với phương trình 19-21 của bài DeepSeek.
 
 4. Chuyển đồ chơi sang MTP song song (Gloeckle-style): thêm đầu đầu ra D trên đỉnh trạng thái ẩn chính, mỗi dự đoán một sự bù đắp khác nhau. đo cách các tổn thất theo độ sâu so sánh với phiên bản theo trình trên cùng một tín hiệu tổng hợp. phiên bản theo trình nên tạo ra tổn thất độ sâu k thấp hơn cho k > 1 vì nó điều kiện trên các dự đoán trung gian.
 
@@ -190,8 +192,8 @@ Bài học này sẽ mang lại kết quả `outputs/skill-mtp-planner.md`. Vớ
 | Sequential MTP | "DeepSeek-V3 style" | Each module conditions on the previous depth's hidden state plus the next token's embedding; preserves causal chain |
 | Shared output head | "Reuse the main head" | The MTP modules call the main model's LM head, not a separate output projection |
 | Shared embedding | "Reuse the main table" | Same vocabulary embedding table is used everywhere; no duplicate parameters |
-| Projection matrix M_k | "Combine hidden + next-token" | An `h x 2h` linear layer that folds the previous hidden state and the target-token embedding into the next depth's input |
-| Joint loss L_MTP | "Averaged extra losses" | Arithmetic mean of per-depth cross-entropy losses, scaled by `lambda` |
+| Projection matrix $M_k$ | "Combine hidden + next-token" | An `h x 2h` linear layer that folds the previous hidden state and the target-token embedding into the next depth's input |
+| Joint loss $L_{\text{MTP}}$ | "Averaged extra losses" | Arithmetic mean of per-depth cross-entropy losses, scaled by `lambda` |
 | Acceptance rate at depth 1 | "How often MTP draft is right" | The rate at which the D=1 MTP module's top-1 prediction equals the main model's top-1 prediction; 80%+ on DeepSeek-V3 |
 | Lambda weighting | "Extra-loss importance" | Per-depth scaling factor; 0.3 at start of training, 0.1 later on DeepSeek-V3 |
 

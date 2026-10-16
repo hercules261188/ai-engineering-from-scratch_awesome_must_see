@@ -53,8 +53,8 @@ nơi `(p - q)+`chỉ ra phần tích cực của sự khác biệt về điểm.
 
 Nếu tỷ lệ chấp nhận cấp token của mô hình dự thảo là `α`, các token dự kiến được sản xuất cho mỗi mục tiêu chuyển tiếp là:
 
-```
-E[tokens] = (1 - α^{K+1}) / (1 - α)        # K = draft length, α in [0, 1]
+```math
+\mathbb{E}[\text{tokens}] = \frac{1 - \alpha^{K+1}}{1 - \alpha} \qquad K = \text{draft length}, \ \alpha \in [0, 1]
 ```
 
 Tại `α = 0.8, K = 4``(1 - 0.8^5)/(1 - 0.8) = 3.36`Các token trên mỗi forward.`cost_q * K + cost_p`(K dự thảo bước cộng với một mục tiêu xác minh). Nếu `cost_p >> cost_q * K`tỷ lệ tăng tốc là `3.36× / 1 = 3.36×`về thông qua.
@@ -162,9 +162,9 @@ def speculative_step(p_target, q_draft, K, temperature=1.0):
 
 ## Sử dụng nó
 
-- **vLLM**và **SGLang**tàu lớp đầu tiên giải mã đầu cơ.`--speculative_model`- `--num_speculative_tokens`. Eagle-2/3 hỗ trợ thông qua `--spec_decoding_algorithm eagle`cờ.
+- **vLLM**và **SGLang**tàu lớp đầu tiên giải mã đầu cơ.`--speculative-config`một đối tượng JSON với `method`- `model`, và`num_speculative_tokens`; EAGLE-3 là `"method": "eagle3"`- Tôi không biết.
 - **NVIDIA TensorRT-LLM**hỗ trợ cây Medusa và Eagle bản địa.
-- **Reference draft models**`Qwen/Qwen3-0.6B-spec`(Các dự thảo về Qwen3-32B),`meta-llama/Llama-3.2-1B-Instruct-spec`(Các dự thảo cho 70B).
+- **Reference draft models**`Qwen/Qwen3-0.6B`(Các dự thảo về Qwen3-32B),`meta-llama/Llama-3.2-1B-Instruct`(Các dự thảo về Llama 3.x 70B).
 - **Medusa heads**(Cai et al. 2024, "Medusa: Simple LLM Inference Acceleration Framework with Multiple Decoding Heads"): thay vì mô hình dự thảo, thêm các đầu dự đoán song song K vào mục tiêu.
 
 ## Chuyển nó
@@ -175,7 +175,7 @@ Bài học này sẽ mang lại kết quả `outputs/skill-speculative-tuning.md
 
 1. Thực hiện quy tắc từ chối chính xác và xác minh bằng chứng.`speculative_decode`và thông qua lấy mẫu mục tiêu đơn giản; tính khoảng cách TV giữa hai phân phối đầu ra.
 
-2. Xét công thức tăng tốc.`α`và `K`, biểu đồ các token dự kiến cho mỗi mục tiêu tiến. Tìm K tối ưu cho α ∈ {0,5, 0,7, 0,9}.
+2. Xét công thức tăng tốc.`α`và `K`, biểu đồ các token dự kiến cho mỗi mục tiêu tiến. Tìm tối ưu $K$cho $\alpha \in \lbrace 0.5, 0.7, 0.9 \rbrace$- Tôi không biết.
 
 3. Đưa một con đường nhỏ, lấy một mục tiêu GPT-2 124M và chưng cất một con đường GPT-2 30M trên 100M token với lỗ KL.`α`- Đường dự kiến: 0,6-0,7.
 

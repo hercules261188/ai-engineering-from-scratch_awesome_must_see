@@ -141,13 +141,13 @@ graph LR
     style V fill:#1a1a2e,stroke:#0f3460,color:#fff
 ```
 
-Việc chia bằng sqrt(d_k) -- sqrt(64) = 8 -- là quy mô. Nếu không có nó, các sản phẩm chấm lớn hơn cho các vector chiều cao, đẩy softmax vào các vùng mà gradient gần như không. Đây là một trong những hiểu biết chính trong bài viết ban đầu "Trông tâm là tất cả bạn cần".
+Sự phân chia của $\sqrt{d_k}$- $\sqrt{64} = 8$- là quy mô. Nếu không có nó, các sản phẩm chấm lớn lên cho các vector chiều cao, đẩy softmax vào các vùng mà gradient gần như không. Đây là một trong những hiểu biết chính trong bài báo ban đầu "Trông tâm là tất cả những gì bạn cần".
 
 ### KV Cache: Tại sao việc suy luận nhanh chóng
 
-Trong quá trình đào tạo, bạn xử lý toàn bộ chuỗi một lần. Trong quá trình suy luận, bạn tạo ra một token một lúc. Không có tối ưu hóa, tạo token N đòi hỏi phải tính lại sự chú ý cho tất cả các token trước đó N-1. đó là O(N^2) cho mỗi token được tạo ra, hoặc tổng cộng O(N^3) cho một chuỗi dài N.
+Trong quá trình đào tạo, bạn xử lý toàn bộ chuỗi cùng một lúc. Trong quá trình suy luận, bạn tạo ra một token một lúc. Không tối ưu hóa, tạo ra token.$N$đòi hỏi phải tính lại sự chú ý cho tất cả mọi người $N-1$- Đồ tín hiệu trước đó.$O(N^2)$cho mỗi token được tạo ra, hoặc $O(N^3)$tổng cho một chuỗi dài $N$- Tôi không biết.
 
-KV Cache sẽ giải quyết chuyện này. Sau khi tính toán K và V cho mỗi token, lưu trữ chúng. Khi tạo token N + 1, bạn chỉ cần tính toán Q cho token mới và tìm kiếm K và V được lưu trữ từ tất cả token trước đó. Điều này làm giảm chi phí mỗi token từ O(N) đến O(1) cho tính toán K và V. Việc tính toán điểm chú ý vẫn là O(N) bởi vì bạn chăm sóc tất cả các vị trí trước đó, nhưng bạn tránh sự nhân số tử liệu dư thừa trên đầu vào.
+KV Cache giải quyết điều này. Sau khi tính toán K và V cho mỗi token, lưu trữ chúng. Khi tạo token$N+1$, bạn chỉ cần tính toán Q cho token mới và tìm kiếm K và V được lưu trữ từ tất cả các token trước đó. Điều này làm giảm chi phí mỗi token từ $O(N)$đến$O(1)$cho tính toán K và V. tính toán điểm chú ý vẫn là$O(N)$vì bạn chăm sóc tất cả các vị trí trước đây, nhưng bạn tránh được sự nhân số tử liệu dư thừa trên đầu vào.
 
 Đối với GPT-2 với 12 lớp và 12 đầu, bộ nhớ cache KV lưu trữ 2 (K + V) x 12 lớp x 12 đầu x 64 dims = 18.432 giá trị mỗi token. Đối với một chuỗi 1024 token, đó là khoảng 75MB trong FP32. Đối với Llama 3 405B với 128 lớp, bộ nhớ cache KV cho một chuỗi duy nhất có thể vượt quá 10GB. Đây là lý do tại sao suy luận ngữ cảnh dài bị ràng buộc bởi bộ nhớ.
 
@@ -211,7 +211,7 @@ Chương trình học tập có nhiều tính quan trọng hơn bạn có thể 
 |-----------|-------|------------|
 | Token embeddings | (50257, 768) | 38,597,376 |
 | Position embeddings | (1024, 768) | 786,432 |
-| Per-block attention (W_q, W_k, W_v, W_out) | 4 x (768, 768) | 2,359,296 |
+| Per-block attention ($W_q, W_k, W_v, W_{\text{out}}$) | 4 x (768, 768) | 2,359,296 |
 | Per-block FFN (up + down) | (768, 3072) + (3072, 768) | 4,718,592 |
 | Per-block LayerNorms (2x) | 2 x 768 x 2 | 3,072 |
 | Final LayerNorm | 768 x 2 | 1,536 |
@@ -258,7 +258,7 @@ def attention(Q, K, V, mask=None):
     return weights @ V
 ```
 
-Việc thực hiện softmax trừ tối đa trước khi tăng trưởng. Nếu không có điều này, exp(large_number) tràn sang vô hạn. Đây là một thủ thuật ổn định số mà không thay đổi đầu ra bởi vì softmax(x - c) = softmax(x) cho bất kỳ định vị c nào.
+Việc thực hiện softmax trừ tối đa trước khi tăng trưởng. Nếu không có điều này, exp(large_number) tràn sang vô hạn. Đây là một thủ thuật ổn định số mà không thay đổi đầu ra bởi vì$\mathop{\mathrm{softmax}}(x - c) = \mathop{\mathrm{softmax}}(x)$cho bất kỳ liên tục nào $c$- Tôi không biết.
 
 ### Bước 3: Cung cấp nhiều đầu
 
@@ -504,7 +504,7 @@ Bài học này sẽ mang lại kết quả `outputs/prompt-gpt-architecture-ana
 
 1. Thay vào 12/12, hãy sửa đổi mô hình để sử dụng 24 lớp và 16 đầu.
 
-2. Thực hiện chức năng kích hoạt GELU (GELU(x) = x * 0.5 * (1 + erf(x / sqrt(2)))) và thay thế ReLU trong mạng feedforward.
+2. Thực hiện chức năng kích hoạt GELU $(\mathop{\mathrm{GELU}}(x) = x \cdot 0.5 \cdot (1 + \mathop{\mathrm{erf}}(x / \sqrt{2})))$và thay thế ReLU trong mạng feedforward.
 
 3. Thêm một bộ nhớ cache KV vào chức năng tạo. Cung cấp các tensor K và V cho mỗi lớp sau khi chuyển tiếp trước đầu tiên, và sử dụng lại cho các token tiếp theo. Đo tốc độ tăng tốc: tạo 200 token với và không có bộ nhớ cache và so sánh thời gian đồng hồ tường.
 
@@ -525,7 +525,7 @@ Bài học này sẽ mang lại kết quả `outputs/prompt-gpt-architecture-ana
 | Weight tying | "Sharing embeddings" | Using the same matrix for input token embeddings and the output projection head -- saves 38M params in GPT-2 |
 | Residual connection | "Skip connection" | Adding the input directly to the output of a sublayer (x + sublayer(x)) -- enables gradient flow in deep networks |
 | Layer normalization | "Normalizing activations" | Normalizing across the feature dimension to mean 0 and variance 1, with learnable scale and bias parameters |
-| Cross-entropy loss | "How wrong the predictions are" | -log(probability assigned to the correct next token), averaged over all positions -- the standard LLM training objective |
+| Cross-entropy loss | "How wrong the predictions are" | $-\log(\text{probability assigned to the correct next token})$, averaged over all positions -- the standard LLM training objective |
 
 ## Đọc thêm
 

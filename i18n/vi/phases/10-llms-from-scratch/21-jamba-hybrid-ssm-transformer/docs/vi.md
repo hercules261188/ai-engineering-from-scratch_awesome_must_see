@@ -30,12 +30,14 @@ Bài học này đọc cả ba bài báo và tạo ra mô hình tâm lý cho "đ
 
 Một mô hình không gian trạng thái xử lý một chuỗi`x_1, ..., x_N`qua một trạng thái kích thước cố định `h`- Có thể là:
 
-```
-h_t = A h_{t-1} + B x_t
-y_t = C h_t
+```math
+\begin{aligned}
+h_t &= A h_{t-1} + B x_t \\
+y_t &= C h_t
+\end{aligned}
 ```
 
-Ở mỗi bước, trạng thái phát triển qua động lực tuyến tính.`A`, lấy thông tin `B x_t`, và phát ra sản lượng`C h_t`- `A, B, C`Hãy chú ý đến tính chất quan trọng: tính toán`y_t`chỉ cần `h_{t-1}`và `x_t`, không có gì trước đây `x`Khoảnh khắc là không đổi, suy luận là O (x) 1 cho mỗi token.
+Ở mỗi bước, trạng thái phát triển qua động lực tuyến tính.`A`, lấy thông tin `B x_t`, và phát ra sản lượng`C h_t`- `A, B, C`Hãy chú ý đến tính chất quan trọng: tính toán`y_t`chỉ cần `h_{t-1}`và `x_t`, không có gì trước đây `x`Tưởng thức là không đổi, suy đoán là không đổi.$O(1)$mỗi token.
 
 Trùi để mô hình hóa chất lượng là cấu trúc của`A`. S4 (Gu 2021) sử dụng một trạm cấu trúc cao có thể được đánh giá hiệu quả như một sự xoay quanh dài trong quá trình đào tạo. Mamba (Gu, Dao 2023) thay thế các cố định `A, B, C`Mamba-2 (2024) tiếp tục đơn giản hóa cấu trúc. Mamba-3 (2026) thêm sự phức tạp ở các nơi cụ thể.
 

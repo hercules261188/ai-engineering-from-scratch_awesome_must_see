@@ -161,11 +161,13 @@ Các tài liệu dài bị cắt ngắn hoặc chia thành các mảnh ở ranh 
 
 ### Luật quy mô của Chinchilla
 
-Đối với ngân sách tính toán cố định C (được đo bằng FLOP), kích thước mô hình tối ưu N và kích thước tập dữ liệu D là:
+Đối với ngân sách tính toán cố định $C$(được đo bằng FLOP), kích thước mô hình tối ưu $N$và kích thước bộ dữ liệu $D$tiếp theo:
 
-```
-N_opt ~ C^0.5
-D_opt ~ C^0.5
+```math
+\begin{aligned}
+N_{\text{opt}} &\sim C^{0.5} \\
+D_{\text{opt}} &\sim C^{0.5}
+\end{aligned}
 ```
 
 Trong thực tế, điều này có nghĩa là bạn nên quy mô mô mô hình và kích thước tập dữ liệu tương đương. Một mô hình có nhiều tham số hơn 10 lần cần khoảng 10 lần nhiều token đào tạo để đạt được cùng một lỗ.
@@ -432,7 +434,7 @@ Bài học này tạo ra một lời nhắc để xác nhận và debugging ch�
 |------|----------------|----------------------|
 | Common Crawl | "The internet" | A non-profit that crawls the web monthly -- ~250TB raw, the starting point for most LLM training data |
 | MinHash | "Some hashing trick" | A technique to estimate Jaccard similarity between sets using fixed-size signatures -- enables near-duplicate detection at scale |
-| LSH | "Locality-Sensitive Hashing" | A method to group similar items into the same bucket -- reduces pairwise comparisons from O(n^2) to near-linear |
+| LSH | "Locality-Sensitive Hashing" | A method to group similar items into the same bucket -- reduces pairwise comparisons from $O(n^2)$ to near-linear |
 | Sequence packing | "Concatenating documents" | Fitting multiple documents into fixed-length sequences with proper attention masks -- eliminates padding waste |
 | Chinchilla scaling | "Train on more data" | For a fixed compute budget, optimal performance requires scaling model size and training tokens roughly equally |
 | Fertility | "Tokens per word" | Average number of tokens per word -- 1.3 for English in GPT-4, higher for non-Latin scripts |

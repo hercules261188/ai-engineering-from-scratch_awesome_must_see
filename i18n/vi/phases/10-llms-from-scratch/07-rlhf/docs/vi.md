@@ -80,8 +80,8 @@ Dữ liệu đào tạo là các cặp sở thích của con người. Đối v�
 
 Chức năng mất mát sử dụng mô hình Bradley-Terry của các ưu tiên cặp:
 
-```
-loss = -log(sigmoid(reward(preferred) - reward(rejected)))
+```math
+\text{loss} = -\log\big(\mathop{\mathrm{sigmoid}}(\text{reward}(\text{preferred}) - \text{reward}(\text{rejected}))\big)
 ```
 
 Đây là phương trình chính.`sigmoid(reward(A) - reward(B))`cho khả năng rằng phản ứng A được ưu tiên so với phản ứng B. Sự mất mát thúc đẩy mô hình phần thưởng để gán điểm cao hơn cho phản ứng được ưu tiên.
@@ -96,8 +96,8 @@ PPO là một thuật toán học tập tăng cường. Trong RLHF, "giới môi
 
 Mục tiêu:
 
-```
-maximize: E[R(prompt, response)] - beta * KL(policy || reference)
+```math
+\text{maximize:} \quad \mathbb{E}[R(\text{prompt}, \text{response})] - \beta \cdot \mathrm{KL}(\text{policy} \,\|\, \text{reference})
 ```
 
 Điều khoản đầu tiên thúc đẩy mô hình tạo ra phản ứng thưởng cao. Điều khoản thứ hai (kỷ lệ lệch phân biệt KL) ngăn chặn mô hình lệch quá xa khỏi điểm kiểm soát SFT.
@@ -110,7 +110,7 @@ Tại sao phải phạt KL? Nếu không, mô hình sẽ tìm ra các giải ph�
 
 Cảnh phạt KL nói: bạn có thể cải thiện, nhưng bạn không thể trở thành một mô hình hoàn toàn khác. Hãy ở gần phiên bản SFT, vốn đã hợp lý. Đi xa quá và chi phí KL thống trị phần thưởng.
 
-**InstructGPT numbers:**Việc đào tạo PPO sử dụng lr = 1.5e-5, tỷ lệ KL beta = 0.02, 256K tập (cặp phản ứng nhanh) và 4 thời kỳ PPO mỗi lô.
+**InstructGPT numbers:**Việc đào tạo PPO được sử dụng lr=1.5e-5, tỷ lệ KL $\beta=0.02$, 256K tập (cặp phản ứng nhanh), và 4 thời kỳ PPO mỗi lô.
 
 ```mermaid
 graph LR
@@ -133,12 +133,14 @@ graph LR
 
 ### Mục tiêu PPO chi tiết
 
-PPO sử dụng một "các mục tiêu thay thế bị cắt giảm" để ngăn chặn các cập nhật quá lớn. tỷ lệ giữa chính sách mới và xác suất chính sách cũ được cắt giảm xuống dải [1 - epsilon, 1 + epsilon], nơi epsilon thường là 0.2.
+PPO sử dụng một "các mục tiêu thay thế bị cắt giảm" để ngăn chặn các cập nhật quá lớn.$[1 - \epsilon, 1 + \epsilon]$, nơi $\epsilon$thường là 0,2.
 
-```
-ratio = pi_new(action | state) / pi_old(action | state)
-clipped_ratio = clip(ratio, 1 - epsilon, 1 + epsilon)
-loss = -min(ratio * advantage, clipped_ratio * advantage)
+```math
+\begin{aligned}
+\text{ratio} &= \pi_{\text{new}}(\text{action} \mid \text{state}) / \pi_{\text{old}}(\text{action} \mid \text{state}) \\
+\text{clipped\_ratio} &= \mathop{\mathrm{clip}}(\text{ratio}, 1 - \epsilon, 1 + \epsilon) \\
+\text{loss} &= -\min(\text{ratio} \cdot \text{advantage}, \text{clipped\_ratio} \cdot \text{advantage})
+\end{aligned}
 ```
 
 Chức năng lợi thế ước tính phản ứng hiện tại tốt hơn bao nhiêu so với chất lượng dự kiến.
@@ -606,9 +608,9 @@ Bài học này sẽ mang lại kết quả `outputs/prompt-reward-model-designe
 
 3. Mô hình thưởng tạo điểm cao cho các phản ứng dài (trả thưởng = len( phản ứng) / 100). chạy PPO với mô hình thưởng sai lầm này và quan sát mô hình chính sách tạo ra kết quả lặp đi lặp lại ngày càng dài. Sau đó thêm một hình phạt KL 0,1 và cho thấy nó ngăn chặn hành vi thoái hóa.
 
-4. Thực hiện một phần thưởng đa mục tiêu. Cử lý hai mô hình phần thưởng - một cho sự hữu ích và một cho sự ngắn gọn. Kết hợp chúng như R = 0,7 * R_helpful + 0,3 * R_concise. Cho thấy mục tiêu kết hợp tạo ra các phản ứng có ích và ngắn gọn, tránh bẫy từ ngữ của một phần thưởng hữu ích duy nhất.
+4. Thực hiện một phần thưởng đa mục tiêu. Tập hai mô hình phần thưởng - một cho sự hữu ích và một cho sự ngắn gọn. Kết hợp chúng như$R = 0.7 \cdot R_{\text{helpful}} + 0.3 \cdot R_{\text{concise}}$- Cụ thể rằng mục tiêu kết hợp tạo ra những phản ứng vừa hữu ích vừa ngắn gọn, tránh bẫy từ ngữ của một phần thưởng hữu ích duy nhất.
 
-5. So sánh các hệ số KL khác nhau. chạy PPO với beta = 0,001 (quá thấp, reward hacking), beta = 0,02 (thực kỳ), và beta = 0,5 (quá cao, không học).
+5. So sánh các hệ số KL khác nhau.$\beta=0.001$(Trong mức thấp, đánh hack phần thưởng),$\beta=0.02$(thực chuẩn), và$\beta=0.5$(Trong độ cao, không học) vẽ đường cong phần thưởng và đường cong KL cho mỗi người.$\beta=0.02$chạy nên cho thấy sự cải thiện phần thưởng ổn định với KL giới hạn.
 
 ## Các điều khoản chính
 
@@ -616,10 +618,10 @@ Bài học này sẽ mang lại kết quả `outputs/prompt-reward-model-designe
 |------|----------------|----------------------|
 | RLHF | "Training with human feedback" | Reinforcement Learning from Human Feedback: a three-stage pipeline (SFT, reward model, PPO) that optimizes language model outputs using human preference signals |
 | Reward model | "A model that scores responses" | A transformer with a scalar output head, trained on pairwise human preferences using the Bradley-Terry loss |
-| Bradley-Terry | "The comparison model" | A probabilistic model where P(A > B) = sigmoid(score(A) - score(B)), converting pairwise preferences into a consistent scoring function |
+| Bradley-Terry | "The comparison model" | A probabilistic model where $P(A > B) = \mathop{\mathrm{sigmoid}}(\text{score}(A) - \text{score}(B))$, converting pairwise preferences into a consistent scoring function |
 | PPO | "The RL algorithm" | Proximal Policy Optimization: updates the policy to maximize reward while clipping the update magnitude to prevent instability |
 | KL divergence | "How different two distributions are" | A measure of the difference between the policy model's token distribution and the reference model's -- used as a penalty to prevent reward hacking |
-| KL penalty | "The leash on the model" | Beta * KL(policy \|\| reference) subtracted from the reward signal -- prevents the policy from diverging too far from the SFT checkpoint |
+| KL penalty | "The leash on the model" | $\beta \cdot \mathrm{KL}(\text{policy} \Vert \text{reference})$ subtracted from the reward signal -- prevents the policy from diverging too far from the SFT checkpoint |
 | Reward hacking | "Gaming the reward" | When the policy finds degenerate high-reward outputs by exploiting weaknesses in the reward model instead of genuinely improving |
 | Preference pair | "Which is better, A or B?" | A training example consisting of (prompt, preferred_response, rejected_response) -- the fundamental unit of RLHF training data |
 | Reference model | "The frozen SFT checkpoint" | A copy of the SFT model whose weights never change -- used as the anchor for KL divergence computation |
