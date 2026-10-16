@@ -11,7 +11,7 @@
 
 - केवल NumPy का उपयोग करके स्केल-डॉट-प्रोडक्ट स्व-विचार को स्क्रैच से लागू करें, जिसमें क्वेरी/की/मूल्य अनुमान और सॉफ्टमैक्स-वेटेड योग शामिल है
 - एक बहु-हेड ध्यान परत बनाएं जो सिरों को विभाजित करता है, समानांतर ध्यान की गणना करता है, और परिणामों को एक साथ जोड़ता है
-- ध्यान मैट्रिक्स टोकन संबंधों को कैसे कैप्चर करता है इसका पता लगाएं और समझाएं कि क्यूआरटी द्वारा स्केलिंग सॉफ्टमैक्स संतृप्ति को रोकती है
+- ध्यान मैट्रिक्स कैसे टोकन संबंधों को कैप्चर करता है का पता लगाएं और क्यों स्केलिंग द्वारा समझाएं $\sqrt{d_k}$सॉफ्टमैक्स संतृप्ति को रोकता है
 - दो दिशाओं के ध्यान को ऑटोरेग्रेसिव (डेकोडर शैली) ध्यान में परिवर्तित करने के लिए कारणात्मक मास्किंग का उपयोग करें
 
 ## समस्या
@@ -109,10 +109,10 @@ attention-matrix
 
 ### पैमाना क्यों?
 
-यदि dk = 64, तो डॉट उत्पाद दसियों की सीमा में हो सकते हैं, जिससे सॉफ्टमैक्स को उन क्षेत्रों में धकेल दिया जा सकता है जहां ग्रेडिएंट गायब हो जाते हैं। फिक्सः वर्ग द्वारा विभाजित करें।
+बिंदु उत्पादों आयाम के साथ बढ़ते हैं $d_k$. अगर .$d_k = 64$, डॉट उत्पादों दसियों की सीमा में हो सकता है, जहां ग्रेडिएंट गायब क्षेत्रों में softmax धक्का।$\sqrt{d_k}$. .
 
-```
-Scaled scores = (Q @ K^T) / sqrt(dk)
+```math
+\text{Scaled scores} = \frac{Q K^T}{\sqrt{d_k}}
 ```
 
 यह मानों को एक सीमा में रखता है जहां सॉफ्टमैक्स उपयोगी ग्रेडिएंट उत्पन्न करता है।
@@ -159,8 +159,8 @@ flowchart LR
 
 एक पंक्ति में सूत्रः
 
-```
-Attention(Q, K, V) = softmax( Q @ K^T / sqrt(dk) ) @ V
+```math
+\text{Attention}(Q, K, V) = \mathop{\mathrm{softmax}}\left( \frac{Q K^T}{\sqrt{d_k}} \right) V
 ```
 
 ```figure
@@ -302,7 +302,7 @@ print(f"\nAttn weights (averaged over heads):")
 print(attn_weights[0].detach().numpy().round(3))
 ```
 
-मुख्य अंतरः मल्टी-हेड ध्यान समानांतर में कई ध्यान कार्यों को चलाता है, प्रत्येक आकार dk = d_model / n_heads के अपने स्वयं के Q, K, V अनुमानों के साथ, फिर परिणामों को संश्लेषित करता है। यह मॉडल को एक साथ विभिन्न संबंध प्रकारों पर ध्यान देने की अनुमति देता है।
+मुख्य अंतरः बहु-मुख्य ध्यान समानांतर में कई ध्यान कार्यों को चलाता है, प्रत्येक अपने स्वयं के आकार के Q, K, V अनुमानों के साथ $d_k = d_{\text{model}} / n_{\text{heads}}$यह मॉडल एक साथ विभिन्न संबंध प्रकारों पर ध्यान देने की अनुमति देता है।
 
 ## इसे भेजें
 
@@ -322,7 +322,7 @@ print(attn_weights[0].detach().numpy().round(3))
 | Query (Q) | "The question vector" | A learned projection of the input that represents what information this token is looking for |
 | Key (K) | "The label vector" | A learned projection that represents what information this token contains, matched against queries |
 | Value (V) | "The content vector" | A learned projection carrying the actual information that gets aggregated based on attention scores |
-| Scaled dot-product attention | "The attention formula" | softmax(QK^T / sqrt(dk)) @ V - scaling prevents softmax saturation in high dimensions |
+| Scaled dot-product attention | "The attention formula" | $\mathop{\mathrm{softmax}}(QK^T / \sqrt{d_k}) V$ - scaling prevents softmax saturation in high dimensions |
 | Self-attention | "The token looks at itself and others" | Attention where Q, K, V all come from the same sequence, letting every position attend to every other position |
 | Attention weights | "How much focus" | A probability distribution over positions, produced by softmax over scaled dot products |
 | Multi-head attention | "Parallel attention" | Running multiple attention functions with different projections, then concatenating results for richer representations |

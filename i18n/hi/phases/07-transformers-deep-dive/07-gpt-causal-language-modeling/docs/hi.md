@@ -23,14 +23,13 @@ GPT-1 (2018), GPT-2 (2019), GPT-3 (2020), GPT-4 (2023), GPT-5 (2025), क्ल�
 
 ### मास्क
 
-लंबाई की एक अनुक्रम को देखते हुए `N`, एक निर्माण`N × N`मैट्रिक्सः
+लंबाई की एक अनुक्रम को देखते हुए $N$, एक निर्माण$N \times N$मैट्रिक्सः
 
-```
-M[i, j] = 0       if j <= i
-M[i, j] = -inf    if j > i
+```math
+M_{ij} = \begin{cases} 0 & \text{if } j \le i \\ -\infty & \text{if } j > i \end{cases}
 ```
 
-जोड़ें `M`softmax से पहले कच्चे ध्यान स्कोर पर। `exp(-inf) = 0`ध्यान मैट्रिक्स की प्रत्येक पंक्ति केवल पिछले स्थानों पर एक संभावना वितरण है।
+जोड़ें `M`softmax से पहले कच्चे ध्यान स्कोर पर। $\exp(-\infty) = 0$ध्यान मैट्रिक्स की प्रत्येक पंक्ति केवल पिछले स्थानों पर एक संभावना वितरण है।
 
 कार्यान्वयन लागतः एक `torch.tril()`कॉल. समय गणनाः नैनोसेकंड. क्षेत्र पर प्रभावः सब कुछ.
 
@@ -38,7 +37,7 @@ M[i, j] = -inf    if j > i
 
 मुखौटा आमतौर पर ध्यान पर एक पैच के रूप में प्रस्तुत किया जाता है। व्युत्पन्न को दूसरी दिशा में चलाएं और यह रहस्यमय होना बंद कर देता हैः ध्यान एक पूर्वावलोकन औसत का तीसरा परिष्करण है, और त्रिकोण उस औसत की लूप सीमाएं हैं, जो मैट्रिक्स के रूप में लिखी जाती हैं।
 
-**Stage 1 — prefix average.**एक अनुक्रम के सबसे बेवकूफ कारण सारांशः स्थिति `i`पदों का औसत बन जाता है `0…i`. एक लूप के रूप में, यह है `out[i] = X[:i+1].mean(0)`. एक ही गणना एक मैट्रिक्स गुणा है. एक से एक के निचले त्रिकोण मैट्रिक्स ले लो, उसकी गिनती से प्रत्येक पंक्ति को विभाजित, गुणाः
+**Stage 1 — prefix average.**एक अनुक्रम के सबसे बेवकूफ कारण सारांशः स्थिति $i$पदों का औसत बन जाता है $0 \ldots i$. एक लूप के रूप में, यह है `out[i] = X[:i+1].mean(0)`. एक ही गणना एक मैट्रिक्स गुणा है. एक से एक के निचले त्रिकोण मैट्रिक्स ले लो, उसकी गिनती से प्रत्येक पंक्ति को विभाजित, गुणाः
 
 ```python
 import numpy as np
@@ -48,7 +47,7 @@ A = A / A.sum(axis=1, keepdims=True)
 out = A @ X
 ```
 
-पंक्ति `i``A`है `[1/(i+1), …, 1/(i+1), 0, …, 0]`भविष्य के बारे में कुछ भी छिपाया नहीं गया था; भविष्य कभी भी योग में नहीं था।
+पंक्ति $i$$A$है $[1/(i+1), \ldots, 1/(i+1), 0, \ldots, 0]$भविष्य के बारे में कुछ भी छिपाया नहीं गया था; भविष्य कभी भी योग में नहीं था।
 
 **Stage 2 — learned weights.**एक समान औसत पिछले टोकन के रूप में समान रूप से प्रासंगिक के रूप में व्यवहार करता है। एक सीखा स्कोर मैट्रिक्स के साथ उन लोगों की जगह`S`. अब पंक्तियों का निर्माण द्वारा एक से जोड़ नहीं है, इसलिए गिनती द्वारा विभाजित करने के बजाय प्रत्येक पंक्ति को सॉफ्टमैक्स के साथ सामान्य बनाएं। सॉफ्टमैक्स कभी भी सटीक शून्य का उत्पादन नहीं करता है, जो कारणों से संबंध को तोड़ता है  जब तक भविष्य के स्कोर में नहीं जाते `-inf`, क्योंकि `exp(-inf) = 0`:
 
@@ -166,7 +165,7 @@ print(tok.decode(out[0]))
 
 हुड के नीचे,`generate()`आगे की पास चलाता है, अंतिम स्थिति लॉजिट खींचता है, अगले टोकन का नमूना लेता है, इसे जोड़ता है, और दोहराता है। प्रत्येक उत्पादन एलएलएम निष्कर्ष स्टैक (वीएलएलएम, टेंसरआरटी-एलएलएम, लामा.सीपीपी, ओल्मा, एमएलएक्स) भारी अनुकूलन के साथ एक ही लूप को लागू करता है  बैच प्रीफिल, निरंतर बैचिंग, केवी कैश पेगिंग, अटकल डिकोडिंग।
 
-**GPT vs BERT, one line each:**जीपीटी भविष्यवाणी `P(x_t | x_{<t})`. BERT भविष्यवाणी `P(x_masked | x_unmasked)`. हानि यह निर्धारित करती है कि मॉडल उत्पन्न कर सकता है या नहीं.
+**GPT vs BERT, one line each:**जीपीटी भविष्यवाणी $P(x_t \mid x_{<t})$. BERT भविष्यवाणी $P(x_{\text{masked}} \mid x_{\text{unmasked}})$. हानि यह निर्धारित करती है कि मॉडल उत्पन्न कर सकता है या नहीं.
 
 ## इसे भेजें
 
@@ -186,8 +185,8 @@ print(tok.decode(out[0]))
 | Next-token prediction | "The loss" | Cross-entropy of the model's distribution against the true next token at every position. |
 | Autoregressive | "Generate one at a time" | Feed output back as input; parallelism only during training, not during generation. |
 | Logits | "Pre-softmax scores" | Raw output of the LM head before softmax; sampling happens on these. |
-| Temperature | "Creativity knob" | Divide logits by T; T→0 = greedy, T→∞ = uniform. |
-| Top-p | "Nucleus sampling" | Truncate distribution to smallest set summing to ≥p; sample from what remains. |
+| Temperature | "Creativity knob" | Divide logits by $T$; $T \to 0$ = greedy, $T \to \infty$ = uniform. |
+| Top-p | "Nucleus sampling" | Truncate distribution to smallest set summing to $\ge p$; sample from what remains. |
 | Min-p | "Better than top-p" | Keep tokens where `p ≥ min_p × max_p`; adapts cutoff to sharpness of distribution. |
 | Speculative decoding | "Draft + verify" | Cheap model proposes N tokens; big model verifies in parallel. |
 | Teacher forcing | "Training trick" | During training, feed the true previous token, not the model's prediction. Standard for every seq2seq LM. |

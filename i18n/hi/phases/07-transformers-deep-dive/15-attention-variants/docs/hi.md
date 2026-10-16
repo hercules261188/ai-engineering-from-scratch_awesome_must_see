@@ -9,11 +9,11 @@
 
 ## समस्या
 
-पूर्ण ध्यान की लागत `O(N²)`स्मृति और `O(N²)`अनुक्रम लंबाई में गणना करें। 128K-संदर्भ Llama 3 70B के लिए जो प्रति परत 16 बिलियन ध्यान प्रविष्टियों है, गुना 80 परतों। फ्लैश ध्यान (पढ़ना 12) छिपाता है `O(N²)`सक्रियण स्मृति लेकिन अंकगणितीय लागत को नहीं बदलता  हर टोकन अभी भी हर अन्य टोकन में भाग लेता है।
+पूर्ण ध्यान की लागत $O(N^2)$स्मृति और $O(N^2)$अनुक्रम लंबाई में गणना करें। 128K-संदर्भ Llama 3 70B के लिए जो प्रति परत 16 बिलियन ध्यान प्रविष्टियों है, गुना 80 परतों। फ्लैश ध्यान (पढ़ना 12) छिपाता है $O(N^2)$सक्रियण स्मृति लेकिन अंकगणितीय लागत को नहीं बदलता  हर टोकन अभी भी हर अन्य टोकन में भाग लेता है।
 
 तीन प्रकार के प्रकार ध्यान मैट्रिक्स की शीर्षिकी को बदलते हैंः
 
-1. **Sliding window attention (SWA).**प्रत्येक टोकन पड़ोसी की एक निश्चित खिड़की पर ध्यान देता है, पूर्ण पूर्वावलोकन नहीं।`O(N · W)`कहाँ`W`Gemma 2/3, मिस्ट्रल 7B की पहली परतों, Phi-3-Long.
+1. **Sliding window attention (SWA).**प्रत्येक टोकन पड़ोसी की एक निश्चित खिड़की पर ध्यान देता है, पूर्ण पूर्वावलोकन नहीं।$O(N \cdot W)$कहाँ$W$Gemma 2/3, मिस्ट्रल 7B की पहली परतों, Phi-3-Long.
 2. **Sparse / block attention.**केवल चयनित जोड़े `(i, j)`Longformer, BigBird, OpenAI स्पायर ट्रांसफार्मर।
 3. **Differential attention.**अलग Q / K प्रोजेक्शन के साथ दो ध्यान मानचित्रों की गणना करें, एक को दूसरे से घटाएं। "अंतर्वार्ता सिंक" को मारता है जो पहले कुछ टोकन में वजन को रक्तदान करता है। माइक्रोसॉफ्ट का डीआईएफएफ ट्रांसफार्मर (2024).
 
@@ -23,7 +23,7 @@
 
 ### स्लाइडिंग विंडो ध्यान (SWA)
 
-स्थिति पर प्रत्येक क्वेरी `i`केवल पदों पर भाग लेता है `[i - W, i]`(स्रोत SWA) या `[i - W/2, i + W/2]`(दो दिशा में) खिड़की के बाहर टोकन प्राप्त `-inf`स्कोर मैट्रिक्स में।
+स्थिति पर प्रत्येक क्वेरी $i$केवल पदों पर भाग लेता है $[i - W, i]$(स्रोत SWA) या $[i - W/2, i + W/2]$(दो दिशा में) खिड़की के बाहर टोकन प्राप्त $-\infty$स्कोर मैट्रिक्स में।
 
 ```
 full causal:           sliding window (W=4):
@@ -39,17 +39,17 @@ positions 0-7          positions 0-7, W=4
 7 | x x x x x x x x  7 |          x x x x
 ```
 
-के लिए`N = 8192`और `W = 1024`, स्कोर मैट्रिक्स में 1024 × 8192 गैर-शून्य पंक्तियाँ हैं जो उम्मीद में हैं  8 × कमी।
+के लिए$N = 8192$और $W = 1024$, स्कोर मैट्रिक्स में 1024 × 8192 गैर-शून्य पंक्तियाँ हैं जो उम्मीद में हैं  8 × कमी।
 
-**KV cache shrinks with SWA.**केवल अंतिम `W`के और वी के टोकन को प्रति परत रखा जाना चाहिए। एक जेम्मा-3-ish कॉन्फ़िग (1024 विंडो, 128K संदर्भ) के लिए, केवी कैश 128x गिर जाता है।
+**KV cache shrinks with SWA.**केवल अंतिम $W$के और वी के टोकन को प्रति परत रखा जाना चाहिए। एक जेम्मा-3-ish कॉन्फ़िग (1024 विंडो, 128K संदर्भ) के लिए, केवी कैश 128x गिर जाता है।
 
-**Quality cost.**केवल SWA-केवल ट्रांसफार्मर लंबी दूरी की निकासी के साथ संघर्ष करते हैं। फिक्सः पूर्ण-ध्यान परतों के साथ SWA परतों को इंटरलेव करें। जेम्मा 3 5:1 SWA: ग्लोबल का उपयोग करता है। मिस्ट्रल 7 बी ने एक कारण-SWA स्टैक का उपयोग किया जहां सूचना "आगे की ओर बहती है" ओवरलैपिंग विंडो के माध्यम से  प्रत्येक परत प्रभावी रिसेप्टिव फ़ील्ड को बढ़ाता है `W`और उसके बाद`L`स्तरों मॉडल भाग ले सकते हैं `L × W`टोकन वापस.
+**Quality cost.**केवल SWA-केवल ट्रांसफार्मर लंबी दूरी की निकासी के साथ संघर्ष करते हैं। फिक्सः पूर्ण-ध्यान परतों के साथ SWA परतों को इंटरलेव करें। जेम्मा 3 5:1 SWA: ग्लोबल का उपयोग करता है। मिस्ट्रल 7 बी ने एक कारण-SWA स्टैक का उपयोग किया जहां सूचना "आगे की ओर बहती है" ओवरलैपिंग विंडो के माध्यम से  प्रत्येक परत प्रभावी रिसेप्टिव फ़ील्ड को बढ़ाता है $W$और उसके बाद`L`स्तरों मॉडल भाग ले सकते हैं `L × W`टोकन वापस.
 
 ### स्पायर / ब्लॉक ध्यान
 
 एक चुनें `N × N`समय से पहले स्पायरसिटी पैटर्न। तीन कैनोनिक आकारः
 
-- **Local + strided (OpenAI sparse transformer).**अंतिम तक ध्यान दें `W`टोकन प्लस प्रत्येक `stride`स्थानीय और लंबी दूरी पर दोनों को कैप्चर करता है।`O(N · sqrt(N))`गणना।
+- **Local + strided (OpenAI sparse transformer).**अंतिम तक ध्यान दें $W$टोकन प्लस प्रत्येक `stride`स्थानीय और लंबी दूरी पर दोनों को कैप्चर करता है।$O(N \cdot \sqrt{N})$गणना।
 - **Longformer / BigBird.**स्थानीय विंडो + वैश्विक टोकन का एक छोटा सेट (जैसे `[CLS]`) जो सभी के लिए उपस्थित हैं और सभी द्वारा उपस्थित हैं + यादृच्छिक-स्थानिक लिंक। दो गुणा अनुभवजन्य संदर्भ एक समान गुणवत्ता पर।
 - **Native Sparse Attention (DeepSeek, 2025).**जानें कि कौन से ब्लॉक `(Q, K)`विषय; नाभिक स्तर पर शून्य ब्लॉक छोड़ दें. फ्लैश ध्यान के साथ संगत.
 
@@ -61,13 +61,15 @@ positions 0-7          positions 0-7, W=4
 
 अंतर ध्यान गणना द्वारा यह ठीक करता है **two**ध्यान के नक्शे और घटानेः
 
-```
-A1 = softmax(Q1 K1^T / √d)
-A2 = softmax(Q2 K2^T / √d)
-DiffAttn = (A1 - λ · A2) V
+```math
+\begin{aligned}
+A_1 &= \mathop{\mathrm{softmax}}(Q_1 K_1^T / \sqrt{d}) \\
+A_2 &= \mathop{\mathrm{softmax}}(Q_2 K_2^T / \sqrt{d}) \\
+\text{DiffAttn} &= (A_1 - \lambda \cdot A_2) V
+\end{aligned}
 ```
 
-कहाँ`λ`A1 वास्तविक सामग्री वजन को कैप्चर करता है; A2 सिंक को कैप्चर करता है। घटाकर सिंक को रद्द करता है, वजन को प्रासंगिक टोकन में पुनः आवंटित करता है।
+कहाँ$\lambda$A1 वास्तविक सामग्री वजन को कैप्चर करता है; A2 सिंक को कैप्चर करता है। घटाकर सिंक को रद्द करता है, वजन को प्रासंगिक टोकन में पुनः आवंटित करता है।
 
 रिपोर्ट किए गए परिणाम (माइक्रोसॉफ्ट 2024): 510% कम उलझन, 1.52× अधिक प्रभावी संदर्भ, समान प्रशिक्षित लंबाई पर, तेज सुई-इन-शेमस्टैक निकासी।
 
@@ -75,12 +77,12 @@ DiffAttn = (A1 - λ · A2) V
 
 | Variant | Compute | KV cache | Quality vs full | Production use |
 |---------|---------|----------|-----------------|----------------|
-| Full attention | O(N²) | O(N) per layer | baseline | every model's default layer |
-| SWA (window 1024) | O(N·W) | O(W) per layer | -0.1 ppl, good with global layers | Gemma 2/3, Phi-3-Long |
-| Local + strided sparse | O(N·√N) | mixed | similar to SWA | OpenAI sparse transformer, Longformer |
-| BigBird (local + global + random) | O(N) approx | mixed | matches full at 2× context | early long-context BERT |
-| Native Sparse (DeepSeek-V3.2) | O(N · active fraction) | O(N) | within 0.05 ppl | DeepSeek-V3.2, 2025 |
-| Differential | O(2·N²) | O(2N) | -5 to -10% ppl | DIFF Transformer, early 2026 models |
+| Full attention | $O(N^2)$ | $O(N)$ per layer | baseline | every model's default layer |
+| SWA (window 1024) | $O(N \cdot W)$ | $O(W)$ per layer | -0.1 ppl, good with global layers | Gemma 2/3, Phi-3-Long |
+| Local + strided sparse | $O(N \cdot \sqrt{N})$ | mixed | similar to SWA | OpenAI sparse transformer, Longformer |
+| BigBird (local + global + random) | $O(N)$ approx | mixed | matches full at 2× context | early long-context BERT |
+| Native Sparse (DeepSeek-V3.2) | $O(N \cdot \text{active fraction})$ | $O(N)$ | within 0.05 ppl | DeepSeek-V3.2, 2025 |
+| Differential | $O(2 \cdot N^2)$ | $O(2N)$ | -5 to -10% ppl | DIFF Transformer, early 2026 models |
 
 ```figure
 gqa-kv-sharing
@@ -142,7 +144,7 @@ def diff_attention(Q1, K1, Q2, K2, V, lam):
 
 ### चरण 5: KV कैश आकार
 
-प्रति परत कैश आकार पर प्रिंट करें `N = 131072`प्रत्येक संस्करण के लिए. SWA और दुर्लभ संस्करणों 10 100 × गिर जाता है. अंतर दोगुना. अपने स्मृति बिल का भुगतान करना.
+प्रति परत कैश आकार पर प्रिंट करें $N = 131072$प्रत्येक संस्करण के लिए. SWA और दुर्लभ संस्करणों 10 100 × गिर जाता है. अंतर दोगुना. अपने स्मृति बिल का भुगतान करना.
 
 ## इसका प्रयोग करें
 
@@ -185,17 +187,17 @@ out = flex_attention(q, k, v, block_mask=mask)
 1. **Easy.**दौड़ें`code/main.py`. SWA पर सत्यापित करें `window=4`प्रत्येक पंक्ति में अंतिम 4 टोकन के बाहर सब कुछ शून्य। सत्यापित करें`window=n`पूर्ण कारण संबंधी ध्यान को बिट-इडेंटिफिक रूप से पुनः प्रस्तुत करता है।
 2. **Medium.** के साथ कारणों से SWA लागू करें`window=1024`Lesson 07 के शीर्ष पर. Tinyshakespeare पर 1,000 कदम के लिए प्रशिक्षण. कितना वैल हानि वि पूर्ण ध्यान में गिरावट? कितना पीक स्मृति गिरता है?
 3. **Hard.**कैपस्टोन मॉडल में जेम्मा-3-शैली 5:1 परत मिश्रण (5 एसडब्ल्यूए, 1 ग्लोबल) लागू करें। शुद्ध-एसडब्ल्यूए और शुद्ध-ग्लोबल बेसलाइन के साथ मिलान पैरामीटर पर हानि, स्मृति और उत्पादन की गुणवत्ता की तुलना करें।
-4. **Hard.**एक शिक्षित के साथ अंतर ध्यान लागू करें `λ`प्रति व्यक्ति. एक सिंथेटिक रिट्रीवल टास्क (एक सुई, 2,000 विचलित करने वाले) पर प्रशिक्षण। मिलान पैरामीटर पर एकल ध्यान आधार रेखा के साथ रिट्रीवल सटीकता मापें।
+4. **Hard.**एक शिक्षित के साथ अंतर ध्यान लागू करें $\lambda$प्रति व्यक्ति. एक सिंथेटिक रिट्रीवल टास्क (एक सुई, 2,000 विचलित करने वाले) पर प्रशिक्षण। मिलान पैरामीटर पर एकल ध्यान आधार रेखा के साथ रिट्रीवल सटीकता मापें।
 
 ## प्रमुख शर्तें
 
 | Term | What people say | What it actually means |
 |------|-----------------|-----------------------|
-| Sliding window attention (SWA) | "Local attention" | Each query attends to its last `W` tokens; KV cache shrinks to `O(W)`. |
-| Effective receptive field | "How far back the model sees" | In an `L`-layer SWA stack with window `W`, up to `L × W` tokens. |
+| Sliding window attention (SWA) | "Local attention" | Each query attends to its last $W$ tokens; KV cache shrinks to $O(W)$. |
+| Effective receptive field | "How far back the model sees" | In an $L$-layer SWA stack with window $W$, up to $L \times W$ tokens. |
 | Longformer / BigBird | "Local + global + random" | Sparse patterns with a few always-attending global tokens; early long-context approach. |
 | Native Sparse Attention | "DeepSeek's kernel trick" | Learn block-level sparsity; skip zero blocks at the kernel level while keeping quality. |
-| Differential attention | "Two maps, one subtracts" | DIFF Transformer: subtract a learned `λ` times a second attention map from the first to cancel attention sinks. |
+| Differential attention | "Two maps, one subtracts" | DIFF Transformer: subtract a learned $\lambda$ times a second attention map from the first to cancel attention sinks. |
 | Attention sink | "Weight bleeds to token 0" | Softmax normalization forces rows to sum to 1; uninformative queries dump weight on position 0. |
 | FlexAttention | "Mask-as-Python" | PyTorch 2.5+ API that compiles arbitrary mask functions into FlashAttention-shape kernels. |
 | Layer type mix | "5:1 SWA-to-global" | Interleave sparse and full attention layers in a stack to keep quality at lower memory. |

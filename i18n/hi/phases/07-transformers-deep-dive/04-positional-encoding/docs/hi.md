@@ -29,25 +29,25 @@
 
 एक निश्चित मैट्रिक्स पूर्व-गणना `PE`आकार का `(max_len, d_model)`:
 
-```
-PE[pos, 2i]   = sin(pos / 10000^(2i / d_model))
-PE[pos, 2i+1] = cos(pos / 10000^(2i / d_model))
+```math
+\begin{aligned}
+PE_{(pos, 2i)} &= \sin\left(pos / 10000^{2i / d_{\text{model}}}\right) \\
+PE_{(pos, 2i+1)} &= \cos\left(pos / 10000^{2i / d_{\text{model}}}\right)
+\end{aligned}
 ```
 
 तो `X' = X + PE[:N]`ध्यान से पहले. प्रत्येक आयाम एक अलग आवृत्ति पर एक sinus है. मॉडल चरण पैटर्न से स्थिति पढ़ने के लिए सीखता है.`max_len`: मॉडल को कुछ भी नहीं बताया कि स्थिति 2048 पर क्या होता है जब उसने केवल स्थिति 02047 देखी।
 
 ### रोपी
 
-Q और K वेक्टरों (इनबेड नहीं) घुमाएं। एक जोड़ी आयामों के लिए `(2i, 2i+1)`:
+Q और K वेक्टरों (इनबेड नहीं) घुमाएं। एक जोड़ी आयामों के लिए $(2i, 2i+1)$:
 
-```
-[q'_2i    ]   [ cos(pos·θ_i)  -sin(pos·θ_i) ] [q_2i   ]
-[q'_2i+1  ] = [ sin(pos·θ_i)   cos(pos·θ_i) ] [q_2i+1 ]
-
-θ_i = base^(-2i / d_head),  base = 10000 by default
+```math
+\begin{bmatrix} q'_{2i} \\ q'_{2i+1} \end{bmatrix} = \begin{bmatrix} \cos(pos \cdot \theta_i) & -\sin(pos \cdot \theta_i) \\ \sin(pos \cdot \theta_i) & \cos(pos \cdot \theta_i) \end{bmatrix} \begin{bmatrix} q_{2i} \\ q_{2i+1} \end{bmatrix}
+\qquad \theta_i = \text{base}^{-2i / d_{\text{head}}}, \quad \text{base} = 10000 \text{ by default}
 ```
 
-उसी घूर्णन को स्थिति के साथ कुंजी पर लागू करें `pos_k`. डॉट उत्पाद `q'_m · k'_n``(m - n)`अकेले।**the attention score depends only on the relative distance**, भले ही घूर्णन पूर्ण स्थिति से कुंजीबद्ध किया गया था.
+उसी घूर्णन को स्थिति के साथ कुंजी पर लागू करें `pos_k`. डॉट उत्पाद $q'_m \cdot k'_n$$(m - n)$अकेले।**the attention score depends only on the relative distance**, भले ही घूर्णन पूर्ण स्थिति से कुंजीबद्ध किया गया था.
 
 RoPE का विस्तार करनाः `base`Llama 3 इस तरह 8K से 128K संदर्भ तक विस्तारित किया गया।
 
@@ -55,11 +55,11 @@ RoPE का विस्तार करनाः `base`Llama 3 इस तरह
 
 ध्यान सीधे स्कोर करता है:
 
-```
-attn_score[i, j] = (q_i · k_j) / √d  -  m_h · |i - j|
+```math
+\text{attn\_score}[i, j] = \frac{q_i \cdot k_j}{\sqrt{d}} - m_h \cdot |i - j|
 ```
 
-कहाँ`m_h`सिर के लिए विशिष्ट ढलान है (जैसे `1 / 2^(8·h/H)`) निकट टोकन को बढ़ावा दिया जाता है; दूर टोकन को दंडित किया जाता है। कोई प्रशिक्षण समय लागत नहीं। पेपर में लंबाई एक्सट्रापोलेशन सिनोसाइडल से अधिक है और इसकी मूल प्रशिक्षित लंबाई पर RoPE से मेल खाता है।
+कहाँ$m_h$सिर के लिए विशिष्ट ढलान है (जैसे $1 / 2^{8h/H}$) निकट टोकन को बढ़ावा दिया जाता है; दूर टोकन को दंडित किया जाता है। कोई प्रशिक्षण समय लागत नहीं। पेपर में लंबाई एक्सट्रापोलेशन सिनोसाइडल से अधिक है और इसकी मूल प्रशिक्षित लंबाई पर RoPE से मेल खाता है।
 
 ### 2026 में क्या चुनना है
 
@@ -113,7 +113,7 @@ def apply_rope(x, pos, base=10000):
     return out
 ```
 
-महत्वपूर्ण: स्थिति पर Q पर एक ही फ़ंक्शन लागू करें `m`और K स्थिति में `n`उनके डॉट उत्पाद एक उठाता है`cos((m-n)·θ_i)`ध्यान मुफ्त में सापेक्ष स्थिति सीखता है।
+महत्वपूर्ण: स्थिति पर Q पर एक ही फ़ंक्शन लागू करें $m$और K स्थिति में $n$उनके डॉट उत्पाद एक उठाता है$\cos((m-n) \cdot \theta_i)$ध्यान मुफ्त में सापेक्ष स्थिति सीखता है।
 
 ### चरण 3: ALiBi ढलान और पूर्वाग्रह
 
@@ -168,7 +168,7 @@ model = AutoModel.from_pretrained("meta-llama/Llama-3.2-3B")
 | Positional encoding | "Tells attention about order" | Any signal added to embeddings or attention that encodes position. |
 | Sinusoidal | "The original one" | `sin/cos` at geometric frequencies added to embeddings; doesn't extrapolate. |
 | RoPE | "Rotary embeddings" | Rotate Q, K by position-dependent angle; dot product encodes relative distance. |
-| ALiBi | "Linear bias trick" | Add `-m·\|i-j\|` to attention scores; no embedding needed, great extrapolation. |
+| ALiBi | "Linear bias trick" | Add $-m \cdot \lvert i-j \rvert$ to attention scores; no embedding needed, great extrapolation. |
 | base | "RoPE's knob" | The frequency scaler in RoPE; increase to extend context at inference. |
 | NTK-aware | "A RoPE scaling trick" | Rescale `base` so high-frequency dims aren't squeezed when context expands. |
 | YaRN | "The fancy one" | Per-dimension interpolation+extrapolation that preserves attention entropy. |

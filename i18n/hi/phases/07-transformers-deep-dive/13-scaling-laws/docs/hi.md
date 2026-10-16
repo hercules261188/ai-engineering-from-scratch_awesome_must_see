@@ -30,22 +30,24 @@ FLOPs के पैमाने लगभग `6 × N × D`आप N को ऊप
 
 चिंचिला पेपर से, हानि निम्नलिखित हैः
 
-```
-L(N, D) = A / N^α + B / D^β + E
+```math
+L(N, D) = \frac{A}{N^\alpha} + \frac{B}{D^\beta} + E
 ```
 
-- `N`= पैरामीटर (गैर-एम्बेड)
-- `D`= प्रशिक्षण टोकन।
-- `α ≈ 0.34`,`β ≈ 0.28`(करीब सममित) ।
-- `E ≈ 1.69`, अपरिवर्तनीय हानि छत।
-- `A ≈ 406`,`B ≈ 411`. .
+- $N$= पैरामीटर (गैर-एम्बेड)
+- $D$= प्रशिक्षण टोकन।
+- $\alpha \approx 0.34$,$\beta \approx 0.28$(करीब सममित) ।
+- $E \approx 1.69$, अपरिवर्तनीय हानि छत।
+- $A \approx 406$,$B \approx 411$. .
 
-दो शब्द एक दूसरे के खिलाफ व्यापार करते हैं जैसे आप पैमाने लेते हैं। व्युत्पन्न W.R.T. ले लो।`N`स्थिर गणना (C = 6ND) पर और हल करेंः
+दो शब्द एक दूसरे के खिलाफ व्यापार करते हैं जैसे आप पैमाने लेते हैं। व्युत्पन्न W.R.T. ले लो।$N$स्थिर गणना पर ($C = 6ND$) और हल करेंः
 
-```
-N_opt ≈ 0.6 × (C/6)^0.5
-D_opt ≈ 0.6 × (C/6)^0.5
-D_opt / N_opt ≈ 20
+```math
+\begin{aligned}
+N_{\text{opt}} &\approx 0.6 \times (C/6)^{0.5} \\
+D_{\text{opt}} &\approx 0.6 \times (C/6)^{0.5} \\
+D_{\text{opt}} / N_{\text{opt}} &\approx 20
+\end{aligned}
 ```
 
 गणना-अनुकूलः प्रति पैरामीटर 20 टोकन।
@@ -90,7 +92,7 @@ scaling-laws
 
 ## इसे बनाओ
 
-देखो`code/main.py`हम Chinchilla हानि समीकरण को लागू और गणना-उत्तम के लिए हल करते हैं`(N, D)`कई कम्प्यूटिंग बजटों में से प्रत्येक पर।
+देखो`code/main.py`हम Chinchilla हानि समीकरण को लागू और गणना-उत्तम के लिए हल करते हैं$(N, D)$कई कम्प्यूटिंग बजटों में से प्रत्येक पर।
 
 ### चरण 1: चिंचिला हानि
 
@@ -99,11 +101,11 @@ def chinchilla_loss(N, D, A=406.4, B=410.7, alpha=0.34, beta=0.28, E=1.69):
     return A / N ** alpha + B / D ** beta + E
 ```
 
-कहानी `L`एक कंटूर के रूप में `(N, D)`तय पर`C = 6ND`न्यूनतम खोजें।
+कहानी $L$एक कंटूर के रूप में $(N, D)$तय पर$C = 6ND$न्यूनतम खोजें।
 
 ### चरण 2: कम्प्यूटिंग-ऑप्टिमाइज़ सीमा
 
- से कम्प्यूटिंग बजट के लिए`1e17``1e25`फ्लोप, खोजें `(N, D)`जो नुकसान को कम करने के अधीन है `6ND = C`. अनुपात की जांच करें `D/N ≈ 20`. .
+ से कम्प्यूटिंग बजट के लिए`1e17``1e25`फ्लोप, खोजें $(N, D)$जो नुकसान को कम करने के अधीन है $6ND = C$. अनुपात की जांच करें $D/N \approx 20$. .
 
 ### चरण 3: ओवर-ट्रेनिंग लागत
 
@@ -133,9 +135,9 @@ def chinchilla_loss(N, D, A=406.4, B=410.7, alpha=0.34, beta=0.28, E=1.69):
 
 ## व्यायाम
 
-1. **Easy.**दौड़ें`code/main.py`. चिंचिला-उत्तम मुद्रण`(N, D)`कम्प्यूटिंग बजट के लिए `1e20`,`1e22`,`1e24`. वास्तविक मॉडल टेबल की तुलना करें.
-2. **Medium.**हॉफमैन हानि-असे-कार्य-कंप्यूटर वक्र लागू करें।`log10(C)`जब कानून हमें जरूरत है की भविष्यवाणी की पहचान`>10^28`क्रॉस-एंट्रोपी में अगले 0.1 के लिए FLOPs।
-3. **Hard.**एक ही डेटासेट पर प्रशिक्षित 5 छोटे मॉडल (100K से 10M पैरामीटर) पर अपने स्वयं के स्केलिंग कानून को फिट करें। अनुमान`α`और `E`आपके लेख प्रकाशित लेखों से कितना मेल खाते हैं?
+1. **Easy.**दौड़ें`code/main.py`. चिंचिला-उत्तम मुद्रण$(N, D)$कम्प्यूटिंग बजट के लिए `1e20`,`1e22`,`1e24`. वास्तविक मॉडल टेबल की तुलना करें.
+2. **Medium.**हॉफमैन हानि-असे-कार्य-कंप्यूटर वक्र लागू करें।`log10(C)`जब कानून हमें जरूरत है की भविष्यवाणी की पहचान$>10^{28}$क्रॉस-एंट्रोपी में अगले 0.1 के लिए FLOPs।
+3. **Hard.**एक ही डेटासेट पर प्रशिक्षित 5 छोटे मॉडल (100K से 10M पैरामीटर) पर अपने स्वयं के स्केलिंग कानून को फिट करें। अनुमान$\alpha$और $E$आपके लेख प्रकाशित लेखों से कितना मेल खाते हैं?
 
 ## प्रमुख शर्तें
 
@@ -146,7 +148,7 @@ def chinchilla_loss(N, D, A=406.4, B=410.7, alpha=0.34, beta=0.28, E=1.69):
 | Compute (C) | "FLOPs spent" | Approximately `6 × N × D` for a standard transformer. |
 | Chinchilla-optimal | "D/N ≈ 20" | Ratio that minimizes loss per FLOP of pretraining. |
 | Over-training | "Past Chinchilla" | Spend extra training FLOPs to save inference FLOPs; D/N >> 20. |
-| Irreducible loss | "The floor" | The `E` term in the scaling law; the entropy of the data itself. |
+| Irreducible loss | "The floor" | The $E$ term in the scaling law; the entropy of the data itself. |
 | Emergent capability | "Sudden jumps at scale" | Often a scorer artifact; continuous loss is smooth. |
 | Effective compute | "Training-efficiency multiplier" | Better data / optimizer / architecture multiplies how far a FLOP goes. |
 
