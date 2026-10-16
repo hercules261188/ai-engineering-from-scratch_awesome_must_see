@@ -30,7 +30,7 @@ Metodoloji (METR blogundan ve makaleleri):
 
 1. Dakika ölçeği ile saat ölçeği uzman tamamlama süreleri arasında bir görev kümesi toplayın.
 2. Her görev için model çalıştırın; başarıyı ya da başarısızlığı kaydetin.
-3. Logistik bir eğri ayarlayın: P(başarılılık) log(ekspert tamamlama süresi fonksiyonu olarak).
+3. Bir lojistik eğriyi ayarlayın: $P(\text{success})$$\log(\text{expert completion time})$- Evet .
 4. Uçaklık, P ((başarılılık) = 0.5'in uzman zamanıdır.
 
 Logistik uygunluk şekli doğru bir şekildir çünkü yetenek genellikle görev zorluğu ile yükselen, plato yaklaşımlı bir ilişkiye sahiptir. 50% noktası bir seçimdir (% 10 olabilir,% 90); METR ayrıntılı kağıda birden fazla eşiği bildirir, ancak en sezgisel olduğu için % 50 ile liderlik eder.
@@ -79,7 +79,7 @@ a5-horizon-fit
 
 ## Kullan
 
-`code/main.py`Yapısal bir sonuç kümesi verildiğinde görev başarısı ile logist zaman arasındaki lojistik bir uyum sağlar. 50% ufuk (METR başlığı), 10% ufuk (sağlam) ve 90% ufuk (önemli). Ayrıca eval-kontext oyunları ile başarının süsü olarak şişirilmesiyle ne değişiklikler olduğunu gösterir.
+`code/main.py`Görev başarısı vs.$\log(\text{expert time})$Bu, %50 ufku (METR başlığı), %10 ufku (sağlam) ve %90 ufku (iyi niyetli) rapor eder.
 
 ## Gönder
 

@@ -58,7 +58,7 @@ AlphaEvolve'de çözüm: LLM'nin hiç görmediği bir değerlendirmeci gönderir
 
 LLM, kompüle edilebilir, anlamsal olarak makul değişiklikler üretebilir. 2000 satırlı Python dosyasında rastgele mutasyon GA neredeyse her zaman sözcük hatası üretir. LLM ayrıca rastgele komşularda aramaları yoğunlaştırır (herhangi bir fonksiyonu değiştir, rastgele bayt değil), bu da değerlendirmeci çağrıları çarpıcı bir şekilde azaltır.
 
-Değerlendirici, LLM'nin konfabulasiyonlarını yakalar. LLM'ler, aslında O(n^2) olduğu halde bir fonksiyonun "O(n log n) sınırında olduğunu güvenle iddia eder; bir duvar saati referans sorunu çözür.
+Değerlendirici, LLM'nin konfabulatlarını yakalar. LLM'ler bir fonksiyonun "$O(n \log n)$"Sınır"da aslında.$O(n^2)$Bu soru, duvar saatinin bir referans göstergesiyle çözülmüştür.
 
 ### AlphaEvolve sınırda yer alırken
 
