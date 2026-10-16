@@ -182,7 +182,7 @@ python3 code/main.py
 - 布克利,沃尔希斯, "评估评估措施稳定性"SIGIR 2000 - 排名指标的经典论文
 - 瑞林,凯卡莱宁, "基于收益的 IR 技术的累计评估" - nDCG论文
 - [Ragas: Automated Evaluation of RAG Pipelines](https://docs.ragas.io)
-- [Anthropic, Evaluating RAG](https://www.anthropic.com/news/evaluating-rag)
+- [Anthropic, Introducing Contextual Retrieval](https://www.anthropic.com/engineering/contextual-retrieval)- 提取1减回20的分数
 - 第十课 - 评估框架基础
 - 第19阶段课程 64-67 - 在这里评估的组件
 - 第19阶段课程69 - - 这项评估成绩的端到端管道

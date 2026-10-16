@@ -82,7 +82,7 @@ flowchart TD
 
 ## 为什么链条有所重要
 
-否认比允许便宜.`WhitelistGate`在 O(1) 哈希搜索中运行. `RegexGate`在O(模式 * argv中运行. `RecencyGate`读到一个小片的消息商店.`BudgetGate`您将通过成本上升来订购,所以拒绝通话之前,就会做昂贵的工作.
+否认比允许便宜.`WhitelistGate`运行$O(1)$查看了.`RegexGate`运行$O(\text{pattern} \cdot \text{argv})$现在,我们要去.`RecencyGate`读到一个小片的消息商店.`BudgetGate`您将通过成本上升来订购,所以拒绝通话之前,就会做昂贵的工作.
 
 现在,我们需要一个新的方法来解决问题,我们需要一个新的方法来解决问题,我们需要一个新的方法来解决问题,我们需要一个新的方法来解决问题.
 

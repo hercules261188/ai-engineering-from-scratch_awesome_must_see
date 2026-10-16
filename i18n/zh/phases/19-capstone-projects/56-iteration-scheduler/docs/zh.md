@@ -61,8 +61,8 @@ flowchart TB
 
 在本课中使用的UCB公式是经典的UCB1.
 
-```text
-ucb(branch) = mean_reward(branch) + c * sqrt( ln(total_runs) / runs(branch) )
+```math
+\text{ucb}(\text{branch}) = \text{mean\_reward}(\text{branch}) + c \sqrt{ \frac{\ln(\text{total\_runs})}{\text{runs}(\text{branch})} }
 ```
 
 `total_runs`是所有各个部门完成的所有实验的数量.`c`探索重量; 课程不符合`sqrt(2)`没有运行的分支得到了`+inf`因此未经测试的分支总是先安排.高平均奖励的分支保持高分数,直到其他分支赶上;许多次运行的分支没有太多奖励的分支被运行的替代品遮盖.

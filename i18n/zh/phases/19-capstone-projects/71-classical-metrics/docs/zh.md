@@ -105,7 +105,7 @@ def lcs_length(a, b):
     return int(dp[n, m])
 ```
 
-编号表使实现可读;纯 Python 列表也会工作.选择 ROUGE-L 的任务支付每项任务的 O(n m) 成本.对于典型的总结长度保持在毫秒以下.
+通过使用Numpy表,实现可读;纯Python列表也会有效.选择ROUGE-L的任务支付了$O(n m)$总结时间不到毫秒.
 
 ## 准确性
 

@@ -49,15 +49,14 @@ flowchart TB
 
 ### 蓝色-4
 
-```text
-BLEU-4 = BP * exp(mean(log p1, log p2, log p3, log p4))
+```math
+\text{BLEU-4} = \text{BP} \cdot \exp\big(\text{mean}(\log p_1, \log p_2, \log p_3, \log p_4)\big)
 ```
 
 在哪里?`p_n`是修改的 n-gram精度 (任何参考中出现的生成 n-gram 的剪切数量,分为生成的 n-gram 总数),以及`BP`是短暂的处罚:
 
-```text
-BP = 1                if generated length > reference length
-   = exp(1 - r/g)     otherwise, where r is reference length and g is generated
+```math
+\text{BP} = \begin{cases} 1 & \text{if generated length} > \text{reference length} \\ \exp(1 - r/g) & \text{otherwise, where } r \text{ is reference length and } g \text{ is generated} \end{cases}
 ```
 
 需要滑滑小样本,其中一些样本`p_n`实现使用陈和桃"方法 1" (为任何零数量添加1到数量和命名器),这是低数量模式的最安全默认.

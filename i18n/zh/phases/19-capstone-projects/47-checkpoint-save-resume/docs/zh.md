@@ -90,7 +90,7 @@ cc-atomic-checkpoint
 
 ### 步骤1:捕获和恢复RNG状态
 
-`capture_rng_state`返回一个字符串的字符串.`random.getstate`,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,`np.random.get_state`它们是PyTorch CPU和CUDA RNG字节.`restore_rng_state`处理器子是PyTorch的RNG知道如何消耗的8字节缓冲器.
+`capture_rng_state`返回一个字符串的字符串.`random.getstate`,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,`np.random.get_state`每个部分都作为平常的Python数字, tuples和列表存储 (NumPy的关键阵列通过`tolist()`),以便步骤3中的载体可以在不选任意物体的情况下重新读取. `restore_rng_state`处理器子是PyTorch的RNG知道如何消耗的8字节缓冲器.
 
 ### 步骤2:原子储存
 
@@ -100,9 +100,11 @@ cc-atomic-checkpoint
 
 `save_checkpoint`包装模型,优化器,调度器,火车状态和RNG成一个单词. `load_checkpoint`转换后返回一个`TrainState`方案字段是升级:未来的格式变化将打破版本字符串和载荷器.
 
+`load_checkpoint`电话`torch.load(..., weights_only=True)` `.pt`文件是一件事, 解开一个不值得信赖的文件`weights_only=False`运行任何代码文件名称. 只有重量加载器接受子和原始容器,并拒绝其他一切,这就是为什么步骤1保持RNG状态在平凡的列表. 完整性检查增加`ValueError`没有使用`assert`因为`python -O`使用2.6或更新版本的火:在此之前`weights_only=True`由于这些证据的存在,因此,这项课程的保证仅依赖于2.6之后的延续.
+
 ### 步骤4:碎片变体
 
-`save_sharded_checkpoint`通过 N 片段进行调整,将每个片段以其自己的原子保存编写,使用优化器,计划器和列车状态编写一个元文件,并使用 sha256s 编写JSON 指数. `load_sharded_checkpoint`在合并之前,检查每一个碎片.
+`save_sharded_checkpoint`通过 N 片段进行调整,将每个片段以其自己的原子保存编写,使用优化器,计划器和列车状态编写一个元文件,并使用 sha256s 编写JSON 指数. `load_sharded_checkpoint`在合并前验证每一个碎片,并拒绝任何在检查点目录之外解决的碎片路径.
 
 ### 步骤5:恢复演示
 
@@ -120,8 +122,9 @@ python3 code/main.py
 
 制作训练堆了作为训练器的一部分的船检查点. 形状相同:模型 + 优化器 + 计时器 + 计数器 + RNG,以原子形式写,以步骤命名,以便最新的位置容易找到. 碎片布局支持大型模型加载并行阅读; index.json 是这么做的.
 
-必须执行三个模式:
+必须执行四种模式:
 
+- **Load with `weights_only=True`.**通过使用一个共享驱动器或下载的检查点,可以被不信任的输入.
 - **Schema is a string in the payload.**没有它,你不能在不打破旧运行的情况下演化格式.
 - **Sha256 every shard.**沉默地缩短下载是最坏的错误;
 - **Keep checkpoint cadence honest.**保存每一个N步骤和每一个钟分钟,无论是较短的.否则长的步骤崩浪费了全窗口的工作.
@@ -151,7 +154,7 @@ python3 code/main.py
 ## 进一步阅读
 
 - 子`rename`原子性学称`os.replace`根据
-- 关于 PyTorch 的文件`torch.save`其他`torch.load`包括`map_location`对于设备间的恢复.
+- 关于 PyTorch 的文件`torch.save`其他`torch.load`包括`map_location`对于跨设备恢复和`weights_only`对于加载不值得信赖的文件.
 - 阶段19课46涵盖了这个课程的检查点有效载荷的梯度积累.
 - 第19阶段课时48涵盖了该方案适用于国家规定格式的分布式包装.
 - Linux内核`fsync`原子改名背后的耐用性保证文件.
