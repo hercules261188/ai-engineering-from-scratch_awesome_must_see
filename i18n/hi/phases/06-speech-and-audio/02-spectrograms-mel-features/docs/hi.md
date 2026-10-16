@@ -23,7 +23,7 @@
 
 **Log-magnitude.**कच्चे आयामों में 5-6 आयामों की सीमा होती है।`log(|X| + 1e-6)`या `20 * log10(|X|)`प्रत्येक उत्पादन पाइपलाइन में लॉग-मग्निटुडे का उपयोग किया जाता है, कच्चे पैमाने नहीं।
 
-**Mel scale.**आवृत्ति `f`मेल के लिए हर्ट्ज़ मानचित्रों में `m`द्वारा `m = 2595 * log10(1 + f / 700)`. मैपिंग लगभग 1 kHz से नीचे रैखिक और लगभग लॉगरिथमिक है। 08 kHz को कवर करने वाले 80 mel bin मानक ASR इनपुट है।
+**Mel scale.**आवृत्ति `f`मेल के लिए हर्ट्ज़ मानचित्रों में `m`द्वारा $m = 2595 \cdot \log_{10}(1 + f / 700)$. मैपिंग लगभग 1 kHz से नीचे रैखिक और लगभग लॉगरिथमिक है। 08 kHz को कवर करने वाले 80 mel bin मानक ASR इनपुट है।
 
 **Mel filterbank.**एक सेट त्रिकोणात्मक फिल्टर जो मेल पैमाने पर समान रूप से अलग हैं। प्रत्येक फिल्टर आसन्न एफएफटी डिब्बों का एक भारित योग है। फिल्टरबैंक मैट्रिक्स द्वारा एसटीएफटी परिमाण को गुणा करने से एक मत्मुल में मेल स्पेक्ट्रोग्राम मिलता है।
 
@@ -170,5 +170,5 @@ def dct_ii(x, n_coeffs):
 - [Davis, Mermelstein (1980). Comparison of parametric representations for monosyllabic word recognition](https://ieeexplore.ieee.org/document/1163420) एमएफसीसी पेपर।
 - [Stevens, Volkmann, Newman (1937). A Scale for the Measurement of the Psychological Magnitude Pitch](https://pubs.aip.org/asa/jasa/article-abstract/8/3/185/735757/) मूल मेल स्केल।
 - [OpenAI — Whisper source, log_mel_spectrogram](https://github.com/openai/whisper/blob/main/whisper/audio.py) संदर्भ कार्यान्वयन पढ़ें।
-- [librosa feature extraction docs](https://librosa.org/doc/main/feature.html) संदर्भ के लिए `mfcc`,`melspectrogram`, और कूद / खिड़की.
+- [librosa feature extraction docs](https://librosa.org/doc/latest/api/feature.html) संदर्भ के लिए `mfcc`,`melspectrogram`, और कूद / खिड़की.
 - [NVIDIA NeMo — audio preprocessing](https://docs.nvidia.com/deeplearning/nemo/user-guide/docs/en/main/asr/asr_all.html#featurizers) पैराकीट + कैनरी मॉडल के लिए उत्पादन पैमाने पर पाइपलाइन।

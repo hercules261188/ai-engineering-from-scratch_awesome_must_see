@@ -170,7 +170,7 @@ STT (क्यूटाई, डीपग्राम, असेंबलीए�
 ## आगे पढ़ना
 
 - [Silero VAD](https://github.com/snakers4/silero-vad) संदर्भ खुला VAD।
-- [Picovoice Cobra VAD](https://picovoice.ai/products/cobra/) वाणिज्यिक सटीकता के लिए अग्रणी।
+- [Picovoice Cobra VAD](https://picovoice.ai/products/voice/voice-activity-detection/) वाणिज्यिक सटीकता के लिए अग्रणी।
 - [Kyutai — Unmute + flush trick](https://kyutai.org/stt) sub-200 ms इंजीनियरिंग ट्रिक।
 - [LiveKit — turn detection](https://docs.livekit.io/agents/logic/turns/) उत्पादन में अर्थिक अंतनिर्देश।
 - [WebRTC VAD](https://webrtc.googlesource.com/src/) विरासत आधार रेखा।

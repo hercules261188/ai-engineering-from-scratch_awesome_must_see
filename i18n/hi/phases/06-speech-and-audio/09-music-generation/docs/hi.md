@@ -169,4 +169,4 @@ music = musicgen.generate([description], duration=30)
 - [ACE-Step](https://github.com/ace-step/ACE-Step) 4B फुल-सिंग जनरेटर, अप्रैल 2026 खोलें।
 - [Suno v5 platform docs](https://suno.com) वाणिज्यिक गुणवत्ता के नेता।
 - [AudioLDM2](https://arxiv.org/abs/2308.05734) संगीत + ध्वनि प्रभाव के लिए लटेंट विसारण।
-- [WMG-Suno settlement coverage](https://www.musicbusinessworldwide.com/suno-warner-music-settlement/) नवंबर 2025 पूर्वानुमान।
+- [WMG-Suno settlement coverage](https://www.musicbusinessworldwide.com/warner-music-group-settles-with-suno-strikes-first-of-its-kind-deal-with-ai-song-generator/) नवंबर 2025 पूर्वानुमान।

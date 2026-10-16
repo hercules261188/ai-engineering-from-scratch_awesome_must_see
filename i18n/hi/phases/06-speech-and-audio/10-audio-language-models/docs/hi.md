@@ -129,17 +129,18 @@ class AudioProjector(nn.Module):
 
 ```python
 from datasets import load_dataset
-mmau = load_dataset("MMAU/MMAU-Pro")
+mmau = load_dataset("gamma-lab-umd/MMAU-Pro", split="test")
+mcq = mmau.filter(lambda item: len(item["choices"] or []) > 1)
 
 correct = 0
-for item in mmau["test"]:
-    answer = call_model(item["audio"], item["question"], item["choices"])
-    if answer == item["correct_choice"]:
+for item in mcq:
+    answer = call_model(item["audio_path"], item["question"], item["choices"])
+    if answer == item["answer"]:
         correct += 1
-print(f"Accuracy: {correct / len(mmau['test']):.3f}")
+print(f"Accuracy: {correct / len(mcq):.3f}")
 ```
 
-प्रति श्रेणी (भाषण / ध्वनि / संगीत / बहु-ऑडियो) को अलग से रिपोर्ट करें। संश्लेषित संख्याएं उस स्थान पर छिप जाती हैं जहां मॉडल विफल रहता है।
+`audio_path`डेटासेट रेपो में अंक `data.zip`(लगभग 47 जीबी), तो स्कोर करने से पहले इसे डाउनलोड और अनज़िप। यह सटीक मैच लूप एक मानसिकता जांच है, बेंचमार्क स्कोरर नहीं है, इसलिए इसकी संख्या प्रकाशित एमएमएयू-प्रो परिणामों के साथ तुलनात्मक नहीं है। आधिकारिक मूल्यांकनकर्ता समानता (NV-Embed-v2) को एम्बेड करके बहुविकल्पीय उत्तरों से मेल खाता है, LLM न्यायाधीश के साथ खुले अंत उत्तरों को दर्जा देता है, और निर्देश के बाद के उत्तरों को रेजेक्स नियमों के साथ जांचता हैः एक के लिए भविष्यवाणियां लिखें `model_output`स्तंभ और रन `evaluate_mmau_pro_comprehensive.py`[MMAU-Pro repo](https://github.com/sonalkum/MMAUPro). प्रत्येक रिपोर्ट`category`(भाषण, ध्वनि, संगीत, बहु, और बाकी) अलग अलग। संकलित संख्याएं छिप जाती हैं जहां मॉडल विफल रहता है।
 
 ## इसका प्रयोग करें
 
@@ -187,4 +188,4 @@ print(f"Accuracy: {correct / len(mmau['test']):.3f}")
 - [NVIDIA (2025). Audio Flamingo 3](https://arxiv.org/abs/2507.08128) खुले लंबे ऑडियो नेता।
 - [NVIDIA (2026). Audio Flamingo Next](https://arxiv.org/abs/2604.10905) LongAudioBench SOTA।
 - [Tang et al. (2023). SALMONN](https://arxiv.org/abs/2310.13289) दोहरे एन्कोडर के अग्रणी।
-- [MMAU-Pro leaderboard](https://mmaubenchmark.github.io/) लाइव 2026 रैंकिंग।
+- [MMAU-Pro leaderboard](https://sonalkum.github.io/mmau-pro/) लाइव 2026 रैंकिंग।

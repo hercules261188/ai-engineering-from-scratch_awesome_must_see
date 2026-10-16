@@ -119,7 +119,7 @@ class AudioCNN(nn.Module):
 
 3M पैरामीटर. एक ही RTX 4090 के साथ ESC-50 पर ~ 10 मिनट में ट्रेनें। 80% + सटीकता।
 
-### चरण 5: 2026 डिफ़ॉल्ट  ठीक-ट्यून बीएटी
+### चरण 5: पूर्व प्रशिक्षित ऑडियो ट्रांसफार्मर (एएसटी दिखाया गया) को ठीक से समायोजित करें
 
 ```python
 from transformers import ASTFeatureExtractor, ASTForAudioClassification
@@ -135,7 +135,7 @@ inputs = ext(audio, sampling_rate=16000, return_tensors="pt")
 logits = model(**inputs).logits
 ```
 
-बीएटीएस के लिए प्रयोग करें`microsoft/BEATs-base``beats`पुस्तकालय; ट्रांसफार्मर एपीआई एक ही आकार है।
+उदाहरण को Hub से AST ठीक-ठाक. बीएटीएस, 2026 डिफ़ॉल्ट, Hugging Face Hub पर नहीं है: डाउनलोड एक चेकपॉइंट से [BEATs release in microsoft/unilm](https://github.com/microsoft/unilm/tree/master/beats)और इसे उस रेपो के साथ लोड `BEATs`और `BEATsConfig`वर्ग; सूक्ष्म-ट्यूनिंग लूप एक ही आकार रखता है।
 
 ## इसका प्रयोग करें
 

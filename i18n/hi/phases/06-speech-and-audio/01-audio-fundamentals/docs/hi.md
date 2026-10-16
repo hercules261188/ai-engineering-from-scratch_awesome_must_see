@@ -137,6 +137,6 @@ def dft(x):
 
 - [Shannon (1949). Communication in the Presence of Noise](https://people.math.harvard.edu/~ctm/home/text/others/shannon/entropy/entropy.pdf) नमूना प्रमेय के पीछे का पेपर।
 - [Smith — The Scientist and Engineer's Guide to Digital Signal Processing](https://www.dspguide.com/ch8.htm) निःशुल्क, कैनोनिक डीएसपी पाठ्यपुस्तक।
-- [librosa docs — audio primer](https://librosa.org/doc/latest/tutorial.html) कोड के साथ व्यावहारिक कदम।
-- [Heinrich Kuttruff — Room Acoustics (6th ed.)](https://www.routledge.com/Room-Acoustics/Kuttruff/p/book/9781482260434) संदर्भ क्यों वास्तविक दुनिया ऑडियो एक स्वच्छ sinusoid नहीं है.
+- [librosa docs — audio primer](https://librosa.org/doc/latest/auto_tutorials/index.html) कोड के साथ व्यावहारिक कदम।
+- [Heinrich Kuttruff — Room Acoustics (6th ed.)](https://www.taylorfrancis.com/books/mono/10.1201/9781315372150/room-acoustics-heinrich-kuttruff) संदर्भ क्यों वास्तविक दुनिया ऑडियो एक स्वच्छ sinusoid नहीं है.
 - [Steve Eddins — FFT Interpretation notebook](https://blogs.mathworks.com/steve/2020/03/30/fft-spectrum-and-spectral-densities/) आवृत्ति बीन अंतर्ज्ञान 10 मिनट में साफ हो गया।
