@@ -177,7 +177,7 @@ print(f"InfoNCE with identical pairs:  {loss_same:.3f}")
 print(f"InfoNCE with random pairs:     {loss_random:.3f}")
 ```
 
-Aynı çiftler düşük bir kaybı (büyük bir parti ve soğuk sıcaklık için 0'ya yakın) vermektedir.
+Aynı çiftler düşük bir kaybı (büyük bir seri ve soğuk sıcaklık için 0' a yakın) vermektedir.$\log(2N-1) \approx \log(31) \approx 3.4$16 çiftli bir parti ile.
 
 ### 4. adım: MAE tarzı maskeli
 

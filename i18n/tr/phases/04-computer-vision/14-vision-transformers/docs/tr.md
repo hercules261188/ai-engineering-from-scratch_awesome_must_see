@@ -97,7 +97,7 @@ LN sonrası kullanılan ilk transformatörler (`x = LN(x + sublayer(x))`Bu neden
 
 - 16x16 yama -> 196 token, standart.
 - 32x32 patches -> 49 token, daha hızlı ama daha düşük çözünürlük.
-- 8x8 patches -> 784 token, daha ince ama O(n^2) dikkat masrafı ölçekleri kötü.
+- 8x8 patches -> 784 token, daha ince ama $O(n^2)$Dikkat çok pahalı.
 
 Daha büyük yamalar = daha az token = daha hızlı ama daha az alan ayrıntıları. SwinV2 hiyerarşik pencerelerde 4x4 yamalar kullanır.
 

@@ -74,8 +74,8 @@ Bu tek formül  **shared weights, locality, sliding window**Diğer her şey muha
 
 Giriş alanının büyüklüğü göz önüne alındığında `H`, çekirdek boyutu `K`, dolandırıcılık`P`, adım at `S`- ...
 
-```
-H_out = floor( (H - K + 2P) / S ) + 1
+```math
+H_{\text{out}} = \left\lfloor \frac{H - K + 2P}{S} \right\rfloor + 1
 ```
 
 Bunu ezberleyin. Arsitektur başına onlarca kez hesaplayacaksınız.
@@ -88,7 +88,7 @@ Bunu ezberleyin. Arsitektur başına onlarca kez hesaplayacaksınız.
 | Pool 2x2 | 32 | 2 | 0 | 2 | 16 |
 | Large receptive field | 32 | 7 | 3 | 2 | 16 |
 
-"Eşit doldurma" demek, H_out == H olarak seçmek anlamına gelir. S == 1. Eşsiz K için, bu P = (K - 1) / 2.
+"Eşit dolgu" seçme anlamına gelir.$P$Yani bu$H_{\text{out}} = H$Ne zaman ?$S = 1$- Garip bir şey için .$K$- Evet .$P = (K - 1) / 2$Bu yüzden 3x3 çekirdekleri üstünlük verir.
 
 ### Çekme
 

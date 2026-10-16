@@ -60,7 +60,7 @@ Resulting tokens:      (T / P_t) * (H / P_h) * (W / P_w) tokens
 
 Pozisyonel kodlama 3D'dir: (t, h, w) koordinat başına bir dönümsel veya öğrenilmiş yerleştirme.
 
-- **Full joint** tüm tokenler tüm tokenlere katılır. O(N^2) N tokenlerle. Uzun videolar için yasak.
+- **Full joint** tüm tokenler tüm tokenlere katılır. $O(N^2)$- Evet .$N$Uzun videolar için yasak.
 - **Divided** değişik zamanlı dikkat (zaman boyunca aynı uzay pozisyonu: `(H*W) * T^2`) ve uzaylı dikkat (eşit zaman aşamasında, uzay boyunca: `T * (H*W)^2`TimeSformer ve çoğu video DiT tarafından kullanılır.
 - **Window** (t, h, w) yerel pencereler. Video Swin tarafından kullanılır.
 
@@ -213,7 +213,7 @@ class DividedAttentionBlock(nn.Module):
         return xs
 ```
 
-Zaman dikkatinin her uzay pozisyonu boyunca zaman içinde; uzay dikkatinin pozisyonlar boyunca her çerçeve içinde hizmet göstermesi.
+Zaman dikkatinin her uzay pozisyonu boyunca zaman içinde, uzay dikkatinin her çerçeve içinde pozisyonlar boyunca hareket etmesi.$O(T^2 + (HW)^2)$Bir işlem yerine bir işlem.$O((THW)^2)$Bu TimeSformer'ın ve her modern video DiT'nin çekirdeği.
 
 ### Dördüncü adım: Küçük bir video yaz
 
@@ -286,7 +286,7 @@ Bu ders şunları ortaya çıkarır:
 | World model | "Learned simulator" | A model that predicts future observations given state and action |
 | Video DiT | "Spacetime transformer" | Diffusion transformer with 3D patchification and divided attention |
 | Latent action | "Inferred control" | Discrete or continuous action latent inferred from frame pairs; used to condition next-frame generation |
-| Divided attention | "Time then space" | Two attention operations per block — across time then across space — to keep O(N^2) manageable |
+| Divided attention | "Time then space" | Two attention operations per block — across time then across space — to keep $O(N^2)$ manageable |
 | Object permanence | "Things stay real" | Scene property that video models must learn; classic failure mode on food, glassware |
 | FVD | "Fréchet Video Distance" | Video equivalent of FID; primary visual quality metric |
 | Inverse dynamics model | "Observations to actions" | Given (state, next state), output the action that connects them; closes robotics loop |

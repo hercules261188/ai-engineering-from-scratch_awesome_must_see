@@ -72,7 +72,7 @@ stack:   conv 3x3 -> conv 3x3 -> pool 2x2
 repeat:  16 or 19 conv layers
 ```
 
-İki 3x3 konvoy aynı 5x5 giriş alanını bir 5x5 konvoy olarak görür, ancak daha az parametrelerle (2 * 9 * C^2 = 18C^2 vs 25 * C^2) ve aralarında ekstra bir ReLU ile. VGG bu gözlemini tüm bir mimari haline getirdi.
+İki 3x3 konvoy aynı 5x5 giriş alanını bir 5x5 konvoy ile görebilir ancak daha az parametreler ($2 \cdot 9 \cdot C^2 = 18C^2$vs $25 \cdot C^2$VGG bu gözlemleri tüm bir mimari haline getirdi.  bir blok tipi, tekrarlanan  onu sonrasında gelen her şeyin referans noktası haline getirdi.
 
 Masraf: 138M parametre, yavaş çalıştırılır, sonuçlama için pahalı.
 
@@ -120,9 +120,11 @@ VGG, 19 katman üzerinde çalıştı çünkü parti normı (bir arada yayınlana
 
 O, Zhang, Ren, Sun her şeyi düzelten bir değişiklik önerdi:
 
-```
-standard block:   y = F(x)
-residual block:   y = F(x) + x
+```math
+\begin{aligned}
+\text{standard block:} \quad & y = F(x) \\
+\text{residual block:} \quad & y = F(x) + x
+\end{aligned}
 ```
 
 - Evet .`+ x`Yani katman her zaman araba kullanarak hiçbir şey yapmayı seçebilir.`F(x)`Bu yüzden, bu sistemin en iyi yönü, her blokun *bir miktar* yararlı olmasını ve 100 kez yığılmış olarak, biraz yararlı olmasını sağlayacaktır.

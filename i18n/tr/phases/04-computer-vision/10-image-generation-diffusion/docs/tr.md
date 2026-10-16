@@ -26,35 +26,32 @@ Bu ders minimal DDPM'yi oluşturur: ileri gürültü, geriye denoizing, eğitim 
 
 ### İlerleme süreci
 
-Bir resim çek .`x_0`Biraz Gaussian gürültüsü ekle .`x_1`Biraz daha ekleyip alacağız .`x_2`T adımlarını devam ettir .`x_T`Bu, saf Gaussian gürültüsünden neredeyse ayırt edilemez.
+Bir resim çek .`x_0`Biraz Gaussian gürültüsü ekle .`x_1`Biraz daha ekleyip alacağız .`x_2`- Devam et .$T$adımlar `x_T`Bu, saf Gaussian gürültüsünden neredeyse ayırt edilemez.
 
-```
-q(x_t | x_{t-1}) = N(x_t; sqrt(1 - beta_t) * x_{t-1},  beta_t * I)
+```math
+q(x_t \mid x_{t-1}) = \mathcal{N}\left(x_t; \sqrt{1 - \beta_t} \, x_{t-1}, \; \beta_t I\right)
 ```
 
-`beta_t`T=1000 adım üzerinde tipik olarak 0.0001'den 0.02'e kadar doğrusal küçük bir varyansa programıdır.
+`beta_t`küçük bir varyansa şemasıdır, tipik olarak 0.0001'den 0.02'e kadar doğrusaldır $T=1000$Her adım sinyalü biraz küçültür ve yeni bir gürültü enjekte eder.
 
 ### Kapalı atlama
 
 Bir adım sonra gürültü eklemek Markov zinciri, ama matematik katlanır: örnekleyebilirsiniz `x_t`Doğrudan `x_0`Bir adımdan sonra.
 
-```
-Define alpha_t = 1 - beta_t
-Define alpha_bar_t = prod_{s=1..t} alpha_s
-
-Then:
-  q(x_t | x_0) = N(x_t; sqrt(alpha_bar_t) * x_0,  (1 - alpha_bar_t) * I)
-
-Equivalently:
-  x_t = sqrt(alpha_bar_t) * x_0 + sqrt(1 - alpha_bar_t) * epsilon
-  where epsilon ~ N(0, I)
+```math
+\begin{aligned}
+&\text{Define } \alpha_t = 1 - \beta_t \\
+&\text{Define } \bar{\alpha}_t = \prod_{s=1}^{t} \alpha_s \\[6pt]
+&\text{Then: } q(x_t \mid x_0) = \mathcal{N}\left(x_t; \sqrt{\bar{\alpha}_t} \, x_0, \; (1 - \bar{\alpha}_t) I\right) \\[6pt]
+&\text{Equivalently: } x_t = \sqrt{\bar{\alpha}_t} \, x_0 + \sqrt{1 - \bar{\alpha}_t} \, \epsilon \quad \text{where } \epsilon \sim \mathcal{N}(0, I)
+\end{aligned}
 ```
 
 Bu tek denklem, yaymanın pratik olmasının tek nedeni.`t`, örnek`x_t`Doğrudan `x_0`, ve tek bir adımla tren  tüm Markov zincirinin simülasyonu gerekmiyor.
 
 ### Geri dönüşüm süreci
 
-Önüme doğru ilerleme süreci sabit.`p(x_{t-1} | x_t)`Bu, sinir ağının öğrendiği şeydir.`x_{t-1}`Doğrudan; gürültüyü tahmin ediyorlar `epsilon`T adımında eklenir ve matematik çıkarır `x_{t-1}`- Bu yüzden.
+Önüme doğru ilerleme süreci sabit.`p(x_{t-1} | x_t)`Bu, sinir ağının öğrendiği şeydir.`x_{t-1}`Doğrudan; gürültüyü tahmin ediyorlar `epsilon`adım adım eklenir $t$, ve matematik çıkarır `x_{t-1}`- Bu yüzden.
 
 ```mermaid
 flowchart LR
@@ -79,7 +76,7 @@ flowchart LR
 Her eğitim aşaması için:
 
 1. Gerçek bir görüntü örneklemesi `x_0`- Evet .
-2. Zaman aşamasını örnekleyin `t`[1, T'den] eşit olarak.
+2. Zaman aşamasını örnekleyin `t`$[1, T]$- Evet .
 3. Örnek gürültü`epsilon ~ N(0, I)`- Evet .
 4. Hesaplama`x_t = sqrt(alpha_bar_t) * x_0 + sqrt(1 - alpha_bar_t) * epsilon`- Evet .
 5. Önceden tahmin et .`epsilon_theta(x_t, t)`Ağla.
@@ -103,7 +100,7 @@ Anahtar şu ki, ters koşul genel olarak kapalı biçimde bilinmese de, bu özel
 
 ### Neden 1000 adım atıyorsun?
 
-Önceki gürültü programı seçilir, böylece her adım, geri adım neredeyse Gaussian olması için yeterli gürültü ekler. Çok az adım ve geri adım Gaussian'dan uzak, ağ iyi bir şekilde modelleyebilir. Çok fazla adım ve örnekleme giderek azalır kazanç ile pahalı hale gelir. T = 1000 bir çizgi programı DDPM varsayılanıdır.
+Önceki gürültü programı seçilir, böylece her adım, geri adım neredeyse Gaussian olması için yeterli gürültü ekler. Çok az adım ve geri adım Gaussian'dan uzak, ağ iyi bir şekilde modelleyebilir. Çok fazla adım ve örnekleme giderek azalır kazanç ile pahalı hale gelir. $T=1000$DDPM'nin varsayılan çizgi çizgi programı.
 
 ### DDIM: 20 kat daha hızlı örnekleme
 
@@ -313,14 +310,14 @@ Bu ders şunları ortaya çıkarır:
 
 | Term | What people say | What it actually means |
 |------|----------------|----------------------|
-| Forward process | "Add noise over time" | Fixed Markov chain that corrupts an image into Gaussian noise over T steps |
+| Forward process | "Add noise over time" | Fixed Markov chain that corrupts an image into Gaussian noise over $T$ steps |
 | Reverse process | "Denoise step by step" | Learned distribution that walks back from noise to image |
-| Epsilon prediction | "Predict the noise" | The training target: `epsilon_theta(x_t, t)` predicts the noise added at step t |
-| Beta schedule | "Noise amounts" | Sequence of T small variances that define how much noise enters per step |
-| alpha_bar_t | "Cumulative retain factor" | Product of (1 - beta_s) up to time t; bigger t means less signal left |
-| DDPM sampler | "Ancestral, stochastic" | Samples each x_{t-1} from its conditional Gaussian; 1000 steps |
+| Epsilon prediction | "Predict the noise" | The training target: `epsilon_theta(x_t, t)` predicts the noise added at step $t$ |
+| Beta schedule | "Noise amounts" | Sequence of $T$ small variances that define how much noise enters per step |
+| $\bar{\alpha}_t$ | "Cumulative retain factor" | Product of $(1 - \beta_s)$ up to time $t$; bigger $t$ means less signal left |
+| DDPM sampler | "Ancestral, stochastic" | Samples each $x_{t-1}$ from its conditional Gaussian; 1000 steps |
 | DDIM sampler | "Deterministic, fast" | Rewrites sampling as a deterministic ODE; 20-100 steps with similar quality |
-| Time conditioning | "Tell the model which t" | Sinusoidal embedding of t injected into the U-Net so it knows the noise level |
+| Time conditioning | "Tell the model which t" | Sinusoidal embedding of $t$ injected into the U-Net so it knows the noise level |
 
 ## Daha Fazla Okumak
 

@@ -270,5 +270,5 @@ Bu ders şunları ortaya çıkarır:
 
 - [EfficientNet (Tan & Le, 2019)](https://arxiv.org/abs/1905.11946) verimli mimariler için bileşik ölçeklendirme
 - [MobileNetV3 (Howard et al., 2019)](https://arxiv.org/abs/1905.02244) H-swish ve squeeze-excite ile mobil ilk mimarisi
-- [A Practical Guide to TensorRT Optimization (NVIDIA)](https://developer.nvidia.com/blog/accelerating-model-inference-with-tensorrt-tips-and-best-practices-for-pytorch-users/) Kağıtdaki geçiş sayısını nasıl elde edebilirsiniz
+- [Accelerating Inference Up to 6x Faster in PyTorch with Torch-TensorRT (NVIDIA)](https://developer.nvidia.com/blog/accelerating-inference-up-to-6x-faster-in-pytorch-with-torch-tensorrt/) Kağıtdaki geçiş sayısını nasıl elde edebilirsiniz
 - [ONNX Runtime docs](https://onnxruntime.ai/docs/) Kvantisaj, grafik optimizasyonu, tedarikçi seçimi

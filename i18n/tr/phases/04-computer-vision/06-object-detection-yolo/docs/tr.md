@@ -74,11 +74,13 @@ Modern detektörler genellikle çözünürlük başına farklı demir kümeleri 
 
 Çiğ`tx, ty, tw, th`kutu koordinatları değil, çizim yapmadan önce dönüştürülecek gerileme hedefleri:
 
-```
-centre x  = (sigmoid(tx) + cell_x) * stride
-centre y  = (sigmoid(ty) + cell_y) * stride
-width     = anchor_w * exp(tw)
-height    = anchor_h * exp(th)
+```math
+\begin{aligned}
+\text{centre } x &= (\sigma(t_x) + \text{cell}_x) \cdot \text{stride} \\
+\text{centre } y &= (\sigma(t_y) + \text{cell}_y) \cdot \text{stride} \\
+\text{width} &= \text{anchor}_w \cdot \exp(t_w) \\
+\text{height} &= \text{anchor}_h \cdot \exp(t_h)
+\end{aligned}
 ```
 
 `sigmoid`hücrenin içinde merkez karıştırmalarını tutar. `exp`genişlik ölçeğini bir işaretleme olmadan demirden serbest bırakır.`stride`Bu dekodlama adımı, v2'den bu yana YOLO'nun her sürümünde aynıdır.
@@ -87,11 +89,11 @@ height    = anchor_h * exp(th)
 
 İki kutu arasındaki algılama evrensel benzerlik metrikası:
 
-```
-IoU(A, B) = area(A intersect B) / area(A union B)
+```math
+\mathrm{IoU}(A, B) = \frac{\mathop{\mathrm{area}}(A \cap B)}{\mathop{\mathrm{area}}(A \cup B)}
 ```
 
-IoU = 1 aynı anlamına gelir; IoU = 0 üst üstelik bir üst üstelik yoktur. Bir tahminin gerçek bir doğru olarak sayılıp sayılmayacağını belirleyen şey, tahmin ile temel gerçeklik kutusunun arasındaki IoU'dur (genellikle IoU >= 0.5).
+$\mathrm{IoU} = 1$Aynı anlamda; $\mathrm{IoU} = 0$Bir tahminin gerçek bir pozitif olarak sayılıp sayılmayacağını belirleyen şey tahmin ile temel gerçeklik kutusunun arasındaki IoU'dur (genellikle$\mathrm{IoU} \ge 0.5$). İki tahmin arasındaki IoU NMS'in kopyalanmak için kullandığı şeydir.
 
 ### Maksimum olmayan baskı
 
@@ -113,11 +115,13 @@ Tipik eşiği: nesne tespit için 0,45 . Son tespit cihazları standart NMS'i `s
 
 YOLO kaybı , ağırlıklarla birlikte üç kaybı içerir .
 
-```
-L = lambda_coord * L_box(pred, target, where obj=1)
-  + lambda_obj   * L_obj(pred, 1,     where obj=1)
-  + lambda_noobj * L_obj(pred, 0,     where obj=0)
-  + lambda_cls   * L_cls(pred, target, where obj=1)
+```math
+\begin{aligned}
+L = {} & \lambda_{\text{coord}} \cdot L_{\text{box}}(\text{pred}, \text{target}, \text{where obj}=1) \\
++ {} & \lambda_{\text{obj}} \cdot L_{\text{obj}}(\text{pred}, 1, \text{where obj}=1) \\
++ {} & \lambda_{\text{noobj}} \cdot L_{\text{obj}}(\text{pred}, 0, \text{where obj}=0) \\
++ {} & \lambda_{\text{cls}} \cdot L_{\text{cls}}(\text{pred}, \text{target}, \text{where obj}=1)
+\end{aligned}
 ```
 
 Sadece bir nesne içeren hücreler kutu geri dönüşü ve sınıflandırma kayıplarına katkıda bulunur. nesnelersiz hücreler sadece nesnelik kayıpına katkıda bulunur (modelle sessiz kalmayı öğretir). `lambda_noobj`Genellikle küçük (~ 0,5) çünkü hücrelerin büyük çoğunluğu boştur ve aksi takdirde toplam kayıpta baskın olacaktır.

@@ -61,7 +61,7 @@ Her klasik izleyici hareket tahmin adımında Kalman filtre kullanır.
 
 ### Macar algoritması
 
-Bir `M x N`maliyet matrisi (yollar x tespitler), toplam maliyeti en aza indirgenen bir-bir görevi bul.`1 - IoU(track_bbox, detection_bbox)`O(((M+N) ^3); M, N için ~ 1000'e kadar Python'da yeterince hızlıdır `scipy.optimize.linear_sum_assignment`- Evet .
+Bir `M x N`maliyet matrisi (yollar x tespitler), toplam maliyeti en aza indirgenen bir-bir görevi bul.`1 - IoU(track_bbox, detection_bbox)`veya görünüm özelliklerinin negatif kozine benzerliği.$O((M+N)^3)$ için$M, N$Python'da 1000'e kadar hızlıdır.`scipy.optimize.linear_sum_assignment`- Evet .
 
 ### ByteTrack'in anahtar fikri
 

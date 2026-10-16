@@ -26,7 +26,7 @@ Bir kamera 2 boyutlu bir görüntü üretir. Bir LIDAR, düzenlenmeden 3 boyutlu
 
 ### Bıçak bulutları
 
-Bir nokta bulutu, R^3'te N noktaların düzensiz bir kümesidir, seçeneği olarak her biri özelliklere (renk, yoğunluk, normal) sahiptir.
+Bir nokta bulutu düzensiz bir dizi $N$$\mathbb{R}^3$, seçeneği olarak her biri özellikleri (renk, yoğunluk, normal) ile.
 
 ```
 cloud = [
@@ -44,8 +44,8 @@ cloud = [
 
 PointNet (Qi et al., 2017) her ikisini de bir fikirle çözdü: her noktaya ortak bir MLP uygulayın, sonra simetrik bir fonksiyonla (maksimum bir havuz) toplayın. Sonuç, sıraya bağlı olmayan sabit boyutlu bir vektördür.
 
-```
-f(P) = max_{p in P} MLP(p)
+```math
+f(P) = \max_{p \in P} \mathop{\mathrm{MLP}}(p)
 ```
 
 Bu, PointNet'in tüm çekirdeğidir. Daha derin çeşitler (PointNet++, Point Transformer) hiyerarşik örnekleme ve yerel birleştirme ekler, ancak simetrik fonksiyon hilesi değişmez.
@@ -89,22 +89,23 @@ Bir kayıp, render edilmiş pikselle eğitim fotoğraflarında yerçekimsel ger�
 
 Vanilya MLP ' de .`(x, y, z)`NeRF, bu durumu, her koordinatın MLP'den önce bir Fourier özelliği vektörüne kodlanarak düzeltir:
 
-```
-gamma(p) = (sin(2^0 pi p), cos(2^0 pi p), sin(2^1 pi p), cos(2^1 pi p), ...)
+```math
+\gamma(p) = \left(\sin(2^0 \pi p), \cos(2^0 \pi p), \sin(2^1 \pi p), \cos(2^1 \pi p), \ldots\right)
 ```
 
-L=10 frekans seviyelerine kadar. Bu, pozisyonlar için kullanılan aynı hile transformörleridir ve difüzyon zaman şartlandırmasında tekrar ortaya çıkar (Desin 10).
+- Evet .$L=10$Bu, pozisyonlar için kullanılan aynı hile transformörleri ve bu durum, difüzyon zaman şartlandırmasında tekrar ortaya çıkar (Desin 10).
 
 ### Volumetrik görüntüleme
 
+```math
+\begin{aligned}
+C(r) &= \sum_i T_i \left(1 - \exp(-\sigma_i \delta_i)\right) c_i \\[4pt]
+T_i &= \exp\left(-\sum_{j<i} \sigma_j \delta_j\right) \\
+\delta_i &= t_{i+1} - t_i
+\end{aligned}
 ```
-C(r) = sum_i T_i * (1 - exp(-sigma_i * delta_i)) * c_i
 
-T_i  = exp(- sum_{j<i} sigma_j * delta_j)
-delta_i = t_{i+1} - t_i
-```
-
-`T_i`i.I.I.I.I.I.I.I.I.I.I.I.I.I.I.I.I.I.I.I.I.I.I.I.I.I.I.I.I.I.I.I.I.I.I.I.I.I.I.I.I.I.I.I.I.I.I.I.I.I.I.I.I.I.I.I.I.I.I.I.I.I.I.I.I.I.I.I.I.I.I.I.I.I.I.I.I.I.I.I.I.I.I.I.I.I.I.I.I.I.I.I.I.I.I.I.I.I.I.I.I.I.I.I.I.I.I.I.I.I.I.I.I.I.I.I.I.I.I.I.I.I.I.I.I.I.I.I.I.I.I.I.I.I.I.I.I.I.I.I.I.I.I.I.I.I.I.I.I.I.I.I.I.I.I.I.I.I.I.I.I.I.I.I.I.I.I.I.I.I.I.I.I.I.I.I.I.I.I.I.I.I.I.I.I.I.I.I.I.I.I.I.I.I.I.I.I.I.I.I.I.I.I.I.I.I.I.I.I.I.I.I.I.I.I.I.I.I.I.I.I.I.I.I.I.I.I.I.I.I.I.I.I.I.I.I.I.I.I.I.I.I.I.I.I.I.I.I.I.I.I.I.I.I.I.`(1 - exp(-sigma_i * delta_i))`i. noktada bulanıklık.`c_i`Son piksel ışın boyunca ağırlanan bir toplamdır.
+`T_i` ne kadar ışık noktaya kadar hayatta kalır $i$- Evet .`(1 - exp(-sigma_i * delta_i))`noktada bulanıklık $i$- Evet .`c_i`Son piksel ışın boyunca ağırlanan bir toplamdır.
 
 ### NeRF'lerin yerini ne aldı?
 

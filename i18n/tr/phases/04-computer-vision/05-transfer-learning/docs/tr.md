@@ -100,8 +100,8 @@ Küçük veri kümeleri için, genellikle tek bir çizgi katman yeterli olur. Gi
 
 Modern ince ayarlarda kullanılan ayrımcı LR'nin daha düzgün bir versiyonu (BEiT, DINOv2, ViT-B ince ayarları).
 
-```
-lr_layer_k = base_lr * decay^(L - k)
+```math
+\text{lr\_layer}_k = \text{base\_lr} \cdot \text{decay}^{L - k}
 ```
 
 Çürüme = 0,75 ve L = 12 transformatör blokları ile ilk blok trenleri `0.75^11 ≈ 0.04x`Transformer ince tonları için CNN'ler için daha önemlidir, genellikle sahne gruplandırılmış LR'lar yeterli.

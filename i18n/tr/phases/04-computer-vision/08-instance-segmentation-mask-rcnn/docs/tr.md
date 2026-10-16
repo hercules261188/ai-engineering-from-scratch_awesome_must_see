@@ -86,8 +86,8 @@ Son ikili maskesi üretmek için 28x28 maskesini önerinin orijinal piksel boyut
 
 Mask R-CNN'in toplam 4 kayıpı var:
 
-```
-L = L_rpn_cls + L_rpn_box + L_box_cls + L_box_reg + L_mask
+```math
+L = L_{\text{rpn\_cls}} + L_{\text{rpn\_box}} + L_{\text{box\_cls}} + L_{\text{box\_reg}} + L_{\text{mask}}
 ```
 
 - `L_rpn_cls`- Evet .`L_rpn_box` RPN önerileri için nesnelik + kutu gerileme.

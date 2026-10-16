@@ -42,7 +42,7 @@ Her iki kodlayıcı da aynı yerleştirme boyutuna (512 CLIP-B/32, 1024 CLIP-L/1
 
 ### Amaç
 
-N (resim, başlık) çiftlerinin bir partiyi vererek, NxN benzerlik matrisi oluşturun. Her iki kodlayıcıyı çalıştırın, böylece diyagonal (eşitli çiftler) yüksek benzerlik gösterir ve dış diyagonallar (eşitli olmayan) düşük benzerlik gösterir.
+Bir sürü $N$(resim, başlık) çiftler, bir inşa $N \times N$İki kodlayıcıyı da çalıştırın, böylece diyagonal (eşitli çiftler) yüksek benzerliklere sahiptir ve dış diyagonal (eşitli olmayan) düşük benzerliklere sahiptir.
 
 ```
 sim_matrix = image_embeddings @ text_embeddings.T / tau
@@ -58,9 +58,11 @@ Hem resimden metne hem de metinden görüntüye geri alım işlemeli. `tau`(temp
 
 SigLIP (Zhai et al., 2023) softmax'ı çift başına sigmoid ile değiştirdi:
 
-```
-loss = mean over pairs of log(1 + exp(-y_ij * sim_ij))
-y_ij = +1 if matching, -1 otherwise
+```math
+\begin{aligned}
+\text{loss} &= \mathop{\mathrm{mean}}\limits_{\text{pairs}} \log\left(1 + \exp(-y_{ij} \cdot \text{sim}_{ij})\right) \\
+y_{ij} &= \begin{cases} +1 & \text{if matching} \\ -1 & \text{otherwise} \end{cases}
+\end{aligned}
 ```
 
 Çift başına kaybı, CLIP'in gerektirdiği parti seviyesindeki normallaşmayı ortadan kaldırır. SigLIP, küçük parti boyutlarında daha iyi çalışır ve eşit verilerde CLIP'den daha fazla veya daha fazla eşleşir.
@@ -224,4 +226,4 @@ Bu ders şunları ortaya çıkarır:
 - [CLIP: Learning Transferable Visual Models from Natural Language Supervision (Radford et al., 2021)](https://arxiv.org/abs/2103.00020)
 - [SigLIP: Sigmoid Loss for Language-Image Pre-Training (Zhai et al., 2023)](https://arxiv.org/abs/2303.15343)
 - [OpenCLIP](https://github.com/mlfoundations/open_clip) Topluluk kod tabanı
-- [DINOv2 vs CLIP vs MAE: a features comparison](https://huggingface.co/blog/dinov2) Yan yan kullanım durumları ile HF rehberi
+- [Oquab et al. (2023). DINOv2: Learning Robust Visual Features without Supervision](https://arxiv.org/abs/2304.07193) CLIP ve MAE biçimindeki modellere karşı özellik referansları ile kağıt
