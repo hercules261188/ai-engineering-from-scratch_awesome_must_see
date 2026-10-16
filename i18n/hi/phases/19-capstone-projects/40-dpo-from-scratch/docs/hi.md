@@ -27,42 +27,46 @@
 
 ब्रैडली-टेरी मॉडल से शुरू करें.`x`और दो पूर्णता `y_w`(चयनित) और `y_l`(अस्वीकृत), संभावना मानव पसंद करता है `y_w`है
 
-```text
-P(y_w > y_l | x) = sigmoid( r(x, y_w) - r(x, y_l) )
+```math
+P(y_w > y_l \mid x) = \sigma\big( r(x, y_w) - r(x, y_l) \big)
 ```
 
 कहाँ`r`RLHF पहले फिट बैठता है`r`प्राथमिकता से, फिर एक नीति को प्रशिक्षित करता है `pi`अधिकतम करने के लिए `r`KL एंकर के साथः
 
-```text
-max_pi   E_{x, y~pi} [ r(x, y) ] - beta * KL(pi || pi_ref)
+```math
+\max_{\pi} \; \mathbb{E}_{x, y \sim \pi} \big[ r(x, y) \big] - \beta \, \mathrm{KL}(\pi \,\|\, \pi_{\text{ref}})
 ```
 
 डीपीओ व्युत्पन्न यह देखते हैं कि इष्टतम नीति `pi*`इस उद्देश्य के तहत यह एक बंद रूप में है`r`:
 
-```text
-pi*(y | x) = (1/Z(x)) * pi_ref(y | x) * exp( r(x, y) / beta )
+```math
+\pi^*(y \mid x) = \frac{1}{Z(x)} \, \pi_{\text{ref}}(y \mid x) \exp\!\left( \frac{r(x, y)}{\beta} \right)
 ```
 
  के लिए पुनर्गठन`r`:
 
-```text
-r(x, y) = beta * ( log pi*(y | x) - log pi_ref(y | x) ) + beta * log Z(x)
+```math
+r(x, y) = \beta \big( \log \pi^*(y \mid x) - \log \pi_{\text{ref}}(y \mid x) \big) + \beta \log Z(x)
 ```
 
 `log Z(x)`दोनों के लिए शब्द एक ही है `y_w`और `y_l`(यह निर्भर करता है`x`नहीं`y`), इसलिए यह प्राथमिकता अंतर की गणना करते समय रद्द हो जाता हैः
 
-```text
-r(x, y_w) - r(x, y_l) = beta * ( log pi_theta(y_w|x) - log pi_ref(y_w|x)
-                                - log pi_theta(y_l|x) + log pi_ref(y_l|x) )
+```math
+\begin{aligned}
+r(x, y_w) - r(x, y_l) = \beta \big( &\log \pi_\theta(y_w \mid x) - \log \pi_{\text{ref}}(y_w \mid x) \\
+&- \log \pi_\theta(y_l \mid x) + \log \pi_{\text{ref}}(y_l \mid x) \big)
+\end{aligned}
 ```
 
 ब्रैडली-टेरी सिग्मोइड में प्रतिस्थापन करें और प्राथमिकता जोड़े पर नकारात्मक लॉग संभावना लेंः
 
-```text
-L_DPO(theta) = - E_{(x, y_w, y_l)} [
-  log sigmoid( beta * ( log pi_theta(y_w|x) - log pi_ref(y_w|x)
-                       - log pi_theta(y_l|x) + log pi_ref(y_l|x) ) )
-]
+```math
+\begin{aligned}
+L_{\text{DPO}}(\theta) = -\mathbb{E}_{(x, y_w, y_l)} \Big[
+  \log \sigma\big( \beta \big( &\log \pi_\theta(y_w \mid x) - \log \pi_{\text{ref}}(y_w \mid x) \\
+  &- \log \pi_\theta(y_l \mid x) + \log \pi_{\text{ref}}(y_l \mid x) \big) \big)
+\Big]
+\end{aligned}
 ```
 
 यह हानि है। यह एक एकल स्केलर पर एक सिग्मोइड है उदाहरण के लिए, चार लॉग-संभाव्यताओं से गणना की गई। कोई अलग इनाम मॉडल नहीं है। कोई पीपीओ नहीं है। हानि में कोई KL शब्द नहीं है; KL प्रतिबंध बंद-रूप व्युत्पन्न में बेक किया गया है।
@@ -87,8 +91,8 @@ flowchart LR
 
 किसी भी प्रशिक्षण दौड़ से पहले एक उपयोगी मानसिक जांच।`log pi_theta(y_w | x)`:
 
-```text
-d L_DPO / d log pi_theta(y_w | x) = - beta * (1 - sigmoid(z))
+```math
+\frac{\partial L_{\text{DPO}}}{\partial \log \pi_\theta(y_w \mid x)} = -\beta \big(1 - \sigma(z)\big)
 ```
 
 कहाँ`z`यह सभी के लिए नकारात्मक है`z`, जिसका अर्थ हैः चयनित समापन की नीति की लॉग-प्रभाव्यता को बढ़ाना नुकसान को कम करता है।`log pi_theta(y_l | x)`सकारात्मक है: अस्वीकृत लॉग-प्रभाव्यता को बढ़ाना नुकसान को बढ़ाना है। प्रशिक्षण चुने हुए को ऊपर और अस्वीकृत को नीचे धकेलता है। संदर्भ जमे हुए है; यह नहीं चलता है।

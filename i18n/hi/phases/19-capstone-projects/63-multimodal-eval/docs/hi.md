@@ -49,15 +49,14 @@ flowchart TB
 
 ### ब्लू-4
 
-```text
-BLEU-4 = BP * exp(mean(log p1, log p2, log p3, log p4))
+```math
+\text{BLEU-4} = \text{BP} \cdot \exp\big(\text{mean}(\log p_1, \log p_2, \log p_3, \log p_4)\big)
 ```
 
 कहाँ`p_n`संशोधित n-ग्राम सटीकता (किसी भी संदर्भ में दिखाई देने वाले उत्पन्न n-ग्राम की कटौती संख्या, कुल उत्पन्न n-ग्राम द्वारा विभाजित) है, और `BP`संक्षिप्तता दंड हैः
 
-```text
-BP = 1                if generated length > reference length
-   = exp(1 - r/g)     otherwise, where r is reference length and g is generated
+```math
+\text{BP} = \begin{cases} 1 & \text{if generated length} > \text{reference length} \\ \exp(1 - r/g) & \text{otherwise, where } r \text{ is reference length and } g \text{ is generated} \end{cases}
 ```
 
 छोटे नमूनों के लिए चिकनाई की आवश्यकता होती है जहां कुछ `p_n`निष्पादन में चेन और चेरी "विधि 1" (किसी भी शून्य गणना के लिए संख्यात्मक और संज्ञात्मक में 1 जोड़ें) का उपयोग किया जाता है, जो कम संख्या वाले शासन के लिए सबसे सुरक्षित डिफ़ॉल्ट है।

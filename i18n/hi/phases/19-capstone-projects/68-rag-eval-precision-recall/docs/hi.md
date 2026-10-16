@@ -182,7 +182,7 @@ python3 code/main.py
 - बक्ले, वोरहीज, "मूल्यांकन उपाय स्थिरता का मूल्यांकन", SIGIR 2000 - रैंकिंग मीट्रिक पर कैनोनिक पेपर
 - Jarvelin, Kekalainen, "एडवीटी तकनीक का संचित लाभ आधारित मूल्यांकन" - nDCG पेपर
 - [Ragas: Automated Evaluation of RAG Pipelines](https://docs.ragas.io)
-- [Anthropic, Evaluating RAG](https://www.anthropic.com/news/evaluating-rag)
+- [Anthropic, Introducing Contextual Retrieval](https://www.anthropic.com/engineering/contextual-retrieval)- 1 - रिकॉल@20 के साथ रिकवरी स्कोर करता है
 - चरण 11 पाठ 10 - मूल्यांकन ढांचे की नींव
 - चरण 19 पाठ 64-67 - यहां मूल्यांकन किए गए घटक
 - चरण 19 पाठ 69 - अंत से अंत पाइपलाइन इस मूल्यांकन ग्रेड

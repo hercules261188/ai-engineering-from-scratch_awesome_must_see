@@ -151,7 +151,7 @@ learner: "6"
 
 - [Khanmigo (Khan Academy)](https://www.khanmigo.ai) संदर्भ उपभोक्ता K-12 शिक्षक
 - [Duolingo Max](https://blog.duolingo.com/duolingo-max/) भाषा सीखने के लिए संदर्भ शिक्षक
-- [Google LearnLM / Gemini for Education](https://blog.google/technology/google-deepmind/learnlm) होस्ट किए गए संदर्भ मॉडल
+- [Google LearnLM / Gemini for Education](https://blog.google/products-and-platforms/products/education/google-learnlm-gemini-generative-ai/) होस्ट किए गए संदर्भ मॉडल
 - [Quizlet Q-Chat](https://quizlet.com) वैकल्पिक संदर्भ
 - [Synthesis Tutor](https://www.synthesis.com) स्टार्टअप संदर्भ
 - [FSRS algorithm](https://github.com/open-spaced-repetition/fsrs4anki) अंतराल-पुनरावृत्ति अनुसूचक

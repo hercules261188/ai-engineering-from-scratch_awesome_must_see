@@ -156,4 +156,4 @@ $ ai-scientist run --seed "attention sparsity in sub-1B transformers" --budget 3
 - [LangGraph documentation](https://langchain-ai.github.io/langgraph/) संदर्भ ऑर्केस्ट्रेशन परत
 - [Semantic Scholar Graph API](https://api.semanticscholar.org/) साहित्य खोज
 - [E2B sandboxes](https://e2b.dev) संदर्भ प्रयोग अलगाव
-- [NeurIPS reviewer guidelines](https://neurips.cc/Conferences/2026/Reviewer-Guidelines) समीक्षक समूह द्वारा कोडित rubric
+- [NeurIPS reviewer guidelines](https://neurips.cc/Conferences/2026/ReviewerGuidelines) समीक्षक समूह द्वारा कोडित rubric
