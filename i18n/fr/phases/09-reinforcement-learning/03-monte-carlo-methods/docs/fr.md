@@ -9,7 +9,7 @@
 
 ## Le problème
 
-La programmation dynamique est élégante, mais elle suppose que vous pouvez demander `P(s' | s, a)`Un robot ne peut pas calculer analytiquement la distribution sur les pixels de la caméra après un couple commun. Un algorithme de prix ne peut pas s'intégrer sur chaque réaction possible du client. Un LLM ne peut pas énumérer toutes les continuations possibles après un jeton.
+La programmation dynamique est élégante, mais elle suppose que vous pouvez demander $P(s' \mid s, a)$Un robot ne peut pas calculer analytiquement la distribution sur les pixels de la caméra après un couple commun. Un algorithme de prix ne peut pas s'intégrer sur chaque réaction possible du client. Un LLM ne peut pas énumérer toutes les continuations possibles après un jeton.
 
 Vous avez besoin d'une méthode qui ne nécessite que la capacité de *prendre des échantillons* de l'environnement.`s_0, a_0, r_1, s_1, a_1, r_2, …, s_T`- Utilisez-le pour estimer les valeurs.
 
@@ -19,30 +19,32 @@ Le changement de DP à MC est philosophiquement important: nous passons de * mod
 
 ![Monte Carlo: rollout, compute returns, average; first-visit vs every-visit](../assets/monte-carlo.svg)
 
-**The core idea, in one line:** `V^π(s) = E_π[G_t | s_t = s] ≈ (1/N) Σ_i G^{(i)}(s)`où `G^{(i)}(s)`Les résultats observés sont les suivants:`s`dans le cadre de la politique `π`- Je suis désolé .
+**The core idea, in one line:** $V^\pi(s) = \mathbb E_\pi[G_t \mid s_t = s] \approx (1/N) \sum_i G^{(i)}(s)$où $G^{(i)}(s)$Les résultats observés sont les suivants:$s$dans le cadre de la politique $\pi$- Je suis désolé .
 
-**First-visit vs every-visit MC.**Vu un épisode qui visite l' état `s`Les premières visites sont plus simples à analyser (échantillons d'iid). Chaque visite utilise plus de données par épisode et converge généralement plus rapidement dans la pratique.
+**First-visit vs every-visit MC.**Vu un épisode qui visite l' état $s$Les premières visites sont plus simples à analyser (échantillons d'iid). Chaque visite utilise plus de données par épisode et converge généralement plus rapidement dans la pratique.
 
 **Incremental mean.**Au lieu de stocker tous les retours, mettre à jour la moyenne courante:
 
-`V_n(s) = V_{n-1}(s) + (1/n) [G_n - V_{n-1}(s)]`
+```math
+V_n(s) = V_{n-1}(s) + (1/n) [G_n - V_{n-1}(s)]
+```
 
-Réorganiser: `V_new = V_old + α · (target - V_old)`avec `α = 1/n`- Échangez .`1/n`pour une taille de marge constante `α ∈ (0, 1)`et vous obtenez un estimateur MC non-stationnaire qui suit les changements dans `π`Ce mouvement est le saut de MC à TD à tous les algorithmes RL modernes.
+Réorganiser: $V_{\text{new}} = V_{\text{old}} + \alpha \cdot (\text{target} - V_{\text{old}})$avec $\alpha = 1/n$- Échangez .$1/n$pour une taille de marge constante $\alpha \in (0, 1)$et vous obtenez un estimateur MC non-stationnaire qui suit les changements dans $\pi$Ce mouvement est le saut de MC à TD à tous les algorithmes RL modernes.
 
-**Exploration is now a problem.**Le DP a touché chaque État par l'enregistrement.`π`Les données de l'espace de l'état ne sont jamais échantillonnées et leurs estimations de valeur restent à zéro pour toujours.
+**Exploration is now a problem.**Le DP a touché chaque État par l'enregistrement.$\pi$Les données de l'espace de l'état ne sont jamais échantillonnées et leurs estimations de valeur restent à zéro pour toujours.
 
 1. **Exploring starts.**Commencez chaque épisode à partir d'une paire aléatoire (s, a). Garantit la couverture; irréaliste dans la pratique (vous ne pouvez pas "réinitialiser" un robot dans un état arbitraire).
-2. **ε-greedy.**Agissez avide avec le courant Q, mais avec la probabilité `ε`Toutes les paires d'actions d'état sont échantillonnées de manière asymptotique.
-3. **Off-policy MC.**Rassembler des données dans le cadre d' une politique de comportement `μ`, apprendre sur la politique cible `π`La variance est élevée, mais c'est le pont vers des méthodes de tampon de répétition comme DQN.
+2. **ε-greedy.**Agissez avide avec le courant Q, mais avec la probabilité $\epsilon$Toutes les paires d'actions d'état sont échantillonnées de manière asymptotique.
+3. **Off-policy MC.**Rassembler des données dans le cadre d' une politique de comportement $\mu$, apprendre sur la politique cible $\pi$La variance est élevée, mais c'est le pont vers des méthodes de tampon de répétition comme DQN.
 
 **Monte Carlo Control.**Évaluer → améliorer → évaluer, tout comme l'itération de la politique, mais l'évaluation est basée sur l'échantillonnage:
 
-1. On court .`π`- Je vais vous faire un épisode.
-2. Mise à jour `Q(s, a)`à partir des résultats observés.
-3. Faites-le`π`É-coupard de l'argent.`Q`- Je suis désolé .
+1. On court .$\pi$- Je vais vous faire un épisode.
+2. Mise à jour $Q(s, a)$à partir des résultats observés.
+3. Faites-le$\pi$É-coupard de l'argent.$Q$- Je suis désolé .
 4. Je répète.
 
-Converge à `Q*`et `π*`avec probabilité 1 dans des conditions douces (toutes les paires ont été visitées de façon infinie,`α`Il est satisfait de Robbins-Monro.
+Converge à $Q^{\ast}$et $\pi^{\ast}$avec probabilité 1 dans des conditions douces (toutes les paires ont été visitées de façon infinie,$\alpha$Il est satisfait de Robbins-Monro.
 
 ```figure
 epsilon-greedy
@@ -80,7 +82,7 @@ def returns_from(trajectory, gamma):
     return list(reversed(returns))
 ```
 
-Une passe,`O(T)`La récurrence en arrière .`G_t = r_{t+1} + γ G_{t+1}`évitent de recommencer à la somme.
+Une passe,$O(T)$La récurrence en arrière .$G_t = r_{t+1} + \gamma G_{t+1}$évitent de recommencer à la somme.
 
 ### Étape 3: évaluation du MC lors de la première visite
 
@@ -130,15 +132,15 @@ def mc_control(env, episodes, gamma=0.99, epsilon=0.1):
 
 ### Étape 5: comparer avec le standard d'or DP
 
-Votre estimation du MC de `V^π`En pratique, 50 000 épisodes sur 4×4 GridWorld vous permettent de vous intégrer dans la série.`~0.1`de la réponse du DP.
+Votre estimation du MC de $V^\pi$En pratique, 50 000 épisodes sur 4×4 GridWorld vous permettent de vous intégrer dans la série.`~0.1`de la réponse du DP.
 
 ## Les pièges
 
 - **Infinite episodes.**MC a besoin d'épisodes pour *cesser*. Si votre politique peut boucle pour toujours, cap `max_steps`GridWorld avec une politique aléatoire, il faut compter correctement.
-- **Variance.**MC utilise des retours complets. sur les longs épisodes, la variance est énorme  une récompense malchanceuse à la fin des tours `V(s_0)`Les méthodes TD (Lesson 04) réduisent ce nombre en le démarrant.
+- **Variance.**MC utilise des retours complets. sur les longs épisodes, la variance est énorme  une récompense malchanceuse à la fin des tours $V(s_0)$Les méthodes TD (Lesson 04) réduisent ce nombre en le démarrant.
 - **State coverage.**Un MC avide sur un Q frais avec des liens n'essaie qu'une seule action.
-- **Non-stationary policies.**Si vous`π`Les résultats de l'analyse de l'échantillon sont basés sur des données de référence, et les résultats de l'échantillon sont basés sur des données de référence.
-- **Off-policy importance sampling.**Les poids .`π(a|s)/μ(a|s)`La variance explose avec l'horizon.
+- **Non-stationary policies.**Si vous$\pi$Les résultats de l'analyse de l'échantillon sont basés sur des données de référence, et les résultats de l'échantillon sont basés sur des données de référence.
+- **Off-policy importance sampling.**Les poids .$\pi(a \mid s)/\mu(a \mid s)$La variance explose avec l'horizon.
 
 ## Utilisez-le
 
@@ -150,10 +152,10 @@ Le rôle des méthodes de Monte Carlo en 2026:
 | Offline evaluation of a logged policy | Average discounted returns over stored trajectories. |
 | Monte Carlo Tree Search (AlphaZero) | MC rollouts from tree leaves guide selection. |
 | LLM RL evaluation | Compute average reward over sampled completions for a given policy. |
-| Baseline estimation in PPO | The advantage target `A_t = G_t - V(s_t)` uses an MC `G_t`. |
+| Baseline estimation in PPO | The advantage target $A_t = G_t - V(s_t)$ uses an MC $G_t$. |
 | Teaching RL | Simplest algorithm that actually works — strip bootstrapping to see the core. |
 
-Les algorithmes modernes de profondeur de RL (PPO, SAC) interpolent entre MC pur (rendement complet) et TD pur (bootstrap à un pas) via `n`Les deux points de fin sont des instances du même estimateur.
+Les algorithmes modernes de profondeur de RL (PPO, SAC) interpolent entre MC pur (rendement complet) et TD pur (bootstrap à un pas) via $n$Les deux points de fin sont des instances du même estimateur.
 
 ## La faire partir
 
@@ -182,20 +184,20 @@ Refuse to run MC on non-episodic tasks without a finite horizon cap. Refuse to r
 
 ## Exercices
 
-1. **Easy.**Mettre en œuvre une évaluation MC de la politique uniforme au hasard lors de la première visite sur 4×4 GridWorld.`V(0,0)`en fonction du nombre d'épisodes par rapport à la réponse du DP.
-2. **Medium.**Implémenter le contrôle de l' MC avec `ε ∈ {0.01, 0.1, 0.3}`Comparer le retour moyen après 20 000 épisodes.
-3. **Hard.**Implementer des MC "extra-politiques" avec échantillonnage d'importance: collecter des données dans le cadre d'une politique uniforme et aléatoire `μ`, estimation `V^π`pour la politique déterministe optimale `π`Comparer l'IS simple par rapport à l'IS par décision par rapport à l'IS pondéré.
+1. **Easy.**Mettre en œuvre une évaluation MC de la politique uniforme au hasard lors de la première visite sur 4×4 GridWorld.$V(0,0)$en fonction du nombre d'épisodes par rapport à la réponse du DP.
+2. **Medium.**Implémenter le contrôle de l' MC avec $\epsilon \in \lbrace 0.01, 0.1, 0.3 \rbrace$Comparer le retour moyen après 20 000 épisodes.
+3. **Hard.**Implementer des MC "extra-politiques" avec échantillonnage d'importance: collecter des données dans le cadre d'une politique uniforme et aléatoire $\mu$, estimation $V^\pi$pour la politique déterministe optimale $\pi$Comparer l'IS simple par rapport à l'IS par décision par rapport à l'IS pondéré.
 
 ## Les termes clés
 
 | Term | What people say | What it actually means |
 |------|-----------------|-----------------------|
 | Monte Carlo | "Random sampling" | Estimate expectations by averaging over iid samples from the distribution. |
-| Return `G_t` | "Future reward" | Sum of discounted rewards from step `t` to episode end: `Σ_{k≥0} γ^k r_{t+k+1}`. |
+| Return $G_t$ | "Future reward" | Sum of discounted rewards from step $t$ to episode end: $\sum_{k\ge 0} \gamma^k r_{t+k+1}$. |
 | First-visit MC | "Count each state once" | Only the first visit in an episode contributes to the value estimate. |
 | Every-visit MC | "Use all visits" | Every visit contributes; slightly biased but more sample-efficient. |
-| ε-greedy | "Exploration noise" | Pick greedy action with prob `1-ε`; random action with prob `ε`. |
-| Importance sampling | "Correcting for sampling from the wrong distribution" | Reweight returns by `π(a\|s)/μ(a\|s)` products to estimate `V^π` from `μ` data. |
+| ε-greedy | "Exploration noise" | Pick greedy action with prob $1-\epsilon$; random action with prob $\epsilon$. |
+| Importance sampling | "Correcting for sampling from the wrong distribution" | Reweight returns by $\pi(a \mid s)/\mu(a \mid s)$ products to estimate $V^\pi$ from $\mu$ data. |
 | On-policy | "Learn from my own data" | Target policy = behavior policy. Vanilla MC, PPO, SARSA. |
 | Off-policy | "Learn from someone else's data" | Target policy ≠ behavior policy. Importance-sampled MC, Q-learning, DQN. |
 

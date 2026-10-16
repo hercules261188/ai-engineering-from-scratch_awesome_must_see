@@ -21,31 +21,31 @@ Cela casse les preuves de convergence tabulaire (la garantie de Q-learning suppo
 
 ![Four MARL regimes: indep, centralized critic, self-play, league](../assets/marl.svg)
 
-**Formalism: Markov Game.**Une généralisation du MDP: États `S`, une action commune `a = (a_1, …, a_n)`, transition `P(s' | s, a)`, et récompenses par agent `R_i(s, a, s')`- Chaque agent .`i`maximiser son propre rendement dans le cadre de sa propre politique `π_i`Si les récompenses sont identiques, c'est le cas.**fully cooperative**Si c'est une somme nulle, c'est ça.**adversarial**Si elle est mélangée, elle est.**general-sum**- Je suis désolé .
+**Formalism: Markov Game.**Une généralisation du MDP: États $S$, une action commune $a = (a_1, \ldots, a_n)$, transition $P(s' \mid s, a)$, et récompenses par agent $R_i(s, a, s')$- Chaque agent .$i$maximiser son propre rendement dans le cadre de sa propre politique $\pi_i$Si les récompenses sont identiques, c'est le cas.**fully cooperative**Si c'est une somme nulle, c'est ça.**adversarial**Si elle est mélangée, elle est.**general-sum**- Je suis désolé .
 
 **Core challenges:**
 
-- **Non-stationarity.** `P(s' | s, a_i)`de l' agent `i`La vue dépend de `π_{-i}`, ce qui change.
+- **Non-stationarity.** $P(s' \mid s, a_i)$de l' agent $i$La vue dépend de $\pi_{-i}$, ce qui change.
 - **Credit assignment.**Avec une récompense partagée, quel agent l'a causé ?
 - **Exploration coordination.**Les agents doivent explorer des stratégies complémentaires, pas redondamment explorer le même état.
-- **Scalability.**L' espace d' action commune augmente de façon exponentielle en `n`- Je suis désolé .
+- **Scalability.**L' espace d' action commune augmente de façon exponentielle en $n$- Je suis désolé .
 - **Partial observability.**Chaque agent ne voit que sa propre observation; l'état mondial est caché.
 
 **Four dominant regimes:**
 
 **1. Independent Q-learning / independent PPO (IQL, IPPO).**Chaque agent apprend sa propre Q ou politique, traitant les autres comme faisant partie de l'environnement. Simple, parfois cela fonctionne (surtout avec une répétition de l'expérience agissant comme un truc de modélisation d'agent de lissage). Convergence théorique: aucune.
 
-**2. Centralized training, decentralized execution (CTDE).**Le paradigme moderne le plus courant.`π_i`que les conditions de l' observation locale `o_i` exécution standard décentralisée au déploiement.`Q(s, a_1, …, a_n)`Les conditions relatives à l'état global complet et à l'action commune.
+**2. Centralized training, decentralized execution (CTDE).**Le paradigme moderne le plus courant.$\pi_i$que les conditions de l' observation locale $o_i$ exécution standard décentralisée au déploiement.$Q(s, a_1, \ldots, a_n)$Les conditions relatives à l'état global complet et à l'action commune.
 - **MADDPG**(Lowe et coll. 2017): DDPG avec un critique centralisé par agent.
-- **COMA**(Foerster et coll. 2017): base contrefactuelle  demandez " quelle aurait été ma récompense si j'avais pris des mesures `a'`"  isole ma contribution.
+- **COMA**(Foerster et coll. 2017): base contrefactuelle  demandez " quelle aurait été ma récompense si j'avais pris des mesures $a'$"  isole ma contribution.
 - **MAPPO**- Je suis là .**IPPO**avec critique partagée (Yu et coll. 2022): PPO avec une fonction de valeur centralisée.
-- **QMIX**(Rashid et coll. 2018): décomposition de la valeur  `Q_tot(s, a) = f(Q_1(s, a_1), …, Q_n(s, a_n))`avec un mélange monotone.
+- **QMIX**(Rashid et coll. 2018): décomposition de la valeur  $Q_{\text{tot}}(s, a) = f(Q_1(s, a_1), \ldots, Q_n(s, a_n))$avec un mélange monotone.
 
 **3. Self-play.**Deux copies du même agent se jouent. La politique de l'adversaire *est* ma politique d'un instantané passé. AlphaGo / AlphaZero / MuZero. OpenAI Five. Fonctionne mieux pour les jeux à somme nulle; le signal d'entraînement est symétrique.
 
 **4. League play.**Une extension du jeu à des environnements généraux / adversitaires: conserver une population de politiques passées et actuelles, échantillonner un adversaire de la ligue, s'entraîner contre eux. Ajout d'exploitants (spécialisés dans la battre le meilleur actuel) et d'exploitants principaux (spécialisés dans la battre des exploitants). AlphaStar (StarCraft II). Nécessaire lorsque le jeu admet des cycles de stratégie "rock-paper-scissors".
 
-**Communication.**Permettez aux agents d' envoyer des messages apprentis .`m_i`Foerster et coll. (2016) ont montré que la communication interagent différenciable peut être formée de bout en bout. Les systèmes multi-agents basés sur le LLM d'aujourd'hui (phase 16) communiquent essentiellement en langage naturel.
+**Communication.**Permettez aux agents d' envoyer des messages apprentis .$m_i$Foerster et coll. (2016) ont montré que la communication interagent différenciable peut être formée de bout en bout. Les systèmes multi-agents basés sur le LLM d'aujourd'hui (phase 16) communiquent essentiellement en langage naturel.
 
 ```figure
 f3-marl-orbit
@@ -101,11 +101,11 @@ Il travaille sur cette tâche parce que les récompenses sont denses et alignée
 
 ### Étape 3: Q centralisé avec mise à jour de la valeur décomposée
 
-Utilisez un Q au lieu d' actions conjointes `Q(s, a_1, a_2)`- Mise à jour à partir de la récompense partagée. Décentraliser à l'exécution en marginalisant:`π_i(s) = argmax_{a_i} max_{a_{-i}} Q(s, a_1, a_2)`. Échange d'espace d'action commun exponentiel pour une vision globale *correcte*
+Utilisez un Q au lieu d' actions conjointes $Q(s, a_1, a_2)$- Mise à jour à partir de la récompense partagée. Décentraliser à l'exécution en marginalisant:$\pi_i(s) = \arg\max_{a_i} \max_{a_{-i}} Q(s, a_1, a_2)$. Échange d'espace d'action commun exponentiel pour une vision globale *correcte*
 
 ### Étape 4: simple jeu d'auto (agent adversaire 2)
 
-Le même agent, deux rôles.`K`Les épisodes, copier les poids d'A en B. Formation symétrique, progression constante.
+Le même agent, deux rôles.$K$Les épisodes, copier les poids d'A en B. Formation symétrique, progression constante.
 
 ## Les pièges
 
@@ -167,11 +167,11 @@ Refuse independent Q-learning on tightly-coupled cooperative tasks. Refuse to re
 
 | Term | What people say | What it actually means |
 |------|-----------------|-----------------------|
-| Markov game | "Multi-agent MDP" | `(S, A_1, …, A_n, P, R_1, …, R_n)`; each agent has its own reward. |
+| Markov game | "Multi-agent MDP" | $(S, A_1, \ldots, A_n, P, R_1, \ldots, R_n)$; each agent has its own reward. |
 | CTDE | "Centralized training, decentralized execution" | Joint critic at training time; each agent's policy uses only local obs. |
 | IPPO | "Independent PPO" | Each agent runs PPO separately. Simple baseline; often underrated. |
 | MAPPO | "Multi-agent PPO" | PPO with a centralized value function conditioned on global state. |
-| QMIX | "Monotonic value decomposition" | `Q_tot = f_monotone(Q_1, …, Q_n)` allows decentralized argmax. |
+| QMIX | "Monotonic value decomposition" | $Q_{\text{tot}} = f_{\text{monotone}}(Q_1, \ldots, Q_n)$ allows decentralized argmax. |
 | COMA | "Counterfactual multi-agent" | Advantage = my Q minus expected Q marginalizing over my action. |
 | Self-play | "Agent vs past self" | Single agent, two roles; standard for zero-sum games. |
 | League play | "Population training" | Cache past policies, sample opponents from the pool; handles strategy cycles. |

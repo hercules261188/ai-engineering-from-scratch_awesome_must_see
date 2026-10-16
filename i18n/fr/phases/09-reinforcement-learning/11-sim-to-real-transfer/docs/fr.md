@@ -31,7 +31,7 @@ Vous avez besoin d'une politique qui soit *robuste pour le sim-to-real distribut
 
 **Domain Adaptation.**En train en sim, en réglage avec une petite quantité de données réelles.
 
-- **Real2Sim2Real:**Apprendre un simulateur résiduel `f(s, a, z) - f_sim(s, a)`En utilisant des déploiements réels, entraînons dans le sim correct.
+- **Real2Sim2Real:**Apprendre un simulateur résiduel $f(s, a, z) - f_{\text{sim}}(s, a)$En utilisant des déploiements réels, entraînons dans le sim correct.
 - **Observation adaptation:**entraîner une politique qui cartographient un véritable obs → sim-like obs via un extracteur de fonctionnalités appris (par exemple, GAN pixel-à-pixel).
 
 **Privileged learning / teacher-student.**Miki et coll. 2022 (Annimal quadruped). Formez un *professeur* dans une simulation qui a accès à des informations privilégiées (truth friction au sol, altitude du terrain, dérive IMU). Dédistribuez un *étudiant* qui ne voit que des observations à capteur réel. L'étudiant apprend à déduire des caractéristiques privilégiées de l'histoire, robustes sur les paramètres physiques.
@@ -128,7 +128,7 @@ Refuse to deploy without (a) a zero-shot sim-variant test, (b) a safety shield, 
 
 ## Exercices
 
-1. **Easy.**Formez un agent Q-apprentissage sur le GridWorld à glissement fixe (slip=0.0).
+1. **Easy.**Former un agent Q-apprentissage sur le GridWorld à glissement fixe (slip=0.0).$\text{slip} \in \lbrace 0.0, 0.1, 0.3, 0.5 \rbrace$- Le retour contre le glissement.
 2. **Medium.**Formation d' un agent d' apprentissage DR Q`slip ~ Uniform[0, 0.3]`- Combien DR achète à slip=0,5 (en dehors de la distribution)?
 3. **Hard.**Mettre en œuvre un programme: commencer par slip=0,0, élargir la plage DR chaque fois que la politique atteint 90% de l'optimal. Mesurer les étapes de l'environnement totale pour atteindre slip=0,3 nul-shot par rapport à une plage de base DR fixe.
 

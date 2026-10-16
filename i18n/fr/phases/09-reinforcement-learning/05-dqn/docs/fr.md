@@ -11,7 +11,7 @@
 
 L'apprentissage de Q tabulaire nécessite une valeur Q distincte pour chaque paire (état, action). Une planche d'échecs a ~1043 états. Un cadre Atari est 210 × 160 × 3 = 100 800 caractéristiques.
 
-La solution est évidente en arrière-plan: remplacer la table Q par un réseau neural,`Q(s, a; θ)`. Mais l'approximation des fonctions naïves avec l'apprentissage Q diverge sous la " triade mortelle "  approximation des fonctions + démarrage + apprentissage hors politique. Mnih et al. (2013, 2015) ont identifié trois astuces d'ingénierie qui stabilisent l'apprentissage:
+La solution est évidente en arrière-plan: remplacer la table Q par un réseau neural,$Q(s, a; \theta)$. Mais l'approximation des fonctions naïves avec l'apprentissage Q diverge sous la " triade mortelle "  approximation des fonctions + démarrage + apprentissage hors politique. Mnih et al. (2013, 2015) ont identifié trois astuces d'ingénierie qui stabilisent l'apprentissage:
 
 1. **Experience replay**déco-corrélate les transitions.
 2. **Target network**gelant la cible du démarrage.
@@ -25,25 +25,29 @@ DQN sur Atari est la première fois qu'une seule architecture avec un seul ensem
 
 **The objective.**Le DQN réduit au minimum la perte de TD en une étape sur une fonction Q neuronale:
 
-`L(θ) = E_{(s,a,r,s')~D} [ (r + γ max_{a'} Q(s', a'; θ^-) - Q(s, a; θ))² ]`
+```math
+L(\theta) = \mathbb{E}_{(s,a,r,s') \sim D}[ (r + \gamma \max_{a'} Q(s', a'; \theta^-) - Q(s, a; \theta))^2 ]
+```
 
-`θ`= réseau en ligne, mis à jour à chaque étape par déclin de gradient. `θ^-`= réseau cible, copié périodiquement à partir de `θ`(à chaque 10 000 pas). `D`= tampon de répétition des transitions passées.
+$\theta$= réseau en ligne, mis à jour à chaque étape par déclin de gradient. $\theta^-$= réseau cible, copié périodiquement à partir de $\theta$(à chaque 10 000 pas). $D$= tampon de répétition des transitions passées.
 
 **The three tricks, in order of importance:**
 
 **Experience replay.**Un tampon de bague de `~10⁶`Les transitions de formation sont effectuées par des équipes de formation qui ont des échantillons de type mini par lots aléatoires.
 
-**Target network.**En utilisant le même réseau `Q(·; θ)`Les deux côtés de l'équation Bellman font que la cible se déplace à chaque mise à jour  " chasse à sa propre queue. " La solution: garder un deuxième réseau `Q(·; θ^-)`avec des poids gelés.`C`Pas, copie `θ → θ^-`Cela stabilise la cible de régression pour des milliers d'étapes de gradient à la fois.`θ^- ← τ θ + (1-τ) θ^-`(utilisés dans le DDPG, SAC) sont une variante plus lisse.
+**Target network.**En utilisant le même réseau $Q(\cdot; \theta)$Les deux côtés de l'équation Bellman font que la cible se déplace à chaque mise à jour  " chasse à sa propre queue. " La solution: garder un deuxième réseau $Q(\cdot; \theta^-)$avec des poids gelés.$C$Pas, copie $\theta \to \theta^-$Cela stabilise la cible de régression pour des milliers d'étapes de gradient à la fois.$\theta^- \leftarrow \tau \theta + (1-\tau) \theta^-$(utilisés dans le DDPG, SAC) sont une variante plus lisse.
 
-**Reward clipping.**Les magnitudes de récompense Atari varient de 1 à 1000+.`{-1, 0, +1}`Faut quand la récompense importe, c'est bien pour Atari quand il ne s'agit que de signes.
+**Reward clipping.**Les magnitudes de récompense Atari varient de 1 à 1000+.$\lbrace-1, 0, +1 \rbrace$Faut quand la récompense importe, c'est bien pour Atari quand il ne s'agit que de signes.
 
 **Double DQN.**Hasselt (2016) corrige le biais de maximisation: utilisez le net en ligne pour * sélectionner* l'action, le net cible pour * l'évaluer*.
 
-`target = r + γ Q(s', argmax_{a'} Q(s', a'; θ); θ^-)`
+```math
+\text{target} = r + \gamma Q(s', \arg\max_{a'} Q(s', a'; \theta); \theta^-)
+```
 
 Le remplacement est toujours mieux.
 
-**Other improvements (Rainbow, 2017):**réplique prioritaire (échantillons de transitions à forte TD-erreur plus), architecture duel (separé `V(s)`Les résultats obtenus sont: les réseaux bruyants (exploration apprise), les retours en n étapes, la distribution Q (C51/QR-DQN), le démarrage en plusieurs étapes.
+**Other improvements (Rainbow, 2017):**réplique prioritaire (échantillons de transitions à forte TD-erreur plus), architecture duel (separé $V(s)$Les résultats obtenus sont: les réseaux bruyants (exploration apprise), les retours en n étapes, la distribution Q (C51/QR-DQN), le démarrage en plusieurs étapes.
 
 ```figure
 f3-dqn-stability
@@ -104,11 +108,11 @@ def train_step(online, target, batch, gamma, lr):
     apply_sgd(online, grads, lr / len(batch))
 ```
 
-La forme est Q-apprentissage de la leçon 04 avec deux différences: a) nous nous rapprochons par un différenciable `Q(·; θ)`au lieu d'indiquer un tableau, b) les utilisations cibles `Q(·; θ^-)`- Je suis désolé .
+La forme est Q-apprentissage de la leçon 04 avec deux différences: a) nous nous rapprochons par un différenciable $Q(\cdot; \theta)$au lieu d'indiquer un tableau, b) les utilisations cibles $Q(\cdot; \theta^-)$- Je suis désolé .
 
 ### Étape 4: boucle extérieure
 
-Pour chaque épisode, agissez avec avidité.`Q(·; θ)`, poussez les transitions dans le tampon, prenez un échantillon d'un minibatch, faites un pas de gradient, synchronisez périodiquement`θ^- ← θ`Le modèle:
+Pour chaque épisode, agissez avec avidité.$Q(\cdot; \theta)$, poussez les transitions dans le tampon, prenez un échantillon d'un minibatch, faites un pas de gradient, synchronisez périodiquement$\theta^- \leftarrow \theta$Le modèle:
 
 ```python
 for episode in range(N):
@@ -181,7 +185,7 @@ Refuse to ship a DQN with no target network, no replay buffer, or ε held at 1. 
 
 1. **Easy.**On court .`code/main.py`Combien d'épisodes avant que la moyenne de course dépasse -10 ?
 2. **Medium.**Désactiver le réseau cible (utiliser le réseau en ligne pour les deux côtés de la cible Bellman). Mesurer l'instabilité de l'entraînement  est-ce que le retour oscille ou diverge?
-3. **Hard.**Ajouter le double DQN: utilisez le réseau en ligne pour choisir `argmax a'`Les résultats de l'analyse de la recherche ont été évalués en fonction des résultats obtenus.`Q(s_0, best_a)`contre vrai `V*(s_0)`Après 1000 épisodes avec vs sans Double DQN sur un grille-World.
+3. **Hard.**Ajouter le double DQN: utilisez le réseau en ligne pour choisir `argmax a'`Les résultats de l'analyse de la recherche ont été évalués en fonction des résultats obtenus.`Q(s_0, best_a)`contre vrai $V^{\ast}(s_0)$Après 1000 épisodes avec vs sans Double DQN sur un grille-World.
 
 ## Les termes clés
 
@@ -203,6 +207,5 @@ Refuse to ship a DQN with no target network, no replay buffer, or ε held at 1. 
 - [Hasselt, Guez, Silver (2016). Deep Reinforcement Learning with Double Q-learning](https://arxiv.org/abs/1509.06461) DDQN.
 - [Wang et al. (2016). Dueling Network Architectures](https://arxiv.org/abs/1511.06581)- Le duel de DQN.
 - [Hessel et al. (2018). Rainbow: Combining Improvements in Deep RL](https://arxiv.org/abs/1710.02298)- Le papier de trucs empilés.
-- [OpenAI Spinning Up — DQN](https://spinningup.openai.com/en/latest/algorithms/dqn.html) exposition moderne claire.
 - [Sutton & Barto (2018). Ch. 9 — On-policy Prediction with Approximation](http://incompleteideas.net/book/RLbook2020.pdf) le traitement manuel de la "triade mortelle" (approximation des fonctions + démarrage + hors politique) que le réseau cible et le tampon de lecture de DQN sont conçus pour dompter.
 - [CleanRL DQN implementation](https://docs.cleanrl.dev/rl-algorithms/dqn/) DQN de référence à fichier unique utilisé dans les études d'ablation; bon à lire à côté de la version originale de cette leçon.
