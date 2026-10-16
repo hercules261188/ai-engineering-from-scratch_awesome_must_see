@@ -100,8 +100,8 @@ backbone.heads.head = nn.Linear(..., num_classes)                       # torchv
 
 Một phiên bản trơn tru hơn của LR phân biệt được sử dụng trong các giai điệu tinh tế hiện đại (BEiT, DINOv2, ViT-B). Thay vì nhóm các lớp thành các giai đoạn, hãy cho mỗi lớp một LR nhỏ hơn một chút so với lớp trên nó:
 
-```
-lr_layer_k = base_lr * decay^(L - k)
+```math
+\text{lr\_layer}_k = \text{base\_lr} \cdot \text{decay}^{L - k}
 ```
 
 Với sự phân hủy = 0,75 và L = 12 khối biến thể, các khối đầu tiên được đào tạo tại `0.75^11 ≈ 0.04x`Nó quan trọng hơn cho các âm thanh biến đổi hơn là cho các chương trình CNN, nơi mà các chương trình LR nhóm giai đoạn thường là đủ.

@@ -26,7 +26,7 @@ Hai đại diện thống trị vì lý do khác nhau. đám mây điểm là nh
 
 ### Những đám mây điểm
 
-Một đám mây điểm là một tập hợp không sắp xếp của N điểm trong R^3, tùy chọn mỗi điểm có các tính năng (màu, cường độ, bình thường).
+Một đám mây điểm là một tập hợp không sắp xếp của $N$điểm trong $\mathbb{R}^3$, tùy chọn mỗi một với các đặc điểm (màu, cường độ, bình thường).
 
 ```
 cloud = [
@@ -44,8 +44,8 @@ Không lưới điện, không kết nối, hai tính chất làm cho việc nà
 
 PointNet (Qi et al., 2017) giải quyết cả hai với một ý tưởng: áp dụng một MLP chia sẻ cho mọi điểm, sau đó tổng hợp với một hàm đối xứng (tầm tối đa). Kết quả là một vector kích thước cố định không phụ thuộc vào thứ tự.
 
-```
-f(P) = max_{p in P} MLP(p)
+```math
+f(P) = \max_{p \in P} \mathop{\mathrm{MLP}}(p)
 ```
 
 Đây là toàn bộ lõi của PointNet. Các biến thể sâu hơn (PointNet++, Point Transformer) thêm mẫu phân cấp và tổng hợp địa phương nhưng thủ thuật chức năng đối xứng không thay đổi.
@@ -89,22 +89,23 @@ Một mất mát so sánh pixel được hiển thị với pixel thực tại m
 
 Một cái vanilla MLP trên `(x, y, z)`Không thể đại diện cho các chi tiết tần số cao vì MLP có thiên vị về mặt quang phổ đối với tần số thấp. NeRF sửa chữa điều này bằng cách mã hóa từng phối hợp thành một vector tính năng Fourier trước MLP:
 
-```
-gamma(p) = (sin(2^0 pi p), cos(2^0 pi p), sin(2^1 pi p), cos(2^1 pi p), ...)
+```math
+\gamma(p) = \left(\sin(2^0 \pi p), \cos(2^0 \pi p), \sin(2^1 \pi p), \cos(2^1 \pi p), \ldots\right)
 ```
 
-Cho đến mức tần số L = 10. Đây là cùng một trò chơi chuyển đổi sử dụng cho các vị trí, và nó xuất hiện lại trong điều kiện thời gian phân tán (Dạy 10) Không có nó, NeRF trông mờ.
+Tới $L=10$Đây là cùng một trò chơi biến đổi sử dụng cho các vị trí, và nó xuất hiện lại trong điều kiện thời gian phân tán (Dân học 10).
 
 ### Phân tích khối lượng
 
+```math
+\begin{aligned}
+C(r) &= \sum_i T_i \left(1 - \exp(-\sigma_i \delta_i)\right) c_i \\[4pt]
+T_i &= \exp\left(-\sum_{j<i} \sigma_j \delta_j\right) \\
+\delta_i &= t_{i+1} - t_i
+\end{aligned}
 ```
-C(r) = sum_i T_i * (1 - exp(-sigma_i * delta_i)) * c_i
 
-T_i  = exp(- sum_{j<i} sigma_j * delta_j)
-delta_i = t_{i+1} - t_i
-```
-
-`T_i`là truyền  lượng ánh sáng tồn tại đến điểm i. `(1 - exp(-sigma_i * delta_i))`là độ không thấm ở điểm i. `c_i`là màu sắc. Pixel cuối cùng là một số lượng cân nặng dọc theo tia.
+`T_i`là truyền  lượng ánh sáng tồn tại đến điểm nào $i$- `(1 - exp(-sigma_i * delta_i))`là độ không thấm ở điểm $i$- `c_i`là màu sắc. Pixel cuối cùng là một số lượng cân nặng dọc theo tia.
 
 ### Điều gì thay thế NeRF
 

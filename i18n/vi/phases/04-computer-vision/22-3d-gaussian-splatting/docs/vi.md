@@ -61,12 +61,13 @@ flowchart LR
 
 Gaussian 3D ở vị trí thế giới`mu`với sự tương tác 3D `Sigma`dự án để một Gaussian 2D tại vị trí màn hình `mu'`với sự đồng hóa 2D `Sigma'`- Có thể là:
 
-```
-mu' = project(mu)
-Sigma' = J W Sigma W^T J^T          (2 x 2)
-
-W = viewing transform (rotation + translation of camera)
-J = Jacobian of the perspective projection at mu'
+```math
+\begin{aligned}
+\mu' &= \mathop{\mathrm{project}}(\mu) \\
+\Sigma' &= J W \Sigma W^T J^T \qquad (2 \times 2) \\[6pt]
+W &= \text{viewing transform (rotation + translation of camera)} \\
+J &= \text{Jacobian of the perspective projection at } \mu'
+\end{aligned}
 ```
 
 Hình ảnh của Gaussian 2D là một hình elip có trục là các vector riêng của `Sigma'`Mỗi pixel bên trong elipse này nhận được sự đóng góp của Gaussian, trọng lượng là`exp(-0.5 * (p - mu')^T Sigma'^-1 (p - mu'))`- Tôi không biết.
@@ -75,12 +76,13 @@ Hình ảnh của Gaussian 2D là một hình elip có trục là các vector ri
 
 Đối với một pixel, các Gaussians che phủ nó được sắp xếp ngược lại (hoặc tương đương với mặt trước ngược lại với công thức đảo ngược). Màu được tạo thành với phương trình tương tự như mọi rasteriser bán minh bạch kể từ những năm 1980:
 
-```
-C_pixel = sum_i alpha_i * T_i * c_i
-
-T_i = prod_{j < i} (1 - alpha_j)       transmittance up to i
-alpha_i = opacity_i * exp(-0.5 * d^T Sigma'^-1 d)   local contribution
-c_i = eval_SH(SH_i, view_direction)    view-dependent colour
+```math
+\begin{aligned}
+C_{\text{pixel}} &= \sum_i \alpha_i T_i c_i \\[6pt]
+T_i &= \prod_{j < i} (1 - \alpha_j) && \text{transmittance up to } i \\
+\alpha_i &= \text{opacity}_i \cdot \exp\left(-0.5 \, d^T \Sigma'^{-1} d\right) && \text{local contribution} \\
+c_i &= \mathop{\mathrm{eval\_SH}}(\text{SH}_i, \text{view\_direction}) && \text{view-dependent colour}
+\end{aligned}
 ```
 
 Đây là**the same equation as NeRF's volumetric render**, chỉ trên một tập hợp hiếm rõ ràng của Gaussians thay vì các mẫu dày đặc dọc theo một tia.
@@ -97,7 +99,7 @@ Một tập hợp cố định của Gaussians không thể bao gồm một cả
 - **Split**một Gaussian quy mô lớn thành hai loại nhỏ hơn khi độ nghiêng của nó cao  một Gaussian lớn quá mịn để phù hợp với khu vực.
 - **Prune**Gaussians mà độ không thấm của nó giảm xuống dưới ngưỡng  họ không đóng góp.
 
-Thiết bị mật độ chạy mỗi lần lặp lại N. Một cảnh thường phát triển từ ~ 100k Gaussians ban đầu (được gieo từ các điểm SfM) đến 1-5M vào cuối đào tạo.
+Sự đông đúc diễn ra mọi lúc.$N$Một cảnh thường phát triển từ ~ 100k Gaussians ban đầu (được gieo từ điểm SfM) đến 1-5M vào cuối đào tạo.
 
 ### Các hợp nhất hình cầu trong một đoạn
 

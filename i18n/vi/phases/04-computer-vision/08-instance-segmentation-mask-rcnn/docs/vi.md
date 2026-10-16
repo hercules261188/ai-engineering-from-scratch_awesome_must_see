@@ -86,8 +86,8 @@ Hãy lấy mẫu mặt nạ 28x28 với kích thước pixel ban đầu của đ
 
 Mask R-CNN có bốn lỗ cộng lại:
 
-```
-L = L_rpn_cls + L_rpn_box + L_box_cls + L_box_reg + L_mask
+```math
+L = L_{\text{rpn\_cls}} + L_{\text{rpn\_box}} + L_{\text{box\_cls}} + L_{\text{box\_reg}} + L_{\text{mask}}
 ```
 
 - `L_rpn_cls`- `L_rpn_box` đối tượng + hộp lùi lại cho các đề xuất RPN.

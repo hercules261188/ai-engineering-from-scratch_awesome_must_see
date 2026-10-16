@@ -61,7 +61,7 @@ Mỗi bộ theo dõi cổ điển sử dụng bộ lọc Kalman trong bước d�
 
 ### Algoritm Hungary
 
-Với một `M x N`Matrix chi phí (tracks x detections), tìm việc giao dịch một đối với một để giảm thiểu tổng chi phí.`1 - IoU(track_bbox, detection_bbox)`hoặc tương đồng âm tính của các tính năng xuất hiện. thời gian chạy là O(((M+N) ^ 3); cho M, N lên đến ~ 1000 nó đủ nhanh trong Python thông qua `scipy.optimize.linear_sum_assignment`- Tôi không biết.
+Với một `M x N`Matrix chi phí (tracks x detections), tìm việc giao dịch một đối với một để giảm thiểu tổng chi phí.`1 - IoU(track_bbox, detection_bbox)`hoặc tương đồng âm tính của các tính năng ngoại hình.$O((M+N)^3)$; vì $M, N$lên đến ~ 1000 nó đủ nhanh trong Python qua `scipy.optimize.linear_sum_assignment`- Tôi không biết.
 
 ### Ý tưởng chính của ByteTrack
 

@@ -50,8 +50,8 @@ Top-down (HRNet, ViTPose) là người dẫn đầu độ chính xác; bottom-up
 
 Thay vì lùi lại `(x, y)`trực tiếp, dự đoán một `H x W`heatmap mỗi điểm khóa với một khối Gaussian tập trung vào vị trí thực.
 
-```
-target[k, y, x] = exp(-((x - cx_k)^2 + (y - cy_k)^2) / (2 sigma^2))
+```math
+\text{target}[k, y, x] = \exp\left(-\frac{(x - \mathit{cx}_k)^2 + (y - \mathit{cy}_k)^2}{2 \sigma^2}\right)
 ```
 
 Khi suy luận, argmax của mỗi heatmap là vị trí điểm khóa dự đoán.

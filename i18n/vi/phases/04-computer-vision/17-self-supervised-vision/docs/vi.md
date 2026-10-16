@@ -177,7 +177,7 @@ print(f"InfoNCE with identical pairs:  {loss_same:.3f}")
 print(f"InfoNCE with random pairs:     {loss_random:.3f}")
 ```
 
-Các cặp giống nhau nên tạo ra một tổn thất thấp (gần 0 cho một lô lớn và nhiệt độ lạnh).
+Các cặp giống nhau nên tạo ra một sự mất mát thấp (gần 0 cho một lô lớn và nhiệt độ lạnh).$\log(2N-1) \approx \log(31) \approx 3.4$với một lô 16 cặp.
 
 ### Bước 4: Mái hóa theo phong cách MAE
 

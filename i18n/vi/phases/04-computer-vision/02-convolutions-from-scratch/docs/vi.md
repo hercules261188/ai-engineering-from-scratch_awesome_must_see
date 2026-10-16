@@ -74,8 +74,8 @@ Một công thức đó  **shared weights, locality, sliding window** là toàn 
 
 Với kích thước không gian đầu vào `H`, kích thước hạt nhân `K`, bọc `P`, bước đi`S`- Có thể là:
 
-```
-H_out = floor( (H - K + 2P) / S ) + 1
+```math
+H_{\text{out}} = \left\lfloor \frac{H - K + 2P}{S} \right\rfloor + 1
 ```
 
 Hãy nhớ điều này. Bạn sẽ tính toán nó hàng chục lần cho mỗi kiến trúc.
@@ -88,7 +88,7 @@ Hãy nhớ điều này. Bạn sẽ tính toán nó hàng chục lần cho mỗi
 | Pool 2x2 | 32 | 2 | 0 | 2 | 16 |
 | Large receptive field | 32 | 7 | 3 | 2 | 16 |
 
-"Tương tự đệm" có nghĩa là chọn P để H_out == H khi S == 1. Đối với K lẻ, đó là P = (K - 1) / 2. Đó là lý do tại sao các hạt nhân 3x3 thống trị  chúng là hạt nhân lẻ nhỏ nhất vẫn có trung tâm.
+"Thiệm giống nhau" có nghĩa là chọn.$P$Vậy là$H_{\text{out}} = H$Khi nào $S = 1$- Để lạ$K$, đó là $P = (K - 1) / 2$Đó là lý do tại sao các hạt nhân 3x3 thống trị  chúng là hạt nhân kỳ lạ nhỏ nhất vẫn có trung tâm.
 
 ### Đánh đệm
 

@@ -42,7 +42,7 @@ Cả hai bộ mã hóa kết thúc bằng một dự án tuyến tính đến c�
 
 ### Mục tiêu
 
-Với một loạt các cặp N (hình ảnh, tiêu đề), xây dựng một matrix tương đồng NxN. Đào tạo cả hai bộ mã hóa để đường vạch (cặp phù hợp) có sự tương đồng cao và đường vạch ngoài (không phù hợp) có sự tương đồng thấp.
+Với một loạt $N$(hình, caption) cặp, xây dựng một $N \times N$Các mã hóa được tập hợp để các đường vạch (cặp phù hợp) có sự tương đồng cao và các đường vạch ngoài (không phù hợp) có sự tương đồng thấp.
 
 ```
 sim_matrix = image_embeddings @ text_embeddings.T / tau
@@ -58,9 +58,11 @@ Tương đối bởi vì cả việc lấy lại từ hình ảnh sang văn bả
 
 SigLIP (Zhai et al., 2023) đã thay thế softmax bằng sigmoid mỗi cặp:
 
-```
-loss = mean over pairs of log(1 + exp(-y_ij * sim_ij))
-y_ij = +1 if matching, -1 otherwise
+```math
+\begin{aligned}
+\text{loss} &= \mathop{\mathrm{mean}}\limits_{\text{pairs}} \log\left(1 + \exp(-y_{ij} \cdot \text{sim}_{ij})\right) \\
+y_{ij} &= \begin{cases} +1 & \text{if matching} \\ -1 & \text{otherwise} \end{cases}
+\end{aligned}
 ```
 
 Thiệt hại mỗi cặp loại bỏ sự bình thường hóa cấp lô mà CLIP yêu cầu. SigLIP đào tạo tốt hơn ở kích thước lô nhỏ và phù hợp hoặc vượt quá CLIP ở dữ liệu bằng nhau.
@@ -224,4 +226,4 @@ Bài học này mang lại:
 - [CLIP: Learning Transferable Visual Models from Natural Language Supervision (Radford et al., 2021)](https://arxiv.org/abs/2103.00020)
 - [SigLIP: Sigmoid Loss for Language-Image Pre-Training (Zhai et al., 2023)](https://arxiv.org/abs/2303.15343)
 - [OpenCLIP](https://github.com/mlfoundations/open_clip) cơ sở mã cộng đồng
-- [DINOv2 vs CLIP vs MAE: a features comparison](https://huggingface.co/blog/dinov2) HF hướng dẫn với các trường hợp sử dụng bên cạnh
+- [Oquab et al. (2023). DINOv2: Learning Robust Visual Features without Supervision](https://arxiv.org/abs/2304.07193) giấy, với các điểm tham khảo tính năng so với các mô hình CLIP và MAE

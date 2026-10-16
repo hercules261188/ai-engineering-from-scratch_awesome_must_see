@@ -97,7 +97,7 @@ Các biến đổi đầu tiên được sử dụng sau LN (`x = LN(x + sublaye
 
 - 16x16 patches -> 196 token, tiêu chuẩn.
 - 32x32 patches -> 49 token, nhanh hơn nhưng độ phân giải thấp hơn.
-- 8x8 patches -> 784 token, tinh tế hơn nhưng O(n^2) chi phí chú ý cân nặng.
+- 8x8 patches -> 784 token, tinh tế hơn nhưng $O(n^2)$Sự chú ý là một vấn đề rất khó khăn.
 
 Các bản vá lớn hơn = ít token hơn = nhanh hơn nhưng ít chi tiết không gian hơn. SwinV2 sử dụng các bản vá 4x4 trong các cửa sổ bậc phân cấp.
 

@@ -52,18 +52,20 @@ Mỗi dòng trong vòng lặp này là nơi mà một lỗi có thể sống. Cr
 
 Một phân loại sản xuất `C`số cho mỗi hình ảnh được gọi là logits. Sử dụng softmax chuyển đổi chúng thành phân phối xác suất:
 
-```
-softmax(z)_i = exp(z_i) / sum_j exp(z_j)
+```math
+\mathop{\mathrm{softmax}}(z)_i = \frac{\exp(z_i)}{\sum_j \exp(z_j)}
 ```
 
 Cross-entropy đo khả năng log âm của lớp đúng:
 
-```
-CE(z, y) = -log( softmax(z)_y )
-        = -z_y + log( sum_j exp(z_j) )
+```math
+\begin{aligned}
+\mathrm{CE}(z, y) &= -\log\left( \mathop{\mathrm{softmax}}(z)_y \right) \\
+&= -z_y + \log\left( \sum_j \exp(z_j) \right)
+\end{aligned}
 ```
 
-Hình dạng bên phải là số ổn định (log-sum-exp).`nn.CrossEntropyLoss`Fuses softmax + NLL trong một op và lấy logits thô trực tiếp.
+Hình dạng bên phải là số ổn định (log-sum-exp).`nn.CrossEntropyLoss`Fuses softmax + NLL trong một lần và lấy logits thô trực tiếp.$\log(\mathop{\mathrm{softmax}}(\mathop{\mathrm{softmax}}(z)))$, một lượng vô nghĩa.
 
 ### Tại sao tăng cường hiệu quả
 
@@ -105,7 +107,7 @@ Một người anh em của sự nhầm lẫn.`[0, 0, 1, 0, 0]`, tàu chống l�
 Sự chính xác tổng hợp che giấu sự mất cân bằng. Một phân loại nhị phân 90-10 luôn dự đoán điểm số lớp đa số là 90%. Các công cụ thực sự cho bạn biết những gì đang xảy ra:
 
 - **Per-class accuracy** một số cho mỗi lớp; ngay lập tức xuất hiện các loại có hiệu suất thấp.
-- **Confusion matrix** C x C lưới với hàng i col j = số lượng lớp thực i dự đoán như lớp j; đường vạch là chính xác, các đường vạch ngoài là nơi mô hình của bạn sống.
+- **Confusion matrix** $C \times C$lưới với hàng$i$Col $j$= đếm lớp thực $i$dự đoán như một lớp $j$; đường viền là chính xác, các đường viền ngoài là nơi mà mô hình của bạn sống.
 - **Top-1 / Top-5** liệu lớp học chính xác có nằm trong dự đoán đầu 1 hoặc đầu 5; Top-5 quan trọng đối với ImageNet vì các lớp học như "Norwich terrier" so với "Norfolk terrier" thực sự không rõ ràng.
 - **Calibration (ECE)** dự đoán độ tin cậy 0,8 có đúng 80% thời gian không?
 

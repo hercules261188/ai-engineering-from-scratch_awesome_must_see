@@ -173,8 +173,8 @@ RGB là định dạng chụp nhưng nó không phải lúc nào cũng là đạ
 
 Tỷ lệ xám từ RGB là một tổng số cân nặng, không phải là trung bình, bởi vì mắt con người nhạy cảm hơn với màu xanh lá cây hơn là màu đỏ hoặc xanh dương:
 
-```
-Y = 0.299 R + 0.587 G + 0.114 B       (ITU-R BT.601, the classic weights)
+```math
+Y = 0.299 R + 0.587 G + 0.114 B \qquad \text{(ITU-R BT.601, the classic weights)}
 ```
 
 ### Tỷ lệ khía cạnh, quy mô lại và phân cực
@@ -440,7 +440,7 @@ Bài học này mang lại:
 
 ## Đọc thêm
 
-- [Charles Poynton — A Guided Tour of Color Space](https://poynton.ca/PDFs/Guided_tour.pdf) cách xử lý kỹ thuật rõ ràng nhất về lý do tại sao có quá nhiều không gian màu sắc và khi mỗi một trong số đó quan trọng
+- [Charles Poynton — A Guided Tour of Color Space](https://web.archive.org/web/20251220000525/https://poynton.ca/PDFs/Guided_tour.pdf) cách xử lý kỹ thuật rõ ràng nhất về lý do tại sao có quá nhiều không gian màu sắc và khi mỗi một trong số đó quan trọng
 - [PyTorch Vision Transforms Docs](https://pytorch.org/vision/stable/transforms.html) toàn bộ đường ống biến đổi bạn thực sự tạo ra trong sản xuất
 - [How JPEG Works (Colt McAnlis)](https://www.youtube.com/watch?v=F1kYBnY6mwg) một tour du lịch trực quan sắc nét của mẫu phụ chroma, DCT, và tại sao JPEG mã hóa YCbCr thay vì RGB
 - [ImageNet Preprocessing Conventions (torchvision models)](https://pytorch.org/vision/stable/models.html) nguồn gốc của sự thật cho `mean=[0.485, 0.456, 0.406]`và tại sao mọi người mẫu trong vườn thú đều mong đợi nó

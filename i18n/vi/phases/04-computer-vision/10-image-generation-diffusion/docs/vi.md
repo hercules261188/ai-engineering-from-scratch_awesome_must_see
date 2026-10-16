@@ -26,35 +26,32 @@ Bài học này xây dựng DDPM tối thiểu: tiếng ồn về phía trước
 
 ### Quá trình tiến bộ
 
-Hãy chụp ảnh`x_0`Thêm một lượng nhỏ tiếng ồn Gaussian để có được`x_1`Thêm thêm một lượng nhỏ để lấy được`x_2`Cứ tiếp tục bước đi cho đến khi`x_T`gần như không thể phân biệt được với tiếng ồn Gaussian thuần túy.
+Hãy chụp ảnh`x_0`Thêm một lượng nhỏ tiếng ồn Gaussian để có được`x_1`Thêm thêm một lượng nhỏ để lấy được`x_2`- Cứ tiếp tục đi.$T$bước cho đến khi `x_T`gần như không thể phân biệt được với tiếng ồn Gaussian thuần túy.
 
-```
-q(x_t | x_{t-1}) = N(x_t; sqrt(1 - beta_t) * x_{t-1},  beta_t * I)
+```math
+q(x_t \mid x_{t-1}) = \mathcal{N}\left(x_t; \sqrt{1 - \beta_t} \, x_{t-1}, \; \beta_t I\right)
 ```
 
-`beta_t`là một lịch trình biến động nhỏ, thường tuyến tính từ 0.0001 đến 0.02 trên T = 1000 bước.
+`beta_t`là một lịch trình biến động nhỏ, thường tuyến tính từ 0.0001 đến 0.02 trên $T=1000$mỗi bước nhỏ lại tín hiệu và tạo ra tiếng ồn mới.
 
 ### Chuyến nhảy hình thức đóng
 
 Thêm tiếng ồn một bước một lần là một chuỗi Markov, nhưng toán học gấp: bạn có thể lấy mẫu`x_t`trực tiếp từ `x_0`chỉ một bước thôi.
 
-```
-Define alpha_t = 1 - beta_t
-Define alpha_bar_t = prod_{s=1..t} alpha_s
-
-Then:
-  q(x_t | x_0) = N(x_t; sqrt(alpha_bar_t) * x_0,  (1 - alpha_bar_t) * I)
-
-Equivalently:
-  x_t = sqrt(alpha_bar_t) * x_0 + sqrt(1 - alpha_bar_t) * epsilon
-  where epsilon ~ N(0, I)
+```math
+\begin{aligned}
+&\text{Define } \alpha_t = 1 - \beta_t \\
+&\text{Define } \bar{\alpha}_t = \prod_{s=1}^{t} \alpha_s \\[6pt]
+&\text{Then: } q(x_t \mid x_0) = \mathcal{N}\left(x_t; \sqrt{\bar{\alpha}_t} \, x_0, \; (1 - \bar{\alpha}_t) I\right) \\[6pt]
+&\text{Equivalently: } x_t = \sqrt{\bar{\alpha}_t} \, x_0 + \sqrt{1 - \bar{\alpha}_t} \, \epsilon \quad \text{where } \epsilon \sim \mathcal{N}(0, I)
+\end{aligned}
 ```
 
 Sự phân tán này là lý do thực tế.`t`, mẫu `x_t`trực tiếp từ `x_0`, và đào tạo trong một bước không cần mô phỏng toàn bộ chuỗi Markov.
 
 ### Quá trình ngược
 
-Quá trình tiến lên là cố định.`p(x_{t-1} | x_t)`là những gì mạng thần kinh học được.`x_{t-1}`trực tiếp; họ dự đoán tiếng ồn`epsilon`thêm vào bước t, và toán học dẫn đến `x_{t-1}`từ nó.
+Quá trình tiến lên là cố định.`p(x_{t-1} | x_t)`là những gì mạng thần kinh học được.`x_{t-1}`trực tiếp; họ dự đoán tiếng ồn`epsilon`thêm vào bước $t$, và toán học dẫn đến`x_{t-1}`từ nó.
 
 ```mermaid
 flowchart LR
@@ -79,7 +76,7 @@ flowchart LR
 Đối với mỗi bước đào tạo:
 
 1. lấy mẫu hình ảnh thực sự`x_0`- Tôi không biết.
-2. Mô tả bước thời gian `t`một cách đồng nhất từ [1, T].
+2. Mô tả bước thời gian `t`một cách đồng nhất từ $[1, T]$- Tôi không biết.
 3. Phản ứng tiếng ồn`epsilon ~ N(0, I)`- Tôi không biết.
 4. Lưu ý`x_t = sqrt(alpha_bar_t) * x_0 + sqrt(1 - alpha_bar_t) * epsilon`- Tôi không biết.
 5. Dự đoán`epsilon_theta(x_t, t)`với mạng lưới.
@@ -103,7 +100,7 @@ return x_0
 
 ### Tại sao 1000 bước
 
-Lịch trình âm thanh phía trước được chọn để mỗi bước thêm đủ tiếng ồn để bước ngược gần như là Gaussian.
+Lịch trình âm thanh phía trước được chọn để mỗi bước thêm đủ tiếng ồn để bước ngược gần như là Gaussian.$T=1000$với một lịch trình tuyến tính là DDPM mặc định.
 
 ### DDIM: lấy mẫu nhanh hơn 20 lần
 
@@ -313,14 +310,14 @@ Bài học này mang lại:
 
 | Term | What people say | What it actually means |
 |------|----------------|----------------------|
-| Forward process | "Add noise over time" | Fixed Markov chain that corrupts an image into Gaussian noise over T steps |
+| Forward process | "Add noise over time" | Fixed Markov chain that corrupts an image into Gaussian noise over $T$ steps |
 | Reverse process | "Denoise step by step" | Learned distribution that walks back from noise to image |
-| Epsilon prediction | "Predict the noise" | The training target: `epsilon_theta(x_t, t)` predicts the noise added at step t |
-| Beta schedule | "Noise amounts" | Sequence of T small variances that define how much noise enters per step |
-| alpha_bar_t | "Cumulative retain factor" | Product of (1 - beta_s) up to time t; bigger t means less signal left |
-| DDPM sampler | "Ancestral, stochastic" | Samples each x_{t-1} from its conditional Gaussian; 1000 steps |
+| Epsilon prediction | "Predict the noise" | The training target: `epsilon_theta(x_t, t)` predicts the noise added at step $t$ |
+| Beta schedule | "Noise amounts" | Sequence of $T$ small variances that define how much noise enters per step |
+| $\bar{\alpha}_t$ | "Cumulative retain factor" | Product of $(1 - \beta_s)$ up to time $t$; bigger $t$ means less signal left |
+| DDPM sampler | "Ancestral, stochastic" | Samples each $x_{t-1}$ from its conditional Gaussian; 1000 steps |
 | DDIM sampler | "Deterministic, fast" | Rewrites sampling as a deterministic ODE; 20-100 steps with similar quality |
-| Time conditioning | "Tell the model which t" | Sinusoidal embedding of t injected into the U-Net so it knows the noise level |
+| Time conditioning | "Tell the model which t" | Sinusoidal embedding of $t$ injected into the U-Net so it knows the noise level |
 
 ## Đọc thêm
 
