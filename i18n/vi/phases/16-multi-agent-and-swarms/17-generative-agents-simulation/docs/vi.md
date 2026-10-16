@@ -117,7 +117,7 @@ Quy tắc đối với mô phỏng sản xuất:
 
 - **Memory is the database.**Chọn một cửa hàng thực sự (vector DB, Postgres) trên quy mô.
 - **Log the retrieval trace.**Với mỗi hành động, ghi lại những ký ức dẫn đến nó.
-- **Budget per-agent tokens.**Các đại lý lấy + phản xạ + kế hoạch mỗi tick là O(k) LLM cuộc gọi. N đại lý × T ticks × cuộc gọi-per-tick có thể làm nhỏ bé ngân sách của bạn.
+- **Budget per-agent tokens.**Các đại lý lấy + phản xạ + kế hoạch cho mỗi tick là $O(k)$N đại lý x T ticks x gọi-per-tick có thể làm nhỏ hơn ngân sách của bạn.
 - **Compact memory periodically.**Kết luận và cắt giảm các mục có tầm quan trọng thấp. Chính sách giữ lại là một quyết định thiết kế, không phải là chi tiết.
 - **Detect spatial / social norm violations**kiến trúc không học được chúng.
 

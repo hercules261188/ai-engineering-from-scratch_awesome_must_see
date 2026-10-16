@@ -72,7 +72,7 @@ MCP là **agent-to-tool**liên lạc, không giúp các nhân viên nói chuyệ
 ### A2A (Bản ứng viên2Bản ứng viên)
 
 **Created by:**Google (nay dưới Linux Foundation như `lf.a2a.v1`(văn)
-**Spec version:**1.0.0
+**Spec version:**1.0.1
 **Problem:**Các đại lý tự trị làm việc với nhau, đàm phán và giao nhiệm vụ với nhau như thế nào?
 
 A2A là giao thức cho **peer-to-peer agent collaboration**. Khi MCP kết nối một đại lý với các công cụ, A2A kết nối một đại lý với các đại lý khác.**Agent Card**tại một URL nổi tiếng, và các đại lý khác phát hiện, đàm phán với và ủy thác nhiệm vụ cho nó.
@@ -87,8 +87,8 @@ sequenceDiagram
     Client->>Remote: GET /.well-known/agent-card.json
     Remote-->>Client: Agent Card (skills, modes, security)
 
-    Client->>Remote: POST /message:send
-    Remote-->>Client: Task (submitted/working)
+    Client->>Remote: POST /message:send (returnImmediately)
+    Remote-->>Client: Task (TASK_STATE_SUBMITTED or TASK_STATE_WORKING)
 
     alt Polling
         Client->>Remote: GET /tasks/{id}
@@ -97,7 +97,7 @@ sequenceDiagram
         Client->>Remote: POST /message:stream
         Remote-->>Client: SSE: statusUpdate
         Remote-->>Client: SSE: artifactUpdate
-        Remote-->>Client: SSE: completed
+        Remote-->>Client: SSE: statusUpdate TASK_STATE_COMPLETED, stream closes
     end
 ```
 
@@ -157,36 +157,36 @@ sequenceDiagram
       }
     }
   },
-  "security": [{ "bearer": [] }]
+  "securityRequirements": [{ "schemes": { "bearer": { "list": [] } } }]
 }
 ```
 
 Những điều quan trọng cần chú ý:
 - **Skills**là những gì một đại lý có thể làm. Mỗi người có một ID, thẻ, và hỗ trợ nhập / ra MIME loại. Đây là cách mà một đại lý khách hàng quyết định liệu đại lý từ xa này có thể xử lý yêu cầu của mình.
 - **supportedInterfaces**danh sách liên kết giao thức nhiều. Một đại lý duy nhất có thể nói JSON-RPC, REST và gRPC cùng một lúc.
-- **Security**Khách hàng biết mình cần gì trước khi thực hiện một yêu cầu duy nhất.
+- **Security**được tích hợp vào thẻ: `securitySchemes`tên của mỗi chương trình và `securityRequirements`Khách hàng biết mình cần gì trước khi đưa ra một yêu cầu.
 
 #### Chuyển đời nhiệm vụ
 
-Nhiệm vụ là đơn vị cốt lõi của công việc trong A2A. Chúng di chuyển qua các trạng thái được xác định:
+Các nhiệm vụ là đơn vị cốt lõi của công việc trong A2A. Chúng di chuyển qua các trạng thái được xác định (phần biểu đồ giảm `TASK_STATE_`tiền tố mà mỗi trạng thái mang trên dây):
 
 ```mermaid
 stateDiagram-v2
-    [*] --> submitted
-    submitted --> working
-    working --> input_required: needs more info
-    input_required --> working: client sends data
-    working --> completed: success
-    working --> failed: error
-    working --> canceled: client cancels
-    submitted --> rejected: agent declines
+    [*] --> SUBMITTED
+    SUBMITTED --> WORKING
+    WORKING --> INPUT_REQUIRED: needs more info
+    INPUT_REQUIRED --> WORKING: client sends data
+    WORKING --> COMPLETED: success
+    WORKING --> FAILED: error
+    WORKING --> CANCELED: client cancels
+    SUBMITTED --> REJECTED: agent declines
 
-    completed --> [*]
-    failed --> [*]
-    canceled --> [*]
-    rejected --> [*]
+    COMPLETED --> [*]
+    FAILED --> [*]
+    CANCELED --> [*]
+    REJECTED --> [*]
 
-    note right of completed
+    note right of COMPLETED
         Terminal states are immutable.
         Follow-ups create new tasks
         within the same contextId.
@@ -212,7 +212,7 @@ Khi một nhiệm vụ đạt đến trạng thái cuối, nó không thay đổ
 
 A2A sử dụng JSON-RPC 2.0. Đây là cách trao đổi tin nhắn thực sự trông như thế nào:
 
-**Client sends a task:**
+**Client sends a message:**
 ```json
 {
   "jsonrpc": "2.0",
@@ -269,16 +269,16 @@ A2A sử dụng JSON-RPC 2.0. Đây là cách trao đổi tin nhắn thực sự
 **Streaming via SSE:**
 ```text
 POST /message:stream HTTP/1.1
-Content-Type: application/json
+Content-Type: application/a2a+json
 A2A-Version: 1.0
 
-data: {"task":{"id":"task-123","status":{"state":"TASK_STATE_WORKING"}}}
+data: {"task":{"id":"task-123","contextId":"ctx-123","status":{"state":"TASK_STATE_WORKING"}}}
 
-data: {"statusUpdate":{"taskId":"task-123","status":{"state":"TASK_STATE_WORKING","message":{"role":"ROLE_AGENT","parts":[{"text":"Searching documentation..."}]}}}}
+data: {"statusUpdate":{"taskId":"task-123","contextId":"ctx-123","status":{"state":"TASK_STATE_WORKING","message":{"messageId":"msg-002","role":"ROLE_AGENT","parts":[{"text":"Searching documentation..."}]}}}}
 
-data: {"artifactUpdate":{"taskId":"task-123","artifact":{"artifactId":"art-1","parts":[{"text":"partial findings..."}]},"append":true,"lastChunk":false}}
+data: {"artifactUpdate":{"taskId":"task-123","contextId":"ctx-123","artifact":{"artifactId":"art-1","parts":[{"text":"partial findings..."}]},"append":true,"lastChunk":false}}
 
-data: {"statusUpdate":{"taskId":"task-123","status":{"state":"TASK_STATE_COMPLETED"}}}
+data: {"statusUpdate":{"taskId":"task-123","contextId":"ctx-123","status":{"state":"TASK_STATE_COMPLETED"}}}
 ```
 
 ### ACP (Phương thức giao tiếp của cơ quan)
@@ -612,12 +612,12 @@ Mỗi hệ thống đa đại lý bắt đầu với một định dạng tin nh
 ```typescript
 import crypto from "node:crypto";
 
-type MessageRole = "user" | "agent";
+type MessageRole = "ROLE_USER" | "ROLE_AGENT";
 
 type MessagePart =
-  | { kind: "text"; text: string }
-  | { kind: "data"; data: unknown; mediaType: string }
-  | { kind: "file"; name: string; url: string; mediaType: string };
+  | { text: string }
+  | { data: unknown; mediaType: string }
+  | { url: string; filename: string; mediaType: string };
 
 type TrajectoryEntry = {
   reasoning: string;
@@ -651,11 +651,11 @@ function createMessage(
 }
 
 function textMessage(role: MessageRole, text: string): AgentMessage {
-  return createMessage(role, [{ kind: "text", text }]);
+  return createMessage(role, [{ text }]);
 }
 ```
 
-Lưu ý: `MessagePart`là đa phương thức (tinh văn, dữ liệu có cấu trúc, tệp) giống như các thông số kỹ thuật A2A và ACP thực sự. `TrajectoryEntry`ghi lại chuỗi lý luận, phù hợp với TrajectoryMetadata của ACP.
+Lưu ý: `MessagePart`là đa phương thức (tinh văn, dữ liệu có cấu trúc, tệp) giống như các thông số kỹ thuật A2A và ACP thực tế.`text`- `data`, hoặc`url`) nói phần là gì; không có `kind`Đồ đếm.`TrajectoryEntry`ghi lại chuỗi lý luận, phù hợp với TrajectoryMetadata của ACP.
 
 ### Bước 2: Thẻ đại lý A2A và đăng ký
 
@@ -671,11 +671,17 @@ type Skill = {
   outputModes: string[];
 };
 
+type AgentInterface = {
+  url: string;
+  protocolBinding: string;
+  protocolVersion: string;
+};
+
 type AgentCard = {
   name: string;
   description: string;
   version: string;
-  url: string;
+  supportedInterfaces: AgentInterface[];
   capabilities: {
     streaming: boolean;
     pushNotifications: boolean;
@@ -724,20 +730,20 @@ Xây dựng máy trạng thái nhiệm vụ đầy đủ:
 
 ```typescript
 type TaskState =
-  | "submitted"
-  | "working"
-  | "input-required"
-  | "auth-required"
-  | "completed"
-  | "failed"
-  | "canceled"
-  | "rejected";
+  | "TASK_STATE_SUBMITTED"
+  | "TASK_STATE_WORKING"
+  | "TASK_STATE_INPUT_REQUIRED"
+  | "TASK_STATE_AUTH_REQUIRED"
+  | "TASK_STATE_COMPLETED"
+  | "TASK_STATE_FAILED"
+  | "TASK_STATE_CANCELED"
+  | "TASK_STATE_REJECTED";
 
 const TERMINAL_STATES: TaskState[] = [
-  "completed",
-  "failed",
-  "canceled",
-  "rejected",
+  "TASK_STATE_COMPLETED",
+  "TASK_STATE_FAILED",
+  "TASK_STATE_CANCELED",
+  "TASK_STATE_REJECTED",
 ];
 
 type TaskStatus = {
@@ -761,13 +767,14 @@ type Task = {
 };
 
 type TaskEvent =
-  | { kind: "statusUpdate"; taskId: string; status: TaskStatus }
+  | { statusUpdate: { taskId: string; status: TaskStatus } }
   | {
-      kind: "artifactUpdate";
-      taskId: string;
-      artifact: Artifact;
-      append: boolean;
-      lastChunk: boolean;
+      artifactUpdate: {
+        taskId: string;
+        artifact: Artifact;
+        append: boolean;
+        lastChunk: boolean;
+      };
     };
 
 type TaskHandler = (
@@ -799,22 +806,22 @@ class TaskManager {
     if (!handler) {
       const task = this.createTask(contextId);
       task.status = {
-        state: "rejected",
+        state: "TASK_STATE_REJECTED",
         timestamp: Date.now(),
-        message: textMessage("agent", `No handler for ${agentName}`),
+        message: textMessage("ROLE_AGENT", `No handler for ${agentName}`),
       };
       return task;
     }
 
     const task = this.createTask(contextId);
     task.history.push(message);
-    task.status = { state: "submitted", timestamp: Date.now() };
+    task.status = { state: "TASK_STATE_SUBMITTED", timestamp: Date.now() };
 
     this.processTask(task, handler, message).catch((err) => {
       task.status = {
-        state: "failed",
+        state: "TASK_STATE_FAILED",
         timestamp: Date.now(),
-        message: textMessage("agent", String(err)),
+        message: textMessage("ROLE_AGENT", String(err)),
       };
     });
     return task;
@@ -827,11 +834,9 @@ class TaskManager {
   cancelTask(taskId: string): boolean {
     const task = this.tasks.get(taskId);
     if (!task || TERMINAL_STATES.includes(task.status.state)) return false;
-    task.status = { state: "canceled", timestamp: Date.now() };
+    task.status = { state: "TASK_STATE_CANCELED", timestamp: Date.now() };
     this.emit(taskId, {
-      kind: "statusUpdate",
-      taskId,
-      status: task.status,
+      statusUpdate: { taskId, status: task.status },
     });
     return true;
   }
@@ -840,7 +845,7 @@ class TaskManager {
     const task: Task = {
       id: crypto.randomUUID(),
       contextId: contextId ?? crypto.randomUUID(),
-      status: { state: "submitted", timestamp: Date.now() },
+      status: { state: "TASK_STATE_SUBMITTED", timestamp: Date.now() },
       artifacts: [],
       history: [],
     };
@@ -853,42 +858,39 @@ class TaskManager {
     handler: TaskHandler,
     message: AgentMessage
   ) {
-    task.status = { state: "working", timestamp: Date.now() };
+    task.status = { state: "TASK_STATE_WORKING", timestamp: Date.now() };
     this.emit(task.id, {
-      kind: "statusUpdate",
-      taskId: task.id,
-      status: task.status,
+      statusUpdate: { taskId: task.id, status: task.status },
     });
 
     try {
       for await (const event of handler(task, message)) {
         if (TERMINAL_STATES.includes(task.status.state)) break;
 
-        if (event.kind === "statusUpdate") {
-          task.status = event.status;
+        if ("statusUpdate" in event) {
+          task.status = event.statusUpdate.status;
         }
-        if (event.kind === "artifactUpdate") {
+        if ("artifactUpdate" in event) {
+          const update = event.artifactUpdate;
           const existing = task.artifacts.find(
-            (a) => a.id === event.artifact.id
+            (a) => a.id === update.artifact.id
           );
-          if (existing && event.append) {
-            existing.parts.push(...event.artifact.parts);
+          if (existing && update.append) {
+            existing.parts.push(...update.artifact.parts);
           } else {
-            task.artifacts.push(event.artifact);
+            task.artifacts.push(update.artifact);
           }
         }
         this.emit(task.id, event);
       }
     } catch (err) {
       task.status = {
-        state: "failed",
+        state: "TASK_STATE_FAILED",
         timestamp: Date.now(),
-        message: textMessage("agent", String(err)),
+        message: textMessage("ROLE_AGENT", String(err)),
       };
       this.emit(task.id, {
-        kind: "statusUpdate",
-        taskId: task.id,
-        status: task.status,
+        statusUpdate: { taskId: task.id, status: task.status },
       });
     }
   }
@@ -901,7 +903,7 @@ class TaskManager {
 }
 ```
 
-Điều này thực hiện chu kỳ cuộc sống thực tế của A2A: gửi, làm việc, nhập-cần, trạng thái cuối.
+Điều này thực hiện chu kỳ hoạt động thực tế của A2A: `TASK_STATE_SUBMITTED`- `TASK_STATE_WORKING`- `TASK_STATE_INPUT_REQUIRED`Các bộ xử lý là các bộ phát điện đồng bộ`statusUpdate`và `artifactUpdate`các sự kiện, cùng các vòng bao bì dòng SSE mang.
 
 ### Bước 4: Đường kiểm toán theo phong cách ACP
 
@@ -1231,7 +1233,13 @@ async function protocolDemo() {
     name: "researcher",
     description: "Searches and summarizes findings",
     version: "1.0.0",
-    url: "https://researcher.local/a2a/v1",
+    supportedInterfaces: [
+      {
+        url: "https://researcher.local/a2a/v1",
+        protocolBinding: "JSONRPC",
+        protocolVersion: "1.0",
+      },
+    ],
     capabilities: { streaming: true, pushNotifications: false },
     defaultInputModes: ["text/plain"],
     defaultOutputModes: ["text/plain", "application/json"],
@@ -1250,7 +1258,13 @@ async function protocolDemo() {
     name: "coder",
     description: "Writes code from specs",
     version: "1.0.0",
-    url: "https://coder.local/a2a/v1",
+    supportedInterfaces: [
+      {
+        url: "https://coder.local/a2a/v1",
+        protocolBinding: "JSONRPC",
+        protocolVersion: "1.0",
+      },
+    ],
     capabilities: { streaming: false, pushNotifications: false },
     defaultInputModes: ["text/plain", "application/json"],
     defaultOutputModes: ["text/plain"],
@@ -1275,9 +1289,13 @@ async function protocolDemo() {
     "researcher",
     async function* (task, message) {
       yield {
-        kind: "statusUpdate" as const,
-        taskId: task.id,
-        status: { state: "working" as const, timestamp: Date.now() },
+        statusUpdate: {
+          taskId: task.id,
+          status: {
+            state: "TASK_STATE_WORKING" as const,
+            timestamp: Date.now(),
+          },
+        },
       };
 
       researchTrajectory.push({
@@ -1302,41 +1320,45 @@ async function protocolDemo() {
       });
 
       yield {
-        kind: "artifactUpdate" as const,
-        taskId: task.id,
-        artifact: {
-          id: crypto.randomUUID(),
-          name: "research-results",
-          parts: [
-            {
-              kind: "data" as const,
-              data: {
-                findings: [
-                  "React 19 compiler auto-memoizes components",
-                  "No more manual useMemo/useCallback needed",
-                  "Compiler runs at build time, not runtime",
-                ],
-                sources: ["react.dev/blog/react-19"],
+        artifactUpdate: {
+          taskId: task.id,
+          artifact: {
+            id: crypto.randomUUID(),
+            name: "research-results",
+            parts: [
+              {
+                data: {
+                  findings: [
+                    "React 19 compiler auto-memoizes components",
+                    "No more manual useMemo/useCallback needed",
+                    "Compiler runs at build time, not runtime",
+                  ],
+                  sources: ["react.dev/blog/react-19"],
+                },
+                mediaType: "application/json",
               },
-              mediaType: "application/json",
-            },
-          ],
+            ],
+          },
+          append: false,
+          lastChunk: true,
         },
-        append: false,
-        lastChunk: true,
       };
 
       yield {
-        kind: "statusUpdate" as const,
-        taskId: task.id,
-        status: { state: "completed" as const, timestamp: Date.now() },
+        statusUpdate: {
+          taskId: task.id,
+          status: {
+            state: "TASK_STATE_COMPLETED" as const,
+            timestamp: Date.now(),
+          },
+        },
       };
     }
   );
 
   auditRunner.registerAgent("researcher", async () => ({
     output: [
-      textMessage("agent", "React 19 compiler auto-memoizes components"),
+      textMessage("ROLE_AGENT", "React 19 compiler auto-memoizes components"),
     ],
     trajectory: researchTrajectory,
   }));
@@ -1366,7 +1388,7 @@ async function protocolDemo() {
   );
 
   console.log("\n2. Identity Verification (ANP)");
-  const message = textMessage("user", "Research React 19 compiler features");
+  const message = textMessage("ROLE_USER", "Research React 19 compiler features");
   const signature = signPayload(coderIdentity, message.id);
   const verified = identityRegistry.verify(
     coderIdentity.did,
@@ -1428,7 +1450,7 @@ Các giao thức giải quyết được con đường hạnh phúc.
 
 **Schema drift.**Cảnh sát A xuất bản quảng cáo thẻ Cảnh sát`application/json`nhưng các bản JSON thay đổi giữa các phiên bản. Agent B phân tích các định dạng cũ và nhận được rác. sửa chữa: phiên bản kỹ năng của bạn và các bản phát hành.`version`về Agent Cards vì lý do này.
 
-**State machine violations.**Một người quản lý đại lý sẽ tạo ra một `completed`event, sau đó cố gắng để tạo ra nhiều đồ tạo khác. nhiệm vụ là không thể thay đổi. mã của bạn lặng lẽ bỏ lại các cập nhật hoặc ném. sửa chữa: kiểm tra trạng thái cuối trước khi tạo ra.`TaskManager`trên thực thi điều này với `break`sau khi kết thúc.
+**State machine violations.**Một người quản lý đại lý sẽ tạo ra một `TASK_STATE_COMPLETED`update status, sau đó cố gắng để tạo ra nhiều artefacts hơn. nhiệm vụ là không thể thay đổi. mã của bạn lặng lẽ bỏ lại các bản cập nhật hoặc ném. sửa chữa: kiểm tra trạng thái cuối trước khi tạo ra.`TaskManager`trên thực thi điều này với `break`sau khi kết thúc.
 
 **Trust resolution failures.**Cảnh sát A cố gắng xác minh DID của Cảnh sát B, nhưng tên miền của Cảnh sát B đã bị mất. Tài liệu DID không thể được lấy. Bạn không mở (tự nhận các đại lý không được xác minh) hoặc không đóng (để từ chối mọi thứ)? ANP khuyến cáo không đóng theo nguyên tắc ít tin tưởng nhất.
 
@@ -1505,7 +1527,7 @@ Bài học này mang lại:
 
 ## Đọc thêm
 
-- [Google A2A specification](https://github.com/google/A2A)-- thông số kỹ thuật chính thức và SDK (v1.0.0, Linux Foundation)
+- [Google A2A specification](https://github.com/google/A2A)-- thông số kỹ thuật chính thức và SDK (v1.0.1, Linux Foundation)
 - [IBM/BeeAI ACP specification](https://github.com/i-am-bee/acp)-- OpenAPI 3.1 spec cho các hoạt động của đại lý và quỹ đạo metadata
 - [Agent Network Protocol](https://github.com/agent-network-protocol/AgentNetworkProtocol)-- DID dựa trên danh tính, E2EE, đàm phán giao thức meta
 - [Model Context Protocol docs](https://modelcontextprotocol.io/)-- Khóa kỹ thuật MCP của Anthropic (được bao gồm trong giai đoạn 13)

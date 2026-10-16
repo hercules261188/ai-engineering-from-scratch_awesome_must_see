@@ -61,8 +61,8 @@ Tại sao điều này quan trọng đối với các hệ thống LLM: bạn c�
 
 Một điểm danh tiếng DID gắn kết tích lũy từ những đóng góp được xác nhận.
 
-```
-rep(i, t+1) = alpha * rep(i, t) + (1 - alpha) * contribution_quality(i, t)
+```math
+\text{rep}(i, t+1) = \alpha \cdot \text{rep}(i, t) + (1 - \alpha) \cdot \text{contribution\_quality}(i, t)
 ```
 
 Với yếu tố phân rã`alpha`gần 1. danh tiếng:

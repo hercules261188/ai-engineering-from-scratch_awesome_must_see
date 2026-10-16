@@ -44,8 +44,8 @@ Chế độ thất bại: các nhà phê bình phát triển với các đại l
 
 Chỉ hợp tác. Giải thưởng toàn cầu là tổng của một hàm đơn giản của các giá trị Q mỗi đại lý:
 
-```
-Q_tot(tau, a) = f(Q_1(tau_1, a_1), ..., Q_n(tau_n, a_n)),   df/dQ_i >= 0
+```math
+Q_{\text{tot}}(\tau, a) = f\big(Q_1(\tau_1, a_1), \ldots, Q_n(\tau_n, a_n)\big), \quad \frac{\partial f}{\partial Q_i} \ge 0
 ```
 
 Sự đơn thuần đảm bảo `argmax_a Q_tot`có thể được tính toán bởi mỗi đại lý chọn `argmax_{a_i} Q_i`độc lập.**exactly the decentralized execution property**Khi tập luyện, một mạng hỗn hợp tạo ra`Q_tot`từ các chất lượng Qs mỗi đại lý.

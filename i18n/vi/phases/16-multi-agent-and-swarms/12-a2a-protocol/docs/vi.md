@@ -17,24 +17,52 @@ A2A là giao thức cáp phổ biến cho cuộc gọi đó. phát hiện tiêu 
 
 ### Bốn yếu tố
 
-**Agent Card.**Một tài liệu JSON tại `/.well-known/agent.json`mô tả đại lý: tên, kỹ năng, điểm cuối, các phương pháp hỗ trợ, yêu cầu của tác giả.
+**Agent Card.**Một tài liệu JSON tại `/.well-known/agent-card.json`mô tả người đại lý: tên, kỹ năng, `supportedInterfaces`(URL điểm cuối, liên kết giao thức, phiên bản giao thức), các loại phương tiện nhập và ra ngoài mặc định, và yêu cầu auth (`securitySchemes`+`securityRequirements`Việc khám phá được thực hiện bằng cách đọc thẻ.
 
+```http
+GET /.well-known/agent-card.json HTTP/1.1
+Host: agent.example.com
 ```
-GET https://agent.example.com/.well-known/agent.json
-→ {
-    "name": "code-review-agent",
-    "skills": ["review-python", "review-typescript"],
-    "endpoints": {
-      "tasks": "https://agent.example.com/tasks"
+
+```json
+{
+  "name": "code-review-agent",
+  "description": "Reviews Python and TypeScript code.",
+  "version": "1.0.0",
+  "supportedInterfaces": [
+    {
+      "url": "https://agent.example.com",
+      "protocolBinding": "HTTP+JSON",
+      "protocolVersion": "1.0"
+    }
+  ],
+  "capabilities": {"streaming": false, "pushNotifications": false},
+  "securitySchemes": {
+    "bearer": {"httpAuthSecurityScheme": {"scheme": "Bearer"}}
+  },
+  "securityRequirements": [{"schemes": {"bearer": {"list": []}}}],
+  "defaultInputModes": ["text/plain", "application/json"],
+  "defaultOutputModes": ["application/json"],
+  "skills": [
+    {
+      "id": "review-python",
+      "name": "Review Python",
+      "description": "Reviews Python code.",
+      "tags": ["code-review", "python"]
     },
-    "auth": {"type": "bearer"},
-    "modalities": ["text", "structured"]
-  }
+    {
+      "id": "review-typescript",
+      "name": "Review TypeScript",
+      "description": "Reviews TypeScript code.",
+      "tags": ["code-review", "typescript"]
+    }
+  ]
+}
 ```
 
-**Task.**Một vật thể không đồng bộ, có trạng thái với chu kỳ sống:`submitted → working → completed / failed / canceled`Một khách hàng gửi một nhiệm vụ, thăm dò hoặc đăng ký cập nhật.
+**Task.**Một vật thể không đồng bộ, có trạng thái với chu kỳ sống:`TASK_STATE_SUBMITTED`→ `TASK_STATE_WORKING`→ `TASK_STATE_COMPLETED`- `TASK_STATE_FAILED`- `TASK_STATE_CANCELED`Một khách hàng gửi một tin nhắn, máy chủ tạo ra nhiệm vụ, và khách hàng thăm dò hoặc đăng ký cập nhật.
 
-**Artifact.**Các loại kết quả được tạo ra bởi một nhiệm vụ. văn bản, cấu trúc JSON, hình ảnh, video, âm thanh. Các đồ tạo được gõ nên các phương thức khác nhau là hạng nhất.
+**Artifact.**Các loại kết quả được tạo ra bởi một nhiệm vụ. văn bản, JSON cấu trúc, hình ảnh, video, âm thanh.`text`- `raw`- `url`, hoặc`data`và có thể đặt tên của nó `mediaType`, vì vậy các phương pháp khác nhau là hạng nhất.
 
 **Opaque lifecycle.**A2A không quy định * làm thế nào * đại lý từ xa giải quyết nhiệm vụ. Khách hàng thấy chuyển đổi trạng thái và các hiện vật; thực hiện là miễn phí để sử dụng bất kỳ khung.
 
@@ -47,29 +75,33 @@ Các hệ thống sản xuất đa đại lý sử dụng cả hai. Một đồn
 
 ### Xuống phát hiện
 
-```
-Client                     Agent server
-  ├──GET /.well-known/agent.json──>
-  <──Agent Card JSON─────────────
-  ├──POST /tasks {skill, input}──>
-  <──201 task_id, state=submitted
-  ├──GET /tasks/{id}──────────────>
-  <──state=working, 42% done──────
-  ├──GET /tasks/{id}──────────────>
-  <──state=completed, artifacts──
+```mermaid
+sequenceDiagram
+    participant C as Client
+    participant S as Agent server
+    C->>S: GET /.well-known/agent-card.json
+    S-->>C: Agent Card JSON
+    C->>S: POST /message:send (returnImmediately)
+    S-->>C: task, TASK_STATE_SUBMITTED
+    C->>S: GET /tasks/{id}
+    S-->>C: TASK_STATE_WORKING
+    C->>S: GET /tasks/{id}
+    S-->>C: TASK_STATE_COMPLETED, artifacts
 ```
 
-Hoặc với streaming: SSE đăng ký `/tasks/{id}/events`để cập nhật.
+Đây là các đường liên kết HTTP + JSON, và mỗi yêu cầu đều mang `A2A-Version: 1.0`. Theo mặc định `SendMessage`chặn cho đến khi nhiệm vụ đạt đến một trạng thái cuối cùng hoặc bị gián đoạn, do đó một khách hàng thăm dò đặt `configuration.returnImmediately`để lấy lại nhiệm vụ ngay lập tức.
+
+Hoặc với streaming: `POST /message:stream`trả lại các sự kiện được Server-Send (a `task`Đầu tiên, sau đó `statusUpdate`và `artifactUpdate`các sự kiện), và`/tasks/{id}:subscribe`kết nối lại với một nhiệm vụ đang chạy. dòng chảy đóng cửa khi nhiệm vụ đạt đến trạng thái cuối; không có `final`cờ.
 
 ### Tác giả
 
 A2A hỗ trợ ba mô hình phổ biến:
 
-- **Bearer token** OAuth2 hoặc không minh bạch.
-- **mTLS** TLS chung; các tổ chức chứng minh danh tính với nhau.
-- **Signed requests** HMAC trên tải trọng hữu ích.
+- **Bearer token**: OAuth2 hoặc không minh bạch (`httpAuthSecurityScheme`hoặc `oauth2SecurityScheme`().
+- **mTLS**: TLS chung; các tổ chức chứng minh danh tính với nhau (`mtlsSecurityScheme`().
+- **API key**: một khóa trong một tiêu đề, tham số truy vấn hoặc cookie (`apiKeySecurityScheme`().
 
-Người được công bố là người có thẻ đại lý, khách hàng phát hiện ra và tuân thủ.
+Người có tên được ghi trong thẻ đại lý:`securitySchemes`tên của mỗi chương trình và `securityRequirements`nói rằng khách hàng phải thỏa mãn những gì khách hàng khám phá và tuân thủ.
 
 ### 150 tổ chức hơn vào tháng 4 năm 2026
 
@@ -104,17 +136,17 @@ sw-agent-card-discovery
 
 ## Hãy xây dựng nó
 
-`code/main.py`thực hiện một máy chủ và client A2A tối thiểu sử dụng `http.server`và JSON.
+`code/main.py`thực hiện một máy chủ và client A2A tối thiểu sử dụng `http.server`và JSON, trên kết nối HTTP + JSON 1.0 .
 
-- - Tự động`/.well-known/agent.json`- Tôi không biết.
-- chấp nhận `POST /tasks`- Tôi không biết.
+- - Tự động`/.well-known/agent-card.json`- Tôi không biết.
+- chấp nhận `POST /message:send`- Tôi không biết.
 - quản lý trạng thái nhiệm vụ,
 - trả lại các hiện vật trên `GET /tasks/{id}`- Tôi không biết.
 
 Khách hàng:
 
 - lấy thẻ đại lý,
-- gửi một nhiệm vụ,
+- gửi tin nhắn với `returnImmediately`- Tôi không biết.
 - thăm dò cho đến khi hoàn thành,
 - đọc được vật cổ.
 
@@ -134,8 +166,8 @@ Các kịch bản bắt đầu máy chủ trong một chuỗi nền, sau đó ch
 
 Danh sách kiểm tra:
 
-- **Pin the spec version.**A2A vẫn đang phát triển, thẻ đại lý nên tuyên bố phiên bản giao thức.
-- **Idempotent task creation.**Các bài đăng trùng lặp (các thử mạng) nên tạo ra một nhiệm vụ.
+- **Pin the spec version.**A2A vẫn đang phát triển;`supportedInterfaces`Nhập trình tuyên bố mình `protocolVersion`, và khách hàng gửi`A2A-Version: 1.0`- Tôi không biết.
+- **Idempotent task creation.**Các bài đăng trùng lặp (các thử mạng) nên tạo ra một nhiệm vụ.`messageId`- Tôi không biết.
 - **Artifact schemas.**Cố định hình dạng mà đại lý trả về; người tiêu dùng nên xác nhận.
 - **Rate limits + auth.**A2A là đối mặt với công chúng; áp dụng an ninh web tiêu chuẩn.
 - **Dead-letter for failed tasks.**Kiểm tra các mẫu theo thời gian cho các loại lỗi tái phát.
@@ -144,7 +176,7 @@ Danh sách kiểm tra:
 
 1. Đi chạy`code/main.py`Hãy xác nhận khách hàng phát hiện ra máy chủ và nhận được vật liệu chính xác.
 2. Thêm một kỹ năng thứ hai vào máy chủ (ví dụ: "summarize"). Cập nhật thẻ đại lý. Viết một khách hàng chọn kỹ năng dựa trên loại nhiệm vụ.
-3. Thực hiện một điểm cuối truyền SSE: `/tasks/{id}/events`Khách hàng cần làm gì khác?
+3. Thực hiện`POST /message:stream`: trả lời với Server-Send Events (a `task`Đầu tiên, sau đó `statusUpdate`Các sự kiện) và đóng dòng chảy ở một trạng thái cuối.
 4. Đọc thông số kỹ thuật A2A (https://a2a-protocol.org/latest/specification/). Định danh ba điều mà đặc điểm yêu cầu không thực hiện trong bản demo này.
 5. So sánh A2A (Agent Card discovery) với MCP (server-side capability listing via `listTools`(văn số 1 - 2) Sự khác biệt giữa các nhân viên tự mô tả và kiểm tra khả năng là gì?
 
@@ -153,17 +185,18 @@ Danh sách kiểm tra:
 | Term | What people say | What it actually means |
 |------|----------------|------------------------|
 | A2A | "Agent-to-agent" | Peer protocol for agents to call other agents across systems. Google 2025. |
-| Agent Card | "The agent's business card" | JSON at `/.well-known/agent.json` describing skills, endpoints, auth. |
+| Agent Card | "The agent's business card" | JSON at `/.well-known/agent-card.json` describing skills, `supportedInterfaces`, auth. |
 | Task | "The unit of work" | Async stateful object with a lifecycle; artifacts produced on completion. |
 | Artifact | "The result" | Typed output: text, structured JSON, image, video, audio. First-class media. |
 | Opaque lifecycle | "How it's solved is the agent's business" | Client sees state transitions; server is free to choose framework/tools. |
-| Discovery | "Finding the agent" | `GET /.well-known/agent.json` returns the card. |
+| Discovery | "Finding the agent" | `GET /.well-known/agent-card.json` returns the card. |
 | MCP vs A2A | "Tools vs peers" | MCP: vertical agent ↔ tool. A2A: horizontal agent ↔ agent. |
 | ACP / ANP / NLIP | "Sibling protocols" | Adjacent specs; A2A is the most-adopted 2026. |
 
 ## Đọc thêm
 
 - [A2A specification](https://a2a-protocol.org/latest/specification/) quy định quy định
+- [A2A v1.0.1 release](https://github.com/a2aproject/A2A/tree/v1.0.1): các thẻ `docs/specification.md`và `specification/a2a.proto`Bài học này tiếp theo
 - [Google Developers Blog — A2A announcement](https://developers.googleblog.com/en/a2a-a-new-era-of-agent-interoperability/) Tháng 4 năm 2025
 - [A2A GitHub repo](https://github.com/a2aproject/A2A) Các thực hiện và SDK tham chiếu
 - [Liu et al. — A Survey of Agent Interoperability Protocols](https://arxiv.org/html/2505.02279v1) MCP, ACP, A2A, ANP so sánh

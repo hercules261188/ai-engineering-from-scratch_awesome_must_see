@@ -148,7 +148,7 @@ Trước khi vận chuyển bất kỳ cơ chế đồng thuận nào:
 
 ## Đọc thêm
 
-- [Castro & Liskov — Practical Byzantine Fault Tolerance (OSDI 1999)](https://pmg.csail.mit.edu/papers/osdi99.pdf) cơ sở
+- [Castro & Liskov — Practical Byzantine Fault Tolerance (OSDI 1999)](https://www.usenix.org/conference/osdi-99/practical-byzantine-fault-tolerance) cơ sở
 - [CP-WBFT — Confidence-Probe Weighted BFT](https://arxiv.org/abs/2511.10400) trọng lượng phiếu bằng sự tin tưởng
 - [DecentLLMs — leaderless multi-agent consensus](https://arxiv.org/abs/2507.14928) Phân tích trung bình hình học
 - [WBFT — Weighted BFT with Hierarchical Structure Clustering](https://arxiv.org/abs/2505.05103) Chia Core/Edge cho thời gian trễ giới hạn
