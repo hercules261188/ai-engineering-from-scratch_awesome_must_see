@@ -21,7 +21,7 @@ VAR उत्पन्न होने वाले को बदलकर प�
 
 ### VQ-VAE बहु-मात्रा टोकनाइज़र
 
-वीएआर को एक **multi-scale discrete tokenizer**. एक छवि x के लिए, यह तेजी से उच्च संकल्प टोकन ग्रिड का एक अनुक्रम उत्पन्न करता हैः
+वीएआर को एक **multi-scale discrete tokenizer**. एक छवि के लिए $x$, यह तेजी से उच्च संकल्प टोकन ग्रिड की एक अनुक्रम का उत्पादन करता हैः
 
 ```
 x -> encoder -> latent f
@@ -31,13 +31,13 @@ f -> tokenize at 2x2: token grid z_2 of shape (2, 2)
 f -> tokenize at (H/p)x(W/p): token grid z_K of shape (H/p, W/p)
 ```
 
-प्रत्येक z_k एक ही कोडबुक (सामान्य आकार 4096-16384) का उपयोग करता है। प्रत्येक पैमाने पर टोकनाइज़ेशन स्वतंत्र नहीं है  यह इस प्रकार प्रशिक्षित है कि प्रत्येक पैमाने पर शेष राशि का योग f का पुनर्निर्माण करता हैः
+प्रत्येक $z_k$एक ही कोडबुक (सामान्य आकार 4096-16384) का उपयोग करता है। प्रत्येक पैमाने पर टोकनकरण स्वतंत्र नहीं है  यह इस प्रकार प्रशिक्षित है कि प्रत्येक पैमाने पर शेष राशि को योगित करना पुनर्निर्माण करता है $f$:
 
-```
-f ≈ upsample(embed(z_1), target_size) + ... + upsample(embed(z_K), target_size)
+```math
+f \approx \mathop{\mathrm{upsample}}(\mathop{\mathrm{embed}}(z_1), \text{target\_size}) + \cdots + \mathop{\mathrm{upsample}}(\mathop{\mathrm{embed}}(z_K), \text{target\_size})
 ```
 
-यह एक है**residual VQ**चर k क्या पैमाने 1..k-1 याद किया है कैप्चर करता है. decoder सभी पैमाने एम्बेडमेंट का योग लेता है और छवि का उत्पादन करता है.
+यह एक है**residual VQ**वेरिएंट।$k$क्या पैमाने को पकड़ता है $1 \ldots k-1$डिकोडर सभी पैमाने एम्बेडमेंट का योग लेता है और छवि का उत्पादन करता है।
 
 बहु-पैमाना वाले वीक्यू टोकनाइज़र को एक बार प्रशिक्षित किया जाता है (जैसे वीक्यूजीएएन) और फिर जमे हुए हैं। सभी जनरेटिव काम ऊपर के ऑटोरेग्रेसिव मॉडल द्वारा किया जाता है।
 
@@ -50,9 +50,9 @@ f ≈ upsample(embed(z_1), target_size) + ... + upsample(embed(z_K), target_size
 [START, z_1 tokens, z_2 tokens, z_3 tokens, ..., z_K tokens]
 ```
 
-स्थिति एम्बेडमेंट स्केल इंडेक्स और स्केल के भीतर स्थानिक स्थिति दोनों को एन्कोड करते हैं। ध्यान पैमाने के क्रम में कारण है: पैमाने k पर टोकन, स्थिति (i, j) पैमाने 1..k पर सभी टोकन और पैमाने k पर टोकन स्वयं को देख सकता है जो किसी भी आंतरिक पैमाने के क्रम में पहले आते हैं (VAR किसी भी आंतरिक पैमाने के कारण के बिना निश्चित स्थिति ध्यान का उपयोग करता है  एक पैमाने के भीतर सभी स्थानों को समानांतर रूप से भविष्यवाणी की जाती है) ।
+स्थिति एम्बेडमेंट स्केल इंडेक्स और स्केल के भीतर स्थानिक स्थिति दोनों को एन्कोड करते हैं। ध्यान स्केल क्रम में कारण है: स्केल पर टोकन $k$, स्थिति $(i, j)$सभी टोकन के लिए ध्यान देने के लिए कर सकते हैं पैमाने पर $1 \ldots k$और पैमाने पर टोकन के लिए $k$स्वयं जो कि किसी भी अंतः-मात्रा क्रम में पहले आते हैं जो भी उपयोग किया जाता है (वीएआर स्थिर स्थिति ध्यान का उपयोग करता है बिना अंतः-मात्रा कारणता  एक पैमाने के भीतर सभी स्थानों समानांतर में भविष्यवाणी की जाती हैं) ।
 
-प्रशिक्षण हानिः प्रत्येक पैमाने k पर, सभी पूर्व-स्केल टोकन दिए गए टोकन z_k की भविष्यवाणी करें। विवश VQ कोड पर क्रॉस-एंट्रोपी हानि। "अनुक्रम" को छोड़कर GPT के समान संरचना अब पैमाने-संरचित है।
+प्रशिक्षण हानि: प्रत्येक पैमाने पर $k$, टोकन की भविष्यवाणी $z_k$सभी पूर्व-मानक टोकन दिए गए। विवश VQ कोड पर क्रॉस-एंट्रोपी हानि। "अनुक्रम" को छोड़कर GPT के समान संरचना अब पैमाने पर संरचित है।
 
 ### पीढ़ी
 
@@ -66,7 +66,7 @@ decode: f = sum of embed-and-upsample scales 1..K
 image = VAE_decoder(f)
 ```
 
-के = 10 पैमाने के लिए, पीढ़ी 10 ट्रांसफार्मर आगे के पास है। प्रत्येक पास एक पैमाने के भीतर समानांतर में अपना पूरा पैमाने  कोई प्रति टोकन ऑटोरेग्रेशन नहीं बनाता है। 256x256 छवि के लिए यह लगभग 10 पास बनाम डीटी का 28-50 है।
+के लिए$K = 10$स्केल, पीढ़ी 10 ट्रांसफार्मर आगे पास है। प्रत्येक पास समानांतर में अपना पूरा पैमाने उत्पन्न करता है  एक पैमाने के भीतर कोई प्रति-टोकन ऑटोरेग्रेशन नहीं। 256x256 छवि के लिए यह लगभग 10 पास बनाम डीटी का 28-50 है।
 
 ### अगला स्केल अगले टोकन पर क्यों जीतता है
 
@@ -127,7 +127,7 @@ gx-var-next-scale
 | Multi-scale VQ tokenizer | "Residual VQ" | VQ-VAE that produces K token grids of increasing resolution, with decoder summing all scales |
 | Scale k | "Pyramid level k" | One of K resolution levels, from 1x1 at k=1 up to (H/p)x(W/p) at k=K |
 | Parallel-within-scale | "One forward per scale" | All tokens at scale k are predicted in one transformer pass, not autoregressively |
-| Causal-across-scales | "Scale-ordered attention" | Token at scale k can attend to all of scales 1..k but not scales k+1..K |
+| Causal-across-scales | "Scale-ordered attention" | Token at scale $k$ can attend to all of scales $1 \ldots k$ but not scales $k+1 \ldots K$ |
 | Residual VQ | "Additive tokenization" | Each scale's tokens encode the residual left by lower scales; decoder sums all scale embeddings |
 | VAR scaling law | "Image GPT scaling" | FID follows a predictable power law in compute, like language models' perplexity |
 | HART | "Hybrid VAR + text" | Text-conditional VAR variant combining MaskGIT-style iterative decoding with VAR's scale structure |
