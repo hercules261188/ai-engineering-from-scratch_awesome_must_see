@@ -74,22 +74,22 @@ graph TD
 
 تذكر هدف PPO (من الدروس 07):
 
-```
-L_PPO = E[min(r(theta) * A, clip(r(theta), 1-eps, 1+eps) * A)]
+```math
+L_{\text{PPO}} = \mathbb{E}\left[\min\left(r(\theta) \cdot A, \mathop{\mathrm{clip}}(r(\theta), 1-\epsilon, 1+\epsilon) \cdot A\right)\right]
 ```
 
 أين`A`هو الميزة، التي يتم تقديرها عادة مع GAE باستخدام شبكة القيمة المتعلمة `V(s)`شبكة القيمة هي نموذج ثان على نفس الحجم من السياسة. إنها تضاعف الذاكرة وتدخل حلقة تدريب خاصة بها.
 
-يرمي GRPO وظيفة القيمة. لكل طلب ، فإنه يختار مجموعة من استجابات G (عادة G = 16 أو 64). يتم حساب مكافأة لكل رد ، ثم يتم تطبيعها داخل المجموعة:
+يرمي GRPO وظيفة القيمة. لكل طلب، فإنه يختار مجموعة من $G$الردود (عادةً$G=16$يتم حساب مكافأة كل رد ثم تطبيعها داخل المجموعة:
 
-```
-A_i = (r_i - mean(r_1, ..., r_G)) / std(r_1, ..., r_G)
+```math
+A_i = \frac{r_i - \mathop{\mathrm{mean}}(r_1, \ldots, r_G)}{\mathop{\mathrm{std}}(r_1, \ldots, r_G)}
 ```
 
 الميزة هي نقطة z من مكافأة الاستجابة بالنسبة لأخواتها. لا يوجد وظيفة قيمة. المجموعة تعمل كخط أساسي خاص بها.
 
-```
-L_GRPO = E[min(r(theta) * A_group, clip(r(theta), 1-eps, 1+eps) * A_group)] - beta * KL(pi || pi_ref)
+```math
+L_{\text{GRPO}} = \mathbb{E}\left[\min\left(r(\theta) \cdot A_{\text{group}}, \mathop{\mathrm{clip}}(r(\theta), 1-\epsilon, 1+\epsilon) \cdot A_{\text{group}}\right)\right] - \beta \cdot \mathrm{KL}(\pi \,\|\, \pi_{\text{ref}})
 ```
 
 عقوبة (كيل) ضد النموذج المرجعي لا تزال موجودة، نفسها مثل (بي بي أو) ، نسبة المقاطع لا تزال موجودة، ما قد اختفى هو النقاد المفصل.

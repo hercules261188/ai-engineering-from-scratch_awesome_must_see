@@ -141,13 +141,13 @@ graph LR
     style V fill:#1a1a2e,stroke:#0f3460,color:#fff
 ```
 
-تقسيم بـ (sqrt(d_k) -- (sqrt(64) = 8 -- هو التوسع. بدونها، تنتج منتجات النقاط كبيرة لمتجهات عالية الأبعاد، مما يدفع softmax إلى مناطق حيث تكون التراجعات شبه صفر. كانت هذه واحدة من المعلومات الرئيسية في ورقة "الاهتمام هو كل ما تحتاجه" الأصلية.
+التقسيم من قبل$\sqrt{d_k}$- .$\sqrt{64} = 8$- هو التوسع. بدونها، تنتج منتجات النقاط كبيرة لمتجهات عالية الأبعاد، مما يدفع softmax إلى مناطق حيث التراجعات تقريبا صفر. هذه كانت واحدة من المعلومات الرئيسية في ورقة "الاهتمام هو كل ما تحتاجه" الأصلية.
 
 ### كيف كاش: لماذا التخمين سريع
 
-أثناء التدريب، تقوم بمعالجة التسلسل بأكمله في وقت واحد. أثناء الاستنتاج، تقوم بتوليد رمز واحد في وقت واحد. دون تحسين، فإن توليد رمز N يتطلب إعادة حساب الاهتمام لجميع رموز N-1 السابقة. وهذا هو O(N^2) لكل رمز تم توليده، أو O(N^3) إجمالي لسلسلة من الطول N.
+أثناء التدريب، تقوم بمعالجة التسلسل بأكمله في وقت واحد أثناء الإستنتاج، تقوم بتوليد رمز واحد في كل مرة. دون تحسين، توليد رمز$N$يتطلب إعادة حساب الاهتمام للجميع$N-1$الوهم السابقة$O(N^2)$لكل رمز تم إنشاؤه، أو $O(N^3)$إجمالي لسلسلة من الطول $N$. . .
 
-كيف كاشي يحل هذا بعد حساب K و V لكل رمز، تخزينهم. عند توليد رمز N + 1 ، تحتاج فقط إلى حساب Q للرمز الجديد والبحث عن الاحتفاظ K و V من جميع الرموز السابقة. هذا يقلل من تكلفة كل رمز من O(N) إلى O(1) للحساب K و V. حساب درجة الاهتمام لا يزال O(N) لأنك تلتزم بكل المواقف السابقة، ولكنك تتجنب مضاعفات المصفوفة الإضافية على المدخل.
+كيه وي كاشي يحل هذا بعد الحساب K و V لكل رمز، تخزينهم. عند توليد رمز$N+1$، تحتاج فقط إلى حساب Q للرمز الجديد والبحث عن الاحتفاظ K و V من جميع الرموز السابقة. وهذا يقلل من تكلفة لكل رمز من $O(N)$إلى$O(1)$لتحديد K و V. حساب درجة الاهتمام لا يزال$O(N)$لأنك تلتزم بكل المواقف السابقة، ولكنك تتجنب مضاعفات المصفوفات الضائعة على المدخل.
 
 بالنسبة لـ GPT-2 مع 12 طبقة و 12 رأسًا ، يحتفظ ذاكرة الاحتفاظ KV 2 (K + V) x 12 طبقة x 12 رأسًا x 64 ديم = 18,432 قيمًا لكل رمز. بالنسبة لسلسلة 1024 رمزًا ، وهذا حوالي 75MB في FP32. بالنسبة لـ Llama 3 405B مع 128 طبقة ، يمكن أن يتجاوز ذاكرة الاحتفاظ KV لسلسلة واحدة 10GB. لهذا السبب يتم تحديد استنتاج السياق الطويل بالذاكرة.
 
@@ -211,7 +211,7 @@ graph LR
 |-----------|-------|------------|
 | Token embeddings | (50257, 768) | 38,597,376 |
 | Position embeddings | (1024, 768) | 786,432 |
-| Per-block attention (W_q, W_k, W_v, W_out) | 4 x (768, 768) | 2,359,296 |
+| Per-block attention ($W_q, W_k, W_v, W_{\text{out}}$) | 4 x (768, 768) | 2,359,296 |
 | Per-block FFN (up + down) | (768, 3072) + (3072, 768) | 4,718,592 |
 | Per-block LayerNorms (2x) | 2 x 768 x 2 | 3,072 |
 | Final LayerNorm | 768 x 2 | 1,536 |
@@ -258,7 +258,7 @@ def attention(Q, K, V, mask=None):
     return weights @ V
 ```
 
-تنفيذ softmax يقلل من الحد الأقصى قبل تعدد. دون هذا، exp(large_number) يتجاوز إلى اللانهاية. هذه خدعة استقرار عددي لا يغير الخروج لأن softmax(x - c) = softmax(x) لأي ثابت c.
+تنفيذ softmax يقلل من الحد الأقصى قبل تعدد. دون هذا، exp(large_number) يتجاوز إلى اللانهاية. هذه خدعة استقرار عددي لا تغير الخروج لأن $\mathop{\mathrm{softmax}}(x - c) = \mathop{\mathrm{softmax}}(x)$لأي ثابت$c$. . .
 
 ### الخطوة الثالثة: الاهتمام متعدد الرؤوس
 
@@ -504,7 +504,7 @@ print(f"\nGenerated: {generated_text}")
 
 1. تعديل النموذج لاستخدام 24 طبقة و 16 رأس بدلا من 12/12. احتساب المعايير. كيف يختلف مضاعفة العمق مع مضاعفة العرض (بعالم الإدراج) ؟
 
-2. تنفيذ وظيفة تنشيط GELU (GELU(x) = x * 0.5 * (1 + erf(x / sqrt(2)))) واستبدال ReLU في شبكة التغذية. تشغيل التدريب لمدة 500 خطوة مع كل تنشيط ومقارنة الخسارة النهائية.
+2. تنفيذ وظيفة تفعيل GELU $(\mathop{\mathrm{GELU}}(x) = x \cdot 0.5 \cdot (1 + \mathop{\mathrm{erf}}(x / \sqrt{2})))$وبدل جهاز ReLU في شبكة التغذية، و قم بتدريب 500 خطوة مع كل تنشيط و قم بمقارنة الخسارة النهائية.
 
 3. إضافة cache KV إلى وظيفة التوليد. تخزين K و V tensors لكل طبقة بعد أول مرسلة إلى الأمام، واستعادتها للشعارات اللاحقة. قياس السرعة: توليد 200 شعارة مع ودون الاحتفاظ والتقارن الوقت الحائط-الساعة.
 
@@ -525,7 +525,7 @@ print(f"\nGenerated: {generated_text}")
 | Weight tying | "Sharing embeddings" | Using the same matrix for input token embeddings and the output projection head -- saves 38M params in GPT-2 |
 | Residual connection | "Skip connection" | Adding the input directly to the output of a sublayer (x + sublayer(x)) -- enables gradient flow in deep networks |
 | Layer normalization | "Normalizing activations" | Normalizing across the feature dimension to mean 0 and variance 1, with learnable scale and bias parameters |
-| Cross-entropy loss | "How wrong the predictions are" | -log(probability assigned to the correct next token), averaged over all positions -- the standard LLM training objective |
+| Cross-entropy loss | "How wrong the predictions are" | $-\log(\text{probability assigned to the correct next token})$, averaged over all positions -- the standard LLM training objective |
 
 ## المزيد من القراءة
 

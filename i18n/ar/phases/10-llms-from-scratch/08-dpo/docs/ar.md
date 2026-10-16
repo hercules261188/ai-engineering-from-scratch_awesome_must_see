@@ -32,51 +32,53 @@
 
 يُحسن RLHF هذا الهدف:
 
-```
-maximize: E[R(x, y)] - beta * KL(pi || pi_ref)
-```
-
-حيث R هو نموذج الجائزة، و pi هو السياسة، و pi_ref هو نموذج المرجع، و beta هو معدل KL.
-
-أظهرت ورقة DPO أن هذا الهدف لديه حلًا مثاليًا في شكل مغلق. بالنسبة لأي وظيفة مكافأة R ، فإن السياسة المثلى هي:
-
-```
-pi*(y | x) = pi_ref(y | x) * exp(R(x, y) / beta) / Z(x)
+```math
+\text{maximize:} \quad \mathbb{E}[R(x, y)] - \beta \cdot \mathrm{KL}(\pi \,\|\, \pi_{\text{ref}})
 ```
 
-حيث Z(x) ثابت طبيعي. إعادة ترتيب:
+أين$R$هو نموذج الجائزة$\pi$هو السياسة$\pi_{\text{ref}}$هو نموذج المرجع، و$\beta$هو معدل KL.
 
+أظهرت ورقة DPO أن هذا الهدف لديه حلًا مثاليًا في شكل مغلق.$R$، السياسة المثلى هي:
+
+```math
+\pi^*(y \mid x) = \pi_{\text{ref}}(y \mid x) \cdot \exp(R(x, y) / \beta) / Z(x)
 ```
-R(x, y) = beta * log(pi*(y | x) / pi_ref(y | x)) + beta * log Z(x)
+
+أين$Z(x)$هو ثابت طبيعي.
+
+```math
+R(x, y) = \beta \log \frac{\pi^*(y \mid x)}{\pi_{\text{ref}}(y \mid x)} + \beta \log Z(x)
 ```
 
 هذه هي الانفجار. يتم التعبير عن المكافأة بالكامل من حيث احتمالات نموذج السياسة ومحتملات نموذج المرجح. لا تحتاج إلى تدريب نموذج مكافأة منفصل. المكافأة * ضمنية * في نسبة الاحتمال.
 
 استبدال هذا في نموذج تفضيل برادلي تيري:
 
-```
-P(y_w > y_l | x) = sigmoid(R(x, y_w) - R(x, y_l))
-                  = sigmoid(beta * (log pi(y_w|x)/pi_ref(y_w|x) - log pi(y_l|x)/pi_ref(y_l|x)))
+```math
+\begin{aligned}
+P(y_w > y_l \mid x) &= \mathop{\mathrm{sigmoid}}(R(x, y_w) - R(x, y_l)) \\
+&= \mathop{\mathrm{sigmoid}}\left(\beta \left(\log \frac{\pi(y_w \mid x)}{\pi_{\text{ref}}(y_w \mid x)} - \log \frac{\pi(y_l \mid x)}{\pi_{\text{ref}}(y_l \mid x)}\right)\right)
+\end{aligned}
 ```
 
-يتم إلغاء شروط Z(x) لأن كلا الإجابات تتحدى نفس الإجابة x. ما تبقى هو وظيفة من احتمالات السجل فقط لنموذج السياسة ومحتملات السجل لنموذج المرجعية على الإجابات المفضلة والمنفذة.
+- نعم$Z(x)$الإجابة تُلغي لأن كلا الإجابات تُشكل نفس الإشارة$x$ما تبقى هو وظيفة فقط من احتمالات السجلات النموذج السياسي ومحتملات السجلات النموذج المرجعي على الردود المفضلة والمنفضة.
 
 ### خسارة الـ DPO
 
-```
-L_DPO = -log(sigmoid(beta * (log pi(y_w|x)/pi_ref(y_w|x) - log pi(y_l|x)/pi_ref(y_l|x))))
+```math
+L_{\text{DPO}} = -\log \mathop{\mathrm{sigmoid}}\left(\beta \left(\log \frac{\pi(y_w \mid x)}{\pi_{\text{ref}}(y_w \mid x)} - \log \frac{\pi(y_l \mid x)}{\pi_{\text{ref}}(y_l \mid x)}\right)\right)
 ```
 
 دعونا نفتح كل قطعة:
 
-- **y_w**= الاستجابة المفضلة (الفائزة)
-- **y_l**= رد رفض (الخسارة)
-- **x**= سريع
-- **pi**= النموذج الحالي (الذي يتدرب عليه)
-- **pi_ref**= نموذج مرجع (مركز تفتيش SFT المجمد)
-- **beta**= مُعيار درجة الحرارة الذي يتحكم في الانحراف عن المرجع (عادة ما يكون من 0.1 إلى 0.5)
+- **$y_w$**= الاستجابة المفضلة (الفائزة)
+- **$y_l$**= رد رفض (الخسارة)
+- **$x$**= سريع
+- **$\pi$**= النموذج الحالي (الذي يتدرب عليه)
+- **$\pi_{\text{ref}}$**= نموذج مرجع (مركز تفتيش SFT المجمد)
+- **$\beta$**= مُعيار درجة الحرارة الذي يتحكم في الانحراف عن المرجع (عادة ما يكون من 0.1 إلى 0.5)
 
-النسبة`log pi(y|x) / pi_ref(y|x)`هو نسبة احتمال التسجيل. عندما يكون هذا النسبة إيجابية، فإن النموذج الحالي يعطي احتمالًا أعلى للرد y من النموذج المرجعي. عندما يكون سلبيًا، يعطي النموذج الحالي احتمالًا أقل.
+النسبة`log pi(y|x) / pi_ref(y|x)`هو نسبة احتمالية التسجيل. عندما يكون هذا النسبة إيجابية، فإن النموذج الحالي يعطي احتمال أكبر للرد $y$عندما يكون سلبي، فإن النموذج الحالي يعطي احتمال أقل.
 
 يضغط فقدان DPO النموذج لزيادة نسبة احتمالية السجل للردود المفضلة وتقليلها للردود المنرفضة. يسيطر معايير بيتا على مدى تعطل النموذج عن المرجع - بيتا صغيرة يعني أن الانحرافات الكبيرة مسموحة ، بيتا كبيرة تبقي النموذج قريبًا من المرجع.
 
@@ -641,7 +643,7 @@ if __name__ == "__main__":
 | DPO | "RLHF without RL" | Direct Preference Optimization: a supervised learning algorithm that optimizes the language model directly on preference pairs, bypassing the reward model and PPO |
 | Implicit reward | "The reward is in the model" | The reward function is determined by the log-probability ratio between the policy and reference models -- no separate reward model needed |
 | Beta (DPO) | "The temperature" | Controls how far the policy can deviate from the reference model -- small beta allows large deviations, large beta keeps the model close |
-| Log-probability ratio | "How much the model changed" | log pi(y\|x) - log pi_ref(y\|x) -- positive means the current model assigns higher probability than the reference |
+| Log-probability ratio | "How much the model changed" | $\log \pi(y \mid x) - \log \pi_{\text{ref}}(y \mid x)$ -- positive means the current model assigns higher probability than the reference |
 | Reference model | "The frozen checkpoint" | A copy of the SFT model whose weights never change -- serves as the anchor for computing probability ratios |
 | KTO | "DPO without pairs" | Kahneman-Tversky Optimization: works with unpaired "good" or "bad" labels instead of requiring preference pairs |
 | ORPO | "One-step alignment" | Odds Ratio Preference Optimization: combines SFT and alignment into a single training loop by adding a preference term to the SFT loss |

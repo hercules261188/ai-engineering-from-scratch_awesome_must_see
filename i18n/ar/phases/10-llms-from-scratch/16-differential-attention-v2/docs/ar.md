@@ -28,8 +28,8 @@
 
 لأجل استفسار`q`و المفاتيح`K = [k_1, ..., k_N]`، ووزن الاهتمام هو:
 
-```
-w_i = exp(q . k_i / sqrt(d)) / sum_j exp(q . k_j / sqrt(d))
+```math
+w_i = \frac{\exp(q \cdot k_i / \sqrt{d})}{\sum_j \exp(q \cdot k_j / \sqrt{d})}
 ```
 
 لا , لا`w_i`هو صفر دائماً`k_i`لا علاقة لها تماماً`q`, النتيجة`q . k_i`ليس 0  يتذبذب حول الصفر مع التباين `||q||^2 / d`بعد تطبيع softmax، كل رمز غير مرتبط لا يزال يساهم `O(1/N)`إلى المبلغ الموزن . إجمالي مساهمة الرموز غير المتعلقة هي `O((N-1)/N) = O(1)` ليس كمية صغيرة
@@ -38,17 +38,19 @@ w_i = exp(q . k_i / sqrt(d)) / sum_j exp(q . k_j / sqrt(d))
 
 ### فكرة التفريق
 
-تقسيم كل من رؤوس Q و K التنبؤات إلى اثنين: Q = (Q_1, Q_2) و K = (K_1, K_2). حساب خرائط اهتمام اثنين:
+تقسيم كل رأس Q و K التنبؤات إلى اثنين: $Q = (Q_1, Q_2)$و$K = (K_1, K_2)$قم بحساب خريطتين للاهتمام
 
-```
-A_1 = softmax(Q_1 K_1^T / sqrt(d))
-A_2 = softmax(Q_2 K_2^T / sqrt(d))
+```math
+\begin{aligned}
+A_1 &= \mathop{\mathrm{softmax}}(Q_1 K_1^T / \sqrt{d}) \\
+A_2 &= \mathop{\mathrm{softmax}}(Q_2 K_2^T / \sqrt{d})
+\end{aligned}
 ```
 
 الناتج:
 
-```
-DiffAttn = (A_1 - lambda * A_2) V
+```math
+\mathop{\mathrm{DiffAttn}} = (A_1 - \lambda \cdot A_2) V
 ```
 
 يُلغي الخسارة أي توزيع ضجيج يشترك فيه الخرائطتان. إذا كانت كلتا الخرائط ذات وزن متساو على الرموز 127k غير المتعلقة (والتي سوف تقوم بها ، عند البدء عشوائيًا) ، فسيتم إلغاء تلك الرموز. الإشارة  الوزن القصوى على الرموز القليلة ذات الصلة بالفعل  فقط يتم إلغاءها إذا ظهرت في كلتا الخرائط بنفس الكبيرة ، والتي لن تفعل مرة واحدة عندما يتدرب النموذج.
@@ -63,7 +65,7 @@ DiffAttn = (A_1 - lambda * A_2) V
 
 حافظ V1 على عدد المعلمات مساوية لخط الأساسي محول. للحصول على استفسارات اثنتين لكل رأس قلل من بعد الرأس. وهذا يكلف الرأس التعبير و  أكثر ألمًا  نصف القيمة التخزينية لكل رأس. كان على التخزين تحميل القيمة التخزينية مرتين في كل خطوة (مرة واحدة لكل فرع softmax). النتيجة: التخزين أبطأ من الخط الأساسي على الرغم من مطابقة عدد المعلمات.
 
-يضاعف V2 عدد رؤوس الاستفسار ويبقي رؤوس KV متشابهة (استعارة المعلمات من التنبؤ الصعودي). يبقى بعدة الرأس نفس الخط الأساسي. بعد الحد من ذلك، يتم إعادة عرض الأبعاد الإضافية إلى الأسفل لتتطابق مع التنبؤ O_W من خط الأساس Transformer. تحدث ثلاثة أشياء في وقت واحد:
+V2 تضاعف عدد رؤوس الاستفسار وتبقي رؤوس KV نفسها (استعارة المعلمات من التنبؤ الصعودي). يبقى بعدة الرأس نفس الخط الأساسي. بعد الحد من ذلك، يتم إعادة عرض الأبعاد الإضافية إلى أسفل لتتطابق خط الأساس من Transformer $O_W$ثلاثة أشياء تحدث في وقت واحد:
 
 1. سرعة فك الرمز تتطابق مع خط الأساس (تحميل cache KV مرة واحدة).
 2. FlashAttention تعمل دون تغيير (لا يوجد جوهر مخصص).
@@ -139,8 +141,8 @@ out = [[sum(w * v[j] for w, v in zip(row, V)) for j in range(d_v)] for row in di
 في حالة إعطاء إعداد (خفية = 4096 ، رؤوس = 32 ، d_head = 128) ، طبع:
 
 - محول خط الأساس: Q، K، V لكل حجم `hidden * hidden`، MLP في 4 * مخفي.
-- DIFF V1: Q، K لكل حجم `hidden * hidden`, حجم V`hidden * hidden`(غير تغير) ، رأس ضيق نصف داخليا. يضاف لكل رأس`lambda`المعلمات (O(رؤوس * d_رؤوس)).
-- DIFF V2: حجم Q `2 * hidden * hidden`، حجم K`hidden * hidden`, حجم V`hidden * hidden`. ضئيل جداً تم إلقاءه إلى أسفل قبل O_W . يضيف نفس الشيء `lambda`المعلمات
+- DIFF V1: Q، K لكل حجم `hidden * hidden`, حجم V`hidden * hidden`(غير تغير) ، رأس ضيق نصف داخليا. يضاف لكل رأس`lambda`المعلمات$(O(\text{heads} \cdot d_{\text{head}}))$. . .
+- DIFF V2: حجم Q `2 * hidden * hidden`، حجم K`hidden * hidden`, حجم V`hidden * hidden`ضئيل جداً تم إلقاءه إلى أسفل من قبل$O_W$. يضيف نفس الشيء`lambda`المعلمات
 
 القياس لعبة تكلفة المعايير الإضافية لـ V2 (تقريبًا `hidden * hidden`(إضافية لكل كتلة مراقبة) وطبعتها.
 
@@ -182,8 +184,8 @@ DIFF V2 لا يتم شحنها بعد في كل خادم استنتاج الإن
 
 | Term | What people say | What it actually means |
 |------|----------------|------------------------|
-| Differential attention | "Two softmaxes minus each other" | Split Q, K into two halves, compute two softmax maps, subtract the second (scaled by lambda) from the first, then multiply by V |
-| Noise floor | "The non-zero tail of softmax" | The O(1/N) weight softmax puts on every unrelated token, which sums to O(1) across long contexts |
+| Differential attention | "Two softmaxes minus each other" | Split Q, K into two halves, compute two softmax maps, subtract the second (scaled by $\lambda$) from the first, then multiply by V |
+| Noise floor | "The non-zero tail of softmax" | The $O(1/N)$ weight softmax puts on every unrelated token, which sums to $O(1)$ across long contexts |
 | lambda | "The subtraction scale" | Per-head learnable scalar parameterized as `exp(lq1.lk1) - exp(lq2.lk2) + lambda_init`; can be negative |
 | DIFF V1 | "The ICLR 2025 version" | Original Differential Transformer; halves head dim to preserve parameter count, needs custom kernel, slower decode |
 | DIFF V2 | "The January 2026 fix" | Doubles Q heads keeping KV heads; matches baseline decode speed and works with FlashAttention |

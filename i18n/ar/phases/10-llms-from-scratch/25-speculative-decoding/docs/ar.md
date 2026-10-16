@@ -53,8 +53,8 @@ For each drafted token x_t:
 
 إذا كان معدل قبول النموذج المشروع على مستوى الرمز هو `α`، فإن الرموز المتوقعة التي يتم إنتاجها لكل مرسلة متقدمة هدف هي:
 
-```
-E[tokens] = (1 - α^{K+1}) / (1 - α)        # K = draft length, α in [0, 1]
+```math
+\mathbb{E}[\text{tokens}] = \frac{1 - \alpha^{K+1}}{1 - \alpha} \qquad K = \text{draft length}, \ \alpha \in [0, 1]
 ```
 
 في`α = 0.8, K = 4`: `(1 - 0.8^5)/(1 - 0.8) = 3.36`الـ "Token" لكل مؤشر.`cost_q * K + cost_p`(إثبات خطوات مسودة K بالإضافة إلى هدف واحد)`cost_p >> cost_q * K`نسبة تسريع هي `3.36× / 1 = 3.36×`على التدفق
@@ -162,9 +162,9 @@ def speculative_step(p_target, q_draft, K, temperature=1.0):
 
 ## استخدمها
 
-- **vLLM**و**SGLang**السفينة التشخيص المضاربي من الدرجة الأولى.`--speculative_model`،`--num_speculative_tokens`. دعم إيغل-2/3 عبر `--spec_decoding_algorithm eagle`العلم
+- **vLLM**و**SGLang**في vLLM، اجتياز `--speculative-config`كائن JSON مع `method`،`model`و`num_speculative_tokens`؛ الـ 3 هي`"method": "eagle3"`. . .
 - **NVIDIA TensorRT-LLM**يدعم شجرة ميدوسا و شجرة النسر بشكل أصلي
-- **Reference draft models**: `Qwen/Qwen3-0.6B-spec`(مصادر قوانين 32-32ب) ،`meta-llama/Llama-3.2-1B-Instruct-spec`(مصادر 70 ب)
+- **Reference draft models**: `Qwen/Qwen3-0.6B`(مصادر قوانين 32-32ب) ،`meta-llama/Llama-3.2-1B-Instruct`(مصادر للاما 3.x 70B)
 - **Medusa heads**(Cai et al. 2024, "Medusa: Simple LLM Inference Acceleration Framework with Multiple Decoding Heads"): بدلاً من مشروع نموذج، أضف رؤوس تنبؤ متوازية K إلى الهدف نفسه. أبسط في النشر، وقبول أقل قليلاً من EAGLE.
 
 ## أرسله
@@ -175,7 +175,7 @@ def speculative_step(p_target, q_draft, K, temperature=1.0):
 
 1. تنفيذ قاعدة الرفض الدقيقة والتحقق من ذلك تجريبيا.`speculative_decode`و عن طريق أخذ عينات واضحة للمستهدف؛ حساب المسافة التلفزيونية بين توزيعات المخرجين. يجب أن يكون < 0.01.
 
-2. احسب صيغة تسريع`α`و`K`، رسم الرموز المتوقعة لكل هدف-مضي قدما. العثور على الكمية المثلى ل α ∈ {0.5 ، 0.7 ، 0.9}.
+2. احسب صيغة تسريع`α`و`K`، رسم الرموز المتوقعة لكل هدف - إلى الأمام.$K$لـ$\alpha \in \lbrace 0.5, 0.7, 0.9 \rbrace$. . .
 
 3. قم بتدريب مسودة صغيرة، خذ هدف 124 مليون جبت-2 وقطع مسودة 30 مليون جبت-2 على رموز 100 مليون مع خسارة KL.`α`على النص المُتَمَرّد. المتوقع: 0.6-0.7.
 

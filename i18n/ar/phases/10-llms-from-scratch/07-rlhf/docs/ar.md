@@ -80,8 +80,8 @@ graph TD
 
 وظيفة الخسارة تستخدم نموذج برادلي تيري من تفضيلات الزوجية:
 
-```
-loss = -log(sigmoid(reward(preferred) - reward(rejected)))
+```math
+\text{loss} = -\log\big(\mathop{\mathrm{sigmoid}}(\text{reward}(\text{preferred}) - \text{reward}(\text{rejected}))\big)
 ```
 
 هذه هي المعادلة الرئيسية`sigmoid(reward(A) - reward(B))`يعطي احتمال تفضيل الاستجابة A على الاستجابة B. الضرر يدفع نموذج الجائزة لتعيين درجة أعلى للرد المفضل.
@@ -96,8 +96,8 @@ PPO هو خوارزمية تعليمي للتعزيز. في RLHF، "البيئة
 
 الهدف:
 
-```
-maximize: E[R(prompt, response)] - beta * KL(policy || reference)
+```math
+\text{maximize:} \quad \mathbb{E}[R(\text{prompt}, \text{response})] - \beta \cdot \mathrm{KL}(\text{policy} \,\|\, \text{reference})
 ```
 
 يضغط المفهوم الأول على النموذج لتوليد استجابات مكافأة عالية. يمنع المفهوم الثاني (عقوبة الانحراف من KL) النموذج من الانحراف بعيداً جداً عن نقطة التفتيش SFT.
@@ -110,7 +110,7 @@ maximize: E[R(prompt, response)] - beta * KL(policy || reference)
 
 عقوبة كيل تقول: يمكنك التحسين، ولكن لا يمكنك أن تصبح نموذج مختلف تماما. إبقى بالقرب من النسخة SFT، الذي كان معقولا بالفعل.
 
-**InstructGPT numbers:**استخدم تدريب PPO lr = 1.5e-5 ، معدل KL beta = 0.02 ، و 256K حلقات (أزواج الاستجابة السريعة) ، و 4 دورات PPO لكل دفعة. استغرق خط أنابيب RLHF بأكمله عدة أيام على مجموعة من GPUs.
+**InstructGPT numbers:**تدريب PPO استخدم lr=1.5e-5، معدل KL $\beta=0.02$، 256K حلقات (زوجات الاستجابة السريعة) ، و 4 دورات PPO لكل دفعة. استغرق خط أنابيب RLHF بأكمله عدة أيام على مجموعة من GPUs.
 
 ```mermaid
 graph LR
@@ -133,12 +133,14 @@ graph LR
 
 ### هدف المنظمة التنفيذية
 
-يستخدم PPO "هدف بديل مقطوع" لمنع التحديثات الكبيرة المفرطة. يتم تقليص النسبة بين السياسة الجديدة واحتمالات السياسة القديمة إلى النطاق [1 - epsilon ، 1 + epsilon ] ، حيث يكون epsilon عادة 0.2.
+يستخدم PPO "هدف بديل مقطوع" لمنع التحديثات الكبيرة المفرطة. يتم تقليص النسبة بين السياسة الجديدة والاحتمالات القديمة للسياسة إلى النطاق $[1 - \epsilon, 1 + \epsilon]$، حيث$\epsilon$عادة ما يكون 0.2.
 
-```
-ratio = pi_new(action | state) / pi_old(action | state)
-clipped_ratio = clip(ratio, 1 - epsilon, 1 + epsilon)
-loss = -min(ratio * advantage, clipped_ratio * advantage)
+```math
+\begin{aligned}
+\text{ratio} &= \pi_{\text{new}}(\text{action} \mid \text{state}) / \pi_{\text{old}}(\text{action} \mid \text{state}) \\
+\text{clipped\_ratio} &= \mathop{\mathrm{clip}}(\text{ratio}, 1 - \epsilon, 1 + \epsilon) \\
+\text{loss} &= -\min(\text{ratio} \cdot \text{advantage}, \text{clipped\_ratio} \cdot \text{advantage})
+\end{aligned}
 ```
 
 تقدر وظيفة الميزة كم هو أفضل من الرد الحالي مقارنة بالجودة المتوقعة. في RLHF:
@@ -606,9 +608,9 @@ if __name__ == "__main__":
 
 3. قم بتحاكي اختراق المكافآت. قم بإنشاء نموذج مكافأة يعطي درجات عالية للردود الطويلة (الرد = len(رد) / 100). قم بتشغيل PPO مع نموذج المكافأة المعيب ولاحظ نموذج السياسة الذي يولد نتائج متكررة طويلة بشكل متزايد. ثم أضف عقوبة KL من 0.1 وظهر أنه يمنع السلوك المتدهور.
 
-4. تنفيذ مكافأة متعددة الأهداف. تدريب نموذجين من المكافآت - واحد للمساعدة والآخر للمكافأة. مزجهم على أنه R = 0.7 * R_helpful + 0.3 * R_concise. أظهر أن الهدف المشترك ينتج استجابات مفيدة ومكافأة، وتجنب فخ الفصائحية من مكافأة مفيدة واحدة.
+4. تنفيذ مكافأة متعددة الأهداف. تدريب نموذجين من المكافآت -- واحد للمساعدة والآخر للخفيفة. مزجهم على أنه$R = 0.7 \cdot R_{\text{helpful}} + 0.3 \cdot R_{\text{concise}}$. أظهري أن الهدف المشترك ينتج استجابات مفيدة وموجزة، وتجنب فخ اللغة التي تعود إلى مكافأة مفيدة واحدة.
 
-5. مقارنة معايير KL المختلفة. تشغيل PPO مع beta=0.001 (منخفض جداً، اختراق المكافآت) ، beta=0.02 (معياري) ، و beta=0.5 (عالي جداً، لا تعلم). رسم منحنى المكافأة و منحنى KL لكل منهما. يجب أن يظهر beta=0.02 تشغيل تحسن ثابت في المكافأة مع KL المحدود.
+5. مقارنة معدل KL المختلفة.$\beta=0.001$(منخفض جداً، إختراق المكافآت) ،$\beta=0.02$(المعيار) ، و$\beta=0.5$(على ارتفاع كبير جداً، لا تعلم) رسم منحنى الجائزة و منحنى KL لكل واحد.$\beta=0.02$يجب أن يظهر الجائزة تحسنًا ثابتًا مع KL المحدود.
 
 ## الشروط الرئيسية
 
@@ -616,10 +618,10 @@ if __name__ == "__main__":
 |------|----------------|----------------------|
 | RLHF | "Training with human feedback" | Reinforcement Learning from Human Feedback: a three-stage pipeline (SFT, reward model, PPO) that optimizes language model outputs using human preference signals |
 | Reward model | "A model that scores responses" | A transformer with a scalar output head, trained on pairwise human preferences using the Bradley-Terry loss |
-| Bradley-Terry | "The comparison model" | A probabilistic model where P(A > B) = sigmoid(score(A) - score(B)), converting pairwise preferences into a consistent scoring function |
+| Bradley-Terry | "The comparison model" | A probabilistic model where $P(A > B) = \mathop{\mathrm{sigmoid}}(\text{score}(A) - \text{score}(B))$, converting pairwise preferences into a consistent scoring function |
 | PPO | "The RL algorithm" | Proximal Policy Optimization: updates the policy to maximize reward while clipping the update magnitude to prevent instability |
 | KL divergence | "How different two distributions are" | A measure of the difference between the policy model's token distribution and the reference model's -- used as a penalty to prevent reward hacking |
-| KL penalty | "The leash on the model" | Beta * KL(policy \|\| reference) subtracted from the reward signal -- prevents the policy from diverging too far from the SFT checkpoint |
+| KL penalty | "The leash on the model" | $\beta \cdot \mathrm{KL}(\text{policy} \Vert \text{reference})$ subtracted from the reward signal -- prevents the policy from diverging too far from the SFT checkpoint |
 | Reward hacking | "Gaming the reward" | When the policy finds degenerate high-reward outputs by exploiting weaknesses in the reward model instead of genuinely improving |
 | Preference pair | "Which is better, A or B?" | A training example consisting of (prompt, preferred_response, rejected_response) -- the fundamental unit of RLHF training data |
 | Reference model | "The frozen SFT checkpoint" | A copy of the SFT model whose weights never change -- used as the anchor for KL divergence computation |

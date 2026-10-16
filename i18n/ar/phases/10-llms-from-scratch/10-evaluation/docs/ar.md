@@ -67,8 +67,8 @@ graph TD
 
 يُقيس الغموض مدى إفاجأة النموذج من خلال سلسلة من الرموز. بشكل رسمي، هو متوسط احتمال السجل السلبي المتعرض:
 
-```
-PPL = exp(-1/N * sum(log P(token_i | context)))
+```math
+\text{PPL} = \exp\left(-\frac{1}{N} \sum_i \log P(\text{token}_i \mid \text{context})\right)
 ```
 
 تعبير 10 يعني أن النموذج غير مؤكد على المتوسط، كما هو الحال في اختيار 10 خيارات بشكل متساوي في كل موقف رمزي. أقل هو أفضل. تحصل GPT-2 على تعبير 30 على ويكيتيكست-103. تحصل GPT-3 على ~20.
@@ -503,7 +503,7 @@ tests:
 | MMLU | "The benchmark" | Massive Multitask Language Understanding -- 15,908 multiple choice questions across 57 subjects, saturated above 88% by 2025 |
 | HumanEval | "Code eval" | 164 Python function-completion problems from OpenAI, tests only isolated function generation |
 | SWE-bench | "Real coding eval" | 2,294 GitHub issues from 12 Python repos, measures end-to-end bug fixing including test generation |
-| Perplexity | "How confused the model is" | exp(-avg(log P(token_i given context))) -- lower means the model assigns higher probability to the actual tokens |
+| Perplexity | "How confused the model is" | $\exp(-\mathop{\mathrm{avg}}(\log P(\text{token}_i \text{ given context})))$ -- lower means the model assigns higher probability to the actual tokens |
 | ELO rating | "Chess ranking for models" | A relative skill rating computed from pairwise win/loss records, used by Chatbot Arena to rank 100+ models |
 | LLM-as-judge | "Using AI to grade AI" | A strong model scores a weaker model's outputs against a rubric, ~80% agreement with human judges at ~$0.01/judgment |
 | Data contamination | "The model saw the test" | Training data includes benchmark questions, inflating scores without improving real capability |
@@ -516,4 +516,4 @@ tests:
 - [Hendrycks et al., 2021 -- "Measuring Massive Multitask Language Understanding"](https://arxiv.org/abs/2009.03300)-- ورقة MMLU، لا تزال أكثر المراجع المشار إليها في ماجستير في العلوم على الرغم من اكتثافها
 - [Chen et al., 2021 -- "Evaluating Large Language Models Trained on Code"](https://arxiv.org/abs/2107.03374)-- ورقة HumanEval من OpenAI، وضع طريقة تقييم توليد الرمز
 - [Zheng et al., 2023 -- "Judging LLM-as-a-Judge"](https://arxiv.org/abs/2306.05685)-- تحليل منهجي لاستخدام القانون الدولي لتقييم القانون الدولي الدولي الدولي، بما في ذلك نتائج التمييز الموقع والتمييز الكلام
-- [LMSYS Chatbot Arena](https://chat.lmsys.org/)-- منصة مقارنة النماذج المستخدمة من قبل الجمهور مع أصوات 2M + ، التصنيف الأكثر ثقة في عالم الواقع LLM
+- [Arena (formerly LMSYS Chatbot Arena)](https://arena.ai/leaderboard)-- منصة مقارنة النماذج المستخدمة من قبل الجمهور مع أصوات 2M + ، التصنيف الأكثر ثقة في عالم الواقع LLM

@@ -37,13 +37,13 @@
 - الذاكرة: 32 مدخل طبقة (صغيرة) مقابل 32 * (حجم تفعيل لكل طبقة) (كبير).
 - الحساب الإضافي: 1 إضافي للأمام لكل قطعة، أي ~33% أكثر من مجموع FLOPs للأمام (بما أن الخلف هو 2x للأمام، تصبح الخطوة الكاملة 1 + 1 + 2 = 4 وحدات بدلا من 1 + 2 = 3).
 
-هذه وصفة " تشين " وآخرون في عام 2016: نقطة تفتيش واحدة لكل`sqrt(L)`طبقات لتوازن الذاكرة والحساب. بالنسبة ل=64, هذا هو 8 نقاط تفتيش.
+هذه وصفة " تشين " وآخرون في عام 2016: نقطة تفتيش واحدة لكل`sqrt(L)`طبقات لتوازن الذاكرة والحساب$L=64$، هذا 8 نقاط تفتيش
 
 ### نقطة التفتيش الانتخابية (كورتهيكانتي 2022)
 
 لا تكلف جميع التفعيلات بنفس القدر.`B*L*L*heads`و ينمو * مربعًا * مع طول التسلسل.`B*L*4d`و ينمو خطياً. بالنسبة لترتيبات طويلة، يهيمن على "البالغة الناعمة".
 
-يحتفظ التفتيش الانتقائي بتشغيلات التخزين الرخيصة (التنبؤات السطحية والبقايا) ويعد فقط تلك المكلفة (الاهتمام). تدفع أدنى فلوب ليعيد الحساب ولكن توفر ذاكرة O(L^2).
+يحتفظ التفتيش الانتقائي بتشغيلات التخزين الرخيصة (التوقعات السطرية والبقايا) ويعد فقط تلك المكلفة (الاهتمام).$O(L^2)$الذاكرة
 
 تطبق ميغاترون كور هذا كإعادة حساب التفعيل "المتخذي". يستخدم في معظم تدريبات الحدود 2024+.
 
@@ -293,8 +293,8 @@ def should_recompute(layer_type, activation_bytes, recompute_flops_ratio):
 | Block checkpointing | "Coarse-grained" | Checkpoint whole transformer blocks; largest granularity |
 | FLOP overhead | "The compute tax" | Extra FLOPs per step = (recompute FLOPs) / (fwd + bwd FLOPs); 33% naive, 5% selective |
 | Activation offload | "Ship to CPU" | Move activations to CPU RAM across forward->backward; alternative to recompute |
-| sqrt-L rule | "The classical optimum" | For uniform-cost layers, optimal checkpoint spacing is sqrt(L) layers |
-| Attention-softmax volume | "The O(L^2) problem" | L^2 * heads * batch floats; dominates activation memory at long contexts |
+| sqrt-L rule | "The classical optimum" | For uniform-cost layers, optimal checkpoint spacing is $\sqrt{L}$ layers |
+| Attention-softmax volume | "The O(L^2) problem" | $L^2 \cdot \text{heads} \cdot \text{batch}$ floats; dominates activation memory at long contexts |
 
 ## المزيد من القراءة
 
@@ -303,4 +303,4 @@ def should_recompute(layer_type, activation_bytes, recompute_flops_ratio):
 - [Pudipeddi et al., 2020 -- "Training Large Neural Networks with Constant Memory using a New Execution Algorithm"](https://arxiv.org/abs/2002.05645)-- نهج بديل لذاكرة ثابتة عن طريق إعادة المادية في وضع العكس
 - [Ren et al., 2021 -- "ZeRO-Offload: Democratizing Billion-Scale Model Training"](https://arxiv.org/abs/2101.06840)-- تحميل التشغيل على مقياس
 - [PyTorch torch.utils.checkpoint docs](https://pytorch.org/docs/stable/checkpoint.html)-- API القياسية
-- [Megatron-Core activation recomputation documentation](https://docs.nvidia.com/nemo-framework/user-guide/latest/nemotoolkit/features/memory_optimizations.html)-- أساليب اختيارية وملئة ومدينة
+- [Megatron Bridge activation recomputation documentation](https://docs.nvidia.com/nemo/megatron-bridge/latest/training/activation-recomputation.html)-- أساليب اختيارية وملئة ومدينة

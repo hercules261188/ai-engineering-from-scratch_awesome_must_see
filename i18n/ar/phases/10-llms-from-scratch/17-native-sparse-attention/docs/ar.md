@@ -36,8 +36,8 @@
 
 يتم دمج ثلاثة خروجيات الفرع عبر بوابة تعلم لكل موقف:
 
-```
-out = g_cmp * out_cmp + g_sel * out_sel + g_win * out_win
+```math
+\text{out} = g_{\text{cmp}} \cdot \text{out}_{\text{cmp}} + g_{\text{sel}} \cdot \text{out}_{\text{sel}} + g_{\text{win}} \cdot \text{out}_{\text{win}}
 ```
 
 `g_cmp, g_sel, g_win`هي وزن البوابات من MLP صغير على السؤال. لا يجب أن يصل إلى 1  يمكنهم وزن الفرع بشكل مستقل.
@@ -171,7 +171,7 @@ def compress(K, l):
 
 | Term | What people say | What it actually means |
 |------|----------------|------------------------|
-| Compressed branch | "Coarse view" | Attention over block-averaged keys that provides global context in O(N/l) keys per query |
+| Compressed branch | "Coarse view" | Attention over block-averaged keys that provides global context in $O(N/l)$ keys per query |
 | Selected branch | "Top-k blocks" | Fine-grained attention over the `k` blocks with highest compressed-branch scores |
 | Sliding window | "Local context" | Attention over the last `W` tokens for short-range patterns |
 | Native trainability | "Pre-train with the sparsity on" | The sparsity pattern is learned during pre-training, not bolted on at inference |

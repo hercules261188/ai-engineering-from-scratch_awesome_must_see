@@ -52,8 +52,8 @@
 
 LayerNorm يخص متوسط، وينقسم بواسطة std، مقياس، وتحركات. RMSNorm يحتفظ فقط بالمقياس:
 
-```
-RMSNorm(x) = x / sqrt(mean(x^2) + eps) * gamma
+```math
+\mathop{\mathrm{RMSNorm}}(x) = \frac{x}{\sqrt{\mathop{\mathrm{mean}}(x^2) + \epsilon}} \cdot \gamma
 ```
 
 لا يعني الحد من النسب. لا يوجد تحيز. واحد من الممل أقل لكل رمز. جادل Zhang و Sennrich (2019) أنه يطابق LayerNorm على الترجمة الآلية مع أن يكون أسرع بنسبة 10%. كل نموذج مفتوح حديث يعمل عليه.
@@ -78,8 +78,8 @@ score = q_rotated . k_rotated
 
 المخططات المختلفة لـ GPT-2 هي`x -> gelu(xW1 + b1) -> (...)W2 + b2`. يُستبدل SwiGLU (Shazeer 2020) التفعيل بمنتج مغلق:
 
-```
-SwiGLU(x) = (xW1) * sigmoid(xW1) * xV
+```math
+\mathop{\mathrm{SwiGLU}}(x) = (xW_1) \cdot \mathop{\mathrm{sigmoid}}(xW_1) \cdot xV
 ```
 
 تمت إعداد مقياسات متوازية بدلاً من مقياس واحد، وتتوافق مع عملية تنشيط سويش. أقوى تجريبياً على التعقيد لكل مبرمج. اعتمدت Llama 2 ، اتبعها الجميع. يتم تحديد حجم المبرمج المخبأ عادةً بحيث يطابق عدد المبرمجات الكلي مع MLP الكثيفة الأصلية: إذا استخدم GPT-2`ff_dim = 4 * hidden`, SwiGLU يستخدم `ff_dim = (2/3) * 4 * hidden = 8/3 * hidden`. . .
@@ -90,7 +90,7 @@ GPT-2 المستخدم **Multi-Head Attention (MHA)**كل رأس لديه مشه
 
 **Multi-Query Attention (MQA, Shazeer 2019)**يشارك K و V على جميع الرؤوس. يقطع cache KV من قبل عدد_رؤوس، وهو خفض 12x إلى 32x على نموذج نموذجي. ينخفض الدقة قليلا على مقارنات صعبة.
 
-**Grouped-Query Attention (GQA, Ainslie et al. 2023)**هو المنتصف: مجموعات G من رؤوس Q تشارك واحدة K و واحدة V. Llama 3 8B تستخدم GQA مع 32 رؤوس Q و 8 رؤوس KV (G = 8 ، لذلك مخزن KV يقلل 4x مقابل كامل MHA.
+**Grouped-Query Attention (GQA, Ainslie et al. 2023)**هو الوسط:$G$المجموعات من رؤوس Q تشارك واحدة K و V واحد. Llama 3 8B تستخدم GQA مع 32 رؤوس Q و 8 رؤوس KV ($G=8$(), لذلك مخزن KV يقلل 4x مقابل كامل MHA.
 
 **Multi-Head Latent Attention (MLA, DeepSeek 2024)**يضغط K و V إلى متبادل متخفي منخفض الرتب ، مما يعيد إلقاءهم إلى أعلى لكل رأس. يقلل من مخزن KV مع الحفاظ على التعبير لكل رأس. يعتمد DeepSeek-V2 و V3 على هذا لأداءها في السياق الطويل.
 
@@ -154,6 +154,7 @@ graph LR
 | Qwen 2.5 72B | 2024 | 72B | 72B | RMSNorm | SwiGLU | RoPE (YaRN) | GQA (64/8) | no | 128k |
 | DeepSeek V2 236B | 2024 | 236B | 21B | RMSNorm | SwiGLU | RoPE | MLA | yes (160 experts, top-6) | 128k |
 | DeepSeek V3 | 2024 | 671B | 37B | RMSNorm | SwiGLU | RoPE | MLA | yes (256 experts, top-8) | 128k |
+| Spark-X2.5 4B | 2026 | 4.1B | 4.1B | RMSNorm | GeGLU | RoPE + sliding (3:1) | GQA (16/4), gated output | no | 1M |
 
 مسح العمود. RMSNorm عالمية. SwiGLU أو ابن عمها GeGLU عالمية. RoPE عالمية. GQA عالمية فوق 7B إلا عندما يتم استبدالها بواسطة MLA. MoE هو المميز في الطرف العلوي.
 
@@ -176,6 +177,12 @@ graph LR
 ```
 
 كل مجال يتوافق مع شيء قمت بتنفيذه بالفعل.
+تشكيلات جديدة تضيف بعض الحقول التي تغير الحساب، لذلك الحاسبة
+يقرأها عندما يكونون حاضران:
+
+- `head_dim`: تحدد صراحة عندما لا يكون`hidden_size / num_attention_heads`جيمما 29 ب) قد أخف 3584 و 16 رأس)`head_dim`256، لذا فإنّ ريمه Q هو 3584 × 4096، وليس مربع.
+- `tie_word_embeddings`لا يربط Llama 3 8B، وهو ما هو 525M المعلمات التي تفوتك إذا احتسبت فقط إضافة مرة واحدة.
+- `layer_types`و`sliding_window`: التي تعطي الوضع الكامل والتي تعطي الوضع الأخير فقط.
 
 - `hidden_size`: أبعاد الإضافة
 - `intermediate_size`: حجم مخفي MLP (3.5x مخفي -- SWIGLU الرياضيات).
@@ -212,6 +219,15 @@ kv_cache = 2 * num_layers * num_kv_heads * head_dim * max_seq_len * bytes_per_el
 
 وزن 8B هو 16 جيجابايت في BF16. مخزن KV لسلسلة واحدة 128k أكبر من الوزن. هذا هو ضغط الذاكرة القيادة GQA، MLA، و KV مخزن كمية البحوث.
 
+افترض الصيغة أن كل طبقة تخفي السلسلة بأكملها. تحتاج طبقة النافذة المنزلقة فقط إلى آخر رموز W ، لذلك بالنسبة للنماذج الهجينة ، يتم إجمالي التشغيل لكل طبقة:
+
+```
+kv_cache = 2 * num_kv_heads * head_dim * bytes_per_element
+           * (full_layers * max_seq_len + sliding_layers * min(W, max_seq_len))
+```
+
+يستخدم Spark-X2.5 4B ثلاث طبقات من النافذة المنزلقة ($W = 512$) لكل طبقة كاملة من الاهتمام: 9 كاملة و 27 ينزلق من 36. في سياق 1M-token الذي هو حوالي 38.7 GB (36 GiB) لكل تسلسل في BF16. إذا كانت جميع الطبقات 36 حفظ السياق الكامل سيكون 154.6 GB (144 GiB). الطبقات الكاملة تحمل تقريبا كل التكلفة، وهذا هو السبب في أن نسبة الطبقات الكاملة إلى الطبقات المنزلقة هي الرقم الذي يجب قراءته أولا على نموذج سياق طويل.
+
 ### عندما يفوز كل نموذج
 
 - **Single 80GB GPU, no MoE**: لامة 3 8 ب، ميسرال 7 ب، جيمما 2 9 ب. سهل الخدمة، أدوات واسعة.
@@ -219,6 +235,7 @@ kv_cache = 2 * num_layers * num_kv_heads * head_dim * max_seq_len * bytes_per_el
 - **Biggest open capability, accept MoE complexity**: DeepSeek V3، Mixtral 8x22B. أفضل قدرة لكل FLOP نشطة.
 - **Long-context needs**: Llama 3 (128k مع مقياس RoPE) ، DeepSeek (ميزة MLA).
 - **Low-latency serving**: Gemma 2 9B (انقطاع النافذة يقطع الحسابات طويلة السياق).
+- **Long context on a small memory budget**: نماذج مزودة بالنوافذ المزلقة مثل Spark-X2.5 4B، حيث لا يدفع سوى ربع الطبقات مقابل السياق الكامل.
 
 ```figure
 rmsnorm-vs-layernorm
@@ -237,13 +254,17 @@ config = {
 }
 ```
 
-يمر النص المخطط في حقل الهندسة المعمارية حسب الحقل ، ويحسب عددات المعلمات للتضمين ، والاهتمام (مع تقليل GQA) ، و MLP (مع توسيع SwiGLU) ، والقواعد الطبقةية ، والرأس. ثم يحسب cache KV في طول السياق المحدد ويطبق ملخصا.
+يمر النص في حقل الهندسة المعمارية حسب الحقل ، ويحسب عدد المعايير للتثبيت ، والاهتمام (مع تقليل GQA و  صريح `head_dim`عندما يضع التكوين واحد) ، MLP (مع توسيع SwiGLU أو GeGLU) ، والطبقات الطبقة، ورأس LM عندما لا يرتبط بالتركيب. ثم يحسب cache KV في طول السياق المحدد، طبقة بعد طبقة بحيث يتم تغطية طبقات النافذة المنزلقة في نافذتها، ويقوم طباعة ملخص.
+
+بالنسبة للنماذج الكثيفة تتطابق إجماليات المعايير المنشورة مع حسابات بالضبط: Llama 3 8B يخرج عند 8.030.261.248 ، Gemma 2 9B عند 9.241.705.984 ، و Spark-X2.5 4B عند 4.112.079.360.
 
 انظر`code/main.py`لتنفيذها.
 
 ## استخدمها
 
 قم بتشغيل الحاسبة على إعدادات Llama 3 8B و Mistral 7B و Mixtral 8x7B و DeepSeek V3 المجمعة في النص. مقارنة تفكيكات المعلمات. لاحظ أن نماذج MoE لديها عدد المعلمات الإجمالي الذي يتقصر على نماذج الكثافة ولكن عدد المعلمات النشطة الذي هو في كثير من الأحيان أصغر. لاحظ أن cache KV في DeepSeek V3 أصغر من Llama 3 405B على الرغم من وجود المزيد من المعلمات الإجمالية - وهذا هو MLA في العمل.
+
+ثم مقارنة Gemma 2 9B و Spark-X2.5 4B. لكل منهما، يقوم النص بطبع الاحتفاظ KV الذي يحتاجه فعلياً والاحتفاظ KV الذي سيحتاجه إذا كانت كل طبقة تهتم بالكامل. Gemma 2 يتناوب 1:1 في سياق 8k، لذلك التوفير متواضع. Spark-X2.5 يذهب 3:1 مع نافذة 512 رمز في 1M، لذلك التوفير هو 4x.
 
 ثم قم بتوصيل إعداد لأي نموذج لديك محليا، وقرأ الموجة، وقرر ما إذا كان يناسب GPU الخاص بك.
 
@@ -275,7 +296,7 @@ config = {
 | MoE | "Sparse experts" | Mixture of Experts: N MLPs per block, router picks top-k per token — huge total params, small active params |
 | Top-k routing | "Pick k experts per token" | The router computes a score per expert and activates the k highest — typical k is 2 (Mixtral) to 8 (DeepSeek) |
 | YaRN | "Stretch RoPE" | Yet another RoPE extension — interpolates rotary angles to extend context from 8k to 128k+ at inference time |
-| Sliding-window attention | "Don't attend to everything" | Each token attends only to the last W tokens — caps attention cost at O(W) per token, used in Gemma 2 and early Mistral |
+| Sliding-window attention | "Don't attend to everything" | Each token attends only to the last $W$ tokens — caps attention cost at $O(W)$ per token, used in Gemma 2 and early Mistral |
 | Active params | "What runs per token" | For MoE models, the parameter count that sees a forward pass per token (much smaller than total params) — governs per-token FLOPs |
 
 ## المزيد من القراءة
