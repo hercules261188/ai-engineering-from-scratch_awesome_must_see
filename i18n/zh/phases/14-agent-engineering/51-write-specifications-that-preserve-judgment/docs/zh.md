@@ -90,7 +90,7 @@ python3 -m unittest discover code/tests -v
 ## 进一步阅读
 
 - [Nuseibeh and Easterbrook, Requirements Engineering: A Roadmap](https://www.cs.toronto.edu/~sme/papers/2000/ICSE2000.pdf)对于目标,精确规格,验证,一致性和进化之间的关系.
-- [Zave and Jackson, Four Dark Corners of Requirements Engineering](https://doi.org/10.1145/267895.267896)对于环境假设,要求和规格的分离.
+- [Zave and Jackson, Four Dark Corners of Requirements Engineering](https://doi.org/10.1145/237432.237434)对于环境假设,要求和规格的分离.
 - [Gotel and Finkelstein, An Analysis of the Requirements Traceability Problem](https://doi.org/10.1109/ICRE.1994.292398)为了保护要求的存在和来源.
 
 ## 你留下什么

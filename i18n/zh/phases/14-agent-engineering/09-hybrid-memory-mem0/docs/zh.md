@@ -32,7 +32,7 @@
 
 1. 从文本中提取候选事实 (基于LLM的步骤).
 2. 写每一个事实到向量存储 (嵌入) 中进行语义搜索.
-3. 写出每个事实到按键 (user_id, fact_type, entity) 键入的 KV存储中,用于O(1) 搜索.
+3. 写每个事实到按键 (user_id, fact_type, entity) 的 KV存储中.$O(1)$查看.
 4. 写每一个事实到图库 (Mem0g) 作为键入边缘关系查询.
 
 现在`search(query, user_id)`其他:

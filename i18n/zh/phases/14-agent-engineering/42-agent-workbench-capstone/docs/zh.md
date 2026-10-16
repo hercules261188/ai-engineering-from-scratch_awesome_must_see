@@ -13,6 +13,7 @@
 - 入方案,脚本和模板,这样一个新的 repo得到了已知的基础.
 - 添加一个单个安装脚本,将包装无力放下.
 - 决定什么留在群里,什么留在外,为每一个人辩护.
+- 证明一个代理协助的存储库变化,并提供审查者可以复制的证据.
 
 ## 问题
 
@@ -133,6 +134,78 @@ python3 code/main.py
 4. 添加一个`lint_pack.py`子出时会失败`VERSION`给IC传输,让包裹自己回复.
 5. 导读了从手动滚动工作台到这个包的迁移运行指南.
 
+## 职业实践:证明一个库存变化
+
+包装演示证明组装器运行和生成文件.它不证明您的代理能完成新任务,生成的检查证明该任务,或部署的系统工作. 保持这些要求分开.
+
+选择一个小的实际任务,在一个你拥有或有权更改的库中.使用一个你已经访问的编码代理.一个错误纠正,一个有限的功能或一个操作改进是足够的;安装多个代理不是练习的一部分.
+
+预算除包装实验室之外的单独工作会议.`learning-artifacts/`保存注册表,并作为参考材料包装.
+
+### 1. 制任务,选择自主
+
+使用第43课题的任务框架和第44课题的证据计划.记录起来的修订,可观察的目标,非目标,允许的路径和接受证据.确定真正需要行为的用户或操作员.
+
+选择一个工作模式:指导步骤,检查点执行,或一个有限的自动运行.解释为什么不确定性,后果和可逆性证明了这一点.一个小的本地检查点可能需要更少的检查点,而不是改变访问控制.
+
+设置一个壁时间预算和一个代币或成本限制,如果代理人暴露一个. 诚实记录不可用测量. 定义一个停止条件重复故障,新的许可,预算耗尽,或未解决的合同决定; 命名谁可以解决它.
+
+### 2. 准备最小的有用环境
+
+检索相关的实现,调用程序,测试和本地说明.记录每个源为什么属于文本,以及当前的证据将取代过时的注释.默认不加载整个存储库.
+
+对于每个相关扩展,做出一个明确的选择:一个技能提供可重复的程序;一个MCP工具提供访问;一个子运行确定性检查;一个插件包装功能.只在任务需要它时保留扩展,使用最小的权限让它工作.
+
+记录你拒绝的建议添加的文本或维护成本.重新检查一个过时的内存或指令,然后在学习者拥有的设置中退休或更换它,当证据支持该决定时. 重复检查以确认删除没有失去必要的约束.
+
+### 3. 捕捉基线并实现
+
+在编辑之前,运行最近的现有检查,并展示所需行为的当前状态. 保持命令,修改,结果和证据位置.尚未存在的功能仍然具有基线:记录观察到的反应或未支持的操作.
+
+让代理人在合同内执行. 保持一个干预日志,说明每次纠正,许可变更或计划修改的原因. 委托是可选的;如果有用,在增加另一个工人之前,应用45课的所有权和整合合合同.
+
+### 4. 挑战证据
+
+选择观察改变的表面的证明.对于UI,重建和检查服务的路径在相关宽度.对于API,检查请求和序列式响应.对于CLI,运行构建命令并检查其出口代码和输出.选择您需要的检查并解释其限制.
+
+写出任务合同的预期结果,独立于代理执行.在一次性复印件中,输入一个特定的错误结果,例如接受无效值或丢弃所需响应字段.执行相同的接受检查:它必须因此故障.
+
+如果它保持绿色,在信任它之前,强化声明或观察.恢复正确的实现并成功重复运行.保持两份收据.语法错误或故障的测试设置不算是检测回归.
+
+检查最终的差异,包括改变的测试,与原始目标和允许的路径相比.请同行或单独的审查者会话挑战最弱的证据,而不编辑实施.你仍然拥有最终的判断;另一个代理的同意不是执行证据.
+
+### 5. 修复车的运行和恢复
+
+运行已改变的文物在一次性本地或舞台环境中.`local`现在`staging`其他`live`地方演练支持当地要求;此演练不需要生产部署.
+
+选择一个与任务相关的失败信号,一个门,一个观察窗口和一个主. 当这个门过了时,解释反应.在练习中安全激活信号,并保留观察日志,指标或反应.
+
+检查已知的好文物重新推翻,并检查是否恢复了以前的行为. 考虑到适用的持续数据;仅仅替换二进制可能不会逆转数据变化.记录您无法验证的任何恢复步骤.
+
+### 6. 改进下一次跑步,然后把它交给
+
+根据研究结果,我们可以将结果与原始数据进行比较,包括过去的时间,可用的使用数据和人类干预.
+
+通过第46课进行一个观察到的修正,一个较小的权限界限,一个自动化或更清晰的例子. 重复受影响的检查.删除临时突变,离开最后的分支,更改文件,开放风险,下一步行动明确下次会议.
+
+### 手动审查条例
+
+检查员检查证据文件,并复制至少最弱的接受检查.`demonstrated`现在`needs revision`其他`unverified`填写字段和传递包装脚本不取代这些观察.
+
+| Dimension | Evidence the reviewer should challenge |
+|---|---|
+| Task and autonomy | Starting behavior, bounded goal, justified permissions, budget, and a usable stop rule |
+| Context and environment | Relevant sources, justified tool access, and a rechecked retirement decision |
+| Verification | Actual before/after behavior and a deliberate incorrect result that the same check rejects |
+| Review and operation | Inspected diff, independent challenge, labeled runtime observation, and rehearsed recovery |
+| Iteration and handoff | One verified improvement, honest limits, clean final state, and a reproducible next action |
+
+解决问题`needs revision`要求完成任务之前的发现.`unverified`投资组合证明您对有限任务的工程判断,而不是雇佣或部署保证.
+
+## 运输的文物
+
+保存可重复使用的包装和您的复印件[career-agent-evidence.md](https://github.com/rohitg00/ai-engineering-from-scratch/blob/main/phases/14-agent-engineering/42-agent-workbench-capstone/outputs/career-agent-evidence.md)模板将任务框架,执行计划,运行时间收据,审查,恢复练习和转让连接到一个可审查的案例研究中.
+
 ## 关键词
 
 | Term | What people say | What it actually means |
@@ -150,7 +223,6 @@ python3 code/main.py
 - [Nx Blog, Teach Your AI Agent How to Work in a Monorepo](https://nx.dev/blog/nx-ai-agent-skills) 六个工具的单源发电机
 - [agents.md — the open spec](https://agents.md/)您的包装路由器必须实现什么
 - [HKUDS/OpenHarness](https://github.com/HKUDS/OpenHarness) 包装等价的参考实施
-- [andrewgarst/agentic_harness](https://github.com/andrewgarst/agentic_harness) 支持重复的引用与 eval套件
 - [Augment Code, A good AGENTS.md is a model upgrade](https://www.augmentcode.com/blog/how-to-write-good-agents-dot-md-files)包装文件质量条
 - [Anthropic, Effective harnesses for long-running agents](https://www.anthropic.com/engineering/effective-harnesses-for-long-running-agents)
 - [Anthropic, Harness design for long-running application development](https://www.anthropic.com/engineering/harness-design-long-running-apps)

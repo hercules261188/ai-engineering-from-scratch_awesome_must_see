@@ -214,7 +214,6 @@ python3 code/main.py
 - [preprints.org, Harness Engineering for Language Agents (March 2026)](https://www.preprints.org/manuscript/202603.1756)作为控制/代理/运行时间的学术框架
 - [walkinglabs/awesome-harness-engineering](https://github.com/walkinglabs/awesome-harness-engineering) 评选文本,评估,可观测性,编排
 - [ai-boost/awesome-harness-engineering](https://github.com/ai-boost/awesome-harness-engineering)替代选定列表 (工具,评估,内存,MCP,权限)
-- [andrewgarst/agentic_harness](https://github.com/andrewgarst/agentic_harness) 随着Redis支持的内存和评估套件的生产准备的参考实现
 - [HKUDS/OpenHarness](https://github.com/HKUDS/OpenHarness) 开放代理带内置个人代理
 
 哈克新闻值得阅读的线程是因为分歧,而不是共识:

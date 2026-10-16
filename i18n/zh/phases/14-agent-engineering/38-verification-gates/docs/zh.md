@@ -140,7 +140,6 @@ python3 code/main.py
 - [Type-Checked Compliance: Deterministic Guardrails (arXiv 2604.01483)](https://arxiv.org/pdf/2604.01483)4作为确定性盖特的上限
 - [logi-cmd/agent-guardrails — merge gate spec](https://github.com/logi-cmd/agent-guardrails)范围+突变测试门
 - [Guardrails AI x MLflow](https://guardrailsai.com/blog/guardrails-mlflow)确定性验证器作为CI分数
-- [Akira, Real-Time Guardrails for Agentic Systems](https://www.akira.ai/blog/real-time-guardrails-agentic-systems)前/后工具门
 - 阶段14 · 27 快速注射防御 (门的对抗对)
 - 阶段14 · 36 本门执行的范围合同
 - 阶段14 · 37 反记录这个门得分
