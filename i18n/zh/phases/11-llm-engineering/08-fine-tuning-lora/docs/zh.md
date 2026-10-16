@@ -11,7 +11,7 @@
 ## 学习目标
 
 - 通过注入低级适配器矩阵 (A和B) 进入预训练模型的注意力层来实现LoRA
-- 计算LoRA对完全微调的参数节省:r级别与d_模型尺寸列车2*r*d参数而不是d2
+- 计算LoRA对完全微调的参数节省:排名 $r$随着$d_{\text{model}}$尺寸列车$2 \cdot r \cdot d$参数而不是$d^2$
 - 使用QLoRA (4位量化基 + LoRA适配器) 调整模型,以适应消费者GPU内存
 - 将LoRA重量重新融入部署的基模型,并将推断速度与无适配器进行比较
 
@@ -37,21 +37,21 @@
 
 标准线性层计算:
 
-```
+```math
 y = Wx
 ```
 
-在 W 是 d_out x d_in 矩阵.为4096x4096的注意力投影,这是16777,216参数.
+在哪里?$W$是一个$d_{\text{out}} \times d_{\text{in}}$对于4096x4096的注意力投影,这相当于16777,216个参数.
 
-洛拉结W并添加低级分解:
+洛拉结$W$并且增加了低级分解:
 
-```
+```math
 y = Wx + BAx
 ```
 
-在B是 (d_out x r) 和A是 (r x d_in) 的位置 r 比d小得多 - 通常是8,16或32
+在哪里?$B$是$(d_{\text{out}} \times r)$其他$A$是$(r \times d_{\text{in}})$位$r$较小的$d$通常是8,16或32个.
 
-对于4096x4096层的 r=16:
+为了$r=16$在4096x4096层上:
 - 基本参数:4096 x 4096 = 16,777,216
 - 低温率参数: (4096 x 16) + (16 x 4096) = 65,536 + 65,536 = 131,072
 - 减少:131,072 / 16,777,216 = 0.78%
@@ -76,18 +76,18 @@ A是随机高斯人初始化. B是初始化到零.这意味着LoRA贡献从零�
 
 ### 规模因素:阿尔法
 
-洛拉引入了扩展因子alpha,它控制了低级更新对输出的影响:
+洛拉引入了扩展因素$\alpha$控制低级更新对输出的影响程度:
 
-```
-y = Wx + (alpha / r) * BAx
+```math
+y = Wx + \frac{\alpha}{r} \cdot BAx
 ```
 
-当alpha=r时,规模为1x.当alpha=2r (常见默认) 时,规模为2x.这个超参数独立于基础学习率控制了LoRA路径的学习速度.
+什么时候$\alpha = r$现在,我们可以在一个小时内进行测量.$\alpha = 2r$超参数控制了LoRA路径的学习速度,独立于基础学习速度.
 
 实际指导:
-- 位是一个常见的社区公约 (原始使用的论文是位在大多数实验中)
-- 率为1x的规模,保守但稳定
-- 高级alpha意味着每步的更新更大,这可以加速化或导致不稳定性
+- $\alpha = 2 \cdot \text{rank}$是一个共同的社区会议 (原始使用的文件)$\alpha = \text{rank}$在大多数实验中)
+- $\alpha = \text{rank}$提供1x扩展,保守但稳定
+- 较高$\alpha$意思是每步进行更大的更新,这可能加快缩或导致不稳定性
 
 ### 适用Lora的地点
 
@@ -104,7 +104,7 @@ y = Wx + (alpha / r) * BAx
 
 ### 排名选择
 
-级r控制了适应的表达性:
+位$r$控制适应的表达性:
 
 | Rank | Trainable Params (per layer) | Best For |
 |------|---------------------------|----------|
@@ -115,7 +115,7 @@ y = Wx + (alpha / r) * BAx
 | 64 | 524,288 | Diminishing returns for most tasks |
 | 128 | 1,048,576 | Rarely justified |
 
-胡等人表明,r=4已经捕获了对简单任务的适应大部分.r=8和r=16是实践中最常见的选择.超越r=64很少改善质量,并开始失去LoRA的记忆优势.
+胡等人证明了这一点.$r=4$现在,它已经捕捉了大部分适应简单任务. $r=8$其他$r=16$实际上,这些选择是最常见的.$r=64$很少提高质量,开始失去洛拉的记忆优势.
 
 ### 定量:4位量化+LORA
 
@@ -148,7 +148,7 @@ y = Wx + (alpha / r) * BAx
 | QLoRA r=16 (NF4) | 47.5 | 6.61 | 13.4 |
 | QLoRA r=64 (NF4) | 48.1 | 6.70 | 14.2 |
 
-在大多数基准值上,R=16的LoRA在1%内.R=16的QLoRA损失了另一个百分比.R=64的QLoRA基本上与完全的细调匹配,同时使用90%的内存.
+洛拉在$r=16$在大多数基准指标上,在1%内的完整调整.$r=16$率的比例是1%的.$r=64$基本上与完全的细调匹配,同时使用90%的内存.
 
 ### 实际成本
 
@@ -183,7 +183,7 @@ y = Wx + (alpha / r) * BAx
 
 1. **Keep them separate**根据本模型的定义,您可以使用一个模型的多个细调变体.
 
-2. **Merge them permanently**计算W' =W + (alpha/r) *BA,并将结果保存为新的完整模型. 合并模型与原始相同的尺寸. 没有推断费用. 没有适配器可管理.
+2. **Merge them permanently**计算$W' = W + (\alpha/r) \cdot BA$合并模型与原始模型相同的尺寸,没有推断费用,没有适配器管理.
 
 为了完成多项任务 (客户支持适配器,代码适配器,翻译适配器),将它们分开.
 
@@ -531,11 +531,11 @@ model.save_pretrained("./lora-adapter")
 | LoRA | "Efficient fine-tuning" | Low-Rank Adaptation: freeze base weights, train two small matrices A and B whose product approximates the full weight update |
 | QLoRA | "Fine-tune on a laptop" | Quantized LoRA: load the base model in 4-bit NF4, train LoRA adapters in fp16 on top, enabling 7B fine-tuning in 6GB VRAM |
 | Rank (r) | "How much the model can learn" | The inner dimension of the A and B matrices; controls expressiveness vs. parameter count |
-| Alpha | "LoRA learning rate" | Scaling factor applied to the LoRA output; alpha/r scales the adaptation's contribution to the final output |
+| Alpha | "LoRA learning rate" | Scaling factor applied to the LoRA output; $\alpha/r$ scales the adaptation's contribution to the final output |
 | NF4 | "4-bit quantization" | Normal Float 4: a 4-bit data type with quantization levels at normal distribution quantiles, optimal for neural network weights |
 | Adapter | "The small trained part" | The LoRA A and B matrices saved as a separate file (10-100MB), loadable on top of any copy of the base model |
 | Target modules | "Which layers to LoRA" | The specific linear layers (q_proj, v_proj, etc.) where LoRA adapters are injected |
-| Merging | "Bake it in" | Computing W + (alpha/r) * BA and replacing the original weight, eliminating the adapter overhead at inference |
+| Merging | "Bake it in" | Computing $W + (\alpha/r) \cdot BA$ and replacing the original weight, eliminating the adapter overhead at inference |
 | Paged optimizers | "Don't OOM during training" | Offloading optimizer states (Adam momentum, variance) to CPU when GPU memory is exhausted |
 | Catastrophic forgetting | "Fine-tuning broke everything else" | When updating all weights causes the model to lose previously learned capabilities |
 

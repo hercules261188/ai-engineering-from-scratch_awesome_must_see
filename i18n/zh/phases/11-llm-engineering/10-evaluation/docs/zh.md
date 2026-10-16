@@ -856,7 +856,7 @@ if __name__ == "__main__":
 - [DeepEval Documentation](https://docs.confident-ai.com)-- 基于Python的评估框架,有14+个指标,Pyest集成,和幻觉检测
 - [Braintrust Eval Guide](https://www.braintrust.dev/docs)-- 实验跟踪,分数功能和数据集管理的生产评估平台
 - [Ribeiro et al., 2020 -- "Beyond Accuracy: Behavioral Testing of NLP Models with CheckList"](https://arxiv.org/abs/2005.04118)-- 对LLM评估适用的系统行为测试方法 (最低功能,不变性,方向预期)
-- [LMSYS Chatbot Arena](https://chat.lmsys.org)-- 实时的人类评估平台,用户投票对模型输出,这是 LLM最大的对比数据集
+- [Arena (formerly LMSYS Chatbot Arena)](https://arena.ai/)-- 实时的人类评估平台,用户投票对模型输出,这是 LLM最大的对比数据集
 - [Es et al., "RAGAS: Automated Evaluation of Retrieval Augmented Generation" (EACL 2024 demo)](https://arxiv.org/abs/2309.15217)-- 没有参考的RAG指标 (忠实性,答案相关性,文本精确性/回忆);
 - [Liu et al., "G-Eval: NLG Evaluation using GPT-4 with Better Human Alignment" (EMNLP 2023)](https://arxiv.org/abs/2303.16634)作为法官协议,校准和偏见结果每个法官-构建者需要.
 - [Hugging Face LLM Evaluation Guidebook](https://huggingface.co/spaces/OpenEvals/evaluation-guidebook)通过开放的LLM排名表的团队提供有关数据污染,测量选择和可复制性的实际建议.

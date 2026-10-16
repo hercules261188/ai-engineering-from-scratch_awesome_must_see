@@ -863,7 +863,7 @@ if __name__ == "__main__":
 #     return None
 ```
 
-在生产中,用向量索引 (Redis Vector Search,Pinecone,或pgvector) 取代线性扫描.线性扫描对<1,000条目工作.此外,使用ANN (近邻近) 搜索O(log n).
+在生产中,用向量指数 (Redis Vector Search,Pinecone或pgvector) 取代线性扫描.线性扫描对<1,000个输入工作.此外,使用ANN (近邻近) 来$O(\log n)$查看.
 
 ## 运送它
 

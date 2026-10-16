@@ -937,24 +937,24 @@ if __name__ == "__main__":
 ### 谷歌:双胞胎安全设置
 
 ```python
-# import google.generativeai as genai
+# from google import genai
+# from google.genai import types
 #
-# genai.configure(api_key="your-key")
+# client = genai.Client()
 #
-# model = genai.GenerativeModel(
-#     "gemini-1.5-pro",
-#     system_instruction="You are a technical analyst. Be precise and cite sources.",
-#     generation_config=genai.GenerationConfig(
+# response = client.models.generate_content(
+#     model="gemini-3.8-flash",
+#     contents="Compare PostgreSQL and MySQL for write-heavy workloads.",
+#     config=types.GenerateContentConfig(
+#         system_instruction="You are a technical analyst. Be precise and cite sources.",
 #         temperature=0.3,
 #         max_output_tokens=2048,
 #     ),
 # )
-#
-# response = model.generate_content("Compare PostgreSQL and MySQL for write-heavy workloads.")
 # print(response.text)
 ```
 
-双子公司处理系统说明作为模型配置的一部分,而不是作为消息. 2M代币文本窗口意味着您可以包括在GPT-4o或Claude中不适合的大规模的几次示例集.
+双子座处理系统说明作为模型配置的一部分,而不是作为消息. 1M代币文本窗口意味着你可以包括在GPT-4o的 128K窗口中不适合的大规模的几次示例集.
 
 ### 提供者-无知提示模板
 
@@ -1023,6 +1023,6 @@ if __name__ == "__main__":
 - [Wei et al., 2022 -- "Chain-of-Thought Prompting Elicits Reasoning in Large Language Models"](https://arxiv.org/abs/2201.11903)根据"思考一步一步"的基础论文,
 - [Zamfirescu-Pereira et al., 2023 -- "Why Johnny Can't Prompt"](https://arxiv.org/abs/2304.13529)如何使非专家与快速工程斗争,以及什么使快速技术有效
 - [Shin et al., 2023 -- "Prompt Engineering a Prompt Engineer"](https://arxiv.org/abs/2311.05661)通过使用LLM来自动优化提示,
-- [LMSYS Chatbot Arena](https://chat.lmsys.org/)-- 通过 LLM 的盲目比较,可以测试不同模型的相同提示,
+- [Arena (formerly LMSYS Chatbot Arena)](https://arena.ai/)-- 通过 LLM 的盲目比较,可以测试不同模型的相同提示,
 - [DAIR.AI Prompt Engineering Guide](https://www.promptingguide.ai/)-- 详尽的即时技术目录,包括示例 (零射,少射,CoT,ReAct,自律性); 参考实践人员使用更广泛的"即时工程"表面.
-- [Anthropic prompt library](https://docs.anthropic.com/en/prompt-library)根据使用情况进行了精选,已知的提示;显示了生产中运输的结构模式.
+- [Claude prompting best practices](https://platform.claude.com/docs/en/build-with-claude/prompt-engineering/claude-prompting-best-practices)通过实践的例子,取代了早期的提示库.

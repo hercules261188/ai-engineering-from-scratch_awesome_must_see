@@ -89,7 +89,7 @@ graph LR
 - 简单的语言:开放式,100多种语言
 - bge-renanker-v2-m3:开放权重,强基线
 - 跨码码器/ms-marco-MiniLM-L-6-v2:开放权重,运行于CPU用于原型设计
-- 结合后期交互多向量重排器  O(代币) 不是 O(doc) 在得分时间
+- 后期交互多向量重排器  $O(\text{tokens})$没有$O(\text{docs})$在得分时间
 
 ### 查询转换
 
