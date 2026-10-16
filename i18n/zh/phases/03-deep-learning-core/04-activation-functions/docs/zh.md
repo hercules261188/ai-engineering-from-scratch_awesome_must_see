@@ -16,7 +16,7 @@
 
 ## 问题
 
-堆叠两个线性转换:y=W2(W1x+b1) +b2.扩展它:y=W2W1x+W2b1+b2.这只是y=Ax+c--一个线性转换.不管你堆叠多少线性层,结果都会崩到一个矩阵乘以.你的100层网络具有与单层相同的表示能力.
+堆两个线性转换:$y = W_2(W_1 x + b_1) + b_2$扩展它:$y = W_2 W_1 x + W_2 b_1 + b_2$这只是...$y = Ax + c$无论你堆叠多少线性层,结果都会崩到一个矩阵乘以.你的100层网络具有同一个层的表示能力.
 
 这不是理论上的好奇心. 这意味着一个深线网络实际上无法学习XOR,不能分类螺旋数据集,不能识别面孔.没有激活函数,深度是幻觉.
 
@@ -26,52 +26,58 @@
 
 ### 为什么不线性是必要的
 
-矩阵乘法是可复合的.乘以矩阵A乘以矩阵B乘以 AB乘以相同.这意味着堆10个线性层是数学上相当于一个线性层,一个大矩阵.所有这些参数,所有深度,都是浪费的.你需要一些东西来打破链.这是激活函数的作用.
+矩阵乘法是可组合的.$A$然后是矩阵$B$乘以 $AB$这意味着堆叠10个线性层,数学上相当于一个线性层,一个大矩阵.所有这些参数,所有深度,都是浪费的.你需要什么来打破链.这是激活函数的作用.
 
-线性层计算了f ((x) =Wx + b.
+线性层计算了$f(x) = Wx + b$堆二:
 
-```
-Layer 1: h = W1 * x + b1
-Layer 2: y = W2 * h + b2
+```math
+\begin{aligned}
+\text{Layer 1:} \quad h &= W_1 x + b_1 \\
+\text{Layer 2:} \quad y &= W_2 h + b_2
+\end{aligned}
 ```
 
 替代品:
 
-```
-y = W2 * (W1 * x + b1) + b2
-y = (W2 * W1) * x + (W2 * b1 + b2)
-y = A * x + c
-```
-
-插入一个非线性激活g() 之间的层:
-
-```
-h = g(W1 * x + b1)
-y = W2 * h + b2
+```math
+\begin{aligned}
+y &= W_2 (W_1 x + b_1) + b_2 \\
+y &= (W_2 W_1) x + (W_2 b_1 + b_2) \\
+y &= A x + c
+\end{aligned}
 ```
 
-现在替代器断裂.W2 * g(W1 * x + b1) + b2不能缩小到单个线性转换.网络可以代表非线性函数.每一个具有激活的额外层增加了表示容量.
+插入一个非线性激活$g()$两层之间:
+
+```math
+\begin{aligned}
+h &= g(W_1 x + b_1) \\
+y &= W_2 h + b_2
+\end{aligned}
+```
+
+现在替换器就打破了.$W_2 g(W_1 x + b_1) + b_2$网络可以代表非线性函数.每一个具有激活的额外层都增加了表示容量.
 
 ### 状
 
 对于神经网络的原始激活功能.
 
-```
-sigmoid(x) = 1 / (1 + e^(-x))
+```math
+\text{sigmoid}(x) = \frac{1}{1 + e^{-x}}
 ```
 
 输出范围: (0,1). 顺,可分化,将任何真数映射到类似概率的值.
 
 衍生品:
 
-```
-sigmoid'(x) = sigmoid(x) * (1 - sigmoid(x))
+```math
+\text{sigmoid}'(x) = \text{sigmoid}(x) \cdot (1 - \text{sigmoid}(x))
 ```
 
-转移的高值为0.25,发生在x=0. 转移时,梯度通过层次乘以.
+产品的最大值为0.25,发生在$x = 0$在后延伸中,梯度通过层次乘以.十层的sigmoid意味着梯度乘以最多0.25十倍:
 
-```
-0.25^10 = 0.000000953674
+```math
+0.25^{10} = 0.000000953674
 ```
 
 信号的百万分之一不到.这是渐变问题.早期层的梯度变得如此小,重量几乎无法更新.网络似乎学习 - - 后层的损失减少 - - 但第一层是结的.深层的sigmoid网络根本没有训练.
@@ -82,33 +88,32 @@ sigmoid'(x) = sigmoid(x) * (1 - sigmoid(x))
 
 它们是"西格莫伊德"的中心版本.
 
-```
-tanh(x) = (e^x - e^(-x)) / (e^x + e^(-x))
+```math
+\tanh(x) = \frac{e^x - e^{-x}}{e^x + e^{-x}}
 ```
 
 产出范围: (-1,1) 零中心,消除了扎克问题.
 
 衍生品:
 
-```
-tanh'(x) = 1 - tanh(x)^2
+```math
+\tanh'(x) = 1 - \tanh(x)^2
 ```
 
-最高衍生值为1.0在x=0时 - - 比sigmoid好四倍.但消失梯度问题仍然存在.对于大量的正值或负值输入,衍生值接近零.十层仍然压碎梯度,但不那么积极.
+最大衍生值为1.0$x = 0$对于大小的正值或负值输入,衍生值接近零.十层仍然压碎梯度,只是不那么积极.
 
 ### 突破
 
 修改线性单元. 2010 年由纳尔和希顿推广为深度学习 (该功能本身可以追溯到福岛1969年的作品),它改变了一切.
 
-```
-relu(x) = max(0, x)
+```math
+\text{relu}(x) = \max(0, x)
 ```
 
-输出范围: [0,无限).衍生式是微乎其微的简单:
+输出范围:$[0, \infty)$导数是简单的:
 
-```
-relu'(x) = 1  if x > 0
-            0  if x <= 0
+```math
+\text{relu}'(x) = \begin{cases} 1 & \text{if } x > 0 \\ 0 & \text{if } x \le 0 \end{cases}
 ```
 
 没有消逝梯度.梯度是正确的1,通过直线.这就是为什么深度网络变得可训练的原因.
@@ -119,25 +124,24 @@ relu'(x) = 1  if x > 0
 
 对于死神经元的最简单的补救方法.
 
-```
-leaky_relu(x) = x        if x > 0
-                alpha * x if x <= 0
+```math
+\text{leaky\_relu}(x) = \begin{cases} x & \text{if } x > 0 \\ \alpha x & \text{if } x \le 0 \end{cases}
 ```
 
-负面侧面的斜率是小的,而不是零,所以死神经元仍然得到一个梯度信号,
+在哪里?$\alpha$负面侧面的斜率是小的,而不是零,所以死神经元仍然得到一个梯度信号,可以恢复.
 
 ### 现代的默认
 
 盖斯错误线性单位. 于2016年由亨德里克斯和吉普尔推出. 在BERT,GPT和大多数现代变压器中默认激活.
 
-```
-gelu(x) = x * Phi(x)
+```math
+\text{gelu}(x) = x \cdot \Phi(x)
 ```
 
-在phi ((x) 是标准正常分布的累积分布函数.
+在哪里?$\Phi(x)$是标准正常分布的累积分布函数.
 
-```
-gelu(x) ~= 0.5 * x * (1 + tanh(sqrt(2/pi) * (x + 0.044715 * x^3)))
+```math
+\text{gelu}(x) \approx 0.5 \cdot x \cdot \left(1 + \tanh\left(\sqrt{2/\pi} \cdot (x + 0.044715 \cdot x^3)\right)\right)
 ```
 
 格鲁在任何地方都是平滑的,允许小负值 (与硬剪切到零的ReLU不同),并且具有概率解释:它根据高斯分布中每一个输入的可能性进行权重.这种平滑的门口在变体架构中优于ReLU,因为它提供了更好的梯度流量,完全避免了死神经元问题.
@@ -146,11 +150,11 @@ gelu(x) ~= 0.5 * x * (1 + tanh(sqrt(2/pi) * (x + 0.044715 * x^3)))
 
 通过自动搜索发现的自闭关键激活.
 
-```
-swish(x) = x * sigmoid(x)
+```math
+\text{swish}(x) = x \cdot \text{sigmoid}(x)
 ```
 
-通过自动搜索在激活函数空间上发现了它 - - 一个设计神经网络的神经网络.
+斯威斯正式成为了$x \cdot \text{sigmoid}(x)$谷歌通过在激活功能空间上的自动搜索来发现它 - - 一个设计神经网络的神经网络.
 
 像GELU一样,它是光滑的,非单调的,并允许小负值.区别微妙:Swish使用sigmoid为盖特,而GELU使用高斯CDF. 在实践中,性能几乎是一样的.Swish用于EfficientNet和一些视觉模型.GELU在语言模型中占主导地位.
 
@@ -158,8 +162,8 @@ swish(x) = x * sigmoid(x)
 
 软max将原始分数 (logits) 的向量转换为概率分布.
 
-```
-softmax(x_i) = e^(x_i) / sum(e^(x_j) for all j)
+```math
+\text{softmax}(x_i) = \frac{e^{x_i}}{\sum_j e^{x_j}}
 ```
 
 每个输出均为0到1之间.所有输出总和为1.这使得它成为多类分类的标准最终激活.最大的逻辑得到最高概率,但与 argmax不同,软max是可分化的,并保留有关相对可靠性的信息.
@@ -500,11 +504,11 @@ model = nn.Sequential(
 
 ## 运动
 
-1. 实现参数 ReLU (PReLU),其中负倾斜alpha是可学习的参数. 运行它在圆数据集上,并与固定的泄漏 ReLU 进行比较.
+1. 执行偏差向 (PRELU) 时$\alpha$运行它在圆数据集和比较固定的泄漏 ReLU.
 
 2. 运行消失梯度实验,用50层而不是10层. 绘制每层的大小为sigmoid,tanh,ReLU和GELU. 在哪个层上每个激活的信号有效达到零?
 
-3. 实现ELU (指数直线单位): elu(x) = x 如果 x > 0,alpha * (e^x - 1) 如果 x <= 0. 将其死神经元的速度与同一个网络上的 ReLU 进行比较.
+3. 实施ELU (指数直线单位): $\text{elu}(x) = x$如果$x \gt 0$现在$\alpha (e^x - 1)$如果$x \le 0$比较它死神经元的速度与同一个网络上的Relu.
 
 4. 建立一个在训练过程中运行的"梯度健康监测器":在每个阶段,计算每个层的平均梯度大小.
 
@@ -518,12 +522,12 @@ model = nn.Sequential(
 | Vanishing gradient | "Gradients disappear in deep networks" | Gradients shrink exponentially through layers when the activation's derivative is less than 1, making early layers untrainable |
 | Exploding gradient | "Gradients blow up" | Gradients grow exponentially through layers when the effective multiplier exceeds 1, causing unstable training |
 | Dead neuron | "A neuron that stopped learning" | A ReLU neuron whose input is permanently negative, producing zero output and zero gradient |
-| Sigmoid | "Squishes values to 0-1" | The logistic function 1/(1+e^-x), historically important but causes vanishing gradients in deep networks |
-| ReLU | "Clips negatives to zero" | max(0, x) -- the activation that made deep learning practical by preserving gradient magnitude |
+| Sigmoid | "Squishes values to 0-1" | The logistic function $1/(1+e^{-x})$, historically important but causes vanishing gradients in deep networks |
+| ReLU | "Clips negatives to zero" | $\max(0, x)$ -- the activation that made deep learning practical by preserving gradient magnitude |
 | GELU | "The transformer activation" | Gaussian Error Linear Unit, a smooth activation that weights inputs by their probability of being positive |
-| Swish/SiLU | "Self-gated ReLU" | x * sigmoid(x), discovered through automated search, used in EfficientNet |
+| Swish/SiLU | "Self-gated ReLU" | $x \cdot \text{sigmoid}(x)$, discovered through automated search, used in EfficientNet |
 | Softmax | "Turns scores into probabilities" | Normalizes a vector of logits into a probability distribution where all values are in (0,1) and sum to 1 |
-| Leaky ReLU | "ReLU that doesn't die" | max(alpha*x, x) where alpha is small (0.01), preventing dead neurons by allowing small negative gradients |
+| Leaky ReLU | "ReLU that doesn't die" | $\max(\alpha x, x)$ where $\alpha$ is small (0.01), preventing dead neurons by allowing small negative gradients |
 | Saturation | "The flat part of sigmoid" | Regions where an activation's derivative approaches zero, blocking gradient flow |
 | Logit | "The raw score before softmax" | The unnormalized output of the final layer before applying softmax or sigmoid |
 

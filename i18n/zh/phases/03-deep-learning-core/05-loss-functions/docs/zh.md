@@ -30,8 +30,8 @@
 
 预测和目标之间的二次差异,平均所有样本.
 
-```
-MSE = (1/n) * sum((y_pred - y_true)^2)
+```math
+\text{MSE} = \frac{1}{n} \sum (y_{\text{pred}} - y_{\text{true}})^2
 ```
 
 为什么正方位是重要的:它将大错误处罚成四次. 2 的错误的成本是 4 倍 1. 10 的错误是 100 倍. 这使得MSE 对异常值敏感 - 一个非常错误的预测占据了损失.
@@ -40,8 +40,8 @@ MSE = (1/n) * sum((y_pred - y_true)^2)
 
 对于预测的MSE梯度是:
 
-```
-dMSE/dy_pred = (2/n) * (y_pred - y_true)
+```math
+\frac{\partial \text{MSE}}{\partial y_{\text{pred}}} = \frac{2}{n} (y_{\text{pred}} - y_{\text{true}})
 ```
 
 错误的线性.更大的错误会变得更大的梯度.这是回归的特征 (大错误需要大修正) 和分类的错误 (你想以指数而不是线性地惩罚自信错误的答案).
@@ -52,31 +52,31 @@ dMSE/dy_pred = (2/n) * (y_pred - y_true)
 
 **Binary Cross-Entropy (BCE):**
 
-```
-BCE = -(y * log(p) + (1 - y) * log(1 - p))
+```math
+\text{BCE} = -\left(y \log(p) + (1 - y) \log(1 - p)\right)
 ```
 
-在此,y是真实标签 (0或1) 和p是预测概率.
+在哪里?$y$是真实标签 (0或 1) 和 $p$预测的概率.
 
-为什么 -log(p) 效果:当真实标签为1并且你预测p =0.99,损失是 -log(0.99) =0.01.当你预测p =0.01,损失是 -log(0.01) =4.6.这460x差异是为什么交叉能效果.它残酷地惩罚自信错误的预测,同时几乎惩罚自信正确的预测.
+为什么?$-\log(p)$运行:当真实标签为1时,你预测$p = 0.99$损失是$-\log(0.99) = 0.01$当你预测时$p = 0.01$损失是$-\log(0.01) = 4.6$这460倍的差异是为什么跨能有效的. 它残忍地惩罚自信错误的预测,
 
 梯度讲述了同样的故事:
 
-```
-dBCE/dp = -(y/p) + (1-y)/(1-p)
+```math
+\frac{\partial \text{BCE}}{\partial p} = -\frac{y}{p} + \frac{1-y}{1-p}
 ```
 
-当 y = 1 和 p 接近零时,梯度是 -1/p,接近负无限.模型得到了一个巨大的信号来纠正错误.当 p 接近 1,梯度是小的.已经正确,没有什么可以纠正.
+什么时候$y = 1$其他$p$向是$-1/p$模型得到了一个巨大的信号来纠正错误.$p$已经正确,没有什么可以修复的.
 
 **Categorical Cross-Entropy:**
 
 对于多类分类,具有单个加密目标.
 
-```
-CCE = -sum(y_i * log(p_i))
+```math
+\text{CCE} = -\sum_i y_i \log(p_i)
 ```
 
-如果有10个类,正确的类得到0.1的概率 (随机猜测),则损失为 -log(0.1) = 2.3. 如果正确的类得到0.9的概率,则损失为 -log(0.9) = 0.105.模型学会集中概率质量在正确的答案.
+只有真正的类型导致损失 (因为所有其他类型的$y_i$如果有10个类,正确的类得到0.1的概率 (随机猜测),则损失是$-\log(0.1) = 2.3$如果正确的类得到0.9的概率,损失是$-\log(0.9) = 0.105$模型学会集中概率质量在正确的答案上.
 
 ### 为什么MSE未能进行分类
 
@@ -96,19 +96,19 @@ graph TD
     C3 -->|"CE gradient<br/>explodes near<br/>wrong answer"| Fast["Fast correction"]
 ```
 
-由于sigmoid和度,MSE梯度平坦化 (由于sigmoid和度). 交叉缩梯度补偿了这一点 - - 记录取消了sigmoid的平坦区域,给出强大的梯度,正是最需要的地方.
+由于sigmoid和,MSE梯度平坦,当预测接近0或1 (由于sigmoid和).$-\log$它们可以在最需要的地方产生强的梯度.
 
 ### 标签滑滑
 
 标准的单热标签说:"这是100%的3级,其他一切都是0%".这是一个强有力的说法.
 
-```
-smooth_label = (1 - alpha) * one_hot + alpha / num_classes
+```math
+\text{smooth\_label} = (1 - \alpha) \cdot \text{one\_hot} + \frac{\alpha}{\text{num\_classes}}
 ```
 
-对于阿尔法=0.1和10类:而不是 [0, 0, 1, 0, ...],目标变成 [0.01, 0.01, 0.91, 0.01, ...].模型目标是0.91而不是1.0.
+随着$\alpha = 0.1$目标是0.01,0.01,0.91,0.01,... 模型目标是0.91而不是1.0.
 
-为什么这有所效果:试图通过软max出口精确的模型需要将logits推到无限.这导致过度自信,损害了通用化,并使模型变得脆弱的分布转移.标签滑板将目标限制在0.9 (含alpha=0.1),保持logits在合理的范围内.GPT和大多数现代模型使用标签滑板或其相当.
+为什么这有所效果:试图通过软max出口的模型需要将logits推到无限度.这导致过度自信,损害了通用化,使得模型变得脆弱于分布转移.标签滑滑将目标限制在0.9 (与$\alpha = 0.1$果和大多数现代模型都使用标签滑滑或其相当的.
 
 ### 显著损失
 
@@ -118,20 +118,20 @@ smooth_label = (1 - alpha) * one_hot + alpha / num_classes
 
 像是一个图像. 创建两个增长的视图 (剪切,旋转,色彩). 这些是"正对" - - 他们应该有相似的嵌入. 批量中的每一个图像都形成"负对" - 他们应该有不同的嵌入.
 
-```
-L = -log(exp(sim(z_i, z_j) / tau) / sum(exp(sim(z_i, z_k) / tau)))
+```math
+L = -\log \frac{\exp(\text{sim}(z_i, z_j) / \tau)}{\sum_k \exp(\text{sim}(z_i, z_k) / \tau)}
 ```
 
-在 sim() 是相似的, z_i 和 z_j 是正对,总数是所有负数,tau (温度) 控制分布的度.低温 = 硬的负数 = 更加激进的分离.
+在哪里?$\text{sim}()$是共数相似性,$z_i$其他$z_j$总数是所有负数,$\tau$低温=较硬的负值=更激进的分离.
 
-实际数量:批量大小256意味着每对正数的255负.温度tau=0.07 (SimCLR默认).损失看起来像一个软最大比相似性 - 它希望正数对的相似性在所有256个选项中是最高的.
+实数:分批量256意味着每对正数的255个负数.$\tau = 0.07$(SimCLR默认) 损失看起来像一个软最大比相似性 - 它希望正对的相似性在所有 256 个选项中最高.
 
 **Triplet Loss:**
 
 采用三个输入:,正 (相同类),负 (不同的类).
 
-```
-L = max(0, d(anchor, positive) - d(anchor, negative) + margin)
+```math
+L = \max\left(0, d(\text{anchor}, \text{positive}) - d(\text{anchor}, \text{negative}) + \text{margin}\right)
 ```
 
 边缘 (通常是0.2-1.0) 强制使正面和负面距离之间的最小差距.如果负面已经足够远,损失是零 - 没有梯度,没有更新.这使得训练效率高,但需要仔细的三角形挖掘 (选择靠近的硬负面).
@@ -140,14 +140,14 @@ L = max(0, d(anchor, positive) - d(anchor, negative) + margin)
 
 对于不平衡的数据集.标准的交叉缩对待所有正确分类的例子均等.焦点损失减重简单的例子:
 
-```
-FL = -alpha * (1 - p_t)^gamma * log(p_t)
+```math
+\text{FL} = -\alpha (1 - p_t)^\gamma \log(p_t)
 ```
 
-在p_t是真类的预测概率,而gamma控制着聚焦.在gamma=0时,这是标准的交叉.在gamma=2时 (默认):
+在哪里?$p_t$是真实类的预测概率$\gamma$控制着聚焦.$\gamma = 0$它们是标准的交叉.$\gamma = 2$(默认):
 
-- 简单的例子 (p_t = 0.9):重量 = (0.1) ^ 2 = 0.01.
-- 硬实例 (p_t = 0.1):重量 = (0.9) ^2 = 0.81. 完全梯度信号.
+- 简单的例子 ($p_t = 0.9$):重量$= (0.1)^2 = 0.01$实际上被忽视了.
+- 难以理解的例子 ($p_t = 0.1$):重量$= (0.9)^2 = 0.81$完全梯信号.
 
 焦点损失是由林等人推出的,用于对象检测,其中99%的候选区域是背景 (轻微负面).没有焦点损失,模型会沉浸在轻松的背景示例中,从来没有学会检测对象.通过它,模型将其能力集中在重要的事实中.
 
@@ -213,7 +213,7 @@ def mse_gradient(predictions, targets):
 
 ### 步骤2:二进制交叉
 
-如果模型预测正确的例子为0, log(0) =负无限. 剪切阻止这一点.
+如果模型预测正确的例子是0,$\log(0) = -\infty$剪切可以阻止.
 
 ```python
 import math
@@ -425,15 +425,15 @@ ce_smooth = F.cross_entropy(logits, labels, label_smoothing=0.1)
 
 ## 运动
 
-1. 运行Huber损失 (柔顺L1损失),这是小错误的MSE和大错误的MAE. 训练一个预测y = sin(x的回归网络,使用MSE与Huber当5%的训练目标随机增加噪音 (异常). 进行最终测试错误的比较.
+1. 实现Huber损失 (光滑L1损失),这是小错误的MSE和大错误的MAE. 训练回归网络预测$y = \sin(x)$对于5%,在训练目标中增加了随机噪音 (异常).
 
-2. 加入二进制分类训练循环中的焦点损失. 创建一个不平衡的数据集 (90%类0,10%类1). 在200个时代后的少数类回忆中,对比标准 BCE 与焦点损失 (gamma=2) .
+2. 增加焦点损失到二进制分类训练循环. 创建一个不平衡的数据集 (90%类0,10%类1).$\gamma = 2$) 关于200个时代后的少数阶级召回.
 
 3. 实现半硬负挖矿的三分数损失.为5类生成2D嵌入数据.对于每个,找到最硬的负,比正面还远 (半硬).将收缩与随机三分数选择进行比较.
 
 4. 运行MSE与跨缩比较,但在训练期间跟踪每个层的梯度大小.按时段绘制平均梯度规范.检查模型最不确定时代的跨缩产生更大的梯度.
 
-5. 实现KL分离损失并验证将KL ((真实的意思预测) 降至最低时,当真正的分布是单热时,会产生与交叉缩相同的梯度.然后尝试软目标 (如知识蒸) 试验,其中"真实的"分布来自教师模型的软max输出.
+5. 实现KL分离损失并验证将其最小化$\mathrm{KL}(\text{true} \Vert \text{predicted})$然后试试软目标 (如知识蒸) 试试试软目标 (如知识蒸) 试试试试试试试试试试试试试试试试试试试试试试试试试试试试试试试试试试试试试试试试试试试试试试试试试试试试试试试试试试试试试试试试试试试试试试试试试试试试试试试试试试试试试试试试试试试试试试试试试试试试试试试试试试试试试试试试试试试试试试试试试试试试试试试试试试试试试试试试试试试试试试试试试试试试试试试试试试试试试试试试试试试试试试试试试试试试试试试试试试试试试试试试试试试试试试试试试试试试试试试试试试试试试试试试试试试试试试试试试试试试试试试试试试试试试试试试试试试试试试试试试试试试试试试试试试试试试试试试试试试试试试试试试试试试试试试试试试试试试试试试试试试试试试试试试试试试试试试试试试试试试试试试试试试试试试试试试试试试试试试试试试试试试试试试试试试试试试试试试试试试试试试试试试试试试试试试试试试试试试试试试试试试试试试试试试试试试试试试试试试试试试试试试试试试试试试试试试试试试试试试试试试试试试试试试试试试试试试试试试试试试试试试试试试试试试试试试试试试试试试试试试试试试试试试试试试试试试试试试试试试试试试试试试试试试试试试试试试试试试试试试试试试试试
 
 ## 关键词
 
@@ -441,12 +441,12 @@ ce_smooth = F.cross_entropy(logits, labels, label_smoothing=0.1)
 |------|----------------|----------------------|
 | Loss function | "How wrong the model is" | A differentiable function mapping predictions and targets to a scalar that the optimizer minimizes |
 | MSE | "Average squared error" | Mean of squared differences between predictions and targets; penalizes large errors quadratically |
-| Cross-entropy | "The classification loss" | Measures divergence between predicted probability distribution and true distribution using -log(p) |
-| Binary cross-entropy | "BCE" | Cross-entropy for two classes: -(y*log(p) + (1-y)*log(1-p)) |
+| Cross-entropy | "The classification loss" | Measures divergence between predicted probability distribution and true distribution using $-\log(p)$ |
+| Binary cross-entropy | "BCE" | Cross-entropy for two classes: $-(y \log(p) + (1-y) \log(1-p))$ |
 | Label smoothing | "Softening the targets" | Replacing hard 0/1 targets with soft values (e.g., 0.1/0.9) to prevent overconfidence and improve generalization |
 | Contrastive loss | "Pull together, push apart" | A loss that learns representations by making similar pairs close and dissimilar pairs far in embedding space |
 | InfoNCE | "The CLIP/SimCLR loss" | Normalized temperature-scaled cross-entropy over similarity scores; treats contrastive learning as classification |
-| Focal loss | "The imbalanced data fix" | Cross-entropy weighted by (1-p_t)^gamma to down-weight easy examples and focus on hard ones |
+| Focal loss | "The imbalanced data fix" | Cross-entropy weighted by $(1-p_t)^\gamma$ to down-weight easy examples and focus on hard ones |
 | Triplet loss | "Anchor-positive-negative" | Pushes anchor closer to positive than negative by at least a margin in embedding space |
 | Temperature | "Sharpness knob" | A scalar divisor on logits/similarities that controls how peaked the resulting distribution is; lower = sharper |
 

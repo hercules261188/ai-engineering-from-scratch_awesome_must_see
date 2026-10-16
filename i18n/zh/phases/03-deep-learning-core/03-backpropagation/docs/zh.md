@@ -26,7 +26,7 @@
 
 ### 链条适用于网络
 
-简单的重复:如果y=f(g(x)),那么dy/dx=f'(g(x)) *g'(x.
+您在第01阶段看到链条规则, 第5课.$y = f(g(x))$现在$\frac{dy}{dx} = f'(g(x)) \cdot g'(x)$通过链接乘以衍生品.
 
 在神经网络中",链"是从输入到损失的操作序列.每个层应用权重,添加偏差,通过激活.损失函数将最终输出与目标进行比较.反传播追踪了这一链向后,计算了每个操作如何导致错误.
 
@@ -45,9 +45,9 @@ graph LR
     y["target"] --> loss
 ```
 
-进前传:值流向左向右. x 和 w 产生z1 = w*x. 添加b 得到z2. 辛格莫ид 给出激活a. 使用损失函数对比a 目标y.
+进步:值流向左向右. $x$其他$w$产品$z_1 = w x$加入$b$为了得到$z_2$体激活$a$比较$a$目标$y$使用损失函数.
 
-往后传递:梯度流向右向左.从dL/da开始 (激活过程中损失发生变化).乘以da/dz2 (sigmoid衍生值).这就给出dL/dz2.分为dL/db (dL/dz2等于dL/dz2),因为z2 =z1 + b) 和dL/dz1.然后dL/dw =dL/dz1 * x,dL/dx =dL/dz1 * w.
+往后过渡:梯度流向右向左.$\partial L/\partial a$乘以                          $\partial a/\partial z_2$它们是的.$\partial L/\partial z_2$分开了$\partial L/\partial b$(这相当于$\partial L/\partial z_2$由于$z_2 = z_1 + b$) 和$\partial L/\partial z_1$然后$\partial L/\partial w = \partial L/\partial z_1 \cdot x$其他$\partial L/\partial x = \partial L/\partial z_1 \cdot w$现在,我们要去.
 
 每个节点在图表中都有一个任务:从上方来来的梯度,乘以其本地衍生值,然后传递下来.
 
@@ -84,7 +84,7 @@ graph RL
     L1 -- "dL/dz1 = dL/da1 * sigmoid'(z1)" --> I["Input"]
 ```
 
-在每层,梯度由西格莫因衍生品乘以.西格莫因衍生品是* (1 - a),最大值为0.25 (当 a = 0.5).
+在每个层次上,梯度乘以sigmoid衍生物.$a(1 - a)$总量为0.25 (当$a = 0.5$梯度最大乘以3层深度$0.25^3 = 0.0156$十层深度:$0.25^{10} = 0.000001$现在,我们要去.
 
 ### 渐变物消失
 
@@ -102,32 +102,35 @@ After 10 layers:  gradient * 0.25^10 = 0.000001x original
 
 ### 取代二层网络的基梯子
 
-具体计算一个网络的输入 x,隐藏层与 sigmoid,输出层与 sigmoid,和 MSE 损失.
+对于输入网络进行具体的数学$x$隐藏层与sigmoid,输出层与sigmoid,和MSE损失.
 
 进步通行:
-```
-z1 = W1 * x + b1
-a1 = sigmoid(z1)
-z2 = W2 * a1 + b2
-a2 = sigmoid(z2)
-L = (a2 - y)^2
+
+```math
+\begin{aligned}
+z_1 &= W_1 x + b_1 \\
+a_1 &= \text{sigmoid}(z_1) \\
+z_2 &= W_2 a_1 + b_2 \\
+a_2 &= \text{sigmoid}(z_2) \\
+L &= (a_2 - y)^2
+\end{aligned}
 ```
 
 后行 (应用链条节点一步一步):
-```
-dL/da2 = 2(a2 - y)
-da2/dz2 = a2 * (1 - a2)
-dL/dz2 = dL/da2 * da2/dz2 = 2(a2 - y) * a2 * (1 - a2)
 
-dL/dW2 = dL/dz2 * a1
-dL/db2 = dL/dz2
-
-dL/da1 = dL/dz2 * W2
-da1/dz1 = a1 * (1 - a1)
-dL/dz1 = dL/da1 * da1/dz1
-
-dL/dW1 = dL/dz1 * x
-dL/db1 = dL/dz1
+```math
+\begin{aligned}
+\frac{\partial L}{\partial a_2} &= 2(a_2 - y) \\
+\frac{\partial a_2}{\partial z_2} &= a_2 (1 - a_2) \\
+\frac{\partial L}{\partial z_2} &= \frac{\partial L}{\partial a_2} \cdot \frac{\partial a_2}{\partial z_2} = 2(a_2 - y) \cdot a_2 (1 - a_2) \\[6pt]
+\frac{\partial L}{\partial W_2} &= \frac{\partial L}{\partial z_2} \cdot a_1 \\
+\frac{\partial L}{\partial b_2} &= \frac{\partial L}{\partial z_2} \\[6pt]
+\frac{\partial L}{\partial a_1} &= \frac{\partial L}{\partial z_2} \cdot W_2 \\
+\frac{\partial a_1}{\partial z_1} &= a_1 (1 - a_1) \\
+\frac{\partial L}{\partial z_1} &= \frac{\partial L}{\partial a_1} \cdot \frac{\partial a_1}{\partial z_1} \\[6pt]
+\frac{\partial L}{\partial W_1} &= \frac{\partial L}{\partial z_1} \cdot x \\
+\frac{\partial L}{\partial b_1} &= \frac{\partial L}{\partial z_1}
+\end{aligned}
 ```
 
 每个梯度都是从损失中追溯到本地衍生品的产物.
@@ -185,9 +188,9 @@ def __mul__(self, other):
     return out
 ```
 
-为了加起来:d(a+b)/da = 1,d(a+b)/db = 1. 所以两个输入直接得到输出梯度.
+加入:$\partial(a+b)/\partial a = 1$现在$\partial(a+b)/\partial b = 1$所以两个输入直接得到输出梯度.
 
-对于乘法:d(a*b)/da = b,d(a*b)/db = a. 每个输入都得到了另一个值乘以输出梯度.
+用于乘法:$\partial(ab)/\partial a = b$现在$\partial(ab)/\partial b = a$每个输入得到了另一个值乘以输出梯度.
 
 其他`+=`值可以用于多个操作.它的梯度是所有路径的梯度的总和.
 
@@ -209,7 +212,7 @@ def sigmoid(self):
     return out
 ```
 
-引号导数:sigmoid(x) * (1 -sigmoid(x)). 我们在前进传递过程中计算了sigmoid(x) = s. 再利用它.没有额外的工作.
+形衍生物: $\text{sigmoid}(x) \cdot (1 - \text{sigmoid}(x))$我们计算了$\text{sigmoid}(x) = s$在前进的传输过程中,再使用它.
 
 ```python
 def mse_loss(predicted, target):
@@ -217,7 +220,7 @@ def mse_loss(predicted, target):
     return diff * diff
 ```
 
-单个输出的MSE: (预测 - 目标) ^2.我们表达减值为加值,负值.
+单个输出的MSE: $(\text{predicted} - \text{target})^2$我们把减算表达成加算,以否定值.
 
 ### 步骤4: 往后过渡
 
@@ -241,7 +244,7 @@ def backward(self):
         v._backward()
 ```
 
-开始在损失 (渐进值=1.0,因为dL/dL=1). 通过排序图表向后行走.`_backward`让孩子们的态度变得更低.
+开始于损失 (渐进率=1.0,因为$dL/dL = 1$通过排序的图表,往后走.`_backward`让孩子们的态度变得更低.
 
 ### 步骤5:层和网络
 
@@ -301,7 +304,7 @@ class Network:
             p.grad = 0.0
 ```
 
-神经元采集输入,计算重量的总数 +偏差,并应用sigmoid.重量初始化尺度由 sqrt(2/n_input) 防止深层网络中的sigmoid和.一个层是神经元的列表.一个网络是层的列表.`parameters()`方法收集所有可学习的值,以便我们更新它们.
+神经元采集输入,计算权重总数 +偏差,并应用sigmoid.$\sqrt{2/n_{\text{inputs}}}$网络是一个列表的神经元. 网络是列表的层. 网络是一个列表的层.`parameters()`方法收集所有可学习的值,以便我们更新它们.
 
 ### 步骤 6: 在XOR上列车
 
@@ -439,9 +442,9 @@ with torch.no_grad():
 
 ## 运动
 
-1. 添加一个`__sub__`运行一个                                `__neg__`通过将 (a - b) ^2等简单表达式与手动计算进行比较来验证梯度是否正确.
+1. 添加一个`__sub__`值类的方法$(a - b = a + (-1 \cdot b))$然后执行一个`__neg__`通过与手动计算进行比较来验证梯度是否正确.$(a - b)^2$现在,我们要去.
 
-2. 添加一个`relu`换取隐藏层中的雷,再在XOR上训练.比较缩速度.你应该看到更快的训练--这预览课04
+2. 添加一个`relu`输出值 (输出) 的方法$\max(0, x)$,衍生值为1如果$x \gt 0$换取隐藏层中的sigmoid 用relu,再再在XOR上训练.比较缩速度.你应该看到更快的训练.
 
 3. 实施一个`__pow__`通过使用它来替换`mse_loss`具有适当的`(predicted - target) ** 2`检查梯度与原始实现一致.
 
@@ -453,14 +456,14 @@ with torch.no_grad():
 
 | Term | What people say | What it actually means |
 |------|----------------|----------------------|
-| Backpropagation | "The network learns" | An algorithm that computes dL/dw for every weight by applying the chain rule backward through the computational graph |
+| Backpropagation | "The network learns" | An algorithm that computes $\partial L/\partial w$ for every weight by applying the chain rule backward through the computational graph |
 | Computational graph | "The network structure" | A directed acyclic graph where nodes are operations and edges carry values (forward) and gradients (backward) |
-| Chain rule | "Multiply the derivatives" | If y = f(g(x)), then dy/dx = f'(g(x)) * g'(x) -- the mathematical foundation of backpropagation |
+| Chain rule | "Multiply the derivatives" | If $y = f(g(x))$, then $\frac{dy}{dx} = f'(g(x)) \cdot g'(x)$ -- the mathematical foundation of backpropagation |
 | Gradient | "The direction of steepest ascent" | The partial derivative of the loss with respect to a parameter -- tells you how to change that parameter to reduce the loss |
 | Vanishing gradient | "Deep networks don't learn" | Gradients shrink exponentially as they propagate through layers with saturating activations like sigmoid |
 | Forward pass | "Running the network" | Computing the output from inputs by sequentially applying each layer's operations and storing intermediate values |
 | Backward pass | "Computing gradients" | Traversing the computational graph in reverse, accumulating gradients at each node using the chain rule |
-| Learning rate | "How fast it learns" | A scalar that controls the step size when updating weights: w_new = w_old - lr * gradient |
+| Learning rate | "How fast it learns" | A scalar that controls the step size when updating weights: $w_{\text{new}} = w_{\text{old}} - \text{lr} \cdot \text{gradient}$ |
 | Topological sort | "The right order" | An ordering of graph nodes where each node appears after all nodes it depends on -- ensures gradients are fully accumulated before propagation |
 | Autograd | "Automatic differentiation" | A system that builds computational graphs during forward computation and automatically computes gradients -- what PyTorch's engine does |
 

@@ -26,7 +26,7 @@
 
 ### 一个神经元,一个决定
 
-一个感知器采用n输入,乘以重量,总结它们,添加偏差,并通过激活函数传递结果.
+一个感知器需要$n$输入,乘以重量,总结它们,增加偏见,然后通过激活函数传递结果.
 
 ```mermaid
 graph LR
@@ -38,11 +38,10 @@ graph LR
     step --> out["output (0 or 1)"]
 ```
 
-步骤函数是残酷的:如果加重总和加偏差是 >= 0,输出 1.否则输出 0.
+步骤函数是残酷的:如果加重的总和加上偏差是$\ge 0$否则输出为0.
 
-```
-step(z) = 1  if z >= 0
-           0  if z < 0
+```math
+\text{step}(z) = \begin{cases} 1 & \text{if } z \ge 0 \\ 0 & \text{if } z < 0 \end{cases}
 ```
 
 这是一个线性分类器. 重量和偏差定义了一个线 (或更高的维度中的超平面) 将输入空间分为两个区域.
@@ -80,7 +79,7 @@ For each training example (x, y_true):
     bias = bias + learning_rate * error
 ```
 
-如果预测是正确的,错误=0,没有什么改变.如果预测是0但应该是1,重量增加.如果预测是1但应该是0,重量减少.学习率控制每个调整的规模.
+如果预测是正确的,$\text{error} = 0$如果它预测0但应该是1,重量增加.如果它预测1但应该是0,重量减少.学习速度控制每个调整的规模.
 
 ### 关于XOR问题
 
@@ -213,7 +212,7 @@ for inputs, expected in xor_data:
 
 ### 步骤 4:用两个层解决XOR
 
-技巧是:XOR= (x1 OR x2) 并不是 (x1 AND x2). 结合三个感知光:
+事:$\text{XOR} = (x_1 \text{ OR } x_2) \text{ AND NOT } (x_1 \text{ AND } x_2)$结合三个感知器:
 
 ```mermaid
 graph LR
@@ -359,7 +358,7 @@ print([clf.predict([x])[0] for x in X])
 ## 运动
 
 1. 训练一个感知器在NAND门 (通用门 - - 任何逻辑电路都可以从NAND构建).验证其重量和偏差形成有效的决策界限.
-2. 修改Perceptron类,以追踪每个时代的决策边界 (w1*x1 + w2*x2 + b = 0).在 AND 门上打印训练过程中线路的转移.
+2. 修改Perceptron类,以追踪决策边界 ($w_1 x_1 + w_2 x_2 + b = 0$打印在 AND 门上训练过程中线路的转移情况.
 3. 构建一个3输入感知器,只有当至少3输入中的2个是1 (多数投票函数) 时才能输出1.这是否线性分离的?为什么?
 
 ## 关键词
@@ -372,7 +371,7 @@ print([clf.predict([x])[0] for x in X])
 | Activation function | "The thing that squishes values" | A function applied after the weighted sum - step function for perceptrons, sigmoid/ReLU for modern networks |
 | Linearly separable | "You can draw a line between them" | A dataset where a single hyperplane can perfectly separate the classes |
 | XOR problem | "The thing perceptrons can't do" | Proof that single-layer networks cannot learn non-linearly-separable functions |
-| Decision boundary | "Where the classifier switches" | The hyperplane w*x + b = 0 that divides input space into two classes |
+| Decision boundary | "Where the classifier switches" | The hyperplane $w \cdot x + b = 0$ that divides input space into two classes |
 | Multi-layer perceptron | "A real neural network" | Perceptrons stacked in layers, where each layer's output feeds the next layer's input |
 
 ## 进一步阅读

@@ -41,21 +41,23 @@ graph LR
 
 ### 放弃
 
-在训练中,随机设置每个神经元的输出到零,概率为p.
+在训练中,随机设置每个神经元的输出到零,$p$现在,我们要去.
 
+```math
+\text{output} = \text{activation}(z) \cdot \text{mask} \quad \text{where }\text{mask}[i] \sim \text{Bernoulli}(1 - p)
 ```
-output = activation(z) * mask    where mask[i] ~ Bernoulli(1 - p)
-```
 
-网络必须学习冗余的表达,因为它无法预测哪些神经元将会有. 这阻止了共适应 - - 神经元学习依赖其他特定的神经元存在.
+随着$p = 0.5$网络必须学习冗余的表达,因为它无法预测哪些神经元将会有. 这阻止了共适应 - - 神经元学习依赖其他特定的神经元存在.
 
-综合解释:一个网络中N神经元和中断产生2^N可能的子网络 (每个神经元的组合都开放或关闭). 训练与中断约同时训练2^N子网络,每个分类在不同的小批量. 在测试时,你使用所有神经元 (没有放弃) 并将输出量量达 (1 - p) 来匹配训练期间预期的值. 这相当于平均2^N子网络的预测 - - 一个单个模型的巨大组.
+集体解释:一个网络$N$细胞的神经元和中断产生$2^N$训练与中断约所有列车$2^N$在测试时,你使用所有神经元 (没有脱节)$(1 - p)$预测值与训练期间预期值相匹配.$2^N$单个模型的巨大集体.
 
 实际上,在训练期间使用扩展而不是测试 (反转放弃):
 
-```
-During training:  output = activation(z) * mask / (1 - p)
-During testing:   output = activation(z)   (no change needed)
+```math
+\begin{aligned}
+\text{During training:} \quad & \text{output} = \text{activation}(z) \cdot \text{mask} / (1 - p) \\
+\text{During testing:} \quad & \text{output} = \text{activation}(z) \quad \text{(no change needed)}
+\end{aligned}
 ```
 
 这更干净,因为测试代码根本不需要知道退学.
@@ -66,15 +68,15 @@ During testing:   output = activation(z)   (no change needed)
 
 增加所有权重的平方大小:
 
-```
-total_loss = task_loss + (lambda / 2) * sum(w_i^2)
+```math
+\text{total\_loss} = \text{task\_loss} + \frac{\lambda}{2} \sum_i w_i^2
 ```
 
-规律化术语的梯度是lambda * w. 这意味着每一步,每个重量都缩小到零的比例.大重量受到更多的惩罚.模型被推向没有单个重量主导的解决方案.
+规则化术语的梯度是$\lambda w$这意味着每一步,每一个重量都会缩小到零,比例于其大小的小部分.大重量会受到更多的惩罚.模型被推向解决方案,没有单一的重量占主导地位.
 
 为什么这有助于通用化:超级适应型号往往具有大重量,这会在训练数据中放大噪音.体重衰减使重量保持小,从而限制了模型的有效能力,迫使其依赖于强,可通用的特性而不是记忆的奇怪.
 
-果超值控制强度.
+其他$\lambda$超参数控制强度.典型值:
 
 - 转变器的 AdamW 0.01
 - 对于CNN电视台的SGD,
@@ -88,16 +90,18 @@ total_loss = task_loss + (lambda / 2) * sum(w_i^2)
 
 对于某个层中的小型激活:
 
-```
-mu = (1/B) * sum(x_i)           (batch mean)
-sigma^2 = (1/B) * sum((x_i - mu)^2)   (batch variance)
-x_hat = (x_i - mu) / sqrt(sigma^2 + eps)   (normalize)
-y = gamma * x_hat + beta        (scale and shift)
+```math
+\begin{aligned}
+\mu &= \frac{1}{B} \sum_i x_i && \text{(batch mean)} \\
+\sigma^2 &= \frac{1}{B} \sum_i (x_i - \mu)^2 && \text{(batch variance)} \\
+\hat{x} &= \frac{x_i - \mu}{\sqrt{\sigma^2 + \epsilon}} && \text{(normalize)} \\
+y &= \gamma \hat{x} + \beta && \text{(scale and shift)}
+\end{aligned}
 ```
 
 没有它们,你将迫使每个层的输出变化为零平均单位变化,这可能不是网络想要的.
 
-**Training vs inference split:**在训练期间,mu和sigma来自当前的迷你批量.在推断过程中,你使用训练期间积累的运行平均值 (动力率为0.1的指数,即90%旧 +10%新).
+**Training vs inference split:**在培训期间,$\mu$其他$\sigma$在推断过程中,你使用了训练期间积累的运行平均值 (动力指数移动平均值=0.1,即90%旧 +10%新).
 
 现在还有人讨论 BatchNorm 为什么工作. 原文声称它减少了"内部变量转移" (随着早期层更新而变化的层输入分布). 桑图尔卡等 (2018) 显示了这种解释是错误的. 实际原因是,BatchNorm使损失景观更加平滑. 梯度更具预测性,利普斯奇特常数更小,优化器可以安全地采取更大的步骤. 这就是为什么BatchNorm允许你使用更高的学习率,
 
@@ -107,14 +111,16 @@ y = gamma * x_hat + beta        (scale and shift)
 
 标准化在各个特征上,而不是在整个批量上.
 
-```
-mu = (1/D) * sum(x_j)           (feature mean)
-sigma^2 = (1/D) * sum((x_j - mu)^2)   (feature variance)
-x_hat = (x_j - mu) / sqrt(sigma^2 + eps)
-y = gamma * x_hat + beta
+```math
+\begin{aligned}
+\mu &= \frac{1}{D} \sum_j x_j && \text{(feature mean)} \\
+\sigma^2 &= \frac{1}{D} \sum_j (x_j - \mu)^2 && \text{(feature variance)} \\
+\hat{x} &= \frac{x_j - \mu}{\sqrt{\sigma^2 + \epsilon}} \\
+y &= \gamma \hat{x} + \beta
+\end{aligned}
 ```
 
-变压器使用LayerNorm而不是 BatchNorm.序列的长度可变,批量大小通常很小 (或在生成过程中是1),训练和推断之间的计算是相同的.
+$D$每个样本都是独立正常化的,没有依赖批量.这就是为什么变压器使用LayerNorm而不是BatchNorm.序列的长度可变,批量大小通常很小 (或在生成过程中是1),训练和推断之间的计算是相同的.
 
 在变压器中,LayerNorm应在每一个自我注意区块和每一个输送前进区块 (后LN) 后或之前 (前LN,更稳定于训练).
 
@@ -122,9 +128,11 @@ y = gamma * x_hat + beta
 
 没有平均减小的LayerNorm. 张和森尼里希 (2019) 提出.
 
-```
-rms = sqrt((1/D) * sum(x_j^2))
-y = gamma * x / rms
+```math
+\begin{aligned}
+\text{rms} &= \sqrt{\frac{1}{D} \sum_j x_j^2} \\
+y &= \gamma \cdot \frac{x}{\text{rms}}
+\end{aligned}
 ```
 
 没有平均计算,没有beta参数.观察:LayerNorm中重中心化 (平均减小) 对模型的性能贡献很少,但成本计算.删除它会带来同样的精度,大约10%的总成本.
@@ -515,8 +523,8 @@ class TransformerBlock(nn.Module):
 |------|----------------|----------------------|
 | Overfitting | "Model memorized the data" | When a model's training performance significantly exceeds its test performance, indicating it learned noise rather than signal |
 | Regularization | "Preventing overfitting" | Any technique that constrains model complexity to improve generalization: dropout, weight decay, normalization, augmentation |
-| Dropout | "Random neuron deletion" | Zeroing random neurons during training with probability p, forcing redundant representations; equivalent to training an ensemble |
-| Weight decay | "L2 penalty" | Shrinking all weights toward zero by subtracting lambda * w at each step; penalizes complexity through weight magnitude |
+| Dropout | "Random neuron deletion" | Zeroing random neurons during training with probability $p$, forcing redundant representations; equivalent to training an ensemble |
+| Weight decay | "L2 penalty" | Shrinking all weights toward zero by subtracting $\lambda w$ at each step; penalizes complexity through weight magnitude |
 | Batch normalization | "Normalize per batch" | Normalizing layer outputs across the batch dimension using batch statistics during training and running averages during inference |
 | Layer normalization | "Normalize per sample" | Normalizing across features within each sample; batch-independent, used in transformers where batch size varies |
 | RMSNorm | "LayerNorm without the mean" | Root mean square normalization; drops the mean subtraction from LayerNorm for 10% speedup with equal accuracy |

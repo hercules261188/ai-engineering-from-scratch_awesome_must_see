@@ -75,8 +75,8 @@ graph LR
 
 现在,激活是sigmoid:
 
-```
-sigmoid(z) = 1 / (1 + e^(-z))
+```math
+\text{sigmoid}(z) = \frac{1}{1 + e^{-z}}
 ```
 
 sigmoid将任何数量压缩到范围 (0,1). 大量的正进口向1推进. 大量的负进口向0推进.零地图到0.5. 这种光滑的曲线是使学习成为可能的 - - 与感知器的硬步骤不同,sigmoid在任何地方都有梯度.
@@ -99,9 +99,11 @@ graph TD
 
 在每个层次上,有三个操作发生:
 
-```
-z = W * input + b       (linear transformation)
-a = sigmoid(z)           (activation)
+```math
+\begin{aligned}
+z &= W \cdot \text{input} + b \quad \text{(linear transformation)} \\
+a &= \text{sigmoid}(z) \quad \text{(activation)}
+\end{aligned}
 ```
 
 一层输出成为下一个层输入.
@@ -112,13 +114,13 @@ a = sigmoid(z)           (activation)
 
 | Step | Operation | Dimensions | Result Shape |
 |------|-----------|------------|-------------|
-| Input | x | -- | (2,) |
-| Hidden linear | W1 * x + b1 | W1: (3, 2), b1: (3,) | (3,) |
-| Hidden activation | sigmoid(z1) | -- | (3,) |
-| Output linear | W2 * h + b2 | W2: (1, 3), b2: (1,) | (1,) |
-| Output activation | sigmoid(z2) | -- | (1,) |
+| Input | $x$ | -- | (2,) |
+| Hidden linear | $W_1 x + b_1$ | $W_1$: (3, 2), $b_1$: (3,) | (3,) |
+| Hidden activation | $\text{sigmoid}(z_1)$ | -- | (3,) |
+| Output linear | $W_2 h + b_2$ | $W_2$: (1, 3), $b_2$: (1,) | (1,) |
+| Output activation | $\text{sigmoid}(z_2)$ | -- | (1,) |
 
-规则:在层 k 的重量矩阵 W 有形状 (神经元_in_layer_k,神经元_in_layer_k_minus_1). 排列与当前层匹配.列表与前层匹配.如果形状不排列,则你有错误.
+规则:重量矩阵$W$在层层$k$列表与当前层相匹配.列表与前层相匹配.如果形状不配列,则你有错误.
 
 ### 全球近似定理
 
@@ -168,7 +170,7 @@ def sigmoid(x):
 
 ### 步骤2:层级
 
-深度学习中最重要的操作是矩阵乘法. 每一个层,每一个注意力头,每一个前进传递,都是矩阵. 一个线性层取出输入向量,乘以重量矩阵,并添加一个偏差向量: y = Wx + b.
+深度学习中最重要的操作是矩阵乘法. 每一个层,每一个注意力头,每一个前进传递--它是子. 一个线性层取一个输入向量,乘以一个权重矩阵,然后添加一个偏差向量:$y = Wx + b$只有一个方程可以计算一个神经网络的90%
 
 一层包含一个重量矩阵和一个偏向向量.它的前进方法采用一个输入向量,返回了激活的输出.
 
@@ -204,7 +206,7 @@ class Layer:
 
 ### 步骤3:网络类
 
-网络是层次列表.前进传递链接它们:层 k的输出输入到层 k+1.
+网络是层次列表. 前进传递链接它们:层输出$k$料料$k+1$现在,我们要去.
 
 ```python
 class Network:
@@ -346,11 +348,11 @@ print(output)
 | Hidden layer | "The middle part" | Any layer between input and output whose values are not directly observed in the data |
 | Multi-layer network | "A deep neural network" | Layers of neurons stacked sequentially, where each layer's output feeds the next layer's input |
 | Activation function | "The nonlinearity" | A function applied after the linear transformation that introduces curves into the decision boundary |
-| Sigmoid | "The S-curve" | sigma(z) = 1/(1+e^(-z)), squashes any real number to (0,1), smooth and differentiable everywhere |
-| Weight matrix | "The parameters" | A matrix W of shape (current_layer_neurons, previous_layer_neurons) containing learnable connection strengths |
+| Sigmoid | "The S-curve" | $\sigma(z) = 1/(1+e^{-z})$, squashes any real number to (0,1), smooth and differentiable everywhere |
+| Weight matrix | "The parameters" | A matrix $W$ of shape (current_layer_neurons, previous_layer_neurons) containing learnable connection strengths |
 | Bias vector | "The offset" | A vector added after the matrix multiply that lets neurons activate even when all inputs are zero |
 | Universal approximation | "Neural nets can learn anything" | A single hidden layer with enough neurons can approximate any continuous function -- but "enough" can mean billions |
-| Linear transformation | "The matrix multiply step" | z = W * x + b, the computation before activation, which maps inputs to a new space |
+| Linear transformation | "The matrix multiply step" | $z = W x + b$, the computation before activation, which maps inputs to a new space |
 | Decision boundary | "Where the classifier switches" | The surface in input space where the network output crosses the classification threshold |
 
 ## 进一步阅读

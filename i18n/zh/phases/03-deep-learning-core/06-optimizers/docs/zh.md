@@ -18,7 +18,7 @@
 
 你计算了梯度.你知道重量#4,721应该减少0.003减少损失.但0.003在哪个单位?通过什么?
 
-基梯度下降对每一步的每个参数都应用相同的学习速度:w = w - lr *梯度. 这造成了三种问题,使得训练神经网络在实践中很痛苦.
+尼拉梯度下降对每一步的每个参数都应用相同的学习速度:$w = w - \text{lr} \cdot \text{gradient}$这就造成了三种问题,
 
 首先,振荡. 失败的景观很少像一个滑. 这更像是一个长而狭窄的谷. 梯度指向谷 (向),而不是沿谷 (浅向). 渐进的下降反弹前后穿越狭窄的维度,同时在有用的维度上取得微小的进展. 你已经看到了:损失比高原快速下降,不是因为模型合,而是因为它正在振荡.
 
@@ -34,8 +34,8 @@
 
 计算一个小批量上的梯度,然后朝着相反的方向行进.
 
-```
-w = w - lr * gradient
+```math
+w = w - \text{lr} \cdot \text{gradient}
 ```
 
 位式意味着你使用一个随机的子集 (迷你批量) 数据来估计梯度,而不是整个数据集.这个噪音实际上是有用的 - 它帮助逃避严峻的局部最小值.
@@ -46,27 +46,31 @@ w = w - lr * gradient
 
 滚球下坡比喻过度使用,但确切.
 
-```
-m_t = beta * m_{t-1} + gradient
-w = w - lr * m_t
+```math
+\begin{aligned}
+m_t &= \beta \, m_{t-1} + \text{gradient} \\
+w &= w - \text{lr} \cdot m_t
+\end{aligned}
 ```
 
-贝塔 (通常是0.9) 控制了要保存多少历史记录. 贝塔 =0.9,动力大致是最后10个梯度 (1 / (1 -0.9) =10的平均值.
+测试的时间是多少?$\beta = 0.9$动力大致是过去10个梯度的平均值 ($1 / (1 - 0.9) = 10$)
 
 由于这种方法可以调整振荡,在同一方向指向的梯度积累.反向方向的梯度取消.在那个狭窄的谷中,"横"组件翻转每一步,减温."沿"组件保持一致,得到放大.结果是在有用方向上平稳加速.
 
-实际数字:在一个不良条件的损失景观上,SGD单独可能需要10,000步.在动力 (beta=0.9) 的SGD通常需要3,000-5,000步.
+实际数字:在一个不良条件的损失景观中,仅 SGD 需要1万步.$\beta = 0.9$速度不是边缘性的.
 
 ### 标
 
 实际上有效的第一个每参数适应性学习率方法. 希顿在Coursera讲座中提出 (从未正式发表).
 
-```
-s_t = beta * s_{t-1} + (1 - beta) * gradient^2
-w = w - lr * gradient / (sqrt(s_t) + epsilon)
+```math
+\begin{aligned}
+s_t &= \beta \, s_{t-1} + (1 - \beta) \cdot \text{gradient}^2 \\
+w &= w - \text{lr} \cdot \frac{\text{gradient}}{\sqrt{s_t} + \epsilon}
+\end{aligned}
 ```
 
-随着一个小的学习率,一个小的学习率 (s_t) 能够分为一个小的学习率.
+$s_t$随着一个小的学习率,一个小的学习率,一个小的学习率,一个小的学习率.
 
 这解决了"所有参数的学习速度"的问题. 一个已经获得了大规模更新的重量可能接近目标 - - 减速. 一个已经获得了小规模更新的重量可能不够训练 - - 加速.
 
@@ -76,41 +80,45 @@ w = w - lr * gradient / (sqrt(s_t) + epsilon)
 
 亚当将这两个想法结合在一起,每参数保持两个指数动平均值:
 
-```
-m_t = beta1 * m_{t-1} + (1 - beta1) * gradient        (first moment: mean)
-v_t = beta2 * v_{t-1} + (1 - beta2) * gradient^2       (second moment: variance)
-```
-
-**Bias correction**基本的解释是最少的细节.在步骤1时,m_1= (1 - beta1) *梯度.在beta1=0.9时,这是0.1 *梯度--太小了10倍.移动平均值还没有升温.偏差纠正补偿:
-
-```
-m_hat = m_t / (1 - beta1^t)
-v_hat = v_t / (1 - beta2^t)
+```math
+\begin{aligned}
+m_t &= \beta_1 m_{t-1} + (1 - \beta_1) \cdot \text{gradient} && \text{(first moment: mean)} \\
+v_t &= \beta_2 v_{t-1} + (1 - \beta_2) \cdot \text{gradient}^2 && \text{(second moment: variance)}
+\end{aligned}
 ```
 
-在步骤1 (beta1 = 0.9):m_hat =m_1 / (1 - 0.9) =m_1 / 0.1 =实际梯度.在步骤100: (1 - 0.9^100) 约为1.0,因此纠正消失.偏差纠正对第10步很重要,在50后是无关紧要的.
+**Bias correction**现在,我们要做一个好方法.$m_1 = (1 - \beta_1) \cdot \text{gradient}$随着$\beta_1 = 0.9$现在,我们要去做什么?$0.1 \cdot \text{gradient}$移动平均值还没有升温.偏差纠正补偿:
+
+```math
+\begin{aligned}
+\hat{m} &= \frac{m_t}{1 - \beta_1^t} \\
+\hat{v} &= \frac{v_t}{1 - \beta_2^t}
+\end{aligned}
+```
+
+在第一步$\beta_1 = 0.9$其他$\hat{m} = m_1 / (1 - 0.9) = m_1 / 0.1 =$实际梯度. 在步骤100:$(1 - 0.9^{100})$偏差对待在第10步,并且在50后是无关的.
 
 更新:
 
-```
-w = w - lr * m_hat / (sqrt(v_hat) + epsilon)
+```math
+w = w - \text{lr} \cdot \frac{\hat{m}}{\sqrt{\hat{v}} + \epsilon}
 ```
 
-亚当默认:lr=0.001,beta1=0.9,beta2=0.999,epsilon=1e-8.这些默认解决80%的问题.如果没有,先更改lr.然后beta2.几乎从来没有更改beta1或epsilon.
+亚当默认:$\text{lr} = 0.001$现在$\beta_1 = 0.9$现在$\beta_2 = 0.999$现在$\epsilon = 10^{-8}$它们可以解决80%的问题,如果没有,先改变.$\beta_2$几乎从来没有改变.$\beta_1$或$\epsilon$现在,我们要去.
 
 ### 体重减轻是正确的
 
-在尼拉 SGD 中,这相当于体重衰减 (减去每一步的体重中的 lambda * w).在亚当中,这种等效性断裂.
+增加L2规律化$\lambda w^2$在尼拉 SGD 中,这相当于体重衰减 (减去$\lambda w$在亚当中,这种等价性会破裂.
 
 洛希洛夫和哈特的见解:当你把L2加到损失中,然后亚当处理梯度时,适应性学习率也会扩大调节术语. 具有较大的梯度差异的参数得到较少的调节.具有较小的变异的参数得到更多.这不是你想要的 - - 你想要的调节是不论梯度统计数据如何.
 
 在亚当更新后,亚当W直接将重量衰减应用于重量:
 
-```
-w = w - lr * m_hat / (sqrt(v_hat) + epsilon) - lr * lambda * w
+```math
+w = w - \text{lr} \cdot \frac{\hat{m}}{\sqrt{\hat{v}} + \epsilon} - \text{lr} \cdot \lambda w
 ```
 
-减肥率 (lr * lambda * w) 不由亚当的适应因子缩小.每个参数都得到相同的比例缩小.
+减肥期 ($\text{lr} \cdot \lambda w$由于每一个参数的比例均为相同,所以每一个参数的比例均为相同.
 
 这似乎是一个小细节.它不是.亚当W几乎在每一个任务上都与亚当+L2规律化相比更好的解决方案相近.它是 PyTorch 中的默认优化器,用于训练变压器,扩散模型和大多数现代建筑.BERT,GPT,LLaMA,稳定扩散--所有这些都是使用亚当W训练的.
 
@@ -424,11 +432,11 @@ for epoch in range(100):
 
 ## 运动
 
-1. 运行Nesterov动力,计算在"看头"位置 (w - lr * beta * v) 转移的梯度,而不是当前位置.
+1. 实现Nesterov动力,在"看头"位置计算梯度 ($w - \text{lr} \cdot \beta v$根据环节数据集的标准动力相比.
 
 2. 实施学习速度升温时间表:在训练步骤的前10%中从0到max_lr的线性坡路,然后降低到0.与亚当+加热相比亚当没有加热的训练.测量圆数据集中达到90%的准确度需要多少时代.
 
-3. 追踪亚当训练期间每个参数的有效学习率.有效率是lr * m_hat / (sqrt(v_hat) + eps).在10 ,50和200步后绘制有效率的分布.所有参数都以相同的速度更新吗?
+3. 追踪亚当训练期间每个参数的有效学习率.$\text{lr} \cdot \hat{m} / (\sqrt{\hat{v}} + \epsilon)$根据10个,50个和200个步骤的有效率分布图.所有参数都以相同的速度更新吗?
 
 4. 执行梯度剪辑 (按全球标准剪辑).设置最高梯度标准为1.0.使用高学习率 (lr=0.01为亚当) 进行剪辑和没有剪辑训练.计算几次跑步分离 (损失到NaN) 进行10个随机种子或没有剪辑.
 
@@ -439,12 +447,12 @@ for epoch in range(100):
 | Term | What people say | What it actually means |
 |------|----------------|----------------------|
 | Learning rate | "Step size" | The scalar multiplier on the gradient update; the single most impactful hyperparameter in training |
-| SGD | "Basic gradient descent" | Stochastic gradient descent: update weights by subtracting lr * gradient, computed on a mini-batch |
+| SGD | "Basic gradient descent" | Stochastic gradient descent: update weights by subtracting $\text{lr} \cdot \text{gradient}$, computed on a mini-batch |
 | Momentum | "Rolling ball analogy" | Exponential moving average of past gradients; dampens oscillation and accelerates consistent directions |
 | RMSProp | "Adaptive learning rate" | Divides each parameter's gradient by the running RMS of its recent gradients; equalizes learning rates |
 | Adam | "The default optimizer" | Combines momentum (first moment) and RMSProp (second moment) with bias correction for the initial steps |
 | AdamW | "Adam done right" | Adam with decoupled weight decay; applies regularization directly to weights rather than through the gradient |
-| Bias correction | "Warmup for running averages" | Dividing by (1 - beta^t) to compensate for the zero-initialization of Adam's moment estimates |
+| Bias correction | "Warmup for running averages" | Dividing by $(1 - \beta^t)$ to compensate for the zero-initialization of Adam's moment estimates |
 | Weight decay | "Shrink the weights" | Subtracting a fraction of the weight value at each step; a regularizer that penalizes large weights |
 | Learning rate schedule | "Changing lr over time" | A function that adjusts the learning rate during training; warmup + cosine decay is the modern default |
 | Gradient clipping | "Capping the gradient norm" | Scaling down the gradient vector when its norm exceeds a threshold; prevents exploding gradient updates |

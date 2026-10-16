@@ -30,8 +30,8 @@
 
 最简单的方法是选择一个数字,用它来执行每一步.
 
-```
-lr(t) = lr_0
+```math
+\text{lr}(t) = \text{lr}_0
 ```
 
 很少是最佳的.它要么太高于训练结束时 (动在最低点左右) 还要太低于开始 (浪费了微小步骤的计算).对于小型号和调试工作很好.对于训练超过一个小时的任何东西来说,这是一个可怕的选择.
@@ -40,11 +40,11 @@ lr(t) = lr_0
 
 通过 ResNet时代的旧式方法,在固定时代,减少学习率一倍 (通常是10倍).
 
-```
-lr(t) = lr_0 * gamma^(floor(epoch / step_size))
+```math
+\text{lr}(t) = \text{lr}_0 \cdot \gamma^{\lfloor \text{epoch} / \text{step\_size} \rfloor}
 ```
 
-在Gamma=0.1和 step_size=30的意思是: lr每30个时代下降10倍.ResNet-50使用这个--lr=0.1,在30个时代下降10倍,60个时代下降90个时代.
+在哪里?$\gamma = 0.1$现在,我们可以看到一个数字,然后我们可以看到一个数字,然后我们可以看到一个数字.
 
 问题是:最佳的衰退点取决于数据集和架构. 转向另一个问题,你需要重新调整下降时间. 转变是突然的 - - 损失可能会升,当速度突然改变.
 
@@ -52,24 +52,24 @@ lr(t) = lr_0 * gamma^(floor(epoch / step_size))
 
 随着可西因曲线的顺序下降,从最大学习速度到最低水平:
 
+```math
+\text{lr}(t) = \text{lr}_{\min} + 0.5 \cdot (\text{lr}_{\max} - \text{lr}_{\min}) \cdot \left(1 + \cos\left(\frac{\pi t}{T}\right)\right)
 ```
-lr(t) = lr_min + 0.5 * (lr_max - lr_min) * (1 + cos(pi * t / T))
-```
 
-在此,t是当前的步骤,T是全部的步骤数.
+在哪里?$t$是目前的步骤$T$是步骤的总数.
 
-在t=0,代数词是1,所以lr=lr_max.在t=T,代数词是-1,所以lr=lr_min.衰变最初是温和的,在中间加速,并在结束附近再次变得温和.
+在$t=0$, 代数是1,所以$\text{lr} = \text{lr} _{\max}$在$t=T$, 代数是 -1,所以$\text{lr} = \text{lr} _{\min}$衰变最初是温和的,在中间加速,然后在结束时再次变得温和.
 
-对于大多数现代训练运行来说,这是默认的.没有超值参数可以调整到 lr_max 和 lr_min.
+现在,我们需要一个新的训练,$\text{lr} _{\max}$其他$\text{lr} _{\min}$随数形状与经验观察相符,大多数学习都在训练中发生,你需要在关键时期进行合理的步骤尺寸.
 
 ### 热情:为什么你开始小
 
 亚当和其他适应优化器保持了梯度平均和变异的运行估计.在0步,这些估计初始化为零.第一些梯度更新基于垃圾统计.如果您在此期间的学习速度很大,模型会采取巨大的,不适合方向的步骤.
 
-热化解决了这一问题.从一个小的学习速度开始 (通常是lr_max / warmup_steps或甚至是零) 并线性地在第一个N步骤上升到lr_max.
+首先要从一个小的学习速度开始 (通常是lr_max/warmup_steps甚至是零)$\text{lr}_{\max}$在第一场$N$到了你达到学习的全部速度,亚当的统计已经稳定了.
 
-```
-lr(t) = lr_max * (t / warmup_steps)     for t < warmup_steps
+```math
+\text{lr}(t) = \text{lr}_{\max} \cdot \frac{t}{\text{warmup\_steps}} \quad \text{for } t < \text{warmup\_steps}
 ```
 
 典型的加热:总训练步骤的1-5%.Llama 3训练了约1.8万亿代币,加热了2000个步骤.GPT-3加热了超过3.75亿代币.
@@ -398,13 +398,13 @@ scheduler = get_cosine_schedule_with_warmup(
 
 ## 运动
 
-1. 实现指数分解:lr(t) =lr_0 *gamma^t,gamma=0.999.
+1. 实现指数式衰退:$\text{lr}(t) = \text{lr}_0 \cdot \gamma^t$在哪里$\gamma = 0.999$比较圆数据集中的可西因缩.
 
 2. 执行学习率范围测试 (Leslie Smith):训练几百步,同时从1e-7升至1. 插图损失与 LR. 最佳最大LR是损失开始增加之前.
 
 3. 训练用加热+,但变化加热时间:0%,1%,5%,10%,20%的总步骤.找到训练最稳定的甜点.
 
-4. 执行热启动 (SGDR) 的可西因缩:每T步骤都将学习速度重置至lr_max,再衰退.
+4. 实现热启动 (SGDR) 的可西因缩:重置学习速度为 $\text{lr}_{\max}$每一个$T$较长的训练中,与标准的体相比.
 
 5. 建立一个"日程外科医生",监测训练损失,自动从加热转向位,
 
@@ -414,12 +414,12 @@ scheduler = get_cosine_schedule_with_warmup(
 |------|----------------|----------------------|
 | Learning rate | "How fast the model learns" | The scalar that multiplies the gradient to determine the parameter update size |
 | Schedule | "Change the LR over time" | A function that maps training step to learning rate, designed to optimize convergence |
-| Warmup | "Start with a small LR" | Linearly ramping the LR from near-zero to the target value over the first N steps to stabilize optimizer statistics |
-| Cosine annealing | "Smooth LR decay" | Decreasing the LR following a cosine curve from lr_max to lr_min over training |
+| Warmup | "Start with a small LR" | Linearly ramping the LR from near-zero to the target value over the first $N$ steps to stabilize optimizer statistics |
+| Cosine annealing | "Smooth LR decay" | Decreasing the LR following a cosine curve from $\text{lr} _{\max}$ to $\text{lr} _{\min}$ over training |
 | Step decay | "Drop LR at milestones" | Multiplying the LR by a factor (usually 0.1) at fixed epoch intervals |
 | 1cycle policy | "Up then down" | Leslie Smith's method of ramping LR up then down in a single cycle for faster convergence |
 | LR range test | "Find the best learning rate" | Training briefly while increasing LR to find the value where loss starts diverging |
-| Cosine with warm restarts | "Reset and repeat" | Periodically resetting the LR to lr_max and decaying again (SGDR) |
+| Cosine with warm restarts | "Reset and repeat" | Periodically resetting the LR to $\text{lr} _{\max}$ and decaying again (SGDR) |
 | Eta min | "The floor for the LR" | The minimum learning rate that the schedule decays to |
 | Peak learning rate | "The maximum LR" | The highest LR reached during training, typically after warmup |
 
