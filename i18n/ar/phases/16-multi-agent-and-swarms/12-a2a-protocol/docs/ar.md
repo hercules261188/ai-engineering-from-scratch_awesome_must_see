@@ -17,24 +17,52 @@ A2A هو بروتوكول الأسلاك العالمي لهذا المكالم�
 
 ### العناصر الأربعة
 
-**Agent Card.**وثيقة JSON في `/.well-known/agent.json`وصف الوكيل: الاسم والمهارات والنقاط النهائية والطرق المدعومة ومتطلبات المؤلف.
+**Agent Card.**وثيقة JSON في `/.well-known/agent-card.json`وصف الوكيل: الاسم والمهارات`supportedInterfaces`(URL نقطة النهاية، التزاما بالبروتوكول، نسخة بروتوكول) ، وأنواع الإدخال والإخراج المتبنية، ومتطلبات الوصول (`securitySchemes`بالإضافة`securityRequirements`"الاكتشاف يحدث من خلال قراءة البطاقة"
 
+```http
+GET /.well-known/agent-card.json HTTP/1.1
+Host: agent.example.com
 ```
-GET https://agent.example.com/.well-known/agent.json
-→ {
-    "name": "code-review-agent",
-    "skills": ["review-python", "review-typescript"],
-    "endpoints": {
-      "tasks": "https://agent.example.com/tasks"
+
+```json
+{
+  "name": "code-review-agent",
+  "description": "Reviews Python and TypeScript code.",
+  "version": "1.0.0",
+  "supportedInterfaces": [
+    {
+      "url": "https://agent.example.com",
+      "protocolBinding": "HTTP+JSON",
+      "protocolVersion": "1.0"
+    }
+  ],
+  "capabilities": {"streaming": false, "pushNotifications": false},
+  "securitySchemes": {
+    "bearer": {"httpAuthSecurityScheme": {"scheme": "Bearer"}}
+  },
+  "securityRequirements": [{"schemes": {"bearer": {"list": []}}}],
+  "defaultInputModes": ["text/plain", "application/json"],
+  "defaultOutputModes": ["application/json"],
+  "skills": [
+    {
+      "id": "review-python",
+      "name": "Review Python",
+      "description": "Reviews Python code.",
+      "tags": ["code-review", "python"]
     },
-    "auth": {"type": "bearer"},
-    "modalities": ["text", "structured"]
-  }
+    {
+      "id": "review-typescript",
+      "name": "Review TypeScript",
+      "description": "Reviews TypeScript code.",
+      "tags": ["code-review", "typescript"]
+    }
+  ]
+}
 ```
 
-**Task.**وحدة العمل، كائن غير متوافق، مع دورة حياة:`submitted → working → completed / failed / canceled`العميل يرسل مهمة أو استطلاعات أو يشترك في تحديثات
+**Task.**وحدة العمل، كائن غير متوافق، مع دورة حياة:`TASK_STATE_SUBMITTED``TASK_STATE_WORKING``TASK_STATE_COMPLETED`- لا ، لا`TASK_STATE_FAILED`- لا ، لا`TASK_STATE_CANCELED`يقوم العميل بإرسال رسالة، و يقوم الخادم بإنشاء المهمة، و يقوم العميل بإجراء استطلاعات أو الاشتراك في التحديثات.
 
-**Artifact.**النوع الناتج الذي تنتجته المهمة. النص، JSON المهيكلة، الصورة، الفيديو، الصوت. يتم كتابة الأدوات بحيث تكون الطرق المختلفة من الدرجة الأولى.
+**Artifact.**نوع النتيجة التي تنتجها المهمة. النص، JSON المهيكلة، الصورة، الفيديو، الصوت. يتم كتابة الأدوات: كل جزء يحمل واحد من `text`،`raw`،`url`أو`data`ويمكن أن يسميها`mediaType`، لذا الوسائل المختلفة هي من الدرجة الأولى.
 
 **Opaque lifecycle.**A2A لا يصف * كيف * يقوم وكيل عن بعد بحل المهمة. يرى العميل عمليات الانتقال والتحفيرات الحالة. التنفيذ حر في استخدام أي إطار.
 
@@ -47,29 +75,33 @@ GET https://agent.example.com/.well-known/agent.json
 
 ### تدفق الاكتشافات
 
-```
-Client                     Agent server
-  ├──GET /.well-known/agent.json──>
-  <──Agent Card JSON─────────────
-  ├──POST /tasks {skill, input}──>
-  <──201 task_id, state=submitted
-  ├──GET /tasks/{id}──────────────>
-  <──state=working, 42% done──────
-  ├──GET /tasks/{id}──────────────>
-  <──state=completed, artifacts──
+```mermaid
+sequenceDiagram
+    participant C as Client
+    participant S as Agent server
+    C->>S: GET /.well-known/agent-card.json
+    S-->>C: Agent Card JSON
+    C->>S: POST /message:send (returnImmediately)
+    S-->>C: task, TASK_STATE_SUBMITTED
+    C->>S: GET /tasks/{id}
+    S-->>C: TASK_STATE_WORKING
+    C->>S: GET /tasks/{id}
+    S-->>C: TASK_STATE_COMPLETED, artifacts
 ```
 
-أو مع البث: الاشتراك في SSE`/tasks/{id}/events`لتحديثات التشغيل
+هذه هي طرق ربط HTTP + JSON ، وكل طلب يحمل `A2A-Version: 1.0`. بطبيعة الحال`SendMessage`يُغلق حتى تصل المهمة إلى حالة نهاية أو انقطاع، لذا يحدد عميل الاستطلاع `configuration.returnImmediately`لكي تعيدوا المهمة فوراً
+
+أو مع البث: `POST /message:stream`يعيد الأحداث المرسلة من الخادم (a `task`أولاً، ثم`statusUpdate`و`artifactUpdate`الأحداث) ، و`/tasks/{id}:subscribe`يربط مرة أخرى بمهمة جارية. يغلق التيار عندما تصل المهمة إلى حالة نهائية. لا يوجد `final`العلم
 
 ### المُصدر
 
 A2A تدعم ثلاثة أنماط مشتركة:
 
-- **Bearer token** OAuth2 أو غير شفاف
-- **mTLS** التلفزيون المتبادل؛ المؤسسات تثبت الهوية لبعضها البعض.
-- **Signed requests**-إتش.إم.إيه.إم.إم.إم.إم.إم.إم.إم.إم.إم.إم.إم.إم.إم.إم.إم.إم.إم.إم.إم.إم.إم.إم.إم.إم.إم.إم.إم.إم.إم.إم.إم.إم.إم.إم.إم.إم.إم.إم.إم.إم.إم.إم.إم.إم.إم.إم.إم.إم.إم.إم.إم.إم.إم.إم.إم.إم.إم.إم.إم.إم.إم.إم.إم.إم.إم.إم.إم.إم.إم.إم.إم.إم.إم.إم.
+- **Bearer token**: OAuth2 أو غير شفاف (`httpAuthSecurityScheme`أو`oauth2SecurityScheme`)
+- **mTLS**: التلفزيون المتبادل؛ المؤسسات تثبت الهوية لبعضها البعض (`mtlsSecurityScheme`)
+- **API key**: مفتاح في عنوان، وبرامج استفسار، أو ملف تعريف الارتباط (`apiKeySecurityScheme`)
 
-المُصدر يُعلن في بطاقة العميل، العملاء يكتشفون ويتوافقون.
+المعتاد يُعلن في بطاقة العميل:`securitySchemes`أسماء كل خطة و`securityRequirements`يحدد أيّة من هذه المواصفات يجب أن يرضيها العميل.
 
 ### 150 منظمة+ بحلول أبريل 2026
 
@@ -104,17 +136,17 @@ sw-agent-card-discovery
 
 ## بناءها
 
-`code/main.py`ينفذ خادم و عميل A2A- على الأقل باستخدام `http.server`و JSON. الخادم:
+`code/main.py`ينفذ خادم و عميل A2A- على الأقل باستخدام `http.server`و JSON، على التماس 1.0 HTTP + JSON. الخادم:
 
-- يُعرض`/.well-known/agent.json`،
-- يوافق`POST /tasks`،
+- يُعرض`/.well-known/agent-card.json`،
+- يوافق`POST /message:send`،
 - يدير حالة المهمة،
 - يعيد الأثاث على `GET /tasks/{id}`. . .
 
 العميل:
 
 - يحضر بطاقة العميل
-- يقدم مهمة،
+- يرسل رسالة مع `returnImmediately`،
 - استطلاعات الرأي حتى الانتهاء
 - يقرأ الأثاث
 
@@ -134,8 +166,8 @@ python3 code/main.py
 
 قائمة التحقق:
 
-- **Pin the spec version.**A2A لا يزال يتطور، بطاقة الوكيل يجب أن تعلن النسخة البروتوكولية.
-- **Idempotent task creation.**يجب أن تؤدي عمليات الإرسال المكررة (تجربات شبكة) إلى مهمة واحدة.
+- **Pin the spec version.**A2A لا يزال يتطور`supportedInterfaces`الإدخال يعلن عن`protocolVersion`، والعملاء يرسلون`A2A-Version: 1.0`. . .
+- **Idempotent task creation.**يجب أن تنتج عمليات الإرسال المكرر (تجربات الشبكة) مهمة واحدة.`messageId`. . .
 - **Artifact schemas.**إعلان ما هي الأشكال التي يعيدها الوكيل؛ يجب على المستهلكين التحقق منها.
 - **Rate limits + auth.**A2A هو عامة، تطبق أمن الويب القياسي.
 - **Dead-letter for failed tasks.**تحقق من الأنماط مع مرور الوقت من أنواع الفشل المتكرر.
@@ -143,8 +175,8 @@ python3 code/main.py
 ## التمارين
 
 1. أركض`code/main.py`تأكد من أن العميل اكتشف الخادم ويحصل على الفن الصحيح
-2. إضافة مهارة ثانية إلى الخادم (على سبيل المثال، "التخفيف"). قم بتحديث بطاقة الوكيل. اكتب عميلا يختار المهارة بناء على نوع المهمة.
-3. تنفيذ نقطة نهاية لتدفق SSE: `/tasks/{id}/events`ما الذي يحتاج العميل إلى فعله بشكل مختلف؟
+2. إضافة مهارة ثانية إلى الخادم (على سبيل المثال ، "التخميز"). قم بتحديث بطاقة الوكيل. اكتب عميلا يختار المهارة بناء على نوع المهمة. طلب 1.0 ليس لديه مجال مهارات ، لذلك يقوم الخادم بتوجيه أجزاء الرسالة.
+3. تنفيذ`POST /message:stream`: الإجابة مع الحوادث المرسلة من الخادم (a `task`أولاً، ثم`statusUpdate`الحوادث) و إغلاق التيار في حالة نهاية. ما الذي يحتاج العميل إلى القيام به بشكل مختلف؟
 4. اقرأوا مواصفات A2A (https://a2a-protocol.org/latest/specification/) حدد ثلاثة أشياء لا تنفذها هذه المواصفات المحددة.
 5. مقارنة A2A (اكتشاف بطاقة العميل) مع MCP (إدراج قدرات جانب الخادم عبر `listTools`ما هي التنازل بين العملاء الذين يصفون أنفسهم واختبار القدرات؟
 
@@ -153,17 +185,18 @@ python3 code/main.py
 | Term | What people say | What it actually means |
 |------|----------------|------------------------|
 | A2A | "Agent-to-agent" | Peer protocol for agents to call other agents across systems. Google 2025. |
-| Agent Card | "The agent's business card" | JSON at `/.well-known/agent.json` describing skills, endpoints, auth. |
+| Agent Card | "The agent's business card" | JSON at `/.well-known/agent-card.json` describing skills, `supportedInterfaces`, auth. |
 | Task | "The unit of work" | Async stateful object with a lifecycle; artifacts produced on completion. |
 | Artifact | "The result" | Typed output: text, structured JSON, image, video, audio. First-class media. |
 | Opaque lifecycle | "How it's solved is the agent's business" | Client sees state transitions; server is free to choose framework/tools. |
-| Discovery | "Finding the agent" | `GET /.well-known/agent.json` returns the card. |
+| Discovery | "Finding the agent" | `GET /.well-known/agent-card.json` returns the card. |
 | MCP vs A2A | "Tools vs peers" | MCP: vertical agent ↔ tool. A2A: horizontal agent ↔ agent. |
 | ACP / ANP / NLIP | "Sibling protocols" | Adjacent specs; A2A is the most-adopted 2026. |
 
 ## المزيد من القراءة
 
 - [A2A specification](https://a2a-protocol.org/latest/specification/) المواصفات القنونية
+- [A2A v1.0.1 release](https://github.com/a2aproject/A2A/tree/v1.0.1): المسموح بها`docs/specification.md`و`specification/a2a.proto`هذا الدرس يتبع
 - [Google Developers Blog — A2A announcement](https://developers.googleblog.com/en/a2a-a-new-era-of-agent-interoperability/) شهر أبريل 2025
 - [A2A GitHub repo](https://github.com/a2aproject/A2A) تنفيذات مرجعية و SDKs
 - [Liu et al. — A Survey of Agent Interoperability Protocols](https://arxiv.org/html/2505.02279v1) مقارنة MCP, ACP, A2A, ANP

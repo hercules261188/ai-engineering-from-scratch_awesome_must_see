@@ -44,8 +44,8 @@ critic update:   TD on Q_i(x, a_1..n) given next-state joint estimate
 
 التعاون فقط. الجائزة العالمية هي جمع وظيفة واحدة من قيم Q لكل عامل:
 
-```
-Q_tot(tau, a) = f(Q_1(tau_1, a_1), ..., Q_n(tau_n, a_n)),   df/dQ_i >= 0
+```math
+Q_{\text{tot}}(\tau, a) = f\big(Q_1(\tau_1, a_1), \ldots, Q_n(\tau_n, a_n)\big), \quad \frac{\partial f}{\partial Q_i} \ge 0
 ```
 
 الاحتمالات الموحدة تضمن`argmax_a Q_tot`يمكن حسابها من قبل كل وكيل يختار`argmax_{a_i} Q_i`بشكل مستقل، هذا هو**exactly the decentralized execution property**في وقت التدريب، شبكة الاختلاط تنتج`Q_tot`من كل عامل

@@ -72,7 +72,7 @@ sequenceDiagram
 ### A2A (بروتوكول الوكيل2الوكيل)
 
 **Created by:**جوجل (الآن تحت مؤسسة لينكس)`lf.a2a.v1`)
-**Spec version:**1.0.0
+**Spec version:**1.0.1
 **Problem:**كيف يتعاون وكلاء مستقلون ويتفاوضون ويمنحون بعضهم بعضهم بعضاً من المهام؟
 
 A2A هو بروتوكول ل**peer-to-peer agent collaboration**حيث يربط MCP وكيل مع الأدوات، يربط A2A وكيل مع وكلاء آخرين.**Agent Card**في عنوان URL معروف، وكلاء آخرون يكتشفون، يتفاوضون معه، ويمنحون مهام له.
@@ -87,8 +87,8 @@ sequenceDiagram
     Client->>Remote: GET /.well-known/agent-card.json
     Remote-->>Client: Agent Card (skills, modes, security)
 
-    Client->>Remote: POST /message:send
-    Remote-->>Client: Task (submitted/working)
+    Client->>Remote: POST /message:send (returnImmediately)
+    Remote-->>Client: Task (TASK_STATE_SUBMITTED or TASK_STATE_WORKING)
 
     alt Polling
         Client->>Remote: GET /tasks/{id}
@@ -97,7 +97,7 @@ sequenceDiagram
         Client->>Remote: POST /message:stream
         Remote-->>Client: SSE: statusUpdate
         Remote-->>Client: SSE: artifactUpdate
-        Remote-->>Client: SSE: completed
+        Remote-->>Client: SSE: statusUpdate TASK_STATE_COMPLETED, stream closes
     end
 ```
 
@@ -157,36 +157,36 @@ sequenceDiagram
       }
     }
   },
-  "security": [{ "bearer": [] }]
+  "securityRequirements": [{ "schemes": { "bearer": { "list": [] } } }]
 }
 ```
 
 أشياء مهمة يجب ملاحظتها:
 - **Skills**كل واحد لديه معرف، علامات، وأنواع MIME المدعومة المدخل / الخروج. هكذا يقرر وكيل العميل ما إذا كان هذا وكيل عن بعد يمكن التعامل مع طلبه.
 - **supportedInterfaces**يدرج العديد من روابط البروتوكول. وكيل واحد يمكن أن يتحدث JSON-RPC، REST، و gRPC في نفس الوقت.
-- **Security**ويتم دمجها في البطاقة، ويعرف العميل ما هو المطلوب قبل أن يطلب طلباً واحداً.
+- **Security**يتم دمجها في البطاقة: `securitySchemes`أسماء كل خطة و`securityRequirements`يُقرر أيّ منها ينطبق. العميل يعرف ما الذي يحتاجه قبل أن يقدم طلباً واحداً.
 
 #### دورة حياة المهام
 
-المهام هي الوحدة الأساسية للعمل في A2A. تتحرك عبر الحالات المحددة:
+المهام هي الوحدة الأساسية للعمل في A2A. تتحرك عبر الحالات المحددة (الرسومات تنسحب `TASK_STATE_`المقبل الذي يحمل كل دولة على السلك):
 
 ```mermaid
 stateDiagram-v2
-    [*] --> submitted
-    submitted --> working
-    working --> input_required: needs more info
-    input_required --> working: client sends data
-    working --> completed: success
-    working --> failed: error
-    working --> canceled: client cancels
-    submitted --> rejected: agent declines
+    [*] --> SUBMITTED
+    SUBMITTED --> WORKING
+    WORKING --> INPUT_REQUIRED: needs more info
+    INPUT_REQUIRED --> WORKING: client sends data
+    WORKING --> COMPLETED: success
+    WORKING --> FAILED: error
+    WORKING --> CANCELED: client cancels
+    SUBMITTED --> REJECTED: agent declines
 
-    completed --> [*]
-    failed --> [*]
-    canceled --> [*]
-    rejected --> [*]
+    COMPLETED --> [*]
+    FAILED --> [*]
+    CANCELED --> [*]
+    REJECTED --> [*]
 
-    note right of completed
+    note right of COMPLETED
         Terminal states are immutable.
         Follow-ups create new tasks
         within the same contextId.
@@ -212,7 +212,7 @@ stateDiagram-v2
 
 A2A يستخدم JSON-RPC 2.0 هنا ما يبدو عليه تبادل الرسائل الحقيقية:
 
-**Client sends a task:**
+**Client sends a message:**
 ```json
 {
   "jsonrpc": "2.0",
@@ -269,16 +269,16 @@ A2A يستخدم JSON-RPC 2.0 هنا ما يبدو عليه تبادل الرس�
 **Streaming via SSE:**
 ```text
 POST /message:stream HTTP/1.1
-Content-Type: application/json
+Content-Type: application/a2a+json
 A2A-Version: 1.0
 
-data: {"task":{"id":"task-123","status":{"state":"TASK_STATE_WORKING"}}}
+data: {"task":{"id":"task-123","contextId":"ctx-123","status":{"state":"TASK_STATE_WORKING"}}}
 
-data: {"statusUpdate":{"taskId":"task-123","status":{"state":"TASK_STATE_WORKING","message":{"role":"ROLE_AGENT","parts":[{"text":"Searching documentation..."}]}}}}
+data: {"statusUpdate":{"taskId":"task-123","contextId":"ctx-123","status":{"state":"TASK_STATE_WORKING","message":{"messageId":"msg-002","role":"ROLE_AGENT","parts":[{"text":"Searching documentation..."}]}}}}
 
-data: {"artifactUpdate":{"taskId":"task-123","artifact":{"artifactId":"art-1","parts":[{"text":"partial findings..."}]},"append":true,"lastChunk":false}}
+data: {"artifactUpdate":{"taskId":"task-123","contextId":"ctx-123","artifact":{"artifactId":"art-1","parts":[{"text":"partial findings..."}]},"append":true,"lastChunk":false}}
 
-data: {"statusUpdate":{"taskId":"task-123","status":{"state":"TASK_STATE_COMPLETED"}}}
+data: {"statusUpdate":{"taskId":"task-123","contextId":"ctx-123","status":{"state":"TASK_STATE_COMPLETED"}}}
 ```
 
 ### ACP (بروتوكول الاتصال بالوكيل)
@@ -612,12 +612,12 @@ swarm-message-bus
 ```typescript
 import crypto from "node:crypto";
 
-type MessageRole = "user" | "agent";
+type MessageRole = "ROLE_USER" | "ROLE_AGENT";
 
 type MessagePart =
-  | { kind: "text"; text: string }
-  | { kind: "data"; data: unknown; mediaType: string }
-  | { kind: "file"; name: string; url: string; mediaType: string };
+  | { text: string }
+  | { data: unknown; mediaType: string }
+  | { url: string; filename: string; mediaType: string };
 
 type TrajectoryEntry = {
   reasoning: string;
@@ -651,11 +651,11 @@ function createMessage(
 }
 
 function textMessage(role: MessageRole, text: string): AgentMessage {
-  return createMessage(role, [{ kind: "text", text }]);
+  return createMessage(role, [{ text }]);
 }
 ```
 
-لاحظ:`MessagePart`هو متعددة الحركات (نص، بيانات مهيكلة، ملفات) تماما مثل المواصفات الحقيقية A2A و ACP. `TrajectoryEntry`يحتوي على سلسلة التفكير، مماثلة لتقنية "ميتاداتا" التي يستخدمها أوكي.
+لاحظ:`MessagePart`هو متعددة الحركات (نص، بيانات مهيكلة، ملفات) تماما مثل المواصفات الحقيقية A2A و ACP. كما هو الحال في A2A 1.0, الحقل الذي موجود (`text`،`data`أو`url`) يقول ما هو الجزء ، لا يوجد`kind`-أجل`TrajectoryEntry`يحتوي على سلسلة التفكير، مماثلة لتقنية "ميتاداتا" التي يستخدمها أوكي.
 
 ### الخطوة الثانية: بطاقة وكيل A2A و سجل
 
@@ -671,11 +671,17 @@ type Skill = {
   outputModes: string[];
 };
 
+type AgentInterface = {
+  url: string;
+  protocolBinding: string;
+  protocolVersion: string;
+};
+
 type AgentCard = {
   name: string;
   description: string;
   version: string;
-  url: string;
+  supportedInterfaces: AgentInterface[];
   capabilities: {
     streaming: boolean;
     pushNotifications: boolean;
@@ -724,20 +730,20 @@ class AgentRegistry {
 
 ```typescript
 type TaskState =
-  | "submitted"
-  | "working"
-  | "input-required"
-  | "auth-required"
-  | "completed"
-  | "failed"
-  | "canceled"
-  | "rejected";
+  | "TASK_STATE_SUBMITTED"
+  | "TASK_STATE_WORKING"
+  | "TASK_STATE_INPUT_REQUIRED"
+  | "TASK_STATE_AUTH_REQUIRED"
+  | "TASK_STATE_COMPLETED"
+  | "TASK_STATE_FAILED"
+  | "TASK_STATE_CANCELED"
+  | "TASK_STATE_REJECTED";
 
 const TERMINAL_STATES: TaskState[] = [
-  "completed",
-  "failed",
-  "canceled",
-  "rejected",
+  "TASK_STATE_COMPLETED",
+  "TASK_STATE_FAILED",
+  "TASK_STATE_CANCELED",
+  "TASK_STATE_REJECTED",
 ];
 
 type TaskStatus = {
@@ -761,13 +767,14 @@ type Task = {
 };
 
 type TaskEvent =
-  | { kind: "statusUpdate"; taskId: string; status: TaskStatus }
+  | { statusUpdate: { taskId: string; status: TaskStatus } }
   | {
-      kind: "artifactUpdate";
-      taskId: string;
-      artifact: Artifact;
-      append: boolean;
-      lastChunk: boolean;
+      artifactUpdate: {
+        taskId: string;
+        artifact: Artifact;
+        append: boolean;
+        lastChunk: boolean;
+      };
     };
 
 type TaskHandler = (
@@ -799,22 +806,22 @@ class TaskManager {
     if (!handler) {
       const task = this.createTask(contextId);
       task.status = {
-        state: "rejected",
+        state: "TASK_STATE_REJECTED",
         timestamp: Date.now(),
-        message: textMessage("agent", `No handler for ${agentName}`),
+        message: textMessage("ROLE_AGENT", `No handler for ${agentName}`),
       };
       return task;
     }
 
     const task = this.createTask(contextId);
     task.history.push(message);
-    task.status = { state: "submitted", timestamp: Date.now() };
+    task.status = { state: "TASK_STATE_SUBMITTED", timestamp: Date.now() };
 
     this.processTask(task, handler, message).catch((err) => {
       task.status = {
-        state: "failed",
+        state: "TASK_STATE_FAILED",
         timestamp: Date.now(),
-        message: textMessage("agent", String(err)),
+        message: textMessage("ROLE_AGENT", String(err)),
       };
     });
     return task;
@@ -827,11 +834,9 @@ class TaskManager {
   cancelTask(taskId: string): boolean {
     const task = this.tasks.get(taskId);
     if (!task || TERMINAL_STATES.includes(task.status.state)) return false;
-    task.status = { state: "canceled", timestamp: Date.now() };
+    task.status = { state: "TASK_STATE_CANCELED", timestamp: Date.now() };
     this.emit(taskId, {
-      kind: "statusUpdate",
-      taskId,
-      status: task.status,
+      statusUpdate: { taskId, status: task.status },
     });
     return true;
   }
@@ -840,7 +845,7 @@ class TaskManager {
     const task: Task = {
       id: crypto.randomUUID(),
       contextId: contextId ?? crypto.randomUUID(),
-      status: { state: "submitted", timestamp: Date.now() },
+      status: { state: "TASK_STATE_SUBMITTED", timestamp: Date.now() },
       artifacts: [],
       history: [],
     };
@@ -853,42 +858,39 @@ class TaskManager {
     handler: TaskHandler,
     message: AgentMessage
   ) {
-    task.status = { state: "working", timestamp: Date.now() };
+    task.status = { state: "TASK_STATE_WORKING", timestamp: Date.now() };
     this.emit(task.id, {
-      kind: "statusUpdate",
-      taskId: task.id,
-      status: task.status,
+      statusUpdate: { taskId: task.id, status: task.status },
     });
 
     try {
       for await (const event of handler(task, message)) {
         if (TERMINAL_STATES.includes(task.status.state)) break;
 
-        if (event.kind === "statusUpdate") {
-          task.status = event.status;
+        if ("statusUpdate" in event) {
+          task.status = event.statusUpdate.status;
         }
-        if (event.kind === "artifactUpdate") {
+        if ("artifactUpdate" in event) {
+          const update = event.artifactUpdate;
           const existing = task.artifacts.find(
-            (a) => a.id === event.artifact.id
+            (a) => a.id === update.artifact.id
           );
-          if (existing && event.append) {
-            existing.parts.push(...event.artifact.parts);
+          if (existing && update.append) {
+            existing.parts.push(...update.artifact.parts);
           } else {
-            task.artifacts.push(event.artifact);
+            task.artifacts.push(update.artifact);
           }
         }
         this.emit(task.id, event);
       }
     } catch (err) {
       task.status = {
-        state: "failed",
+        state: "TASK_STATE_FAILED",
         timestamp: Date.now(),
-        message: textMessage("agent", String(err)),
+        message: textMessage("ROLE_AGENT", String(err)),
       };
       this.emit(task.id, {
-        kind: "statusUpdate",
-        taskId: task.id,
-        status: task.status,
+        statusUpdate: { taskId: task.id, status: task.status },
       });
     }
   }
@@ -901,7 +903,7 @@ class TaskManager {
 }
 ```
 
-هذا ينفذ دورة حياة المهمة الحقيقية A2A: المقدمة، والعمل، والمستحقة من المدخلات، والحالات المحطة. المعاملون هي مولدات التزامية التي تنتج الأحداث (تحديثات الحالة وقطع الأثاث) التي تطابق نموذج SSE التدفق.
+هذا ينفذ دورة حياة المهمة الحقيقية A2A: `TASK_STATE_SUBMITTED`،`TASK_STATE_WORKING`،`TASK_STATE_INPUT_REQUIRED`المُعاملون هم مولدات التسلسل التي تُعطى`statusUpdate`و`artifactUpdate`الأحداث، نفس الملفات التي يحملها تيار SSE.
 
 ### الخطوة الرابعة: مسار مراجعة النمط الأفريقي
 
@@ -1231,7 +1233,13 @@ async function protocolDemo() {
     name: "researcher",
     description: "Searches and summarizes findings",
     version: "1.0.0",
-    url: "https://researcher.local/a2a/v1",
+    supportedInterfaces: [
+      {
+        url: "https://researcher.local/a2a/v1",
+        protocolBinding: "JSONRPC",
+        protocolVersion: "1.0",
+      },
+    ],
     capabilities: { streaming: true, pushNotifications: false },
     defaultInputModes: ["text/plain"],
     defaultOutputModes: ["text/plain", "application/json"],
@@ -1250,7 +1258,13 @@ async function protocolDemo() {
     name: "coder",
     description: "Writes code from specs",
     version: "1.0.0",
-    url: "https://coder.local/a2a/v1",
+    supportedInterfaces: [
+      {
+        url: "https://coder.local/a2a/v1",
+        protocolBinding: "JSONRPC",
+        protocolVersion: "1.0",
+      },
+    ],
     capabilities: { streaming: false, pushNotifications: false },
     defaultInputModes: ["text/plain", "application/json"],
     defaultOutputModes: ["text/plain"],
@@ -1275,9 +1289,13 @@ async function protocolDemo() {
     "researcher",
     async function* (task, message) {
       yield {
-        kind: "statusUpdate" as const,
-        taskId: task.id,
-        status: { state: "working" as const, timestamp: Date.now() },
+        statusUpdate: {
+          taskId: task.id,
+          status: {
+            state: "TASK_STATE_WORKING" as const,
+            timestamp: Date.now(),
+          },
+        },
       };
 
       researchTrajectory.push({
@@ -1302,41 +1320,45 @@ async function protocolDemo() {
       });
 
       yield {
-        kind: "artifactUpdate" as const,
-        taskId: task.id,
-        artifact: {
-          id: crypto.randomUUID(),
-          name: "research-results",
-          parts: [
-            {
-              kind: "data" as const,
-              data: {
-                findings: [
-                  "React 19 compiler auto-memoizes components",
-                  "No more manual useMemo/useCallback needed",
-                  "Compiler runs at build time, not runtime",
-                ],
-                sources: ["react.dev/blog/react-19"],
+        artifactUpdate: {
+          taskId: task.id,
+          artifact: {
+            id: crypto.randomUUID(),
+            name: "research-results",
+            parts: [
+              {
+                data: {
+                  findings: [
+                    "React 19 compiler auto-memoizes components",
+                    "No more manual useMemo/useCallback needed",
+                    "Compiler runs at build time, not runtime",
+                  ],
+                  sources: ["react.dev/blog/react-19"],
+                },
+                mediaType: "application/json",
               },
-              mediaType: "application/json",
-            },
-          ],
+            ],
+          },
+          append: false,
+          lastChunk: true,
         },
-        append: false,
-        lastChunk: true,
       };
 
       yield {
-        kind: "statusUpdate" as const,
-        taskId: task.id,
-        status: { state: "completed" as const, timestamp: Date.now() },
+        statusUpdate: {
+          taskId: task.id,
+          status: {
+            state: "TASK_STATE_COMPLETED" as const,
+            timestamp: Date.now(),
+          },
+        },
       };
     }
   );
 
   auditRunner.registerAgent("researcher", async () => ({
     output: [
-      textMessage("agent", "React 19 compiler auto-memoizes components"),
+      textMessage("ROLE_AGENT", "React 19 compiler auto-memoizes components"),
     ],
     trajectory: researchTrajectory,
   }));
@@ -1366,7 +1388,7 @@ async function protocolDemo() {
   );
 
   console.log("\n2. Identity Verification (ANP)");
-  const message = textMessage("user", "Research React 19 compiler features");
+  const message = textMessage("ROLE_USER", "Research React 19 compiler features");
   const signature = signPayload(coderIdentity, message.id);
   const verified = identityRegistry.verify(
     coderIdentity.did,
@@ -1428,7 +1450,7 @@ protocolDemo().catch((err) => {
 
 **Schema drift.**العميل (أ) ينشر إعلان بطاقة العميل`application/json`النسخة. ولكن مخطط JSON يتغير بين الإصدارات. وكيل B يحتل النموذج القديم ويستقبل القمامة. تصحيح: إصدار مهاراتك وخطط الإصدار. تطبيق A2A يدعم `version`على العميل بطاقات لهذا السبب.
 
-**State machine violations.**وكيل يُساعد على إعطاء`completed`الحدث، ثم يحاول أن يعطي المزيد من الأثاث. المهمة لا تتغير. رمزك يترك الصمت التحديثات أو يرمي. تصحيح: تحقق من حالة المحطة قبل الإعطاء.`TaskManager`أعلاه يفرض هذا مع `break`بعد الحالات النهائية.
+**State machine violations.**وكيل يُساعد على إعطاء`TASK_STATE_COMPLETED`تحديث الحالة، ثم يحاول إعطاء المزيد من الأثاث. المهمة غير قابلة للتغيير. رمزك يسقط صامتًا التحديثات أو يرمي.`TaskManager`أعلاه يفرض هذا مع `break`بعد الحالات النهائية.
 
 **Trust resolution failures.**يحاول العميل A التحقق من DID العميل B، ولكن النطاق العميل B هو منخفض. الوثيقة DID لا يمكن الحصول عليها. هل تفشل في فتح (قبل وكلاء غير مصدقين) أو تفشل في إغلاق (رفض كل شيء) ؟ توصي ANP بإغلاق الفشل مع مبدأ أقل ثقة.
 
@@ -1505,7 +1527,7 @@ graph TD
 
 ## المزيد من القراءة
 
-- [Google A2A specification](https://github.com/google/A2A)-- المواصفات الرسمية و SDKs (v1.0.0، Linux Foundation)
+- [Google A2A specification](https://github.com/google/A2A)-- المواصفات الرسمية و SDKs (v1.0.1 ، Linux Foundation)
 - [IBM/BeeAI ACP specification](https://github.com/i-am-bee/acp)-- تطبيق OpenAPI 3.1 لتشغيل العملاء و بيانات المياه
 - [Agent Network Protocol](https://github.com/agent-network-protocol/AgentNetworkProtocol)-- الهوية القائمة على DID، E2EE، مفاوضات البروتوكول المنتظم
 - [Model Context Protocol docs](https://modelcontextprotocol.io/)-- تخصيص MCP من Anthropic (المغطى في المرحلة 13)

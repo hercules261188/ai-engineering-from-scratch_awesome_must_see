@@ -163,5 +163,5 @@ python3 code/main.py
 
 - [Li et al. — Theory of Mind for Multi-Agent Collaboration via Large Language Models](https://arxiv.org/abs/2310.10701) التنمية الناشئة في الألعاب التعاونية؛ أساليب الفشل على الأفق الطويل
 - [Riedl — Emergent Coordination in Multi-Agent Language Models](https://arxiv.org/abs/2510.05174) قياس على نطاق السكان؛ تحفيز ToM هو حالة تحمل
-- [Premack & Woodruff — Does the chimpanzee have a theory of mind?](https://www.cambridge.org/core/journals/behavioral-and-brain-sciences/article/does-the-chimpanzee-have-a-theory-of-mind/1E96B02CD9850E69AF20F81FA7EB3595) أصل مفهوم التنمية العامة لعام 1978
+- [Premack & Woodruff — Does the chimpanzee have a theory of mind?](https://doi.org/10.1017/S0140525X00076512) أصل مفهوم التنمية العامة لعام 1978
 - [Baron-Cohen, Leslie, Frith — Does the autistic child have a theory of mind?](https://doi.org/10.1016/0010-0277(85)90022-8)  ورقة سالي-آني (1985)
