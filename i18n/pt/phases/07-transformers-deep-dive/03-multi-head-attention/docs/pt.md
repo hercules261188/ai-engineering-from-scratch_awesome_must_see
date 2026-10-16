@@ -11,7 +11,7 @@
 
 Uma única cabeça de auto-atenção calcula uma matriz de atenção. Essa matriz capta um tipo de relação  geralmente aquela que minimiza a perda em qualquer sinal de treinamento. Se os seus dados têm acordo sujeito-verbo, co-referência, discurso de longo alcance e fragmentos sintáticos todos emaranhados juntos, uma única cabeça os esmagia em uma única distribuição de max soft e perde metade do sinal.
 
-A correção do artigo Vaswani de 2017: executar várias funções de atenção em paralelo, cada uma com suas próprias projeções Q, K, V, e concatenar as saídas.`d_model / n_heads`Os parâmetros totais permanecem iguais.
+A correção do artigo Vaswani de 2017: executar várias funções de atenção em paralelo, cada uma com suas próprias projeções Q, K, V, e concatenar as saídas.$d_{\text{model}} / n_{\text{heads}}$Os parâmetros totais permanecem iguais.
 
 A atenção multi-cabeça é o padrão de cada transformador em 2026 navios com. O único argumento é sobre * quantas cabeças * e se as chaves e valores compartilham projeções (Attenção de Queria Grupada, Attenção de Queria Multi, Attenção Latente de Multi-cabeça).
 
@@ -19,7 +19,7 @@ A atenção multi-cabeça é o padrão de cada transformador em 2026 navios com.
 
 ![Multi-head attention splits, attends, concatenates](../assets/multi-head-attention.svg)
 
-**Split.**- Toma .`X`de forma`(N, d_model)`Projeto para Q, K, V de cada forma`(N, d_model)`- Refazer para`(N, n_heads, d_head)`onde`d_head = d_model / n_heads`Transpor para`(n_heads, N, d_head)`- Não .
+**Split.**- Toma .`X`de forma`(N, d_model)`Projeto para Q, K, V de cada forma`(N, d_model)`- Refazer para`(N, n_heads, d_head)`onde$d_{\text{head}} = d_{\text{model}} / n_{\text{heads}}$Transpor para`(n_heads, N, d_head)`- Não .
 
 **Attend in parallel.**Execute uma escala de atenção de ponto-produto dentro de cada cabeça.`(N, d_head)`As cabeças operam em diferentes subespaços da incorporação e nunca falam durante o próprio cálculo da atenção.
 
@@ -36,7 +36,7 @@ A atenção multi-cabeça é o padrão de cada transformador em 2026 navios com.
 | Grouped-query (GQA) | N | G (e.g. N/8) | Llama 2 70B, Llama 3+, Qwen 2+, Mistral |
 | Multi-head latent (MLA) | N | compressed to low-rank | DeepSeek-V2, V3 |
 
-GQA é o padrão moderno porque reduz a memória de cache KV por um fator de `N/G`MLA vai mais longe comprimindo K/V em um espaço latente, e depois projetando de volta no tempo de computação  custa FLOPs, economiza muito mais memória.
+GQA é o padrão moderno porque reduz a memória de cache KV por um fator de $N/G$MLA vai mais longe comprimindo K/V em um espaço latente, e depois projetando de volta no tempo de computação  custa FLOPs, economiza muito mais memória.
 
 ```figure
 multihead-split
@@ -129,7 +129,7 @@ out = scaled_dot_product_attention(q, k, v, is_causal=True, enable_gqa=True)
 | Large (~1B) | 2048 | 16 | 128 |
 | Frontier (~70B) | 8192 | 64 | 128 |
 
-`d_head`Quase sempre cai em 64 ou 128. É a unidade de quanto uma cabeça pode "ver".`sqrt(d_head)`• se ultrapassar o 256, perderá o benefício de "muitos especialistas pequenos".
+`d_head`Quase sempre cai em 64 ou 128. É a unidade de quanto uma cabeça pode "ver".$\sqrt{d_{\text{head}}}$• se ultrapassar o 256, perderá o benefício de "muitos especialistas pequenos".
 
 ## Envia-o
 
@@ -145,7 +145,7 @@ Veja .`outputs/skill-mha-configurator.md`. A competência recomenda o número de
 
 | Term | What people say | What it actually means |
 |------|-----------------|-----------------------|
-| Head | "A single attention circuit" | One Q/K/V projection of dimension `d_head = d_model / n_heads` with its own attention matrix. |
+| Head | "A single attention circuit" | One Q/K/V projection of dimension $d_{\text{head}} = d_{\text{model}} / n_{\text{heads}}$ with its own attention matrix. |
 | d_head | "Head dimension" | Per-head hidden width; almost always 64 or 128 in production. |
 | Split / combine | "Reshape tricks" | `(N, d_model) ↔ (n_heads, N, d_head)` reshape+transpose around attention. |
 | W_o | "Output projection" | `(d_model, d_model)` matrix applied after concatenating heads; where heads mix. |

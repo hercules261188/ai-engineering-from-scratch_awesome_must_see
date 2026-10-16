@@ -9,11 +9,11 @@
 
 ## O problema
 
-Custos de atenção total `O(N²)`Memória e `O(N²)`Para um Llama 3 70B de 128K de contexto que é 16 bilhões de entradas de atenção por camada, vezes 80 camadas.`O(N²)`Memória de ativação, mas não altera o custo aritmético  cada token ainda atende a cada outro token.
+Custos de atenção total $O(N^2)$Memória e $O(N^2)$Para um Llama 3 70B de 128K de contexto que é 16 bilhões de entradas de atenção por camada, vezes 80 camadas.$O(N^2)$Memória de ativação, mas não altera o custo aritmético  cada token ainda atende a cada outro token.
 
 Três classes de variantes mudam a topologia da própria matriz de atenção:
 
-1. **Sliding window attention (SWA).**Cada token atende a uma janela fixa de vizinhos, não o prefixo completo.`O(N · W)`onde`W`Gemma 2/3, as primeiras camadas do Mistral 7B, Phi-3-Long.
+1. **Sliding window attention (SWA).**Cada token atende a uma janela fixa de vizinhos, não o prefixo completo.$O(N \cdot W)$onde$W$Gemma 2/3, as primeiras camadas do Mistral 7B, Phi-3-Long.
 2. **Sparse / block attention.**Apenas pares selecionados `(i, j)`O resto é forçado a zero peso. Longformer, BigBird, OpenAI transformador esparso.
 3. **Differential attention.**Compute dois mapas de atenção com projeções Q/K separadas, subtraia um do outro. Mata o "sink de atenção" que sangra o peso dos primeiros tokens.
 
@@ -23,7 +23,7 @@ Estes coexistem. Um modelo de fronteira de 2026 muitas vezes os mistura: a maior
 
 ### Atenção à janela deslizante (SWA)
 
-Cada consulta em posição `i`Assegura apenas posições em `[i - W, i]`(SWA causal) ou `[i - W/2, i + W/2]`Os tokens fora da janela vão ficar`-inf`na matriz de pontuação.
+Cada consulta em posição $i$Assegura apenas posições em $[i - W, i]$(SWA causal) ou $[i - W/2, i + W/2]$Os tokens fora da janela vão ficar$-\infty$na matriz de pontuação.
 
 ```
 full causal:           sliding window (W=4):
@@ -39,17 +39,17 @@ positions 0-7          positions 0-7, W=4
 7 | x x x x x x x x  7 |          x x x x
 ```
 
-Para o`N = 8192`E ...`W = 1024`, a matriz de pontuação tem 1024 × 8192 linhas não-zero na expectativa  uma redução de 8 ×.
+Para o$N = 8192$E ...$W = 1024$, a matriz de pontuação tem 1024 × 8192 linhas não-zero na expectativa  uma redução de 8 ×.
 
-**KV cache shrinks with SWA.**Só o último .`W`Para uma configuração Gemma-3-ish (1024 janela, contexto 128K), o cache KV cai 128x.
+**KV cache shrinks with SWA.**Só o último .$W$Para uma configuração Gemma-3-ish (1024 janela, contexto 128K), o cache KV cai 128x.
 
-**Quality cost.**Os transformadores SWA-somente lutam com a recuperação de longo alcance. A solução: intercalar camadas SWA com camadas de atenção plena. Gemma 3 usa 5:1 SWA: global. Mistral 7B usou uma pilha de SWA causal onde a informação "flui para a frente" através de janelas sobrepostas  cada camada estende o campo receptivo efetivo por `W`, e depois`L`camadas que o modelo pode participar `L × W`- Os tokens de volta.
+**Quality cost.**Os transformadores SWA-somente lutam com a recuperação de longo alcance. A solução: intercalar camadas SWA com camadas de atenção plena. Gemma 3 usa 5:1 SWA: global. Mistral 7B usou uma pilha de SWA causal onde a informação "flui para a frente" através de janelas sobrepostas  cada camada estende o campo receptivo efetivo por $W$, e depois`L`camadas que o modelo pode participar `L × W`- Os tokens de volta.
 
 ### Atenção de pouca / bloqueio
 
 Escolha um .`N × N`Patrão de esparcia antecipado.
 
-- **Local + strided (OpenAI sparse transformer).**Atender ao último .`W`Tokens mais cada `stride`- O símbolo anterior, capta tanto local como de longo alcance.`O(N · sqrt(N))`Computação.
+- **Local + strided (OpenAI sparse transformer).**Atender ao último .$W$Tokens mais cada `stride`- O símbolo anterior, capta tanto local como de longo alcance.$O(N \cdot \sqrt{N})$Computação.
 - **Longformer / BigBird.**Janela local + um pequeno conjunto de tokens globais (por exemplo `[CLS]`O conteúdo empírico 2x com qualidade correspondente.
 - **Native Sparse Attention (DeepSeek, 2025).**Saiba quais blocos de `(Q, K)`- Não há bloqueio zero no núcleo.
 
@@ -61,13 +61,15 @@ A atenção regular tem um problema de "desintoxicação da atenção": softmax 
 
 A atenção diferencial corrige isto computacional .**two**mapas de atenção e subtração:
 
-```
-A1 = softmax(Q1 K1^T / √d)
-A2 = softmax(Q2 K2^T / √d)
-DiffAttn = (A1 - λ · A2) V
+```math
+\begin{aligned}
+A_1 &= \mathop{\mathrm{softmax}}(Q_1 K_1^T / \sqrt{d}) \\
+A_2 &= \mathop{\mathrm{softmax}}(Q_2 K_2^T / \sqrt{d}) \\
+\text{DiffAttn} &= (A_1 - \lambda \cdot A_2) V
+\end{aligned}
 ```
 
-onde`λ`A1 capta pesos reais de conteúdo; A2 capta o lavatório. A subtração cancela o lavatório, realoca o peso para tokens relevantes.
+onde$\lambda$A1 capta pesos reais de conteúdo; A2 capta o lavatório. A subtração cancela o lavatório, realoca o peso para tokens relevantes.
 
 Resultados relatados (Microsoft 2024): 510% menor perplexidade, contexto eficaz 1,52× mais longo no mesmo comprimento treinado, recuperação mais nítida de agulha em palha de feno.
 
@@ -75,12 +77,12 @@ Resultados relatados (Microsoft 2024): 510% menor perplexidade, contexto eficaz 
 
 | Variant | Compute | KV cache | Quality vs full | Production use |
 |---------|---------|----------|-----------------|----------------|
-| Full attention | O(N²) | O(N) per layer | baseline | every model's default layer |
-| SWA (window 1024) | O(N·W) | O(W) per layer | -0.1 ppl, good with global layers | Gemma 2/3, Phi-3-Long |
-| Local + strided sparse | O(N·√N) | mixed | similar to SWA | OpenAI sparse transformer, Longformer |
-| BigBird (local + global + random) | O(N) approx | mixed | matches full at 2× context | early long-context BERT |
-| Native Sparse (DeepSeek-V3.2) | O(N · active fraction) | O(N) | within 0.05 ppl | DeepSeek-V3.2, 2025 |
-| Differential | O(2·N²) | O(2N) | -5 to -10% ppl | DIFF Transformer, early 2026 models |
+| Full attention | $O(N^2)$ | $O(N)$ per layer | baseline | every model's default layer |
+| SWA (window 1024) | $O(N \cdot W)$ | $O(W)$ per layer | -0.1 ppl, good with global layers | Gemma 2/3, Phi-3-Long |
+| Local + strided sparse | $O(N \cdot \sqrt{N})$ | mixed | similar to SWA | OpenAI sparse transformer, Longformer |
+| BigBird (local + global + random) | $O(N)$ approx | mixed | matches full at 2× context | early long-context BERT |
+| Native Sparse (DeepSeek-V3.2) | $O(N \cdot \text{active fraction})$ | $O(N)$ | within 0.05 ppl | DeepSeek-V3.2, 2025 |
+| Differential | $O(2 \cdot N^2)$ | $O(2N)$ | -5 to -10% ppl | DIFF Transformer, early 2026 models |
 
 ```figure
 gqa-kv-sharing
@@ -142,7 +144,7 @@ Em dois passos de atenção, subtrair com um coeficiente de mistura aprendido. N
 
 ### Passo 5: Tamanhos do cache KV
 
-Imprimir o tamanho do cache por camada em `N = 131072`A diferença é de 10 a 100 vezes, o que significa que a diferença é de 2 a 5 vezes, e que a diferença é de 2 a 5 vezes.
+Imprimir o tamanho do cache por camada em $N = 131072$A diferença é de 10 a 100 vezes, o que significa que a diferença é de 2 a 5 vezes, e que a diferença é de 2 a 5 vezes.
 
 ## Usá-lo
 
@@ -185,17 +187,17 @@ Veja .`outputs/skill-attention-variant-picker.md`A competência seleciona uma to
 1. **Easy.**Corra .`code/main.py`Verificar o SWA em`window=4`- Verifica tudo fora dos últimos 4 tokens por linha.`window=n`Reproduz a atenção causal completa de forma bit-identical.
 2. **Medium.**Implementar a SWA causal com `window=1024`Treinar por 1000 passos no Tinyshakespeare, quanto é a perda de valor contra a atenção plena?
 3. **Hard.**Implemente uma mistura de camadas 5:1 de estilo Gemma-3 (5 SWA, 1 global) no modelo de pedra angular. Comparar perda, memória e qualidade de geração contra linhas de base de SWA pura e global pura em parâmetros correspondentes.
-4. **Hard.**Implementar a atenção diferenciada com um aprendiz `λ`A formação de um trabalho de recuperação sintética (uma agulha, 2.000 distractores).
+4. **Hard.**Implementar a atenção diferenciada com um aprendiz $\lambda$A formação de um trabalho de recuperação sintética (uma agulha, 2.000 distractores).
 
 ## Termos-chave
 
 | Term | What people say | What it actually means |
 |------|-----------------|-----------------------|
-| Sliding window attention (SWA) | "Local attention" | Each query attends to its last `W` tokens; KV cache shrinks to `O(W)`. |
-| Effective receptive field | "How far back the model sees" | In an `L`-layer SWA stack with window `W`, up to `L × W` tokens. |
+| Sliding window attention (SWA) | "Local attention" | Each query attends to its last $W$ tokens; KV cache shrinks to $O(W)$. |
+| Effective receptive field | "How far back the model sees" | In an $L$-layer SWA stack with window $W$, up to $L \times W$ tokens. |
 | Longformer / BigBird | "Local + global + random" | Sparse patterns with a few always-attending global tokens; early long-context approach. |
 | Native Sparse Attention | "DeepSeek's kernel trick" | Learn block-level sparsity; skip zero blocks at the kernel level while keeping quality. |
-| Differential attention | "Two maps, one subtracts" | DIFF Transformer: subtract a learned `λ` times a second attention map from the first to cancel attention sinks. |
+| Differential attention | "Two maps, one subtracts" | DIFF Transformer: subtract a learned $\lambda$ times a second attention map from the first to cancel attention sinks. |
 | Attention sink | "Weight bleeds to token 0" | Softmax normalization forces rows to sum to 1; uninformative queries dump weight on position 0. |
 | FlexAttention | "Mask-as-Python" | PyTorch 2.5+ API that compiles arbitrary mask functions into FlashAttention-shape kernels. |
 | Layer type mix | "5:1 SWA-to-global" | Interleave sparse and full attention layers in a stack to keep quality at lower memory. |

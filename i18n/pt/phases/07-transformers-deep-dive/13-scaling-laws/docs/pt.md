@@ -30,22 +30,24 @@ Hoffmann et al. (2022), que treinavam uma pequena família de modelos chamada Ch
 
 Do jornal Chinchilla, a perda é a seguinte:
 
-```
-L(N, D) = A / N^α + B / D^β + E
+```math
+L(N, D) = \frac{A}{N^\alpha} + \frac{B}{D^\beta} + E
 ```
 
-- `N`= parâmetros (não incorporados).
-- `D`= tokens de formação.
-- `α ≈ 0.34`- Não .`β ≈ 0.28`(aproximadamente simétrica).
-- `E ≈ 1.69`O limite de perda irredutível.
-- `A ≈ 406`- Não .`B ≈ 411`- Não .
+- $N$= parâmetros (não incorporados).
+- $D$= tokens de formação.
+- $\alpha \approx 0.34$- Não .$\beta \approx 0.28$(aproximadamente simétrica).
+- $E \approx 1.69$O limite de perda irredutível.
+- $A \approx 406$- Não .$B \approx 411$- Não .
 
-Dois termos negociam uns contra os outros à medida que escalam.`N`em cálculo fixo (C = 6ND) e resolver:
+Dois termos negociam uns contra os outros à medida que escalam.$N$com cálculo fixo ($C = 6ND$) e resolver:
 
-```
-N_opt ≈ 0.6 × (C/6)^0.5
-D_opt ≈ 0.6 × (C/6)^0.5
-D_opt / N_opt ≈ 20
+```math
+\begin{aligned}
+N_{\text{opt}} &\approx 0.6 \times (C/6)^{0.5} \\
+D_{\text{opt}} &\approx 0.6 \times (C/6)^{0.5} \\
+D_{\text{opt}} / N_{\text{opt}} &\approx 20
+\end{aligned}
 ```
 
 Computação-ótima: 20 tokens por parâmetro.
@@ -90,7 +92,7 @@ scaling-laws
 
 ## Construí-lo
 
-Veja .`code/main.py`Implementamos a equação de perda Chinchilla e resolvemos para o computador-óptimo .`(N, D)`Em cada um dos vários orçamentos de computação.
+Veja .`code/main.py`Implementamos a equação de perda Chinchilla e resolvemos para o computador-óptimo .$(N, D)$Em cada um dos vários orçamentos de computação.
 
 ### Passo 1: Perda de chinchilla
 
@@ -99,11 +101,11 @@ def chinchilla_loss(N, D, A=406.4, B=410.7, alpha=0.34, beta=0.28, E=1.69):
     return A / N ** alpha + B / D ** beta + E
 ```
 
-Plot `L`Como um contorno sobre `(N, D)`em fixa `C = 6ND`- Encontre o mínimo.
+Plot $L$Como um contorno sobre $(N, D)$em fixa $C = 6ND$- Encontre o mínimo.
 
 ### Passo 2: Fronteira óptima de computação
 
-Para os orçamentos de computação de `1e17`- Não .`1e25`FLOPs, encontrar `(N, D)`que minimizem as perdas sujeitas a `6ND = C`Verificar a relação `D/N ≈ 20`- Não .
+Para os orçamentos de computação de `1e17`- Não .`1e25`FLOPs, encontrar $(N, D)$que minimizem as perdas sujeitas a $6ND = C$Verificar a relação $D/N \approx 20$- Não .
 
 ### Passo 3: custo de formação excessiva
 
@@ -133,9 +135,9 @@ Veja .`outputs/skill-training-budget-estimator.md`A habilidade escolhe .`(N, D, 
 
 ## Exercícios
 
-1. **Easy.**Corra .`code/main.py`Imprimir Chinchilla-optimo .`(N, D)`para orçamentos de computação `1e20`- Não .`1e22`- Não .`1e24`Comparar com a mesa de modelos reais.
-2. **Medium.**Implementar a curva de perda de Hoffmann como função de computador.`log10(C)`Identificar quando a lei prevê que precisamos de um sistema de controle de dados.`>10^28`FLOPs para a próxima redução de 0,1 na entropia cruzada.
-3. **Hard.**Aplique a sua própria lei de escala em 5 modelos minúsculos (100K a 10M parâmetros) treinados no mesmo conjunto de dados.`α`E ...`E`Quão bem os seus exponentes correspondem aos publicados?
+1. **Easy.**Corra .`code/main.py`Imprimir Chinchilla-optimo .$(N, D)$para orçamentos de computação `1e20`- Não .`1e22`- Não .`1e24`Comparar com a mesa de modelos reais.
+2. **Medium.**Implementar a curva de perda de Hoffmann como função de computador.`log10(C)`Identificar quando a lei prevê que precisamos de um sistema de controle de dados.$>10^{28}$FLOPs para a próxima redução de 0,1 na entropia cruzada.
+3. **Hard.**Aplique a sua própria lei de escala em 5 modelos minúsculos (100K a 10M parâmetros) treinados no mesmo conjunto de dados.$\alpha$E ...$E$Quão bem os seus exponentes correspondem aos publicados?
 
 ## Termos-chave
 
@@ -146,7 +148,7 @@ Veja .`outputs/skill-training-budget-estimator.md`A habilidade escolhe .`(N, D, 
 | Compute (C) | "FLOPs spent" | Approximately `6 × N × D` for a standard transformer. |
 | Chinchilla-optimal | "D/N ≈ 20" | Ratio that minimizes loss per FLOP of pretraining. |
 | Over-training | "Past Chinchilla" | Spend extra training FLOPs to save inference FLOPs; D/N >> 20. |
-| Irreducible loss | "The floor" | The `E` term in the scaling law; the entropy of the data itself. |
+| Irreducible loss | "The floor" | The $E$ term in the scaling law; the entropy of the data itself. |
 | Emergent capability | "Sudden jumps at scale" | Often a scorer artifact; continuous loss is smooth. |
 | Effective compute | "Training-efficiency multiplier" | Better data / optimizer / architecture multiplies how far a FLOP goes. |
 

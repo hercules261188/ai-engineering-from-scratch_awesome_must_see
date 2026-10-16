@@ -29,25 +29,25 @@ A partir de 2026, praticamente todos os modelos abertos de fronteira usam RoPE: 
 
 Pre-computação de uma matriz fixa `PE`de forma`(max_len, d_model)`- Não .
 
-```
-PE[pos, 2i]   = sin(pos / 10000^(2i / d_model))
-PE[pos, 2i+1] = cos(pos / 10000^(2i / d_model))
+```math
+\begin{aligned}
+PE_{(pos, 2i)} &= \sin\left(pos / 10000^{2i / d_{\text{model}}}\right) \\
+PE_{(pos, 2i+1)} &= \cos\left(pos / 10000^{2i / d_{\text{model}}}\right)
+\end{aligned}
 ```
 
 Então ...`X' = X + PE[:N]`Cada dimensão é um sinusoide em uma frequência diferente.`max_len`O modelo não tinha conhecimento do que acontece na posição 2048 quando só viu posições 02047.
 
 ### RoPE
 
-Rotar os vetores Q e K (não incorporados). Para um par de dimensões `(2i, 2i+1)`- Não .
+Rotar os vetores Q e K (não incorporados). Para um par de dimensões $(2i, 2i+1)$- Não .
 
-```
-[q'_2i    ]   [ cos(pos·θ_i)  -sin(pos·θ_i) ] [q_2i   ]
-[q'_2i+1  ] = [ sin(pos·θ_i)   cos(pos·θ_i) ] [q_2i+1 ]
-
-θ_i = base^(-2i / d_head),  base = 10000 by default
+```math
+\begin{bmatrix} q'_{2i} \\ q'_{2i+1} \end{bmatrix} = \begin{bmatrix} \cos(pos \cdot \theta_i) & -\sin(pos \cdot \theta_i) \\ \sin(pos \cdot \theta_i) & \cos(pos \cdot \theta_i) \end{bmatrix} \begin{bmatrix} q_{2i} \\ q_{2i+1} \end{bmatrix}
+\qquad \theta_i = \text{base}^{-2i / d_{\text{head}}}, \quad \text{base} = 10000 \text{ by default}
 ```
 
-Aplicar a mesma rotação às teclas com posição `pos_k`O produto de pontos`q'_m · k'_n`torna-se uma função de `(m - n)`- Só a mim.**the attention score depends only on the relative distance**- É um truque bonito.
+Aplicar a mesma rotação às teclas com posição `pos_k`O produto de pontos$q'_m \cdot k'_n$torna-se uma função de $(m - n)$- Só a mim.**the attention score depends only on the relative distance**- É um truque bonito.
 
 Extensão do RoPE: `base`O Llama 3 foi ampliado de 8K para 128K de tal forma.
 
@@ -55,11 +55,11 @@ Extensão do RoPE: `base`O Llama 3 foi ampliado de 8K para 128K de tal forma.
 
 Esqueça o truque de inserção.
 
-```
-attn_score[i, j] = (q_i · k_j) / √d  -  m_h · |i - j|
+```math
+\text{attn\_score}[i, j] = \frac{q_i \cdot k_j}{\sqrt{d}} - m_h \cdot |i - j|
 ```
 
-Onde ?`m_h`é uma inclinação específica da cabeça (por exemplo `1 / 2^(8·h/H)`O documento mostra que a extrapolação de comprimento supera o sinusoidal e corresponde ao RoPE em seu comprimento treinado original.
+Onde ?$m_h$é uma inclinação específica da cabeça (por exemplo $1 / 2^{8h/H}$O documento mostra que a extrapolação de comprimento supera o sinusoidal e corresponde ao RoPE em seu comprimento treinado original.
 
 ### O que escolher em 2026
 
@@ -113,7 +113,7 @@ def apply_rope(x, pos, base=10000):
     return out
 ```
 
-Crucial: aplicar a mesma função a Q na posição `m`E K na posição `n`O produto deles pega um .`cos((m-n)·θ_i)`A atenção aprende a posição relativa de graça.
+Crucial: aplicar a mesma função a Q na posição $m$E K na posição $n$O produto deles pega um .$\cos((m-n) \cdot \theta_i)$A atenção aprende a posição relativa de graça.
 
 ### Passo 3: Pistas e preconceitos do ALiBi
 
@@ -168,7 +168,7 @@ Veja .`outputs/skill-positional-encoding-picker.md`. A habilidade escolhe uma es
 | Positional encoding | "Tells attention about order" | Any signal added to embeddings or attention that encodes position. |
 | Sinusoidal | "The original one" | `sin/cos` at geometric frequencies added to embeddings; doesn't extrapolate. |
 | RoPE | "Rotary embeddings" | Rotate Q, K by position-dependent angle; dot product encodes relative distance. |
-| ALiBi | "Linear bias trick" | Add `-m·\|i-j\|` to attention scores; no embedding needed, great extrapolation. |
+| ALiBi | "Linear bias trick" | Add $-m \cdot \lvert i-j \rvert$ to attention scores; no embedding needed, great extrapolation. |
 | base | "RoPE's knob" | The frequency scaler in RoPE; increase to extend context at inference. |
 | NTK-aware | "A RoPE scaling trick" | Rescale `base` so high-frequency dims aren't squeezed when context expands. |
 | YaRN | "The fancy one" | Per-dimension interpolation+extrapolation that preserves attention entropy. |

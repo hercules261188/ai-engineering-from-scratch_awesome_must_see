@@ -9,13 +9,13 @@
 
 ## O problema
 
-Um descodificador autoregressivo ingênuo faz .`O(N²)`trabalho para gerar `N`Tokens: em cada passo recalcula a atenção sobre o prefixo completo. Para uma resposta de token 4K que é 16M operações de atenção, a maioria delas redundantes. Cada estado oculto de um token prefixo é determinista uma vez calculado.
+Um descodificador autoregressivo ingênuo faz .$O(N^2)$trabalho para gerar $N$Tokens: em cada passo recalcula a atenção sobre o prefixo completo. Para uma resposta de token 4K que é 16M operações de atenção, a maioria delas redundantes. Cada estado oculto de um token prefixo é determinista uma vez calculado.
 
 Além disso, a atenção em si move muitos dados. A atenção padrão materializa uma matriz de pontuação N×N, saída N×d softmax, saída final N×d  muita leitura e escrita para HBM. Para N≥2K, a atenção se torna limitada à memória antes de se tornar FLOP-bound.
 
 Duas otimizações, ambas de Dao et al., empurraram a inferência de fronteira de "lento" para "rápido":
 
-1. **KV cache.**Armazenar os vetores K e V de cada token pré-fix. A atenção de cada novo token é uma consulta contra as chaves armazenadas em cache.`O(N²)`- Não .`O(N)`por fase de geração.
+1. **KV cache.**Armazenar os vetores K e V de cada token pré-fix. A atenção de cada novo token é uma consulta contra as chaves armazenadas em cache.$O(N^2)$- Não .$O(N)$por fase de geração.
 2. **Flash Attention.**Tire a computação de atenção para que a matriz completa N×N nunca atinja HBM. Todo softmax + matmul acontece na SRAM. 24× velocidade do relógio de parede em A100; 510× em H100 com FP8.
 
 Em 2026, ambos são universais. Todas as pilhas de inferência de produção (vLLM, TensorRT-LLM, SGLang, llama.cpp) assumem-nos.
@@ -84,7 +84,7 @@ for each block of Q (tile size ~128 × 128):
     write O_tile to HBM
 ```
 
-Uma viagem de HBM por telha.`O(N²)`- Não .`O(N)`Passada para trás recalcula alguns valores da passada para frente em vez de armazená-los  outra vitória de memória.
+Uma viagem de HBM por telha.$O(N^2)$- Não .$O(N)$Passada para trás recalcula alguns valores da passada para frente em vez de armazená-los  outra vitória de memória.
 
 **Numerical trick.**Funcionamento de softmax mantém `(max, sum)`A atenção flash calcula a saída bit-identical para atenção padrão (modulo fp16 não-asociatividade).
 
@@ -126,8 +126,8 @@ flash-attention-memory
 
 Veja .`code/main.py`Implementamos:
 
-1. Um ingênuo .`O(N²)`Decodificador incremental.
-2. A.`O(N)`Descóderas em cache KV.
+1. Um ingênuo .$O(N^2)$Decodificador incremental.
+2. A.$O(N)$Descóderas em cache KV.
 3. Um softmax de azulejos que simula o algoritmo de execução máxima da Flash Attention.
 
 ### Passo 1: cache KV
@@ -174,7 +174,7 @@ Saída de bits idêntica a `softmax(qK) V`em um tiro, mas a qualquer momento o c
 
 ### Passo 3: Compare naívo versus decodificação em cache na geração de 100 tokens
 
-Contar operações de atenção.`O(N²)`= 5050. em cache: `O(N)`O código imprime as duas.
+Contar operações de atenção.$O(N^2)$= 5050. em cache: $O(N)$O código imprime as duas.
 
 ## Usá-lo
 
