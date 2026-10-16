@@ -185,7 +185,7 @@ Refuse any EL pipeline without a mention-recall baseline (you cannot evaluate a 
 
 ## Đọc thêm
 
-- [Milne, Witten (2008). Learning to Link with Wikipedia](https://www.cs.waikato.ac.nz/~ihw/papers/08-DM-IHW-LearningToLinkWithWikipedia.pdf) phương pháp tiếp cận trước + ngữ cảnh cơ bản.
+- [Milne, Witten (2008). Learning to Link with Wikipedia](https://researchcommons.waikato.ac.nz/entities/publication/b9a0b520-abc5-47c5-a86a-da6c579893ab) phương pháp tiếp cận trước + ngữ cảnh cơ bản.
 - [Wu et al. (2020). Zero-shot Entity Linking with Dense Entity Retrieval (BLINK)](https://arxiv.org/abs/1911.03814) ngựa làm việc dựa trên nhúng.
 - [De Cao et al. (2021). Autoregressive Entity Retrieval (GENRE)](https://arxiv.org/abs/2010.00904) tạo EL với mã hóa hạn chế.
 - [Hoffart et al. (2011). Robust Disambiguation of Named Entities in Text (AIDA)](https://www.aclweb.org/anthology/D11-1072.pdf) giấy chuẩn.

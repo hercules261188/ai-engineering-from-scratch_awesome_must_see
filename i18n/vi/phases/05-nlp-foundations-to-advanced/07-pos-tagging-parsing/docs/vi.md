@@ -80,8 +80,8 @@ Trên cơ thể Brown, đường cơ sở này đạt độ chính xác khoảng
 
 Mô hình xác suất chung của chuỗi:
 
-```
-P(tags, words) = prod P(tag_i | tag_{i-1}) * P(word_i | tag_i)
+```math
+P(\text{tags}, \text{words}) = \prod_i P(\text{tag}_i \mid \text{tag}_{i-1}) \cdot P(\text{word}_i \mid \text{tag}_i)
 ```
 
 Hai bảng: xác suất chuyển tiếp (tag cho thẻ trước), xác suất phát thải (tag cho từ).

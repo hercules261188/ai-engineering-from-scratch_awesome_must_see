@@ -23,9 +23,11 @@ Bài học này xây dựng túi từ, sau đó là TF-IDF, từ đầu. sau đ�
 
 **TF-IDF**Một từ xuất hiện trong mọi tài liệu là không thông tin, vì vậy hãy giảm nó. Một từ hiếm trên toàn bộ bộ các tập hợp nhưng thường xuyên trong một tài liệu là tín hiệu, vì vậy hãy tăng nó.
 
-```
-TF-IDF(w, d) = TF(w, d) * IDF(w)
-             = count(w in d) / |d| * log(N / df(w))
+```math
+\begin{aligned}
+\text{TF-IDF}(w, d) &= \text{TF}(w, d) \cdot \text{IDF}(w) \\
+&= \frac{\mathop{\mathrm{count}}(w \text{ in } d)}{|d|} \cdot \log\frac{N}{\mathop{\mathrm{df}}(w)}
+\end{aligned}
 ```
 
 Ở đâu `TF`là tần số thuật ngữ trong tài liệu, `df`là tần số tài liệu (nhiều tài liệu bao nhiêu chứa từ),`N`là tổng số tài liệu.`log`giữ trọng lượng giới hạn cho các từ ở khắp mọi nơi.

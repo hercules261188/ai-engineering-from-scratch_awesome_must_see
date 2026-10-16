@@ -79,7 +79,7 @@ def encode_bpe(word, merges):
     return symbols
 ```
 
-Các ứng dụng sản xuất, HF Tokenizers sử dụng tìm kiếm xếp hạng kết hợp với hàng xếp hạng ưu tiên và chạy trong thời gian gần tuyến tính.
+Thới thới $O(n \cdot \lvert \text{merges} \rvert)$. Các triển khai sản xuất (tiktoken, HF Tokenizers) sử dụng tìm kiếm xếp hạng hợp nhất với hàng xếp ưu tiên và chạy trong thời gian gần như tuyến tính.
 
 ### Bước 3: Câu nóiPiece thực tế
 

@@ -29,7 +29,7 @@ Bài học này giúp bạn có trực giác cho cả ba và biết khi nào b�
 
 Thực hiện vào năm 2026:
 
-- **Outlines.**Compiles JSON Schema hoặc regex vào một máy trạng thái hữu hạn. Mỗi token nhận được một O(1) xác thực-nhiếp theo token tìm kiếm. dựa trên FSM, do đó các kế hoạch tái tạo cần phải phẳng.
+- **Outlines.**Sắp xếp JSON Schema hoặc Regex vào một máy giới hạn.$O(1)$tìm kiếm mã thông báo mới có giá trị dựa trên FSM, vì vậy các chương trình tái tạo cần phải được phẳng.
 - **XGrammar / llguidance.**Các công cụ ngữ pháp không liên quan. xử lý quy trình JSON tái tạo. Chi phí giải mã gần bằng không. OpenAI ghi nhận sự hướng dẫn trong việc thực hiện đầu ra cấu trúc năm 2025 của họ.
 - **vLLM guided decoding.**Được xây dựng `guided_json`- `guided_regex`- `guided_choice`- `guided_grammar`thông qua đường sơ đồ, XGrammar, hoặc lm-format-enforcer backends.
 - **Instructor.**Pydantic dựa trên bao bì trên bất kỳ LLM. Thử nghiệm về thất bại xác thực. Cross-công viên, nhưng không sửa đổi logits  nó dựa trên các thử nghiệm lại + cấu trúc-output-thông thức lời nhắc.
@@ -210,7 +210,7 @@ Refuse any design that puts `answer` or `decision` before reasoning fields. Refu
 |------|-----------------|-----------------------|
 | Constrained decoding | Force valid output | Mask invalid-token logits at every generation step. |
 | Logit processor | The thing that constrains | Function: `(logits, state) -> masked_logits`. |
-| FSM | Finite-state machine | Compiled grammar representation; O(1) valid-next-token lookup. |
+| FSM | Finite-state machine | Compiled grammar representation; $O(1)$ valid-next-token lookup. |
 | CFG | Context-free grammar | Grammar that handles recursion; slower but more expressive than FSM. |
 | Schema field order | Does it matter? | Yes — first field commits; always put reasoning before answer. |
 | Guided decoding | vLLM's name for it | Same concept, integrated into the inference server. |

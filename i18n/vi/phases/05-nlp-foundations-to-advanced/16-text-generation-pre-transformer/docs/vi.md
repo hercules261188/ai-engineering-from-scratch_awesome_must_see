@@ -41,8 +41,8 @@ prediction-game
 
 **N-gram probability:** `P(w_i | w_{i-n+1}, ..., w_{i-1})`- Đặt lại .`n`(thường là 3 cho trigram, 4 cho 4 gram).
 
-```text
-P(w | context) = count(context, w) / count(context)
+```math
+P(w \mid \text{context}) = \frac{\mathop{\mathrm{count}}(\text{context}, w)}{\mathop{\mathrm{count}}(\text{context})}
 ```
 
 **The zero-count problem.**Bất kỳ n-gram nào không được nhìn thấy trong đào tạo đều có xác suất bằng không. Một nghiên cứu năm 2007 trên Brown corpus cho thấy rằng ngay cả một mô hình 4 gram có 30% 4 gram không được nhìn thấy trong đào tạo. Bạn không thể đánh giá trên bất kỳ văn bản thực nào mà không làm trơn.
@@ -60,8 +60,8 @@ Sự hiểu biết của Kneser-Ney rất sâu sắc. "San Francisco" là một 
 
 **Evaluation: perplexity.**Tỷ lệ nhân của tỷ lệ trung bình âm tính log-cho khả năng mỗi từ trên một tập hợp thử nghiệm được tổ chức. thấp hơn là tốt hơn. Một sự bối rối của 100 có nghĩa là mô hình là bối rối như nó sẽ chọn đồng đều trong số 100 từ.
 
-```text
-perplexity = exp(- (1/N) * Σ log P(w_i | context_i))
+```math
+\text{perplexity} = \exp\left(-\frac{1}{N} \sum_i \log P(w_i \mid \text{context}_i)\right)
 ```
 
 ```figure

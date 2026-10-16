@@ -147,7 +147,7 @@ Khi phát hiện sự sửa đổi, hãy viết lại khe cập nhật cuối c�
 
 ## Những bẫy
 
-- **Full-history regeneration cost.**Để LLM tái tạo mỗi lượt chi phí O ((n2) tổng token.
+- **Full-history regeneration cost.**Để LLM tái tạo mỗi lần chi phí $O(n^2)$tổng số token. lịch sử cap hoặc tóm tắt các lượt cũ.
 - **Schema drift.**Thêm các khe mới sau khi chơi sẽ phá vỡ dữ liệu huấn luyện cũ.
 - **Case sensitivity.**"Italy" vs "Italy" vs "ITALYAN"  bình thường ở khắp mọi nơi.
 - **Implicit inheritance.**Nếu người dùng đã xác định trước đó "cho 4 người", yêu cầu mới cho một thời gian khác không nên xóa người.
