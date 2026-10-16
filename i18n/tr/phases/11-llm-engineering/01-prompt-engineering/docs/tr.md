@@ -937,24 +937,24 @@ Yardımcı prefill (`"{"`Bu, Anthropic'in benzersiz özelliğidir - başka hiçb
 ### Google: Güvenlik Ayarları ile İkizler
 
 ```python
-# import google.generativeai as genai
+# from google import genai
+# from google.genai import types
 #
-# genai.configure(api_key="your-key")
+# client = genai.Client()
 #
-# model = genai.GenerativeModel(
-#     "gemini-1.5-pro",
-#     system_instruction="You are a technical analyst. Be precise and cite sources.",
-#     generation_config=genai.GenerationConfig(
+# response = client.models.generate_content(
+#     model="gemini-3.8-flash",
+#     contents="Compare PostgreSQL and MySQL for write-heavy workloads.",
+#     config=types.GenerateContentConfig(
+#         system_instruction="You are a technical analyst. Be precise and cite sources.",
 #         temperature=0.3,
 #         max_output_tokens=2048,
 #     ),
 # )
-#
-# response = model.generate_content("Compare PostgreSQL and MySQL for write-heavy workloads.")
 # print(response.text)
 ```
 
-Gemini, sistem talimatlarını bir mesaj olarak değil, model yapılandırmasının bir parçası olarak işliyor. 2M token bağlam penceresi, GPT-4o veya Claude'da yer almayacak büyük birkaç çekim örnek setlerini ekleyebileceğiniz anlamına gelir.
+Gemini, sistem talimatlarını bir mesaj olarak değil, model yapılandırmasının bir parçası olarak işliyor. 1M token bağlam penceresi, GPT-4o'nun 128K penceresine uymayan büyük birkaç çekim örneği setlerini ekleyebileceğiniz anlamına gelir.
 
 ### Sağlayıcı-Agnistik Cevap Şablonları
 
@@ -1023,6 +1023,6 @@ Python kodu (`code/prompt_engineering.py`) bağımsız bir test harnesidir.`simu
 - [Wei et al., 2022 -- "Chain-of-Thought Prompting Elicits Reasoning in Large Language Models"](https://arxiv.org/abs/2201.11903)- "Hatırlatma" ile ilgili temel makale, "Hatırlatma görevlerinde LLM doğruluğunu yüzde 10-40 oranında artırıyor.
 - [Zamfirescu-Pereira et al., 2023 -- "Why Johnny Can't Prompt"](https://arxiv.org/abs/2304.13529)- Uzman olmayanların hızlı mühendislik ile nasıl mücadele ettikleri ve uyarıları nasıl etkili kıldıkları hakkında araştırma.
 - [Shin et al., 2023 -- "Prompt Engineering a Prompt Engineer"](https://arxiv.org/abs/2311.05661)-- otomatik olarak uyarıları optimize etmek için LLM'leri kullanmak, meta-yararın temelini oluşturur
-- [LMSYS Chatbot Arena](https://chat.lmsys.org/)-- LLM'lerin canlı kör karşılaştırması, burada aynı soruyu farklı modellerde test edip hangi tepki daha iyi olduğuna oy verebilirsiniz
+- [Arena (formerly LMSYS Chatbot Arena)](https://arena.ai/)-- LLM'lerin canlı kör karşılaştırması, burada aynı soruyu farklı modellerde test edip hangi tepki daha iyi olduğuna oy verebilirsiniz
 - [DAIR.AI Prompt Engineering Guide](https://www.promptingguide.ai/)-- örneklerle birlikte hızlı tekniklerin eksiksiz katalogı (sıfır çekim, az çekim, CoT, ReAct, kendi kendine tutarlılık); referans uygulayıcıları daha geniş "Prompt mühendisliği" yüzeyine yönelik olarak kullanırlar.
-- [Anthropic prompt library](https://docs.anthropic.com/en/prompt-library)-- Kullanımsal durumlar doğrultusunda kurate edilmiş, bilinen iyi bilgileri; üretimde gönderilen yapısal kalıpları gösterir.
+- [Claude prompting best practices](https://platform.claude.com/docs/en/build-with-claude/prompt-engineering/claude-prompting-best-practices)- Antropic'in hızlı yapı yönlendirmesi, çalışılmış örneklerle.

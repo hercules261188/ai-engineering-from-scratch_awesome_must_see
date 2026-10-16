@@ -89,7 +89,7 @@ Genel yeniden sıralama modelleri (2026 sıralaması):
 - Jina-Reranker-v2 Çok dilli: açık ağırlıklı, 100+ dil
 - bge-re-ranker-v2-m3: açık ağırlıklı, güçlü bir başlangıç çizgisi
 - çapraz kodlayıcı/ms-marco-MiniLM-L-6-v2: açık ağırlıklı, prototip oluşturmak için CPU ile çalışır
-- ColBERTv2 / Jina-ColBERT-v2: Son etkileşim çok vektör yeniden sıralamaları  O(tokens) not O(docs) not zamanında
+- ColBERTv2 / Jina-ColBERT-v2: Geç etkileşimlü çok vektörlü yeniden sıralamalar  $O(\text{tokens})$Hayır .$O(\text{docs})$Notlama zamanı
 
 ### Sorgu dönüşümü
 

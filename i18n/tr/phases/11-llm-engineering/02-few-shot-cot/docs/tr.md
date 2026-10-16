@@ -438,22 +438,20 @@ Bu boru hattı tüm teknikleri bir tırmanış stratejisi ile birleştirir.
 
 ```python
 def solve_with_escalation(question, examples, client, model):
-    system, user = build_cot_prompt(question, examples)
-    single_response = call_llm(client, model, system, user, temperature=0.0)
-    single_answer = extract_answer(single_response)
+    single_answer, _ = few_shot_cot_solve(question, examples, client, model)
 
     sc_answer, confidence, _, _ = self_consistency_solve(
         question, examples, client, model, n_samples=5
     )
 
-    if confidence >= 0.8:
+    if confidence >= 0.8 and single_answer == sc_answer:
         return sc_answer, "self_consistency", confidence
 
     tot_answer, _ = tree_of_thought_solve(question, client, model)
     return tot_answer, "tree_of_thought", None
 ```
 
-Aşama mantığı: Önce ucuz (tek CoT) deneyin. Eğer kendi kendine tutarlılık güveninin 0.8'in altında (beş örnekten 4'ten azı aynı fikirde) ise, ToT'ye aşın. Bu maliyet ve doğruluğu dengeleyecek. Çoğu sorun ucuz çözülecek, zor sorun daha fazla hesaplanacak.
+Eskalasyon mantığı: Önce ucuz (tek CoT) deneyin. Tek bir belirleyici yol, oy payı vermez, bu nedenle kalite kontrolü bir anlaşmadır: sıcaklık-0 cevabı örneklenen yollardan gelen çoğunluk cevabına eşleşmelidir. Eğer bu olmazsa veya kendi kendine tutarlılık güveninin 0,8'den aşağı olması durumunda (beş örnekten 4'ten azı aynı fikirde) ToT'ye yükseltilmelidir. Bu maliyet ve doğruluğu dengeleyecek -- çoğu sorun ucuz çözülecek, zor sorunlar daha fazla hesaplanacak.
 
 ## Kullan
 

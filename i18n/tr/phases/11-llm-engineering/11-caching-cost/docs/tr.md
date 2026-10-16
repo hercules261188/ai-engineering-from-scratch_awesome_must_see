@@ -863,7 +863,7 @@ Batch API tüm tokenlere %50 indirim sağlar. Sonuçlar 24 saat içinde gelir. G
 #     return None
 ```
 
-Yapım sırasında, doğrusal taramayi vektör endeksiyle değiştirin (Redis vektör arama, Pinecone veya pgvector).
+Yapım sırasında, doğrusal tarama vektör endeksi ile değiştirin (Redis vektör arama, Pinecone veya pgvector).$O(\log n)$- Arama.
 
 ## Gönder
 

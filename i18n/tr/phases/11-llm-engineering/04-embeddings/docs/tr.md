@@ -100,20 +100,20 @@ MTEB (Massive Text Embedding Benchmark) v2, geri alım, sınıflandırma, grupla
 
 **Cosine similarity**Bu, iki vektör arasındaki açının kozinüsünü gösterir. -1 (karşı) ile 1 (aynı yön) arasında değişir. Büyüklüğü görmezden gelir. 10 kelime cümle ve 500 kelimelik bir belge aynı yönü gösterirse 1.0 puan alabilir. Bu kullanım durumlarının %90'ında varsayılan puan.
 
-```
-cosine_sim(a, b) = dot(a, b) / (||a|| * ||b||)
+```math
+\mathop{\mathrm{cosine\_sim}}(a, b) = \frac{\mathop{\mathrm{dot}}(a, b)}{\lVert a \rVert \cdot \lVert b \rVert}
 ```
 
 **Dot product**: iki vektörün çiğ iç ürünü. vektörler normalleştirildiğinde (birlik uzunluğu) kozin benzerliği ile aynı. Hesaplama daha hızlı. OpenAI'nin gömülmeleri normalleştirilmiştir, bu nedenle nokta ürünü ve kozin aynı sıralama verir.
 
-```
-dot(a, b) = sum(a_i * b_i)
+```math
+\mathop{\mathrm{dot}}(a, b) = \sum_i a_i b_i
 ```
 
 **Euclidean (L2) distance**Vectör alanında düz çizgi mesafe. Daha küçük = daha benzer. Büyüklük farklarına duyarlı. Sadece yön değil, uzaydaki mutlak pozisyon önemli olduğunda kullanın.
 
-```
-L2(a, b) = sqrt(sum((a_i - b_i)^2))
+```math
+\mathop{\mathrm{L2}}(a, b) = \sqrt{\sum_i (a_i - b_i)^2}
 ```
 
 Ne zaman kullanılır:
@@ -134,7 +134,7 @@ Vektör veritabanları bunu Yaklaşık En Yakın Komşu (ANN) algoritmaları ile
 2. Yukarı katmanlar nadirdir. Uzak gruplar arasındaki uzun mesafeli bağlantılar.
 3. Alt katmanlar yoğun -- yakın vektörler arasındaki ince tanelerli bağlantılar
 4. Arama üst katmandan başlar, açgözlülükle aramak için aşağı iner
-5. O(log n) yerine O(n) zamanında yaklaşık üst-k sonuçları gönderir
+5.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              $O(\log n)$Zaman yerine $O(n)$
 
 HNSW, büyük hız kazanımları için küçük bir doğruluk kaybı (genellikle 95-99% hatırlama) ticareti yapar. 10 milyon vektörde kaba güç saniyeler alır. HNSW milisaniyeler alır.
 
@@ -491,7 +491,7 @@ Bu ders şunları ortaya çıkarır:
 | Embedding | "Text to numbers" | A dense vector where geometric proximity encodes semantic similarity |
 | Word2Vec | "The OG embedding" | 2013 model that learned word vectors by predicting context words; proved vector arithmetic encodes meaning |
 | Cosine similarity | "How similar are two vectors" | Cosine of the angle between vectors; 1 = identical direction, 0 = orthogonal, -1 = opposite |
-| HNSW | "Fast vector search" | Hierarchical Navigable Small World graph -- multi-layer structure enabling O(log n) approximate nearest neighbor search |
+| HNSW | "Fast vector search" | Hierarchical Navigable Small World graph -- multi-layer structure enabling $O(\log n)$ approximate nearest neighbor search |
 | Bi-encoder | "Embed separately, compare fast" | Encodes query and document independently into vectors; enables pre-computation and fast retrieval |
 | Cross-encoder | "Slow but accurate reranker" | Processes query-document pair jointly through the full model; higher accuracy, no pre-computation |
 | Matryoshka embeddings | "Truncatable vectors" | Embeddings trained so the first N dimensions capture the most important information, enabling variable-size storage |

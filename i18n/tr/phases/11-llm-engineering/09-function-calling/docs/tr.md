@@ -182,6 +182,7 @@ mx-tool-call-loop
 Her araçta bir JSON Schema tanımlaması (model ne görüyor) ve bir Python fonksiyonu (kodunuzun ne uyguladığını) vardır.
 
 ```python
+import ast
 import json
 import math
 import time
@@ -290,10 +291,18 @@ def read_file(path):
 def run_code(code, language="python"):
     if language != "python":
         return {"error": True, "message": f"Language '{language}' not supported. Only 'python' is available."}
-    forbidden = ["import os", "import sys", "import subprocess", "exec(", "eval(", "__import__", "open("]
-    for pattern in forbidden:
-        if pattern in code:
-            return {"error": True, "message": f"Forbidden operation: {pattern}", "code": "SECURITY_VIOLATION"}
+    try:
+        tree = ast.parse(code)
+    except SyntaxError as e:
+        return {"error": True, "message": f"SyntaxError: {e}", "code": "SYNTAX_ERROR"}
+    unsafe_names = {"exec", "eval", "compile", "__import__", "open", "globals", "locals", "vars", "getattr", "setattr", "delattr"}
+    for node in ast.walk(tree):
+        if isinstance(node, (ast.Import, ast.ImportFrom)):
+            return {"error": True, "message": "Forbidden operation: import is not allowed", "code": "SECURITY_VIOLATION"}
+        if isinstance(node, ast.Attribute) and node.attr.startswith("__") and node.attr.endswith("__"):
+            return {"error": True, "message": "Forbidden operation: dunder attribute access is not allowed", "code": "SECURITY_VIOLATION"}
+        if isinstance(node, ast.Name) and node.id in unsafe_names:
+            return {"error": True, "message": f"Forbidden operation: {node.id} is not allowed", "code": "SECURITY_VIOLATION"}
     try:
         local_vars = {}
         exec(code, {"__builtins__": {"print": print, "range": range, "len": len, "str": str, "int": int, "float": float, "list": list, "dict": dict, "sum": sum, "min": min, "max": max, "abs": abs, "round": round, "sorted": sorted, "enumerate": enumerate, "zip": zip, "map": map, "filter": filter, "math": math}}, local_vars)
@@ -302,6 +311,8 @@ def run_code(code, language="python"):
     except Exception as e:
         return {"error": True, "message": f"{type(e).__name__}: {e}"}
 ```
+
+Bir alt ip bloklisti kodu metin olarak okuyor, bu nedenle ip eşleşmesi kelimenin tam anlamıyla yazılmayan herhangi bir şeyi kaçırır.`import`Bu, bir diğer önemli konu.`__class__`ve `__globals__`Bu, gerçek tercümeciye ulaşan zincirler ve güvenli olmayan yapısal isimler yerine imletikler ile oluşturulmuştur. Yine de, bunu gerçek bir sınır değil, bir öğretim filtresi olarak düşünün. İşlemdeki herhangi bir koruma, çeviricini çalıştıran kodla paylaşıyor ve belirlenmiş bir arayan hala erişilebilir nesneleri bulabilir. Üretim sistemleri güvenilmeyen kodları ayrı bir işlem veya konteynerde (valyutaları düşmüş bir alt işlem, gVisor, Firecracker veya barındırılmış bir kod çalıştırıcısı) çalıştırır.
 
 ### Adım 3: Tüm araçları kaydet
 
@@ -328,7 +339,7 @@ def register_all_tools():
         read_file,
     )
     register_tool(
-        "run_code", "Execute Python code in a sandboxed environment. Set a 'result' variable to return output.",
+        "run_code", "Run a small Python snippet behind a static-analysis guard and a restricted interpreter. This is a teaching filter, not real isolation. Set a 'result' variable to return output.",
         {"type": "object", "properties": {"code": {"type": "string", "description": "Python code to execute"}, "language": {"type": "string", "enum": ["python"], "description": "Programming language"}}, "required": ["code"]},
         run_code,
     )
