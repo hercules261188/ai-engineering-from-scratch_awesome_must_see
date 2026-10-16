@@ -30,7 +30,7 @@ El servicio de LLM multi-regional es un problema de caché, un problema de enrut
 
 El router hacha el prefijo (digamos, los primeros 512 tokens); le pregunta a cada réplica "¿tienes este prefijo almacenado en caché?". Las réplicas publican eventos de caché KV en un canal pub/sub mientras asignan y despejan bloques.
 
-**vLLM Router**(Rust, 2026 producción-estaca): suscribirse a `kv.cache.block_added`eventos, mantiene un índice de réplica prefijo-hash →, rutas con búsqueda O(1). Calla a la menor profundidad de cola cuando no se combina.
+**vLLM Router**(Rust, 2026 producción-estaca): suscribirse a `kv.cache.block_added`eventos, mantiene un índice de réplica → prefijo-hash, rutas con $O(1)$Se cae hasta la menor profundidad de cola cuando no hay coincidencia.
 
 **llm-d router**: mismo patrón, nativo de Kubernetes. Publica eventos a través de la API ControlPlane.
 

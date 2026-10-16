@@ -125,4 +125,4 @@ Esta lección produce`outputs/skill-radix-scheduler-advisor.md`. Dado una descri
 - [SGLang documentation](https://sgl-project.github.io/) Radix Atención y detalles de programación.
 - [SGLang paper — Efficiently Programming Large Language Models (arXiv:2312.07104)](https://arxiv.org/abs/2312.07104) la referencia del diseño.
 - [LMSYS blog — SGLang with RadixAttention](https://www.lmsys.org/blog/2024-01-17-sglang/) Números de referencia y razón del programador.
-- [vLLM — Prefix Caching](https://docs.vllm.ai/en/latest/features/prefix_caching.html) La propia implementación de vLLM en forma de radix, para comparación.
+- [vLLM — Prefix Caching](https://docs.vllm.ai/en/latest/features/automatic_prefix_caching/) La propia implementación de vLLM en forma de radix, para comparación.

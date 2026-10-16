@@ -57,7 +57,7 @@ El P99 puede empeorar si no se sintoniza. Los proyectos rechazados desencadenan 
 
 ### Cuando EAGLE-3 ya esté desplegado
 
-Google desplegó la descodificación especulativa en AI Overviews en 2025 (la misma calidad, respuesta más rápida). vLLM V1 barcos `speculative_config`como la interfaz documentada; la descifrado especulativo de GPU de N-gram en V1 es la variante compatible con preempleo en pedazos. SGLang admite EAGLE-3 como la ruta de proyecto recomendada para cargas de trabajo pesadas de prefijos.
+Google desplegó la descodificación especulativa en AI Overviews en 2025 (la misma calidad, respuesta más rápida). vLLM V1 barcos `speculative_config`SGLang admite EAGLE-3 como la ruta de proyecto recomendada para cargas de trabajo pesadas de prefijos.
 
 ### Matemáticas de equilibrio en una línea
 
@@ -68,7 +68,7 @@ Aceleración esperada: `S(alpha, K) = (1 + K*alpha) / (1 + verify_overhead)`- Co
 - Generación de batch-1 sin conexión donde la latencia no importa.
 - Los resultados son muy cortos (menos de 50 tokens).
 - Dominio especializado sin un jefe de reclutamiento entrenado.
-- vLLM v0.18.0 más el código de especificaciones del modelo de proyecto más `--enable-chunked-prefill`Esta combinación no se compiló. La excepción documentada es el decodificación de especificaciones de GPU de N-gram en V1.
+- Suponiendo que cada par de características compone. Compruebe la matriz de compatibilidad vLLM para su versión: v0.18.0 marca la descifrado especulativo compatible con preempleo en pedazos.
 
 ```figure
 mx-speculative-tree
@@ -86,7 +86,7 @@ Esta lección produce`outputs/skill-eagle3-rollout.md`. Dado un modelo objetivo,
 
 1. - ¿ Qué ?`code/main.py`¿Qué alfa necesitas para un 2x de aceleración? ¿Para un 3x de aceleración? ¿Qué tan sensible es eso para verificar_overhead?
 2. Imagínese que el tráfico de producción divide el 70% de chat general, el 30% de código. El chat general alcanza el alfa 0.7 con EAGLE-3 entrenado en ShareGPT; el código alcanza el alfa 0.4. ¿Qué es alfa mezclado y es el código de descodación de especificaciones net-positivo?
-3. Lea el VLLM `speculative_config`En el caso de los Estados miembros, el número de datos de los datos de los datos de los datos de los datos de los datos de los datos de los datos de los datos de los datos de los datos de los datos de los datos de los datos de los datos de los datos de los datos de los datos de los datos de los datos de los datos de los datos de los datos de los datos de los datos de los datos de los datos de los datos de los datos de los datos de los datos de los datos de los datos de los datos de los datos de los datos de los datos de los datos de los datos de los datos de los datos de los datos de los datos de los datos de los datos de los datos de los datos de los datos de los datos de los datos de los datos de los datos de los datos de los datos de los datos de los datos de los datos de los datos de los datos de los datos de los datos de los datos de los datos de los datos de los datos de los datos de los datos de los datos de los datos de los datos de los datos de los datos de los datos de los datos de los datos de los datos de los datos de los datos de los datos de los datos de los datos de los datos de los datos de los datos de los datos de los datos de los datos de los datos de los datos de los datos de los datos de los datos de los datos de los datos de los datos de los datos de los datos de los datos de los datos de los datos de los datos de los datos de los datos de los datos de los datos de los datos de los datos de los datos de los datos de los datos de los datos de los datos de los datos de los datos de los datos de los datos de los datos de los datos de los datos de los datos de los datos de los datos de los datos de los datos de los datos de los datos de los datos de los datos de los datos de los datos de los datos de los datos de los datos de los datos de los datos de los datos de los datos de los datos de los datos de los datos de los datos de los datos de los datos de los datos de los que se han introducción de los datos de los datos de los datos de los datos de los datos de los datos de los datos de los datos de los datos de los datos de los datos de los datos de los datos de los datos de los datos de los datos de los datos de los datos de los datos de los datos de los
+3. Lea el VLLM `speculative_config`Nombrar los tres modos (modelo de borrador, EAGLE, N-gram) y comprobar cuáles son las características de cada uno de ellos en su versión vLLM.
 4. Vemos que la media ITL cayó un 25% después de habilitar EAGLE-3 pero P99 ITL subió un 15%.
 5. Calcule el costo de memoria de la cabeza de proyección EAGLE-3 para Llama 3.3 70B. ¿Cómo se compara con ejecutar Llama 3.2 1B como un proyecto clásico?
 
