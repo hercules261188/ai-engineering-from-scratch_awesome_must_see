@@ -26,7 +26,7 @@ Comprender el perceptron significa entender lo que "aprender" realmente signific
 
 ### Una neurona, una decisión
 
-Un perceptron toma n entradas, multiplica cada una por un peso, las suma, agrega un sesgo y pasa el resultado a través de una función de activación.
+Un perceptron toma .$n$las entradas, multiplicando cada una por un peso, las suma, agrega un sesgo y pasa el resultado a través de una función de activación.
 
 ```mermaid
 graph LR
@@ -38,11 +38,10 @@ graph LR
     step --> out["output (0 or 1)"]
 ```
 
-La función de paso es brutal: si la suma ponderada más el sesgo es >= 0, salida 1. De lo contrario, salida 0.
+La función de paso es brutal: si la suma ponderada más el sesgo es $\ge 0$, salida 1. De lo contrario, salida 0.
 
-```
-step(z) = 1  if z >= 0
-           0  if z < 0
+```math
+\text{step}(z) = \begin{cases} 1 & \text{if } z \ge 0 \\ 0 & \text{if } z < 0 \end{cases}
 ```
 
 Este es un clasificador lineal. Los pesos y los sesgos definen una línea (o hiperplano en dimensiones más altas) que divide el espacio de entrada en dos regiones.
@@ -80,7 +79,7 @@ For each training example (x, y_true):
     bias = bias + learning_rate * error
 ```
 
-Si la predicción es correcta, el error = 0, nada cambia. Si predice 0 pero debe ser 1, los pesos aumentan. Si predice 1 pero debe ser 0, los pesos disminuyen. La tasa de aprendizaje controla el tamaño de cada ajuste.
+Si la predicción es correcta,$\text{error} = 0$Si predice 0 pero debe ser 1, los pesos aumentan. si predice 1 pero debe ser 0, los pesos disminuyen. La tasa de aprendizaje controla la magnitud de cada ajuste.
 
 ### El problema de la XOR
 
@@ -213,7 +212,7 @@ Esto es la prueba de que un solo perceptrón no puede aprender XOR.
 
 ### Paso 4: Resolver XOR con dos capas
 
-El truco: XOR = (x1 O x2) Y NO (x1 Y x2). Combine tres perceptrones:
+El truco:$\text{XOR} = (x_1 \text{ OR } x_2) \text{ AND NOT } (x_1 \text{ AND } x_2)$Combine tres perceptores:
 
 ```mermaid
 graph LR
@@ -359,7 +358,7 @@ Esta lección produce:
 ## Los ejercicios
 
 1. Entrenar un perceptron en una puerta NAND (la puerta universal - cualquier circuito lógico se puede construir a partir de NAND).
-2. Modifique la clase Perceptron para rastrear el límite de decisión (w1*x1 + w2*x2 + b = 0) en cada época. Imprime cómo se desplaza la línea durante el entrenamiento en la puerta AND.
+2. Modificar la clase Perceptron para rastrear el límite de decisión ($w_1 x_1 + w_2 x_2 + b = 0$Imprimir cómo se desplaza la línea durante el entrenamiento en la puerta de entrada de la AN.
 3. Construir un perceptron de 3 entradas que salga 1 sólo cuando al menos 2 de las 3 entradas son 1 (una función de voto mayoritario). ¿Es esto linealmente separable? ¿Por qué?
 
 ## Términos clave
@@ -372,7 +371,7 @@ Esta lección produce:
 | Activation function | "The thing that squishes values" | A function applied after the weighted sum - step function for perceptrons, sigmoid/ReLU for modern networks |
 | Linearly separable | "You can draw a line between them" | A dataset where a single hyperplane can perfectly separate the classes |
 | XOR problem | "The thing perceptrons can't do" | Proof that single-layer networks cannot learn non-linearly-separable functions |
-| Decision boundary | "Where the classifier switches" | The hyperplane w*x + b = 0 that divides input space into two classes |
+| Decision boundary | "Where the classifier switches" | The hyperplane $w \cdot x + b = 0$ that divides input space into two classes |
 | Multi-layer perceptron | "A real neural network" | Perceptrons stacked in layers, where each layer's output feeds the next layer's input |
 
 ## Leer más

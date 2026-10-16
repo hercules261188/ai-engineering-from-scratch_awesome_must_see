@@ -18,7 +18,7 @@
 
 ¿Sabes que el peso # 4,721 debe disminuir en 0,003 para reducir la pérdida? Pero 0.003 en qué unidades? ¿Escalado por qué? ¿Y deberías mover la misma cantidad en el paso 1 como en el paso 1,000?
 
-El descenso del gradiente de vainilla aplica la misma tasa de aprendizaje a cada parámetro en cada paso: w = w - lr * gradiente. Esto crea tres problemas que hacen que el entrenamiento de las redes neuronales sea doloroso en la práctica.
+La descenda del gradiente de vainilla aplica la misma tasa de aprendizaje a todos los parámetros en cada paso: $w = w - \text{lr} \cdot \text{gradient}$Esto crea tres problemas que hacen que entrenar las redes neuronales sea doloroso en la práctica.
 
 Primero, la oscilación. El paisaje de pérdidas rara vez tiene la forma de un cuenco liso. Es más como un valle largo y estrecho. El gradiente apunta a través del valle (dirección empinada), no a lo largo de él (dirección poco profunda). El descenso gradual rebota hacia adelante y hacia atrás a través de la dimensión estrecha mientras hace pequeños progresos a lo largo de la útil. Ya han visto esto: la pérdida cae rápidamente después de las mesetas, no porque el modelo convergió sino porque está oscilando.
 
@@ -34,8 +34,8 @@ Adam resuelve las tres. Mantene dos promedios corrientes por parámetro - el gra
 
 El optimizador más simple: calcular el gradiente en un mini lote y dar un paso en la dirección opuesta.
 
-```
-w = w - lr * gradient
+```math
+w = w - \text{lr} \cdot \text{gradient}
 ```
 
 El "estocástico" significa que se utiliza un subconjunto aleatorio (mini-batch) de datos para estimar el gradiente, en lugar del conjunto completo de datos. Este ruido es realmente útil - ayuda a escapar de mínimos locales agudos. Pero el ruido también causa oscilación.
@@ -46,27 +46,31 @@ La tasa de aprendizaje es la única clave. Demasiado alto: la pérdida diverge. 
 
 La analogía de rodar a la bola y bajar a la colina es demasiado utilizada pero precisa. En lugar de caminar solo por el gradiente, mantienes una velocidad que se acumula en los gradientes anteriores.
 
-```
-m_t = beta * m_{t-1} + gradient
-w = w - lr * m_t
+```math
+\begin{aligned}
+m_t &= \beta \, m_{t-1} + \text{gradient} \\
+w &= w - \text{lr} \cdot m_t
+\end{aligned}
 ```
 
-Beta (normalmente 0.9) controla cuánto historial se debe guardar. con beta = 0.9, el impulso es aproximadamente el promedio de los últimos 10 gradientes (1 / (1 - 0.9) = 10.
+Beta (tipo 0.9) controla cuánto historial guardar.$\beta = 0.9$, el impulso es aproximadamente el promedio de los últimos 10 gradientes ($1 / (1 - 0.9) = 10$¿Qué es lo que se hace?
 
 Por qué esto fija la oscilación: los gradientes que apuntan en la misma dirección se acumulan. Los gradientes que van en dirección inversa se cancelarán. En ese valle estrecho, el componente "cross" vuelve a marcar cada paso y se amortiguará. El componente "along" se mantiene constante y se amplifica. El resultado es una aceleración suave en la dirección útil.
 
-Números reales: SGD solo en un panorama de pérdidas mal condicionado podría tomar 10.000 pasos. SGD con impulso (beta = 0,9) normalmente toma 3.000-5.000 pasos en el mismo problema.
+Los números reales: el SGD solo en un panorama de pérdidas mal condicionado podría tomar 10.000 pasos.$\beta = 0.9$En el caso de los sistemas de control de velocidad, el tiempo de ejecución de los sistemas de control de velocidad es de entre 3 y 5 000 pasos.
 
 ### RMSProp
 
 El primer método de tasa de aprendizaje adaptativo por parámetro que realmente funcionó. Propuso por Hinton en una conferencia de Coursera (nunca publicado formalmente).
 
-```
-s_t = beta * s_{t-1} + (1 - beta) * gradient^2
-w = w - lr * gradient / (sqrt(s_t) + epsilon)
+```math
+\begin{aligned}
+s_t &= \beta \, s_{t-1} + (1 - \beta) \cdot \text{gradient}^2 \\
+w &= w - \text{lr} \cdot \frac{\text{gradient}}{\sqrt{s_t} + \epsilon}
+\end{aligned}
 ```
 
-s_t realiza un seguimiento del promedio de funcionamiento de los gradientes cuadrados. Los parámetros con gradientes consistentemente grandes se dividen por un número grande (taxa de aprendizaje efectiva más pequeña).
+$s_t$Los parámetros con gradientes consistentemente grandes se dividen por un número grande (taxa de aprendizaje efectiva más pequeña).
 
 Esto resuelve el problema de "una tasa de aprendizaje para todos los parámetros". Un peso que ya ha recibido grandes actualizaciones probablemente esté cerca de su objetivo - ralentiza. Un peso que ha recibido pequeñas actualizaciones podría estar poco entrenado - acelerarlo.
 
@@ -76,41 +80,45 @@ Epsilon (típicamente 1e-8) evita la división por cero cuando un parámetro no 
 
 Adam combina ambas ideas. mantiene dos promedios móviles exponenciales por parámetro:
 
-```
-m_t = beta1 * m_{t-1} + (1 - beta1) * gradient        (first moment: mean)
-v_t = beta2 * v_{t-1} + (1 - beta2) * gradient^2       (second moment: variance)
-```
-
-**Bias correction**En el paso 1, m_1 = (1 - beta1) * gradiente. con beta1 = 0.9, que es 0.1 * gradiente - diez veces demasiado pequeño. el promedio móvil no se ha calentado todavía.
-
-```
-m_hat = m_t / (1 - beta1^t)
-v_hat = v_t / (1 - beta2^t)
+```math
+\begin{aligned}
+m_t &= \beta_1 m_{t-1} + (1 - \beta_1) \cdot \text{gradient} && \text{(first moment: mean)} \\
+v_t &= \beta_2 v_{t-1} + (1 - \beta_2) \cdot \text{gradient}^2 && \text{(second moment: variance)}
+\end{aligned}
 ```
 
-En el paso 1 con beta1 = 0,9: m_hat = m_1 / (1 - 0,9) = m_1 / 0.1 = el gradiente real. En el paso 100: (1 - 0,9^100) es aproximadamente 1,0, por lo que la corrección desaparece. La corrección de sesgo importa para los primeros ~10 pasos y es irrelevante después de ~50.
+**Bias correction**Es el detalle clave que la mayoría de las explicaciones omiten.$m_1 = (1 - \beta_1) \cdot \text{gradient}$- Con$\beta_1 = 0.9$, eso es $0.1 \cdot \text{gradient}$La media móvil no se ha calentado todavía.
+
+```math
+\begin{aligned}
+\hat{m} &= \frac{m_t}{1 - \beta_1^t} \\
+\hat{v} &= \frac{v_t}{1 - \beta_2^t}
+\end{aligned}
+```
+
+En el paso 1 con $\beta_1 = 0.9$¿ Qué es esto ?$\hat{m} = m_1 / (1 - 0.9) = m_1 / 0.1 =$El gradiente real. en el paso 100: $(1 - 0.9^{100})$La corrección de Bias es importante para los primeros ~ 10 pasos y es irrelevante después de ~ 50.
 
 La actualización:
 
-```
-w = w - lr * m_hat / (sqrt(v_hat) + epsilon)
+```math
+w = w - \text{lr} \cdot \frac{\hat{m}}{\sqrt{\hat{v}} + \epsilon}
 ```
 
-Los valores predeterminados de Adam: lr = 0.001, beta1 = 0.9, beta2 = 0.999, epsilon = 1e-8. Estos valores predeterminados funcionan para el 80% de los problemas. Cuando no lo hacen, cambie primero lr. Luego beta2.
+Adán por defecto: $\text{lr} = 0.001$¿ Qué ?$\beta_1 = 0.9$¿ Qué ?$\beta_2 = 0.999$¿ Qué ?$\epsilon = 10^{-8}$Estos valores predeterminados funcionan para el 80% de los problemas.$\beta_2$Casi nunca cambian .$\beta_1$o $\epsilon$¿ Qué ?
 
 ### La pérdida de peso se hizo bien
 
-La regularización de L2 añade lambda * w^2 a la pérdida. en SGD de vainilla, esto equivale a la desintegración del peso (sustracción de lambda * w del peso en cada paso). en Adam, esta equivalencia se rompe.
+La regularización de L2 se agrega $\lambda w^2$En el SGD de vainilla, esto equivale a una pérdida de peso (sustracción de$\lambda w$En Adán, esta equivalencia se rompe.
 
 La visión de Loshchilov & Hutter: cuando se añade L2 a la pérdida y luego Adam procesa el gradiente, la tasa de aprendizaje adaptativo escala el término de regularización también. Parámetros con gran variación de gradiente obtienen menos regularización. Parámetros con pequeña variación obtienen más. Esto no es lo que quieres - quieres regularización uniforme independientemente de las estadísticas de gradiente.
 
 AdamW corrige esto aplicando la desintegración de peso directamente a los pesos, después de la actualización de Adam:
 
-```
-w = w - lr * m_hat / (sqrt(v_hat) + epsilon) - lr * lambda * w
+```math
+w = w - \text{lr} \cdot \frac{\hat{m}}{\sqrt{\hat{v}} + \epsilon} - \text{lr} \cdot \lambda w
 ```
 
-El término de desintegración del peso (lr * lambda * w) no se escala por el factor adaptativo de Adam.
+El término de desintegración del peso ($\text{lr} \cdot \lambda w$Cada parámetro obtiene la misma contracción proporcional.
 
 Esto parece un detalle menor. No es. AdamW converge a mejores soluciones que la regularización de Adam + L2 en prácticamente todas las tareas. Es el optimizador predeterminado en PyTorch para entrenar transformadores, modelos de difusión y la mayoría de las arquitecturas modernas. BERT, GPT, LLaMA, Diffusión estable - todos entrenados con AdamW.
 
@@ -424,11 +432,11 @@ Esta lección produce:
 
 ## Los ejercicios
 
-1. Implemente el impulso de Nesterov, donde se calcula el gradiente en la posición "lookahead" (w - lr * beta * v) en lugar de la posición actual.
+1. Implemente el impulso de Nesterov, donde se calcula el gradiente en la posición "mirante" ($w - \text{lr} \cdot \beta v$Comparar la convergencia con el impulso estándar en el conjunto de datos del círculo.
 
 2. Implemente un horario de calentamiento de la tasa de aprendizaje: rampa lineal de 0 a max_lr durante el primer 10% de los pasos de entrenamiento, luego desintegración cosina a 0. Entrenamiento con Adam + calentamiento vs Adam sin calentamiento. Medir cuántas épocas se necesitan para alcanzar la precisión del 90% en el conjunto de datos del círculo.
 
-3. Seguir el ritmo de aprendizaje efectivo para cada parámetro durante el entrenamiento de Adam. La tasa efectiva es lr * m_hat / (sqrt(v_hat) + eps).
+3. El ritmo efectivo de aprendizaje para cada parámetro durante el entrenamiento de Adam.$\text{lr} \cdot \hat{m} / (\sqrt{\hat{v}} + \epsilon)$. Describir la distribución de las tasas efectivas después de los pasos 10, 50 y 200. ¿Se actualizan todos los parámetros a la misma velocidad?
 
 4. Implemente el recorte de gradientes (clip por norma global). Establezca la norma de gradiente máximo a 1.0. Entrenar con y sin recorte utilizando una tasa de aprendizaje alta (lr=0.01 para Adam). Cuente cuántas carreras divergen (la pérdida va a NaN) con y sin recorte de más de 10 semillas aleatorias.
 
@@ -439,12 +447,12 @@ Esta lección produce:
 | Term | What people say | What it actually means |
 |------|----------------|----------------------|
 | Learning rate | "Step size" | The scalar multiplier on the gradient update; the single most impactful hyperparameter in training |
-| SGD | "Basic gradient descent" | Stochastic gradient descent: update weights by subtracting lr * gradient, computed on a mini-batch |
+| SGD | "Basic gradient descent" | Stochastic gradient descent: update weights by subtracting $\text{lr} \cdot \text{gradient}$, computed on a mini-batch |
 | Momentum | "Rolling ball analogy" | Exponential moving average of past gradients; dampens oscillation and accelerates consistent directions |
 | RMSProp | "Adaptive learning rate" | Divides each parameter's gradient by the running RMS of its recent gradients; equalizes learning rates |
 | Adam | "The default optimizer" | Combines momentum (first moment) and RMSProp (second moment) with bias correction for the initial steps |
 | AdamW | "Adam done right" | Adam with decoupled weight decay; applies regularization directly to weights rather than through the gradient |
-| Bias correction | "Warmup for running averages" | Dividing by (1 - beta^t) to compensate for the zero-initialization of Adam's moment estimates |
+| Bias correction | "Warmup for running averages" | Dividing by $(1 - \beta^t)$ to compensate for the zero-initialization of Adam's moment estimates |
 | Weight decay | "Shrink the weights" | Subtracting a fraction of the weight value at each step; a regularizer that penalizes large weights |
 | Learning rate schedule | "Changing lr over time" | A function that adjusts the learning rate during training; warmup + cosine decay is the modern default |
 | Gradient clipping | "Capping the gradient norm" | Scaling down the gradient vector when its norm exceeds a threshold; prevents exploding gradient updates |

@@ -90,14 +90,14 @@ Comparar los gradientes analíticos (de backprop) con los gradientes numéricos 
 
 Gradiente numérico para el parámetro `w`¿Qué es esto ?
 
-```
-grad_numerical = (loss(w + eps) - loss(w - eps)) / (2 * eps)
+```math
+\text{grad\_numerical} = \frac{\text{loss}(w + \text{eps}) - \text{loss}(w - \text{eps})}{2 \cdot \text{eps}}
 ```
 
 Metrica de acuerdo (diferencia relativa):
 
-```
-rel_diff = |grad_analytical - grad_numerical| / max(|grad_analytical|, |grad_numerical|, 1e-8)
+```math
+\text{rel\_diff} = \frac{\lvert \text{grad\_analytical} - \text{grad\_numerical} \rvert}{\max(\lvert \text{grad\_analytical} \rvert, \lvert \text{grad\_numerical} \rvert, 10^{-8})}
 ```
 
 Si ...`rel_diff < 1e-5`: correcto. si`rel_diff > 1e-3`Es casi seguro que es un insecto.

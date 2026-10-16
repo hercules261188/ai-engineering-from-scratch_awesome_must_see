@@ -26,7 +26,7 @@ La propagación hacia atrás resuelve esto. Un paso hacia adelante, un paso haci
 
 ### La regla de la cadena, aplicada a las redes
 
-Viste la regla de la cadena en la fase 01, lección 05. Resumen rápido: si y = f(g(x)), entonces dy/dx = f'(g(x)) * g'(x. Multiplicas derivadas a lo largo de la cadena.
+Usted vio la regla de la cadena en la fase 01, lección 05. Resumen rápido: si $y = f(g(x))$, entonces$\frac{dy}{dx} = f'(g(x)) \cdot g'(x)$Se multiplican derivados a lo largo de la cadena.
 
 En una red neuronal, la "cadena" es la secuencia de operaciones desde la entrada hasta la pérdida. Cada capa aplica pesos, agrega sesgos, pasa a través de una activación. La función de pérdida compara la salida final con el objetivo. La retropropagación rastrea esta cadena hacia atrás, calculando cómo cada operación contribuyó al error.
 
@@ -45,9 +45,9 @@ graph LR
     y["target"] --> loss
 ```
 
-Pasar hacia adelante: los valores fluyen de izquierda a derecha. x y w producen z1 = w*x. Agregar b para obtener z2. Sigmoid da activación a. Comparar a a a y usando la función de pérdida.
+Pasado hacia adelante: los valores fluyen de izquierda a derecha. $x$y $w$Productos$z_1 = w x$- Añadir .$b$para conseguir$z_2$Sigmoid da activación .$a$- Comparar .$a$para el objetivo $y$utilizando la función de pérdida.
 
-Paso hacia atrás: los gradientes fluyen de derecha a izquierda. Comience con dL/da (cómo cambia la pérdida con la activación). Multiplicar por da/dz2 (derivada sigmoide). Eso da dL/dz2. Dividir en dL/dz2 (que es igual a dL/dz2, ya que z2 = z1 + b) y dL/dz1.
+Paso hacia atrás: los gradientes fluyen de derecha a izquierda.$\partial L/\partial a$(cómo cambia la pérdida con la activación).$\partial a/\partial z_2$Eso da$\partial L/\partial z_2$Se dividen en .$\partial L/\partial b$(que es igual a $\partial L/\partial z_2$, desde$z_2 = z_1 + b$) y $\partial L/\partial z_1$Entonces ...$\partial L/\partial w = \partial L/\partial z_1 \cdot x$y $\partial L/\partial x = \partial L/\partial z_1 \cdot w$¿ Qué ?
 
 Cada nodo en el gráfico tiene una tarea durante el paso hacia atrás: tomar el gradiente que viene de arriba, multiplicar por su derivada local, y pasarlo hacia abajo.
 
@@ -84,7 +84,7 @@ graph RL
     L1 -- "dL/dz1 = dL/da1 * sigmoid'(z1)" --> I["Input"]
 ```
 
-En cada capa, el gradiente se multiplica por la derivada sigmoide. La derivada sigmoide es un * (1 - a), que se maximiza a 0.25 (cuando a = 0.5). Tres capas profundas, el gradiente se ha multiplicado por un máximo de 0.25^3 = 0.0156. Diez capas profundas: 0.25^10 = 0.000001.
+En cada capa, el gradiente se multiplica por la derivada sigmoide.$a(1 - a)$, que se eleva a 0,25 (cuando $a = 0.5$La profundidad de la gradiente se ha multiplicado por tres capas.$0.25^3 = 0.0156$- Diez capas de profundidad:$0.25^{10} = 0.000001$¿ Qué ?
 
 ### Los gradientes desaparecen
 
@@ -102,32 +102,35 @@ Por eso las redes sigmoides profundas son casi imposibles de entrenar. La soluci
 
 ### Derivar Gradientes para una red de dos capas
 
-Matemáticas concretas para una red con entrada x, capa oculta con sigmoid, capa de salida con sigmoid y pérdida de MSE.
+Matemáticas concretas para una red con entrada $x$, capa oculta con sigmoide, capa de salida con sigmoide, y pérdida de MSE.
 
 Pases de entrada:
-```
-z1 = W1 * x + b1
-a1 = sigmoid(z1)
-z2 = W2 * a1 + b2
-a2 = sigmoid(z2)
-L = (a2 - y)^2
+
+```math
+\begin{aligned}
+z_1 &= W_1 x + b_1 \\
+a_1 &= \text{sigmoid}(z_1) \\
+z_2 &= W_2 a_1 + b_2 \\
+a_2 &= \text{sigmoid}(z_2) \\
+L &= (a_2 - y)^2
+\end{aligned}
 ```
 
 Pases hacia atrás (aplicación de la regla de la cadena paso a paso):
-```
-dL/da2 = 2(a2 - y)
-da2/dz2 = a2 * (1 - a2)
-dL/dz2 = dL/da2 * da2/dz2 = 2(a2 - y) * a2 * (1 - a2)
 
-dL/dW2 = dL/dz2 * a1
-dL/db2 = dL/dz2
-
-dL/da1 = dL/dz2 * W2
-da1/dz1 = a1 * (1 - a1)
-dL/dz1 = dL/da1 * da1/dz1
-
-dL/dW1 = dL/dz1 * x
-dL/db1 = dL/dz1
+```math
+\begin{aligned}
+\frac{\partial L}{\partial a_2} &= 2(a_2 - y) \\
+\frac{\partial a_2}{\partial z_2} &= a_2 (1 - a_2) \\
+\frac{\partial L}{\partial z_2} &= \frac{\partial L}{\partial a_2} \cdot \frac{\partial a_2}{\partial z_2} = 2(a_2 - y) \cdot a_2 (1 - a_2) \\[6pt]
+\frac{\partial L}{\partial W_2} &= \frac{\partial L}{\partial z_2} \cdot a_1 \\
+\frac{\partial L}{\partial b_2} &= \frac{\partial L}{\partial z_2} \\[6pt]
+\frac{\partial L}{\partial a_1} &= \frac{\partial L}{\partial z_2} \cdot W_2 \\
+\frac{\partial a_1}{\partial z_1} &= a_1 (1 - a_1) \\
+\frac{\partial L}{\partial z_1} &= \frac{\partial L}{\partial a_1} \cdot \frac{\partial a_1}{\partial z_1} \\[6pt]
+\frac{\partial L}{\partial W_1} &= \frac{\partial L}{\partial z_1} \cdot x \\
+\frac{\partial L}{\partial b_1} &= \frac{\partial L}{\partial z_1}
+\end{aligned}
 ```
 
 Cada gradiente es un producto de derivados locales rastreados desde la pérdida.
@@ -185,9 +188,9 @@ def __mul__(self, other):
     return out
 ```
 
-Para adición: d(a+b)/da = 1, d(a+b)/db = 1. Así que ambas entradas obtienen el gradiente de la salida directamente.
+Para añadir: $\partial(a+b)/\partial a = 1$¿ Qué ?$\partial(a+b)/\partial b = 1$Así que ambas entradas obtienen el gradiente de la salida directamente.
 
-Para la multiplicación: d(a*b)/da = b, d(a*b)/db = a. Cada entrada obtiene el valor del otro veces el gradiente de salida.
+Para la multiplicación: $\partial(ab)/\partial a = b$¿ Qué ?$\partial(ab)/\partial b = a$Cada entrada obtiene el valor del otro veces el gradiente de salida.
 
 El `+=`Un valor puede ser utilizado en múltiples operaciones. su gradiente es la suma de los gradientes de todos los caminos.
 
@@ -209,7 +212,7 @@ def sigmoid(self):
     return out
 ```
 
-Sigmoid derivado: sigmoid(x) * (1 - sigmoid(x)). Hemos calculado sigmoid(x) = s durante el pase hacia adelante.
+Derivada de sigmoides: $\text{sigmoid}(x) \cdot (1 - \text{sigmoid}(x))$- Hemos calculado .$\text{sigmoid}(x) = s$Reutilice, no hay trabajo extra.
 
 ```python
 def mse_loss(predicted, target):
@@ -217,7 +220,7 @@ def mse_loss(predicted, target):
     return diff * diff
 ```
 
-MSE para una salida única: (predecida - objetivo) ^ 2. Expresamos la restancia como suma con un valor negativo.
+MSE para una sola salida: $(\text{predicted} - \text{target})^2$Expresamos la restancia como suma con un valor negado.
 
 ### Paso 4: Pasar hacia atrás
 
@@ -241,7 +244,7 @@ def backward(self):
         v._backward()
 ```
 
-Comience en la pérdida (gradiente = 1.0, ya que dL/dL = 1).`_backward`empuja los gradientes a sus hijos.
+Comienza en la pérdida (gradiente = 1.0, ya que $dL/dL = 1$3) Caminar hacia atrás a través del gráfico ordenado.`_backward`empuja los gradientes a sus hijos.
 
 ### Paso 5: capa y red
 
@@ -301,7 +304,7 @@ class Network:
             p.grad = 0.0
 ```
 
-Una Neurona toma entradas, calcula la suma ponderada + sesgo y aplica sigmoides. Escales de inicialización de peso por sqrt(2/n_inputs) para evitar la saturación sigmoide en redes más profundas. Una capa es una lista de neuronas. Una red es una lista de capas.`parameters()`El método recopila todos los valores que se pueden aprender para que podamos actualizarlos.
+Una neurona toma entradas, calcula la suma ponderada + sesgo, y aplica sigmoide.$\sqrt{2/n_{\text{inputs}}}$Una capa es una lista de neuronas. Una red es una lista de capas.`parameters()`El método recopila todos los valores que se pueden aprender para que podamos actualizarlos.
 
 ### Paso 6: Entrenamiento en XOR
 
@@ -439,9 +442,9 @@ Esta lección produce:
 
 ## Los ejercicios
 
-1. Añadir un`__sub__`El método de la clase de valor (a - b = a + (-1 * b)).`__neg__`El método de cálculo de los gradientes es el método de cálculo de los gradientes.
+1. Añadir un`__sub__`método para la clase de valor $(a - b = a + (-1 \cdot b))$Entonces implementar un`__neg__`El método de cálculo de la velocidad de la velocidad de un eje de la velocidad de un eje de la velocidad de un eje de la velocidad de un eje de la velocidad de un eje de la velocidad de un eje de velocidad de un eje de velocidad de una velocidad de velocidad de un eje de velocidad de velocidad de un eje de velocidad de velocidad de un eje de velocidad de velocidad de un eje de velocidad de velocidad de un eje de velocidad de velocidad de velocidad de un eje de velocidad de velocidad de velocidad de un eje de velocidad de velocidad de velocidad de velocidad de un eje de velocidad de velocidad de velocidad de velocidad de velocidad de velocidad de velocidad de velocidad de velocidad de velocidad de velocidad de velocidad de velocidad de velocidad de velocidad de velocidad de velocidad de velocidad de velocidad de velocidad de velocidad de velocidad de velocidad de velocidad de velocidad de velocidad de velocidad de velocidad de velocidad de velocidad de velocidad de velocidad de velocidad de velocidad de velocidad de velocidad de velocidad de velocidad de velocidad de velocidad de velocidad de velocidad de velocidad de velocidad de velocidad de velocidad de velocidad de velocidad de velocidad de velocidad de velocidad de velocidad de velocidad de velocidad de velocidad de velocidad de velocidad de velocidad de velocidad de velocidad de velocidad de velocidad de velocidad de velocidad de velocidad de velocidad de velocidad de velocidad de velocidad de velocidad de velocidad de velocidad de velocidad de velocidad de velocidad de velocidad de velocidad de velocidad de velocidad de velocidad de velocidad de velocidad de velocidad de velocidad de velocidad de velocidad de velocidad de velocidad de velocidad de velocidad de velocidad de velocidad de velocidad de velocidad de velocidad de velocidad de velocidad de velocidad de velocidad de velocidad de velocidad de velocidad de velocidad de velocidad de velocidad de velocidad de velocidad de velocidad de velocidad de velocidad de velocidad de velocidad de velocidad de velocidad de velocidad de velocidad de velocidad de velocidad de velocidad de velocidad de velocidad de velocidad$(a - b)^2$¿ Qué ?
 
-2. Añadir un`relu`El método de conversión de la señal de sigmoide a la señal de sigmoide a la señal de sigmoide a la señal de sigmoide a la señal de sigmoide a la señal de sigmoide a la señal de sigmoide a la señal de sigmoide a la señal de sigmoide a la señal de sigmoide a la señal de sigmoide a la señal de sigmoide a la señal de sigmoide a la señal de sigmoide a la señal de sigmoide a la señal de sigmoide a la señal de sigmoide a la señal de sigmoide a la señal de sigmoide a la señal de sigmoide a la señal de sigmoide a la señal de sigmoide a la señal de sigmoide a la señal de sigmoide a la señal de sigmoide a la señal de sigmoide a la señal de sigmoide a la señal de sigmoide a la señal de sigmoide a la señal de sigmoide a la señal de sigmoide a la señal de convergencia a la velocidad de convergencia.
+2. Añadir un`relu`método a Valor (producción $\max(0, x)$, derivada es 1 si $x \gt 0$, si no 0.) reemplazar sigmoide con relú en las capas ocultas y entrenar en XOR de nuevo. Comparar la velocidad de convergencia. Usted debería ver el entrenamiento más rápido - este preview de la lección 04.
 
 3. Implementar una `__pow__`método en Valor para potencias enteras.`mse_loss`con un adecuado `(predicted - target) ** 2`Expresión. Verifique que los gradientes coinciden con la implementación original.
 
@@ -453,14 +456,14 @@ Esta lección produce:
 
 | Term | What people say | What it actually means |
 |------|----------------|----------------------|
-| Backpropagation | "The network learns" | An algorithm that computes dL/dw for every weight by applying the chain rule backward through the computational graph |
+| Backpropagation | "The network learns" | An algorithm that computes $\partial L/\partial w$ for every weight by applying the chain rule backward through the computational graph |
 | Computational graph | "The network structure" | A directed acyclic graph where nodes are operations and edges carry values (forward) and gradients (backward) |
-| Chain rule | "Multiply the derivatives" | If y = f(g(x)), then dy/dx = f'(g(x)) * g'(x) -- the mathematical foundation of backpropagation |
+| Chain rule | "Multiply the derivatives" | If $y = f(g(x))$, then $\frac{dy}{dx} = f'(g(x)) \cdot g'(x)$ -- the mathematical foundation of backpropagation |
 | Gradient | "The direction of steepest ascent" | The partial derivative of the loss with respect to a parameter -- tells you how to change that parameter to reduce the loss |
 | Vanishing gradient | "Deep networks don't learn" | Gradients shrink exponentially as they propagate through layers with saturating activations like sigmoid |
 | Forward pass | "Running the network" | Computing the output from inputs by sequentially applying each layer's operations and storing intermediate values |
 | Backward pass | "Computing gradients" | Traversing the computational graph in reverse, accumulating gradients at each node using the chain rule |
-| Learning rate | "How fast it learns" | A scalar that controls the step size when updating weights: w_new = w_old - lr * gradient |
+| Learning rate | "How fast it learns" | A scalar that controls the step size when updating weights: $w_{\text{new}} = w_{\text{old}} - \text{lr} \cdot \text{gradient}$ |
 | Topological sort | "The right order" | An ordering of graph nodes where each node appears after all nodes it depends on -- ensures gradients are fully accumulated before propagation |
 | Autograd | "Automatic differentiation" | A system that builds computational graphs during forward computation and automatically computes gradients -- what PyTorch's engine does |
 

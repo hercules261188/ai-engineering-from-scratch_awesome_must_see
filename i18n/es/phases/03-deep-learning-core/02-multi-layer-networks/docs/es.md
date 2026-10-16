@@ -75,8 +75,8 @@ Cada neurona hace tres cosas:
 
 Por ahora, la activación es sigmoide:
 
-```
-sigmoid(z) = 1 / (1 + e^(-z))
+```math
+\text{sigmoid}(z) = \frac{1}{1 + e^{-z}}
 ```
 
 Sigmoid aplasta cualquier número en el rango (0, 1). Las grandes entradas positivas empujan hacia 1. Las grandes entradas negativas empujan hacia 0.
@@ -99,9 +99,11 @@ graph TD
 
 En cada capa, tres operaciones ocurren en secuencia:
 
-```
-z = W * input + b       (linear transformation)
-a = sigmoid(z)           (activation)
+```math
+\begin{aligned}
+z &= W \cdot \text{input} + b \quad \text{(linear transformation)} \\
+a &= \text{sigmoid}(z) \quad \text{(activation)}
+\end{aligned}
 ```
 
 La salida de una capa se convierte en la entrada de la siguiente.
@@ -112,13 +114,13 @@ Las dimensiones de seguimiento son la habilidad de depuración más importante e
 
 | Step | Operation | Dimensions | Result Shape |
 |------|-----------|------------|-------------|
-| Input | x | -- | (2,) |
-| Hidden linear | W1 * x + b1 | W1: (3, 2), b1: (3,) | (3,) |
-| Hidden activation | sigmoid(z1) | -- | (3,) |
-| Output linear | W2 * h + b2 | W2: (1, 3), b2: (1,) | (1,) |
-| Output activation | sigmoid(z2) | -- | (1,) |
+| Input | $x$ | -- | (2,) |
+| Hidden linear | $W_1 x + b_1$ | $W_1$: (3, 2), $b_1$: (3,) | (3,) |
+| Hidden activation | $\text{sigmoid}(z_1)$ | -- | (3,) |
+| Output linear | $W_2 h + b_2$ | $W_2$: (1, 3), $b_2$: (1,) | (1,) |
+| Output activation | $\text{sigmoid}(z_2)$ | -- | (1,) |
 
-La regla: la matriz de peso W en la capa k tiene forma (neuronas_en_layer_k, neuronas_en_layer_k_minus_1). Las filas coinciden con la capa actual. Las columnas coinciden con la capa anterior. Si las formas no se alinean, tienes un error.
+La regla: matriz de peso $W$en la capa $k$tiene forma (neuronas_en_layer_k, neuronas_en_layer_k_minus_1). Las filas coinciden con la capa actual. Las columnas coinciden con la capa anterior. Si las formas no se alinean, tienes un error.
 
 ### Teorema de la aproximación universal
 
@@ -168,7 +170,7 @@ El sujetador a [500, 500] evita el desbordamiento. `math.exp(500)`es grande pero
 
 ### Paso 2: Clase de capas
 
-La operación más importante en todo el aprendizaje profundo es la multiplicación de matrices. Cada capa, cada cabeza de atención, cada paso hacia adelante, son matrices hasta abajo. Una capa lineal toma un vector de entrada, lo multiplica por una matriz de peso y añade un vector de sesgo: y = Wx + b. Esa sola ecuación es el 90% del cálculo en una red neuronal.
+La operación más importante en todo el aprendizaje profundo es la multiplicación de matrices. Cada capa, cada cabeza de atención, cada paso hacia adelante, son matrices hasta abajo. Una capa lineal toma un vector de entrada, lo multiplica por una matriz de peso, y añade un vector de sesgo:$y = Wx + b$Esa sola ecuación es el 90% de la computación en una red neuronal.
 
 Una capa contiene una matriz de peso y un vector de sesgo. Su método de avance toma un vector de entrada y devuelve la salida activada.
 
@@ -204,7 +206,7 @@ La matriz de peso tiene forma (n_neurones, n_input). Cada fila es el peso de una
 
 ### Paso 3: Clasificación de red
 
-Una red es una lista de capas. El pase hacia adelante las encadenan: la salida de la capa k alimenta a la capa k + 1.
+Una red es una lista de capas. El pase hacia adelante las encadenan: salida de capa $k$se alimenta en capa $k+1$¿ Qué ?
 
 ```python
 class Network:
@@ -346,11 +348,11 @@ Utilice cuando necesite decidir cuántas capas, cuántas neuronas por capa y qu�
 | Hidden layer | "The middle part" | Any layer between input and output whose values are not directly observed in the data |
 | Multi-layer network | "A deep neural network" | Layers of neurons stacked sequentially, where each layer's output feeds the next layer's input |
 | Activation function | "The nonlinearity" | A function applied after the linear transformation that introduces curves into the decision boundary |
-| Sigmoid | "The S-curve" | sigma(z) = 1/(1+e^(-z)), squashes any real number to (0,1), smooth and differentiable everywhere |
-| Weight matrix | "The parameters" | A matrix W of shape (current_layer_neurons, previous_layer_neurons) containing learnable connection strengths |
+| Sigmoid | "The S-curve" | $\sigma(z) = 1/(1+e^{-z})$, squashes any real number to (0,1), smooth and differentiable everywhere |
+| Weight matrix | "The parameters" | A matrix $W$ of shape (current_layer_neurons, previous_layer_neurons) containing learnable connection strengths |
 | Bias vector | "The offset" | A vector added after the matrix multiply that lets neurons activate even when all inputs are zero |
 | Universal approximation | "Neural nets can learn anything" | A single hidden layer with enough neurons can approximate any continuous function -- but "enough" can mean billions |
-| Linear transformation | "The matrix multiply step" | z = W * x + b, the computation before activation, which maps inputs to a new space |
+| Linear transformation | "The matrix multiply step" | $z = W x + b$, the computation before activation, which maps inputs to a new space |
 | Decision boundary | "Where the classifier switches" | The surface in input space where the network output crosses the classification threshold |
 
 ## Leer más
