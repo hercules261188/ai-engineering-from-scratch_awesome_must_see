@@ -82,7 +82,7 @@ Le compteur de jetons est intentionnellement stupide .`len(text) // 4`Le but de 
 
 ## Pourquoi l'ordre de la chaîne compte
 
-Le déni est moins cher qu'une permission.`WhitelistGate`est en O(1) recherche de hachage. `RegexGate`fonctionne dans le modèle O( * argv). `RecencyGate`Il lit une petite tranche de la boutique de messages.`BudgetGate`Vous les commandez en augmentant le coût, donc un appel refusé court-circuite avant de faire le travail coûteux.
+Le déni est moins cher qu'une permission.`WhitelistGate`Il entre .$O(1)$Je veux voir.`RegexGate`Il entre .$O(\text{pattern} \cdot \text{argv})$- Je suis là .`RecencyGate`Il lit une petite tranche de la boutique de messages.`BudgetGate`Vous les commandez en augmentant le coût, donc un appel refusé court-circuite avant de faire le travail coûteux.
 
 Les autres éléments de la liste blanche sont les plus forts: cet outil n'est pas dans le contrat. La porte regex est la suivante: cet argument n'est pas dans le contrat. La récente vient après: le harnais est toujours intéressant mais l'appel est structurellement légal. Le budget est le dernier parce que, par définition, il ne tire que lorsque tout le reste est passé.
 

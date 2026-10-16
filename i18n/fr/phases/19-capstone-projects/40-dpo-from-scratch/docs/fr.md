@@ -27,42 +27,46 @@ La politique est formée directement sur les paires de préférences, avec une p
 
 Commencez par le modèle Bradley-Terry.`x`et deux compléments `y_w`(élu) et `y_l`(rejeté), la probabilité que l' humain préfère `y_w`est
 
-```text
-P(y_w > y_l | x) = sigmoid( r(x, y_w) - r(x, y_l) )
+```math
+P(y_w > y_l \mid x) = \sigma\big( r(x, y_w) - r(x, y_l) \big)
 ```
 
 où `r`C'est une fonction de récompense latente.`r`Les politiques de la société sont les mêmes que celles des autres pays.`pi`pour maximiser `r`avec une ancre KL:
 
-```text
-max_pi   E_{x, y~pi} [ r(x, y) ] - beta * KL(pi || pi_ref)
+```math
+\max_{\pi} \; \mathbb{E}_{x, y \sim \pi} \big[ r(x, y) \big] - \beta \, \mathrm{KL}(\pi \,\|\, \pi_{\text{ref}})
 ```
 
 La dérivation du DPO observe que la politique optimale `pi*`Dans le cadre de cet objectif, la forme de l'objectif est fermée en termes de`r`- Le numéro de la liste:
 
-```text
-pi*(y | x) = (1/Z(x)) * pi_ref(y | x) * exp( r(x, y) / beta )
+```math
+\pi^*(y \mid x) = \frac{1}{Z(x)} \, \pi_{\text{ref}}(y \mid x) \exp\!\left( \frac{r(x, y)}{\beta} \right)
 ```
 
 Réorganiser pour `r`- Le numéro de la liste:
 
-```text
-r(x, y) = beta * ( log pi*(y | x) - log pi_ref(y | x) ) + beta * log Z(x)
+```math
+r(x, y) = \beta \big( \log \pi^*(y \mid x) - \log \pi_{\text{ref}}(y \mid x) \big) + \beta \log Z(x)
 ```
 
 Le `log Z(x)`Le terme est le même pour les deux `y_w`et `y_l`(c' est en fonction de `x`- Je ne sais pas .`y`), il annule donc lorsque vous calculez la différence de préférence:
 
-```text
-r(x, y_w) - r(x, y_l) = beta * ( log pi_theta(y_w|x) - log pi_ref(y_w|x)
-                                - log pi_theta(y_l|x) + log pi_ref(y_l|x) )
+```math
+\begin{aligned}
+r(x, y_w) - r(x, y_l) = \beta \big( &\log \pi_\theta(y_w \mid x) - \log \pi_{\text{ref}}(y_w \mid x) \\
+&- \log \pi_\theta(y_l \mid x) + \log \pi_{\text{ref}}(y_l \mid x) \big)
+\end{aligned}
 ```
 
 Remplacez le sigmoïde Bradley-Terry et prenez la probabilité négative de log sur les paires de préférences:
 
-```text
-L_DPO(theta) = - E_{(x, y_w, y_l)} [
-  log sigmoid( beta * ( log pi_theta(y_w|x) - log pi_ref(y_w|x)
-                       - log pi_theta(y_l|x) + log pi_ref(y_l|x) ) )
-]
+```math
+\begin{aligned}
+L_{\text{DPO}}(\theta) = -\mathbb{E}_{(x, y_w, y_l)} \Big[
+  \log \sigma\big( \beta \big( &\log \pi_\theta(y_w \mid x) - \log \pi_{\text{ref}}(y_w \mid x) \\
+  &- \log \pi_\theta(y_l \mid x) + \log \pi_{\text{ref}}(y_l \mid x) \big) \big)
+\Big]
+\end{aligned}
 ```
 
 Il s'agit d'une sigmoïde sur un seul scalaire par exemple, calculée à partir de quatre log-probabilités. Aucun modèle de récompense séparé. Aucun PPO. Aucun terme KL dans la perte; la contrainte KL est cuite dans la dérivation de forme fermée.
@@ -87,8 +91,8 @@ flowchart LR
 
 Une vérification utile de la santé mentale avant toute course d'entraînement.`log pi_theta(y_w | x)`- Le numéro de la liste:
 
-```text
-d L_DPO / d log pi_theta(y_w | x) = - beta * (1 - sigmoid(z))
+```math
+\frac{\partial L_{\text{DPO}}}{\partial \log \pi_\theta(y_w \mid x)} = -\beta \big(1 - \sigma(z)\big)
 ```
 
 où `z`C'est l'argument du sigmoïde.`z`, ce qui signifie: augmenter la probabilité de logement de la politique de l'achèvement choisi diminue la perte.`log pi_theta(y_l | x)`La formation pousse les élus vers le haut et les rejetés vers le bas. La référence est gelée; elle ne bouge pas.

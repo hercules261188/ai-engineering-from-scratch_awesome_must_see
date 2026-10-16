@@ -61,8 +61,8 @@ flowchart TB
 
 La formule UCB utilisée dans cette leçon est la classique UCB1.
 
-```text
-ucb(branch) = mean_reward(branch) + c * sqrt( ln(total_runs) / runs(branch) )
+```math
+\text{ucb}(\text{branch}) = \text{mean\_reward}(\text{branch}) + c \sqrt{ \frac{\ln(\text{total\_runs})}{\text{runs}(\text{branch})} }
 ```
 
 `total_runs`est le nombre de toutes les expériences réalisées dans toutes les branches. `c`est le poids de l' exploration; la leçon est défaillante à `sqrt(2)`Une branche avec zéro course obtient`+inf`Une branche avec une récompense moyenne élevée conserve un score élevé jusqu'à ce que les autres branches se rattrapent; une branche qui fonctionne plusieurs fois sans beaucoup de récompense est écrasée par des alternatives moins courantes.

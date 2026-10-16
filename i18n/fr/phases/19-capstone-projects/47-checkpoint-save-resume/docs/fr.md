@@ -90,7 +90,7 @@ cc-atomic-checkpoint
 
 ### Étape 1: capture et restauration de l'état de RNG
 
-`capture_rng_state`Retourne un dicté avec Python `random.getstate`, NumPy's `np.random.get_state`, et les cycles de processeur PyTorch et CUDA RNG. `restore_rng_state`Le tensor de la CPU est un tampon de 8 octets que le RNG de PyTorch sait utiliser.
+`capture_rng_state`Retourne un dicté avec Python `random.getstate`, NumPy's `np.random.get_state`Chaque pièce est stockée sous forme de nombres Python simples, de tuples et de listes (l'ensemble de clés de NumPy passe par `tolist()`), afin que le chargement de l'étape 3 puisse le lire sans démarrer des objets arbitraires. `restore_rng_state`Le tensor de la CPU est un tampon de 8 octets que le RNG de PyTorch sait utiliser.
 
 ### Étape 2: sauvegarde atomique
 
@@ -100,9 +100,11 @@ cc-atomic-checkpoint
 
 `save_checkpoint`Le système de gestion de la circulation de gaz et de gaz est un système de gestion de la circulation de gaz et de gaz.`load_checkpoint`l' inversera et lui rendra une `TrainState`. Le champ schéma est le crochet de mise à niveau: les changements de format futurs bousculent la chaîne de version et le chargement des envois.
 
+`load_checkpoint`Les appels`torch.load(..., weights_only=True)`- Je suis un .`.pt`Le dossier est un dépistage, et dépistage d'un dossier non fiable avec `weights_only=False`Le chargement à poids seulement accepte les tensors et les conteneurs primitifs et rejette tout le reste, c'est pourquoi l'étape 1 maintient l'état de RNG dans des listes simples.`ValueError`au lieu d' utiliser `assert`, parce que `python -O`Les bandes affirment. utilisez la torche 2.6 ou plus récente: avant cette libération `weights_only=True`Il y a eu un décalage connu (CVE-2025-32434), donc la garantie de cette leçon ne repose sur des délais que de 2,6 à partir de maintenant.
+
 ### Étape 4: variante en morceaux
 
-`save_sharded_checkpoint`Ronde-robin les touches de paramètre sur N shards, écrit chaque shard avec son propre sauvegarde atomique, écrit un fichier méta avec optimisateur et planificateur et train état, et écrit l'indice JSON avec shard sha256s. `load_sharded_checkpoint`Vérifie chaque fragment avant de fusionner.
+`save_sharded_checkpoint`Ronde-robin les touches de paramètre sur N shards, écrit chaque shard avec son propre sauvegarde atomique, écrit un fichier méta avec optimisateur et planificateur et train état, et écrit l'indice JSON avec shard sha256s. `load_sharded_checkpoint`vérifie chaque fragment avant de fusionner et refuse tout chemin de fragment qui se résolve en dehors du répertoire des points de contrôle.
 
 ### Étape 5: démo de résumé
 
@@ -120,8 +122,9 @@ Les démos en un seul fichier et en fragments affirment tous deux une différenc
 
 La formation de production accumule le point de contrôle du navire dans le cadre du trainer. La forme est la même: modèle + optimisateur + planificateur + compteur + RNG, écrit à l'atome, nommé par étape afin que le dernier soit facile à trouver.
 
-Trois modèles à appliquer:
+Quatre modèles à appliquer:
 
+- **Load with `weights_only=True`.**Un point de contrôle tiré d'un lecteur partagé ou d'un téléchargement est une entrée non fiable. Le chargeur de poids uniquement empêche un fichier malveillant d'exécuter du code sur la machine qui reprend.
 - **Schema is a string in the payload.**Sans elle, vous ne pouvez pas évoluter le format sans rompre les vieilles règles.
 - **Sha256 every shard.**Un téléchargement silencieux est le pire type de bug; le chargement échoue rapidement ou il échoue tard.
 - **Keep checkpoint cadence honest.**Gardez chaque N pas et chaque minute de l'horloge, selon le plus court.
@@ -151,7 +154,7 @@ Trois modèles à appliquer:
 ## Pour en savoir plus
 
 - POSIX `rename`La sémantique de l' atomique affirme que `os.replace`Il dépend.
-- Documents de PyTorch sur `torch.save`et `torch.load`, y compris `map_location`pour les restaurations entre appareils.
+- Documents de PyTorch sur `torch.save`et `torch.load`, y compris `map_location`pour les restaurations croisées de périphériques et `weights_only`pour le chargement de fichiers non fiables.
 - La leçon 46 de la phase 19 couvre l'accumulation de gradients sur laquelle la charge utile du point de contrôle de cette leçon survit.
 - La phase 19 leçon 48 couvre les emballages distribués dont le format de dictée de l'État est adapté à ce régime.
 - Le noyau Linux `fsync`documentation de la garantie de durabilité derrière le renommé atomique.

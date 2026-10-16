@@ -16,7 +16,7 @@
 
 ## Le problème
 
-Une formation moderne de langage-modèle lit des jetons à des centaines de milliers d'échantillons par seconde sur des dizaines de travailleurs. JSONL sur disque meurt lors de la première erreur de page de cache froide: le parseur JSON est lent, les limites du document ne sont pas adressables, et la recherche de "échantillon 4,217,884" nécessite la numérisation du fichier. Même le Parquet, qui se comprime bien, ne convient pas bien parce que l'entraîneur ne veut pas de colonnes; il veut un flux de jetons plat avec O(1) accès aléatoire.
+Une formation moderne de langage-modèle lit des jetons à des centaines de milliers d'échantillons par seconde sur des dizaines de travailleurs. JSONL sur disque meurt lors de la première erreur de page de cache froide: le parseur JSON est lent, les limites du document ne sont pas adressables, et la recherche de "échantillon 4,217,884" nécessite la numérisation du fichier. Même le Parquet, qui se comprime bien, ne convient pas bien parce que l'entraîneur ne veut pas de colonnes; il veut un flux de jetons plat avec $O(1)$accès aléatoire.
 
 HDF5 convient car il offre un ensemble de données en morceaux, dimensionnables, uniquement entiers dont les morceaux sont conviviaux en cas de lecture.`tokens[3,200,000 : 3,200,8192]`HDF5 copie l'hyperlab demandé du cache de la page dans un tableau NumPy nouvellement alloué. Le coût est un poignet de fichier ouvert et une empreinte de cache de page de taille de pièce par travailleur, ce qui est négligeable par rapport au coût de décoding JSONL.
 

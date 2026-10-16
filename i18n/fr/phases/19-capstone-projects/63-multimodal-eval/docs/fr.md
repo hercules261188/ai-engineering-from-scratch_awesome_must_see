@@ -49,15 +49,14 @@ Pour chaque image (image, question, réponse), encodez l'image, embladez la ques
 
 ### Le projet de loi
 
-```text
-BLEU-4 = BP * exp(mean(log p1, log p2, log p3, log p4))
+```math
+\text{BLEU-4} = \text{BP} \cdot \exp\big(\text{mean}(\log p_1, \log p_2, \log p_3, \log p_4)\big)
 ```
 
 Où ?`p_n`est la précision n-gramme modifiée (compte réduit des n-grammes générés qui apparaissent dans toute référence, divisé par le total des n-grammes générés), et `BP`est la peine de breveté:
 
-```text
-BP = 1                if generated length > reference length
-   = exp(1 - r/g)     otherwise, where r is reference length and g is generated
+```math
+\text{BP} = \begin{cases} 1 & \text{if generated length} > \text{reference length} \\ \exp(1 - r/g) & \text{otherwise, where } r \text{ is reference length and } g \text{ is generated} \end{cases}
 ```
 
 Le raffinage est nécessaire pour les petits échantillons où certains `p_n`La mise en œuvre utilise la méthode " Chen et Cherry " 1 (ajouter 1 au numérateur et au dénominateur pour tout compte zéro), qui est la méthode par défaut la plus sûre pour les régimes à faible nombre.
