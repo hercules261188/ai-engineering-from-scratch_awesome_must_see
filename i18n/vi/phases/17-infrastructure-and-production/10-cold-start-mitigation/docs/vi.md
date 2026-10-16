@@ -125,6 +125,6 @@ Bài học này sẽ mang lại kết quả `outputs/skill-cold-start-planner.md
 - [Modal — Cold start performance](https://modal.com/docs/guide/cold-start) Các tiêu chuẩn và kiến trúc điểm kiểm soát được công bố của Modal.
 - [AWS Bottlerocket](https://github.com/bottlerocket-os/bottlerocket) mô hình chụp ảnh nhanh về khối lượng dữ liệu được gieo trước.
 - [NVIDIA Run:ai Model Streamer](https://github.com/run-ai/runai-model-streamer) tải trọng chồng chéo với thiết lập tính toán.
-- [Baseten — Cold-start mitigation](https://www.baseten.co/blog/cold-start-mitigation/) Quyển sách trước khi nóng lên.
+- [Baseten — Cold starts](https://docs.baseten.co/deployment/autoscaling/cold-starts) Quyển sách trước khi nóng lên.
 - [ServerlessLLM paper (USENIX OSDI'24)](https://www.usenix.org/conference/osdi24/presentation/fu) Thiết kế tải hàng cấp.
 - [NVIDIA — Disaggregated LLM Inference on Kubernetes](https://developer.nvidia.com/blog/deploying-disaggregated-llm-inference-workloads-on-kubernetes/) di cư trực tiếp cho các triển khai phân chia.

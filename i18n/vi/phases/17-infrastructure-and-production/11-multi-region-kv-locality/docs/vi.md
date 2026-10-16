@@ -30,7 +30,7 @@ Việc phục vụ LLM đa khu vực là một vấn đề cache, một vấn đ
 
 Các yêu cầu đến với một lời nhắc. Router hashes tiền đề (chẳng hạn, đầu tiên 512 token); nó hỏi mỗi bản sao "bạn có tiền đề này được lưu trữ trong cache không?". Các bản sao xuất bản các sự kiện lưu trữ KV trên một kênh pub / sub khi họ phân bổ và loại bỏ các khối. Router chọn bản sao với sự phù hợp, rơi qua vào tie-breaker dựa trên GPU-util nếu không ai làm.
 
-**vLLM Router**(Rust, 2026 sản xuất-phân): đăng ký `kv.cache.block_added`events, duy trì một prefix-hash → replica index, đường dẫn với O(1) tìm kiếm.
+**vLLM Router**(Rust, 2026 sản xuất-phân): đăng ký `kv.cache.block_added`events, duy trì một prefix-hash → replica index, đường với $O(1)$Nhìn xuống, đi qua độ sâu thấp nhất khi không có sự phù hợp.
 
 **llm-d router**: cùng một mô hình, Kubernetes bản địa. xuất bản các sự kiện thông qua ControlPlane API.
 

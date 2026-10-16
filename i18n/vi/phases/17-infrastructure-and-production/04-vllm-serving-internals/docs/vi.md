@@ -12,7 +12,7 @@
 - Giải thích PagedAttention như một bộ phân bổ cache KV: khối, bảng khối, và tại sao phân mảnh vẫn dưới 4% khi tải sản xuất.
 - Chụp đồ họa liên tục đợt đợt đợt lặp ở cấp độ lặp: các chuỗi hoàn thành rời khỏi đợt và các chuỗi mới kết hợp mà không bị khử.
 - Mô tả prefill cục cục trong một câu và tên là métric độ trễ mà nó bảo vệ (khí dụ: đó là đuôi TTFT, không phải là thông qua trung bình).
-- Tên gọi 2026 vLLM v0.18.0 có được một cái gì đó mà cắn đội cho phép mọi tối ưu hóa cùng một lúc.
+- Kiểm tra kết hợp tính năng vLLM so với matrix tương thích cho phiên bản của bạn trước khi kích hoạt mọi tối ưu hóa cùng một lúc.
 
 ## Vấn đề
 
@@ -56,9 +56,9 @@ Tất cả ba tính năng đều giả định nhau. PagedAttention cung cấp c
 
 Bạn không cần phải biết mọi cờ, bạn cần phải biết những gì lập trình viên tối ưu hóa: tốt trong ngân sách khối KV, tùy thuộc vào cắt prefill mảnh.
 
-### 2026 v0.18.0 đã có bạn
+### Kiểm tra các matrix tương thích
 
-Trong vLLM v0.18.0 bạn không thể kết hợp `--enable-chunked-prefill`Với mô hình dự thảo giải mã dự đoán (`--speculative-model`(). Ngoại lệ được ghi chép là giải mã GPU đầu cơ N-gram trong trình lập lịch V1. Các đội bật mọi cờ mà không đọc thông báo phát hành sẽ có lỗi thời gian chạy khi khởi động, không phải sự lùi lại mềm. Nếu lợi nhuận đầu cơ của bạn đáng để cho phép prefill cho, xem lại sự lựa chọn  câu trả lời đúng vào năm 2026 thường là EAGLE-3 mà không có prefill cho, không phải một mô hình dự thảo cộng với prefill cho không biên soạn.
+Kiểm tra mọi kết hợp tính năng với matrix tương thích cho phiên bản vLLM chính xác của bạn trước khi bật tất cả chúng cùng một lúc, bởi vì những gì tạo thành thay đổi giữa các bản phát hành. Trong v0.18.0 các tính năng tử liệu đánh dấu giải mã phỏng đoán tương thích với prefill và prefix cache phân mảnh, và trang giải mã phỏng đoán liệt kê hai sự không tương thích được biết đến: đường ống song song thông qua v0.15.0, và dự đoán mô hình dự thảo thông qua v0.10.0. Đối với bản thảo phương pháp, mặc định 2026 thường là EAGLE-3 (`"method": "eagle3"`), được bao gồm trong giai đoạn 17 · 05.
 
 ### Những con số mà bạn nên nhớ
 
@@ -131,7 +131,7 @@ Bài học này sẽ mang lại kết quả `outputs/skill-vllm-scheduler-reader
 | TTFT | "first token time" | Prefill + queue + network; dominated by prefill at long prompts |
 | ITL | "inter-token latency" | Time between consecutive decode tokens; dominated by batch size |
 | Goodput | "throughput that meets SLO" | Tokens/sec where every request still hit TTFT and ITL targets |
-| V1 scheduler | "the new scheduler" | vLLM's 2026 scheduler; N-gram spec decode is the chunked-prefill-compatible path |
+| V1 scheduler | "the new scheduler" | vLLM's 2026 scheduler; runs continuous batching with chunked prefill |
 | `--gpu-memory-utilization` | "the memory knob" | Fraction of HBM reserved for KV blocks after weights and activations |
 
 ## Đọc thêm

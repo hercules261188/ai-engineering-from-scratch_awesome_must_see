@@ -125,4 +125,4 @@ Bài học này sẽ mang lại kết quả `outputs/skill-radix-scheduler-advis
 - [SGLang documentation](https://sgl-project.github.io/) RadixCông tâm và chi tiết lịch trình.
 - [SGLang paper — Efficiently Programming Large Language Models (arXiv:2312.07104)](https://arxiv.org/abs/2312.07104) tham chiếu thiết kế.
 - [LMSYS blog — SGLang with RadixAttention](https://www.lmsys.org/blog/2024-01-17-sglang/) Số điểm tham chiếu và lý do lập trình viên.
-- [vLLM — Prefix Caching](https://docs.vllm.ai/en/latest/features/prefix_caching.html) Thực hiện giống như rễ của vLLM, để so sánh.
+- [vLLM — Prefix Caching](https://docs.vllm.ai/en/latest/features/automatic_prefix_caching/) Thực hiện giống như rễ của vLLM, để so sánh.

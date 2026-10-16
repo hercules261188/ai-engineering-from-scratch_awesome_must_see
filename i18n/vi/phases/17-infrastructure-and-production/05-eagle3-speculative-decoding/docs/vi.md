@@ -57,7 +57,7 @@ Phân tích thông tin thông tin thông tin thông tin thông tin thông tin th
 
 ### Khi EAGLE-3 đã được triển khai
 
-Google triển khai mã hóa giả định trong AI Overviews vào năm 2025 (các chất lượng tương tự, phản ứng nhanh hơn). vLLM V1 tàu `speculative_config`như giao diện được ghi chép; N-gram GPU decoding speculative trong V1 là biến thể tương thích với prefill chunked. SGLang hỗ trợ EAGLE-3 như là con đường dự thảo được khuyến cáo cho tải trọng công việc nặng tiền tố.
+Google triển khai mã hóa giả định trong AI Overviews vào năm 2025 (các chất lượng tương tự, phản ứng nhanh hơn). vLLM V1 tàu `speculative_config`SGLang hỗ trợ EAGLE-3 như là con đường dự thảo được khuyến cáo cho tải trọng công việc nặng tiền tố.
 
 ### Phá toán bằng nhau trong một dòng
 
@@ -68,7 +68,7 @@ Tốc độ tăng tốc dự kiến: `S(alpha, K) = (1 + K*alpha) / (1 + verify_
 - Lập 1 offline generation mà thời gian trễ không quan trọng.
 - Các sản phẩm đầu ra rất ngắn (dưới 50 token).
 - Các tên miền chuyên nghiệp không có người huấn luyện tên miền.
-- vLLM v0.18.0 cộng với mã hóa mô hình dự thảo đặc điểm cộng với `--enable-chunked-prefill`Sự kết hợp này không biên soạn. ngoại lệ được ghi chép là mã hóa kỹ thuật định dạng GPU N-gram trong V1.
+- Giả sử mỗi cặp tính năng tạo thành. Kiểm tra vLLM tương thích matrix cho phiên bản của bạn: v0.18.0 đánh dấu giải mã giả định tương thích với prefill mảnh.
 
 ```figure
 mx-speculative-tree
@@ -86,7 +86,7 @@ Bài học này sẽ mang lại kết quả `outputs/skill-eagle3-rollout.md`. V
 
 1. Đi chạy`code/main.py`Ở K=5, bạn cần alpha nào để tăng tốc 2x? 3x?
 2. Hãy tưởng tượng lưu lượng sản xuất chia sẻ 70% chat chung, 30% mã. chat chung đạt alpha 0.7 với EAGLE-3 được đào tạo trên ShareGPT; mã đạt alpha 0.4.
-3. Đọc vLLM `speculative_config`Các mô hình (mô hình bản, EAGLE, N-gram) và mô hình nào tương thích với việc điền trước từng mảnh.
+3. Đọc vLLM `speculative_config`Các mô hình (Mô hình bản, EAGLE, N-gram) và kiểm tra các tính năng nào trong mỗi phiên bản vLLM của bạn.
 4. Bạn thấy mức ITL giảm 25% sau khi kích hoạt EAGLE-3 nhưng P99 ITL tăng 15%. Chẩn đoán và đề xuất giảm thiểu.
 5. Xét chi phí bộ nhớ của đầu dự thảo EAGLE-3 cho Llama 3.3 70B. Nó so sánh như thế nào với chạy Llama 3.2 1B như một dự thảo cổ điển?
 
