@@ -82,7 +82,7 @@ flowchart TD
 
 ### Z-Score विधि
 
-सबसे सरल दृष्टिकोण. प्रत्येक विशेषता के औसत और मानक विचलन की गणना करें. औसत से k मानक विचलन से अधिक किसी भी बिंदु को चिह्नित करें।
+सबसे सरल दृष्टिकोण. प्रत्येक विशेषता के औसत और मानक विचलन की गणना करें. किसी भी बिंदु को अधिक से अधिक चिह्नित करें।$k$औसत से मानक विचलन।
 
 ```text
 z_score = (x - mean) / std
@@ -148,11 +148,11 @@ flowchart TD
 
 विसंगति स्कोर सभी पेड़ों में औसत पथ लंबाई पर आधारित है, जो एक यादृच्छिक द्विआधारी खोज पेड़ की अपेक्षित पथ लंबाई से सामान्य है:
 
-```
-score(x) = 2^(-average_path_length(x) / c(n))
+```math
+\text{score}(x) = 2^{-\text{average\_path\_length}(x) / c(n)}
 ```
 
-कहाँ`c(n)`n नमूनों के लिए अपेक्षित पथ लंबाई है। 1 के पास स्कोर का अर्थ है विसंगति। 0.5 के पास स्कोर का अर्थ है सामान्य। 0 के पास स्कोर का अर्थ है बहुत सामान्य (घनता समूहों में गहराई) ।
+कहाँ`c(n)` के लिए अपेक्षित पथ लंबाई है$n$नमूना. 1 के पास स्कोर का अर्थ है असामान्यता. 0.5 के पास स्कोर का अर्थ है सामान्य. 0 के पास स्कोर का अर्थ है बहुत सामान्य (घनता समूहों में गहराई में) ।
 
 **Strengths:**कोई वितरण परिकल्पना नहीं। उच्च आयामों में काम करता है। स्केल अच्छा (सॉब साइज में उपरेखीय क्योंकि प्रत्येक पेड़ एक उप-सॉब का उपयोग करता है) । मिश्रित विशेषता प्रकारों को संभालता है।
 
@@ -168,7 +168,7 @@ score(x) = 2^(-average_path_length(x) / c(n))
 LOF एक बिंदु के आसपास स्थानीय घनत्व की तुलना अपने पड़ोसियों के आसपास घनत्व से करता है। घने क्षेत्रों से घिरे एक दुर्लभ क्षेत्र में एक बिंदु असामान्य है।
 
 **How it works:**
-1. प्रत्येक बिंदु के लिए, अपने निकटतम पड़ोसियों के लिए खोजें
+1. प्रत्येक बिंदु के लिए, उसके खोजें $k$निकटतम पड़ोसी
 2. स्थानीय पहुंच घनत्व की गणना करें (गोरबार कितना घनत्वपूर्ण है)
 3. प्रत्येक बिंदु की घनत्व की तुलना उसके पड़ोसियों की घनत्व से करें
 4. यदि किसी बिंदु की घनत्व उसके पड़ोसियों की तुलना में बहुत कम है, तो यह एक असामान्य है
@@ -182,7 +182,7 @@ LOF एक बिंदु के आसपास स्थानीय घन�
 
 **Strengths:**स्थानीय विसंगतियों का पता लगाता है (बिंदु जो अपने पड़ोस में असामान्य हैं, भले ही वे वैश्विक स्तर पर असामान्य न हों) । विभिन्न घनत्व के समूहों पर काम करता है।
 
-**Weaknesses:**बड़े डेटासेट पर धीमा (O(n^2) साफ़ कार्यान्वयन के लिए। k के विकल्प के प्रति संवेदनशील। बहुत उच्च आयामों में अच्छी तरह से काम नहीं करता (आयामीता की शाप दूरी की गणना को प्रभावित करती है) ।
+**Weaknesses:**बड़े डेटा सेट पर धीमा ($O(n^2)$$k$बहुत उच्च आयामों में अच्छा काम नहीं करता (आयामीता की शाप दूरी की गणना को प्रभावित करती है) ।
 
 ### तुलना
 
@@ -199,7 +199,7 @@ LOF एक बिंदु के आसपास स्थानीय घन�
 
 - **Extreme class imbalance.**0.1% विसंगतियों के साथ, सब कुछ के लिए "सामान्य" भविष्यवाणी 99.9% सटीकता देता है। सटीकता बेकार है।
 - **AUROC is misleading.**भारी असंतुलन के साथ, AUROC भले ही मॉडल व्यावहारिक सीमाओं पर अधिकांश विसंगतियों को याद कर सकता है।
-- **Better metrics:**Precision@k (शीर्ष k चिह्नित वस्तुओं में से, कितने वास्तविक विसंगतियों हैं), AUPRC (सटीक-पुनर्प्राप्त वक्र के तहत क्षेत्र), और एक निश्चित झूठी सकारात्मक दर पर वापस बुलाया।
+- **Better metrics:**Precision@k (शीर्ष से $k$चिह्नित वस्तुओं, वास्तविक विसंगतियों की संख्या), AUPRC (सटीक रिकॉल वक्र के तहत क्षेत्र) और एक निश्चित झूठी सकारात्मक दर पर रिकॉल।
 
 ```mermaid
 flowchart LR
@@ -317,7 +317,7 @@ class IsolationForest:
         return scores
 ```
 
-सामान्यीकरण कारक `c(n)`यह n तत्वों के साथ द्विआधारी खोज पेड़ में असफल खोज की अपेक्षित पथ लंबाई है। यह बराबर है `2 * H(n-1) - 2*(n-1)/n`कहाँ`H`यह सामान्यीकरण सुनिश्चित करता है कि विभिन्न आकारों के डेटा सेटों के बीच स्कोर तुलनात्मक हैं।
+सामान्यीकरण कारक `c(n)`एक द्विआधारी खोज पेड़ में असफल खोज की अपेक्षित पथ लंबाई है $n$तत्वों. यह बराबर है `2 * H(n-1) - 2*(n-1)/n`कहाँ`H`यह सामान्यीकरण सुनिश्चित करता है कि विभिन्न आकारों के डेटा सेटों के बीच स्कोर तुलनात्मक हैं।
 
 ### डेमो परिदृश्य
 
@@ -433,7 +433,7 @@ predictions = oc_svm.predict(X_test)
 
 2. **Multivariate anomalies.**2D डेटा बनाएं जहां प्रत्येक विशेषता व्यक्तिगत रूप से सामान्य दिखती है, लेकिन संयोजन असामान्य है (उदाहरण के लिए, मुख्य क्लस्टर विकर्ण से दूर बिंदु) । दिखाएं कि प्रति विशेषता Z-स्कोर इन को याद करता है लेकिन अलगाव वन उन्हें पकड़ता है।
 
-3. **LOF from scratch.**k- निकटतम पड़ोसियों का उपयोग करके स्थानीय आउटलिअर कारक को लागू करें। उसी डेटा पर sklearn के स्थानीय आउटलिअर कारक की तुलना करें। k=10 और k=50 का उपयोग करें - k का चयन परिणामों को कैसे प्रभावित करता है?
+3. **LOF from scratch.**k- निकटतम पड़ोसियों का उपयोग करके स्थानीय आउटलीयर कारक को लागू करें। उसी डेटा पर sklearn के स्थानीय आउटलीयर कारक की तुलना करें। उपयोग $k=10$और $k=50$-- कैसे चुनें $k$परिणामों को प्रभावित करता है?
 
 4. **Streaming anomaly detection.**स्ट्रीमिंग सेटिंग में काम करने के लिए Z-स्कोर डिटेक्टर को संशोधित करेंः नए बिंदुओं के आने के साथ चल रहे औसत और भिन्नता को अपडेट करें (वेल्फोर्ड का ऑनलाइन एल्गोरिथ्म) । एक ही डेटा पर बैच Z-स्कोर की तुलना करें।
 
@@ -448,10 +448,10 @@ predictions = oc_svm.predict(X_test)
 | Contextual anomaly | "Normal value, wrong context" | An observation that is unusual given its context (time, location, etc.) but might be normal in another context |
 | Isolation Forest | "Random splits to find outliers" | An ensemble of random trees that isolates anomalies with fewer splits than normal points |
 | Local Outlier Factor | "Compare density to neighbors" | A method that flags points whose local density is much lower than their neighbors' density |
-| Z-score | "Standard deviations from mean" | (x - mean) / std, measuring how far a point is from the center in units of standard deviation |
-| IQR | "Interquartile range" | Q3 - Q1, measuring the spread of the middle 50% of data, used for robust outlier detection |
+| Z-score | "Standard deviations from mean" | $(x - \text{mean}) / \text{std}$, measuring how far a point is from the center in units of standard deviation |
+| IQR | "Interquartile range" | $Q3 - Q1$, measuring the spread of the middle 50% of data, used for robust outlier detection |
 | Contamination | "Expected fraction of anomalies" | A hyperparameter telling the detector what proportion of the data it should flag as anomalous |
-| Precision@k | "Of the top k flags, how many are real" | Precision computed on only the k most suspicious points, useful for imbalanced anomaly detection |
+| Precision@k | "Of the top k flags, how many are real" | Precision computed on only the $k$ most suspicious points, useful for imbalanced anomaly detection |
 | AUPRC | "Area under precision-recall curve" | A metric that summarizes precision-recall performance across all thresholds, better than AUROC for imbalanced data |
 
 ## आगे पढ़ना

@@ -18,7 +18,7 @@
 
 आप यह अनुमान लगाना चाहते हैं कि क्या एक ट्यूमर उसके आकार को देखते हुए दुर्भावनापूर्ण या सौम्य है। आप रैखिक प्रतिगमन का प्रयास करते हैं। यह 0.3 या 1.7 या -0.5 जैसे संख्याओं का उत्पादन करता है। इसका क्या मतलब है? क्या 1.7 "बहुत दुर्भावनापूर्ण" है? क्या -0.5 "बहुत सौम्य" है? रैखिक प्रतिगमन असीमित संख्याओं का उत्पादन करता है। वर्गीकरण के लिए 0 से 1 के बीच सीमित संभावनाओं की आवश्यकता होती है, और एक स्पष्ट निर्णयः हाँ या नहीं।
 
-लॉजिस्टिक रेग्रिशन इस समस्या का समाधान करता है। यह उसी रैखिक संयोजन (wx + b) को लेता है और इसे सिग्मोइड फ़ंक्शन के माध्यम से पारित करता है, जो किसी भी संख्या को दायरे में कुचल देता है (0, 1). आउटपुट एक संभावना है। आप एक सीमा निर्धारित करते हैं (आमतौर पर 0.5) और एक निर्णय लेते हैं।
+लॉजिस्टिक रेग्रिशन इस समस्या का समाधान करता है।$wx + b$) और इसे सिग्मोइड फ़ंक्शन के माध्यम से पारित करता है, जो किसी भी संख्या को दायरे में कुचल देता है (0, 1). आउटपुट एक संभावना है। आप एक सीमा निर्धारित करते हैं (आमतौर पर 0.5) और एक निर्णय लेते हैं।
 
 यह अभ्यास में सबसे व्यापक रूप से उपयोग किए जाने वाले एल्गोरिदम में से एक है। इसके नाम के बावजूद, लॉजिस्टिक रेग्रिशन एक वर्गीकरण एल्गोरिदम है, रेग्रिशन एल्गोरिदम नहीं। इसका नाम लॉजिस्टिक (सिग्मोइड) फ़ंक्शन से आता है जिसका यह उपयोग करता है।
 
@@ -44,22 +44,22 @@ actual: 0   0   0   0   1   1   1   1   1   1
 
 सिग्मोइड फ़ंक्शन ठीक यही करता हैः
 
-```
-sigmoid(z) = 1 / (1 + e^(-z))
+```math
+\sigma(z) = \frac{1}{1 + e^{-z}}
 ```
 
 गुण:
-- जब z बड़ा और सकारात्मक होता है, तो सिग्मोइड ((z) 1 के करीब आता है
-- जब z बड़ा और ऋणात्मक है, तो सिग्मोइड ((z) 0 के करीब आता है
-- जब z = 0, सिग्मोइड(z) = 0.5
+- कब$z$बड़ा और सकारात्मक है,$\sigma(z)$दृष्टिकोण 1
+- कब$z$बड़ा और नकारात्मक है,$\sigma(z)$दृष्टिकोण 0
+- कब$z = 0$,$\sigma(z) = 0.5$
 - आउटपुट हमेशा 0 से 1 के बीच होता है
 - समारोह चिकनी है और हर जगह अंतर
 
-व्युत्पन्न का एक सुविधाजनक रूप हैः sigmoid'(z) = sigmoid(z) * (1 - sigmoid(z)). यह ग्रेडिएंट गणना कुशल बनाता है।
+व्युत्पन्न का एक सुविधाजनक रूप हैः $\sigma'(z) = \sigma(z) (1 - \sigma(z))$. यह ग्रेडिएंट गणना कुशल बनाता है.
 
 ### लॉजिस्टिक रिग्रेशन = रैखिक मॉडल + सिग्मोइड
 
-मॉडल z = wx + b (सीधी regression के समान) की गणना करता है, फिर सिग्मोइड लागू करता हैः
+मॉडल गणना करता है $z = wx + b$(सीधी विघटन के समान), फिर सिग्मोइड लागू होता हैः
 
 ```mermaid
 flowchart LR
@@ -70,21 +70,21 @@ flowchart LR
     D -->|No| N[Predict 0]
 ```
 
-आउटपुट p के रूप में व्याख्या की जाती है P ((y=1)) x), संभावना है कि इनपुट वर्ग 1 से संबंधित है निर्णय सीमा है जहां wx + b = 0, जो सिग्मोइड आउटपुट ठीक 0.5 बनाता है।
+आउटपुट $p$इसको व्याख्या की जाती है $P(y=1 \mid x)$, संभावना है कि इनपुट वर्ग 1 से संबंधित है। निर्णय सीमा है जहां $wx + b = 0$, जो सिग्मोइड आउटपुट ठीक 0.5 बनाता है।
 
 ### द्विआधारी क्रॉस-एंट्रोपी हानि
 
 आप लॉजिस्टिक रेग्रेशन के लिए एमएसई का उपयोग नहीं कर सकते। सिग्मोइड के साथ एमएसई कई स्थानीय न्यूनतम के साथ एक गैर-घुंढ लागत सतह बनाता है। इसके बजाय, द्विआधारी क्रॉस-एंट्रोपी (लॉग हानि) का उपयोग करेंः
 
-```
-Loss = -(1/n) * sum(y * log(p) + (1-y) * log(1-p))
+```math
+\text{Loss} = -\frac{1}{n} \sum \left( y \log(p) + (1-y) \log(1-p) \right)
 ```
 
 यह काम क्यों करता हैः
-- जब y=1 और p 1: log(1) = 0 के करीब होता है, तो हानि 0 के करीब होती है (सही, कम लागत)
-- जब y=1 और p 0 के करीब होता है: log(0) नकारात्मक अनंत के करीब होता है, तो हानि बहुत बड़ी होती है (गलत, उच्च लागत)
-- जब y=0 और p 0 के करीब होता हैः log(1) = 0, तो हानि 0 के करीब होती है (सही, कम लागत)
-- जब y=0 और p 1: log(0) के करीब होता है तो नकारात्मक अनंत के करीब होता है, इसलिए हानि बहुत बड़ी होती है (गलत, उच्च लागत)
+- कब$y=1$और $p$1 के करीब है।$\log(1) = 0$, तो हानि 0 के निकट है (सही, कम लागत)
+- कब$y=1$और $p$0 के निकट हैः $\log(0)$नकारात्मक अनंत के करीब आता है, इसलिए हानि बहुत बड़ी है (गलत, उच्च लागत)
+- कब$y=0$और $p$0 के निकट हैः $\log(1) = 0$, तो हानि 0 के निकट है (सही, कम लागत)
+- कब$y=0$और $p$1 के करीब है।$\log(0)$नकारात्मक अनंत के करीब आता है, इसलिए हानि बहुत बड़ी है (गलत, उच्च लागत)
 
 लॉजिस्टिक रिग्रेशन के लिए यह हानि फ़ंक्शन घुमावदार है, जिससे एक वैश्विक न्यूनतम सुनिश्चित होता है।
 
@@ -92,12 +92,14 @@ Loss = -(1/n) * sum(y * log(p) + (1-y) * log(1-p))
 
 सिग्मोइड के साथ द्विआधारी क्रॉस-एंट्रोपी के लिए ग्रेडिएंट्स का एक साफ रूप होता हैः
 
-```
-dL/dw = (1/n) * sum((p - y) * x)
-dL/db = (1/n) * sum(p - y)
+```math
+\begin{aligned}
+\frac{\partial L}{\partial w} &= \frac{1}{n} \sum (p - y) \, x \\
+\frac{\partial L}{\partial b} &= \frac{1}{n} \sum (p - y)
+\end{aligned}
 ```
 
-ये रैखिक प्रतिगमन ग्रेडिएंट के समान दिखते हैं। अंतर यह है कि p = sigmoid(wx + b) के बजाय p = wx + b। sigmoid गैर-रेखात्मकता को पेश करता है, लेकिन ग्रेडिएंट अपडेट नियम समान रहता है।
+ये रैखिक regression gradients के समान दिखते हैं। अंतर यह है कि$p = \sigma(wx + b)$इसके बजाय $p = wx + b$. सिग्मोइड गैर-रैखिकता को पेश करता है, लेकिन ग्रेडिएंट अपडेट नियम समान रहता है।
 
 ```mermaid
 flowchart TD
@@ -114,29 +116,29 @@ flowchart TD
 
 2D इनपुट (दो विशेषताएं) के लिए निर्णय सीमा वह रेखा है जहांः
 
-```
-w1*x1 + w2*x2 + b = 0
+```math
+w_1 x_1 + w_2 x_2 + b = 0
 ```
 
 एक तरफ के बिंदुओं को 1 के रूप में वर्गीकृत किया जाता है, दूसरी तरफ 0 के रूप में। लॉजिस्टिक प्रतिगमन हमेशा एक रैखिक निर्णय सीमा उत्पन्न करता है। यदि आपको एक घुमावदार सीमा की आवश्यकता है, तो आप या तो बहुपद सुविधाओं को जोड़ते हैं या एक गैर-रेखीय मॉडल का उपयोग करते हैं।
 
 ### सॉफ्टमैक्स के साथ मल्टी-क्लास वर्गीकरण
 
-द्विआधारी लॉजिस्टिक प्रतिगमन दो वर्गों को संभालता है। k वर्गों के लिए, softmax फ़ंक्शन का उपयोग करेंः
+द्विआधारी तार्किक regression दो वर्गों को संभालता है।$k$वर्गों, softmax फ़ंक्शन का उपयोग करेंः
 
-```
-softmax(z_i) = e^(z_i) / sum(e^(z_j) for all j)
+```math
+\text{softmax}(z_i) = \frac{e^{z_i}}{\sum_j e^{z_j}}
 ```
 
-प्रत्येक वर्ग का अपना वजन वेक्टर होता है। मॉडल प्रत्येक वर्ग के लिए एक स्कोर z_i की गणना करता है, फिर softmax स्कोर को संभावनाओं में परिवर्तित करता है जो 1 के योग में आता है। अनुमानित वर्ग सबसे अधिक संभावना वाला है।
+प्रत्येक वर्ग का अपना वजन वेक्टर होता है। मॉडल एक स्कोर की गणना करता है।$z_i$प्रत्येक वर्ग के लिए, तो softmax संभावनाओं के लिए स्कोर परिवर्तित करता है कि 1 के योग है. भविष्यवाणी वर्ग सबसे अधिक संभावना के साथ है.
 
 हानि फ़ंक्शन श्रेणीगत क्रॉस-एंट्रोपी बन जाती हैः
 
-```
-Loss = -(1/n) * sum(sum(y_k * log(p_k)))
+```math
+\text{Loss} = -\frac{1}{n} \sum \sum_k y_k \log(p_k)
 ```
 
-जहां y_k वास्तविक वर्ग के लिए 1 और अन्य सभी के लिए 0 है (एक-गर्म एन्कोडिंग) ।
+कहाँ$y_k$सही वर्ग के लिए 1 और अन्य सभी के लिए 0 है (एक-गर्म एन्कोडिंग) ।
 
 ### मूल्यांकन मेट्रिक्स
 
@@ -150,18 +152,18 @@ Loss = -(1/n) * sum(sum(y_k * log(p_k)))
 | Actually Negative | False Positive (FP) | True Negative (TN) |
 
 **Precision**: सभी भविष्यवाणी की गई सकारात्मकताओं में से कितने वास्तव में सकारात्मक हैं?
-```
-Precision = TP / (TP + FP)
+```math
+\text{Precision} = \frac{TP}{TP + FP}
 ```
 
 **Recall**(संवेदनशीलता): सभी वास्तविक सकारात्मकताओं में से, हम कितने को पकड़े?
-```
-Recall = TP / (TP + FN)
+```math
+\text{Recall} = \frac{TP}{TP + FN}
 ```
 
 **F1 Score**: सटीकता और याद करने का सामंजस्यपूर्ण औसत। दोनों मीट्रिकों को संतुलित करता है।
-```
-F1 = 2 * (Precision * Recall) / (Precision + Recall)
+```math
+F_1 = 2 \cdot \frac{\text{Precision} \cdot \text{Recall}}{\text{Precision} + \text{Recall}}
 ```
 
 प्राथमिकताएं कब निर्धारित करेंः
@@ -504,7 +506,7 @@ print(f"\nClassification Report:\n{classification_report(y_te, y_pred)}")
 
 ## व्यायाम
 
-1. एक डेटासेट उत्पन्न करें जो रैखिक रूप से अलग नहीं है (उदाहरण के लिए, दो केंद्रित वृत्त) । लॉजिस्टिक प्रतिगमन को प्रशिक्षित करें और इसकी विफलता का अवलोकन करें। फिर बहुपद विशेषताओं (x1^2, x2^2, x1*x2) जोड़ें और फिर से प्रशिक्षित करें। दिखाएं कि सटीकता में सुधार होता है।
+1. एक डेटासेट उत्पन्न करें जो रैखिक रूप से अलग नहीं है (जैसे, दो केंद्रित वृत्त) । लॉजिस्टिक प्रतिगमन को प्रशिक्षित करें और इसकी विफलता का अवलोकन करें। फिर बहुपद विशेषताएं जोड़ें ($x_1^2, x_2^2, x_1 x_2$) और फिर से प्रशिक्षित करें। दिखाएं कि सटीकता में सुधार होता है।
 2. 3-वर्ग सॉफ्टमैक्स मॉडल के लिए मल्टी-क्लास भ्रम मैट्रिक्स लागू करें। प्रति-वर्ग सटीकता और यादगार गणना करें। किस वर्ग को वर्गीकृत करना सबसे कठिन है?
 3. आरओसी वक्र को खरोंच से बनाएं। 0 से 1 तक 100 सीमा मानों के लिए, सच्ची सकारात्मक दर और झूठी सकारात्मक दर की गणना करें। ट्रैपेज़ोइडल नियम का उपयोग करके एयूसी (वक्र के नीचे क्षेत्र) की गणना करें।
 
@@ -513,14 +515,14 @@ print(f"\nClassification Report:\n{classification_report(y_te, y_pred)}")
 | Term | What people say | What it actually means |
 |------|----------------|----------------------|
 | Logistic regression | "Regression for classification" | A linear model followed by a sigmoid function that outputs class probabilities |
-| Sigmoid function | "The S-curve" | The function 1/(1+e^(-z)) that maps any real number to the range (0, 1) |
-| Binary cross-entropy | "Log loss" | The loss function -[y*log(p) + (1-y)*log(1-p)] that penalizes confident wrong predictions severely |
+| Sigmoid function | "The S-curve" | The function $1/(1+e^{-z})$ that maps any real number to the range (0, 1) |
+| Binary cross-entropy | "Log loss" | The loss function $-[y \log(p) + (1-y) \log(1-p)]$ that penalizes confident wrong predictions severely |
 | Decision boundary | "The dividing line" | The surface where the model's output probability equals 0.5, separating predicted classes |
 | Softmax | "Multi-class sigmoid" | A function that converts a vector of scores into probabilities that sum to 1 |
-| Precision | "How many selected are relevant" | TP / (TP + FP), the fraction of positive predictions that are actually positive |
-| Recall | "How many relevant are selected" | TP / (TP + FN), the fraction of actual positives that the model correctly identifies |
-| F1 score | "Balanced accuracy" | The harmonic mean of precision and recall: 2*P*R / (P+R) |
+| Precision | "How many selected are relevant" | $TP / (TP + FP)$, the fraction of positive predictions that are actually positive |
+| Recall | "How many relevant are selected" | $TP / (TP + FN)$, the fraction of actual positives that the model correctly identifies |
+| F1 score | "Balanced accuracy" | The harmonic mean of precision and recall: $2PR / (P+R)$ |
 | Confusion matrix | "The error breakdown" | A table showing TP, TN, FP, FN counts for each class pair |
 | Threshold | "The cutoff" | The probability value above which the model predicts class 1 (default 0.5, tunable) |
-| One-hot encoding | "Binary columns for categories" | Representing class k as a vector of zeros with a 1 at position k |
-| Categorical cross-entropy | "Multi-class log loss" | The extension of binary cross-entropy to k classes using one-hot encoded labels |
+| One-hot encoding | "Binary columns for categories" | Representing class $k$ as a vector of zeros with a 1 at position $k$ |
+| Categorical cross-entropy | "Multi-class log loss" | The extension of binary cross-entropy to $k$ classes using one-hot encoded labels |

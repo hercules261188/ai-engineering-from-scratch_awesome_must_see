@@ -16,7 +16,7 @@
 
 ## समस्या
 
-आपके ग्रेडिएंट बूस्टिंग मॉडल में सीखने की दर, पेड़ों की संख्या, अधिकतम गहराई, प्रति पत्ती न्यूनतम नमूने, उप-समुदा अनुपात और कॉलम नमूना अनुपात है। यह छह हाइपरपैरामीटर है। यदि प्रत्येक में 5 उचित मान हैं, तो ग्रिड में 5^6 = 15,625 संयोजन हैं। प्रत्येक को प्रशिक्षित करने में 10 सेकंड लगते हैं। यह सभी को आजमाने के लिए 43 घंटे का गणना है।
+आपके ग्रेडिएंट बूस्टिंग मॉडल में सीखने की दर, पेड़ों की संख्या, अधिकतम गहराई, प्रति पत्ती न्यूनतम नमूने, उप-सैंपल अनुपात और कॉलम नमूना अनुपात है। यह छह हाइपरपैरामीटर है। यदि प्रत्येक में 5 उचित मान हैं, तो ग्रिड में $5^6 = 15{,}625$प्रशिक्षण में 10 सेकंड लगते हैं, जो कि सभी को आज़माने के लिए 43 घंटे का कम्प्यूटिंग है।
 
 ग्रिड खोज स्पष्ट दृष्टिकोण है और पैमाने पर सबसे खराब है। यादृच्छिक खोज कम गणना के साथ बेहतर करती है। बीएशियन अनुकूलन पिछले मूल्यांकन से सीखने से और भी बेहतर करता है। कौन सी रणनीति का उपयोग करना है, और कौन से हाइपरपैरामीटर वास्तव में मायने रखते हैं, यह जानना जीपीयू समय के दिनों को बर्बाद करता है।
 
@@ -31,7 +31,7 @@
 | Learning rate | Step size per update | 0.001 to 1.0 |
 | Number of trees/epochs | How long to train | 10 to 10,000 |
 | Max depth | Model complexity | 1 to 30 |
-| Regularization (lambda) | Overfitting prevention | 0.0001 to 100 |
+| Regularization ($\lambda$) | Overfitting prevention | 0.0001 to 100 |
 | Batch size | Gradient estimation noise | 16 to 512 |
 | Dropout rate | Fraction of neurons dropped | 0.0 to 0.5 |
 
@@ -125,7 +125,7 @@ flowchart TD
 | Scheduler | Formula | When to use |
 |-----------|---------|-------------|
 | Step decay | Multiply by 0.1 every N epochs | Classic CNN training |
-| Cosine annealing | lr * 0.5 * (1 + cos(pi * t / T)) | Modern default |
+| Cosine annealing | $\text{lr} \cdot 0.5 \cdot (1 + \cos(\pi t / T))$ | Modern default |
 | Warmup + decay | Linear increase then cosine decay | Transformers |
 | One-cycle | Increase then decrease over one cycle | Fast convergence |
 | Reduce on plateau | Reduce by factor when metric stalls | Safe default |

@@ -62,8 +62,8 @@ flowchart TD
 
 एक विशेषता विचार करें जो 1000 नमूनों में से 999 के लिए 0.0 है. इसका भिन्नता शून्य के करीब है. कोई भी मॉडल वर्गों के बीच अंतर करने के लिए इसका उपयोग नहीं कर सकता है. इसे हटा दें।
 
-```
-variance(x) = mean((x - mean(x))^2)
+```math
+\text{variance}(x) = \text{mean}\bigl((x - \text{mean}(x))^2\bigr)
 ```
 
 एक सीमा निर्धारित करें (जैसे, 0.01) । इसके नीचे भिन्नता वाले प्रत्येक फीचर को छोड़ दें। यह लक्ष्य चर को देखने के बिना स्थिर या लगभग स्थिर फीचर्स को हटा देता है।
@@ -74,17 +74,17 @@ variance(x) = mean((x - mean(x))^2)
 
 ### परस्पर सूचना
 
-पारस्परिक सूचना यह मापती है कि विशेषता X के मूल्य को जानने से लक्ष्य Y के बारे में अनिश्चितता कम होती है।
+आपसी सूचना यह मापती है कि किसी विशेषता के मूल्य को कितना जाना जाता है $X$लक्ष्य के बारे में अनिश्चितता कम करता है $Y$. .
 
-```
-I(X; Y) = sum_x sum_y p(x, y) * log(p(x, y) / (p(x) * p(y)))
+```math
+I(X; Y) = \sum_x \sum_y p(x, y) \cdot \log \frac{p(x, y)}{p(x) \cdot p(y)}
 ```
 
-यदि X और Y स्वतंत्र हैं, p(x, y) = p(x) * p(y), तो लॉग शब्द शून्य है और I(X; Y) = 0. जितना अधिक X आपको Y के बारे में बताता है, उतना ही अधिक आपसी जानकारी है।
+यदि$X$और $Y$स्वतंत्र हैं,$p(x, y) = p(x) \cdot p(y)$, तो लॉग अवधि शून्य है और $I(X; Y) = 0$. . . अधिक से अधिक .$X$आपको बताता है $Y$, आपसी सूचना जितनी अधिक होगी।
 
 सहसंबंध के मुकाबले मुख्य लाभः आपसी जानकारी गैर-रेखीय संबंधों को कैप्चर करती है। एक विशेषता लक्ष्य के साथ शून्य सहसंबंध हो सकती है लेकिन उच्च आपसी जानकारी हो सकती है क्योंकि संबंध वर्ग या आवधिक है।
 
-निरंतर सुविधाओं के लिए, पहले डिब्बे में विवश करें (हिस्टोग्राम आधारित अनुमान) । डिब्बे की संख्या अनुमान को प्रभावित करती है - बहुत कम डिब्बे जानकारी खो देते हैं, बहुत अधिक डिब्बे शोर जोड़ते हैं। एक आम विकल्पः वर्ग ((एन) डिब्बे या स्टर्जेस का नियम (1 + लॉग2 ((एन)) ।
+निरंतर सुविधाओं के लिए, पहले डिब्बे में विवश करें (हिस्टोग्राम आधारित अनुमान) । डिब्बे की संख्या अनुमान को प्रभावित करती है - बहुत कम डिब्बे जानकारी खो देते हैं, बहुत अधिक डिब्बे शोर जोड़ते हैं। एक आम विकल्पः $\sqrt{n}$कंटेनर या स्टर्जेस का नियम ($1 + \log_2 n$) ।
 
 ```mermaid
 flowchart LR
@@ -116,14 +116,14 @@ flowchart TD
 
 आरएफई सुविधाओं के बीच बातचीत पर विचार करता है क्योंकि मॉडल सभी शेष सुविधाओं को एक साथ देखता है। एक सुविधा को हटाने से अन्य सुविधाओं का महत्व बदल जाता है। यह इसे फ़िल्टर तरीकों की तुलना में अधिक गहन बनाता है।
 
-लागतः आप मॉडल N को प्रशिक्षित करते हैं - लक्ष्य समय। 500 सुविधाओं और 10 के लक्ष्य के साथ, यह 490 प्रशिक्षण रन है। महंगे मॉडल के लिए, यह धीमा है। आप इसे गति से बढ़ा सकते हैं।
+लागतः आप मॉडल को प्रशिक्षित करते हैं $N - \text{target}$500 फीचर्स और 10 का लक्ष्य है, जो 490 प्रशिक्षण रन है। महंगे मॉडल के लिए, यह धीमा है। आप इसे गति से प्रति चरण कई फीचर्स को हटाने (जैसे, प्रत्येक राउंड में नीचे 10% को हटाने) कर सकते हैं।
 
 ### L1 (लासो) विनियमन
 
 L1 नियमितकरण हानि फ़ंक्शन के लिए भारों का निरपेक्ष मूल्य जोड़ता हैः
 
-```
-loss = prediction_error + alpha * sum(|w_i|)
+```math
+\text{loss} = \text{prediction\_error} + \alpha \cdot \sum \lvert w_i \rvert
 ```
 
 अल्फा पैरामीटर नियंत्रित करता है कि आक्रामक रूप से सुविधाओं का कटाई किया जाता है। उच्च अल्फा का मतलब है अधिक वजन ठीक शून्य के लिए जाना.
@@ -140,12 +140,10 @@ L1 पेनल्टी वजन स्थान में हीरा के
 
 निर्णय के पेड़ और उनके समूह (केंद्रित वन, ग्रेडिएंट बढ़ाना) स्वाभाविक रूप से विशेषताएं क्रमबद्ध करते हैं। प्रत्येक विभाजन अशुद्धता (वर्गीकरण के लिए गिनी या एंट्रोपी, विसंगति के लिए प्रतिगमन) को कम करता है। विशेषताएं जो अधिक अशुद्धता में कमी पैदा करती हैं, अधिक महत्वपूर्ण हैं।
 
-T पेड़ों के साथ एक यादृच्छिक जंगल के लिएः
+के साथ एक यादृच्छिक जंगल के लिए $T$पेड़
 
-```
-importance(feature_j) = (1/T) * sum over all trees of
-    sum over all nodes splitting on feature_j of
-        (n_samples * impurity_decrease)
+```math
+\text{importance}(\text{feature}_j) = \frac{1}{T} \sum_{\text{all trees}} \; \sum_{\text{all nodes splitting on } \text{feature}_j} (\text{n\_samples} \cdot \text{impurity\_decrease})
 ```
 
 यह प्रत्येक विशेषता के लिए एक सामान्य महत्व स्कोर देता है। यह गैर-रैखिक संबंधों और सुविधाओं के इंटरैक्शन को स्वचालित रूप से संभालता है।
@@ -524,7 +522,7 @@ sklearn संस्करणों में मजबूती (जैसे, 
 | Filter method | "Score features independently" | A feature selection approach that ranks features using a statistical measure without training a model, evaluating each feature in isolation |
 | Wrapper method | "Use the model to pick features" | A feature selection approach that evaluates feature subsets by training a model and using its performance as the selection criterion |
 | Embedded method | "The model selects features during training" | Feature selection that happens as part of model fitting, such as L1 regularization driving weights to zero |
-| Mutual information | "How much one variable tells you about another" | A measure of the reduction in uncertainty about Y given knowledge of X, capturing both linear and nonlinear dependencies |
+| Mutual information | "How much one variable tells you about another" | A measure of the reduction in uncertainty about $Y$ given knowledge of $X$, capturing both linear and nonlinear dependencies |
 | Recursive Feature Elimination | "Train, rank, prune, repeat" | An iterative wrapper method that trains a model, removes the least important feature(s), and repeats until a target count is reached |
 | L1 / Lasso regularization | "Penalty that kills features" | Adding the sum of absolute weight values to the loss function, which drives unimportant feature weights to exactly zero |
 | Variance threshold | "Remove constant features" | Dropping features whose variance across samples falls below a specified threshold, filtering out features that carry no information |

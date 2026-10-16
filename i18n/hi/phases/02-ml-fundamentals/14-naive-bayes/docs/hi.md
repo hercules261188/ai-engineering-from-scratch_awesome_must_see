@@ -30,8 +30,8 @@
 
 बेयज़ का प्रमेय सशर्त संभावनाओं को उलट देता हैः
 
-```
-P(class | features) = P(features | class) * P(class) / P(features)
+```math
+P(\text{class} \mid \text{features}) = \frac{P(\text{features} \mid \text{class}) \cdot P(\text{class})}{P(\text{features})}
 ```
 
 हम चाहते हैं`P(class | features)`-- एक दस्तावेज़ के वर्ग से संबंधित होने की संभावना उसके शब्दों को देखते हुए। हम इसे गणना कर सकते हैंः
@@ -43,15 +43,15 @@ P(class | features) = P(features | class) * P(class) / P(features)
 
 ### साफ़-साफ़ आजादी की धारणा
 
-कम्प्यूटिंग `P(features | class)`एक शब्दभंडार के साथ, आप एक अनुमान की जरूरत होगी वितरण पर 2 ^ 10,000 संभावित संयोजन. असंभव.
+कम्प्यूटिंग `P(features | class)`ठीक है, यह सभी विशेषताओं के संयुक्त संभावना का अनुमान लगाने की आवश्यकता है. 10,000 शब्दों के शब्दावली के साथ, आप पर एक वितरण का अनुमान लगाने की जरूरत होगी $2^{10{,}000}$संभव संयोजन. असंभव.
 
 साफ़ धारणा: प्रत्येक विशेषता वर्ग को देखते हुए सशर्त रूप से स्वतंत्र है।
 
-```
-P(w1, w2, ..., wn | class) = P(w1 | class) * P(w2 | class) * ... * P(wn | class)
+```math
+P(w_1, w_2, \ldots, w_n \mid \text{class}) = P(w_1 \mid \text{class}) \cdot P(w_2 \mid \text{class}) \cdots P(w_n \mid \text{class})
 ```
 
-एक असंभव संयुक्त वितरण के बजाय, आप अनुमान है n सरल प्रति विशेषता वितरण. प्रत्येक केवल एक गिनती की जरूरत है.
+एक असंभव संयुक्त वितरण के बजाय, आप अनुमान $n$प्रत्येक को केवल एक गणना की आवश्यकता है।
 
 यह धारणा स्पष्ट रूप से गलत है. "मशीन" और "लर्निंग" शब्द किसी भी दस्तावेज़ में स्वतंत्र नहीं हैं. लेकिन वर्गीकरणकर्ता को सटीक संभावना अनुमानों की आवश्यकता नहीं है। इसे सही रैंकिंग की आवश्यकता है - किस वर्ग में सबसे अधिक संभावना है। स्वतंत्रता परिकल्पना व्यवस्थित त्रुटियों को पेश करती है, लेकिन ये त्रुटियां सभी वर्गों को समान रूप से प्रभावित करती हैं, इसलिए रैंकिंग सही रहती है।
 
@@ -59,7 +59,7 @@ P(w1, w2, ..., wn | class) = P(w1 | class) * P(w2 | class) * ... * P(wn | class)
 
 तीन कारण:
 
-1. **Ranking over calibration.**वर्गीकरण केवल शीर्ष रैंक वर्ग सही होने की आवश्यकता है। भले ही P(स्पैम) = 0.99999 जब वास्तविक संभावना 0.7 है, तो भी वर्गीकरणकर्ता अभी भी स्पैम सही चुनता है। हमें सही संभावनाओं की आवश्यकता नहीं है। हमें सही विजेता की आवश्यकता है।
+1. **Ranking over calibration.**वर्गीकरण केवल शीर्ष रैंक वर्ग सही होने की आवश्यकता है।$P(\text{spam}) = 0.99999$जब वास्तविक संभावना 0.7 है, तो वर्गीकरणकर्ता अभी भी सही स्पैम चुनता है. हमें सही संभावनाओं की आवश्यकता नहीं है. हमें सही विजेता की आवश्यकता है।
 
 2. **High bias, low variance.**स्वतंत्रता परिकल्पना एक मजबूत पूर्व है। यह मॉडल को बहुत सीमित करता है, जो ओवरफिटिंग को रोकता है। सीमित प्रशिक्षण डेटा के साथ, एक मॉडल जो थोड़ा गलत है लेकिन स्थिर है, सैद्धांतिक रूप से सही है लेकिन बहुत अस्थिर है। यह कार्रवाई में पूर्वाग्रह-भिन्नता व्यापार है।
 
@@ -76,31 +76,33 @@ P(w1, w2, ..., wn | class) = P(w1 | class) * P(w2 | class) * ... * P(wn | class)
 - गैर-स्पैम ईमेल में 5 बार "फ्री" का उल्लेख है, 10 बार "पैसा" का उल्लेख है, 100 बार "मीटिंग" (115 कुल शब्द)
 - 40% ईमेल स्पैम हैं, 60% गैर-स्पैम हैं
 
-लैपलेस चिकनाई (अल्फा=1) के साथः
+लैपलेस चिकनाई के साथ ($\alpha=1$):
 
-```
-P(free | spam)    = (80 + 1) / (150 + 3) = 81/153 = 0.529
-P(money | spam)   = (60 + 1) / (150 + 3) = 61/153 = 0.399
-P(meeting | spam) = (10 + 1) / (150 + 3) = 11/153 = 0.072
-
-P(free | not-spam)    = (5 + 1) / (115 + 3) = 6/118 = 0.051
-P(money | not-spam)   = (10 + 1) / (115 + 3) = 11/118 = 0.093
-P(meeting | not-spam) = (100 + 1) / (115 + 3) = 101/118 = 0.856
+```math
+\begin{aligned}
+P(\text{free} \mid \text{spam}) &= (80 + 1) / (150 + 3) = 81/153 = 0.529 \\
+P(\text{money} \mid \text{spam}) &= (60 + 1) / (150 + 3) = 61/153 = 0.399 \\
+P(\text{meeting} \mid \text{spam}) &= (10 + 1) / (150 + 3) = 11/153 = 0.072 \\[6pt]
+P(\text{free} \mid \text{not-spam}) &= (5 + 1) / (115 + 3) = 6/118 = 0.051 \\
+P(\text{money} \mid \text{not-spam}) &= (10 + 1) / (115 + 3) = 11/118 = 0.093 \\
+P(\text{meeting} \mid \text{not-spam}) &= (100 + 1) / (115 + 3) = 101/118 = 0.856
+\end{aligned}
 ```
 
 नए ईमेल में शामिल हैंः "मुफ्त" (2 बार), "पैसा" (1 बार), "मीटिंग" (0 बार) ।
 
+```math
+\begin{aligned}
+\log P(\text{spam} \mid \text{email}) &= \log(0.4) + 2 \log(0.529) + 1 \log(0.399) + 0 \log(0.072) \\
+&= -0.916 + 2(-0.637) + (-0.919) + 0 \\
+&= -3.109 \\[6pt]
+\log P(\text{not-spam} \mid \text{email}) &= \log(0.6) + 2 \log(0.051) + 1 \log(0.093) + 0 \log(0.856) \\
+&= -0.511 + 2(-2.976) + (-2.375) + 0 \\
+&= -8.838
+\end{aligned}
 ```
-log P(spam | email) = log(0.4) + 2*log(0.529) + 1*log(0.399) + 0*log(0.072)
-                    = -0.916 + 2*(-0.637) + (-0.919) + 0
-                    = -3.109
 
-log P(not-spam | email) = log(0.6) + 2*log(0.051) + 1*log(0.093) + 0*log(0.856)
-                        = -0.511 + 2*(-2.976) + (-2.375) + 0
-                        = -8.838
-```
-
-स्पैम एक बड़े मार्जिन से जीतता है। दो बार दिखाई देने वाला शब्द "मुक्त" स्पैम के लिए मजबूत सबूत है। ध्यान दें कि "मीटिंग" नहीं दिखने से दोनों लॉग योग (0 * लॉग(पी)) में शून्य योगदान होता है - बहुपद NB में, अनुपस्थित शब्दों का कोई प्रभाव नहीं होता है। यह बर्नौली NB है जो स्पष्ट रूप से शब्द अनुपस्थिति का मॉडल है।
+स्पैम एक बड़े मार्जिन से जीतता है। दो बार "मुक्त" शब्द स्पैम के लिए मजबूत सबूत है। ध्यान दें कि "मीटिंग" नहीं दिखता है दोनों लॉग योगों में शून्य योगदान देता है ($0 \cdot \log P$) - बहुपद NB में, अनुपस्थित शब्दों का कोई प्रभाव नहीं होता है। यह Bernoulli NB है जो स्पष्ट रूप से शब्द अनुपस्थिति का मॉडल है।
 
 ### तीन प्रकार
 
@@ -110,8 +112,8 @@ log P(not-spam | email) = log(0.6) + 2*log(0.051) + 1*log(0.093) + 0*log(0.856)
 
 प्रत्येक विशेषता को एक गणना के रूप में मॉडल करें। पाठ डेटा के लिए सबसे अच्छा है जहां विशेषताएं शब्द आवृत्तियां या TF-IDF मान हैं।
 
-```
-P(word_i | class) = (count of word_i in class + alpha) / (total words in class + alpha * vocab_size)
+```math
+P(\text{word}_i \mid \text{class}) = \frac{\text{count of } \text{word}_i \text{ in class} + \alpha}{\text{total words in class} + \alpha \cdot \text{vocab\_size}}
 ```
 
 `alpha`यह संस्करण पाठ वर्गीकरण के लिए कार्यघड़ी है।
@@ -120,8 +122,8 @@ P(word_i | class) = (count of word_i in class + alpha) / (total words in class +
 
 मॉडल्स प्रत्येक विशेषता के रूप में एक सामान्य वितरण. निरंतर विशेषता के लिए सबसे अच्छा।
 
-```
-P(x_i | class) = (1 / sqrt(2 * pi * var)) * exp(-(x_i - mean)^2 / (2 * var))
+```math
+P(x_i \mid \text{class}) = \frac{1}{\sqrt{2 \pi \cdot \text{var}}} \cdot \exp\left(-\frac{(x_i - \text{mean})^2}{2 \cdot \text{var}}\right)
 ```
 
 प्रत्येक वर्ग को प्रत्येक विशेषता के लिए अपना औसत और भिन्नता मिलती है। यह तब अच्छा काम करता है जब विशेषताएं वास्तव में प्रत्येक वर्ग के भीतर एक बेल वक्र का पालन करती हैं।
@@ -130,8 +132,8 @@ P(x_i | class) = (1 / sqrt(2 * pi * var)) * exp(-(x_i - mean)^2 / (2 * var))
 
 प्रत्येक विशेषता को द्विआधारी (वर्तमान या अनुपस्थित) के रूप में मॉडल। लघु पाठ या द्विआधारी विशेषता वेक्टर के लिए सबसे अच्छा।
 
-```
-P(word_i | class) = (docs in class containing word_i + alpha) / (total docs in class + 2 * alpha)
+```math
+P(\text{word}_i \mid \text{class}) = \frac{\text{docs in class containing } \text{word}_i + \alpha}{\text{total docs in class} + 2 \alpha}
 ```
 
 मल्टीनोमीअल के विपरीत, बर्नौली स्पष्ट रूप से एक शब्द की अनुपस्थिति को दंडित करता है। यदि "मुक्त" आमतौर पर स्पैम में दिखाई देता है लेकिन इस ईमेल में अनुपस्थित है, तो बर्नौली इसे स्पैम के खिलाफ सबूत के रूप में गिनता है।
@@ -152,11 +154,11 @@ P(word_i | class) = (docs in class containing word_i + alpha) / (total docs in c
 
 लैप्लेस चिकनाई एक छोटी संख्या जोड़ती है `alpha`(आमतौर पर 1) प्रत्येक विशेषता संख्या के लिएः
 
-```
-P(word_i | class) = (count(word_i, class) + alpha) / (total_words_in_class + alpha * vocab_size)
+```math
+P(\text{word}_i \mid \text{class}) = \frac{\text{count}(\text{word}_i, \text{class}) + \alpha}{\text{total\_words\_in\_class} + \alpha \cdot \text{vocab\_size}}
 ```
 
-अल्फा = 1 के साथ, प्रत्येक शब्द को कम से कम एक छोटी संभावना मिलती है। एक परीक्षण ईमेल में दिखाई देने वाला शब्द "डिस्कोम्बोबुलेट" स्पैम संभावना को अब नहीं मारता है। चिकनाई की एक बेयसियन व्याख्या हैः यह शब्द वितरण पर एक समान डायरिचलेट को पहले रखने के बराबर है।
+के साथ$\alpha=1$एक परीक्षण ईमेल में दिखाई देने वाला शब्द "डिस्कॉम्बुलेट" अब स्पैम संभावना को मारता नहीं है। चिकनाई की एक बेयसियन व्याख्या हैः यह शब्द वितरण पर एक समान डायरिचलेट पहले रखने के बराबर है।
 
 उच्च अल्फा का अर्थ है मजबूत चिकनाई (अधिक समान वितरण) । निम्न अल्फा का अर्थ है कि मॉडल डेटा पर अधिक भरोसा करता है। अल्फा एक हाइपरपैरामीटर है जिसे आप ट्यून करते हैं।
 
@@ -175,8 +177,8 @@ P(word_i | class) = (count(word_i, class) + alpha) / (total_words_in_class + alp
 
 समाधानः लॉग स्पेस में काम करें। संभावनाओं को गुणा करने के बजाय, उनके लॉगरिदम जोड़ेंः
 
-```
-log P(class | x1, x2, ..., xn) = log P(class) + sum_i log P(xi | class)
+```math
+\log P(\text{class} \mid x_1, x_2, \ldots, x_n) = \log P(\text{class}) + \sum_i \log P(x_i \mid \text{class})
 ```
 
 यह भविष्यवाणी को एक डॉट उत्पाद में बदल देता हैः
@@ -194,7 +196,7 @@ prediction = argmax(log_scores)
 
 | Aspect | Naive Bayes | Logistic Regression |
 |--------|------------|-------------------|
-| Type | Generative (models P(X\|Y)) | Discriminative (models P(Y\|X)) |
+| Type | Generative (models $P(X \mid Y){}$) | Discriminative (models $P(Y \mid X){}$) |
 | Training | Count frequencies | Optimize loss function |
 | Small data | Better (strong prior helps) | Worse (not enough to estimate weights) |
 | Large data | Worse (wrong assumption hurts) | Better (flexible boundary) |
@@ -221,8 +223,8 @@ flowchart LR
 
 व्यावहारिक रूप से, हम लॉग स्थान में काम करते हैं फ्लोटिंग पॉइंट अंडरफ्लो से बचने के लिए। कई छोटी संभावनाओं को गुणा करने के बजाय, हम उनके लॉगरिदम जोड़ते हैंः
 
-```
-log P(class | features) = log P(class) + sum_i log P(feature_i | class)
+```math
+\log P(\text{class} \mid \text{features}) = \log P(\text{class}) + \sum_i \log P(\text{feature}_i \mid \text{class})
 ```
 
 ```figure
@@ -239,7 +241,7 @@ naive-bayes
 
 1. **fit(X, y)**: प्रत्येक वर्ग के लिए, प्रत्येक विशेषता की आवृत्ति गिनें। लैपलेस चिकनाई जोड़ें। लॉग संभावनाओं की गणना करें। वर्ग पूर्ववर्ती (वर्ग आवृत्तियों का लॉग) स्टोर करें।
 
-2. **predict_log_proba(X)**: प्रत्येक नमूना के लिए, गणना लॉग P(वर्ग) + लॉग P(विशेषता_i वर्ग) के योग के लिए सभी वर्गों के लिए. यह एक मैट्रिक्स गुणांक हैः X @ log_probs.T + log_priors.
+2. **predict_log_proba(X)**: प्रत्येक नमूना के लिए गणना करें $\log P(\text{class})$+ राशि $\log P(\text{feature}_i \mid \text{class})$सभी वर्गों के लिए. यह एक मैट्रिक्स गुणा हैः X @ log_probs.T + log_priors.
 
 3. **predict(X)**: उच्चतम लॉग संभावना के साथ वर्ग लौटाएं।
 
@@ -312,9 +314,9 @@ class GaussianNB:
 
 ### भविष्यवाणी गति
 
-बेयज़ की साफ़ भविष्यवाणी एक मैट्रिक्स गुणा है। d गुणों और k वर्गों वाले n नमूनों के लिएः
-- बहुपदNB: एक मैट्रिक्स गुणा (n x d) @ (d x k) = O(n * d * k)
-- GaussianNB: n * k Gaussian PDF मूल्यांकन, प्रत्येक d सुविधाओं = O(n * d * k)
+बेयज़ की साफ़ भविष्यवाणी मैट्रिक्स गुणा है।$n$$d$विशेषताएं और $k$वर्गः
+- बहुपदNB: एक मैट्रिक्स गुणा $(n \times d) \mathbin{@} (d \times k) = O(n \cdot d \cdot k)$
+- गौशियनNB: $n \cdot k$गौशियन पीडीएफ मूल्यांकन, प्रत्येक ओवर $d$विशेषताएँ = $O(n \cdot d \cdot k)$
 
 दोनों प्रत्येक आयाम में रैखिक हैं। इसे KNN (जिसके लिए सभी प्रशिक्षण बिंदुओं तक दूरी गणना की आवश्यकता होती है) या RBF कर्नेल (जिसके लिए सभी समर्थन वेक्टरों के खिलाफ कर्नेल मूल्यांकन की आवश्यकता होती है) के साथ SVM की तुलना करें। भविष्यवाणी समय में NB परिमाण के आदेशों द्वारा तेज़ है।
 
@@ -387,7 +389,7 @@ text_clf = Pipeline([
 
 ### कालीब्रेशन NB संभावनाएं
 
-NB संभावनाएं खराब रूप से मापने योग्य हैं। जब NB कहता है कि P(स्पैम) = 0.95, वास्तविक संभावना 0.7 हो सकती है। यदि आपको विश्वसनीय संभावना अनुमानों की आवश्यकता है (उदाहरण के लिए, एक सीमा निर्धारित करने या अन्य मॉडल के साथ संयोजन करने के लिए), sklearn के मापने योग्य वर्गीकरणCV का उपयोग करेंः
+NB संभावनाओं खराब रूप से माप रहे हैं. जब NB कहते हैं$P(\text{spam}) = 0.95$यदि आपको विश्वसनीय संभावना अनुमानों की आवश्यकता है (उदाहरण के लिए, एक सीमा निर्धारित करने या अन्य मॉडल के साथ संयोजन करने के लिए), sklearn के CalibratedClassifierCV का उपयोग करेंः
 
 ```python
 from sklearn.calibration import CalibratedClassifierCV
@@ -405,7 +407,7 @@ proba = calibrated_nb.predict_proba(X_test)
 
 2. **Zero variance features.**GaussianNB भिन्नता के अनुसार विभाजित होता है। यदि किसी विशेषता में एक वर्ग के लिए शून्य भिन्नता होती है (सभी मान समान होते हैं), तो संभावना गणना टूट जाती है। कोड इस स्थिति को रोकने के लिए सभी भिन्नताओं में एक छोटा चिकनाई शब्द (1e-9) जोड़ता है।
 
-3. **Class imbalance.**यदि 99% ईमेल गैर-स्पैम हैं, तो पूर्व P(न-स्पैम) = 0.99 इतना मजबूत है कि यह संभावना साक्ष्य को जबरदस्त करता है। आप वर्ग पूर्वानुमान मैन्युअल रूप से सेट कर सकते हैं या sklearn में वर्ग_पूर्व पैरामीटर का उपयोग कर सकते हैं।
+3. **Class imbalance.**यदि 99% ईमेल स्पैम नहीं हैं, तो पूर्व$P(\text{not-spam}) = 0.99$आप वर्ग पूर्व निर्धारित कर सकते हैं या sklearn में वर्ग_पूर्व पैरामीटर का उपयोग कर सकते हैं।
 
 4. **Feature scaling.**मल्टीनोमीअल एनबी को स्केलिंग की आवश्यकता नहीं है (यह गिनती पर काम करता है) । गौशियन एनबी को भी स्केलिंग की आवश्यकता नहीं है (यह प्रति विशेषता सांख्यिकी का अनुमान लगाता है) । यह लॉजिस्टिक रेग्रेशन और एसवीएम के मुकाबले एक लाभ है, जो सुविधाओं के पैमाने के प्रति संवेदनशील हैं।
 
@@ -431,7 +433,7 @@ NB विफलता तब होती है जब स्वतंत्र
 
 1. **Smoothing experiment.**0.01, 0.1, 1.0, 10.0, और 100.0 के अल्फा मानों के साथ पाठ डेटा पर मल्टीनोमीअलएनबी को प्रशिक्षित करें। प्लॉट सटीकता बनाम अल्फा। प्रदर्शन का शिखर कहां है? बहुत उच्च अल्फा क्यों चोट करता है?
 
-2. **Feature independence test.**एक वास्तविक पाठ डेटासेट लें. दो शब्दों को चुनें जो स्पष्ट रूप से सहसंबंधित हैं ("मशीन" और "शिक्षा") गणना P  word1  वर्ग * P  word2  वर्ग) और तुलना P  word1 और word2  वर्ग के साथ. कितना गलत है स्वतंत्रता परिकल्पना? यह वर्गीकरण की सटीकता को प्रभावित करता है?
+2. **Feature independence test.**एक वास्तविक पाठ डेटासेट लें। दो शब्दों का चयन करें जो स्पष्ट रूप से संबद्ध हैं ("मशीन" और "शिक्षा") । गणना $P(\text{word}_1 \mid \text{class}) \cdot P(\text{word}_2 \mid \text{class})$और तुलना करें $P(\text{word}_1 \text{ AND } \text{word}_2 \mid \text{class})$क्या यह वर्गीकरण की सटीकता को प्रभावित करता है?
 
 3. **Bernoulli implementation.**एक BernoulliNB वर्ग के साथ कोड का विस्तार करें. शब्द के बैग को बाइनरी (वर्तमान / अनुपस्थित) में परिवर्तित करें और पाठ डेटा पर मल्टीनोमीअलएनबी के साथ सटीकता की तुलना करें। Bernoulli कब जीतता है?
 
@@ -444,14 +446,14 @@ NB विफलता तब होती है जब स्वतंत्र
 | Term | What people say | What it actually means |
 |------|----------------|----------------------|
 | Naive Bayes | "Simple probabilistic classifier" | A classifier that applies Bayes' theorem with the assumption that features are conditionally independent given the class |
-| Conditional independence | "Features don't affect each other" | P(A, B \| C) = P(A \| C) * P(B \| C) -- knowing B tells you nothing new about A once you know C |
+| Conditional independence | "Features don't affect each other" | $P(A, B \mid C) = P(A \mid C) \cdot P(B \mid C)$ -- knowing $B$ tells you nothing new about $A$ once you know $C$ |
 | Laplace smoothing | "Add-one smoothing" | Adding a small count to every feature to prevent zero probabilities from dominating the prediction |
-| Prior | "What you believed before seeing data" | P(class) -- the probability of each class before observing any features |
-| Likelihood | "How well the data fits" | P(features \| class) -- the probability of observing these features if the class is known |
-| Posterior | "What you believe after seeing data" | P(class \| features) -- the updated probability of the class after observing the features |
-| Generative model | "Models how data is generated" | A model that learns P(X \| Y) and P(Y), then uses Bayes' theorem to get P(Y \| X) |
-| Discriminative model | "Models the decision boundary" | A model that directly learns P(Y \| X) without modeling how X is generated |
-| Log probability | "Avoid underflow" | Working with log P instead of P to prevent the product of many small numbers from becoming zero in floating point |
+| Prior | "What you believed before seeing data" | $P(\text{class})$ -- the probability of each class before observing any features |
+| Likelihood | "How well the data fits" | $P(\text{features} \mid \text{class})$ -- the probability of observing these features if the class is known |
+| Posterior | "What you believe after seeing data" | $P(\text{class} \mid \text{features})$ -- the updated probability of the class after observing the features |
+| Generative model | "Models how data is generated" | A model that learns $P(X \mid Y)$ and $P(Y)$, then uses Bayes' theorem to get $P(Y \mid X)$ |
+| Discriminative model | "Models the decision boundary" | A model that directly learns $P(Y \mid X)$ without modeling how $X$ is generated |
+| Log probability | "Avoid underflow" | Working with $\log P$ instead of $P$ to prevent the product of many small numbers from becoming zero in floating point |
 
 ## आगे पढ़ना
 

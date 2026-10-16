@@ -81,11 +81,11 @@ flowchart TB
     Fold5 --> R
 ```
 
-1. समान आकार के K फोल्ड में डेटा विभाजित करें
-2. प्रत्येक तह के लिए, K-1 तह पर ट्रेन करें और शेष तह पर सत्यापित करें
-3. K सत्यापन स्कोर का औसत
+1. डेटा को विभाजित करें $K$समान आकार के फोल्ड
+2. प्रत्येक पंक्ति के लिए, ट्रेन पर $K-1$फोल्ड और शेष फोल्ड पर मान्य करें
+3. औसतन $K$सत्यापन स्कोर
 
-K=5 या K=10 मानक विकल्प हैं। प्रत्येक डेटा बिंदु को सत्यापन के लिए ठीक एक बार उपयोग किया जाता है। औसत स्कोर किसी भी एकल विभाजन की तुलना में अधिक स्थिर अनुमान है।
+$K=5$या $K=10$प्रत्येक डेटा बिंदु को सत्यापन के लिए एक बार उपयोग किया जाता है. औसत स्कोर किसी भी एकल विभाजन की तुलना में एक अधिक स्थिर अनुमान है.
 
 **Stratified K-fold**यदि आपका डेटासेट 70% वर्ग ए और 30% वर्ग बी है, तो प्रत्येक गुना में लगभग समान अनुपात होगा। यह असंतुलित डेटासेट के लिए महत्वपूर्ण है जहां एक यादृच्छिक विभाजन सभी अल्पसंख्यक नमूनों को एक गुना में डाल सकता है।
 
@@ -100,18 +100,18 @@ K=5 या K=10 मानक विकल्प हैं। प्रत्य�
 
 इस मैट्रिक्स से, अन्य सभी माप निम्नलिखित हैंः
 
-- **Accuracy**= (TP + TN) / (TP + TN + FP + FN) सही भविष्यवाणियों का अंश। कक्षाओं में असंतुलन होने पर भ्रामक।
-- **Precision**= टीपी / (टीपी + एफपी) । सभी भविष्यवाणी की गई चीजों में से कितने वास्तव में सकारात्मक थे? जब झूठे सकारात्मक महंगे होते हैं (जैसे, स्पैम फ़िल्टर वास्तविक ईमेल को स्पैम के रूप में चिह्नित करता है) का उपयोग करें।
-- **Recall**(संवेदनशीलता) = टीपी / (टीपी + एफएन) सभी वास्तविक सकारात्मकताओं में से, हमने कितने पकड़े? जब झूठे नकारात्मक लागत वाले होते हैं (जैसे, कैंसर स्क्रीनिंग में ट्यूमर गायब होता है) उपयोग करें।
-- **F1 score**= 2 * सटीकता * याद / (सटीकता + याद) सटीकता और याद का सामंजस्यपूर्ण औसत। दोनों को संतुलित करता है जब स्पष्ट रूप से कोई भी प्रभुत्व नहीं रखता है।
+- **Accuracy**= $(TP + TN) / (TP + TN + FP + FN)$सही भविष्यवाणियों का एक अंश, गलत है जब वर्ग असंतुलित हैं।
+- **Precision**= $TP / (TP + FP)$. सभी चीजों में से कितने वास्तव में सकारात्मक थे? जब गलत सकारात्मक लागत है (जैसे, स्पैम फिल्टर वास्तविक ईमेल को स्पैम के रूप में चिह्नित करता है) का उपयोग करें।
+- **Recall**(संवेदनशीलता) = $TP / (TP + FN)$. सभी वास्तविक सकारात्मकताओं में से, हमने कितने पकड़े? जब झूठे नकारात्मक लागतें महंगी हों (जैसे, कैंसर स्क्रीनिंग में ट्यूमर की कमी होती है) ।
+- **F1 score**= $2 \cdot \text{precision} \cdot \text{recall} / (\text{precision} + \text{recall})$. सटीकता और याद करने का सामंजस्यपूर्ण साधन. दोनों को संतुलित करता है जब स्पष्ट रूप से कोई भी प्रभुत्व नहीं करता है.
 - **AUC-ROC**: रिसीवर ऑपरेटिंग कैरेक्टेरिस्टिक वक्र के तहत क्षेत्र। विभिन्न वर्गीकरण सीमाओं पर सच्ची सकारात्मक दर बनाम झूठी सकारात्मक दर का पता लगाता है। AUC = 0.5 का अर्थ है यादृच्छिक अनुमान, AUC = 1.0 का अर्थ है सही अलगाव। सीमा-स्वतंत्रः यह मापता है कि मॉडल नकारात्मक से ऊपर सकारात्मक को कितनी अच्छी तरह से रैंक करता है, चाहे आप किस कटऑफ का चयन करें।
 
 ### प्रतिगमन माप
 
-- **MSE**(मीडियन स्क्वायर त्रुटि) = mean((y_true - y_pred) ^ 2). बड़े त्रुटियों को quadratically दंडित करता है। असाधारण के प्रति संवेदनशील।
-- **RMSE**(रूट मीड स्क्वायर त्रुटि) = sqrt(MSE) लक्ष्य चर के समान इकाइयां। एमएसई की तुलना में व्याख्या करना आसान है।
-- **MAE**(मध्यम पूर्ण त्रुटि) = औसत y_true - y_pred ) सभी त्रुटियों को रैखिक रूप से व्यवहार करता है। एमएसई की तुलना में अधिक मजबूत से असाधारण।
-- **R-squared**= 1 - SS_res / SS_tot, जहां SS_res = योगफल((y_true - y_pred) ^2) और SS_tot = योगफल(((y_true - y_mean) ^2) । मॉडल द्वारा समझाए गए भिन्नता का अंश। R^2 = 1.0 एकदम सही है। R^2 = 0.0 का अर्थ है कि मॉडल हमेशा औसत की भविष्यवाणी करने से बेहतर नहीं है। R^2 नकारात्मक हो सकता है यदि मॉडल औसत से बदतर है।
+- **MSE**(मध्यम वर्ग त्रुटि) = $\text{mean}((y_{\text{true}} - y_{\text{pred}})^2)$. बड़े त्रुटियों को चौतरफा दंडित करता है.
+- **RMSE**(रूट मीड स्क्वायर त्रुटि) = $\sqrt{\text{MSE}}$. लक्ष्य चर के समान इकाइयों. एमएसई की तुलना में व्याख्या करने में आसान.
+- **MAE**(मध्यम पूर्ण त्रुटि) = $\text{mean}(\lvert y_{\text{true}} - y_{\text{pred}} \rvert)$. सभी त्रुटियों को रैखिक रूप से संभालता है. एमएसई की तुलना में अधिक मजबूत से असाधारण।
+- **R-squared**= $1 - SS_{\text{res}} / SS_{\text{tot}}$, जहां $SS_{\text{res}} = \sum (y_{\text{true}} - y_{\text{pred}})^2$और $SS_{\text{tot}} = \sum (y_{\text{true}} - y_{\text{mean}})^2$. मॉडल द्वारा समझाए गए भिन्नता का अंश। $R^2 = 1.0$यह सही है।$R^2 = 0.0$इसका मतलब है कि मॉडल हमेशा औसत का अनुमान लगाने से बेहतर नहीं है। $R^2$यदि मॉडल औसत से बदतर है तो यह नकारात्मक हो सकता है।
 
 ### सीखने की वक्रता
 
@@ -664,10 +664,10 @@ scores = cross_val_score(model, X, y, cv=StratifiedKFold(5), scoring="f1")
 |------|----------------|----------------------|
 | Overfitting | "Memorizing the training data" | The model captures noise in the training data, performing well on training but poorly on unseen data |
 | Cross-validation | "Testing on different subsets" | Systematically rotating which portion of data is used for validation, averaging results across all rotations |
-| Precision | "How many predicted positives are correct" | TP / (TP + FP): the fraction of positive predictions that are actually positive |
-| Recall | "How many actual positives we found" | TP / (TP + FN): the fraction of actual positives that were correctly identified |
+| Precision | "How many predicted positives are correct" | $TP / (TP + FP)$: the fraction of positive predictions that are actually positive |
+| Recall | "How many actual positives we found" | $TP / (TP + FN)$: the fraction of actual positives that were correctly identified |
 | AUC-ROC | "How well the model separates classes" | The area under the curve of true positive rate vs false positive rate across all thresholds, from 0.5 (random) to 1.0 (perfect) |
-| R-squared | "How much variance is explained" | 1 - (sum of squared residuals / total sum of squares): the fraction of target variance captured by the model |
+| R-squared | "How much variance is explained" | $1 - (\text{sum of squared residuals} / \text{total sum of squares})$: the fraction of target variance captured by the model |
 | Data leakage | "The model cheated" | Using information during training that would not be available at prediction time, leading to optimistic evaluation |
 | Learning curve | "How performance changes with more data" | A plot of training and validation scores vs training set size, revealing underfitting or overfitting |
 | Stratified split | "Keeping class ratios balanced" | Splitting data so each subset has the same proportion of each class as the full dataset |

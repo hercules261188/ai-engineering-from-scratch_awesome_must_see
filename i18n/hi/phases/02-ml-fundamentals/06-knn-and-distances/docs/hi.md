@@ -56,12 +56,12 @@ K एकल हाइपरमैटर है। यह पूर्वाग�
 
 | K | Behavior |
 |---|----------|
-| K = 1 | Decision boundary follows every point. Zero training error. High variance. Overfits |
+| $K = 1$ | Decision boundary follows every point. Zero training error. High variance. Overfits |
 | Small K (3-5) | Sensitive to local structure. Can capture complex boundaries |
 | Large K | Smoother boundaries. More robust to noise. May underfit |
-| K = N | Predicts the majority class for every point. Maximum bias |
+| $K = N$ | Predicts the majority class for every point. Maximum bias |
 
-एक सामान्य प्रारंभिक बिंदु N बिंदुओं के डेटासेट के लिए K = sqrt(N है। बाइनरी वर्गीकरण के लिए बाइनरी वर्गीकरण के लिए क्यारी का उपयोग करें।
+एक आम प्रारंभिक बिंदु है $K = \sqrt{N}$ के एक डेटासेट के लिए$N$अंक। बाइनरी वर्गीकरण के लिए विषम K का उपयोग करें संबंध से बचने के लिए।
 
 ```mermaid
 graph LR
@@ -83,32 +83,33 @@ graph LR
 
 **L2 (Euclidean)**यह डिफ़ॉल्ट है। सीधी रेखा की दूरी।
 
-```
-d(a, b) = sqrt(sum((a_i - b_i)^2))
+```math
+d(a, b) = \sqrt{\sum_i (a_i - b_i)^2}
 ```
 
 फीचर स्केल के प्रति संवेदनशील। KNN के साथ L2 का उपयोग करने से पहले हमेशा फीचर्स को मानकीकृत करें।
 
 **L1 (Manhattan)**यह L2 की तुलना में अप्रासंगिकता के लिए अधिक मजबूत है क्योंकि यह अंतरों को वर्ग नहीं करता है।
 
-```
-d(a, b) = sum(|a_i - b_i|)
+```math
+d(a, b) = \sum_i \lvert a_i - b_i \rvert
 ```
 
 **Cosine distance**पाठ और डेटा एम्बेडिंग के लिए आवश्यक।
 
-```
-d(a, b) = 1 - (a . b) / (||a|| * ||b||)
+```math
+d(a, b) = 1 - \frac{a \cdot b}{\lVert a \rVert \, \lVert b \rVert}
 ```
 
-**Minkowski**पैरामीटर p के साथ L1 और L2 को सामान्य करता है।
+**Minkowski**पैरामीटर के साथ L1 और L2 को सामान्य बनाता है $p$. .
 
-```
-d(a, b) = (sum(|a_i - b_i|^p))^(1/p)
-
-p=1: Manhattan
-p=2: Euclidean
-p->inf: Chebyshev (max absolute difference)
+```math
+\begin{aligned}
+& d(a, b) = \left( \sum_i \lvert a_i - b_i \rvert^p \right)^{1/p} \\[6pt]
+& p=1\text{: Manhattan} \\
+& p=2\text{: Euclidean} \\
+& p \to \infty\text{: Chebyshev (max absolute difference)}
+\end{aligned}
 ```
 
 कौन सा मीट्रिक उपयोग करना है, डेटा पर निर्भर करता हैः
@@ -127,14 +128,15 @@ p->inf: Chebyshev (max absolute difference)
 
 **Distance-weighted KNN**प्रत्येक पड़ोसी को दूरी से विपरीत रूप से वजन करता हैः
 
+```math
+\begin{aligned}
+& \text{weight}_i = \frac{1}{\text{distance}_i + \epsilon} \\[6pt]
+& \text{For classification: weighted vote} \\
+& \text{For regression: weighted average} = \frac{\sum_i w_i y_i}{\sum_i w_i}
+\end{aligned}
 ```
-weight_i = 1 / (distance_i + epsilon)
 
-For classification: weighted vote
-For regression:     weighted average = sum(w_i * y_i) / sum(w_i)
-```
-
-ईप्सिलन शून्य से विभाजन को रोकता है जब एक क्वेरी बिंदु प्रशिक्षण बिंदु से बिल्कुल मेल खाता है।
+$\epsilon$शून्य से विभाजन को रोकता है जब एक क्वेरी बिंदु प्रशिक्षण बिंदु से बिल्कुल मेल खाता है।
 
 वजनदार KNN K के विकल्प के प्रति कम संवेदनशील है क्योंकि दूर के पड़ोसियों का योगदान बहुत कम होता है।
 
@@ -162,7 +164,7 @@ When all distances are nearly equal, "nearest" is meaningless.
 
 ### KD-वृक्ष: निकटतम पड़ोसी की त्वरित खोज
 
-क्रूर-फोर्स KNN क्वेरी से प्रत्येक प्रशिक्षण बिंदु तक की दूरी की गणना करता है। यह प्रति क्वेरी O(n * d) है। बड़े डेटा सेट के लिए, यह बहुत धीमा है।
+क्रूर बल KNN प्रत्येक प्रशिक्षण बिंदु तक क्वेरी से दूरी की गणना करता है।$O(n \cdot d)$बड़े डेटा सेट के लिए, यह बहुत धीमा है.
 
 एक KD-tree रिकर्सिव रूप से स्पेस को फीचर अक्षों के साथ विभाजित करता है। प्रत्येक स्तर पर, यह मध्य मान पर एक आयाम के साथ विभाजित होता है।
 
@@ -178,7 +180,7 @@ graph TD
 
 निकटतम पड़ोसी को खोजने के लिए, पेड़ से उस पत्ती तक पार करें जिसमें प्रश्न है, फिर पीछे की ओर और पड़ोसी विभाजन की जांच करें केवल यदि वे निकटतम बिंदुओं को शामिल कर सकते हैं।
 
-औसत क्वेरी समयः कम आयामों के लिए O(log n) । लेकिन KD-tree उच्च आयामों (d > 20) में O(n) तक गिरावट आती है क्योंकि बैकट्रैकिंग कम और कम शाखाओं को समाप्त करता है।
+औसत क्वेरी समयः $O(\log n)$कम आयामों के लिए. लेकिन KD-वृक्षों को गिरावट करने के लिए$O(n)$उच्च आयामों में ($d > 20$) क्योंकि पीछे हटने से कम से कम शाखाएं समाप्त हो जाती हैं।
 
 ### गेंद के पेड़ः मध्यम आयामों के लिए बेहतर
 
@@ -197,8 +199,8 @@ KNN एक आलसी छात्र हैः यह प्रशिक्�
 
 | Aspect | Lazy (KNN) | Eager (SVM, neural net) |
 |--------|------------|------------------------|
-| Training time | O(1) just store data | O(n * epochs) |
-| Prediction time | O(n * d) per query | O(d) or O(parameters) |
+| Training time | $O(1)$ just store data | $O(n \cdot \text{epochs})$ |
+| Prediction time | $O(n \cdot d)$ per query | $O(d)$ or $O(\text{parameters})$ |
 | Memory at prediction | Store entire training set | Store model parameters only |
 | Adapts to new data | Add points instantly | Retrain the model |
 | Decision boundary | Implicit, computed on the fly | Explicit, fixed after training |
@@ -213,12 +215,12 @@ KNN एक आलसी छात्र हैः यह प्रशिक्�
 
 बहुमत के मतदान के बजाय, प्रतिगमन के लिए KNN K पड़ोसियों के लक्ष्य मानों का औसत बनाता है।
 
-```
-prediction = (1/K) * sum(y_i for i in K nearest neighbors)
-
-Or with distance weighting:
-prediction = sum(w_i * y_i) / sum(w_i)
-where w_i = 1 / distance_i
+```math
+\begin{aligned}
+& \text{prediction} = \frac{1}{K} \sum_{i \in K \text{ nearest neighbors}} y_i \\[6pt]
+& \text{Or with distance weighting:} \\
+& \text{prediction} = \frac{\sum_i w_i y_i}{\sum_i w_i} \quad \text{where } w_i = \frac{1}{\text{distance}_i + \epsilon}
+\end{aligned}
 ```
 
 KNN रेग्रेसशन टुकड़ा-साधक (या टुकड़ा-साधक वजन के साथ) भविष्यवाणियां उत्पन्न करता है। यह प्रशिक्षण डेटा की सीमा से परे एक्सट्रापोलेट नहीं कर सकता है। यदि प्रशिक्षण लक्ष्य सभी 0 से 100 के बीच हैं, तो KNN 200 की भविष्यवाणी कभी नहीं करेगा।
@@ -345,7 +347,7 @@ distances, indices = index.search(query_vectors, k=5)
 
 ## व्यायाम
 
-1. 3 वर्गों के साथ 2D डेटासेट पर KNN वर्गीकरण लागू करें। K=1, K=5, K=15, और K=N के लिए निर्णय सीमा का पता लगाएं। ओवरफिटिंग से अंडरफिटिंग में संक्रमण का निरीक्षण करें।
+1. 3 वर्गों के साथ 2D डेटासेट पर KNN वर्गीकरण लागू करें।$K=1$,$K=5$,$K=15$और $K=N$. अति-अनुकूलन से अधूरे-अनुकूलन में बदलाव का अवलोकन करें।
 
 2. 2, 5, 10, 50, 100, और 500 आयामों में 1000 यादृच्छिक बिंदु उत्पन्न करें। प्रत्येक आयाम के लिए, अधिकतम जोड़ी दूरी के अनुपात को न्यूनतम जोड़ी दूरी के अनुपात की गणना करें। आयाम के शाप को दृश्यमान बनाने के लिए अनुपात बनाम आयाम का ग्राफ करें।
 
@@ -353,7 +355,7 @@ distances, indices = index.search(query_vectors, k=5)
 
 4. 2D, 10D, और 50D में 1k, 10k, और 100k बिंदुओं के डेटा सेट के लिए एक KD-tree को लागू करें और क्वेरी समय बनाम क्रूर बल को मापें। किस आयाम पर KD-tree क्रूर बल से तेज होना बंद कर देता है?
 
-5. y = sin(x) + शोर के लिए एक भारित KNN रेग्रेसर बनाएं। इसे K=3, 10, 30 के लिए गैर-वेट किए गए KNN के साथ तुलना करें। दिखाएं कि वजन अधिक चिकनी भविष्यवाणियां उत्पन्न करता है, खासकर बड़े K के लिए।
+5.  के लिए एक भारित KNN रेग्रेसर का निर्माण करें$y = \sin(x) + \text{noise}$. इसे KNN के लिए अनवज़न के साथ तुलना करें$K=3, 10, 30$. दिखाएं कि वजन से अधिक सुचारू भविष्यवाणियां होती हैं, विशेष रूप से बड़े K के लिए।
 
 ## प्रमुख शर्तें
 
@@ -363,14 +365,14 @@ distances, indices = index.search(query_vectors, k=5)
 | Lazy learning | No computation at training time. All work happens at prediction time. KNN is the canonical example |
 | Eager learning | Heavy computation at training time to build a compact model. Most ML algorithms are eager |
 | Curse of dimensionality | In high dimensions, distances converge and neighborhoods expand to cover most of the space, making KNN ineffective |
-| KD-tree | Binary tree that recursively partitions space along feature axes. O(log n) queries in low dimensions |
+| KD-tree | Binary tree that recursively partitions space along feature axes. $O(\log n)$ queries in low dimensions |
 | Ball tree | Tree of nested hyperspheres. Works better than KD-trees in moderate dimensions (up to ~50) |
 | Weighted KNN | Neighbors weighted inversely by distance. Closer neighbors have more influence on the prediction |
 | Feature scaling | Normalizing features to comparable ranges. Required for distance-based methods like KNN |
 | Majority vote | Classification by counting which class is most common among K neighbors |
-| Brute force search | Computing distance to every training point. O(n*d) per query. Exact but slow for large n |
+| Brute force search | Computing distance to every training point. $O(n \cdot d)$ per query. Exact but slow for large $n$ |
 | Approximate nearest neighbor | Algorithms (HNSW, LSH, IVF) that find approximately nearest points much faster than exact search |
-| Voronoi diagram | The partition of space where each region contains all points closer to one training point than any other. K=1 KNN produces Voronoi boundaries |
+| Voronoi diagram | The partition of space where each region contains all points closer to one training point than any other. $K=1$ KNN produces Voronoi boundaries |
 
 ## आगे पढ़ना
 

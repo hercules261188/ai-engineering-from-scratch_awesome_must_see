@@ -24,10 +24,10 @@
 
 ### क्यों समूह काम करते हैं
 
-मान लीजिए आपके पास N स्वतंत्र वर्गीकरणकर्ता हैं, जिनमें से प्रत्येक की सटीकता p > 0.5 है। बहुमत की सटीकता हैः
+मान लीजिए कि आपके पास है$N$स्वतंत्र वर्गीकरणकर्ता, प्रत्येक सटीकता के साथ $p > 0.5$बहुमत की मतदाना सटीकता हैः
 
-```
-P(majority correct) = sum over k > N/2 of C(N,k) * p^k * (1-p)^(N-k)
+```math
+P(\text{majority correct}) = \sum_{k > N/2} \binom{N}{k} p^k (1-p)^{N-k}
 ```
 
 21 वर्गीकरणकर्ताओं के लिए प्रत्येक 60% सटीकता के साथ, बहुमत वोट सटीकता लगभग 74% है। 101 वर्गीकरणकर्ताओं के साथ, यह 84% तक बढ़ जाता है। मॉडल विभिन्न गलतियों को करते समय त्रुटियों को रद्द कर देता है।
@@ -132,7 +132,7 @@ AdaBoost (अनुकूली बूस्टिंग) पहला व्य
 3. Final prediction: F_T(x)
 ```
 
-वर्ग त्रुटि हानि के लिए, छद्म-अवशिष्ट केवल वास्तविक अवशिष्ट हैंः `r_i = y_i - F_{t-1}(x_i)`प्रत्येक पेड़ सचमुच पिछले समूह की गलतियों में फिट बैठता है।
+वर्ग त्रुटि हानि के लिए, छद्म-अवशिष्ट केवल वास्तविक अवशिष्ट हैंः $r_i = y_i - F_{t-1}(x_i)$प्रत्येक पेड़ सचमुच पिछले समूह की गलतियों में फिट बैठता है।
 
 सीखने की दर (संकुचन) नियंत्रित करती है कि प्रत्येक पेड़ कितना योगदान देता है। छोटे सीखने की दरों के लिए अधिक पेड़ों की आवश्यकता होती है लेकिन बेहतर सामान्यीकरण होता है। विशिष्ट मानः 0.01 से 0.3.
 
@@ -349,7 +349,7 @@ class GradientBoostingScratch:
 ## आगे पढ़ना
 
 - [Schapire & Freund: Boosting: Foundations and Algorithms](https://mitpress.mit.edu/9780262526036/)-- AdaBoost के रचनाकारों की पुस्तक
-- [Friedman: Greedy Function Approximation: A Gradient Boosting Machine (2001)](https://statweb.stanford.edu/~jhf/ftp/trebst.pdf)-- मूल ग्रेडिएंट बूस्टिंग पेपर
+- [Friedman: Greedy Function Approximation: A Gradient Boosting Machine (2001)](https://doi.org/10.1214/aos/1013203451)-- मूल ग्रेडिएंट बूस्टिंग पेपर
 - [Chen & Guestrin: XGBoost (2016)](https://arxiv.org/abs/1603.02754)-- XGBoost पेपर
 - [Wolpert: Stacked Generalization (1992)](https://www.sciencedirect.com/science/article/abs/pii/S0893608005800231)-- मूल स्टैकिंग पेपर
 - [scikit-learn Ensemble Methods](https://scikit-learn.org/stable/modules/ensemble.html)-- व्यावहारिक संदर्भ

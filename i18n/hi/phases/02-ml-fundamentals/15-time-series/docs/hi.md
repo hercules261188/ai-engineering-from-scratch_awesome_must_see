@@ -91,8 +91,8 @@ flowchart TD
 
 **How to fix:**कच्चे मूल्यों को मॉडल करने के बजाय, लगातार मानों के बीच परिवर्तन को मॉडल करेंः
 
-```
-diff[t] = value[t] - value[t-1]
+```math
+\text{diff}[t] = \text{value}[t] - \text{value}[t-1]
 ```
 
 यदि एक राउंड डिफरेंसिंग से श्रृंखला स्थिर नहीं होती है, तो इसे फिर से लागू करें (दूसरी क्रम की डिफरेंसिंग) अधिकांश वास्तविक दुनिया की श्रृंखलाओं को अधिकतम दो राउंड की आवश्यकता होती है।
@@ -109,7 +109,7 @@ diff[t] = value[t] - value[t-1]
 
 ### स्व-संयोजन
 
-ऑटोकोरेलेशन मापता है कि समय t में एक मान समय t-k में मान के साथ कितना सहसंबंधित है (अतीत में k कदम) । ऑटोकोरेलेशन फ़ंक्शन (ACF) प्रत्येक lag k के लिए इस सहसंबंध का ग्राफ करता है।
+ऑटोकोरेलेशन मापता है कि एक समय में एक मूल्य कितना है $t$समय पर मूल्य के साथ सहसंबंधित $t-k$($k$ऑटोकोरेलेशन फ़ंक्शन (ACF) प्रत्येक लेग के लिए इस सहसंबंध को ग्राफ़ करता है।$k$. .
 
 **ACF tells you:**
 - यदि ACF 5 लेग के बाद शून्य हो जाता है, तो 5 कदम से अधिक पहले के मानों से कोई लेना-देना नहीं है।
@@ -142,7 +142,7 @@ diff[t] = value[t] - value[t-1]
 
 **How many lags?**ऑटो-संदर्भ फ़ंक्शन का उपयोग करें। यदि ACF 10 तक की देरी से महत्वपूर्ण है, तो कम से कम 10 देरी का उपयोग करें। यदि साप्ताहिक मौसमीता है, तो 7 (और संभवतः 14) देरी शामिल करें। अधिक देरी मॉडल को अधिक इतिहास देती है लेकिन फिट करने के लिए अधिक सुविधाएं भी देती है, जिससे ओवरफिटिंग का खतरा बढ़ जाता है।
 
-**The target alignment trap.**जब लेग फीचर्स बनाते हैं तो लक्ष्य समय t पर मान होना चाहिए, और सभी फीचर्स को समय t-1 या उससे पहले के मानों का उपयोग करना चाहिए. यदि आप गलती से समय t पर मान को एक फीचर के रूप में शामिल करते हैं, तो आपके पास एक सही भविष्यवाणी है - और एक पूरी तरह से बेकार मॉडल। यह टाइम सीरीज़ फीचर इंजीनियरिंग में सबसे आम बग है।
+**The target alignment trap.**लॅग फीचर्स बनाते समय लक्ष्य समय पर मान होना चाहिए $t$, और सभी सुविधाओं को समय पर मानों का उपयोग करना चाहिए $t-1$यदि आप गलती से समय पर मूल्य शामिल करते हैं$t$एक विशेषता के रूप में, आप एक सही भविष्यवाणी है - और एक पूरी तरह से बेकार मॉडल. यह समय श्रृंखला सुविधा इंजीनियरिंग में सबसे आम बग है.
 
 ### आगे की पुष्टि
 
@@ -178,8 +178,8 @@ flowchart TD
 ```
 
 आगे की वैधताः
-1. समय t तक के आंकड़ों पर ट्रेन
-2. समय t+1 (या t+1 से t+k तक बहु-चरण के लिए) पर भविष्यवाणी करें
+1. समय पर डेटा को प्रशिक्षित करें $t$
+2. समय पर भविष्यवाणी करें $t+1$(या $t+1$$t+k$बहु-चरण के लिए)
 3. खिड़की को आगे स्लाइड करें
 4. दोहराएँ
 
@@ -191,11 +191,11 @@ flowchart TD
 
 एरिमा क्लासिक टाइम सीरीज मॉडल है। इसमें तीन घटक हैंः
 
-- **AR (Autoregressive):**पिछले मानों से भविष्यवाणी करें। AR ((p) अंतिम p मानों का उपयोग करता है।
-- **I (Integrated):**स्थिरीकरण प्राप्त करने के लिए अंतर करना।
-- **MA (Moving Average):**पूर्वानुमान त्रुटियों से भविष्यवाणी करें। MA(q) अंतिम q त्रुटियों का उपयोग करता है।
+- **AR (Autoregressive):**पिछले मानों से भविष्यवाणी करें। AR(p) पिछले का उपयोग करता है $p$मूल्य।
+- **I (Integrated):**स्थिरीकरण प्राप्त करने के लिए अंतर करना।$d$अंतर के दौर।
+- **MA (Moving Average):**पूर्वानुमान त्रुटियों से भविष्यवाणी करें।$q$त्रुटियां।
 
-ARIMA ((p, d, q) तीनों को जोड़ता है। आप ACF/PACF विश्लेषण या स्वचालित खोज (ऑटो-ARIMA) के आधार पर p, d, q चुनते हैं।
+ARIMA ((p, d, q) सभी तीनों को जोड़ता है. आप चुनते हैं$p$,$d$,$q$ACF/PACF विश्लेषण या स्वचालित खोज (ऑटो-ARIMA) पर आधारित।
 
 हम आरआईएमए को स्क्रैच से लागू नहीं करेंगे - इसके लिए संख्यात्मक अनुकूलन की आवश्यकता है जो इस पाठ के दायरे से परे है। कुंजी अंतर्दृष्टि यह समझना है कि प्रत्येक घटक क्या करता है ताकि आप आरआईएमए परिणामों की व्याख्या कर सकें और पता लगा सकें कि इसका उपयोग कब करना है।
 
@@ -217,7 +217,7 @@ ARIMA ((p, d, q) तीनों को जोड़ता है। आप ACF/
 
 **Recursive (iterated):**एक कदम आगे का अनुमान लगाएं, अगले कदम के लिए भविष्यवाणी को इनपुट के रूप में उपयोग करें. सरल लेकिन त्रुटियां जमा होती हैं - प्रत्येक भविष्यवाणी पिछले भविष्यवाणी का उपयोग करती है, इसलिए गलतियां मिश्रित होती हैं।
 
-**Direct:**प्रत्येक क्षितिज के लिए एक अलग मॉडल का अभ्यास करें। मॉडल-1 t+1 का अनुमान लगाता है, मॉडल-5 t+5 का अनुमान लगाता है। कोई त्रुटि संचय नहीं है, लेकिन प्रत्येक मॉडल में कम प्रशिक्षण नमूने हैं और वे जानकारी साझा नहीं करते हैं।
+**Direct:**प्रत्येक क्षितिज के लिए एक अलग मॉडल को प्रशिक्षित करें। मॉडल-1 भविष्यवाणी करता है$t+1$, मॉडल-5 भविष्यवाणी $t+5$. कोई त्रुटि संचय नहीं, लेकिन प्रत्येक मॉडल में प्रशिक्षण के नमूने कम हैं और वे जानकारी साझा नहीं करते हैं।
 
 **Multi-output:**एक मॉडल को प्रशिक्षित करें जो सभी क्षितिज को एक साथ आउटपुट करता है। क्षितिज के पार जानकारी साझा करता है लेकिन एक मॉडल की आवश्यकता होती है जो कई आउटपुट (या कस्टम हानि फ़ंक्शन) का समर्थन करता है।
 
@@ -228,7 +228,7 @@ ARIMA ((p, d, q) तीनों को जोड़ता है। आप ACF/
 | Mistake | Why it happens | How to fix |
 |---------|---------------|-----------|
 | Random train/test split | Habit from standard ML | Use walk-forward or temporal split |
-| Using future features | Feature at time t included by mistake | Audit every feature for temporal alignment |
+| Using future features | Feature at time $t$ included by mistake | Audit every feature for temporal alignment |
 | Overfitting to seasonality | Model memorizes calendar patterns | Hold out a full seasonal cycle in the test set |
 | Ignoring scale changes | Revenue doubles but patterns stay | Model percentage change instead of absolute |
 | Too many lag features | "More history is better" | Use ACF to determine relevant lags |
@@ -386,7 +386,7 @@ print(f"Mean score: {scores.mean():.4f} +/- {scores.std():.4f}")
 
 समय श्रृंखला भविष्यवाणी में regression metrics का उपयोग किया जाता है, लेकिन समय-सचेत संदर्भ के साथः
 
-- **MAE (Mean Absolute Error):**औसत y_true - y_pred डिश. मूल इकाइयों में व्याख्या करने के लिए आसान. "औसत में, भविष्यवाणियों 3.2 डिग्री से अधिक हैं. "
+- **MAE (Mean Absolute Error):**औसत $\lvert y_{\text{true}} - y_{\text{pred}} \rvert$मूल इकाइयों में व्याख्या करने में आसान। "औसत में, भविष्यवाणियों 3.2 डिग्री से नीचे हैं।"
 - **RMSE (Root Mean Squared Error):**औसत वर्ग त्रुटि की वर्गमूल। बड़े त्रुटियों को MAE से अधिक दंडित करता है। जब बड़े त्रुटियों को कई छोटी त्रुटियों से भी बदतर है।
 - **MAPE (Mean Absolute Percentage Error):**औसत त्रुटि / true_value = 100 स्केल-स्वतंत्र, विभिन्न श्रृंखलाओं के बीच तुलना के लिए उपयोगी है. लेकिन undefined जब सही मान शून्य हैं.
 - **Naive baseline comparison:**हमेशा सरल बेसलाइन के साथ तुलना करें। मौसमी साफ़ आधार रेखा एक अवधि से पहले (कल, पिछले सप्ताह) के मूल्य की भविष्यवाणी करती है। यदि आपका मॉडल साफ़ नहीं हरा सकता है, तो कुछ गलत है।
@@ -444,10 +444,10 @@ print(f"Mean score: {scores.mean():.4f} +/- {scores.std():.4f}")
 | Term | What people say | What it actually means |
 |------|----------------|----------------------|
 | Stationarity | "The stats don't change over time" | A series whose mean, variance, and autocorrelation structure are constant over time |
-| Differencing | "Subtract consecutive values" | Computing y[t] - y[t-1] to remove trends and achieve stationarity |
+| Differencing | "Subtract consecutive values" | Computing $y[t] - y[t-1]$ to remove trends and achieve stationarity |
 | Autocorrelation (ACF) | "How a series correlates with itself" | The correlation between a time series and a lagged copy of itself, as a function of the lag |
-| Partial autocorrelation (PACF) | "Direct correlation only" | Autocorrelation at lag k after removing the effect of all shorter lags |
-| Lag features | "Past values as inputs" | Using y[t-1], y[t-2], ..., y[t-k] as features to predict y[t] |
+| Partial autocorrelation (PACF) | "Direct correlation only" | Autocorrelation at lag $k$ after removing the effect of all shorter lags |
+| Lag features | "Past values as inputs" | Using $y[t-1], y[t-2], \ldots, y[t-k]$ as features to predict $y[t]$ |
 | Walk-forward validation | "Time-respecting cross-validation" | Evaluation where training data always precedes test data chronologically |
 | ARIMA | "The classic time series model" | AutoRegressive Integrated Moving Average: combines past values (AR), differencing (I), and past errors (MA) |
 | Seasonality | "Repeating calendar patterns" | Regular, predictable cycles in a time series tied to calendar periods (daily, weekly, yearly) |

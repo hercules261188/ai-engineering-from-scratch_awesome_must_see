@@ -28,15 +28,15 @@
 
 ### अधिकतम मार्जिन वर्गीकरण
 
-{-1, +1} में y_i लेबल और विशेषता वेक्टर x_i के साथ रैखिक रूप से अलग डेटा को देखते हुए, हम एक हाइपरप्लेन w^T x + b = 0 चाहते हैं जो कक्षाओं को अलग करता है।
+लेबल के साथ रैखिक रूप से अलग किए जाने वाले डेटा दिए गए $y_i \in \lbrace -1, +1 \rbrace$और विशेषता वेक्टर $x_i$, हम एक हाइपरप्लेन चाहते हैं $w^T x + b = 0$जो कक्षाओं को अलग करता है।
 
-हाइपरप्लेन से बिंदु x_i से दूरी हैः
+किसी बिंदु से दूरी $x_i$हाइपरप्लेन के लिए हैः
 
+```math
+\text{distance} = \frac{\lvert w^T x_i + b \rvert}{\lVert w \rVert}
 ```
-distance = |w^T x_i + b| / ||w||
-```
 
-सही ढंग से वर्गीकृत बिंदु के लिएः y_i * (w^T x_i + b) > 0. मार्जिन दोनों तरफ हाइपरप्लेन से निकटतम बिंदु तक की दूरी का दोगुना है।
+सही ढंग से वर्गीकृत बिंदु के लिएः $y_i (w^T x_i + b) > 0$. मार्जिन हाइपरप्लेन से निकटतम बिंदु तक की दूरी का दो गुना है दोनों तरफ।
 
 ```mermaid
 graph LR
@@ -51,19 +51,23 @@ graph LR
 
 अनुकूलन समस्याः
 
-```
-maximize    2 / ||w||     (the margin width)
-subject to  y_i * (w^T x_i + b) >= 1  for all i
-```
-
-इसी तरह (मिमीमाइज़िंग नेशन्स को अनुकूलित करने में आसान है):
-
-```
-minimize    (1/2) ||w||^2
-subject to  y_i * (w^T x_i + b) >= 1  for all i
+```math
+\begin{aligned}
+\text{maximize} \quad & \frac{2}{\lVert w \rVert} \quad \text{(the margin width)} \\
+\text{subject to} \quad & y_i (w^T x_i + b) \ge 1 \quad \text{for all } i
+\end{aligned}
 ```
 
-यह एक घुमावदार चतुर्भुज कार्यक्रम है। इसमें एक अद्वितीय वैश्विक समाधान है। मार्जिन सीमाओं पर ठीक बैठने वाले डेटा बिंदु (जहां y_i * (w^T x_i + b) = 1) समर्थन वेक्टर हैं। वे एकमात्र बिंदु हैं जो निर्णय सीमा निर्धारित करते हैं। किसी भी गैर-समर्थन वेक्टर बिंदु को स्थानांतरित या हटा दें, और सीमा नहीं बदलती है।
+समान रूप से (कम से कम करने के लिए)$\lVert w \rVert^2$अनुकूलन करने के लिए आसान है):
+
+```math
+\begin{aligned}
+\text{minimize} \quad & \frac{1}{2} \lVert w \rVert^2 \\
+\text{subject to} \quad & y_i (w^T x_i + b) \ge 1 \quad \text{for all } i
+\end{aligned}
+```
+
+यह एक घुमावदार चतुर्भुज कार्यक्रम है. इसमें एक अद्वितीय वैश्विक समाधान है. डेटा बिंदु जो मार्जिन सीमाओं पर ठीक बैठते हैं (जहां $y_i (w^T x_i + b) = 1$) समर्थन वेक्टर हैं। वे एकमात्र बिंदु हैं जो निर्णय सीमा को निर्धारित करते हैं। किसी भी गैर-समर्थन वेक्टर बिंदु को स्थानांतरित या हटा दें, और सीमा नहीं बदलती है।
 
 ### समर्थन वेक्टरः महत्वपूर्ण कुछ
 
@@ -85,30 +89,32 @@ graph TD
 
 वास्तविक डेटा शायद ही कभी पूरी तरह से अलग किया जा सकता है। कुछ बिंदु सीमा के गलत पक्ष पर या मार्जिन के अंदर हो सकते हैं। नरम मार्जिन सूत्र लचीले चर को पेश करके उल्लंघन की अनुमति देता है।
 
-```
-minimize    (1/2) ||w||^2 + C * sum(xi_i)
-subject to  y_i * (w^T x_i + b) >= 1 - xi_i
-            xi_i >= 0  for all i
+```math
+\begin{aligned}
+\text{minimize} \quad & \frac{1}{2} \lVert w \rVert^2 + C \sum_i \xi_i \\
+\text{subject to} \quad & y_i (w^T x_i + b) \ge 1 - \xi_i \\
+& \xi_i \ge 0 \quad \text{for all } i
+\end{aligned}
 ```
 
-लैक चर xi_i मापता है कि कितना बिंदु i मार्जिन का उल्लंघन करता है। C व्यापार-बंद को नियंत्रित करता हैः
+ढीलापन चर $\xi_i$मापता है कि कितना अंक $i$मार्जिन का उल्लंघन करता है। $C$व्यापारिक समझौता को नियंत्रित करता हैः
 
-| C value | Behavior |
+| $C$ value | Behavior |
 |---------|----------|
-| Large C | Penalizes violations heavily. Narrow margin, fewer misclassifications. Overfits |
-| Small C | Allows more violations. Wide margin, more misclassifications. Underfits |
+| Large $C$ | Penalizes violations heavily. Narrow margin, fewer misclassifications. Overfits |
+| Small $C$ | Allows more violations. Wide margin, more misclassifications. Underfits |
 
-C नियमितता बल है, उल्टा। बड़ा C = कम नियमितता। छोटा C = अधिक नियमितता।
+$C$यह नियमितता बल, उल्टा है।$C$= कम नियमितता।$C$= अधिक नियमितता।
 
 ### झिल्ली हानिः एसवीएम हानि फ़ंक्शन
 
 सॉफ्ट मार्जिन एसवीएम को एक निर्बाध अनुकूलन के रूप में फिर से लिखा जा सकता हैः
 
-```
-minimize    (1/2) ||w||^2 + C * sum(max(0, 1 - y_i * (w^T x_i + b)))
+```math
+\text{minimize} \quad \frac{1}{2} \lVert w \rVert^2 + C \sum_i \max(0, 1 - y_i (w^T x_i + b))
 ```
 
-max(0, 1 - y_i * f(x_i)) शब्द ही झिल्ली हानि है। यह शून्य है जब बिंदु को सही ढंग से वर्गीकृत किया जाता है और मार्जिन से परे होता है। यह रैखिक है जब बिंदु मार्जिन के अंदर होता है या गलत वर्गीकृत होता है।
+शब्द $\max(0, 1 - y_i f(x_i))$यह शून्य है जब बिंदु सही ढंग से वर्गीकृत है और मार्जिन से परे है। यह रैखिक है जब बिंदु मार्जिन के अंदर है या गलत वर्गीकृत है।
 
 ```
 Hinge loss for a single point:
@@ -130,9 +136,11 @@ Linear penalty when y*f(x) < 1.
 
 लॉजिस्टिक हानि (लॉजिस्टिक प्रतिगमन) की तुलना करेंः
 
-```
-Hinge:     max(0, 1 - y*f(x))          Hard cutoff at margin
-Logistic:  log(1 + exp(-y*f(x)))        Smooth, never exactly zero
+```math
+\begin{aligned}
+\text{Hinge:} \quad & \max(0, 1 - y f(x)) && \text{Hard cutoff at margin} \\
+\text{Logistic:} \quad & \log(1 + \exp(-y f(x))) && \text{Smooth, never exactly zero}
+\end{aligned}
 ```
 
 हिंज हानि दुर्लभ समाधान पैदा करती है (केवल समर्थन वेक्टरों में गैर-शून्य योगदान होता है) । लॉजिस्टिक हानि सभी डेटा बिंदुओं का उपयोग करती है। यह भविष्यवाणी के समय एसवीएम को अधिक स्मृति-कुशल बनाता है।
@@ -141,36 +149,40 @@ Logistic:  log(1 + exp(-y*f(x)))        Smooth, never exactly zero
 
 आप लिनेयर एसवीएम को शिंज हानि और एल 2 नियमितता पर ग्रेडिएंट गिरावट का उपयोग करके प्रशिक्षित कर सकते हैं, बिना प्रतिबंधित क्यूपी को हल किएः
 
+```math
+\begin{aligned}
+& L(w, b) = \frac{\lambda}{2} \lVert w \rVert^2 + \frac{1}{n} \sum_i \max(0, 1 - y_i (w^T x_i + b)) \\[6pt]
+& \text{Gradient with respect to } w\text{:} \\
+& \quad \text{If } y_i (w^T x_i + b) \ge 1\text{:} \quad \frac{\partial L}{\partial w} = \lambda w \\
+& \quad \text{If } y_i (w^T x_i + b) < 1\text{:} \quad \frac{\partial L}{\partial w} = \lambda w - y_i x_i \\[6pt]
+& \text{Gradient with respect to } b\text{:} \\
+& \quad \text{If } y_i (w^T x_i + b) \ge 1\text{:} \quad \frac{\partial L}{\partial b} = 0 \\
+& \quad \text{If } y_i (w^T x_i + b) < 1\text{:} \quad \frac{\partial L}{\partial b} = -y_i
+\end{aligned}
 ```
-L(w, b) = (lambda/2) * ||w||^2 + (1/n) * sum(max(0, 1 - y_i * (w^T x_i + b)))
 
-Gradient with respect to w:
-  If y_i * (w^T x_i + b) >= 1:  dL/dw = lambda * w
-  If y_i * (w^T x_i + b) < 1:   dL/dw = lambda * w - y_i * x_i
-
-Gradient with respect to b:
-  If y_i * (w^T x_i + b) >= 1:  dL/db = 0
-  If y_i * (w^T x_i + b) < 1:   dL/db = -y_i
-```
-
-इसे प्राथमिक सूत्र कहा जाता है। यह O ((n * d) प्रति युग में चलता है, जहां n नमूने की संख्या है और d विशेषताओं की संख्या है। बड़े, दुर्लभ, उच्च आयामी डेटा (पाठ वर्गीकरण) के लिए, यह तेजी से है।
+यह मूल सूत्र कहा जाता है. यह चलती है में$O(n \cdot d)$प्रति युग, जहां $n$नमूना संख्या है और $d$बड़ी, दुर्लभ, उच्च आयामी डेटा (पाठ वर्गीकरण) के लिए, यह तेजी से है।
 
 ### दोहरे सूत्र और कर्नेल ट्रिक
 
 एसवीएम समस्या का लैग्रेंजियन डुअल (चरण 1 पाठ 18 से, केकेटी स्थितियों से) हैः
 
-```
-maximize    sum(alpha_i) - (1/2) * sum_ij(alpha_i * alpha_j * y_i * y_j * (x_i . x_j))
-subject to  0 <= alpha_i <= C
-            sum(alpha_i * y_i) = 0
+```math
+\begin{aligned}
+\text{maximize} \quad & \sum_i \alpha_i - \frac{1}{2} \sum_{i,j} \alpha_i \alpha_j y_i y_j (x_i \cdot x_j) \\
+\text{subject to} \quad & 0 \le \alpha_i \le C \\
+& \sum_i \alpha_i y_i = 0
+\end{aligned}
 ```
 
-डुअल केवल डेटा बिंदुओं के बीच डॉट उत्पादों x_i . x_j को शामिल करता है। यह मुख्य अंतर्दृष्टि है। प्रत्येक डॉट उत्पाद को एक कर्नेल फ़ंक्शन K(x_i, x_j) के साथ बदलें और SVM स्पष्ट रूप से परिवर्तन की गणना किए बिना गैर-रैखिक सीमाएं सीख सकता है।
+दोहरी केवल डॉट उत्पादों को शामिल $x_i \cdot x_j$डेटा बिंदुओं के बीच. यह कुंजी अंतर्दृष्टि है. प्रत्येक बिंदु उत्पाद के साथ एक कर्नेल समारोह के साथ प्रतिस्थापित करें$K(x_i, x_j)$और SVM स्पष्ट रूप से परिवर्तन की गणना किए बिना गैर रैखिक सीमाओं को सीख सकते हैं।
 
-```
-Linear kernel:      K(x, z) = x . z
-Polynomial kernel:  K(x, z) = (x . z + c)^d
-RBF (Gaussian):     K(x, z) = exp(-gamma * ||x - z||^2)
+```math
+\begin{aligned}
+\text{Linear kernel:} \quad & K(x, z) = x \cdot z \\
+\text{Polynomial kernel:} \quad & K(x, z) = (x \cdot z + c)^d \\
+\text{RBF (Gaussian):} \quad & K(x, z) = \exp(-\gamma \lVert x - z \rVert^2)
+\end{aligned}
 ```
 
 आरबीएफ कर्नेल डेटा को अनंत आयामी अंतरिक्ष में मानचित्रित करता है। इनपुट अंतरिक्ष में निकट बिंदुओं का कर्नेल मूल्य 1 के करीब होता है। दूर के बिंदुओं का कर्नेल मूल्य 0 के करीब होता है। यह किसी भी चिकनी निर्णय सीमा को सीख सकता है।
@@ -186,20 +198,22 @@ graph LR
     A -->|"Kernel trick<br>K(x,z) = phi(x).phi(z)"| B
 ```
 
-कर्नेल ट्रिक उच्च-आयामी अंतरिक्ष में बिंदु उत्पाद की गणना करता है, कभी भी वहां जाने के बिना। D आयामों में डिग्री डी के बहुपद कर्नेल के लिए, स्पष्ट विशेषता अंतरिक्ष में O(D^d) आयाम हैं। लेकिन K(x, z) को O(D) समय में गणना की जाती है।
+कर्नेल ट्रिक उच्च आयामी अंतरिक्ष में बिंदु उत्पाद की गणना करता है वहाँ कभी नहीं जाना. डिग्री के बहुपद कर्नेल के लिए$d$में $D$आयामों, स्पष्ट विशेषता अंतरिक्ष है $O(D^d)$आयामों.$K(x, z)$$O(D)$समय।
 
 ### प्रतिगमन के लिए एसवीएम (एसवीआर)
 
-समर्थन वेक्टर रिग्रेशन डेटा के चारों ओर चौड़ाई के एक ट्यूब को फिट करता है। ट्यूब के अंदर के बिंदुओं में शून्य हानि होती है। ट्यूब के बाहर के बिंदुओं को रैखिक रूप से दंडित किया जाता है।
+समर्थन वेक्टर प्रतिगमन चौड़ाई के एक ट्यूब फिट बैठता है $\epsilon$ट्यूब के अंदर अंक शून्य हानि है. ट्यूब के बाहर अंक रैखिक रूप से दंडित कर रहे हैं.
 
-```
-minimize    (1/2) ||w||^2 + C * sum(xi_i + xi_i*)
-subject to  y_i - (w^T x_i + b) <= epsilon + xi_i
-            (w^T x_i + b) - y_i <= epsilon + xi_i*
-            xi_i, xi_i* >= 0
+```math
+\begin{aligned}
+\text{minimize} \quad & \frac{1}{2} \lVert w \rVert^2 + C \sum_i (\xi_i + \xi_i^*) \\
+\text{subject to} \quad & y_i - (w^T x_i + b) \le \epsilon + \xi_i \\
+& (w^T x_i + b) - y_i \le \epsilon + \xi_i^* \\
+& \xi_i, \xi_i^* \ge 0
+\end{aligned}
 ```
 
-ईप्सिलन पैरामीटर ट्यूब चौड़ाई को नियंत्रित करता है। चौड़ा ट्यूब = कम समर्थन वेक्टर = चिकनी फिट। संकीर्ण ट्यूब = अधिक समर्थन वेक्टर = तंग फिट।
+$\epsilon$पैरामीटर ट्यूब की चौड़ाई को नियंत्रित करता है। चौड़ा ट्यूब = कम समर्थन वेक्टर = चिकनी फिट। संकीर्ण ट्यूब = अधिक समर्थन वेक्टर = तंग फिट।
 
 ### क्यों एसवीएम गहन सीखने के लिए हार गए (और जब वे अभी भी जीतते हैं)
 
@@ -208,7 +222,7 @@ subject to  y_i - (w^T x_i + b) <= epsilon + xi_i
 | Factor | SVMs | Deep learning |
 |--------|------|---------------|
 | Feature engineering | Requires it | Learns features |
-| Scalability | O(n^2) to O(n^3) for kernel | O(n) per epoch with SGD |
+| Scalability | $O(n^2)$ to $O(n^3)$ for kernel | $O(n)$ per epoch with SGD |
 | Image/text/audio | Needs handcrafted features | Learns from raw data |
 | Large datasets (>100k) | Slow | Scales well |
 | GPU acceleration | Limited benefit | Massive speedup |
@@ -324,9 +338,9 @@ print(f"Accuracy: {clf.score(X_test, y_test):.4f}")
 print(f"Support vectors: {clf['svm'].n_support_}")
 ```
 
-महत्वपूर्णः एसवीएम को प्रशिक्षित करने से पहले हमेशा अपनी विशेषताएं स्केल करें। एसवीएम विशेषता परिमाणों के प्रति संवेदनशील होते हैं क्योंकि मार्जिन अनस्केल किए गए विशेषताओं पर निर्भर करता है, और ज्यामिति को विकृत करता है।
+महत्वपूर्णः एक एसवीएम को प्रशिक्षित करने से पहले हमेशा अपनी विशेषताओं को स्केल करें। एसवीएम विशेषताओं के लिए संवेदनशील हैं क्योंकि मार्जिन पर निर्भर करता है $\lVert w \rVert$, और अनस्केलेबल सुविधाओं ज्यामिति विकृत.
 
-बड़े डेटा सेट के लिए, उपयोग करें `LinearSVC`(प्राथमिक सूत्र, O(n) प्रति युग)`SVC`(दोहरी सूत्र, O(n^2) से O(n^3)):
+बड़े डेटा सेट के लिए, उपयोग करें `LinearSVC`(प्राथमिक सूत्र, $O(n)$ के बजाय `SVC`(दोहरी सूत्र, $O(n^2)$$O(n^3){}$):
 
 ```python
 from sklearn.svm import LinearSVC
@@ -341,13 +355,13 @@ clf = Pipeline([
 
 1. एक 2D रैखिक रूप से अलग करने योग्य डेटासेट उत्पन्न करें। अपने रैखिक एसवीएम को प्रशिक्षित करें और समर्थन वेक्टरों की पहचान करें। सत्यापित करें कि समर्थन वेक्टर निर्णय सीमा के निकटतम बिंदु हैं।
 
-2. शोर डेटासेट पर 0.001 से 1000 तक भिन्न C। प्रत्येक C मान के लिए निर्णय सीमा का पता लगाएं। चौड़े मार्जिन (अंडरफिटिंग) से संकीर्ण मार्जिन (ओवरफिटिंग) में संक्रमण का अवलोकन करें।
+2. भिन्न $C$शोर डेटासेट पर 0.001 से 1000 तक। प्रत्येक के लिए निर्णय सीमा रेखांकित करें।$C$मूल्य. व्यापक मार्जिन (अंडरफिटिंग) से संकीर्ण मार्जिन (ओवरफिटिंग) में संक्रमण का अवलोकन करें।
 
 3. एक डेटासेट बनाएं जहां कक्षा सीमाएं गोल (रैखिक नहीं) हैं। दिखाएं कि एक रैखिक एसवीएम विफल है। आरबीएफ कर्नेल मैट्रिक्स की गणना करें और दिखाएं कि कक्षाएं कर्नेल-प्रेरित सुविधा स्थान में अलग हो जाती हैं।
 
 4. एक ही डेटासेट पर हिंज हानि बनाम लॉजिस्टिक हानि की तुलना करें। एक रैखिक एसवीएम और लॉजिस्टिक प्रतिगमन को प्रशिक्षित करें। गणना करें कि प्रत्येक मॉडल के निर्णय सीमा में कितने प्रशिक्षण बिंदु योगदान करते हैं (सपोर्ट वेक्टर बनाम सभी बिंदु) ।
 
-5. एसवीआर (एप्सिलन-असंवेदनशील हानि) लागू करें। इसे y = sin(x) + शोर पर समायोजित करें। भविष्यवाणियों के आसपास एप्सिलन ट्यूब को रेखांकित करें और समर्थन वेक्टरों (ट्यूब के बाहर बिंदुओं) को उजागर करें।
+5. एसवीआर (एप्सिलन-असंवेदनशील हानि) लागू करें।$y = \sin(x) + \text{noise}$. भविष्यवाणियों के चारों ओर ईप्सिलन ट्यूब को रेखांकित करें और समर्थन वेक्टर (ट्यूब के बाहर के बिंदुओं) को उजागर करें।
 
 ## प्रमुख शर्तें
 
@@ -355,16 +369,16 @@ clf = Pipeline([
 |------|----------------------|
 | Support vectors | The training points closest to the decision boundary. The only points that determine the hyperplane |
 | Margin | The distance between the decision boundary and the nearest support vectors. SVMs maximize this |
-| Hinge loss | max(0, 1 - y*f(x)). Zero when correctly classified and outside the margin. Linear penalty otherwise |
-| C parameter | Trade-off between margin width and classification errors. Large C = narrow margin, small C = wide margin |
+| Hinge loss | $\max(0, 1 - y f(x))$. Zero when correctly classified and outside the margin. Linear penalty otherwise |
+| C parameter | Trade-off between margin width and classification errors. Large $C$ = narrow margin, small $C$ = wide margin |
 | Soft margin | SVM formulation that allows margin violations via slack variables. Handles non-separable data |
 | Kernel trick | Computing dot products in a high-dimensional feature space without explicitly mapping to that space |
-| Linear kernel | K(x, z) = x . z. Equivalent to standard dot product. For linearly separable data |
-| RBF kernel | K(x, z) = exp(-gamma * \|\|x-z\|\|^2). Maps to infinite dimensions. Learns any smooth boundary |
-| Polynomial kernel | K(x, z) = (x . z + c)^d. Maps to a feature space of polynomial combinations |
+| Linear kernel | $K(x, z) = x \cdot z$. Equivalent to standard dot product. For linearly separable data |
+| RBF kernel | $K(x, z) = \exp(-\gamma \Vert x-z \Vert^2)$. Maps to infinite dimensions. Learns any smooth boundary |
+| Polynomial kernel | $K(x, z) = (x \cdot z + c)^d$. Maps to a feature space of polynomial combinations |
 | Dual formulation | Reformulation of the SVM problem that depends only on dot products between data points. Enables kernels |
 | SVR | Support Vector Regression. Fits an epsilon-tube around the data. Points inside the tube have zero loss |
-| Slack variables | xi_i: measures how much a point violates the margin. Zero for correctly classified points outside margin |
+| Slack variables | $\xi_i$: measures how much a point violates the margin. Zero for correctly classified points outside margin |
 | Maximum margin | The principle of choosing the hyperplane that maximizes the distance to the nearest points of each class |
 
 ## आगे पढ़ना

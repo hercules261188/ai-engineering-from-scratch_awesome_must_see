@@ -26,36 +26,36 @@
 
 ### आदर्श
 
-रैखिक प्रतिगमन में इनपुट (x) और आउटपुट (y) के बीच रैखिक संबंध का अनुमान लगाया जाता हैः
+रैखिक प्रतिगमन में इनपुट के बीच रैखिक संबंध ($x$) और आउटपुट ($y$):
 
-```
+```math
 y = wx + b
 ```
 
-- `w`(वेट/झल): जब x 1 से बढ़ता है तो y कितना बदलता है
-- `b`(bias/intercept): y का मान जब x = 0
+- `w`(वेट/झल): कितना $y$परिवर्तन जब $x$1 की वृद्धि
+- `b`(अवशिष्ट/अवरोध):  का मूल्य$y$कब$x = 0$
 
 कई इनपुट (विशेषताओं) के लिए, यह निम्नलिखित तक फैला हैः
 
-```
-y = w1*x1 + w2*x2 + ... + wn*xn + b
+```math
+y = w_1 x_1 + w_2 x_2 + \cdots + w_n x_n + b
 ```
 
-या वेक्टर रूप मेंः `y = w^T * x + b`
+या वेक्टर रूप मेंः $y = w^T x + b$
 
-लक्ष्य: सभी प्रशिक्षण उदाहरणों में w और b के मानों को ढूंढें जो भविष्यवाणी की गई y को वास्तविक y के जितना संभव हो उतना करीब बनाते हैं।
+लक्ष्य: $w$और $b$जो भविष्यवाणी करते हैं $y$वास्तविकता के यथासंभव करीब $y$सभी प्रशिक्षण उदाहरणों में।
 
 ### लागत फ़ंक्शन (मीडियन स्क्वायर त्रुटि)
 
 आप "जितना संभव हो उतना करीब" कैसे मापते हैं? आपको एक एकल संख्या की आवश्यकता है जो आपकी भविष्यवाणियों को गलत तरीके से कैप्चर करती है। सबसे आम विकल्प औसत वर्ग त्रुटि (MSE) हैः
 
-```
-MSE = (1/n) * sum((y_predicted - y_actual)^2)
+```math
+\text{MSE} = \frac{1}{n} \sum (y_{\text{predicted}} - y_{\text{actual}})^2
 ```
 
 दो कारणों से। पहला, यह छोटी त्रुटियों की तुलना में बड़ी त्रुटियों को अधिक दंडित करता है (10 की त्रुटि 1 की त्रुटि से 100 गुना बदतर है, 10 की तुलना में) दूसरा, वर्ग फ़ंक्शन हर जगह चिकनी और भिन्न है, जो अनुकूलन को सीधा बनाता है।
 
-लागत फ़ंक्शन एक सतह बनाता है. एकल वजन w और पूर्वाग्रह b के लिए, MSE सतह एक कटोरे (एक संकुचित पैराबोलाइड) की तरह दिखती है। कटोरे का निचला हिस्सा है जहां MSE को न्यूनतम किया जाता है। प्रशिक्षण का मतलब है कि नीचे की खोज करना।
+लागत फ़ंक्शन एक सतह बनाता है।$w$और पूर्वाग्रह $b$एक कटोरा (एक घुमावदार पैराबोलाइड) की तरह दिखता है। कटोरा के नीचे जहां एमएसई को कम किया जाता है। प्रशिक्षण का मतलब है कि नीचे की खोज।
 
 ### क्रमिक गिरावट
 
@@ -74,18 +74,22 @@ flowchart TD
 
 ग्रेडिएंट आपको दो चीजें बताते हैंः प्रत्येक पैरामीटर को किस दिशा में स्थानांतरित करना है, और कितना स्थानांतरित करना है।
 
-y_hat = wx + b के साथ MSE के लिएः
+ के साथ एमएसई के लिए$\hat{y} = wx + b$:
 
-```
-dMSE/dw = (2/n) * sum((y_hat - y) * x)
-dMSE/db = (2/n) * sum(y_hat - y)
+```math
+\begin{aligned}
+\frac{\partial \text{MSE}}{\partial w} &= \frac{2}{n} \sum (\hat{y} - y) \, x \\
+\frac{\partial \text{MSE}}{\partial b} &= \frac{2}{n} \sum (\hat{y} - y)
+\end{aligned}
 ```
 
 अद्यतन नियमः
 
-```
-w = w - learning_rate * dMSE/dw
-b = b - learning_rate * dMSE/db
+```math
+\begin{aligned}
+w &= w - \text{learning\_rate} \cdot \frac{\partial \text{MSE}}{\partial w} \\
+b &= b - \text{learning\_rate} \cdot \frac{\partial \text{MSE}}{\partial b}
+\end{aligned}
 ```
 
 सीखने की दर चरण के आकार को नियंत्रित करती है। बहुत बड़ाः आप न्यूनतम से अधिक हो जाते हैं और विचलित होते हैं। बहुत छोटाः प्रशिक्षण हमेशा के लिए लेता है। सामान्य प्रारंभिक मानः 0.01, 0.001, या 0.0001.
@@ -94,18 +98,18 @@ b = b - learning_rate * dMSE/db
 
 रैखिक प्रतिगमन के लिए विशेष रूप से, एक सीधा सूत्र है जो बिना किसी पुनरावृत्ति के इष्टतम वजन देता हैः
 
-```
-w = (X^T * X)^(-1) * X^T * y
+```math
+w = (X^T X)^{-1} X^T y
 ```
 
-यह एक चरण में w के लिए हल करने के लिए एक मैट्रिक्स को उलट देता है। यह छोटे डेटासेट के लिए एकदम सही काम करता है। बड़े डेटासेट (मिलियनों पंक्तियों या हजारों सुविधाओं) के लिए, ग्रेडिएंट अवतरण को प्राथमिकता दी जाती है क्योंकि मैट्रिक्स विपरित सुविधाओं की संख्या में O(n ^ 3) है।
+यह हल करने के लिए एक मैट्रिक्स को उलटा करता है $w$यह छोटे डेटासेट के लिए एकदम सही काम करता है। बड़े डेटासेट (मिलियन पंक्तियों या हजारों सुविधाओं) के लिए, ग्रेडिएंट गिरावट को प्राथमिकता दी जाती है क्योंकि मैट्रिक्स विपरित है।$O(n^3)$विशेषताओं की संख्या में।
 
 ### बहु-रेखीय प्रतिगमन
 
 कई विशेषताओं के साथ, मॉडल बन जाता हैः
 
-```
-y = w1*x1 + w2*x2 + ... + wn*xn + b
+```math
+y = w_1 x_1 + w_2 x_2 + \cdots + w_n x_n + b
 ```
 
 सब कुछ एक ही काम करता हैः एमएसई लागत फ़ंक्शन है, ग्रेडिएंट गिरावट एक साथ सभी भारों को अपडेट करती है। एकमात्र अंतर यह है कि आप एक रेखा के बजाय एक हाइपरप्लेन फिट कर रहे हैं।
@@ -116,36 +120,38 @@ y = w1*x1 + w2*x2 + ... + wn*xn + b
 
 यदि संबंध रैखिक नहीं है तो क्या होगा? आप अभी भी बहुपद विशेषताओं को बनाकर रैखिक प्रतिगमन का उपयोग कर सकते हैंः
 
-```
-y = w1*x + w2*x^2 + w3*x^3 + b
+```math
+y = w_1 x + w_2 x^2 + w_3 x^3 + b
 ```
 
-यह अभी भी "रैखिक" regression है क्योंकि मॉडल वजन में रैखिक है (w1, w2, w3) आप केवल x के गैर रैखिक गुणों का उपयोग कर रहे हैं.
+यह अभी भी "रैखिक" प्रतिगमन है क्योंकि मॉडल भार में रैखिक है ($w_1, w_2, w_3$) आप सिर्फ उपयोग कर रहे हैं गैर रैखिक सुविधाओं के $x$. .
 
 उच्च डिग्री बहुपद अधिक जटिल वक्रों को फिट कर सकते हैं लेकिन ओवरफitting का जोखिम है। एक डिग्री-10 बहुपद 10 बिंदु डेटासेट में हर बिंदु से गुजरता है लेकिन नए डेटा पर खराब भविष्यवाणी करता है।
 
 ### आर-क्वायर स्कोर
 
-एमएसई आपको बताता है कि आप कितना गलत हैं, लेकिन संख्या y के पैमाने पर निर्भर करती है। R-क्वायर (R^2) एक पैमाने-स्वतंत्र उपाय देता हैः
+एमएसई आपको बताता है कि आप कितना गलत हैं, लेकिन संख्या के पैमाने पर निर्भर करती है $y$. आर-क्वाड ($R^2$) एक पैमाने से स्वतंत्र उपाय देता हैः
 
-```
-R^2 = 1 - (sum of squared residuals) / (sum of squared deviations from mean)
-    = 1 - SS_res / SS_tot
+```math
+\begin{aligned}
+R^2 &= 1 - \frac{\text{sum of squared residuals}}{\text{sum of squared deviations from mean}} \\
+&= 1 - \frac{SS_{\text{res}}}{SS_{\text{tot}}}
+\end{aligned}
 ```
 
-- R^2 = 1.0: सही भविष्यवाणी
-- R^2 = 0.0: मॉडल प्रत्येक बार औसत की भविष्यवाणी से बेहतर नहीं है
-- R^2 < 0.0: मॉडल औसत की भविष्यवाणी से भी बदतर है
+- $R^2 = 1.0$: सही भविष्यवाणियाँ
+- $R^2 = 0.0$: मॉडल हर बार औसत की भविष्यवाणी से बेहतर नहीं है
+- $R^2 < 0.0$: मॉडल औसत की भविष्यवाणी से भी बदतर है
 
 ### नियमन पूर्वावलोकन (रिज रिग्रेशन)
 
 जब आपके पास कई विशेषताएं होती हैं, तो मॉडल बड़े वजन आवंटित करके ओवरफिट कर सकता है। रidge रेग्रिशन (L2 नियमितकरण) एक दंड जोड़ता हैः
 
-```
-Cost = MSE + lambda * sum(w_i^2)
+```math
+\text{Cost} = \text{MSE} + \lambda \sum w_i^2
 ```
 
-पेनल्टी शब्द बड़े वजन को मना करता है। हाइपरपरपैरामीटर लैम्बा कॉम्प्रेस को नियंत्रित करता हैः उच्च लैम्बा का अर्थ है छोटे वजन और अधिक नियमितता। यह एक बाद के पाठ में गहराई से कवर किया जाएगा। अभी के लिए, जानें कि यह मौजूद है और यह मदद क्यों करता है।
+दंड शब्द बड़े वजन को रोकने के लिए है।$\lambda$व्यापारिक अंतर को नियंत्रित करता हैः उच्च $\lambda$यह एक बाद के पाठ में गहराई से कवर किया जाएगा। अभी के लिए, यह पता है कि यह मौजूद है और यह मदद क्यों करता है।
 
 ```figure
 linear-regression-fit
@@ -520,24 +526,24 @@ print(f"Ridge coefficient: {ridge.coef_[0]:.4f}")
 ## व्यायाम
 
 1. बैच ग्रेडिएंट गिरावट, स्टोकास्टिक ग्रेडिएंट गिरावट (SGD) और मिनी बैच ग्रेडिएंट गिरावट को लागू करें। एक ही डेटासेट पर अभिसरण गति की तुलना करें। कौन सा सबसे तेजी से अभिसरण करता है?
-2. एक घन फ़ंक्शन से डेटा उत्पन्न करें (y = ax^3 + bx^2 + cx + d + शोर) । डिग्री 1, 3 और 10 के फिट बहुपदों की तुलना करें। प्रशिक्षण R^2 और परीक्षण R^2 की तुलना करें। किस स्तर पर ओवरफिटिंग स्पष्ट हो जाती है?
-3. लासो रेग्रेसशन (L1 नियमितकरणः पेनाल्टी अल्फा *(पर पर आप = i i i i i i i i i i i)) लागू करें। बहु-गुणवत्ता आवास डेटा को प्रशिक्षित करें। तुलना करें कि कौन से वजन शून्य बनाम रिज तक जाते हैं। L1 दुर्लभ समाधान क्यों उत्पन्न करता है जबकि L2 नहीं करता है?
+2. एक घन फ़ंक्शन से डेटा उत्पन्न करें ($y = ax^3 + bx^2 + cx + d + \text{noise}$) डिग्री 1, 3 और 10 के बहुपदों के अनुकूल। प्रशिक्षण की तुलना करें $R^2$और परीक्षण$R^2$. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
+3. लासो रेग्रिशन (L1 नियमितकरण) को लागू करें: $\text{penalty} = \alpha \sum \lvert w_i \rvert$) बहु-विशेषताओं वाले आवास डेटा पर प्रशिक्षण करें। तुलना करें कि कौन से वजन शून्य बनाम रिज पर जाते हैं। L1 दुर्लभ समाधान क्यों पैदा करता है जबकि L2 नहीं करता है?
 
 ## प्रमुख शर्तें
 
 | Term | What people say | What it actually means |
 |------|----------------|----------------------|
-| Linear regression | "Draw a line through data" | Find weight w and bias b that minimize the sum of squared differences between wx+b and actual y values |
+| Linear regression | "Draw a line through data" | Find weight $w$ and bias $b$ that minimize the sum of squared differences between $wx+b$ and actual $y$ values |
 | Cost function | "How bad the model is" | A function that maps model parameters to a single number measuring prediction error, which optimization minimizes |
-| Mean squared error | "Average of squared errors" | (1/n) * sum of (predicted - actual)^2, penalizing large errors disproportionately |
+| Mean squared error | "Average of squared errors" | $\frac{1}{n} \sum (\text{predicted} - \text{actual})^2$, penalizing large errors disproportionately |
 | Gradient descent | "Walk downhill" | Iteratively adjust parameters in the direction that reduces the cost function, using partial derivatives |
 | Learning rate | "Step size" | A scalar that controls how much parameters change per gradient descent step |
-| Normal equation | "Solve it directly" | The closed-form solution w = (X^T X)^-1 X^T y that gives optimal weights without iteration |
-| R-squared | "How good the fit is" | The fraction of variance in y explained by the model, ranging from negative infinity to 1.0 |
+| Normal equation | "Solve it directly" | The closed-form solution $w = (X^T X)^{-1} X^T y$ that gives optimal weights without iteration |
+| R-squared | "How good the fit is" | The fraction of variance in $y$ explained by the model, ranging from negative infinity to 1.0 |
 | Feature scaling | "Make features comparable" | Transforming features to similar ranges (e.g., zero mean, unit variance) so gradient descent converges faster |
 | Regularization | "Penalize complexity" | Adding a term to the cost function that shrinks weights, preventing overfitting |
-| Ridge regression | "L2 regularization" | Linear regression with a penalty of lambda * sum(w_i^2) added to MSE |
-| Polynomial regression | "Fitting curves with linear math" | Linear regression on polynomial features (x, x^2, x^3, ...), still linear in the weights |
+| Ridge regression | "L2 regularization" | Linear regression with a penalty of $\lambda \sum w_i^2$ added to MSE |
+| Polynomial regression | "Fitting curves with linear math" | Linear regression on polynomial features ($x, x^2, x^3, \ldots$), still linear in the weights |
 | Overfitting | "Memorizing training data" | Using a model so complex that it fits noise in training data and fails on new data |
 
 ## आगे पढ़ना
