@@ -38,9 +38,9 @@ Dimension    Avg distance ratio (max/min between random points)
 1000         ~1.02
 ```
 
-**Volume concentrates in corners.**Một khối siêu khối đơn vị ở kích thước d có góc 2^d. Trong 100 kích thước, gần như toàn bộ khối lượng là ở góc, xa từ trung tâm.
+**Volume concentrates in corners.**Một đơn vị siêu khối trong $d$kích thước có$2^d$ở góc. ở 100 chiều, hầu hết khối lượng đều ở góc, xa trung tâm. Điểm dữ liệu lan rộng đến các cạnh và mô hình của bạn đói dữ liệu bên trong.
 
-**You need exponentially more data.**Để duy trì mật độ mẫu trong không gian, từ 2D đến 20D có nghĩa là bạn cần 10^18 lần nhiều dữ liệu. Bạn không bao giờ có đủ. Giảm kích thước mang lại mật độ dữ liệu trở lại một cái gì đó có thể làm việc.
+**You need exponentially more data.**Để duy trì mật độ mẫu tương tự trong không gian, đi từ 2D đến 20D có nghĩa là bạn cần$10^{18}$Bạn không bao giờ có đủ. Giảm kích thước mang lại mật độ dữ liệu trở lại một cái gì đó có thể thực hiện.
 
 ### PCA: tìm các hướng dẫn quan trọng
 
@@ -88,7 +88,7 @@ Ba chiến lược:
 
 1. **Threshold.**Giữ đủ thành phần để giải thích 90-95% sự khác biệt.
 2. **Elbow method.**- Đọc về sự khác biệt của mỗi thành phần.
-3. **Downstream performance.**Sử dụng PCA như là xử lý trước. quét k và đo độ chính xác của mô hình của bạn.
+3. **Downstream performance.**Sử dụng PCA như là xử lý trước.$k$và đo độ chính xác của mô hình của bạn.$k$là bất cứ nơi nào độ chính xác cao nguyên.
 
 ### T-SNE: bảo vệ các khu phố
 
@@ -101,7 +101,7 @@ Các tính chất chính của t-SNE:
 - Stochastic, các chạy khác nhau tạo ra các bố cục khác nhau.
 - Các tham số phức tạp kiểm soát số lượng hàng xóm cần xem xét (các phạm vi điển hình: 5-50).
 - Khoảng cách giữa các cụm trong đầu ra không có ý nghĩa. Chỉ có các cụm chính là có ý nghĩa.
-- chậm trên tập dữ liệu lớn. O ((n^2) theo mặc định.
+- chậm trên tập dữ liệu lớn. $O(n^2)$theo mặc định.
 
 ### UMAP: cấu trúc toàn cầu nhanh hơn, tốt hơn
 
@@ -135,27 +135,27 @@ PCA tiêu chuẩn tìm thấy các vùng phụ tuyến tính. Nó xoay hệ th�
 Kernel PCA áp dụng PCA trong một không gian tính năng chiều cao được kích hoạt bởi một chức năng kernel, mà không tính toán rõ ràng các tọa độ trong không gian đó. Đây là thủ thuật kernel - cùng một ý tưởng đằng sau SVM.
 
 Khóa toán:
-1. Xét toán các khối lượng hạt nhân K nơi K_ij = k(x_i, x_j)
+1. Xét toán các khối lượng của hạt nhân $K$nơi $K_{ij} = k(x_i, x_j)$
 2. Trung tâm các mã nguồn trong không gian tính năng
 3. Eigendecompose các tập trung hạt nhân matrix
-4. Các vector tự trị trên cùng (được quy mô bằng 1/sqrt(quý trị tự trị)) là các dự đoán
+4. Các vector tự trên (được quy mô bởi $1/\sqrt{\text{eigenvalue}}$) là các dự báo
 
 Các chức năng hạt nhân chung:
 
 | Kernel | Formula | Good for |
 |--------|---------|----------|
-| RBF (Gaussian) | exp(-gamma * \|\|x - y\|\|^2) | Most nonlinear data, smooth manifolds |
-| Polynomial | (x . y + c)^d | Polynomial relationships |
-| Sigmoid | tanh(alpha * x . y + c) | Neural network-like mappings |
+| RBF (Gaussian) | $\exp(-\gamma \lVert x - y \rVert^2)$ | Most nonlinear data, smooth manifolds |
+| Polynomial | $(x \cdot y + c)^d$ | Polynomial relationships |
+| Sigmoid | $\tanh(\alpha x \cdot y + c)$ | Neural network-like mappings |
 
 Khi nào sử dụng PCA hạt nhân so với PCA tiêu chuẩn:
 
 | Criterion | Standard PCA | Kernel PCA |
 |-----------|-------------|------------|
 | Data structure | Linear subspace | Nonlinear manifold |
-| Speed | O(min(n^2 d, d^2 n)) | O(n^2 d + n^3) |
+| Speed | $O(\min(n^2 d, d^2 n))$ | $O(n^2 d + n^3)$ |
 | Interpretability | Components are linear combinations of features | Components lack direct feature interpretation |
-| Scalability | Works on millions of samples | Kernel matrix is n x n, memory-limited |
+| Scalability | Works on millions of samples | Kernel matrix is $n \times n$, memory-limited |
 | Reconstruction | Direct inverse transform | Requires pre-image approximation |
 
 Ví dụ điển hình: vòng tròn tập trung 2D. Hai vòng tròn điểm, một bên trong nhau. PCA tiêu chuẩn chiếu cả hai trên cùng một đường - vô dụng cho phân loại. Kernel PCA với một hạt nhân RBF vẽ bản đồ vòng tròn bên trong và vòng tròn bên ngoài đến các khu vực khác nhau, làm cho chúng có thể tách ra tuyến tính.
@@ -165,22 +165,24 @@ Ví dụ điển hình: vòng tròn tập trung 2D. Hai vòng tròn điểm, m�
 Bạn đã nén 784 chiều thành 50.
 
 Mức độ lỗi tái thiết:
-1. Dữ liệu dự án đến k kích thước: X_reduced = X @ W_k
-2. Tái tạo: X_hat = X_reduced @ W_k^T
-3. MSE tính toán: trung bình (X - X_hat) ^2)
+1. Dữ liệu dự án đến $k$kích thước: $X_{\text{reduced}} = X W_k$
+2. Tái tạo: $\hat{X} = X_{\text{reduced}} W_k^T$
+3. Xét MSE: $\text{mean}((X - \hat{X})^2)$
 
 Đối với PCA, lỗi tái thiết có mối quan hệ sạch với sự biến động giải thích:
 
-```
-Reconstruction error = sum of eigenvalues NOT included
-Total variance = sum of ALL eigenvalues
-Fraction lost = (sum of dropped eigenvalues) / (sum of all eigenvalues)
+```math
+\begin{aligned}
+\text{Reconstruction error} &= \text{sum of eigenvalues NOT included} \\
+\text{Total variance} &= \text{sum of ALL eigenvalues} \\
+\text{Fraction lost} &= \frac{\text{sum of dropped eigenvalues}}{\text{sum of all eigenvalues}}
+\end{aligned}
 ```
 
 Tỷ lệ biến số giải thích cho mỗi thành phần là:
 
-```
-explained_ratio_k = eigenvalue_k / sum(all eigenvalues)
+```math
+\text{explained\_ratio}_k = \frac{\text{eigenvalue}_k}{\sum \text{all eigenvalues}}
 ```
 
 Chụp biểu đồ sự biến động được giải thích tích lũy đối với số lượng các thành phần cho bạn đường cong "công tay".
@@ -188,7 +190,7 @@ Chụp biểu đồ sự biến động được giải thích tích lũy đối
 - Sự biến động tích lũy vượt qua ngưỡng của bạn (thường là 0,90 hoặc 0,95)
 - Các đồng bằng về hiệu suất nhiệm vụ
 
-Hầm lẫn tái thiết có ích hơn là chọn k. Bạn có thể sử dụng nó để phát hiện bất thường: các mẫu có lỗi tái thiết cao là các điểm ngoại lệ không phù hợp với không gian phụ được học. Đây là cơ sở phát hiện bất thường dựa trên PCA trong các hệ thống sản xuất.
+Trận lỗi tái tạo là hữu ích hơn là chọn $k$Bạn có thể sử dụng nó để phát hiện bất thường: các mẫu có lỗi tái thiết cao là các điểm ngoại lệ không phù hợp với không gian phụ được học. Đây là cơ sở của phát hiện bất thường dựa trên PCA trong các hệ thống sản xuất.
 
 ```figure
 pca-axes
@@ -353,6 +355,14 @@ Bài học này mang lại:
 
 3. Hãy lấy một bộ dữ liệu với 50 tính năng mà chỉ có 5 tính năng thông tin (tạo ra một với `sklearn.datasets.make_classification`). Sử dụng PCA và kiểm tra xem đường cong biến số được giải thích có xác định chính xác dữ liệu có hiệu quả là 5 chiều không.
 
+### Những gợi ý
+
+**Exercise 1.**Đọc `inverse_transform`trong `PCA`lớp và phù hợp với một mô hình cho mỗi số thành phần.`reconstruction_error`cho 10, 50 và 200 thành phần; lỗi phải giảm khi số lượng thành phần tăng lên.
+
+**Exercise 2.**Đơn vị `sklearn.manifold.TSNE`ba lần trên cùng một bộ phận, thay đổi chỉ `perplexity`, và sử dụng cùng một `random_state`Sự bối rối thấp nhìn vào ít hàng xóm, vì vậy mong đợi các nhóm nhỏ chặt chẽ; sự bối rối cao nhìn vào nhiều hàng xóm, vì vậy mong đợi các nhóm lớn hơn, mượt mà hơn.
+
+**Exercise 3.**Gọi`make_classification(n_features=50, n_informative=5, n_redundant=45)`, phù hợp`PCA`, và in sự biến thể được giải thích tích lũy. Các tính năng dư thừa là kết hợp tuyến tính của những thông tin, do đó đường cong đạt gần 1.0 ở 5 thành phần.`n_redundant=0`: 45 tính năng khác là tiếng ồn độc lập, và đường cong không phẳng.
+
 ## Các điều khoản chính
 
 | Term | What people say | What it actually means |
@@ -360,8 +370,8 @@ Bài học này mang lại:
 | Curse of dimensionality | "Too many features" | Distances, volumes, and data density all behave counterintuitively as dimensions grow. Models need exponentially more data to compensate. |
 | PCA | "Reduce dimensions" | Rotate your coordinate system so the axes align with the directions of maximum variance, then drop the low-variance axes. |
 | Principal component | "An important direction" | An eigenvector of the covariance matrix. The direction in feature space along which the data varies most. |
-| Explained variance ratio | "How much info this component has" | The fraction of total variance captured by one principal component. Sum the top k ratios to see how much k components preserve. |
-| Covariance matrix | "How features correlate" | A symmetric matrix where entry (i,j) measures how feature i and feature j move together. Diagonal entries are individual variances. |
+| Explained variance ratio | "How much info this component has" | The fraction of total variance captured by one principal component. Sum the top $k$ ratios to see how much $k$ components preserve. |
+| Covariance matrix | "How features correlate" | A symmetric matrix where entry $(i,j)$ measures how feature $i$ and feature $j$ move together. Diagonal entries are individual variances. |
 | t-SNE | "That cluster plot" | A nonlinear method that maps high-dimensional data to 2D by preserving pairwise neighborhood probabilities. Good for visualization, not for preprocessing. |
 | UMAP | "Faster t-SNE" | A nonlinear method based on topological data analysis. Preserves both local and some global structure. Scales better than t-SNE. |
 | Perplexity | "A t-SNE knob" | Controls the effective number of neighbors each point considers. Low perplexity focuses on very local structure. High perplexity captures broader patterns. |

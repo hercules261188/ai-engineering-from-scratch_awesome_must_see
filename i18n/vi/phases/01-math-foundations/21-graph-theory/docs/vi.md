@@ -34,9 +34,9 @@ Bạn cần bốn thứ:
 
 ### Hình đồ: nút và cạnh
 
-Một biểu đồ G = (V, E) bao gồm các đỉnh (thắt nút) V và cạnh E. Mỗi cạnh kết nối hai nút.
+Một biểu đồ$G = (V, E)$bao gồm các đỉnh (thắt nút) $V$và các cạnh$E$Mỗi cạnh nối hai nút.
 
-**Directed vs undirected.**Trong biểu đồ không hướng, cạnh (u, v) có nghĩa là u kết nối với v Và v kết nối với u. Trong biểu đồ hướng (digraph), cạnh (u, v) có nghĩa là u chỉ đến v, nhưng không nhất thiết là ngược lại.
+**Directed vs undirected.**Trong biểu đồ không hướng, cạnh $(u, v)$- Ý nghĩa$u$kết nối với $v$Và$v$kết nối với $u$Trong biểu đồ hướng (digraph), cạnh $(u, v)$- Ý nghĩa$u$chỉ ra $v$, nhưng không nhất thiết phải ngược lại.
 
 **Weighted vs unweighted.**Trong biểu đồ không cân nặng, cạnh có hoặc không có. Trong biểu đồ cân nặng, mỗi cạnh có trọng lượng số - khoảng cách, chi phí, sức mạnh.
 
@@ -49,14 +49,13 @@ Một biểu đồ G = (V, E) bao gồm các đỉnh (thắt nút) V và cạnh 
 
 ### Matrix gần nhau
 
-Các matrix lân cận A là đại diện cốt lõi. Đối với một biểu đồ với n nút:
+Matrix lân cận $A$là đại diện cốt lõi.$n$các nút:
 
-```
-A[i][j] = 1    if there is an edge from node i to node j
-A[i][j] = 0    otherwise
+```math
+A[i][j] = \begin{cases} 1 & \text{if there is an edge from node } i \text{ to node } j \\ 0 & \text{otherwise} \end{cases}
 ```
 
-Đối với đồ thị không định hướng, A là đối xứng: A[i][j] = A[j][i]. Đối với đồ thị trọng lượng, A[i][j] = trọng lượng cạnh (i, j).
+Đối với các biểu đồ không định hướng, $A$là đối xứng: $A[i][j] = A[j][i]$. Đối với biểu đồ trọng lượng, $A[i][j]$= trọng lượng cạnh $(i, j)$- Tôi không biết.
 
 **Example -- a triangle:**
 
@@ -69,20 +68,22 @@ A = [[0, 1, 1],
      [1, 1, 0]]
 ```
 
-Các matrix lân cận là đầu vào cho mỗi GNN. Các hoạt động của matrix trên A tương ứng với các hoạt động trên biểu đồ.
+Matrix lân cận là đầu vào cho mỗi GNN.$A$tương ứng với các hoạt động trên biểu đồ.
 
 ### Bằng cấp
 
 Độ độ của một nút là số lượng các cạnh kết nối với nó. Đối với biểu đồ hướng, bạn có độ độ (đến vào cạnh) và độ độ ngoài (đến ra cạnh).
 
-Các số liệu của độ D là đường viền:
+Các mức độ matrix $D$là đường viền:
 
-```
-D[i][i] = degree of node i
-D[i][j] = 0    for i != j
+```math
+\begin{aligned}
+D[i][i] &= \text{degree of node } i \\
+D[i][j] &= 0 \quad \text{for } i \ne j
+\end{aligned}
 ```
 
-Ví dụ về tam giác: D = diag(2, 2, 2) bởi vì mỗi nút kết nối với hai nút khác.
+Ví dụ về tam giác: $D = \mathop{\mathrm{diag}}(2, 2, 2)$bởi vì mỗi nút kết nối với hai nút khác.
 
 Các mức độ cho bạn biết về tầm quan trọng của nút. cấp độ cao = nút nút. Phân bố cấp của một mạng cho thấy cấu trúc của nó. Các mạng xã hội tuân theo các luật năng lượng (một số ít nút, nhiều nút lá).
 
@@ -132,19 +133,17 @@ DFS hữu ích cho:
 
 ### Chữ đồ họa Laplacian
 
-L = D - A. Các trận đấu quan trọng nhất trong lý thuyết đồ thị quang phổ.
+$L = D - A$- Matrix quan trọng nhất trong lý thuyết đồ thị quang phổ.
 
 Đối với tam giác:
 
-```
-D = [[2, 0, 0],    A = [[0, 1, 1],    L = [[2, -1, -1],
-     [0, 2, 0],         [1, 0, 1],         [-1, 2, -1],
-     [0, 0, 2]]         [1, 1, 0]]         [-1, -1,  2]]
+```math
+D = \begin{bmatrix} 2 & 0 & 0 \\ 0 & 2 & 0 \\ 0 & 0 & 2 \end{bmatrix} \qquad A = \begin{bmatrix} 0 & 1 & 1 \\ 1 & 0 & 1 \\ 1 & 1 & 0 \end{bmatrix} \qquad L = \begin{bmatrix} 2 & -1 & -1 \\ -1 & 2 & -1 \\ -1 & -1 & 2 \end{bmatrix}
 ```
 
 Bạch laplacian có những đặc tính đáng chú ý:
 
-1. **L is positive semi-definite.**Tất cả các giá trị riêng là >= 0.
+1. **$L$ is positive semi-definite.**Tất cả các giá trị riêng là $\ge 0$- Tôi không biết.
 
 2. **The number of zero eigenvalues equals the number of connected components.**Một biểu đồ kết nối có chính xác một giá trị riêng không. Một biểu đồ với 3 thành phần không kết nối có ba giá trị riêng không.
 
@@ -174,12 +173,12 @@ graph TD
 Các giá trị riêng của các matrix lân cận và Laplacian tiết lộ các tính chất cấu trúc mà không cần bất kỳ quá trình nào.
 
 **Spectral clustering**làm như thế này:
-1. Xét Laplacian L
-2. Tìm các đối tượng tự nhỏ nhất của L (lỡ bỏ đầu tiên, là tất cả-one cho biểu đồ kết nối)
+1. Xét số Laplacian $L$
+2. Tìm ra $k$Các vector chính nhỏ nhất của $L$(đánh qua thứ nhất, đó là tất cả các đối tượng cho các biểu đồ kết nối)
 3. Sử dụng các vector tự như là các tọa độ mới cho mỗi nút
-4. Đưa k-means trên các tọa độ đó
+4. Đi chạy$k$-đường trung bình trên các phối hợp đó
 
-Tại sao điều này hoạt động? Các vector tự của L mã hóa các hàm "mơn mịn nhất" trên biểu đồ. Các nút kết nối tốt có được các giá trị vector tự tương tự. Các nút tách bằng nút bốc lấy các giá trị khác nhau. Các vector tự tự tự tự tự tách các cụm.
+Tại sao nó hoạt động?$L$mã hóa các hàm "mơn mịn nhất" trên biểu đồ. Các nút kết nối tốt có giá trị eigenvector tương tự. Các nút tách bằng nút chai có giá trị khác nhau. Các eigenvector tự nhiên tách các cụm.
 
 **Random walk connection.**Laplacian bình thường liên quan đến các bước ngẫu nhiên trên biểu đồ. Phân bố tĩnh của một bước ngẫu nhiên tương xứng với độ nút. Thời gian trộn (tốc độ bước ngẫu nhiên hội tụ) phụ thuộc vào khoảng cách quang phổ.
 
@@ -187,25 +186,25 @@ Tại sao điều này hoạt động? Các vector tự của L mã hóa các h�
 
 Các hoạt động cốt lõi của Graph Neural Networks. Mỗi nút thu thập thông điệp từ hàng xóm của nó, tổng hợp chúng và cập nhật trạng thái của riêng nó.
 
-```
-h_v^(k+1) = UPDATE(h_v^(k), AGGREGATE({h_u^(k) : u in neighbors(v)}))
+```math
+h_v^{(k+1)} = \text{UPDATE}\left(h_v^{(k)}, \text{AGGREGATE}\left(\{h_u^{(k)} : u \in \text{neighbors}(v)\}\right)\right)
 ```
 
 Trong dạng đơn giản nhất, AGGREGATE = trung bình, và UPDATE = chuyển đổi tuyến tính + kích hoạt:
 
-```
-h_v^(k+1) = sigma(W * mean({h_u^(k) : u in neighbors(v)}))
-```
-
-Đây là sự nhân đếm của các khối tử liệu. Nếu H là các khối tử liệu của tất cả các tính năng nút và A là các khối tử liệu lân cận:
-
-```
-H^(k+1) = sigma(A_norm * H^(k) * W)
+```math
+h_v^{(k+1)} = \sigma\left(W \cdot \text{mean}\left(\{h_u^{(k)} : u \in \text{neighbors}(v)\}\right)\right)
 ```
 
-nơi A_norm là matrix lân cận bình thường (mỗi hàng tổng cộng lên 1).
+Đây là sự nhân số tử liệu trong giả vờ.$H$là các mô-trix của tất cả các tính năng nút và $A$là các matrix lân cận:
 
-Một vòng thông điệp truyền cho phép mỗi nút "xem" hàng xóm trực tiếp của nó. Hai vòng cho phép nó thấy hàng xóm của hàng xóm.
+```math
+H^{(k+1)} = \sigma\left(A_{\text{norm}} H^{(k)} W\right)
+```
+
+nơi $A_{\text{norm}}$là các mã số liền kề bình thường (mỗi hàng tổng cộng lên 1).
+
+Một vòng thông điệp truyền cho phép mỗi nút "xem" hàng xóm trực tiếp của nó. Hai vòng cho phép nó thấy hàng xóm của hàng xóm. $K$vòng cung cấp cho mỗi nút thông tin từ $K$- Quận hip.
 
 ```mermaid
 graph LR
@@ -326,7 +325,7 @@ def dfs(graph, start):
     return order
 ```
 
-BFS sử dụng một deque (trung hai cuối) cho O(1) pop left. DFS sử dụng một danh sách như một đống. Cả hai truy cập mỗi nút chính xác một lần - O(V + E) thời gian.
+BFS sử dụng một deque (trung hàng kết thúc đôi) cho $O(1)$DFS sử dụng một danh sách như một đống. Cả hai đều truy cập mỗi nút chính xác một lần -$O(V + E)$Thời gian.
 
 ### Bước 3: Các thành phần kết nối và giá trị riêng Laplacian
 
@@ -369,7 +368,7 @@ def spectral_clustering(graph, k=2):
     return labels
 ```
 
-Đối với k=2, dấu hiệu của vector Fiedler chia đồ thị thành hai cluster. Đối với k>2, bạn sẽ chạy k- trung bình trên các vector tự trị k đầu tiên (không bao gồm các vector tự trị tất cả).
+Vì $k=2$, dấu hiệu của vector Fiedler chia đồ thị thành hai cluster.$k>2$, anh sẽ chạy$k$-đáng ra là lần đầu tiên $k$eigenvector (ngoại trừ eigenvector tất cả các đơn vị tầm thường).
 
 ### Bước 5: Gửi thông điệp
 
@@ -462,13 +461,13 @@ Bài học này mang lại:
 | Connected components | Preprocessing, handling disconnected graphs |
 | PageRank | Node importance ranking, attention initialization |
 
-GNN xứng đáng được đề cập đặc biệt. Hoạt động xoắn gạch trong GCN (Kipf & Welling, 2017) sử dụng các matrix lân cận với tự vòng tự thêm, A_hat = A + I:
+GNN xứng đáng được đề cập đặc biệt. Hoạt động xoắn gạch trong GCN (Kipf & Welling, 2017) sử dụng các matrix lân cận với tự buo tự thêm, $\hat{A} = A + I$- Có thể là:
 
-```text
-H^(l+1) = sigma(D_hat^(-1/2) * A_hat * D_hat^(-1/2) * H^(l) * W^(l))
+```math
+H^{(l+1)} = \sigma\left(\hat{D}^{-1/2} \hat{A} \hat{D}^{-1/2} H^{(l)} W^{(l)}\right)
 ```
 
-nơi A_hat = A + I (đối diện cộng với tự vòng lặp) và D_hat là các bậc tử của A_hat. Các vòng tự đảm bảo mỗi nút bao gồm các tính năng riêng của nó trong quá trình tổng hợp. Đây chính xác là thông điệp thông qua với bình thường hóa đối xứng. D_hat^(-1/2) * A_hat * D_hat^(-1/2) là các matrix lân cận bình thường. Laplacian xuất hiện bởi vì sự bình thường hóa này liên quan đến L_sym = I - D^(-1/2) * A * D^(-1/2). Hiểu Laplacian có nghĩa là hiểu tại sao GCN hoạt động.
+nơi $\hat{A} = A + I$(đối diện cộng với tự vòng) và $\hat{D}$là các bậc tử của $\hat{A}$Các vòng tự đảm bảo mỗi nút có các tính năng riêng của nó trong quá trình tổng hợp. Đây chính xác là thông điệp thông qua với bình thường hóa đối xứng. $\hat{D}^{-1/2} \hat{A} \hat{D}^{-1/2}$là các matrix lân cận bình thường hóa. Laplacian xuất hiện bởi vì sự bình thường hóa này liên quan đến$L_{\text{sym}} = I - D^{-1/2} A D^{-1/2}$Nhận thức Laplacian có nghĩa là hiểu tại sao GCN hoạt động.
 
 ## Các bài tập
 
@@ -482,15 +481,27 @@ nơi A_hat = A + I (đối diện cộng với tự vòng lặp) và D_hat là c
 
 5. **Analyze a real-world graph.**Sử dụng biểu đồ Câu lạc bộ Karate (34 nút, 78 cạnh). Xét phân phối mức độ, giá trị riêng của Laplacian và nhóm quang phổ. So sánh kết quả nhóm quang phổ với phân chia thực tại mặt đất được biết đến.
 
+### Những gợi ý
+
+**Exercise 1.**Sử dụng công thức từ bài tập. Một nút không có cạnh ra ngoài phải chia sẻ điểm số của nó bằng nhau với tất cả các nút, hoặc tổng số giảm xuống dưới 1. Kiểm tra xem điểm số cộng lên đến 1 sau mỗi bước và so sánh kết quả của bạn với `pagerank(graph)`- Tôi không biết.
+
+**Exercise 2.**Hãy tạo ra hai nhóm với `add_edge`, kết nối chúng với một cạnh, và gọi `spectral_clustering(graph, k=2)`Hãy kiểm tra rằng mỗi click có được một nhãn. Khi bạn thêm các cạnh chéo, in giá trị bản nhỏ thứ hai của `laplacian()`, phát triển khi hai nhóm kết hợp.
+
+**Exercise 3.**Giữ hàng ưu tiên với `heapq`và luôn mở rộng nút với khoảng cách nhỏ nhất được biết đến. Hãy làm cho mỗi trọng lượng 1 và kiểm tra rằng mỗi khoảng cách Dijkstra bằng với lớp BFS của nút đó từ `bfs(graph, start)`- Tôi không biết.
+
+**Exercise 4.**Sử dụng mã số danh tính như `features`, để mỗi cột đánh dấu một nút, và áp dụng `message_passing`sau đó các mục không bằng 0 trong hàng cho nút$v$cho thấy các nút nào đã đạt được $v$So sánh bộ đó với các nút trong khoảng cách 2 từ chiều rộng tìm kiếm đầu tiên.
+
+**Exercise 5.** `networkx.karate_club_graph()`cho danh sách cạnh và sự thật của mặt đất trong thuộc tính nút `club`. Tải các cạnh vào một`Graph`và kiểm tra xem nó có 34 nút và 78 cạnh. So sánh các nhãn từ`spectral_clustering`với `club`giá trị, và cho phép hai tên nhãn được trao đổi.
+
 ## Các điều khoản chính
 
 | Term | What people say | What it actually means |
 |------|----------------|----------------------|
-| Graph | "Nodes and edges" | A mathematical structure G=(V,E) encoding pairwise relationships |
-| Adjacency matrix | "The connection table" | An n x n matrix where A[i][j] = 1 if nodes i and j are connected |
+| Graph | "Nodes and edges" | A mathematical structure $G=(V,E)$ encoding pairwise relationships |
+| Adjacency matrix | "The connection table" | An $n \times n$ matrix where $A[i][j] = 1$ if nodes $i$ and $j$ are connected |
 | Degree | "How connected a node is" | The number of edges touching a node |
-| Laplacian | "D minus A" | L = D - A, the matrix whose eigenvalues reveal graph structure |
-| Fiedler value | "The algebraic connectivity" | The smallest non-zero eigenvalue of L, measuring how well-connected the graph is |
+| Laplacian | "D minus A" | $L = D - A$, the matrix whose eigenvalues reveal graph structure |
+| Fiedler value | "The algebraic connectivity" | The smallest non-zero eigenvalue of $L$, measuring how well-connected the graph is |
 | BFS | "Level-by-level search" | Traversal that visits all neighbors before going deeper, finds shortest paths |
 | DFS | "Go deep first" | Traversal that follows one path to its end before backtracking |
 | Message passing | "Nodes talk to neighbors" | Each node aggregates information from its neighbors, the core of GNNs |

@@ -9,7 +9,7 @@
 
 ## Mục tiêu học tập
 
-- Xét số và phân tích dẫn xuất cho các hàm ML chung (x^2, sigmoid, cross-entropy)
+- Xét số và phân tích dẫn xuất cho các hàm ML chung ($x^2$, sigmoid, cross-entropy)
 - Thực hiện giảm gradient từ đầu để giảm thiểu hàm mất mát trong 1D và 2D
 - Thuộc dẫn gradient của mô hình hồi quy tuyến tính và đào tạo nó thông qua cập nhật trọng lượng thủ công
 - Giải thích các matrix Hessian, các phép so sánh chuỗi Taylor và mối liên hệ của chúng với các phương pháp tối ưu hóa
@@ -24,59 +24,58 @@ Nếu không có tính toán, đào tạo một mạng thần kinh sẽ có ngh�
 
 ### Một dẫn xuất là gì?
 
-Một phái sinh đo tốc độ thay đổi. cho một hàm y = f(x), phái sinh f'(x) cho bạn biết: nếu bạn đẩy x bằng một số lượng nhỏ, y thay đổi bao nhiêu?
+Một phái sinh đo lường tỷ lệ thay đổi.$y = f(x)$, phái sinh $f'(x)$nói với bạn: nếu bạn đẩy $x$bằng một số lượng nhỏ, bao nhiêu là $y$thay đổi?
 
 Về mặt hình học, dẫn xuất là độ nghiêng của đường ngã ở một điểm.
 
-**f(x) = x^2:**
+**$f(x) = x^2$:**
 
-| x | f(x) | f'(x) (slope) |
+| $x$ | $f(x)$ | $f'(x)$ (slope) |
 |---|------|---------------|
 | 0 | 0    | 0 (flat, at the bottom) |
 | 1 | 1    | 2 |
 | 2 | 4    | 4 (tangent line slope at this point) |
 | 3 | 9    | 6 |
 
-Khi x=2, độ nghiêng là 4. Nếu bạn di chuyển x một chút sang bên phải, y tăng khoảng 4 lần số tiền đó.
+Tại $x=2$, độ nghiêng là 4. Nếu bạn di chuyển $x$một chút về bên phải,$y$tăng khoảng 4 lần số tiền đó.$x=0$, độ nghiêng là 0. Bạn đang ở dưới cùng của bát.
 
 Định nghĩa chính thức:
 
-```
-f'(x) = lim   f(x + h) - f(x)
-        h->0  -----------------
-                     h
+```math
+f'(x) = \lim_{h \to 0} \frac{f(x + h) - f(x)}{h}
 ```
 
-Trong mã, bạn bỏ qua giới hạn và chỉ sử dụng một h rất nhỏ. Đó là dẫn xuất số.
+Trong mã, bạn bỏ qua giới hạn và chỉ sử dụng một rất nhỏ $h$Đó là dẫn xuất số.
 
 ### Các phái sinh một phần: một biến tại một thời điểm
 
 Các hàm thực có nhiều đầu vào. Một mất mạng thần kinh phụ thuộc vào hàng ngàn trọng lượng. Một dẫn xuất một phần giữ tất cả các biến liên tục ngoại trừ một, sau đó lấy dẫn xuất liên quan đến một.
 
-```
-f(x, y) = x^2 + 3xy + y^2
-
-df/dx = 2x + 3y     (treat y as a constant)
-df/dy = 3x + 2y     (treat x as a constant)
+```math
+\begin{aligned}
+f(x, y) &= x^2 + 3xy + y^2 \\[4pt]
+\frac{\partial f}{\partial x} &= 2x + 3y \quad \text{(treat } y \text{ as a constant)} \\
+\frac{\partial f}{\partial y} &= 3x + 2y \quad \text{(treat } x \text{ as a constant)}
+\end{aligned}
 ```
 
 Mỗi dẫn xuất một phần trả lời: nếu tôi đẩy chỉ một trọng lượng này, làm thế nào để mất thay đổi?
 
 ### Các gradient: vector của tất cả các phái sinh một phần
 
-Các gradient thu thập mọi dẫn xuất một phần thành một vector. cho một hàm f ((x, y, z), gradient là:
+gradient thu thập mọi dẫn xuất phân trong một vector.$f(x, y, z)$, độ nghiêng là:
 
-```
-grad f = [ df/dx, df/dy, df/dz ]
+```math
+\nabla f = \left[ \frac{\partial f}{\partial x}, \frac{\partial f}{\partial y}, \frac{\partial f}{\partial z} \right]
 ```
 
 Đi độ hướng về hướng leo cao nhất. Để giảm thiểu một chức năng, đi theo hướng ngược lại.
 
-**Contour plot of f(x,y) = x^2 + y^2:**
+**Contour plot of $f(x,y) = x^2 + y^2$:**
 
 Chức năng hình thành một hình thức bát với các vòng tròn tập trung như đường đường.
 
-| Point | grad f | -grad f (descent direction) |
+| Point | $\nabla f$ | $-\nabla f$ (descent direction) |
 |-------|--------|----------------------------|
 | (1, 1) | [2, 2] (points uphill, away from minimum) | [-2, -2] (points downhill, toward minimum) |
 | (0, 0) | [0, 0] (flat, at the minimum) | [0, 0] |
@@ -85,7 +84,7 @@ Chức năng hình thành một hình thức bát với các vòng tròn tập t
 
 ### Kết nối với tối ưu hóa
 
-Căn luyện một mạng thần kinh là tối ưu hóa. Bạn có một hàm mất L ((w1, w2, ..., wn) đo mức độ sai lầm của mô hình. Bạn muốn giảm thiểu nó.
+Việc đào tạo mạng thần kinh là tối ưu hóa.$L(w_1, w_2, \ldots, w_n)$bạn muốn giảm thiểu nó.
 
 ```
 Gradient descent update rule:
@@ -102,7 +101,7 @@ Tốc độ học tập kiểm soát kích thước bước quá lớn và bạn
 
 **Loss landscape (1D slice):**
 
-Chức năng mất L ((w) hình thành một đường cong với đỉnh và thung lũng khi trọng lượng w thay đổi.
+Chức năng mất mát $L(w)$hình thành một đường cong với đỉnh và thung lũng như trọng lượng $w$khác nhau.
 
 | Feature | Description |
 |---------|-------------|
@@ -116,9 +115,9 @@ Sự giảm dần theo chiều dốc xuống đồi. Nó có thể bị mắc k�
 
 Có hai cách để tính toán một phái sinh.
 
-Phân tích: áp dụng các quy tắc toán bằng tay. Đối với f  x = x ^ 2, dẫn xuất là f  x = 2x. chính xác.
+Phân tích: áp dụng các quy tắc toán học bằng tay.$f(x) = x^2$, dẫn xuất là $f'(x) = 2x$Đúng rồi, nhanh thôi.
 
-Số: ước tính bằng cách sử dụng định nghĩa. tính f ((x+h) và f ((x-h) cho một h nhỏ, sau đó sử dụng sự khác biệt.
+Số: ước tính sử dụng định nghĩa.$f(x+h)$và $f(x-h)$cho một cái nhỏ $h$, sau đó sử dụng sự khác biệt.
 
 ```
 Numerical (central difference):
@@ -148,7 +147,7 @@ f(x) = ln(x)   f'(x) = 1/x     Cross-entropy loss
 f(x) = 1/(1+e^-x)  f'(x) = f(x)(1-f(x))   Sigmoid activation
 ```
 
-Đối với f ((x) = x ^ 2:
+Vì $f(x) = x^2$- Có thể là:
 
 ```
 f(x) = x^2    f'(x) = 2x
@@ -161,7 +160,7 @@ f(x) = x^2    f'(x) = 2x
    2    4       4      slope tilts right (increasing)
 ```
 
-Đối với f(w) = wx + b với x=3, b=1:
+Vì $f(w) = wx + b$với $x=3$- $b=1$- Có thể là:
 
 ```
 f(w) = 3w + 1    f'(w) = 3
@@ -189,17 +188,16 @@ Các mạng thần kinh là chuỗi các chức năng: đầu vào -> tuyến t�
 
 Điểm nghiêng cho bạn biết đường nghiêng.
 
-Hessian là các tử liệu dẫn xuất phân tử thứ hai. Đối với một hàm f ((x1, x2, ..., xn), nhập (i, j) của Hessian là:
+Hessian là các matrix của các phái sinh phân số thứ hai.$f(x_1, x_2, \ldots, x_n)$, nhập khẩu$(i, j)$của Hessian là:
 
-```
-H[i][j] = d^2f / (dx_i * dx_j)
+```math
+H_{ij} = \frac{\partial^2 f}{\partial x_i \, \partial x_j}
 ```
 
-Đối với hàm 2 biến f ((x, y):
+Đối với hàm 2 biến $f(x, y)$- Có thể là:
 
-```
-H = | d^2f/dx^2    d^2f/dxdy |
-    | d^2f/dydx    d^2f/dy^2 |
+```math
+H = \begin{bmatrix} \dfrac{\partial^2 f}{\partial x^2} & \dfrac{\partial^2 f}{\partial x \, \partial y} \\[8pt] \dfrac{\partial^2 f}{\partial y \, \partial x} & \dfrac{\partial^2 f}{\partial y^2} \end{bmatrix}
 ```
 
 **What the Hessian tells you at a critical point (where gradient = 0):**
@@ -210,7 +208,7 @@ H = | d^2f/dx^2    d^2f/dxdy |
 | Negative definite (all eigenvalues < 0) | Local maximum | Bowl pointing down |
 | Indefinite (mixed eigenvalues) | Saddle point | Horse saddle shape |
 
-**Example:**f(x, y) = x^2 - y^2 (một hàm saddle)
+**Example:** $f(x, y) = x^2 - y^2$(một chức năng saddle)
 
 ```
 df/dx = 2x       df/dy = -2y
@@ -223,7 +221,7 @@ Eigenvalues: 2 and -2 (one positive, one negative)
 --> Saddle point at (0, 0)
 ```
 
-So sánh với f ((x, y) = x^2 + y^2 (một bát):
+So sánh với $f(x, y) = x^2 + y^2$(một bát):
 
 ```
 H = | 2  0 |
@@ -237,22 +235,24 @@ Eigenvalues: 2 and 2 (both positive)
 
 Phương pháp của Newton sử dụng phương pháp Hessian để thực hiện các bước tối ưu hóa tốt hơn so với giảm gradient.
 
-```
-Newton's update:    w_new = w_old - H^(-1) * gradient
-Gradient descent:   w_new = w_old - lr * gradient
+```math
+\begin{aligned}
+\text{Newton's update:} \quad & w_{\text{new}} = w_{\text{old}} - H^{-1} \cdot \text{gradient} \\
+\text{Gradient descent:} \quad & w_{\text{new}} = w_{\text{old}} - \text{lr} \cdot \text{gradient}
+\end{aligned}
 ```
 
 Phương pháp Newton hội tụ nhanh hơn bởi vì Hessian "đổi lại" độ lệch -- hướng thẳng đứng có bước nhỏ hơn, hướng phẳng có bước lớn hơn.
 
-Chỗ bắt: cho một mạng thần kinh với các tham số N, Hessian là N x N. Một mô hình với 1 triệu tham số sẽ cần một số liệu đầu vào 1 nghìn tỷ. Đó là lý do tại sao chúng tôi sử dụng các ước tính.
+Việc bắt: cho một mạng lưới thần kinh với $N$Các tham số, Hessian là $N \times N$Một mô hình với 1 triệu tham số sẽ cần một số lượng matrix nhập 1 nghìn tỷ.
 
 | Method | What it uses | Cost | Convergence |
 |--------|-------------|------|-------------|
-| Gradient descent | First derivatives only | O(N) per step | Slow (linear) |
-| Newton's method | Full Hessian | O(N^3) per step | Fast (quadratic) |
-| L-BFGS | Approximate Hessian from gradient history | O(N) per step | Medium (superlinear) |
-| Adam | Per-parameter adaptive rates (diagonal Hessian approx) | O(N) per step | Medium |
-| Natural gradient | Fisher information matrix (statistical Hessian) | O(N^2) per step | Fast |
+| Gradient descent | First derivatives only | $O(N)$ per step | Slow (linear) |
+| Newton's method | Full Hessian | $O(N^3)$ per step | Fast (quadratic) |
+| L-BFGS | Approximate Hessian from gradient history | $O(N)$ per step | Medium (superlinear) |
+| Adam | Per-parameter adaptive rates (diagonal Hessian approx) | $O(N)$ per step | Medium |
+| Natural gradient | Fisher information matrix (statistical Hessian) | $O(N^2)$ per step | Fast |
 
 Trong thực tế, Adam là người tối ưu hóa mặc định cho học sâu. Nó gần gũi thông tin thứ hai giá rẻ bằng cách theo dõi trung bình chạy và sự biến động của gradient cho mỗi tham số.
 
@@ -260,17 +260,17 @@ Trong thực tế, Adam là người tối ưu hóa mặc định cho học sâu
 
 Bất kỳ hàm mượt mà nào có thể được ước tính tại địa phương bằng một đa nôn:
 
-```
-f(x + h) = f(x) + f'(x)*h + (1/2)*f''(x)*h^2 + (1/6)*f'''(x)*h^3 + ...
+```math
+f(x + h) = f(x) + f'(x)\,h + \frac{1}{2} f''(x)\,h^2 + \frac{1}{6} f'''(x)\,h^3 + \cdots
 ```
 
-Bạn càng thêm nhiều thuật ngữ, thì việc gần gũi càng tốt, nhưng chỉ gần điểm x.
+Bạn càng thêm nhiều thuật ngữ, thì sự gần gũi càng tốt - nhưng chỉ gần điểm$x$- Tôi không biết.
 
 **Why Taylor series matter for ML:**
 
-- **First-order Taylor = gradient descent.**Khi bạn sử dụng f(x + h) ~ f(x) + f'(x) *h, bạn đang thực hiện một sự gần gũi tuyến tính.
+- **First-order Taylor = gradient descent.**Khi sử dụng$f(x + h) \approx f(x) + f'(x) h$, bạn đang làm một sự gần gũi tuyến tính.$h = -\text{lr} \cdot f'(x)$- Tôi không biết.
 
-- **Second-order Taylor = Newton's method.**Sử dụng f(x + h) ~ f(x) + f'(x) *h + (1/2) *f'(x) *h^2, bạn có được một mô hình hình vuông.
+- **Second-order Taylor = Newton's method.**Sử dụng $f(x + h) \approx f(x) + f'(x) h + \frac{1}{2} f''(x) h^2$, bạn có một mô hình hình vuông.$h = -f'(x)/f''(x)$- Bước của Newton.
 
 - **Loss function design.**MSE và cross-entropy đều trơn tru, có nghĩa là sự mở rộng Taylor của chúng có hành vi tốt.
 
@@ -291,28 +291,36 @@ Các dẫn xuất cho bạn biết tỷ lệ thay đổi. Các nguyên tố tín
 
 Trong ML, bạn hiếm khi tính toán tích hợp bằng tay, nhưng khái niệm này ở khắp mọi nơi:
 
-**Probability.**Đối với một biến ngẫu nhiên liên tục với mật độ p ((x):
+**Probability.**Đối với một biến ngẫu nhiên liên tục với mật độ $p(x)$- Có thể là:
+
+```math
+P(a < X < b) = \int_a^b p(x) \, dx
 ```
-P(a < X < b) = integral from a to b of p(x) dx
-```
-Khu vực dưới đường cong mật độ xác suất giữa a và b là xác suất hạ cánh trong phạm vi đó.
+
+Khu vực dưới đường cong mật độ xác suất giữa $a$và $b$là khả năng hạ cánh trong phạm vi đó.
 
 **Expected value.**Kết quả trung bình cân bằng xác suất:
+
+```math
+\mathbb{E}[f(X)] = \int f(x) \, p(x) \, dx
 ```
-E[f(X)] = integral of f(x) * p(x) dx
-```
+
 Sự mất mát dự kiến trên phân phối dữ liệu là một phần không thể thiếu.
 
 **KL divergence.**Đường độ phân phối hai phân phối khác nhau như thế nào:
+
+```math
+\mathrm{KL}(p \,\|\, q) = \int p(x) \log \frac{p(x)}{q(x)} \, dx
 ```
-KL(p || q) = integral of p(x) * log(p(x) / q(x)) dx
-```
+
 Được sử dụng trong VAEs, chưng cất kiến thức và suy luận Bayesian.
 
 **Normalization constants.**Trong suy luận Bayesian:
+
+```math
+p(w \mid \text{data}) = \frac{p(\text{data} \mid w) \, p(w)}{\int p(\text{data} \mid w) \, p(w) \, dw}
 ```
-p(w | data) = p(data | w) * p(w) / integral of p(data | w) * p(w) dw
-```
+
 Tên gọi là một phần tích hợp trên tất cả các giá trị tham số có thể. Nó thường không thể giải quyết được, đó là lý do tại sao chúng tôi sử dụng các ước tính như MCMC và suy luận biến.
 
 | Integral concept | Where it appears in ML |
@@ -353,16 +361,16 @@ Mỗi mũi tên nhân bằng dẫn xuất địa phương. gradient cho bất k�
 
 Khi một hàm lập bản đồ một vector đến một vector (như một lớp mạng thần kinh), dẫn xuất của nó là một matrix.
 
-Đối với f: R^n -> R^m, Jacobian J là một dải m x n:
+Vì $f: \mathbb{R}^n \to \mathbb{R}^m$, Giacobia $J$là một $m \times n$Matrix:
 
-| | x1 | x2 | ... | xn |
+| | $x_1$ | $x_2$ | ... | $x_n$ |
 |---|---|---|---|---|
-| f1 | df1/dx1 | df1/dx2 | ... | df1/dxn |
-| f2 | df2/dx1 | df2/dx2 | ... | df2/dxn |
+| $f_1$ | $\partial f_1/\partial x_1$ | $\partial f_1/\partial x_2$ | ... | $\partial f_1/\partial x_n$ |
+| $f_2$ | $\partial f_2/\partial x_1$ | $\partial f_2/\partial x_2$ | ... | $\partial f_2/\partial x_n$ |
 | ... | ... | ... | ... | ... |
-| fm | dfm/dx1 | dfm/dx2 | ... | dfm/dxn |
+| $f_m$ | $\partial f_m/\partial x_1$ | $\partial f_m/\partial x_2$ | ... | $\partial f_m/\partial x_n$ |
 
-Bạn sẽ không tính toán Jacobian bằng tay cho các mạng thần kinh. PyTorch xử lý nó. Nhưng biết nó tồn tại giúp bạn hiểu hình dạng trong backpropagation: nếu một lớp bản đồ R^n đến R^m, Jacobian của nó là m x n. gradient chảy ngược qua chuyển giao của matrix này.
+Bạn sẽ không tính toán Jacobians bằng tay cho các mạng thần kinh. PyTorch xử lý nó. Nhưng biết nó tồn tại giúp bạn hiểu hình dạng trong backpropagation: nếu một lớp bản đồ$\mathbb{R}^n$đến$\mathbb{R}^m$, nó là Jacobian $m \times n$. gradient chảy ngược qua chuyển giao của matrix này.
 
 ### Tại sao điều này quan trọng đối với các mạng thần kinh
 
@@ -445,7 +453,7 @@ for step in range(20):
     print(f"step {step:2d}  x={x:8.4f}  f(x)={x**2:10.6f}")
 ```
 
-Bắt đầu từ x=5, mỗi bước di chuyển gần x=0 (tối thiểu).
+Bắt đầu từ $x=5$, mỗi bước tiến gần hơn $x=0$(tối thiểu).
 
 ### Bước 4: Thấp độ giảm trên một hàm 2D
 
@@ -531,7 +539,7 @@ for h in [0.1, 0.5, 1.0, 2.0]:
     print(f"h={h:.1f}  sin(h)={true_val:.4f}  order1={t1:.4f}  order2={t2:.4f}")
 ```
 
-Gần x0=0, sin(x) ~ x (định dạng Taylor thứ nhất). Phương trình gần gũi là tuyệt vời cho h nhỏ nhưng chia ra cho h lớn. Đây là lý do tại sao sự giảm gradient hoạt động tốt nhất với tỷ lệ học tập nhỏ - mỗi bước giả định rằng sự gần gũi tuyến tính là chính xác.
+Gần $x_0=0$- $\sin(x) \approx x$(Taylor thứ nhất).$h$Nhưng nó sẽ bị phá vỡ cho lớn $h$Đó là lý do tại sao sự giảm gradient hoạt động tốt nhất với tỷ lệ học tập nhỏ - mỗi bước giả định sự gần gũi tuyến tính là chính xác.
 
 ### Bước 8: Tại sao điều này quan trọng đối với một mạng lưới thần kinh
 
@@ -600,9 +608,17 @@ PyTorch tự động hóa tính toán gradient, nhưng vòng lặp cập nhật 
 
 ## Các bài tập
 
-1. Thực hiện`numerical_second_derivative(f, x)`sử dụng `numerical_derivative`xác minh rằng phái sinh thứ hai của x^3 tại x=2 là 12.
-2. Sử dụng độ giảm gradient để tìm được tối thiểu của f ((x, y) = (x - 3) ^ 2 + (y + 1) ^ 2. bắt đầu từ (0, 0). Câu trả lời nên hội tụ đến (3, -1).
-3. Thêm động lực vào vòng tròn giảm gradient: duy trì một vector tốc độ tích lũy gradient trước. So sánh tốc độ hội tụ với và không có động lực trên f ((x) = x^4 - 3x^2.
+1. Thực hiện`numerical_second_derivative(f, x)`sử dụng `numerical_derivative`xác minh rằng phái sinh thứ hai của $x^3$$x=2$là 12.
+2. Sử dụng độ giảm gradient để tìm được tối thiểu của $f(x, y) = (x - 3)^2 + (y + 1)^2$Bắt đầu từ$(0, 0)$Câu trả lời nên hội tụ với $(3, -1)$- Tôi không biết.
+3. Thêm động lực vào vòng tròn giảm gradient: duy trì một vector tốc độ tích lũy gradient trước. So sánh tốc độ hội tụ với và không động lực trên $f(x) = x^4 - 3x^2$- Tôi không biết.
+
+### Những gợi ý
+
+**Exercise 1.**Định nghĩa một người giúp đỡ trở lại `numerical_derivative(f, x)`và đưa người giúp đỡ đó đến `numerical_derivative`Nếu kết quả là tiếng ồn, sử dụng một bước lớn hơn như `h=1e-4`cho cả hai cuộc gọi; giá trị tại $x=2$Phải gần 12 rồi.
+
+**Exercise 2.**Viết gradient $(2(x - 3), 2(y + 1))$hoặc sử dụng `numerical_gradient`, và gọi `gradient_descent_nd`từ $(0, 0)$Bác in điểm mỗi 10 bước; nó phải di chuyển về phía $(3, -1)$và thua lỗ phải giảm xuống gần 0.
+
+**Exercise 3.**Giữ tốc độ `v`, cập nhật nó như `v = momentum * v - lr * grad`, sau đó thêm `v`đến`x`. Đếm các bước mà mỗi phương pháp cần để đạt đến một gradient gần 0; tối thiểu là ở $x = \pm\sqrt{1.5} \approx \pm 1.225$- Tôi không biết.
 
 ## Các điều khoản chính
 
@@ -613,12 +629,12 @@ PyTorch tự động hóa tính toán gradient, nhưng vòng lặp cập nhật 
 | Gradient | "Direction of steepest ascent" | A vector of all partial derivatives. Points in the direction that increases the function fastest. |
 | Gradient descent | "Go downhill" | Subtract the gradient (times a learning rate) from the parameters to reduce the loss. The core of neural network training. |
 | Learning rate | "Step size" | A scalar that controls how big each gradient descent step is. Too large: diverge. Too small: converge slowly. |
-| Chain rule | "Multiply the derivatives" | The rule for differentiating composed functions: df/dx = df/dg * dg/dx. The mathematical basis of backpropagation. |
+| Chain rule | "Multiply the derivatives" | The rule for differentiating composed functions: $\frac{df}{dx} = \frac{df}{dg} \cdot \frac{dg}{dx}$. The mathematical basis of backpropagation. |
 | Jacobian | "Matrix of derivatives" | When a function maps vectors to vectors, the Jacobian is the matrix of all partial derivatives of outputs with respect to inputs. |
 | Numerical derivative | "Finite differences" | Approximating a derivative by evaluating the function at two nearby points and computing the slope between them. |
 | Backpropagation | "Reverse-mode autodiff" | Computing gradients layer by layer from output to input using the chain rule. How neural networks learn. |
 | Hessian | "Matrix of second derivatives" | The matrix of all second-order partial derivatives. Describes the curvature of a function. Positive definite Hessian at a critical point means local minimum. |
-| Taylor series | "Polynomial approximation" | Approximating a function near a point using its derivatives: f(x+h) ~ f(x) + f'(x)h + (1/2)f''(x)h^2 + ... The basis for understanding why gradient descent and Newton's method work. |
+| Taylor series | "Polynomial approximation" | Approximating a function near a point using its derivatives: $f(x+h) \approx f(x) + f'(x)h + \frac{1}{2}f''(x)h^2 + \cdots$ The basis for understanding why gradient descent and Newton's method work. |
 | Integral | "Area under the curve" | The accumulation of a quantity over a range. In ML, integrals define probabilities, expected values, and KL divergence. |
 
 ## Đọc thêm

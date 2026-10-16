@@ -96,7 +96,7 @@ Relative error: 19.2%
 
 Đó là một lỗi tương đối 19% từ một lần trừ.
 
-- Xét sự khác biệt của dữ liệu với trung bình lớn: `E[x^2] - E[x]^2`khi E[x] lớn
+- Xét sự khác biệt của dữ liệu với trung bình lớn: $\mathbb{E}[x^2] - \mathbb{E}[x]^2$Khi nào $\mathbb{E}[x]$là lớn
 - Giảm gần như tương đương log-chỉ có thể
 - Xét các gradient khác biệt hữu hạn với epsilon quá nhỏ
 
@@ -141,20 +141,22 @@ Máy tính `log(sum(exp(x_i)))`trực tiếp là nguy hiểm về mặt số.`x_
 
 Trù: trừ giá trị tối đa trước khi tăng số.
 
-```
-log(sum(exp(x_i))) = max(x) + log(sum(exp(x_i - max(x))))
+```math
+\log\left(\sum_i \exp(x_i)\right) = \max(x) + \log\left(\sum_i \exp(x_i - \max(x))\right)
 ```
 
 Tại sao điều này hoạt động: sau khi trừ `max(x)`, số nhân lớn nhất là `exp(0) = 1`Không có quá tải là có thể. ít nhất một thuật ngữ trong tổng là 1, vì vậy tổng là ít nhất là 1, và`log(1) = 0`Không có dòng chảy xuống `-inf`có thể.
 
 Bằng chứng:
 
-```
-log(sum(exp(x_i)))
-= log(sum(exp(x_i - c + c)))                    (add and subtract c)
-= log(sum(exp(x_i - c) * exp(c)))               (exp(a+b) = exp(a)*exp(b))
-= log(exp(c) * sum(exp(x_i - c)))               (factor out exp(c))
-= c + log(sum(exp(x_i - c)))                    (log(a*b) = log(a) + log(b))
+```math
+\begin{aligned}
+& \log\left(\sum_i \exp(x_i)\right) \\
+&= \log\left(\sum_i \exp(x_i - c + c)\right) && \text{(add and subtract } c\text{)} \\
+&= \log\left(\sum_i \exp(x_i - c) \cdot \exp(c)\right) && (\exp(a+b) = \exp(a) \cdot \exp(b)) \\
+&= \log\left(\exp(c) \cdot \sum_i \exp(x_i - c)\right) && \text{(factor out } \exp(c)\text{)} \\
+&= c + \log\left(\sum_i \exp(x_i - c)\right) && (\log(a \cdot b) = \log(a) + \log(b))
+\end{aligned}
 ```
 
 Đặt `c = max(x)`và sự tràn qua được loại bỏ.
@@ -170,8 +172,8 @@ Trù này xuất hiện khắp nơi trong ML:
 
 Softmax chuyển đổi logits thành xác suất:
 
-```
-softmax(x_i) = exp(x_i) / sum(exp(x_j))
+```math
+\mathop{\mathrm{softmax}}(x_i) = \frac{\exp(x_i)}{\sum_j \exp(x_j)}
 ```
 
 Nếu không có thủ thuật, logit của [100, 101, 102] gây ra tràn:
@@ -242,18 +244,18 @@ Các gradient phân tích (từ backpropagation) có thể có lỗi. kiểm tra
 
 Công thức khác biệt trung tâm:
 
-```
-df/dx ~= (f(x + h) - f(x - h)) / (2h)
+```math
+\frac{df}{dx} \approx \frac{f(x + h) - f(x - h)}{2h}
 ```
 
-Đây là chính xác O ((h^2) tốt hơn nhiều so với sự khác biệt về phía trước `(f(x+h) - f(x)) / h`là chỉ là O(h).
+Đây là$O(h^2)$chính xác, tốt hơn nhiều so với sự khác biệt về phía trước $(f(x+h) - f(x)) / h$mà chỉ là $O(h)$- Tôi không biết.
 
-Chọn h: quá lớn và sự gần gũi là sai.`h = 1e-5`đến`1e-7`là điển hình.
+Chọn$h$: quá lớn và sự gần gũi là sai lầm.`h = 1e-5`đến`1e-7`là điển hình.
 
 Kiểm tra: tính toán sự khác biệt tương đối giữa các gradient phân tích và số.
 
-```
-relative_error = |grad_analytical - grad_numerical| / max(|grad_analytical|, |grad_numerical|, 1e-8)
+```math
+\text{relative\_error} = \frac{\lvert \text{grad}_{\text{analytical}} - \text{grad}_{\text{numerical}} \rvert}{\max(\lvert \text{grad}_{\text{analytical}} \rvert, \lvert \text{grad}_{\text{numerical}} \rvert, 10^{-8})}
 ```
 
 Quy tắc của ngón tay:
@@ -289,7 +291,7 @@ Việc khắc phục là giảm quy mô:
 5. Net effect: same update, but no underflow
 ```
 
-Scaling mất động điều chỉnh yếu tố quy mô tự động. bắt đầu với một giá trị lớn (65536). Nếu gradient tràn đến `inf`Nếu N bước đi mà không tràn, tăng gấp đôi.
+Scaling mất động điều chỉnh yếu tố quy mô tự động. bắt đầu với một giá trị lớn (65536). Nếu gradient tràn đến `inf`- Nếu...$N$Đi qua các bậc thang mà không quá tải, gấp đôi.
 
 ### Bfloat16 vs. Float16: Tại sao bfloat16 thắng trong tập luyện
 
@@ -350,8 +352,8 @@ Layer 50: values in [0, inf]
 
 Tiêu chuẩn hóa các recenters và tái kích hoạt ở mỗi lớp:
 
-```
-LayerNorm(x) = (x - mean(x)) / (std(x) + epsilon) * gamma + beta
+```math
+\mathop{\mathrm{LayerNorm}}(x) = \frac{x - \mathop{\mathrm{mean}}(x)}{\mathop{\mathrm{std}}(x) + \epsilon} \cdot \gamma + \beta
 ```
 
 - `epsilon`(thường là 1e-5) ngăn chặn chia bằng không khi tất cả các hoạt động đều giống nhau.`gamma`và `beta`để mạng phục hồi bất kỳ quy mô nào nó cần.
@@ -568,7 +570,7 @@ Những thực hiện ổn định này xuất hiện lại trong giai đoạn 3
 
 ## Các bài tập
 
-1. **Catastrophic cancellation.**Xét sự khác biệt của [1000000.0, 1000001.0, 1000002.0] bằng cách sử dụng công thức ngây thơ `E[x^2] - E[x]^2`Sau đó tính toán nó bằng cách sử dụng thuật toán trực tuyến của Welford. So sánh các lỗi với sự khác biệt thực (0,6667).
+1. **Catastrophic cancellation.**Xét sự khác biệt của [1000000.0, 1000001.0, 1000002.0] bằng cách sử dụng công thức ngây thơ $\mathbb{E}[x^2] - \mathbb{E}[x]^2$Sau đó tính toán nó bằng cách sử dụng thuật toán trực tuyến của Welford. So sánh các lỗi với sự khác biệt thực (0,6667).
 
 2. **Precision hunt.**Tìm giá trị float32 tích cực nhỏ nhất `x`như thế này`1.0 + x == 1.0`Đây là máy epsilon. Hãy kiểm tra xem nó phù hợp.`numpy.finfo(numpy.float32).eps`- Tôi không biết.
 
@@ -578,17 +580,29 @@ Những thực hiện ổn định này xuất hiện lại trong giai đoạn 3
 
 5. **Loss scaling experiment.**Mô phỏng đào tạo với float16: tạo gradient ngẫu nhiên trong phạm vi [1e-9, 1e-3), chuyển đổi sang float16, và đo phân số nào trở thành không. Sau đó áp dụng quy mô mất mát (lập số bằng 1024), chuyển đổi sang float16, quy mô lại, và đo phân số không một lần nữa.
 
+### Những gợi ý
+
+**Exercise 1.**Chuyển đổi ba giá trị bằng `np.float32`trước khi bạn bình quân chúng, sau đó gọi `variance_naive`và `welford_variance`Giá trị gần$10^{12}$trong float32 có khoảng cách lớn hơn nhiều so với 1, vì vậy mong đợi kết quả ngây thơ sẽ xa từ 0.6667 và kết quả Welford sẽ gần.
+
+**Exercise 2.**Bắt đầu với `x = np.float32(1.0)`và giảm một nửa trong khi `np.float32(1.0) + x != np.float32(1.0)`. Giữ mọi giá trị trong float32, sau đó so sánh giá trị cuối cùng mà vẫn thay đổi số tiền với `numpy.finfo(numpy.float32).eps`, đó là $2^{-23}$- Tôi không biết.
+
+**Exercise 3.**Hãy dự đoán trước mỗi câu trả lời.$n$giá trị bình đẳng $c$, kết quả là $c + \ln n$Đối với một giá trị lớn, kết quả gần với giá trị đó. Đối với giá trị gần -1000, kết quả gần $-1000 + \ln n$, trong khi `logsumexp_naive`trả lại `-inf`vì mỗi hàm số biểu diễn chảy xuống 0.
+
+**Exercise 4.**Vì $y = Wx + b$với một tổn thất $L$, độ nghiêng của $W$là sản phẩm bên ngoài của độ lệch lên dòng và $x$. Bỏ mất tích như một chức năng của phẳng $W$, gọi `numerical_gradient`, và chuyển cả hai kết quả cho `check_gradient`- Tôi không biết.
+
+**Exercise 5.**Mô tả các quy mô trên thang log với `10 ** np.random.uniform(-9, -3, n)`và chuyển đổi với `np.float16`. Float16 không thể giữ các giá trị dưới khoảng $6 \times 10^{-8}$, nên mong đợi khoảng một phần tư các giá trị sẽ trở thành 0 trước khi mở rộng và gần như không có khi bạn nhân bằng 1024.
+
 ## Các điều khoản chính
 
 | Term | What people say | What it actually means |
 |------|----------------|----------------------|
 | IEEE 754 | "The float standard" | International standard defining binary floating point formats, rounding rules, and special values (inf, nan). Every modern CPU and GPU implements it. |
-| Machine epsilon | "The precision limit" | The smallest value e such that 1.0 + e != 1.0 in a given float format. For float32, it is about 1.19e-7. |
+| Machine epsilon | "The precision limit" | The smallest value $e$ such that $1.0 + e \ne 1.0$ in a given float format. For float32, it is about 1.19e-7. |
 | Catastrophic cancellation | "Precision loss from subtraction" | When subtracting nearly equal floating point numbers, significant digits cancel and rounding noise dominates the result. |
 | Overflow | "Number too big" | A result exceeds the maximum representable value and becomes inf. exp(89) overflows float32. |
 | Underflow | "Number too small" | A result is closer to zero than the smallest representable positive number and becomes 0.0. exp(-104) underflows float32. |
-| Log-sum-exp trick | "Subtract the max first" | Computing log(sum(exp(x))) by factoring out exp(max(x)) to prevent overflow and underflow. Used in softmax, cross-entropy, and log-probability math. |
-| Stable softmax | "Softmax that does not explode" | Subtracting max(logits) before exponentiating. Numerically identical result, no overflow possible. |
+| Log-sum-exp trick | "Subtract the max first" | Computing $\log(\sum \exp(x))$ by factoring out $\exp(\max(x))$ to prevent overflow and underflow. Used in softmax, cross-entropy, and log-probability math. |
+| Stable softmax | "Softmax that does not explode" | Subtracting $\max(\text{logits})$ before exponentiating. Numerically identical result, no overflow possible. |
 | Gradient checking | "Verify your backprop" | Comparing analytical gradients from backpropagation against numerical gradients from finite differences to catch implementation bugs. |
 | Mixed precision | "Float16 forward, float32 backward" | Using lower-precision floats for speed-critical operations and higher-precision floats for numerically sensitive operations. Typical speedup is 2-3x. |
 | Loss scaling | "Prevent gradient underflow" | Multiplying the loss by a large constant before backprop so gradients stay in float16's representable range, then dividing by the same constant before weight updates. |
@@ -596,7 +610,7 @@ Những thực hiện ổn định này xuất hiện lại trong giai đoạn 3
 | Gradient clipping | "Cap the gradient norm" | Scaling the gradient vector so its norm does not exceed a threshold. Prevents exploding gradients from ruining weights. |
 | NaN | "Not a Number" | Special float value from undefined operations (0/0, inf-inf, sqrt(-1)). Propagates through all subsequent arithmetic. |
 | Inf | "Infinity" | Special float value from overflow or division by zero. Can combine to produce NaN (inf - inf, inf * 0). |
-| Numerical gradient | "Brute force derivative" | Approximating a derivative by evaluating f(x+h) and f(x-h) and dividing by 2h. Slow but reliable for verification. |
+| Numerical gradient | "Brute force derivative" | Approximating a derivative by evaluating $f(x+h)$ and $f(x-h)$ and dividing by $2h$. Slow but reliable for verification. |
 
 ## Đọc thêm
 

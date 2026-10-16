@@ -9,7 +9,7 @@
 
 ## Mục tiêu học tập
 
-- Chơi mô phỏng 1D và 2D đi bộ ngẫu nhiên và xác minh quy mô của sự di chuyển
+- Chụp đi bộ ngẫu nhiên 1D và 2D và xác minh $\sqrt{n}$quy mô của sự di chuyển
 - Xây dựng một mô phỏng chuỗi Markov và tính toán phân bố tĩnh của nó thông qua cấu trúc riêng
 - Thực hiện Metropolis-Hastings MCMC và động lực Langevin để lấy mẫu từ các phân phối mục tiêu
 - Kết nối quá trình phân tán về phía trước với chuyển động Brownian và giải thích cách quá trình ngược tạo ra dữ liệu
@@ -38,9 +38,9 @@ Tất cả đều dựa trên bốn ý tưởng cơ bản:
 
 Bắt đầu từ vị trí 0. Ở mỗi bước, ném một đồng xu công bằng. Đầu: di chuyển sang bên phải (+1). đuôi: di chuyển sang trái (-1).
 
-Sau n bước, vị trí của bạn là tổng số n giá trị ngẫu nhiên +/-1. vị trí dự kiến là 0 (lần đi không thiên vị). Nhưng khoảng cách dự kiến từ nguồn tăng lên như sqrt(n).
+Sau đó$n$bước, vị trí của bạn là tổng của $n$        $\pm 1$giá trị. vị trí dự kiến là 0 (lễ đi bộ không thiên vị).$\sqrt{n}$- Tôi không biết.
 
-Điều này trái với trực giác. Đi bộ là công bằng - không có trôi dạt theo cả hai hướng. Nhưng theo thời gian, nó đi lang thang xa hơn và xa hơn từ nơi nó bắt đầu. Phản độ tiêu chuẩn sau n bước là sqrt(n).
+Điều này trái với trực giác. Đi bộ là công bằng - không có trôi dạt theo cả hai hướng. Nhưng theo thời gian, nó đi lang thang xa hơn và xa hơn từ nơi nó bắt đầu. Phản độ tiêu chuẩn sau$n$bước là $\sqrt{n}$- Tôi không biết.
 
 ```
 Step 0:  Position = 0
@@ -51,33 +51,33 @@ Step 100: Expected distance from origin ~ 10 (sqrt(100))
 Step 10000: Expected distance from origin ~ 100 (sqrt(10000))
 ```
 
-**In 2D**, bước đi di chuyển lên, xuống, trái, hoặc phải với xác suất tương đương.
+**In 2D**, bước đi di chuyển lên, xuống, trái, hoặc phải với xác suất tương tự.$\sqrt{n}$Scaling áp dụng cho khoảng cách từ nguồn.
 
-**Why sqrt(n)?**Mỗi bước là +1 hoặc -1 với xác suất tương đương. Sau n bước, vị trí S_n = X_1 + X_2 + ... + X_n nơi mỗi X_i là +/-1. Sự khác biệt của mỗi bước là 1, và các bước là độc lập, vì vậy Var(S_n) = n. Chỉnh tiêu chuẩn = sqrt(n. Theo định lý giới hạn trung tâm, S_n / sqrt(n) hội tụ với phân bố bình thường tiêu chuẩn.
+**Why $\sqrt{n}$?**Mỗi bước là +1 hoặc -1 với xác suất tương đương.$n$bước, vị trí $S_n = X_1 + X_2 + \cdots + X_n$nơi mỗi $X_i$là $\pm 1$. Sự khác biệt của mỗi bước là 1, và các bước là độc lập, vì vậy $\mathop{\mathrm{Var}}(S_n) = n$. Phác lệch chuẩn = $\sqrt{n}$Theo định lý giới hạn trung tâm,$S_n / \sqrt{n}$hội tụ với phân bố bình thường tiêu chuẩn.
 
-Quy mô này xuất hiện ở mọi nơi trong ML. SGD âm thanh scale như 1/sqrt(batch_size). Nhập kích thước scale như sqrt(d). Quảng gốc là chữ ký của các sự bổ sung ngẫu nhiên độc lập.
+Đây là$\sqrt{n}$quy mô hiển thị ở khắp mọi nơi trong ML. SGD noise scale là 1/sqrt(batch_size).$\sqrt{d}$. Quả gốc vuông là chữ ký của các sự cộng ngẫu nhiên độc lập.
 
-**Connection to Brownian motion.**Hãy đi bộ ngẫu nhiên với kích thước bước 1/sqrt(n) và n bước mỗi đơn vị thời gian. Khi n đi đến vô tận, bước đi hội tụ với chuyển động Brownian B(t) - một quá trình liên tục thời gian nơi B(t) thường được phân phối với trung bình 0 và biến số t.
+**Connection to Brownian motion.**Đi bộ ngẫu nhiên với kích thước bước $1/\sqrt{n}$và $n$bước mỗi đơn vị thời gian.$n$đi đến vô tận, bước đi hội tụ với chuyển động Brownian$B(t)$-- một quá trình liên tục trong đó $B(t)$thường được phân phối với trung bình 0 và biến số $t$- Tôi không biết.
 
 Hành động Brown là nền tảng toán học của sự phân tán. Nó mô hình hóa sự rung chuyển ngẫu nhiên của các hạt trong một chất lỏng, biến động của giá cổ phiếu, và - quan trọng hơn - quá trình tiếng ồn trong các mô hình phân tán.
 
-**Gambler's ruin.**Một người đi bộ ngẫu nhiên bắt đầu ở vị trí k, với các rào cản hấp thụ ở 0 và N. xác suất đạt đến N trước 0 là gì? Đối với một bước đi công bằng: P(reach N) = k/N. Điều này là đáng ngạc nhiên đơn giản và thanh lịch. Nó kết nối với lý thuyết của martingales - bước đi ngẫu nhiên công bằng là một martingale (tín giá trị tương lai dự kiến = giá trị hiện tại).
+**Gambler's ruin.**Một người đi bộ ngẫu nhiên bắt đầu từ vị trí $k$, với các rào cản hấp thụ ở 0 và $N$- Có khả năng đạt được gì?$N$Trước 0?$P(\text{reach } N) = k/N$Nó kết nối với lý thuyết của martingales -- một bước đi ngẫu nhiên là martingale (tín giá trị tương lai = giá trị hiện tại).
 
 ### Dòng dây chuyền Markov
 
 Một chuỗi Markov là một hệ thống chuyển đổi giữa các trạng thái theo xác suất cố định.
 
-```
-P(X_{t+1} = j | X_t = i, X_{t-1} = ...) = P(X_{t+1} = j | X_t = i)
-```
-
-Đây là tính năng Markov. nó có nghĩa là bạn có thể mô tả toàn bộ động lực bằng một số liệu chuyển tiếp P:
-
-```
-P[i][j] = probability of going from state i to state j
+```math
+P(X_{t+1} = j \mid X_t = i, X_{t-1} = \ldots) = P(X_{t+1} = j \mid X_t = i)
 ```
 
-Mỗi hàng của P cộng với 1 (bạn phải đi đâu đó).
+Đây là tính năng Markov. nó có nghĩa là bạn có thể mô tả toàn bộ động lực bằng một số liệu chuyển tiếp$P$- Có thể là:
+
+```math
+P[i][j] = \text{probability of going from state } i \text{ to state } j
+```
+
+Mỗi hàng của $P$số tiền lên đến 1 (bạn phải đi đâu đó).
 
 **Example -- Weather:**
 
@@ -89,7 +89,7 @@ P = [[0.7, 0.1, 0.2],    (if sunny: 70% sunny, 10% rainy, 20% cloudy)
      [0.4, 0.2, 0.4]]    (if cloudy: 40% sunny, 20% rainy, 40% cloudy)
 ```
 
-Bắt đầu ở bất kỳ trạng thái nào. Sau nhiều chuyển đổi, phân phối các trạng thái hội tụ đến phân phối tĩnh pi, nơi pi * P = pi. Đây là vector tự bên trái của P với giá trị tự 1.
+Bắt đầu từ bất kỳ trạng thái nào. Sau nhiều chuyển đổi, phân phối các trạng thái hội tụ với phân phối tĩnh.$\pi$, nơi $\pi P = \pi$Đây là phương tiện riêng bên trái của$P$với giá trị chính 1.
 
 Đối với chuỗi thời tiết, phân phối tĩnh là [0,55, 0,18, 0,27] -- trong thời gian dài, nó có mặt trời 55% thời gian bất kể trạng thái khởi đầu.
 
@@ -108,8 +108,8 @@ graph LR
 
 **Computing the stationary distribution.**Có hai cách tiếp cận:
 
-1. **Power method**: nhân bất kỳ phân bố ban đầu bằng P nhiều lần. Sau đủ lần lặp lại, nó hội tụ.
-2. **Eigenvalue method**: tìm được phương tiện riêng bên trái của P với giá trị riêng 1. Đây là phương tiện riêng của P^T với giá trị riêng 1.
+1. **Power method**: nhân bất kỳ phân phối ban đầu nào bằng $P$Sau nhiều lần lặp lại, nó hội tụ lại.
+2. **Eigenvalue method**: tìm ra phương tiện tự bên trái của $P$với giá trị bản thân 1. Đây là vector bản thân của $P^T$với giá trị chính 1.
 
 Cả hai cách tiếp cận đều đòi hỏi chuỗi đáp ứng các điều kiện hội tụ.
 
@@ -119,63 +119,63 @@ Cả hai cách tiếp cận đều đòi hỏi chuỗi đáp ứng các điều 
 
 Hầu hết các chuỗi mà bạn gặp trong ML đáp ứng cả hai điều kiện.
 
-**Absorbing states.**Một trạng thái hấp thụ nếu một khi bạn nhập nó, bạn không bao giờ rời đi (P[i][i] = 1). hấp thụ chuỗi Markov mô hình hóa các quy trình với các trạng thái cuối cùng - một trò chơi kết thúc, một khách hàng trộn trộn, một chuỗi token chạm vào token cuối văn bản.
+**Absorbing states.**Một trạng thái hấp thụ nếu một khi bạn vào đó, bạn không bao giờ rời khỏi ($P[i][i] = 1$Trải theo các quy trình mô hình chuỗi Markov với các trạng thái cuối cùng - một trò chơi kết thúc, một khách hàng đang lắc lắc, một chuỗi mã thông báo tấn công vào mã thông báo cuối văn bản.
 
-**Mixing time.**Số bước cho đến khi chuỗi "gần" với phân phối tĩnh? Về hình thức, số bước cho đến khi khoảng cách thay đổi tổng thể từ tĩnh giảm xuống dưới một số ngưỡng.
+**Mixing time.**Số bước cho đến khi chuỗi "gần" với phân phối tĩnh?$P$(1 trừ giá trị tự lớn thứ hai) điều khiển thời gian trộn.
 
 ### Kết nối với các mô hình ngôn ngữ
 
 Tạo token trong một mô hình ngôn ngữ là một quá trình Markov. Với bối cảnh hiện tại, mô hình sẽ phát ra phân phối trên token tiếp theo. Nhiệt độ kiểm soát độ sắc:
 
-```
-P(token_i) = exp(logit_i / temperature) / sum(exp(logit_j / temperature))
+```math
+P(\text{token}_i) = \frac{\exp(\text{logit}_i / \text{temperature})}{\sum_j \exp(\text{logit}_j / \text{temperature})}
 ```
 
 - Nhiệt độ = 1,0: phân phối tiêu chuẩn
 - Nhiệt độ < 1,0: sắc hơn (đối đa xác định)
 - Nhiệt độ > 1,0: phẳng hơn (thường tình cờ hơn)
-- Nhiệt độ -> 0: argmax (cười tham)
+- Nhiệt độ $\to 0$: argmax (cười tham)
 
-Top-k lấy mẫu cắt giảm đến các token có xác suất cao nhất k. Top-p (tâm) lấy mẫu cắt giảm đến các token nhỏ nhất có xác suất tích lũy vượt quá p. Cả hai đều sửa đổi xác suất chuyển đổi Markov.
+Top-k lấy mẫu truncates đến $k$token có xác suất cao nhất. top-p (nucleus) lấy mẫu cắt giảm thành tập hợp nhỏ nhất của token có xác suất tích lũy vượt quá $p$Cả hai đều thay đổi xác suất chuyển đổi Markov.
 
 ### Động thái Brown
 
-Giới hạn thời gian liên tục của bước ngẫu nhiên.
-1. B(0) = 0
-2. B(t) - B(s) thường được phân phối với trung bình 0 và biến số t - s (cho t > s)
+Giới hạn thời gian liên tục của bước ngẫu nhiên.$B(t)$có ba tính chất:
+1. $B(0) = 0$
+2. $B(t) - B(s)$thường được phân phối với trung bình 0 và biến số $t - s$(để $t > s$(văn)
 3. Các sự gia tăng trên các khoảng không chồng chéo là độc lập
 
 Phong trào Brown liên tục nhưng không thể phân biệt được ở đâu cả - nó rung động ở mọi thang.
 
 Trong mô phỏng riêng biệt, bạn ước tính chuyển động của Browni bằng:
 
-```
-B(t + dt) = B(t) + sqrt(dt) * z,    where z ~ N(0, 1)
+```math
+B(t + dt) = B(t) + \sqrt{dt} \, z, \quad \text{where } z \sim \mathcal{N}(0, 1)
 ```
 
-Các sqrt(dt) quy mô là quan trọng. Nó đến từ định lý giới hạn trung tâm áp dụng cho các bước ngẫu nhiên.
+- $\sqrt{dt}$Scaling là điều quan trọng. Nó xuất phát từ định lý giới hạn trung tâm được áp dụng cho các bước ngẫu nhiên.
 
 ### Langevin Dynamics
 
-Sự giảm gradient tìm thấy tối thiểu của một hàm. Dinamika Langevin tìm thấy phân bố xác suất tương xứng với exp(-U(x) / T), nơi U là một hàm năng lượng và T là nhiệt độ.
+Sự giảm dần tìm thấy tối thiểu của một hàm.$\exp(-U(x)/T)$, nơi $U$là một chức năng năng và$T$là nhiệt độ.
 
-```
-x_{t+1} = x_t - dt * gradient(U(x_t)) + sqrt(2 * T * dt) * z_t
+```math
+x_{t+1} = x_t - dt \, \nabla U(x_t) + \sqrt{2 T \, dt} \, z_t
 ```
 
 Hai lực tác động lên hạt:
-1. **Gradient force**(-dt * gradient(U)): đẩy về hướng năng lượng thấp (như giảm gradient)
-2. **Random force**(sqrt(2*T*dt) * z): đẩy theo hướng ngẫu nhiên (khám phá)
+1. **Gradient force**($-dt \cdot \nabla U$): đẩy về hướng năng lượng thấp (như giảm gradient)
+2. **Random force**($\sqrt{2T dt} \cdot z$): đẩy theo hướng ngẫu nhiên (khám phá)
 
-Ở nhiệt độ T = 0, đây là sự giảm gradient tinh khiết. Ở nhiệt độ cao, nó gần như là một bước đi ngẫu nhiên.
+Ở nhiệt độ $T = 0$Khi nhiệt độ cao, nó gần như là một bước đi ngẫu nhiên.
 
 **Connection to diffusion models.**Quá trình tiến bộ của mô hình phân tán là:
 
-```
-x_t = sqrt(alpha_t) * x_{t-1} + sqrt(1 - alpha_t) * noise
+```math
+x_t = \sqrt{\alpha_t} \, x_{t-1} + \sqrt{1 - \alpha_t} \cdot \text{noise}
 ```
 
-Đây là một chuỗi Markov liên tục trộn dữ liệu với tiếng ồn.
+Đây là chuỗi Markov liên tục trộn dữ liệu với tiếng ồn.$x_T$là tiếng ồn Gaussian thuần túy.
 
 Quá trình ngược -- từ tiếng ồn trở lại dữ liệu -- cũng là chuỗi Markov, nhưng xác suất chuyển đổi của nó được tìm hiểu bởi một mạng lưới thần kinh. mạng học cách dự đoán tiếng ồn được thêm vào mỗi bước, sau đó trừ nó.
 
@@ -195,27 +195,27 @@ graph LR
 
 ### MCMC: Markov Chain Monte Carlo
 
-Đôi khi bạn cần lấy mẫu từ phân bố p ((x) mà bạn có thể đánh giá (trong một liên tục) nhưng không thể lấy mẫu trực tiếp. Bayesian hậu là ví dụ cổ điển - bạn biết khả năng gấp đôi trước, nhưng các định hình bình thường hóa là khó xử lý.
+Đôi khi bạn cần lấy mẫu từ một phân phối$p(x)$Bayesian là ví dụ điển hình -- bạn biết xác suất gấp đôi trước, nhưng các định hình bình thường hóa là khó xử lý.
 
-**Metropolis-Hastings**xây dựng chuỗi Markov có phân bố tĩnh là p(x):
+**Metropolis-Hastings**xây dựng một chuỗi Markov mà phân phối tĩnh là$p(x)$- Có thể là:
 
-1. Bắt đầu ở một số vị trí x
-2. Đề xuất một vị trí mới x' từ một phân phối đề xuất Q(x' ảix)
-3. Tỷ lệ chấp nhận tính toán: a(x') * Q(x khiếu x') / (p(x) * Q(x khiếu x))
-4. Hãy chấp nhận x' với xác suất min ((1, a). Nếu không, hãy ở x.
+1. Bắt đầu từ một vị trí nào đó $x$
+2. đề xuất vị trí mới $x'$từ một phân phối đề xuất $Q(x' \mid x)$
+3. Tỷ lệ chấp nhận tính toán: $a = p(x') Q(x \mid x') / (p(x) Q(x' \mid x))$
+4. Hãy chấp nhận$x'$với khả năng$\min(1, a)$Nếu không thì ở lại đây.$x$- Tôi không biết.
 5. Lặp lại.
 
-Nếu Q là đối xứng ví dụ, Q(x' (ởx) = Q(x (ởx') = N(x, sigma^2)), tỷ lệ đơn giản hóa thành a = p(x') / p(x. Bạn chỉ cần tỷ lệ xác suất - các định kỳ bình thường hóa hủy bỏ.
+Nếu$Q$là đối xứng (ví dụ: $Q(x' \mid x) = Q(x \mid x') = \mathcal{N}(x, \sigma^2){}$), tỷ lệ này đơn giản hóa thành $a = p(x') / p(x)$Bạn chỉ cần tỷ lệ xác suất -- các biến cố bình thường hóa hủy bỏ.
 
-Mạng lưới này được đảm bảo sẽ hội tụ với p ((x) trong điều kiện nhẹ. Nhưng hội tụ có thể chậm nếu đề xuất quá nhỏ (quá trình ngẫu nhiên) hoặc quá lớn (đánh giá cao).
+Dòng dây chuyền được đảm bảo sẽ hội tụ đến $p(x)$Nhưng sự hội tụ có thể chậm nếu đề xuất quá nhỏ (quay ngẫu nhiên) hoặc quá lớn (đánh chối cao).
 
-**Why it works.**Tỷ lệ chấp nhận đảm bảo sự cân bằng chi tiết: xác suất ở x và di chuyển đến x' bằng với xác suất ở x' và di chuyển đến x. Sự cân bằng chi tiết cho thấy p(x) là phân bố tĩnh của chuỗi.
+**Why it works.**Tỷ lệ chấp nhận đảm bảo sự cân bằng chi tiết: khả năng ở $x$và chuyển đến $x'$bằng với xác suất ở $x'$và chuyển đến $x$Sự cân bằng chi tiết cho thấy rằng$p(x)$là phân bố tĩnh của chuỗi.$p(x)$- Tôi không biết.
 
 **Practical considerations:**
-- **Burn-in**: loại bỏ các mẫu N đầu tiên. chuỗi cần thời gian để đạt được phân phối tĩnh từ điểm khởi đầu của nó.
-- **Thinning**: giữ mỗi mẫu k-th để giảm sự tương quan tự động.
+- **Burn-in**: loại bỏ thứ nhất $N$chuỗi cần thời gian để đạt được phân phối tĩnh từ điểm khởi đầu của nó.
+- **Thinning**: giữ tất cả $k$- mẫu thứ hai để giảm sự tương quan tự động.
 - **Multiple chains**: chạy nhiều chuỗi từ các điểm khởi đầu khác nhau. Nếu chúng hội tụ đến cùng một phân bố, bạn có bằng chứng về hội tụ.
-- **Acceptance rate**: cho các đề xuất Gaussian trong d chiều, tỷ lệ chấp nhận tối ưu là khoảng 23% (Roberts & Rosenthal, 2001).
+- **Acceptance rate**: cho các đề xuất của Gaussian trong $d$Các quy mô của chuỗi, tỷ lệ chấp nhận tối ưu là khoảng 23% (Roberts & Rosenthal, 2001). quá cao có nghĩa là chuỗi hầu như không di chuyển. quá thấp có nghĩa là nó từ chối mọi thứ.
 
 ### Quá trình Stochastic trong AI
 
@@ -260,7 +260,7 @@ def random_walk_2d(n_steps, seed=None):
     return x, y
 ```
 
-1D walk lưu trữ tổng tích lũy. Mỗi bước là +1 hoặc -1. Sau n bước, vị trí là tổng. Sự khác biệt tăng tuyến tính với n, do đó lệch chuẩn tăng như sqrt(n.
+1D walk lưu trữ tổng cộng. mỗi bước là +1 hoặc -1. sau đó $n$bước, vị trí là tổng.$n$, vì vậy sự lệch tiêu chuẩn tăng lên như $\sqrt{n}$- Tôi không biết.
 
 ### Bước 2: Dòng dây chuyền Markov
 
@@ -294,7 +294,7 @@ class MarkovChain:
         return np.abs(stationary)
 ```
 
-Phân bố tĩnh là vector tự động trái của P với giá trị tự động 1. Chúng ta tìm thấy nó bằng cách tính toán vector tự động của P^T (trả chuyển các vector tự động trái thành vector tự động phải).
+Phân bố tĩnh là vector tự bên trái của $P$với giá trị bản thân 1. Chúng ta tìm ra nó bằng cách tính toán các vector bản thân của $P^T$(trả chuyển biến các vector tự bên trái thành các vector tự bên phải).
 
 ### Bước 3: Động lực Langevin
 
@@ -310,7 +310,7 @@ def langevin_dynamics(grad_U, x0, dt, temperature, n_steps, seed=None):
     return np.array(trajectory)
 ```
 
-Phong trào đẩy x về phía năng lượng thấp. tiếng ồn ngăn chặn nó bị kẹt. Ở trạng thái cân bằng, phân bố các mẫu tương xứng với exp ((-U(x) / nhiệt độ).
+Tốc độ đẩy $x$Phong trào của các loại hình này được chứng minh bởi sự phân bố của các mẫu tương ứng với các loại hình khác nhau.$\exp(-U(x)/\text{temperature})$- Tôi không biết.
 
 ### Bước 4: Metropolis-Hastings
 
@@ -363,7 +363,7 @@ for _ in range(100):
 print(f"Stationary distribution: {np.round(distribution, 4)}")
 ```
 
-Bội số phân bố ban đầu bằng P nhiều lần. Sau đủ lần lặp lại, nó hội tụ với phân bố tĩnh bất kể bạn bắt đầu ở đâu. Đây là phương pháp năng lượng để tìm ra vector tự chủ bên trái.
+Lặp gấp số phân phối ban đầu bằng $P$Sau đủ lần lặp lại, nó hội tụ với phân bố tĩnh bất kể bạn bắt đầu ở đâu. Đây là phương pháp năng lượng để tìm ra các cánh tay trái chủ đạo.
 
 ### Kết nối với các khung thực tế
 
@@ -409,14 +409,14 @@ Bài học này mang lại:
 
 Các mô hình phân tán xứng đáng được chú ý đặc biệt. DDPM (Ho et al., 2020) xác định chuỗi Markov phía trước:
 
-```
-q(x_t | x_{t-1}) = N(x_t; sqrt(1-beta_t) * x_{t-1}, beta_t * I)
+```math
+q(x_t \mid x_{t-1}) = \mathcal{N}\left(x_t; \sqrt{1-\beta_t} \, x_{t-1}, \beta_t I\right)
 ```
 
-khi beta_t là một lịch trình tiếng ồn. Sau bước T, x_T là khoảng N(0, I).
+nơi $\beta_t$là một lịch trình tiếng ồn.$T$bước,$x_T$là khoảng $\mathcal{N}(0, I)$Quá trình ngược được định đo bởi một mạng thần kinh dự đoán tiếng ồn:
 
-```
-p_theta(x_{t-1} | x_t) = N(x_{t-1}; mu_theta(x_t, t), sigma_t^2 * I)
+```math
+p_\theta(x_{t-1} \mid x_t) = \mathcal{N}\left(x_{t-1}; \mu_\theta(x_t, t), \sigma_t^2 I\right)
 ```
 
 Mỗi bước của thế hệ là một bước trong một chuỗi Markov học.
@@ -427,15 +427,27 @@ SGLD (Stochastic Gradient Langevin Dynamics) kết hợp giảm gradient mini-ba
 
 ## Các bài tập
 
-1. **Simulate 1000 random walks of 10000 steps.**Chụp bản phân phối các vị trí cuối cùng. Kiểm tra nó là khoảng Gaussian với trung bình 0 và lệch chuẩn sqrt(10000) = 100.
+1. **Simulate 1000 random walks of 10000 steps.**Chụp bản phân bố các vị trí cuối cùng. Kiểm tra nó là khoảng Gaussian với trung bình 0 và lệch chuẩn $\sqrt{10000} = 100$- Tôi không biết.
 
 2. **Build a text generator using a Markov chain.**Trình luyện trên một tập hợp nhỏ: cho mỗi từ, đếm chuyển tiếp đến từ tiếp theo. Xây dựng các trận chuyển tiếp. Tạo ra các câu mới bằng cách lấy mẫu từ chuỗi.
 
 3. **Implement simulated annealing**sử dụng Metropolis-Hastings. Bắt đầu ở nhiệt độ cao (tận dụng hầu hết mọi thứ) và dần dần làm mát (tận dụng chỉ cải tiến). Sử dụng nó để tìm tối thiểu của một chức năng với nhiều tối thiểu địa phương.
 
-4. **Compare Langevin dynamics at different temperatures.**Mô hình từ tiềm năng hố hai U(x) = (x^2 - 1)^2. ở nhiệt độ thấp, các mẫu tập hợp trong một hố.
+4. **Compare Langevin dynamics at different temperatures.**Mô hình từ tiềm năng cống hai lốp$U(x) = (x^2 - 1)^2$Ở nhiệt độ thấp, các mẫu được tập hợp trong một giếng. Ở nhiệt độ cao, chúng được trải rộng trên cả hai. Tìm nhiệt độ quan trọng nơi chuỗi trộn lẫn giữa các giếng.
 
 5. **Implement the forward diffusion process.**Bắt đầu với một tín hiệu 1D (ví dụ, một sóng âm đạo). Thêm tiếng ồn dần dần hơn 100 bước với một lịch trình tiếng ồn tuyến tính. Hãy cho thấy tín hiệu suy giảm xuống là tiếng ồn tinh khiết. Sau đó thực hiện một biểu tượng đơn giản đảo ngược quá trình (ngay cả một sự ngây thơ mà chỉ trừ được tiếng ồn ước tính).
+
+### Những gợi ý
+
+**Exercise 1.**Gọi`random_walk_1d(10000, seed=i)`cho 1000 hạt và giữ từng vị trí cuối cùng. kiểm tra rằng trung bình gần 0, lệch chuẩn gần 100, và khoảng 68% vị trí cuối cùng là giữa -100 và 100.
+
+**Exercise 2.**Đếm từng cặp từ, sau đó chia từng hàng bằng tổng số của nó để mỗi hàng cộng lên đến 1.`MarkovChain(transition_matrix, state_names)`và gọi`simulate`Hãy kiểm tra xem mỗi cặp từ trong đầu ra của bạn cũng xuất hiện trong corpus.
+
+**Exercise 3.**Hãy chấp nhận điểm tồi tệ hơn với khả năng$\exp(-\Delta / T)$và nhân lên$T$bằng một nhân tố như 0,99 sau mỗi bước. kiểm tra trên một hàm mà bạn biết tối thiểu, và kiểm tra câu trả lời của bạn với một tìm kiếm lưới tinh tế.
+
+**Exercise 4.**Tốc độ là $4x(x^2 - 1)$, nên hãy chuyển nó cho `langevin_dynamics(grad_U, x0, dt, temperature, n_steps)`- Chân rào ở$x = 0$có chiều cao 1, vì vậy đếm bao nhiêu lần dấu hiệu của $x$thay đổi nhiệt độ từ 0,05 đến 1 và tìm nhiệt độ nơi số lượng bắt đầu tăng nhanh chóng.
+
+**Exercise 5.**Gọi`diffusion_forward(signal, 100)`và tính toán$\bar{\alpha}$bước cuối cùng như là sản phẩm của $(1 - \beta_t)$Nếu$\bar{\alpha}$là xa 0, tín hiệu vẫn chưa là tiếng ồn tinh khiết, vì vậy hãy nâng `beta_end`Hãy thử thử máy báo trước với tiếng ồn thật: sau đó$(x_t - \sqrt{1 - \bar{\alpha}_t} \epsilon)/\sqrt{\bar{\alpha}_t}$phải trả lại tín hiệu ban đầu chính xác.
 
 ## Các điều khoản chính
 
@@ -443,9 +455,9 @@ SGLD (Stochastic Gradient Langevin Dynamics) kết hợp giảm gradient mini-ba
 |------|----------------|----------------------|
 | Random walk | "Coin-flip movement" | A process where position changes by random increments at each step |
 | Markov property | "Memoryless" | The future depends only on the present state, not on the history |
-| Transition matrix | "The probability table" | P[i][j] = probability of moving from state i to state j |
-| Stationary distribution | "The long-run average" | The distribution pi where pi*P = pi -- the chain's equilibrium |
-| Brownian motion | "Random jiggling" | The continuous-time limit of a random walk, B(t) ~ N(0, t) |
+| Transition matrix | "The probability table" | $P[i][j]$ = probability of moving from state $i$ to state $j$ |
+| Stationary distribution | "The long-run average" | The distribution $\pi$ where $\pi P = \pi$ -- the chain's equilibrium |
+| Brownian motion | "Random jiggling" | The continuous-time limit of a random walk, $B(t) \sim \mathcal{N}(0, t)$ |
 | Langevin dynamics | "Gradient descent with noise" | Update rule that combines deterministic gradient and random perturbation |
 | MCMC | "Walking toward the target" | Constructing a Markov chain whose stationary distribution is the one you want |
 | Metropolis-Hastings | "Propose and accept/reject" | MCMC algorithm that uses acceptance ratios to ensure convergence |

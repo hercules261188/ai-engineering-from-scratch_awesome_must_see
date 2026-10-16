@@ -38,8 +38,8 @@ minimize L(w) where:
 
 Các phương pháp tối ưu hóa đơn giản nhất: tính toán gradient của sự mất mát đối với mỗi trọng lượng.
 
-```
-w = w - lr * gradient
+```math
+w = w - \text{lr} \cdot \text{gradient}
 ```
 
 Đó là toàn bộ thuật toán.
@@ -94,9 +94,11 @@ Giảm độ gradient mini-batch chia khác biệt. tính toán gradient trên m
 
 Giảm độ vanilla chỉ nhìn vào độ nghiêng hiện tại. Nếu độ nghiêng (thường xảy ra ở các thung lũng hẹp), tiến độ là chậm.
 
-```
-v = beta * v + gradient
-w = w - lr * v
+```math
+\begin{aligned}
+v &= \beta \cdot v + \text{gradient} \\
+w &= w - \text{lr} \cdot v
+\end{aligned}
 ```
 
 Tương tự như một quả bóng đang lăn xuống đồi. Nó không dừng lại và khởi động lại ở mỗi đập. Nó tăng tốc độ theo hướng nhất quán và làm giảm dao động.
@@ -124,17 +126,17 @@ Một trọng lượng hiếm khi có gradient lớn nên thực hiện các bư
 
 Adam (Tín tích thời điểm thích ứng) theo dõi hai thứ cho trọng lượng:
 
-1. Khoảnh khắc đầu tiên (m): trung bình chạy của các gradient (như động lực)
-2. Khoảnh khắc thứ hai (v): trung bình chạy của các gradient vuông (tốc độ gradient)
+1. Khoảnh khắc đầu tiên ($m$): trung bình trôi động của các gradient (như động lực)
+2. Khoảnh khắc thứ hai ($v$): trung bình chạy của các gradient vuông (tốc độ gradient)
 
-```
-m = beta1 * m + (1 - beta1) * gradient
-v = beta2 * v + (1 - beta2) * gradient^2
-
-m_hat = m / (1 - beta1^t)    bias correction
-v_hat = v / (1 - beta2^t)    bias correction
-
-w = w - lr * m_hat / (sqrt(v_hat) + epsilon)
+```math
+\begin{aligned}
+m &= \beta_1 \cdot m + (1 - \beta_1) \cdot \text{gradient} \\
+v &= \beta_2 \cdot v + (1 - \beta_2) \cdot \text{gradient}^2 \\[4pt]
+\hat{m} &= m / (1 - \beta_1^t) \quad \text{bias correction} \\
+\hat{v} &= v / (1 - \beta_2^t) \quad \text{bias correction} \\[4pt]
+w &= w - \text{lr} \cdot \hat{m} / (\sqrt{\hat{v}} + \epsilon)
+\end{aligned}
 ```
 
 Sự phân chia của `sqrt(v_hat)`là thông tin quan trọng. trọng lượng với gradient lớn được chia bằng một số lớn (phát hiệu quả nhỏ). trọng lượng với gradient nhỏ được chia bằng một số nhỏ (phát hiệu quả lớn).
@@ -149,14 +151,14 @@ Các lịch trình chung:
 
 | Schedule | Formula | Use case |
 |----------|---------|----------|
-| Step decay | lr = lr * factor every N epochs | Simple, manual control |
-| Exponential decay | lr = lr_0 * decay^t | Smooth reduction |
-| Cosine annealing | lr = lr_min + 0.5 * (lr_max - lr_min) * (1 + cos(pi * t / T)) | Transformers, modern training |
+| Step decay | $\text{lr} = \text{lr} \cdot \text{factor}$ every $N$ epochs | Simple, manual control |
+| Exponential decay | $\text{lr} = \text{lr}_0 \cdot \text{decay}^t$ | Smooth reduction |
+| Cosine annealing | $\text{lr} = \text{lr} _{\min} + 0.5 \cdot (\text{lr} _{\max} - \text{lr} _{\min}) \cdot (1 + \cos(\pi t / T))$ | Transformers, modern training |
 | Warmup + decay | Linear ramp up, then decay | Large models, prevents early instability |
 
 ### Phép trục trặc đối với không trục trặc
 
-Một hàm ngọc có một tối thiểu.`f(x) = x^2`là tròn.
+Một hàm ngọc có một tối thiểu.$f(x) = x^2$là tròn.
 
 Các chức năng mất mạng thần kinh không phải ngọc. Chúng có nhiều mức tối thiểu địa phương, điểm saddle và khu vực phẳng.
 
@@ -205,8 +207,8 @@ gradient-descent
 
 Hàm Rosenbrock là một chuẩn tối ưu hóa cổ điển. Điểm tối thiểu của nó là (1, 1) bên trong một thung lũng cong hẹp dễ tìm thấy nhưng khó theo dõi.
 
-```
-f(x, y) = (1 - x)^2 + 100 * (y - x^2)^2
+```math
+f(x, y) = (1 - x)^2 + 100 \cdot (y - x^2)^2
 ```
 
 ```python
@@ -351,9 +353,19 @@ Các lớp tối ưu hóa được xây dựng ở đây xuất hiện lại tro
 
 2. **Momentum comparison.**Thực hiện SGD với giá trị động lực [0,0,0,5,0,9,0,99] trên hàm Rosenbrock. Theo dõi sự mất mát ở mỗi bước. giá trị động lực hội tụ nhanh nhất?
 
-3. **Saddle point escape.**Định nghĩa chức năng `f(x, y) = x^2 - y^2`Hãy so sánh cách vanilla GD, SGD với động lực, và Adam cư xử.
+3. **Saddle point escape.**Định nghĩa chức năng $f(x, y) = x^2 - y^2$Hãy so sánh cách vanilla GD, SGD với động lực, và Adam cư xử.
 
 4. **Implement learning rate decay.**Thêm một lịch trình phân rã theo hàm số cao vào lớp GradientDescent: `lr = lr_0 * 0.999^step`So sánh sự hội tụ với và không phân rã trên hàm Rosenbrock.
+
+### Những gợi ý
+
+**Exercise 1.**Lòng qua các tỷ lệ học tập, tạo ra một `GradientDescent(lr=...)`cho mỗi người, và chuyển nó cho `optimize`với `rosenbrock`và `rosenbrock_gradient`Một lần chạy khác nhau cho thấy một khoản thua lỗ tăng lên hoặc trở thành`nan`; tối thiểu là $(1, 1)$với lỗ 0.
+
+**Exercise 2.**Tạo ra`SGDMomentum(momentum=m)`cho mỗi giá trị và ghi lại tổn thất sau mỗi bước. Sử dụng `find_convergence_step`để so sánh tốc độ, và tìm kiếm lỗ tăng và giảm để tìm quá tải.
+
+**Exercise 3.**Viết gradient $(2x, -2y)$và chạy ba tối ưu hóa từ (0.01, 0.01).$y$mỗi 100 bước: tối ưu hóa thoát ra là một nơi $\lvert y \rvert$lớn lên.
+
+**Exercise 4.**Cửa hàng `lr_0`và một máy tính bước trong `GradientDescent`, và tính toán`lr = lr_0 * 0.999 ** step`bên trong`step`. Bác ấn tốc độ học tập ở bước 0 và bước 1000; nó phải rơi từ `lr_0`đến khoảng $0.37 \times \text{lr}_0$- Tôi không biết.
 
 ## Các điều khoản chính
 
@@ -365,7 +377,7 @@ Các lớp tối ưu hóa được xây dựng ở đây xuất hiện lại tro
 | SGD | "Random sampling" | Stochastic gradient descent. Compute gradient on a random subset instead of the full dataset. Almost always means mini-batch SGD in practice. |
 | Mini-batch | "A chunk of data" | A small subset of training data (32-256 samples) used to estimate the gradient. Balances speed and gradient accuracy. |
 | Adam | "The default optimizer" | Adaptive Moment Estimation. Tracks per-weight running averages of gradients and squared gradients to give each weight its own learning rate. |
-| Bias correction | "Fix the cold start" | Adam's first and second moments are initialized to zero. Bias correction divides by (1 - beta^t) to compensate during early steps. |
+| Bias correction | "Fix the cold start" | Adam's first and second moments are initialized to zero. Bias correction divides by $(1 - \beta^t)$ to compensate during early steps. |
 | Learning rate schedule | "Change lr over time" | A function that adjusts the learning rate during training. Large steps early, small steps late. |
 | Convex function | "One valley" | A function where any local minimum is the global minimum. Gradient descent always finds it. Neural network losses are not convex. |
 | Saddle point | "Flat but not a minimum" | A point where the gradient is zero but it is a minimum in some directions and a maximum in others. Common in high dimensions. |

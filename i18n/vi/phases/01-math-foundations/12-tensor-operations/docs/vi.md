@@ -36,7 +36,7 @@ graph LR
     T3 --> T4["4D Tensor<br/>rank 4<br/>shape: (B,C,H,W)"]
 ```
 
-Tổng số các yếu tố = sản phẩm của tất cả các kích thước.`(2, 3, 4)`giữ `2 * 3 * 4 = 24`Các yếu tố.
+Tổng số các yếu tố = sản phẩm của tất cả các kích thước.`(2, 3, 4)`giữ $2 \cdot 3 \cdot 4 = 24$Các yếu tố.
 
 ### Các hình dạng căng thẳng trong học tập sâu
 
@@ -232,7 +232,7 @@ batch_B = np.random.randn(4, 5, 2)
 batch_mm = np.einsum("bij,bjk->bik", batch_A, batch_B)
 ```
 
-Chi phí tính toán của một sự suy giảm là sản phẩm của tất cả các kích thước chỉ số (được giữ và cộng lại).`bij,bjk->bik`với B=32, I=128, J=64, K=128: `32 * 128 * 64 * 128 = 33,554,432`số cộng nhiều.
+Chi phí tính toán của một sự suy giảm là sản phẩm của tất cả các kích thước chỉ số (được giữ và cộng lại).`bij,bjk->bik`với $B=32$- $I=128$- $J=64$- $K=128$$32 \cdot 128 \cdot 64 \cdot 128 = 33{,}554{,}432$số cộng nhiều.
 
 ### Bước 7: Cơ chế chú ý qua einsum
 
@@ -319,6 +319,16 @@ Bài học này tạo ra hai lời nhắc lặp lại:
 3. **Hard -- Build einsum from scratch.**Thực hiện một cơ bản `einsum(subscripts, *tensors)`hàm xử lý ít nhất: sản phẩm điểm (`i,i->`), số tử số (`ij,jk->ik`), sản phẩm bên ngoài (`i,j->ij`), và chuyển giao (`ij->ji`). Phân tích chuỗi chữ viết dưới, xác định các chỉ số bị ký kết, và vòng lặp trên tất cả các kết hợp chỉ số. So sánh kết quả của bạn với `np.einsum`- Tôi không biết.
 
 4. **Hard -- Attention shape tracker.**Viết một hàm có tính`batch_size`- `seq_len`- `embed_dim`, và`num_heads`như đầu vào và in ấn hình dạng chính xác tại mỗi bước của nhiều đầu chú ý: đầu vào, Q / K / V dự đoán, đầu chia, điểm chú ý, trọng lượng mềmmax, tổng cân, đầu hợp, đầu ra.`demo_attention_einsum()`đầu ra.
+
+### Những gợi ý
+
+**Exercise 1.**Xây dựng tensor từ `list(range(24))`Vì vậy, mỗi yếu tố cho thấy vị trí của riêng nó.`reshape`gọi, in `flatten().to_list()`và kiểm tra xem nó vẫn là 0 đến 23 theo thứ tự.
+
+**Exercise 2.**Một chiều chỉ có thể phát sóng khi hai kích thước bằng nhau hoặc một trong số chúng là 1, vì vậy kiểm tra quy tắc đó trước tiên và đưa ra một lỗi khi nó thất bại.`(3, 1)`và `(1, 4)`, kiểm tra mục đó `[i][j]`của kết quả bằng nhau `a[i][0] + b[0][j]`, và so sánh kết quả đầy đủ với NumPy.
+
+**Exercise 3.**Chia các thuê bao trên `->`. Một chữ cái trong các đầu vào nhưng không trong đầu ra là một chỉ số tổng cộng, vì vậy vòng qua tất cả các giá trị của mỗi chữ cái và thêm vào vị trí đầu ra.`np.allclose(mine, np.einsum(...))`- Tôi không biết.
+
+**Exercise 4.**Bắt đầu với kích thước đầu `embed_dim // num_heads`và khẳng định điều đó.`embed_dim % num_heads == 0`Điểm chú ý có hình dạng`(batch_size, num_heads, seq_len, seq_len)`, nên kiểm tra bản in của bạn với hình dạng đó và với các hình dạng mà `demo_attention_einsum()`- Nhìn vân tay.
 
 ## Các điều khoản chính
 

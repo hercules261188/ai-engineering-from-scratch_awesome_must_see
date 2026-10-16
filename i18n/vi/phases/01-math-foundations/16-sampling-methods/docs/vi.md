@@ -42,7 +42,7 @@ Thách thức cốt lõi: bạn chỉ có thể lấy mẫu trực tiếp từ p
 
 ### Phân tích ngẫu nhiên thống nhất
 
-Mỗi phương pháp lấy mẫu bắt đầu ở đây. Một máy phát điện số ngẫu nhiên đồng nhất tạo ra các giá trị trong [0, 1) nơi mỗi phân đoạn cùng chiều dài có xác suất bằng nhau.
+Mỗi phương pháp lấy mẫu bắt đầu từ đây. Một máy phát điện số ngẫu nhiên đồng nhất tạo ra các giá trị trong$[0, 1)$nơi mỗi phân đoạn dài bằng nhau có xác suất bằng nhau.
 
 ```
 U ~ Uniform(0, 1)
@@ -54,7 +54,7 @@ Properties:
   Var(U) = 1/12
 ```
 
-Để lấy mẫu một cách đồng nhất từ một tập hợp phân biệt n mục, tạo U và trả lại tầng(n * U. Để lấy mẫu từ một phạm vi liên tục [a, b], tính toán a + (b - a) * U.
+Để lấy mẫu một cách đồng nhất từ một tập hợp riêng biệt của $n$các mục, tạo ra $U$và quay lại$\lfloor n U \rfloor$Để lấy mẫu từ một phạm vi liên tục $[a, b]$, tính toán$a + (b - a) U$- Tôi không biết.
 
 Ý tưởng chính: một số ngẫu nhiên đồng nhất có chứa chính xác số lượng ngẫu nhiên phù hợp để tạo ra một mẫu từ bất kỳ phân phối nào.
 
@@ -72,7 +72,7 @@ Properties:
   F maps the real line to [0, 1]
 ```
 
-CDF ngược sẽ lập bản đồ xác suất trở lại với giá trị. Nếu U ~ Uniform(0, 1), thì X = F_inverse(U) theo phân bố mục tiêu.
+CDF ngược sẽ lập bản đồ xác suất trở lại với giá trị.$U \sim \text{Uniform}(0, 1)$, sau đó $X = F^{-1}(U)$theo mục tiêu phân phối.
 
 ```
 Algorithm:
@@ -98,9 +98,9 @@ Since (1 - U) and U have the same distribution:
   x = -ln(u) / lambda
 ```
 
-Điều này hoạt động hoàn hảo khi bạn có thể viết F_inverse trong dạng đóng. Đối với phân bố bình thường, không có CDF ngược hình thức đóng, vì vậy chúng tôi sử dụng các phương pháp khác (Box-Muller, hoặc ước tính số).
+Điều này hoạt động hoàn hảo khi bạn có thể ghi lại$F^{-1}$Đối với phân bố bình thường, không có CDF ngược hình thức đóng, vì vậy chúng tôi sử dụng các phương pháp khác (Box-Muller, hoặc ước tính số).
 
-**Discrete version:**Đối với phân phối phân định, xây dựng CDF như một tổng cộng, tạo U, và tìm chỉ số đầu tiên khi tổng cộng vượt quá U. Đây là cách `sample_categorical`làm việc trong Bài học 06.
+**Discrete version:**Đối với phân phối riêng biệt, xây dựng CDF như một tổng cộng, tạo $U$, và tìm chỉ số đầu tiên khi tổng số hóa vượt quá $U$Đây là cách mà`sample_categorical`làm việc trong Bài học 06.
 
 ### Phân tích mẫu từ chối
 
@@ -120,15 +120,15 @@ Algorithm:
 Acceptance rate = 1/M
 ```
 
-M càng chặt chẽ, tỷ lệ chấp nhận càng cao. Trong các chiều kích thấp (1-3), lấy mẫu từ chối hoạt động tốt. Trong các chiều kích cao, tỷ lệ chấp nhận giảm theo cấp số lượng bởi vì phần lớn khối lượng đề xuất bị từ chối. Đây là lời nguyền về chiều kích cho lấy mẫu từ chối.
+Càng chặt hơn thì càng chặt hơn$M$, tỷ lệ chấp nhận cao hơn. Trong các chiều kích thấp (1-3), lấy mẫu từ chối hoạt động tốt. Trong các chiều kích cao, tỷ lệ chấp nhận giảm theo cấp số lượng bởi vì phần lớn khối lượng đề xuất bị từ chối. Đây là lời nguyền về chiều kích cho lấy mẫu từ chối.
 
-**Example: sampling from a truncated normal.**Sử dụng một đề xuất thống nhất trên phạm vi cắt giảm. bưu thi M là tối đa của PDF bình thường trong phạm vi đó.
+**Example: sampling from a truncated normal.**Sử dụng một đề xuất thống nhất trên phạm vi cắt giảm.$M$là tối đa của PDF bình thường trong phạm vi đó.
 
-**Example: sampling from a semicircle.**Đề xuất một cách đồng nhất trong hình chữ nhật biên giới. chấp nhận nếu điểm rơi vào vòng bán cầu. Đây là cách Monte Carlo tính toán pi: tỷ lệ chấp nhận bằng tỷ lệ diện tích pi/4.
+**Example: sampling from a semicircle.**Đề xuất một cách đồng đều trong hình chữ nhật biên giới. chấp nhận nếu điểm rơi vào trong bán vòng tròn. Đây là cách Monte Carlo tính toán$\pi$: tỷ lệ chấp nhận bằng tỷ lệ diện tích $\pi/4$- Tôi không biết.
 
 ### Việc lấy mẫu quan trọng
 
-Đôi khi bạn không cần các mẫu từ phân phối mục tiêu p(x. Bạn cần ước tính một kỳ vọng dưới p(x), và bạn có các mẫu từ phân phối khác q(x.
+Đôi khi bạn không cần các mẫu từ phân phối mục tiêu $p(x)$Bạn cần ước tính một kỳ vọng dưới$p(x)$, và bạn có mẫu từ phân phối khác nhau $q(x)$- Tôi không biết.
 
 ```
 Goal: estimate E_p[f(x)] = integral of f(x) * p(x) dx
@@ -143,12 +143,12 @@ Estimator:
   E_p[f(x)] ~ (1/N) * sum(f(x_i) * w(x_i))    where x_i ~ q(x)
 ```
 
-Điều này rất quan trọng trong việc học tập tăng cường. Trong PPO (Proposimal Policy Optimization), bạn thu thập quỹ đạo theo một chính sách cũ nhưng muốn tối ưu hóa một chính sách mới.
+Điều này rất quan trọng trong việc học tập tăng cường. Trong PPO (Proposal Policy Optimization), bạn thu thập quỹ đạo theo một chính sách cũ $\pi_{\text{old}}$nhưng muốn tối ưu hóa một chính sách mới $\pi_{\text{new}}$. trọng lượng quan trọng là $\pi_{\text{new}}(a \mid s) / \pi_{\text{old}}(a \mid s)$PPO cắt giảm những cân nặng này để ngăn chặn chính sách mới đi xa quá xa với chính sách cũ.
 
-Sự khác biệt của ước tính lấy mẫu tầm quan trọng phụ thuộc vào sự tương tự của q với p. Nếu q rất khác với p, một vài mẫu có trọng lượng rất lớn và thống trị ước tính.
+Sự khác biệt của ước tính lấy mẫu tầm quan trọng phụ thuộc vào mức độ tương tự $q$là để $p$Nếu$q$rất khác với $p$, một vài mẫu có trọng lượng khổng lồ và thống trị ước tính.
 
-```
-E_p[f(x)] ~ sum(w_i * f(x_i)) / sum(w_i)
+```math
+\mathbb{E}_p[f(x)] \approx \frac{\sum_i w_i \, f(x_i)}{\sum_i w_i}
 ```
 
 ### Đánh giá Monte Carlo
@@ -186,7 +186,7 @@ Variance of the estimator = Var(f(X)) / N
 
 ### Đường dây Markov Monte Carlo (MCMC): Metropolis-Hastings
 
-MCMC xây dựng một chuỗi Markov mà phân phối tĩnh là phân phối mục tiêu p(x). Sau đủ bước, các mẫu từ chuỗi là (khoảng) các mẫu từ p(x.
+MCMC xây dựng một chuỗi Markov mà phân phối tĩnh là mục tiêu phân phối $p(x)$Sau khi có đủ bước, các mẫu từ chuỗi là (khoảng) các mẫu từ $p(x)$- Tôi không biết.
 
 ```
 Target: p(x)  (known up to a normalizing constant)
@@ -205,13 +205,13 @@ Metropolis-Hastings algorithm:
   4. Return remaining samples
 ```
 
-Đối với các đề xuất đối xứng (q(x' khiếux) = q(x khiếux') , tỷ lệ đơn giản hóa thành p(x')/p(x). Đây là thuật toán Metropolis ban đầu.
+Đối với các đề xuất đối xứng $(q(x' \mid x) = q(x \mid x'))$, tỷ lệ đơn giản hóa thành $p(x')/p(x)$Đây là thuật toán Metropolis ban đầu.
 
-**Why it works.**Quy tắc chấp nhận đảm bảo sự cân bằng chi tiết: xác suất ở x và di chuyển đến x' bằng với xác suất ở x' và di chuyển đến x. Sự cân bằng chi tiết cho thấy p ((x) là sự phân bố tĩnh của chuỗi.
+**Why it works.**Quy tắc chấp nhận đảm bảo sự cân bằng chi tiết: khả năng ở $x$và chuyển đến $x'$bằng với xác suất ở $x'$và chuyển đến $x$Sự cân bằng chi tiết cho thấy rằng$p(x)$là sự phân phối tĩnh của chuỗi.
 
 **Practical considerations:**
 - Đốt: loại bỏ các mẫu sơ khai trước khi chuỗi đạt được cân bằng
-- Thinning: giữ mỗi mẫu k-th để giảm sự tương quan tự
+- Thâm mỏng: giữ tất cả $k$- mẫu thứ hai để giảm sự tương quan tự động
 - Skala đề xuất: quá nhỏ và chuỗi di chuyển chậm (tự chấp nhận cao, khám phá chậm); quá lớn và hầu hết các đề xuất bị từ chối (tự chấp nhận thấp, bị mắc kẹt)
 - Tỷ lệ chấp nhận tối ưu cho một đề xuất Gaussian ở kích thước cao là khoảng 0,234
 
@@ -230,7 +230,7 @@ Algorithm:
     Sample x_d^{t+1} ~ p(x_d | x_1^{t+1}, x_2^{t+1}, ..., x_{d-1}^{t+1})
 ```
 
-Phân tích Gibbs đòi hỏi bạn có thể lấy mẫu từ mỗi phân bố điều kiện p ((x_i ∈ x_{-i}).
+Việc lấy mẫu Gibbs đòi hỏi bạn có thể lấy mẫu từ mỗi phân phối có điều kiện .$p(x_i \mid x_{-i})$Điều này rất đơn giản đối với nhiều mô hình:
 - Các mạng Bayesian: điều kiện theo sau từ cấu trúc đồ thị
 - Các hỗn hợp Gaussian: điều kiện là Gaussian
 - Các mô hình Ising: điều kiện của mỗi spin chỉ phụ thuộc vào các hàng xóm của nó
@@ -241,7 +241,7 @@ Tỷ lệ chấp nhận luôn là 1 (mỗi đề xuất đều được chấp n
 
 ### Tiêu chuẩn nhiệt độ (được sử dụng trong LLM)
 
-Các mô hình ngôn ngữ xuất logit z_1, ..., z_V cho mỗi token trong từ vựng. Softmax chuyển đổi chúng thành xác suất. Nhiệt độ tái định lượng logit trước softmax:
+Các mô hình ngôn ngữ xuất logits $z_1, \ldots, z_V$Softmax chuyển đổi chúng thành xác suất. nhiệt độ tái định lượng các logit trước softmax:
 
 ```
 p_i = exp(z_i / T) / sum(exp(z_j / T))
@@ -253,20 +253,20 @@ T < 1.0: sharpens the distribution (more confident, less diverse)
 T > 1.0: flattens the distribution (less confident, more diverse)
 ```
 
-**Why it works.**Chia logit bằng T < 1 làm tăng sự khác biệt giữa logit. Nếu z_1 = 2 và z_2 = 1, chia bằng T = 0.5 sẽ tạo ra z_1/T = 4 và z_2/T = 2, làm cho khoảng cách lớn hơn. Sau softmax, token logit cao nhất sẽ có phần lớn hơn nhiều.
+**Why it works.**Chia logit bởi $T < 1$làm tăng sự khác biệt giữa các logit.$z_1 = 2$và $z_2 = 1$, chia bằng $T = 0.5$cho $z_1/T = 4$và $z_2/T = 2$Sau Softmax, token logit cao nhất sẽ có phần lớn hơn nhiều.
 
 **In practice:**
-- T = 0,0: giải mã tham lam, tốt nhất cho Q&A thực tế
-- T = 0,3-0,7: hơi sáng tạo, tốt cho việc tạo ra mã
-- T = 0,7-1,0: cân bằng, tốt cho cuộc trò chuyện chung
-- T = 1.0-1.5: viết sáng tạo, suy nghĩ
-- T > 1,5: ngày càng ngẫu nhiên, hiếm khi hữu ích
+- $T = 0.0$: decoding tham lam, tốt nhất cho Q&A thực tế
+- $T = 0.3\text{-}0.7$: hơi sáng tạo, tốt cho việc tạo ra mã
+- $T = 0.7\text{-}1.0$: cân bằng, tốt cho cuộc trò chuyện chung
+- $T = 1.0\text{-}1.5$: viết sáng tạo, suy nghĩ
+- $T > 1.5$: ngày càng ngẫu nhiên, hiếm khi hữu ích
 
 Nhiệt độ không thay đổi các token có thể, nó thay đổi khối lượng xác suất được phân bổ cho mỗi token.
 
 ### Top-k Sampling
 
-Top-k lấy mẫu hạn chế bộ ứng cử viên cho các token k có xác suất cao nhất, sau đó tái bình thường hóa và lấy mẫu từ bộ hạn chế đó.
+Top-k lấy mẫu giới hạn ứng cử viên được đặt ra cho $k$token có xác suất cao nhất, sau đó tái bình thường hóa và lấy mẫu từ tập hợp hạn chế đó.
 
 ```
 Algorithm:
@@ -281,11 +281,11 @@ k = V:  no filtering (standard sampling)
 k = 40: typical setting, removes long tail of unlikely tokens
 ```
 
-Top-k ngăn chặn mô hình chọn các token cực kỳ không có khả năng (typos, nonsense) tồn tại trong đuôi dài của phân phối từ vựng. Vấn đề: k được cố định bất kể bối cảnh. Khi mô hình tự tin (một token có khả năng 95%), k = 40 vẫn cho phép 39 lựa chọn thay thế. Khi mô hình không chắc chắn (có khả năng được phân phối trên 1000 token), k = 40 cắt giảm các tùy chọn đáng tin cậy.
+Top-k ngăn chặn mô hình chọn các mã thông báo cực kỳ khó có thể (typos, nonsense) tồn tại trong đuôi dài của phân phối từ vựng. Vấn đề: $k$Nếu mô hình là tự tin (một token có khả năng 95%), $k = 40$vẫn cho phép 39 lựa chọn thay thế. Khi mô hình không chắc chắn (khả năng được phân bố trên 1000 token), $k = 40$cắt giảm các lựa chọn hợp lý.
 
 ### Top-p (Nucleus) lấy mẫu
 
-Top-p lấy mẫu điều chỉnh động lực kích thước tập hợp ứng cử viên. Thay vì giữ một số lượng mã thông báo cố định, nó giữ tập hợp nhỏ nhất của mã thông báo có xác suất tích lũy vượt quá p.
+Top-p lấy mẫu thay vì giữ một số lượng mã thông báo cố định, nó giữ bộ mã thông báo nhỏ nhất có khả năng tích lũy vượt quá $p$- Tôi không biết.
 
 ```
 Algorithm:
@@ -335,13 +335,13 @@ Reparameterized sampling:
   Gradients flow through mu and sigma.
 ```
 
-Điều này hoạt động bởi vì N(mu, sigma^2) có phân bố tương tự như mu + sigma * N(0, 1). Nhìn sâu: di chuyển sự ngẫu nhiên đến một nguồn không có tham số (epsilon), sau đó thể hiện mẫu như một biến đổi có thể phân biệt các tham số.
+Điều này hiệu quả bởi vì$\mathcal{N}(\mu, \sigma^2)$có phân phối tương tự như $\mu + \sigma \cdot \mathcal{N}(0, 1)$. Thông tin quan trọng: chuyển sự ngẫu nhiên đến một nguồn không có tham số ($\epsilon$), sau đó thể hiện mẫu như một biến đổi phân biệt các tham số.
 
 **In the VAE training loop:**
-1. Các đầu ra mã hóa mu và log(sigma^2) cho mỗi đầu vào
-2. mẫu epsilon ~ N(0, 1)
-3. Xét z = mu + sigma * epsilon
-4. Tự giải mã z để tái cấu trúc đầu vào
+1. Các đầu ra mã hóa $\mu$và $\log(\sigma^2)$cho mỗi đầu vào
+2. Mô hình $\epsilon \sim \mathcal{N}(0, 1)$
+3. Lưu ý$z = \mu + \sigma \epsilon$
+4. Tự giải mã $z$để tái cấu trúc đầu vào
 5. Chuyển ngược qua các bước 4, 3, 2, 1 (có thể bởi vì bước 3 có thể phân biệt)
 
 Nếu không có thủ thuật tái định đo lường, VAE không thể được đào tạo với sự lây lan ngược tiêu chuẩn.
@@ -413,7 +413,7 @@ For piecewise-constant functions, stratified sampling is exact.
 
 ### Kết nối với các mô hình phân phối
 
-Các mô hình phân phối tạo ra hình ảnh thông qua một quá trình lấy mẫu. quá trình tiến thêm tiếng ồn Gaussian vào một hình ảnh qua các bước T cho đến khi nó trở thành tiếng ồn thuần túy.
+Các mô hình phân tán tạo ra hình ảnh thông qua một quá trình lấy mẫu.$T$tiến hành cho đến khi nó trở thành tiếng ồn thuần túy.
 
 ```
 Forward process (known):
@@ -431,7 +431,7 @@ Reverse process (learned):
 
 Kết nối với các phương pháp trong bài học này:
 - Mỗi bước khử sử dụng thủ thuật tái định đo (mô hình tiếng ồn, áp dụng biến đổi xác định)
-- Các lịch trình tiếng ồn {alpha_t} điều khiển một hình thức của nhiệt độ
+- Thời gian âm thanh $\lbrace \alpha_t \rbrace$điều khiển một hình thức điều khiển nhiệt độ
 - Việc đào tạo sử dụng ước tính Monte Carlo để gần ELBO (bằng chứng bên dưới)
 - Tiêu mẫu tổ tiên trong các mô hình phân tán là chuỗi Markov (mỗi bước chỉ phụ thuộc vào trạng thái hiện tại)
 
@@ -457,7 +457,7 @@ def sample_exponential_inverse_cdf(lam):
     return -math.log(u) / lam
 ```
 
-Tạo 10.000 mẫu biểu diễn và xác minh trung bình là 1/lambda.
+Tạo ra 10.000 mẫu biểu diễn và xác minh trung bình là $1/\lambda$- Tôi không biết.
 
 ### Bước 2: Tiểu mẫu từ chối
 
@@ -484,7 +484,7 @@ def importance_sampling_estimate(f, target_pdf, proposal_pdf, proposal_sample, n
     return total / n
 ```
 
-Đếm E[X^2] dưới phân bố bình thường bằng cách sử dụng một đề xuất đồng nhất. So sánh với câu trả lời được biết (mu^2 + sigma^2).
+Đếm số$\mathbb{E}[X^2]$Phân tích của các câu trả lời được biết đến ($\mu^2 + \sigma^2$().
 
 ### Bước 4: ước tính Monte Carlo của pi
 
@@ -642,37 +642,49 @@ Anh đã xây dựng những cái này từ đầu rồi, giờ anh biết nhữ
 
 ## Các bài tập
 
-1. Thực hiện lấy mẫu CDF ngược cho phân bố Cauchy. CDF là F(x) = 0.5 + arctan(x) / pi. Tạo 10.000 mẫu và vẽ histogram so với PDF thực. Nhận thức những đuôi nặng (giá trị cực xa trung tâm).
+1. Thực hiện lấy mẫu CDF ngược cho phân phối Cauchy.$F(x) = 0.5 + \arctan(x)/\pi$. Tạo 10.000 mẫu và vẽ histogram so với PDF thực. Nhận thấy đuôi nặng (giá trị cực xa trung tâm).
 
 2. Sử dụng mẫu từ chối để tạo mẫu từ phân phối Beta(2, 5) sử dụng đề xuất Uniform(0, 1). Chụp các mẫu được chấp nhận so với PDF Beta thực tế. Tỷ lệ chấp nhận lý thuyết là gì?
 
-3. Đếm số tích tích hợp của sin(x) từ 0 đến pi bằng cách sử dụng Monte Carlo với 1.000, 10.000 và 100.000 mẫu. So sánh lỗi ở mỗi cấp độ.
+3. Đếm số tích hợp của $\sin(x)$từ 0 đến $\pi$sử dụng Monte Carlo với 1.000, 10.000 và 100.000 mẫu. So sánh lỗi ở mỗi cấp độ.$O(1/\sqrt{N})$- Tôi không biết.
 
-4. Thực hiện Metropolis-Hastings để lấy mẫu từ phân bố 2D p ((x, y) tương xứng với exp ((-(x^2 * y^2 + x^2 + y^2 - 8*x - 8*y) / 2).
+4. Thực hiện Metropolis-Hastings để lấy mẫu từ phân phối 2D $p(x, y)$tương xứng với $\exp(-(x^2 y^2 + x^2 + y^2 - 8x - 8y) / 2)$- Chụp các mẫu và đường đi chuỗi.
 
 5. Xây dựng một bản demo tạo văn bản hoàn chỉnh: với một từ vựng 10 từ với logit, tạo ra chuỗi 20 mã thông báo bằng cách sử dụng (a) tham lam, (b) nhiệt độ = 0,7, (c) top-k = 3, (d) top-p = 0,9. So sánh sự đa dạng của các đầu ra trong 5 lần chạy.
+
+### Những gợi ý
+
+**Exercise 1.**Giải quyết $u = F(x)$cho $x$, cho phép$x = \tan(\pi(u - 0.5))$Kiểm tra xem liệu trung bình mẫu có gần 0 và khoảng 6% mẫu có $\lvert x \rvert > 10$, đó là $1 - (2/\pi)\arctan(10)$- Tôi không biết.
+
+**Exercise 2.**Độ dày Beta ((2, 5) là $30x(1-x)^4$Tìm giá trị lớn nhất của nó ở chế độ $x = 1/5$và sử dụng giá trị đó như $M$trong `rejection_sample`Tỷ lệ chấp nhận lý thuyết là$1/M$, nên so sánh nó với phần nhỏ các đề xuất mà bạn chấp nhận.
+
+**Exercise 3.**Giá trị chính xác là 2.`monte_carlo_integral(math.sin, 0, math.pi, n)`cho mỗi $n$và lặp lại mỗi lần chạy với nhiều hạt giống.$n$tăng gấp 10 lần, lỗi trung bình sẽ giảm khoảng $\sqrt{10} \approx 3.2$- Tôi không biết.
+
+**Exercise 4.**Viết nhật ký của mục tiêu, đó là $-(x^2 y^2 + x^2 + y^2 - 8x - 8y)/2$, và chuyển nó cho `metropolis_hastings_2d`- ghi lại tỷ lệ chấp nhận cho mỗi đề xuất lệch chuẩn: một giá trị rất nhỏ chấp nhận hầu hết mọi bước nhưng di chuyển chậm, và một giá trị rất lớn từ chối hầu hết mọi bước.
+
+**Exercise 5.**Việc giải mã tham lam lấy chỉ số logit lớn nhất ở mỗi bước.`temperature_sample`- `top_k_sample`, và`top_p_sample`Tham mê phải đưa ra cùng một chuỗi trong tất cả 5 lần chạy, vì vậy hãy đếm các chuỗi riêng biệt cho mỗi phương pháp để đo đa dạng.
 
 ## Các điều khoản chính
 
 | Term | What people say | What it actually means |
 |------|----------------|----------------------|
 | Sampling | "Drawing random values" | Generating values according to a probability distribution. The mechanism behind all generative AI |
-| Uniform distribution | "All equally likely" | Every value in [a, b] has equal probability density 1/(b-a). The starting point for all sampling methods |
-| Inverse CDF | "Probability transform" | F_inverse(U) converts a uniform sample into a sample from any distribution with known CDF. Exact and efficient |
+| Uniform distribution | "All equally likely" | Every value in $[a, b]$ has equal probability density $1/(b-a)$. The starting point for all sampling methods |
+| Inverse CDF | "Probability transform" | $F^{-1}(U)$ converts a uniform sample into a sample from any distribution with known CDF. Exact and efficient |
 | Rejection sampling | "Propose and accept/reject" | Generate from a simple proposal, accept with probability proportional to target/proposal ratio. Exact but wastes samples |
-| Importance sampling | "Reweight samples" | Estimate expectations under p(x) using samples from q(x) by weighting each sample by p(x)/q(x). Core to PPO in RL |
-| Monte Carlo | "Average random samples" | Approximate integrals as sample averages. Error O(1/sqrt(N)) regardless of dimension |
+| Importance sampling | "Reweight samples" | Estimate expectations under $p(x)$ using samples from $q(x)$ by weighting each sample by $p(x)/q(x)$. Core to PPO in RL |
+| Monte Carlo | "Average random samples" | Approximate integrals as sample averages. Error $O(1/\sqrt{N})$ regardless of dimension |
 | MCMC | "Random walk that converges" | Construct a Markov chain whose stationary distribution is the target. Metropolis-Hastings is the foundational algorithm |
 | Metropolis-Hastings | "Accept uphill, sometimes downhill" | Propose moves, accept based on density ratio. Detailed balance ensures convergence to target distribution |
 | Gibbs sampling | "One variable at a time" | Update each variable from its conditional distribution holding others fixed. 100% acceptance rate |
-| Temperature | "Confidence knob" | Divides logits by T before softmax. T<1 sharpens (more confident), T>1 flattens (more diverse) |
-| Top-k sampling | "Keep the k best" | Zero out all but the k highest-probability tokens, renormalize, sample. Fixed candidate set size |
-| Nucleus sampling (top-p) | "Keep the probable ones" | Keep the smallest set of tokens whose cumulative probability exceeds p. Adaptive candidate set size |
-| Reparameterization trick | "Move randomness outside" | Write z = mu + sigma * epsilon where epsilon ~ N(0,1). Makes sampling differentiable. Essential for VAE training |
+| Temperature | "Confidence knob" | Divides logits by $T$ before softmax. $T<1$ sharpens (more confident), $T>1$ flattens (more diverse) |
+| Top-k sampling | "Keep the k best" | Zero out all but the $k$ highest-probability tokens, renormalize, sample. Fixed candidate set size |
+| Nucleus sampling (top-p) | "Keep the probable ones" | Keep the smallest set of tokens whose cumulative probability exceeds $p$. Adaptive candidate set size |
+| Reparameterization trick | "Move randomness outside" | Write $z = \mu + \sigma \epsilon$ where $\epsilon \sim \mathcal{N}(0,1)$. Makes sampling differentiable. Essential for VAE training |
 | Gumbel-Softmax | "Soft categorical sampling" | Differentiable approximation to categorical sampling using Gumbel noise + softmax with temperature |
 | Stratified sampling | "Forced coverage" | Divide sample space into strata, sample from each. Always lower variance than naive Monte Carlo |
 | Burn-in | "Warm-up period" | Initial MCMC samples discarded before the chain reaches its stationary distribution |
-| Detailed balance | "Reversibility condition" | p(x) * T(x->y) = p(y) * T(y->x). Sufficient condition for p to be the stationary distribution of a Markov chain |
+| Detailed balance | "Reversibility condition" | $p(x) T(x \to y) = p(y) T(y \to x)$. Sufficient condition for $p$ to be the stationary distribution of a Markov chain |
 | Diffusion sampling | "Iterative denoising" | Generate data by starting from noise and applying learned denoising steps. Each step is a conditional sampling operation |
 
 ## Đọc thêm

@@ -32,7 +32,7 @@ Một vector chỉ là một danh sách số. Nhưng những số đó có ý ng
 |---|---|-------|
 | 3 | 2 | The vector points from origin (0,0) to (3, 2) on the plane |
 
-Dòng vector có độ lớn vuông ((3^2 + 2^2) = vuông ((13) và chỉ lên và về phía bên phải.
+Dòng vector có độ lớn$\sqrt{3^2 + 2^2} = \sqrt{13}$và chỉ lên và về bên phải.
 
 Trong AI, các vector đại diện cho mọi thứ:
 - Một từ → một vector của 768 số (tên của nó trong không gian nhúng)
@@ -71,19 +71,20 @@ Trong AI, các matrix là mô hình:
 
 Kết quả điểm của hai vector cho bạn biết chúng tương tự như thế nào.
 
-```
-a · b = a₁×b₁ + a₂×b₂ + ... + aₙ×bₙ
-
-Same direction:      a · b > 0  (similar)
-Perpendicular:       a · b = 0  (unrelated)
-Opposite direction:  a · b < 0  (dissimilar)
+```math
+\begin{aligned}
+a \cdot b &= a_1 \times b_1 + a_2 \times b_2 + \cdots + a_n \times b_n \\[4pt]
+\text{Same direction:} \quad a \cdot b &> 0 \quad \text{(similar)} \\
+\text{Perpendicular:} \quad a \cdot b &= 0 \quad \text{(unrelated)} \\
+\text{Opposite direction:} \quad a \cdot b &< 0 \quad \text{(dissimilar)}
+\end{aligned}
 ```
 
 Đây là cách mà các công cụ tìm kiếm, hệ thống khuyến nghị và RAG hoạt động -- tìm ra các vector với các sản phẩm điểm cao.
 
 ### Tự do tuyến tính
 
-Các vector là tuyến tính độc lập nếu không có vector trong tập thể có thể được viết là sự kết hợp của những người khác. Nếu v1, v2, v3 độc lập, chúng trải dài một không gian 3D. Nếu một là sự kết hợp của những người khác, chúng chỉ trải dài một máy bay.
+Các vector là tuyến tính độc lập nếu không có vector trong tập thể có thể được viết như một sự kết hợp của những người khác. Nếu $v_1, v_2, v_3$Nếu một trong hai là sự kết hợp của những thứ khác, chúng chỉ trải dài một máy bay.
 
 Tại sao nó quan trọng cho AI: các tính năng của bạn nên có cột độc lập tuyến tính. Nếu hai tính năng tương quan hoàn hảo (thay thuộc tuyến tính), mô hình không thể phân biệt các hiệu ứng của chúng. Điều này gây ra sự đa tuyến tính trong sự hồi quy - các khối lượng của matrix trở nên bất ổn, và những thay đổi đầu vào nhỏ tạo ra các biến động đầu ra hoang dã.
 
@@ -95,7 +96,7 @@ v2 = [0, 1, 0]
 v3 = [2, 1, 0]   # v3 = 2*v1 + v2
 ```
 
-v1 và v2 là độc lập - không phải là một nhân số scalar hoặc sự kết hợp của các khác. Nhưng v3 = 2 * v1 + v2, vì vậy {v1, v2, v3} là một tập phụ thuộc. Ba vector này đều nằm trong phẳng xy. Cho dù bạn kết hợp chúng như thế nào, bạn không thể đạt được [0, 0, 1]. Bạn có ba vector nhưng chỉ có hai chiều tự do.
+$v_1$và $v_2$là độc lập - không phải là một số nhân scalar hoặc sự kết hợp của các thứ khác.$v_3 = 2 v_1 + v_2$, vậy $\lbrace v_1, v_2, v_3 \rbrace$là một tập phụ thuộc. ba vector này đều nằm trong xy-plane. bất kể bạn kết hợp chúng như thế nào, bạn không thể đạt đến [0, 0, 1]. Bạn có ba vector nhưng chỉ có hai chiều tự do.
 
 Trong một tập dữ liệu: nếu feature_3 = 2*feature_1 + feature_2, thêm feature_3 sẽ cung cấp cho mô hình không có thông tin mới.
 
@@ -105,15 +106,15 @@ Một cơ sở là một tập hợp tối thiểu của các vector độc lậ
 
 Cơ sở tiêu chuẩn cho không gian 3D là {[1,0,0], [0,1,0], [0,0,1]}. Nhưng bất kỳ ba vector độc lập nào trong 3D tạo thành cơ sở hợp lệ.
 
-Đường độ của một matrix = số lượng cột độc lập tuyến tính = số lượng hàng độc lập tuyến tính. Nếu xếp hạng < m ((những hàng, hàng), các matrix là thiếu xếp hạng. Điều này có nghĩa là:
+Tỷ lệ của một số tử liệu = số lượng cột độc lập tuyến tính = số lượng hàng độc lập tuyến tính. Nếu $\text{rank} < \min(\text{rows}, \text{cols})$, các matrix là thiếu cấp bậc.
 - Hệ thống có vô số giải pháp (hoặc không có)
 - Thông tin bị mất trong quá trình chuyển đổi
 - Matrix không thể đảo ngược
 
 | Situation | Rank | What it means for ML |
 |-----------|------|---------------------|
-| Full rank (rank = min(m, n)) | Maximum possible | Unique least-squares solution exists. Model is well-conditioned. |
-| Rank deficient (rank < min(m, n)) | Below maximum | Features are redundant. Infinitely many weight solutions. Regularization needed. |
+| Full rank $(\text{rank} = \min(m, n))$ | Maximum possible | Unique least-squares solution exists. Model is well-conditioned. |
+| Rank deficient $(\text{rank} < \min(m, n))$ | Below maximum | Features are redundant. Infinitely many weight solutions. Regularization needed. |
 | Rank 1 | 1 | Every column is a scaled copy of one vector. All data lies on a line. |
 | Near rank-deficient (small singular values) | Numerically low | Matrix is ill-conditioned. Tiny input noise causes large output changes. Use SVD truncation or ridge regression. |
 
@@ -121,11 +122,11 @@ Cơ sở tiêu chuẩn cho không gian 3D là {[1,0,0], [0,1,0], [0,0,1]}. Nhưn
 
 Vêctơ dự án **a**trên vector **b**cho thành phần của **a**hướng tới **b**- Có thể là:
 
-```
-proj_b(a) = (a dot b / b dot b) * b
+```math
+\mathop{\mathrm{proj}}_b(a) = \frac{a \cdot b}{b \cdot b} \, b
 ```
 
-Số dư (a - proj_b(a)) là thẳng đứng với b. Sự phân hủy trực giác này là nền tảng của các bộ sơn vuông nhỏ nhất.
+Các dư $(a - \mathop{\mathrm{proj}}_b(a))$là trọc với $b$Sự phân hủy trực giác này là nền tảng của việc lắp đặt các hình vuông nhỏ nhất.
 
 Đánh chiếu là ở khắp mọi nơi trong ML:
 - Lịch chiếu tuyến tính giảm thiểu khoảng cách từ quan sát đến không gian cột -- giải pháp là một dự đoán
@@ -143,9 +144,9 @@ graph LR
     end
 ```
 
-**Example:**a = [3, 4], b = [1, 0]
+**Example:** $a = [3, 4]$- $b = [1, 0]$
 
-Proj_b(a) = (3*1 + 4*0) / (1*1 + 0*0) * [1, 0] = 3 * [1, 0] = [3, 0]
+$\mathop{\mathrm{proj}}_b(a) = (3 \cdot 1 + 4 \cdot 0) / (1 \cdot 1 + 0 \cdot 0) \cdot [1, 0] = 3 \cdot [1, 0] = [3, 0]$
 
 Dự án làm giảm thành phần y. Đây là sự giảm chiều kích trong hình thức đơn giản nhất của nó - ném đi những hướng bạn không quan tâm.
 
@@ -447,6 +448,20 @@ LoRA xứng đáng được nhắc đến đặc biệt. Nó tinh chỉnh các m
 4. Kiểm tra xem liệu lượng Gram-Schmidt thực sự là orthonormal: kiểm tra rằng mỗi cặp có điểm sản phẩm 0 và mỗi vector có độ lớn 1
 5. Tạo một số liệu 3x3 với cấp 2.`rank()`sau đó giải thích các vật lý hình học mà các cột trải dài.
 6. Đặt đường dẫn [1, 2, 3] lên [1, 1, 1].
+
+### Những gợi ý
+
+**Exercise 1.**Bắt đầu từ `cosine_similarity`, giữ giá trị giữa -1 và 1, sau đó lấy vòng cung cosine và chuyển đổi radian thành độ.`Vector([1, 0])`và `Vector([0, 1])`cho 90 và một vector tự nó sẽ cho 0.
+
+**Exercise 2.**Đặt hai nhân thang trên đường vạch của một số liệu 2x2 và đặt 0 trong hai tế bào khác. Kết quả cho [1, 1] phải là [2, 3].
+
+**Exercise 3.**Xét tính sự tương đồng cosine cho mỗi cặp 5 vector (10 cặp) và giữ giá trị lớn nhất.
+
+**Exercise 4.**Sử dụng `gram_schmidt`trên ba vector độc lập, sau đó tính toán `dot`cho mỗi cặp và `magnitude`so sánh với một dung nạp như `1e-9`, bởi vì điểm nổi không cung cấp số 0 chính xác.
+
+**Exercise 5.**Làm cho hàng thứ ba hoặc cột tổng của hai đầu tiên, do đó một hướng lặp lại. `rank()`phải trả lại 2, và các cột sau đó trải qua một máy bay qua nguồn gốc.
+
+**Exercise 6.**Xét quy mô $\frac{a \cdot b}{b \cdot b}$và nhân lên$b$- Không, không, không.`project_onto`Hãy kiểm tra phần còn lại.$a$trừ dự đoán có một điểm nhân của 0 với [1, 1, 1].
 
 ## Các điều khoản chính
 

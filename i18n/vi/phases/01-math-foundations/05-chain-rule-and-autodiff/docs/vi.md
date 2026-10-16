@@ -28,29 +28,31 @@ Quy tắc chuỗi cho bạn toán học. phân biệt tự động cho bạn thu
 
 ### Quy tắc chuỗi
 
-Nếu`y = f(g(x))`, dẫn xuất của `y`đối với `x`là:
+Nếu$y = f(g(x))$, dẫn xuất của $y$đối với $x$là:
 
-```
-dy/dx = dy/dg * dg/dx = f'(g(x)) * g'(x)
+```math
+\frac{dy}{dx} = \frac{dy}{dg} \cdot \frac{dg}{dx} = f'(g(x)) \cdot g'(x)
 ```
 
 Bội số các phái sinh dọc theo chuỗi. Mỗi liên kết đóng góp phái sinh địa phương của nó.
 
-Ví dụ: `y = sin(x^2)`
+Ví dụ: $y = \sin(x^2)$
 
-```
-g(x) = x^2       g'(x) = 2x
-f(g) = sin(g)     f'(g) = cos(g)
-
-dy/dx = cos(x^2) * 2x
+```math
+\begin{aligned}
+g(x) &= x^2 \qquad & g'(x) &= 2x \\
+f(g) &= \sin(g) \qquad & f'(g) &= \cos(g) \\[4pt]
+\frac{dy}{dx} &= \cos(x^2) \cdot 2x
+\end{aligned}
 ```
 
 Đối với các thành phần sâu hơn, chuỗi mở rộng:
 
-```
-y = f(g(h(x)))
-
-dy/dx = f'(g(h(x))) * g'(h(x)) * h'(x)
+```math
+\begin{aligned}
+y &= f(g(h(x))) \\[4pt]
+\frac{dy}{dx} &= f'(g(h(x))) \cdot g'(h(x)) \cdot h'(x)
+\end{aligned}
 ```
 
 Mỗi lớp trong một mạng thần kinh là một liên kết trong chuỗi này.
@@ -88,7 +90,7 @@ Việc đi ngược áp dụng quy tắc chuỗi tại mỗi nút, lan truyền 
 
 Có hai cách để áp dụng quy tắc chuỗi thông qua biểu đồ.
 
-**Forward mode**bắt đầu từ các đầu vào và đẩy các phái sinh về phía trước.`dx/dx = 1`và lây lan thông qua mỗi hoạt động. tốt khi bạn có ít đầu vào và nhiều đầu ra.
+**Forward mode**bắt đầu từ các đầu vào và đẩy các phái sinh về phía trước.$dx/dx = 1$và lây lan thông qua mỗi hoạt động. tốt khi bạn có ít đầu vào và nhiều đầu ra.
 
 ```
 Forward mode: seed dx/dx = 1, propagate forward
@@ -98,7 +100,7 @@ Forward mode: seed dx/dx = 1, propagate forward
   y = sin(a)  (dy/dx = cos(a) * da/dx = cos(4) * 4 = -2.615)
 ```
 
-**Reverse mode**bắt đầu ở đầu ra và kéo gradient ngược lại.`dy/dy = 1`và lan truyền qua mỗi hoạt động ngược lại. tốt khi bạn có nhiều đầu vào và ít đầu ra.
+**Reverse mode**bắt đầu ở đầu ra và kéo gradient ngược lại.$dy/dy = 1$và lan truyền qua mỗi hoạt động ngược lại. tốt khi bạn có nhiều đầu vào và ít đầu ra.
 
 ```
 Reverse mode: seed dy/dy = 1, propagate backward
@@ -112,12 +114,12 @@ Các mạng thần kinh có hàng triệu đầu vào (năng lượng) và một
 
 | Mode | Seed | Direction | Best when |
 |------|------|-----------|-----------|
-| Forward | `dx_i/dx_i = 1` | Input to output | Few inputs, many outputs |
-| Reverse | `dy/dy = 1` | Output to input | Many inputs, few outputs (neural nets) |
+| Forward | $dx_i/dx_i = 1$ | Input to output | Few inputs, many outputs |
+| Reverse | $dy/dy = 1$ | Output to input | Many inputs, few outputs (neural nets) |
 
 ### Số hai cho chế độ đi trước
 
-Phương thức đi trước có thể được thực hiện đẹp đẽ với số hai.`a + b*epsilon`nơi `epsilon^2 = 0`- Tôi không biết.
+Phương thức đi trước có thể được thực hiện đẹp đẽ với số hai.$a + b\epsilon$nơi $\epsilon^2 = 0$- Tôi không biết.
 
 ```
 Dual number: (value, derivative)
@@ -236,7 +238,7 @@ Mỗi hoạt động tạo ra một kết thúc biết cách tính toán gradien
             v._backward()
 ```
 
-Phân loại topological đảm bảo gradient của mỗi nút được tính toán đầy đủ trước khi nó lây lan cho con cái của nó.
+Topological sort đảm bảo gradient của mỗi nút được tính toán đầy đủ trước khi nó lây lan cho con cái của nó.$dy/dy = 1$().
 
 ### Bước 4: Nhiều hoạt động hơn cho một động cơ hoàn chỉnh
 
@@ -300,11 +302,11 @@ Các lớp giá trị cơ bản xử lý cộng, nhân và relu. Một động c
 | Operation | Backward rule | Used in |
 |-----------|--------------|---------|
 | `__sub__` | Reuses add + neg | Loss computation (pred - target) |
-| `__pow__` | n * x^(n-1) | Polynomial activations, MSE (error^2) |
+| `__pow__` | $n \cdot x^{n-1}$ | Polynomial activations, MSE ($\text{error}^2$) |
 | `__truediv__` | Reuses mul + pow(-1) | Normalization, learning rate scaling |
-| `exp` | exp(x) * upstream | Softmax, log-likelihood |
-| `log` | (1/x) * upstream | Cross-entropy loss, log probabilities |
-| `tanh` | (1 - tanh^2) * upstream | Classic activation function |
+| `exp` | $\exp(x) \cdot \text{upstream}$ | Softmax, log-likelihood |
+| `log` | $(1/x) \cdot \text{upstream}$ | Cross-entropy loss, log probabilities |
+| `tanh` | $(1 - \tanh^2) \cdot \text{upstream}$ | Classic activation function |
 
 Phần thông minh:`__sub__`và `__truediv__`được định nghĩa theo các hoạt động hiện có. Họ nhận được gradient chính xác miễn phí vì quy tắc chuỗi được tạo ra thông qua các hoạt động cộng/mul/pow cơ bản.
 
@@ -489,13 +491,23 @@ Các lớp giá trị được xây dựng ở đây là nền tảng cho vòng 
 
 ## Các bài tập
 
-1. Thêm `__pow__`để bạn có thể tính toán`x ** n`- Hãy kiểm tra.`d/dx(x^3)``x=2`=`12.0`- Tôi không biết.
+1. Thêm `__pow__`để bạn có thể tính toán`x ** n`- Hãy kiểm tra.$\frac{d}{dx}(x^3)$$x=2$=`12.0`- Tôi không biết.
 
-2. Thêm `tanh`làm chức năng kích hoạt.`tanh'(0) = 1`và `tanh'(2) = 0.0707`(các khoảng).
+2. Thêm `tanh`làm chức năng kích hoạt.$\tanh'(0) = 1$và $\tanh'(2) = 0.0707$(các khoảng).
 
 3. Xây dựng một biểu đồ tính toán cho một tế bào thần kinh duy nhất: `y = relu(w1*x1 + w2*x2 + b)`- Xét tất cả 5 gradient và xác minh với PyTorch.
 
 4. Thực hiện tự động định dạng hướng trước sử dụng hai số.`Dual`lớp và xác minh nó cung cấp các phái sinh tương tự như động cơ chế ngược của bạn.
+
+### Những gợi ý
+
+**Exercise 1.** `Value`đã xác định `__pow__`- Đọc nó.`_backward`và xác nhận nó áp dụng $n x^{n-1}$đến độ nghiêng tiếp cận.`x = Value(2.0)`- `y = x ** 3`- `y.backward()``x.grad`phải là 12,0.
+
+**Exercise 2.**Sử dụng $\tanh'(x) = 1 - \tanh(x)^2$trong `_backward`Hãy kiểm tra với sự khác biệt hữu hạn của chính mình:$\frac{\tanh(x + h) - \tanh(x - h)}{2h}$phải đồng ý với $x = 0$và $x = 2$- Tôi không biết.
+
+**Exercise 3.**- Cây lên`w1*x1 + w2*x2 + b`từ `Value`các đối tượng, áp dụng `relu`, và gọi `backward`Trước khi so sánh với PyTorch, kiểm tra bằng tay: nếu đầu vào đến `relu`là tích cực, gradient cho `w1`=`x1`; nếu nó là âm, tất cả năm gradient là 0.
+
+**Exercise 4.**Đặt một giá trị và một phái sinh trong mỗi `Dual`, và sử dụng quy tắc sản phẩm $(a, a')(b, b') = (ab, a'b + ab')$Để nhân. Thấy đầu vào với phái sinh 1 và so sánh kết quả với `x.grad`từ động cơ chế ngược cho cùng một chức năng.
 
 ## Các điều khoản chính
 
@@ -506,13 +518,13 @@ Các lớp giá trị được xây dựng ở đây là nền tảng cho vòng 
 | Forward mode | "Push derivatives forward" | Autodiff that propagates derivatives from inputs to outputs. One pass per input variable. |
 | Reverse mode | "Backpropagation" | Autodiff that propagates gradients from outputs to inputs. One pass per output variable. |
 | Autograd | "Automatic gradients" | A system that records operations on values, builds a graph, and computes exact gradients via the chain rule |
-| Dual numbers | "Value plus derivative" | Numbers of the form a + b*epsilon (epsilon^2 = 0) that carry derivative information through arithmetic |
+| Dual numbers | "Value plus derivative" | Numbers of the form $a + b\epsilon$ ($\epsilon^2 = 0$) that carry derivative information through arithmetic |
 | Topological sort | "Dependency order" | Ordering graph nodes so every node comes after all its dependencies. Required for correct gradient propagation. |
 | Gradient accumulation | "Add, don't replace" | When a value feeds into multiple operations, its gradient is the sum of all incoming gradient contributions |
 | Dynamic graph | "Define by run" | A computation graph rebuilt on every forward pass, allowing Python control flow inside models (PyTorch style) |
 | Gradient checking | "Numerical verification" | Comparing autodiff gradients against numerical finite-difference gradients to verify correctness. Essential for debugging. |
 | MLP | "Multi-layer perceptron" | A neural network with one or more hidden layers of neurons. Each neuron computes a weighted sum plus bias, then applies an activation function. |
-| Neuron | "Weighted sum + activation" | The basic unit: output = activation(w1*x1 + w2*x2 + ... + b). The weights and bias are learnable parameters. |
+| Neuron | "Weighted sum + activation" | The basic unit: $\text{output} = \text{activation}(w_1 x_1 + w_2 x_2 + \cdots + b)$. The weights and bias are learnable parameters. |
 
 ## Đọc thêm
 

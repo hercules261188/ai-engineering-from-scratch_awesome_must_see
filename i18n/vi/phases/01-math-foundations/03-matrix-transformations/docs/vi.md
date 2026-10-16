@@ -45,7 +45,7 @@ graph LR
 
 ### Chuyển đổi
 
-Một vòng quay 2D bằng góc theta giữ cho khoảng cách và góc nguyên vẹn. Nó di chuyển mọi điểm dọc theo một vòng cung tròn.
+Một vòng quay 2D theo góc $\theta$Nó giữ khoảng cách và góc nguyên vẹn. Nó di chuyển mọi điểm dọc theo một vòng cung tròn.
 
 ```mermaid
 graph LR
@@ -66,18 +66,12 @@ graph LR
 
 Trong 3D, bạn xoay quanh một trục. Mỗi trục có trục xoay riêng của nó:
 
-```
-Rz(theta) = | cos  -sin  0 |     Rotate around z-axis
-            | sin   cos  0 |     (x-y plane spins, z stays)
-            |  0     0   1 |
-
-Rx(theta) = | 1   0     0    |   Rotate around x-axis
-            | 0  cos  -sin   |   (y-z plane spins, x stays)
-            | 0  sin   cos   |
-
-Ry(theta) = |  cos  0  sin |     Rotate around y-axis
-            |   0   1   0  |     (x-z plane spins, y stays)
-            | -sin  0  cos |
+```math
+\begin{aligned}
+R_z(\theta) &= \begin{bmatrix} \cos\theta & -\sin\theta & 0 \\ \sin\theta & \cos\theta & 0 \\ 0 & 0 & 1 \end{bmatrix} \quad \text{Rotate around z-axis (x-y plane spins, z stays)} \\[6pt]
+R_x(\theta) &= \begin{bmatrix} 1 & 0 & 0 \\ 0 & \cos\theta & -\sin\theta \\ 0 & \sin\theta & \cos\theta \end{bmatrix} \quad \text{Rotate around x-axis (y-z plane spins, x stays)} \\[6pt]
+R_y(\theta) &= \begin{bmatrix} \cos\theta & 0 & \sin\theta \\ 0 & 1 & 0 \\ -\sin\theta & 0 & \cos\theta \end{bmatrix} \quad \text{Rotate around y-axis (x-z plane spins, y stays)}
+\end{aligned}
 ```
 
 ### Tăng quy mô
@@ -123,8 +117,8 @@ graph LR
 ```
 
 Các matrices cắt:
-- `Shx = [[1, k], [0, 1]]`thay đổi x bằng k * y
-- `Shy = [[1, 0], [k, 1]]`thay đổi y bằng k * x
+- `Shx = [[1, k], [0, 1]]`thay đổi$x$bởi $k \cdot y$
+- `Shy = [[1, 0], [k, 1]]`thay đổi$y$bởi $k \cdot x$
 
 ### Nhận xét
 
@@ -196,7 +190,7 @@ Các hình tử liệu kéo dài không gian bằng 3x dọc theo [1, 1] và gi�
 
 ### Thành phần của nó
 
-Nếu một matrix có n vector tự độc lập tuyến tính, nó có thể bị phân hủy:
+Nếu một matrix có$n$các vector tự độc lập tuyến tính, nó có thể bị phân hủy:
 
 ```
 A = V @ D @ V^(-1)
@@ -210,7 +204,7 @@ This says: rotate into eigenvector coordinates, scale along each axis, rotate ba
 
 ### Tại sao giá trị bản chất quan trọng
 
-**PCA.**Các vector chính của matrix tính biến là các thành phần chính. các giá trị chính cho bạn biết mỗi thành phần nắm bắt được sự biến động bao nhiêu.
+**PCA.**Các vector chính của matrix covariance là các thành phần chính. các giá trị chính cho bạn biết mỗi thành phần nắm bắt bao nhiêu sự biến động.$k$, và bạn có sự giảm chiều kích.
 
 **Stability.**Trong các mạng tái phát và hệ thống động, các giá trị tự với độ lớn > 1 gây ra các đầu ra nổ. độ lớn < 1 gây ra chúng biến mất. Đây là vấn đề biến mất / bùng nổ gradient được nêu trong một câu.
 
@@ -309,7 +303,7 @@ print(f"Same? {result1 == result2}")
 
 ### Bước 3: Giá trị riêng từ đầu (2x2)
 
-Đối với một matrix 2x2 `[[a, b], [c, d]]`, giá trị riêng giải quyết phương trình đặc trưng: `lambda^2 - (a+d)*lambda + (ad - bc) = 0`- Tôi không biết.
+Đối với một matrix 2x2 `[[a, b], [c, d]]`, giá trị riêng giải quyết phương trình đặc trưng: $\lambda^2 - (a+d)\lambda + (ad - bc) = 0$- Tôi không biết.
 
 ```python
 def eigenvalues_2x2(matrix):
@@ -443,6 +437,14 @@ Bài học này xây dựng nền tảng hình học cho PCA (Phase 2) và phân
 
 3. Tạo một cấu trúc gồm ba biến đổi (đối tròn 30 độ, đo bằng [1,5, 0,8], cắt bằng kx=0,3) và áp dụng nó cho 8 điểm được sắp xếp trong một vòng tròn. Bác trước và sau các phối hợp. Xét định số của các matrix được tạo thành và xác minh nó bằng với sản phẩm của các định số riêng lẻ.
 
+### Những gợi ý
+
+**Exercise 1.**Đơn `rotation_2d`- `scaling_2d`, và`shearing_2d`đến mỗi góc với `mat_vec_mul`. Đối với sự xoay quanh, tính toán 4 chiều dài bên và 2 đường chọc trước và sau; mỗi phải giữ nguyên.
+
+**Exercise 2.**Viết phương trình đặc trưng $\lambda^2 - (\text{trace})\lambda + \det = 0$Hãy kiểm tra hai giá trị của bạn cộng với dấu vết (7) và nhân lên số xác định (10), sau đó so sánh với `eigenvalues_2x2`và `np.linalg.eigvals`- Tôi không biết.
+
+**Exercise 3.**Xây dựng ba bộ tử, với `shearing_2d(0.3, 0)`cho việc cắt, nhân chúng với `mat_mul`theo thứ tự ứng dụng, và áp dụng kết quả cho 8 điểm $(\cos\theta, \sin\theta)$. Chuyển quay có một định đo của 1 và cắt có một định đo của 1, vì vậy `det_2x2`của thành phần phải bằng $1.5 \times 0.8 = 1.2$- Tôi không biết.
+
 ## Các điều khoản chính
 
 | Term | What people say | What it actually means |
@@ -454,9 +456,9 @@ Bài học này xây dựng nền tảng hình học cho PCA (Phase 2) và phân
 | Composition | "Do two things" | Multiplying transformation matrices to chain operations. Order matters: B @ A means apply A first, then B. |
 | Eigenvector | "Special direction" | A direction that the matrix only scales, never rotates. The transformation's fingerprint. |
 | Eigenvalue | "How much it stretches" | The scalar factor by which the matrix scales its eigenvector. Can be negative (flip) or complex (rotation). |
-| Eigendecomposition | "Break the matrix apart" | Writing a matrix as V @ D @ V^(-1), separating it into its fundamental scaling directions and magnitudes. |
+| Eigendecomposition | "Break the matrix apart" | Writing a matrix as $V D V^{-1}$, separating it into its fundamental scaling directions and magnitudes. |
 | Determinant | "A single number from a matrix" | The factor by which the transformation scales area (2D) or volume (3D). Zero means the transformation is irreversible. |
-| Characteristic equation | "Where eigenvalues come from" | det(A - lambda * I) = 0. The polynomial whose roots are the eigenvalues. |
+| Characteristic equation | "Where eigenvalues come from" | $\det(A - \lambda I) = 0$. The polynomial whose roots are the eigenvalues. |
 
 ## Đọc thêm
 

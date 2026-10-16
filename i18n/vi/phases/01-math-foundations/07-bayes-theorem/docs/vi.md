@@ -30,24 +30,24 @@ Nếu bạn xây dựng các hệ thống ML mà không hiểu điều này, b�
 
 Bạn đã biết từ bài học 06 rằng xác suất có điều kiện là:
 
-```
-P(A|B) = P(A and B) / P(B)
+```math
+P(A \mid B) = \frac{P(A \text{ and } B)}{P(B)}
 ```
 
 Và đối xứng:
 
+```math
+P(B \mid A) = \frac{P(A \text{ and } B)}{P(A)}
 ```
-P(B|A) = P(A and B) / P(A)
-```
 
-Cả hai biểu hiện đều có cùng số liệu: P(A và B). Đặt chúng bằng nhau và sắp xếp lại:
+Cả hai biểu hiện đều có cùng số liệu: $P(A \text{ and } B)$Đặt chúng bằng nhau và sắp xếp lại:
 
-```
-P(A and B) = P(A|B) * P(B) = P(B|A) * P(A)
-
-Therefore:
-
-P(A|B) = P(B|A) * P(A) / P(B)
+```math
+\begin{aligned}
+P(A \text{ and } B) &= P(A \mid B) \cdot P(B) = P(B \mid A) \cdot P(A) \\[4pt]
+&\text{Therefore:} \\[4pt]
+P(A \mid B) &= \frac{P(B \mid A) \cdot P(A)}{P(B)}
+\end{aligned}
 ```
 
 Đó là định lý Bayes. 4 số lượng, 1 phương trình.
@@ -56,35 +56,35 @@ P(A|B) = P(B|A) * P(A) / P(B)
 
 | Part | Name | What it means |
 |------|------|---------------|
-| P(A\|B) | Posterior | Your updated belief about A after seeing evidence B |
-| P(B\|A) | Likelihood | How probable the evidence B is if A is true |
-| P(A) | Prior | Your belief about A before seeing any evidence |
-| P(B) | Evidence | Total probability of seeing B under all possibilities |
+| $P(A \mid B)$ | Posterior | Your updated belief about $A$ after seeing evidence $B$ |
+| $P(B \mid A)$ | Likelihood | How probable the evidence $B$ is if $A$ is true |
+| $P(A)$ | Prior | Your belief about $A$ before seeing any evidence |
+| $P(B)$ | Evidence | Total probability of seeing $B$ under all possibilities |
 
-Thuật ngữ bằng chứng P(B) hoạt động như một chất bình thường hóa. Bạn có thể mở rộng nó bằng cách sử dụng luật xác suất tổng thể:
+Thời gian chứng minh$P(B)$Nó hoạt động như một chất bình thường hóa. Bạn có thể mở rộng nó bằng cách sử dụng luật xác suất tổng thể:
 
-```
-P(B) = P(B|A) * P(A) + P(B|not A) * P(not A)
+```math
+P(B) = P(B \mid A) \cdot P(A) + P(B \mid \text{not } A) \cdot P(\text{not } A)
 ```
 
 ### Ví dụ về xét nghiệm y tế
 
 Một bệnh ảnh hưởng đến 1 trong 10.000 người.
 
-```
-P(sick)          = 0.0001     (prior: disease is rare)
-P(positive|sick) = 0.99       (likelihood: test catches it)
-P(positive|healthy) = 0.01    (false positive rate)
-
-P(positive) = P(positive|sick) * P(sick) + P(positive|healthy) * P(healthy)
-            = 0.99 * 0.0001 + 0.01 * 0.9999
-            = 0.000099 + 0.009999
-            = 0.010098
-
-P(sick|positive) = P(positive|sick) * P(sick) / P(positive)
-                 = 0.99 * 0.0001 / 0.010098
-                 = 0.0098
-                 = 0.98%
+```math
+\begin{aligned}
+P(\text{sick}) &= 0.0001 \quad \text{(prior: disease is rare)} \\
+P(\text{positive} \mid \text{sick}) &= 0.99 \quad \text{(likelihood: test catches it)} \\
+P(\text{positive} \mid \text{healthy}) &= 0.01 \quad \text{(false positive rate)} \\[6pt]
+P(\text{positive}) &= P(\text{positive} \mid \text{sick}) \cdot P(\text{sick}) + P(\text{positive} \mid \text{healthy}) \cdot P(\text{healthy}) \\
+&= 0.99 \cdot 0.0001 + 0.01 \cdot 0.9999 \\
+&= 0.000099 + 0.009999 \\
+&= 0.010098 \\[6pt]
+P(\text{sick} \mid \text{positive}) &= P(\text{positive} \mid \text{sick}) \cdot P(\text{sick}) / P(\text{positive}) \\
+&= 0.99 \cdot 0.0001 / 0.010098 \\
+&= 0.0098 \\
+&= 0.98\%
+\end{aligned}
 ```
 
 Khi một tình trạng hiếm, ngay cả xét nghiệm chính xác cũng có kết quả dương tính hầu hết là sai.
@@ -93,18 +93,18 @@ Khi một tình trạng hiếm, ngay cả xét nghiệm chính xác cũng có k�
 
 Bạn nhận được một email có chứa từ "nhà cờ bạc".
 
-```
-P(spam)                = 0.3      (30% of email is spam)
-P("lottery"|spam)      = 0.05     (5% of spam emails contain "lottery")
-P("lottery"|not spam)  = 0.001    (0.1% of legitimate emails contain "lottery")
-
-P("lottery") = 0.05 * 0.3 + 0.001 * 0.7
-             = 0.015 + 0.0007
-             = 0.0157
-
-P(spam|"lottery") = 0.05 * 0.3 / 0.0157
-                  = 0.955
-                  = 95.5%
+```math
+\begin{aligned}
+P(\text{spam}) &= 0.3 \quad \text{(30\% of email is spam)} \\
+P(\text{"lottery"} \mid \text{spam}) &= 0.05 \quad \text{(5\% of spam emails contain "lottery")} \\
+P(\text{"lottery"} \mid \text{not spam}) &= 0.001 \quad \text{(0.1\% of legitimate emails contain "lottery")} \\[6pt]
+P(\text{"lottery"}) &= 0.05 \cdot 0.3 + 0.001 \cdot 0.7 \\
+&= 0.015 + 0.0007 \\
+&= 0.0157 \\[6pt]
+P(\text{spam} \mid \text{"lottery"}) &= 0.05 \cdot 0.3 / 0.0157 \\
+&= 0.955 \\
+&= 95.5\%
+\end{aligned}
 ```
 
 Một từ thay đổi xác suất từ 30% lên 95,5%. Một bộ lọc spam thực sự áp dụng Bayes trên hàng trăm từ cùng một lúc.
@@ -113,58 +113,56 @@ Một từ thay đổi xác suất từ 30% lên 95,5%. Một bộ lọc spam th
 
 Bayes ngây thơ mở rộng điều này đến nhiều tính năng bằng cách giả định tất cả các tính năng đều độc lập theo điều kiện khi xem xét lớp học:
 
-```
-P(class | feature_1, feature_2, ..., feature_n)
-  = P(class) * P(feature_1|class) * P(feature_2|class) * ... * P(feature_n|class)
-    / P(feature_1, feature_2, ..., feature_n)
+```math
+P(\text{class} \mid \text{feature}_1, \text{feature}_2, \ldots, \text{feature}_n) = \frac{P(\text{class}) \cdot P(\text{feature}_1 \mid \text{class}) \cdot P(\text{feature}_2 \mid \text{class}) \cdots P(\text{feature}_n \mid \text{class})}{P(\text{feature}_1, \text{feature}_2, \ldots, \text{feature}_n)}
 ```
 
 Phần "tâm nhiên" là giả định độc lập. Trong văn bản, các sự xuất hiện của từ không độc lập ("New" và "York" có liên quan). Nhưng giả định hoạt động rất tốt trong thực tế bởi vì trình phân loại chỉ cần xếp hạng các lớp, không tạo ra xác suất được chuẩn bị.
 
 Vì tên gọi là giống nhau cho tất cả các lớp học, bạn có thể bỏ qua nó và chỉ cần so sánh số:
 
-```
-score(class) = P(class) * product of P(feature_i | class)
+```math
+\text{score}(\text{class}) = P(\text{class}) \cdot \prod_i P(\text{feature}_i \mid \text{class})
 ```
 
 Chọn lớp có điểm cao nhất.
 
 ### Đánh giá xác suất tối đa (MLE)
 
-Làm thế nào bạn có được P n tính năng (Figure) từ dữ liệu đào tạo?
+Làm sao anh có được $P(\text{feature} \mid \text{class})$từ dữ liệu huấn luyện?
 
-```
-P("free"|spam) = (number of spam emails containing "free") / (total spam emails)
+```math
+P(\text{"free"} \mid \text{spam}) = \frac{\text{number of spam emails containing "free"}}{\text{total spam emails}}
 ```
 
 Đây là MLE: chọn các giá trị tham số làm cho dữ liệu quan sát có khả năng cao nhất. Bạn đang tối đa hóa hàm xác suất, mà cho các đếm riêng lẻ giảm xuống tần số tương đối.
 
 Vấn đề: nếu một từ không bao giờ xuất hiện trong spam trong quá trình đào tạo, MLE cho nó xác suất bằng không. Một từ không được nhìn thấy sẽ giết chết toàn bộ sản phẩm.
 
-```
-P(word|class) = (count(word, class) + 1) / (total_words_in_class + vocabulary_size)
+```math
+P(\text{word} \mid \text{class}) = \frac{\text{count}(\text{word}, \text{class}) + 1}{\text{total\_words\_in\_class} + \text{vocabulary\_size}}
 ```
 
 Thêm 1 vào mỗi con số đảm bảo không có khả năng nào là không.
 
 ### Tối đa a posteriori (MAP)
 
-MLE hỏi: những tham số nào tối đa hóa các tham số dữ liệu P(?
+MLE hỏi: những tham số nào tối đa hóa $P(\text{data} \mid \text{parameters})$- Không .
 
-MAP hỏi: những tham số nào tối đa hóa các tham số P(nơi dữ liệu)?
+MAP hỏi: những tham số nào tối đa hóa $P(\text{parameters} \mid \text{data})$- Không .
 
 Theo định lý Bayes:
 
-```
-P(parameters|data) proportional to P(data|parameters) * P(parameters)
+```math
+P(\text{parameters} \mid \text{data}) \propto P(\text{data} \mid \text{parameters}) \cdot P(\text{parameters})
 ```
 
 MAP thêm một tiền lệ trên các tham số. Nếu bạn tin rằng các tham số nên nhỏ, bạn mã hóa nó như một tiền lệ phạt các giá trị lớn. Điều này giống như việc điều chỉnh L2 trong ML.
 
 | Estimation | Optimizes | ML equivalent |
 |------------|-----------|---------------|
-| MLE | P(data\|params) | Unregularized training |
-| MAP | P(data\|params) * P(params) | L2 / L1 regularization |
+| MLE | $P(\text{data} \mid \text{params})$ | Unregularized training |
+| MAP | $P(\text{data} \mid \text{params}) \cdot P(\text{params})$ | L2 / L1 regularization |
 
 ### Bayesian vs frequentist: sự khác biệt thực tế
 
@@ -189,7 +187,7 @@ Sự kết nối sâu sắc hơn cả sự tương tự:
 
 **Priors are regularization.**Một Gaussian trước trên trọng lượng là L2 thường xuyên. một Laplace trước là L1. Mỗi khi bạn thêm một thuật ngữ thường xuyên, bạn đang làm cho một tuyên bố Bayesian về các giá trị tham số bạn mong đợi.
 
-**Posteriors are uncertainty.**Một xác suất dự đoán duy nhất không cho bạn biết mô hình có thể tự tin như thế nào trong ước tính đó. phương pháp Bayesian cho bạn một phân phối: "Tôi nghĩ P(spam) là giữa 0,8 và 0,95. "
+**Posteriors are uncertainty.**Một xác suất dự đoán duy nhất không cho bạn biết mô hình có thể tự tin như thế nào trong ước tính đó.$P(\text{spam})$là từ 0,8 đến 0,95. "
 
 **Bayes updates are online learning.**Khi mô hình của bạn nhìn thấy dữ liệu mới, nó sẽ cập nhật niềm tin của mình theo từng bước thay vì tái tập từ đầu.
 
@@ -345,26 +343,28 @@ Khi trước và sau thuộc cùng một gia đình phân phối, trước đư�
 
 | Likelihood | Conjugate Prior | Posterior | Example |
 |-----------|----------------|-----------|---------|
-| Bernoulli | Beta(a, b) | Beta(a + successes, b + failures) | Coin flip bias estimation |
-| Normal (known variance) | Normal(mu_0, sigma_0) | Normal(weighted mean, smaller variance) | Sensor calibration |
-| Poisson | Gamma(a, b) | Gamma(a + sum of counts, b + n) | Modeling arrival rates |
-| Multinomial | Dirichlet(alpha) | Dirichlet(alpha + counts) | Topic modeling, language models |
+| Bernoulli | $\text{Beta}(a, b)$ | $\text{Beta}(a + \text{successes}, b + \text{failures})$ | Coin flip bias estimation |
+| Normal (known variance) | $\text{Normal}(\mu_0, \sigma_0)$ | Normal(weighted mean, smaller variance) | Sensor calibration |
+| Poisson | $\text{Gamma}(a, b)$ | $\text{Gamma}(a + \text{sum of counts}, b + n)$ | Modeling arrival rates |
+| Multinomial | $\text{Dirichlet}(\alpha)$ | $\text{Dirichlet}(\alpha + \text{counts})$ | Topic modeling, language models |
 
 Tại sao điều này quan trọng: không có con số trước kết hợp, bạn cần lấy mẫu Monte Carlo hoặc suy luận biến số để gần gũi với con số sau.
 
-Phân bố Beta là con số kết hợp trước phổ biến nhất trong thực tế. Beta(a, b) đại diện cho niềm tin của bạn về một tham số xác suất.
+Phân bố Beta là con số kết hợp trước phổ biến nhất trong thực tế. $\text{Beta}(a, b)$đại diện cho niềm tin của bạn về một tham số xác suất.$a/(a+b)$- Tối lớn hơn$a+b$, phân phối tập trung (tự tin) hơn.
 
 Các trường hợp đặc biệt của Beta trước:
-- Beta ((1, 1) = đồng nhất. Bạn không có ý kiến về tham số.
-- Beta ((10, 10) = đạt đỉnh ở 0,5. Bạn tin rằng tham số gần 0,5.
-- Beta ((1, 10) = bị khuếch tán về phía 0. Bạn tin rằng tham số là nhỏ.
+- $\text{Beta}(1, 1)$Bạn không có ý kiến gì về các tham số.
+- $\text{Beta}(10, 10)$= đạt đỉnh ở 0,5. Bạn tin rằng tham số gần 0,5.
+- $\text{Beta}(1, 10)$= ngơ về phía 0. Bạn tin rằng tham số nhỏ.
 
 Quy tắc cập nhật là rất đơn giản:
 
-```
-Prior:     Beta(a, b)
-Data:      s successes, f failures
-Posterior: Beta(a + s, b + f)
+```math
+\begin{aligned}
+\text{Prior:} \quad & \text{Beta}(a, b) \\
+\text{Data:} \quad & s \text{ successes}, f \text{ failures} \\
+\text{Posterior:} \quad & \text{Beta}(a + s, b + f)
+\end{aligned}
 ```
 
 Không có tích hợp, không lấy mẫu, chỉ là cộng.
@@ -376,19 +376,19 @@ Bayesian inference tự nhiên là theo trình tự. ngày hôm nay trở thành
 Ví dụ cụ thể: ước tính xem một đồng xu có công bằng hay không.
 
 **Day 1: No data yet.**
-Bắt đầu với Beta ((1, 1) -- một tiền nhiệm đồng bộ.
+Bắt đầu với $\text{Beta}(1, 1)$- Ông không có ý kiến.
 - Tỷ lệ trung bình trước: 0,5
 - Prior là phẳng trên [0, 1]
 
 **Day 2: Observe 7 heads, 3 tails.**
-Sau = Beta(1 + 7, 1 + 3) = Beta(8, 4)
-- Tỷ lệ trung bình sau: 8/12 = 0,667
+$\text{Posterior} = \text{Beta}(1 + 7, 1 + 3) = \text{Beta}(8, 4)$
+- Tỷ lệ trung bình sau: $8/12 = 0.667$
 - Bằng chứng cho thấy đồng xu này có khuynh hướng hướng hướng về đầu
 
 **Day 3: Observe 5 more heads, 5 more tails.**
 Sử dụng hình hậu của hôm qua như hình trước của hôm nay.
-Sau = Beta(8 + 5, 4 + 5) = Beta(13, 9)
-- Tỷ lệ trung bình sau: 13/22 = 0,591
+$\text{Posterior} = \text{Beta}(8 + 5, 4 + 5) = \text{Beta}(13, 9)$
+- Tỷ lệ trung bình sau: $13/22 = 0.591$
 - Các dữ liệu mới cân bằng kéo ước tính trở lại phía 0.5
 
 ```mermaid
@@ -398,7 +398,7 @@ graph LR
     C -->|"5H, 5T"| D["Posterior 2<br/>Beta(13,9)<br/>mean = 0.59"]
 ```
 
-Dòng quan sát không quan trọng. Beta(1,1) được cập nhật với tất cả 12 đầu và 8 đuôi cùng một lúc cho Beta(13, 9) - kết quả tương tự. Cập nhật theo trình và cập nhật hàng loạt tương đương về mặt toán học. Nhưng cập nhật theo trình cho phép bạn đưa ra quyết định tại mỗi bước mà không cần lưu trữ dữ liệu thô.
+Lệnh trình độ quan sát không quan trọng. $\text{Beta}(1,1)$cập nhật với tất cả 12 đầu và 8 đuôi cùng một lúc cung cấp $\text{Beta}(13, 9)$-- kết quả tương tự. Cập nhật theo trình tự và cập nhật hàng loạt là tương đương về mặt toán học. Nhưng cập nhật theo trình tự cho phép bạn đưa ra quyết định ở từng bước mà không cần lưu trữ dữ liệu thô.
 
 Đây là nền tảng của việc học trực tuyến trong các hệ thống ML sản xuất. Thompson lấy mẫu cho tên cướp, hệ thống khuyến nghị tăng và các máy dò biến chứng phát sóng đều sử dụng mô hình này.
 
@@ -410,14 +410,14 @@ Thiết lập: bạn đang thử nghiệm hai màu nút: biến thể A (màu xa
 
 Thử nghiệm A/B Bayesian:
 
-1. **Prior.**Bắt đầu với Beta(1, 1) cho cả hai biến thể. Không có ưu tiên trước.
+1. **Prior.**Bắt đầu với $\text{Beta}(1, 1)$cho cả hai biến thể. Không có ưu tiên trước.
 2. **Data.**Phân biến A: 50 lần nhấp trên 1000 lượt xem. Phân biến B: 65 lần nhấp trên 1000 lượt xem.
 3. **Posteriors.**
-   - A: Beta(1 + 50, 1 + 950) = Beta(51, 951).
-   - B: Beta(1 + 65, 1 + 935) = Beta(66, 936).
-4. **Decision.**Xét P ((B > A) -- xác suất rằng tỷ lệ chuyển đổi thực của B cao hơn A.
+   - A: $\text{Beta}(1 + 50, 1 + 950) = \text{Beta}(51, 951)$- Tỷ lệ trung bình = 0,051
+   - B: $\text{Beta}(1 + 65, 1 + 935) = \text{Beta}(66, 936)$- Tỷ lệ trung bình = 0,066
+4. **Decision.**Lưu ý$P(B > A)$-- xác suất tỷ lệ chuyển đổi thực của B cao hơn tỷ lệ chuyển đổi của A.
 
-Xét toán P ((B > A) về mặt phân tích là khó khăn. Nhưng Monte Carlo làm cho nó tầm thường:
+Máy tính $P(B > A)$Nhưng Monte Carlo làm cho nó tầm thường:
 
 ```
 1. Draw 100,000 samples from Beta(51, 951)  -> samples_A
@@ -425,7 +425,7 @@ Xét toán P ((B > A) về mặt phân tích là khó khăn. Nhưng Monte Carlo 
 3. P(B > A) = fraction of samples where B > A
 ```
 
-Nếu P(B > A) > 0,95, bạn gửi biến thể B. Nếu nó là giữa 0,05 và 0,95, bạn tiếp tục thu thập dữ liệu. Nếu P(B > A) < 0,05, bạn gửi biến thể A.
+Nếu$P(B > A) > 0.95$, bạn gửi biến thể B. Nếu nó là giữa 0,05 và 0,95, bạn tiếp tục thu thập dữ liệu.$P(B > A) < 0.05$, con tàu biến thể A.
 
 Lợi ích so với thử nghiệm A/B thường xuyên:
 - Bạn nhận được một tuyên bố xác suất trực tiếp: "có 97% cơ hội B tốt hơn"
@@ -435,40 +435,50 @@ Lợi ích so với thử nghiệm A/B thường xuyên:
 
 | Aspect | Frequentist A/B | Bayesian A/B |
 |--------|----------------|--------------|
-| Output | p-value | P(B > A) |
+| Output | p-value | $P(B > A)$ |
 | Interpretation | "How surprising is this data if A=B?" | "How likely is B better than A?" |
 | Early stopping | Inflates false positives | Safe at any point (given a well-chosen prior and correctly specified model) |
 | Prior knowledge | Not used | Encoded as Beta prior |
-| Decision rule | p < 0.05 | P(B > A) > threshold |
+| Decision rule | $p < 0.05$ | $P(B > A) > \text{threshold}$ |
 
 ## Các bài tập
 
-1. **Multiple tests.**Một bệnh nhân kiểm tra dương tính hai lần trên các xét nghiệm độc lập (cả hai đều chính xác 99%, tỷ lệ mắc bệnh là 1 trong 10.000).
+1. **Multiple tests.**Một bệnh nhân có kết quả dương tính hai lần trên các xét nghiệm độc lập (cả hai đều chính xác 99%, tỷ lệ mắc bệnh là 1 trong 10.000).$P(\text{sick})$Sau cả hai thử nghiệm? Sử dụng phía sau từ thử nghiệm đầu tiên như trước cho thử nghiệm thứ hai.
 
 2. **Smoothing impact.**Hãy chạy phân loại spam với giá trị làm trơn bằng 0,01, 0,1, 1.0 và 10.0.
 
-3. **Add features.**Lớn thêm lớp NaiveBayes để cũng sử dụng chiều dài thông điệp (cắn/dáu) như một tính năng bên cạnh số lượng từ. ước tính P(short dizerspam) và P(short dizerham) từ dữ liệu đào tạo và gấp nó vào điểm số dự đoán.
+3. **Add features.**Lớn thêm lớp NaiveBayes để cũng sử dụng chiều dài thông điệp (cắn/dáu) như một tính năng bên cạnh số lượng từ.$P(\text{short} \mid \text{spam})$và $P(\text{short} \mid \text{ham})$từ dữ liệu đào tạo và gấp nó vào điểm dự đoán.
 
-4. **MAP by hand.**Với dữ liệu quan sát (7 đầu trong 10 lần ném đồng xu), tính toán ước tính MAP của sự thiên vị bằng cách sử dụng một Beta(2,2) trước. So sánh nó với ước tính MLE (7/10).
+4. **MAP by hand.**Với dữ liệu quan sát (7 đầu trong 10 cú đánh đồng), tính toán ước tính MAP của sự thiên vị bằng cách sử dụng một $\text{Beta}(2,2)$so sánh với ước tính MLE ($7/10$().
+
+### Những gợi ý
+
+**Exercise 1.**Gọi`bayes`một lần để lấy phía sau sau xét nghiệm 1, sau đó gọi lại với phía sau như trước. `sequential_bayes(prior, likelihood, false_positive_rate, 2)`phải có cùng giá trị, gần 0,5.
+
+**Exercise 2.**Tạo ra một cái `NaiveBayes(smoothing=s)`cho mỗi giá trị, đào tạo nó trên cùng các dữ liệu, và in `top_words`Với thanh toán 0, một từ không bao giờ xuất hiện trong spam có xác suất 0, vì vậy nhật ký của nó không được xác định.
+
+**Exercise 3.**Đếm số lượng thư spam và ham ngắn, chia bằng số lượng thư trong mỗi lớp, và thêm nhật ký của tỷ lệ đó vào điểm trong `predict`Kiểm tra xem hai xác suất cho mỗi lớp cộng lên đến 1.
+
+**Exercise 4.**Với một $\text{Beta}(\alpha, \beta)$trước đó, ước tính MAP là $\frac{h + \alpha - 1}{n + \alpha + \beta - 2}$Đặt vào.$h = 7$- $n = 10$; kết quả phải nằm giữa MLE (0.7) và chế độ trước (0,5).
 
 ## Các điều khoản chính
 
 | Term | What people say | What it actually means |
 |------|----------------|----------------------|
-| Prior | "My initial guess" | P(hypothesis) before observing evidence. In ML: the regularization term. |
-| Likelihood | "How well the data fits" | P(evidence\|hypothesis). How probable the observed data is under a specific hypothesis. |
-| Posterior | "My updated belief" | P(hypothesis\|evidence). The prior multiplied by the likelihood, then normalized. |
-| Evidence | "The normalizing constant" | P(data) across all hypotheses. Ensures the posterior sums to 1. |
+| Prior | "My initial guess" | $P(\text{hypothesis})$ before observing evidence. In ML: the regularization term. |
+| Likelihood | "How well the data fits" | $P(\text{evidence} \mid \text{hypothesis})$. How probable the observed data is under a specific hypothesis. |
+| Posterior | "My updated belief" | $P(\text{hypothesis} \mid \text{evidence})$. The prior multiplied by the likelihood, then normalized. |
+| Evidence | "The normalizing constant" | $P(\text{data})$ across all hypotheses. Ensures the posterior sums to 1. |
 | Naive Bayes | "That simple text classifier" | A classifier that assumes features are independent given the class. Works well despite the false assumption. |
 | Laplace smoothing | "Add-one smoothing" | Adding a small count to every feature to prevent zero probabilities from unseen data. |
-| MLE | "Just use the frequencies" | Choose parameters that maximize P(data\|parameters). No prior. Can overfit with small data. |
-| MAP | "MLE with a prior" | Choose parameters that maximize P(data\|parameters) * P(parameters). Equivalent to regularized MLE. |
-| Log-probability | "Work in log space" | Using log(P) instead of P to avoid floating-point underflow when multiplying many small numbers. |
+| MLE | "Just use the frequencies" | Choose parameters that maximize $P(\text{data} \mid \text{parameters})$. No prior. Can overfit with small data. |
+| MAP | "MLE with a prior" | Choose parameters that maximize $P(\text{data} \mid \text{parameters}) \cdot P(\text{parameters})$. Equivalent to regularized MLE. |
+| Log-probability | "Work in log space" | Using $\log(P)$ instead of $P$ to avoid floating-point underflow when multiplying many small numbers. |
 | False positive | "A wrong alarm" | The test says positive, but the true state is negative. Drives the base rate fallacy. |
 
 ## Đọc thêm
 
 - [3Blue1Brown: Bayes' theorem](https://www.youtube.com/watch?v=HZGCoVF3YvM)- giải thích trực quan với ví dụ xét nghiệm y tế
-- [Stanford CS229: Generative Learning Algorithms](https://cs229.stanford.edu/notes2022fall/cs229-notes2.pdf)- Bayes ngây thơ và mối liên hệ của nó với các mô hình phân biệt đối xử
+- [Stanford CS229: Generative Learning Algorithms](https://cs229.stanford.edu/main_notes.pdf)- Bayes ngây thơ và mối liên hệ của nó với các mô hình phân biệt đối xử
 - [Think Bayes](https://greenteapress.com/wp/think-bayes/)- sách miễn phí, thống kê Bayesian với mã Python
 - [scikit-learn Naive Bayes](https://scikit-learn.org/stable/modules/naive_bayes.html)- các hoạt động sản xuất và khi nào sử dụng mỗi biến thể

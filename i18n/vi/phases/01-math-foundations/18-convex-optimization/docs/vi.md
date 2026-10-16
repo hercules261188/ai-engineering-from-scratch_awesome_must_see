@@ -26,7 +26,7 @@ Việc hiểu sự ngập cong làm ba điều. Thứ nhất, nó cho bạn bi�
 
 ### Bộ trục trục
 
-Một tập hợp S là ngọc nếu cho bất kỳ hai điểm nào trong S, phân đoạn đường giữa chúng cũng nằm hoàn toàn trong S.
+Một bộ $S$là tròn nếu cho bất kỳ hai điểm trong $S$, đoạn đường giữa chúng cũng nằm hoàn toàn trong $S$- Tôi không biết.
 
 | Convex sets | Not convex |
 |---|---|
@@ -34,12 +34,12 @@ Một tập hợp S là ngọc nếu cho bất kỳ hai điểm nào trong S, ph
 | **Triangle**: same property holds for all interior points | **Donut/annulus**: the hole means some line segments leave the set |
 | The line segment between any two points stays within the set | The line segment between some pairs of points exits the set |
 
-Kiểm tra chính thức: đối với bất kỳ điểm x, y trong S và bất kỳ t nào trong [0, 1], điểm tx + (1-t) y cũng là trong S.
+Kiểm tra chính thức: cho bất kỳ điểm nào $x, y$trong $S$và bất cứ$t \in [0, 1]$, điểm $tx + (1-t)y$cũng trong $S$- Tôi không biết.
 
 Ví dụ về các bộ trục trặc:
-- Một đường, một máy bay, tất cả R^n
+- Một đường, một máy bay, tất cả.$\mathbb{R}^n$
 - Một quả bóng (thây tròn, quả cầu, siêu cầu)
-- Một không gian nửa: {x: a^T x <= b}
+- Một nửa không gian:$\lbrace x : a^T x \le b \rbrace$
 - Sự giao lộ của bất kỳ số lượng tập hợp ngọc nào
 
 Ví dụ về các bộ không ngón:
@@ -49,10 +49,10 @@ Ví dụ về các bộ không ngón:
 
 ### Các hàm trục trĩ
 
-Một hàm f là ngọc nếu miền của nó là một tập hợp ngọc và cho bất kỳ hai điểm x, y trong miền của nó và bất kỳ t nào trong [0, 1]:
+Một chức năng$f$là ngọc nếu vùng của nó là một tập hợp ngọc và cho bất kỳ hai điểm $x, y$trong phạm vi của nó và bất kỳ $t \in [0, 1]$- Có thể là:
 
-```
-f(tx + (1-t)y) <= t*f(x) + (1-t)*f(y)
+```math
+f(tx + (1-t)y) \le t f(x) + (1-t) f(y)
 ```
 
 Về mặt địa hình: đoạn đường giữa hai điểm trên biểu đồ nằm trên hoặc trên biểu đồ.
@@ -64,26 +64,26 @@ Về mặt địa hình: đoạn đường giữa hai điểm trên biểu đồ
 | **Local minima** | Every local minimum is the global minimum | Multiple local minima may exist at different heights |
 
 Các chức năng nhòm chung:
-- f(x) = x^2 (chỉ số)
-- F(x) = ✓x (tín hiệu tuyệt đối)
-- f(x) = e^x (tự động)
-- F(x) = max(0, x) (ReLU, mặc dù là tuyến tính theo mảnh)
-- f(x) = -log(x) cho x > 0 (log âm)
-- Bất kỳ hàm tuyến tính nào f ((x) = a^T x + b (cả ngọc và ngọc)
+- $f(x) = x^2$(công ngữ)
+- $f(x) = \lvert x \rvert$(tín hiệu tuyệt đối)
+- $f(x) = e^x$(tự động)
+- $f(x) = \max(0, x)$(ReLU, mặc dù mảnh tuyến tính)
+- $f(x) = -\log(x)$cho $x > 0$(trọng lượng âm)
+- Bất kỳ hàm tuyến tính nào $f(x) = a^T x + b$(cả ngọc và ngọc)
 
 ### Kiểm tra độ ngập
 
 Ba bài kiểm tra thực tế, từ dễ nhất đến nghiêm ngặt nhất.
 
-**Test 1: Second derivative test (1D).**Nếu f'(x) >= 0 cho tất cả x, thì f là ngọc.
+**Test 1: Second derivative test (1D).**Nếu$f''(x) \ge 0$cho tất cả mọi người$x$, sau đó $f$là tròn.
 
-- F''((x) = x^2: f''(x) = 2 >= 0.
-- f''((x) = x^3: f''(x) = 6x. âm cho x < 0. Không nhòm.
-- F''(x) = e^x: f''(x) = e^x > 0.
+- $f(x) = x^2$$f''(x) = 2 \ge 0$- Trọng trọng.
+- $f(x) = x^3$$f''(x) = 6x$- Không .$x < 0$Không nhòm.
+- $f(x) = e^x$$f''(x) = e^x > 0$- Trọng trọng.
 
-**Test 2: Hessian test (multivariate).**Nếu các Hessian tử liệu H(x) là một phân định tích tích cực cho tất cả các x, thì f là ngọc.
+**Test 2: Hessian test (multivariate).**Nếu các Hessian matrix $H(x)$là dương tính bán xác định cho tất cả $x$, sau đó $f$Hessian là các tử liệu dẫn xuất phân tử thứ hai.
 
-**Test 3: Definition test.**Kiểm tra bất bình đẳng f(tx + (1-t) y) <= t*f(x) + (1-t) *f(y) trực tiếp. hữu ích cho các hàm mà dẫn xuất khó tính toán.
+**Test 3: Definition test.**Kiểm tra sự bất bình đẳng $f(tx + (1-t)y) \le t f(x) + (1-t) f(y)$hữu ích cho các hàm mà các phái sinh khó tính toán.
 
 ### Tại sao sự ngập lỏng quan trọng
 
@@ -129,20 +129,22 @@ Các mô hình tuyến tính với lỗ hổng ngọc là ngọc. Khi bạn thê
 
 ### Matrix Hessian
 
-Hessian H của một hàm f: R^n -> R là n x n trền của các phái sinh phân tử thứ hai.
+Người Hessian $H$của một chức năng $f: \mathbb{R}^n \to \mathbb{R}$là $n \times n$Matrix của các phái sinh phân tử thứ hai.
 
+```math
+H_{ij} = \frac{\partial^2 f}{\partial x_i \, \partial x_j}
 ```
-H[i][j] = d^2 f / (dx_i dx_j)
-```
 
-Đối với f ((x, y) = x^2 + 3xy + y^2:
+Vì $f(x, y) = x^2 + 3xy + y^2$- Có thể là:
 
-```
-df/dx = 2x + 3y       d^2f/dx^2 = 2      d^2f/dxdy = 3
-df/dy = 3x + 2y       d^2f/dydx = 3      d^2f/dy^2 = 2
-
-H = [ 2  3 ]
-    [ 3  2 ]
+```math
+\begin{gathered}
+\begin{aligned}
+\frac{\partial f}{\partial x} &= 2x + 3y & \frac{\partial^2 f}{\partial x^2} &= 2 & \frac{\partial^2 f}{\partial x \, \partial y} &= 3 \\
+\frac{\partial f}{\partial y} &= 3x + 2y & \frac{\partial^2 f}{\partial y \, \partial x} &= 3 & \frac{\partial^2 f}{\partial y^2} &= 2
+\end{aligned} \\[8pt]
+H = \begin{bmatrix} 2 & 3 \\ 3 & 2 \end{bmatrix}
+\end{gathered}
 ```
 
 Người Hessian nói với bạn về sự cong cong:
@@ -151,18 +153,17 @@ Người Hessian nói với bạn về sự cong cong:
 - Các dấu hiệu hỗn hợp: điểm lăn (đối cao theo một số hướng, xuống ở những hướng khác)
 - Giá trị bản chất không: phẳng theo hướng đó (từ)
 
-Đối với độ ngập, Hessian phải là một điểm định nghĩa (tất cả các giá trị riêng > = 0) ở mọi nơi, không chỉ ở một điểm.
+Đối với độ ngập, Hessian phải là tích cực bán xác định (tất cả các giá trị riêng $\ge 0$) ở khắp mọi nơi, không chỉ ở một điểm.
 
 ### Phương pháp của Newton
 
 Phương pháp của Newton sử dụng thông tin thứ hai (Hessian). Nó phù hợp với một phương pháp gần gũi hình vuông tại điểm hiện tại và nhảy thẳng đến mức tối thiểu của hình vuông đó.
 
-```
-Update rule:
-  x_new = x - H^(-1) * gradient
-
-Compare to gradient descent:
-  x_new = x - lr * gradient
+```math
+\begin{aligned}
+\text{Update rule:} \quad & x_{\text{new}} = x - H^{-1} \cdot \text{gradient} \\
+\text{Compare to gradient descent:} \quad & x_{\text{new}} = x - \text{lr} \cdot \text{gradient}
+\end{aligned}
 ```
 
 Phương pháp của Newton thay thế tốc độ học đường thang bằng Hessian ngược. Điều này tự động điều chỉnh kích thước và hướng bước dựa trên độ cong địa phương.
@@ -190,14 +191,14 @@ Lợi ích:
 - Scale-invariant (được làm bất kể bạn định nghĩa vấn đề như thế nào)
 
 Khối thâm điểm:
-- Việc tính toán Hessian chi phí O n ^ 2) bộ nhớ và O n ^ 3) để đảo ngược
-- Đối với một mạng thần kinh với 1 triệu trọng lượng, đó là 10 ^ 12 mục và 10 ^ 18 hoạt động
+- Xét chi phí Hessian $O(n^2)$trí nhớ và$O(n^3)$để đảo ngược
+- Đối với một mạng thần kinh với 1 triệu trọng lượng, đó là $10^{12}$Các mục và $10^{18}$hoạt động
 - Không thực tế cho việc học sâu
 
 ### Tối ưu hóa hạn chế
 
-Tối ưu hóa không hạn chế: giảm thiểu f ((x) trên tất cả x.
-Tối ưu hóa hạn chế: giảm thiểu f ((x) theo hạn chế.
+Tối ưu hóa không hạn chế: giảm thiểu $f(x)$trên tất cả mọi thứ$x$- Tôi không biết.
+Tối ưu hóa hạn chế: giảm thiểu $f(x)$có thể bị hạn chế.
 
 Các vấn đề thực sự có những hạn chế. Bạn muốn giảm chi phí nhưng ngân sách của bạn là hạn chế. Bạn muốn giảm thiểu lỗi nhưng phức tạp của mô hình của bạn là giới hạn.
 
@@ -216,22 +217,24 @@ graph LR
 
 Phương pháp nhân nhân Lagrange chuyển đổi một vấn đề bị hạn chế thành một vấn đề không bị hạn chế.
 
-Vấn đề: giảm thiểu f(x) theo g(x) = 0.
+Vấn đề: giảm thiểu $f(x)$theo quy định của$g(x) = 0$- Tôi không biết.
 
-Giải pháp: giới thiệu một biến mới (Lambda nhân Lagrange) và giải quyết vấn đề không bị hạn chế:
+Giải pháp: giới thiệu một biến mới (Lagrange nhân $\lambda$) và giải quyết vấn đề không bị ràng buộc:
 
-```
-L(x, lambda) = f(x) + lambda * g(x)
-```
-
-Ở giải pháp, gradient của L là không:
-
-```
-dL/dx = df/dx + lambda * dg/dx = 0
-dL/dlambda = g(x) = 0
+```math
+L(x, \lambda) = f(x) + \lambda g(x)
 ```
 
-Nhận thức hình học: ở mức tối thiểu bị hạn chế, gradient của f phải song song với gradient của hạn chế g. Nếu chúng không song song, bạn có thể di chuyển dọc theo bề mặt hạn chế và giảm thêm f.
+Tại giải pháp, độ nghiêng của $L$là 0:
+
+```math
+\begin{aligned}
+\frac{\partial L}{\partial x} &= \frac{\partial f}{\partial x} + \lambda \frac{\partial g}{\partial x} = 0 \\
+\frac{\partial L}{\partial \lambda} &= g(x) = 0
+\end{aligned}
+```
+
+Nhận thức hình học: ở mức tối thiểu bị hạn chế, độ nghiêng của $f$phải song song với độ nghiêng của sự hạn chế $g$Nếu chúng không song song, bạn có thể di chuyển dọc theo bề mặt hạn chế và giảm $f$- Cứ đi xa hơn nữa.
 
 ```mermaid
 graph LR
@@ -240,39 +243,41 @@ graph LR
     S --- C["At the solution, gradient of f is parallel to gradient of g"]
 ```
 
-Ví dụ: giảm thiểu f(x,y) = x^2 + y^2 theo x + y = 1.
+Ví dụ: giảm thiểu $f(x,y) = x^2 + y^2$theo quy định của$x + y = 1$- Tôi không biết.
 
+```math
+\begin{aligned}
+L &= x^2 + y^2 + \lambda(x + y - 1) \\[4pt]
+\frac{\partial L}{\partial x} &= 2x + \lambda = 0 \implies x = -\lambda/2 \\
+\frac{\partial L}{\partial y} &= 2y + \lambda = 0 \implies y = -\lambda/2 \\
+\frac{\partial L}{\partial \lambda} &= x + y - 1 = 0 \\[4pt]
+&\text{From first two: } x = y \\
+&\text{Substituting: } 2x = 1, \text{ so } x = y = 0.5, \ \lambda = -1
+\end{aligned}
 ```
-L = x^2 + y^2 + lambda(x + y - 1)
 
-dL/dx = 2x + lambda = 0  =>  x = -lambda/2
-dL/dy = 2y + lambda = 0  =>  y = -lambda/2
-dL/dlambda = x + y - 1 = 0
-
-From first two: x = y
-Substituting: 2x = 1, so x = y = 0.5, lambda = -1
-```
-
-Điểm gần nhất trên đường x + y = 1 đến nguồn là (0,5, 0,5).
+Điểm gần nhất trên đường dây $x + y = 1$đến nguồn gốc là $(0.5, 0.5)$- Tôi không biết.
 
 ### Điều kiện KKT
 
 Các điều kiện Karush-Kuhn-Tucker mở rộng nhân Lagrange đến các hạn chế bất bình đẳng.
 
-Vấn đề: giảm thiểu f(x) theo g_i(x) <= 0 cho i = 1, ..., m.
+Vấn đề: giảm thiểu $f(x)$theo quy định của$g_i(x) \le 0$cho $i = 1, \ldots, m$- Tôi không biết.
 
 Các điều kiện KKT (cần thiết cho sự tối ưu):
 
-```
-1. Stationarity:    df/dx + sum(lambda_i * dg_i/dx) = 0
-2. Primal feasibility:  g_i(x) <= 0  for all i
-3. Dual feasibility:    lambda_i >= 0  for all i
-4. Complementary slackness:  lambda_i * g_i(x) = 0  for all i
+```math
+\begin{aligned}
+&\text{1. Stationarity:} && \frac{\partial f}{\partial x} + \sum_i \lambda_i \frac{\partial g_i}{\partial x} = 0 \\
+&\text{2. Primal feasibility:} && g_i(x) \le 0 \quad \text{for all } i \\
+&\text{3. Dual feasibility:} && \lambda_i \ge 0 \quad \text{for all } i \\
+&\text{4. Complementary slackness:} && \lambda_i \, g_i(x) = 0 \quad \text{for all } i
+\end{aligned}
 ```
 
-Sự lười biếng bổ sung là quan điểm chính: hoặc hạn chế hoạt động (g_i = 0, giải pháp nằm trên biên giới) hoặc nhân số là không (nghĩa hạn không quan trọng).
+Sự lười biếng bổ sung là cái nhìn chính: hoặc sự ràng buộc đang hoạt động ($g_i = 0$, giải pháp nằm trên biên giới) hoặc nhân số là không (sự hạn chế không quan trọng).$\lambda = 0$- Tôi không biết.
 
-Các điều kiện KKT là trung tâm của SVM. Các vector hỗ trợ là các điểm dữ liệu mà hạn chế hoạt động (lambda > 0).
+Các điều kiện KKT là trung tâm của SVM. Các vector hỗ trợ là các điểm dữ liệu nơi mà sự hạn chế hoạt động ($\lambda > 0$Tất cả các điểm dữ liệu khác đều có$\lambda = 0$và không ảnh hưởng đến ranh giới quyết định.
 
 ### Chuẩn bị như là tối ưu hóa hạn chế
 
@@ -280,25 +285,27 @@ L1 và L2 đều không phải là những trò lừa đảo tùy ý.
 
 **L2 regularization (Ridge):**
 
+```math
+\begin{aligned}
+&\text{minimize } \text{Loss}(w) \text{ subject to } \lVert w \rVert^2 \le t \\[4pt]
+&\text{Equivalent unconstrained form:} \\
+&\text{minimize } \text{Loss}(w) + \lambda \lVert w \rVert^2
+\end{aligned}
 ```
-minimize  Loss(w)  subject to  ||w||^2 <= t
 
-Equivalent unconstrained form:
-minimize  Loss(w) + lambda * ||w||^2
-```
-
-Các ràng buộc của không gian trong không gian <= t xác định một quả bóng (thây giới trong 2D, quả cầu 3D).
+Sự hạn chế $\lVert w \rVert^2 \le t$định nghĩa một quả bóng (thây tròn trong 2D, quả cầu trong 3D). Giải pháp là nơi đường viền mất chạm đầu tiên vào quả bóng này.
 
 **L1 regularization (LASSO):**
 
+```math
+\begin{aligned}
+&\text{minimize } \text{Loss}(w) \text{ subject to } \lVert w \rVert_1 \le t \\[4pt]
+&\text{Equivalent unconstrained form:} \\
+&\text{minimize } \text{Loss}(w) + \lambda \lVert w \rVert_1
+\end{aligned}
 ```
-minimize  Loss(w)  subject to  ||w||_1 <= t
 
-Equivalent unconstrained form:
-minimize  Loss(w) + lambda * ||w||_1
-```
-
-Các hạn chế của các loại hình này <= t xác định một kim cương (đường vuông quay trong 2D).
+Sự hạn chế $\lVert w \rVert_1 \le t$định nghĩa một viên kim cương (trường xoay 2D).
 
 | Property | L2 constraint (circle) | L1 constraint (diamond) |
 |---|---|---|
@@ -315,11 +322,13 @@ Mỗi vấn đề tối ưu hóa hạn chế (bản nguyên) có một vấn đ�
 
 Hàm hàm Lagrangian:
 
-```
-Primal: minimize f(x) subject to g(x) <= 0
-Lagrangian: L(x, lambda) = f(x) + lambda * g(x)
-Dual function: d(lambda) = min_x L(x, lambda)
-Dual problem: maximize d(lambda) subject to lambda >= 0
+```math
+\begin{aligned}
+&\text{Primal:} && \text{minimize } f(x) \text{ subject to } g(x) \le 0 \\
+&\text{Lagrangian:} && L(x, \lambda) = f(x) + \lambda g(x) \\
+&\text{Dual function:} && d(\lambda) = \min_x L(x, \lambda) \\
+&\text{Dual problem:} && \text{maximize } d(\lambda) \text{ subject to } \lambda \ge 0
+\end{aligned}
 ```
 
 Tại sao sự hai chiều quan trọng:
@@ -346,7 +355,7 @@ Các chức năng mất mạng thần kinh là vô cùng không ngập. Theo m�
 
 **Most local minima are good enough.**Trong không gian chiều cao, các điểm quan trọng ngẫu nhiên (nơi độ nghiêng là không) là điểm đạp, không phải là các tối thiểu địa phương.
 
-**Saddle points, not local minima, are the real obstacle.**Trong một hàm với n tham số, một điểm saddle có sự pha trộn của các hướng cong tích cực và tiêu cực. Đối với một điểm quan trọng ngẫu nhiên ở các chiều cao, xác suất của tất cả các giá trị riêng n tích cực (giới hạn địa phương) là khoảng 2 ^ - n. Hầu như tất cả các điểm quan trọng là điểm saddle.
+**Saddle points, not local minima, are the real obstacle.**Trong một chức năng với $n$Các thông số của các điểm, một điểm saddle có sự pha trộn của các hướng cong tích cực và tiêu cực.$n$giá trị riêng là tích cực (đối thiểu địa phương) là khoảng $2^{-n}$Hầu hết các điểm quan trọng đều là điểm đạp.
 
 **Overparameterization smooths the landscape.**Các mạng có nhiều tham số hơn các ví dụ đào tạo có bề mặt mất mát trơn tru hơn, kết nối hơn. Các mạng rộng hơn có ít tối thiểu địa phương xấu hơn. Điều này trái ngược trực giác nhưng theo học nghiệm.
 
@@ -365,21 +374,21 @@ Các chức năng mất mạng thần kinh là vô cùng không ngập. Theo m�
 
 Phương pháp Newton tinh khiết không thực tế cho các mô hình lớn.
 
-**L-BFGS (Limited-memory BFGS):**Phương pháp này được sử dụng để phân tích các biến thể của Hessian ngược bằng cách sử dụng các khác biệt gradient m cuối cùng. Nó yêu cầu bộ nhớ O(mn thay vì O(n^2).
+**L-BFGS (Limited-memory BFGS):**Ghi gần Hessian ngược bằng cách sử dụng cuối cùng $m$Sự khác biệt về độ nghiêng.$O(mn)$trí nhớ thay vì $O(n^2)$. Hành động tốt cho các vấn đề với tối đa ~ 10.000 tham số. được sử dụng trong ML cổ điển (kết hồi logistics, CRFs) nhưng không phải học sâu.
 
 **Natural gradient:**Sử dụng các hình thức phân phối xác suất của các hệ thống Hessian thông tin Fisher (hình thức Hessian dự kiến của xác suất log) thay vì Hessian tiêu chuẩn.
 
-**Hessian-free optimization:**Sử dụng gradient kết hợp để giải quyết Hx = g mà không bao giờ tạo ra H. Chỉ cần các sản phẩm vector Hessian, có thể được tính trong thời gian O ((n) thông qua phân biệt tự động.
+**Hessian-free optimization:**Sử dụng gradient kết hợp để giải quyết $Hx = g$Không bao giờ hình thành$H$Chỉ cần các sản phẩm vector Hessian, có thể được tính toán trong $O(n)$thời gian thông qua phân biệt tự động.
 
 **Diagonal approximations:**Khoảnh khắc thứ hai của Adam là một sự gần gũi đường vạch của đường vạch của Hessian. AdaHessian mở rộng điều này bằng cách sử dụng các yếu tố đường vạch Hessian thực tế thông qua ước tính của Hutchinson.
 
 | Method | Memory | Per-step cost | When to use |
 |--------|--------|--------------|-------------|
-| Gradient descent | O(n) | O(n) | Baseline, large models |
-| Newton's method | O(n^2) | O(n^3) | Small convex problems |
-| L-BFGS | O(mn) | O(mn) | Medium convex problems |
-| Adam | O(n) | O(n) | Deep learning default |
-| K-FAC | O(n) | O(n) per layer | Research, large-batch training |
+| Gradient descent | $O(n)$ | $O(n)$ | Baseline, large models |
+| Newton's method | $O(n^2)$ | $O(n^3)$ | Small convex problems |
+| L-BFGS | $O(mn)$ | $O(mn)$ | Medium convex problems |
+| Adam | $O(n)$ | $O(n)$ | Deep learning default |
+| K-FAC | $O(n)$ | $O(n)$ per layer | Research, large-batch training |
 
 ```figure
 convex-vs-nonconvex
@@ -516,15 +525,27 @@ print(f"Support vectors: {svm.n_support_}")
 
 ## Các bài tập
 
-1. **Convexity gallery.**Kiểm tra các hàm này cho độ ngập bằng cách sử dụng kiểm tra: f(x) = x^4, f(x) = sin(x), f(x,y) = x^2 + y^2, f(x,y) = x*y, f(x) = max(x, 0). Giải thích tại sao mỗi kết quả có ý nghĩa.
+1. **Convexity gallery.**Kiểm tra các chức năng này để tìm ra độ ngập lưỡng bằng cách sử dụng bộ kiểm tra: $f(x) = x^4$- $f(x) = \sin(x)$- $f(x,y) = x^2 + y^2$- $f(x,y) = xy$- $f(x) = \max(x, 0)$Hãy giải thích tại sao mỗi kết quả đều có ý nghĩa.
 
-2. **Newton vs gradient descent race.**Thực hiện cả hai phương pháp trên f ((x,y) = 50*x^2 + y^2 từ điểm khởi đầu (10, 10). Mỗi bước cần bao nhiêu bước để đạt được lỗ < 1e-10?
+2. **Newton vs gradient descent race.**Động hành cả hai phương pháp $f(x,y) = 50x^2 + y^2$Từ điểm khởi đầu $(10, 10)$. Mỗi bước cần bao nhiêu bước để đạt được mất < 1e-10? Điều gì xảy ra với sự giảm gradient khi số điều kiện ( tỷ lệ của giá trị bản thân Hessian lớn nhất đến nhỏ nhất) tăng lên?
 
-3. **Lagrange multiplier geometry.**Giảm tối thiểu f ((x,y) = (x-3) ^ 2 + (y-3) ^ 2 theo x + 2y = 4. Kiểm tra giải pháp bằng cách kiểm tra rằng độ lệch của f song song với độ lệch của g tại giải pháp.
+3. **Lagrange multiplier geometry.**Giảm thiểu $f(x,y) = (x-3)^2 + (y-3)^2$theo quy định của$x + 2y = 4$Kiểm tra giải pháp bằng cách kiểm tra rằng độ nghiêng của $f$là song song với gradient của $g$ở giải pháp.
 
-4. **Regularization constraint.**Thực hiện tối ưu hóa bị hạn chế L1: giảm thiểu (x-3) ^ 2 + (y-2) ^ 2 đối với ➡x ➡ + ➡ <= 1. Chứng minh rằng giải pháp có một phối hợp bằng không (sparsity từ hạn chế kim cương).
+4. **Regularization constraint.**Thực hiện tối ưu hóa hạn chế L1: giảm thiểu $(x-3)^2 + (y-2)^2$theo quy định của$\lvert x \rvert + \lvert y \rvert \le 1$. Cụ thể hóa rằng giải pháp có một phối hợp bằng không (sparsity từ giới hạn kim cương).
 
 5. **Hessian eigenvalue analysis.**Xét Hessian của hàm Rosenbrock ở (1,1) và ở (-1,1). Xét các giá trị riêng ở cả hai điểm.
+
+### Những gợi ý
+
+**Exercise 1.**Hãy dự đoán từng kết quả trước khi chạy `check_convexity`: trong một chiều, nhìn vào dấu hiệu của$f''(x)$; trong hai chiều, hãy xem các giá trị riêng của Hessian.$f(x,y) = xy$, Hessian có giá trị riêng 1 và -1, vì vậy kiểm tra phải báo cáo rằng nó không phải là ngọc.
+
+**Exercise 2.**Gọi`optimize_gd`và `newtons_method`với độ nghiêng và Hessian của $f$Phương pháp Newton giải quyết một phương pháp hình vuông trong một bước.$2/100$vì $50x^2$thuật ngữ, do đó $y$hướng di chuyển chậm.$100x^2$và đếm lại các bước.
+
+**Exercise 3.**Sử dụng `lagrange_solve`với $g(x,y) = x + 2y - 4$- Đáp lại, hãy kiểm tra.$x + 2y = 4$Và đó là$\nabla f = (2(x-3), 2(y-3))$là một nhân của $\nabla g = (1, 2)$- Tôi không biết.
+
+**Exercise 4.**Điểm tối thiểu không bị hạn chế (3, 2) nằm bên ngoài kim cương, vì vậy câu trả lời nằm ở biên giới của nó. Sử dụng hạ độ nghiêng dự đoán: thực hiện một bước nghiêng, sau đó chiếu trở lại trên $\lvert x \rvert + \lvert y \rvert \le 1$Kiểm tra kết quả đáp ứng hạn chế bằng bình đẳng và so sánh nó với`demo_regularization_geometry`- Tôi không biết.
+
+**Exercise 5.**Gọi`rosenbrock_hessian`ở mỗi điểm và chuyển kết quả cho `hessian_eigenvalues_2d`Ở (1, 1), cả hai giá trị tự đều tích cực và tỷ lệ của chúng rất lớn, vì vậy thung lũng là hẹp ở một hướng và phẳng ở hướng khác. So sánh tỷ lệ đó với tỷ lệ ở (-1, 1).
 
 ## Các điều khoản chính
 
@@ -543,7 +564,7 @@ print(f"Support vectors: {svm.n_support_}")
 | Complementary slackness | At the solution, either a constraint is active or its multiplier is zero. Never both nonzero |
 | Duality | Every constrained problem has a companion dual problem. For convex problems, both have the same optimal value |
 | Strong duality | Primal and dual optimal values are equal. Holds for convex problems satisfying Slater's condition |
-| L-BFGS | Approximate second-order method that stores the last m gradient differences instead of the full Hessian |
+| L-BFGS | Approximate second-order method that stores the last $m$ gradient differences instead of the full Hessian |
 | Saddle point | A point where the gradient is zero but it is a minimum in some directions and a maximum in others |
 | Overparameterization | Using more parameters than training examples. Smooths the loss landscape and reduces bad local minima |
 

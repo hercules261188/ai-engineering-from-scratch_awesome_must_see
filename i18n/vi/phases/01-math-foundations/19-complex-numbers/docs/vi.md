@@ -45,40 +45,42 @@ where:
 
 **Addition.**Thêm những phần thật vào nhau, thêm những phần tưởng tượng vào nhau.
 
+```math
+\begin{aligned}
+(a + bi) + (c + di) &= (a + c) + (b + d)i \\[4pt]
+\text{Example: } (3 + 2i) + (1 + 4i) &= 4 + 6i
+\end{aligned}
 ```
-(a + bi) + (c + di) = (a + c) + (b + d)i
 
-Example: (3 + 2i) + (1 + 4i) = 4 + 6i
-```
+**Multiplication.**Sử dụng luật phân phối và nhớ rằng$i^2 = -1$- Tôi không biết.
 
-**Multiplication.**Sử dụng luật phân phối và nhớ rằng i ^ 2 = -1.
-
-```
-(a + bi)(c + di) = ac + adi + bci + bdi^2
-                 = ac + adi + bci - bd
-                 = (ac - bd) + (ad + bc)i
-
-Example: (3 + 2i)(1 + 4i) = 3 + 12i + 2i + 8i^2
-                            = 3 + 14i - 8
-                            = -5 + 14i
+```math
+\begin{aligned}
+(a + bi)(c + di) &= ac + adi + bci + bdi^2 \\
+&= ac + adi + bci - bd \\
+&= (ac - bd) + (ad + bc)i \\[8pt]
+\text{Example: } (3 + 2i)(1 + 4i) &= 3 + 12i + 2i + 8i^2 \\
+&= 3 + 14i - 8 \\
+&= -5 + 14i
+\end{aligned}
 ```
 
 **Conjugate.**Trật lại dấu hiệu của phần tưởng tượng.
 
-```
-conjugate of (a + bi) = a - bi
+```math
+\text{conjugate of } (a + bi) = a - bi
 ```
 
 Kết quả của một số phức tạp và kết hợp của nó luôn là thực:
 
-```
+```math
 (a + bi)(a - bi) = a^2 + b^2
 ```
 
 **Division.**Tăng số và tên nhân bằng kết hợp của tên nhân.
 
-```
-(a + bi) / (c + di) = (a + bi)(c - di) / (c^2 + d^2)
+```math
+\frac{a + bi}{c + di} = \frac{(a + bi)(c - di)}{c^2 + d^2}
 ```
 
 Điều này loại bỏ phần tưởng tượng từ tên gọi, cho bạn một số phức tạp sạch.
@@ -99,23 +101,24 @@ Một số phức tạp là một điểm và một vector từ nguồn gốc. S
 
 Bất kỳ điểm nào trong máy bay có thể được mô tả bằng cách cách xa xôi từ nguồn gốc và góc của nó từ trục thực tích cực.
 
+```math
+\begin{aligned}
+z &= r (\cos\theta + i \sin\theta) \\[4pt]
+\text{where: } r &= |z| = \sqrt{a^2 + b^2} \quad \text{(magnitude, or modulus)} \\
+\theta &= \mathop{\mathrm{atan2}}(b, a) \quad \text{(phase, or argument)}
+\end{aligned}
 ```
-z = r * (cos(theta) + i*sin(theta))
 
-where:
-  r = |z| = sqrt(a^2 + b^2)     (magnitude, or modulus)
-  theta = atan2(b, a)             (phase, or argument)
-```
-
-Hình hình hình chữ nhật (a + bi) là tốt cho việc cộng. Hình hình cực (r, theta) là tốt cho nhân.
+hình hình chữ nhật $(a + bi)$là tốt cho việc bổ sung.$(r, \theta)$là tốt cho nhân.
 
 **Multiplication in polar form.**Bội số lớn, thêm các góc.
 
-```
-z1 = r1 * e^(i*theta1)
-z2 = r2 * e^(i*theta2)
-
-z1 * z2 = (r1 * r2) * e^(i*(theta1 + theta2))
+```math
+\begin{aligned}
+z_1 &= r_1 e^{i\theta_1} \\
+z_2 &= r_2 e^{i\theta_2} \\[4pt]
+z_1 z_2 &= (r_1 r_2) \, e^{i(\theta_1 + \theta_2)}
+\end{aligned}
 ```
 
 Đó là lý do tại sao các số phức hợp là hoàn hảo cho các vòng quay.
@@ -124,38 +127,38 @@ z1 * z2 = (r1 * r2) * e^(i*(theta1 + theta2))
 
 Cầu giữa các hàm hàm phức tạp và bộ ba chữ số:
 
-```
-e^(i*theta) = cos(theta) + i*sin(theta)
-```
-
-Đây là công thức quan trọng nhất trong bài học này. Khi theta = pi:
-
-```
-e^(i*pi) = cos(pi) + i*sin(pi) = -1 + 0i = -1
-
-Therefore: e^(i*pi) + 1 = 0
+```math
+e^{i\theta} = \cos\theta + i \sin\theta
 ```
 
-Năm liên tục cơ bản (e, i, pi, 1, 0) được kết nối trong một phương trình.
+Đây là công thức quan trọng nhất trong bài học này.$\theta = \pi$- Có thể là:
+
+```math
+\begin{aligned}
+e^{i\pi} &= \cos\pi + i \sin\pi = -1 + 0i = -1 \\[4pt]
+\text{Therefore: } e^{i\pi} + 1 &= 0
+\end{aligned}
+```
+
+Năm liên tục cơ bản ($e$- $i$- $\pi$, 1, 0) được liên kết trong một phương trình.
 
 ### Tại sao công thức của Euler quan trọng cho ML
 
-Công thức của Euler nói rằng`e^(i*theta)`Chữ tròn đơn vị theo cách theta thay đổi. Tại theta = 0, bạn ở (1, 0). Tại theta = pi/2, bạn ở (0, 1). Tại theta = pi, bạn ở (-1, 0). Tại theta = 3 * pi/2, bạn ở (0, -1).
+Công thức của Euler nói rằng$e^{i\theta}$theo dõi vòng tròn đơn vị như $\theta$khác nhau.$\theta = 0$, anh đang ở $(1, 0)$- Tại $\theta = \pi/2$, anh đang ở $(0, 1)$- Tại $\theta = \pi$, anh đang ở $(-1, 0)$- Tại $\theta = 3\pi/2$, anh đang ở $(0, -1)$Một vòng quay đầy đủ là$\theta = 2\pi$- Tôi không biết.
 
 Điều này có nghĩa là các hàm số phức tạp là quay và quay ở khắp mọi nơi trong xử lý tín hiệu và ML.
 
 ### Kết nối với quay 2D
 
-Bội số phức tạp (x + yi) bằng e ^ i * theta) xoay điểm (x, y) bằng góc theta xung quanh nguồn gốc.
+Lặp số phức tạp $(x + yi)$bởi $e^{i\theta}$xoay điểm $(x, y)$theo góc độ$\theta$xung quanh nguồn gốc.
 
-```
-Rotation via complex multiplication:
-  (x + yi) * (cos(theta) + i*sin(theta))
-  = (x*cos(theta) - y*sin(theta)) + (x*sin(theta) + y*cos(theta))i
-
-Rotation via matrix multiplication:
-  [cos(theta)  -sin(theta)] [x]   [x*cos(theta) - y*sin(theta)]
-  [sin(theta)   cos(theta)] [y] = [x*sin(theta) + y*cos(theta)]
+```math
+\begin{aligned}
+&\text{Rotation via complex multiplication:} \\
+&\quad (x + yi)(\cos\theta + i \sin\theta) = (x \cos\theta - y \sin\theta) + (x \sin\theta + y \cos\theta)i \\[8pt]
+&\text{Rotation via matrix multiplication:} \\
+&\quad \begin{bmatrix} \cos\theta & -\sin\theta \\ \sin\theta & \cos\theta \end{bmatrix} \begin{bmatrix} x \\ y \end{bmatrix} = \begin{bmatrix} x \cos\theta - y \sin\theta \\ x \sin\theta + y \cos\theta \end{bmatrix}
+\end{aligned}
 ```
 
 Chúng tạo ra kết quả giống nhau. nhân phức là quay 2D. Matrix quay chỉ là nhân phức hợp được viết bằng dấu hiệu matrix.
@@ -173,55 +176,56 @@ graph TD
 
 ### Phasor và tín hiệu xoay
 
-Một hàm hàm phức tạp e^(i*omega*t) là một điểm xoay quanh vòng tròn đơn vị ở t t t t t tăng lên, điểm theo dõi vòng tròn.
+Một hàm số phức tạp $e^{i\omega t}$là một điểm quay xung quanh vòng tròn đơn vị ở tần số góc $\omega$- Như vậy.$t$tăng lên, điểm theo dõi vòng tròn.
 
-Phần thực của điểm xoay này là cos(omega*t). Phần tưởng tượng là sin(omega*t). Một tín hiệu sinusoidal là bóng của một số phức tạp xoay.
+Phần thực sự của điểm quay này là$\cos(\omega t)$Phần tưởng tượng là$\sin(\omega t)$Một tín hiệu sinus là bóng của một số phức tạp quay.
 
-```
-e^(i*omega*t) = cos(omega*t) + i*sin(omega*t)
-
-Real part:      cos(omega*t)    -- a cosine wave
-Imaginary part: sin(omega*t)    -- a sine wave
+```math
+\begin{aligned}
+e^{i\omega t} &= \cos(\omega t) + i \sin(\omega t) \\[4pt]
+\text{Real part: } & \cos(\omega t) \quad \text{-- a cosine wave} \\
+\text{Imaginary part: } & \sin(\omega t) \quad \text{-- a sine wave}
+\end{aligned}
 ```
 
 Đây là đại diện của phasor. Thay vì theo dõi một sóng xơ động, bạn theo dõi một mũi tên quay trơn tru. Thay đổi giai đoạn trở thành sự bù đắp góc. Thay đổi độ dải trở thành thay đổi độ lớn. Tích thêm tín hiệu trở thành sự gia tăng vector.
 
 ### Nguồn gốc của sự hiệp nhất
 
-Các gốc N của sự thống nhất là N điểm được phân cách bằng nhau trên vòng tròn đơn vị:
+- $N$-các nguồn gốc của sự hiệp nhất là$N$Các điểm cách nhau bằng nhau trên vòng tròn đơn vị:
 
+```math
+w_k = e^{2\pi i k/N} \quad \text{for } k = 0, 1, 2, \ldots, N-1
 ```
-w_k = e^(2*pi*i*k/N)    for k = 0, 1, 2, ..., N-1
-```
 
-Đối với N = 4, các gốc là: 1, i, -1, -i (bốn điểm buso).
-Đối với N = 8, bạn nhận được bốn điểm buso cộng với bốn hình chéo.
+Vì $N = 4$, gốc là: $1, i, -1, -i$(bốn điểm buso).
+Vì $N = 8$, bạn có được bốn điểm buso cộng với bốn hình chéo.
 
-Các gốc của sự thống nhất là nền tảng của chuyển đổi Fourier phân biệt. DFT phân hủy tín hiệu thành các thành phần tại các tần số không gian bằng N này.
+Các gốc của sự thống nhất là nền tảng của chuyển đổi Fourier riêng biệt.$N$Tần số không gian bằng nhau.
 
 ### Kết nối với DFT
 
-Sự chuyển đổi Fourier riêng biệt của một tín hiệu x[0], x[1], ..., x[N-1] là:
+Chuyển đổi Fourier của tín hiệu$x[0], x[1], \ldots, x[N-1]$là:
 
-```
-X[k] = sum_{n=0}^{N-1} x[n] * e^(-2*pi*i*k*n/N)
+```math
+X[k] = \sum_{n=0}^{N-1} x[n] \, e^{-2\pi i k n/N}
 ```
 
-Mỗi X[k] đo mức độ tín hiệu tương quan với gốc k của sự thống nhất - một chân lưng phức tạp ở tần số k. DFT phá vỡ tín hiệu thành N phasor xoay và cho bạn biết độ dồn và giai đoạn của mỗi.
+Mỗi người$X[k]$đo mức độ tín hiệu tương quan với $k$-Căn gốc thứ hai của sự hiệp nhất - một sinus phức tạp ở tần số$k$DFT phá vỡ tín hiệu vào$N$và cho bạn biết độ lớn và giai đoạn của mỗi phasor.
 
 ### Tại sao tôi không phải là tưởng tượng
 
-Từ "tưởng tượng" là một tai nạn lịch sử. Descartes sử dụng nó một cách khinh thường. Nhưng i không tưởng tượng hơn so với số âm khi mọi người lần đầu tiên từ chối chúng. Số âm trả lời "những gì bạn trừ 5 từ 3 để có được?" đơn vị tưởng tượng trả lời "những gì bạn bình phương để có được -1?"
+Từ "tưởng tượng" là một tai nạn lịch sử. Descartes sử dụng nó một cách khinh thường.$i$số âm trả lời "những gì bạn trừ 5 từ 3 để nhận được?" đơn vị tưởng tượng trả lời "những gì bạn bình phương để nhận được -1?"
 
-Và nó sẽ được sử dụng hơn: i là một nhân viên xoay 90 độ. Bội số thực bằng i một lần, bạn xoay 90 độ đến trục tưởng tượng. Bội lại bằng i (i ^ 2), bạn xoay thêm 90 độ - bây giờ bạn đang chỉ ra hướng tiêu cực thực. Đó là lý do tại sao i ^ 2 = -1.
+Tốt hơn: $i$là một nhà điều hành quay 90 độ.$i$một lần, bạn xoay 90 độ về trục tưởng tượng.$i$một lần nữa ($i^2$), bạn quay lại 90 độ nữa -- bây giờ bạn đang chỉ ra hướng tiêu cực thực.$i^2 = -1$Nó không phải là bí ẩn. Nó là một vòng bán xoay được xây dựng từ hai vòng tròn.
 
 Đó là lý do tại sao các con số phức tạp ở khắp mọi nơi trong kỹ thuật. Bất cứ thứ gì quay - sóng điện từ, trạng thái lượng tử, dao động tín hiệu, mã hóa vị trí - đều được mô tả tự nhiên bằng các con số phức tạp.
 
 ### Các hàm hàm phức tạp so với hàm trigonometric
 
-Trước công thức của Euler, các kỹ sư đã viết các tín hiệu như A*cos(omega*t + phi) - độ dồn A, tần số omega, pha phi. Điều này hoạt động nhưng làm cho toán học đau đớn.
+Trước công thức của Euler, các kỹ sư đã viết các tín hiệu như$A \cos(\omega t + \phi)$-- độ dồn $A$, tần suất $\omega$, giai đoạn $\phi$Điều này hiệu quả nhưng làm cho toán học đau đớn.
 
-Với các hàm số phức tạp, cùng một tín hiệu là A*e^(i*(omega*t + phi)). Thêm hai tín hiệu chỉ là thêm hai số phức tạp.
+Với các hàm số phức tạp, cùng một tín hiệu là $A e^{i(\omega t + \phi)}$Thêm hai tín hiệu chỉ là thêm hai số phức tạp. nhân (modulating) chỉ là nhân quy mô và thêm góc. chuyển động giai đoạn trở thành sự gia tăng góc. chuyển động tần số trở thành nhân bằng các pha.
 
 Toàn bộ lĩnh vực xử lý tín hiệu chuyển sang ghi chú biểu diễn phức tạp vì toán học sạch hơn. " tín hiệu thực " luôn chỉ là phần thực của biểu diễn phức tạp. Phần tưởng tượng được mang theo như kế toán, làm cho tất cả các đại số hoạt động tự nhiên.
 
@@ -229,9 +233,11 @@ Toàn bộ lĩnh vực xử lý tín hiệu chuyển sang ghi chú biểu diễn
 
 **Sinusoidal positional encodings**(khác giấy gốc của Transformer):
 
-```
-PE(pos, 2i) = sin(pos / 10000^(2i/d))
-PE(pos, 2i+1) = cos(pos / 10000^(2i/d))
+```math
+\begin{aligned}
+PE(pos, 2i) &= \sin\left(pos / 10000^{2i/d}\right) \\
+PE(pos, 2i+1) &= \cos\left(pos / 10000^{2i/d}\right)
+\end{aligned}
 ```
 
 Các cặp sin và cos là các phần thực và tưởng tượng của các hàm số phức tạp ở tần số khác nhau. Mỗi tần số cung cấp một "sự giải quyết" khác nhau cho vị trí mã hóa. tần số thấp thay đổi chậm ( vị trí thô). tần số cao thay đổi nhanh chóng ( vị trí tốt). Cùng nhau chúng mang lại cho mỗi vị trí một dấu vân tay tần số độc đáo.
@@ -240,13 +246,13 @@ Các cặp sin và cos là các phần thực và tưởng tượng của các h
 
 | Operation | Algebraic Form | Geometric Meaning |
 |-----------|---------------|-------------------|
-| Addition | (a+c) + (b+d)i | Vector addition in the plane |
-| Multiplication | (ac-bd) + (ad+bc)i | Rotate and scale |
-| Conjugate | a - bi | Reflect over real axis |
-| Magnitude | sqrt(a^2 + b^2) | Distance from origin |
-| Phase | atan2(b, a) | Angle from positive real axis |
+| Addition | $(a+c) + (b+d)i$ | Vector addition in the plane |
+| Multiplication | $(ac-bd) + (ad+bc)i$ | Rotate and scale |
+| Conjugate | $a - bi$ | Reflect over real axis |
+| Magnitude | $\sqrt{a^2 + b^2}$ | Distance from origin |
+| Phase | $\mathop{\mathrm{atan2}}(b, a)$ | Angle from positive real axis |
 | Division | multiply by conjugate | Reverse rotation and rescale |
-| Power | r^n * e^(i*n*theta) | Rotate n times, scale by r^n |
+| Power | $r^n e^{in\theta}$ | Rotate $n$ times, scale by $r^n$ |
 
 ```mermaid
 graph LR
@@ -326,7 +332,7 @@ Kiểm tra: `euler(theta).magnitude()`luôn luôn là 1.0. `euler(0)`nên đưa 
 
 ### Bước 3: Chuyển
 
-Chuyển một điểm (x, y) theo góc theta là một nhân phức tạp:
+Chuyển một điểm$(x, y)$theo góc độ$\theta$là một nhân phức tạp:
 
 ```python
 point = Complex(3, 4)
@@ -350,11 +356,11 @@ def dft(signal):
     return result
 ```
 
-Đây là O(N^2) DFT. Mỗi đầu ra X[k] là tổng số các mẫu tín hiệu nhân bằng các gốc của sự thống nhất.
+Đây là $O(N^2)$DFT. Mỗi đầu ra $X[k]$là tổng số mẫu tín hiệu nhân bằng các gốc của sự thống nhất.
 
 ### Bước 5: DFT ngược
 
-DFT ngược tái tạo tín hiệu ban đầu từ quang phổ của nó. Những thay đổi duy nhất từ DFT phía trước: xoay tín hiệu trong nhân tố và chia bằng N.
+DFT ngược tái tạo tín hiệu ban đầu từ quang phổ của nó. Những thay đổi duy nhất từ DFT phía trước: xoay tín hiệu trong nhân tố và chia bằng $N$- Tôi không biết.
 
 ```python
 def idft(spectrum):
@@ -380,7 +386,7 @@ def roots_of_unity(N):
 
 Kiểm tra hai tính chất:
 - Mỗi gốc có độ lớn chính xác là 1.
-- Tổng của tất cả các gốc N là không (bạn hủy bằng đối xứng).
+- Tổng số của tất cả$N$gốc là không (bạn hủy bằng đối xứng).
 
 Những tính chất này làm cho DFT trở nên đảo ngược. Rễ của đơn vị hình thành một cơ sở trực giác cho lĩnh vực tần số.
 
@@ -424,30 +430,42 @@ freqs = np.fft.fftfreq(128, d=1/128)
 
 ## Các bài tập
 
-1. **Complex arithmetic by hand.**Lập ra cả hai kết quả trên một trình đơn phức tạp và kiểm tra xem nhân số đã quay và quy mô số đầu tiên.
+1. **Complex arithmetic by hand.**Lưu ý$(2 + 3i)(4 - i)$và xác minh bằng mã.$(5 + 2i) / (1 - 3i)$. Chụp cả hai kết quả trên trình độ phức tạp và kiểm tra rằng nhân đúc quay và quy mô số đầu tiên.
 
-2. **Rotation sequence.**Bắt đầu với điểm (1, 0). nhân bằng e^(i*pi/6) mười hai lần. Kiểm tra rằng bạn trở lại (1, 0) sau khi nhân 12. Bác định các tọa độ tại mỗi bước và xác nhận chúng theo dõi một 12-gon thường.
+2. **Rotation sequence.**Bắt đầu với điểm $(1, 0)$- Tăng lên $e^{i\pi/6}$12 lần.$(1, 0)$Bác in các phối hợp ở mỗi bước và xác nhận chúng theo dõi một 12gon thường.
 
-3. **DFT of a known signal.**Tạo một tín hiệu là tổng số sin ((2 * pi * 3 * t) và 0.5 * sin ((2 * pi * 7 * t) được lấy mẫu tại 32 điểm.
+3. **DFT of a known signal.**Tạo ra một tín hiệu là tổng của $\sin(2\pi \cdot 3t)$và $0.5 \sin(2\pi \cdot 7t)$kiểm tra rằng quang phổ độ lớn có đỉnh ở tần số 3 và 7, với đỉnh ở 7 là một nửa chiều cao của đỉnh ở 3.
 
-4. **Roots of unity visualization.**Xét ra các gốc thứ 8 của sự thống nhất. Kiểm tra xem chúng cộng đến không. Kiểm tra xem nhân bất kỳ gốc nào bằng gốc nguyên thủy e ^ 2 * pi * i / 8) sẽ đưa ra gốc tiếp theo.
+4. **Roots of unity visualization.**Xét ra gốc thứ 8 của sự thống nhất. Kiểm tra xem chúng cộng đến không. Kiểm tra rằng nhân bất kỳ gốc nào bằng gốc nguyên thủy$e^{2\pi i/8}$cho ra gốc tiếp theo.
 
 5. **Rotation matrix equivalence.**Đối với 10 góc ngẫu nhiên và 10 điểm ngẫu nhiên, xác minh rằng nhân phức hợp mang lại kết quả tương tự như nhân tử-vector với các 2x2 quay tử liệu.
+
+### Những gợi ý
+
+**Exercise 1.**Tăng sản phẩm với $i^2 = -1$, sau đó chia bằng cách nhân phần trên và dưới bằng conyugat $1 + 3i$Kiểm tra sản phẩm với `Complex(2, 3) * Complex(4, -1)`: của nó `magnitude()`phải bằng với nhân của hai cường độ, và nó `phase()`phải bằng với tổng của hai giai đoạn.
+
+**Exercise 2.**Hãy bước đi với `euler(math.pi / 6)`và nhân 12 lần. Ở mỗi bước, kiểm tra rằng độ lớn vẫn là 1 và góc tăng thêm 30 độ. Điểm cuối cùng phải là trong khoảng 1e-12 của (1, 0).
+
+**Exercise 3.**Hãy ghi thời gian với $t = n/32$và gọi`dft`Chỉ nhìn vào các thùng 0 đến 15, bởi vì nửa trên là hình ảnh gương.$k$cho một âm âm của độ lớn $A$là $AN/2$, nên mong đợi khoảng 16 ở Bin 3 và khoảng 8 ở Bin 7.
+
+**Exercise 4.**Gọi`roots_of_unity(8)`và thêm các gốc: quy mô của tổng số phải gần 0. Chia mỗi gốc bằng gốc trước và kiểm tra rằng mọi kết quả đều bằng `euler(2 * math.pi / 8)`- Tôi không biết.
+
+**Exercise 5.**Các mô hình quay là [[cos t, -sin t], [sin t, cos t]]. Đối với mỗi góc và điểm, tính toán `euler(t) * Complex(x, y)`và các sản phẩm tử liệu, sau đó ghi lại sự khác biệt tuyệt đối lớn nhất.$10^{-15}$- Tôi không biết.
 
 ## Các điều khoản chính
 
 | Term | What it means |
 |------|---------------|
-| Complex number | A number a + bi where a is the real part, b is the imaginary part, and i^2 = -1 |
-| Imaginary unit | The number i, defined by i^2 = -1. Not imaginary in the philosophical sense -- it is a rotation operator |
+| Complex number | A number $a + bi$ where $a$ is the real part, $b$ is the imaginary part, and $i^2 = -1$ |
+| Imaginary unit | The number $i$, defined by $i^2 = -1$. Not imaginary in the philosophical sense -- it is a rotation operator |
 | Complex plane | The 2D plane where the x-axis is real and the y-axis is imaginary. Also called the Argand plane |
-| Magnitude (modulus) | The distance from the origin: sqrt(a^2 + b^2). Written as \|z\| |
-| Phase (argument) | The angle from the positive real axis: atan2(b, a). Written as arg(z) |
-| Conjugate | The mirror image across the real axis: conjugate of a + bi is a - bi |
-| Polar form | Expressing z as r * e^(i*theta) instead of a + bi. Makes multiplication easy |
-| Euler's formula | e^(i*theta) = cos(theta) + i*sin(theta). Connects exponentials to trigonometry |
-| Phasor | A rotating complex number e^(i*omega*t) representing a sinusoidal signal |
-| Roots of unity | The N complex numbers e^(2*pi*i*k/N) for k = 0 to N-1. N equally spaced points on the unit circle |
+| Magnitude (modulus) | The distance from the origin: $\sqrt{a^2 + b^2}$. Written as $\lvert z \rvert$ |
+| Phase (argument) | The angle from the positive real axis: $\mathop{\mathrm{atan2}}(b, a)$. Written as $\arg(z)$ |
+| Conjugate | The mirror image across the real axis: conjugate of $a + bi$ is $a - bi$ |
+| Polar form | Expressing $z$ as $r e^{i\theta}$ instead of $a + bi$. Makes multiplication easy |
+| Euler's formula | $e^{i\theta} = \cos\theta + i \sin\theta$. Connects exponentials to trigonometry |
+| Phasor | A rotating complex number $e^{i\omega t}$ representing a sinusoidal signal |
+| Roots of unity | The $N$ complex numbers $e^{2\pi i k/N}$ for $k = 0$ to $N-1$. $N$ equally spaced points on the unit circle |
 | DFT | Discrete Fourier Transform. Decomposes a signal into complex sinusoidal components using roots of unity |
 | RoPE | Rotary Position Embedding. Uses complex multiplication to encode relative position in transformer attention |
 
@@ -456,6 +474,6 @@ freqs = np.fft.fftfreq(128, d=1/128)
 - [Visual Introduction to Euler's Formula](https://betterexplained.com/articles/intuitive-understanding-of-eulers-formula/)- xây dựng trực giác hình học mà không có ghi chú nặng
 - [Su et al.: RoFormer (2021)](https://arxiv.org/abs/2104.09864)- giấy giới thiệu việc nhúng vị trí xoay bằng cách sử dụng xoay phức tạp
 - [Vaswani et al.: Attention Is All You Need (2017)](https://arxiv.org/abs/1706.03762)- giấy Transformer gốc với mã hóa vị trí chân lưng
-- [3Blue1Brown: Euler's formula with introductory group theory](https://www.youtube.com/watch?v=mvmuCPvRoWQ)- giải thích trực quan về lý do tại sao e^(i*pi) = -1
+- [3Blue1Brown: Euler's formula with introductory group theory](https://www.youtube.com/watch?v=mvmuCPvRoWQ)- giải thích trực quan về lý do tại sao $e^{i\pi} = -1$
 - [Needham: Visual Complex Analysis](https://global.oup.com/academic/product/visual-complex-analysis-9780198534464)- xử lý hình ảnh tốt nhất của các con số phức tạp, đầy đủ thông tin hình học
 - [Strang: Introduction to Linear Algebra, Ch. 10](https://math.mit.edu/~gs/linearalgebra/)- các số phức tạp trong bối cảnh đại số tuyến tính và giá trị riêng

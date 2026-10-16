@@ -44,7 +44,7 @@ Mode:   most frequent value
         Useful for categorical data. For continuous data, rarely informative.
 ```
 
-Trung bình là điểm cân bằng. trung bình là dấu hiệu nửa đường. Khi chúng khác nhau, phân phối của bạn bị lệch. Phân phối thu nhập có trung bình >> trung bình (người tỷ phú có sự lệch bên phải). Phân bố mất mát trong quá trình đào tạo thường có trung bình << trung bình (người lệch bên trái từ các mẫu dễ dàng).
+Trung bình là điểm cân bằng. trung bình là dấu hiệu nửa đường. Khi chúng khác nhau, phân phối của bạn bị lệch.$\text{mean} \gg \text{median}$(trái bên phải từ tỷ phú).$\text{mean} \ll \text{median}$(đánh khốn bên trái từ các mẫu đơn giản).
 
 **Measures of spread**trả lời "dữ liệu phân tán như thế nào?"
 
@@ -75,14 +75,16 @@ For latency monitoring:
 
 Trong ML, bạn quan tâm đến phần trăm cho độ trễ suy luận, phân phối sự tin cậy dự đoán và phân phối lỗi hiểu. Một mô hình với lỗi trung bình thấp nhưng lỗi P99 khủng khiếp có thể vô dụng cho các ứng dụng quan trọng về an toàn.
 
-**Sample vs population statistics.**Khi tính toán sự biến động từ một mẫu, hãy chia bằng (n-1) thay vì n. Đây là sự sửa đổi của Bessel. Nó bù đắp cho thực tế là trung bình mẫu của bạn không phải là trung bình dân số thực. Với n trong tên gọi, bạn có thể đánh giá thấp sự biến động thực sự. Với (n-1), ước tính là không thiên vị.
+**Sample vs population statistics.**Khi tính toán sự khác biệt từ một mẫu, chia bằng $(n-1)$thay vì $n$Đây là sự sửa đổi của Bessel. nó bù đắp cho thực tế là trung bình mẫu của bạn không phải là trung bình dân số thực sự.$n$trong nhân tố, bạn có hệ thống đánh giá thấp sự khác biệt thực sự.$(n-1)$, ước tính là không thiên vị.
 
-```
-Population variance: sigma^2 = (1/N) * sum((x_i - mu)^2)
-Sample variance:     s^2     = (1/(n-1)) * sum((x_i - x_bar)^2)
+```math
+\begin{aligned}
+\text{Population variance:} \quad \sigma^2 &= \frac{1}{N} \sum (x_i - \mu)^2 \\
+\text{Sample variance:} \quad s^2 &= \frac{1}{n-1} \sum (x_i - \bar{x})^2
+\end{aligned}
 ```
 
-Thực tế: nếu n lớn (người mẫu hàng ngàn), sự khác biệt là vô cùng nhỏ.
+Trong thực tế: nếu $n$là lớn (người mẫu hàng ngàn), sự khác biệt là vô cùng nhỏ.$n$là nhỏ (chỉ hàng chục mẫu), nó quan trọng.
 
 ### Sự tương quan: Cách các biến chuyển cùng nhau
 
@@ -100,7 +102,7 @@ r =  0:  no linear relationship (but there might be a nonlinear one!)
 Range: [-1, 1]
 ```
 
-Pearson cho rằng mối quan hệ này là tuyến tính và cả hai biến đều được phân phối bình thường. Nó nhạy cảm với các điểm ngoại lệ. Một điểm cực đoan duy nhất có thể kéo r từ 0,1 đến 0,9.
+Pearson cho rằng mối quan hệ là tuyến tính và cả hai biến đều được phân phối bình thường.$r$từ 0,1 đến 0,9.
 
 **Spearman rank correlation**Các biện pháp liên kết đơn giản:
 
@@ -139,7 +141,7 @@ Cov(X, Y) < 0:  when X increases, Y tends to decrease
 Cov(X, Y) = 0:  no linear co-movement
 ```
 
-Đối với d tính năng, các matrix tính toán C là một d x d matrix nơi C[i][j] = Cov(feature_i, feature_j).
+Vì $d$các tính năng, các matrix covariance $C$là một $d \times d$Matrix nơi $C[i][j] = \mathop{\mathrm{Cov}}(\text{feature}_i, \text{feature}_j)$Các mục đường chọc $C[i][i]$là sự khác biệt của mỗi tính năng.
 
 ```
 C = | Var(x1)      Cov(x1,x2)  Cov(x1,x3) |
@@ -155,7 +157,7 @@ Properties:
 
 **Connection to PCA.**PCA tự cấu thành các matrix có sự biến đổi. Các eigenvector là các thành phần chính (nghĩa của sự biến đổi tối đa). Các eigenvalue cho bạn biết mỗi thành phần nắm bắt được sự biến đổi bao nhiêu. Đây chính xác là điều mà Bài học 10 đã đề cập đến, nhưng bây giờ bạn thấy tại sao matrix có sự biến đổi là điều đúng để phân hủy: nó mã hóa tất cả các mối quan hệ tuyến tính theo cặp trong dữ liệu của bạn.
 
-**Connection to correlation.**Matrix tương quan là matrix covariance của các biến tiêu chuẩn hóa (mỗi biến được chia bằng lệch tiêu chuẩn của nó).
+**Connection to correlation.**Matrix tương quan là matrix covariance của các biến tiêu chuẩn hóa (mỗi biến được chia bằng lệch tiêu chuẩn của nó).$[-1, 1]$- Tôi không biết.
 
 ### Kiểm tra giả thuyết
 
@@ -205,10 +207,11 @@ Thử nghiệm t so sánh các phương tiện.
 
 **One-sample t-test:**liệu con số trung bình dân số có khác với giá trị giả định không?
 
-```
-t = (x_bar - mu_0) / (s / sqrt(n))
-
-degrees of freedom = n - 1
+```math
+\begin{aligned}
+t &= \frac{\bar{x} - \mu_0}{s / \sqrt{n}} \\[4pt]
+\text{degrees of freedom} &= n - 1
+\end{aligned}
 ```
 
 **Two-sample t-test (independent):**hai nhóm có nghĩa khác nhau không?
@@ -297,19 +300,20 @@ engineering cost of deploying a new model.
 
 **Effect size**định lượng sự khác biệt lớn như thế nào, độc lập với kích thước mẫu:
 
-```
-Cohen's d = (mean_1 - mean_2) / pooled_std
-
-d = 0.2:  small effect
-d = 0.5:  medium effect
-d = 0.8:  large effect
+```math
+\begin{aligned}
+\text{Cohen's } d &= \frac{\text{mean}_1 - \text{mean}_2}{\text{pooled\_std}} \\[4pt]
+d &= 0.2: \quad \text{small effect} \\
+d &= 0.5: \quad \text{medium effect} \\
+d &= 0.8: \quad \text{large effect}
+\end{aligned}
 ```
 
 Luôn báo cáo cả giá trị p và kích thước hiệu ứng. giá trị p cho bạn biết nếu sự khác biệt là thực.
 
 ### Vấn đề so sánh nhiều lần
 
-Khi bạn kiểm tra nhiều giả thuyết, một số sẽ "có ý nghĩa" bởi tình cờ. Nếu bạn kiểm tra 20 điều ở alpha = 0.05, bạn mong đợi 1 dương tính sai ngay cả khi không có gì là thực.
+Khi bạn kiểm tra nhiều giả thuyết, một số sẽ "có ý nghĩa" bởi tình cờ.$\alpha = 0.05$, bạn mong đợi 1 dương tính sai ngay cả khi không có gì là thực.
 
 ```
 P(at least one false positive) = 1 - (1 - alpha)^m
@@ -320,7 +324,7 @@ P(false positive) = 1 - 0.95^20 = 0.64
 You have a 64% chance of at least one false positive.
 ```
 
-**Bonferroni correction:**chia alpha bằng số lượng xét nghiệm.
+**Bonferroni correction:**chia $\alpha$bằng số lượng thử nghiệm.
 
 ```
 Adjusted alpha = alpha / m = 0.05 / 20 = 0.0025
@@ -417,11 +421,11 @@ Kruskal-Wallis:     compares multiple groups (replaces ANOVA)
 - More statistical power (better at detecting real differences)
 ```
 
-Trong các thí nghiệm ML, bạn thường có n nhỏ (5 hoặc 10 lần xác nhận chéo), vì vậy các thử nghiệm không tham số như Wilcoxon-signed-rank thường phù hợp hơn các thử nghiệm t.
+Trong các thí nghiệm ML, bạn thường có những$n$(5 hoặc 10 lần xác nhận chéo), vì vậy các thử nghiệm không tham số như Wilcoxon chữ ký thường phù hợp hơn các thử nghiệm t.
 
 ### Lý thuyết giới hạn trung tâm: Implications Practical
 
-CLT nói rằng phân phối mẫu phương tiện gần với phân phối bình thường khi n tăng lên, bất kể phân phối dân số cơ bản.
+CLT nói rằng phân phối mẫu có thể tiếp cận với phân phối bình thường như$n$tăng trưởng, bất kể sự phân bố dân số cơ bản.
 
 ```
 If X_1, X_2, ..., X_n are iid with mean mu and variance sigma^2:
@@ -473,7 +477,7 @@ For highly skewed distributions, you might need n >= 100.
 
 9. **Assuming independence when data is not independent.**Hình ảnh y tế từ cùng một bệnh nhân, nhiều câu từ cùng một tài liệu.
 
-10. **P-hacking.**Thử thử các thử nghiệm khác nhau, các bộ phụ hoặc các tiêu chí loại trừ cho đến khi bạn có được p < 0,05. Kết quả là một tạo vật của tìm kiếm.
+10. **P-hacking.**Thử thử các xét nghiệm khác nhau, các bộ phụ hoặc các tiêu chí loại trừ cho đến khi bạn có được $p < 0.05$Kết quả là một đồ tạo vật của cuộc tìm kiếm.
 
 ## Xây dựng nó
 
@@ -484,7 +488,7 @@ Bạn sẽ thực hiện:
 3. **Hypothesis tests**(một mẫu thử nghiệm t, hai mẫu thử nghiệm t, thử nghiệm chi vuông)
 4. **Bootstrap confidence intervals**(cho bất kỳ thống kê nào, không cần phải giả định)
 5. **A/B test simulator**(tạo dữ liệu, kiểm tra, kiểm tra lỗi loại I và loại II)
-6. **Statistical vs practical significance demo**(khải thị rằng n lớn làm cho mọi thứ "có ý nghĩa")
+6. **Statistical vs practical significance demo**(khải thị lớn đó $n$làm cho mọi thứ "có ý nghĩa")
 
 Tất cả từ đầu, chỉ sử dụng `math`và `random`Không có người đùa, không có người đùa.
 
@@ -501,7 +505,7 @@ f3-bootstrap-resample
 | Standard deviation | Square root of variance. Measures spread in original units. |
 | Percentile | Value below which a given percentage of data falls. |
 | IQR | Interquartile range. Q3 minus Q1. The spread of the middle 50%. |
-| Pearson correlation | Measures linear association between two variables. Range [-1, 1]. |
+| Pearson correlation | Measures linear association between two variables. Range $[-1, 1]$. |
 | Spearman correlation | Measures monotonic association using ranks. |
 | Covariance matrix | Matrix of pairwise covariances between all features. |
 | Null hypothesis | Default assumption of no effect or no difference. |
