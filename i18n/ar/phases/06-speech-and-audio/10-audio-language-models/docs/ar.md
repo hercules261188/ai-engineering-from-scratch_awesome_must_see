@@ -129,17 +129,18 @@ class AudioProjector(nn.Module):
 
 ```python
 from datasets import load_dataset
-mmau = load_dataset("MMAU/MMAU-Pro")
+mmau = load_dataset("gamma-lab-umd/MMAU-Pro", split="test")
+mcq = mmau.filter(lambda item: len(item["choices"] or []) > 1)
 
 correct = 0
-for item in mmau["test"]:
-    answer = call_model(item["audio"], item["question"], item["choices"])
-    if answer == item["correct_choice"]:
+for item in mcq:
+    answer = call_model(item["audio_path"], item["question"], item["choices"])
+    if answer == item["answer"]:
         correct += 1
-print(f"Accuracy: {correct / len(mmau['test']):.3f}")
+print(f"Accuracy: {correct / len(mcq):.3f}")
 ```
 
-تقرير لكل فئة (الحديث / الصوت / الموسيقى / متعددة الصوت) بشكل منفصل. الأرقام الإجمالية تختبئ حيث يفشل النموذج.
+`audio_path`نقاط في إعادة التأمينات مجموعة البيانات `data.zip`(حوالي 47 جيجا غاي) ، لذا تحميل و فك الزيله قبل تسجيل النقاط. هذه الحلقة المتماثقة الدقيقة هي فحص الصواب، وليس مستحق النتيجة المرجعية، لذلك لا يمكن مقارنة عددها مع نتائج MMAU-Pro المنشورة. يطابق المقيّم الرسمي إجابات الاختيار المتعدد عن طريق إدراج التشابه (NV-Embed-v2) ، ويضع علامات على الإجابات المفتوحة مع قاضي ماجستير في القانون، ويتحقق من الإجابات التي تتبع التعليمات بقواعد regex: كتابة التنبؤات إلى`model_output`العمود والعمل`evaluate_mmau_pro_comprehensive.py`من[MMAU-Pro repo](https://github.com/sonalkum/MMAUPro). أبلغ كل واحد`category`(الحديث والصوت والموسيقى والمتعدد وغيره) بشكل منفصل. الأرقام الإجمالية تختبئ حيث يفشل النموذج.
 
 ## استخدمها
 
@@ -187,4 +188,4 @@ print(f"Accuracy: {correct / len(mmau['test']):.3f}")
 - [NVIDIA (2025). Audio Flamingo 3](https://arxiv.org/abs/2507.08128)القائد المفتوح للصوت الطويل
 - [NVIDIA (2026). Audio Flamingo Next](https://arxiv.org/abs/2604.10905) LongAudioBench SOTA
 - [Tang et al. (2023). SALMONN](https://arxiv.org/abs/2310.13289)الرائدين في تشفير المزدوج
-- [MMAU-Pro leaderboard](https://mmaubenchmark.github.io/) ترتيبات حية لعام 2026
+- [MMAU-Pro leaderboard](https://sonalkum.github.io/mmau-pro/) ترتيبات حية لعام 2026

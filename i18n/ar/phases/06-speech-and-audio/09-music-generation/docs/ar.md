@@ -169,4 +169,4 @@ music = musicgen.generate([description], duration=30)
 - [ACE-Step](https://github.com/ace-step/ACE-Step)-فتح مولد 4B كامل الأغاني، أبريل 2026.
 - [Suno v5 platform docs](https://suno.com) قائد الجودة التجارية
 - [AudioLDM2](https://arxiv.org/abs/2308.05734) انتشار غامض للموسيقى + تأثيرات الصوت.
-- [WMG-Suno settlement coverage](https://www.musicbusinessworldwide.com/suno-warner-music-settlement/) نوفمبر 2025 سابقة.
+- [WMG-Suno settlement coverage](https://www.musicbusinessworldwide.com/warner-music-group-settles-with-suno-strikes-first-of-its-kind-deal-with-ai-song-generator/) نوفمبر 2025 سابقة.

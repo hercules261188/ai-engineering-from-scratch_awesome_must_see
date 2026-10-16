@@ -23,7 +23,7 @@
 
 **Log-magnitude.**الحجم الخام يتراوح بين 5-6 ترتيبات من الحجم.`log(|X| + 1e-6)`أو`20 * log10(|X|)`كل خط إنتاج يستخدم حجم الحسابات، وليس حجم الخام
 
-**Mel scale.**التردد`f`في خرائط Hz إلى mel `m`من`m = 2595 * log10(1 + f / 700)`. الخريطة خطية تقريبًا تحت 1 كيلوهرتز وعلى نحو لوغاريتميكي أعلاه. 80 مل بين تغطي 08 كيلوهرتز هي مدخل ASR القياسي.
+**Mel scale.**التردد`f`في خرائط Hz إلى mel `m`من$m = 2595 \cdot \log_{10}(1 + f / 700)$. الخريطة خطية تقريبًا تحت 1 كيلوهرتز وعلى نحو لوغاريتميكي أعلاه. 80 مل بين تغطي 08 كيلوهرتز هي مدخل ASR القياسي.
 
 **Mel filterbank.**مجموعة من المرشحات الثلاثية المتراكمة بالتساوي على مقياس ميل. كل مرشح هو جمع وزن من حاويات FFT المجاورة. مضاعفة حجم STFT بالصفائح المصدر يمنح طيف ميل في ممل واحد.
 
@@ -170,5 +170,5 @@ def dct_ii(x, n_coeffs):
 - [Davis, Mermelstein (1980). Comparison of parametric representations for monosyllabic word recognition](https://ieeexplore.ieee.org/document/1163420)ورقة المجلس المالي
 - [Stevens, Volkmann, Newman (1937). A Scale for the Measurement of the Psychological Magnitude Pitch](https://pubs.aip.org/asa/jasa/article-abstract/8/3/185/735757/) مقياس الميل الأصلي
 - [OpenAI — Whisper source, log_mel_spectrogram](https://github.com/openai/whisper/blob/main/whisper/audio.py) قراءة تنفيذ المرجعية.
-- [librosa feature extraction docs](https://librosa.org/doc/main/feature.html) إشارة إلى `mfcc`،`melspectrogram`، و قفز / نافذة.
+- [librosa feature extraction docs](https://librosa.org/doc/latest/api/feature.html) إشارة إلى `mfcc`،`melspectrogram`، و قفز / نافذة.
 - [NVIDIA NeMo — audio preprocessing](https://docs.nvidia.com/deeplearning/nemo/user-guide/docs/en/main/asr/asr_all.html#featurizers)خط أنابيب على نطاق الإنتاج للطرازات Parakeet + Canary.

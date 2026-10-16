@@ -137,6 +137,6 @@ def dft(x):
 
 - [Shannon (1949). Communication in the Presence of Noise](https://people.math.harvard.edu/~ctm/home/text/others/shannon/entropy/entropy.pdf) الورقة وراء نظرية أخذ العينات.
 - [Smith — The Scientist and Engineer's Guide to Digital Signal Processing](https://www.dspguide.com/ch8.htm) كتاب دراسي DSP مجاني
-- [librosa docs — audio primer](https://librosa.org/doc/latest/tutorial.html) عملية المشي مع الرمز.
-- [Heinrich Kuttruff — Room Acoustics (6th ed.)](https://www.routledge.com/Room-Acoustics/Kuttruff/p/book/9781482260434) إشارة لماذا الصوت في العالم الحقيقي ليس سينوسيد نظيف.
+- [librosa docs — audio primer](https://librosa.org/doc/latest/auto_tutorials/index.html) عملية المشي مع الرمز.
+- [Heinrich Kuttruff — Room Acoustics (6th ed.)](https://www.taylorfrancis.com/books/mono/10.1201/9781315372150/room-acoustics-heinrich-kuttruff) إشارة لماذا الصوت في العالم الحقيقي ليس سينوسيد نظيف.
 - [Steve Eddins — FFT Interpretation notebook](https://blogs.mathworks.com/steve/2020/03/30/fft-spectrum-and-spectral-densities/)إنطباع القمامة الترددية تمت تصفيته في غضون 10 دقائق

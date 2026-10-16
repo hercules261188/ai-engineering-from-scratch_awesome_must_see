@@ -119,7 +119,7 @@ class AudioCNN(nn.Module):
 
 3M المعلمات. القطارات في ~ 10 دقيقة على ESC-50 مع RTX 4090 واحد. 80٪ + دقة.
 
-### الخطوة 5: الـ 2026 الاختيارات الاختيارية
+### الخطوة 5: ضبط محول الصوت المُدرب مسبقًا (مظهر AST)
 
 ```python
 from transformers import ASTFeatureExtractor, ASTForAudioClassification
@@ -135,7 +135,7 @@ inputs = ext(audio, sampling_rate=16000, return_tensors="pt")
 logits = model(**inputs).logits
 ```
 
-لـ " BEAT " استخدم`microsoft/BEATs-base`عبر `beats`المكتبة، و API المحولات نفس الشكل.
+مثال تحديد المفاتيح AST من المركبة. BEATs، افتراضي 2026، ليس على مركبة Hugging Face: تنزيل نقطة تفتيش من المركبة [BEATs release in microsoft/unilm](https://github.com/microsoft/unilm/tree/master/beats)و تحمله مع ذلك الاحتفاظ`BEATs`و`BEATsConfig`فصول، حلقة التنسيق الدقيق تبقى نفس الشكل.
 
 ## استخدمها
 
