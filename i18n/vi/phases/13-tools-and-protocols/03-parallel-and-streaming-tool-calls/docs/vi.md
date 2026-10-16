@@ -158,7 +158,7 @@ Bài học này sẽ mang lại kết quả `outputs/skill-parallel-call-safety-
 ## Đọc thêm
 
 - [OpenAI — Parallel function calling](https://platform.openai.com/docs/guides/function-calling#parallel-function-calling) Hành vi mặc định và cờ không chọn
-- [Anthropic — Tool use: implementing tool use](https://docs.anthropic.com/en/docs/agents-and-tools/tool-use/implementing-tool-use) `disable_parallel_tool_use`và kết quả đợt
+- [Anthropic — Parallel tool use](https://platform.claude.com/docs/en/agents-and-tools/tool-use/parallel-tool-use) `disable_parallel_tool_use`và kết quả đợt
 - [Google — Gemini function calling parallel section](https://ai.google.dev/gemini-api/docs/function-calling) Các cuộc gọi song song liên quan đến ID từ Gemini 3
 - [OpenAI — Streaming responses with tools](https://platform.openai.com/docs/api-reference/responses-streaming) Phục bộ lập luận lại cho các dòng OpenAI
 - [Anthropic — Streaming messages](https://docs.anthropic.com/en/api/messages-streaming) `content_block_delta`với `input_json_delta`
