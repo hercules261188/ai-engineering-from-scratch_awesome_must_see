@@ -163,5 +163,5 @@ Liste de contrôle des demandes de coordination:
 
 - [Li et al. — Theory of Mind for Multi-Agent Collaboration via Large Language Models](https://arxiv.org/abs/2310.10701) la gestion des risques émergente dans les jeux de coopération; modes de défaillance à long horizon
 - [Riedl — Emergent Coordination in Multi-Agent Language Models](https://arxiv.org/abs/2510.05174) Mesure à l'échelle de la population; la pression à la charge est la condition de support
-- [Premack & Woodruff — Does the chimpanzee have a theory of mind?](https://www.cambridge.org/core/journals/behavioral-and-brain-sciences/article/does-the-chimpanzee-have-a-theory-of-mind/1E96B02CD9850E69AF20F81FA7EB3595) l'origine de la notion de TOM en 1978
+- [Premack & Woodruff — Does the chimpanzee have a theory of mind?](https://doi.org/10.1017/S0140525X00076512) l'origine de la notion de TOM en 1978
 - [Baron-Cohen, Leslie, Frith — Does the autistic child have a theory of mind?](https://doi.org/10.1016/0010-0277(85)90022-8)  le document Sally-Anne (1985)

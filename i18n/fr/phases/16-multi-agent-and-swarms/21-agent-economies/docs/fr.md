@@ -61,8 +61,8 @@ Pourquoi cela importe pour les systèmes de LLM: vous pouvez externaliser les t�
 
 Un score de réputation lié à la DID s'accumule à partir de contributions confirmées.
 
-```
-rep(i, t+1) = alpha * rep(i, t) + (1 - alpha) * contribution_quality(i, t)
+```math
+\text{rep}(i, t+1) = \alpha \cdot \text{rep}(i, t) + (1 - \alpha) \cdot \text{contribution\_quality}(i, t)
 ```
 
 Avec un facteur de décomposition `alpha`Près de 1. réputation:

@@ -148,7 +148,7 @@ Avant l'expédition de tout mécanisme de consensus:
 
 ## Pour en savoir plus
 
-- [Castro & Liskov — Practical Byzantine Fault Tolerance (OSDI 1999)](https://pmg.csail.mit.edu/papers/osdi99.pdf) la fondation
+- [Castro & Liskov — Practical Byzantine Fault Tolerance (OSDI 1999)](https://www.usenix.org/conference/osdi-99/practical-byzantine-fault-tolerance) la fondation
 - [CP-WBFT — Confidence-Probe Weighted BFT](https://arxiv.org/abs/2511.10400) pondération des voix par confiance
 - [DecentLLMs — leaderless multi-agent consensus](https://arxiv.org/abs/2507.14928) Aggrégation géométrique-médiane
 - [WBFT — Weighted BFT with Hierarchical Structure Clustering](https://arxiv.org/abs/2505.05103) Split de base/extrémité pour une latence limitée

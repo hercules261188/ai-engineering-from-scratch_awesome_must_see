@@ -44,8 +44,8 @@ Mode d'échec: les critiques se développent avec N agents (l'entrée comprend t
 
 La récompense globale est la somme d'une fonction monotone des valeurs Q par agent:
 
-```
-Q_tot(tau, a) = f(Q_1(tau_1, a_1), ..., Q_n(tau_n, a_n)),   df/dQ_i >= 0
+```math
+Q_{\text{tot}}(\tau, a) = f\big(Q_1(\tau_1, a_1), \ldots, Q_n(\tau_n, a_n)\big), \quad \frac{\partial f}{\partial Q_i} \ge 0
 ```
 
 La monotonie garantit `argmax_a Q_tot`peut être calculé par chaque agent choisissant `argmax_{a_i} Q_i`- Je ne suis pas d'accord.**exactly the decentralized execution property**En cours de formation, un réseau de mélange produit`Q_tot`du Qs par agent.
