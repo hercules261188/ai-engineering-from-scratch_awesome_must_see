@@ -53,8 +53,8 @@ où `(p - q)+`La différence de point est la partie positive de la différence d
 
 Si le taux d'acceptation au niveau des jetons du modèle de projet est `α`, les jetons attendus produits par passe cible sont:
 
-```
-E[tokens] = (1 - α^{K+1}) / (1 - α)        # K = draft length, α in [0, 1]
+```math
+\mathbb{E}[\text{tokens}] = \frac{1 - \alpha^{K+1}}{1 - \alpha} \qquad K = \text{draft length}, \ \alpha \in [0, 1]
 ```
 
 À `α = 0.8, K = 4`Le numéro de la liste:`(1 - 0.8^5)/(1 - 0.8) = 3.36`Les prix de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de`cost_q * K + cost_p`(K étapes de projet plus une vérification de l' objectif).`cost_p >> cost_q * K`le ratio d'accélération est `3.36× / 1 = 3.36×`sur le débit.
@@ -162,9 +162,9 @@ def speculative_step(p_target, q_draft, K, temperature=1.0):
 
 ## Utilisez-le
 
-- **vLLM**et **SGLang**Décodage spéculatif de premier ordre.`--speculative_model`- Je suis là .`--num_speculative_tokens`. l'appui à l'Eagle-2/3 via le `--spec_decoding_algorithm eagle`Le drapeau.
+- **vLLM**et **SGLang**Le code de déchiffrement de la première classe du navire.`--speculative-config`un objet JSON avec `method`- Je suis là .`model`, et `num_speculative_tokens`; l' Eagle-3 est `"method": "eagle3"`- Je suis désolé .
 - **NVIDIA TensorRT-LLM**soutient les arbres de Medusa et Eagle de manière indigène.
-- **Reference draft models**Le numéro de la liste:`Qwen/Qwen3-0.6B-spec`(projets de Qwen3-32B), `meta-llama/Llama-3.2-1B-Instruct-spec`(projets de 70B).
+- **Reference draft models**Le numéro de la liste:`Qwen/Qwen3-0.6B`(projets de Qwen3-32B), `meta-llama/Llama-3.2-1B-Instruct`(projet de Llama 3.x 70B).
 - **Medusa heads**(Cai et coll. 2024, "Medusa: Simple LLM Inference Acceleration Framework with Multiple Decoding Heads"): au lieu d'un modèle de projet, ajoutez des têtes de prédiction parallèles K à la cible elle-même.
 
 ## La faire partir
@@ -175,7 +175,7 @@ Cette leçon produit `outputs/skill-speculative-tuning.md` une compétence qui d
 
 1. Appliquez la règle exacte de rejet et vérifiez-la empiriquement.`speculative_decode`et par l'échantillonnage cible simple; calculer la distance TV entre les deux distributions de sortie.
 
-2. Compute la formule de l'accélération.`α`et `K`, tracez les jetons attendus par cible-avant. Trouvez le K optimal pour α ∈ {0,5, 0,7, 0,9}.
+2. Compute la formule de l'accélération.`α`et `K`, tracez les jetons attendus par cible-avant.$K$pour $\alpha \in \lbrace 0.5, 0.7, 0.9 \rbrace$- Je suis désolé .
 
 3. Prenez une cible de 124 M et distillez une cible de 30 M sur 100 M.`α`Les résultats de l'enquête ont été obtenus en fonction des résultats obtenus.
 

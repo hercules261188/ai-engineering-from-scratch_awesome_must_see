@@ -36,8 +36,8 @@ La pile `N`de ces appels de retour en retour en utilisant un vérificateur de tr
 
 Je vous laisse .`α`Le taux d'acceptation attendu par jeton émis.`c = cost(draft) / cost(verifier)`Le nombre attendu de jetons acceptés par vérificateur à terme est:
 
-```
-E[accepted] = (1 - α^(N+1)) / (1 - α)
+```math
+\mathbb{E}[\text{accepted}] = \frac{1 - \alpha^{N+1}}{1 - \alpha}
 ```
 
 Le temps total de paroi attendu par jeton accepté est `(N * c + 1) / E[accepted]`- Réduire au minimum .`N`et vous obtenez le bon point.`α = 0.8, c = 0.05`: optimale `N`est d'environ 57, la vitesse est de 3,2x. Pour `α = 0.95, c = 0.02`: optimale `N`est d'environ 8×10, l'accélération pousse 5x.

@@ -141,13 +141,13 @@ graph LR
     style V fill:#1a1a2e,stroke:#0f3460,color:#fff
 ```
 
-La division par sqrt(d_k) -- sqrt(64) = 8 -- est en train de s'élargir. Sans elle, les produits de point deviennent plus grands pour les vecteurs haute dimension, poussant le softmax dans des régions où les gradients sont presque zéro. C'était l'une des idées clés dans le papier original "Attention is All You Need".
+La division par $\sqrt{d_k}$- Je suis là .$\sqrt{64} = 8$- est en train d'évoluer. Sans elle, les produits de point grandissent pour les vecteurs haute dimension, poussant le softmax dans des régions où les gradients sont presque zéro. C'était l'une des idées clés dans le papier original "Attention est tout ce dont vous avez besoin".
 
 ### KV Cache: Pourquoi l'inférence est rapide
 
-Pendant la formation, vous traitez toute la séquence à la fois. Pendant l'inférence, vous générez un jeton à la fois. Sans optimisation, générer un jeton N nécessite de recomputer l'attention pour tous les jetons précédents N-1.
+Pendant l'entraînement, vous traitez toute la séquence en même temps. Pendant l'inférence, vous générez un jeton à la fois.$N$Il faut revoir l' attention de tous .$N-1$Les jetons précédents.$O(N^2)$par jeton généré, ou $O(N^3)$Total pour une séquence de longueur $N$- Je suis désolé .
 
-KV Cache résout ça. Après avoir calculé K et V pour chaque jeton, stockez-les. Lorsque vous générez des jetons N + 1, vous devez seulement calculer Q pour le nouveau jeton et rechercher les K et V en cache de tous les jetons précédents. Cela réduit le coût par jeton de O(N) à O(1) pour le calcul K et V. Le calcul du score d'attention est toujours O(N) parce que vous prenez toutes les positions précédentes, mais vous évitez les multiplications de matrice redondantes sur l'entrée.
+KV Cache résolve ceci. Après avoir calculé K et V pour chaque jeton, stocker.$N+1$, vous avez juste besoin de calculer Q pour le nouveau jeton et de chercher le caché K et V de tous les jetons précédents. Cela réduit le coût par jeton de $O(N)$à $O(1)$Pour le calcul de K et V, le calcul du score d'attention est toujours $O(N)$Parce que vous prenez toutes les positions précédentes, mais vous évitez les multiplications de matrice redondantes sur l'entrée.
 
 Pour GPT-2 avec 12 couches et 12 têtes, le cache KV stocke 2 (K + V) x 12 couches x 12 têtes x 64 dims = 18 432 valeurs par jeton. Pour une séquence de 1024 jetons, c'est environ 75 MB en FP32. Pour Llama 3 405B avec 128 couches, le cache KV pour une seule séquence peut dépasser 10 GB. C'est pourquoi l'inférence de long contexte est liée à la mémoire.
 
@@ -211,7 +211,7 @@ Le programme de taux d'apprentissage compte plus que ce à quoi vous vous attend
 |-----------|-------|------------|
 | Token embeddings | (50257, 768) | 38,597,376 |
 | Position embeddings | (1024, 768) | 786,432 |
-| Per-block attention (W_q, W_k, W_v, W_out) | 4 x (768, 768) | 2,359,296 |
+| Per-block attention ($W_q, W_k, W_v, W_{\text{out}}$) | 4 x (768, 768) | 2,359,296 |
 | Per-block FFN (up + down) | (768, 3072) + (3072, 768) | 4,718,592 |
 | Per-block LayerNorms (2x) | 2 x 768 x 2 | 3,072 |
 | Final LayerNorm | 768 x 2 | 1,536 |
@@ -258,7 +258,7 @@ def attention(Q, K, V, mask=None):
     return weights @ V
 ```
 
-La mise en œuvre de softmax soustrait le maximum avant d'exponentier. Sans cela, exp(large_number) dépasse à l'infini. Il s'agit d'un truc de stabilité numérique qui ne change pas la sortie car softmax(x - c) = softmax(x) pour n'importe quelle constante c.
+La mise en œuvre de softmax soustrait le maximum avant d'exponentier. Sans cela, exp(large_number) dépasse à l'infini.$\mathop{\mathrm{softmax}}(x - c) = \mathop{\mathrm{softmax}}(x)$pour une constante $c$- Je suis désolé .
 
 ### Étape 3: Attention à plusieurs têtes
 
@@ -504,7 +504,7 @@ Cette leçon produit `outputs/prompt-gpt-architecture-analyzer.md`-- une requêt
 
 1. Modifiez le modèle pour utiliser 24 couches et 16 têtes au lieu de 12/12.
 
-2. Implémenter la fonction d'activation GELU (GELU(x) = x * 0.5 * (1 + erf(x / sqrt(2)))) et remplacer la ReLU dans le réseau de flux.
+2. Implémenter la fonction d' activation de GELU $(\mathop{\mathrm{GELU}}(x) = x \cdot 0.5 \cdot (1 + \mathop{\mathrm{erf}}(x / \sqrt{2})))$et remplacer la ReLU dans le réseau de retour.
 
 3. Ajoutez un cache KV à la fonction de génération. Conservez les tensors K et V pour chaque couche après le premier passage vers l'avant, et réutilisez-les pour les jetons ultérieurs. Mesurez la vitesse: générez 200 jetons avec et sans le cache et comparez le temps de l'horloge murale.
 
@@ -525,7 +525,7 @@ Cette leçon produit `outputs/prompt-gpt-architecture-analyzer.md`-- une requêt
 | Weight tying | "Sharing embeddings" | Using the same matrix for input token embeddings and the output projection head -- saves 38M params in GPT-2 |
 | Residual connection | "Skip connection" | Adding the input directly to the output of a sublayer (x + sublayer(x)) -- enables gradient flow in deep networks |
 | Layer normalization | "Normalizing activations" | Normalizing across the feature dimension to mean 0 and variance 1, with learnable scale and bias parameters |
-| Cross-entropy loss | "How wrong the predictions are" | -log(probability assigned to the correct next token), averaged over all positions -- the standard LLM training objective |
+| Cross-entropy loss | "How wrong the predictions are" | $-\log(\text{probability assigned to the correct next token})$, averaged over all positions -- the standard LLM training objective |
 
 ## Pour en savoir plus
 

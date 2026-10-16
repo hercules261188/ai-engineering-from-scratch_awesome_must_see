@@ -80,8 +80,8 @@ Les données de formation sont des paires de préférences humaines. Pour chaque
 
 La fonction de perte utilise le modèle Bradley-Terry des préférences par paires:
 
-```
-loss = -log(sigmoid(reward(preferred) - reward(rejected)))
+```math
+\text{loss} = -\log\big(\mathop{\mathrm{sigmoid}}(\text{reward}(\text{preferred}) - \text{reward}(\text{rejected}))\big)
 ```
 
 C'est l'équation clé.`sigmoid(reward(A) - reward(B))`donne la probabilité que la réponse A soit préférée à la réponse B. La perte pousse le modèle de récompense à attribuer un score plus élevé à la réponse préférée.
@@ -96,8 +96,8 @@ Le PPO est un algorithme d'apprentissage de renforcement. Dans RLHF, l'"environn
 
 L'objectif est:
 
-```
-maximize: E[R(prompt, response)] - beta * KL(policy || reference)
+```math
+\text{maximize:} \quad \mathbb{E}[R(\text{prompt}, \text{response})] - \beta \cdot \mathrm{KL}(\text{policy} \,\|\, \text{reference})
 ```
 
 Le premier terme pousse le modèle à générer des réponses à forte rémunération.
@@ -110,7 +110,7 @@ Pourquoi la pénalité KL? Sans elle, le modèle trouve des solutions dégénér
 
 La pénalité KL dit: vous pouvez améliorer, mais vous ne pouvez pas devenir un modèle complètement différent. Restez près de la version SFT, qui était déjà raisonnable.
 
-**InstructGPT numbers:**L'entraînement en PPO a utilisé lr=1.5e-5, coefficient KL beta=0.02, 256K épisodes (pares de réponse rapide) et 4 époques de PPO par lot.
+**InstructGPT numbers:**Formation en PPO utilisée lr=1,5e-5, coefficient KL $\beta=0.02$Le projet de RLHF a duré plusieurs jours sur un groupe de GPU.
 
 ```mermaid
 graph LR
@@ -133,12 +133,14 @@ graph LR
 
 ### L'objectif de l'APP en détail
 
-Le PPO utilise un "objectif de substitution coupé" pour éviter des mises à jour excessivement importantes.
+Le PPO utilise un "objectif de substitution réduit" pour éviter des mises à jour excessivement importantes.$[1 - \epsilon, 1 + \epsilon]$Où ?$\epsilon$est généralement de 0,2
 
-```
-ratio = pi_new(action | state) / pi_old(action | state)
-clipped_ratio = clip(ratio, 1 - epsilon, 1 + epsilon)
-loss = -min(ratio * advantage, clipped_ratio * advantage)
+```math
+\begin{aligned}
+\text{ratio} &= \pi_{\text{new}}(\text{action} \mid \text{state}) / \pi_{\text{old}}(\text{action} \mid \text{state}) \\
+\text{clipped\_ratio} &= \mathop{\mathrm{clip}}(\text{ratio}, 1 - \epsilon, 1 + \epsilon) \\
+\text{loss} &= -\min(\text{ratio} \cdot \text{advantage}, \text{clipped\_ratio} \cdot \text{advantage})
+\end{aligned}
 ```
 
 La fonction avantage évalue la meilleure réponse actuelle par rapport à la qualité attendue.
@@ -606,9 +608,9 @@ Cette leçon produit `outputs/prompt-reward-model-designer.md`- une commande pou
 
 3. Simuler le piratage de la récompense. Créer un modèle de récompense qui donne des scores élevés aux réponses longues (récompense = len(réponse) / 100). Exécuter PPO avec ce modèle de récompense défectueux et observer le modèle de politique générant des sorties de plus en plus longues et répétitives. Puis ajouter une pénalité KL de 0,1 et montrer qu'il empêche le comportement dégénéré.
 
-4. Mettre en œuvre une récompense multi-objectif. Exercer deux modèles de récompense - un pour l'utilité et un pour la concision. Combiner comme R = 0,7 * R_helpful + 0,3 * R_concise. Montrez que l'objectif combiné produit des réponses qui sont à la fois utiles et concises, évitant le piège verbosité d'une seule récompense d'utilité.
+4. Implémenter une récompense multi-objectif. Trainer deux modèles de récompense - un pour l'utilité et un pour la concision.$R = 0.7 \cdot R_{\text{helpful}} + 0.3 \cdot R_{\text{concise}}$. Montrez que l'objectif combiné produit des réponses à la fois utiles et concises, en évitant le piège de la verbosité d'une seule récompense d'utilité.
 
-5. Comparez différents coefficients KL. Exécutez PPO avec beta=0.001 (trop bas, hacking de récompense), beta=0.02 (standard) et beta=0.5 (trop élevé, pas d'apprentissage).
+5. Comparez les différents coefficients KL.$\beta=0.001$(trop bas, le piratage de la récompense), $\beta=0.02$(norme), et $\beta=0.5$Tracer la courbe de récompense et la courbe KL pour chacun.$\beta=0.02$La course devrait montrer une amélioration constante de la récompense avec KL limitée.
 
 ## Les termes clés
 
@@ -616,10 +618,10 @@ Cette leçon produit `outputs/prompt-reward-model-designer.md`- une commande pou
 |------|----------------|----------------------|
 | RLHF | "Training with human feedback" | Reinforcement Learning from Human Feedback: a three-stage pipeline (SFT, reward model, PPO) that optimizes language model outputs using human preference signals |
 | Reward model | "A model that scores responses" | A transformer with a scalar output head, trained on pairwise human preferences using the Bradley-Terry loss |
-| Bradley-Terry | "The comparison model" | A probabilistic model where P(A > B) = sigmoid(score(A) - score(B)), converting pairwise preferences into a consistent scoring function |
+| Bradley-Terry | "The comparison model" | A probabilistic model where $P(A > B) = \mathop{\mathrm{sigmoid}}(\text{score}(A) - \text{score}(B))$, converting pairwise preferences into a consistent scoring function |
 | PPO | "The RL algorithm" | Proximal Policy Optimization: updates the policy to maximize reward while clipping the update magnitude to prevent instability |
 | KL divergence | "How different two distributions are" | A measure of the difference between the policy model's token distribution and the reference model's -- used as a penalty to prevent reward hacking |
-| KL penalty | "The leash on the model" | Beta * KL(policy \|\| reference) subtracted from the reward signal -- prevents the policy from diverging too far from the SFT checkpoint |
+| KL penalty | "The leash on the model" | $\beta \cdot \mathrm{KL}(\text{policy} \Vert \text{reference})$ subtracted from the reward signal -- prevents the policy from diverging too far from the SFT checkpoint |
 | Reward hacking | "Gaming the reward" | When the policy finds degenerate high-reward outputs by exploiting weaknesses in the reward model instead of genuinely improving |
 | Preference pair | "Which is better, A or B?" | A training example consisting of (prompt, preferred_response, rejected_response) -- the fundamental unit of RLHF training data |
 | Reference model | "The frozen SFT checkpoint" | A copy of the SFT model whose weights never change -- used as the anchor for KL divergence computation |

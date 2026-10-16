@@ -30,12 +30,14 @@ Cette leçon lit les trois articles et produit le modèle mental pour "choisir l
 
 Un modèle spatial d' état traite une séquence `x_1, ..., x_N`par un état de taille fixe `h`- Le numéro de la liste:
 
-```
-h_t = A h_{t-1} + B x_t
-y_t = C h_t
+```math
+\begin{aligned}
+h_t &= A h_{t-1} + B x_t \\
+y_t &= C h_t
+\end{aligned}
 ```
 
-À chaque étape , l' état évolue par une dynamique linéaire .`A`, prend des informations `B x_t`, et émet des sorties `C h_t`- Je suis là .`A, B, C`Il est important de noter la propriété critique:`y_t`seulement besoin `h_{t-1}`et `x_t`Pas plus tôt .`x`La mémoire est constante, l'inférence est O (1) par jeton.
+À chaque étape , l' état évolue par une dynamique linéaire .`A`, prend des informations `B x_t`, et émet des sorties `C h_t`- Je suis là .`A, B, C`Il est important de noter la propriété critique:`y_t`seulement besoin `h_{t-1}`et `x_t`Pas plus tôt .`x`La mémoire est constante, l'inférence est constante.$O(1)$par jeton.
 
 Le truc de la qualité de la modélisation est la structure de`A`. S4 (Gu 2021) a utilisé une matrice très structurée qui pouvait être évaluée efficacement en tant que longue convolutions pendant la formation.`A, B, C`Mamba-2 (2024) a encore simplifié la structure. Mamba-3 (2026) ajoute de nouveau la complexité dans des lieux spécifiques.
 

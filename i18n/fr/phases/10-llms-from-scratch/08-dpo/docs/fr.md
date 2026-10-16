@@ -32,51 +32,53 @@ Le DPO réduit le RLHF à une seule étape d'apprentissage supervisée. Un modè
 
 RLHF optimise cet objectif:
 
-```
-maximize: E[R(x, y)] - beta * KL(pi || pi_ref)
-```
-
-où R est le modèle de récompense, pi est la politique, pi_ref est le modèle de référence et beta est le coefficient KL.
-
-Le document du DPO a montré que cet objectif a une solution optimale en forme fermée.
-
-```
-pi*(y | x) = pi_ref(y | x) * exp(R(x, y) / beta) / Z(x)
+```math
+\text{maximize:} \quad \mathbb{E}[R(x, y)] - \beta \cdot \mathrm{KL}(\pi \,\|\, \pi_{\text{ref}})
 ```
 
-où Z(x) est une constante de normalisation.
+où $R$est le modèle de récompense, $\pi$est la politique, $\pi_{\text{ref}}$est le modèle de référence, et $\beta$est le coefficient KL.
 
+Le document du DPO a montré que cet objectif a une solution optimale en forme fermée.$R$, la politique optimale est:
+
+```math
+\pi^*(y \mid x) = \pi_{\text{ref}}(y \mid x) \cdot \exp(R(x, y) / \beta) / Z(x)
 ```
-R(x, y) = beta * log(pi*(y | x) / pi_ref(y | x)) + beta * log Z(x)
+
+où $Z(x)$est une constante de normalisation.
+
+```math
+R(x, y) = \beta \log \frac{\pi^*(y \mid x)}{\pi_{\text{ref}}(y \mid x)} + \beta \log Z(x)
 ```
 
 C'est la percée. La récompense est entièrement exprimée en termes de probabilités du modèle de politique et de probabilités du modèle de référence. Vous n'avez pas besoin de former un modèle de récompense séparé. La récompense est * implicite * dans le rapport de probabilité.
 
 Pour remplacer ce modèle de préférence Bradley-Terry:
 
-```
-P(y_w > y_l | x) = sigmoid(R(x, y_w) - R(x, y_l))
-                  = sigmoid(beta * (log pi(y_w|x)/pi_ref(y_w|x) - log pi(y_l|x)/pi_ref(y_l|x)))
+```math
+\begin{aligned}
+P(y_w > y_l \mid x) &= \mathop{\mathrm{sigmoid}}(R(x, y_w) - R(x, y_l)) \\
+&= \mathop{\mathrm{sigmoid}}\left(\beta \left(\log \frac{\pi(y_w \mid x)}{\pi_{\text{ref}}(y_w \mid x)} - \log \frac{\pi(y_l \mid x)}{\pi_{\text{ref}}(y_l \mid x)}\right)\right)
+\end{aligned}
 ```
 
-Les termes Z(x) sont annulés parce que les deux réponses sont conditionnées sur le même prompt x. Ce qui reste est une fonction des seules probabilités de logs du modèle de politique et des probabilités de logs du modèle de référence sur les réponses préférées et rejetées.
+Le $Z(x)$les termes annulent parce que les deux réponses condition sur la même demande $x$Ce qui reste est une fonction des seules probabilités de log du modèle politique et des probabilités de log du modèle de référence sur les réponses préférées et rejetées.
 
 ### La perte du DPO
 
-```
-L_DPO = -log(sigmoid(beta * (log pi(y_w|x)/pi_ref(y_w|x) - log pi(y_l|x)/pi_ref(y_l|x))))
+```math
+L_{\text{DPO}} = -\log \mathop{\mathrm{sigmoid}}\left(\beta \left(\log \frac{\pi(y_w \mid x)}{\pi_{\text{ref}}(y_w \mid x)} - \log \frac{\pi(y_l \mid x)}{\pi_{\text{ref}}(y_l \mid x)}\right)\right)
 ```
 
 Déballer chaque pièce:
 
-- **y_w**= réponse préférée (gagnant)
-- **y_l**= réponse rejetée (perdue)
-- **x**= rapidement
-- **pi**= modèle actuel (être formé)
-- **pi_ref**= modèle de référence (point de contrôle de la FFT gelé)
-- **beta**= paramètre de température contrôlant l'écart de référence (généralement de 0,1 à 0,5)
+- **$y_w$**= réponse préférée (gagnant)
+- **$y_l$**= réponse rejetée (perdue)
+- **$x$**= rapidement
+- **$\pi$**= modèle actuel (être formé)
+- **$\pi_{\text{ref}}$**= modèle de référence (point de contrôle de la FFT gelé)
+- **$\beta$**= paramètre de température contrôlant l'écart de référence (généralement de 0,1 à 0,5)
 
-Le ratio `log pi(y|x) / pi_ref(y|x)`Le modèle actuel attribue une probabilité plus élevée à la réponse y que la référence.
+Le ratio `log pi(y|x) / pi_ref(y|x)`Le modèle actuel attribue une plus grande probabilité à la réponse $y$Si le modèle actuel est négatif, il attribue une probabilité plus faible.
 
 La perte de DPO pousse le modèle à augmenter le rapport de probabilité de log pour les réponses préférées et à le diminuer pour les réponses rejetées. Le paramètre bêta contrôle la façon dont le modèle peut dévier de la référence - petite bêta signifie que de grandes déviations sont autorisées, grande bêta garde le modèle proche de la référence.
 
@@ -641,7 +643,7 @@ Cette leçon produit `outputs/prompt-alignment-method-selector.md`- une demande 
 | DPO | "RLHF without RL" | Direct Preference Optimization: a supervised learning algorithm that optimizes the language model directly on preference pairs, bypassing the reward model and PPO |
 | Implicit reward | "The reward is in the model" | The reward function is determined by the log-probability ratio between the policy and reference models -- no separate reward model needed |
 | Beta (DPO) | "The temperature" | Controls how far the policy can deviate from the reference model -- small beta allows large deviations, large beta keeps the model close |
-| Log-probability ratio | "How much the model changed" | log pi(y\|x) - log pi_ref(y\|x) -- positive means the current model assigns higher probability than the reference |
+| Log-probability ratio | "How much the model changed" | $\log \pi(y \mid x) - \log \pi_{\text{ref}}(y \mid x)$ -- positive means the current model assigns higher probability than the reference |
 | Reference model | "The frozen checkpoint" | A copy of the SFT model whose weights never change -- serves as the anchor for computing probability ratios |
 | KTO | "DPO without pairs" | Kahneman-Tversky Optimization: works with unpaired "good" or "bad" labels instead of requiring preference pairs |
 | ORPO | "One-step alignment" | Odds Ratio Preference Optimization: combines SFT and alignment into a single training loop by adding a preference term to the SFT loss |

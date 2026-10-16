@@ -39,27 +39,29 @@ Module `k`est composé de:
 
 En formation, pour un préfixe par position `i`, l' état caché par profondeur est:
 
-```
-h_i^(0) = main model backbone at position i
-h_i^(k) = T_k( M_k * concat(RMSNorm(h_i^(k-1)), RMSNorm(E(t_{i+k}))) )   for k >= 1
+```math
+\begin{aligned}
+h_i^{(0)} &= \text{main model backbone at position } i \\
+h_i^{(k)} &= T_k\Big( M_k \cdot \mathop{\mathrm{concat}}\big(\mathop{\mathrm{RMSNorm}}(h_i^{(k-1)}), \mathop{\mathrm{RMSNorm}}(E(t_{i+k}))\big) \Big) \quad \text{for } k \ge 1
+\end{aligned}
 ```
 
 La prédiction par profondeur est:
 
-```
-logits_{i+k} = Out(h_i^(k-1))   for k = 1..D
+```math
+\text{logits}_{i+k} = \mathop{\mathrm{Out}}(h_i^{(k-1)}) \quad \text{for } k = 1, \ldots, D
 ```
 
 La perte de profondeur est une entropie croisée contre la vérité fondamentale .`t_{i+k}`- Le numéro de la liste:
 
-```
-L_k = CE(logits_{i+k}, t_{i+k})
+```math
+L_k = \mathop{\mathrm{CE}}(\text{logits}_{i+k}, t_{i+k})
 ```
 
 La perte articulaire à travers les profondeurs:
 
-```
-L_MTP = (lambda / D) * sum_{k=1..D} L_k
+```math
+L_{\text{MTP}} = \frac{\lambda}{D} \sum_{k=1}^{D} L_k
 ```
 
 `lambda`Le coefficient de pondération est faible  DeepSeek-V3 utilise 0,3 pour les 10% de formation et 0,1 après.`L_main + L_MTP`- Je suis désolé .
@@ -174,7 +176,7 @@ Cette leçon produit `outputs/skill-mtp-planner.md`. Compte tenu d'une spécific
 
 2. Comparer le coût de chargement des paramètres pour un modèle dense 70B (casqué 8192, 80 couches) avec un module MTP D = 1. Comparer avec le coût de chargement 14B rapporté par DeepSeek-V3. Expliquez pourquoi le nombre de DeepSeek est plus élevé: le bloc de transformateur MTP hérite de la même structure MoE, gonflant le nombre de paramètres par module.
 
-3. Implémentation D=2 dans le jouet: ajouter un deuxième module MTP qui prend h^(1) et prédit `t_{i+2}`Vérifiez que la perte commune et la comptabilité des paramètres correspondent aux équations 19 à 21 du document DeepSeek.
+3. Implémentation D=2 dans le jouet: ajouter un deuxième module MTP qui prend $h^{(1)}$et prédit .`t_{i+2}`Vérifiez que la perte commune et la comptabilité des paramètres correspondent aux équations 19 à 21 du document DeepSeek.
 
 4. Transférez le jouet en MTP parallèle (style Gloeckle): ajoutez des têtes de sortie D au-dessus de l'état caché principal, chacune prédisant un décalage différent. Mesurez comment les pertes par profondeur se comparent à la version séquentielle sur le même signal synthétique. La version séquentielle devrait produire une perte de profondeur de plus faible pour k > 1 car elle conditionne les prédictions intermédiaires.
 
@@ -190,8 +192,8 @@ Cette leçon produit `outputs/skill-mtp-planner.md`. Compte tenu d'une spécific
 | Sequential MTP | "DeepSeek-V3 style" | Each module conditions on the previous depth's hidden state plus the next token's embedding; preserves causal chain |
 | Shared output head | "Reuse the main head" | The MTP modules call the main model's LM head, not a separate output projection |
 | Shared embedding | "Reuse the main table" | Same vocabulary embedding table is used everywhere; no duplicate parameters |
-| Projection matrix M_k | "Combine hidden + next-token" | An `h x 2h` linear layer that folds the previous hidden state and the target-token embedding into the next depth's input |
-| Joint loss L_MTP | "Averaged extra losses" | Arithmetic mean of per-depth cross-entropy losses, scaled by `lambda` |
+| Projection matrix $M_k$ | "Combine hidden + next-token" | An `h x 2h` linear layer that folds the previous hidden state and the target-token embedding into the next depth's input |
+| Joint loss $L_{\text{MTP}}$ | "Averaged extra losses" | Arithmetic mean of per-depth cross-entropy losses, scaled by `lambda` |
 | Acceptance rate at depth 1 | "How often MTP draft is right" | The rate at which the D=1 MTP module's top-1 prediction equals the main model's top-1 prediction; 80%+ on DeepSeek-V3 |
 | Lambda weighting | "Extra-loss importance" | Per-depth scaling factor; 0.3 at start of training, 0.1 later on DeepSeek-V3 |
 
