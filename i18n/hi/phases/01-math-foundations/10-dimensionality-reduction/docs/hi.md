@@ -38,9 +38,9 @@ Dimension    Avg distance ratio (max/min between random points)
 1000         ~1.02
 ```
 
-**Volume concentrates in corners.**एक इकाई हाइपर क्यूब में 2 आयामों 2 आयामों है। 100 आयामों में, लगभग सभी मात्रा को केंद्र से दूर कोनों में है। डेटा बिंदु किनारों तक फैलते हैं और आपके मॉडल अंदर डेटा के लिए भूखे रहते हैं।
+**Volume concentrates in corners.**एक इकाई हाइपरक्यूब में $d$आयामों में है$2^d$100 आयामों में, लगभग सभी मात्रा को केंद्र से दूर कोने में है। डेटा बिंदु किनारों तक फैलते हैं और आपके मॉडल अंदर डेटा के लिए भूखा हैं।
 
-**You need exponentially more data.**एक अंतरिक्ष में नमूने की समान घनत्व बनाए रखने के लिए, 2D से 20D तक जाने का मतलब है कि आपको 10^18 गुना अधिक डेटा की आवश्यकता है. आपके पास कभी भी पर्याप्त नहीं है। आयामों को कम करने से डेटा घनत्व वापस कुछ काम करने योग्य हो जाता है।
+**You need exponentially more data.**एक अंतरिक्ष में नमूने की समान घनत्व बनाए रखने के लिए, 2D से 20D पर जाने का मतलब है कि आप की जरूरत है $10^{18}$आप कभी भी पर्याप्त नहीं है. आयामों को कम करने डेटा घनत्व वापस कुछ काम करने योग्य करने के लिए लाता है.
 
 ### पीसीएः महत्वपूर्ण दिशाएं खोजें
 
@@ -88,7 +88,7 @@ PC4          0.89          0.089              0.925
 
 1. **Threshold.**90-95% भिन्नता को स्पष्ट करने के लिए पर्याप्त घटक रखें।
 2. **Elbow method.**प्लॉट प्रत्येक घटक के लिए भिन्नता की व्याख्या. एक तेज गिरावट के लिए देखो.
-3. **Downstream performance.**पीसीए को पूर्व प्रसंस्करण के रूप में उपयोग करें। क को झाड़ो और अपने मॉडल की सटीकता को मापें। सबसे अच्छा क सटीकता पठारों पर है।
+3. **Downstream performance.**पीसीए को पूर्व प्रसंस्करण के रूप में प्रयोग करें।$k$और अपने मॉडल की सटीकता को मापने. सबसे अच्छा।$k$सटीकता के साथ है।
 
 ### t-SNE: पड़ोसों को संरक्षित करें
 
@@ -101,7 +101,7 @@ t-SNE के मुख्य गुणः
 - अलग-अलग रन अलग-अलग लेआउट पैदा करते हैं।
 - विडंबना पैरामीटर यह नियंत्रित करता है कि कितने पड़ोसियों को विचार किया जाना चाहिए (आमतौर पर रेंजः 5-50).
 - आउटपुट में क्लस्टर के बीच की दूरी कोई मायने नहीं रखती है। केवल क्लस्टर स्वयं मायने रखती हैं।
-- बड़े डेटा सेट पर धीमा।
+- बड़े डेटा सेट पर धीमा। $O(n^2)$डिफ़ॉल्ट रूप से।
 
 ### UMAP: तेजी से, बेहतर वैश्विक संरचना
 
@@ -135,27 +135,27 @@ UMAP उच्च-आयामी स्थान में एक भारि�
 कर्नेल पीसीए एक उच्च आयामी सुविधा अंतरिक्ष में लागू करता है कर्नेल फ़ंक्शन द्वारा प्रेरित, स्पष्ट रूप से उस अंतरिक्ष में निर्देशांक की गणना किए बिना। यह कर्नेल ट्रिक है - एसवीएम के पीछे एक ही विचार।
 
 एल्गोरिथ्मः
-1. कर्नेल मैट्रिक्स K की गणना करें जहां K_ij = k(x_i, x_j)
+1. कर्नेल मैट्रिक्स की गणना करें $K$कहाँ$K_{ij} = k(x_i, x_j)$
 2. सुविधाओं स्थान में कर्नेल मैट्रिक्स केंद्र
 3. Eigendecompose केंद्रित कर्नेल मैट्रिक्स
-4. शीर्ष स्वयं वेक्टर (1/sqrt द्वारा स्केल किया गया)
+4. शीर्ष स्व-वेक्टर (स्केल द्वारा $1/\sqrt{\text{eigenvalue}}$) अनुमान हैं
 
 सामान्य कर्नेल फ़ंक्शंसः
 
 | Kernel | Formula | Good for |
 |--------|---------|----------|
-| RBF (Gaussian) | exp(-gamma * \|\|x - y\|\|^2) | Most nonlinear data, smooth manifolds |
-| Polynomial | (x . y + c)^d | Polynomial relationships |
-| Sigmoid | tanh(alpha * x . y + c) | Neural network-like mappings |
+| RBF (Gaussian) | $\exp(-\gamma \lVert x - y \rVert^2)$ | Most nonlinear data, smooth manifolds |
+| Polynomial | $(x \cdot y + c)^d$ | Polynomial relationships |
+| Sigmoid | $\tanh(\alpha x \cdot y + c)$ | Neural network-like mappings |
 
 कर्णल पीसीए बनाम मानक पीसीए का उपयोग कब करेंः
 
 | Criterion | Standard PCA | Kernel PCA |
 |-----------|-------------|------------|
 | Data structure | Linear subspace | Nonlinear manifold |
-| Speed | O(min(n^2 d, d^2 n)) | O(n^2 d + n^3) |
+| Speed | $O(\min(n^2 d, d^2 n))$ | $O(n^2 d + n^3)$ |
 | Interpretability | Components are linear combinations of features | Components lack direct feature interpretation |
-| Scalability | Works on millions of samples | Kernel matrix is n x n, memory-limited |
+| Scalability | Works on millions of samples | Kernel matrix is $n \times n$, memory-limited |
 | Reconstruction | Direct inverse transform | Requires pre-image approximation |
 
 क्लासिक उदाहरणः 2D में एकाग्र वृत्त। दो अंक के छल्ले, एक दूसरे के अंदर। मानक पीसीए दोनों को एक ही रेखा पर प्रक्षेपित करता है - वर्गीकरण के लिए बेकार। आरबीएफ के साथ कर्नेल पीसीए आंतरिक वृत्त और बाहरी वृत्त को विभिन्न क्षेत्रों में मानचित्रित करता है, जिससे वे रैखिक रूप से अलग हो सकते हैं।
@@ -165,22 +165,24 @@ UMAP उच्च-आयामी स्थान में एक भारि�
 आप 784 आयामों को 50 तक संपीड़ित किया है। आप क्या खो दिया है?
 
 पुनर्निर्माण त्रुटि का मापः
-1. k आयामों तक परियोजना डेटाः X_reduced = X @ W_k
-2. पुनः निर्माणः X_hat = X_reduced @ W_k^T
-3. गणना MSE: औसत
+1. परियोजना के आंकड़े $k$आयाम: $X_{\text{reduced}} = X W_k$
+2. पुनर्निर्माणः $\hat{X} = X_{\text{reduced}} W_k^T$
+3. कम्प्यूटेबल एमएसई: $\text{mean}((X - \hat{X})^2)$
 
 पीसीए के लिए, पुनर्निर्माण त्रुटि का स्पष्ट भिन्नता के साथ एक स्पष्ट संबंध हैः
 
-```
-Reconstruction error = sum of eigenvalues NOT included
-Total variance = sum of ALL eigenvalues
-Fraction lost = (sum of dropped eigenvalues) / (sum of all eigenvalues)
+```math
+\begin{aligned}
+\text{Reconstruction error} &= \text{sum of eigenvalues NOT included} \\
+\text{Total variance} &= \text{sum of ALL eigenvalues} \\
+\text{Fraction lost} &= \frac{\text{sum of dropped eigenvalues}}{\text{sum of all eigenvalues}}
+\end{aligned}
 ```
 
 प्रत्येक घटक के लिए स्पष्ट भिन्नता अनुपात हैः
 
-```
-explained_ratio_k = eigenvalue_k / sum(all eigenvalues)
+```math
+\text{explained\_ratio}_k = \frac{\text{eigenvalue}_k}{\sum \text{all eigenvalues}}
 ```
 
 घटकों की संख्या के खिलाफ संचयी व्याख्या भिन्नता को रेखांकन आपको "उलकह" वक्र देता है। घटकों की सही संख्या है जहांः
@@ -188,7 +190,7 @@ explained_ratio_k = eigenvalue_k / sum(all eigenvalues)
 - संचयी भिन्नता आपके सीमा पार करती है (आमतौर पर 0.90 या 0.95)
 - कार्य प्रदर्शन के निचले स्तर
 
-पुनर्निर्माण त्रुटि के चयन के अलावा उपयोगी है। आप इसे विसंगतियों का पता लगाने के लिए उपयोग कर सकते हैंः उच्च पुनर्निर्माण त्रुटि वाले नमूने असाधारण हैं जो सीखे गए उप-स्थान में फिट नहीं होते हैं। यह उत्पादन प्रणालियों में पीसीए-आधारित विसंगतियों का पता लगाने का आधार है।
+पुनर्निर्माण त्रुटि चुनने से परे उपयोगी है $k$आप इसे विसंगतियों का पता लगाने के लिए उपयोग कर सकते हैंः उच्च पुनर्निर्माण त्रुटि वाले नमूने असाधारण हैं जो सीखे गए उप-स्थान में फिट नहीं होते हैं। यह उत्पादन प्रणालियों में पीसीए-आधारित विसंगतियों का पता लगाने का आधार है।
 
 ```figure
 pca-axes
@@ -353,6 +355,14 @@ for k in [10, 30, 50, 100, 200]:
 
 3. 50 सुविधाओं के साथ एक डेटासेट लें जहां केवल 5 सूचनात्मक हैं (एक के साथ उत्पन्न करें `sklearn.datasets.make_classification`) पीसीए लागू करें और जांचें कि क्या समझाया गया भिन्नता वक्र सही ढंग से पहचानता है कि डेटा प्रभावी रूप से 5-आयामी है।
 
+### संकेत
+
+**Exercise 1.**पढ़िए `inverse_transform``PCA`वर्ग और प्रत्येक घटक संख्या के लिए एक मॉडल फिट। गणना `reconstruction_error`10, 50 और 200 घटकों के लिए; घटकों की संख्या बढ़ने के साथ त्रुटि कम होनी चाहिए।
+
+**Exercise 2.**फिट `sklearn.manifold.TSNE`एक ही उपसमूह पर तीन बार, केवल बदलते हुए `perplexity`, और उसी का उपयोग करें `random_state`. कम उलझन कम पड़ोसियों को देखता है, इसलिए छोटे तंग समूहों की उम्मीद करें; उच्च उलझन अधिक पड़ोसियों को देखता है, इसलिए बड़े, चिकनी समूहों की उम्मीद करें।
+
+**Exercise 3.**कॉल`make_classification(n_features=50, n_informative=5, n_redundant=45)`, फिट`PCA`, और संचयी व्याख्या भिन्नता प्रिंट करें. अपर्याप्त विशेषताएं सूचनात्मक के रैखिक संयोजन हैं, इसलिए वक्र लगभग 1.0 तक पहुंचता है 5 घटकों पर। फिर प्रयास करें `n_redundant=0`: अन्य 45 विशेषताएं स्वतंत्र शोर हैं, और वक्र समतल नहीं होता है।
+
 ## प्रमुख शर्तें
 
 | Term | What people say | What it actually means |
@@ -360,8 +370,8 @@ for k in [10, 30, 50, 100, 200]:
 | Curse of dimensionality | "Too many features" | Distances, volumes, and data density all behave counterintuitively as dimensions grow. Models need exponentially more data to compensate. |
 | PCA | "Reduce dimensions" | Rotate your coordinate system so the axes align with the directions of maximum variance, then drop the low-variance axes. |
 | Principal component | "An important direction" | An eigenvector of the covariance matrix. The direction in feature space along which the data varies most. |
-| Explained variance ratio | "How much info this component has" | The fraction of total variance captured by one principal component. Sum the top k ratios to see how much k components preserve. |
-| Covariance matrix | "How features correlate" | A symmetric matrix where entry (i,j) measures how feature i and feature j move together. Diagonal entries are individual variances. |
+| Explained variance ratio | "How much info this component has" | The fraction of total variance captured by one principal component. Sum the top $k$ ratios to see how much $k$ components preserve. |
+| Covariance matrix | "How features correlate" | A symmetric matrix where entry $(i,j)$ measures how feature $i$ and feature $j$ move together. Diagonal entries are individual variances. |
 | t-SNE | "That cluster plot" | A nonlinear method that maps high-dimensional data to 2D by preserving pairwise neighborhood probabilities. Good for visualization, not for preprocessing. |
 | UMAP | "Faster t-SNE" | A nonlinear method based on topological data analysis. Preserves both local and some global structure. Scales better than t-SNE. |
 | Perplexity | "A t-SNE knob" | Controls the effective number of neighbors each point considers. Low perplexity focuses on very local structure. High perplexity captures broader patterns. |

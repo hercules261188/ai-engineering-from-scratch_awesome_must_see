@@ -43,11 +43,10 @@ w = [1, 0, -2]    -- a 3D vector
 
 ### मैट्रिक्सः संख्याओं के ग्रिड
 
-एक मैट्रिक्स एक 2D ग्रिड है। पंक्तियों और स्तंभों। एक m x n मैट्रिक्स में m पंक्तियों और n स्तंभ हैं।
+एक मैट्रिक्स एक 2D ग्रिड है। पंक्तियों और स्तंभों। एक$m \times n$मैट्रिक्स में है $m$पंक्तियाँ और $n$स्तंभ।
 
-```
-A = | 1  2  3 |     -- 2x3 matrix (2 rows, 3 columns)
-    | 4  5  6 |
+```math
+A = \begin{bmatrix} 1 & 2 & 3 \\ 4 & 5 & 6 \end{bmatrix} \quad \text{2x3 matrix (2 rows, 3 columns)}
 ```
 
 न्यूरल नेटवर्क में, वजन मैट्रिक्स इनपुट वेक्टरों को आउटपुट वेक्टरों में बदल देते हैं। 784 इनपुट और 128 आउटपुट वाली परत में 128x784 वजन मैट्रिक्स का उपयोग किया जाता है।
@@ -83,16 +82,14 @@ Inner dimensions: 784 = 784  -- valid
 
 तत्व-बुद्धिमानः मिलान वाली स्थिति को गुणा करें. दोनों मैट्रिक्स एक ही आकार के होने चाहिए।
 
-```
-| 1  2 |   | 5  6 |   | 5  12 |
-| 3  4 | * | 7  8 | = | 21 32 |
+```math
+\begin{bmatrix} 1 & 2 \\ 3 & 4 \end{bmatrix} * \begin{bmatrix} 5 & 6 \\ 7 & 8 \end{bmatrix} = \begin{bmatrix} 5 & 12 \\ 21 & 32 \end{bmatrix}
 ```
 
 मैट्रिक्स गुणाः पंक्तियों और स्तंभों के अंक उत्पाद। आंतरिक आयामों को मेल खाना चाहिए।
 
-```
-| 1  2 |   | 5  6 |   | 1*5+2*7  1*6+2*8 |   | 19  22 |
-| 3  4 | @ | 7  8 | = | 3*5+4*7  3*6+4*8 | = | 43  50 |
+```math
+\begin{bmatrix} 1 & 2 \\ 3 & 4 \end{bmatrix} @ \begin{bmatrix} 5 & 6 \\ 7 & 8 \end{bmatrix} = \begin{bmatrix} 1 \cdot 5 + 2 \cdot 7 & 1 \cdot 6 + 2 \cdot 8 \\ 3 \cdot 5 + 4 \cdot 7 & 3 \cdot 6 + 4 \cdot 8 \end{bmatrix} = \begin{bmatrix} 19 & 22 \\ 43 & 50 \end{bmatrix}
 ```
 
 अलग-अलग ऑपरेशन, अलग-अलग परिणाम, अलग-अलग नियम।
@@ -325,6 +322,14 @@ NumPy स्वचालित रूप से दोनों पंक्त�
 
 3. **Build a two-layer network.**केवल अपने मैट्रिक्स वर्ग (नहीं NumPy) का उपयोग करके, दो-परत तंत्रिका नेटवर्क बनाएंः इनपुट (3) -> छिपा हुआ (4) -> आउटपुट (2). यादृच्छिक वजन शुरू करें, आगे की पास चलाएं, और सभी आकारों की पुष्टि करें कि वे सही हैं।
 
+### संकेत
+
+**Exercise 1.**गुणा करें `A @ A.inverse_2x2()`तीन मैट्रिक्स के लिए और प्रत्येक सेल के साथ की तुलना में भीतर की पहचान के साथ `1e-9`. 0 के निर्धारक के साथ मैट्रिक्स के लिए, जैसे कि [[1, 2], [2, 4]], `inverse_2x2`एक `ValueError`, और यह अपेक्षित परिणाम है।
+
+**Exercise 2.**3x3 cofactor मैट्रिक्स की गणना करें, इसे प्रत्यारोपित करने के लिए प्राप्त करने के लिए, फिर प्रत्येक सेल को विभाजित करके `determinant()`. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .`A @ A_inv`पहचान देता है और प्रत्येक कोशिका मेल खाती है `np.linalg.inv(A)``1e-9`. .
+
+**Exercise 3.**गुणा करने से पहले प्रत्येक मैट्रिक्स के आकार लिखेंः `W1`4x3 है और `W2`2x4 है, जैसे `demo_neural_network_layer`. 3x1 इनपुट में 4x1 छिपे हुए वेक्टर और 2x1 आउटपुट होना चाहिए।
+
 ## प्रमुख शर्तें
 
 | Term | What people say | What it actually means |
@@ -332,7 +337,7 @@ NumPy स्वचालित रूप से दोनों पंक्त�
 | Vector | "An arrow" | An ordered list of numbers. In AI: a point in high-dimensional space. |
 | Matrix | "A table of numbers" | A linear transformation. It maps vectors from one space to another. |
 | Matrix multiply | "Just multiply the numbers" | Dot products between every row of the first matrix and every column of the second. Order matters. |
-| Transpose | "Flip it" | Swap rows and columns. Turns an m x n matrix into n x m. Critical in backpropagation. |
+| Transpose | "Flip it" | Swap rows and columns. Turns an $m \times n$ matrix into $n \times m$. Critical in backpropagation. |
 | Determinant | "Some number from the matrix" | Measures how much the matrix scales area (2D) or volume (3D). Zero means the transformation crushes a dimension. |
 | Inverse | "Undo the matrix" | The matrix that reverses the transformation. Only exists when the determinant is not zero. |
 | Identity matrix | "The boring matrix" | The matrix equivalent of multiplying by 1. Used in residual connections (ResNets). |

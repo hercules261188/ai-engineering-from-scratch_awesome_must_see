@@ -26,7 +26,7 @@
 
 ### कंवेक्स सेट
 
-एक सेट S गुंबद है यदि S में किसी भी दो बिंदुओं के लिए, उनके बीच का रेखा खंड भी पूरी तरह से S में स्थित है।
+एक सेट $S$यदि किसी भी दो बिंदुओं के लिए $S$, उनके बीच लाइन खंड भी पूरी तरह से स्थित है $S$. .
 
 | Convex sets | Not convex |
 |---|---|
@@ -34,12 +34,12 @@
 | **Triangle**: same property holds for all interior points | **Donut/annulus**: the hole means some line segments leave the set |
 | The line segment between any two points stays within the set | The line segment between some pairs of points exits the set |
 
-औपचारिक परीक्षणः S में किसी भी बिंदु x, y और [0, 1] में किसी भी t के लिए, बिंदु tx + (1-t) y भी S में है।
+औपचारिक परीक्षण: किसी भी बिंदु के लिए $x, y$में $S$और किसी भी$t \in [0, 1]$, मुद्दा $tx + (1-t)y$$S$. .
 
 कंवेक्स सेट के उदाहरणः
-- एक रेखा, एक विमान, सभी R^n
+- एक लाइन, एक विमान, सब कुछ $\mathbb{R}^n$
 - एक गेंद (चक्र, गोला, हाइपरस्फीयर)
-- एक आधे स्थानः {x : a^T x <= b}
+- एक आधे स्थान: $\lbrace x : a^T x \le b \rbrace$
 - किसी भी संख्या में घुमावदार सेट का चौराहा
 
 गैर-कंकुष्ठ सेट के उदाहरणः
@@ -49,10 +49,10 @@
 
 ### घुमावदार फ़ंक्शन
 
-एक फ़ंक्शन f संकुचित है यदि उसका डोमेन संकुचित सेट है और उसके डोमेन में किसी भी दो बिंदुओं x, y और [0, 1] में किसी भी t के लिएः
+एक कार्य$f$यदि इसका डोमेन एक संकुचित सेट है और किसी भी दो बिंदुओं के लिए संकुचित है $x, y$अपने क्षेत्र में और किसी भी $t \in [0, 1]$:
 
-```
-f(tx + (1-t)y) <= t*f(x) + (1-t)*f(y)
+```math
+f(tx + (1-t)y) \le t f(x) + (1-t) f(y)
 ```
 
 ज्यामितीय रूप सेः ग्राफ पर किसी भी दो बिंदुओं के बीच रेखा खंड ग्राफ के ऊपर या ग्राफ पर स्थित है।
@@ -64,26 +64,26 @@ f(tx + (1-t)y) <= t*f(x) + (1-t)*f(y)
 | **Local minima** | Every local minimum is the global minimum | Multiple local minima may exist at different heights |
 
 सामान्य संकुचित कार्यः
-- f(x) = x^2 (पाराबोला)
-- f(x) = ✓x (मूर्त मूल्य)
-- f(x) = e^x (आकस्मिक)
-- f(x) = max(0, x) (ReLU, हालांकि टुकड़ा के रूप में रैखिक)
-- f(x) = -log(x) के लिए x > 0 (नकारात्मक लॉग)
-- कोई भी रैखिक फ़ंक्शन f ((x) = a^T x + b (बैठक और कंकाल दोनों)
+- $f(x) = x^2$(पाराबोला)
+- $f(x) = \lvert x \rvert$(मूर्त मूल्य)
+- $f(x) = e^x$(उत्पादक)
+- $f(x) = \max(0, x)$(ReLU, हालांकि टुकड़ा के रूप में रैखिक)
+- $f(x) = -\log(x)$के लिए$x > 0$(नकारात्मक लॉग)
+- कोई भी रैखिक फ़ंक्शन $f(x) = a^T x + b$(कंकड़ और कंकड़ दोनों)
 
 ### संकुचितता पर परीक्षण
 
 तीन व्यावहारिक परीक्षण, सबसे आसान से सबसे कठोर तक।
 
-**Test 1: Second derivative test (1D).**यदि f'(x) >= 0 सभी x के लिए, तो f संकुचित है।
+**Test 1: Second derivative test (1D).**यदि$f''(x) \ge 0$सभी के लिए$x$, तो $f$घुंघराली है।
 
-- f''((x) = x^2: f''(x) = 2 >= 0. घुमावदार।
-- f''((x) = x^3: f''(x) = 6x. x < 0 के लिए नकारात्मक।
-- f'(x) = e^x: f'(x) = e^x > 0. घुमावदार।
+- $f(x) = x^2$$f''(x) = 2 \ge 0$- घुमावदार।
+- $f(x) = x^3$$f''(x) = 6x$. नकारात्मक के लिए$x < 0$. . घुमावदार नहीं.
+- $f(x) = e^x$$f''(x) = e^x > 0$- घुमावदार।
 
-**Test 2: Hessian test (multivariate).**यदि हेसियन मैट्रिक्स H(x) सभी x के लिए सकारात्मक अर्ध-परिभाषित है, तो f घुमावदार है। हेसियन दूसरे आंशिक व्युत्पन्नों की मैट्रिक्स है।
+**Test 2: Hessian test (multivariate).**यदि हेसियन मैट्रिक्स $H(x)$सभी के लिए सकारात्मक अर्ध-परिभाषित है $x$, तो $f$हेसियन दूसरे आंशिक व्युत्पन्नों का मैट्रिक्स है।
 
-**Test 3: Definition test.**सीधे असमानता f(tx + (1-t) y) <= t*f(x) + (1-t) *f(y) की जांच करें। ऐसे कार्यों के लिए उपयोगी जहां व्युत्पन्न गणना करना मुश्किल है।
+**Test 3: Definition test.**असमानता की जाँच करें $f(tx + (1-t)y) \le t f(x) + (1-t) f(y)$सीधे. परिणतों की गणना करने में मुश्किल होने वाले कार्यों के लिए उपयोगी।
 
 ### क्यों संकुचन महत्वपूर्ण है
 
@@ -129,20 +129,22 @@ graph LR
 
 ### हेसियन मैट्रिक्स
 
-फ़ंक्शन f: R^n -> R का हेसियन H द्वितीय आंशिक व्युत्पन्नों का n x n मैट्रिक्स है।
+हेसियन $H$किसी कार्य के $f: \mathbb{R}^n \to \mathbb{R}$$n \times n$दूसरे आंशिक व्युत्पन्नों का मैट्रिक्स।
 
+```math
+H_{ij} = \frac{\partial^2 f}{\partial x_i \, \partial x_j}
 ```
-H[i][j] = d^2 f / (dx_i dx_j)
-```
 
-f ((x, y) = x^2 + 3xy + y^2:
+के लिए$f(x, y) = x^2 + 3xy + y^2$:
 
-```
-df/dx = 2x + 3y       d^2f/dx^2 = 2      d^2f/dxdy = 3
-df/dy = 3x + 2y       d^2f/dydx = 3      d^2f/dy^2 = 2
-
-H = [ 2  3 ]
-    [ 3  2 ]
+```math
+\begin{gathered}
+\begin{aligned}
+\frac{\partial f}{\partial x} &= 2x + 3y & \frac{\partial^2 f}{\partial x^2} &= 2 & \frac{\partial^2 f}{\partial x \, \partial y} &= 3 \\
+\frac{\partial f}{\partial y} &= 3x + 2y & \frac{\partial^2 f}{\partial y \, \partial x} &= 3 & \frac{\partial^2 f}{\partial y^2} &= 2
+\end{aligned} \\[8pt]
+H = \begin{bmatrix} 2 & 3 \\ 3 & 2 \end{bmatrix}
+\end{gathered}
 ```
 
 हेसियन आपको वक्रता के बारे में बताता हैः
@@ -151,18 +153,17 @@ H = [ 2  3 ]
 - मिश्रित संकेतः सड़ल बिंदु (कुछ दिशाओं में ऊपर, अन्य दिशाओं में नीचे)
 - शून्य स्वमूल्यः उस दिशा में फ्लैट (डिजेनेरेट)
 
-संकुचितता के लिए, हेसियन को हर जगह, न कि केवल एक बिंदु पर सकारात्मक अर्ध-परिभाषित (सभी स्व-मूल्य >= 0) होना चाहिए।
+संकुचितता के लिए, हेसियन को सकारात्मक अर्ध-परिभाषित होना चाहिए (सभी स्व-मूल्य $\ge 0$) हर जगह, केवल एक ही बिंदु पर नहीं।
 
 ### न्यूटन की विधि
 
 ग्रेडिएंट अवतरण प्रथम क्रम की जानकारी (ग्रेडिएंट) का उपयोग करता है। न्यूटन की विधि द्वितीय क्रम की जानकारी (हेसियन) का उपयोग करती है। यह वर्तमान बिंदु पर एक वर्गिक अनुमान फिट बैठता है और सीधे उस वर्गिक के न्यूनतम पर कूदता है।
 
-```
-Update rule:
-  x_new = x - H^(-1) * gradient
-
-Compare to gradient descent:
-  x_new = x - lr * gradient
+```math
+\begin{aligned}
+\text{Update rule:} \quad & x_{\text{new}} = x - H^{-1} \cdot \text{gradient} \\
+\text{Compare to gradient descent:} \quad & x_{\text{new}} = x - \text{lr} \cdot \text{gradient}
+\end{aligned}
 ```
 
 न्यूटन की विधि स्कॉलर सीखने की दर को उल्टा हेसियन से बदल देती है। यह स्वचालित रूप से स्थानीय वक्रता के आधार पर चरण आकार और दिशा को समायोजित करती है।
@@ -190,14 +191,14 @@ graph TD
 - स्केल-इंवर्टेंट (प्रश्न को आप कैसे पैरामीटर करते हैं, इससे कोई फर्क नहीं पड़ता कि यह कैसे काम करता है)
 
 नुकसान:
-- Hessian गणना O  n ^ 2) स्मृति और O  n ^ 3) उल्टा करने के लिए लागत
-- 1 मिलियन वजन वाले तंत्रिका नेटवर्क के लिए, यानी 10^12 प्रविष्टियाँ और 10^18 ऑपरेशन
+- हेसियन लागतों की गणना $O(n^2)$स्मृति और $O(n^3)$उल्टा करना
+- एक लाख वजन के साथ एक तंत्रिका नेटवर्क के लिए, यह है $10^{12}$प्रविष्टियाँ और $10^{18}$संचालन
 - गहन शिक्षा के लिए व्यावहारिक नहीं
 
 ### सीमित अनुकूलन
 
-बिना सीमाओं के अनुकूलनः सभी x पर f ((x) को कम से कम करें।
-सीमित अनुकूलनः प्रतिबंधों के अधीन f ((x) को न्यूनतम करें।
+बिना किसी सीमा के अनुकूलनः न्यूनतम $f(x)$सब पर$x$. .
+सीमित अनुकूलनः न्यूनतम $f(x)$प्रतिबंधों के अधीन।
 
 वास्तविक समस्याओं में बाधाएं होती हैं आप लागत को कम करना चाहते हैं लेकिन आपका बजट सीमित है आप त्रुटि को कम करना चाहते हैं लेकिन आपकी मॉडल जटिलता सीमित है।
 
@@ -216,22 +217,24 @@ graph LR
 
 लैग्रेंज गुणकों की विधि एक सीमित समस्या को एक निर्बंधित समस्या में परिवर्तित करती है।
 
-समस्याः g(x) = 0 के अधीन f ((x) को न्यूनतम करें।
+समस्या: कम से कम करें $f(x)$$g(x) = 0$. .
 
-समाधानः एक नया चर (लैगरेंज गुणक लैम्ब्डा) पेश करें और अनियंत्रित समस्या को हल करेंः
+समाधान: एक नया चर (लैगरेंज गुणक) पेश करें $\lambda$) और अनियंत्रित समस्या को हल करेंः
 
-```
-L(x, lambda) = f(x) + lambda * g(x)
-```
-
-समाधान पर, L का ग्रेडिएंट शून्य हैः
-
-```
-dL/dx = df/dx + lambda * dg/dx = 0
-dL/dlambda = g(x) = 0
+```math
+L(x, \lambda) = f(x) + \lambda g(x)
 ```
 
-ज्यामितीय अंतर्ज्ञानः सीमित न्यूनतम पर, f का ग्रेडिएंट बाधा g के ग्रेडिएंट के समानांतर होना चाहिए। यदि वे समानांतर नहीं थे, तो आप बाधा सतह के साथ आगे बढ़ सकते हैं और f को कम कर सकते हैं।
+समाधान पर, $L$शून्य है:
+
+```math
+\begin{aligned}
+\frac{\partial L}{\partial x} &= \frac{\partial f}{\partial x} + \lambda \frac{\partial g}{\partial x} = 0 \\
+\frac{\partial L}{\partial \lambda} &= g(x) = 0
+\end{aligned}
+```
+
+ज्यामितीय अंतर्ज्ञानः सीमित न्यूनतम पर, $f$बाध्यता के ग्रेडिएंट के समानांतर होना चाहिए $g$यदि वे समानांतर नहीं थे, तो आप बाधा सतह के साथ आगे बढ़ सकते हैं और कम कर सकते हैं$f$आगे।
 
 ```mermaid
 graph LR
@@ -240,39 +243,41 @@ graph LR
     S --- C["At the solution, gradient of f is parallel to gradient of g"]
 ```
 
-उदाहरण: f ((x,y) = x^2 + y^2 को x + y = 1 के अधीन न्यूनतम करें।
+उदाहरण: न्यूनतम $f(x,y) = x^2 + y^2$$x + y = 1$. .
 
+```math
+\begin{aligned}
+L &= x^2 + y^2 + \lambda(x + y - 1) \\[4pt]
+\frac{\partial L}{\partial x} &= 2x + \lambda = 0 \implies x = -\lambda/2 \\
+\frac{\partial L}{\partial y} &= 2y + \lambda = 0 \implies y = -\lambda/2 \\
+\frac{\partial L}{\partial \lambda} &= x + y - 1 = 0 \\[4pt]
+&\text{From first two: } x = y \\
+&\text{Substituting: } 2x = 1, \text{ so } x = y = 0.5, \ \lambda = -1
+\end{aligned}
 ```
-L = x^2 + y^2 + lambda(x + y - 1)
 
-dL/dx = 2x + lambda = 0  =>  x = -lambda/2
-dL/dy = 2y + lambda = 0  =>  y = -lambda/2
-dL/dlambda = x + y - 1 = 0
-
-From first two: x = y
-Substituting: 2x = 1, so x = y = 0.5, lambda = -1
-```
-
-रेखा x + y = 1 पर मूल के निकटतम बिंदु (0.5, 0.5) है।
+रेखा पर निकटतम बिंदु $x + y = 1$मूल से है $(0.5, 0.5)$. .
 
 ### केकेटी की शर्तें
 
 करुश-कुहन-टकर स्थितियां लैग्रेंज गुणकों को असमानता प्रतिबंधों तक विस्तारित करती हैं।
 
-समस्या: i = 1, ..., m के लिए g_i(x) <= 0 के अधीन f(x) को न्यूनतम करें।
+समस्या: कम से कम करें $f(x)$$g_i(x) \le 0$के लिए$i = 1, \ldots, m$. .
 
 KKT की शर्तें (उपमाइश के लिए आवश्यक):
 
-```
-1. Stationarity:    df/dx + sum(lambda_i * dg_i/dx) = 0
-2. Primal feasibility:  g_i(x) <= 0  for all i
-3. Dual feasibility:    lambda_i >= 0  for all i
-4. Complementary slackness:  lambda_i * g_i(x) = 0  for all i
+```math
+\begin{aligned}
+&\text{1. Stationarity:} && \frac{\partial f}{\partial x} + \sum_i \lambda_i \frac{\partial g_i}{\partial x} = 0 \\
+&\text{2. Primal feasibility:} && g_i(x) \le 0 \quad \text{for all } i \\
+&\text{3. Dual feasibility:} && \lambda_i \ge 0 \quad \text{for all } i \\
+&\text{4. Complementary slackness:} && \lambda_i \, g_i(x) = 0 \quad \text{for all } i
+\end{aligned}
 ```
 
-पूरक ढीलापन मुख्य अंतर्दृष्टि हैः या तो प्रतिबंध सक्रिय है (g_i = 0, समाधान सीमा पर बैठता है) या गुणक शून्य है (बंधन कोई फर्क नहीं पड़ता है) । एक प्रतिबंध जो समाधान को प्रभावित नहीं करता है, उसके पास lambda = 0 है।
+अतिरिक्त ढीलापन मुख्य अंतर्दृष्टि हैः या तो प्रतिबंध सक्रिय है ($g_i = 0$, समाधान सीमा पर बैठता है) या गुणक शून्य है (प्रतिबंध कोई फर्क नहीं पड़ता है) । एक प्रतिबन्ध जो समाधान को प्रभावित नहीं करता है $\lambda = 0$. .
 
-केकेटी स्थितियां एसवीएम के लिए केंद्रीय हैं। समर्थन वेक्टर डेटा बिंदु हैं जहां प्रतिबंध सक्रिय है (lambda > 0) । अन्य सभी डेटा बिंदुओं में lambda = 0 है और निर्णय सीमा को प्रभावित नहीं करते हैं।
+केकेटी स्थितियां एसवीएम के लिए केंद्रीय हैं। समर्थन वेक्टर डेटा बिंदु हैं जहां प्रतिबंध सक्रिय है ($\lambda > 0$) अन्य सभी डेटा बिंदुओं में $\lambda = 0$और निर्णय सीमा को प्रभावित नहीं करते।
 
 ### सीमित अनुकूलन के रूप में नियमन
 
@@ -280,25 +285,27 @@ L1 और L2 नियमितता मनमाने तरीके से 
 
 **L2 regularization (Ridge):**
 
+```math
+\begin{aligned}
+&\text{minimize } \text{Loss}(w) \text{ subject to } \lVert w \rVert^2 \le t \\[4pt]
+&\text{Equivalent unconstrained form:} \\
+&\text{minimize } \text{Loss}(w) + \lambda \lVert w \rVert^2
+\end{aligned}
 ```
-minimize  Loss(w)  subject to  ||w||^2 <= t
 
-Equivalent unconstrained form:
-minimize  Loss(w) + lambda * ||w||^2
-```
-
-2 में बाधाओं का निर्बंध <= t एक गेंद को परिभाषित करता है (दो आयामी में वृत्त, 3 आयामी में गोला) समाधान यह है कि जहां हानि कंत्राट इस गेंद को पहले स्पर्श करते हैं।
+बाध्यता $\lVert w \rVert^2 \le t$एक गेंद को परिभाषित करता है (चक्र 2D में, गोला 3D में) समाधान है जहां हानि कंतोरे पहली बार इस गेंद को छूते हैं।
 
 **L1 regularization (LASSO):**
 
+```math
+\begin{aligned}
+&\text{minimize } \text{Loss}(w) \text{ subject to } \lVert w \rVert_1 \le t \\[4pt]
+&\text{Equivalent unconstrained form:} \\
+&\text{minimize } \text{Loss}(w) + \lambda \lVert w \rVert_1
+\end{aligned}
 ```
-minimize  Loss(w)  subject to  ||w||_1 <= t
 
-Equivalent unconstrained form:
-minimize  Loss(w) + lambda * ||w||_1
-```
-
-प्रतिबन्ध में एक हीरा (दो आयामी में घुमाया हुआ वर्ग) परिभाषित किया गया है।
+बाध्यता $\lVert w \rVert_1 \le t$एक हीरा (दो आयामी में घुमाया हुआ वर्ग) को परिभाषित करता है।
 
 | Property | L2 constraint (circle) | L1 constraint (diamond) |
 |---|---|---|
@@ -315,11 +322,13 @@ minimize  Loss(w) + lambda * ||w||_1
 
 लैग्रंजियन डबल फ़ंक्शनः
 
-```
-Primal: minimize f(x) subject to g(x) <= 0
-Lagrangian: L(x, lambda) = f(x) + lambda * g(x)
-Dual function: d(lambda) = min_x L(x, lambda)
-Dual problem: maximize d(lambda) subject to lambda >= 0
+```math
+\begin{aligned}
+&\text{Primal:} && \text{minimize } f(x) \text{ subject to } g(x) \le 0 \\
+&\text{Lagrangian:} && L(x, \lambda) = f(x) + \lambda g(x) \\
+&\text{Dual function:} && d(\lambda) = \min_x L(x, \lambda) \\
+&\text{Dual problem:} && \text{maximize } d(\lambda) \text{ subject to } \lambda \ge 0
+\end{aligned}
 ```
 
 द्वैतता क्यों महत्वपूर्ण हैः
@@ -346,7 +355,7 @@ Replace x_i^T x_j with K(x_i, x_j) to get the kernel trick.
 
 **Most local minima are good enough.**उच्च-आयामी स्थानों में, यादृच्छिक महत्वपूर्ण बिंदु (जहां ग्रेडिएंट शून्य है) स्थानीय न्यूनतम नहीं, बल्कि भारी मात्रा में सaddle बिंदु हैं। मौजूद कुछ स्थानीय न्यूनतम में वैश्विक न्यूनतम के करीब हानि मूल्य होते हैं। जब पैरामीटर स्थान में लाखों आयाम होते हैं तो भयानक स्थानीय न्यूनतम में फंसने की बहुत संभावना नहीं होती है।
 
-**Saddle points, not local minima, are the real obstacle.**n पैरामीटर वाले फ़ंक्शन में, एक सaddle point में सकारात्मक और नकारात्मक वक्रता दिशाओं का मिश्रण होता है। उच्च आयामों में एक यादृच्छिक महत्वपूर्ण बिंदु के लिए, सभी n स्वमूल्यों के सकारात्मक होने की संभावना (स्थानीय न्यूनतम) लगभग 2 ^-n है। लगभग सभी महत्वपूर्ण बिंदु सaddle points हैं। SGD का शोर उन्हें बचाने में मदद करता है।
+**Saddle points, not local minima, are the real obstacle.** के साथ एक समारोह में$n$पैरामीटर, एक सaddle point में सकारात्मक और नकारात्मक वक्रता दिशाओं का मिश्रण होता है। उच्च आयामों में एक यादृच्छिक महत्वपूर्ण बिंदु के लिए, सभी की संभावना $n$स्वमूल्य सकारात्मक होने (स्थानीय न्यूनतम) लगभग $2^{-n}$लगभग सभी महत्वपूर्ण बिंदुओं सेटल बिंदुओं हैं एसजीडी की शोर उन्हें बचने में मदद करता है।
 
 **Overparameterization smooths the landscape.**प्रशिक्षण उदाहरणों की तुलना में अधिक मापदंडों वाले नेटवर्क में अधिक चिकनी, अधिक जुड़े नुकसान सतहें होती हैं। व्यापक नेटवर्क में कम खराब स्थानीय न्यूनतम होते हैं। यह विपरीत है लेकिन अनुभवजन्य रूप से सुसंगत है।
 
@@ -365,21 +374,21 @@ Replace x_i^T x_j with K(x_i, x_j) to get the kernel trick.
 
 न्यूटन की विधि बड़े मॉडल के लिए अप्रैक्टिकल है। कई अनुमानों से दूसरी श्रेणी की जानकारी उपयोग में आती है।
 
-**L-BFGS (Limited-memory BFGS):**पिछले m ग्रेडिएंट अंतर का उपयोग करके उल्टा हेसियन का अनुमान लगाता है। O(n^2 के बजाय O(mn) मेमोरी की आवश्यकता होती है। ~ 10,000 पैरामीटर तक की समस्याओं के लिए अच्छा काम करता है। शास्त्रीय ML (लॉजिस्टिक रेग्रिशन, CRFs) में उपयोग किया जाता है लेकिन गहन सीखने में नहीं।
+**L-BFGS (Limited-memory BFGS):**पिछले का उपयोग करके विपरीत हेसियन के करीब $m$ग्रेडिएंट अंतर।$O(mn)$स्मृति के बजाय $O(n^2)$. ~ 10,000 पैरामीटर तक की समस्याओं के लिए अच्छी तरह से काम करता है। शास्त्रीय एमएल (लॉजिस्टिक रिग्रेशन, सीआरएफ) में उपयोग किया जाता है लेकिन गहन सीखने में नहीं।
 
 **Natural gradient:**मानक हेसियन के बजाय फिशर सूचना मैट्रिक्स (लॉग-संभाव्यता के अपेक्षित हेसियन) का उपयोग करता है। यह संभावना वितरण की ज्यामिति का कारण बनता है। K-FAC (क्रोनकर-कारक अनुमानित वक्रता) फिशर मैट्रिक्स को एक क्रोनकर उत्पाद के रूप में अनुमानित करता है, जिससे यह तंत्रिका नेटवर्क के लिए व्यावहारिक हो जाता है।
 
-**Hessian-free optimization:**Hx = g को हल करने के लिए संयुग्मित ग्रेडिएंट का उपयोग करता है, बिना कभी H का गठन किए। केवल हेसियन-वेक्टर उत्पादों की आवश्यकता होती है, जिन्हें स्वचालित विभेदन के माध्यम से O ((n) समय में गणना की जा सकती है।
+**Hessian-free optimization:**हल करने के लिए संयोग gradient का उपयोग करता है $Hx = g$बिना कभी बनकर$H$. केवल हेसन वेक्टर उत्पादों की आवश्यकता होती है, जो गणना में किया जा सकता है $O(n)$समय स्वचालित विभेदन के माध्यम से।
 
 **Diagonal approximations:**एडम का दूसरा क्षण हेसियन के विकर्ण के एक विकर्ण समीकरण है। एडहेसियन हचिनसन के अनुमानक के माध्यम से वास्तविक हेसियन विकर्ण तत्वों का उपयोग करके इसे बढ़ाता है।
 
 | Method | Memory | Per-step cost | When to use |
 |--------|--------|--------------|-------------|
-| Gradient descent | O(n) | O(n) | Baseline, large models |
-| Newton's method | O(n^2) | O(n^3) | Small convex problems |
-| L-BFGS | O(mn) | O(mn) | Medium convex problems |
-| Adam | O(n) | O(n) | Deep learning default |
-| K-FAC | O(n) | O(n) per layer | Research, large-batch training |
+| Gradient descent | $O(n)$ | $O(n)$ | Baseline, large models |
+| Newton's method | $O(n^2)$ | $O(n^3)$ | Small convex problems |
+| L-BFGS | $O(mn)$ | $O(mn)$ | Medium convex problems |
+| Adam | $O(n)$ | $O(n)$ | Deep learning default |
+| K-FAC | $O(n)$ | $O(n)$ per layer | Research, large-batch training |
 
 ```figure
 convex-vs-nonconvex
@@ -516,15 +525,27 @@ print(f"Support vectors: {svm.n_support_}")
 
 ## व्यायाम
 
-1. **Convexity gallery.**इन कार्यों को चेकर का उपयोग करके संकुचितता के लिए परीक्षण करेंः f(x) = x^4, f(x) = sin(x), f(x,y) = x^2 + y^2, f(x,y) = x*y, f(x) = max(x, 0) प्रत्येक परिणाम का अर्थ क्यों है।
+1. **Convexity gallery.**चेकर का उपयोग करके इन कार्यों की संकुचनता के लिए परीक्षण करेंः $f(x) = x^4$,$f(x) = \sin(x)$,$f(x,y) = x^2 + y^2$,$f(x,y) = xy$,$f(x) = \max(x, 0)$. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
 
-2. **Newton vs gradient descent race.**दोनों विधियों को प्रारंभ बिंदु (10,10) से f ((x,y) = 50*x^2 + y^2 पर चलाएं। खोने < 1e-10 तक पहुंचने के लिए प्रत्येक चरणों की आवश्यकता कितनी है? स्थिति संख्या (सबसे बड़ा से सबसे छोटा हेसियन स्वयं मूल्य का अनुपात) बढ़ते समय ग्रेडिएंट अवतरण के साथ क्या होता है?
+2. **Newton vs gradient descent race.**दोनों तरीकों को चलाएँ $f(x,y) = 50x^2 + y^2$प्रारंभ बिंदु से $(10, 10)$. हर एक नुकसान < 1e-10 तक पहुंचने के लिए कितने चरणों की आवश्यकता होती है? स्थिति संख्या (सबसे बड़ा से सबसे छोटा हेसियन स्वयं मूल्य का अनुपात) बढ़ते समय ग्रेडिएंट गिरावट का क्या होता है?
 
-3. **Lagrange multiplier geometry.**x + 2y = 4 के अधीन f ((x,y) = (x-3)^2 + (y-3)^2 को न्यूनतम करें। यह जांचकर समाधान की जांच करें कि क्या f का ग्रेडिएंट समाधान पर g के ग्रेडिएंट के समानांतर है।
+3. **Lagrange multiplier geometry.**कम से कम करें$f(x,y) = (x-3)^2 + (y-3)^2$$x + 2y = 4$. समाधान की जांच करके कि $f$ के ग्रेडिएंट के समानांतर है$g$समाधान पर।
 
-4. **Regularization constraint.**L1 प्रतिबंधित अनुकूलन लागू करेंः न्यूनतम (x-3)^2 + (y-2)^2 विषय के साथ ➡x ➡ + ➡ ➡ <= 1. दिखाएं कि समाधान में शून्य के बराबर एक निर्देशांक है (चेंदी प्रतिबंध से स्परसिटी) ।
+4. **Regularization constraint.**L1 सीमित अनुकूलन लागू करेंः न्यूनतम $(x-3)^2 + (y-2)^2$$\lvert x \rvert + \lvert y \rvert \le 1$. दिखाएं कि समाधान का एक निर्देशांक शून्य के बराबर है (चिलहरी बाधा से विखंडन) ।
 
 5. **Hessian eigenvalue analysis.**(1,1) और (-1,1) पर रोजेनब्रोक फ़ंक्शन के हेसनियन की गणना करें। दोनों बिंदुओं पर स्व-मूल्यों की गणना करें। स्व-मूल्यों आपको न्यूनतम बनाम उससे दूर वक्रता के बारे में क्या बताते हैं?
+
+### संकेत
+
+**Exercise 1.**दौड़ने से पहले प्रत्येक परिणाम की भविष्यवाणी करें `check_convexity`: एक आयाम में, संकेत को देखें $f''(x)$दो आयामों में, हेसियन के स्व-मूल्यों को देखें।$f(x,y) = xy$, हेसियन के पास स्वमान 1 और -1 हैं, इसलिए चेकर को रिपोर्ट करना चाहिए कि यह घुमावदार नहीं है।
+
+**Exercise 2.**कॉल`optimize_gd`और `newtons_method` के ग्रेडिएंट और हेसियन के साथ$f$न्यूटन की विधि एक चरण में एक वर्ग हल करता है. ग्रेडिएंट अवतरण के लिए, सीखने की दर से कम होना चाहिए$2/100$$50x^2$शब्द, तो $y$दिशा धीरे-धीरे आगे बढ़ती है।$100x^2$और फिर से कदम गिनें।
+
+**Exercise 3.**उपयोग करें`lagrange_solve`के साथ$g(x,y) = x + 2y - 4$. जवाब पर, यह जाँचें कि$x + 2y = 4$और यह $\nabla f = (2(x-3), 2(y-3))$$\nabla g = (1, 2)$. .
+
+**Exercise 4.**असीमित न्यूनतम (3, 2) हीरे के बाहर है, इसलिए उत्तर इसकी सीमा पर है। अनुमानित ग्रेडिएंट अवतरण का उपयोग करेंः ग्रेडिएंट चरण लें, फिर वापस पर प्रक्षेपित करें $\lvert x \rvert + \lvert y \rvert \le 1$. जाँचें कि परिणाम समानता के साथ प्रतिबन्ध को पूरा करता है और इसकी तुलना करें `demo_regularization_geometry`. .
+
+**Exercise 5.**कॉल`rosenbrock_hessian`प्रत्येक बिंदु पर और परिणाम को पारित करने के लिए `hessian_eigenvalues_2d`. (1, 1) पर दोनों स्वमूल्य सकारात्मक हैं और उनका अनुपात बहुत बड़ा है, इसलिए एक दिशा में घाटी संकीर्ण और दूसरी दिशा में सपाट है। उस अनुपात की तुलना (-1, 1) पर अनुपात से करें।
 
 ## प्रमुख शर्तें
 
@@ -543,7 +564,7 @@ print(f"Support vectors: {svm.n_support_}")
 | Complementary slackness | At the solution, either a constraint is active or its multiplier is zero. Never both nonzero |
 | Duality | Every constrained problem has a companion dual problem. For convex problems, both have the same optimal value |
 | Strong duality | Primal and dual optimal values are equal. Holds for convex problems satisfying Slater's condition |
-| L-BFGS | Approximate second-order method that stores the last m gradient differences instead of the full Hessian |
+| L-BFGS | Approximate second-order method that stores the last $m$ gradient differences instead of the full Hessian |
 | Saddle point | A point where the gradient is zero but it is a minimum in some directions and a maximum in others |
 | Overparameterization | Using more parameters than training examples. Smooths the loss landscape and reduces bad local minima |
 

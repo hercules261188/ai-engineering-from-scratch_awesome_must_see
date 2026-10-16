@@ -44,7 +44,7 @@ Mode:   most frequent value
         Useful for categorical data. For continuous data, rarely informative.
 ```
 
-औसत संतुलन बिंदु है। मध्यवर्ती मध्यवर्ती अंक है। जब वे विचलित होते हैं, तो आपका वितरण विकृत होता है। आय वितरण का औसत >> मध्यवर्ती (अरबपति से दाएं विकृत) होता है। प्रशिक्षण के दौरान हानि वितरण में अक्सर औसत << मध्यवर्ती (आसान नमूनों से बाएं विकृत) होता है।
+औसत संतुलन बिंदु है. मध्य मध्य मध्य है. जब वे विचलित होते हैं, तो आपका वितरण विकृत होता है. आय वितरण में$\text{mean} \gg \text{median}$प्रशिक्षण के दौरान हानि वितरण अक्सर है$\text{mean} \ll \text{median}$(आसान नमूनों से बाएं विकृति) ।
 
 **Measures of spread**जवाब "कई बार डेटा कैसे फैला हुआ है?
 
@@ -75,14 +75,16 @@ For latency monitoring:
 
 एमएल में, आप अनुमानित विलंबता, भविष्यवाणी विश्वास वितरण और त्रुटि वितरण को समझने के लिए प्रतिशत के बारे में परवाह करते हैं। कम औसत त्रुटि के साथ एक मॉडल लेकिन भयानक पी 99 त्रुटि सुरक्षा-महत्वपूर्ण अनुप्रयोगों के लिए बेकार हो सकती है।
 
-**Sample vs population statistics.**जब किसी नमूना से भिन्नता का गणना करते हैं, तो n के बजाय (n-1) से विभाजित करें। यह बेसल की सुधार है। यह इस तथ्य की भरपाई करता है कि आपका नमूना औसत वास्तविक जनसंख्या औसत नहीं है। नामक में n के साथ, आप व्यवस्थित रूप से वास्तविक भिन्नता का मूल्यांकन करते हैं। (n-1) के साथ, अनुमान निष्पक्ष है।
+**Sample vs population statistics.**नमूना से गणना भिन्नता, द्वारा विभाजित $(n-1)$इसके बजाय $n$यह बेसल की सुधार है. यह तथ्य की भरपाई करता है कि आपके नमूना औसत वास्तविक आबादी औसत नहीं है.$n$नामक में, आप व्यवस्थित रूप से वास्तविक भिन्नता को कम आंकते हैं।$(n-1)$, अनुमान निष्पक्ष है।
 
-```
-Population variance: sigma^2 = (1/N) * sum((x_i - mu)^2)
-Sample variance:     s^2     = (1/(n-1)) * sum((x_i - x_bar)^2)
+```math
+\begin{aligned}
+\text{Population variance:} \quad \sigma^2 &= \frac{1}{N} \sum (x_i - \mu)^2 \\
+\text{Sample variance:} \quad s^2 &= \frac{1}{n-1} \sum (x_i - \bar{x})^2
+\end{aligned}
 ```
 
-व्यवहार में: यदि n बड़ा है (हजारों नमूने), तो अंतर नगण्य है। यदि n छोटा है (दसों नमूने), तो यह मायने रखता है।
+व्यवहार में: यदि $n$यदि यह बड़ा है (हजारों नमूने), तो अंतर नगण्य है।$n$छोटे (दसों नमूने), यह मायने रखता है।
 
 ### सहसंबंधः कैसे चर एक साथ चलते हैं
 
@@ -100,7 +102,7 @@ r =  0:  no linear relationship (but there might be a nonlinear one!)
 Range: [-1, 1]
 ```
 
-पियरसन का मानना है कि संबंध रैखिक है और दोनों चर लगभग सामान्य रूप से वितरित हैं। यह असाधारण के प्रति संवेदनशील है। एक एकल चरम बिंदु r को 0.1 से 0.9 तक खींच सकता है।
+पियरसन का मानना है कि संबंध रैखिक है और दोनों चर लगभग सामान्य रूप से वितरित हैं। यह असाधारण के प्रति संवेदनशील है। एक एकल चरम बिंदु खींच सकता है$r$0.1 से 0.9 तक।
 
 **Spearman rank correlation**एकतरफा संबंध उपायः
 
@@ -139,7 +141,7 @@ Cov(X, Y) < 0:  when X increases, Y tends to decrease
 Cov(X, Y) = 0:  no linear co-movement
 ```
 
-d सुविधाओं के लिए, सह-विवर्तन मैट्रिक्स C एक d x d मैट्रिक्स है जहां C[i][j] = Cov(feature_i, feature_j। विकर्ण प्रविष्टियाँ C[i][i] प्रत्येक सुविधा के भिन्नताएं हैं।
+के लिए$d$विशेषताएं, सह-परिवर्तन मैट्रिक्स $C$है $d \times d$मैट्रिक्स जहां $C[i][j] = \mathop{\mathrm{Cov}}(\text{feature}_i, \text{feature}_j)$. विकर्ण प्रविष्टियाँ $C[i][i]$प्रत्येक विशेषता के भिन्नताएँ हैं।
 
 ```
 C = | Var(x1)      Cov(x1,x2)  Cov(x1,x3) |
@@ -155,7 +157,7 @@ Properties:
 
 **Connection to PCA.**PCA स्वयं कोविरेन्स मैट्रिक्स को संकलित करता है। स्ववेक्टर मुख्य घटक (अधिकतम भिन्नता के दिशाएं) हैं। स्वमूल्य आपको बताते हैं कि प्रत्येक घटक कितना भिन्नता कैप्चर करता है। यह ठीक यही है कि पाठ 10 का कवर किया गया है, लेकिन अब आप देखते हैं कि क्यों कोविरेन्स मैट्रिक्स को विघटित करने के लिए सही चीज हैः यह आपके डेटा में सभी जोड़ेदार रैखिक संबंधों को एन्कोड करता है।
 
-**Connection to correlation.**सहसंबंध मैट्रिक्स मानकीकृत चर (प्रत्येक अपने मानक विचलन से विभाजित) की सहसंबंध मैट्रिक्स है। सहसंबंध सहसंबंध को सामान्य बनाता है इसलिए सभी मान [-1, 1 में गिरते हैं।
+**Connection to correlation.**सहसंबंध मैट्रिक्स मानक चर के सहसंबंध मैट्रिक्स है (प्रत्येक अपने मानक विचलन से विभाजित) सहसंबंध सहसंबंध सामान्य बनाता है इसलिए सभी मान में गिरते हैं $[-1, 1]$. .
 
 ### परिकल्पना परीक्षण
 
@@ -205,10 +207,11 @@ is a 95% probability the true mean is in this specific interval.
 
 **One-sample t-test:**क्या जनसंख्या का औसत परिकल्पना मूल्य से भिन्न है?
 
-```
-t = (x_bar - mu_0) / (s / sqrt(n))
-
-degrees of freedom = n - 1
+```math
+\begin{aligned}
+t &= \frac{\bar{x} - \mu_0}{s / \sqrt{n}} \\[4pt]
+\text{degrees of freedom} &= n - 1
+\end{aligned}
 ```
 
 **Two-sample t-test (independent):**क्या दो समूहों का अर्थ अलग है?
@@ -297,19 +300,20 @@ engineering cost of deploying a new model.
 
 **Effect size**नमूना आकार के बावजूद अंतर कितना बड़ा है, यह quantifies:
 
-```
-Cohen's d = (mean_1 - mean_2) / pooled_std
-
-d = 0.2:  small effect
-d = 0.5:  medium effect
-d = 0.8:  large effect
+```math
+\begin{aligned}
+\text{Cohen's } d &= \frac{\text{mean}_1 - \text{mean}_2}{\text{pooled\_std}} \\[4pt]
+d &= 0.2: \quad \text{small effect} \\
+d &= 0.5: \quad \text{medium effect} \\
+d &= 0.8: \quad \text{large effect}
+\end{aligned}
 ```
 
 हमेशा p-मूल्य और प्रभाव आकार दोनों की रिपोर्ट करें. p-मूल्य आपको बताता है कि क्या अंतर वास्तविक है. प्रभाव आकार आपको बताता है कि क्या यह मायने रखता है.
 
 ### कई तुलना समस्या
 
-यदि आप 20 चीजों का परीक्षण अल्फा = 0.05 पर करते हैं, तो आप 1 झूठी सकारात्मक की उम्मीद करते हैं, भले ही कुछ भी वास्तविक नहीं हो।
+जब आप कई परिकल्पनाओं का परीक्षण करते हैं, तो कुछ "महत्वपूर्ण" संयोग से होंगे।$\alpha = 0.05$, आप 1 झूठी सकारात्मक उम्मीद है, भले ही कुछ भी वास्तविक नहीं है.
 
 ```
 P(at least one false positive) = 1 - (1 - alpha)^m
@@ -320,7 +324,7 @@ P(false positive) = 1 - 0.95^20 = 0.64
 You have a 64% chance of at least one false positive.
 ```
 
-**Bonferroni correction:**परीक्षणों की संख्या के अनुसार अल्फा विभाजित करें।
+**Bonferroni correction:**विभाजित करें$\alpha$परीक्षणों की संख्या से।
 
 ```
 Adjusted alpha = alpha / m = 0.05 / 20 = 0.0025
@@ -417,11 +421,11 @@ Kruskal-Wallis:     compares multiple groups (replaces ANOVA)
 - More statistical power (better at detecting real differences)
 ```
 
-एमएल प्रयोगों में, आप आमतौर पर छोटे n (5 या 10 क्रॉस-वैलिडेशन फोल्ड) है, इसलिए Wilcoxon हस्ताक्षरित-रैंक जैसे गैर-परिमेट्रिक परीक्षण अक्सर टी-टेस्ट की तुलना में अधिक उपयुक्त हैं।
+एमएल प्रयोगों में, आप आम तौर पर छोटे होते हैं$n$(५ या १० क्रॉस-वैलिडेशन फोल्ड) इसलिए विल्कोक्सन जैसे गैर-पैरामेट्रिक टेस्ट अक्सर टी-टेस्ट से अधिक उपयुक्त होते हैं।
 
 ### केंद्रीय सीमा प्रमेय: व्यावहारिक प्रभाव
 
-सीएलटी का कहना है कि नमूना का वितरण सामान्य वितरण के करीब आता है जैसे-जैसे n बढ़ता है, चाहे जनसंख्या का आधार आधार क्या हो।
+सीएलटी का कहना है कि नमूना वितरण औसत सामान्य वितरण के करीब है जैसे $n$जनसंख्या के आधार पर वितरण के बावजूद बढ़ता है।
 
 ```
 If X_1, X_2, ..., X_n are iid with mean mu and variance sigma^2:
@@ -473,7 +477,7 @@ For highly skewed distributions, you might need n >= 100.
 
 9. **Assuming independence when data is not independent.**एक ही रोगी की चिकित्सा छवियां, एक ही दस्तावेज से कई वाक्य। एक समूह के भीतर अवलोकन सहसंबंधित हैं।
 
-10. **P-hacking.**विभिन्न परीक्षणों, उपसमूहों, या बहिष्करण मानदंडों का परीक्षण जब तक आप पी < 0.05 प्राप्त नहीं करते। परिणाम खोज का एक कलाकृत्य है।
+10. **P-hacking.**जब तक आप प्राप्त नहीं करते हैं, विभिन्न परीक्षणों, उपसमूहों, या बहिष्करण मानदंडों की कोशिश करना।$p < 0.05$परिणाम खोज का एक कलाकृत्य है।
 
 ## इसे बनाना
 
@@ -484,7 +488,7 @@ For highly skewed distributions, you might need n >= 100.
 3. **Hypothesis tests**(एक नमूना टी-टेस्ट, दो नमूना टी-टेस्ट, चि-क्वाड टेस्ट)
 4. **Bootstrap confidence intervals**(किसी भी सांख्यिकीय के लिए कोई अनुमान की आवश्यकता नहीं है)
 5. **A/B test simulator**(डेटा उत्पन्न करना, परीक्षण करना, प्रकार I और प्रकार II की त्रुटियों की जांच करना)
-6. **Statistical vs practical significance demo**(यह दिखाता है कि बड़े n सब कुछ "महत्वपूर्ण" बनाता है)
+6. **Statistical vs practical significance demo**(यह दिखाने के लिए कि बड़े $n$सब कुछ "महत्वपूर्ण" बनाता है)
 
 सब कुछ खरोंच से, केवल उपयोग करते हुए `math`और `random`कोई नंगा, कोई नंगा।
 
@@ -501,7 +505,7 @@ f3-bootstrap-resample
 | Standard deviation | Square root of variance. Measures spread in original units. |
 | Percentile | Value below which a given percentage of data falls. |
 | IQR | Interquartile range. Q3 minus Q1. The spread of the middle 50%. |
-| Pearson correlation | Measures linear association between two variables. Range [-1, 1]. |
+| Pearson correlation | Measures linear association between two variables. Range $[-1, 1]$. |
 | Spearman correlation | Measures monotonic association using ranks. |
 | Covariance matrix | Matrix of pairwise covariances between all features. |
 | Null hypothesis | Default assumption of no effect or no difference. |

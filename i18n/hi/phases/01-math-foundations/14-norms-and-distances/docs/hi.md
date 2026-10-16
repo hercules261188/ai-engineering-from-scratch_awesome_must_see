@@ -28,14 +28,14 @@
 
 ### मानकः वेक्टर परिमाण माप
 
-मानदंड वेक्टर के आकार को मापता है। दो वेक्टरों के बीच प्रत्येक दूरी समारोह को उनके अंतर के मानदंड के रूप में लिखा जा सकता हैः d(a, b) = a - b)
+एक मानदंड वेक्टर के "आकार" को मापता है। दो वेक्टरों के बीच प्रत्येक दूरी समारोह को उनके अंतर के मानदंड के रूप में लिखा जा सकता हैः$d(a, b) = \lVert a - b \rVert$तो मानदंडों को समझना दूरी को समझना है।
 
 ### L1 Norm (मैनहट्टन दूरी)
 
 L1 मानदंड सभी घटकों के निरपेक्ष मानों का योग है।
 
-```
-||x||_1 = |x_1| + |x_2| + ... + |x_n|
+```math
+\lVert x \rVert_1 = |x_1| + |x_2| + \cdots + |x_n|
 ```
 
 इसे मैनहट्टन दूरी कहा जाता है क्योंकि यह मापता है कि आप शहर के ग्रिड पर कितनी दूर जाते हैं जहां आप केवल अक्षों के साथ आगे बढ़ सकते हैं। कोई अनुदैर्ध्य नहीं।
@@ -54,7 +54,7 @@ L1 का उपयोग कब करेंः
 - जब आप असाधारण के लिए मजबूत चाहते हैं (एक ही विशाल अंतर हावी नहीं है)
 - विशेषता चयन समस्याएं (L1 नियमितता स्परसिटी को बढ़ावा देती है)
 
-L1 नियमितता से कनेक्शनः अपने नुकसान फ़ंक्शन में यह जोड़ना पूर्ण वजन मानों के योग को दंडित करता है। यह छोटे वजन को बिल्कुल शून्य तक धकेलता है, स्वचालित सुविधा चयन करता है। L1 दंड वजन स्थान में हीरा के आकार के प्रतिबंध क्षेत्रों को बनाता है, और हीरे के कोनों को अक्षों पर स्थित किया जाता है जहां कुछ वजन शून्य हैं।
+L1 नियमितकरण (लासो) से संबंधः जोड़ना $\lVert w \rVert_1$L1 पेनल्टी वजन स्थान में हीरा के आकार के प्रतिबंध क्षेत्र बनाता है, और हीरे के कोनों अक्षों पर स्थित हैं जहां कुछ वजन शून्य हैं।
 
 हानि कार्यों के साथ संबंधः औसत पूर्ण त्रुटि (MAE) भविष्यवाणियों और लक्ष्यों के बीच औसत L1 दूरी है। यह सभी त्रुटियों को रैखिक रूप से दंडित करता है, जिससे यह एमएसई की तुलना में अप्रासंगिक के लिए मजबूत होता है।
 
@@ -62,11 +62,11 @@ L1 नियमितता से कनेक्शनः अपने नु�
 
 L2 मानदंड सीधी रेखा की दूरी है। वर्ग मूल वर्ग घटकों के योग का है।
 
-```
-||x||_2 = sqrt(x_1^2 + x_2^2 + ... + x_n^2)
+```math
+\lVert x \rVert_2 = \sqrt{x_1^2 + x_2^2 + \cdots + x_n^2}
 ```
 
-यह दूरी आप ज्यामिति कक्षा में सीखा है. n आयामों में पाइथागोरस.
+यह दूरी आप ज्यामिति कक्षा में सीखा है.$n$आयाम।
 
 ```
 Point A = (1, 1)
@@ -83,24 +83,26 @@ L2 का उपयोग कब करेंः
 - भौतिक दूरी (स्थानिक डेटा, सेंसर रीडिंग)
 - पिक्सेल स्तर पर छवि समानता
 
-L2 के लिए कनेक्शन (Ridge): Unww                                                                                                                                                                                                                                                         
+L2 नियमितकरण (रिज) से कनेक्शनः जोड़ना $\lVert w \rVert_2^2$L1 के विपरीत, यह वजन को शून्य तक नहीं धकेलता है। यह सभी वजन को शून्य की ओर समानुपातिक रूप से छोटा करता है। L2 दंड परिपत्र प्रतिबंध क्षेत्रों को बनाता है, इसलिए अक्षों पर कोई कोण नहीं है। वजन छोटे होते हैं लेकिन शायद ही कभी बिल्कुल शून्य होते हैं।
 
 हानि के कार्यों के साथ संबंधः औसत वर्ग त्रुटि (MSE) L2 वर्ग की दूरी का औसत है। वर्गण बड़ी त्रुटियों की तुलना में छोटी त्रुटियों को अधिक भारी दंडित करता है।
 
-```
-MAE (L1 loss):  |y - y_hat|         Linear penalty. Robust to outliers.
-MSE (L2 loss):  (y - y_hat)^2       Quadratic penalty. Sensitive to outliers.
+```math
+\begin{aligned}
+\text{MAE (L1 loss):} \quad & |y - \hat{y}| && \text{Linear penalty. Robust to outliers.} \\
+\text{MSE (L2 loss):} \quad & (y - \hat{y})^2 && \text{Quadratic penalty. Sensitive to outliers.}
+\end{aligned}
 ```
 
 ### सामान्य परिवार
 
 L1 और L2 Lp मानदंड के विशेष मामले हैंः
 
-```
-||x||_p = (|x_1|^p + |x_2|^p + ... + |x_n|^p)^(1/p)
+```math
+\lVert x \rVert_p = (|x_1|^p + |x_2|^p + \cdots + |x_n|^p)^{1/p}
 ```
 
-p के विभिन्न मानों से अलग-अलग आकार के "इकाई गोले" उत्पन्न होते हैं (उत्पत्ति से दूरी 1 पर सभी बिंदुओं का सेट):
+ के विभिन्न मान$p$विभिन्न आकार के "इकाई गोले" (उत्पत्ति से दूरी 1 पर सभी बिंदुओं का सेट) का उत्पादन करेंः
 
 ```
 p=1:    Diamond shape      (corners on axes)
@@ -111,19 +113,20 @@ p=inf:  Square/hypercube   (flat sides along axes)
 
 ### L-अनंतता मानदंड (चेबिशेव दूरी)
 
-जब p अनंत के करीब आता है, तो Lp मानदंड अधिकतम पूर्ण घटक के पास आता है।
+जैसे $p$अनंत के करीब, Lp मानदंड अधिकतम पूर्ण घटक के लिए अभिसरण।
 
-```
-||x||_inf = max(|x_1|, |x_2|, ..., |x_n|)
+```math
+\lVert x \rVert_\infty = \max(|x_1|, |x_2|, \ldots, |x_n|)
 ```
 
 दो बिंदुओं के बीच की दूरी एक ही आयाम द्वारा निर्धारित की जाती है जहां वे सबसे अधिक भिन्न होते हैं। अन्य सभी आयामों को अनदेखा किया जाता है।
 
-```
-Point A = (1, 1)
-Point B = (4, 5)
-
-L-inf distance = max(|4-1|, |5-1|) = max(3, 4) = 4
+```math
+\begin{aligned}
+\text{Point } A &= (1, 1) \\
+\text{Point } B &= (4, 5) \\[6pt]
+L_\infty \text{ distance} &= \max(|4-1|, |5-1|) = \max(3, 4) = 4
+\end{aligned}
 ```
 
 L- इन्फिनिटी का उपयोग कब करेंः
@@ -135,19 +138,20 @@ L- इन्फिनिटी का उपयोग कब करेंः
 
 कॉसिन समानता दो वेक्टरों के बीच कोण को मापती है, उनकी परिमाणों को अनदेखा करती है।
 
-```
-cos_sim(a, b) = (a . b) / (||a||_2 * ||b||_2)
+```math
+\text{cos\_sim}(a, b) = \frac{a \cdot b}{\lVert a \rVert_2 \, \lVert b \rVert_2}
 ```
 
 यह -1 (उपरोधी दिशाओं) से +1 (एक ही दिशा) तक होता है। लंबवत वेक्टरों में कोसिन समानता 0 होती है।
 
 कॉसिन दूरी इसे एक दूरी में परिवर्तित करती हैः कॉसिन_दूरी = 1 - कॉसिन_समानता। यह 0 (समान दिशा) से 2 (उपरोधी दिशा) तक होता है।
 
-```
-a = (1, 0)    b = (1, 1)
-
-cos_sim = (1*1 + 0*1) / (1 * sqrt(2)) = 1/sqrt(2) = 0.707
-cos_dist = 1 - 0.707 = 0.293
+```math
+\begin{aligned}
+& a = (1, 0) \qquad b = (1, 1) \\[6pt]
+& \text{cos\_sim} = \frac{1 \cdot 1 + 0 \cdot 1}{1 \cdot \sqrt{2}} = \frac{1}{\sqrt{2}} = 0.707 \\
+& \text{cos\_dist} = 1 - 0.707 = 0.293
+\end{aligned}
 ```
 
 क्यों कॉसिन एनएलपी और एम्बेडिंग पर हावी हैः पाठ में, दस्तावेज़ की लंबाई समानता को प्रभावित नहीं करनी चाहिए। बिल्लियों के बारे में एक दस्तावेज जो बिल्लियों के बारे में एक अन्य दस्तावेज की तुलना में दो बार लंबा है, उसे अभी भी "समान" होना चाहिए। कॉसिन समानता परिमाण (लंबाई) को अनदेखा करती है और केवल दिशा की परवाह करती है। एक ही शब्द वितरण के साथ दो दस्तावेज लेकिन अलग लंबाई एक ही दिशा में इंगित करते हैं और कॉसिन समानता 1.0 प्राप्त करते हैं।
@@ -162,16 +166,17 @@ cos_dist = 1 - 0.707 = 0.293
 
 दो वेक्टरों का बिंदु गुणकः
 
-```
-a . b = a_1*b_1 + a_2*b_2 + ... + a_n*b_n
-      = ||a|| * ||b|| * cos(angle)
+```math
+\begin{aligned}
+a \cdot b &= a_1 b_1 + a_2 b_2 + \cdots + a_n b_n \\
+&= \lVert a \rVert \, \lVert b \rVert \cos(\text{angle})
+\end{aligned}
 ```
 
 कॉसिन समानता दोनों आयामों द्वारा सामान्यीकृत बिंदु उत्पाद है। जब दोनों वेक्टर पहले से ही इकाई-सामान्य (मगीनता = 1) हैं, तो बिंदु उत्पाद और कॉसिन समानता समान होती है।
 
-```
-If ||a|| = 1 and ||b|| = 1:
-    a . b = cos(angle between a and b)
+```math
+\text{If } \lVert a \rVert = 1 \text{ and } \lVert b \rVert = 1: \quad a \cdot b = \cos(\text{angle between } a \text{ and } b)
 ```
 
 जब वे भिन्न होते हैंः डॉट उत्पाद में परिमाण की जानकारी शामिल होती है। बड़े परिमाण वाले वेक्टर को एक उच्च डॉट उत्पाद स्कोर मिलता है। यह कुछ रिकवरी सिस्टम में मायने रखता है जहां आप चाहते हैं कि "लोकप्रिय" आइटम उच्च रैंक करें। परिमाण एक अप्रत्यक्ष गुणवत्ता या महत्व संकेत के रूप में कार्य करता है।
@@ -197,13 +202,13 @@ Both agree on direction, but dot product also reflects magnitude.
 
 महालनोबी दूरी डेटा की सह-विवर्तन संरचना को समझती है।
 
-```
-d_M(x, y) = sqrt((x - y)^T * S^(-1) * (x - y))
+```math
+d_M(x, y) = \sqrt{(x - y)^T S^{-1} (x - y)}
 ```
 
-जहां S डेटा के सह-विवर्तन मैट्रिक्स है।
+कहाँ$S$डेटा का सह-विवर्तन मैट्रिक्स है।
 
-अंतर्ज्ञानात्मक रूप सेः महलनोबी दूरी पहले डेटा (सफेद) को विकोरेट और सामान्यीकृत करती है, फिर उस परिवर्तित स्थान में L2 दूरी की गणना करती है। यदि S पहचान मैट्रिक्स (अनौपचारिक, इकाई भिन्नता विशेषताएं) है, तो महलनोबी दूरी यूक्लिडियन दूरी तक कम हो जाती है।
+सहजतः महलनॉबी दूरी पहले डेटा को विकोरेट और सामान्यीकृत करती है (सफेद) , फिर उस परिवर्तित स्थान में L2 दूरी की गणना करती है।$S$पहचान मैट्रिक्स (असंबन्धित, इकाई भिन्नता विशेषताएं) है, महलनोबी दूरी यूक्लिडियन दूरी तक कम हो जाती है।
 
 ```
 Example: height and weight are correlated.
@@ -225,8 +230,8 @@ because it accounts for the height-weight correlation.
 
 जैकार्ड समानता उपाय दो सेटों के बीच ओवरलैप करते हैं।
 
-```
-J(A, B) = |A intersect B| / |A union B|
+```math
+J(A, B) = \frac{|A \cap B|}{|A \cup B|}
 ```
 
 यह 0 (कोई ओवरलैप नहीं) से 1 (समान सेट) तक होता है। जैकार्ड दूरी = 1 - जैकार्ड समानता।
@@ -263,7 +268,7 @@ sittin -> sitting (insert g)
 Edit distance = 3
 ```
 
-गतिशील प्रोग्रामिंग का उपयोग करके गणना की गई। एक मैट्रिक्स भरें जहां प्रविष्टि (i, j) स्ट्रिंग A के पहले i वर्णों और स्ट्रिंग B के पहले j वर्णों के बीच संपादन दूरी है।
+गतिशील प्रोग्रामिंग का उपयोग करके गणना की गई। प्रविष्टि जहां एक मैट्रिक्स भरें $(i, j)$पहली के बीच की दूरी है $i$स्ट्रिंग ए और पहले के वर्ण $j$स्ट्रिंग बी के वर्ण।
 
 ```
         ""  s  i  t  t  i  n  g
@@ -286,20 +291,20 @@ Edit distance = 3
 
 KL विचलन मापता है कि एक संभावना वितरण दूसरे से कैसे भिन्न होता है। यह पाठ 09 में कवर किया गया है, लेकिन यह इस चर्चा में शामिल है क्योंकि लोग इसे एक "दूरी" के रूप में उपयोग करते हैं, भले ही यह एक नहीं हो।
 
-```
-D_KL(P || Q) = sum(p(x) * log(p(x) / q(x)))
+```math
+D_{KL}(P \,\|\, Q) = \sum_x p(x) \log\frac{p(x)}{q(x)}
 ```
 
 महत्वपूर्ण गुणः KL विचलन सममित नहीं है।
 
-```
-D_KL(P || Q) != D_KL(Q || P)
+```math
+D_{KL}(P \,\|\, Q) \ne D_{KL}(Q \,\|\, P)
 ```
 
 इसका मतलब यह है कि यह दूरी मीट्रिक की बुनियादी आवश्यकता को पूरा नहीं करता है। यह त्रिकोण असमानता को भी पूरा नहीं करता है। यह एक विचलन है, दूरी नहीं है।
 
-आगे KL (D_KL(P  Q)) "मतलब खोज" हैः Q P के सभी मोड को कवर करने का प्रयास करता है।
-उल्टा KL (D_KL(Q geut P)) "मोड-खोजने" है: Q P के एक ही मोड पर केंद्रित है।
+आगे KL $(D_{KL}(P \Vert Q))$"सारा खोज" है: $Q$$P$. .
+उल्टा KL $(D_{KL}(Q \Vert P))$"मोड-खोजने वाला": $Q$एक ही मोड पर ध्यान केंद्रित करता है $P$. .
 
 जब आप KL विचलन देखते हैंः
 - VAEs (ELBO में KL शब्द लटेंट वितरण को पूर्व की ओर धकेलता है)
@@ -311,14 +316,14 @@ D_KL(P || Q) != D_KL(Q || P)
 
 वास्स्टीन की दूरी एक संभावना वितरण को दूसरे में बदलने के लिए आवश्यक न्यूनतम "काम" को मापती है। इसे इस तरह सोचेंः यदि एक वितरण गंदगी का ढेर है और दूसरा एक छेद है, तो आपको कितनी गंदगी को स्थानांतरित करना होगा और कितनी दूर?
 
-```
-W(P, Q) = inf over all transport plans gamma of E[d(x, y)]
+```math
+W(P, Q) = \inf_{\gamma} \mathbb{E}[d(x, y)] \quad \text{(over all transport plans } \gamma\text{)}
 ```
 
 1D वितरण के लिए, यह संचयी वितरण कार्यों के पूर्ण अंतर के समावेशी को सरल करता हैः
 
-```
-W_1(P, Q) = integral |CDF_P(x) - CDF_Q(x)| dx
+```math
+W_1(P, Q) = \int |\text{CDF}_P(x) - \text{CDF}_Q(x)| \, dx
 ```
 
 वास्स्टीन क्यों मायने रखता हैः
@@ -353,7 +358,7 @@ Wasserstein का उपयोग कब करेंः
 | Set overlap (tags, categories) | Jaccard | Data is naturally set-valued, not vectorial |
 | String matching | Edit distance | Operations map to human editing intuition |
 | Outlier detection | Mahalanobis | Accounts for feature correlations and scales |
-| Comparing distributions | KL divergence | Measures information lost by using Q instead of P |
+| Comparing distributions | KL divergence | Measures information lost by using $Q$ instead of $P$ |
 | GAN training | Wasserstein | Provides gradients even when distributions do not overlap |
 | Embeddings (vector DB) | Cosine or dot product | Embeddings are trained to encode meaning in direction |
 | Recommendation | Dot product | Magnitude can encode popularity or confidence |
@@ -404,7 +409,7 @@ L1 में कमतरता क्यों होती है लेकि
 
 प्रत्येक दूरी फ़ंक्शन में निकटतम पड़ोसी खोज समस्या शामिल होती हैः एक क्वेरी बिंदु दिए जाने पर, डेटासेट में निकटतम बिंदुओं को ढूंढें।
 
-निकटतम पड़ोसी खोज n आयामों के साथ n बिंदुओं के डेटासेट में प्रति क्वेरी O(n * d) है। बड़े डेटासेट के लिए, यह बहुत धीमा है।
+निकटतम पड़ोसी खोज है$O(n \cdot d)$ के डेटासेट में प्रति क्वेरी$n$$d$बड़े डेटा सेट के लिए, यह बहुत धीमा है.
 
 निकटतम पड़ोसी (ANN) एल्गोरिदम विशाल गति लाभ के लिए सटीकता की एक छोटी राशि का व्यापार करते हैंः
 
@@ -469,7 +474,7 @@ print(f"Similarities: {similarities[top_k]}")
 
 ## व्यायाम
 
-1. (1, 2, 3) और (4, 0, 6) के बीच L1, L2 और L-असीमता की दूरी की गणना करें। यह सत्यापित करें कि L-inf <= L2 <= L1 हमेशा किसी भी जोड़ी बिंदुओं के लिए मान्य है। यह साबित करें कि यह क्रम क्यों गारंटी है।
+1. (1, 2, 3) और (4, 0, 6) के बीच L1, L2 और L-अनंत दूरी की गणना करें।$L_\infty \le L_2 \le L_1$यह सुनिश्चित करें कि यह आदेश क्यों गारंटी है।
 
 2. दो वेक्टर बनाएं जहां कॉसिन की समानता अधिक है (> 0.9) लेकिन L2 दूरी बड़ी है (> 10) । ज्यामितीय रूप से समझाएं कि क्या हो रहा है। फिर दो वेक्टर बनाएं जहां कॉसिन की समानता कम है (< 0.3) लेकिन L2 दूरी छोटी है (< 0.5).
 
@@ -479,6 +484,18 @@ print(f"Similarities: {similarities[top_k]}")
 
 5. लगभग जैकार्ड समानता के लिए MinHash को लागू करें। 100 यादृच्छिक सेट उत्पन्न करें, सभी जोड़े के लिए सटीक जैकार्ड की गणना करें, और 50, 100, और 200 हैश फ़ंक्शंस का उपयोग करके MinHash अनुमान के साथ तुलना करें। अनुमान त्रुटि का ग्राफ करें।
 
+### संकेत
+
+**Exercise 1.**अंतर वेक्टर है (-3, 2, -3), तो उस वेक्टर के तीन मानदंडों की गणना के साथ `l1_norm`,`l2_norm`और `linf_norm`. सबूत के लिए, सबसे बड़ी तुलना करें $\lvert d_i \rvert$वर्गों के योग के साथ, और वर्गों के योग को पूर्ण मानों के योग के वर्ग के साथ तुलना करें।
+
+**Exercise 2.**कॉसिन समानता लंबाई को अनदेखा करती है, इसलिए दो वेक्टरों से शुरू करें जो लगभग एक ही दिशा में इंगित करते हैं और उनमें से एक को बहुत लंबा बनाते हैं। दूसरे मामले के लिए, मूल के पास दो छोटे वेक्टरों का उपयोग करें जो विभिन्न दिशाओं में इंगित करते हैं, फिर दोनों स्थितियों की जांच करें`cosine_similarity`और `l2_distance`. .
+
+**Exercise 3.**कॉल`find_nearest_neighbor(query, dataset, distance_fn)`एक बार प्रत्येक के लिए `l1_distance`,`l2_distance`,`cosine_distance`और `mahalanobis_distance`. .`demo_different_neighbors`एक डेटासेट दिखाता है जहां माप असहमत हैं, तो इसे पहले पढ़ें और फिर चार उत्तरों में अंतर होने तक बिंदुओं को बदलें।
+
+**Exercise 4.**प्रत्येक वितरण का संचयी योग लिखें, फिर दो संचयी योगों के पूर्ण अंतर जोड़ें। दोनों हाथों के परिणामों की जांच करें `wasserstein_1d(p, q)`, फिर बड़ी मान को बताएं कि संभावना द्रव्यमान कितनी दूर तक आगे बढ़ना चाहिए।
+
+**Exercise 5.**प्रत्येक हैश फ़ंक्शन के लिए, एक सेट का MinHash हस्ताक्षर उसके तत्वों पर न्यूनतम हैश मूल्य है, और हैश फ़ंक्शन का अंश जहां दो सेट समान न्यूनतम अनुमान प्राप्त करते हैं, उनकी जैकार्ड समानता। प्रत्येक अनुमान की तुलना करें `jaccard_similarity`; त्रुटि लगभग $1/\sqrt{k}$के लिए$k$हैश फ़ंक्शंस।
+
 ## प्रमुख शर्तें
 
 | Term | What people say | What it actually means |
@@ -486,15 +503,15 @@ print(f"Similarities: {similarities[top_k]}")
 | Norm | "Size of a vector" | A function that maps a vector to a non-negative scalar, satisfying triangle inequality, absolute homogeneity, and zero only for the zero vector |
 | L1 norm | "Manhattan distance" | Sum of absolute component values. Produces sparsity in optimization. Robust to outliers |
 | L2 norm | "Euclidean distance" | Square root of sum of squared components. The straight-line distance in Euclidean space |
-| Lp norm | "Generalized norm" | The p-th root of the sum of p-th powers of absolute components. L1 and L2 are special cases |
-| L-infinity norm | "Max norm" or "Chebyshev distance" | The maximum absolute component value. The limit of Lp as p approaches infinity |
+| Lp norm | "Generalized norm" | The $p$-th root of the sum of $p$-th powers of absolute components. L1 and L2 are special cases |
+| L-infinity norm | "Max norm" or "Chebyshev distance" | The maximum absolute component value. The limit of Lp as $p$ approaches infinity |
 | Cosine similarity | "Angle between vectors" | Dot product normalized by both magnitudes. Ranges from -1 to +1. Ignores vector length |
 | Cosine distance | "1 minus cosine similarity" | Converts cosine similarity to a distance. Ranges from 0 to 2 |
 | Dot product | "Unnormalized cosine" | Sum of component-wise products. Equals cosine similarity times both magnitudes |
 | Mahalanobis distance | "Correlation-aware distance" | L2 distance in a space that has been whitened (decorrelated and normalized) using the data covariance matrix |
 | Jaccard similarity | "Set overlap" | Size of intersection divided by size of union. For sets, not vectors |
 | Edit distance | "Levenshtein distance" | Minimum insertions, deletions, and substitutions to transform one string into another |
-| KL divergence | "Distance between distributions" | Not a true distance (not symmetric). Measures extra bits from using Q to encode P |
+| KL divergence | "Distance between distributions" | Not a true distance (not symmetric). Measures extra bits from using $Q$ to encode $P$ |
 | Wasserstein distance | "Earth mover's distance" | Minimum work to transport mass from one distribution to another. A true metric |
 | Approximate nearest neighbor | "ANN search" | Algorithms (HNSW, LSH, IVF) that find approximately closest points much faster than exact search |
 | HNSW | "The vector DB algorithm" | Hierarchical Navigable Small World graph. Multi-layer graph for fast approximate nearest neighbor search |

@@ -96,7 +96,7 @@ Relative error: 19.2%
 
 यह एक एकल घटाने से 19% सापेक्ष त्रुटि है। ML में, यह हर बार होता है जब आपः
 
-- बड़ी औसत के साथ डेटा की गणना करें: `E[x^2] - E[x]^2`जब E[x] बड़ा हो
+- बड़ी औसत के साथ डेटा की गणना करें: $\mathbb{E}[x^2] - \mathbb{E}[x]^2$कब$\mathbb{E}[x]$बड़ा है
 - लगभग समान लॉग-संभाव्यताओं को घटाएं
 - बहुत छोटे एप्सिलन के साथ परिमित अंतर ग्रेडिएंट की गणना करें
 
@@ -141,20 +141,22 @@ log(1e-46) = -inf        (input underflowed to 0, then log(0) = -inf)
 
 चालः exponentiating से पहले अधिकतम मान घटाएं।
 
-```
-log(sum(exp(x_i))) = max(x) + log(sum(exp(x_i - max(x))))
+```math
+\log\left(\sum_i \exp(x_i)\right) = \max(x) + \log\left(\sum_i \exp(x_i - \max(x))\right)
 ```
 
 यह काम क्यों करता हैः घटाने के बाद `max(x)`, सबसे बड़ा एक्सपोनेंट है `exp(0) = 1`. कोई ओवरफ्लो संभव नहीं है. योग में कम से कम एक शब्द 1 है, इसलिए योग कम से कम 1 है, और `log(1) = 0`. कोई निचला प्रवाह नहीं है .`-inf`संभव है।
 
 प्रमाण:
 
-```
-log(sum(exp(x_i)))
-= log(sum(exp(x_i - c + c)))                    (add and subtract c)
-= log(sum(exp(x_i - c) * exp(c)))               (exp(a+b) = exp(a)*exp(b))
-= log(exp(c) * sum(exp(x_i - c)))               (factor out exp(c))
-= c + log(sum(exp(x_i - c)))                    (log(a*b) = log(a) + log(b))
+```math
+\begin{aligned}
+& \log\left(\sum_i \exp(x_i)\right) \\
+&= \log\left(\sum_i \exp(x_i - c + c)\right) && \text{(add and subtract } c\text{)} \\
+&= \log\left(\sum_i \exp(x_i - c) \cdot \exp(c)\right) && (\exp(a+b) = \exp(a) \cdot \exp(b)) \\
+&= \log\left(\exp(c) \cdot \sum_i \exp(x_i - c)\right) && \text{(factor out } \exp(c)\text{)} \\
+&= c + \log\left(\sum_i \exp(x_i - c)\right) && (\log(a \cdot b) = \log(a) + \log(b))
+\end{aligned}
 ```
 
 सेट `c = max(x)`और अतिप्रवाह समाप्त हो जाता है।
@@ -170,8 +172,8 @@ log(sum(exp(x_i)))
 
 Softmax संभावनाओं में लॉगिट परिवर्तित करता हैः
 
-```
-softmax(x_i) = exp(x_i) / sum(exp(x_j))
+```math
+\mathop{\mathrm{softmax}}(x_i) = \frac{\exp(x_i)}{\sum_j \exp(x_j)}
 ```
 
 बिना चाल के, [100, 101, 102] के लॉजिटों से अतिप्रवाह होता हैः
@@ -242,18 +244,18 @@ math.isfinite(x)    # True if x is neither nan nor inf
 
 केन्द्रित अंतर सूत्रः
 
-```
-df/dx ~= (f(x + h) - f(x - h)) / (2h)
+```math
+\frac{df}{dx} \approx \frac{f(x + h) - f(x - h)}{2h}
 ```
 
-यह O ((h^2) सटीक है, आगे अंतर से बहुत बेहतर `(f(x+h) - f(x)) / h`जो केवल O(h है।
+यह है$O(h^2)$सटीक, आगे की अंतर से बहुत बेहतर $(f(x+h) - f(x)) / h$जो केवल है $O(h)$. .
 
-h: बहुत बड़ा चुनना और अनुमान गलत है। बहुत छोटा और विनाशकारी रद्द करने से उत्तर नष्ट हो जाता है। `h = 1e-5``1e-7`यह आम है।
+चुनना $h$बहुत छोटा और विनाशकारी रद्द करने से उत्तर नष्ट हो जाता है। `h = 1e-5``1e-7`यह आम है।
 
 जांचः विश्लेषणात्मक और संख्यात्मक ग्रेडिएंट के बीच सापेक्ष अंतर की गणना करें।
 
-```
-relative_error = |grad_analytical - grad_numerical| / max(|grad_analytical|, |grad_numerical|, 1e-8)
+```math
+\text{relative\_error} = \frac{\lvert \text{grad}_{\text{analytical}} - \text{grad}_{\text{numerical}} \rvert}{\max(\lvert \text{grad}_{\text{analytical}} \rvert, \lvert \text{grad}_{\text{numerical}} \rvert, 10^{-8})}
 ```
 
 अंगूठे के नियमः
@@ -289,7 +291,7 @@ relative_error = |grad_analytical - grad_numerical| / max(|grad_analytical|, |gr
 5. Net effect: same update, but no underflow
 ```
 
-गतिशील हानि स्केलिंग स्वचालित रूप से पैमाने कारक समायोजित करता है। एक बड़े मूल्य (65536) के साथ शुरू करें। यदि gradients ओवरफ्लो करने के लिए `inf`यदि N कदम बिना ओवरफ्लो के गुजरते हैं, तो इसे दोगुना करें।
+गतिशील हानि स्केलिंग स्वचालित रूप से पैमाने कारक समायोजित करता है। एक बड़े मूल्य (65536) के साथ शुरू करें। यदि gradients ओवरफ्लो करने के लिए `inf`, इसे आधा करो.$N$कदम बिना ओवरफ्लो के गुजरते हैं, इसे दोगुना करें।
 
 ### bfloat16 vs float16: क्यों bfloat16 ट्रेनिंग के लिए जीतता है
 
@@ -350,8 +352,8 @@ Layer 50: values in [0, inf]
 
 सामान्यीकरण प्रत्येक परत पर हालिया और पुनः सक्रियण सक्रियणः
 
-```
-LayerNorm(x) = (x - mean(x)) / (std(x) + epsilon) * gamma + beta
+```math
+\mathop{\mathrm{LayerNorm}}(x) = \frac{x - \mathop{\mathrm{mean}}(x)}{\mathop{\mathrm{std}}(x) + \epsilon} \cdot \gamma + \beta
 ```
 
 `epsilon`(आमतौर पर 1e-5) शून्य से विभाजन को रोकता है जब सभी सक्रियण समान होते हैं।`gamma`और `beta`नेटवर्क को किसी भी पैमाने को बहाल करने की अनुमति दें जो उसे चाहिए।
@@ -568,7 +570,7 @@ check_tensor("ugly", [1.0, float('inf'), 3.0])
 
 ## व्यायाम
 
-1. **Catastrophic cancellation.**[1000000.0, 1000001.0, 1000002.0] के विचलन को सरल सूत्र का उपयोग करके गणना करें `E[x^2] - E[x]^2`फिर वेल्फोर्ड के ऑनलाइन एल्गोरिथ्म का उपयोग करके गणना करें। वास्तविक भिन्नता (0.6667) के साथ त्रुटियों की तुलना करें।
+1. **Catastrophic cancellation.**[1000000.0, 1000001.0, 1000002.0] के विचलन को सरल सूत्र का उपयोग करके गणना करें $\mathbb{E}[x^2] - \mathbb{E}[x]^2$फिर वेल्फोर्ड के ऑनलाइन एल्गोरिथ्म का उपयोग करके गणना करें। वास्तविक भिन्नता (0.6667) के साथ त्रुटियों की तुलना करें।
 
 2. **Precision hunt.**सबसे छोटी सकारात्मक float32 मान खोजें `x`इस तरह की`1.0 + x == 1.0`यह मशीन epsilon है. यह मेल खाता है कि यह सत्यापित करें.`numpy.finfo(numpy.float32).eps`. .
 
@@ -578,17 +580,29 @@ check_tensor("ugly", [1.0, float('inf'), 3.0])
 
 5. **Loss scaling experiment.**फ्लोट16 के साथ प्रशिक्षण का अनुकरण करेंः [1e-9, 1e-3] रेंज में यादृच्छिक ग्रेडिएंट बनाएं, फ्लोट16 में परिवर्तित करें, और मापें कि किस अंश को शून्य बना दिया जाता है। फिर हानि स्केलिंग (1024 से गुणा करें) लागू करें, फ्लोट16 में परिवर्तित करें, स्केल वापस करें, और शून्य अंश को फिर से मापें।
 
+### संकेत
+
+**Exercise 1.**तीनों मानों को परिवर्तित करें `np.float32`इससे पहले कि आप उन्हें वर्ग, फिर कॉल `variance_naive`और `welford_variance`. एक मूल्य करीब $10^{12}$फ्लोट 32 में एक अंतर 1 से बहुत अधिक है, तो आशा है कि साफ़ परिणाम 0.6667 से दूर है और वेल्फोर्ड परिणाम करीब है।
+
+**Exercise 2.** से शुरू करें`x = np.float32(1.0)`और इसे आधा जबकि `np.float32(1.0) + x != np.float32(1.0)`. प्रत्येक मान को float32 में रखें, फिर अंतिम मान की तुलना करें जो अभी भी राशि को बदल दिया है`numpy.finfo(numpy.float32).eps`, जो है $2^{-23}$. .
+
+**Exercise 3.**पहले प्रत्येक उत्तर का अनुमान लगाओ।$n$बराबर मूल्य $c$, परिणाम है $c + \ln n$. एक बड़े मूल्य के लिए, परिणाम उस मूल्य के करीब है. -1000 के करीब के लिए, परिणाम निकट है $-1000 + \ln n$, जबकि `logsumexp_naive`रिटर्न `-inf`क्योंकि प्रत्येक घातीय 0 तक नीचे बहता है।
+
+**Exercise 4.**के लिए$y = Wx + b$हानि के साथ $L$,  के लिए ग्रेडिएंट$W$उपधारा के उतार का बाहरी उत्पाद है और $x$. क्षैतिज के कार्य के रूप में हानि को लपेटें $W$, कॉल `numerical_gradient`, और दोनों परिणामों को पारित करने के लिए `check_gradient`. .
+
+**Exercise 5.** के साथ लॉग पैमाने पर आयामों का नमूना`10 ** np.random.uniform(-9, -3, n)`और परिवर्तित करने के लिए `np.float16`. फ्लोट16 लगभग $6 \times 10^{-8}$, तो अनुमान लगाएं कि लगभग एक चौथाई मानों को शून्य करने से पहले पैमाने और लगभग कोई भी जब आप 1024 द्वारा गुणा करने के लिए हो जाएगा।
+
 ## प्रमुख शर्तें
 
 | Term | What people say | What it actually means |
 |------|----------------|----------------------|
 | IEEE 754 | "The float standard" | International standard defining binary floating point formats, rounding rules, and special values (inf, nan). Every modern CPU and GPU implements it. |
-| Machine epsilon | "The precision limit" | The smallest value e such that 1.0 + e != 1.0 in a given float format. For float32, it is about 1.19e-7. |
+| Machine epsilon | "The precision limit" | The smallest value $e$ such that $1.0 + e \ne 1.0$ in a given float format. For float32, it is about 1.19e-7. |
 | Catastrophic cancellation | "Precision loss from subtraction" | When subtracting nearly equal floating point numbers, significant digits cancel and rounding noise dominates the result. |
 | Overflow | "Number too big" | A result exceeds the maximum representable value and becomes inf. exp(89) overflows float32. |
 | Underflow | "Number too small" | A result is closer to zero than the smallest representable positive number and becomes 0.0. exp(-104) underflows float32. |
-| Log-sum-exp trick | "Subtract the max first" | Computing log(sum(exp(x))) by factoring out exp(max(x)) to prevent overflow and underflow. Used in softmax, cross-entropy, and log-probability math. |
-| Stable softmax | "Softmax that does not explode" | Subtracting max(logits) before exponentiating. Numerically identical result, no overflow possible. |
+| Log-sum-exp trick | "Subtract the max first" | Computing $\log(\sum \exp(x))$ by factoring out $\exp(\max(x))$ to prevent overflow and underflow. Used in softmax, cross-entropy, and log-probability math. |
+| Stable softmax | "Softmax that does not explode" | Subtracting $\max(\text{logits})$ before exponentiating. Numerically identical result, no overflow possible. |
 | Gradient checking | "Verify your backprop" | Comparing analytical gradients from backpropagation against numerical gradients from finite differences to catch implementation bugs. |
 | Mixed precision | "Float16 forward, float32 backward" | Using lower-precision floats for speed-critical operations and higher-precision floats for numerically sensitive operations. Typical speedup is 2-3x. |
 | Loss scaling | "Prevent gradient underflow" | Multiplying the loss by a large constant before backprop so gradients stay in float16's representable range, then dividing by the same constant before weight updates. |
@@ -596,7 +610,7 @@ check_tensor("ugly", [1.0, float('inf'), 3.0])
 | Gradient clipping | "Cap the gradient norm" | Scaling the gradient vector so its norm does not exceed a threshold. Prevents exploding gradients from ruining weights. |
 | NaN | "Not a Number" | Special float value from undefined operations (0/0, inf-inf, sqrt(-1)). Propagates through all subsequent arithmetic. |
 | Inf | "Infinity" | Special float value from overflow or division by zero. Can combine to produce NaN (inf - inf, inf * 0). |
-| Numerical gradient | "Brute force derivative" | Approximating a derivative by evaluating f(x+h) and f(x-h) and dividing by 2h. Slow but reliable for verification. |
+| Numerical gradient | "Brute force derivative" | Approximating a derivative by evaluating $f(x+h)$ and $f(x-h)$ and dividing by $2h$. Slow but reliable for verification. |
 
 ## आगे पढ़ना
 

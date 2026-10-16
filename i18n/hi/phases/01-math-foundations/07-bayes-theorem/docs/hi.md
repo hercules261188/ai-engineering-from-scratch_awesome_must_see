@@ -30,24 +30,24 @@
 
 आप पहले से ही पाठ 06 से जानते हैं कि सशर्त संभावना हैः
 
-```
-P(A|B) = P(A and B) / P(B)
+```math
+P(A \mid B) = \frac{P(A \text{ and } B)}{P(B)}
 ```
 
 और सममित रूप सेः
 
+```math
+P(B \mid A) = \frac{P(A \text{ and } B)}{P(A)}
 ```
-P(B|A) = P(A and B) / P(A)
-```
 
-दोनों अभिव्यक्ति एक ही संख्यात्मक साझा करते हैंः P(A और B। उन्हें बराबर सेट करें और पुनर्गठन करेंः
+दोनों अभिव्यक्ति एक ही संख्याकार साझा करते हैंः $P(A \text{ and } B)$. उन्हें बराबर करें और पुनर्गठनः
 
-```
-P(A and B) = P(A|B) * P(B) = P(B|A) * P(A)
-
-Therefore:
-
-P(A|B) = P(B|A) * P(A) / P(B)
+```math
+\begin{aligned}
+P(A \text{ and } B) &= P(A \mid B) \cdot P(B) = P(B \mid A) \cdot P(A) \\[4pt]
+&\text{Therefore:} \\[4pt]
+P(A \mid B) &= \frac{P(B \mid A) \cdot P(A)}{P(B)}
+\end{aligned}
 ```
 
 यह बेयज़ का प्रमेय है चार मात्राओं, एक समीकरण।
@@ -56,35 +56,35 @@ P(A|B) = P(B|A) * P(A) / P(B)
 
 | Part | Name | What it means |
 |------|------|---------------|
-| P(A\|B) | Posterior | Your updated belief about A after seeing evidence B |
-| P(B\|A) | Likelihood | How probable the evidence B is if A is true |
-| P(A) | Prior | Your belief about A before seeing any evidence |
-| P(B) | Evidence | Total probability of seeing B under all possibilities |
+| $P(A \mid B)$ | Posterior | Your updated belief about $A$ after seeing evidence $B$ |
+| $P(B \mid A)$ | Likelihood | How probable the evidence $B$ is if $A$ is true |
+| $P(A)$ | Prior | Your belief about $A$ before seeing any evidence |
+| $P(B)$ | Evidence | Total probability of seeing $B$ under all possibilities |
 
-साक्ष्य शब्द P(B) एक सामान्यीकरण के रूप में कार्य करता है. आप कुल संभावना के कानून का उपयोग करके इसे बढ़ा सकते हैंः
+साक्ष्य अवधि $P(B)$आप कुल संभावना के कानून का उपयोग करके इसे बढ़ा सकते हैंः
 
-```
-P(B) = P(B|A) * P(A) + P(B|not A) * P(not A)
+```math
+P(B) = P(B \mid A) \cdot P(A) + P(B \mid \text{not } A) \cdot P(\text{not } A)
 ```
 
 ### चिकित्सा परीक्षण का उदाहरण
 
 एक बीमारी 10,000 में से 1 व्यक्ति को प्रभावित करती है। परीक्षण 99% सटीक है (बीमार लोगों का 99% पकड़ता है, समय के 1% में झूठे सकारात्मकता देता है) ।
 
-```
-P(sick)          = 0.0001     (prior: disease is rare)
-P(positive|sick) = 0.99       (likelihood: test catches it)
-P(positive|healthy) = 0.01    (false positive rate)
-
-P(positive) = P(positive|sick) * P(sick) + P(positive|healthy) * P(healthy)
-            = 0.99 * 0.0001 + 0.01 * 0.9999
-            = 0.000099 + 0.009999
-            = 0.010098
-
-P(sick|positive) = P(positive|sick) * P(sick) / P(positive)
-                 = 0.99 * 0.0001 / 0.010098
-                 = 0.0098
-                 = 0.98%
+```math
+\begin{aligned}
+P(\text{sick}) &= 0.0001 \quad \text{(prior: disease is rare)} \\
+P(\text{positive} \mid \text{sick}) &= 0.99 \quad \text{(likelihood: test catches it)} \\
+P(\text{positive} \mid \text{healthy}) &= 0.01 \quad \text{(false positive rate)} \\[6pt]
+P(\text{positive}) &= P(\text{positive} \mid \text{sick}) \cdot P(\text{sick}) + P(\text{positive} \mid \text{healthy}) \cdot P(\text{healthy}) \\
+&= 0.99 \cdot 0.0001 + 0.01 \cdot 0.9999 \\
+&= 0.000099 + 0.009999 \\
+&= 0.010098 \\[6pt]
+P(\text{sick} \mid \text{positive}) &= P(\text{positive} \mid \text{sick}) \cdot P(\text{sick}) / P(\text{positive}) \\
+&= 0.99 \cdot 0.0001 / 0.010098 \\
+&= 0.0098 \\
+&= 0.98\%
+\end{aligned}
 ```
 
 एक बार जब कोई बीमारी होती है तो सटीक परीक्षण भी अक्सर झूठे सकारात्मक परिणाम देते हैं यही कारण है कि डॉक्टर पुष्टि परीक्षणों का आदेश देते हैं।
@@ -93,18 +93,18 @@ P(sick|positive) = P(positive|sick) * P(sick) / P(positive)
 
 आपको एक ईमेल मिलता है जिसमें "लॉटरी" शब्द होता है। क्या यह स्पैम है?
 
-```
-P(spam)                = 0.3      (30% of email is spam)
-P("lottery"|spam)      = 0.05     (5% of spam emails contain "lottery")
-P("lottery"|not spam)  = 0.001    (0.1% of legitimate emails contain "lottery")
-
-P("lottery") = 0.05 * 0.3 + 0.001 * 0.7
-             = 0.015 + 0.0007
-             = 0.0157
-
-P(spam|"lottery") = 0.05 * 0.3 / 0.0157
-                  = 0.955
-                  = 95.5%
+```math
+\begin{aligned}
+P(\text{spam}) &= 0.3 \quad \text{(30\% of email is spam)} \\
+P(\text{"lottery"} \mid \text{spam}) &= 0.05 \quad \text{(5\% of spam emails contain "lottery")} \\
+P(\text{"lottery"} \mid \text{not spam}) &= 0.001 \quad \text{(0.1\% of legitimate emails contain "lottery")} \\[6pt]
+P(\text{"lottery"}) &= 0.05 \cdot 0.3 + 0.001 \cdot 0.7 \\
+&= 0.015 + 0.0007 \\
+&= 0.0157 \\[6pt]
+P(\text{spam} \mid \text{"lottery"}) &= 0.05 \cdot 0.3 / 0.0157 \\
+&= 0.955 \\
+&= 95.5\%
+\end{aligned}
 ```
 
 एक शब्द 30% से 95.5% तक संभावना को स्थानांतरित करता है। एक वास्तविक स्पैम फ़िल्टर एक साथ सैकड़ों शब्दों पर बेयज़ लागू करता है।
@@ -113,58 +113,56 @@ P(spam|"lottery") = 0.05 * 0.3 / 0.0157
 
 Naive Bayes यह वर्ग को देखते हुए सभी सुविधाओं को सशर्त रूप से स्वतंत्र मानते हुए कई विशेषताओं तक विस्तारित करता हैः
 
-```
-P(class | feature_1, feature_2, ..., feature_n)
-  = P(class) * P(feature_1|class) * P(feature_2|class) * ... * P(feature_n|class)
-    / P(feature_1, feature_2, ..., feature_n)
+```math
+P(\text{class} \mid \text{feature}_1, \text{feature}_2, \ldots, \text{feature}_n) = \frac{P(\text{class}) \cdot P(\text{feature}_1 \mid \text{class}) \cdot P(\text{feature}_2 \mid \text{class}) \cdots P(\text{feature}_n \mid \text{class})}{P(\text{feature}_1, \text{feature}_2, \ldots, \text{feature}_n)}
 ```
 
 "नाईव" हिस्सा स्वतंत्रता परिकल्पना है। पाठ में, शब्द घटनाएं स्वतंत्र नहीं हैं ("नई" और "यॉर्क" संबद्ध हैं) लेकिन यह परिकल्पना अभ्यास में आश्चर्यजनक रूप से अच्छी तरह से काम करती है क्योंकि वर्गीकरणकर्ता को केवल वर्गों को रैंक करने की आवश्यकता है, न कि कैलिब्रेटेड संभावनाओं का उत्पादन करना है।
 
 चूंकि सभी वर्गों के लिए नामक एक ही है, आप इसे छोड़ सकते हैं और बस संख्याओं की तुलना कर सकते हैंः
 
-```
-score(class) = P(class) * product of P(feature_i | class)
+```math
+\text{score}(\text{class}) = P(\text{class}) \cdot \prod_i P(\text{feature}_i \mid \text{class})
 ```
 
 उच्चतम स्कोर वाला वर्ग चुनें।
 
 ### अधिकतम संभावना अनुमान (MLE)
 
-प्रशिक्षण डेटा से आप P  विशेषताएं (Figure) कैसे प्राप्त करते हैं?
+आप कैसे प्राप्त करते हैं$P(\text{feature} \mid \text{class})$प्रशिक्षण डेटा से?
 
-```
-P("free"|spam) = (number of spam emails containing "free") / (total spam emails)
+```math
+P(\text{"free"} \mid \text{spam}) = \frac{\text{number of spam emails containing "free"}}{\text{total spam emails}}
 ```
 
 यह MLE है: उन पैरामीटर मानों का चयन करें जो अवलोकन किए गए डेटा को सबसे अधिक संभावना बनाते हैं। आप संभावना फ़ंक्शन को अधिकतम कर रहे हैं, जो डिस्क्रिट गिनती के लिए सापेक्ष आवृत्ति में कम हो जाता है।
 
 समस्याः यदि एक शब्द प्रशिक्षण के दौरान स्पैम में कभी नहीं दिखाई देता है, तो MLE उसे शून्य संभावना देता है। एक अदृश्य शब्द पूरे उत्पाद को मार देता है। इसे लैपलेस चिकनाई के साथ ठीक करेंः
 
-```
-P(word|class) = (count(word, class) + 1) / (total_words_in_class + vocabulary_size)
+```math
+P(\text{word} \mid \text{class}) = \frac{\text{count}(\text{word}, \text{class}) + 1}{\text{total\_words\_in\_class} + \text{vocabulary\_size}}
 ```
 
 प्रत्येक गणना में 1 जोड़ने से कोई संभावना कभी शून्य नहीं होती है।
 
 ### अधिकतम एक बाद में (MAP)
 
-MLE पूछता हैः कौन से पैरामीटर P\ डेटा पैरामीटर को अधिकतम करते हैं?
+एमएलई पूछता हैः कौन से पैरामीटर अधिकतम $P(\text{data} \mid \text{parameters})$?
 
-MAP पूछता हैः P  पैरामीटर डेटा में अधिकतम कौन से पैरामीटर हैं?
+मैप पूछता हैः कौन से पैरामीटर अधिकतम $P(\text{parameters} \mid \text{data})$?
 
 बेयज़ के प्रमेय द्वाराः
 
-```
-P(parameters|data) proportional to P(data|parameters) * P(parameters)
+```math
+P(\text{parameters} \mid \text{data}) \propto P(\text{data} \mid \text{parameters}) \cdot P(\text{parameters})
 ```
 
 MAP स्वयं मापदंडों पर एक पूर्ववर्ती जोड़ता है। यदि आपको लगता है कि मापदंड छोटे होने चाहिए, तो आप इसे एक पूर्ववर्ती के रूप में एन्कोड करते हैं जो बड़े मानों को दंडित करता है। यह एमएल में एल 2 नियमितकरण के समान है। रिग रेग्रिशन में "रिज" दंड सचमुच भार पर गौशियन पूर्ववर्ती है।
 
 | Estimation | Optimizes | ML equivalent |
 |------------|-----------|---------------|
-| MLE | P(data\|params) | Unregularized training |
-| MAP | P(data\|params) * P(params) | L2 / L1 regularization |
+| MLE | $P(\text{data} \mid \text{params})$ | Unregularized training |
+| MAP | $P(\text{data} \mid \text{params}) \cdot P(\text{params})$ | L2 / L1 regularization |
 
 ### बेयिसियन बनाम फ्रिक्वेन्टिस्टः व्यावहारिक अंतर
 
@@ -189,7 +187,7 @@ MAP स्वयं मापदंडों पर एक पूर्ववर
 
 **Priors are regularization.**भार पर गौसीयन पूर्वक्रम L2 नियमितता है। लैपलेस पूर्वक्रम L1 है। जब भी आप एक नियमितता शब्द जोड़ते हैं, तो आप एक बेयसीयन कथन बना रहे हैं कि आप किन पैरामीटर मानों की उम्मीद करते हैं।
 
-**Posteriors are uncertainty.**एक ही भविष्यवाणी की गई संभावना आपको बताती है कि मॉडल उस अनुमान में कितना आश्वस्त है। बेयिसियन विधियों आपको एक वितरण देती हैः "मुझे लगता है कि P(स्पैम) 0.8 से 0.95 के बीच है।"
+**Posteriors are uncertainty.**एक ही भविष्यवाणी की संभावना आपको बताती है कि मॉडल उस अनुमान में कितना आश्वस्त है के बारे में कुछ नहीं है. बेयिसियन तरीकों आप एक वितरण देते हैंः "मुझे लगता है कि$P(\text{spam})$0.8 से 0.95 के बीच है।"
 
 **Bayes updates are online learning.**आज का पीछे का हिस्सा कल का पूर्व बन जाता है जब आपका मॉडल नए डेटा देखता है, तो यह स्क्रैच से पुनः प्रशिक्षण के बजाय अपने विश्वासों को क्रमिक रूप से अपडेट करता है।
 
@@ -345,26 +343,28 @@ for msg, pred in zip(test_messages, predictions):
 
 | Likelihood | Conjugate Prior | Posterior | Example |
 |-----------|----------------|-----------|---------|
-| Bernoulli | Beta(a, b) | Beta(a + successes, b + failures) | Coin flip bias estimation |
-| Normal (known variance) | Normal(mu_0, sigma_0) | Normal(weighted mean, smaller variance) | Sensor calibration |
-| Poisson | Gamma(a, b) | Gamma(a + sum of counts, b + n) | Modeling arrival rates |
-| Multinomial | Dirichlet(alpha) | Dirichlet(alpha + counts) | Topic modeling, language models |
+| Bernoulli | $\text{Beta}(a, b)$ | $\text{Beta}(a + \text{successes}, b + \text{failures})$ | Coin flip bias estimation |
+| Normal (known variance) | $\text{Normal}(\mu_0, \sigma_0)$ | Normal(weighted mean, smaller variance) | Sensor calibration |
+| Poisson | $\text{Gamma}(a, b)$ | $\text{Gamma}(a + \text{sum of counts}, b + n)$ | Modeling arrival rates |
+| Multinomial | $\text{Dirichlet}(\alpha)$ | $\text{Dirichlet}(\alpha + \text{counts})$ | Topic modeling, language models |
 
 यह महत्वपूर्ण क्यों हैः बिना संयुग्मित पूर्व के, आप मोन्टे कार्लो नमूना या भिन्नता inference के पीछे के करीब करने की जरूरत है. संयुग्मित पूर्व के साथ, आप सिर्फ दो संख्याओं को अद्यतन.
 
-बीटा वितरण व्यवहार में सबसे आम संयुग्मित पूर्व है। बीटा ((a, b) एक संभावना पैरामीटर के बारे में आपके विश्वास को दर्शाता है। औसत a/(a+b है। जितना बड़ा a+b, उतना अधिक केंद्रित (आत्मविश्वासपूर्ण) वितरण।
+बीटा वितरण व्यवहार में सबसे आम संयुग्गित पूर्व है। $\text{Beta}(a, b)$संभावना पैरामीटर के बारे में आपके विश्वास का प्रतिनिधित्व करता है। औसत है$a/(a+b)$. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .$a+b$, अधिक केंद्रित (आत्मविश्वास) वितरण।
 
 बीटा पूर्व के विशेष मामलेः
-- बीटा ((1, 1) = वर्दी. आप पैरामीटर के बारे में कोई राय नहीं है.
-- बीटा ((10, 10) = 0.5 पर पीक। आप दृढ़ता से मानता है कि पैरामीटर 0.5 के करीब है।
-- बीटा ((1, 10) = 0 की ओर झुका हुआ है. आप मानते हैं कि पैरामीटर छोटा है.
+- $\text{Beta}(1, 1)$आप पैरामीटर के बारे में कोई राय नहीं है.
+- $\text{Beta}(10, 10)$आप दृढ़ता से मानता है कि पैरामीटर 0.5 के करीब है।
+- $\text{Beta}(1, 10)$= 0 की ओर झुका हुआ है. आप मानते हैं कि पैरामीटर छोटा है.
 
 अद्यतन नियम बहुत सरल हैः
 
-```
-Prior:     Beta(a, b)
-Data:      s successes, f failures
-Posterior: Beta(a + s, b + f)
+```math
+\begin{aligned}
+\text{Prior:} \quad & \text{Beta}(a, b) \\
+\text{Data:} \quad & s \text{ successes}, f \text{ failures} \\
+\text{Posterior:} \quad & \text{Beta}(a + s, b + f)
+\end{aligned}
 ```
 
 कोई पूर्णांक नहीं, कोई नमूना नहीं, बस जोड़।
@@ -376,19 +376,19 @@ Posterior: Beta(a + s, b + f)
 एक ठोस उदाहरण: यह अनुमान लगाना कि क्या एक सिक्का निष्पक्ष है।
 
 **Day 1: No data yet.**
-बेटा से शुरू करें 1, 1) -- एक समान पूर्व. आप कोई राय नहीं है.
+ से शुरू करें$\text{Beta}(1, 1)$- एक वर्दी पूर्व. आपके पास कोई राय नहीं है.
 - पूर्व औसतः 0.5
 - पूर्व की चौड़ाई [0, 1]
 
 **Day 2: Observe 7 heads, 3 tails.**
-पछाड़ = बीटा(1 + 7, 1 + 3) = बीटा(8, 4)
-- बाद का औसतः 8/12 = 0.667
+$\text{Posterior} = \text{Beta}(1 + 7, 1 + 3) = \text{Beta}(8, 4)$
+- पश्चात् औसतः $8/12 = 0.667$
 - सबूत बताते हैं कि सिक्का सिर की ओर झुका हुआ है
 
 **Day 3: Observe 5 more heads, 5 more tails.**
 कल के पीछे का उपयोग आज के पूर्व के रूप में करें।
-पछाड़ = बीटा ((8 + 5, 4 + 5) = बीटा ((13, 9)
-- बाद का औसतः 13/22 = 0.591
+$\text{Posterior} = \text{Beta}(8 + 5, 4 + 5) = \text{Beta}(13, 9)$
+- पश्चात् औसतः $13/22 = 0.591$
 - संतुलित नए आंकड़ों ने अनुमान को 0.5 की ओर वापस खींच लिया
 
 ```mermaid
@@ -398,7 +398,7 @@ graph LR
     C -->|"5H, 5T"| D["Posterior 2<br/>Beta(13,9)<br/>mean = 0.59"]
 ```
 
-अवलोकनों का क्रम मायने नहीं रखता है। बीटा(1,1) एक ही समय में सभी 12 सिरों और 8 पूंछों के साथ अपडेट किया गया बीटा(13, 9) - एक ही परिणाम देता है। अनुक्रमिक अद्यतन और बैच अद्यतन गणितीय रूप से समकक्ष हैं। लेकिन अनुक्रमिक अद्यतन आपको कच्चे डेटा को संग्रहीत किए बिना प्रत्येक चरण में निर्णय लेने की अनुमति देता है।
+टिप्पणियों का क्रम मायने नहीं रखता। $\text{Beta}(1,1)$सभी 12 सिर और 8 पूंछ के साथ एक ही समय में अद्यतन देता है $\text{Beta}(13, 9)$क्रमशः अद्यतन और बैच अद्यतन गणितीय रूप से बराबर हैं. लेकिन क्रमशः अद्यतन आप कच्चे डेटा संग्रहीत किए बिना प्रत्येक चरण में निर्णय लेने की अनुमति देता है.
 
 यह उत्पादन एमएल सिस्टम में ऑनलाइन सीखने की नींव है। डाकू के लिए थॉम्पसन नमूनाकरण, वृद्धिशील सिफारिश प्रणाली और स्ट्रीमिंग विसंगति डिटेक्टर सभी इस पैटर्न का उपयोग करते हैं।
 
@@ -410,14 +410,14 @@ graph LR
 
 बेयिसियन ए/बी परीक्षणः
 
-1. **Prior.**दोनों संस्करणों के लिए बीटा 1 से शुरू करें। कोई पूर्व प्राथमिकता नहीं।
+1. **Prior.** से शुरू करें$\text{Beta}(1, 1)$दोनों संस्करणों के लिए कोई पूर्व प्राथमिकता नहीं है।
 2. **Data.**वेरिएंट ए: 1000 विचारों में से 50 क्लिक। वेरिएंट बी: 1000 विचारों में से 65 क्लिक।
 3. **Posteriors.**
-   - एः बीटा ((1 + 50, 1 + 950) = बीटा ((51, 951) । औसत = 0.051
-   - बीः बीटा ((1 + 65, 1 + 935) = बीटा ((66, 936). औसत = 0.066
-4. **Decision.**गणना P ((B > A) - संभावना है कि B की वास्तविक रूपांतरण दर A की तुलना में अधिक है।
+   - ए: $\text{Beta}(1 + 50, 1 + 950) = \text{Beta}(51, 951)$. औसत = 0.051
+   - बीः $\text{Beta}(1 + 65, 1 + 935) = \text{Beta}(66, 936)$. औसत = 0.066
+4. **Decision.**गणना $P(B > A)$-- संभावना है कि बी की वास्तविक रूपांतरण दर A की तुलना में अधिक है।
 
-विश्लेषणात्मक रूप से P (B) > A (A) का गणना करना कठिन है, लेकिन मोन्टे कार्लो इसे तुच्छ बनाता हैः
+कम्प्यूटिंग $P(B > A)$विश्लेषणात्मक रूप से कठिन है, लेकिन मोंटे कार्लो इसे तुच्छ बनाता हैः
 
 ```
 1. Draw 100,000 samples from Beta(51, 951)  -> samples_A
@@ -425,7 +425,7 @@ graph LR
 3. P(B > A) = fraction of samples where B > A
 ```
 
-यदि P(B > A) > 0.95, आप संस्करण B भेजते हैं। यदि यह 0.05 से 0.95 के बीच है, तो आप डेटा एकत्र करना जारी रखते हैं। यदि P(B > A) < 0.05, आप संस्करण A भेजते हैं।
+यदि$P(B > A) > 0.95$यदि यह 0.05 से 0.95 के बीच है, तो आप डेटा एकत्र करना जारी रखते हैं।$P(B > A) < 0.05$, आप जहाज संस्करण ए.
 
 आवृत्ति ए/बी परीक्षणों के मुकाबले लाभः
 - आप एक प्रत्यक्ष संभावना कथन प्राप्त करते हैंः "एक 97% संभावना है कि बी बेहतर है"
@@ -435,40 +435,50 @@ graph LR
 
 | Aspect | Frequentist A/B | Bayesian A/B |
 |--------|----------------|--------------|
-| Output | p-value | P(B > A) |
+| Output | p-value | $P(B > A)$ |
 | Interpretation | "How surprising is this data if A=B?" | "How likely is B better than A?" |
 | Early stopping | Inflates false positives | Safe at any point (given a well-chosen prior and correctly specified model) |
 | Prior knowledge | Not used | Encoded as Beta prior |
-| Decision rule | p < 0.05 | P(B > A) > threshold |
+| Decision rule | $p < 0.05$ | $P(B > A) > \text{threshold}$ |
 
 ## व्यायाम
 
-1. **Multiple tests.**एक रोगी स्वतंत्र परीक्षणों पर दो बार सकारात्मक परीक्षण करता है (दोनों 99% सटीक, बीमारी की प्रवृत्ति 1 में 10,000) । दोनों परीक्षणों के बाद पी(मार) क्या है? पहले परीक्षण से पिछली को दूसरे के लिए पूर्व के रूप में उपयोग करें।
+1. **Multiple tests.**एक रोगी स्वतंत्र परीक्षणों पर दो बार सकारात्मक परीक्षण करता है (दोनों 99% सटीक, रोग प्रवृत्ति 10,000 में से 1 है) ।$P(\text{sick})$पहले परीक्षण के बाद दूसरे परीक्षण के लिए पूर्व के रूप में पिछली प्रयोग करें।
 
 2. **Smoothing impact.**स्पाम वर्गीकरणकर्ता को 0.01, 0.1, 1.0 और 10.0 के स्लाइडिंग मानों के साथ चलाएं। शीर्ष शब्द संभावनाएं कैसे बदलती हैं? स्लाइडिंग=0 और एक शब्द के साथ क्या होता है जो केवल शिन में दिखाई देता है?
 
-3. **Add features.**NaiveBayes वर्ग का विस्तार करें ताकि संदेश लंबाई (लघु / लंबा) को शब्द गणना के साथ एक सुविधा के रूप में भी उपयोग किया जा सके। प्रशिक्षण डेटा से P(short mefspam) और P(shortff) का अनुमान लगाएं और इसे भविष्यवाणी स्कोर में फोल्ड करें।
+3. **Add features.**NaiveBayes वर्ग का विस्तार करें ताकि संदेश लंबाई (लघु/लंबे) को शब्द गणना के साथ एक विशेषता के रूप में भी उपयोग किया जा सके। अनुमान $P(\text{short} \mid \text{spam})$और $P(\text{short} \mid \text{ham})$प्रशिक्षण डेटा से और भविष्यवाणी स्कोर में इसे फोल्ड।
 
-4. **MAP by hand.**अवलोकन किए गए आंकड़ों को देखते हुए (7 सिक्के में 10 सिर) पूर्ववर्ती बीटा ((2,2) का उपयोग करके पूर्वाग्रह के MAP अनुमान की गणना करें। इसे MLE अनुमान (7/10) के साथ तुलना करें।
+4. **MAP by hand.**अवलोकन किए गए आंकड़ों को देखते हुए (7 सिक्के में 10 सिर) एक $\text{Beta}(2,2)$इससे पहले की तुलना MLE अनुमान से करें ($7/10$) ।
+
+### संकेत
+
+**Exercise 1.**कॉल`bayes`एक बार परीक्षण 1 के बाद पिछली प्राप्त करने के लिए, फिर इसे पूर्व के रूप में पिछली के साथ फिर से कॉल। `sequential_bayes(prior, likelihood, false_positive_rate, 2)`0.5 के करीब एक ही मान देना चाहिए।
+
+**Exercise 2.**एक बनाओ `NaiveBayes(smoothing=s)`प्रत्येक मान के लिए, इसे उसी डेटा पर प्रशिक्षित करें, और प्रिंट करें `top_words`प्रत्येक के लिए. 0 को समतल करने के साथ, एक शब्द जो कभी स्पैम में दिखाई नहीं देता है, संभावना 0 प्राप्त करता है, इसलिए इसका लॉग परिभाषित नहीं है।
+
+**Exercise 3.**गणना कितनी स्पैम और हैम संदेशों को कम है, प्रत्येक वर्ग में संदेशों की संख्या द्वारा विभाजित, और उस अनुपात के लॉग को स्कोर में जोड़ें `predict`जाँच करें कि प्रत्येक वर्ग के लिए दो संभावनाओं 1 तक जोड़ने के लिए.
+
+**Exercise 4.**एक के साथ $\text{Beta}(\alpha, \beta)$पहले, MAP अनुमान $\frac{h + \alpha - 1}{n + \alpha + \beta - 2}$. . डाल दिया .$h = 7$,$n = 10$; परिणाम MLE (0.7) और पूर्व मोड (0.5) के बीच होना चाहिए।
 
 ## प्रमुख शर्तें
 
 | Term | What people say | What it actually means |
 |------|----------------|----------------------|
-| Prior | "My initial guess" | P(hypothesis) before observing evidence. In ML: the regularization term. |
-| Likelihood | "How well the data fits" | P(evidence\|hypothesis). How probable the observed data is under a specific hypothesis. |
-| Posterior | "My updated belief" | P(hypothesis\|evidence). The prior multiplied by the likelihood, then normalized. |
-| Evidence | "The normalizing constant" | P(data) across all hypotheses. Ensures the posterior sums to 1. |
+| Prior | "My initial guess" | $P(\text{hypothesis})$ before observing evidence. In ML: the regularization term. |
+| Likelihood | "How well the data fits" | $P(\text{evidence} \mid \text{hypothesis})$. How probable the observed data is under a specific hypothesis. |
+| Posterior | "My updated belief" | $P(\text{hypothesis} \mid \text{evidence})$. The prior multiplied by the likelihood, then normalized. |
+| Evidence | "The normalizing constant" | $P(\text{data})$ across all hypotheses. Ensures the posterior sums to 1. |
 | Naive Bayes | "That simple text classifier" | A classifier that assumes features are independent given the class. Works well despite the false assumption. |
 | Laplace smoothing | "Add-one smoothing" | Adding a small count to every feature to prevent zero probabilities from unseen data. |
-| MLE | "Just use the frequencies" | Choose parameters that maximize P(data\|parameters). No prior. Can overfit with small data. |
-| MAP | "MLE with a prior" | Choose parameters that maximize P(data\|parameters) * P(parameters). Equivalent to regularized MLE. |
-| Log-probability | "Work in log space" | Using log(P) instead of P to avoid floating-point underflow when multiplying many small numbers. |
+| MLE | "Just use the frequencies" | Choose parameters that maximize $P(\text{data} \mid \text{parameters})$. No prior. Can overfit with small data. |
+| MAP | "MLE with a prior" | Choose parameters that maximize $P(\text{data} \mid \text{parameters}) \cdot P(\text{parameters})$. Equivalent to regularized MLE. |
+| Log-probability | "Work in log space" | Using $\log(P)$ instead of $P$ to avoid floating-point underflow when multiplying many small numbers. |
 | False positive | "A wrong alarm" | The test says positive, but the true state is negative. Drives the base rate fallacy. |
 
 ## आगे पढ़ना
 
 - [3Blue1Brown: Bayes' theorem](https://www.youtube.com/watch?v=HZGCoVF3YvM)- चिकित्सा परीक्षण के उदाहरण के साथ दृश्य स्पष्टीकरण
-- [Stanford CS229: Generative Learning Algorithms](https://cs229.stanford.edu/notes2022fall/cs229-notes2.pdf)- बेयज़ की साफ़ता और भेदभावपूर्ण मॉडल से उसका संबंध
+- [Stanford CS229: Generative Learning Algorithms](https://cs229.stanford.edu/main_notes.pdf)- बेयज़ की साफ़ता और भेदभावपूर्ण मॉडल से उसका संबंध
 - [Think Bayes](https://greenteapress.com/wp/think-bayes/)- मुक्त पुस्तक, पायथन कोड के साथ बेयसियन सांख्यिकी
 - [scikit-learn Naive Bayes](https://scikit-learn.org/stable/modules/naive_bayes.html)- उत्पादन के कार्यान्वयन और प्रत्येक संस्करण का उपयोग कब किया जाना चाहिए

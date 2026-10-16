@@ -28,29 +28,31 @@
 
 ### श्रृंखला नियम
 
-यदि`y = f(g(x))`,  के व्युत्पन्न`y`के संबंध में `x`है:
+यदि$y = f(g(x))$,  के व्युत्पन्न$y$के संबंध में $x$है:
 
-```
-dy/dx = dy/dg * dg/dx = f'(g(x)) * g'(x)
+```math
+\frac{dy}{dx} = \frac{dy}{dg} \cdot \frac{dg}{dx} = f'(g(x)) \cdot g'(x)
 ```
 
 श्रृंखला के साथ व्युत्पन्न को गुणा करें। प्रत्येक लिंक अपने स्थानीय व्युत्पन्न में योगदान देता है।
 
-उदाहरण: `y = sin(x^2)`
+उदाहरण: $y = \sin(x^2)$
 
-```
-g(x) = x^2       g'(x) = 2x
-f(g) = sin(g)     f'(g) = cos(g)
-
-dy/dx = cos(x^2) * 2x
+```math
+\begin{aligned}
+g(x) &= x^2 \qquad & g'(x) &= 2x \\
+f(g) &= \sin(g) \qquad & f'(g) &= \cos(g) \\[4pt]
+\frac{dy}{dx} &= \cos(x^2) \cdot 2x
+\end{aligned}
 ```
 
 गहरी रचनाओं के लिए, श्रृंखला विस्तारित हैः
 
-```
-y = f(g(h(x)))
-
-dy/dx = f'(g(h(x))) * g'(h(x)) * h'(x)
+```math
+\begin{aligned}
+y &= f(g(h(x))) \\[4pt]
+\frac{dy}{dx} &= f'(g(h(x))) \cdot g'(h(x)) \cdot h'(x)
+\end{aligned}
 ```
 
 न्यूरल नेटवर्क में हर परत इस श्रृंखला में एक कड़ी है।
@@ -88,7 +90,7 @@ graph TD
 
 एक ग्राफ के माध्यम से श्रृंखला नियम लागू करने के दो तरीके हैं।
 
-**Forward mode**इनपुट पर शुरू होता है और डेरिवेटिव आगे धकेलता है। यह गणना करता है`dx/dx = 1`अच्छा है जब आप कम इनपुट और कई आउटपुट है।
+**Forward mode**इनपुट पर शुरू होता है और डेरिवेटिव आगे धकेलता है। यह गणना करता है$dx/dx = 1$अच्छा है जब आप कम इनपुट और कई आउटपुट है।
 
 ```
 Forward mode: seed dx/dx = 1, propagate forward
@@ -98,7 +100,7 @@ Forward mode: seed dx/dx = 1, propagate forward
   y = sin(a)  (dy/dx = cos(a) * da/dx = cos(4) * 4 = -2.615)
 ```
 
-**Reverse mode**आउटपुट पर शुरू होता है और पीछे की ओर gradients खींचता है. यह गणना करता है`dy/dy = 1`और प्रत्येक ऑपरेशन के माध्यम से विपरीत में प्रसारित. अच्छा जब आप कई इनपुट और कुछ आउटपुट है.
+**Reverse mode**आउटपुट पर शुरू होता है और पीछे की ओर gradients खींचता है. यह गणना करता है$dy/dy = 1$और प्रत्येक ऑपरेशन के माध्यम से विपरीत में प्रसारित. अच्छा जब आप कई इनपुट और कुछ आउटपुट है.
 
 ```
 Reverse mode: seed dy/dy = 1, propagate backward
@@ -112,12 +114,12 @@ Reverse mode: seed dy/dy = 1, propagate backward
 
 | Mode | Seed | Direction | Best when |
 |------|------|-----------|-----------|
-| Forward | `dx_i/dx_i = 1` | Input to output | Few inputs, many outputs |
-| Reverse | `dy/dy = 1` | Output to input | Many inputs, few outputs (neural nets) |
+| Forward | $dx_i/dx_i = 1$ | Input to output | Few inputs, many outputs |
+| Reverse | $dy/dy = 1$ | Output to input | Many inputs, few outputs (neural nets) |
 
 ### आगे के मोड के लिए दोहरे संख्याएँ
 
-आगे के मोड को डबल नंबरों के साथ सुरुचिपूर्ण रूप से लागू किया जा सकता है।`a + b*epsilon`कहाँ`epsilon^2 = 0`. .
+आगे के मोड को डबल नंबरों के साथ सुरुचिपूर्ण रूप से लागू किया जा सकता है।$a + b\epsilon$कहाँ$\epsilon^2 = 0$. .
 
 ```
 Dual number: (value, derivative)
@@ -236,7 +238,7 @@ class Value:
             v._backward()
 ```
 
-टोपोलॉजिकल सॉर्ट सुनिश्चित करता है कि प्रत्येक नोड का ग्रेडिएंट अपने बच्चों में फैलने से पहले पूरी तरह से गणना की जाए। बीज ग्रेडिएंट 1.0 (डी / डी = 1) है।
+टोपोलॉजिकल सॉर्ट सुनिश्चित करता है कि प्रत्येक नोड का ग्रेडिएंट पूरी तरह से गणना की जाती है इससे पहले कि यह अपने बच्चों तक फैल जाए।$dy/dy = 1$) ।
 
 ### चरण 4: पूर्ण इंजन के लिए अधिक संचालन
 
@@ -300,11 +302,11 @@ class Value:
 | Operation | Backward rule | Used in |
 |-----------|--------------|---------|
 | `__sub__` | Reuses add + neg | Loss computation (pred - target) |
-| `__pow__` | n * x^(n-1) | Polynomial activations, MSE (error^2) |
+| `__pow__` | $n \cdot x^{n-1}$ | Polynomial activations, MSE ($\text{error}^2$) |
 | `__truediv__` | Reuses mul + pow(-1) | Normalization, learning rate scaling |
-| `exp` | exp(x) * upstream | Softmax, log-likelihood |
-| `log` | (1/x) * upstream | Cross-entropy loss, log probabilities |
-| `tanh` | (1 - tanh^2) * upstream | Classic activation function |
+| `exp` | $\exp(x) \cdot \text{upstream}$ | Softmax, log-likelihood |
+| `log` | $(1/x) \cdot \text{upstream}$ | Cross-entropy loss, log probabilities |
+| `tanh` | $(1 - \tanh^2) \cdot \text{upstream}$ | Classic activation function |
 
 चतुर भागः `__sub__`और `__truediv__`वे सही ग्रेडिएंट मुफ्त में प्राप्त करते हैं क्योंकि श्रृंखला नियम अंतर्निहित जोड़/मल/पू ऑपरेशन के माध्यम से बना होता है।
 
@@ -489,13 +491,23 @@ print(f"df/dc = {c.grad}")  #  1.0
 
 ## व्यायाम
 
-1. जोड़ें `__pow__`मान वर्ग में आप गणना कर सकते हैं`x ** n`. . यह सत्यापित करें .`d/dx(x^3)`पर`x=2`बराबर `12.0`. .
+1. जोड़ें `__pow__`मान वर्ग में आप गणना कर सकते हैं`x ** n`. . यह सत्यापित करें .$\frac{d}{dx}(x^3)$पर$x=2$बराबर `12.0`. .
 
-2. जोड़ें `tanh`एक सक्रियण समारोह के रूप में. यह सत्यापित करें कि`tanh'(0) = 1`और `tanh'(2) = 0.0707`(अंदाजी)
+2. जोड़ें `tanh`एक सक्रियण समारोह के रूप में. यह सत्यापित करें कि$\tanh'(0) = 1$और $\tanh'(2) = 0.0707$(अंदाजी)
 
 3. एक ही न्यूरॉन के लिए एक गणना ग्राफ बनाएंः `y = relu(w1*x1 + w2*x2 + b)`सभी पांच ग्रेडिएंट की गणना करें और PyTorch के खिलाफ सत्यापित करें।
 
 4. दोहरे संख्याओं का उपयोग करके आगे मोड ऑटोडिफ्लिकेशन लागू करें।`Dual`वर्ग और यह सत्यापित है कि यह आपके रिवर्स मोड इंजन के रूप में एक ही व्युत्पन्न देता है.
+
+### संकेत
+
+**Exercise 1.** `Value`पहले से ही परिभाषित करता है `__pow__`. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .`_backward`और पुष्टि करें कि यह लागू होता है $n x^{n-1}$आने वाले ग्रेडिएंट के लिए।`x = Value(2.0)`,`y = x ** 3`,`y.backward()``x.grad`12.0 होना चाहिए।
+
+**Exercise 2.**उपयोग करें$\tanh'(x) = 1 - \tanh(x)^2$में `_backward`अपने स्वयं के अंतहीन अंतर के खिलाफ जाँचेंः$\frac{\tanh(x + h) - \tanh(x - h)}{2h}$$x = 0$और $x = 2$. .
+
+**Exercise 3.**निर्माण`w1*x1 + w2*x2 + b`से`Value`वस्तुओं पर लागू करें `relu`, और कॉल `backward`PyTorch के साथ तुलना करने से पहले, हाथ से जांचेंः क्या इनपुट `relu`सकारात्मक है, के लिए प्रवृत्त`w1`बराबर `x1`यदि यह ऋणात्मक है, तो सभी पांच ग्रेडिएंट 0 हैं।
+
+**Exercise 4.**प्रत्येक में एक मूल्य और एक व्युत्पन्न को स्टोर करें `Dual`, और उत्पाद नियम का उपयोग करें $(a, a')(b, b') = (ab, a'b + ab')$गुणा के लिए। इनपुट को व्युत्पन्न 1 के साथ बीज करें और परिणाम की तुलना `x.grad`उसी कार्य के लिए रिवर्स मोड इंजन से।
 
 ## प्रमुख शर्तें
 
@@ -506,13 +518,13 @@ print(f"df/dc = {c.grad}")  #  1.0
 | Forward mode | "Push derivatives forward" | Autodiff that propagates derivatives from inputs to outputs. One pass per input variable. |
 | Reverse mode | "Backpropagation" | Autodiff that propagates gradients from outputs to inputs. One pass per output variable. |
 | Autograd | "Automatic gradients" | A system that records operations on values, builds a graph, and computes exact gradients via the chain rule |
-| Dual numbers | "Value plus derivative" | Numbers of the form a + b*epsilon (epsilon^2 = 0) that carry derivative information through arithmetic |
+| Dual numbers | "Value plus derivative" | Numbers of the form $a + b\epsilon$ ($\epsilon^2 = 0$) that carry derivative information through arithmetic |
 | Topological sort | "Dependency order" | Ordering graph nodes so every node comes after all its dependencies. Required for correct gradient propagation. |
 | Gradient accumulation | "Add, don't replace" | When a value feeds into multiple operations, its gradient is the sum of all incoming gradient contributions |
 | Dynamic graph | "Define by run" | A computation graph rebuilt on every forward pass, allowing Python control flow inside models (PyTorch style) |
 | Gradient checking | "Numerical verification" | Comparing autodiff gradients against numerical finite-difference gradients to verify correctness. Essential for debugging. |
 | MLP | "Multi-layer perceptron" | A neural network with one or more hidden layers of neurons. Each neuron computes a weighted sum plus bias, then applies an activation function. |
-| Neuron | "Weighted sum + activation" | The basic unit: output = activation(w1*x1 + w2*x2 + ... + b). The weights and bias are learnable parameters. |
+| Neuron | "Weighted sum + activation" | The basic unit: $\text{output} = \text{activation}(w_1 x_1 + w_2 x_2 + \cdots + b)$. The weights and bias are learnable parameters. |
 
 ## आगे पढ़ना
 

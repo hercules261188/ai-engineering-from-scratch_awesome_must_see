@@ -1,6 +1,6 @@
 # रैखिक प्रणाली
 
-> Ax = b को हल करना गणित में सबसे पुरानी समस्या है जो अभी भी आपके तंत्रिका नेटवर्क को चलाती है।
+> हल करना $Ax = b$गणित में सबसे पुरानी समस्या है जो अभी भी आपके तंत्रिका नेटवर्क को चलाती है।
 
 **Type:** Build
 **Language:**पायथन
@@ -9,7 +9,7 @@
 
 ## सीखने के लक्ष्य
 
-- आंशिक पिवटिंग और बैक रिप्लेसमेंट के साथ गौशियन उन्मूलन का उपयोग करके एक्स = बी हल करें
+- हल करें$Ax = b$आंशिक पिवटिंग और बैक रिप्लेसमेंट के साथ गौशियन उन्मूलन का उपयोग करना
 - LU, QR और Cholesky विघटन के साथ कारक मैट्रिक्स और समझाएं कि प्रत्येक उपयुक्त कब है
 - न्यूनतम वर्गों के लिए सामान्य समीकरणों को व्युत्पन्न करें और उन्हें रैखिक और रिज रिग्रेशन से जोड़ें
 - स्थिति संख्या का उपयोग करके खराब स्थिति वाले प्रणालियों का निदान करें और उन्हें स्थिर करने के लिए नियमितता लागू करें
@@ -18,7 +18,7 @@
 
 जब भी आप एक रैखिक regression को प्रशिक्षित करते हैं, आप एक रैखिक प्रणाली को हल करते हैं. जब भी आप एक न्यूनतम वर्ग फिट की गणना करते हैं, आप एक रैखिक प्रणाली को हल करते हैं. जब भी एक तंत्रिका नेटवर्क परत गणना करता है।`y = Wx + b`जब आप नियमितता जोड़ते हैं, तो आप प्रणाली को संशोधित करते हैं. जब आप गौशियन प्रक्रियाओं का उपयोग करते हैं, तो आप एक मैट्रिक्स को गुणा करते हैं. जब आप महालनोबी की दूरी के लिए एक सह-विवर्तन मैट्रिक्स को उलटते हैं, तो आप एक रैखिक प्रणाली को हल करते हैं।
 
-समीकरण Ax = b हर जगह दिखाई देता है. A ज्ञात गुणांक का एक मैट्रिक्स है. b ज्ञात आउटपुट का एक वेक्टर है. x अज्ञात का वेक्टर है जिसे आप ढूंढना चाहते हैं. रैखिक प्रतिगमन में, A आपकी डेटा मैट्रिक्स है, b आपका लक्ष्य वेक्टर है, और x आपका वजन वेक्टर है. पूरा मॉडल निम्न तक कम हो जाता हैः x को ढूंढें ताकि Ax जितना संभव हो उतना b के करीब हो।
+समीकरण $Ax = b$हर जगह दिखाई देता है।$A$ज्ञात गुणांक का एक मैट्रिक्स है। $b$ज्ञात आउटपुट का वेक्टर है। $x$यह अज्ञात का वेक्टर है जिसे आप ढूंढना चाहते हैं।$A$आपका डेटा मैट्रिक्स है,$b$आपका लक्ष्य वेक्टर है, और $x$पूरे मॉडल में निम्न तक कम हो जाता हैः$x$इस तरह की$Ax$$b$जितना संभव हो सके।
 
 इस पाठ में उस समीकरण को हल करने के लिए हर प्रमुख विधि को खरोंच से बनाया गया है। आप समझेंगे कि कुछ विधियां तेज क्यों हैं और अन्य स्थिर क्यों हैं, क्यों कुछ केवल वर्ग प्रणालियों के लिए काम करते हैं और अन्य ओवरडेटर्मिनेटेड सिस्टम को संभालते हैं, और क्यों आपके मैट्रिक्स की स्थिति संख्या निर्धारित करती है कि क्या आपका उत्तर कुछ भी मायने रखता है।
 
@@ -54,15 +54,15 @@ graph TD
     end
 ```
 
-मैट्रिक्स के रूप में, "एक समाधान" का अर्थ है कि A परिवर्तनीय है। "कोई समाधान" का अर्थ है कि प्रणाली असंगत है। "असीमित समाधान" का अर्थ है कि A में शून्य स्थान है। अधिकांश ML समस्याएं "कोई सटीक समाधान" श्रेणी में आती हैं क्योंकि आपके पास अज्ञात (परिमाणकों) की तुलना में अधिक समीकरण (डेटा पॉइंट) हैं। यही वह जगह है जहां कम से कम वर्ग आते हैं।
+मैट्रिक्स के रूप में, "एक समाधान" का अर्थ है $A$"कोई समाधान नहीं" का अर्थ है कि प्रणाली असंगत है। "असीम समाधान" का अर्थ है$A$इसमें शून्य स्थान है। अधिकांश एमएल समस्याएं "कोई सटीक समाधान नहीं" श्रेणी में आती हैं क्योंकि आपके पास अज्ञात (परिमाणकों) की तुलना में अधिक समीकरण (डेटा पॉइंट) हैं। यही वह जगह है जहां सबसे कम वर्ग आते हैं।
 
 ### स्तंभ चित्र बनाम पंक्ति चित्र
 
-Ax = b को पढ़ने के दो तरीके हैं।
+पढ़ने के दो तरीके हैं $Ax = b$. .
 
-**Row picture.**A की प्रत्येक पंक्ति एक समीकरण को परिभाषित करती है. प्रत्येक समीकरण एक हाइपरप्लेन है. समाधान है जहां वे सभी पार करते हैं.
+**Row picture.**$A$एक समीकरण को परिभाषित करता है. प्रत्येक समीकरण एक हाइपरप्लेन है. समाधान है जहां वे सभी पार करते हैं.
 
-**Column picture.**A के प्रत्येक स्तंभ एक वेक्टर है. प्रश्न यह बन जाता हैः A के स्तंभों का कौन सा रैखिक संयोजन b का उत्पादन करता है?
+**Column picture.** के प्रत्येक स्तंभ$A$प्रश्न बन जाता हैः  के स्तंभों के रैखिक संयोजन क्या है$A$उत्पादन करता है $b$?
 
 ```
 A = | 2  1 |    b = | 5 |
@@ -75,11 +75,11 @@ Column picture: find x1, x2 such that:
   2 * [2, 1] + 1 * [1, -1] = [4+1, 2-1] = [5, 1]   check.
 ```
 
-स्तंभ चित्र अधिक मौलिक है. यदि b स्तंभ स्थान A में स्थित है, तो प्रणाली का एक समाधान है. यदि b नहीं है, तो आप स्तंभ स्थान में सबसे निकटतम बिंदु मिल जाएगा. यह सबसे निकटतम बिंदु सबसे कम वर्ग समाधान है.
+स्तंभ चित्र अधिक मौलिक है।$b$ के स्तंभ स्थान में स्थित है$A$, प्रणाली का एक समाधान है.$b$नहीं, आप कॉलम अंतरिक्ष में सबसे निकटतम बिंदु मिल जाएगा. सबसे निकटतम बिंदु सबसे कम वर्ग समाधान है.
 
 ### गौसीयन उन्मूलन
 
-गौसीयन उन्मूलन एक्स = बी को ऊपरी त्रिकोणात्मक प्रणाली Ux = c में बदल देता है जिसे आप बैक सब्सट्रेशन द्वारा हल करते हैं। यह सबसे सीधा तरीका है।
+Gaussian उन्मूलन परिवर्तन $Ax = b$एक ऊपरी त्रिकोण प्रणाली में $Ux = c$यह सबसे सीधा तरीका है।
 
 एल्गोरिथ्मः
 
@@ -111,7 +111,7 @@ Back substitute:
   2*x1 + 2 + 2 = 8 --> x1 = 2
 ```
 
-Gaussian elimination costs O ((n^3) ऑपरेशन. 1000x1000 सिस्टम के लिए, यह लगभग एक अरब फ्लोटिंग-पॉइंट ऑपरेशन है. तेजी से, लेकिन आप बेहतर कर सकते हैं यदि आपको एक ही A के साथ कई सिस्टम हल करने की आवश्यकता है।
+गौशियन उन्मूलन लागत $O(n^3)$एक के लिए$1000 \times 1000$प्रणाली, जो लगभग एक अरब फ्लोटिंग-पॉइंट संचालन है. तेजी से, लेकिन आप बेहतर कर सकते हैं अगर आप एक ही के साथ कई प्रणालियों को हल करने की जरूरत है$A$. .
 
 ### आंशिक पिवटिंगः यह क्यों मायने रखता है
 
@@ -136,7 +136,7 @@ x1 = (1.001 - 1)/0.001          x1 = (2 - 1)/1 = 1.000 (correct)
 
 ### एलयू विघटन
 
-LU घटकों को निचले त्रिकोण मैट्रिक्स L और ऊपरी त्रिकोण मैट्रिक्स U में विघटन करता हैः A = LU। L मैट्रिक्स Gaussian elimination से गुणकों को संग्रहीत करता है। U मैट्रिक्स elimination का परिणाम है।
+LU विघटन कारक $A$एक निचले त्रिकोण मैट्रिक्स में $L$और एक ऊपरी त्रिकोण मैट्रिक्स $U$$A = LU$. . .$L$मैट्रिक्स Gaussian उन्मूलन से गुणकों को संग्रहीत करता है।$U$मैट्रिक्स उन्मूलन का परिणाम है।
 
 ```
 A = L @ U
@@ -146,25 +146,27 @@ A = L @ U
 | 2  3  1 |   | 1  2  1 |   | 0  0  -2 |
 ```
 
-क्यों कारक केवल खत्म करने के बजाय? क्योंकि एक बार जब आप L और U है, किसी भी नए b के लिए हल करने के लिए Ax = b केवल O ((n ^ 2) खर्च करता हैः
+क्यों कारक सिर्फ खत्म करने के बजाय? क्योंकि एक बार जब आप$L$और $U$, हल करना $Ax = b$किसी भी नए के लिए $b$केवल लागत $O(n^2)$:
 
+```math
+\begin{aligned}
+Ax &= b \\
+LUx &= b \\
+&\text{Let } y = Ux\text{:} \\
+Ly &= b \quad \text{(forward substitution, } O(n^2)\text{)} \\
+Ux &= y \quad \text{(back substitution, } O(n^2)\text{)}
+\end{aligned}
 ```
-Ax = b
-LUx = b
-Let y = Ux:
-  Ly = b    (forward substitution, O(n^2))
-  Ux = y    (back substitution, O(n^2))
-```
 
-O  n^3) लागत को कारककरण के दौरान एक बार भुगतान किया जाता है। प्रत्येक बाद में हल O  n^2) है। यदि आपको 1000 सिस्टम को एक ही A के साथ हल करने की आवश्यकता है लेकिन अलग-अलग बी वेक्टर, LU कुल कार्य में 1000/3 का कारक बचाता है।
+$O(n^3)$लागत का भुगतान एक बार कारककरण के दौरान किया जाता है।$O(n^2)$. अगर आप एक ही के साथ 1000 प्रणालियों को हल करने की जरूरत है $A$लेकिन अलग $b$वेक्टर, LU कुल काम में 1000/3 का कारक बचाता है।
 
-आंशिक पिवटिंग के साथ, आप PA = LU जहां P पंक्ति स्वैप रिकॉर्ड करने के लिए एक permutation मैट्रिक्स है मिलता है।
+आंशिक पिवटिंग के साथ, आप प्राप्त $PA = LU$कहाँ$P$पंक्ति स्वैप को रिकॉर्ड करने वाला एक परमुटੇਸ਼ਨ मैट्रिक्स है।
 
 ### क्यूआर विघटन
 
-क्यूआर घटकों को एक ऑर्थोगनल मैट्रिक्स क्यू और एक ऊपरी त्रिकोण मैट्रिक्स आरः ए = क्यूआर में विभाजित किया गया।
+क्यूआर विघटन कारक $A$एक ऑर्थोगनल मैट्रिक्स में $Q$और एक ऊपरी त्रिकोण मैट्रिक्स $R$$A = QR$. .
 
-एक ऑर्थोगनल मैट्रिक्स का गुण Q^T Q = I है। इसके स्तंभों में ऑर्थोनोर्मल वेक्टर होते हैं। Q से गुणा करने से लंबाई और कोण संरक्षित होते हैं।
+एक orthogonal मैट्रिक्स गुण है $Q^T Q = I$. इसके स्तंभों orthonormal वेक्टर हैं.$Q$लम्बाई और कोण को संरक्षित करता है।
 
 ```
 A = Q @ R
@@ -178,7 +180,7 @@ To solve Ax = b:
   Back substitute to get x.
 ```
 
-कम से कम वर्गों की समस्याओं को हल करने के लिए क्यूआर संख्यात्मक रूप से एलयू की तुलना में अधिक स्थिर है। ग्राम-स्मिड्ट प्रक्रिया स्तंभ-स्तंभ क्यू का निर्माण करती हैः
+कम से कम वर्गों की समस्याओं को हल करने के लिए क्यूआर संख्यात्मक रूप से एलयू की तुलना में अधिक स्थिर है।$Q$स्तंभ से स्तंभः
 
 ```
 Given columns a1, a2, ... of A:
@@ -194,11 +196,11 @@ q3 = q3 / ||q3||
 R[i][j] = qi . aj    for i <= j
 ```
 
-प्रत्येक चरण में सभी पिछले q वेक्टरों के साथ घटक को हटा दिया जाता है, केवल नई ऑर्थोगनल दिशा छोड़ दी जाती है।
+प्रत्येक चरण सभी पिछले के साथ घटक को हटा देता है $q$वेक्टर, केवल नए orthogonal दिशा छोड़ने.
 
 ### चोलेस्की विघटन
 
-जब A सममित (A = A^T) और सकारात्मक निश्चित (सभी स्वमूल्य सकारात्मक) है, तो आप इसे A = L L^T के रूप में कारक कर सकते हैं जहां L निचला त्रिकोणात्मक है। यह चोलेस्की विघटन है।
+कब$A$सममित है ($A = A^T$) और सकारात्मक निश्चित (सभी स्वमूल्य सकारात्मक), आप इसे कारक के रूप में कर सकते हैं $A = L L^T$कहाँ$L$यह चोलेस्की विघटन है।
 
 ```
 A = L @ L^T
@@ -215,13 +217,13 @@ Cholesky LU से दोगुना तेज है और आधा भं�
 - कोवरिएंसी मैट्रिक्स सममित सकारात्मक अर्ध-परिभाषित (नियमन के साथ सकारात्मक निश्चित) हैं।
 - गौसी प्रक्रियाओं में कर्नेल मैट्रिक्स सममित सकारात्मक निश्चित है।
 - कम से कम एक संकुचित फ़ंक्शन का हेसियन सममित सकारात्मक निश्चित है।
-- एटी ए हमेशा सममित सकारात्मक अर्ध-परिभाषित होता है।
+- $A^T A$हमेशा सममित सकारात्मक अर्ध-परिभाषित है।
 
-गौसी प्रक्रियाओं में, आप कोर मैट्रिक्स K को चोलेस्की के साथ कारगर करते हैं, फिर अनुमानात्मक औसत प्राप्त करने के लिए K अल्फा = y को हल करते हैं। चोलेस्की कारक आपको मार्जिनल संभावना के लिए लॉग-निर्धारितकर्ता भी देता हैः लॉग det(K) = 2 * योगफल(log(diag(L)) ।
+Gaussian प्रक्रियाओं में, आप कर्नेल मैट्रिक्स कारक $K$Cholesky के साथ, तो हल $K \alpha = y$Cholesky कारक आपको मार्जिनल संभावना के लिए लॉग-निर्धारक भी देता हैः$\log \det(K) = 2 \sum \log(\mathop{\mathrm{diag}}(L))$. .
 
 ### न्यूनतम वर्गः जब Ax = b का कोई सटीक समाधान नहीं होता है
 
-यदि A m x n है और m > n (अज्ञात से अधिक समीकरण) है, तो सिस्टम अतिनिर्धारित है। कोई सटीक समाधान नहीं है। इसके बजाय, आप वर्ग त्रुटि को कम से कम करते हैंः
+यदि$A$है $m \times n$के साथ$m > n$(अज्ञात की तुलना में अधिक समीकरण), प्रणाली अधिक निर्धारित है. कोई सटीक समाधान नहीं है. इसके बजाय, आप वर्ग त्रुटि को कम से कम करते हैंः
 
 ```
 minimize ||Ax - b||^2
@@ -232,11 +234,11 @@ This is the sum of squared residuals:
 
 न्यूनतमकरण सामान्य समीकरणों को संतुष्ट करता हैः
 
-```
+```math
 A^T A x = A^T b
 ```
 
-व्युत्पन्नः विस्तार न करेंAx - b ण न करें^2 = (Ax - b) ^T (Ax - b) = x^T A^T A x - 2 x^T A^T b + b^T b. x के संबंध में ग्रेडिएंट लें, इसे शून्य पर सेट करेंः 2 A^T A x - 2 A^T b = 0.
+व्युत्पन्न: विस्तार $\lVert Ax - b \rVert^2 = (Ax - b)^T (Ax - b) = x^T A^T A x - 2 x^T A^T b + b^T b$.  के संबंध में ग्रेडिएंट लें$x$, इसे शून्य पर सेट करें: $2 A^T A x - 2 A^T b = 0$. .
 
 ```
 Original system (overdetermined, 4 equations, 2 unknowns):
@@ -256,35 +258,40 @@ This is linear regression. x[0] is the intercept, x[1] is the slope.
 
 ### सामान्य समीकरण = रैखिक प्रतिगमन
 
-कनेक्शन सटीक है। रैखिक प्रतिगमन में, आपके डेटा मैट्रिक्स X में प्रति नमूना एक पंक्ति और प्रति विशेषता एक कॉलम है। आपके लक्ष्य वेक्टर y में प्रति नमूना एक प्रविष्टि है। वजन वेक्टर w संतुष्ट करता हैः
+रैखिक प्रतिगमन में, आपके डेटा मैट्रिक्स$X$प्रति नमूना एक पंक्ति और प्रति विशेषता एक स्तंभ है.$y$प्रति नमूना एक प्रविष्टि है। वजन वेक्टर $w$संतुष्ट करता हैः
 
-```
-X^T X w = X^T y
-w = (X^T X)^(-1) X^T y
+```math
+\begin{aligned}
+X^T X w &= X^T y \\
+w &= (X^T X)^{-1} X^T y
+\end{aligned}
 ```
 
 यह रैखिक प्रतिगमन के लिए बंद-रूप समाधान है।`sklearn.linear_model.LinearRegression.fit()`यह गणना करता है (या QR या SVD के माध्यम से समकक्ष) ।
 
-मैट्रिक्स में एक नियमितकरण शब्द lambda * I जोड़ें और आप रिज regression मिलता हैः
+एक नियमितता शब्द जोड़ें $\lambda I$मैट्रिक्स और आप रिज रिग्रेशन मिलता हैः
 
-```
-(X^T X + lambda * I) w = X^T y
-w = (X^T X + lambda * I)^(-1) X^T y
+```math
+\begin{aligned}
+(X^T X + \lambda I) w &= X^T y \\
+w &= (X^T X + \lambda I)^{-1} X^T y
+\end{aligned}
 ```
 
-नियमितता मैट्रिक्स को बेहतर रूप से संचालित करती है (सटीक रूप से उलटा करना आसान है) और शून्य की ओर वजन को छोटा करके ओवरफitting को रोकती है। मैट्रिक्स X^T X + lambda * I हमेशा सममित सकारात्मक निश्चित होता है जब lambda > 0, इसलिए आप इसे हल करने के लिए चोलेस्की का उपयोग कर सकते हैं।
+नियमितता मैट्रिक्स को बेहतर स्थिति में बनाती है (सटीक रूप से उलटा करना आसान है) और शून्य की ओर वजन को छोटा करके ओवरफिट को रोकती है।$X^T X + \lambda I$हमेशा समानुपातिक सकारात्मक निश्चित है जब $\lambda > 0$, तो आप इसे हल करने के लिए Cholesky का उपयोग कर सकते हैं.
 
 ### प्यूडियोइंवर्स (मूर-पेनरोज)
 
-Pseudoinverse A+ मैट्रिक्स इन्वर्शन को गैर-वर्ग और एकल मैट्रिक्स में सामान्य बनाता है। किसी भी मैट्रिक्स A के लिएः
+झूठी उलटी हुई दुनिया $A^+$मैट्रिक्स के लिए सामान्यीकरण की inversion गैर-वर्ग और एकल मैट्रिक्स.$A$:
 
+```math
+\begin{aligned}
+x &= A^+ b \\[4pt]
+\text{where } A^+ &= V \Sigma^+ U^T \quad \text{(computed via SVD)}
+\end{aligned}
 ```
-x = A+ b
 
-where A+ = V Sigma+ U^T    (computed via SVD)
-```
-
-सिग्मा+ प्रत्येक गैर-शून्य एकल मूल्य का प्रतिपादित करके और परिणाम को पार करके बनता है। यदि A = U सिग्मा V^T, तो A+ = V सिग्मा+ U^T।
+$\Sigma^+$प्रत्येक गैर-शून्य एकल मूल्य का प्रतिफल लेते हुए और परिणाम को पारस्परिक रूप से पार कर के गठन किया जाता है।$A = U \Sigma V^T$, तो $A^+ = V \Sigma^+ U^T$. .
 
 ```
 A = U Sigma V^T        (SVD)
@@ -297,21 +304,21 @@ A+ = V Sigma+ U^T
 ```
 
 प्यूडोकवरस न्यूनतम-नॉर्म न्यूनतम-क्वायर समाधान देता है। यदि प्रणाली में हैः
-- एक समाधानः A + b देता है।
-- कोई समाधान नहींः A+b न्यूनतम वर्ग समाधान देता है।
-- अनंत समाधानः A+ b सबसे छोटी संख्या के साथ एक देता है।
+- एक समाधान: $A^+ b$यह देता है.
+- कोई समाधान नहीं: $A^+ b$न्यूनतम वर्ग समाधान देता है।
+- अनंत समाधान: $A^+ b$जो सबसे छोटा है उसे देता है $\lVert x \rVert$. .
 
 NumPy की `np.linalg.lstsq`और `np.linalg.pinv`दोनों आंतरिक रूप से एसवीडी का उपयोग करते हैं।
 
 ### स्थिति संख्या
 
-स्थिति संख्या मापती है कि समाधान इनपुट में छोटे परिवर्तनों के प्रति कितना संवेदनशील है। मैट्रिक्स ए के लिए, स्थिति संख्या हैः
+स्थिति संख्या मापता है कि समाधान इनपुट में छोटे परिवर्तनों के लिए कितना संवेदनशील है।$A$, स्थिति संख्या हैः
 
-```
-kappa(A) = ||A|| * ||A^(-1)|| = sigma_max / sigma_min
+```math
+\kappa(A) = \lVert A \rVert \cdot \lVert A^{-1} \rVert = \frac{\sigma_{\max}}{\sigma_{\min}}
 ```
 
-जहां sigma_max और sigma_min सबसे बड़े और सबसे छोटे एकल मान हैं।
+कहाँ$\sigma_{\max}$और $\sigma_{\min}$सबसे बड़ा और सबसे छोटा एकल मान हैं।
 
 ```
 Well-conditioned (kappa ~ 1):        Ill-conditioned (kappa ~ 10^15):
@@ -323,17 +330,17 @@ small change in x                    huge change in x
 ```
 
 अंगूठे के नियमः
-- kappa < 100: सुरक्षित, समाधान सटीक है।
-- kappa ~ 10 k: आप अपने तैरते बिंदु अंकगणित से सटीकता के बारे में k अंकों खो देते हैं।
-- kappa ~ 10^16 (float64): समाधान अर्थहीन है। मैट्रिक्स प्रभावी रूप से एकल है।
+- $\kappa < 100$: सुरक्षित, समाधान सटीक है।
+- $\kappa \approx 10^k$: आप खो के बारे में $k$आपके फ्लोटिंग-पॉइंट अंकगणित से सटीकता के अंकों।
+- $\kappa \approx 10^{16}$(फ्लोट64 के लिए): समाधान अर्थहीन है। मैट्रिक्स प्रभावी रूप से एकल है।
 
-एमएल में, खराब स्थिति तब होती है जब विशेषताएं लगभग सहरी होती हैं। नियमितता (लैम्ब्डा * I जोड़कर) स्थिति संख्या को सिग्मा_मैक्स / सिग्मा_मिन से (सिग्मा_मैक्स + लैम्ब्डा) / (सिग्मा_मिन + लैम्ब्डा) तक बढ़ाता है।
+एमएल में, खराब स्थिति तब होती है जब विशेषताएं लगभग सहरी होती हैं।$\lambda I$) से स्थिति संख्या में सुधार करता है $\sigma_{\max} / \sigma_{\min}$$(\sigma_{\max} + \lambda) / (\sigma_{\min} + \lambda)$. .
 
 ### पुनरावर्ती विधिः संयुग्मित ग्रेडिएंट
 
 बहुत बड़ी दुर्लभ प्रणालियों (मिलियंस अज्ञात) के लिए, एलयू या चोलेस्की जैसे प्रत्यक्ष तरीके बहुत महंगे हैं। पुनरावृत्तिक विधियां कई पुनरावृत्तियों पर अनुमान को बेहतर बनाकर समाधान के करीब आती हैं।
 
-संयोग ग्रेडिएंट (CG) Ax = b को हल करता है जब A सममित सकारात्मक निश्चित है। यह अधिकतम n पुनरावृत्तियों (सही अंकगणित में) में सटीक समाधान पाता है, लेकिन आमतौर पर यदि A के स्वमानें समूहबद्ध हैं तो बहुत तेज़ी से अभिसरण होता है।
+संयुग्मित ग्रेडिएंट (सीजी) हल करता है $Ax = b$कब$A$यह अधिकतम में सटीक समाधान पाता है$n$पुनरावृत्ति (सटीक अंकगणित में), लेकिन आम तौर पर बहुत तेजी से अभिसरण यदि स्वमान के $A$समूहबद्ध हैं।
 
 ```
 Algorithm sketch:
@@ -362,29 +369,29 @@ CG का उपयोग निम्नलिखित में किया 
 
 | Method | Requirements | Cost | Use case |
 |--------|-------------|------|----------|
-| Gaussian elimination | Square, nonsingular A | O(n^3) | One-off solve of a square system |
-| LU decomposition | Square, nonsingular A | O(n^3) factor + O(n^2) solve | Multiple solves with the same A |
-| QR decomposition | Any A (m >= n) | O(mn^2) | Least squares, numerically stable |
-| Cholesky | Symmetric positive definite A | O(n^3/3) | Covariance matrices, Gaussian processes, ridge regression |
-| Normal equations | Overdetermined (m > n) | O(mn^2 + n^3) | Linear regression (small n) |
-| SVD / pseudoinverse | Any A | O(mn^2) | Rank-deficient systems, minimum-norm solutions |
-| Conjugate gradient | Symmetric positive definite, sparse A | O(n * k * nnz) | Large sparse systems, k = iterations |
+| Gaussian elimination | Square, nonsingular $A$ | $O(n^3)$ | One-off solve of a square system |
+| LU decomposition | Square, nonsingular $A$ | $O(n^3)$ factor + $O(n^2)$ solve | Multiple solves with the same $A$ |
+| QR decomposition | Any $A$ ($m \ge n$) | $O(mn^2)$ | Least squares, numerically stable |
+| Cholesky | Symmetric positive definite $A$ | $O(n^3/3)$ | Covariance matrices, Gaussian processes, ridge regression |
+| Normal equations | Overdetermined ($m > n$) | $O(mn^2 + n^3)$ | Linear regression (small $n$) |
+| SVD / pseudoinverse | Any $A$ | $O(mn^2)$ | Rank-deficient systems, minimum-norm solutions |
+| Conjugate gradient | Symmetric positive definite, sparse $A$ | $O(n \cdot k \cdot \text{nnz})$ | Large sparse systems, $k$ = iterations |
 
 ### एमएल से कनेक्शन
 
 इस पाठ में प्रत्येक विधि उत्पादन एमएल में दिखाई देती हैः
 
-**Linear regression.**बंद-रूप समाधान सामान्य समीकरणों को हल करता है X^T X w = X^T y. यह चोलेस्की (यदि n छोटा है) या क्यूआर (यदि संख्यात्मक स्थिरता मायने रखती है) या एसवीडी (यदि मैट्रिक्स रैंक-अभावी हो सकती है) के माध्यम से किया जाता है।
+**Linear regression.**बंद-रूप समाधान सामान्य समीकरणों को हल करता है $X^T X w = X^T y$यह चोलेस्की के माध्यम से किया जाता है (यदि$n$छोटा है) या क्यूआर (यदि संख्यात्मक स्थिरता मायने रखती है) या एसवीडी (यदि मैट्रिक्स रैंक-अभावी हो सकती है) ।
 
-**Ridge regression.**X^T X में lambda * I जोड़ता है। नियमित प्रणाली (X^T X + lambda * I) w = X^T y हमेशा Cholesky के माध्यम से हल किया जा सकता है क्योंकि X^T X + lambda * I lambda के लिए सममित सकारात्मक निश्चित है > 0.
+**Ridge regression.**जोड़ता है $\lambda I$$X^T X$. नियमित प्रणाली $(X^T X + \lambda I) w = X^T y$हमेशा Cholesky के माध्यम से हल किया जा सकता है क्योंकि $X^T X + \lambda I$ के लिए सममित सकारात्मक निश्चित है$\lambda > 0$. .
 
-**Gaussian processes.**भविष्यवाणी औसत के हल करने की आवश्यकता है K अल्फा = y जहां K कोर मैट्रिक्स है। K का चोलेस्की फैक्टरिज़ेशन मानक दृष्टिकोण है। लॉग मार्जिनल संभावना लॉग det(K) = 2 योगफल(log(diag(L)) का उपयोग करती है।
+**Gaussian processes.**भविष्यवाणी औसत हल करने की आवश्यकता होती है $K \alpha = y$कहाँ$K$यह कोर मैट्रिक्स है.$K$यह मानक दृष्टिकोण है। लॉग मार्जिनल संभावना का उपयोग करता है $\log \det(K) = 2 \sum \log(\mathop{\mathrm{diag}}(L))$. .
 
 **Neural network initialization.**ऑर्तोगनल आरंभिकरण क्यूआर विघटन का उपयोग वजन मैट्रिक्स बनाने के लिए करता है जिनके स्तंभों में ऑर्तोनॉर्मल हैं। यह गहरे नेटवर्क में संकेत को विफल करने से बचाता है।
 
 **Preconditioning.**बड़े पैमाने पर अनुकूलक संयुग्मित ग्रेडिएंट सॉल्वर के लिए अपूर्ण चोलेस्की या अपूर्ण LU को पूर्व शर्तों के रूप में उपयोग करते हैं।
 
-**Feature engineering.**X^T X की स्थिति संख्या आपको बताती है कि क्या आपकी विशेषताएं सहरी हैं। यदि कप्पा बड़ा है, तो विशेषताएं छोड़ दें या नियमितता जोड़ें।
+**Feature engineering.** की स्थिति संख्या$X^T X$आपको बताता है कि क्या आपके लक्षण संरेखित हैं।$\kappa$बड़ी है, सुविधाओं को छोड़ दें या नियमितता जोड़ें।
 
 ```figure
 linear-system-conditioning
@@ -545,37 +552,49 @@ print(f"Ridge weights (sklearn): {ridge_sk.coef_}")
 
 1. प्रणाली को हल करें `[[1,2,3],[4,5,6],[7,8,10]] x = [6, 15, 27]`अपने गौशियन उन्मूलन, अपने LU हल करने वाला, और `np.linalg.solve`. तीनों एक ही उत्तर के लिए फ्लोटिंग-पॉइंट सहिष्णुता के भीतर जांचें.
 
-2. 50x5 यादृच्छिक मैट्रिक्स X और लक्ष्य y = X @ w_true + शोर उत्पन्न करें. सामान्य समीकरणों का उपयोग करके w के लिए हल करें, QR (via `np.linalg.qr`), एसवीडी (मार्फत `np.linalg.svd`), तथा `np.linalg.lstsq`. सभी चार समाधानों की तुलना करें. X^T X की स्थिति संख्या को मापें और समझाएं कि यह किस विधि को प्रभावित करता है जिस पर आप भरोसा करते हैं।
+2. 50x5 यादृच्छिक मैट्रिक्स X और लक्ष्य y = X @ w_true + शोर उत्पन्न करें. सामान्य समीकरणों का उपयोग करके w के लिए हल करें, QR (via `np.linalg.qr`), एसवीडी (मार्फत `np.linalg.svd`), तथा `np.linalg.lstsq`. सभी चार समाधानों की तुलना करें. स्थिति संख्या का मापें$X^T X$और समझाएं कि यह किस विधि को प्रभावित करता है जिस पर आप भरोसा करते हैं।
 
-3. दो स्तंभों को लगभग समान बनाकर एक लगभग एकल मैट्रिक्स बनाएं (उदाहरण के लिए, स्तंभ 2 = स्तंभ 1 + 1e-10 * शोर) । इसकी स्थिति संख्या की गणना करें। नियमितकरण के साथ और बिना Ax = b हल करें (जोड़ें 0.01 * I) । समाधान और अवशिष्टों की तुलना करें। स्पष्ट करें कि नियमितकरण क्यों मदद करता है।
+3. दो स्तंभों को लगभग समान बनाकर एक लगभग एकल मैट्रिक्स बनाएं (उदाहरण के लिए, स्तंभ 2 = स्तंभ 1 + 1e-10 * शोर) । इसकी स्थिति संख्या की गणना करें। हल $Ax = b$नियमितता के साथ और बिना (add $0.01 I$) समाधानों और अवशेषों की तुलना करें। नियमितता का लाभ क्यों होता है, समझाएं।
 
-4. 100x100 यादृच्छिक सममित सकारात्मक निश्चित मैट्रिक्स के लिए संयुग्मित ग्रेडिएंट एल्गोरिथ्म को लागू करें। सहिष्णुता 1e-8 तक पहुंचने के लिए कितने पुनरावृत्ति की आवश्यकता होती है, इसकी गणना करें। n पुनरावृत्ति के सैद्धांतिक अधिकतम की तुलना करें।
+4. 100x100 यादृच्छिक सममित सकारात्मक निश्चित मैट्रिक्स के लिए संयुग्मित ग्रेडिएंट एल्गोरिथ्म को लागू करें। सहिष्णुता 1e-8 तक पहुंचने के लिए कितने पुनरावृत्ति की आवश्यकता होती है, इसकी गणना करें।$n$पुनरावृत्ति।
 
 5. अपने Cholesky हल करने के लिए समय अपने LU हल करने के लिए बनाम`np.linalg.solve`आकार 10, 50, 200, 500 के सममित सकारात्मक निश्चित मैट्रिक्स पर। परिणामों का पता लगाएं। सत्यापित करें कि चोलेस्की लगभग 2 गुना तेजी से LU से है।
+
+### संकेत
+
+**Exercise 1.**कॉल`gaussian_elimination(A, b)`, तो `lu_decompose(A)`इसके बाद `lu_solve(P, L, U, b)`, तो `np.linalg.solve(A, b)`. प्रत्येक उत्तर की जांच करें `np.allclose(A @ x, b)`और तीनों उत्तरों की तुलना `np.allclose`. .
+
+**Exercise 2.**उपयोग करें`least_squares_normal`सामान्य समीकरणों के लिए और अन्य विधियों के लिए तीन संख्यात्मक फ़ंक्शंस के लिए। सभी चार उत्तरों के करीब होना चाहिए `w_true`. तुलना करें`condition_number(X.T @ X)`के साथ`condition_number(X)`: पहला दूसरे का वर्ग है, इसलिए सामान्य समीकरण सबसे अधिक सटीकता खो देते हैं।
+
+**Exercise 3.**ऊपर एक स्थिति संख्या की उम्मीद $10^{9}$. . के साथ हल करें`np.linalg.solve`और साथ में `ridge_regression(A, b, 0.01)`, फिर तुलना करें `np.linalg.norm(x)`दोनों अवशिष्ट छोटे हो सकते हैं, लेकिन नियमितता के बिना समाधान में आमतौर पर बहुत बड़े प्रविष्टियां होती हैं।
+
+**Exercise 4.**एक सममित सकारात्मक निश्चित मैट्रिक्स बनाओ `B @ B.T + n * np.eye(n)`, ताकि प्रत्येक स्वयं मूल्य सकारात्मक है. अपने प्रति में लूप के लिए एक काउंटर जोड़ें`conjugate_gradient`, फिर जांचें कि अंतिम अवशिष्ट मान 1e-8 से नीचे है और कि गिनती अधिकतम 100 है।
+
+**Exercise 5.**वही प्रयोग करें `B @ B.T + n * np.eye(n)`सभी तीनों हलकों के लिए मैट्रिक्स और समय प्रत्येक हल के साथ `time.perf_counter`Cholesky के लिए लगभग आधा अंकगणित की आवश्यकता है, तो अनुपात बड़े आकार पर सबसे स्पष्ट है।
 
 ## प्रमुख शर्तें
 
 | Term | What people say | What it actually means |
 |------|----------------|----------------------|
-| Linear system | "Solve for x" | A set of linear equations Ax = b. Finding x means finding the input that produces output b under transformation A. |
-| Gaussian elimination | "Row reduce" | Systematically zero out entries below the diagonal using row operations, producing an upper triangular system solvable by back substitution. O(n^3). |
-| Partial pivoting | "Swap rows for stability" | Before eliminating in column k, swap the row with the largest absolute value in that column to the pivot position. Prevents division by small numbers. |
-| LU decomposition | "Factor into triangles" | Write A = LU where L is lower triangular (stores multipliers) and U is upper triangular (the eliminated matrix). Amortizes the O(n^3) cost over multiple solves. |
-| QR decomposition | "Orthogonal factorization" | Write A = QR where Q has orthonormal columns and R is upper triangular. More stable than LU for least squares. |
-| Cholesky decomposition | "Square root of a matrix" | For symmetric positive definite A, write A = LL^T. Half the cost of LU. Used for covariance matrices, kernel matrices, and ridge regression. |
-| Least squares | "Best fit when exact is impossible" | Minimize the sum of squared residuals ||Ax - b||^2 when the system is overdetermined (more equations than unknowns). |
-| Normal equations | "The calculus shortcut" | A^T A x = A^T b. Setting the gradient of ||Ax - b||^2 to zero. This IS the closed-form solution to linear regression. |
-| Pseudoinverse | "Inversion for non-square matrices" | A+ = V Sigma+ U^T via SVD. Gives the minimum-norm least-squares solution for any matrix, square or rectangular, singular or not. |
-| Condition number | "How trustworthy is this answer" | kappa = sigma_max / sigma_min. Measures sensitivity to input perturbations. Lose about log10(kappa) digits of precision. |
-| Ridge regression | "Regularized least squares" | Solve (X^T X + lambda I) w = X^T y. Adding lambda I improves conditioning and shrinks weights toward zero. Prevents overfitting. |
-| Conjugate gradient | "Iterative Ax=b for big matrices" | An iterative solver for symmetric positive definite systems. Converges in at most n steps. Practical for large sparse systems where factorization is too expensive. |
-| Overdetermined system | "More data than parameters" | m > n in an m-by-n system. No exact solution exists. Least squares finds the best approximation. This is every regression problem. |
-| Back substitution | "Solve from the bottom up" | Given an upper triangular system, solve the last equation first, then substitute backward. O(n^2). |
-| Forward substitution | "Solve from the top down" | Given a lower triangular system, solve the first equation first, then substitute forward. O(n^2). Used in the L step of LU solves. |
+| Linear system | "Solve for x" | A set of linear equations $Ax = b$. Finding $x$ means finding the input that produces output $b$ under transformation $A$. |
+| Gaussian elimination | "Row reduce" | Systematically zero out entries below the diagonal using row operations, producing an upper triangular system solvable by back substitution. $O(n^3)$. |
+| Partial pivoting | "Swap rows for stability" | Before eliminating in column $k$, swap the row with the largest absolute value in that column to the pivot position. Prevents division by small numbers. |
+| LU decomposition | "Factor into triangles" | Write $A = LU$ where $L$ is lower triangular (stores multipliers) and $U$ is upper triangular (the eliminated matrix). Amortizes the $O(n^3)$ cost over multiple solves. |
+| QR decomposition | "Orthogonal factorization" | Write $A = QR$ where $Q$ has orthonormal columns and $R$ is upper triangular. More stable than LU for least squares. |
+| Cholesky decomposition | "Square root of a matrix" | For symmetric positive definite $A$, write $A = LL^T$. Half the cost of LU. Used for covariance matrices, kernel matrices, and ridge regression. |
+| Least squares | "Best fit when exact is impossible" | Minimize the sum of squared residuals $\lVert Ax - b \rVert^2$ when the system is overdetermined (more equations than unknowns). |
+| Normal equations | "The calculus shortcut" | $A^T A x = A^T b$. Setting the gradient of $\lVert Ax - b \rVert^2$ to zero. This IS the closed-form solution to linear regression. |
+| Pseudoinverse | "Inversion for non-square matrices" | $A^+ = V \Sigma^+ U^T$ via SVD. Gives the minimum-norm least-squares solution for any matrix, square or rectangular, singular or not. |
+| Condition number | "How trustworthy is this answer" | $\kappa = \sigma_{\max} / \sigma_{\min}$. Measures sensitivity to input perturbations. Lose about $\log_{10}(\kappa)$ digits of precision. |
+| Ridge regression | "Regularized least squares" | Solve $(X^T X + \lambda I) w = X^T y$. Adding $\lambda I$ improves conditioning and shrinks weights toward zero. Prevents overfitting. |
+| Conjugate gradient | "Iterative Ax=b for big matrices" | An iterative solver for symmetric positive definite systems. Converges in at most $n$ steps. Practical for large sparse systems where factorization is too expensive. |
+| Overdetermined system | "More data than parameters" | $m > n$ in an $m\text{-by-}n$ system. No exact solution exists. Least squares finds the best approximation. This is every regression problem. |
+| Back substitution | "Solve from the bottom up" | Given an upper triangular system, solve the last equation first, then substitute backward. $O(n^2)$. |
+| Forward substitution | "Solve from the top down" | Given a lower triangular system, solve the first equation first, then substitute forward. $O(n^2)$. Used in the L step of LU solves. |
 
 ## आगे पढ़ना
 
 - [MIT 18.06: Linear Algebra](https://ocw.mit.edu/courses/18-06-linear-algebra-spring-2010/)(गिलबर्ट स्ट्रैंग) -- रैखिक प्रणालियों और मैट्रिक्स कारककरण पर अंतिम पाठ्यक्रम
 - [Numerical Linear Algebra](https://people.maths.ox.ac.uk/trefethen/text.html)(ट्रेफेटन और बाउ) - संख्यात्मक स्थिरता, संस्थिता और एल्गोरिदम विफल क्यों समझने के लिए मानक संदर्भ
-- [Matrix Computations](https://www.cs.cornell.edu/cv/GolubVanLoan4/golubandvanloan.htm)(गोलब और वैन लोन) - प्रत्येक मैट्रिक्स एल्गोरिदम के लिए ज्ञानकोश संदर्भ
-- [3Blue1Brown: Inverse Matrices](https://www.3blue1brown.com/lessons/inverse-matrices)-- दृश्य अंतर्ज्ञान के लिए क्या हल करने के लिए Ax = b ज्यामितीय रूप से मतलब
+- [Matrix Computations](https://www.press.jhu.edu/books/title/10678/matrix-computations)(गोलब और वैन लोन) - प्रत्येक मैट्रिक्स एल्गोरिदम के लिए ज्ञानकोश संदर्भ
+- [3Blue1Brown: Inverse Matrices](https://www.3blue1brown.com/lessons/inverse-matrices)-- दृश्य अंतर्ज्ञान के लिए क्या हल करने के लिए $Ax = b$ज्यामितीय रूप से अर्थ

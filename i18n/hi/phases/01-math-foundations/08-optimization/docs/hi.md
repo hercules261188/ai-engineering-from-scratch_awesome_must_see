@@ -38,8 +38,8 @@ minimize L(w) where:
 
 सबसे सरल अनुकूलक. हर वजन के संबंध में हानि के ग्रेडिएंट की गणना करें. प्रत्येक वजन को उसके ग्रेडिएंट के विपरीत दिशा में ले जाएं. सीखने की दर से कदम को मापें।
 
-```
-w = w - lr * gradient
+```math
+w = w - \text{lr} \cdot \text{gradient}
 ```
 
 यह पूरी एल्गोरिथ्म है. एक पंक्ति.
@@ -94,9 +94,11 @@ graph LR
 
 वैनिला ग्रेडिएंट की गिरावट केवल वर्तमान ग्रेडिएंट को देखता है। यदि ग्रेडिएंट ज़िगज़ैग (झीले घाटियों में आम) हैं, तो प्रगति धीमी होती है। गति पिछले ग्रेडिएंट को गति अवधि में जमा करके इसे ठीक करती है।
 
-```
-v = beta * v + gradient
-w = w - lr * v
+```math
+\begin{aligned}
+v &= \beta \cdot v + \text{gradient} \\
+w &= w - \text{lr} \cdot v
+\end{aligned}
 ```
 
 इसी तरह, एक गेंद गिरती है, हर झटके पर रुकती नहीं है और फिर से शुरू नहीं होती है। यह लगातार दिशाओं में गति बढ़ाता है और घर्षणों को धीमा करता है।
@@ -124,17 +126,17 @@ graph TD
 
 एडम (अनुकूली क्षण अनुमान) वजन के प्रति दो चीजों को ट्रैक करता हैः
 
-1. प्रथम क्षण (m): गति के समान ग्रेडिएंट का चल रहा औसत
-2. दूसरा क्षण (v): वर्ग ग्रेडिएंट्स का चल रहा औसत (ग्रेडिएंट ग्रेडिएंट)
+1. पहला क्षण ($m$): ग्रेडिएंट्स का चल रहा औसत (जैसे गति)
+2. दूसरा क्षण ($v$): वर्ग ग्रेडिएंट्स का चल रहा औसत (ग्रेडिएंट ग्रेडिएंट)
 
-```
-m = beta1 * m + (1 - beta1) * gradient
-v = beta2 * v + (1 - beta2) * gradient^2
-
-m_hat = m / (1 - beta1^t)    bias correction
-v_hat = v / (1 - beta2^t)    bias correction
-
-w = w - lr * m_hat / (sqrt(v_hat) + epsilon)
+```math
+\begin{aligned}
+m &= \beta_1 \cdot m + (1 - \beta_1) \cdot \text{gradient} \\
+v &= \beta_2 \cdot v + (1 - \beta_2) \cdot \text{gradient}^2 \\[4pt]
+\hat{m} &= m / (1 - \beta_1^t) \quad \text{bias correction} \\
+\hat{v} &= v / (1 - \beta_2^t) \quad \text{bias correction} \\[4pt]
+w &= w - \text{lr} \cdot \hat{m} / (\sqrt{\hat{v}} + \epsilon)
+\end{aligned}
 ```
 
  द्वारा विभाजन`sqrt(v_hat)`बड़े ग्रेडिएंट वाले वजन को बड़ी संख्या (छोटे प्रभावी कदम) से विभाजित किया जाता है। छोटे ग्रेडिएंट वाले वजन को छोटी संख्या (बड़े प्रभावी कदम) से विभाजित किया जाता है। प्रत्येक वजन को अपनी अनुकूलन सीखने की दर मिलती है।
@@ -149,14 +151,14 @@ w = w - lr * m_hat / (sqrt(v_hat) + epsilon)
 
 | Schedule | Formula | Use case |
 |----------|---------|----------|
-| Step decay | lr = lr * factor every N epochs | Simple, manual control |
-| Exponential decay | lr = lr_0 * decay^t | Smooth reduction |
-| Cosine annealing | lr = lr_min + 0.5 * (lr_max - lr_min) * (1 + cos(pi * t / T)) | Transformers, modern training |
+| Step decay | $\text{lr} = \text{lr} \cdot \text{factor}$ every $N$ epochs | Simple, manual control |
+| Exponential decay | $\text{lr} = \text{lr}_0 \cdot \text{decay}^t$ | Smooth reduction |
+| Cosine annealing | $\text{lr} = \text{lr} _{\min} + 0.5 \cdot (\text{lr} _{\max} - \text{lr} _{\min}) \cdot (1 + \cos(\pi t / T))$ | Transformers, modern training |
 | Warmup + decay | Linear ramp up, then decay | Large models, prevents early instability |
 
 ### कंवेक्स बनाम गैर-कंवेक्स
 
-एक घुमावदार समारोह में एक न्यूनतम है. ग्रेडिएंट अवतरण हमेशा यह पाता है. एक वर्गिक जैसे`f(x) = x^2`घुंघराली है।
+एक घुमावदार समारोह में एक न्यूनतम है. ग्रेडिएंट अवतरण हमेशा यह पाता है. एक वर्गिक जैसे$f(x) = x^2$घुंघराली है।
 
 तंत्रिका नेटवर्क हानि कार्य गैर-कुंभिक हैं। उनके पास कई स्थानीय न्यूनतम, सaddle points और flat regions हैं।
 
@@ -205,8 +207,8 @@ gradient-descent
 
 रोसेनब्रोक फ़ंक्शन एक क्लासिक अनुकूलन बेंचमार्क है। इसका न्यूनतम (1, 1) एक संकीर्ण वक्र घाटी के अंदर है जिसे ढूंढना आसान है लेकिन पीछा करना मुश्किल है।
 
-```
-f(x, y) = (1 - x)^2 + 100 * (y - x^2)^2
+```math
+f(x, y) = (1 - x)^2 + 100 \cdot (y - x^2)^2
 ```
 
 ```python
@@ -351,9 +353,19 @@ scheduler = torch.optim.lr_scheduler.CosineAnnealingLR(adam, T_max=100)
 
 2. **Momentum comparison.**रॉसेनब्रोक फ़ंक्शन पर गतिमानता मानों [0.0, 0.5, 0.9, 0.99] के साथ SGD चलाएं. हर कदम पर नुकसान का ट्रैक करें. किस गतिमानता मूल्य में सबसे तेजी से अभिसरण होता है? कौन सा ओवरशॉट होता है?
 
-3. **Saddle point escape.**फ़ंक्शन को परिभाषित करें `f(x, y) = x^2 - y^2`(उत्पत्ति पर एक सaddle बिंदु) से शुरू करें (0.01, 0.01) तुलना करें कि कैसे वैनिला GD, गति के साथ SGD, और एडम व्यवहार करते हैं. कौन से सaddle बिंदु से बचता है?
+3. **Saddle point escape.**फ़ंक्शन को परिभाषित करें $f(x, y) = x^2 - y^2$(उत्पत्ति पर एक सaddle बिंदु) से शुरू करें (0.01, 0.01) तुलना करें कि कैसे वैनिला GD, गति के साथ SGD, और एडम व्यवहार करते हैं. कौन से सaddle बिंदु से बचता है?
 
 4. **Implement learning rate decay.**GradientDescent वर्ग में एक घातीय क्षय अनुसूची जोड़ेंः `lr = lr_0 * 0.999^step`. रोसेनब्रोक फ़ंक्शन पर गिरावट के साथ और बिना गिरावट के अभिसरण की तुलना करें.
+
+### संकेत
+
+**Exercise 1.**सीखने की दरों पर लूप, एक `GradientDescent(lr=...)`प्रत्येक के लिए, और इसे पारित करने के लिए `optimize`के साथ`rosenbrock`और `rosenbrock_gradient`. एक दौड़ जो विचलित होती है वह एक नुकसान को दर्शाता है जो बढ़ता है या बन जाता है`nan`; न्यूनतम $(1, 1)$0 के साथ हानि
+
+**Exercise 2.**सृजन`SGDMomentum(momentum=m)`प्रत्येक मूल्य के लिए और प्रत्येक चरण के बाद हानि दर्ज करें। उपयोग `find_convergence_step`गति की तुलना करने के लिए, और खोने के लिए देख जो ऊपर और नीचे जाने के लिए ओवरसोच खोजने के लिए.
+
+**Exercise 3.**ग्रेडिएंट लिखें $(2x, -2y)$और (0.01, 0.01) से तीन अनुकूलक चलाएं।$y$हर 100 कदम: अनुकूलक जो बच जाता है वह है जहां $\lvert y \rvert$बड़ा हो जाता है।
+
+**Exercise 4.**स्टोर `lr_0`और एक कदम काउंटर में `GradientDescent`, और गणना `lr = lr_0 * 0.999 ** step`अंदर`step`. सीखने की दर को चरण 0 और चरण 1000 पर प्रिंट करें; यह `lr_0`के बारे में $0.37 \times \text{lr}_0$. .
 
 ## प्रमुख शर्तें
 
@@ -365,7 +377,7 @@ scheduler = torch.optim.lr_scheduler.CosineAnnealingLR(adam, T_max=100)
 | SGD | "Random sampling" | Stochastic gradient descent. Compute gradient on a random subset instead of the full dataset. Almost always means mini-batch SGD in practice. |
 | Mini-batch | "A chunk of data" | A small subset of training data (32-256 samples) used to estimate the gradient. Balances speed and gradient accuracy. |
 | Adam | "The default optimizer" | Adaptive Moment Estimation. Tracks per-weight running averages of gradients and squared gradients to give each weight its own learning rate. |
-| Bias correction | "Fix the cold start" | Adam's first and second moments are initialized to zero. Bias correction divides by (1 - beta^t) to compensate during early steps. |
+| Bias correction | "Fix the cold start" | Adam's first and second moments are initialized to zero. Bias correction divides by $(1 - \beta^t)$ to compensate during early steps. |
 | Learning rate schedule | "Change lr over time" | A function that adjusts the learning rate during training. Large steps early, small steps late. |
 | Convex function | "One valley" | A function where any local minimum is the global minimum. Gradient descent always finds it. Neural network losses are not convex. |
 | Saddle point | "Flat but not a minimum" | A point where the gradient is zero but it is a minimum in some directions and a maximum in others. Common in high dimensions. |
