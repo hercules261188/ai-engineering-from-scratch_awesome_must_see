@@ -119,7 +119,7 @@ class AudioCNN(nn.Module):
 
 3M parametreleri. ESC-50'de tek bir RTX 4090 ile 10 dakika içinde trenler.
 
-### Adım 5: 2026 Varsayılan  ince ayarlı BEAT
+### Adım 5: önceden eğitilmiş bir ses transformatörünü ince ayarlayın (AST gösterildi)
 
 ```python
 from transformers import ASTFeatureExtractor, ASTForAudioClassification
@@ -135,7 +135,7 @@ inputs = ext(audio, sampling_rate=16000, return_tensors="pt")
 logits = model(**inputs).logits
 ```
 
-BEAT için kullanın `microsoft/BEATs-base``beats`kütüphanesi; transformör API aynı şekildedir.
+Örnek, Hub'dan AST'yi ince ayarlar. BEATs, 2026 varsayılan, Hugging Face Hub'da bulunmuyor:[BEATs release in microsoft/unilm](https://github.com/microsoft/unilm/tree/master/beats)Ve onu o repo ile yükle.`BEATs`ve `BEATsConfig`sınıflar; ince ayarlama döngüsü aynı şekli korur.
 
 ## Kullan
 

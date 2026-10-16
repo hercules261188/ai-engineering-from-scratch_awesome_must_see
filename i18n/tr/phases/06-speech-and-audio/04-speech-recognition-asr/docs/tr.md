@@ -37,7 +37,7 @@ Avantajlar: çevrimdışı ASR'de en yüksek kalitede, standart seq2seq araçlar
 
 ### WER: tek sayı
 
-**Word Error Rate**= `(S + D + I) / N`, S=değiştirme, D=iptal, I=sıkıştırma, N=referans kelime sayısı. Levenshtein'in kelime seviyesindeki düzenleme mesafesine uyması. Daha düşük daha iyidir. 20%'den yüksek bir WER genellikle kullanılamaz; % 5'ten aşağıdaki insan-işleme konuşması için eşitliktir. 2026 standart referans değerleri:
+**Word Error Rate**= $(S + D + I) / N$, nerede $S$=değiştirme, $D$=Kesinleştirmeler,$I$=İşlemeler, $N$=reference word count. Levenshtein'in kelime seviyesindeki mesafeyi eşleştiriyor. Daha düşük daha iyidir. 20%'den fazla bir WER genellikle kullanılamaz; 5%'in altında okuma konuşması için insan-birliktir. 2026 standart referans değerleri:
 
 | Model | LibriSpeech test-clean | LibriSpeech test-other | Size |
 |-------|------------------------|------------------------|------|

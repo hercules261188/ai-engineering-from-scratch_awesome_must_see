@@ -24,7 +24,7 @@ Dil modelleri ayrı belirtiler üzerinde çalışır. Ses süreklidir. Konuşma 
 
 ### Temel numara: Geri kalan vektör kvantizasyonu (RVQ)
 
-Bir büyük kod defteri yerine (iyi kalite için milyonlarca kod gerekecek) tüm modern ses kodekleri kullanır **RVQ**: küçük kod defterlerinin bir kaskasası. Birinci kod defterinde kodlayıcı çıkışı, ikincisi kalıntılı kalıntıları kuantleştirir.
+Bir büyük kod defteri yerine (iyi kalite için milyonlarca kod gerekecek) tüm modern ses kodekleri kullanır **RVQ**: küçük kod defterlerinin bir kaskasası. Birinci kod defterinde kodlayıcı çıkışı, ikincisi kalıntılı kalıntıları kuantleştirir.$1024^8 = 10^{24}$- Evet .
 
 Sonuçlama sırasında, dekodör yeniden yapılandırmak için seçilen tüm kodları çerçeve başına toplamlar.
 
@@ -129,8 +129,8 @@ Semantik kod defteri 0 WavLM ile uyumludur. Bir metin-semantik transformatörü 
 
 Mimi'nin 12.5 Hz × 8 kod defterinde 10 saniyelik bir konuşma klipi için:
 
-```
-N_tokens = 10 * 12.5 * 8 = 1000 tokens
+```math
+N_{\text{tokens}} = 10 \times 12.5 \times 8 = 1000 \text{ tokens}
 ```
 
 1000 token, bir transformatör için önemsiz bir bağlamdır. 256M parametre transformatörü modern bir GPU'da milisaniyede 10 saniye konuşma üretebilir.

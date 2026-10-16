@@ -170,7 +170,7 @@ Baskır kural: başka bir seçeneğiniz yoksa asla enerjiye bağlı VAD'leri gö
 ## Daha Fazla Okumak
 
 - [Silero VAD](https://github.com/snakers4/silero-vad) İpucu açık VAD.
-- [Picovoice Cobra VAD](https://picovoice.ai/products/cobra/) Ticari doğruluk lideri.
+- [Picovoice Cobra VAD](https://picovoice.ai/products/voice/voice-activity-detection/) Ticari doğruluk lideri.
 - [Kyutai — Unmute + flush trick](https://kyutai.org/stt)- Sub-200 ms mühendislik hilesi.
 - [LiveKit — turn detection](https://docs.livekit.io/agents/logic/turns/) üretimdeki semantik son gösterme.
 - [WebRTC VAD](https://webrtc.googlesource.com/src/) miras alınan temel çizgi.

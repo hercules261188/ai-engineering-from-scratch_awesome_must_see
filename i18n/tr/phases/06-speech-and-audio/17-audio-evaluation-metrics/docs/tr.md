@@ -106,7 +106,7 @@ Denge eksikliği: **macro F1**+ **per-class recall**.Sınıf başına rapor  Top
 | Open ASR Leaderboard (HF) | English + multilingual + long-form | `huggingface.co/spaces/hf-audio/open_asr_leaderboard` |
 | TTS Arena (HF) | English TTS | `huggingface.co/spaces/TTS-AGI/TTS-Arena` |
 | Artificial Analysis Speech | TTS + STT, ELO from paired votes | `artificialanalysis.ai/speech` |
-| MMAU-Pro | LALM reasoning | `mmaubenchmark.github.io` |
+| MMAU-Pro | LALM reasoning | `sonalkum.github.io/mmau-pro` |
 | SpeakerBench / VoxSRC | Speaker recognition | `voxsrc.github.io` |
 | MMAU music subset | Music LALM | (within MMAU) |
 | HEAR benchmark | Self-supervised audio | `hearbenchmark.com` |
@@ -224,5 +224,5 @@ Her dağıtımın her model güncelleme sırasında çalışacak sabit bir değe
 - [Fréchet Audio Distance (Kilgour et al. 2019)](https://arxiv.org/abs/1812.08466) Müzik-gen standardı.
 - [Open ASR Leaderboard](https://huggingface.co/spaces/hf-audio/open_asr_leaderboard)2026 canlı sıralamaları.
 - [TTS Arena](https://huggingface.co/spaces/TTS-AGI/TTS-Arena) İnsan oyları TTS lider listesinde.
-- [MMAU-Pro benchmark](https://mmaubenchmark.github.io/) LALM akıl yürütme lider tablosu.
+- [MMAU-Pro benchmark](https://sonalkum.github.io/mmau-pro/) LALM akıl yürütme lider tablosu.
 - [HEAR benchmark](https://hearbenchmark.com/) sesli SSL referansları.

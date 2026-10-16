@@ -129,17 +129,18 @@ Bu projector genellikle 1-3 doğrusal katman. ASR çiftlerinde eğitmek (audio �
 
 ```python
 from datasets import load_dataset
-mmau = load_dataset("MMAU/MMAU-Pro")
+mmau = load_dataset("gamma-lab-umd/MMAU-Pro", split="test")
+mcq = mmau.filter(lambda item: len(item["choices"] or []) > 1)
 
 correct = 0
-for item in mmau["test"]:
-    answer = call_model(item["audio"], item["question"], item["choices"])
-    if answer == item["correct_choice"]:
+for item in mcq:
+    answer = call_model(item["audio_path"], item["question"], item["choices"])
+    if answer == item["answer"]:
         correct += 1
-print(f"Accuracy: {correct / len(mmau['test']):.3f}")
+print(f"Accuracy: {correct / len(mcq):.3f}")
 ```
 
-Kategori başına (söz / ses / müzik / çok sesli) ayrı rapor edin.
+`audio_path`Veriler kümesinin repolarına işaretler `data.zip`(yaklaşık 47 GB), bu yüzden not almadan önce indir ve aç. Bu tam eşleşme döngüsü, referans puanlayıcı değil, akıl kontrolüdür, bu nedenle sayısı MMAU-Pro'nun yayınlanan sonuçlarıyla karşılaştırılamaz. Resmi değerlendirici benzerliği (NV-Embed-v2) yerleştirerek çoklu seçim yanıtlarını eşleştiriyor, bir LLM yargıçıyla açık sonlu yanıtları notlar ve talimatları takip eden yanıtları regex kurallarıyla kontrol ediyor: bir `model_output`sütun ve çalıştır `evaluate_mmau_pro_comprehensive.py`- ...[MMAU-Pro repo](https://github.com/sonalkum/MMAUPro)- Her biri rapor eder .`category`(söz, ses, müzik, multi ve diğerleri) ayrı ayrı.
 
 ## Kullan
 
@@ -187,4 +188,4 @@ Kategori başına (söz / ses / müzik / çok sesli) ayrı rapor edin.
 - [NVIDIA (2025). Audio Flamingo 3](https://arxiv.org/abs/2507.08128) açık uzun sesli lider.
 - [NVIDIA (2026). Audio Flamingo Next](https://arxiv.org/abs/2604.10905) LongAudioBench SOTA.
 - [Tang et al. (2023). SALMONN](https://arxiv.org/abs/2310.13289) çift kodlayıcı öncü.
-- [MMAU-Pro leaderboard](https://mmaubenchmark.github.io/) 2026'da canlı sıralamalar.
+- [MMAU-Pro leaderboard](https://sonalkum.github.io/mmau-pro/) 2026'da canlı sıralamalar.

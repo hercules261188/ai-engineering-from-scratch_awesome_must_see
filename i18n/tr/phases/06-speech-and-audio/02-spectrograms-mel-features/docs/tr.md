@@ -23,7 +23,7 @@ Mel spektrogramları daha da ileriye doğru ilerler. İnsanlar yüksek sesleri l
 
 **Log-magnitude.**Çömlek büyüklükleri 5-6 büyüklük sırası arasında değişir.`log(|X| + 1e-6)`veya `20 * log10(|X|)`Her üretim borusunda çiğ büyüklük değil, log büyüklüğü kullanılır.
 
-**Mel scale.**Sıklık`f`Hz haritelerinde mel `m`- ...`m = 2595 * log10(1 + f / 700)`. Haritalama yaklaşık olarak 1 kHz'nin altında lineer ve yukarıda yaklaşık olarak logaritmiktir.
+**Mel scale.**Sıklık`f`Hz haritelerinde mel `m`- ...$m = 2595 \cdot \log_{10}(1 + f / 700)$. Haritalama yaklaşık olarak 1 kHz'nin altında lineer ve yukarıda yaklaşık olarak logaritmiktir.
 
 **Mel filterbank.**Mel ölçeğinde eşit derecede uzanan üçgenli filtrelerin bir kümesi. Her filtreler, bitişik FFT kutularının ağırlıklı toplamıdır. STFT büyüklüğünü filtrebank matrisine çarpırsak, bir matmul'de mel spektrogramını verir.
 
@@ -170,5 +170,5 @@ Başparmak kuralı: **if you are not working on music, start with 80 log-mels.**
 - [Davis, Mermelstein (1980). Comparison of parametric representations for monosyllabic word recognition](https://ieeexplore.ieee.org/document/1163420)- MFCC kağıdı.
 - [Stevens, Volkmann, Newman (1937). A Scale for the Measurement of the Psychological Magnitude Pitch](https://pubs.aip.org/asa/jasa/article-abstract/8/3/185/735757/) orijinal mel ölçeği.
 - [OpenAI — Whisper source, log_mel_spectrogram](https://github.com/openai/whisper/blob/main/whisper/audio.py) referans uygulanmasını okuyun.
-- [librosa feature extraction docs](https://librosa.org/doc/main/feature.html) referans için `mfcc`- Evet .`melspectrogram`, ve hop / penceresi.
+- [librosa feature extraction docs](https://librosa.org/doc/latest/api/feature.html) referans için `mfcc`- Evet .`melspectrogram`, ve hop / penceresi.
 - [NVIDIA NeMo — audio preprocessing](https://docs.nvidia.com/deeplearning/nemo/user-guide/docs/en/main/asr/asr_all.html#featurizers) Parakeet + Canary modelleri için üretim ölçeği boru hattı.
