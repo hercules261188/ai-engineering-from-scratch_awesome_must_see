@@ -1,0 +1,441 @@
+# कार्यक्रम एनाटॉमीः एक ELF रीडर स्क्रैच से
+
+> एक संकलित प्रोग्राम तालिकाओं का एक सेट है जो एक दूसरे की ओर इशारा करते हैं। आपके द्वारा लिखे गए पाठक में आउटपुट दिया जाता है जिसे आप बाइट द्वारा जांच सकते हैं।
+
+**Type:** Build
+**Languages:** Python (stdlib), C (fixture only)
+**Prerequisites:** Phase 0 · 01 (Dev Environment) with clang installed, Python 3.10 or later, hexadecimal arithmetic
+**Time:** ~120 minutes
+
+## सीखने के लक्ष्य
+
+- इस ट्रैक में प्रत्येक लक्ष्य के लिए अनुमतियों के नियम और 17 U.S.C. 1201 ((f) की चार सीमाएं बताएं।
+- ELF हेडर, सेक्शन हेडर टेबल और दोनों स्ट्रिंग टेबल को  के साथ पढ़ें`struct.unpack`. .
+- डिकोड `.symtab`प्रविष्टियाँ और `.rela`gABI और x86-64 psABI के नामों के साथ रिकॉर्ड।
+- एक नामित फ़ंक्शन के सटीक बाइट्स लौटाएं और प्रत्येक फ़ाइल को उस संरचना में मानचित्रित करें जो इसका मालिक है।
+- कार्यक्रम के हेडर पढ़ें और एक आभासी पते को एक फ़ाइल के माध्यम से ऑफसेट करने के लिए मानचित्रण `PT_LOAD`. .
+- एक Mach-O वस्तु के लोड कमांड पढ़ें और ELF विचार का नाम है कि प्रत्येक एक मेल खाता है.
+
+## शुरू करने से पहलेः प्राधिकरण और कानून
+
+पाठ 32 से 36 तक के प्रत्येक लक्ष्य एक प्रोग्राम है जिसे आपने लिखा और संकलित किया है।`code/fixtures/ledger.c`आप स्रोत, संकलक कमांड और उस द्वारा उत्पन्न वस्तु फ़ाइलों का मालिक हैं. कोई लाइसेंस नहीं है पढ़ने के लिए, कोई सुरक्षा पास करने के लिए, और कोई तीसरा पक्ष जिसका कोड आप खोलने. ट्रैक कभी भी सॉफ्टवेयर सुरक्षा, लाइसेंस की जांच या कार्यक्रमों को कवर नहीं करता है आप नहीं है.
+
+नियम मौजूद है क्योंकि कानून विघटन को कॉपी करने के रूप में देखता है। *सेगा एंटरप्राइज लिमिटेड में v. Accolade, Inc.*, 977 F.2d 1510 (9th Cir. 1992), अदालत ने कहा कि विघटन के दौरान बनाई गई मध्यवर्ती प्रतियां कॉपीराइट अधिनियम के तहत प्रतियां हैं। इसके बाद यह फैसला किया गया कि "जब कॉपीराइट वाले कंप्यूटर प्रोग्राम में शामिल विचारों और कार्यात्मक तत्वों तक पहुंच प्राप्त करने का एकमात्र तरीका है और जहां इस तरह की पहुंच की मांग करने का वैध कारण है, तो कॉपीराइट वाले काम का न्यायसंगत उपयोग कानूनी मामले के रूप में किया जाता है।" 
+
+दूसरा मामला * सोनी कंप्यूटर एंटरटेनमेंट, इंक बनाम कनेक्टिक्स कॉर्प *, 203 F.3d 596 (9th Cir. 2000). कनेक्टिक्स ने प्लेस्टेशन बायोस को कॉपी किया जबकि उसने एक एमुलेटर बनाया, और अदालत ने उन प्रतियों को उचित उपयोग माना। दोनों मामलों ने अध्ययन की रक्षा की। अंतिम उत्पाद में प्रतिलिपि कोड की रक्षा नहीं की।
+
+दो कानूनों ने सीमाएं निर्धारित की हैं। 17 यूएससी 1201 ((f) किसी व्यक्ति को अनुमति देता है जिसने "कंप्यूटर प्रोग्राम की एक प्रति का उपयोग करने का कानूनी रूप से अधिकार प्राप्त किया है" एक्सेस नियंत्रण को "केवल उन तत्वों की पहचान करने और विश्लेषण करने के लिए एक्सेस नियंत्रण को बाधित करना" जो स्वतंत्र रूप से बनाए गए कंप्यूटर प्रोग्राम की अन्य कार्यक्रमों के साथ सहकार्य प्राप्त करने के लिए आवश्यक हैं। चार सीमाओं का ढेरः एक वैध प्रति, सहकार्य उद्देश्य, तत्व जो पहले से ही "सुलभ" नहीं थे, और विश्लेषण जो अन्यथा उल्लंघन नहीं करता है। धारा 1201 ((f) केवल अभिक्रिया के नियम का अपवाद है। कॉपी करने का प्रश्न निष्पक्ष उपयोग के साथ रहता है।
+
+यूरोपीय संघ में, निर्देश 2009/24/EC अनुच्छेद 5 ((3) अध्ययन को कवर करता है। एक प्रति का उपयोग करने का अधिकार रखने वाला व्यक्ति "प्रोग्राम के किसी भी तत्व के आधार पर विचार और सिद्धांतों को निर्धारित करने के लिए कार्यक्रम के कामकाज का निरीक्षण, अध्ययन या परीक्षण कर सकता है। कार्यक्रम को लोड करने, प्रदर्शित करने, चलाने, प्रसारित करने या संग्रहीत करने के दौरान अधिकार लागू होता है।
+
+अनुच्छेद 6 में अधिकार धारक की अनुमति के बिना डिकोम्पिल करने की अनुमति है जब यह "स्वतंत्र रूप से बनाए गए कंप्यूटर प्रोग्राम की सहकार्यशीलता को प्राप्त करने के लिए आवश्यक जानकारी प्राप्त करना आवश्यक है। शर्तें 1201 ((f) के अनुरूप हैं। लाइसेंसधारक कार्य करता है, सूचना पहले से ही आसानी से उपलब्ध नहीं थी, और कार्य आवश्यक भागों के भीतर रहते हैं। अनुच्छेद 6(2) किसी अन्य उद्देश्य या कार्यक्रम के लिए परिणाम का उपयोग करने पर प्रतिबंध लगाता है जो अभिव्यक्ति में काफी समान है। अनुच्छेद 8 में अनुच्छेद 6 या अनुच्छेद 5*3) के विपरीत अनुबंध की शर्तें निरर्थक और शून्य कर दी गई हैं।
+
+| Source | What it allows | Conditions |
+|---|---|---|
+| 17 U.S.C. 1201(f) | Circumventing an access control to analyze a program | Lawful copy, interoperability purpose, information not readily available, no infringement |
+| Directive 2009/24/EC Art. 5(3) | Observing, studying, and testing a running program | A right to use the copy, acts within normal loading and running |
+| Directive 2009/24/EC Art. 6 | Decompilation | Licensee, interoperability purpose, information not readily available, confined to the needed parts |
+| *Sega v. Accolade* | Disassembly as fair use | The only way to reach the ideas and functional elements, a legitimate reason |
+| *Sony v. Connectix* | Intermediate copies during reverse engineering | A non-infringing final product |
+
+इन नोट्स की रचना विधान और राय से होती है और ये कानूनी सलाह नहीं होती है। यदि भविष्य का लक्ष्य आपका नहीं है, तो फ़ाइल खोलने से पहले लिखित अनुमति प्राप्त करें और अपने सबूतों के साथ अनुमति रखें। रिवर्स इंजीनियरिंग 101 मैनुअल की धारा 2.1 में पूर्ण उद्धरण और CJEU मामलों का उल्लेख है।
+
+## समस्या
+
+आप संकलित किया `ledger.c`और भाग गया`llvm-objdump -t`वस्तु पर. आउटपुट सूचियों `percent_change`मूल्य पर `0000000000000000`आकार के साथ `0000000000000010`. 1,768-बाइट फ़ाइल के 16 बाइट्स कौन से कार्य हैं? सूची में यह भी दिखाता है`R_X86_64_PC32 .rodata+0x10`विलय में`0x36`, और उस बिंदु पर फ़ाइल में चार बाइट शून्य हैं. वे क्या बन जाएगा, और क्यों है जोड़ा`0x10`जब टेबल शुरू होता है `0x14`?
+
+rea लेआउट प्रश्नों के उत्तर देता है `inspect_binary_layout`, और यह उपकरण केवल लिनक्स x64 पर मौजूद है pwntools 4.15.0 के पीछे के साथ `REA_PWNTOOLS_PYTHON`. इस मैक पर यह अनुपस्थित है.`address_to_file_offset`एक Ghidra सत्र और एक संगत SHA-256 के साथ मूल फ़ाइल बाइट्स की एक पूरी प्रति की आवश्यकता है। `inspect_artifact`यह कभी भी एक वस्तु फ़ाइल के अंदर तालिकाओं को नहीं खोलता है। तो आप खुद पाठक को लिखते हैं पाइथन के लगभग 950 पंक्तियों के साथ`struct.unpack`परीक्षणों में प्रत्येक तालिका की तुलना की जाती है`llvm-objdump`एक बार फिक्स्चर में कैप्चर पाठ।
+
+```figure
+elf-byte-map
+```
+
+## फ़ाइल तालिकाएँ हैं जो तालिकाओं पर अंक देती हैं
+
+सिस्टम V gABI, अध्याय 4, चित्र 4-1, एक फ़ाइल के दो दृश्यों को आकर्षित करता है। लिंकिंग व्यू में एक ELF हेडर, एक वैकल्पिक प्रोग्राम हेडर तालिका, अनुभाग और एक आवश्यक अनुभाग हेडर तालिका है। निष्पादन दृश्य में एक ELF हेडर, एक आवश्यक कार्यक्रम हेडर तालिका, खंड और एक वैकल्पिक अनुभाग हेडर तालिका है। gABI एक वाक्य जोड़ता है जो पूरे पाठक को नियंत्रित करता हैः "केवल ELF हेडर में फ़ाइल में एक निश्चित स्थिति है। प्रत्येक अन्य संरचना को एक अन्य संरचना में संग्रहीत ऑफसेट द्वारा पाया जाता है।
+
+गबीआई भी स्केलर प्रकारों को ठीक करता है और कहता है कि "ईएलएफ बिट-फील्ड का उपयोग नहीं करता है। "`Elf64_Addr`और `Elf64_Off`8 बाइट्स हैं, `Elf64_Half`2 है।`Elf64_Word`4 है, तथा`Elf64_Xword`x86-64 psABI, धारा 4.1.1 में आवश्यकता है `ELFCLASS64`,`ELFDATA2LSB`,`e_machine` `EM_X86_64`(62) तथा`e_flags`0. निश्चित चौड़ाई वाले छोटे-छोटे-आदिश`struct.unpack`एक के साथ `<`उपसर्ग एक कॉल में हर रिकॉर्ड पढ़ता है।
+
+ के पहले 64 बाइट्स`ledger-x86_64-O1.o`:
+
+```text
+00000000: 7f45 4c46 0201 0100 0000 0000 0000 0000  .ELF............
+00000010: 0100 3e00 0100 0000 0000 0000 0000 0000  ..>.............
+00000020: 0000 0000 0000 0000 2804 0000 0000 0000  ........(.......
+00000030: 0000 0000 4000 0000 0000 4000 0b00 0100  ....@.....@.....
+```
+
+उन्हें गबी "एलएफ हेडर" पृष्ठ के खिलाफ पढ़ें।`e_ident`है 16 बाइट्स `7f 45 4c 46`(जादू), वर्ग 2 (64-बिट), डेटा 1 (छोटे-एंडियन), संस्करण 1, ओएस एबीआई 0 (सिस्टम वी), और पैडिंग।
+
+तो `e_type` `0x0001`है `ET_REL`, एक स्थानांतरित करने योग्य वस्तु। `e_machine` `0x003e`62 है।`EM_X86_64`. .`e_entry`शून्य है क्योंकि किसी वस्तु में प्रवेश बिंदु नहीं है। `e_phoff`शून्य है क्योंकि एक वस्तु में कोई कार्यक्रम हेडर नहीं है। `e_shoff`है `0x428`, अनुभाग हेडर तालिका के फ़ाइल ऑफसेट. अंतिम पंक्ति holds `e_ehsize` `0x40`,`e_phentsize`0 , `e_phnum`0 , `e_shentsize` `0x40`,`e_shnum` `0x0b`(11 शीर्षक), तथा`e_shstrndx` `0x0001`. .
+
+पाठक उस पंक्ति को एक कॉल में बदल देता हैः
+
+```python
+fields = struct.unpack_from("<HHIQQQIHHHHHH", data, 16)
+```
+
+प्रारूप स्ट्रिंग बाएं से दाएं पढ़ने वाली gABI आकृति हैः दो अर्धशब्द, एक शब्द, तीन 8-बाइट मान, एक शब्द और छह अर्धशब्द। पाठक एक फ़ाइल को अस्वीकार करता है जिसका जादू, वर्ग या बाइट क्रम अलग है, और यह अस्वीकार करता है।`e_shentsize`या `e_phentsize`एक गलत चौड़ाई हर बाद में गलत ऑफसेट बना देगा, तो चेक शीर्ष पर बैठता है।
+
+## खंड शीर्षक और दो स्ट्रिंग तालिकाएँ
+
+प्रत्येक अनुभाग शीर्षक एक `Elf64_Shdr`64 बाइट्स (जीएबीआई चित्र 4-8): `sh_name`,`sh_type`,`sh_flags`,`sh_addr`,`sh_offset`,`sh_size`,`sh_link`,`sh_info`,`sh_addralign`और `sh_entsize`. प्रारूप स्ट्रिंग है `<IIQQQQIIQQ`. .`sh_name`एक अनुभाग में एक ऑफसेट है जिसका सूचकांक है `e_shstrndx`, और नाम पहले शून्य बाइट पर समाप्त होता है.`e_shstrndx`1 है, और clang उस खंड का नाम `.strtab`, तो एक तालिका दोनों खंड नाम और प्रतीक नामों की सेवा करता है।
+
+पाठक -O1 वस्तु के 11 हेडर प्रिंट करता हैः
+
+```text
+Idx Name             Type         Flags   Offset     Size       Addr Link Info Align
+  0                  NULL                    0x0      0x0        0x0    0    0     0
+  1 .strtab          STRTAB                0x368     0xbe        0x0    0    0     1
+  2 .text            PROGBITS     AX        0x40     0x9f        0x0    0    0    16
+  3 .rela.text       RELA         I        0x2a8     0x48        0x0   10    2     8
+  4 .rodata          PROGBITS     A         0xe0     0x50        0x0    0    0     8
+  5 .rela.rodata     RELA         I        0x2f0     0x78        0x0   10    4     8
+  6 .rodata.str1.1   PROGBITS     AMS      0x130      0xa        0x0    0    0     1
+  7 .comment         PROGBITS     MS       0x13a     0x2f        0x0    0    0     1
+  8 .note.GNU-stack  PROGBITS              0x169      0x0        0x0    0    0     1
+  9 .llvm_addrsig    LLVM_ADDRSIG E        0x368      0x0        0x0   10    0     1
+ 10 .symtab          SYMTAB                0x170    0x138        0x0    1    9     8
+```
+
+सूचकांक 0 आरक्षित शून्य हेडर है। `.text`फ़ाइल ऑफसेट पर कोड के 159 बाइट्स रखता है `0x40`, सीधे हेडर के बाद, झंडे के साथ `A`(स्मृति में आवंटित) और `X`(कार्यकारी) । `.rodata`केवल पढ़ने के लिए डेटा के 80 बाइट्स रखता है। `.rodata.str1.1`लेबल के पांच तारों को रखता है `F\0D\0C\0B\0A\0`, 10 बाइट्स, ध्वज के साथ `M`(विलय) और `S`(कणों) ।
+
+`.comment`47 बाइट के संकलक टिकट रखता है `\0Apple clang version 17.0.0 (clang-1700.6.3.2)\0`. .`.llvm_addrsig`प्रकार है `0x6fff4c03`, ओएस विशिष्ट श्रेणी के भीतर `SHT_LOOS``SHT_HIOS`कि gABI के भंडार और LLVM के `ELF.h`उसका ध्वज`E`है `SHF_EXCLUDE`, तो एक लिंकर इसे छोड़ देता है.
+
+`sh_link`और `sh_info`स्तंभ तालिकाओं के बीच के संकेत हैं। `.rela.text`है`sh_info`2 और `sh_link`10: यह धारा 2 को पैच करता है और धारा 10 से अपने प्रतीकों को लेता है। `.symtab`है`sh_link`1, प्रतीक नामों के लिए स्ट्रिंग तालिका, और `sh_info`9, पहला गैर-स्थानीय प्रतीक का सूचकांक। `sh_addr`प्रत्येक पंक्ति में शून्य है क्योंकि एक वस्तु में अभी तक पते नहीं हैं. लिंकर उन्हें असाइन करता है.
+
+दो gABI नियम पाठक को फ़ाइल का पूरा नक्शा खींचने देते हैं। अनुभाग "संलग्न हैं और ओवरलैप नहीं करते हैं", और एक फ़ाइल "अक्रिय स्थान हो सकता है। पाठक प्रत्येक संरचना को ऑफसेट द्वारा क्रमबद्ध करता है और छेद भरता हैः
+
+```text
+     0x0 +64    header   ELF header
+    0x40 +159   section  .text
+    0xdf +1     gap      inactive space
+    0xe0 +80    section  .rodata
+   0x130 +10    section  .rodata.str1.1
+   0x13a +47    section  .comment
+   0x169 +7     gap      inactive space
+   0x170 +312   section  .symtab
+   0x2a8 +72    section  .rela.text
+   0x2f0 +120   section  .rela.rodata
+   0x368 +190   section  .strtab
+   0x426 +2     gap      inactive space
+   0x428 +704   table    section header table
+```
+
+तीनों अंतराल कुल 10 बाइट्स हैं, और प्रत्येक एक संरेखण है। `.rodata`है`sh_addralign`8, तो यह शुरू होता है `0xe0``0xdf`. .`.symtab`संरेखण 8 है, तो सात बाइट्स के बाद अप्रयुक्त रहते हैं `.comment`. खंड शीर्षक तालिका स्वयं 8 के लिए संरेखित है.
+
+प्रकार के खंड `SHT_NOBITS`इस ऑब्जेक्ट में कुछ भी उस प्रकार का नहीं है।`.bss`एक लिंक कार्यक्रम में करता है, और एक पाठक जो भरोसा `sh_size`वहाँ फ़ाइल से आगे पढ़ता है।
+
+## प्रतीक: बंधन, प्रकार, खंड, मूल्य, आकार
+
+एक `Elf64_Sym`24 बाइट्स (जीएबीआई चित्र 4-18) है: `st_name`,`st_info`,`st_other`,`st_shndx`,`st_value`,`st_size`, प्रारूप `<IBBHQQ`. .`st_info`इसमें दो फ़ील्ड होते हैंः ऊपरी चार बिट्स में बंधन और निचले चार में टाइप। gABI बंधन का नाम देता है `STB_LOCAL`0 , `STB_GLOBAL`1, `STB_WEAK`2, और प्रकार `STT_NOTYPE`0 , `STT_OBJECT`1, `STT_FUNC`2, `STT_SECTION`3, `STT_FILE`4. निम्न दो बिट्स `st_other`दृश्यता बनाए रखें,`STV_DEFAULT`यहाँ पूरे में 0।
+
+```text
+Idx            Value   Size Bind   Type    Section          Name
+  0              0x0      0 LOCAL  NOTYPE  *UND*
+  1              0x0      0 LOCAL  FILE    *ABS*            ledger.c
+  2              0x0     20 LOCAL  OBJECT  .rodata          labels.rel
+  3              0x0      0 LOCAL  SECTION .rodata          .rodata
+  4              0x2      2 LOCAL  OBJECT  .rodata.str1.1   .L.str.1
+  5              0x4      2 LOCAL  OBJECT  .rodata.str1.1   .L.str.2
+  6              0x6      2 LOCAL  OBJECT  .rodata.str1.1   .L.str.3
+  7              0x8      2 LOCAL  OBJECT  .rodata.str1.1   .L.str.4
+  8              0x0      0 LOCAL  SECTION .rodata.str1.1   .rodata.str1.1
+  9              0x0     16 GLOBAL FUNC    .text            percent_change
+ 10             0x10     46 GLOBAL FUNC    .text            grade
+ 11             0x40     31 GLOBAL FUNC    .text            total
+ 12             0x60     63 GLOBAL FUNC    .text            grade_label
+```
+
+सूचकांक 0 आरक्षित अनिश्चित प्रतीक है। `st_shndx`तीन आरक्षित मानों के साथ प्रतीक को परिभाषित करने वाले अनुभाग का नामकरण करेंः `SHN_UNDEF`0 , `SHN_ABS` `0xfff1`फ़ाइल नाम के लिए, और `SHN_COMMON` `0xfff2`अनुभाग के प्रतीकों का नाम खाली है, इसलिए `llvm-objdump`gABI नियम है कि "STB_LOCAL बंधन वाले सभी प्रतीकों को कमजोर और वैश्विक प्रतीकों से पहले" दिखाई देता है के रूप में पहली नौ पंक्तियों, और `.symtab`9 में दर्ज किया गया `sh_info`इस कारण से।
+
+एक स्थानांतरित करने योग्य वस्तु में `st_value`प्रतीक के खंड के अंदर एक ऑफसेट है, क्योंकि `sh_addr`शून्य है. इसलिए एक फ़ंक्शन के फ़ाइल ऑफसेट है `sh_offset + st_value - sh_addr`, और इसकी लंबाई `st_size`:
+
+```python
+section = elf.sections[symbol.st_shndx]
+file_offset = section.sh_offset + (symbol.st_value - section.sh_addr)
+code = elf.data[file_offset : file_offset + symbol.st_size]
+```
+
+के लिए`percent_change`यह है`0x40 + 0`, और 16 बाइट्स हैं `85 ff 74 09 29 fe 6b c6 64 99 f7 ff c3 31 c0 c3`. आकारों के रूप में ज्यादा मायने रखता है शुरू.`grade``.text`विघटन`0x3e`. दो बाइट्स `66 90`जो एक `nop`संकलक जोड़ा गया है ताकि `total``0x40`इन दो बाइट्स किसी भी प्रतीक से संबंधित नहीं हैं. पाठ 33 का उपयोग करता है`st_size`एक विघटन के लिए स्टॉप स्थिति के रूप में, और पाठ 36 एक पुनर्निर्माण की तुलना से पहले उन्हें बाहर छिपाता है।
+
+## स्थानांतरणः शून्य बाइट्स का क्या अर्थ है
+
+एक `Elf64_Rela`24 बाइट्स (जीएबीआई चित्र 4-23) है: `r_offset`,`r_info`, और एक हस्ताक्षरित `r_addend`, प्रारूप `<QQq`. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .`r_info`दो मैक्रो के साथः `ELF64_R_SYM(i)`है `i >> 32`और `ELF64_R_TYPE(i)`है `i & 0xffffffff`. एक स्थानांतरित करने योग्य फ़ाइल में `r_offset`तालिका के नामित अनुभाग के अंदर एक ऑफसेट है `sh_info`. प्रकार के नाम और सूत्र x86-64 psABI, तालिका 4.9 से आते हैं।`S`प्रतीक मूल्य है, `A`अनुपूरक, `P`पटाई की जा रही जगह, और `L`PLT प्रविष्टि। `R_X86_64_64`है `S + A`,`R_X86_64_PC32`है `S + A - P`और `R_X86_64_PLT32`है `L + A - P`. .
+
+-O1 वस्तु में आठ रिकॉर्ड हैंः
+
+```text
+  .rela.text       0x36 R_X86_64_PC32          .rodata+0x10
+  .rela.text       0x84 R_X86_64_PC32          .rodata+0x24
+  .rela.text       0x93 R_X86_64_PC32          .rodata-0x4
+  .rela.rodata      0x0 R_X86_64_PC32          .rodata.str1.1
+  .rela.rodata      0x4 R_X86_64_PC32          .L.str.1+0x4
+  .rela.rodata      0x8 R_X86_64_PC32          .L.str.2+0x8
+  .rela.rodata      0xc R_X86_64_PC32          .L.str.3+0xc
+  .rela.rodata     0x10 R_X86_64_PC32          .L.str.4+0x10
+```
+
+पहले को अलग से ले लो।`0x36`अंदर से झूठ बोलता है`grade`, जो कि `0x10``0x3e`. `0x33`है `48 8d 0d 00 00 00 00`, ए `lea`एक RIP-संबंधित पते के, और इसके चार बाइट विस्थापन पर स्थित है`0x36`. प्रोसेसर अगले निर्देश के पते में विस्थापन जोड़ता है, `0x3a`. .
+
+संकलक परिणाम होना चाहता है `.rodata + 0x14`, जहां 32-बिट मानों की पांच प्रविष्टि तालिका `1, 2, 3, 4, 4`तो संग्रहीत मूल्य होना चाहिए`(.rodata + 0x14) - 0x3a`. सूत्र `S + A - P`के साथ`P = 0x36`देता है`.rodata + A - 0x36`. दो बराबर देता है`A = 0x14 - 4 = 0x10`. अतिरिक्त में निर्देश के विस्थापन और अंत के बीच चार बाइट्स के घटाए गए लक्ष्य ऑफसेट होते हैं।
+
+यह तालिका है कि कैसे क्लेंग संकलित किया `switch`में `grade`-O1 पर कोड गणना करता है`score / 10`द्वारा गुणा के साथ `0x66666667`और दो शिफ्ट, घटाने 6, तुलना करता है 4 और सूचकांक तालिका. -O1 ELF वस्तु तालिका के लिए कोई प्रतीक नहीं रखता है. संदर्भ खंड प्रतीक है `.rodata`और एक अतिरिक्त, और केवल एक ही स्रोत के arm64 निर्माण इसे नाम `l_switch.table.grade`. . दूसरे रिकॉर्ड, पर `0x84`में `grade_label`, बिंदुओं पर एक दूसरी तालिका में 8 बाइट मानों के `.rodata + 0x28`. तीसरा, पर `0x93`, `.rodata + 0x0`, `labels.rel`. .
+
+पांच `.rela.rodata`रिकॉर्ड भरें `labels.rel`. प्रत्येक प्रविष्टि ऑफसेट पर बैठता है `4i`और वह अतिरिक्त प्राप्त करता है`4i`, तो `S + A - P`तालिका के आधार को घटाकर स्ट्रिंग के पते पर कम करता है। `grade_label` के साथ एक प्रविष्टि पढ़ता है`movslq`, तालिका आधार वापस जोड़ता है, और सूचक है. पहला रिकॉर्ड अनुभाग प्रतीक नाम देता है`.rodata.str1.1`जोड़ 0 के साथ क्योंकि स्ट्रिंग `F`उस खंड का पहला बाइट है। बाकी का नाम है `.L.str.1``.L.str.4`, संकलक के स्थानीय लेबल के लिए `D`,`C`,`B`और `A`. .
+
+एक ही स्रोत तीन अनुकूलन स्तरों पर तीन अलग-अलग तालिकाओं में संकलित करता है। पाठक बिना एक डिमॉन्टेजर के अंतर दिखाता हैः
+
+| Build | Where `labels` lives | How `grade` selects | How `grade_label` reaches `grade` |
+|---|---|---|---|
+| -O0 | `.data`, five 8-byte pointers, five `R_X86_64_64` records | A jump table in `.rodata`: five `R_X86_64_PC32` records pointing into `.text` | A call with `R_X86_64_PLT32 grade-0x4` |
+| -O1 | `.rodata` as `labels.rel`, five 32-bit relative entries | A value table at `.rodata+0x14`, one `R_X86_64_PC32` | Inlined, no call |
+| -O2 | Same as -O1 | Same as -O1 | Inlined, `total` grows to 140 bytes |
+
+-0 पर `switch`एक असली कूद तालिका है जिसका पांच प्रविष्टियों वापस में इंगित करते हैं`.text`पर`+0x91`,`+0x8c`,`+0x87`,`+0x82`और `+0x86`. . . कॉल करने के लिए`grade`वही ले जाता है `-0x4``lea`-O1 पर ऑप्टिमाइज़र ने देखा कि प्रत्येक मामले में एक स्थिर लौटाया गया और परिणामों की तालिका के साथ कूदने की जगह ली। पाठ 33 दोनों आकारों को डिक्रिप्ट करता है।
+
+## कार्यक्रम के शीर्षकः लोडर का दृष्टिकोण
+
+एक स्थानांतरित करने योग्य वस्तु में कोई कार्यक्रम हेडर नहीं है, तो `e_phnum`एक निष्पादित या साझा वस्तु में है, और लोडर कुछ और नहीं पढ़ता है।`Elf64_Phdr`56 बाइट्स (जीएबीआई चित्र 5-1): `p_type`,`p_flags`,`p_offset`,`p_vaddr`,`p_paddr`,`p_filesz`,`p_memsz`,`p_align`, प्रारूप `<IIQQQQQQ`. GABI के लिए तीन नियम तय करते हैं`PT_LOAD`प्रविष्टियाँ। वे ऊपर उठते दिखाई देते हैं`p_vaddr`आदेश और एक `p_memsz` से अधिक`p_filesz`शून्य भरने का मतलब है।`p_vaddr` के अनुरूप है`p_offset`मॉड्यूल`p_align`. .
+
+इस ट्रैक में प्रत्येक लक्ष्य एक प्रोग्राम है कि आप बनाया है, और इस मैक पर कोई भी लिंकर एक लिनक्स निष्पादित करता है से `ledger.o`तो फिक्स्ड`tiny-x86_64`से आता है `code/fixtures/build_tiny_elf.py`, जो 736 बाइट्स के साथ लिखता है `struct.pack`. फ़ाइल में एक ELF हेडर, दो कार्यक्रम हेडर, एक 36 बाइट है `_start`, एक 3 बाइट `.rodata`, एक प्रतीक तालिका, और छह अनुभाग शीर्षक। `_start`लिखता है `ok\n`यह फ़ाइल वर्णक 1 और स्थिति 42 के साथ बाहर निकलता है। लिनक्स पर यह x86-64 चलाता है। यहाँ यह कार्यक्रम हेडर पथ के लिए एक फिक्स्चर है।
+
+```text
+Program headers:
+  PT_LOAD          r-x offset=0x0 vaddr=0x400000 filesz=0x2e0 memsz=0x2e0 align=0x1000
+  PT_GNU_STACK     rw- offset=0x0 vaddr=0x0 filesz=0x0 memsz=0x0 align=0x10
+
+entry 0x4000b0 is file offset 0xb0 through PT_LOAD
+```
+
+एकल `PT_LOAD` पर पूरी 736-बाइट फ़ाइल का नक्शा`0x400000`. पाठक एक पते को एक फ़ाइल में मानचित्रित करता है जो ऑप्ट-ऑफ होता है `PT_LOAD`जो इसे और कंप्यूटिंग में शामिल है `p_offset + (address - p_vaddr)`प्रवेश बिंदु के लिए जो है`0 + (0x4000b0 - 0x400000) = 0xb0`, `.text`. .
+
+यह रिया के पीछे की गणना है `address_to_file_offset`. एक गिद्रा लक्ष्य के लिए, कि उपकरण वापस आता है `{address, file_offset}`. हॉपर प्रदाता भी लौटता है .`provider_file_offset`और `image_base_file_offset`. उपकरण को फ़ाइल की पूर्ण मूल प्रति की आवश्यकता होती है, और उस प्रति की SHA-256 लक्ष्य से मेल खाती होनी चाहिए।`inspect_binary_layout`एक स्थिति-स्वतंत्र निष्पादित लोड एक आधार पर कर्नेल द्वारा चुना जाता है, और फ़ाइल ऑफसेट एकमात्र स्थिर निर्देशांक है।
+
+कार्यक्रम हेडर भी बताते हैं कि एक डिस्ट्रिप किए गए निष्पादन योग्य अभी भी क्यों चल रहा है। एक लिंकर सेक्शन हेडर तालिका को पूरी तरह से हटा सकता है, और `e_shoff`एक उपकरण जो खंडों को चलता है फिर कुछ भी नहीं देखता है. लोडर उन्हें कभी नहीं देखा.
+
+## मच-ओ में एक ही विचार
+
+Apple Mach-O के लिए कोई प्रोसा विनिर्देश प्रकाशित नहीं करता है। XNU स्रोत में हेडर विनिर्देश हैंः `EXTERNAL_HEADERS/mach-o/loader.h`,`nlist.h`और `reloc.h`. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .`ledger-arm64-O1.o`वही है `ledger.c`के साथ बनाया गया`clang -target arm64-apple-macos -O1 -fno-asynchronous-unwind-tables -c`. .
+
+ए `mach_header_64`32 बाइट्स है: `magic`,`cputype`,`cpusubtype`,`filetype`,`ncmds`,`sizeofcmds`,`flags`,`reserved`. . जादू है`0xfeedfacf`,`MH_MAGIC_64`. .`cputype`है `0x0100000c`,`CPU_TYPE_ARM64`. .`filetype`है 1, `MH_OBJECT`. .`ncmds`5 और `sizeofcmds`है 616: लोड आदेश हेडर के बाद 616 बाइट्स को कब्जा, और प्रत्येक के साथ शुरू होता है `{cmd, cmdsize}`. . . ध्वज`0x2000`है `MH_SUBSECTIONS_VIA_SYMBOLS`. .
+
+```text
+Load commands:
+  0 LC_SEGMENT_64                cmdsize=472 at 0x20
+  1 LC_BUILD_VERSION             cmdsize=24 at 0x1f8
+  2 LC_LINKER_OPTIMIZATION_HINT  cmdsize=16 at 0x210
+  3 LC_SYMTAB                    cmdsize=24 at 0x220
+  4 LC_DYSYMTAB                  cmdsize=80 at 0x238
+```
+
+`LC_SEGMENT_64`(0x19) दोनों ELF तालिकाओं के लिए Mach-O उत्तर है।`segment_command_64`है`segname`,`vmaddr`,`vmsize`,`fileoff`,`filesize`,`maxprot`,`initprot`,`nsects`और `flags`. . तो `nsects`प्रकार के रिकॉर्ड `section_64`, 80 बाइट्स प्रत्येक, एक ही आदेश में पालन करें।`loader.h`टिप्पणी पर `MH_OBJECT`कहते हैं कि खंडों को "एक नामित खंड में रहते हैं बिना खंड पैडिंग के।" फिक्स्चर दिखाता है किः एक खंड के साथ एक खाली नाम, `fileoff`648, `filesize`456 और पांच अनुभागों।
+
+```text
+  Idx Section                    Addr   Size Offset Reloff Nreloc Type
+    1 __TEXT,__text               0x0   0xd0    648   1104      6 S_REGULAR
+    2 __DATA,__const             0xd0   0x28    856   1152      5 S_REGULAR
+    3 __TEXT,__cstring           0xf8    0xa    896      0      0 S_CSTRING_LITERALS
+    4 __TEXT,__const            0x108   0x40    912      0      0 S_REGULAR
+    5 __LD,__compact_unwind     0x148   0x80    976   1192      4 S_REGULAR
+```
+
+प्रत्येक खंड में अपने मूल खंड का नाम दिया गया है `segname`, तो दो अनुभाग कहा जाता है`__const`अलग हैं क्योंकि एक है `__DATA,__const`और दूसरा `__TEXT,__const`. प्रति खंड से स्थानांतरण होते हैं `reloff`और `nreloc`, जहां ELF में एक अलग `.rela.X`प्रति लक्ष्य सेक्शन।
+
+प्रत्येक `relocation_info`8 बाइट्स है. एक हस्ताक्षरित `r_address`पहले आता है. एक 32-बिट क्षेत्र के बाद, पैक के रूप में`r_symbolnum`(24 बिट्स), `r_pcrel`(1) `r_length`(2) `r_extern`(1) तथा `r_type`(4) छह `__text`रिकॉर्ड तीन जोड़े हैं `ARM64_RELOC_PAGE21`और `ARM64_RELOC_PAGEOFF12`, एक जोड़ी प्रति संदर्भ तालिका। एक हाथ64 `adrp`और `add`क्या एक x86-64 `lea`है, तो प्रत्येक संदर्भ दो रिकॉर्ड की जरूरत है।`__DATA,__const`रिकॉर्ड हैं `ARM64_RELOC_UNSIGNED`के साथ`r_length`3, तो प्रत्येक एक 8-बाइट पूर्ण पॉइंटर पैच करता है।
+
+-O1 पर arm64 निर्माण बनाए रखा `labels`सादे संकेतकों के रूप में जहां x86-64 निर्माण एक सापेक्ष तालिका बनाई।
+
+`LC_SYMTAB`(0x2) रखता है `symoff`1240, `nsyms`17`stroff`1512, `strsize`176 और 1512 प्लस 176 है 1688, फ़ाइल आकार. प्रत्येक `nlist_64`16 बाइट्स है: `n_strx`,`n_type`,`n_sect`,`n_desc`,`n_value`. .`n_type`थोड़ा क्षेत्र है।`N_TYPE`(मास्क `0x0e`) के बराबर `N_SECT`(`0xe`) सेक्शन में परिभाषित है जिसका 1 आधारित ऑर्डरल है `n_sect`. .`N_EXT`(`0x01`) एक बाहरी प्रतीक है।
+
+`nlist_64`आकार क्षेत्र नहीं है. 24 बाइट्स प्राप्त करने के लिए`_percent_change`पाठक उसी अनुभाग में अगले प्रतीक पते को लेता है, `_grade`पर`0x18`. सी प्रतीक एक अग्रणी ले जाते हैं `_`यहाँ, तो समारोह है `_percent_change`. .
+
+`LC_DYSYMTAB`(0xb) स्थानीय-पहले नियम के समान रिकॉर्ड करता है जैसे कि ELF `sh_info``ilocalsym`0 , `nlocalsym`13, `iextdefsym`13, `nextdefsym`4. `LC_BUILD_VERSION`(0x32) रिकॉर्ड `platform`1 (macOS), `minos`26.0 और `sdk`26.2 पैक के रूप में `XXXX.YY.ZZ`पूर्णांक. यह आदेश है कि क्यों arm64 फिक्स्चर बाइट्स के रूप में प्रतिबद्ध है. एक अन्य SDK के साथ एक मैक पर निर्माण एक अलग फ़ाइल का उत्पादन करता है.
+
+पाठक का `compare_formats`दो फ़ाइलों को एक साथ रखता हैः
+
+| Idea | ELF, `ledger-x86_64-O1.o` | Mach-O, `ledger-arm64-O1.o` |
+|---|---|---|
+| File identity | `e_ident` `7f 45 4c 46`, class 64, data LSB | `magic` `0xfeedfacf` |
+| Machine | `e_machine` 62, `EM_X86_64` | `cputype` `0x100000c`, `CPU_TYPE_ARM64` |
+| File kind | `e_type` 1, `ET_REL` | `filetype` 1, `MH_OBJECT` |
+| Where the tables are | `e_shoff` `0x428`, 11 section headers | 5 load commands, 616 bytes after the header |
+| The code | `.text` at `0x40`, size `0x9f`, flags `AX` | `__TEXT,__text` at 648, size `0xd0`, in the unnamed segment |
+| Symbol names | `.symtab` (section 10), names in `.strtab` through `sh_link` 1 | `LC_SYMTAB` `symoff` 1240, `nsyms` 17, names at `stroff` 1512 |
+| Symbol size | `st_size`: `percent_change` is 16 bytes | No field: next symbol minus this one, 24 bytes |
+| Relocations | `.rela.text`, 3 records, `R_X86_64_PC32` | `__text` `reloff` 1104, 6 records, `PAGE21` and `PAGEOFF12` |
+| Function bytes | `percent_change`: 16 bytes at `0x40` | `_percent_change`: 24 bytes at `0x288` |
+
+rea माच-ओ के माध्यम से पढ़ता है `inspect_macho`, जो चलता है `otool -h -l`,`nm -gjU`,`dyld_info -imports -exports`और `dwarfdump --uuid`पार`xcrun`आपके पाठक को उनमें से किसी की जरूरत नहीं है, और यह एक ही पढ़ता है`symoff`और `stroff`यह`otool -l`छापें।`open_binary`रिया के उपकरण जादू बाइट्स से ELF, MZ, PE, और पतला या सार्वभौमिक Mach-O का पता लगाता है। यह भी पढ़ता है `e_machine`यह है कि आप यहाँ बनाया है कि पहले 20 बाइट्स है. बिना हेडर के लिए एक फ़ाइल के लिए, आप दे`format: raw-binary`Ghidra प्रदाता एक सार्वभौमिक बाइनरी से इनकार करता है और एक पतला स्लाइस के लिए पूछता है. आपका पाठक वही करता है जब वह देखता है`0xcafebabe`. .
+
+## इसे बनाओ
+
+मानक पुस्तकालय रीडर चलाएँः
+
+```bash
+cd phases/13-tools-and-protocols/32-program-anatomy-elf-from-scratch
+python3 code/main.py
+```
+
+डेमो पढ़ता है `ledger-x86_64-O1.o`और अपने हेडर, अनुभागों, प्रतीकों, स्थानांतरण, और फ़ाइल ऑफसेट नक्शा प्रिंट करता है। यह फिर चार फ़ंक्शन बाइट स्ट्रिंग प्रिंट करता है, पढ़ता है `ledger-arm64-O1.o`, और तुलना तालिका प्रिंट करता है। यह कार्यक्रम के शीर्षक के साथ समाप्त होता है`tiny-x86_64`. अपेक्षित पंक्तियाँ:
+
+```text
+percent_change: 16 bytes at file offset 0x40: 85 ff 74 09 29 fe 6b c6 64 99 f7 ff c3 31 c0 c3
+grade: 46 bytes at file offset 0x50: 48 63 c7 48 69 c0 67 66 66 66 ...
+entry 0x4000b0 is file offset 0xb0 through PT_LOAD
+```
+
+एक फ़ाइल पढ़ने के लिए एक पथ पारित करें: `python3 code/main.py code/fixtures/ledger-x86_64-O0.o`पाठक पहले चार बाइट्स से ELF या Mach-O चुनता है।
+
+पढ़िए `code/main.py`इस क्रम मेंः
+
+1. `ElfFile._read_header()`जादू, वर्ग, बाइट क्रम, और प्रविष्टि आकार की जांच करता है, फिर हेडर को खोलता है।
+2. `ElfFile._read_sections()`और `read_cstring()`अनुभाग शीर्षक तालिका को पढ़ें और नामों को हल करें `e_shstrndx`. .
+3. `ElfFile._read_symbols()`विभाजित `st_info`, नामों को हल करता है के माध्यम से `sh_link`, और आरक्षित अनुभाग सूचकांक को पठनीय बनाए रखता है।
+4. `ElfFile._read_relocations()`हर बार चलता है `SHT_RELA`खंड, विभाजन `r_info`, और तालिका 4.9 से नाम प्रकार।
+5. `ElfFile.function_span()`और `function_bytes()`एक प्रतीक को फ़ाइल रेंज में और इसमें बाइट्स में बदल दें।
+6. `ElfFile.file_offset_map()`प्रत्येक संरचना को ऑफसेट द्वारा क्रमबद्ध करता है और निष्क्रिय स्थान को भरता है।
+7. `ElfFile._read_program_headers()`और `address_to_file_offset()`निष्पादन योग्य को संभालें।
+8. `MachOFile`हेडर पढ़ता है, लोड कमांड, `LC_SEGMENT_64`उसके खण्डों के साथ, `LC_SYMTAB`,`LC_BUILD_VERSION`, और प्रति खंड स्थानान्तरण।
+9. `compare_formats()`दोनों फाइलों में एक ही विचार का नाम है, प्रत्येक से मानों को पढ़ा जाता है।
+
+## इसका प्रयोग करें
+
+ के साथ बाद के पाठकों से पाठक आयात`from main import ElfFile`इस पाठ के जोड़ने के बाद `code`निर्देशिका `sys.path`पाठ 33 यह पूछता है`function_bytes`और `relocations_for(".text")`. पाठ 35 में इसका आउटपुट अवलोकन साक्ष्य के रूप में दर्ज किया गया है. पाठ 36 में इसे बाइट तुलना से पहले छिपाने के लिए स्थानांतरण ऑफसेट का अनुरोध किया गया है।
+
+एक ही वस्तु के साथ अपने स्वयं के सी को संकलित करें `clang -target x86_64-unknown-linux-gnu -c`कमांड करें और उस पर रीडर चलाएं। केवल जब x86-64 psABI तालिका 4.9 में इसे सूचीबद्ध किया जाता है तो एक स्थानान्तरण नाम जोड़ें। केवल जब gABI या उत्पादक टूलचेन इसे दस्तावेज करता है तो एक अनुभाग प्रकार जोड़ें। जब रीडर एक मान को पूरा करता है जिसके लिए उसके पास कोई नाम नहीं है, तो यह अनुमान लगाने के बजाय हेक्साडेसिमल में संख्या प्रिंट करता है।
+
+## इंटरैक्टिव लैब
+
+### लैब एः हेडर हाथ से
+
+`code`निर्देशिका, खुला पायथनः
+
+```bash
+cd phases/13-tools-and-protocols/32-program-anatomy-elf-from-scratch/code
+python3 -q
+```
+
+दौड़ें:
+
+```python
+import struct
+from main import ElfFile, FIXTURES
+data = (FIXTURES / "ledger-x86_64-O1.o").read_bytes()
+data[:4], data[4], data[5]
+struct.unpack_from("<HHIQQQIHHHHHH", data, 16)
+elf = ElfFile(data)
+elf.header.e_shoff, elf.header.e_shnum, elf.sections[elf.header.e_shstrndx].name
+```
+
+टूपल शो `e_type`1, `e_machine`62, तथा `e_shoff`1064, जो है `0x428`. अंतिम पंक्ति में धारा 1 को दर्शाया गया है,`.strtab`, खंड के नाम रखता है।
+
+### लैब बीः स्विच के पीछे मूल्य तालिका
+
+```python
+rodata = elf.section_bytes(elf.section(".rodata"))
+[int.from_bytes(rodata[i : i + 4], "little") for i in range(0x14, 0x28, 4)]
+[int.from_bytes(rodata[i : i + 8], "little") for i in range(0x28, 0x50, 8)]
+[r for r in elf.relocations_for(".text") if r.symbol == ".rodata"]
+```
+
+दोनों तालिकाएँ पढ़ी गयीं `1, 2, 3, 4, 4`. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .`ledger.c``grade(65)`गणना `65 / 10 - 6 = 0`और प्रविष्टि 0 पढ़ता है, जो है 1,  का मूल्य`case 6`. .`grade(100)`प्रविष्टि 4 पढ़ता है, जो 4 है, मूल्य साझा किया जाता है `case 10`और `case 9`. .
+
+### लैब सी: एक स्रोत के तीन निर्माण
+
+```python
+for level in ("O0", "O1", "O2"):
+    obj = ElfFile.from_path(FIXTURES / f"ledger-x86_64-{level}.o")
+    print(level, [s.name for s in obj.sections if s.name in (".data", ".rodata")])
+    print(level, sorted({r.type_name for r in obj.relocations}))
+    print(level, {s.name: s.st_size for s in obj.symbols if s.type == "FUNC"})
+```
+
+-0 वस्तु में एक `.data`-O1 और -O2 वस्तुओं में कोई`.data`और एक प्रकार।`total`-O0 पर 66 बाइट्स, -O1 पर 31 और -O2 पर 140 बाइट्स है।
+
+### लैब डीः Mach-O में एक ही फ़ंक्शन
+
+```python
+from main import MachOFile
+macho = MachOFile.from_path(FIXTURES / "ledger-arm64-O1.o")
+[(c.name, c.cmdsize) for c in macho.load_commands]
+macho.function_span("_percent_change")
+macho.function_bytes("_percent_change")[:4].hex()
+```
+
+फ़ाइल ऑफसेट 648 पर स्पैन 24 बाइट्स है। पहले चार बाइट्स हैं `a0000034`, निर्देश के छोटे-आदिश रूप `0x340000a0`, जो `llvm-objdump -d``cbz w0, 0x14`. . यह है `before == 0`गार्ड, एक ही परीक्षण है कि x86-64 निर्माण कोड के रूप में `85 ff 74 09`. .
+
+## अभ्यास प्रयोगशाला
+
+एक लिनक्स x86-64 मशीन पर, निर्माण `clang -O1 -shared -fPIC code/fixtures/ledger.c -o libledger.so`और `clang -O1 code/fixtures/ledger.c -o ledger_main`एक के साथ `main`आप जोड़ते हैं, फिर दोनों पर पाठक चलाएं।
+
+आवश्यकताएँः
+
+- पढ़िए `.dynsym`एक ही के साथ `Elf64_Sym`लेआउट, के बाद से `SHT_DYNSYM`11 है और रिकॉर्ड अपरिवर्तित है।
+- पढ़िए `.dynamic`जैसे `Elf64_Dyn``d_tag`और `d_val`, और नाम `DT_NEEDED`,`DT_STRTAB`,`DT_SYMTAB`,`DT_RELA`और `DT_JMPREL`gABI "डायनामिक सेक्शन" पृष्ठ से।
+- अपरिभाषित प्रतीकों को सूचीबद्ध करें `st_shndx` `SHN_UNDEF`जैसे आयात और `R_X86_64_JUMP_SLOT` में रिकॉर्ड`.rela.plt`उन्हें प्राप्त करने वाले कॉल साइटों के रूप में।
+- प्रत्येक का नक्शा `PT_LOAD`gABI नियम का उपयोग करके इसमें शामिल खंडों में से एक खंड को विभाजित करें कि "एक ऑब्जेक्ट फ़ाइल खंड में एक या अधिक खंड होते हैं।
+- साबित करें `address_to_file_offset`साझा वस्तु में प्रत्येक परिभाषित फ़ंक्शन के बाइट्स बाइट्स हैं `function_bytes`लौटता है।
+- पकड़ `llvm-objdump -h -t -r -p`और `llvm-objdump -T`दोनों फ़ाइलों के लिए पाठ में `code/fixtures/`और पाठकों की तुलना उनके साथ परीक्षा में करें।
+
+सफलता का अर्थ है आयात सूची, खंड मानचित्र, और प्रत्येक कार्य सीमा कैप्चर किए गए उपकरण आउटपुट के साथ सहमत है, परीक्षणों के दौरान कोई उपकरण नहीं चलाया जाता है।
+
+## पाठ कलाकृतियाँ
+
+यह सबक हमें फल देता है`outputs/skill-program-anatomy-elf-from-scratch.md`. इसे क्लाउड, कर्सर, कोडेक्स, ओपनक्लाव, हर्मेस या SKILL.md पढ़ने वाले किसी भी एजेंट के साथ उपयोग करें। कौशल एक संकलित वस्तु या उपयोगकर्ता द्वारा निर्मित निष्पादन योग्य को लेआउट रिपोर्ट में बदल देता है। रिपोर्ट में प्रत्येक संरचना, प्रतीक और स्थानांतरण की फ़ाइल रेंज दी जाती है, जो कैप्चर किए गए उपकरण आउटपुट के खिलाफ जांच की जाती है।
+
+## जाँचें
+
+डेमो और निर्धारक सूट चलाएंः
+
+```bash
+cd phases/13-tools-and-protocols/32-program-anatomy-elf-from-scratch
+python3 code/main.py
+python3 -m unittest discover -s code/tests -v
+```
+
+सूट साबित करता हैः
+
+- प्रत्येक अनुभाग सूचकांक, नाम, आकार, पता, और प्रकार कैप्चर से मेल खाती है `llvm-objdump -h`तीन x86-64 वस्तुओं और छोटे निष्पादित करने योग्य के लिए पाठ
+- प्रत्येक प्रतीक मूल्य, बंधन, प्रकार, खंड, आकार और नाम कैप्चर किए गए से मेल खाता है `llvm-objdump -t`पाठ
+- प्रत्येक स्थानांतरण ऑफसेट, प्रकार का नाम, प्रतीक, और जोड़ने कैप्चर से मेल खाती है `llvm-objdump -r`पाठ, जिसमें `R_X86_64_PLT32`और `R_X86_64_64`-0 पर
+- दोनों कार्यक्रम के प्रमुख `tiny-x86_64`पकड़े गए लोगों से मेल खाएं `llvm-objdump -p`पाठ, और वस्तुओं में कोई नहीं है
+- `percent_change`फ़ाइल ऑफसेट पर 16 बाइट्स है `0x40`अपेक्षित बाइट्स के साथ, और प्रत्येक समारोह अंदर स्थित है `.text`
+- फ़ाइल ऑफसेट मानचित्र प्रत्येक फिस्ट के प्रत्येक बाइट को एक बार कवर करता है, -O1 ऑब्जेक्ट के तीन संरेखण अंतराल उनके स्थानों पर
+-  के प्रवेश बिंदु`tiny-x86_64`फ़ाइलों को ऑफसेट करने के लिए नक्शे `0xb0`पार`PT_LOAD`, और एक स्थानांतरित करने योग्य वस्तु पता मानचित्रण से इनकार करता है
+- Mach-O हेडर, प्रत्येक लोड कमांड, खंड, पांच अनुभागों,`LC_SYMTAB`और `LC_BUILD_VERSION`पकड़े गए लोगों से मेल खाएं `--private-headers`पाठ
+- Mach-O प्रतीक और 15 स्थानान्तरण कैदियों के अनुरूप हैं `llvm-objdump`पाठ और`_percent_change`648 ऑफसेट पर 24 बाइट्स है
+- एक गलत जादू, एक 32-बिट वर्ग, एक बड़े-एंडियन फ़ाइल, एक छोटा तालिका, एक सार्वभौमिक बाइनरी, और एक सी स्रोत फ़ाइल सभी बढ़े।`FormatError`
+- `build_tiny_elf.py`प्रतिबद्धता को पुनः प्रस्तुत करता है `tiny-x86_64`बाइट प्रति बाइट
+- आकृति मॉड्यूल `site/figures-re-32.js` के सटीक बाइट्स ले जाता है`ledger-x86_64-O1.o`
+
+## उत्पादन विफलता मोड
+
+| Failure | What the weak reading reports | What the reader must prove |
+|---|---|---|
+| `st_value` used as a file offset | "`percent_change` is at 0" | Offset is `sh_offset + st_value - sh_addr`, here `0x40` |
+| Padding counted as code | "`grade` is 48 bytes" | `st_size` is 46 and the `66 90` after it belongs to no symbol |
+| Section names read from the wrong table | Garbage names or an exception | `e_shstrndx` names the table, here section 1 |
+| `sh_size` trusted for `SHT_NOBITS` | A read past the end of the file | `.bss` has no file bytes and the map skips it |
+| Zero bytes read as the operand | "`lea 0(%rip)`" | The `.rela.text` record at `0x36` names `.rodata+0x10` |
+| Addend read as the target offset | "the table starts at `0x10`" | `S + A - P` with the instruction end gives `0x14` |
+| Sections walked on a stripped executable | "the file has no code" | `PT_LOAD` maps every address the loader uses |
+| A linked address treated as a runtime address | A wrong offset under a random base | The file offset from `PT_LOAD` is the stable coordinate |
+| A Mach-O section looked up by `sectname` alone | Two `__const` sections collapse into one | `segname,sectname` is the name |
+| A size field expected in `nlist_64` | An exception or zero bytes | The next symbol in the same section ends the function |
+| A universal binary read as one Mach-O | "magic `0xcafebabe` is unknown" | Refuse it and ask for a thinned slice |
+| The arm64 object rebuilt on another Mac | "the fixture changed" | `LC_BUILD_VERSION` records the SDK, so the committed bytes are the fixture |
+
+## परिचालन नियम
+
+आप जिस हेडर पर भरोसा कर सकते हैं, उसे पढ़ें, उस में मौजूद ऑफसेट का पालन करें, और उस विनिर्देश से प्रत्येक फ़ील्ड का नाम दें जो इसे परिभाषित करता है। उस टूल आउटपुट को एक प्रतिबद्ध फिक्स्चर के रूप में रखें, ताकि तुलना टूल के बिना चले। जब किसी मान का विनिर्देश में कोई नाम नहीं है, तो संख्या प्रिंट करें। पाठक जिसे आप बाइट से बाइट जांच सकते हैं वह वह है जिस पर हर बाद का पाठ बनाता है।
+
+## आगे पढ़ना
+
+- [System V gABI, chapter 4: Object Files](https://www.sco.com/developers/gabi/latest/ch4.intro.html)और [ELF Header](https://www.sco.com/developers/gabi/latest/ch4.eheader.html),[Sections](https://www.sco.com/developers/gabi/latest/ch4.sheader.html),[Symbol Table](https://www.sco.com/developers/gabi/latest/ch4.symtab.html)और [Relocation](https://www.sco.com/developers/gabi/latest/ch4.reloc.html)पृष्ठ
+- [System V gABI, chapter 5: Program Header](https://www.sco.com/developers/gabi/latest/ch5.pheader.html)और [Dynamic Linking](https://www.sco.com/developers/gabi/latest/ch5.dynamic.html)
+- [System V ABI, AMD64 Architecture Processor Supplement](https://gitlab.com/x86-psABIs/x86-64-ABI)तालिका 4.9 स्थानांतरण प्रकार
+- [Apple XNU `loader.h`](https://github.com/apple-oss-distributions/xnu/blob/main/EXTERNAL_HEADERS/mach-o/loader.h),[`nlist.h`](https://github.com/apple-oss-distributions/xnu/blob/main/EXTERNAL_HEADERS/mach-o/nlist.h)और [`reloc.h`](https://github.com/apple-oss-distributions/xnu/blob/main/EXTERNAL_HEADERS/mach-o/reloc.h)
+- [17 U.S.C. 1201](https://uscode.house.gov/view.xhtml?req=granuleid:USC-prelim-title17-section1201&num=0&edition=prelim)और [Directive 2009/24/EC](https://eur-lex.europa.eu/eli/dir/2009/24/oj/eng)
+- [Sega v. Accolade, 977 F.2d 1510](https://law.resource.org/pub/us/case/reporter/F2/977/977.F2d.1510.92-15655.html)और [Sony v. Connectix, 203 F.3d 596](https://law.resource.org/pub/us/case/reporter/F3/203/203.F3d.596.99-15852.html)
+- [rea 6.5.0 `docs/binary-diagnostics.md`](https://github.com/morluto/rea/blob/rea-agents-6.5.0/docs/binary-diagnostics.md)और [`docs/ghidra-provider.md`](https://github.com/morluto/rea/blob/rea-agents-6.5.0/docs/ghidra-provider.md)

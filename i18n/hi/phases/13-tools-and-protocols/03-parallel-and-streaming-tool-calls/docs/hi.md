@@ -158,7 +158,7 @@ tp-parallel-fanout
 ## आगे पढ़ना
 
 - [OpenAI — Parallel function calling](https://platform.openai.com/docs/guides/function-calling#parallel-function-calling) डिफ़ॉल्ट व्यवहार और ऑप्ट-आउट ध्वज
-- [Anthropic — Tool use: implementing tool use](https://docs.anthropic.com/en/docs/agents-and-tools/tool-use/implementing-tool-use) `disable_parallel_tool_use`और परिणाम बैचिंग
+- [Anthropic — Parallel tool use](https://platform.claude.com/docs/en/agents-and-tools/tool-use/parallel-tool-use) `disable_parallel_tool_use`और परिणाम बैचिंग
 - [Google — Gemini function calling parallel section](https://ai.google.dev/gemini-api/docs/function-calling) मिथुन 3 से आईडी-संदर्भित समानांतर कॉल
 - [OpenAI — Streaming responses with tools](https://platform.openai.com/docs/api-reference/responses-streaming) OpenAI धाराओं के लिए टुकड़े टुकड़े तर्क फिर से इकट्ठा
 - [Anthropic — Streaming messages](https://docs.anthropic.com/en/api/messages-streaming) `content_block_delta`के साथ`input_json_delta`

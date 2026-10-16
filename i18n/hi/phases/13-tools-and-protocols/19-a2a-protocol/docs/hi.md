@@ -1,6 +1,6 @@
 # ए2ए  एजेंट-एजेंट प्रोटोकॉल
 
-> एमसीपी एजेंट-टू-टू-टूल है। ए2ए (एजेंट2एजेंट) एजेंट-टू-एजेंट  एक खुला प्रोटोकॉल है जो विभिन्न ढांचे पर निर्मित अस्पष्ट एजेंटों को सहयोग करने की अनुमति देता है। अप्रैल 2025 में Google द्वारा जारी किया गया, जून 2025 में लिनक्स फाउंडेशन को दान किया गया, अप्रैल 2026 में 150+ समर्थकों सहित AWS, सिस्को, माइक्रोसॉफ्ट, सेल्सफोर्स, SAP और सर्विस नाउ सहित v1.0 तक पहुंच गया। इसने आईबीएम के एसीपी को अवशोषित किया और एपी 2 भुगतान विस्तार जोड़ा। यह सबक एजेंट कार्ड, कार्य जीवन चक्र और दो परिवहन बंधन के बारे में है।
+> एमसीपी एजेंट-टू-टू-टूल है। ए2ए (एजेंट2एजेंट) एजेंट-टू-एजेंट  एक खुला प्रोटोकॉल है जो विभिन्न ढांचे पर निर्मित अस्पष्ट एजेंटों को सहयोग करने की अनुमति देता है। अप्रैल 2025 में Google द्वारा जारी किया गया, जून 2025 में लिनक्स फाउंडेशन को दान किया गया, अप्रैल 2026 में 150+ समर्थकों सहित AWS, सिस्को, माइक्रोसॉफ्ट, सेल्सफोर्स, SAP और सर्विस नाउ सहित v1.0 तक पहुंच गया। इसने आईबीएम के एसीपी को अवशोषित किया और एपी 2 भुगतान विस्तार जोड़ा। यह सबक एजेंट कार्ड, कार्य जीवन चक्र, और तीन प्रोटोकॉल बंधन के माध्यम से चलता है, A2A 1.0.1 तार नामों का उपयोग कर.
 
 **Type:** Build
 **Languages:** Python (stdlib, Agent Card + Task harness)
@@ -10,9 +10,9 @@
 ## सीखने के लक्ष्य
 
 - एजेंट-टू-टू-टूल (MCP) के उपयोग के मामलों में एजेंट-टू-एजेंट (A2A) के बीच अंतर करना।
--  पर एजेंट कार्ड प्रकाशित करें`/.well-known/agent.json`कौशल और अंत बिंदु मेटाडेटा के साथ।
-- कार्य जीवन चक्र (सदस्य → कार्य → इनपुट-आवश्यक → पूरा / विफल / रद्द / अस्वीकार) को चलाना।
-- आउटपुट के रूप में भागों (पाठ, फ़ाइल, डेटा) और कलाकृतियों के साथ संदेशों का उपयोग करें।
+-  पर एजेंट कार्ड प्रकाशित करें`/.well-known/agent-card.json`कौशल और`supportedInterfaces`मेटाडेटा।
+- कार्य जीवन चक्र का पालन करें: `TASK_STATE_SUBMITTED`,`TASK_STATE_WORKING`,`TASK_STATE_INPUT_REQUIRED`, और टर्मिनल राज्यों `TASK_STATE_COMPLETED`,`TASK_STATE_FAILED`,`TASK_STATE_CANCELED`,`TASK_STATE_REJECTED`. .
+- संदेशों का उपयोग करें जिनकी प्रत्येक भाग में एक से एक है `text`,`raw`,`url`या `data`, और कलाकृतियों के रूप में आउटपुट.
 
 ## समस्या
 
@@ -30,60 +30,79 @@ A2A "चैरेक के माध्यम से एजेंटों क�
 
 ### एजेंट कार्ड
 
-A2A के अनुरूप प्रत्येक एजेंट एक कार्ड प्रकाशित करता है `/.well-known/agent.json`:
+A2A के अनुरूप प्रत्येक एजेंट एक कार्ड प्रकाशित करता है `/.well-known/agent-card.json`:
 
 ```json
 {
-  "schemaVersion": "1.0",
   "name": "research-agent",
   "description": "Summarizes academic papers and drafts citations.",
-  "url": "https://research.example.com/a2a",
   "version": "1.2.0",
+  "supportedInterfaces": [
+    {
+      "url": "https://research.example.com/a2a",
+      "protocolBinding": "JSONRPC",
+      "protocolVersion": "1.0"
+    }
+  ],
+  "capabilities": {"streaming": true, "pushNotifications": true},
+  "securitySchemes": {
+    "bearer": {"httpAuthSecurityScheme": {"scheme": "Bearer"}}
+  },
+  "securityRequirements": [{"schemes": {"bearer": {"list": []}}}],
+  "defaultInputModes": ["text/plain"],
+  "defaultOutputModes": ["text/markdown"],
   "skills": [
     {
       "id": "summarize_paper",
       "name": "Summarize a paper",
       "description": "Read a paper PDF and produce a 3-paragraph summary.",
-      "inputModes": ["text", "file"],
-      "outputModes": ["text", "artifact"]
+      "tags": ["research", "summarization"],
+      "inputModes": ["text/plain", "application/pdf"],
+      "outputModes": ["text/markdown"]
     }
-  ],
-  "capabilities": {"streaming": true, "pushNotifications": true}
+  ]
 }
 ```
 
-खोज URL पर आधारित हैः कार्ड लाओ, A2A एंडपॉइंट का URL जानें, कौशल सूचीबद्ध करें।
+खोज URL पर आधारित हैः कार्ड लाओ, पहले चुनें `supportedInterfaces`प्रविष्टि जिसका `protocolBinding`इनपुट और आउटपुट मोड मीडिया प्रकार हैं।
 
-### हस्ताक्षरित एजेंट कार्ड (AP2)
+### हस्ताक्षरित एजेंट कार्ड
 
-एपी 2 एक्सटेंशन (सितंबर 2025) एजेंट कार्ड में क्रिप्टोग्राफिक हस्ताक्षर जोड़ता है। एक प्रकाशक एक JWT के साथ अपना कार्ड साइन करता है; उपभोक्ता सत्यापित करते हैं। नकलीकरण को रोकता है।
+एक कार्ड एक `signatures`प्रत्येक प्रविष्टि एक JWS (RFC 7515) है जो कार्ड के RFC 8785 कैनोनिकल JSON पर गणना की जाती है, जिसमें `signatures`उपभोक्ता कार्ड को उसी तरह से कैनोनिकलाइज़ करते हैं और सत्यापित करते हैं. नकलीकरण को रोकता है।
 
 ### कार्य जीवन चक्र
 
-```
-submitted -> working -> completed | failed | canceled | rejected
-             -> input_required -> working (loop via message)
+```text
+TASK_STATE_SUBMITTED
+  -> TASK_STATE_WORKING
+  -> TASK_STATE_COMPLETED | TASK_STATE_FAILED | TASK_STATE_CANCELED | TASK_STATE_REJECTED
+
+TASK_STATE_WORKING
+  -> TASK_STATE_INPUT_REQUIRED
+  -> TASK_STATE_WORKING (the client sends a message with the same taskId)
 ```
 
-ग्राहक  से शुरू करते हैं`tasks/send`. कॉल एजेंट राज्यों के माध्यम से संक्रमण करता है; ग्राहक एसएसई या सर्वेक्षण के माध्यम से राज्य अपडेट की सदस्यता लेते हैं।
+ग्राहक  से शुरू करते हैं`SendMessage`तथा सर्वर कार्य बनाता है। कहा एजेंट राज्यों के माध्यम से संक्रमण; ग्राहकों के साथ सर्वेक्षण`GetTask`या SSE पर धारा के साथ `SendStreamingMessage`और `SubscribeToTask`एक धारा ले जाती है`statusUpdate`और `artifactUpdate`कार्य समाप्त होने पर समाप्त होता है।`final`ध्वज।
 
 ### संदेश और भाग
 
-एक संदेश में एक या अधिक भाग होते हैंः
+एक संदेश में एक `messageId`, ए `role`(`ROLE_USER`या `ROLE_AGENT`), और एक या अधिक भागों. प्रत्येक भाग में एक सामग्री फ़ील्ड होता है, और उस फ़ील्ड का नाम प्रकार होता है। कोई `kind`क्षेत्र।
 
-- `text` सादा सामग्री।
-- `file` mimeType के साथ आधार 64 ब्लेब।
-- `data` टाइप किया गया JSON उपयोगिता लोड (कॉल एजेंट के लिए संरचित इनपुट) ।
+- `text`: सादा सामग्री।
+- `raw`: फ़ाइल बाइट्स, JSON में आधार64, आमतौर पर के साथ `filename`और `mediaType`. .
+- `url`: फ़ाइल सामग्री का लिंक।
+- `data`: संरचित JSON उपयोगिता लोड (कॉल एजेंट के लिए संरचित इनपुट) ।
 
 उदाहरण:
 
 ```json
 {
-  "role": "user",
+  "messageId": "msg-001",
+  "role": "ROLE_USER",
   "parts": [
-    {"type": "text", "text": "Summarize this paper."},
-    {"type": "file", "file": {"name": "paper.pdf", "mimeType": "application/pdf", "bytes": "..."}},
-    {"type": "data", "data": {"targetLength": "3 paragraphs"}}
+    {"text": "Summarize this paper."},
+    {"raw": "...", "filename": "paper.pdf", "mediaType": "application/pdf"},
+    {"data": {"targetLength": "3 paragraphs"}, "mediaType": "application/json"}
   ]
 }
 ```
@@ -94,20 +113,41 @@ submitted -> working -> completed | failed | canceled | rejected
 
 ```json
 {
+  "artifactId": "art-001",
   "name": "summary",
-  "parts": [{"type": "text", "text": "..."}],
-  "mimeType": "text/markdown"
+  "parts": [{"text": "...", "mediaType": "text/markdown"}]
 }
 ```
 
-कलाकृतियों को टुकड़ों के रूप में स्ट्रीम किया जा सकता है।
+कलाकृतियों को टुकड़ों के रूप में स्ट्रीम किया जा सकता है।`artifactUpdate`घटना कलाकृतियों के साथ है प्लस `append`और `lastChunk`. . कॉल करने वाला जमा हो जाता है.
 
-### दो परिवहन बंधन
+### तीन प्रोटोकॉल बंधन
 
-1. **JSON-RPC over HTTP.** `/a2a`अंत बिंदु, अनुरोधों के लिए POST, स्ट्रीमिंग के लिए वैकल्पिक SSE। डिफ़ॉल्ट बाध्यकारी।
-2. **gRPC.**उद्यम वातावरण के लिए जहां gRPC मूल है।
+1. **JSON-RPC 2.0 over HTTP**(`JSONRPC`) अनुरोधों के लिए पोस्ट, स्ट्रीमिंग के लिए एसएसई।`SendMessage`,`SendStreamingMessage`,`GetTask`,`ListTasks`,`CancelTask`,`SubscribeToTask`,`CreateTaskPushNotificationConfig`,`GetTaskPushNotificationConfig`,`ListTaskPushNotificationConfigs`,`DeleteTaskPushNotificationConfig`और `GetExtendedAgentCard`. .
+2. **gRPC**(`GRPC`) उद्यम वातावरण के लिए जहां gRPC मूल है। समान विधि नाम।
+3. **HTTP+JSON/REST**(`HTTP+JSON`) संसाधन URL जैसे `POST /message:send`और `GET /tasks/{id}`. .
 
-दोनों बंधनों में एक ही तार्किक संदेश का आकार होता है।
+सभी तीनों बंधन एक ही डेटा मॉडल रखते हैं।`supportedInterfaces`प्रविष्टि नाम एक बाध्यकारी और उसके `protocolVersion`. ग्राहक हेडर भेजें`A2A-Version: 1.0`हर अनुरोध पर, क्योंकि एक सर्वर संस्करण 0.3 के रूप में एक अनुरोध के बिना पढ़ता है।
+
+```http
+POST /a2a HTTP/1.1
+Host: research.example.com
+Content-Type: application/json
+A2A-Version: 1.0
+
+{
+  "jsonrpc": "2.0",
+  "id": 1,
+  "method": "SendMessage",
+  "params": {
+    "message": {
+      "messageId": "msg-001",
+      "role": "ROLE_USER",
+      "parts": [{"text": "Summarize this paper."}]
+    }
+  }
+}
+```
 
 ### खुलेपन का संरक्षण
 
@@ -131,8 +171,8 @@ submitted -> working -> completed | failed | canceled | rejected
 | Opacity | Transparent tool calls | Opaque inner reasoning |
 | Typical caller | Agent runtime | Another agent |
 | State | Tool-call result | Task with lifecycle |
-| Authorization | OAuth 2.1 (Phase 13 · 16) | JWT-signed Agent Cards (AP2) |
-| Transport | Stdio / Streamable HTTP | JSON-RPC over HTTP / gRPC |
+| Authorization | OAuth 2.1 (Phase 13 · 16) | Agent Card `securitySchemes` + `securityRequirements` |
+| Transport | Stdio / Streamable HTTP | JSON-RPC / gRPC / HTTP+JSON |
 
 जब आप किसी विशिष्ट टूल को कॉल करना चाहते हैं तो MCP का उपयोग करें। जब आप किसी अन्य एजेंट को पूरा कार्य सौंपना चाहते हैं तो A2A का उपयोग करें। कई उत्पादन प्रणालियों दोनों का उपयोग करती हैंः एक एजेंट अपने टूल लेयर के लिए MCP का उपयोग करता है और A2A अपने सहयोग लेयर के लिए।
 
@@ -142,14 +182,14 @@ a2a-task-lifecycle
 
 ## इसका प्रयोग करें
 
-`code/main.py`एक शोध एजेंट अपना कार्ड प्रकाशित करता है, एक लेखक एजेंट एक प्राप्त करता है `tasks/send`एक पीडीएफ और एक पाठ निर्देश सहित भागों के साथ, काम → input_required → काम → पूरा कर के माध्यम से संक्रमण, और एक पाठ कलाकृतियों लौटता है। सभी stdlib; संदेश के रूपों पर ध्यान केंद्रित करने के लिए एक इन-मेमोरी परिवहन का उपयोग करता है।
+`code/main.py`एक न्यूनतम ए 2 ए हर्नल लागू करता हैः लेखक एजेंट अपना कार्ड प्रकाशित करता है, शोध एजेंट उसे एक भेजता है `SendMessage`एक पीडीएफ भाग और एक पाठ निर्देश के साथ अनुरोध, और कार्य के माध्यम से चलता है `TASK_STATE_WORKING`→ `TASK_STATE_INPUT_REQUIRED`→ `TASK_STATE_WORKING`→ `TASK_STATE_COMPLETED`सभी stdlib; संदेश के आकार पर ध्यान केंद्रित करने के लिए एक स्मृति में परिवहन का उपयोग करता है.
 
 क्या देखना हैः
 
 - एजेंट कार्ड JSON आकार।
-- कार्य आईडी असाइनमेंट और राज्य संक्रमण।
-- मिश्रित प्रकार के भागों के साथ संदेश।
-- इनपुट आवश्यक शाखा मध्य कार्य।
+- सर्वर-साइड टास्क आईडी असाइनमेंट और स्टेट ट्रांजिशन।
+- उन भागों को टाइप किया गया है जिनकी सामग्री फ़ील्ड मौजूद है।
+- `TASK_STATE_INPUT_REQUIRED`शाखा मध्य कार्य।
 - कलाकृतियों को पूरा होने पर वापस।
 
 ## इसे भेजें
@@ -158,11 +198,11 @@ a2a-task-lifecycle
 
 ## व्यायाम
 
-1. दौड़ें`code/main.py`. इनपुट के लिए आवश्यक विराम सहित कार्य के पूरे जीवन चक्र का पता लगाएं, जहां बुलाए गए एजेंट स्पष्टीकरण के लिए कहता है।
+1. दौड़ें`code/main.py` `TASK_STATE_INPUT_REQUIRED`रुकें जहां बुलाए गए एजेंट स्पष्टीकरण के लिए पूछता है।
 
-2. एक हस्ताक्षरित एजेंट कार्ड जोड़ें, कार्ड के कैनोनिक JSON पर HMAC के साथ हस्ताक्षर करें, एक सत्यापनकर्ता लिखें और पुष्टि करें कि यह एक उत्परिवर्तन कार्ड पर विफल रहता है।
+2. एक हस्ताक्षरित एजेंट कार्ड जोड़ें. एक JWS प्रविष्टि डालें.`signatures`के साथ`alg` पर सेट किया गया`HS256`, कार्ड के कैनोनिक JSON हस्ताक्षर बिना `signatures`एक सत्यापनकर्ता लिखें और पुष्टि करें कि यह एक उत्परिवर्तन कार्ड पर विफल रहता है।
 
-3. कार्य प्रवाह को लागू करेंः लेखक एजेंट SSE पर तीन वृद्धिशील आर्टिफैक्ट टुकड़े जारी करता है और कॉल करने वाला उन्हें जमा करता है।
+3.  के साथ कार्य प्रवाह को लागू करें`SendStreamingMessage`: लेखक एजेंट द्वारा प्रेषित `task`, तीन `artifactUpdate`टुकड़े, और एक `statusUpdate`के साथ`TASK_STATE_COMPLETED`और फिर धारा बंद कर देता है. कॉल करने वाले टुकड़े जमा करते हैं.
 
 4. एक ए 2 ए एजेंट डिजाइन करें जो एक एमसीपी सर्वर को लपेटता है। प्रत्येक एमसीपी टूल को एक ए 2 ए कौशल में मैप करें। व्यापारिक अंतरों पर ध्यान दें  क्या अस्पष्टता खो गई है?
 
@@ -173,20 +213,21 @@ a2a-task-lifecycle
 | Term | What people say | What it actually means |
 |------|----------------|------------------------|
 | A2A | "Agent-to-Agent protocol" | Open protocol for opaque agent collaboration |
-| Agent Card | "`.well-known/agent.json`" | Published metadata describing an agent's skills and endpoint |
+| Agent Card | "`/.well-known/agent-card.json`" | Published metadata describing an agent's skills and `supportedInterfaces` |
 | Skill | "A callable unit" | A named operation the agent supports (analog to MCP tool) |
 | Task | "Unit of delegation" | A work item with a lifecycle and final artifact |
-| Message | "Task input" | Carries Parts (text, file, data) |
-| Part | "Typed chunk" | `text` / `file` / `data` element of a message |
+| Message | "Task input" | Carries Parts (`text`, `raw`, `url`, `data`) |
+| Part | "Typed chunk" | Exactly one of `text` / `raw` / `url` / `data`, plus optional `mediaType`; no `kind` field |
 | Artifact | "Task output" | Named, typed output returned on completion |
-| AP2 | "Agent Payments Protocol" | Signed Agent Cards extension for trust and payments |
+| AP2 | "Agent Payments Protocol" | Payments extension built on A2A; card signing is core A2A (`signatures`) |
 | Opacity | "Black-box collaboration" | Called agent's internals are hidden from caller |
-| Input-required | "Task pause" | Lifecycle state when the agent needs more info |
+| `TASK_STATE_INPUT_REQUIRED` | "Task pause" | Interrupted state when the agent needs more info |
 
 ## आगे पढ़ना
 
 - [a2a-protocol.org](https://a2a-protocol.org/latest/) कैनोनिक ए2ए विनिर्देश
 - [a2aproject/A2A — GitHub](https://github.com/a2aproject/A2A) संदर्भ कार्यान्वयन और एसडीके
+- [A2A v1.0.1 release](https://github.com/a2aproject/A2A/tree/v1.0.1): टैग `docs/specification.md`और मानदंड `specification/a2a.proto`यह सबक निम्नलिखित है
 - [Linux Foundation — A2A launch press release](https://www.linuxfoundation.org/press/linux-foundation-launches-the-agent2agent-protocol-project-to-enable-secure-intelligent-communication-between-ai-agents) जून 2025 शासन हस्तांतरण
 - [Google Cloud — A2A protocol upgrade](https://cloud.google.com/blog/products/ai-machine-learning/agent2agent-protocol-is-getting-an-upgrade) रोडमैप और भागीदार गति
 - [Google Dev — A2A 1.0 milestone](https://discuss.google.dev/t/the-a2a-1-0-milestone-ensuring-and-testing-backward-compatibility/352258) v1.0 रिलीज नोट्स और बैकवर्ड कॉम्पैक्ट गाइड
