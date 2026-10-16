@@ -44,8 +44,8 @@ Modo de falha: os críticos crescem com N agentes (a entrada inclui todas as aç
 
 A recompensa global é a soma de uma função monótona de valores Q por agente:
 
-```
-Q_tot(tau, a) = f(Q_1(tau_1, a_1), ..., Q_n(tau_n, a_n)),   df/dQ_i >= 0
+```math
+Q_{\text{tot}}(\tau, a) = f\big(Q_1(\tau_1, a_1), \ldots, Q_n(\tau_n, a_n)\big), \quad \frac{\partial f}{\partial Q_i} \ge 0
 ```
 
 A monotonia garante `argmax_a Q_tot`Pode ser calculado por cada agente escolhendo`argmax_{a_i} Q_i`Independentemente.**exactly the decentralized execution property**No momento do treino, uma rede de mistura produz`Q_tot`do Qs por agente.

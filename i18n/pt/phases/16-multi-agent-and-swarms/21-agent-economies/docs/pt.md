@@ -61,8 +61,8 @@ Por que isso importa para os sistemas de LLM: pode terceirizar tarefas de conclu
 
 Uma pontuação de reputação vinculada ao DID acumula-se a partir de contribuições confirmadas.
 
-```
-rep(i, t+1) = alpha * rep(i, t) + (1 - alpha) * contribution_quality(i, t)
+```math
+\text{rep}(i, t+1) = \alpha \cdot \text{rep}(i, t) + (1 - \alpha) \cdot \text{contribution\_quality}(i, t)
 ```
 
 Com fator de decomposição`alpha`Próximo a 1. Repútua:
