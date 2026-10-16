@@ -137,10 +137,12 @@ Dividir los casos en conjuntos de desarrollo y validación. Ajustar las descripc
 
 Para la invocación binaria:
 
-```text
-precision = true_positives / (true_positives + false_positives)
-recall = true_positives / (true_positives + false_negatives)
-f1 = 2 * precision * recall / (precision + recall)
+```math
+\begin{aligned}
+\text{precision} &= \frac{\text{true\_positives}}{\text{true\_positives} + \text{false\_positives}} \\[4pt]
+\text{recall} &= \frac{\text{true\_positives}}{\text{true\_positives} + \text{false\_negatives}} \\[4pt]
+\text{f1} &= \frac{2 \cdot \text{precision} \cdot \text{recall}}{\text{precision} + \text{recall}}
+\end{aligned}
 ```
 
 Reporte los números en bruto con las proporciones. 10 de cada 10 y 100 de cada 100 son ambos 100 por ciento pero proporcionan pruebas diferentes.
