@@ -143,11 +143,11 @@ class MLP(nn.Module):
 
 | Module | What it does | Parameters |
 |--------|-------------|------------|
-| nn.Linear(in, out) | Wx + b | in*out + out |
+| nn.Linear(in, out) | $Wx + b$ | in*out + out |
 | nn.Conv2d(in_ch, out_ch, k) | 2D convolution | in_ch*out_ch*k*k + out_ch |
 | nn.BatchNorm1d(features) | Normalize activations | 2 * features |
 | nn.Dropout(p) | Random zeroing | 0 |
-| nn.ReLU() | max(0, x) | 0 |
+| nn.ReLU() | $\max(0, x)$ | 0 |
 | nn.GELU() | Gaussian error linear | 0 |
 | nn.Embedding(vocab, dim) | Lookup table | vocab * dim |
 | nn.LayerNorm(dim) | Per-sample normalization | 2 * dim |
@@ -356,7 +356,7 @@ class MNISTModel(nn.Module):
 
 आउटपुट परत 10 कच्चे लॉगिट (एक प्रति अंक) उत्पन्न करता है। कोई softmax -- `CrossEntropyLoss`आंतरिक रूप से संभालता है।
 
-पैरामीटर की संख्याः 784*256 + 256 + 256*128 + 128 + 128*10 + 10 = 235,146. आधुनिक मानकों के अनुसार छोटा। GPT-2 छोटा 124M है। यह सेकंड में ट्रेन करता है।
+पैरामीटर गिनतीः $784 \cdot 256 + 256 + 256 \cdot 128 + 128 + 128 \cdot 10 + 10 = 235{,}146$आधुनिक मानकों के अनुसार छोटा. GPT-2 छोटा है 124M. यह सेकंड में ट्रेनों.
 
 ### चरण 3: प्रशिक्षण लूप
 

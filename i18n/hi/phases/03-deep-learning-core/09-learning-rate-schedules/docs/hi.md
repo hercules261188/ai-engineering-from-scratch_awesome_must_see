@@ -30,8 +30,8 @@
 
 सबसे सरल तरीका है, एक संख्या चुनें, हर कदम के लिए इसका इस्तेमाल करें।
 
-```
-lr(t) = lr_0
+```math
+\text{lr}(t) = \text{lr}_0
 ```
 
 यह शायद ही कभी इष्टतम है। यह या तो प्रशिक्षण के अंत के लिए बहुत अधिक है (कम से कम के आसपास गतिशीलता) या शुरुआत के लिए बहुत कम है (छोटे चरणों पर बर्बाद गणना) । यह छोटे मॉडल और डिबगिंग के लिए ठीक काम करता है। एक घंटे से अधिक समय तक प्रशिक्षण देने वाले किसी भी चीज़ के लिए एक भयानक विकल्प है।
@@ -40,11 +40,11 @@ lr(t) = lr_0
 
 ResNet युग से पुराने स्कूल के दृष्टिकोण। निश्चित कालखंडों पर सीखने की दर को एक कारक (आमतौर पर 10 गुना) कम करें।
 
-```
-lr(t) = lr_0 * gamma^(floor(epoch / step_size))
+```math
+\text{lr}(t) = \text{lr}_0 \cdot \gamma^{\lfloor \text{epoch} / \text{step\_size} \rfloor}
 ```
 
-जहां गामा = 0.1 और स्टेप_साइज = 30 का मतलब हैः lr हर 30 युगों में 10 गुना गिरता है. ResNet-50 ने इस का उपयोग किया -- lr = 0.1, 30, 60 और 90 युगों में 10 गुना गिरता है।
+कहाँ$\gamma = 0.1$और step_size = 30 का मतलब है: lr हर 30 युगों में 10x गिरता है. ResNet-50 इस का उपयोग किया - lr = 0.1, 30, 60 और 90 युगों में 10x गिरता है.
 
 समस्याः अनुकूलन गिरावट बिंदु डेटा सेट और वास्तुकला पर निर्भर करता है. एक अलग समस्या पर जाएं और आपको गिरने के समय को फिर से समायोजित करने की आवश्यकता है. संक्रमण अचानक हैं - नुकसान बढ़ सकता है जब दर अचानक बदल जाती है.
 
@@ -52,24 +52,24 @@ lr(t) = lr_0 * gamma^(floor(epoch / step_size))
 
 एक कॉसिन वक्र के बाद अधिकतम सीखने की दर से न्यूनतम तक चिकनी गिरावटः
 
+```math
+\text{lr}(t) = \text{lr}_{\min} + 0.5 \cdot (\text{lr}_{\max} - \text{lr}_{\min}) \cdot \left(1 + \cos\left(\frac{\pi t}{T}\right)\right)
 ```
-lr(t) = lr_min + 0.5 * (lr_max - lr_min) * (1 + cos(pi * t / T))
-```
 
-जहां t वर्तमान चरण है और T चरणों की कुल संख्या है।
+कहाँ$t$वर्तमान चरण है और $T$चरणों की कुल संख्या है।
 
-t=0 पर, कॉसिन शब्द 1 है, इसलिए lr = lr_max। t=T पर, कॉसिन शब्द -1 है, इसलिए lr = lr_min। क्षय शुरू में हल्का होता है, मध्य में तेज होता है, और अंत के करीब फिर से हल्का हो जाता है।
+$t=0$, कॉसिन शब्द 1 है, तो $\text{lr} = \text{lr} _{\max}$.$t=T$, कोसिन शब्द -1 है, तो $\text{lr} = \text{lr} _{\min}$. पहले क्षय हल्का होता है, मध्य में तेज होता है, और अंत के निकट फिर से हल्का हो जाता है।
 
-यह अधिकांश आधुनिक प्रशिक्षण रन के लिए डिफ़ॉल्ट है. lr_max और lr_min से परे कोई हाइपरपैरामीटर नहीं है. कॉसिन आकार अनुभवजन्य अवलोकन से मेल खाता है कि अधिकांश सीखने प्रशिक्षण के बीच में होता है - आप उस महत्वपूर्ण अवधि के दौरान उचित चरण आकार चाहते हैं।
+यह अधिकांश आधुनिक प्रशिक्षण रन के लिए डिफ़ॉल्ट है. कोई हाइपरपैरामीटर के लिए tune करने के लिए परे नहीं है$\text{lr} _{\max}$और $\text{lr} _{\min}$. कॉसिन आकार अनुभवजन्य अवलोकन से मेल खाता है कि अधिकांश सीखने प्रशिक्षण के बीच में होता है - आप उस महत्वपूर्ण अवधि के दौरान उचित कदम आकार चाहते हैं.
 
 ### गर्मजोशीः छोटी सी शुरुआत क्यों करें
 
 एडम और अन्य अनुकूलन अनुकूलक ग्रेडिएंट औसत और भिन्नता के चल रहे अनुमान बनाए रखते हैं। चरण 0 पर, ये अनुमान शून्य पर आरंभिक रूप से किए जाते हैं। पहले कुछ ग्रेडिएंट अपडेट कचरे के आंकड़ों पर आधारित होते हैं। यदि इस अवधि के दौरान आपकी सीखने की दर बड़ी है, तो मॉडल बड़े पैमाने पर, खराब दिशा में कदम उठाता है।
 
-Warmup इस समस्या को ठीक करता है. एक छोटी सी सीखने की दर (अक्सर lr_max / warmup_steps या यहां तक कि शून्य) से शुरू करें और पहले N चरणों के दौरान रैखिक रूप से lr_max तक ramp up करें। जब आप पूर्ण सीखने की दर तक पहुंच जाते हैं, तो एडम के आंकड़े स्थिर हो जाते हैं।
+वार्मअप इस को ठीक करता है. एक छोटी सी सीखने की दर (अक्सर lr_max / वार्मअप_steps या यहां तक कि शून्य) के साथ शुरू करें और रैखिक रूप से ramps तक$\text{lr}_{\max}$पहले से अधिक $N$जब तक आप पूर्ण सीखने की दर तक पहुँच जाते हैं, तब तक एडम के आंकड़े स्थिर हो जाते हैं।
 
-```
-lr(t) = lr_max * (t / warmup_steps)     for t < warmup_steps
+```math
+\text{lr}(t) = \text{lr}_{\max} \cdot \frac{t}{\text{warmup\_steps}} \quad \text{for } t < \text{warmup\_steps}
 ```
 
 सामान्य वार्मिंगः कुल प्रशिक्षण चरणों का 1-5%। Llama 3 ने लगभग 1.8 ट्रिलियन टोकन के लिए प्रशिक्षण दिया और 2000 चरणों के लिए गर्म किया। GPT-3 ने 375 मिलियन टोकन से अधिक गर्म किया।
@@ -398,13 +398,13 @@ HuggingFace फ़ंक्शन सबसे Llama और GPT ठीक-ठी
 
 ## व्यायाम
 
-1. एक्सपोनेंशियल गिरावट लागू करेंः lr(t) = lr_0 * गामा^t जहां गामा = 0.999. सर्कल डेटासेट पर कोसिन annealing की तुलना करें।
+1. घातीय क्षय को लागू करें: $\text{lr}(t) = \text{lr}_0 \cdot \gamma^t$कहाँ$\gamma = 0.999$. सर्कल डेटासेट पर कॉसिनस annealing की तुलना करें.
 
 2. सीखने की दर रेंज टेस्ट (लेस्ली स्मिथ) को लागू करेंः कुछ सौ चरणों के लिए प्रशिक्षित करें जबकि 1e-7 से 1 तक एलआर को तेजी से बढ़ाएं। प्लॉट हानि बनाम एलआर। अधिकतम एलआर नुकसान बढ़ने से ठीक पहले है।
 
 3. वार्मअप + कोसिन के साथ प्रशिक्षण करें लेकिन वार्मअप की लंबाई को भिन्न करेंः 0%, 1%, 5%, 10%, कुल चरणों का 20%। सबसे अधिक स्थिर प्रशिक्षण के लिए एक मीठा स्थान खोजें।
 
-4. गर्म रिस्टार्ट (SGDR) के साथ कॉसीन एनीलिंग लागू करेंः प्रत्येक टी चरणों में सीखने की दर को lr_max पर रीसेट करें और फिर से गिरावट। लंबी प्रशिक्षण रन पर मानक कॉसीन की तुलना करें।
+4. गर्म रिस्टार्ट के साथ कोसिन एनीलिंग लागू करें (SGDR): सीखने की दर को रीसेट करें $\text{lr}_{\max}$हर $T$एक लंबे प्रशिक्षण रन पर मानक कॉसिन की तुलना करें।
 
 5. एक "अनुसूची सर्जन" का निर्माण करें जो प्रशिक्षण हानि की निगरानी करता है और नुकसान स्थिर होने पर स्वचालित रूप से वार्मिंग से कोसिन पर स्विच करता है, और यदि नुकसान बहुत लंबे समय तक पठारों में है तो आईआर को कम करता है।
 
@@ -414,12 +414,12 @@ HuggingFace फ़ंक्शन सबसे Llama और GPT ठीक-ठी
 |------|----------------|----------------------|
 | Learning rate | "How fast the model learns" | The scalar that multiplies the gradient to determine the parameter update size |
 | Schedule | "Change the LR over time" | A function that maps training step to learning rate, designed to optimize convergence |
-| Warmup | "Start with a small LR" | Linearly ramping the LR from near-zero to the target value over the first N steps to stabilize optimizer statistics |
-| Cosine annealing | "Smooth LR decay" | Decreasing the LR following a cosine curve from lr_max to lr_min over training |
+| Warmup | "Start with a small LR" | Linearly ramping the LR from near-zero to the target value over the first $N$ steps to stabilize optimizer statistics |
+| Cosine annealing | "Smooth LR decay" | Decreasing the LR following a cosine curve from $\text{lr} _{\max}$ to $\text{lr} _{\min}$ over training |
 | Step decay | "Drop LR at milestones" | Multiplying the LR by a factor (usually 0.1) at fixed epoch intervals |
 | 1cycle policy | "Up then down" | Leslie Smith's method of ramping LR up then down in a single cycle for faster convergence |
 | LR range test | "Find the best learning rate" | Training briefly while increasing LR to find the value where loss starts diverging |
-| Cosine with warm restarts | "Reset and repeat" | Periodically resetting the LR to lr_max and decaying again (SGDR) |
+| Cosine with warm restarts | "Reset and repeat" | Periodically resetting the LR to $\text{lr} _{\max}$ and decaying again (SGDR) |
 | Eta min | "The floor for the LR" | The minimum learning rate that the schedule decays to |
 | Peak learning rate | "The maximum LR" | The highest LR reached during training, typically after warmup |
 

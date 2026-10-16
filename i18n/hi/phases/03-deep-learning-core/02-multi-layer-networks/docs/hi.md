@@ -75,8 +75,8 @@ graph LR
 
 अभी के लिए, सक्रियण सिग्मोइड हैः
 
-```
-sigmoid(z) = 1 / (1 + e^(-z))
+```math
+\text{sigmoid}(z) = \frac{1}{1 + e^{-z}}
 ```
 
 सिग्मोइड किसी भी संख्या को दायरे में स्क्वाश करता है (0, 1). बड़े सकारात्मक इनपुट 1 की ओर धकेलते हैं। बड़े नकारात्मक इनपुट 0 की ओर धकेलते हैं। शून्य मानचित्र 0.5 तक। यह चिकनी वक्र सीखने को संभव बनाता है - पर्सेप्ट्रॉन के कठिन कदम के विपरीत, सिग्मोइड में हर जगह एक ग्रेडिएंट है।
@@ -99,9 +99,11 @@ graph TD
 
 प्रत्येक परत पर, तीन ऑपरेशन क्रमशः होते हैंः
 
-```
-z = W * input + b       (linear transformation)
-a = sigmoid(z)           (activation)
+```math
+\begin{aligned}
+z &= W \cdot \text{input} + b \quad \text{(linear transformation)} \\
+a &= \text{sigmoid}(z) \quad \text{(activation)}
+\end{aligned}
 ```
 
 एक परत का आउटपुट अगले परत का इनपुट बन जाता है। यह संपूर्ण आगे का पास है।
@@ -112,13 +114,13 @@ a = sigmoid(z)           (activation)
 
 | Step | Operation | Dimensions | Result Shape |
 |------|-----------|------------|-------------|
-| Input | x | -- | (2,) |
-| Hidden linear | W1 * x + b1 | W1: (3, 2), b1: (3,) | (3,) |
-| Hidden activation | sigmoid(z1) | -- | (3,) |
-| Output linear | W2 * h + b2 | W2: (1, 3), b2: (1,) | (1,) |
-| Output activation | sigmoid(z2) | -- | (1,) |
+| Input | $x$ | -- | (2,) |
+| Hidden linear | $W_1 x + b_1$ | $W_1$: (3, 2), $b_1$: (3,) | (3,) |
+| Hidden activation | $\text{sigmoid}(z_1)$ | -- | (3,) |
+| Output linear | $W_2 h + b_2$ | $W_2$: (1, 3), $b_2$: (1,) | (1,) |
+| Output activation | $\text{sigmoid}(z_2)$ | -- | (1,) |
 
-नियमः परत k पर वजन मैट्रिक्स W का आकार है (न्यूयॉरन्स_इन_लेयर_के, न्यूरॉन_इन_लेयर_के_मिनस_1) । पंक्तियां वर्तमान परत से मेल खाती हैं। स्तंभ पिछले परत से मेल खाती हैं। यदि आकार पंक्तिबद्ध नहीं होते हैं, तो आपके पास एक बग है।
+नियमः वजन मैट्रिक्स $W$परत पर $k$आकार (न्यूयॉन्स_इन_लेयर_के, न्यूयॉन्स_इन_लेयर_के_मिनस_1) है। पंक्तियां वर्तमान परत से मेल खाती हैं। स्तंभ पिछले परत से मेल खाते हैं। यदि आकार पंक्तिबद्ध नहीं होते हैं, तो आपके पास एक बग है।
 
 ### सार्वभौमिक समीकरण प्रमेय
 
@@ -168,7 +170,7 @@ def sigmoid(x):
 
 ### चरण 2: परत वर्ग
 
-गहन सीखने में सबसे महत्वपूर्ण ऑपरेशन मैट्रिक्स गुणा है. हर परत, हर ध्यान सिर, हर आगे पास - यह नीचे तक मैटमूल है. एक रैखिक परत एक इनपुट वेक्टर लेती है, इसे एक वजन मैट्रिक्स से गुणा करती है, और एक पूर्वाग्रह वेक्टर जोड़ती हैः y = Wx + b. यह एकल समीकरण एक तंत्रिका नेटवर्क में गणना का 90% है.
+गहन सीखने में सबसे महत्वपूर्ण ऑपरेशन मैट्रिक्स गुणा है. हर परत, हर ध्यान सिर, हर आगे पास - यह नीचे तक सभी matmuls है. एक रैखिक परत एक इनपुट वेक्टर लेता है, इसे एक वजन मैट्रिक्स से गुणा करता है, और एक पूर्वाग्रह वेक्टर जोड़ता हैः$y = Wx + b$. यह एकल समीकरण एक तंत्रिका नेटवर्क में गणना का 90% है.
 
 एक परत में एक वजन मैट्रिक्स और एक पूर्वाग्रह वेक्टर होता है। इसका आगे का तरीका एक इनपुट वेक्टर लेता है और सक्रिय आउटपुट लौटाता है।
 
@@ -204,7 +206,7 @@ class Layer:
 
 ### चरण 3: नेटवर्क वर्ग
 
-एक नेटवर्क परतों की एक सूची है। आगे की पास उन्हें चेन करती हैः परत k का आउटपुट परत k+1 में फ़ीड करता है।
+एक नेटवर्क परतों की एक सूची है। आगे की पास उन्हें चेन करता हैः परत का आउटपुट $k$परत में फ़ीड करता है $k+1$. .
 
 ```python
 class Network:
@@ -346,11 +348,11 @@ print(output)
 | Hidden layer | "The middle part" | Any layer between input and output whose values are not directly observed in the data |
 | Multi-layer network | "A deep neural network" | Layers of neurons stacked sequentially, where each layer's output feeds the next layer's input |
 | Activation function | "The nonlinearity" | A function applied after the linear transformation that introduces curves into the decision boundary |
-| Sigmoid | "The S-curve" | sigma(z) = 1/(1+e^(-z)), squashes any real number to (0,1), smooth and differentiable everywhere |
-| Weight matrix | "The parameters" | A matrix W of shape (current_layer_neurons, previous_layer_neurons) containing learnable connection strengths |
+| Sigmoid | "The S-curve" | $\sigma(z) = 1/(1+e^{-z})$, squashes any real number to (0,1), smooth and differentiable everywhere |
+| Weight matrix | "The parameters" | A matrix $W$ of shape (current_layer_neurons, previous_layer_neurons) containing learnable connection strengths |
 | Bias vector | "The offset" | A vector added after the matrix multiply that lets neurons activate even when all inputs are zero |
 | Universal approximation | "Neural nets can learn anything" | A single hidden layer with enough neurons can approximate any continuous function -- but "enough" can mean billions |
-| Linear transformation | "The matrix multiply step" | z = W * x + b, the computation before activation, which maps inputs to a new space |
+| Linear transformation | "The matrix multiply step" | $z = W x + b$, the computation before activation, which maps inputs to a new space |
 | Decision boundary | "Where the classifier switches" | The surface in input space where the network output crosses the classification threshold |
 
 ## आगे पढ़ना

@@ -26,7 +26,7 @@
 
 ### एक न्यूरॉन, एक निर्णय
 
-एक परिकल्पना n इनपुट लेता है, प्रत्येक को एक वजन से गुणा करता है, उन्हें योगित करता है, एक पूर्वाग्रह जोड़ता है, और एक सक्रियण फ़ंक्शन के माध्यम से परिणाम पारित करता है।
+एक perceptron लेता है$n$इनपुट, एक वजन से प्रत्येक गुणा, उन्हें सारांशित, एक पूर्वाग्रह जोड़ता है, और एक सक्रियण समारोह के माध्यम से परिणाम पारित करता है।
 
 ```mermaid
 graph LR
@@ -38,11 +38,10 @@ graph LR
     step --> out["output (0 or 1)"]
 ```
 
-चरण फ़ंक्शन क्रूर हैः यदि वजन योग प्लस पूर्वाग्रह >= 0 है, तो आउटपुट 1। अन्यथा, आउटपुट 0 है।
+चरण समारोह क्रूर हैः यदि भारित योग + पूर्वाग्रह है $\ge 0$, आउटपुट 1। अन्यथा, आउटपुट 0।
 
-```
-step(z) = 1  if z >= 0
-           0  if z < 0
+```math
+\text{step}(z) = \begin{cases} 1 & \text{if } z \ge 0 \\ 0 & \text{if } z < 0 \end{cases}
 ```
 
 यह एक रैखिक वर्गीकरण है। वजन और पूर्वाग्रह एक रेखा (या उच्च आयामों में हाइपरप्लेन) को परिभाषित करते हैं जो इनपुट स्थान को दो क्षेत्रों में विभाजित करता है।
@@ -80,7 +79,7 @@ For each training example (x, y_true):
     bias = bias + learning_rate * error
 ```
 
-यदि भविष्यवाणी सही है, तो त्रुटि = 0, कुछ भी नहीं बदलता है। यदि यह भविष्यवाणी करता है 0 लेकिन 1 होना चाहिए, तो वजन बढ़ता है। यदि यह भविष्यवाणी करता है 1 लेकिन 0 होना चाहिए, तो वजन कम होता है। सीखने की दर नियंत्रित करती है कि प्रत्येक समायोजन कितना बड़ा है।
+यदि भविष्यवाणी सही है,$\text{error} = 0$यदि यह 0 की भविष्यवाणी करता है, लेकिन 1 होना चाहिए, तो वजन बढ़ता है। अगर यह 1 की भविष्यवाणी करता है, लेकिन 0 होना चाहिए, तो वजन कम होता है। सीखने की दर नियंत्रित करती है कि प्रत्येक समायोजन कितना बड़ा है।
 
 ### एक्सओआर समस्या
 
@@ -213,7 +212,7 @@ for inputs, expected in xor_data:
 
 ### चरण 4: दो परतों के साथ XOR हल करें
 
-चालः XOR = (x1 OR x2) और NOT (x1 AND x2) । तीन धारणाओं को मिलाएं:
+ट्रिकः$\text{XOR} = (x_1 \text{ OR } x_2) \text{ AND NOT } (x_1 \text{ AND } x_2)$तीन परिक्ट्रॉन को जोड़ेंः
 
 ```mermaid
 graph LR
@@ -359,7 +358,7 @@ print([clf.predict([x])[0] for x in X])
 ## व्यायाम
 
 1. NAND गेट पर एक perceptron को प्रशिक्षित करें (सार्वभौमिक गेट - NAND से कोई भी तर्क सर्किट बनाया जा सकता है) इसके वजन और पूर्वाग्रह को मान्य निर्णय सीमा के रूप में सत्यापित करें।
-2. प्रत्येक युग में निर्णय सीमा (w1*x1 + w2*x2 + b = 0) को ट्रैक करने के लिए पर्सेप्ट्रॉन वर्ग को संशोधित करें। AND गेट पर प्रशिक्षण के दौरान रेखा कैसे बदलती है, प्रिंट करें।
+2. निर्णय सीमा को ट्रैक करने के लिए Perceptron वर्ग को संशोधित करें ($w_1 x_1 + w_2 x_2 + b = 0$एएन गेट पर प्रशिक्षण के दौरान रेखा कैसे बदलती है, प्रिंट करें।
 3. एक 3-इनपुट परिक्ट्रॉन बनाएं जो केवल 1 आउटपुट करता है जब 3 इनपुट में से कम से कम 2 1 (बहुमत वोट फ़ंक्शन) हैं। क्या यह रैखिक रूप से अलग किया जा सकता है? क्यों?
 
 ## प्रमुख शर्तें
@@ -372,7 +371,7 @@ print([clf.predict([x])[0] for x in X])
 | Activation function | "The thing that squishes values" | A function applied after the weighted sum - step function for perceptrons, sigmoid/ReLU for modern networks |
 | Linearly separable | "You can draw a line between them" | A dataset where a single hyperplane can perfectly separate the classes |
 | XOR problem | "The thing perceptrons can't do" | Proof that single-layer networks cannot learn non-linearly-separable functions |
-| Decision boundary | "Where the classifier switches" | The hyperplane w*x + b = 0 that divides input space into two classes |
+| Decision boundary | "Where the classifier switches" | The hyperplane $w \cdot x + b = 0$ that divides input space into two classes |
 | Multi-layer perceptron | "A real neural network" | Perceptrons stacked in layers, where each layer's output feeds the next layer's input |
 
 ## आगे पढ़ना

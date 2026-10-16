@@ -26,7 +26,7 @@
 
 ### नेटवर्क पर लागू श्रृंखला नियम
 
-आप चरण 01, पाठ 05 में श्रृंखला नियम देखा है। त्वरित पुनरावृत्तिः यदि y = f(g(x)), तो dy/dx = f'(g(x)) * g'(x। आप श्रृंखला के साथ व्युत्पन्न गुणा करते हैं।
+आपने चरण 01, पाठ 05 में श्रृंखला नियम देखा है।$y = f(g(x))$, तो $\frac{dy}{dx} = f'(g(x)) \cdot g'(x)$आप श्रृंखला के साथ व्युत्पन्न गुणा करते हैं।
 
 न्यूरल नेटवर्क में, "चेन" इनपुट से नुकसान तक संचालन का क्रम है। प्रत्येक परत भार लागू करती है, पूर्वाग्रह जोड़ती है, सक्रियण से गुजरती है। हानि फ़ंक्शन अंतिम आउटपुट की तुलना लक्ष्य से करती है। बैकप्रॉपेगेशन इस श्रृंखला को पीछे की ओर ट्रैक करता है, यह गणना करता है कि प्रत्येक ऑपरेशन ने त्रुटि में कैसे योगदान दिया।
 
@@ -45,9 +45,9 @@ graph LR
     y["target"] --> loss
 ```
 
-आगे की ओर पासः मान बाएं से दाएं बहते हैं। x और w z1 = w*x उत्पन्न करते हैं। z2 प्राप्त करने के लिए b जोड़ें। सिग्मोइड सक्रियण a देता है। हानि फ़ंक्शन का उपयोग करके a को लक्ष्य y के साथ तुलना करें।
+आगे की ओर पारः मान बाएं से दाएं बहते हैं। $x$और $w$उत्पाद$z_1 = w x$जोड़ें$b$प्राप्त करने के लिए$z_2$सिग्मोइड सक्रियण देता है $a$. तुलना करें$a$लक्ष्य करने के लिए $y$हानि फ़ंक्शन का उपयोग करके।
 
-पीछे की ओर पासः ग्रेडिएंट दाएं से बाएं तक बहते हैं। dL/da (सक्रियता के साथ नुकसान कैसे बदलता है) से शुरू करें। da/dz2 (सिग्मोइड व्युत्पन्न) से गुणा करें। यह dL/dz2 देता है। dL/dz2 में विभाजित करें (जो dL/dz2 के बराबर है, क्योंकि z2 = z1 + b) और dL/dz1 के बराबर है। फिर dL/dw = dL/dz1 * x और dL/dx = dL/dz1 * w।
+पीछे की ओर जानेः ग्रेडिएंट दाईं ओर से बाईं ओर बहते हैं। $\partial L/\partial a$(सक्रियता के साथ हानि कैसे बदलती है) ।$\partial a/\partial z_2$(सिग्मोइड व्युत्पन्न) जो देता है$\partial L/\partial z_2$. विभाजित हो गया .$\partial L/\partial b$(जो बराबर है $\partial L/\partial z_2$, के बाद से $z_2 = z_1 + b$) और $\partial L/\partial z_1$. . तो $\partial L/\partial w = \partial L/\partial z_1 \cdot x$और $\partial L/\partial x = \partial L/\partial z_1 \cdot w$. .
 
 ग्राफ में प्रत्येक नोड का एक काम है पीछे की ओर जाने के दौरानः ऊपर से आने वाले ग्रेडिएंट को ले लो, स्थानीय व्युत्पन्न से गुणा करो, और इसे नीचे ले जाओ।
 
@@ -84,7 +84,7 @@ graph RL
     L1 -- "dL/dz1 = dL/da1 * sigmoid'(z1)" --> I["Input"]
 ```
 
-प्रत्येक परत पर, ग्रेडिएंट सिग्मोइड व्युत्पन्न द्वारा गुणा किया जाता है। सिग्मोइड व्युत्पन्न * (1 - ए) है, जो 0.25 पर अधिकतम निकलता है (जब ए = 0.5) । तीन परतों की गहराई पर, ग्रेडिएंट को अधिकतम 0.25^3 = 0.0156 से गुणा किया गया है। दस परतों की गहराईः 0.25^10 = 0.000001।
+प्रत्येक परत पर, ग्रेडिएंट सिग्मोइड व्युत्पन्न से गुणा होता है। सिग्मोइड व्युत्पन्न $a(1 - a)$, जो अधिकतम 0.25 पर है (जब $a = 0.5$) तीन परतों की गहराई में, ग्रेडिएंट अधिकतम गुणा किया गया है $0.25^3 = 0.0156$. दस परतों की गहराई:$0.25^{10} = 0.000001$. .
 
 ### गिरते हुए ग्रेडिएंट
 
@@ -102,32 +102,35 @@ After 10 layers:  gradient * 0.25^10 = 0.000001x original
 
 ### 2-परत नेटवर्क के लिए ग्रेडिएंट्स व्युत्पन्न करना
 
-इनपुट एक्स, सिग्मोइड के साथ छिपे हुए परत, सिग्मोइड के साथ आउटपुट परत और एमएसई हानि के साथ नेटवर्क के लिए ठोस गणित।
+इनपुट के साथ नेटवर्क के लिए ठोस गणित $x$, सिग्मोइड के साथ छिपी हुई परत, सिग्मोइड के साथ आउटपुट परत, और एमएसई हानि।
 
 आगे की पासः
-```
-z1 = W1 * x + b1
-a1 = sigmoid(z1)
-z2 = W2 * a1 + b2
-a2 = sigmoid(z2)
-L = (a2 - y)^2
+
+```math
+\begin{aligned}
+z_1 &= W_1 x + b_1 \\
+a_1 &= \text{sigmoid}(z_1) \\
+z_2 &= W_2 a_1 + b_2 \\
+a_2 &= \text{sigmoid}(z_2) \\
+L &= (a_2 - y)^2
+\end{aligned}
 ```
 
 पीछे की ओर जाने का रास्ता (चिन्तन नियम को कदम से कदम लागू करना):
-```
-dL/da2 = 2(a2 - y)
-da2/dz2 = a2 * (1 - a2)
-dL/dz2 = dL/da2 * da2/dz2 = 2(a2 - y) * a2 * (1 - a2)
 
-dL/dW2 = dL/dz2 * a1
-dL/db2 = dL/dz2
-
-dL/da1 = dL/dz2 * W2
-da1/dz1 = a1 * (1 - a1)
-dL/dz1 = dL/da1 * da1/dz1
-
-dL/dW1 = dL/dz1 * x
-dL/db1 = dL/dz1
+```math
+\begin{aligned}
+\frac{\partial L}{\partial a_2} &= 2(a_2 - y) \\
+\frac{\partial a_2}{\partial z_2} &= a_2 (1 - a_2) \\
+\frac{\partial L}{\partial z_2} &= \frac{\partial L}{\partial a_2} \cdot \frac{\partial a_2}{\partial z_2} = 2(a_2 - y) \cdot a_2 (1 - a_2) \\[6pt]
+\frac{\partial L}{\partial W_2} &= \frac{\partial L}{\partial z_2} \cdot a_1 \\
+\frac{\partial L}{\partial b_2} &= \frac{\partial L}{\partial z_2} \\[6pt]
+\frac{\partial L}{\partial a_1} &= \frac{\partial L}{\partial z_2} \cdot W_2 \\
+\frac{\partial a_1}{\partial z_1} &= a_1 (1 - a_1) \\
+\frac{\partial L}{\partial z_1} &= \frac{\partial L}{\partial a_1} \cdot \frac{\partial a_1}{\partial z_1} \\[6pt]
+\frac{\partial L}{\partial W_1} &= \frac{\partial L}{\partial z_1} \cdot x \\
+\frac{\partial L}{\partial b_1} &= \frac{\partial L}{\partial z_1}
+\end{aligned}
 ```
 
 हर gradient स्थानीय व्युत्पन्न के उत्पाद है नुकसान से वापस पता चला है.
@@ -185,9 +188,9 @@ def __mul__(self, other):
     return out
 ```
 
-जोड़ने के लिएः d(a+b) /da = 1, d(a+b) /db = 1. तो दोनों इनपुट सीधे आउटपुट की ग्रेडिएंट प्राप्त करते हैं।
+जोड़ने के लिएः $\partial(a+b)/\partial a = 1$,$\partial(a+b)/\partial b = 1$तो दोनों इनपुट सीधे आउटपुट की ग्रेडिएंट प्राप्त करते हैं।
 
-गुणा के लिएः d(a*b)/da = b, d(a*b)/db = a. प्रत्येक इनपुट को दूसरे का मान गुणा आउटपुट ग्रेडिएंट मिलता है।
+गुणा के लिएः $\partial(ab)/\partial a = b$,$\partial(ab)/\partial b = a$. प्रत्येक इनपुट दूसरे के मूल्य को आउटपुट ग्रेडिएंट से गुणा करता है.
 
 `+=`एक मान कई संचालन में इस्तेमाल किया जा सकता है. इसके ग्रेडिएंट सभी पथों से ग्रेडिएंट के योग है.
 
@@ -209,7 +212,7 @@ def sigmoid(self):
     return out
 ```
 
-सिग्मोइड व्युत्पन्नः सिग्मोइड(x) * (1 - सिग्मोइड(x)). हमने आगे के पास के दौरान सिग्मोइड(x) = s का गणना की। इसे पुनः उपयोग करें। कोई अतिरिक्त काम नहीं।
+सिग्मोइड डेरिवेटिव: $\text{sigmoid}(x) \cdot (1 - \text{sigmoid}(x))$. हमने गणना की .$\text{sigmoid}(x) = s$आगे की पार के दौरान इसे पुनः उपयोग करें। कोई अतिरिक्त काम नहीं।
 
 ```python
 def mse_loss(predicted, target):
@@ -217,7 +220,7 @@ def mse_loss(predicted, target):
     return diff * diff
 ```
 
-एकल आउटपुट के लिए एमएसईः (पूर्वानुमानित - लक्ष्य) ^ 2। हम शून्य मान के साथ योग के रूप में घटावट व्यक्त करते हैं।
+एकल आउटपुट के लिए एमएसई: $(\text{predicted} - \text{target})^2$हम घटाकर शून्य मूल्य के साथ योग के रूप में व्यक्त करते हैं।
 
 ### चरण 4: पीछे की ओर जाने
 
@@ -241,7 +244,7 @@ def backward(self):
         v._backward()
 ```
 
-खोने से शुरू करें (ग्रिडिएंट = 1.0, क्योंकि dL/dL = 1). क्रमबद्ध ग्राफ के माध्यम से पीछे की ओर चलें। प्रत्येक नोड का `_backward`अपने बच्चों को gradients धक्का देता है।
+हानि से शुरू करें (ग्रैडिएंट = 1.0, चूंकि $dL/dL = 1$) क्रमबद्ध ग्राफ के माध्यम से पीछे की ओर चलें. प्रत्येक नोड के `_backward`अपने बच्चों को gradients धक्का देता है।
 
 ### चरण 5: परत और नेटवर्क
 
@@ -301,7 +304,7 @@ class Network:
             p.grad = 0.0
 ```
 
-एक न्यूरॉन इनपुट लेता है, वजन योग + पूर्वाग्रह की गणना करता है, और सिग्मोइड लागू करता है। गहरे नेटवर्क में सिग्मोइड संतृप्ति को रोकने के लिए वर्ग ((2/n_input) द्वारा वजन आरंभिकरण पैमाने। एक परत न्यूरॉन की एक सूची है। एक नेटवर्क परतों की एक सूची है।`parameters()`विधि सभी सीखने योग्य मूल्यों को इकट्ठा करता है ताकि हम उन्हें अद्यतन कर सकें।
+एक न्यूरॉन इनपुट लेता है, वजन योग + पूर्वाग्रह की गणना करता है, और सिग्मोइड लागू करता है। वजन आरंभिकरण पैमाने द्वारा $\sqrt{2/n_{\text{inputs}}}$एक परत न्यूरॉन्स की एक सूची है। एक नेटवर्क परतों की एक सूची है।`parameters()`विधि सभी सीखने योग्य मूल्यों को इकट्ठा करता है ताकि हम उन्हें अद्यतन कर सकें।
 
 ### चरण 6: एक्सओआर पर ट्रेन
 
@@ -439,9 +442,9 @@ with torch.no_grad():
 
 ## व्यायाम
 
-1. एक जोड़ें `__sub__`मान वर्ग (a - b = a + (-1 * b) के लिए विधि) । फिर एक `__neg__`विधि. (a - b) ^2 जैसे सरल अभिव्यक्ति के लिए मैनुअल गणना की तुलना करके यह सत्यापित करें कि ग्रेडिएंट सही हैं।
+1. एक जोड़ें `__sub__`मान वर्ग के लिए विधि $(a - b = a + (-1 \cdot b))$. फिर एक `__neg__`विधि. यह सत्यापित करें कि ग्रेडिएंट सही हैं, जैसे सरल अभिव्यक्ति के लिए मैनुअल गणना की तुलना करके $(a - b)^2$. .
 
-2. एक जोड़ें `relu`मान (आउटपुट अधिकतम ((0, x), व्युत्पन्न 1 है अगर x > 0, तो 0 है. छिपे हुए परतों में रेलू के साथ सिग्मोइड को बदलें और फिर से XOR पर ट्रेन करें. अभिसरण गति की तुलना करें. आपको तेज प्रशिक्षण देखना चाहिए - यह सबक 04 का पूर्वावलोकन करता है।
+2. एक जोड़ें `relu`मूल्य (आउटपुट) के लिए विधि$\max(0, x)$, व्युत्पन्न 1 है यदि $x \gt 0$, अन्यथा 0) छिपे हुए परतों में रील्यू के साथ सिग्मोइड की जगह लें और फिर से एक्सओआर पर ट्रेन करें. अभिसरण गति की तुलना करें. आपको तेज प्रशिक्षण देखना चाहिए - यह पाठ 04 का पूर्वावलोकन है।
 
 3. एक `__pow__`पूर्णांक शक्तियों के लिए मूल्य पर विधि का उपयोग करें।`mse_loss`एक उचित के साथ `(predicted - target) ** 2`अभिव्यक्ति. सत्यापित करें कि ग्रेडिएंट मूल कार्यान्वयन से मेल खाते हैं।
 
@@ -453,14 +456,14 @@ with torch.no_grad():
 
 | Term | What people say | What it actually means |
 |------|----------------|----------------------|
-| Backpropagation | "The network learns" | An algorithm that computes dL/dw for every weight by applying the chain rule backward through the computational graph |
+| Backpropagation | "The network learns" | An algorithm that computes $\partial L/\partial w$ for every weight by applying the chain rule backward through the computational graph |
 | Computational graph | "The network structure" | A directed acyclic graph where nodes are operations and edges carry values (forward) and gradients (backward) |
-| Chain rule | "Multiply the derivatives" | If y = f(g(x)), then dy/dx = f'(g(x)) * g'(x) -- the mathematical foundation of backpropagation |
+| Chain rule | "Multiply the derivatives" | If $y = f(g(x))$, then $\frac{dy}{dx} = f'(g(x)) \cdot g'(x)$ -- the mathematical foundation of backpropagation |
 | Gradient | "The direction of steepest ascent" | The partial derivative of the loss with respect to a parameter -- tells you how to change that parameter to reduce the loss |
 | Vanishing gradient | "Deep networks don't learn" | Gradients shrink exponentially as they propagate through layers with saturating activations like sigmoid |
 | Forward pass | "Running the network" | Computing the output from inputs by sequentially applying each layer's operations and storing intermediate values |
 | Backward pass | "Computing gradients" | Traversing the computational graph in reverse, accumulating gradients at each node using the chain rule |
-| Learning rate | "How fast it learns" | A scalar that controls the step size when updating weights: w_new = w_old - lr * gradient |
+| Learning rate | "How fast it learns" | A scalar that controls the step size when updating weights: $w_{\text{new}} = w_{\text{old}} - \text{lr} \cdot \text{gradient}$ |
 | Topological sort | "The right order" | An ordering of graph nodes where each node appears after all nodes it depends on -- ensures gradients are fully accumulated before propagation |
 | Autograd | "Automatic differentiation" | A system that builds computational graphs during forward computation and automatically computes gradients -- what PyTorch's engine does |
 

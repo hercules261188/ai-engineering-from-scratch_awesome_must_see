@@ -38,40 +38,40 @@
 
 फैन_इन इनपुट के साथ एक एकल परत पर विचार करेंः
 
-```
-z = w1*x1 + w2*x2 + ... + w_n*x_n
-```
-
-यदि प्रत्येक भार wi को Var(w) के साथ एक वितरण से लिया गया है और प्रत्येक इनपुट xi में Var(x) का अंतर है, तो आउटपुट भिन्नता हैः
-
-```
-Var(z) = fan_in * Var(w) * Var(x)
+```math
+z = w_1 x_1 + w_2 x_2 + \cdots + w_n x_n
 ```
 
-यदि Var(w) = 1 और fan_in = 512, आउटपुट भिन्नता 512x इनपुट भिन्नता है। 10 परतों के बादः 512 ^ 10 = 1.2e27. आपका संकेत विस्फोट हो गया है।
+यदि प्रत्येक भार$w_i$भिन्नता के साथ वितरण से प्राप्त होता है $\mathrm{Var}(w)$और प्रत्येक इनपुट $x_i$भिन्नता है $\mathrm{Var}(x)$, आउटपुट वैरिएंसी हैः
 
-यदि Var ((w) = 0.001 है, तो आउटपुट वैरिएंस प्रति परत 0.001 * 512 = 0.512 से घट जाती है। 10 परतों के बादः 0.512^10 = 0.00013। आपका संकेत गायब हो गया है।
+```math
+\mathrm{Var}(z) = \text{fan}_{\text{in}} \cdot \mathrm{Var}(w) \cdot \mathrm{Var}(x)
+```
 
-लक्ष्य: Var(w) चुनें ताकि Var(z) = Var(x) । सिग्नल आयाम परतों के पार स्थिर रहता है।
+यदि$\mathrm{Var}(w) = 1$और $\text{fan}_{\text{in}} = 512$, आउटपुट भिन्नता 512x इनपुट भिन्नता है। 10 परतों के बादः $512^{10} = 1.2 \times 10^{27}$आपका संकेत विस्फोट हो गया है.
+
+यदि$\mathrm{Var}(w) = 0.001$, आउटपुट भिन्नता घट जाती है $0.001 \cdot 512 = 0.512$प्रति परत। 10 परतों के बादः $0.512^{10} = 0.00013$आपका संकेत गायब हो गया है.
+
+लक्ष्य: चुनें $\mathrm{Var}(w)$तो यह है कि$\mathrm{Var}(z) = \mathrm{Var}(x)$. सिग्नल की मात्रा परतों में स्थिर रहती है.
 
 ### ज़ावियर/ग्लोरोट आरंभिकरण
 
 ग्लोरोट और बेंगियो (2010) ने सिग्मोइड और टैन सक्रियण के लिए समाधान प्राप्त किया। आगे और पीछे दोनों पास में भिन्नता को निरंतर रखने के लिएः
 
-```
-Var(w) = 2 / (fan_in + fan_out)
+```math
+\mathrm{Var}(w) = \frac{2}{\text{fan}_{\text{in}} + \text{fan}_{\text{out}}}
 ```
 
 व्यवहार में, वजन निम्नानुसार से प्राप्त किया जाता हैः
 
-```
-w ~ Uniform(-limit, limit)  where limit = sqrt(6 / (fan_in + fan_out))
+```math
+w \sim \text{Uniform}(-\text{limit}, \text{limit}) \quad \text{where } \text{limit} = \sqrt{\frac{6}{\text{fan}_{\text{in}} + \text{fan}_{\text{out}}}}
 ```
 
 या
 
-```
-w ~ Normal(0, sqrt(2 / (fan_in + fan_out)))
+```math
+w \sim \text{Normal}\left(0, \sqrt{\frac{2}{\text{fan}_{\text{in}} + \text{fan}_{\text{out}}}}\right)
 ```
 
 यह काम करता है क्योंकि सिग्मोइड और टैन लगभग शून्य के करीब रैखिक हैं, जहां ठीक से आरंभिक सक्रियण रहते हैं। विविधता दर्जनों परतों के माध्यम से स्थिर रहती है।
@@ -82,27 +82,27 @@ ReLU आउटपुट का आधा मार देता है (सभ�
 
 He et al. (2015) ने सूत्र को समायोजित कियाः
 
-```
-Var(w) = 2 / fan_in
+```math
+\mathrm{Var}(w) = \frac{2}{\text{fan}_{\text{in}}}
 ```
 
 वजन निम्न से प्राप्त किए जाते हैंः
 
-```
-w ~ Normal(0, sqrt(2 / fan_in))
+```math
+w \sim \text{Normal}\left(0, \sqrt{\frac{2}{\text{fan}_{\text{in}}}}\right)
 ```
 
-2 का कारक ReLU को सक्रियण के आधे शून्य करने के लिए क्षतिपूर्ति करता है। इसके बिना, संकेत प्रति परत ~ 0.5x कम हो जाता है। 50 परतों के साथः 0.5^50 = 8.8e-16. काइमिंग init इससे बचाता है।
+2 का कारक ReLU को सक्रियण के आधे शून्य करने के लिए क्षतिपूर्ति करता है। इसके बिना, संकेत प्रति परत में ~ 0.5x कम हो जाता है। 50 परतों के साथः$0.5^{50} = 8.8 \times 10^{-16}$काइमिंग इनेट इससे बचाता है।
 
 ### ट्रांसफार्मर आरंभिकरण
 
 जीपीटी-2 ने एक अलग पैटर्न पेश किया। शेष कनेक्शन प्रत्येक उप-परत के आउटपुट को इसके इनपुट में जोड़ते हैंः
 
-```
-x = x + sublayer(x)
+```math
+x = x + \text{sublayer}(x)
 ```
 
-प्रत्येक जोड़ भिन्नता बढ़ाता है। N अवशिष्ट परतों के साथ, भिन्नता N के अनुपात में बढ़ जाती है। GPT-2 अवशिष्ट परतों के वजन को 1/sqrt(2N) द्वारा स्केल करता है, जहां N परतों की संख्या है। यह संचित संकेत परिमाण को स्थिर रखता है।
+प्रत्येक जोड़ से भिन्नता बढ़ जाती है।$N$शेष परतों में, भिन्नता अनुपात में बढ़ जाती है $N$. जीपीटी-2 शेष परतों के वजन को $1/\sqrt{2N}$, जहां $N$यह संचित संकेत की मात्रा स्थिर रखता है।
 
 एलएएमए 3 (405 बी पैरामीटर, 126 परतें) एक समान योजना का उपयोग करता है। इस स्केलिंग के बिना, शेष प्रवाह 126 परतों के ध्यान और फ़ीडफॉरवर्ड ब्लॉक के माध्यम से असीमित रूप से बढ़ेगा।
 
@@ -341,7 +341,7 @@ nn.init.zeros_(layer.bias)
 
 जब आप कॉल करते हैं`nn.Linear(512, 256)`, PyTorch डिफ़ॉल्ट रूप से केमिंग वर्दी आरंभिकरण के लिए है. यही कारण है कि सबसे सरल नेटवर्क "बस काम" - PyTorch पहले से ही सही विकल्प बनाया है. लेकिन जब आप कस्टम वास्तुकला का निर्माण या 20 परतों से अधिक गहरा जाना, आप क्या हो रहा है समझना चाहिए और संभावित रूप से डिफ़ॉल्ट ओवरराइड.
 
-ट्रांसफार्मर के लिए, HuggingFace मॉडल आमतौर पर अपने `_init_weights`GPT-2 के कार्यान्वयन 1 / sqrt द्वारा शेष अनुमानों को स्केल करता है। यदि आप खरोंच से एक ट्रांसफार्मर का निर्माण कर रहे हैं, तो आप इसे स्वयं जोड़ने की जरूरत है।
+ट्रांसफार्मर के लिए, HuggingFace मॉडल आमतौर पर अपने `_init_weights`GPT-2 के कार्यान्वयन के पैमाने पर शेष अनुमानों द्वारा $1/\sqrt{N}$यदि आप खरोंच से एक ट्रांसफार्मर का निर्माण कर रहे हैं, आप इसे स्वयं जोड़ने की जरूरत है.
 
 ## इसे भेजें
 
@@ -350,13 +350,13 @@ nn.init.zeros_(layer.bias)
 
 ## व्यायाम
 
-1. लेकुन आरंभिकरण जोड़ें (Var = 1/fan_in, SELU सक्रियण के लिए डिज़ाइन किया गया) । लेकुन init + tanh के साथ 50-परत प्रयोग चलाएं और Xavier + tanh की तुलना करें।
+1. LeCun आरंभिकरण जोड़ें ($\mathrm{Var} = 1/\text{fan}_{\text{in}}$लेकुन init + टैन के साथ 50 परतों का प्रयोग करें और इसे Xavier + टैन के साथ तुलना करें।
 
-2. जीपीटी-2 अवशिष्ट स्केलिंग लागू करेंः अवशिष्ट धारा में जोड़ने से पहले प्रत्येक परत के आउटपुट को 1/sqrt ((2*N) से गुणा करें। 50 परतों को स्केलिंग के साथ और बिना चलाएं, मापें कि अवशिष्ट परिमाण कितनी तेजी से बढ़ता है।
+2. जीपीटी-2 अवशिष्ट स्केलिंग लागू करें: प्रत्येक परत के आउटपुट को गुणा करें $1/\sqrt{2N}$50 परतों को स्केलिंग के साथ और बिना चलाएं, मापें कि शेष मात्रा कितनी तेजी से बढ़ती है।
 
 3. एक "init स्वास्थ्य जांच" फ़ंक्शन बनाएं जो नेटवर्क के परत आयामों और सक्रियण प्रकार को लेता है, फिर सही आरंभिकरण की सिफारिश करता है और चेतावनी देता है यदि वर्तमान init समस्याएं पैदा करेगा।
 
-4. fan_in = 16 vs fan_in = 1024. Xavier और Kaiming fan_in के लिए अनुकूलित, लेकिन यादृच्छिक init नहीं करता है. दिखाएं कि कैसे "काम" और "ब्रीक" के बीच अंतर बड़ा परतों के साथ बड़ा होता है.
+4. प्रयोग चलाएँ $\text{fan} _{\text{in}} = 16$vs $\text{fan} _{\text{in}} = 1024$. Xavier और Kaiming fan_in के लिए अनुकूलित, लेकिन यादृच्छिक init नहीं है. दिखाएँ कि कैसे "काम" और "ब्रीक" के बीच अंतर बड़ा परतों के साथ बड़ा होता है.
 
 5. ऑर्थोगनल आरंभिकरण (एक यादृच्छिक मैट्रिक्स उत्पन्न करें, इसके एसवीडी की गणना करें, ऑर्थोगनल मैट्रिक्स यू का उपयोग करें) लागू करें। 50 परतों पर ReLU नेटवर्क के लिए कैमिंग की तुलना करें।
 
@@ -368,10 +368,10 @@ nn.init.zeros_(layer.bias)
 | Symmetry breaking | "Make neurons different" | Using random initialization to ensure neurons learn distinct features instead of computing identical functions |
 | Fan-in | "Number of inputs to a neuron" | The number of incoming connections, which determines how input variance accumulates in the weighted sum |
 | Fan-out | "Number of outputs from a neuron" | The number of outgoing connections, relevant for maintaining gradient variance during backpropagation |
-| Xavier/Glorot init | "The sigmoid initialization" | Var(w) = 2/(fan_in + fan_out), designed to preserve variance through sigmoid and tanh activations |
-| Kaiming/He init | "The ReLU initialization" | Var(w) = 2/fan_in, accounts for ReLU zeroing half the activations |
+| Xavier/Glorot init | "The sigmoid initialization" | $\mathrm{Var}(w) = 2/(\text{fan} _{\text{in}} + \text{fan} _{\text{out}})$, designed to preserve variance through sigmoid and tanh activations |
+| Kaiming/He init | "The ReLU initialization" | $\mathrm{Var}(w) = 2/\text{fan}_{\text{in}}$, accounts for ReLU zeroing half the activations |
 | Variance propagation | "How signals grow or shrink through layers" | The mathematical analysis of how activation variance changes layer by layer based on weight scale |
-| Residual scaling | "GPT-2's init trick" | Scaling residual connection weights by 1/sqrt(2N) to prevent variance growth through N transformer layers |
+| Residual scaling | "GPT-2's init trick" | Scaling residual connection weights by $1/\sqrt{2N}$ to prevent variance growth through $N$ transformer layers |
 | Dead network | "Nothing trains" | A network where poor initialization causes all gradients to be zero or all activations to saturate |
 | Exploding activations | "Values go to infinity" | When weight variance is too high, causing activation magnitudes to grow exponentially through layers |
 

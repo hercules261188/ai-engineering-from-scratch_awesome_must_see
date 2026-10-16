@@ -41,21 +41,23 @@ graph LR
 
 ### छोड़ना
 
-प्रशिक्षण के दौरान, प्रत्येक न्यूरॉन के आउटपुट को पसंती के साथ शून्य पर यादृच्छिक रूप से सेट करें।
+प्रशिक्षण के दौरान, प्रत्येक न्यूरॉन के आउटपुट को शून्य पर संयोग से निर्धारित करें।$p$. .
 
+```math
+\text{output} = \text{activation}(z) \cdot \text{mask} \quad \text{where }\text{mask}[i] \sim \text{Bernoulli}(1 - p)
 ```
-output = activation(z) * mask    where mask[i] ~ Bernoulli(1 - p)
-```
 
-p = 0.5 के साथ, प्रत्येक आगे के पास आधे न्यूरॉन्स शून्य पर होते हैं. नेटवर्क को अधिशेष प्रतिनिधित्व सीखना चाहिए क्योंकि यह भविष्यवाणी नहीं कर सकता है कि कौन से न्यूरॉन्स उपलब्ध होंगे. यह सह-अनुकूलन को रोकता है - न्यूरॉन्स को विशिष्ट अन्य न्यूरॉन्स पर निर्भर करना सीखना मौजूद है।
+के साथ$p = 0.5$नेटवर्क को redundant representations सीखना चाहिए क्योंकि यह भविष्यवाणी नहीं कर सकता कि कौन से न्यूरॉन्स उपलब्ध होंगे. यह सह-अनुकूलन को रोकता है - न्यूरॉन्स को विशिष्ट अन्य न्यूरॉन्स पर निर्भर करना सीखना मौजूद है.
 
-संचयी व्याख्याः N न्यूरॉन्स और ड्रॉपआउट के साथ एक नेटवर्क 2^N संभावित उप-नेटवर्क बनाता है (उनमे से प्रत्येक संयोजन जिसमें न्यूरॉन्स चालू या बंद हैं) । ड्रॉप-अप के साथ प्रशिक्षण लगभग एक साथ सभी 2^N उप-नेटवर्क को अलग-अलग मिनी-बैच पर ट्रेन करता है। परीक्षण के समय, आप सभी न्यूरॉन्स का उपयोग करते हैं (कोई ड्रॉप-ऑफ नहीं) और प्रशिक्षण के दौरान अपेक्षित मूल्य के अनुरूप होने के लिए आउटपुट को 1 - पी तक स्केल करते हैं। यह 2^N उप-नेटवर्क के अनुमानों का औसत देने के बराबर है -- एक एकल मॉडल से एक विशाल समूह।
+समूह व्याख्याः एक नेटवर्क के साथ $N$न्यूरॉन्स और ड्रॉपअप बनाता है $2^N$संभव उप-नेटवर्क (प्रत्येक संयोजन जिसमें न्यूरॉन्स चालू या बंद हैं) ।$2^N$परीक्षण के समय, आप सभी न्यूरॉन्स का उपयोग (कोई ड्रॉपआउट नहीं) और पैमाने आउटपुट द्वारा $(1 - p)$प्रशिक्षण के दौरान अपेक्षित मूल्य से मेल खाने के लिए। यह औसत भविष्यवाणियों के बराबर है $2^N$उप-नेटवर्क -- एक ही मॉडल से एक विशाल समूह।
 
 अभ्यास में, परीक्षण के बजाय प्रशिक्षण के दौरान स्केलिंग लागू की जाती है (उपवर्जित ड्रॉपआउट):
 
-```
-During training:  output = activation(z) * mask / (1 - p)
-During testing:   output = activation(z)   (no change needed)
+```math
+\begin{aligned}
+\text{During training:} \quad & \text{output} = \text{activation}(z) \cdot \text{mask} / (1 - p) \\
+\text{During testing:} \quad & \text{output} = \text{activation}(z) \quad \text{(no change needed)}
+\end{aligned}
 ```
 
 यह साफ है क्योंकि परीक्षण कोड को छोड़ने के बारे में जानने की जरूरत नहीं है।
@@ -66,15 +68,15 @@ During testing:   output = activation(z)   (no change needed)
 
 हानि के लिए सभी भारों की वर्ग परिमाण जोड़ेंः
 
-```
-total_loss = task_loss + (lambda / 2) * sum(w_i^2)
+```math
+\text{total\_loss} = \text{task\_loss} + \frac{\lambda}{2} \sum_i w_i^2
 ```
 
-नियमितकरण शब्द का ग्रेडिएंट लैम्ब्डा * w है। इसका मतलब है कि प्रत्येक चरण में, प्रत्येक वजन इसकी परिमाण के समानुपातिक अंश से शून्य की ओर छोटा हो जाता है। बड़े वजन अधिक दंडित होते हैं। मॉडल को समाधान की ओर धकेल दिया जाता है जहां कोई भी वजन हावी नहीं होता है।
+नियमितता शब्द का ग्रेडिएंट है $\lambda w$इसका मतलब है कि हर कदम पर, प्रत्येक वजन शून्य की ओर छोटा हो जाता है, जो उसके आकार के अनुपात में होता है। बड़े वजन अधिक दंडित होते हैं। मॉडल को उन समाधानों की ओर धकेल दिया जाता है जहां कोई भी वजन हावी नहीं होता है।
 
 यह सामान्यीकरण में मदद करता हैः ओवरफिट मॉडल में बड़े वजन होते हैं जो प्रशिक्षण डेटा में शोर को बढ़ाते हैं। वजन घटाने से वजन कम रहता है, जो मॉडल की प्रभावी क्षमता को सीमित करता है और इसे याद रखने वाली विचित्रताओं के बजाय मजबूत, सामान्यीकृत विशेषताओं पर भरोसा करने के लिए मजबूर करता है।
 
-लैम्ब्डा हाइपरपरमैटर ताकत को नियंत्रित करता है।
+$\lambda$हाइपरपरमैटर ताकत को नियंत्रित करता है।
 
 - ट्रांसफार्मर पर AdamW के लिए 0.01
 - सीएनएन पर एसजीडी के लिए 1ई-4
@@ -88,16 +90,18 @@ total_loss = task_loss + (lambda / 2) * sum(w_i^2)
 
 किसी परत पर सक्रियण के एक मिनी-बैच के लिएः
 
-```
-mu = (1/B) * sum(x_i)           (batch mean)
-sigma^2 = (1/B) * sum((x_i - mu)^2)   (batch variance)
-x_hat = (x_i - mu) / sqrt(sigma^2 + eps)   (normalize)
-y = gamma * x_hat + beta        (scale and shift)
+```math
+\begin{aligned}
+\mu &= \frac{1}{B} \sum_i x_i && \text{(batch mean)} \\
+\sigma^2 &= \frac{1}{B} \sum_i (x_i - \mu)^2 && \text{(batch variance)} \\
+\hat{x} &= \frac{x_i - \mu}{\sqrt{\sigma^2 + \epsilon}} && \text{(normalize)} \\
+y &= \gamma \hat{x} + \beta && \text{(scale and shift)}
+\end{aligned}
 ```
 
 गामा और बीटा सीखने योग्य मापदंड हैं जो नेटवर्क को सामान्यीकरण को रद्द करने की अनुमति देते हैं यदि यह इष्टतम है। उनके बिना, आप प्रत्येक परत के आउटपुट को शून्य-औसत इकाई-विभेद के लिए मजबूर कर रहे होंगे, जो नेटवर्क की इच्छा नहीं हो सकती है।
 
-**Training vs inference split:**प्रशिक्षण के दौरान, mu और sigma वर्तमान मिनी-बैच से आते हैं। निष्कर्ष के दौरान, आप प्रशिक्षण के दौरान संचित चल रहे औसत (गति = 0.1 के साथ गतिशील चलती औसत, जिसका अर्थ है 90% पुराना + 10% नया) का उपयोग करते हैं।
+**Training vs inference split:**प्रशिक्षण के दौरान, $\mu$और $\sigma$वर्तमान मिनी बैच से आते हैं। निष्कर्ष के दौरान, आप प्रशिक्षण के दौरान संचित चलती औसत का उपयोग करते हैं (आक्रामकता के साथ गतिशील औसत = 0.1, जिसका अर्थ है 90% पुराना + 10% नया) ।
 
 बैचनोर्म का काम क्यों होता है, इस पर अभी भी बहस चल रही है। मूल पेपर में दावा किया गया था कि यह "आंतरिक कोवरिएट शिफ्ट" (पहले परतों के अपडेट के रूप में परत इनपुट का वितरण बदलता है) को कम करता है। संतुरकर आदि। (2018) ने यह स्पष्टीकरण गलत दिखाया। वास्तविक कारणः बैचनॉर्म नुकसान के परिदृश्य को अधिक चिकनी बनाता है। ग्रेडिएंट अधिक भविष्यवाणी कर रहे हैं, लिप्सकिट्ज़ स्थिरांक छोटे हैं, और अनुकूलक बड़े कदम सुरक्षित रूप से ले सकता है। यही कारण है कि बैचनोर्म आपको उच्च सीखने की दरों का उपयोग करने और तेजी से अभिसरण करने की अनुमति देता है।
 
@@ -107,14 +111,16 @@ BatchNorm की एक मौलिक सीमा हैः यह बैच 
 
 बैच के बजाय सभी सुविधाओं को सामान्य करें। एक ही नमूने के लिएः
 
-```
-mu = (1/D) * sum(x_j)           (feature mean)
-sigma^2 = (1/D) * sum((x_j - mu)^2)   (feature variance)
-x_hat = (x_j - mu) / sqrt(sigma^2 + eps)
-y = gamma * x_hat + beta
+```math
+\begin{aligned}
+\mu &= \frac{1}{D} \sum_j x_j && \text{(feature mean)} \\
+\sigma^2 &= \frac{1}{D} \sum_j (x_j - \mu)^2 && \text{(feature variance)} \\
+\hat{x} &= \frac{x_j - \mu}{\sqrt{\sigma^2 + \epsilon}} \\
+y &= \gamma \hat{x} + \beta
+\end{aligned}
 ```
 
-D विशेषता आयाम है। प्रत्येक नमूना स्वतंत्र रूप से सामान्यीकृत होता है - बैच आकार पर कोई निर्भरता नहीं। यही कारण है कि ट्रांसफार्मर बैच नॉर्म के बजाय लेयरनोर्म का उपयोग करते हैं। अनुक्रमों की लंबाई परिवर्तनीय होती है, बैच आकार अक्सर छोटे होते हैं (या 1 उत्पादन के दौरान), और प्रशिक्षण और निष्कर्ष के बीच गणना समान होती है।
+$D$प्रत्येक नमूना स्वतंत्र रूप से सामान्यीकृत होता है - बैच आकार पर कोई निर्भरता नहीं। यही कारण है कि ट्रांसफार्मर बैच नॉर्म के बजाय लेयर नॉर्म का उपयोग करते हैं। अनुक्रमों की लंबाई परिवर्तनीय होती है, बैच आकार अक्सर छोटे होते हैं (या 1 उत्पादन के दौरान), और प्रशिक्षण और निष्कर्ष के बीच गणना समान होती है।
 
 ट्रांसफार्मर में LayerNorm प्रत्येक स्व-विचार ब्लॉक और प्रत्येक फ़ीड-फॉरवर्ड ब्लॉक (पोस्ट-एलएन) के बाद या उनके पहले (प्रि-एलएन, जो प्रशिक्षण के लिए अधिक स्थिर है) लागू किया जाता है।
 
@@ -122,9 +128,11 @@ D विशेषता आयाम है। प्रत्येक नम�
 
 औसत घटाव के बिना LayerNorm। Zhang & Sennrich (2019) द्वारा प्रस्तावित।
 
-```
-rms = sqrt((1/D) * sum(x_j^2))
-y = gamma * x / rms
+```math
+\begin{aligned}
+\text{rms} &= \sqrt{\frac{1}{D} \sum_j x_j^2} \\
+y &= \gamma \cdot \frac{x}{\text{rms}}
+\end{aligned}
 ```
 
 यह है. कोई औसत गणना, कोई बीटा पैरामीटर नहीं। अवलोकनः LayerNorm में पुनर्व्यवस्थित (औसत घटाने) मॉडल के प्रदर्शन में बहुत कम योगदान देता है, लेकिन गणना लागत. इसे हटाने के साथ लगभग 10% कम ओवरहेड के साथ एक ही सटीकता देता है।
@@ -515,8 +523,8 @@ LayerNorm, बैचनॉर्म नहीं. ड्रॉप आउट p=0.
 |------|----------------|----------------------|
 | Overfitting | "Model memorized the data" | When a model's training performance significantly exceeds its test performance, indicating it learned noise rather than signal |
 | Regularization | "Preventing overfitting" | Any technique that constrains model complexity to improve generalization: dropout, weight decay, normalization, augmentation |
-| Dropout | "Random neuron deletion" | Zeroing random neurons during training with probability p, forcing redundant representations; equivalent to training an ensemble |
-| Weight decay | "L2 penalty" | Shrinking all weights toward zero by subtracting lambda * w at each step; penalizes complexity through weight magnitude |
+| Dropout | "Random neuron deletion" | Zeroing random neurons during training with probability $p$, forcing redundant representations; equivalent to training an ensemble |
+| Weight decay | "L2 penalty" | Shrinking all weights toward zero by subtracting $\lambda w$ at each step; penalizes complexity through weight magnitude |
 | Batch normalization | "Normalize per batch" | Normalizing layer outputs across the batch dimension using batch statistics during training and running averages during inference |
 | Layer normalization | "Normalize per sample" | Normalizing across features within each sample; batch-independent, used in transformers where batch size varies |
 | RMSNorm | "LayerNorm without the mean" | Root mean square normalization; drops the mean subtraction from LayerNorm for 10% speedup with equal accuracy |
