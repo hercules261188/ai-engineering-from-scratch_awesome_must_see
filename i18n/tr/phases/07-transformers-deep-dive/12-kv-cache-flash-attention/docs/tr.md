@@ -9,13 +9,13 @@
 
 ## Sorun
 
-Saf bir otomatik gerileme dekodörü yapar .`O(N²)`üretmek için çalışmak `N`Tokens: her adımda dikkatini tam önbellek üzerinde yeniden hesaplar. 16M dikkat işlemleri olan 4K-token yanıt için, çoğu fazladan. Bir önbellek tokeninin her gizli durumu hesaplandığında belirlenir.
+Saf bir otomatik gerileme dekodörü yapar .$O(N^2)$üretmek için çalışmak $N$Tokens: her adımda dikkatini tam önbellek üzerinde yeniden hesaplar. 16M dikkat işlemleri olan 4K-token yanıt için, çoğu fazladan. Bir önbellek tokeninin her gizli durumu hesaplandığında belirlenir.
 
 Bu nedenle, dikkat, bir çok veriyi hareket ettirir. Standart dikkat N×N puan matrisi, N×d softmax çıkışı, N×d son çıkışı  çok fazla okuma ve HBM'ye yazma yapar. N≥2K için, dikkat FLOP-a bağlı olmadan önce hafıza bağlanır. Klasik dikkat çekirdekleri modern GPU'ları 410×'ya az kullanır.
 
 Dao et al'dan gelen iki optimizasyon, sınır çıkarımını "yavaş"tan "hızlı"a doğru harekete geçirdi:
 
-1. **KV cache.**Her ön işaret simgesinin K ve V vektörlerini saklayın. Her yeni simgenin dikkatini önbelleğe alınan anahtarlara karşı bir sorgu oluşturur.`O(N²)`- ...`O(N)`Bir nesil adım başına.
+1. **KV cache.**Her ön işaret simgesinin K ve V vektörlerini saklayın. Her yeni simgenin dikkatini önbelleğe alınan anahtarlara karşı bir sorgu oluşturur.$O(N^2)$- ...$O(N)$Bir nesil adım başına.
 2. **Flash Attention.**Dikkat hesaplamalarını çizin böylece tam N×N matrisi asla HBM'ye ulaşmaz. Tüm softmax + matmul SRAM'da gerçekleşir. A100'de 24× duvar saati hızlandırması; FP8 ile H100'de 510×.
 
 2026 yılına kadar her iki üretim sonuç kümesi (vLLM, TensorRT-LLM, SGLang, llama.cpp) onları varsayır.
@@ -84,7 +84,7 @@ for each block of Q (tile size ~128 × 128):
     write O_tile to HBM
 ```
 
-Bir HBM seferı tek tek tekerlek.`O(N²)`- ...`O(N)`Geri geçiş, ileri geçişten bazı değerleri yeniden hesaplar ve onları saklar.
+Bir HBM seferı tek tek tekerlek.$O(N^2)$- ...$O(N)$Geri geçiş, ileri geçişten bazı değerleri yeniden hesaplar ve onları saklar.
 
 **Numerical trick.**Softmax çalışmasını sürdürüyor `(max, sum)`Flash dikkat, bit-tıpkı standart dikkat için çıkış hesaplar (modulo fp16 ilişkisizliği).
 
@@ -126,8 +126,8 @@ flash-attention-memory
 
 Bakın .`code/main.py`Bu uygulamayı uyguluyoruz:
 
-1. Saf bir adam .`O(N²)`Gelişmiş dekodör.
-2. A.`O(N)`KV-cached dekodör.
+1. Saf bir adam .$O(N^2)$Gelişmiş dekodör.
+2. A.$O(N)$KV-cached dekodör.
 3. Flash Attention'ın çalıştırma maksimum algoritmasını simüle eden bir softmax.
 
 ### Adım 1: KV önbelleği
@@ -174,7 +174,7 @@ Bit-iynet çıkış `softmax(qK) V`Bir çekimde, ama her zaman çalışma seti b
 
 ### Adım 3: 100 token neslinde saf ve önbelleğe alınan kodlama ile karşılaştırın
 
-Dikkat operasyonlarını say.`O(N²)`= 5050 .`O(N)`Kodu her ikisini de basıyor.
+Dikkat operasyonlarını say.$O(N^2)$= 5050 .$O(N)$Kodu her ikisini de basıyor.
 
 ## Kullan
 

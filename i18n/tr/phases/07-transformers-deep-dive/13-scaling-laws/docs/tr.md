@@ -30,22 +30,24 @@ Hoffmann et al. (2022), Chinchilla adlı küçük bir model ailesini eğitmekle 
 
 Chinchilla gazetesinden kayıp şöyle:
 
-```
-L(N, D) = A / N^α + B / D^β + E
+```math
+L(N, D) = \frac{A}{N^\alpha} + \frac{B}{D^\beta} + E
 ```
 
-- `N`= parametre (tökeltilmemiş).
-- `D`= eğitim simgeler.
-- `α ≈ 0.34`- Evet .`β ≈ 0.28`(kaykayla simetrik).
-- `E ≈ 1.69`, azaltabilir kayıp tavanı.
-- `A ≈ 406`- Evet .`B ≈ 411`- Evet .
+- $N$= parametre (tökeltilmemiş).
+- $D$= eğitim simgeler.
+- $\alpha \approx 0.34$- Evet .$\beta \approx 0.28$(kaykayla simetrik).
+- $E \approx 1.69$, azaltabilir kayıp tavanı.
+- $A \approx 406$- Evet .$B \approx 411$- Evet .
 
-İki terim birbirine karşı ticaret yaparken ölçerken.`N`sabit hesaplama (C = 6ND) ile çözülür:
+İki terim birbirine karşı ticaret yaparken ölçerken.$N$sabit hesaplama ($C = 6ND$) ve çözmek için:
 
-```
-N_opt ≈ 0.6 × (C/6)^0.5
-D_opt ≈ 0.6 × (C/6)^0.5
-D_opt / N_opt ≈ 20
+```math
+\begin{aligned}
+N_{\text{opt}} &\approx 0.6 \times (C/6)^{0.5} \\
+D_{\text{opt}} &\approx 0.6 \times (C/6)^{0.5} \\
+D_{\text{opt}} / N_{\text{opt}} &\approx 20
+\end{aligned}
 ```
 
 Hesaplama-optimal: Parametre başına 20 token.
@@ -90,7 +92,7 @@ scaling-laws
 
 ## Yapın
 
-Bakın .`code/main.py`Chinchilla kaybı denklemini uygulayarak hesaplama-optimal için çözüyoruz .`(N, D)`Her bir hesaplama bütçesinin birinde.
+Bakın .`code/main.py`Chinchilla kaybı denklemini uygulayarak hesaplama-optimal için çözüyoruz .$(N, D)$Her bir hesaplama bütçesinin birinde.
 
 ### Adım 1: Chinchilla kaybı
 
@@ -99,11 +101,11 @@ def chinchilla_loss(N, D, A=406.4, B=410.7, alpha=0.34, beta=0.28, E=1.69):
     return A / N ** alpha + B / D ** beta + E
 ```
 
-Çeviri`L`Bir kontur olarak `(N, D)`sabit olarak `C = 6ND`En azını bul.
+Çeviri$L$Bir kontur olarak $(N, D)$sabit olarak $C = 6ND$En azını bul.
 
 ### Adım 2: Bilgisayar-optimal sınır
 
-Bilgisayar bütçeleri için `1e17`- ...`1e25`FLOPs, bul `(N, D)``6ND = C`- Rakipleri kontrol edin .`D/N ≈ 20`- Evet .
+Bilgisayar bütçeleri için `1e17`- ...`1e25`FLOPs, bul $(N, D)$$6ND = C$- Rakipleri kontrol edin .$D/N \approx 20$- Evet .
 
 ### Adım 3: Üstü eğitim maliyeti
 
@@ -133,9 +135,9 @@ Bakın .`outputs/skill-training-budget-estimator.md`- Yetenek seçimi .`(N, D, h
 
 ## Egzersizler
 
-1. **Easy.**Çık .`code/main.py`- Çincilla-optimal basın .`(N, D)`Bilgisayar bütçeleri için `1e20`- Evet .`1e22`- Evet .`1e24`Gerçek model masasına kıyasla.
-2. **Medium.**Hoffmann'ın hesaplama işlev kaybı eğrisini uygulayın.`log10(C)`Bilgisayar-optimal sınır için.`>10^28`FLOPs, önümüzdeki 0,1'lik çapraz entropi azaltımı için.
-3. **Hard.**Aynı veri kümesi üzerinde eğitilen 5 küçük modelde (100K'den 10M'ye kadar) kendi ölçekleme yasasını uygulayın.`α`ve `E`- Eksponentlerin yayınlananlarla ne kadar uyumlu?
+1. **Easy.**Çık .`code/main.py`- Çincilla-optimal basın .$(N, D)$Bilgisayar bütçeleri için `1e20`- Evet .`1e22`- Evet .`1e24`Gerçek model masasına kıyasla.
+2. **Medium.**Hoffmann'ın hesaplama işlev kaybı eğrisini uygulayın.`log10(C)`Bilgisayar-optimal sınır için.$>10^{28}$FLOPs, önümüzdeki 0,1'lik çapraz entropi azaltımı için.
+3. **Hard.**Aynı veri kümesi üzerinde eğitilen 5 küçük modelde (100K'den 10M'ye kadar) kendi ölçekleme yasasını uygulayın.$\alpha$ve $E$- Eksponentlerin yayınlananlarla ne kadar uyumlu?
 
 ## Anahtar Terimler
 
@@ -146,7 +148,7 @@ Bakın .`outputs/skill-training-budget-estimator.md`- Yetenek seçimi .`(N, D, h
 | Compute (C) | "FLOPs spent" | Approximately `6 × N × D` for a standard transformer. |
 | Chinchilla-optimal | "D/N ≈ 20" | Ratio that minimizes loss per FLOP of pretraining. |
 | Over-training | "Past Chinchilla" | Spend extra training FLOPs to save inference FLOPs; D/N >> 20. |
-| Irreducible loss | "The floor" | The `E` term in the scaling law; the entropy of the data itself. |
+| Irreducible loss | "The floor" | The $E$ term in the scaling law; the entropy of the data itself. |
 | Emergent capability | "Sudden jumps at scale" | Often a scorer artifact; continuous loss is smooth. |
 | Effective compute | "Training-efficiency multiplier" | Better data / optimizer / architecture multiplies how far a FLOP goes. |
 

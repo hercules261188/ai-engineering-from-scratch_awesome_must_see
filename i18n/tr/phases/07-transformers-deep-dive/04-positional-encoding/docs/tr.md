@@ -29,25 +29,25 @@ Bu çözüm, yerleşimlere bir şekilde yerleştirmek.
 
 Bir sabit matris önceden hesaplayın `PE`şekli ile`(max_len, d_model)`- ...
 
-```
-PE[pos, 2i]   = sin(pos / 10000^(2i / d_model))
-PE[pos, 2i+1] = cos(pos / 10000^(2i / d_model))
+```math
+\begin{aligned}
+PE_{(pos, 2i)} &= \sin\left(pos / 10000^{2i / d_{\text{model}}}\right) \\
+PE_{(pos, 2i+1)} &= \cos\left(pos / 10000^{2i / d_{\text{model}}}\right)
+\end{aligned}
 ```
 
 O zaman ...`X' = X + PE[:N]`Her boyut farklı bir frekansta sinusoid.`max_len`: hiçbir şey modelin sadece pozisyon 02047'i gördüğünde 2048 pozisyonunda ne olduğunu söylemedi.
 
 ### RoPE
 
-Bir çift boyut için Q ve K vektörlerini (kaynak değil) döndürün `(2i, 2i+1)`- ...
+Bir çift boyut için Q ve K vektörlerini (kaynak değil) döndürün $(2i, 2i+1)$- ...
 
-```
-[q'_2i    ]   [ cos(pos·θ_i)  -sin(pos·θ_i) ] [q_2i   ]
-[q'_2i+1  ] = [ sin(pos·θ_i)   cos(pos·θ_i) ] [q_2i+1 ]
-
-θ_i = base^(-2i / d_head),  base = 10000 by default
+```math
+\begin{bmatrix} q'_{2i} \\ q'_{2i+1} \end{bmatrix} = \begin{bmatrix} \cos(pos \cdot \theta_i) & -\sin(pos \cdot \theta_i) \\ \sin(pos \cdot \theta_i) & \cos(pos \cdot \theta_i) \end{bmatrix} \begin{bmatrix} q_{2i} \\ q_{2i+1} \end{bmatrix}
+\qquad \theta_i = \text{base}^{-2i / d_{\text{head}}}, \quad \text{base} = 10000 \text{ by default}
 ```
 
-Aynı dönümsellik pozisyonlu anahtarlara uygulayın `pos_k`- Dots ürünü`q'_m · k'_n``(m - n)`- Yalnız.**the attention score depends only on the relative distance**- ...eğer de dönüşüm mutlak pozisyonlarda kilitlenmiş olsa.
+Aynı dönümsellik pozisyonlu anahtarlara uygulayın `pos_k`- Dots ürünü$q'_m \cdot k'_n$$(m - n)$- Yalnız.**the attention score depends only on the relative distance**- ...eğer de dönüşüm mutlak pozisyonlarda kilitlenmiş olsa.
 
 RoPE'yi uzatmak: `base`Llama 3'ün 8K'den 128K'ye kadar uzandığı bu şekilde.
 
@@ -55,11 +55,11 @@ RoPE'yi uzatmak: `base`Llama 3'ün 8K'den 128K'ye kadar uzandığı bu şekilde.
 
 Dikkatin doğrudan puanlarını ayır.
 
-```
-attn_score[i, j] = (q_i · k_j) / √d  -  m_h · |i - j|
+```math
+\text{attn\_score}[i, j] = \frac{q_i \cdot k_j}{\sqrt{d}} - m_h \cdot |i - j|
 ```
 
-Nerede ?`m_h`başı için özel bir eğimdir (örneğin `1 / 2^(8·h/H)`) Yakınlıklı tokenler artırılır; uzak tokenler cezalandırılır. Eğitim zamanı maliyeti yoktur. Kağıt uzunluk ekstrapolasyonunun sinusoidal olduğunu ve RoPE'ye orijinal eğitim uzunluğunda eşleştiğini gösterir.
+Nerede ?$m_h$başı için özel bir eğimdir (örneğin $1 / 2^{8h/H}$) Yakınlıklı tokenler artırılır; uzak tokenler cezalandırılır. Eğitim zamanı maliyeti yoktur. Kağıt uzunluk ekstrapolasyonunun sinusoidal olduğunu ve RoPE'ye orijinal eğitim uzunluğunda eşleştiğini gösterir.
 
 ### 2026'da neyi seçmeliyiz?
 
@@ -113,7 +113,7 @@ def apply_rope(x, pos, base=10000):
     return out
 ```
 
-Önemli: aynı işlevi pozisyonda Q ' e uygulayın `m`Ve K pozisyonda `n`- Dots ürünü bir `cos((m-n)·θ_i)`Dikkat, nispet konumunu ücretsiz öğrenir.
+Önemli: aynı işlevi pozisyonda Q ' e uygulayın $m$Ve K pozisyonda $n$- Dots ürünü bir $\cos((m-n) \cdot \theta_i)$Dikkat, nispet konumunu ücretsiz öğrenir.
 
 ### Adım 3: ALiBi yamaçları ve tarafsızlığı
 
@@ -168,7 +168,7 @@ Bakın .`outputs/skill-positional-encoding-picker.md`. Bu beceri, hedef bağlam 
 | Positional encoding | "Tells attention about order" | Any signal added to embeddings or attention that encodes position. |
 | Sinusoidal | "The original one" | `sin/cos` at geometric frequencies added to embeddings; doesn't extrapolate. |
 | RoPE | "Rotary embeddings" | Rotate Q, K by position-dependent angle; dot product encodes relative distance. |
-| ALiBi | "Linear bias trick" | Add `-m·\|i-j\|` to attention scores; no embedding needed, great extrapolation. |
+| ALiBi | "Linear bias trick" | Add $-m \cdot \lvert i-j \rvert$ to attention scores; no embedding needed, great extrapolation. |
 | base | "RoPE's knob" | The frequency scaler in RoPE; increase to extend context at inference. |
 | NTK-aware | "A RoPE scaling trick" | Rescale `base` so high-frequency dims aren't squeezed when context expands. |
 | YaRN | "The fancy one" | Per-dimension interpolation+extrapolation that preserves attention entropy. |

@@ -11,7 +11,7 @@
 
 Tek bir kendi dikkat başı bir dikkat matrisi hesaplar. Bu matris bir tür ilişkiyi yakalar  genellikle eğitim sinyalleri ne olursa olsun kayıpları en aza indirgenir. Verilerinizde konu-ketim anlaşması, eş-referans, uzun mesafeli konuşma ve sentaksik parçalanma varsa, tek bir baş onları tek yumuşak maksimum dağılımına ayırır ve sinyalin yarısını kaybeder.
 
-2017 Vaswani makalesinden alınan düzeltme: her biri kendi Q, K, V projeksiyonlarıyla paralel olarak birkaç dikkat fonksiyonu çalıştırır ve çıkışları birleştirir. Her baş daha küçük boyut alt alanında çalışır.`d_model / n_heads`Toplam parametreler aynı kalır.
+2017 Vaswani makalesinden alınan düzeltme: her biri kendi Q, K, V projeksiyonlarıyla paralel olarak birkaç dikkat fonksiyonu çalıştırır ve çıkışları birleştirir. Her baş daha küçük boyut alt alanında çalışır.$d_{\text{model}} / n_{\text{heads}}$Toplam parametreler aynı kalır.
 
 Çok başlı dikkat, 2026 gemilerindeki her transformatörün varsayılanıdır. Tek argüman * kaç* başlı ve anahtarların ve değerlerin projeksiyonları paylaşıp paylaşmadığı hakkında (Grouped-Query Attention, Multi-Query Attention, Multi-head Latent Attention).
 
@@ -19,7 +19,7 @@ Tek bir kendi dikkat başı bir dikkat matrisi hesaplar. Bu matris bir tür ili�
 
 ![Multi-head attention splits, attends, concatenates](../assets/multi-head-attention.svg)
 
-**Split.**Al .`X`şekli ile`(N, d_model)`- Her biri şekilinde Q, K, V'ye kadar.`(N, d_model)`- Yeniden değiştir .`(N, n_heads, d_head)`nerede`d_head = d_model / n_heads`- Transposer `(n_heads, N, d_head)`- Evet .
+**Split.**Al .`X`şekli ile`(N, d_model)`- Her biri şekilinde Q, K, V'ye kadar.`(N, d_model)`- Yeniden değiştir .`(N, n_heads, d_head)`nerede$d_{\text{head}} = d_{\text{model}} / n_{\text{heads}}$- Transposer `(n_heads, N, d_head)`- Evet .
 
 **Attend in parallel.**Her başın içinde bir nokta üretici dikkatini çalıştır.`(N, d_head)`Başlar yerleşimlerin farklı alt alanlarında çalışır ve dikkat hesaplama sırasında hiç konuşmazlar.
 
@@ -36,7 +36,7 @@ Tek bir kendi dikkat başı bir dikkat matrisi hesaplar. Bu matris bir tür ili�
 | Grouped-query (GQA) | N | G (e.g. N/8) | Llama 2 70B, Llama 3+, Qwen 2+, Mistral |
 | Multi-head latent (MLA) | N | compressed to low-rank | DeepSeek-V2, V3 |
 
-GQA, modern varsayılan bir yöntemdir çünkü KV-cache belleğini `N/G`MLA, K/V'yi gizli bir alanlara sıkıştırarak daha ileri gider, sonra hesaplama zamanında geri projeksine geçerek  FLOP'ler maliyetini artırır, çok daha fazla bellek tasarruf eder.
+GQA, modern varsayılan bir yöntemdir çünkü KV-cache belleğini $N/G$MLA, K/V'yi gizli bir alanlara sıkıştırarak daha ileri gider, sonra hesaplama zamanında geri projeksine geçerek  FLOP'ler maliyetini artırır, çok daha fazla bellek tasarruf eder.
 
 ```figure
 multihead-split
@@ -129,7 +129,7 @@ out = scaled_dot_product_attention(q, k, v, is_causal=True, enable_gqa=True)
 | Large (~1B) | 2048 | 16 | 128 |
 | Frontier (~70B) | 8192 | 64 | 128 |
 
-`d_head`Bu, bir başın "görme" yeteneğinin birimidir. 32'nin altına düşer ve başlar ölçekleme faktörüne karşı savaşmaya başlar.`sqrt(d_head)`256'den fazla bir iş yaparsanız "çok küçük uzman" avantajını kaybedeceksiniz.
+`d_head`Bu, bir başın "görme" yeteneğinin birimidir. 32'nin altına düşer ve başlar ölçekleme faktörüne karşı savaşmaya başlar.$\sqrt{d_{\text{head}}}$256'den fazla bir iş yaparsanız "çok küçük uzman" avantajını kaybedeceksiniz.
 
 ## Gönder
 
@@ -145,7 +145,7 @@ Bakın .`outputs/skill-mha-configurator.md`. Bu beceri, yeni bir transformatör 
 
 | Term | What people say | What it actually means |
 |------|-----------------|-----------------------|
-| Head | "A single attention circuit" | One Q/K/V projection of dimension `d_head = d_model / n_heads` with its own attention matrix. |
+| Head | "A single attention circuit" | One Q/K/V projection of dimension $d_{\text{head}} = d_{\text{model}} / n_{\text{heads}}$ with its own attention matrix. |
 | d_head | "Head dimension" | Per-head hidden width; almost always 64 or 128 in production. |
 | Split / combine | "Reshape tricks" | `(N, d_model) ↔ (n_heads, N, d_head)` reshape+transpose around attention. |
 | W_o | "Output projection" | `(d_model, d_model)` matrix applied after concatenating heads; where heads mix. |

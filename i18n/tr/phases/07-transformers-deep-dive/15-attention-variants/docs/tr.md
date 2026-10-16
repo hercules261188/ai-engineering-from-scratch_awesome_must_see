@@ -9,11 +9,11 @@
 
 ## Sorun
 
-Tam ilgi maliyetleri `O(N²)`hafıza ve `O(N²)`128K bağlamlı bir Llama 3 70B için, katman başına 16 milyar dikkat girişi çarpı 80 katman.`O(N²)`Aktifleştirme hafızası ama aritmetik maliyetini değiştirmez  her token hala diğer tokenlere katılır.
+Tam ilgi maliyetleri $O(N^2)$hafıza ve $O(N^2)$128K bağlamlı bir Llama 3 70B için, katman başına 16 milyar dikkat girişi çarpı 80 katman.$O(N^2)$Aktifleştirme hafızası ama aritmetik maliyetini değiştirmez  her token hala diğer tokenlere katılır.
 
 Üç çeşit sınıfı dikkat matrisinin topolojisini değiştirir:
 
-1. **Sliding window attention (SWA).**Her token komşuların sabit bir penceresine hizmet eder, tam öncü değil.`O(N · W)`nerede`W`Gemma 2/3, Mistral 7B'nin ilk katmanları, Phi-3-Long.
+1. **Sliding window attention (SWA).**Her token komşuların sabit bir penceresine hizmet eder, tam öncü değil.$O(N \cdot W)$nerede$W$Gemma 2/3, Mistral 7B'nin ilk katmanları, Phi-3-Long.
 2. **Sparse / block attention.**Sadece seçilmiş çiftler `(i, j)`Longformer, BigBird, OpenAI nadir transformatör.
 3. **Differential attention.**İki dikkat haritasını ayrı Q / K projeksiyonlarıyla hesaplayın, birini diğerinden çıkarın. İlk birkaç tokene ağırlığı kanayan " dikkat sink" ı öldürür. Microsoft'un DIFF Transformer (2024).
 
@@ -23,7 +23,7 @@ Bu özellikler birlikte var. 2026 sınır modeli genellikle onları karıştır�
 
 ### Çekilme Penceresi Dikkat (SWA)
 
-Her sorgu pozisyonunda `i`Sadece pozisyonlara katılır `[i - W, i]`(kötü nedenlik SWA) veya `[i - W/2, i + W/2]`Pencerenin dışındaki simgeler çıkıyor .`-inf`Not matrisinde.
+Her sorgu pozisyonunda $i$Sadece pozisyonlara katılır $[i - W, i]$(kötü nedenlik SWA) veya $[i - W/2, i + W/2]$Pencerenin dışındaki simgeler çıkıyor .$-\infty$Not matrisinde.
 
 ```
 full causal:           sliding window (W=4):
@@ -39,17 +39,17 @@ positions 0-7          positions 0-7, W=4
 7 | x x x x x x x x  7 |          x x x x
 ```
 
-- Evet .`N = 8192`ve `W = 1024`, puan matrisi, 1024 × 8192 sıfır dışı sıralara sahiptir  8 × azaltma beklentisi.
+- Evet .$N = 8192$ve $W = 1024$, puan matrisi, 1024 × 8192 sıfır dışı sıralara sahiptir  8 × azaltma beklentisi.
 
-**KV cache shrinks with SWA.**Sadece sonuncusu .`W`Gemma-3-ish yapılandırması (1024 penceresi, 128K bağlamı) için, KV önbelleği 128× düşer.
+**KV cache shrinks with SWA.**Sadece sonuncusu .$W$Gemma-3-ish yapılandırması (1024 penceresi, 128K bağlamı) için, KV önbelleği 128× düşer.
 
-**Quality cost.**SWA-yalnızca transformatörler uzun mesafeli geri alım ile mücadele eder. Düzeltme: SWA katmanlarını tam dikkat katmanlarıyla aralaştırın. Gemma 3 5:1 SWA: global kullanır. Mistral 7B, bilgi'nin üst üste geçiş pencereleri üzerinden "geri akıyor" olduğu bir nedensel-SWA yığınını kullanır.`W`ve sonra`L`Modelin katılabileceği katmanlar `L × W`- Tokenleri geri ver.
+**Quality cost.**SWA-yalnızca transformatörler uzun mesafeli geri alım ile mücadele eder. Düzeltme: SWA katmanlarını tam dikkat katmanlarıyla aralaştırın. Gemma 3 5:1 SWA: global kullanır. Mistral 7B, bilgi'nin üst üste geçiş pencereleri üzerinden "geri akıyor" olduğu bir nedensel-SWA yığınını kullanır.$W$ve sonra`L`Modelin katılabileceği katmanlar `L × W`- Tokenleri geri ver.
 
 ### İzleme / Blok Et
 
 Bir seç .`N × N`Zaman öncesi bir kısıtlama modeli.
 
-- **Local + strided (OpenAI sparse transformer).**Sonunculara kadar bak .`W`Tokenler artı her `stride`Yerel ve uzun mesafeli çekimleri yakalar.`O(N · sqrt(N))`Bilgisayar.
+- **Local + strided (OpenAI sparse transformer).**Sonunculara kadar bak .$W$Tokenler artı her `stride`Yerel ve uzun mesafeli çekimleri yakalar.$O(N \cdot \sqrt{N})$Bilgisayar.
 - **Longformer / BigBird.**Yerel pencere + küçük bir küresel token kümesi (örneğin `[CLS]`) herkesin katıldığı ve herkesin katıldığı + rastgele-sparse bağlantılar.
 - **Native Sparse Attention (DeepSeek, 2025).**Hangi blokları öğrenin `(Q, K)`- Flaş Dikkatle uyumlu.
 
@@ -61,13 +61,15 @@ Düzenli dikkat "hatırlama" sorunu vardır: softmax her satırı 1'e toplamaya 
 
 Farklı dikkat bunu hesaplama yoluyla düzeltir .**two**dikkat haritaları ve çıkarma:
 
-```
-A1 = softmax(Q1 K1^T / √d)
-A2 = softmax(Q2 K2^T / √d)
-DiffAttn = (A1 - λ · A2) V
+```math
+\begin{aligned}
+A_1 &= \mathop{\mathrm{softmax}}(Q_1 K_1^T / \sqrt{d}) \\
+A_2 &= \mathop{\mathrm{softmax}}(Q_2 K_2^T / \sqrt{d}) \\
+\text{DiffAttn} &= (A_1 - \lambda \cdot A_2) V
+\end{aligned}
 ```
 
-nerede`λ`A1 gerçek içerik ağırlıklarını yakalar; A2 sinkini yakalar. Kısıtlama sinkini iptal eder, ağırlığı ilgili simgeler için yeniden tahsis eder.
+nerede$\lambda$A1 gerçek içerik ağırlıklarını yakalar; A2 sinkini yakalar. Kısıtlama sinkini iptal eder, ağırlığı ilgili simgeler için yeniden tahsis eder.
 
 Raporlanan sonuçlar (Microsoft 2024): 510% daha düşük karmaşıklık, aynı eğitimli uzunlukta 1.52× daha uzun etkili bağlam, daha keskin iğne-haystack geri alımı.
 
@@ -75,12 +77,12 @@ Raporlanan sonuçlar (Microsoft 2024): 510% daha düşük karmaşıklık, aynı 
 
 | Variant | Compute | KV cache | Quality vs full | Production use |
 |---------|---------|----------|-----------------|----------------|
-| Full attention | O(N²) | O(N) per layer | baseline | every model's default layer |
-| SWA (window 1024) | O(N·W) | O(W) per layer | -0.1 ppl, good with global layers | Gemma 2/3, Phi-3-Long |
-| Local + strided sparse | O(N·√N) | mixed | similar to SWA | OpenAI sparse transformer, Longformer |
-| BigBird (local + global + random) | O(N) approx | mixed | matches full at 2× context | early long-context BERT |
-| Native Sparse (DeepSeek-V3.2) | O(N · active fraction) | O(N) | within 0.05 ppl | DeepSeek-V3.2, 2025 |
-| Differential | O(2·N²) | O(2N) | -5 to -10% ppl | DIFF Transformer, early 2026 models |
+| Full attention | $O(N^2)$ | $O(N)$ per layer | baseline | every model's default layer |
+| SWA (window 1024) | $O(N \cdot W)$ | $O(W)$ per layer | -0.1 ppl, good with global layers | Gemma 2/3, Phi-3-Long |
+| Local + strided sparse | $O(N \cdot \sqrt{N})$ | mixed | similar to SWA | OpenAI sparse transformer, Longformer |
+| BigBird (local + global + random) | $O(N)$ approx | mixed | matches full at 2× context | early long-context BERT |
+| Native Sparse (DeepSeek-V3.2) | $O(N \cdot \text{active fraction})$ | $O(N)$ | within 0.05 ppl | DeepSeek-V3.2, 2025 |
+| Differential | $O(2 \cdot N^2)$ | $O(2N)$ | -5 to -10% ppl | DIFF Transformer, early 2026 models |
 
 ```figure
 gqa-kv-sharing
@@ -142,7 +144,7 @@ def diff_attention(Q1, K1, Q2, K2, V, lam):
 
 ### Adım 5: KV önbelleği boyutları
 
-Önbelleğin katman boyutunu `N = 131072`SWA ve nadir çeşitler 10 100 × düşer. Farklı çiftler.
+Önbelleğin katman boyutunu $N = 131072$SWA ve nadir çeşitler 10 100 × düşer. Farklı çiftler.
 
 ## Kullan
 
@@ -185,17 +187,17 @@ Bakın .`outputs/skill-attention-variant-picker.md`. Bu beceri, hedef bağlam uz
 1. **Easy.**Çık .`code/main.py`SWA ' yı kontrol edin .`window=4`Son 4 simge dışında her şeyi sıfırlıyor.`window=n`Tam sebepli dikkatini bit-ident olarak yeniden üretir.
 2. **Medium.** ile nedensel SWA uygulamak`window=1024`Lesson 07'ün baş taşı üzerinde. Tinyshakespeare'da 1000 adımlar için eğitim.
 3. **Hard.**Gemma-3 tarzında 5:1 katman karışımı (5 SWA, 1 global) baş taşı modelinde uygulayın.
-4. **Hard.**Öğrenciyle farklı ilgi göstermek`λ`Bir sentetik geri alım görevinde çalışın (bir iğne, 2.000 dikkat dağıtıcı).
+4. **Hard.**Öğrenciyle farklı ilgi göstermek$\lambda$Bir sentetik geri alım görevinde çalışın (bir iğne, 2.000 dikkat dağıtıcı).
 
 ## Anahtar Terimler
 
 | Term | What people say | What it actually means |
 |------|-----------------|-----------------------|
-| Sliding window attention (SWA) | "Local attention" | Each query attends to its last `W` tokens; KV cache shrinks to `O(W)`. |
-| Effective receptive field | "How far back the model sees" | In an `L`-layer SWA stack with window `W`, up to `L × W` tokens. |
+| Sliding window attention (SWA) | "Local attention" | Each query attends to its last $W$ tokens; KV cache shrinks to $O(W)$. |
+| Effective receptive field | "How far back the model sees" | In an $L$-layer SWA stack with window $W$, up to $L \times W$ tokens. |
 | Longformer / BigBird | "Local + global + random" | Sparse patterns with a few always-attending global tokens; early long-context approach. |
 | Native Sparse Attention | "DeepSeek's kernel trick" | Learn block-level sparsity; skip zero blocks at the kernel level while keeping quality. |
-| Differential attention | "Two maps, one subtracts" | DIFF Transformer: subtract a learned `λ` times a second attention map from the first to cancel attention sinks. |
+| Differential attention | "Two maps, one subtracts" | DIFF Transformer: subtract a learned $\lambda$ times a second attention map from the first to cancel attention sinks. |
 | Attention sink | "Weight bleeds to token 0" | Softmax normalization forces rows to sum to 1; uninformative queries dump weight on position 0. |
 | FlexAttention | "Mask-as-Python" | PyTorch 2.5+ API that compiles arbitrary mask functions into FlashAttention-shape kernels. |
 | Layer type mix | "5:1 SWA-to-global" | Interleave sparse and full attention layers in a stack to keep quality at lower memory. |

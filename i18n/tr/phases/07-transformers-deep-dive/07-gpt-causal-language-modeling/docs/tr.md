@@ -23,14 +23,13 @@ GPT-1 (2018), GPT-2 (2019), GPT-3 (2020), GPT-4 (2023), GPT-5 (2025), Claude, Ll
 
 ### Maske .
 
-Uzunluk bir sırayla .`N`, bir inşaat`N × N`matris:
+Uzunluk bir sırayla .$N$, bir inşaat$N \times N$matris:
 
-```
-M[i, j] = 0       if j <= i
-M[i, j] = -inf    if j > i
+```math
+M_{ij} = \begin{cases} 0 & \text{if } j \le i \\ -\infty & \text{if } j > i \end{cases}
 ```
 
-Ekle`M`softmax öncesinde yapılan incelemeler için. `exp(-inf) = 0`Dikkat matrisinin her satırı sadece önceki pozisyonlar üzerinde bir olasılık dağılımıdır.
+Ekle`M`softmax öncesinde yapılan incelemeler için. $\exp(-\infty) = 0$Dikkat matrisinin her satırı sadece önceki pozisyonlar üzerinde bir olasılık dağılımıdır.
 
 Uygulama maliyeti: 1 `torch.tril()`Çağrı, hesaplama zamanı: nanoseconds, etkisi: her şey.
 
@@ -38,7 +37,7 @@ Uygulama maliyeti: 1 `torch.tril()`Çağrı, hesaplama zamanı: nanoseconds, etk
 
 Maske genellikle dikkat üzerine bir yama olarak sunulur. Delivasyonu diğer yönde çalıştırın ve gizemli olmaktan vazgeçirilir: dikkat bir önbellek ortalamasının üçüncü gelişmesidir ve üçgen bir matris olarak yazılan ortalamanın döngü sınırlarıdır.
 
-**Stage 1 — prefix average.**Bir dizi için en aptalca nedenci özet: pozisyon .`i`pozisyonların ortalaması olur.`0…i`Bir döngü olarak, bu `out[i] = X[:i+1].mean(0)`Aynı hesaplama bir matris çarpmasıdır.
+**Stage 1 — prefix average.**Bir dizi için en aptalca nedenci özet: pozisyon .$i$pozisyonların ortalaması olur.$0 \ldots i$Bir döngü olarak, bu `out[i] = X[:i+1].mean(0)`Aynı hesaplama bir matris çarpmasıdır.
 
 ```python
 import numpy as np
@@ -48,7 +47,7 @@ A = A / A.sum(axis=1, keepdims=True)
 out = A @ X
 ```
 
-Satır `i``A`- Evet .`[1/(i+1), …, 1/(i+1), 0, …, 0]`Diyagonalın üzerindeki sıfırlar sebepliliktir. Gelecek hakkında hiçbir şey gizlenmemiştir. Gelecek asla toplamda değildi.
+Satır $i$$A$- Evet .$[1/(i+1), \ldots, 1/(i+1), 0, \ldots, 0]$Diyagonalın üzerindeki sıfırlar sebepliliktir. Gelecek hakkında hiçbir şey gizlenmemiştir. Gelecek asla toplamda değildi.
 
 **Stage 2 — learned weights.**Bir düz ortalama, geçmişteki her simgeyi eşit derecede değerlendirir.`S`Şimdi sıralar artık yapısal olarak birine toplamamaktadır, bu nedenle sayıya bölmek yerine her satırı softmax ile normalleştirin. Softmax asla tam bir sıfır çıkarmaz, bu da nedenlik ilişkisini kırır  eğer gelecekteki puanlar  gibi girmezse `-inf`Çünkü ...`exp(-inf) = 0`- ...
 
@@ -166,7 +165,7 @@ print(tok.decode(out[0]))
 
 Kapusunun altında,`generate()`Önceki geçitini yürütür, son pozisyon logitlerini çekir, bir sonraki jetonu örnekler, ekler ve tekrarlar. Her üretim LLM sonuç kümesi (vLLM, TensorRT-LLM, llama.cpp, Ollama, MLX) aynı döngüyü ağır optimizasyonla uyguluyor  toplu önceden doldurma, sürekli serileme, KV önbelleği sayfalama, spekülasyonsal dekodlama.
 
-**GPT vs BERT, one line each:**GPT tahminleri `P(x_t | x_{<t})`BERT tahmin ediyor .`P(x_masked | x_unmasked)`Kayıp, modelin üretebildiğini belirler.
+**GPT vs BERT, one line each:**GPT tahminleri $P(x_t \mid x_{<t})$BERT tahmin ediyor .$P(x_{\text{masked}} \mid x_{\text{unmasked}})$Kayıp, modelin üretebildiğini belirler.
 
 ## Gönder
 
@@ -186,8 +185,8 @@ Bakın .`outputs/skill-sampling-tuner.md`. Yetenek yeni nesil görev için örne
 | Next-token prediction | "The loss" | Cross-entropy of the model's distribution against the true next token at every position. |
 | Autoregressive | "Generate one at a time" | Feed output back as input; parallelism only during training, not during generation. |
 | Logits | "Pre-softmax scores" | Raw output of the LM head before softmax; sampling happens on these. |
-| Temperature | "Creativity knob" | Divide logits by T; T→0 = greedy, T→∞ = uniform. |
-| Top-p | "Nucleus sampling" | Truncate distribution to smallest set summing to ≥p; sample from what remains. |
+| Temperature | "Creativity knob" | Divide logits by $T$; $T \to 0$ = greedy, $T \to \infty$ = uniform. |
+| Top-p | "Nucleus sampling" | Truncate distribution to smallest set summing to $\ge p$; sample from what remains. |
 | Min-p | "Better than top-p" | Keep tokens where `p ≥ min_p × max_p`; adapts cutoff to sharpness of distribution. |
 | Speculative decoding | "Draft + verify" | Cheap model proposes N tokens; big model verifies in parallel. |
 | Teacher forcing | "Training trick" | During training, feed the true previous token, not the model's prediction. Standard for every seq2seq LM. |

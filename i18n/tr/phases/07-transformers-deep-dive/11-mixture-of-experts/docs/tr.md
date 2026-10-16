@@ -11,7 +11,7 @@
 
 Dense bir transformatörün FLOP'leri, parametre sayısının (geri geçiş için 2 kat) eşit olduğu sonucunda. Dense bir modeli ölçeklendirir ve her token tüm faturayı öder. 2024 yılına gelindiğinde sınır bir hesaplama duvarına çarpardı: anlamlı olarak daha akıllı olmak için, bir token için eksponensel olarak daha fazla FLOP'ye ihtiyacınız vardı.
 
-Uzmanlar karışımı bu bağlantıyı kırar.`E`bağımsız uzmanlar + seçen bir yönlendiricisi `k`Teknes başına uzmanlar.`E × FFN_size`. Token başına aktif parametreler = `k × FFN_size`.2026 tipi yapılandırma: `E=256`- Evet .`k=8`. depolama ölçekleri `E`, hesaplama ölçekleri ile `k`- Evet .
+Uzmanlar karışımı bu bağlantıyı kırar.$E$bağımsız uzmanlar + seçen bir yönlendiricisi $k$Teknes başına uzmanlar.$E \times \text{FFN size}$. Token başına aktif parametreler = $k \times \text{FFN size}$.2026 tipi yapılandırma: $E=256$- Evet .$k=8$. depolama ölçekleri $E$, hesaplama ölçekleri ile $k$- Evet .
 
 2026 sınır neredeyse tamamen MoE: DeepSeek-V3 (671B toplam / 37B aktif), Mixtral 8×22B, Qwen2.5-MoE, Llama 4, Kimi K2, gpt-oss. Yapay Analiz'in bağımsız liderlik tablosunda, en iyi 10 açık kaynaklı model tüm MoE.
 
@@ -46,7 +46,7 @@ Her uzman bağımsız bir FFN (genellikle SwiGLU) dir. yönlendiricisi tek bir d
 Eğer yönlendiriciler, %90'ı uzman 3'ün üzerinden gönderirse diğer uzmanlar aç kalır.
 
 1. **Auxiliary load-balancing loss**(Switch Transformer, Mixtral). Uzman kullanımdaki değişikliğe göre bir ceza ekleyin. Çalışır, ancak bir hiperparametre ve ikinci bir gradient sinyali ekler.
-2. **Expert capacity + token dropping**(Erken Switch) Her uzman en fazla işlem yapar.`C × N/E`Tokenler, aşırı akış tokenleri katmanı atlar.
+2. **Expert capacity + token dropping**(Erken Switch) Her uzman en fazla işlem yapar.$C \times N/E$Tokenler, aşırı akış tokenleri katmanı atlar.
 3. **Auxiliary-loss-free balancing**(DeepSeek-V3). Router'ın üst-k seçimini değiştiren bir uzman başına öğrenilen önyargıyı ekleyin.
 
 DeepSeek-V3'ün yaklaşımı: her eğitim aşamasından sonra, her uzman için, kullanımının hedefin üzerinde veya altında olup olmadığını kontrol edin.`±γ`Seçim kullanımı`scores + bias`- Kaplama için kullanılan uzman olasılıkları ,`scores`- Yollama ifadelerinden koparılmasını.
@@ -59,7 +59,7 @@ DeepSeek-V2/V3 ayrıca uzmanları *shared* ve *routed* olarak bölüyor. Her tok
 
 Klasik MoE (GShard, Switch): her uzman, tam bir FFN kadar geniş. `E`küçük (864), `k`küçüktür (12).
 
-Modern ince tanelerli MoE (DeepSeek-V3, Qwen-MoE): her uzman daha dar (1/8 FFN boyut). `E`büyüktür (256+), `k`Aynı toplam parametreler, ancak kombinasyonlar daha hızlı ölçeklendirilir. `C(256, 8) = 400 trillion`- Kalite artıyor, gecikme sabit kalıyor.
+Modern ince tanelerli MoE (DeepSeek-V3, Qwen-MoE): her uzman daha dar (1/8 FFN boyut). $E$büyüktür (256+), $k$Aynı toplam parametreler, ancak kombinasyonlar daha hızlı ölçeklendirilir. $\binom{256}{8} \approx 400$Bir token için trilyonlarca uzman var.
 
 ### Maliyet profili
 
@@ -159,7 +159,7 @@ Bakın .`outputs/skill-moe-configurator.md`. Yetenek yeni bir MOE için E, k ve 
 | Auxiliary-loss-free | "DeepSeek-V3's trick" | Balance via per-expert bias on the router's selection only; no extra gradient. |
 | Shared expert | "Always on" | Extra expert through which every token passes; captures common knowledge. |
 | Expert parallelism | "Shard by expert" | Distribute different experts to different GPUs; route tokens across the network. |
-| Sparsity | "Active params < total params" | The ratio `k × expert_size / (E × expert_size)`; 37/671 ≈ 5.5% for DeepSeek-V3. |
+| Sparsity | "Active params < total params" | The ratio $k \times \text{expert size} / (E \times \text{expert size})$; 37/671 ≈ 5.5% for DeepSeek-V3. |
 
 ## Daha Fazla Okumak
 

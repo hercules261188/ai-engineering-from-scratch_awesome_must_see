@@ -25,13 +25,13 @@ Sonuç 2026 yılına kadar her modalite hakimdir. Dil (GPT-5, Claude 4, Llama 4)
 
 ![RNN sequential compute vs Transformer parallel attention](../assets/rnn-vs-transformer.svg)
 
-**Recurrence as a bottleneck.**RNN hesaplar `h_t = f(h_{t-1}, x_t)`Her adım önceki adımdan bağlı.`h_5`Daha önce`h_4`10.000'den fazla paralel çekirdekli modern GPU'larda bu, uzun bir dizide silikonun %99'unu atıyor.
+**Recurrence as a bottleneck.**RNN hesaplar $h_t = f(h_{t-1}, x_t)$Her adım önceki adımdan bağlı.$h_5$Daha önce$h_4$10.000'den fazla paralel çekirdekli modern GPU'larda bu, uzun bir dizide silikonun %99'unu atıyor.
 
-**Attention as a broadcast.**Kendine dikkat hesaplamaları `output_i = sum_j(a_ij * v_j)`Her çift için .`(i, j)`Tüm N×N dikkat matrisi bir partili matmul'e doldurulur.
+**Attention as a broadcast.**Kendine dikkat hesaplamaları `output_i = sum_j(a_ij * v_j)`Her çift için .$(i, j)$Tüm N×N dikkat matrisi bir partili matmul'e doldurulur.
 
-**The speedup is not a constant.**Bu `O(N)`seri derinliği ve `O(1)`Serial derinliği. pratikte, transformatörler eşleşen donanımlarda N=512'de 510x daha hızlı çalıştırılır ve boşluk, `O(N²)`Akılda tutulan hafıza duvarı (Flash Attention'ın daha sonra düzelttiği  12. dersi gör).
+**The speedup is not a constant.**Bu $O(N)$seri derinliği ve $O(1)$Serial derinliği. pratikte, transformatörler eşleşen donanımlarda N=512'de 510x daha hızlı çalıştırılır ve boşluk, $O(N^2)$Akılda tutulan hafıza duvarı (Flash Attention'ın daha sonra düzelttiği  12. dersi gör).
 
-**What transformers cost.**Dikkat hafıza ölçekleri `O(N²)`128K bağlamı için kaydırıcı pencereler, RoPE ekstrapolasyonu, Flash dikkat kapakları veya doğrusal dikkat çeşitleri gerekir.`O(N)`Zaman ve hafıza her iki tarafta; transformatörler zamanla hafıza alışverişinde bulunur ve paralellik yoluyla zamanı geri kazanır.
+**What transformers cost.**Dikkat hafıza ölçekleri $O(N^2)$128K bağlamı için kaydırıcı pencereler, RoPE ekstrapolasyonu, Flash dikkat kapakları veya doğrusal dikkat çeşitleri gerekir.$O(N)$Zaman ve hafıza her iki tarafta; transformatörler zamanla hafıza alışverişinde bulunur ve paralellik yoluyla zamanı geri kazanır.
 
 **The inductive bias shift.**RNN'ler yerellik ve yenilikçilik kabul eder. Transformatörler hiçbir şeyi kabul etmez.  her çift dikkat için bir adaydır. Bu nedenle transformatörler iyi eğitilmek için daha fazla veriye ihtiyaç duyarlar, ancak bir kez daha ölçeklendirirler. Chinchilla (2022) bunu resmileştirdi: yeterli token verildiğinde, bir transformatör her zaman eşit parametreler sayısının RNN'ini yener.
 
@@ -58,7 +58,7 @@ def attention_style(xs):
     return sum(xs) / len(xs)  # every x is independent
 ```
 
-RNN sürümü O(N) ve tek bir CPU borusu. saf Python'da bile dikkat biçimindeki azaltma uzunluğu ≥ 1000'e geçiyor çünkü Python'un `sum()`C'de uygulanır ve adım başına tercümanlık ödemesi olmadan tekrarlanır.
+Her ikisini de 100.000'e kadar element üzerinde zamanlandırıyoruz.$O(N)$Python'da bile dikkat biçimindeki kısıtlama, uzunluğu 1000'den fazla olmaktadır çünkü Python'un`sum()`C'de uygulanır ve adım başına tercümanlık ödemesi olmadan tekrarlanır.
 
 ### Adım 2: teorik işlemleri sayın
 
@@ -66,7 +66,7 @@ Her iki algoritma da N ekler. Fark * bağımlılık derinliği *: bir sonraki ba
 
 ### Adım 3: Uzun diziler üzerinde empiriyel ölçeklendirme
 
-O  N) boşluğu görülebilen bir zamanlama tablosunu yazdırırırız. 2026 Mac dizüstü bilgisayarında, 1000 element altındaki diziler ölçülmek için çok hızlıdır. 100,000'in dizileri temiz bir çizgi tarama gösterir. Bunu 16 384 token transformatörüne 12 katman LSTM eşdeğerle ölçeyin ve eğitim duvar saati neden 2016'da bir engelleyici olduğunu göreceksiniz.
+Zamanlama tabloyu basıyoruz .$O(N)$2026 Mac dizüstü bilgisayarında, 1000 element altındaki diziler ölçülmek için çok hızlıdır. 100,000'in dizileri temiz bir çizgi tarama gösterir. Bunu 12 katman LSTM eşdeğerli bir LSTM ile 16.384 token transformatörüne ölçe ve 2016'da eğitim duvar saati neden bir engelleyici olduğunu görebilirsiniz.
 
 ## Kullan
 
@@ -79,7 +79,7 @@ O  N) boşluğu görülebilen bir zamanlama tablosunu yazdırırırız. 2026 Mac
 | Edge device with no matmul accelerator | Depthwise-separable RNN still wins on FLOPs/watt |
 | Anything else (training, batched inference, context up to 128K) | Transformer |
 
-Mamba gibi devlet- uzay modelleri (SSM) esasen her ikisinin de en iyisini veren yapılandırılmış parametreleşme ile RNN'lerdir: `O(N)`Sıkıntılı bir şekilde, bir sürü farklı yöntemler kullanılır.
+Mamba gibi devlet- uzay modelleri (SSM) esasen her ikisinin de en iyisini veren yapılandırılmış parametreleşme ile RNN'lerdir: $O(N)$Sıkıntılı bir şekilde, bir sürü farklı yöntemler kullanılır.
 
 ## Gönder
 
@@ -97,11 +97,11 @@ Bakın .`outputs/skill-architecture-picker.md`. Yetenek, uzunluk, geçiş gücü
 |------|-----------------|-----------------------|
 | Recurrence | "RNNs are sequential" | Computation where step `t` depends on step `t-1`, forcing serial execution along the time axis. |
 | Serial depth | "How deep the graph is" | Longest chain of dependent ops; bounds wall-clock even on infinite hardware. |
-| Attention | "Let tokens look at each other" | Weighted sum `sum_j a_ij v_j` where `a_ij` comes from a similarity score between positions i and j. |
+| Attention | "Let tokens look at each other" | Weighted sum $\sum_j a_{ij} v_j$ where $a_{ij}$ comes from a similarity score between positions $i$ and $j$. |
 | Context window | "How much the model sees" | Number of positions an attention layer can take as input; quadratic memory cost scales here. |
 | Inductive bias | "Assumptions baked into the architecture" | Prior about what the data looks like; CNNs assume translation invariance, RNNs assume recency. |
 | State-space model | "RNN with algebra behind it" | Recurrence parameterized for parallel training via structured state-space matrices. |
-| Quadratic bottleneck | "Why context costs so much" | Attention memory = `O(N²)` in sequence length; Flash Attention hides the constants, not the scaling. |
+| Quadratic bottleneck | "Why context costs so much" | Attention memory = $O(N^2)$ in sequence length; Flash Attention hides the constants, not the scaling. |
 
 ## Daha Fazla Okumak
 

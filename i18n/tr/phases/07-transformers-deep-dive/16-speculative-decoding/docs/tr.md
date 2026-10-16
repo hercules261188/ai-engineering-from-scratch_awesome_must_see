@@ -9,7 +9,7 @@
 
 ## Sorun
 
-Bir H100'de bir 70B LLM örneği örneği ~30 ms alır. Bir 3B taslak modeli ~3 ms alır. 3B taslak 5 tokeni ileri bırakırsak, tüm 5'i doğrulamak için 70B * bir kez * çalıştırın.`5×3 + 30 = 45 ms`5 tane kadar kabul edilen token için  vs `5×30 = 150 ms`Bu tam spekülasyonsal dekodlama alanı: 24x daha düşük dekod gecikmesi için küçük miktarda ekstra GPU belleği (yazar model) değiştirin.
+Bir H100'de bir 70B LLM örneği örneği ~30 ms alır. Bir 3B taslak modeli ~3 ms alır. 3B taslak 5 tokeni ileri bırakırsak, tüm 5'i doğrulamak için 70B * bir kez * çalıştırın.$5 \times 3 + 30 = 45$ms 5 tane kadar kabul edilen token için  vs `5×30 = 150 ms`Bu tam spekülasyonsal dekodlama alanı: 24x daha düşük dekod gecikmesi için küçük miktarda ekstra GPU belleği (yazar model) değiştirin.
 
 Leviathan et al. (2023) ve Chen et al. tarafından aynı anda getirilen spekülasyonlu örnekleme, çıkış sırasının **identically distributed**Bu büyük model kendi başına üretebildiği şey için.
 
@@ -26,30 +26,30 @@ Leviathan et al. (2023) ve Chen et al. tarafından aynı anda getirilen speküla
 
 ### Temel algoritma
 
-Bir doğrulayıcı veriliyor `M_q`ve daha ucuz bir taslak .`M_p`- ...
+Bir doğrulayıcı veriliyor $M_q$ve daha ucuz bir taslak .$M_p$- ...
 
-1. - Bırak .`x_1..x_k`- Bu, zaten çözülmüş bir önlemdir.
-2. **Draft**: kullanımı `M_p`- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -`d_{k+1}, d_{k+2}, ..., d_{k+N}`- Evet .`p_1..p_N`- Evet .
-3. **Verify in parallel**Çıkış`M_q`Bir kere .`x_1..x_k, d_{k+1}, ..., d_{k+N}`, verifier olasılıklarını almak `q_1..q_{N+1}`pozisyonlar için `k+1..k+N+1`- Evet .
-4. **Accept/reject each draft token left to right**: her biri için`i`, olasılıklarla kabul et .`min(1, q_i(d_i) / p_i(d_i))`- Evet .
-5. İlk reddedilme konusunda pozisyon .`j`Örnek:`t_j`"Kalan" dağıtımından `(q_j - p_j)_+`Tüm taslaklar normalleştirildi.`j`Atılır.
-6. Her şeyi kabul etmekle .`N`: örnek bir ekstra token `t_{N+1}`-`q_{N+1}`(Buna karşılık bonus simgesi)
+1. - Bırak .$x_1 \ldots x_k$- Bu, zaten çözülmüş bir önlemdir.
+2. **Draft**: kullanımı $M_p$- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -$d_{k+1}, d_{k+2}, \ldots, d_{k+N}$- Evet .$p_1 \ldots p_N$- Evet .
+3. **Verify in parallel**Çıkış$M_q$Bir kere .$x_1 \ldots x_k, d_{k+1}, \ldots, d_{k+N}$, verifier olasılıklarını almak $q_1 \ldots q_{N+1}$pozisyonlar için $k+1 \ldots k+N+1$- Evet .
+4. **Accept/reject each draft token left to right**: her biri için$i$, olasılıklarla kabul et .$\min(1, q_i(d_i) / p_i(d_i))$- Evet .
+5. İlk reddedilme konusunda pozisyon .$j$Örnek:$t_j$"Kalan" dağıtımından $(q_j - p_j)_+$Tüm taslaklar normalleştirildi.$j$Atılır.
+6. Her şeyi kabul etmekle .$N$: örnek bir ekstra token $t_{N+1}$-$q_{N+1}$(Buna karşılık bonus simgesi)
 
-Geri kalan dağılım hilesi , çıkışın tam olarak dağılmasını sağlayan matematiksel bir anlayıştır .`M_q`- İlk defa örnek almıştım.
+Geri kalan dağılım hilesi , çıkışın tam olarak dağılmasını sağlayan matematiksel bir anlayıştır .$M_q$- İlk defa örnek almıştım.
 
 ### Hızlandırmayı belirleyenler
 
-- Bırak .`α`= proje token başına beklenen kabul oranı.`c`= taslak ve denetleyiciler arasındaki maliyet oranı.
+- Bırak .$\alpha$= proje token başına beklenen kabul oranı.$c$= taslak ve denetleyiciler arasındaki maliyet oranı.
 
 - Saçma nesil, her token için bir büyük model çağrısı yapar.
-- Spekülatör , her gün 1 büyük model çağrısı yapıyor .`(1 - α^{N+1}) / (1 - α) ≈ 1/(1-α)`Tokenler ne zaman`α`- Yüksek.
+- Spekülatör , her gün 1 büyük model çağrısı yapıyor .$(1 - \alpha^{N+1}) / (1 - \alpha) \approx 1/(1-\alpha)$Tokenler ne zaman$\alpha$- Yüksek.
 
-Tipik bir kural .`α = 0.75`ve `N = 5`Bu yüzden, bu bir şey değil.
+Tipik bir kural .$\alpha = 0.75$ve $N = 5$Bu yüzden, bu bir şey değil.
 
-**α depends on:**
+**$\alpha$ depends on:**
 
-- Aynı aile / aynı eğitim verileri α önemli ölçüde artırır.
-- Açgözlü verifikatör karşısında açgözlü taslak: yüksek α. Temperatür örneği: eşleşmesi zor; kabul düşüyor.
+- Eğitim verileri aynı aile / aynı eğitim verilerini artırır $\alpha$- Kesinlikle.
+- Açgözlü taslakla açgözlü doğrulayıcı: yüksek $\alpha$Temperatür örneklemesi: eşleşmesi zor; kabul düşüyor.
 - Görev türü: Kod ve yapılandırılmış çıkış daha fazla (görünülebilir) kabul eder; serbest biçimdeki yaratıcı yazım daha az kabul eder.
 
 ### Medusa  bir taslak modeli olmayan taslaklar
@@ -76,9 +76,9 @@ EAGLE-3 (2025) aday devamları üzerinde ağaç arama ekledi. vLLM ve SGLang gem
 
 ### KV'nin dansı
 
-Verifikasyon kaynakları `N`Tek ileri geçişle verifikatörün giriş simgelerini çiz. Bu verifikatörün KV önbelleğini `N`Bazı taslaklar reddedildiğinde, önbelleği kabul edilen önbellek uzunluğuna geri çevirmelisiniz.
+Verifikasyon kaynakları $N$Tek ileri geçişle verifikatörün giriş simgelerini çiz. Bu verifikatörün KV önbelleğini $N$Bazı taslaklar reddedildiğinde, önbelleği kabul edilen önbellek uzunluğuna geri çevirmelisiniz.
 
-Üretim uygulamalar (vLLM'ler) `--speculative-model`Bu, ilk önce yaz, kabul üzerine karar ver.
+Üretim uygulamalar (vLLM'ler) `--speculative-config`Bu, ilk önce yaz, kabul üzerine karar ver.
 
 ```figure
 draft-verify-tokens
@@ -160,14 +160,11 @@ Empirik olarak: spekülatör döngü tarafından üretilen simgelerin histogram�
 ```bash
 # vLLM with EAGLE
 vllm serve meta-llama/Llama-3.1-70B-Instruct \
-    --speculative-model /models/llama-3.1-eagle-70b \
-    --speculative-draft-tensor-parallel-size 1 \
-    --num-speculative-tokens 5
+    --speculative-config '{"method": "eagle", "model": "/models/llama-3.1-eagle-70b", "draft_tensor_parallel_size": 1, "num_speculative_tokens": 5}'
 
 # vLLM with vanilla draft model
 vllm serve meta-llama/Llama-3.1-70B-Instruct \
-    --speculative-model meta-llama/Llama-3.2-1B-Instruct \
-    --num-speculative-tokens 5
+    --speculative-config '{"method": "draft_model", "model": "meta-llama/Llama-3.2-1B-Instruct", "num_speculative_tokens": 5}'
 ```
 
 TensorRT-LLM'de 2026 ortalarında en hızlı Medusa yolu var.`faster-whisper`Whisper-large için spekülatörlü bir kodlama yaparak küçük bir taslakla kaplıyor.
@@ -184,7 +181,7 @@ TensorRT-LLM'de 2026 ortalarında en hızlı Medusa yolu var.`faster-whisper`Whi
 **When NOT to spec-decode:**
 
 - Tek sıralama jenerasyonu 15 token.
-- Çok yaratıcı / yüksek sıcaklık örneklemesi (α damlaları).
+- Çok yaratıcı / yüksek sıcaklık örneklemesi ($\alpha$(Düşükler).
 - Hatıra sınırlı dağıtımlar (önzet modeli VRAM ekler).
 
 ## Gönder
@@ -194,7 +191,7 @@ Bakın .`outputs/skill-spec-decode-picker.md`. Yetenek yeni bir sonucu oluşturm
 ## Egzersizler
 
 1. **Easy.**Çık .`code/main.py`. Spekülatör token dağıtımının, verifikatörün p = 0.05 çerez içinde 50.000 token üzerinde doğrudan örnek dağıtımına uygun olduğunu onaylayın.
-2. **Medium.** fonksiyonu olarak plan hızlandırılması (büyük model için tokens)`N`için`α = 0.5, 0.7, 0.85`- En iyi olanı belirle`N`(Tip: Verify call başına beklenen token = `(1 - α^{N+1}) / (1 - α)`.)
+2. **Medium.** fonksiyonu olarak plan hızlandırılması (büyük model için tokens)$N$için$\alpha = 0.5, 0.7, 0.85$- En iyi olanı belirle$N$Her biri için$\alpha$. (Tip: Verify call başına beklenen token = $(1 - \alpha^{N+1}) / (1 - \alpha)$.)
 3. **Hard.**Küçük bir Medusa uygulayın: 14. dersten alın GPT, t+2, t+3, t+4 pozisyonlarını tahmin eden 3 ekstra LM başını ekleyin.
 4. **Hard.**Geri dönüşü uygulayın: 10 token ön harf KV ön harfinden başlayarak, 5 taslak belirticiyi besleyin, 3. pozisyonda bir reddedmeyi simüle edin. Ön harfinizin okumalarının bir sonraki iterasyonda "ön harf + ilk 2 kabul edilen taslak" ile doğru eşleştiklerini kontrol edin.
 
@@ -204,7 +201,7 @@ Bakın .`outputs/skill-spec-decode-picker.md`. Yetenek yeni bir sonucu oluşturm
 |------|-----------------|-----------------------|
 | Draft model | "The cheap one" | A smaller model that proposes candidate tokens; usually 10–50× cheaper than the verifier. |
 | Verifier | "The big one" | The target model whose distribution we preserve; runs once per speculative step. |
-| Acceptance rate (α) | "How often the draft is right" | Per-token probability that the verifier accepts the draft. 0.7–0.9 typical. |
+| Acceptance rate ($\alpha$) | "How often the draft is right" | Per-token probability that the verifier accepts the draft. 0.7–0.9 typical. |
 | Residual distribution | "The rejection fallback" | `(q - p)_+` normalized; sampling from this on rejection preserves the verifier's distribution. |
 | Bonus token | "The free one" | When all N drafts accepted, sample one more from the verifier's next-step distribution. |
 | Medusa | "Draft-less speculative" | Multiple LM heads on the verifier predict positions t+1..t+k in parallel. |

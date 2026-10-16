@@ -11,7 +11,7 @@
 
 - Sorgu/kisel/değer projelerini ve softmax ağırlıklı toplamı dahil olmak üzere sadece NumPy kullanarak, ölçekli nokta ürün kendi dikkatini sıfırdan uygulamak
 - Başları bölüp paralel dikkat hesaplayan ve sonuçları birleştiren çok başlı bir dikkat katmanı oluşturun
-- Dikkat matrisi token ilişkileri nasıl yakalar ve neden sqrt(d_k) ile ölçeklendirilmesi softmax doymuşluğunu engeller açıklayın
+- Dikkat matrisi simge ilişkileri nasıl yakaladığını takip edin ve neden ölçeklendirilmesini açıklayın $\sqrt{d_k}$softmax doymuşluğunu önler
 - İki yönlü dikkatin otomatik (dekoder tarzında) dikkatine dönüştürülmesi için nedensel maskeli uygulama
 
 ## Sorun
@@ -109,10 +109,10 @@ attention-matrix
 
 ### Neden Ölçü?
 
-Dots ürünleri dk boyut ile büyür. dk = 64, dots ürünleri onluk aralığında olabilir, softmax gradientlerin kaybolduğu bölgelerde itmek.
+Düğüm ürünleri boyutla büyüyor $d_k$- Eğer ...$d_k = 64$Bu nedenle, bu ürünler, yüzeyleri ortadan kaldırmak için yumuşaklıklılık seviyelerini bölükleyen onluk aralığında olabilir.$\sqrt{d_k}$- Evet .
 
-```
-Scaled scores = (Q @ K^T) / sqrt(dk)
+```math
+\text{Scaled scores} = \frac{Q K^T}{\sqrt{d_k}}
 ```
 
 Bu, değerlerin softmax'ın yararlı gradientler ürettiği bir aralığında kalmasını sağlar.
@@ -159,8 +159,8 @@ flowchart LR
 
 Tek satırlı formül:
 
-```
-Attention(Q, K, V) = softmax( Q @ K^T / sqrt(dk) ) @ V
+```math
+\text{Attention}(Q, K, V) = \mathop{\mathrm{softmax}}\left( \frac{Q K^T}{\sqrt{d_k}} \right) V
 ```
 
 ```figure
@@ -302,7 +302,7 @@ print(f"\nAttn weights (averaged over heads):")
 print(attn_weights[0].detach().numpy().round(3))
 ```
 
-Ana fark: çok başlı dikkat, her biri kendi Q, K, V projeksiyonlarıyla paralel olarak çok sayıda dikkat fonksiyonunu yürütür.
+Ana fark: çok başlı dikkat, her biri kendi boyut projeksiyonlarıyla birlikte çok sayıda dikkat fonksiyonunu paralel olarak çalışır.$d_k = d_{\text{model}} / n_{\text{heads}}$Bu modelin farklı ilişki türlerine aynı anda dikkat etmesine izin verir.
 
 ## Gönder
 
@@ -322,7 +322,7 @@ Bu ders şunları ortaya çıkarır:
 | Query (Q) | "The question vector" | A learned projection of the input that represents what information this token is looking for |
 | Key (K) | "The label vector" | A learned projection that represents what information this token contains, matched against queries |
 | Value (V) | "The content vector" | A learned projection carrying the actual information that gets aggregated based on attention scores |
-| Scaled dot-product attention | "The attention formula" | softmax(QK^T / sqrt(dk)) @ V - scaling prevents softmax saturation in high dimensions |
+| Scaled dot-product attention | "The attention formula" | $\mathop{\mathrm{softmax}}(QK^T / \sqrt{d_k}) V$ - scaling prevents softmax saturation in high dimensions |
 | Self-attention | "The token looks at itself and others" | Attention where Q, K, V all come from the same sequence, letting every position attend to every other position |
 | Attention weights | "How much focus" | A probability distribution over positions, produced by softmax over scaled dot products |
 | Multi-head attention | "Parallel attention" | Running multiple attention functions with different projections, then concatenating results for richer representations |
