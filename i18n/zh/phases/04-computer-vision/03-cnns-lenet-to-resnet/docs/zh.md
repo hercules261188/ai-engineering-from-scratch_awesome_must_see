@@ -72,7 +72,7 @@ stack:   conv 3x3 -> conv 3x3 -> pool 2x2
 repeat:  16 or 19 conv layers
 ```
 
-两台3x3孔像一个5x5孔一样,但参数较少 (2*9*C^2 = 18C^2 vs 25*C^2) 和中间的额外的ReLU.VGG将这一观察变成了一个整体架构.简单的一个块类型,重复使它成为之后的一切参考点.
+两个3x3conv看到相同的5x5输入面积,但有更少的参数 ($2 \cdot 9 \cdot C^2 = 18C^2$其他$25 \cdot C^2$简单的一块类型,重复使它成为后来的一切参考点.
 
 成本:138万参数,训练缓慢,推断成本昂贵.
 
@@ -120,9 +120,11 @@ Stack 100 of them with gains < 1 and the gradient is effectively zero.
 
 他,张,任,孙提出了一个改变,
 
-```
-standard block:   y = F(x)
-residual block:   y = F(x) + x
+```math
+\begin{aligned}
+\text{standard block:} \quad & y = F(x) \\
+\text{residual block:} \quad & y = F(x) + x
+\end{aligned}
 ```
 
 其他`+ x`它们可以选择在驾驶时做什么.`F(x)`现在,一个1000层的ResNet最糟糕的,就像一个层的网络一样,因为每个额外的块都有一个微不足道的逃生口.

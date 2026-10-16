@@ -61,12 +61,13 @@ flowchart LR
 
 现在,我们在世界位置上.`mu`具有3D共变性`Sigma`投影机在屏幕位置上`mu'`具有2D共变性`Sigma'`其他:
 
-```
-mu' = project(mu)
-Sigma' = J W Sigma W^T J^T          (2 x 2)
-
-W = viewing transform (rotation + translation of camera)
-J = Jacobian of the perspective projection at mu'
+```math
+\begin{aligned}
+\mu' &= \mathop{\mathrm{project}}(\mu) \\
+\Sigma' &= J W \Sigma W^T J^T \qquad (2 \times 2) \\[6pt]
+W &= \text{viewing transform (rotation + translation of camera)} \\
+J &= \text{Jacobian of the perspective projection at } \mu'
+\end{aligned}
 ```
 
 两维高斯人的足迹是一个圆,其轴是`Sigma'`每个圆的内部的像素都得到了高斯人的贡献,`exp(-0.5 * (p - mu')^T Sigma'^-1 (p - mu'))`现在,我们要去.
@@ -75,12 +76,13 @@ J = Jacobian of the perspective projection at mu'
 
 对于一个像素,它覆盖的高西式被排序为前向 (或以逆式相等于前向后向).颜色由80年代以来的每种半透明的纹器相同的方程组成:
 
-```
-C_pixel = sum_i alpha_i * T_i * c_i
-
-T_i = prod_{j < i} (1 - alpha_j)       transmittance up to i
-alpha_i = opacity_i * exp(-0.5 * d^T Sigma'^-1 d)   local contribution
-c_i = eval_SH(SH_i, view_direction)    view-dependent colour
+```math
+\begin{aligned}
+C_{\text{pixel}} &= \sum_i \alpha_i T_i c_i \\[6pt]
+T_i &= \prod_{j < i} (1 - \alpha_j) && \text{transmittance up to } i \\
+\alpha_i &= \text{opacity}_i \cdot \exp\left(-0.5 \, d^T \Sigma'^{-1} d\right) && \text{local contribution} \\
+c_i &= \mathop{\mathrm{eval\_SH}}(\text{SH}_i, \text{view\_direction}) && \text{view-dependent colour}
+\end{aligned}
 ```
 
 这是**the same equation as NeRF's volumetric render**由于这种身份,所以染质量与NeRF相匹配,它们都整合了相同的辐射场方程.
@@ -97,7 +99,7 @@ c_i = eval_SH(SH_i, view_direction)    view-dependent colour
 - **Split**高梯度时,一个大高梯度太平滑,不能适合该区域.
 - **Prune**光率下降到值以下的高斯人,
 
-密度运行每次N代.一个场景通常从100k初始高斯人 (从SfM点种植) 增长到训练结束时的1-5M.
+密度每次都会增加$N$演习结束时,一个场景通常从100万个初始的高斯人 (从SfM点种植) 增长到1-5M.
 
 ### 圆形和在一个段落中
 

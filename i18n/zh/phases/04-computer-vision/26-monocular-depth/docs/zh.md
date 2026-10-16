@@ -83,11 +83,13 @@ flowchart LR
 
 提升一个像素`(u, v)`的深度`d`转到一个3D点`(X, Y, Z)`在摄像头坐标中:
 
-```
-fx, fy, cx, cy = camera intrinsics
-X = (u - cx) * d / fx
-Y = (v - cy) * d / fy
-Z = d
+```math
+\begin{aligned}
+f_x, f_y, c_x, c_y &= \text{camera intrinsics} \\
+X &= (u - c_x) \cdot d / f_x \\
+Y &= (v - c_y) \cdot d / f_y \\
+Z &= d
+\end{aligned}
 ```
 
 内部数据来自EXIF元数据,校准模式或单元内核估计器 (Perspective Fields, UniDepth).没有内核数据,您仍然可以通过假设60-70° FOV和中度分辨率原则来呈现一个点云,可用于可视化而不是测量.
@@ -192,21 +194,21 @@ print(f"before align  absRel = {abs_rel_error(pred, gt):.3f}")
 print(f"after align   absRel = {abs_rel_error(aligned, gt):.3f}")
 ```
 
-### 步骤5:任何深度 V3 使用 (参考)
+### 步骤5:任何深度 V2 使用 (参考)
 
 ```python
-import torch
+import numpy as np
 from transformers import pipeline
 from PIL import Image
 
-pipe = pipeline(task="depth-estimation", model="LiheYoung/depth-anything-v2-large")
+pipe = pipeline(task="depth-estimation", model="depth-anything/Depth-Anything-V2-Large-hf")
 
 image = Image.open("street.jpg").convert("RGB")
 out = pipe(image)
 depth_np = np.array(out["depth"])
 ```
 
-三个行.`out["depth"]`对于深度任何V3具体来说,在发布后,切换模型ID;API没有改变.
+三个行.`out["depth"]`度任何东西3 (11月 2025) 不通过这个管道. 它运输自己的`depth_anything_3`包装: `DepthAnything3.from_pretrained("depth-anything/DA3MONO-LARGE")`负载相对单光模型,`model.inference(images).depth`返回一个`[N, H, W]`度阵列
 
 ## 用它
 
@@ -246,7 +248,7 @@ depth_np = np.array(out["depth"])
 | Monocular depth | "Single-image depth" | Depth estimation from one RGB frame, no stereo or LiDAR |
 | Relative depth | "Ordered depth" | Ordered z-values without real-world units |
 | Metric depth | "Absolute distance" | Depth in metres; requires calibration or a model trained with metric supervision |
-| AbsRel | "Absolute relative error" | Mean of |d_pred - d_gt| / d_gt; standard depth metric |
+| AbsRel | "Absolute relative error" | Mean of $\lvert d_{\text{pred}} - d_{\text{gt}} \rvert / d_{\text{gt}}$; standard depth metric |
 | Delta accuracy | "delta < 1.25" | Fraction of pixels with prediction within 25% of ground truth |
 | Pinhole camera | "fx, fy, cx, cy" | The camera model used to lift (u, v, d) to (X, Y, Z) |
 | DPT | "Dense Prediction Transformer" | The conv-based decoder used on top of frozen ViT encoders for depth |

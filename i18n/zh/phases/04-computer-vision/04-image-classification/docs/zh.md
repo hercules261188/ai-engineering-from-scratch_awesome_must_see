@@ -52,18 +52,20 @@ flowchart LR
 
 一个分类器产生`C`应用软max将它们转化为概率分布:
 
-```
-softmax(z)_i = exp(z_i) / sum_j exp(z_j)
+```math
+\mathop{\mathrm{softmax}}(z)_i = \frac{\exp(z_i)}{\sum_j \exp(z_j)}
 ```
 
 交叉透量测量正确类的负记录概率:
 
-```
-CE(z, y) = -log( softmax(z)_y )
-        = -z_y + log( sum_j exp(z_j) )
+```math
+\begin{aligned}
+\mathrm{CE}(z, y) &= -\log\left( \mathop{\mathrm{softmax}}(z)_y \right) \\
+&= -z_y + \log\left( \sum_j \exp(z_j) \right)
+\end{aligned}
 ```
 
-右边的表格是数值稳定的表格 (log-sum-exp).`nn.CrossEntropyLoss`软max+NLL在一个操作中合并并并直接取原始的logits. 应用软max自己首先几乎总是一个错误.
+右边的表格是数值稳定的表格 (log-sum-exp).`nn.CrossEntropyLoss`直接使用原始的记录. 应用软max 首先几乎总是错误$\log(\mathop{\mathrm{softmax}}(\mathop{\mathrm{softmax}}(z)))$没有意义的数量.
 
 ### 为什么增强效果
 
@@ -105,7 +107,7 @@ Cutmix:
 总的来说,一个90-10的二进制分类器总是预测大多数类的分数是90%.
 
 - **Per-class accuracy**每类一个数字;立即出现低绩效类别.
-- **Confusion matrix** C x C 格格,行 i col j = 预测的真实类 i 的数量为类 j; 横向是正确的,外横向是您的模型居住的地方.
+- **Confusion matrix** $C \times C$排列的网格$i$专长$j$值值为:$i$预测为类型$j$角是正确的, 角是模型居住的地方.
 - **Top-1 / Top-5**是否正确的类型在前1或前5个预测中;对ImageNet来说,前5个是重要的,因为"诺威奇特里耶尔"与"诺福克特里耶尔"等类型是真正模糊的.
 - **Calibration (ECE)**0.8的可靠性预测 80% 的时间是否正确?现代网络系统上过于安全;通过温度缩小或标签平滑来解决.
 

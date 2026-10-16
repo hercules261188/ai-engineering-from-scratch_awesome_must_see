@@ -74,8 +74,8 @@ The kernel slides across every valid 3 x 3 window. Output Y is 3 x 3:
 
 鉴于输入空间大小`H`核子大小`K`料`P`走进`S`其他:
 
-```
-H_out = floor( (H - K + 2P) / S ) + 1
+```math
+H_{\text{out}} = \left\lfloor \frac{H - K + 2P}{S} \right\rfloor + 1
 ```
 
 记住这一点,你将计算每一个建筑数十倍.
@@ -88,7 +88,7 @@ H_out = floor( (H - K + 2P) / S ) + 1
 | Pool 2x2 | 32 | 2 | 0 | 2 | 16 |
 | Large receptive field | 32 | 7 | 3 | 2 | 16 |
 
-"同样的填充"意味着选择P,以便H_out=H当S=1.为奇数K,即P= (K - 1) /2.这就是为什么3x3核主导的.它们是最小的奇数核,仍然有一个中心.
+"同样的填充"意味着选择.$P$所以,$H_{\text{out}} = H$什么时候$S = 1$对于奇怪的$K$现在,$P = (K - 1) / 2$这就是为什么3x3核主导的原因.
 
 ### 子
 

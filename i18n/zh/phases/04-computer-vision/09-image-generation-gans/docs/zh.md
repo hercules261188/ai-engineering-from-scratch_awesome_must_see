@@ -9,7 +9,7 @@
 
 ## 学习目标
 
-- 解释生成器和分辨器之间的最小数游戏,以及为什么平衡与p_model =p_data相符
+- 解释生成器和分辨器之间的最小量游戏,以及为什么平衡相应于$p_{\text{model}} = p_{\text{data}}$
 - 在 PyTorch 中实现DCGAN,并使它在60行以下生成一致的32x32合成图像
 - 通过三个标准技巧稳定GAN训练:不和损失,光谱规范,TTUR (两次更新规则)
 - 阅读训练曲线,将健康的融合与模式崩,振荡和歧视者完全区分
@@ -45,8 +45,8 @@ flowchart LR
 
 格希望D错误,D想要正确.
 
-```
-min_G max_D  E_x[log D(x)] + E_z[log(1 - D(G(z)))]
+```math
+\min_G \max_D \; \mathbb{E}_x[\log D(x)] + \mathbb{E}_z[\log(1 - D(G(z)))]
 ```
 
 读到右到左:D是最大化真实 (`log D(real)`) 和假 (`log (1 - D(fake))`图像. G 正在尽量减少D的虚假信息准确性.`D(G(z))`为了高兴.
@@ -57,9 +57,11 @@ min_G max_D  E_x[log D(x)] + E_z[log(1 - D(G(z)))]
 
 早期训练, 早期训练,`D(G(z))`对于每一个假冒,几乎是零,所以`log(1 - D(G(z)))`解决方案是翻转G的损失.
 
-```
-L_D = -E_x[log D(x)] - E_z[log(1 - D(G(z)))]
-L_G = -E_z[log D(G(z))]                          # non-saturating
+```math
+\begin{aligned}
+L_D &= -\mathbb{E}_x[\log D(x)] - \mathbb{E}_z[\log(1 - D(G(z)))] \\
+L_G &= -\mathbb{E}_z[\log D(G(z))] \qquad \text{(non-saturating)}
+\end{aligned}
 ```
 
 现在什么时候?`D(G(z))`现在,每一个现代GAN列车都用这种变体.
@@ -299,8 +301,8 @@ def build_sn_discriminator(img_channels=3, feat=64):
 |------|----------------|----------------------|
 | Generator (G) | "The draws-stuff net" | Maps noise to images; trained to fool the discriminator |
 | Discriminator (D) | "The critic" | Binary classifier; trained to distinguish real from generated images |
-| Minimax | "The game" | min over G, max over D of an adversarial loss; equilibrium is p_G = p_data |
-| Non-saturating loss | "The numerically sane version" | G's loss is -log(D(G(z))) instead of log(1 - D(G(z))) to avoid vanishing gradients early in training |
+| Minimax | "The game" | min over G, max over D of an adversarial loss; equilibrium is $p_G = p_{\text{data}}$ |
+| Non-saturating loss | "The numerically sane version" | G's loss is $-\log(D(G(z)))$ instead of $\log(1 - D(G(z)))$ to avoid vanishing gradients early in training |
 | Mode collapse | "Generator makes one thing" | G produces only a small subset of the data distribution; fix with SN, minibatch discrimination, or larger batch |
 | TTUR | "Two learning rates" | D learns faster than G, typically by a factor of 2-4; stabilises training |
 | Spectral norm | "1-Lipschitz layer" | A weight-normalisation that bounds each layer's Lipschitz constant; stops D from becoming arbitrarily steep |

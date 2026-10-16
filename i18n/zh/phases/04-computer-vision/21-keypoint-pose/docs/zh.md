@@ -50,8 +50,8 @@ flowchart LR
 
 没有退缩`(x, y)`直接预测一个`H x W`热地图每一个键点,一个位于真实位置的高斯斑点.
 
-```
-target[k, y, x] = exp(-((x - cx_k)^2 + (y - cy_k)^2) / (2 sigma^2))
+```math
+\text{target}[k, y, x] = \exp\left(-\frac{(x - \mathit{cx}_k)^2 + (y - \mathit{cy}_k)^2}{2 \sigma^2}\right)
 ```
 
 在推断时,每个热图的 argmax 是预测的关键点位置.

@@ -177,7 +177,7 @@ print(f"InfoNCE with identical pairs:  {loss_same:.3f}")
 print(f"InfoNCE with random pairs:     {loss_random:.3f}")
 ```
 
-偶数对应输出低损失 (对于大型批量和冷温度接近0).随机对应应输出 log(2N-1) = ~log(31) = ~3.4 与16对批量.
+偶数对应产生低损失 (对于大型批量和冷温度来说接近0).$\log(2N-1) \approx \log(31) \approx 3.4$只有16对的批量.
 
 ### 步骤4:MAE风格的罩
 

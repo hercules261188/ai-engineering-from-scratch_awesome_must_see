@@ -100,8 +100,8 @@ backbone.heads.head = nn.Linear(..., num_classes)                       # torchv
 
 现代细调 (BEiT,DINOv2,ViT-B细调) 中使用的歧视性LR的更平滑版本.
 
-```
-lr_layer_k = base_lr * decay^(L - k)
+```math
+\text{lr\_layer}_k = \text{base\_lr} \cdot \text{decay}^{L - k}
 ```
 
 化块的化量为0.75个,变压器块的L值为12个,`0.75^11 ≈ 0.04x`对于变压器的细节调节而言,

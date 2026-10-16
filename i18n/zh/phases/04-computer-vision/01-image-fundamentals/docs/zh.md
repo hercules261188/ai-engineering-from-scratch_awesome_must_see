@@ -173,8 +173,8 @@ RGB是捕获格式,但它并不总是模型中最有用的表示.
 
 根据RGB的灰度尺度是重量总数,而不是平均值,因为人类眼睛对绿色更敏感,而不是红色或蓝色:
 
-```
-Y = 0.299 R + 0.587 G + 0.114 B       (ITU-R BT.601, the classic weights)
+```math
+Y = 0.299 R + 0.587 G + 0.114 B \qquad \text{(ITU-R BT.601, the classic weights)}
 ```
 
 ### 面积比,重大小和插射
@@ -440,7 +440,7 @@ print(f"per-channel std:  {batch.std(dim=(0, 2, 3)).tolist()}")
 
 ## 进一步阅读
 
-- [Charles Poynton — A Guided Tour of Color Space](https://poynton.ca/PDFs/Guided_tour.pdf)最清晰的技术处理为什么有这么多的颜色空间,
+- [Charles Poynton — A Guided Tour of Color Space](https://web.archive.org/web/20251220000525/https://poynton.ca/PDFs/Guided_tour.pdf)最清晰的技术处理为什么有这么多的颜色空间,
 - [PyTorch Vision Transforms Docs](https://pytorch.org/vision/stable/transforms.html)你实际上将在生产中构成的全部转换管道
 - [How JPEG Works (Colt McAnlis)](https://www.youtube.com/watch?v=F1kYBnY6mwg)对色子样本,DCT的明确视觉巡回,以及为什么JPEG编码为YCbCr而不是RGB
 - [ImageNet Preprocessing Conventions (torchvision models)](https://pytorch.org/vision/stable/models.html)对真理的来源`mean=[0.485, 0.456, 0.406]`为什么动物园里的每个模特都会期待它

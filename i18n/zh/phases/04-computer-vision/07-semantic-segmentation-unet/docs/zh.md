@@ -87,10 +87,10 @@ flowchart LR
 
 ### 在像素格格子上交叉透
 
-对于C类的语义分类,模型输出是`(N, C, H, W)`目标是`(N, H, W)`交叉透与分类案例相同,只应在每个空间位置上应用:
+用于语义分类$C$模型输出是`(N, C, H, W)`目标是`(N, H, W)`交叉透与分类案例相同,只应在每个空间位置上应用:
 
-```
-Loss = mean over (n, h, w) of -log( softmax(logits[n, :, h, w])[target[n, h, w]] )
+```math
+\text{Loss} = \mathop{\mathrm{mean}}\limits_{(n, h, w)} \left[ -\log\left( \mathop{\mathrm{softmax}}(\text{logits}[n, :, h, w])[\text{target}[n, h, w]] \right) \right]
 ```
 
 `F.cross_entropy`在 PyTorch 处理这种形状原生.
@@ -101,17 +101,19 @@ Loss = mean over (n, h, w) of -log( softmax(logits[n, :, h, w])[target[n, h, w]]
 
 子损失通过直接优化预测和真实的面具之间的重叠来解决这一问题:
 
-```
-Dice(p, y) = 2 * sum(p * y) / (sum(p) + sum(y) + epsilon)
-Dice_loss = 1 - Dice
+```math
+\begin{aligned}
+\mathop{\mathrm{Dice}}(p, y) &= \frac{2 \sum (p \cdot y)}{\sum p + \sum y + \epsilon} \\
+\text{Dice}_{\text{loss}} &= 1 - \text{Dice}
+\end{aligned}
 ```
 
 在哪里`p`是一个类的sigmoid/softmax概率地图,`y`由于它是基于比例的,类失衡是无关紧要的.
 
 实际上,使用**combined loss**其他:
 
-```
-L = L_cross_entropy + lambda * L_dice       (lambda ~ 1)
+```math
+L = L_{\text{cross\_entropy}} + \lambda \cdot L_{\text{dice}} \qquad (\lambda \approx 1)
 ```
 
 交叉透在训练初期提供稳定的梯度; 子将训练的尾巴集中在实际匹配面具形状上. 这种组合是医学图像默认的,并且在任何类失衡的数据集上难以击败.
@@ -120,7 +122,7 @@ L = L_cross_entropy + lambda * L_dice       (lambda ~ 1)
 
 - **Pixel accuracy**%的像素预测正确. 便宜. 由于分类的准确性而被破坏在不平衡的数据上.
 - **IoU per class**每个类面具的工会交叉;各类间平均值 = mIoU.
-- **Dice (F1 on pixels)**类似于IU;`Dice = 2 * IoU / (1 + IoU)`医疗成像更喜欢Days,驾驶社区更喜欢IoU;它们是单调的关系.
+- **Dice (F1 on pixels)**类似于IU;$\text{Dice} = 2 \cdot \text{IoU} / (1 + \text{IoU})$医疗成像更喜欢Days,驾驶社区更喜欢IoU;它们是单调的关系.
 - **Boundary F1**测量预测边界与地面真相边界有多近,即使是小变量也会受到惩罚.
 
 平均平均平均平均平均每班人15%而其他9班人85%
@@ -400,4 +402,4 @@ model = smp.Unet(
 - [U-Net: Convolutional Networks for Biomedical Image Segmentation (Ronneberger et al., 2015)](https://arxiv.org/abs/1505.04597)原始纸;每个人复制的图片在第2页
 - [Fully Convolutional Networks (Long et al., 2015)](https://arxiv.org/abs/1411.4038)第一个使分区成为端到端的卷积问题
 - [segmentation_models_pytorch](https://github.com/qubvel/segmentation_models.pytorch)生产细分的参考;每一个标准架构加上每一个标准损失
-- [Lessons learned from training SOTA segmentation (kaggle.com competitions)](https://www.kaggle.com/code/iafoss/carvana-unet-pytorch)为什么TTA,伪标签和类重量在真实数据上重要
+- [iafoss, Unet34 submission with TTA (Kaggle notebook)](https://www.kaggle.com/code/iafoss/unet34-submission-tta-0-699-new-public-lb)实在的细分竞赛中 U-Net的测试时间增加
