@@ -24,10 +24,10 @@ Les méthodes d'assemblage font exactement cela. Ce sont les techniques les plus
 
 ### Pourquoi les groupes travaillent
 
-Supposons que vous ayez N classifiateurs indépendants, chacun avec une précision p > 0,5.
+Supposons que vous ayez$N$des classifiateurs indépendants, chacun avec précision $p > 0.5$- La majorité des voix est exacte:
 
-```
-P(majority correct) = sum over k > N/2 of C(N,k) * p^k * (1-p)^(N-k)
+```math
+P(\text{majority correct}) = \sum_{k > N/2} \binom{N}{k} p^k (1-p)^{N-k}
 ```
 
 Pour 21 classifiateurs, chacun avec une précision de 60%, la précision des voix majoritaires est d'environ 74%. Avec 101 classifiateurs, elle monte à 84%.
@@ -132,7 +132,7 @@ Le boosting gradient généralise le boosting à des fonctions de perte arbitrai
 3. Final prediction: F_T(x)
 ```
 
-Pour la perte d'erreur carrée, les pseudo-résidus sont juste les résidus réels: `r_i = y_i - F_{t-1}(x_i)`Chaque arbre correspond littéralement aux erreurs de l'ensemble précédent.
+Pour la perte d'erreur carrée, les pseudo-résidus sont juste les résidus réels: $r_i = y_i - F_{t-1}(x_i)$Chaque arbre correspond littéralement aux erreurs de l'ensemble précédent.
 
 Le taux d'apprentissage (rétrécissement) contrôle la contribution de chaque arbre.
 
@@ -349,7 +349,7 @@ Cette leçon produit `outputs/prompt-ensemble-selector.md`- une requête qui vou
 ## Pour en savoir plus
 
 - [Schapire & Freund: Boosting: Foundations and Algorithms](https://mitpress.mit.edu/9780262526036/)-- le livre des créateurs d'AdaBoost
-- [Friedman: Greedy Function Approximation: A Gradient Boosting Machine (2001)](https://statweb.stanford.edu/~jhf/ftp/trebst.pdf)- le papier d'amélioration du gradient original
+- [Friedman: Greedy Function Approximation: A Gradient Boosting Machine (2001)](https://doi.org/10.1214/aos/1013203451)- le papier d'amélioration du gradient original
 - [Chen & Guestrin: XGBoost (2016)](https://arxiv.org/abs/1603.02754)-- le papier XGBoost
 - [Wolpert: Stacked Generalization (1992)](https://www.sciencedirect.com/science/article/abs/pii/S0893608005800231)- le papier d'empilage original
 - [scikit-learn Ensemble Methods](https://scikit-learn.org/stable/modules/ensemble.html)-- référence pratique

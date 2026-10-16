@@ -62,8 +62,8 @@ Si une caractéristique varie à peine entre les échantillons, elle ne contient
 
 Considérez une caractéristique qui est 0,0 pour 999 sur 1000 échantillons. Sa variance est proche de zéro. Aucun modèle ne peut l'utiliser pour distinguer entre les classes.
 
-```
-variance(x) = mean((x - mean(x))^2)
+```math
+\text{variance}(x) = \text{mean}\bigl((x - \text{mean}(x))^2\bigr)
 ```
 
 Définir un seuil (par exemple, 0,01). Débarrasser chaque fonctionnalité avec une variance en dessous de celui-ci. Cela supprime les fonctionnalités constantes ou quasi constantes sans regarder la variable cible du tout.
@@ -74,17 +74,17 @@ Limitation: une caractéristique peut avoir une grande variance et être puremen
 
 ### Informations mutuelles
 
-L'information mutuelle mesure à quel point la connaissance de la valeur de la fonctionnalité X réduit l'incertitude concernant la cible Y.
+L' information mutuelle mesure la connaissance de la valeur d' une fonctionnalité $X$réduit l' incertitude quant à la cible $Y$- Je suis désolé .
 
-```
-I(X; Y) = sum_x sum_y p(x, y) * log(p(x, y) / (p(x) * p(y)))
+```math
+I(X; Y) = \sum_x \sum_y p(x, y) \cdot \log \frac{p(x, y)}{p(x) \cdot p(y)}
 ```
 
-Si X et Y sont indépendants, p(x, y) = p(x) * p(y), alors le terme log est zéro et I(X; Y) = 0. Plus X vous dit sur Y, plus l'information mutuelle est élevée.
+Si vous$X$et $Y$sont indépendantes, $p(x, y) = p(x) \cdot p(y)$, donc le terme log est zéro et $I(X; Y) = 0$Plus on le fait .$X$Il vous raconte$Y$Plus les informations mutuelles sont élevées.
 
 Un élément peut avoir une corrélation zéro avec la cible, mais une information mutuelle élevée parce que la relation est quadratique ou périodique.
 
-Pour les caractéristiques continues, discrétionnez-les en poubelles d'abord (estimation basée sur l'histogramme). Le nombre de poubelles affecte l'estimation - trop peu de poubelles perdent de l'information, trop de poubelles ajoutent du bruit. Un choix courant: sqrt(n) poubelles ou la règle de Sturges (1 + log2(n)).
+Pour les caractéristiques continues, discrétionnez-les en poubelles d'abord (estimation basée sur l'histogramme). Le nombre de poubelles affecte l'estimation - trop peu de poubelles perdent de l'information, trop de poubelles ajoutent du bruit. Un choix courant: $\sqrt{n}$les poubelles ou la règle de Sturges ($1 + \log_2 n$)
 
 ```mermaid
 flowchart LR
@@ -116,14 +116,14 @@ flowchart TD
 
 La RFE considère les interactions de fonctionnalités parce que le modèle voit toutes les fonctionnalités restantes ensemble.
 
-Le coût: vous entraînez le modèle N - temps cible. Avec 500 fonctionnalités et un objectif de 10, c'est 490 séries de formation. Pour les modèles coûteux, c'est lent. Vous pouvez l'accélérer en supprimant plusieurs fonctionnalités par étape (par exemple, supprimer le 10% inférieur à chaque tour).
+Le coût: vous entraînez le modèle $N - \text{target}$Avec 500 fonctionnalités et un objectif de 10, c'est 490 séries d'entraînement. Pour les modèles coûteux, c'est lent. Vous pouvez l'accélérer en supprimant plusieurs fonctionnalités par étape (par exemple, supprimer le 10% inférieur à chaque tour).
 
 ### L1 (Lasso) Régularisation
 
 La régulation L1 ajoute la valeur absolue des poids à la fonction de perte:
 
-```
-loss = prediction_error + alpha * sum(|w_i|)
+```math
+\text{loss} = \text{prediction\_error} + \alpha \cdot \sum \lvert w_i \rvert
 ```
 
 L'alpha contrôle la taille des caractéristiques, plus élevée signifie que plus de poids atteignent exactement zéro.
@@ -140,12 +140,10 @@ Limitation: fonctionne uniquement pour les modèles linéaires.
 
 Les arbres de décision et leurs ensembles (forêts aléatoires, augmentation des gradients) classent naturellement les caractéristiques.
 
-Pour une forêt aléatoire avec des arbres T:
+Pour une forêt aléatoire avec $T$arbres:
 
-```
-importance(feature_j) = (1/T) * sum over all trees of
-    sum over all nodes splitting on feature_j of
-        (n_samples * impurity_decrease)
+```math
+\text{importance}(\text{feature}_j) = \frac{1}{T} \sum_{\text{all trees}} \; \sum_{\text{all nodes splitting on } \text{feature}_j} (\text{n\_samples} \cdot \text{impurity\_decrease})
 ```
 
 Cela donne un score d'importance normalisé pour chaque fonctionnalité.
@@ -524,7 +522,7 @@ Cette leçon donne:
 | Filter method | "Score features independently" | A feature selection approach that ranks features using a statistical measure without training a model, evaluating each feature in isolation |
 | Wrapper method | "Use the model to pick features" | A feature selection approach that evaluates feature subsets by training a model and using its performance as the selection criterion |
 | Embedded method | "The model selects features during training" | Feature selection that happens as part of model fitting, such as L1 regularization driving weights to zero |
-| Mutual information | "How much one variable tells you about another" | A measure of the reduction in uncertainty about Y given knowledge of X, capturing both linear and nonlinear dependencies |
+| Mutual information | "How much one variable tells you about another" | A measure of the reduction in uncertainty about $Y$ given knowledge of $X$, capturing both linear and nonlinear dependencies |
 | Recursive Feature Elimination | "Train, rank, prune, repeat" | An iterative wrapper method that trains a model, removes the least important feature(s), and repeats until a target count is reached |
 | L1 / Lasso regularization | "Penalty that kills features" | Adding the sum of absolute weight values to the loss function, which drives unimportant feature weights to exactly zero |
 | Variance threshold | "Remove constant features" | Dropping features whose variance across samples falls below a specified threshold, filtering out features that carry no information |

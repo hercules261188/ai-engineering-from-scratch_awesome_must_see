@@ -30,8 +30,8 @@ Comprendre pourquoi une supposition erronée conduit à de bonnes prédictions v
 
 Le théorème de Bayes renverse les probabilités conditionnelles:
 
-```
-P(class | features) = P(features | class) * P(class) / P(features)
+```math
+P(\text{class} \mid \text{features}) = \frac{P(\text{features} \mid \text{class}) \cdot P(\text{class})}{P(\text{features})}
 ```
 
 Nous voulons`P(class | features)`-- la probabilité qu'un document appartient à une classe compte tenu des mots qui y sont.
@@ -43,15 +43,15 @@ La classe avec le plus haut .`P(class | features)`Il gagne.
 
 ### La supposition naïve de l'indépendance
 
-L' informatique `P(features | class)`Il faut calculer la probabilité commune de toutes les caractéristiques ensemble. avec un vocabulaire de 10 000 mots, vous devriez estimer une distribution sur 2^10 000 combinaisons possibles.
+L' informatique `P(features | class)`Il faut calculer la probabilité commune de toutes les caractéristiques ensemble.$2^{10{,}000}$Des combinaisons possibles.
 
 L'hypothèse naïve: chaque caractéristique est conditionnellement indépendante compte tenu de la classe.
 
-```
-P(w1, w2, ..., wn | class) = P(w1 | class) * P(w2 | class) * ... * P(wn | class)
+```math
+P(w_1, w_2, \ldots, w_n \mid \text{class}) = P(w_1 \mid \text{class}) \cdot P(w_2 \mid \text{class}) \cdots P(w_n \mid \text{class})
 ```
 
-Au lieu d'une distribution commune impossible, vous estimez n distributions simples par fonction.
+Au lieu d'une distribution commune impossible, vous estimez $n$Il suffit de compter les chiffres.
 
 Cette hypothèse est évidemment fausse. Les mots "machine" et "apprentissage" ne sont indépendants dans aucun document. Mais le classifiant n'a pas besoin d'estimations de probabilité correctes. Il a besoin de classements corrects - quelle classe a la plus grande probabilité. L'hypothèse d'indépendance introduit des erreurs systématiques, mais ces erreurs affectent toutes les classes de manière similaire, de sorte que le classement reste correct.
 
@@ -59,7 +59,7 @@ Cette hypothèse est évidemment fausse. Les mots "machine" et "apprentissage" n
 
 Trois raisons:
 
-1. **Ranking over calibration.**La classification ne nécessite que la classe la plus haut classée pour être correcte. Même si P(spam) = 0,99999 lorsque la vraie probabilité est de 0,7, le classifiant choisit toujours correctement le spam. Nous n'avons pas besoin de probabilités correctes. Nous avons besoin du gagnant correct.
+1. **Ranking over calibration.**La classification ne nécessite que la classe la plus haut classée pour être correcte.$P(\text{spam}) = 0.99999$Si la probabilité est de 0,7, le classifiateur choisit toujours correctement le spam.
 
 2. **High bias, low variance.**L'hypothèse d'indépendance est un précédent fort. Elle restreint fortement le modèle, ce qui empêche le surpassage. Avec des données de formation limitées, un modèle légèrement erroné mais stable bat un modèle théoriquement correct mais extrêmement instable.
 
@@ -76,31 +76,33 @@ Données de formation:
 - Les e-mails non-spam mentionnent "gratuit" 5 fois, "argent" 10 fois, "réunion" 100 fois (115 mots au total)
 - 40% des e-mails sont des spams, 60% ne sont pas des spams
 
-Avec le lissage Laplace (alpha=1):
+Avec lissage Laplace ($\alpha=1$):
 
-```
-P(free | spam)    = (80 + 1) / (150 + 3) = 81/153 = 0.529
-P(money | spam)   = (60 + 1) / (150 + 3) = 61/153 = 0.399
-P(meeting | spam) = (10 + 1) / (150 + 3) = 11/153 = 0.072
-
-P(free | not-spam)    = (5 + 1) / (115 + 3) = 6/118 = 0.051
-P(money | not-spam)   = (10 + 1) / (115 + 3) = 11/118 = 0.093
-P(meeting | not-spam) = (100 + 1) / (115 + 3) = 101/118 = 0.856
+```math
+\begin{aligned}
+P(\text{free} \mid \text{spam}) &= (80 + 1) / (150 + 3) = 81/153 = 0.529 \\
+P(\text{money} \mid \text{spam}) &= (60 + 1) / (150 + 3) = 61/153 = 0.399 \\
+P(\text{meeting} \mid \text{spam}) &= (10 + 1) / (150 + 3) = 11/153 = 0.072 \\[6pt]
+P(\text{free} \mid \text{not-spam}) &= (5 + 1) / (115 + 3) = 6/118 = 0.051 \\
+P(\text{money} \mid \text{not-spam}) &= (10 + 1) / (115 + 3) = 11/118 = 0.093 \\
+P(\text{meeting} \mid \text{not-spam}) &= (100 + 1) / (115 + 3) = 101/118 = 0.856
+\end{aligned}
 ```
 
 Le nouveau courriel contient: "gratuit" (2 fois), "argent" (1 fois), "réunion" (0 fois).
 
+```math
+\begin{aligned}
+\log P(\text{spam} \mid \text{email}) &= \log(0.4) + 2 \log(0.529) + 1 \log(0.399) + 0 \log(0.072) \\
+&= -0.916 + 2(-0.637) + (-0.919) + 0 \\
+&= -3.109 \\[6pt]
+\log P(\text{not-spam} \mid \text{email}) &= \log(0.6) + 2 \log(0.051) + 1 \log(0.093) + 0 \log(0.856) \\
+&= -0.511 + 2(-2.976) + (-2.375) + 0 \\
+&= -8.838
+\end{aligned}
 ```
-log P(spam | email) = log(0.4) + 2*log(0.529) + 1*log(0.399) + 0*log(0.072)
-                    = -0.916 + 2*(-0.637) + (-0.919) + 0
-                    = -3.109
 
-log P(not-spam | email) = log(0.6) + 2*log(0.051) + 1*log(0.093) + 0*log(0.856)
-                        = -0.511 + 2*(-2.976) + (-2.375) + 0
-                        = -8.838
-```
-
-Le mot "gratuit" apparaissant deux fois est une preuve forte du spam. Notez que "réunion" ne apparaissant pas contribue à zéro à les deux log sumes (0 * log(P)) - dans le NB multivarié, les mots absents n'ont aucun effet. C'est Bernoulli NB qui modélise explicitement l'absence de mots.
+Le mot "gratuit" apparaissant deux fois est une preuve forte du spam.$0 \cdot \log P$En effet, les mots absents n'ont pas d'effet dans le système de calcul de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la
 
 ### Trois variantes
 
@@ -110,8 +112,8 @@ Bayes naïf est disponible en trois saveurs.`P(feature | class)`- C'est différe
 
 Modèles de chaque fonctionnalité comme un compte. Il est préférable pour les données de texte où les caractéristiques sont des fréquences de mots ou des valeurs TF-IDF.
 
-```
-P(word_i | class) = (count of word_i in class + alpha) / (total words in class + alpha * vocab_size)
+```math
+P(\text{word}_i \mid \text{class}) = \frac{\text{count of } \text{word}_i \text{ in class} + \alpha}{\text{total words in class} + \alpha \cdot \text{vocab\_size}}
 ```
 
 Le `alpha`est le lissage Laplace (expliqué ci-dessous).
@@ -120,8 +122,8 @@ Le `alpha`est le lissage Laplace (expliqué ci-dessous).
 
 Modèle de chaque fonctionnalité comme une distribution normale.
 
-```
-P(x_i | class) = (1 / sqrt(2 * pi * var)) * exp(-(x_i - mean)^2 / (2 * var))
+```math
+P(x_i \mid \text{class}) = \frac{1}{\sqrt{2 \pi \cdot \text{var}}} \cdot \exp\left(-\frac{(x_i - \text{mean})^2}{2 \cdot \text{var}}\right)
 ```
 
 Chaque classe a sa propre moyenne et sa propre variance par fonctionnalité. Cela fonctionne bien lorsque les fonctionnalités suivent réellement une courbe de cloche au sein de chaque classe.
@@ -130,8 +132,8 @@ Chaque classe a sa propre moyenne et sa propre variance par fonctionnalité. Cel
 
 Modèles de chaque fonctionnalité comme binaire (présent ou absent).
 
-```
-P(word_i | class) = (docs in class containing word_i + alpha) / (total docs in class + 2 * alpha)
+```math
+P(\text{word}_i \mid \text{class}) = \frac{\text{docs in class containing } \text{word}_i + \alpha}{\text{total docs in class} + 2 \alpha}
 ```
 
 Contrairement à Multinomial, Bernoulli pénalise explicitement l'absence d'un mot. Si "libre" apparaît généralement dans le spam mais est absent de cet e-mail, Bernoulli le compte comme preuve contre le spam.
@@ -152,11 +154,11 @@ Sans lissage:`P(word | class) = 0/N = 0`Un zéro multiplié par l' ensemble prod
 
 Le lissage de la laplace ajoute un petit nombre `alpha`(généralement 1) pour chaque nombre de caractéristiques:
 
-```
-P(word_i | class) = (count(word_i, class) + alpha) / (total_words_in_class + alpha * vocab_size)
+```math
+P(\text{word}_i \mid \text{class}) = \frac{\text{count}(\text{word}_i, \text{class}) + \alpha}{\text{total\_words\_in\_class} + \alpha \cdot \text{vocab\_size}}
 ```
 
-Avec alpha = 1, chaque mot obtient au moins une probabilité minuscule. Le mot "discombobulate" apparaissant dans un e-mail de test ne tue plus la probabilité de spam. Le smoothing a une interprétation bayésienne: il est équivalent à placer un Dirichlet uniforme avant les distributions de mots.
+Avec $\alpha=1$Le mot "discombobulate" apparaissant dans un e-mail de test ne tue plus la probabilité de spam.
 
 L'alpha supérieur signifie un raffinement plus fort (distributions plus uniformes).
 
@@ -175,8 +177,8 @@ Multiplication de centaines de probabilités (chacune inférieure à 1) provoque
 
 La solution: travailler dans l'espace log. Au lieu de multiplier les probabilités, ajoutez leurs logarithmes:
 
-```
-log P(class | x1, x2, ..., xn) = log P(class) + sum_i log P(xi | class)
+```math
+\log P(\text{class} \mid x_1, x_2, \ldots, x_n) = \log P(\text{class}) + \sum_i \log P(x_i \mid \text{class})
 ```
 
 Cela transforme la prédiction en un produit de point:
@@ -194,7 +196,7 @@ Les deux sont des classifiants linéaires pour le texte.
 
 | Aspect | Naive Bayes | Logistic Regression |
 |--------|------------|-------------------|
-| Type | Generative (models P(X\|Y)) | Discriminative (models P(Y\|X)) |
+| Type | Generative (models $P(X \mid Y){}$) | Discriminative (models $P(Y \mid X){}$) |
 | Training | Count frequencies | Optimize loss function |
 | Small data | Better (strong prior helps) | Worse (not enough to estimate weights) |
 | Large data | Worse (wrong assumption hurts) | Better (flexible boundary) |
@@ -221,8 +223,8 @@ flowchart LR
 
 En pratique, nous travaillons dans l'espace log pour éviter le sous-flux des points flottants. Au lieu de multiplier de nombreuses petites probabilités, nous ajoutons leurs logarithmes:
 
-```
-log P(class | features) = log P(class) + sum_i log P(feature_i | class)
+```math
+\log P(\text{class} \mid \text{features}) = \log P(\text{class}) + \sum_i \log P(\text{feature}_i \mid \text{class})
 ```
 
 ```figure
@@ -239,7 +241,7 @@ La mise en œuvre à partir de zéro:
 
 1. **fit(X, y)**Pour chaque classe, comptez la fréquence de chaque fonctionnalité. Ajoutez le lissage Laplace. Comptez les probabilités de journaux. Réservez les prérogatives de classe (journaux de fréquences de classe).
 
-2. **predict_log_proba(X)**Pour chaque échantillon, calculer le log P(class) + la somme du log P(feature_i==class) pour toutes les classes.
+2. **predict_log_proba(X)**: Pour chaque échantillon, calculer $\log P(\text{class})$+ somme de $\log P(\text{feature}_i \mid \text{class})$Pour toutes les classes. Ceci est une matrice de multiplication: X @ log_probs.T + log_priors.
 
 3. **predict(X)**: Retournez la classe avec la plus grande probabilité de log.
 
@@ -312,9 +314,9 @@ Le code démontre également:
 
 ### Vite de prédiction
 
-La prédiction naïve de Bayes est une multiplication de matrice. Pour n échantillons avec d caractéristiques et k classes:
-- MultinomialNB: une matrice multipliée (n x d) @ (d x k) = O(n * d * k)
-- GaussianNB: n * k Évaluations PDF gaussiennes, chacune sur d caractéristiques = O(n * d * k)
+La prédiction de Bayes naïve est une multiplication de matrice.$n$échantillons avec $d$caractéristiques et $k$classes:
+- MultinomialNB: une matrice est multipliée $(n \times d) \mathbin{@} (d \times k) = O(n \cdot d \cdot k)$
+- GaussianNB: $n \cdot k$Évaluations Gaussian PDF, chacune à la fin $d$caractéristiques = $O(n \cdot d \cdot k)$
 
 Les deux sont linéaires dans toutes les dimensions. Comparer ceci à KNN (qui nécessite le calcul de la distance à tous les points de formation) ou SVM avec le noyau RBF (qui nécessite l'évaluation du noyau contre tous les vecteurs de support). NB est plus rapide par ordre de magnitude au moment de la prédiction.
 
@@ -387,7 +389,7 @@ Le `binary=True`flag dans CountVectorizer convertit tous les nombres en 0/1. San
 
 ### Calibration NB Probabilités
 
-Les probabilités de NB sont mal calibrées. Lorsque NB dit P(spam) = 0,95, la vraie probabilité pourrait être de 0,7. Si vous avez besoin d'estimations de probabilité fiables (par exemple, pour définir un seuil ou combiner avec d'autres modèles), utilisez le CalibratedClassifierCV de sklearn:
+Les probabilités de NB sont mal calibrées.$P(\text{spam}) = 0.95$Si vous avez besoin d'estimations de probabilité fiables (par exemple, pour définir un seuil ou pour le combiner avec d'autres modèles), utilisez le CalibratedClassifierCV de sklearn:
 
 ```python
 from sklearn.calibration import CalibratedClassifierCV
@@ -405,7 +407,7 @@ Cela correspond à une régression logistique en plus des scores bruts de NB en 
 
 2. **Zero variance features.**Le GaussianNB est divisé par variance. Si une fonction a une variance zéro pour une classe (toutes les valeurs sont identiques), le calcul de probabilité est cassé. Le code ajoute un petit terme de lissage (1e-9) à toutes les variances pour éviter cela.
 
-3. **Class imbalance.**Si 99% des e-mails ne sont pas spam, le P (non-spam) = 0,99 est si fort qu'il dépasse les preuves de probabilité. Vous pouvez définir manuellement les priorités de classe ou utiliser le paramètre class_prior dans sklearn.
+3. **Class imbalance.**Si 99% des e-mails ne sont pas du spam, le précédent $P(\text{not-spam}) = 0.99$Vous pouvez définir manuellement les classes prioritaires ou utiliser le paramètre class_prior dans sklearn.
 
 4. **Feature scaling.**Le multinomialNB n'a pas besoin d'échelle (il fonctionne sur les calculs). Le GaussianNB n'a pas besoin d'échelle non plus (il estime les statistiques par caractéristique).
 
@@ -431,7 +433,7 @@ En pratique, ces modes d'échec sont rares pour la classification du texte. Les 
 
 1. **Smoothing experiment.**Prenez MultinomialNB sur les données de texte avec des valeurs alpha de 0,01, 0,1, 1,0, 10,0 et 100,0.
 
-2. **Feature independence test.**Prenez un ensemble de données de texte réel. Choisissez deux mots qui sont évidemment corrélés ("machine" et "apprentissage"). Comptez P "class word1′′) * P "word2′′) et comparez avec P "word1 AND word2′′ class. Quelle est la erreur de l'hypothèse d'indépendance?
+2. **Feature independence test.**Prenez un ensemble de données de texte réel. Choisissez deux mots qui sont évidemment corrélés ("machine" et "apprentissage"). Compute $P(\text{word}_1 \mid \text{class}) \cdot P(\text{word}_2 \mid \text{class})$et comparer à $P(\text{word}_1 \text{ AND } \text{word}_2 \mid \text{class})$La supposition d'indépendance est-elle fausse ?
 
 3. **Bernoulli implementation.**Extension du code avec une classe BernoulliNB. Convertir les sacs de mots en binaire (présent/absent) et comparer la précision contre MultinomialNB sur les données de texte. Quand Bernoulli gagne-t-il?
 
@@ -444,14 +446,14 @@ En pratique, ces modes d'échec sont rares pour la classification du texte. Les 
 | Term | What people say | What it actually means |
 |------|----------------|----------------------|
 | Naive Bayes | "Simple probabilistic classifier" | A classifier that applies Bayes' theorem with the assumption that features are conditionally independent given the class |
-| Conditional independence | "Features don't affect each other" | P(A, B \| C) = P(A \| C) * P(B \| C) -- knowing B tells you nothing new about A once you know C |
+| Conditional independence | "Features don't affect each other" | $P(A, B \mid C) = P(A \mid C) \cdot P(B \mid C)$ -- knowing $B$ tells you nothing new about $A$ once you know $C$ |
 | Laplace smoothing | "Add-one smoothing" | Adding a small count to every feature to prevent zero probabilities from dominating the prediction |
-| Prior | "What you believed before seeing data" | P(class) -- the probability of each class before observing any features |
-| Likelihood | "How well the data fits" | P(features \| class) -- the probability of observing these features if the class is known |
-| Posterior | "What you believe after seeing data" | P(class \| features) -- the updated probability of the class after observing the features |
-| Generative model | "Models how data is generated" | A model that learns P(X \| Y) and P(Y), then uses Bayes' theorem to get P(Y \| X) |
-| Discriminative model | "Models the decision boundary" | A model that directly learns P(Y \| X) without modeling how X is generated |
-| Log probability | "Avoid underflow" | Working with log P instead of P to prevent the product of many small numbers from becoming zero in floating point |
+| Prior | "What you believed before seeing data" | $P(\text{class})$ -- the probability of each class before observing any features |
+| Likelihood | "How well the data fits" | $P(\text{features} \mid \text{class})$ -- the probability of observing these features if the class is known |
+| Posterior | "What you believe after seeing data" | $P(\text{class} \mid \text{features})$ -- the updated probability of the class after observing the features |
+| Generative model | "Models how data is generated" | A model that learns $P(X \mid Y)$ and $P(Y)$, then uses Bayes' theorem to get $P(Y \mid X)$ |
+| Discriminative model | "Models the decision boundary" | A model that directly learns $P(Y \mid X)$ without modeling how $X$ is generated |
+| Log probability | "Avoid underflow" | Working with $\log P$ instead of $P$ to prevent the product of many small numbers from becoming zero in floating point |
 
 ## Pour en savoir plus
 

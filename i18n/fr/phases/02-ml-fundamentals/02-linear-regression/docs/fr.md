@@ -26,36 +26,36 @@ Il s'agit non seulement de problèmes simples, mais aussi de régressions linéa
 
 ### Le modèle
 
-La régression linéaire suppose une relation linéaire entre la sortie (x) et la sortie (y):
+La régression linéaire suppose une relation linéaire entre les entrées ($x$) et de la production ($y$):
 
-```
+```math
 y = wx + b
 ```
 
-- `w`(poids/inclinaison): combien y change lorsque x augmente de 1
-- `b`(bias/intercept): la valeur de y lorsque x = 0
+- `w`(poids/inclinaison): combien $y$changements lorsque $x$augmentation de 1
+- `b`(bias/intercept): la valeur de $y$quand ?$x = 0$
 
 Pour les entrées (features) multiples, cela s'étend à:
 
-```
-y = w1*x1 + w2*x2 + ... + wn*xn + b
+```math
+y = w_1 x_1 + w_2 x_2 + \cdots + w_n x_n + b
 ```
 
-Ou sous forme vectorielle: `y = w^T * x + b`
+Ou sous forme vectorielle: $y = w^T x + b$
 
-L'objectif: trouver les valeurs de w et b qui rendent le y prévu le plus proche possible du y réel dans tous les exemples de formation.
+L'objectif: trouver les valeurs de $w$et $b$qui font ce qui est prévu $y$le plus proche possible de l'actuelle$y$Dans tous les exemples de formation.
 
 ### La fonction de coût (erreur moyenne carré)
 
 Comment mesurer " le plus près possible " ? Vous avez besoin d'un seul nombre qui détecte à quel point vos prédictions sont erronées.
 
-```
-MSE = (1/n) * sum((y_predicted - y_actual)^2)
+```math
+\text{MSE} = \frac{1}{n} \sum (y_{\text{predicted}} - y_{\text{actual}})^2
 ```
 
 Pourquoi le carré? Deux raisons. Premièrement, il pénalise les erreurs importantes plus que les erreurs mineures (une erreur de 10 est 100 fois pire qu'une erreur de 1, pas 10x). Deuxièmement, la fonction carré est lisse et différenciable partout, ce qui facilite l'optimisation.
 
-La fonction de coût crée une surface. Pour un seul poids w et un biais b, la surface de l'ESM ressemble à un bol (un paraboloïde convexe).
+La fonction de coût crée une surface.$w$et préjugés $b$La surface de la cuvette est un peu comme une cuvette, le fond de la cuvette est le point où la cuvette est réduite au minimum.
 
 ### Descent graduel
 
@@ -74,18 +74,22 @@ flowchart TD
 
 Les gradients vous disent deux choses: quelle direction déplacer chaque paramètre, et combien de déplacer.
 
-Pour les émissions de masse de masse avec y_hat = wx + b:
+Pour les ESM avec $\hat{y} = wx + b$- Le numéro de la liste:
 
-```
-dMSE/dw = (2/n) * sum((y_hat - y) * x)
-dMSE/db = (2/n) * sum(y_hat - y)
+```math
+\begin{aligned}
+\frac{\partial \text{MSE}}{\partial w} &= \frac{2}{n} \sum (\hat{y} - y) \, x \\
+\frac{\partial \text{MSE}}{\partial b} &= \frac{2}{n} \sum (\hat{y} - y)
+\end{aligned}
 ```
 
 La règle de mise à jour:
 
-```
-w = w - learning_rate * dMSE/dw
-b = b - learning_rate * dMSE/db
+```math
+\begin{aligned}
+w &= w - \text{learning\_rate} \cdot \frac{\partial \text{MSE}}{\partial w} \\
+b &= b - \text{learning\_rate} \cdot \frac{\partial \text{MSE}}{\partial b}
+\end{aligned}
 ```
 
 Le taux d'apprentissage contrôle la taille des étapes. Trop grand: vous dépassez le minimum et divergez. Trop petit: la formation prend toujours.
@@ -94,18 +98,18 @@ Le taux d'apprentissage contrôle la taille des étapes. Trop grand: vous dépas
 
 Pour la régression linéaire spécifiquement, il existe une formule directe qui donne les poids optimaux sans aucune itération:
 
-```
-w = (X^T * X)^(-1) * X^T * y
+```math
+w = (X^T X)^{-1} X^T y
 ```
 
-Il est préférable de faire une descente de gradient, car l'inversion de la matrice est O (n^3) dans le nombre de caractéristiques.
+Cela inverse une matrice à résoudre pour $w$Pour les grands ensembles de données (millions de lignes ou des milliers de fonctionnalités), la descente de gradient est préférée car l'inversion de la matrice est$O(n^3)$dans le nombre de caractéristiques.
 
 ### Régrésion linéaire multiple
 
 Avec plusieurs caractéristiques, le modèle devient:
 
-```
-y = w1*x1 + w2*x2 + ... + wn*xn + b
+```math
+y = w_1 x_1 + w_2 x_2 + \cdots + w_n x_n + b
 ```
 
 Tout fonctionne de la même manière: MSE est la fonction de coût, la descente de gradient met à jour tous les poids simultanément.
@@ -116,36 +120,38 @@ Si une caractéristique varie de 0 à 1 et une autre de 0 à 1 000 000, la baiss
 
 Et si la relation n'est pas linéaire ? Vous pouvez toujours utiliser la régression linéaire en créant des caractéristiques polynomielles:
 
-```
-y = w1*x + w2*x^2 + w3*x^3 + b
+```math
+y = w_1 x + w_2 x^2 + w_3 x^3 + b
 ```
 
-C'est toujours une régression "linéaire" parce que le modèle est linéaire dans les poids (w1, w2, w3).
+Il s'agit toujours d'une régression "linéaire" parce que le modèle est linéaire dans les poids ($w_1, w_2, w_3$Vous utilisez simplement des caractéristiques non linéaires de $x$- Je suis désolé .
 
 Les polynômes de degré supérieur peuvent s'adapter à des courbes plus complexes mais risquent de se surpasser. Un polynôme de degré 10 traversera tous les points d'un ensemble de données de 10 points mais prédira mal les nouvelles données.
 
 ### R-quadrés
 
-Le MSE vous dit à quel point vous vous trompez, mais le nombre dépend de l'échelle de y. R-quadré (R^2) donne une mesure indépendante de l'échelle:
+L'EMS vous dit à quel point vous vous trompez, mais le nombre dépend de l'échelle de$y$. R-quadrés ($R^2$) donne une mesure indépendante de l'échelle:
 
-```
-R^2 = 1 - (sum of squared residuals) / (sum of squared deviations from mean)
-    = 1 - SS_res / SS_tot
+```math
+\begin{aligned}
+R^2 &= 1 - \frac{\text{sum of squared residuals}}{\text{sum of squared deviations from mean}} \\
+&= 1 - \frac{SS_{\text{res}}}{SS_{\text{tot}}}
+\end{aligned}
 ```
 
-- R^2 = 1,0: prédictions parfaites
-- R^2 = 0,0: le modèle n'est pas meilleur que de prédire la moyenne à chaque fois
-- R^2 < 0,0: le modèle est pire que de prédire la moyenne
+- $R^2 = 1.0$: des prédictions parfaites
+- $R^2 = 0.0$: le modèle n'est pas meilleur que de prédire la moyenne à chaque fois
+- $R^2 < 0.0$: le modèle est pire que de prédire la moyenne
 
 ### Révision préliminaire de la régulation (régrésion de la vallée)
 
 Lorsque vous avez de nombreuses caractéristiques, le modèle peut surpasser en attribuant de grands poids.
 
-```
-Cost = MSE + lambda * sum(w_i^2)
+```math
+\text{Cost} = \text{MSE} + \lambda \sum w_i^2
 ```
 
-Le terme de pénalité décourage les poids importants. L'hyperparamètre lambda contrôle le compromis: un lambda plus élevé signifie des poids plus petits et plus de régularisation.
+La peine de condamnation décourage les poids élevés.$\lambda$contrôle le compromis: plus élevé $\lambda$Il est donc important de savoir si la méthode est efficace et pourquoi elle est utile.
 
 ```figure
 linear-regression-fit
@@ -520,24 +526,24 @@ Cette leçon donne:
 ## Exercices
 
 1. Appliquez la baisse de gradient de lot, la baisse de gradient stochastique (SGD) et la baisse de gradient de mini lot. Comparer la vitesse de convergence sur le même ensemble de données.
-2. Générer des données à partir d'une fonction cubique (y = ax^3 + bx^2 + cx + d + bruit).
-3. Implémenter la régression Lasso (régularisation L1: pénalité * alpha *( sur le direw_i i i i i)). Trainer les données de logement multi-factores. Comparer les poids qui vont à zéro par rapport à Ridge. Pourquoi L1 produit des solutions rares alors que L2 ne le fait pas?
+2. Générer des données à partir d'une fonction cube ($y = ax^3 + bx^2 + cx + d + \text{noise}$Les polynômes de degrés 1, 3 et 10 correspondent à la formation.$R^2$et test $R^2$Dans quelle mesure le surcoût devient-il évident ?
+3. Implémentation de la régression de Lasso (régularisation de L1: $\text{penalty} = \alpha \sum \lvert w_i \rvert$Les données de l'habitat à plusieurs caractéristiques sont utilisées. Comparer les poids qui atteignent zéro par rapport à Ridge. Pourquoi L1 produit-il des solutions rares alors que L2 ne le fait pas?
 
 ## Les termes clés
 
 | Term | What people say | What it actually means |
 |------|----------------|----------------------|
-| Linear regression | "Draw a line through data" | Find weight w and bias b that minimize the sum of squared differences between wx+b and actual y values |
+| Linear regression | "Draw a line through data" | Find weight $w$ and bias $b$ that minimize the sum of squared differences between $wx+b$ and actual $y$ values |
 | Cost function | "How bad the model is" | A function that maps model parameters to a single number measuring prediction error, which optimization minimizes |
-| Mean squared error | "Average of squared errors" | (1/n) * sum of (predicted - actual)^2, penalizing large errors disproportionately |
+| Mean squared error | "Average of squared errors" | $\frac{1}{n} \sum (\text{predicted} - \text{actual})^2$, penalizing large errors disproportionately |
 | Gradient descent | "Walk downhill" | Iteratively adjust parameters in the direction that reduces the cost function, using partial derivatives |
 | Learning rate | "Step size" | A scalar that controls how much parameters change per gradient descent step |
-| Normal equation | "Solve it directly" | The closed-form solution w = (X^T X)^-1 X^T y that gives optimal weights without iteration |
-| R-squared | "How good the fit is" | The fraction of variance in y explained by the model, ranging from negative infinity to 1.0 |
+| Normal equation | "Solve it directly" | The closed-form solution $w = (X^T X)^{-1} X^T y$ that gives optimal weights without iteration |
+| R-squared | "How good the fit is" | The fraction of variance in $y$ explained by the model, ranging from negative infinity to 1.0 |
 | Feature scaling | "Make features comparable" | Transforming features to similar ranges (e.g., zero mean, unit variance) so gradient descent converges faster |
 | Regularization | "Penalize complexity" | Adding a term to the cost function that shrinks weights, preventing overfitting |
-| Ridge regression | "L2 regularization" | Linear regression with a penalty of lambda * sum(w_i^2) added to MSE |
-| Polynomial regression | "Fitting curves with linear math" | Linear regression on polynomial features (x, x^2, x^3, ...), still linear in the weights |
+| Ridge regression | "L2 regularization" | Linear regression with a penalty of $\lambda \sum w_i^2$ added to MSE |
+| Polynomial regression | "Fitting curves with linear math" | Linear regression on polynomial features ($x, x^2, x^3, \ldots$), still linear in the weights |
 | Overfitting | "Memorizing training data" | Using a model so complex that it fits noise in training data and fails on new data |
 
 ## Pour en savoir plus

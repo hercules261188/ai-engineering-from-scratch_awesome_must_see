@@ -35,25 +35,27 @@ Considérez un ensemble de données avec 1000 échantillons: 990 négatifs, 10 p
 | Actually Positive | 0 (TP) | 10 (FN) |
 | Actually Negative | 0 (FP) | 990 (TN) |
 
-La précision est de 0 + 990) / 1000 = 99,0%
+```math
+\text{Accuracy} = (0 + 990) / 1000 = 99.0\%
+```
 
 Le modèle ne détecte aucune fraude, aucune maladie, aucun défaut, mais la précision est de 99%.
 
 ### Meilleures mesures
 
-**Precision**= TP / (TP + FP). De tout ce qui est marqué comme positif, combien sont-ils réellement?
+**Precision**- Je suis là.$\text{TP} / (\text{TP} + \text{FP})$De tout ce qui est marqué comme positif, combien sont-ils réellement ?
 
-**Recall**TP / (TP + FN). De tout ce qui est positif, combien avons-nous attrapé ?
+**Recall**- Je suis là.$\text{TP} / (\text{TP} + \text{FN})$De tout ce qui est positif, combien avons-nous attrapé ?
 
-**F1 Score**= 2 * précision * rappel / (precision + rappel). La moyenne harmonieuse.
+**F1 Score**- Je suis là.$2 \cdot \text{precision} \cdot \text{recall} / (\text{precision} + \text{recall})$La moyenne harmonieuse pénalise un déséquilibre extrême entre précision et rappel plus que la moyenne arithmétique.
 
-**F-beta Score**= (1 + bêta^2) * précision * rappel / (bêta^2 * précision + rappel). Lorsque bêta > 1, rappel est plus important. Lorsque bêta < 1, la précision est plus importante. F2 est fréquent dans la détection de la fraude (la fraude manquante est pire qu'une fausse alarme).
+**F-beta Score**- Je suis là.$(1 + \beta^2) \cdot \text{precision} \cdot \text{recall} / (\beta^2 \cdot \text{precision} + \text{recall})$- Quand ?$\beta > 1$Quand vous vous souvenez de ce qui s'est passé,$\beta < 1$La détection de la fraude est courante (la fraude manquante est pire qu'une fausse alarme).
 
 **AUPRC**(Area Under Precision-Recall Curve). Comme AUC-ROC mais plus informatif pour les données déséquilibrées. Un classificateur aléatoire a AUPRC égal au taux de classe positive (pas 0,5 comme ROC). Cela facilite la perception des améliorations.
 
-**Matthews Correlation Coefficient**= (TP * TN - FP * FN) / sqrt((TP+FP)(TP+FN)(TN+FP)(TN+FN)). Va de -1 à +1. Ne donne un score élevé que lorsque le modèle fonctionne bien sur les deux classes.
+**Matthews Correlation Coefficient**- Je suis là.$(\text{TP} \cdot \text{TN} - \text{FP} \cdot \text{FN}) / \sqrt{(\text{TP}+\text{FP})(\text{TP}+\text{FN})(\text{TN}+\text{FP})(\text{TN}+\text{FN})}$. varie de -1 à +1. ne donne un score élevé que lorsque le modèle fonctionne bien sur les deux classes.
 
-Pour le modèle "prédire toujours négatif" ci-dessus: précision = 0/0 (indéfini, souvent réglé sur 0), rappel = 0/10 = 0, F1 = 0, MCC = 0. Ces mesures identifient correctement le modèle comme sans valeur.
+Pour le modèle "prédire toujours négatif" ci-dessus: $\text{precision} = 0/0$(indéfinie, souvent définie à 0), $\text{recall} = 0/10 = 0$- Je suis là .$\text{F1} = 0$- Je suis là .$\text{MCC} = 0$Ces mesures identifient correctement le modèle comme sans valeur.
 
 ### Le pipeline de données déséquilibrées
 
@@ -79,9 +81,9 @@ Le suréchantillonnage aléatoire duplique les échantillons existants de minori
 
 SMOTE crée de nouveaux échantillons synthétiques de minorités qui sont plausibles mais pas des copies.
 
-1. Pour chaque échantillon minoritaire x, trouvez son voisin le plus proche k parmi les autres échantillons minoritaires
+1. Pour chaque échantillon minoritaire $x$, trouver son .$k$les voisins les plus proches parmi les autres échantillons de minorités
 2. Choisissez un voisin au hasard
-3. Créez un nouvel échantillon sur le segment de ligne entre x et ce voisin
+3. Créer un nouveau échantillon sur le segment de ligne entre $x$et ce voisin
 
 La formule: `new_sample = x + random(0, 1) * (neighbor - x)`
 
@@ -137,24 +139,24 @@ flowchart LR
 Au lieu de modifier les données, modifiez la façon dont le modèle traite les erreurs.
 
 Pour un problème binaire avec 950 échantillons négatifs et 50 échantillons positifs:
-- Poids pour la classe négative = n_échantillons / (2 * n_négatif) = 1000 / (2 * 950) = 0,526
-- Poids pour la classe positive = n_échantillons / (2 * n_positif) = 1000 / (2 * 50) = 10,0
+- Poids pour la classe négative = $n_{\text{samples}} / (2 \cdot n_{\text{negative}}) = 1000 / (2 \cdot 950) = 0.526$
+- Poids pour la classe positive = $n_{\text{samples}} / (2 \cdot n_{\text{positive}}) = 1000 / (2 \cdot 50) = 10.0$
 
 La classe positive a 19 fois le poids. Une mauvaise classification d'un échantillon positif coûte autant que 19 échantillons négatifs.
 
 En régression logistique, cela modifie la fonction de perte:
 
-```
-weighted_loss = -sum(w_i * [y_i * log(p_i) + (1-y_i) * log(1-p_i)])
+```math
+\text{weighted\_loss} = -\sum \bigl( w_i \cdot [y_i \log(p_i) + (1-y_i) \log(1-p_i)] \bigr)
 ```
 
-où w_i dépend de la classe de l'échantillon i.
+où $w_i$dépend de la classe de l'échantillon $i$- Je suis désolé .
 
 Les poids de classe sont mathématiquement équivalents à un suréchantillonnage dans l'attente, mais sans créer de nouveaux points de données.
 
 ### Réglage du seuil
 
-La plupart des classifiateurs produisent une probabilité. Le seuil par défaut est de 0,5: si P ((positif) >= 0,5, prédire positif. Mais 0,5 est arbitraire. Lorsque les classes sont déséquilibrées, le seuil optimal est généralement beaucoup plus bas.
+La plupart des classifiateurs produisent une probabilité.$P(\text{positive}) \ge 0.5$La valeur de la valeur de la classe est généralement beaucoup plus faible.
 
 Le processus:
 1. Formez un modèle
@@ -172,7 +174,7 @@ flowchart LR
     E --> F[Use in Production]
 ```
 
-Un modèle peut produire P ((fraude) = 0,15 pour une transaction frauduleuse. Au seuil 0,5, cela est classé comme ne pas être frauduleux. Au seuil 0,10, il est correctement capturé. L'étalonnage de probabilité compte moins que le classement - tant que la fraude a des probabilités plus élevées que la non-fraude, il existe un seuil qui les sépare.
+Un modèle pourrait produire $P(\text{fraud}) = 0.15$Pour une transaction frauduleuse. Au seuil de 0,5, cela est classé comme non frauduleux. Au seuil de 0,10, il est correctement capturé. La calibration de probabilité compte moins que le classement - tant que la fraude a des probabilités plus élevées que la non-fraude, il existe un seuil qui les sépare.
 
 ### Un apprentissage peu coûteux
 
@@ -180,8 +182,8 @@ Généralisation des poids de classe: au lieu de coûts uniformes, attribuer des
 
 | | Predict Positive | Predict Negative |
 |--|---|---|
-| Actually Positive | 0 (correct) | C_FN = 100 |
-| Actually Negative | C_FP = 1 | 0 (correct) |
+| Actually Positive | 0 (correct) | $C_{\text{FN}} = 100$ |
+| Actually Negative | $C_{\text{FP}} = 1$ | 0 (correct) |
 
 Le manque d'une transaction frauduleuse (FN) coûte 100 fois plus cher qu'une fausse alarme (FP).
 

@@ -51,7 +51,7 @@ Les nombres bruts sont rarement prêts à être modelés.
 
 **Binning:**Convertisse les valeurs continues en catégories. Utilisée lorsque la relation entre caractéristique et cible est non linéaire mais passive (par exemple, groupes d'âge).
 
-**Polynomial features:**Il crée des termes x^2, x^3, x1*x2. Les modèles linéaires captent des relations non linéaires au prix de plus de fonctionnalités.
+**Polynomial features:**Il crée$x^2$- Je suis là .$x^3$- Je suis là .$x_1 x_2$Les modèles linéaires captent les relations non linéaires au prix de plus de caractéristiques.
 
 ### Caractéristiques de la catégorie
 
@@ -69,10 +69,12 @@ Les modèles ont besoin de numéros, les catégories de code.
 
 **TF-IDF:**Le terme fréquence-inverse document fréquence. pèse les mots par la façon dont ils sont uniques dans les documents. Les mots communs comme "le" ont un poids faible.
 
-```
-TF(word, doc) = count(word in doc) / total words in doc
-IDF(word) = log(total docs / docs containing word)
-TF-IDF = TF * IDF
+```math
+\begin{aligned}
+\text{TF}(\text{word}, \text{doc}) &= \frac{\text{count(word in doc)}}{\text{total words in doc}} \\
+\text{IDF}(\text{word}) &= \log \frac{\text{total docs}}{\text{docs containing word}} \\
+\text{TF-IDF} &= \text{TF} \cdot \text{IDF}
+\end{aligned}
 ```
 
 ### Des valeurs manquantes
@@ -87,7 +89,7 @@ Les données réelles ont des trous.
 
 ### Interaction des caractéristiques
 
-Parfois, la relation est dans la combinaison. "Ton poids" et "tête" seuls sont moins prédictifs que "BMI = poids / hauteur^2".
+Parfois, la relation est dans la combinaison. "Ton poids" et "tête" sont moins prédictifs que $\text{BMI} = \text{weight} / \text{height}^2$Les interactions de fonctionnalités multiplient l'espace de fonctionnalités, alors utilisez les connaissances de domaine pour choisir les bonnes.
 
 ### Sélection de fonctionnalités
 

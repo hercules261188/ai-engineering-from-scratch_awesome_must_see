@@ -82,7 +82,7 @@ En pratique, les meilleurs systèmes combinent les deux: détection non supervis
 
 ### Métode de Z-Score
 
-L'approche la plus simple: calculer la moyenne et l'écart standard de chaque caractéristique.
+L'approche la plus simple: calculer la moyenne et l'écart standard de chaque caractéristique.$k$déviations standards par rapport à la moyenne.
 
 ```text
 z_score = (x - mean) / std
@@ -148,11 +148,11 @@ flowchart TD
 
 Le score d'anomalie est basé sur la longueur moyenne du chemin sur tous les arbres, normalisée par la longueur de chemin attendue d'un arbre de recherche binaire aléatoire:
 
-```
-score(x) = 2^(-average_path_length(x) / c(n))
+```math
+\text{score}(x) = 2^{-\text{average\_path\_length}(x) / c(n)}
 ```
 
-Où ?`c(n)`est la longueur de cheminée attendue pour n échantillons. Le score près de 1 signifie anomalie. Le score près de 0,5 signifie normal. Le score près de 0 signifie très normal (en profondeur dans les amas denses).
+Où ?`c(n)`est la longueur de cheminée attendue pour $n$Les résultats obtenus par les échantillons. Un score proche de 1 signifie une anomalie. Un score proche de 0,5 signifie normal. Un score proche de 0 signifie très normal (en profondeur dans des grappes denses).
 
 **Strengths:**Aucune hypothèse de distribution. Fonctionne dans de grandes dimensions. Équelles bien (sublinéaire en taille d'échantillon parce que chaque arbre utilise un sous-échantillon).
 
@@ -168,7 +168,7 @@ Où ?`c(n)`est la longueur de cheminée attendue pour n échantillons. Le score 
 LOF compare la densité locale autour d'un point à celle autour de ses voisins.
 
 **How it works:**
-1. Pour chaque point, trouvez ses voisins les plus proches
+1. Pour chaque point, trouvez son $k$voisins les plus proches
 2. Calculer la densité de disponibilité locale (combien la zone est dense)
 3. Comparer la densité de chaque point avec celle de ses voisins.
 4. Si un point a une densité beaucoup plus faible que ses voisins, il est un écart
@@ -182,7 +182,7 @@ La partie "locale" est essentielle. Considérez un ensemble de données avec deu
 
 **Strengths:**Détecte les anomalies locales (points qui sont inhabituels dans leur voisinage, même s'ils ne sont pas inhabituels dans le monde entier).
 
-**Weaknesses:**Légère sur les grands ensembles de données (O(n^2) pour une mise en œuvre naïve.
+**Weaknesses:**Résultats de la recherche$O(n^2)$Il est sensible au choix de l'application.$k$- Ne fonctionne pas bien dans des dimensions très élevées (la malédiction de la dimensionnalité affecte les calculs de distance).
 
 ### Comparaison
 
@@ -199,7 +199,7 @@ L'évaluation des détecteurs d'anomalies est plus difficile que l'évaluation d
 
 - **Extreme class imbalance.**Avec des anomalies de 0,1%, prédire "normal" pour tout donne une précision de 99,9%.
 - **AUROC is misleading.**Avec un déséquilibre important, l'AUROC peut paraître bon même lorsque le modèle manque la plupart des anomalies aux seuils pratiques.
-- **Better metrics:**Precision@k (d'entre les éléments marqués au sommet de k, combien sont d'anomalies réelles), AUPRC (zone sous courbe de rappel de précision) et rappel à un taux de faux positif fixe.
+- **Better metrics:**Precision@k (de la plus haute$k$les éléments marqués, combien sont d'anomalies réelles), AUPRC (zone sous courbe de rappel de précision) et rappel à un taux de faux positifs fixe.
 
 ```mermaid
 flowchart LR
@@ -317,7 +317,7 @@ class IsolationForest:
         return scores
 ```
 
-Le facteur de normalisation `c(n)`est la longueur de chemin attendue d'une recherche infructueuse dans un arbre de recherche binaire avec n éléments.`2 * H(n-1) - 2*(n-1)/n`où `H`Cette normalisation garantit que les scores sont comparables sur des ensembles de données de différentes tailles.
+Le facteur de normalisation `c(n)`est la longueur de chemin attendue d'une recherche infructueuse dans un arbre de recherche binaire avec $n$Les éléments.`2 * H(n-1) - 2*(n-1)/n`où `H`Cette normalisation garantit que les scores sont comparables sur des ensembles de données de différentes tailles.
 
 ### Scénarios de démonstration
 
@@ -433,7 +433,7 @@ Pour la détection en temps réel d'anomalies en production:
 
 2. **Multivariate anomalies.**Créer des données 2D où chaque fonctionnalité semble individuellement normale, mais la combinaison est anormale (par exemple, des points éloignés de la diagonale principale du cluster).
 
-3. **LOF from scratch.**Implémenter le facteur local outlier en utilisant les voisins les plus proches de k. Comparer avec le facteur local outlier de sklearn sur les mêmes données. Utilisez k=10 et k=50 - comment le choix de k affecte-t-il les résultats?
+3. **LOF from scratch.**Implémenter le Facteur Local Outlier en utilisant les voisins les plus proches.$k=10$et $k=50$-- comment choisir $k$affecte les résultats ?
 
 4. **Streaming anomaly detection.**Modifier le détecteur de Z-score pour qu'il fonctionne dans un environnement de streaming: mettre à jour la moyenne et la variance en cours d'exécution à mesure que de nouveaux points arrivent (algorithme en ligne de Welford).
 
@@ -448,10 +448,10 @@ Pour la détection en temps réel d'anomalies en production:
 | Contextual anomaly | "Normal value, wrong context" | An observation that is unusual given its context (time, location, etc.) but might be normal in another context |
 | Isolation Forest | "Random splits to find outliers" | An ensemble of random trees that isolates anomalies with fewer splits than normal points |
 | Local Outlier Factor | "Compare density to neighbors" | A method that flags points whose local density is much lower than their neighbors' density |
-| Z-score | "Standard deviations from mean" | (x - mean) / std, measuring how far a point is from the center in units of standard deviation |
-| IQR | "Interquartile range" | Q3 - Q1, measuring the spread of the middle 50% of data, used for robust outlier detection |
+| Z-score | "Standard deviations from mean" | $(x - \text{mean}) / \text{std}$, measuring how far a point is from the center in units of standard deviation |
+| IQR | "Interquartile range" | $Q3 - Q1$, measuring the spread of the middle 50% of data, used for robust outlier detection |
 | Contamination | "Expected fraction of anomalies" | A hyperparameter telling the detector what proportion of the data it should flag as anomalous |
-| Precision@k | "Of the top k flags, how many are real" | Precision computed on only the k most suspicious points, useful for imbalanced anomaly detection |
+| Precision@k | "Of the top k flags, how many are real" | Precision computed on only the $k$ most suspicious points, useful for imbalanced anomaly detection |
 | AUPRC | "Area under precision-recall curve" | A metric that summarizes precision-recall performance across all thresholds, better than AUROC for imbalanced data |
 
 ## Pour en savoir plus

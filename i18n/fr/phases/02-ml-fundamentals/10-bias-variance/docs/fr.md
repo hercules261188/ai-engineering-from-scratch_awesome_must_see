@@ -54,23 +54,24 @@ High variance (overfitting):
 
 ### La décomposition
 
-Pour n'importe quel point x, l'erreur de prédiction attendue sous perte carrée se décompose exactement:
+Pour n' importe quel point .$x$, l' erreur de prédiction attendue sous perte carrée se décompose exactement:
 
+```math
+\begin{aligned}
+& \text{Expected Error} = \text{Bias}^2 + \text{Variance} + \text{Irreducible Noise} \\[6pt]
+& \text{where:} \\
+& \quad \text{Bias}^2 = (\mathbb{E}[\hat{f}(x)] - f(x))^2 \\
+& \quad \text{Variance} = \mathbb{E}[(\hat{f}(x) - \mathbb{E}[\hat{f}(x)])^2] \\
+& \quad \text{Noise} = \mathbb{E}[(y - f(x))^2] \quad (\sigma^2)
+\end{aligned}
 ```
-Expected Error = Bias^2 + Variance + Irreducible Noise
 
-where:
-  Bias^2   = (E[f_hat(x)] - f(x))^2
-  Variance = E[(f_hat(x) - E[f_hat(x)])^2]
-  Noise    = E[(y - f(x))^2]             (sigma^2)
-```
+- $f(x)$est la vraie fonction
+- $\hat{f}(x)$est la prédiction de votre modèle
+- $\mathbb{E}[\ldots]$est l'attente sur les différents ensembles de formation
+- $y$est l'étiquette observée (vraie fonction plus bruit)
 
-- `f(x)`est la vraie fonction
-- `f_hat(x)`est la prédiction de votre modèle
-- `E[...]`est l'attente sur les différents ensembles de formation
-- `y`est l'étiquette observée (vraie fonction plus bruit)
-
-Le terme bruit est irréductible. Aucun modèle ne peut faire mieux que sigma^2 sur les données bruyantes.
+Le terme bruit est irréductible.$\sigma^2$Votre travail consiste à trouver le bon équilibre entre les$\text{bias}^2$et la variance.
 
 ### Complicité du modèle par rapport à l'erreur
 
@@ -131,9 +132,9 @@ Pourquoi cela arrive- t- il ? Au seuil d'interpolation, le modèle a une capacit
 
 | Regime | Parameters vs Samples | Behavior |
 |--------|----------------------|----------|
-| Underparameterized | p << n | Classical tradeoff applies |
-| Interpolation threshold | p ~ n | Variance peaks, test error spikes |
-| Overparameterized | p >> n | Implicit regularization kicks in, test error drops |
+| Underparameterized | $p \ll n$ | Classical tradeoff applies |
+| Interpolation threshold | $p \sim n$ | Variance peaks, test error spikes |
+| Overparameterized | $p \gg n$ | Implicit regularization kicks in, test error drops |
 
 Pour des raisons pratiques: si vous utilisez des réseaux neuraux ou de grands ensembles d'arbres, ne vous arrêtez pas au seuil d'interpolation. Soyez bien en dessous de celui-ci (avec une régularisation explicite) ou bien en dépassez-le.
 
@@ -180,7 +181,7 @@ Les méthodes d'assemblage sont l'outil le plus pratique pour combattre les vari
 
 **Bagging (Bootstrap Aggregating)**Les modèles de formation sont les plus variés, mais les modèles de formation sont les plus variés.
 
-Pourquoi cela fonctionne-t-il mathématiquement: si vous faites en moyenne N prédictions indépendantes, chacune avec une variance sigma^2, la variance de la moyenne est sigma^2 / N. Les modèles ne sont pas vraiment indépendants (ils voient tous des données similaires), donc la réduction est inférieure à 1/N, mais elle est toujours substantielle.
+Pourquoi ça marche mathématiquement: si vous faites en moyenne $N$Les prédictions indépendantes, chacune avec une variance $\sigma^2$, la variance de la moyenne est $\sigma^2 / N$Les modèles ne sont pas vraiment indépendants (ils ont tous des données similaires), de sorte que la réduction est inférieure à $1/N$Mais c'est encore substantiel.
 
 **Boosting**Le booster peut surpasser si vous ajoutez trop de modèles, vous devez donc arrêter ou régulariser tôt.
 
@@ -306,10 +307,10 @@ variance = np.mean(predictions.var(axis=0))
 total_error = np.mean(np.mean((predictions - y_true) ** 2, axis=1))
 ```
 
-- `mean_pred`est E[f_hat(x)] estimé à partir d'échantillons de démarrage
+- `mean_pred`est $\mathbb{E}[\hat{f}(x)]$estimé à partir d'échantillons de démarrage
 - `bias_sq`est l'écart carré entre la prédiction moyenne et la vérité
 - `variance`est la propagation moyenne des prédictions sur les échantillons de démarrage
-- `total_error`doit être approximativement égale à la particule^2 + variance + bruit
+- `total_error`devrait être approximativement égale $\text{bias}^2 + \text{variance} + \text{noise}$
 
 ### Étape 4: Curves d'apprentissage
 
@@ -440,7 +441,7 @@ Cette leçon donne: `outputs/prompt-model-diagnostics.md`
 
 2. Augmenter la taille du jeu d'entraînement de 30 à 300. Comment cela affecte-t-il la composante de variance?
 
-3. Ajouter la régulation L2 (régrésion de Ridge) à l'expérience. Pour un polynôme à degré élevé fixe (grade 15), balayer lambda de 0 à 100.
+3. Ajoutez à l'expérience la régulation L2 (régrésion de Ridge). Pour un polynôme à degré élevé fixe (grade 15), balayez lambda de 0 à 100.$\text{bias}^2$et la variance en tant que fonctions de lambda.
 
 4. Modifier la vraie fonction d' un polynôme à `sin(x)`Comment la décomposition des variantes de biais change-t-il ?
 

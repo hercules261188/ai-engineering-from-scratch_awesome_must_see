@@ -91,8 +91,8 @@ Une série temporelle est stationnaire si ses propriétés statistiques (média,
 
 **How to fix:**Différenciation. Au lieu de modéliser les valeurs brutes, modélisez le changement entre les valeurs consécutives:
 
-```
-diff[t] = value[t] - value[t-1]
+```math
+\text{diff}[t] = \text{value}[t] - \text{value}[t-1]
 ```
 
 Si une série de différenciation ne rend pas la série stationnaire, appliquez-la à nouveau (différenciation de deuxième ordre).
@@ -109,7 +109,7 @@ La série originale avait une tendance quadratique. La première différenciatio
 
 ### Corrélation automatique
 
-La fonction d'autocorrélation (ACF) trace cette corrélation pour chaque retard k.
+L' autocorrélation mesure la quantité d' une valeur à la fois $t$Corrélate avec la valeur à l'heure $t-k$(le secteur de l'énergie)$k$La fonction d'autocorrélation (ACF) trace cette corrélation pour chaque retard.$k$- Je suis désolé .
 
 **ACF tells you:**
 - Si l'ACF tombe à zéro après le retard 5, les valeurs de plus de 5 étapes sont sans importance.
@@ -142,7 +142,7 @@ Des fonctionnalités supplémentaires que vous pouvez concevoir:
 
 **How many lags?**Utilisez la fonction de corrélation automatique. Si l'ACF est significative jusqu'à 10 délais, utilisez au moins 10 délais. S'il y a une saisonnalité hebdomadaire, inclure 7 délais (et éventuellement 14).
 
-**The target alignment trap.**Lorsque vous créez des fonctionnalités de retard, la cible doit être la valeur au temps t, et toutes les fonctionnalités doivent utiliser des valeurs au temps t-1 ou plus tôt. Si vous incluez accidentellement la valeur au temps t comme une fonctionnalité, vous avez un prédicteur parfait - et un modèle complètement inutile. C'est le bug le plus courant dans l'ingénierie des fonctionnalités de séries temporelles.
+**The target alignment trap.**Lors de la création de fonctionnalités de retard, l'objectif doit être la valeur à l'heure $t$, et toutes les caractéristiques doivent utiliser des valeurs à la fois $t-1$Si vous incluez accidentellement la valeur à temps$t$comme une fonctionnalité, vous avez un prédicteur parfait -- et un modèle complètement inutile. C'est le bug le plus courant dans l'ingénierie des fonctionnalités de la série temporelle.
 
 ### Une validation à l'avance
 
@@ -178,8 +178,8 @@ flowchart TD
 ```
 
 Validation à l'avance:
-1. Traîne sur les données à jour t
-2. Prédiction à l'heure t+1 (ou t+1 à t+k pour plusieurs étapes)
+1. Trainer les données à jour $t$
+2. Prédire à temps $t+1$(ou $t+1$à $t+k$pour plusieurs étapes)
 3. Faites glisser la fenêtre vers l' avant
 4. Répétez
 
@@ -191,11 +191,11 @@ Chaque pliage de test contient uniquement des données qui viennent après toute
 
 ARIMA est le modèle classique de séries temporelles.
 
-- **AR (Autoregressive):**Prédire à partir de valeurs passées. AR(p) utilise les dernières valeurs p.
-- **I (Integrated):**Différenciation pour atteindre la stationarité.
-- **MA (Moving Average):**Prédire à partir d'erreurs de prévision passées.
+- **AR (Autoregressive):**Prédire à partir de valeurs passées.$p$Les valeurs.
+- **I (Integrated):**Différenciation pour atteindre la stationnalité.$d$les tours de différenciation.
+- **MA (Moving Average):**Prédiction à partir d'erreurs de prévision passées.$q$Les erreurs.
 
-ARIMA ((p, d, q) combine les trois. Vous choisissez p, d, q en fonction de l'analyse ACF/PACF ou de la recherche automatisée (ARIMA automatique).
+ARIMA ((p, d, q) combine les trois.$p$- Je suis là .$d$- Je suis là .$q$basé sur l'analyse ACF/PACF ou la recherche automatisée (ARIMA automatique).
 
 Nous ne allons pas mettre en œuvre ARIMA à partir de zéro - il nécessite une optimisation numérique qui est au-delà de la portée de cette leçon.
 
@@ -217,7 +217,7 @@ La prévision en une seule étape prédit une étape de l'avance.
 
 **Recursive (iterated):**Prédire une étape en avant, utiliser la prédiction comme entrée pour la prochaine étape. Simple mais les erreurs s'accumulent - chaque prédiction utilise la prédiction précédente, donc les erreurs sont compoxes.
 
-**Direct:**Exercer un modèle séparé pour chaque horizon. Le modèle 1 prévoit t+1, le modèle 5 prévoit t+5. Aucune accumulation d'erreur, mais chaque modèle a moins d'échantillons de formation et ils ne partagent pas d'informations.
+**Direct:**- Prenez un modèle séparé pour chaque horizon.$t+1$, prévoit le modèle 5 .$t+5$- Aucune accumulation d'erreurs, mais chaque modèle a moins d'échantillons de formation et ne partage pas d'informations.
 
 **Multi-output:**Exercer un modèle qui sort tous les horizons simultanément. Partage des informations à travers les horizons mais nécessite un modèle qui prend en charge plusieurs sorties (ou une fonction de perte personnalisée).
 
@@ -228,7 +228,7 @@ Pour la plupart des problèmes pratiques, commencez par le récursif pour les ho
 | Mistake | Why it happens | How to fix |
 |---------|---------------|-----------|
 | Random train/test split | Habit from standard ML | Use walk-forward or temporal split |
-| Using future features | Feature at time t included by mistake | Audit every feature for temporal alignment |
+| Using future features | Feature at time $t$ included by mistake | Audit every feature for temporal alignment |
 | Overfitting to seasonality | Model memorizes calendar patterns | Hold out a full seasonal cycle in the test set |
 | Ignoring scale changes | Revenue doubles but patterns stay | Model percentage change instead of absolute |
 | Too many lag features | "More history is better" | Use ACF to determine relevant lags |
@@ -386,7 +386,7 @@ print(f"Mean score: {scores.mean():.4f} +/- {scores.std():.4f}")
 
 La prévision des séries temporelles utilise des mesures de régression, mais dans un contexte conscient du temps:
 
-- **MAE (Mean Absolute Error):**"En moyenne, les prédictions sont déformées de 3,2 degrés".
+- **MAE (Mean Absolute Error):**Moyenne de $\lvert y_{\text{true}} - y_{\text{pred}} \rvert$Facile à interpréter en unités originales. "En moyenne, les prédictions sont déformées de 3,2 degrés".
 - **RMSE (Root Mean Squared Error):**La racine carrée de l'erreur carrée moyenne. Pénale les erreurs importantes plus que MAE. Utilisez quand les erreurs importantes sont pires que de nombreuses petites erreurs.
 - **MAPE (Mean Absolute Percentage Error):**La moyenne de l'erreur / valeur vraie = 100 *. indépendante de l'échelle, utile pour comparer entre différentes séries. Mais indéfinie lorsque les valeurs vraies sont zéro.
 - **Naive baseline comparison:**La base saisonnière naïve prédit la valeur d'une période antérieure (hier, la semaine dernière). Si votre modèle ne peut pas battre la naïve, quelque chose ne va pas.
@@ -444,10 +444,10 @@ Si votre modèle de ML de fantaisie perd à la base saisonnière naïve, vous av
 | Term | What people say | What it actually means |
 |------|----------------|----------------------|
 | Stationarity | "The stats don't change over time" | A series whose mean, variance, and autocorrelation structure are constant over time |
-| Differencing | "Subtract consecutive values" | Computing y[t] - y[t-1] to remove trends and achieve stationarity |
+| Differencing | "Subtract consecutive values" | Computing $y[t] - y[t-1]$ to remove trends and achieve stationarity |
 | Autocorrelation (ACF) | "How a series correlates with itself" | The correlation between a time series and a lagged copy of itself, as a function of the lag |
-| Partial autocorrelation (PACF) | "Direct correlation only" | Autocorrelation at lag k after removing the effect of all shorter lags |
-| Lag features | "Past values as inputs" | Using y[t-1], y[t-2], ..., y[t-k] as features to predict y[t] |
+| Partial autocorrelation (PACF) | "Direct correlation only" | Autocorrelation at lag $k$ after removing the effect of all shorter lags |
+| Lag features | "Past values as inputs" | Using $y[t-1], y[t-2], \ldots, y[t-k]$ as features to predict $y[t]$ |
 | Walk-forward validation | "Time-respecting cross-validation" | Evaluation where training data always precedes test data chronologically |
 | ARIMA | "The classic time series model" | AutoRegressive Integrated Moving Average: combines past values (AR), differencing (I), and past errors (MA) |
 | Seasonality | "Repeating calendar patterns" | Regular, predictable cycles in a time series tied to calendar periods (daily, weekly, yearly) |

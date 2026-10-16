@@ -48,10 +48,8 @@ Nous voulons les diviser de façon à ce que les nœuds enfants résultants soie
 
 **Gini impurity**mesure la probabilité qu'un échantillon choisi au hasard soit mal classé s'il est étiqueté selon la distribution de classes au nœud.
 
-```
-Gini(S) = 1 - sum(p_k^2)
-
-where p_k is the proportion of class k in set S.
+```math
+\text{Gini}(S) = 1 - \sum_k p_k^2 \quad \text{where } p_k \text{ is the proportion of class } k \text{ in set } S.
 ```
 
 Pour un nœud pur (tous une classe), Gini = 0, pour une fraction binaire avec des classes 50/50, Gini = 0,5.
@@ -64,8 +62,8 @@ Gini = 1 - (0.6^2 + 0.4^2) = 1 - (0.36 + 0.16) = 0.48
 
 **Entropy**mesure le contenu d'information (trouble) dans un nœud. couvert dans la leçon 09 de la phase 1.
 
-```
-Entropy(S) = -sum(p_k * log2(p_k))
+```math
+\text{Entropy}(S) = -\sum_k p_k \log_2(p_k)
 ```
 
 Pour un nœud pur, entropie = 0, pour une fraction binaire 50/50, entropie = 1,0.
@@ -81,20 +79,21 @@ Entropy = -(0.6 * log2(0.6) + 0.4 * log2(0.4))
 
 **Information gain**est la réduction de l'impureté (entropie ou Gini) après une fraction.
 
-```
-IG(S, feature, threshold) = Impurity(S) - weighted_avg(Impurity(S_left), Impurity(S_right))
-
-where the weights are the proportions of samples in each child.
+```math
+\begin{aligned}
+& IG(S, \text{feature}, \text{threshold}) = \text{Impurity}(S) - \text{weighted\_avg}(\text{Impurity}(S_{\text{left}}), \text{Impurity}(S_{\text{right}})) \\[4pt]
+& \text{where the weights are the proportions of samples in each child.}
+\end{aligned}
 ```
 
 L'algorithme avide de chaque nœud: essayez toutes les fonctionnalités et tous les seuils possibles. Choisissez la paire (fonction, seuil) qui maximize le gain d'informations.
 
 ### Comment fonctionne la séparation
 
-Pour un ensemble de données avec n caractéristiques et m échantillons au nœud courant:
+Pour un ensemble de données avec $n$caractéristiques et $m$échantillons au nœud courant:
 
-1. Pour chaque caractéristique j (j = 1 à n):
-   - Régler les échantillons par caractéristique j
+1. Pour chaque fonctionnalité $j$(le secteur de l'énergie)$j = 1$à $n$):
+   - Régler les échantillons par caractéristique $j$
    - Essayez chaque point intermédiaire entre des valeurs distinctes consécutives comme un seuil
    - Calculer le gain d'information pour chaque seuil
 2. Sélectionnez la fonctionnalité et le seuil avec le plus grand gain d'informations
@@ -109,7 +108,7 @@ Sans s'arrêter, l'arbre pousse jusqu'à ce que chaque feuille soit pure (un éc
 
 **Pre-pruning**Arrête l'arbre avant qu'il ne pousse pleinement:
 - Profondeur maximale: arrête de se diviser lorsque l'arbre atteint une profondeur définie
-- Primes minimaux par feuille: arrêt si un nœud contient moins de k prémices
+- Primes minimaux par feuille: arrêt si un nœud a moins de $k$échantillons
 - Obtention minimale d'informations: arrêt si la meilleure fraction améliore l'impureté de moins d'un seuil
 - Nœuds de feuilles maximaux: limiter le nombre total de feuilles
 
@@ -125,8 +124,8 @@ Pour la régression, la prédiction de la feuille est la moyenne des valeurs cib
 
 **Variance reduction**remplace le gain d'information:
 
-```
-VR(S, feature, threshold) = Var(S) - weighted_avg(Var(S_left), Var(S_right))
+```math
+VR(S, \text{feature}, \text{threshold}) = \text{Var}(S) - \text{weighted\_avg}(\text{Var}(S_{\text{left}}), \text{Var}(S_{\text{right}}))
 ```
 
 Choisissez la fraction qui réduit le plus la variance. L'arbre divise l'espace d'entrée en régions et prédit une constante (la moyenne) dans chaque région.
@@ -155,7 +154,7 @@ Deux sources de hasard rendent les arbres divers:
 
 **Bagging (bootstrap aggregating):**Chaque arbre est formé sur un échantillon de démarrage, un échantillon aléatoire avec le remplacement des données de formation. Environ 63% des échantillons originaux apparaissent dans chaque démarrage (le reste sont des échantillons hors sac qui peuvent être utilisés pour la validation).
 
-**Feature randomization:**Pour chaque division, seul un sous-ensemble aléatoire de caractéristiques est pris en compte. Pour la classification, la valeur par défaut est sqrt(n_factualités). Pour la régression, n_factualités/3. Cela empêche tous les arbres de se diviser sur la même caractéristique dominante.
+**Feature randomization:**À chaque fractionnement, seul un sous-ensemble aléatoire de caractéristiques est pris en compte.$\sqrt{n_{\text{features}}}$Pour la régression,$n_{\text{features}}/3$Cela empêche tous les arbres de se diviser sur la même caractéristique dominante.
 
 L'idée principale: en moyenne, de nombreux arbres décorérés réduisent la variance sans augmenter les biais.
 
@@ -165,9 +164,8 @@ Les forêts aléatoires fournissent naturellement des scores d'importance caract
 
 **Mean Decrease in Impurity (MDI):**Pour chaque caractéristique, additionnez la réduction totale de l'impureté sur tous les arbres et tous les nœuds où cette caractéristique est utilisée.
 
-```
-importance(feature_j) = sum over all nodes where feature_j is used:
-    (n_samples_at_node / n_total_samples) * impurity_decrease
+```math
+\text{importance}(\text{feature}_j) = \sum_{\text{nodes where feature}_j \text{ is used}} \frac{n_{\text{samples at node}}}{n_{\text{total samples}}} \cdot \text{impurity\_decrease}
 ```
 
 Ceci est rapide (computé pendant l'entraînement) mais biaisé vers des caractéristiques et des caractéristiques de haute cardinalité avec de nombreux points de fraction possibles.
@@ -444,7 +442,7 @@ Cette leçon produit `outputs/prompt-tree-interpreter.md`-- une requête qui int
 
 1. Trainer un seul arbre de décision sur un ensemble de données 2D avec 3 classes. Tracer manuellement les fractions et dessiner les limites de décision rectangulaire. Comparer les limites à max_depth=2 vs max_depth=10.
 
-2. Implémenter la division de réduction de variance pour les arbres de régression. Générer y = sin(x) + bruit pour 200 points et correspondre à votre arbre de régression.
+2. Implémenter la division de réduction de variance pour les arbres de régression.$y = \sin(x) + \text{noise}$Pour les calculs de la résistance, il faut faire une trace de la résistance de l'arbre par rapport à la courbe vraie.
 
 3. Construisez une forêt aléatoire avec 1, 5, 10, 50 et 200 arbres. Prenez le temps de tester la précision et la précision des essais par rapport au nombre d'arbres. Observez que la précision des essais est des plateaux mais ne diminue pas (les forêts résistent au surmontage).
 

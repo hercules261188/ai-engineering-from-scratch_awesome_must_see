@@ -81,11 +81,11 @@ flowchart TB
     Fold5 --> R
 ```
 
-1. Divisez les données en plies de taille K
-2. Pour chaque pli, entraînez sur les plies K-1 et validez sur le pli restant
-3. La moyenne des scores de validation K
+1. Divisez les données en $K$des plis de taille égale
+2. Pour chaque pli, continuez à trainer.$K-1$plies et valides sur le pli restant
+3. La moyenne$K$Scores de validation
 
-Les données sont utilisées pour la validation une seule fois.
+$K=5$ou $K=10$chaque point de données est utilisé pour la validation exactement une fois. le score moyen est une estimation plus stable que toute fraction unique.
 
 **Stratified K-fold**Si votre ensemble de données est de 70% classe A et de 30% classe B, chaque pli aura à peu près le même ratio. Ceci est important pour les ensembles de données déséquilibrés où une fraction aléatoire pourrait mettre tous les échantillons minoritaires dans un seul pli.
 
@@ -100,18 +100,18 @@ Les données sont utilisées pour la validation une seule fois.
 
 À partir de cette matrice, toutes les autres mesures suivent:
 
-- **Accuracy**= (TP + TN) / (TP + TN + FP + FN). Fraction des prédictions correctes.
-- **Precision**= TP / (TP + FP). De toutes les choses prédites positives, combien étaient réellement positives ? Utilisez lorsque les faux positifs sont coûteux (par exemple, le filtre de spam marquant le vrai courrier électronique comme spam).
-- **Recall**(sensibilité) = TP / (TP + FN). De tous les positifs réels, combien avons-nous capturé ? Utilisez quand les faux négatifs sont coûteux (par exemple, le dépistage du cancer manquant une tumeur).
-- **F1 score**= 2 * précision * rappel / (precision + rappel). Moyenne harmonieuse de précision et de rappel.
+- **Accuracy**- Je suis là.$(TP + TN) / (TP + TN + FP + FN)$- Fraction de prédictions correctes.
+- **Precision**- Je suis là.$TP / (TP + FP)$. De toutes les choses prédictées positives, combien en étaient réellement ? Utilisez lorsque les faux positifs sont coûteux (par exemple, filtre spam marquant le vrai courrier électronique comme spam).
+- **Recall**(sensibilité) = $TP / (TP + FN)$- de tous les positifs réels, combien avons-nous pris ?
+- **F1 score**- Je suis là.$2 \cdot \text{precision} \cdot \text{recall} / (\text{precision} + \text{recall})$- Un moyen harmonieux de précision et de rappel.
 - **AUC-ROC**: Area Under the Receiver Operating Characteristic curve. Graphique de taux positif vrai vs taux faux positif à différents seuils de classification. AUC = 0,5 signifie deviner au hasard, AUC = 1,0 signifie séparation parfaite. Indépendante du seuil: il mesure à quel point le modèle classe les positifs au-dessus des négatifs, quel que soit le coup de coupe que vous choisissez.
 
 ### Mesures de régression
 
-- **MSE**(Erreur carrée moyenne) = moyenne((y_true - y_pred) ^ 2). Pénalise les erreurs importantes quadratiquement.
-- **RMSE**(Erreur carrée de la racine moyenne) = sqrt(MSE). Les mêmes unités que la variable cible.
-- **MAE**(Méthode d'erreur absolue) = moyenne de la vérité - y_predition). Traite toutes les erreurs de manière linéaire.
-- **R-squared**= 1 - SS_res / SS_tot, où SS_res = somme((y_true - y_pred) ^2) et SS_tot = somme(((y_true - y_mean) ^2). Fraction de variance expliquée par le modèle. R^2 = 1,0 est parfait. R^2 = 0,0 signifie que le modèle n'est pas meilleur que toujours prédire la moyenne. R^2 peut être négatif si le modèle est pire que la moyenne.
+- **MSE**(Erreur moyenne carré) = $\text{mean}((y_{\text{true}} - y_{\text{pred}})^2)$- Il pénalise les erreurs importantes quadratiquement.
+- **RMSE**(erreur de base moyenne carrée) = $\sqrt{\text{MSE}}$- Les mêmes unités que la variable cible, plus facile à interpréter que le MSE.
+- **MAE**(Erreur absolue moyenne) = $\text{mean}(\lvert y_{\text{true}} - y_{\text{pred}} \rvert)$- traite toutes les erreurs de manière linéaire.
+- **R-squared**- Je suis là.$1 - SS_{\text{res}} / SS_{\text{tot}}$Où ?$SS_{\text{res}} = \sum (y_{\text{true}} - y_{\text{pred}})^2$et $SS_{\text{tot}} = \sum (y_{\text{true}} - y_{\text{mean}})^2$. Fraction de variance expliquée par le modèle. $R^2 = 1.0$C'est parfait.$R^2 = 0.0$Le modèle n'est pas meilleur que de toujours prédire la moyenne. $R^2$peut être négatif si le modèle est pire que la moyenne.
 
 ### Curves d'apprentissage
 
@@ -664,10 +664,10 @@ Cette leçon donne:
 |------|----------------|----------------------|
 | Overfitting | "Memorizing the training data" | The model captures noise in the training data, performing well on training but poorly on unseen data |
 | Cross-validation | "Testing on different subsets" | Systematically rotating which portion of data is used for validation, averaging results across all rotations |
-| Precision | "How many predicted positives are correct" | TP / (TP + FP): the fraction of positive predictions that are actually positive |
-| Recall | "How many actual positives we found" | TP / (TP + FN): the fraction of actual positives that were correctly identified |
+| Precision | "How many predicted positives are correct" | $TP / (TP + FP)$: the fraction of positive predictions that are actually positive |
+| Recall | "How many actual positives we found" | $TP / (TP + FN)$: the fraction of actual positives that were correctly identified |
 | AUC-ROC | "How well the model separates classes" | The area under the curve of true positive rate vs false positive rate across all thresholds, from 0.5 (random) to 1.0 (perfect) |
-| R-squared | "How much variance is explained" | 1 - (sum of squared residuals / total sum of squares): the fraction of target variance captured by the model |
+| R-squared | "How much variance is explained" | $1 - (\text{sum of squared residuals} / \text{total sum of squares})$: the fraction of target variance captured by the model |
 | Data leakage | "The model cheated" | Using information during training that would not be available at prediction time, leading to optimistic evaluation |
 | Learning curve | "How performance changes with more data" | A plot of training and validation scores vs training set size, revealing underfitting or overfitting |
 | Stratified split | "Keeping class ratios balanced" | Splitting data so each subset has the same proportion of each class as the full dataset |

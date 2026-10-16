@@ -58,9 +58,9 @@ La fonction objective (inertie) mesure la distance carrée totale de chaque poin
 
 Deux méthodes standard:
 
-**Elbow method:**Exécuter K-Means pour K = 1, 2, 3, ..., n. Inertie de la trace vs K. Rechercher le "coude-d'épaule" où l'ajout de plus de grappes cesse de réduire l'inertie de manière significative.
+**Elbow method:**Retourner à K-Means$K = 1, 2, 3, \ldots, n$. Inertie de la trace contre K. Cherchez le "coude-à-cou" où l'ajout de plus de grappes cesse de réduire l'inertie de manière significative.
 
-**Silhouette score:**Pour chaque point, mesurez à quel point il est similaire à son propre cluster (a) par rapport à l'autre cluster (b). Le coefficient de silhouette est (b - a) / max(a, b), allant de -1 (cluster erroné) à +1 (bien regroupé).
+**Silhouette score:**Pour chaque point, mesurez à quel point il est similaire à son propre cluster ($a$) par rapport à l'autre groupe le plus proche ($b$Le coefficient de silhouette est $(b - a) / \max(a, b)$, allant de -1 (cluster erroné) à +1 (bien regroupé).
 
 ### DBSCAN: Clustering basé sur la densité
 
@@ -112,7 +112,7 @@ GMM peut modéliser des amas elliptiques (pas seulement sphériques comme K-Mean
 |--------|----------|------------|
 | K-Means | Large datasets, spherical clusters, known K | Irregular shapes, outliers present |
 | DBSCAN | Unknown K, arbitrary shapes, outlier detection | Varying densities, very high dimensions |
-| Hierarchical | Small datasets, need dendrogram, unknown K | Large datasets (O(n^2) memory) |
+| Hierarchical | Small datasets, need dendrogram, unknown K | Large datasets ($O(n^2)$ memory) |
 | GMM | Overlapping clusters, soft assignments needed | Very large datasets, too many dimensions |
 
 ### Détection des anomalies par agglomération
@@ -488,7 +488,7 @@ Cette leçon produit des implémentations de travail de K-Means, DBSCAN et GMM �
 | Clustering | "Grouping similar things" | Partitioning data into subsets where within-group similarity exceeds between-group similarity, measured by a specific distance metric |
 | Centroid | "The center of a cluster" | The mean of all points assigned to a cluster; used by K-Means as the cluster representative |
 | Inertia | "How tight the clusters are" | Sum of squared distances from each point to its assigned centroid; lower is tighter |
-| Silhouette score | "How well-separated clusters are" | For each point, (b - a) / max(a, b) where a is mean intra-cluster distance and b is mean nearest-cluster distance |
+| Silhouette score | "How well-separated clusters are" | For each point, $(b - a) / \max(a, b)$ where $a$ is mean intra-cluster distance and $b$ is mean nearest-cluster distance |
 | Core point | "A point in a dense region" | A point with at least min_samples neighbors within eps distance, in DBSCAN |
 | EM algorithm | "Soft K-Means" | Expectation-Maximization: iteratively compute membership probabilities (E-step) and update distribution parameters (M-step) |
 | Dendrogram | "A tree of clusters" | A tree diagram showing the order and distance at which clusters were merged in hierarchical clustering |

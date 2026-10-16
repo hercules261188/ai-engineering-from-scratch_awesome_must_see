@@ -176,7 +176,7 @@ flowchart LR
 
 Le jeu de test est sacré. Vous le regardez exactement une fois. Si vous continuez à ajuster votre modèle en fonction des performances du test, vous vous entraînez efficacement sur le jeu de test et vos chiffres rapportés sont sans signification.
 
-Pour les petits ensembles de données, utilisez la validation croisée k-fold: divisez les données en k parties, entraînez sur k-1 parties, validez sur la partie restante, tournez et obtenez des résultats moyens.
+Pour les petits ensembles de données, utilisez la validation croisée k-fold:$k$Parties, train sur $k-1$Les résultats sont les suivants:
 
 ### Sur-adaptation contre sous-adaptation
 
@@ -242,9 +242,9 @@ C'est le cadre mathématique derrière le sur-adaptation et le sous-adaptation.
 | Just right | Medium | Medium | Good generalization |
 | Too high (degree-20 polynomial for 10 points) | Low | High | Overfitting |
 
-Erreur totale = Bias^2 + Variance + Bruit irréductible
+$\text{Total error} = \text{Bias}^2 + \text{Variance} + \text{Irreducible noise}$
 
-Vous ne pouvez pas réduire le bruit irréductible (c'est le hasard dans les données elles-mêmes).
+Vous ne pouvez pas réduire le bruit irréductible (c'est le hasard dans les données elles-mêmes).$\text{bias}^2 + \text{variance}$est réduite au minimum.
 
 ### Il n'y a pas de théorème du déjeuner gratuit
 

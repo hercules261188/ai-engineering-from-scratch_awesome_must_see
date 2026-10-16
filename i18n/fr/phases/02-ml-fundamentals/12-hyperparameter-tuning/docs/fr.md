@@ -16,7 +16,7 @@
 
 ## Le problème
 
-Votre modèle de stimulation du gradient a un taux d'apprentissage, le nombre d'arbres, la profondeur maximale, les échantillons min par feuille, le ratio sous-échantillon et le ratio échantillon de colonne. Cela représente six hyperparametres. Si chacun a 5 valeurs raisonnables, la grille a 5 ^ 6 = 15.625 combinaisons.
+Votre modèle d'augmentation du gradient a un taux d'apprentissage, le nombre d'arbres, la profondeur maximale, les échantillons min par feuille, le ratio sous-échantillon et le ratio échantillon de colonne.$5^6 = 15{,}625$Chaque entraînement prend 10 secondes, c'est 43 heures de calcul pour essayer tout.
 
 La recherche de grille est l'approche évidente et la pire à l'échelle. La recherche aléatoire fonctionne mieux avec moins de calcul. L'optimisation bayésienne fonctionne encore mieux en apprenant des évaluations passées. Savoir quelle stratégie utiliser et quels hyperparametres comptent vraiment, permet d'économiser des jours de temps de GPU gaspillé.
 
@@ -31,7 +31,7 @@ Les paramètres sont apprises pendant la formation (poids, biais, seuils divisé
 | Learning rate | Step size per update | 0.001 to 1.0 |
 | Number of trees/epochs | How long to train | 10 to 10,000 |
 | Max depth | Model complexity | 1 to 30 |
-| Regularization (lambda) | Overfitting prevention | 0.0001 to 100 |
+| Regularization ($\lambda$) | Overfitting prevention | 0.0001 to 100 |
 | Batch size | Gradient estimation noise | 16 to 512 |
 | Dropout rate | Fraction of neurons dropped | 0.0 to 0.5 |
 
@@ -125,7 +125,7 @@ Le taux d'apprentissage est presque toujours l'hyperparamètre le plus important
 | Scheduler | Formula | When to use |
 |-----------|---------|-------------|
 | Step decay | Multiply by 0.1 every N epochs | Classic CNN training |
-| Cosine annealing | lr * 0.5 * (1 + cos(pi * t / T)) | Modern default |
+| Cosine annealing | $\text{lr} \cdot 0.5 \cdot (1 + \cos(\pi t / T))$ | Modern default |
 | Warmup + decay | Linear increase then cosine decay | Transformers |
 | One-cycle | Increase then decrease over one cycle | Fast convergence |
 | Reduce on plateau | Reduce by factor when metric stalls | Safe default |
