@@ -395,3 +395,15 @@ Veja .`outputs/prompt-debug-ai-code.md`para um prompt que ajuda a diagnosticar b
 3. Utilização`tracemalloc`para encontrar qual linha no seu pipeline de carga de dados atribui a maior memória.
 4. Configure o TensorBoard para uma simples formação e identifique se o modelo está em excesso.
 5. Utilização`breakpoint()`Exercício de inspecção de formas tensores, dispositivos e valores de gradiente a partir do prompt debugger.
+
+### Indicios
+
+**Exercise 1.**Corra .`python3 phases/00-setup-and-tooling/12-debugging-and-profiling/code/debug_tools.py`e ler a saída de cada função demo. Então, alterar o modelo em `demo_nan_detection`Assim, a sua saída é dividida por zero e volta a funcionar.`detect_nan`Deve imprimir um aviso de NaN com o número de passo.
+
+**Exercise 2.**- Executar o loop .`python -m cProfile -s cumtime your_script.py`, ou enrolar em `cProfile.Profile()`- Leia as linhas superiores do livro .`cumtime`coluna; a função com o maior tempo que é o seu próprio código é o mais lento.
+
+**Exercise 3.**Liga-me .`tracemalloc.start()`antes do código de carga de dados e `tracemalloc.take_snapshot()`Depois disso, como em `demo_memory_tracking`Impressão .`snapshot.statistics("lineno")[:5]`A primeira linha mostra o ficheiro e o número de linha com a maior atribuição.
+
+**Exercise 4.**Registrar a perda de formação e a perda de validação para um `SummaryWriter`Em cada época, então, corra.`tensorboard --logdir=runs`Se a perda de formação continuar a diminuir enquanto a perda de validação aumenta, o modelo supera.
+
+**Exercise 5.**- Não .`breakpoint()`dentro do circuito depois `loss.backward()`E executar o roteiro.`(Pdb)`Pronto, impressão.`x.shape`- Não .`x.device`, e `next(model.parameters()).grad`, então digite`c`Para continuar para o próximo passo.

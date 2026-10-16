@@ -336,6 +336,16 @@ Aqui está quando cada ferramenta entra em jogo durante este curso:
 3. Criar um registro de treinamento falso com `for i in $(seq 1 100); do echo "epoch $i loss: $(echo "scale=4; 1/$i" | bc)"; sleep 0.1; done > fake_train.log`e depois usar `grep`- Não .`tail`, e `awk`Para extrair apenas os valores de perda.
 4. Configurar uma entrada de configuração SSH para um servidor que você tem acesso (ou utiliza `localhost`Para praticar a sintaxe).
 
+### Indicios
+
+**Exercise 1.**Começa com `tmux new -s practice`, depois dividido com o prefixo `Ctrl+B`seguida por `"`E ...`%`, e mover-se entre painéis com `Ctrl+B`E uma chave de flecha.`Ctrl+B`Então ...`d`, correr`tmux ls`, e anexar novamente com `tmux attach -t practice`Os três programas ainda devem ser executados.
+
+**Exercise 2.**Copiar as linhas de `code/shell_aliases.sh`até ao final de`~/.zshrc`ou `~/.bashrc`, então corre .`source`- Não, não, não.`alias`ou `type <name>`Para um dos novos alias confirmar que o concha sabe.
+
+**Exercise 3.**Primeira corrida .`tail -5 fake_train.log`para ver o formato da linha. Depois, filtrar com `grep loss`e imprimir apenas o último campo com `awk '{print $NF}'`A saída deve ser de 100 números cada vez menores.
+
+**Exercise 4.**Copie o `Host gpu`Bloco da lição para o `~/.ssh/config`e mudança .`HostName`E ...`User`para o seu servidor, ou para `localhost`e o seu nome de usuário.`ssh -G gpu`Se você tem um servidor de SSH acessível que aceita a sua chave, executar `ssh gpu`para se conectar.
+
 ## Termos-chave
 
 | Term | What people say | What it actually means |

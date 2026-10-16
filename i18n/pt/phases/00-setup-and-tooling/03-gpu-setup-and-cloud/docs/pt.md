@@ -130,6 +130,14 @@ if torch.cuda.is_available():
 2. Se você não tem uma GPU, execute no Google Colab e compare
 3. Verifique a quantidade de memória de GPU que você tem e estimar o maior modelo que você pode caber (regra geral: 2 bytes por parâmetro para fp16)
 
+### Indicios
+
+**Exercise 1.**Execute o código da seção Construir como está, depois anote o tempo da CPU, o tempo da GPU e a linha de aceleração.
+
+**Exercise 2.**No Colab, selecione Runtime > Alterar o tipo de runtime > GPU, e depois colar o índice de referência em uma célula.`!nvidia-smi`em outra célula primeiro; deve mostrar um nome de GPU antes que o resultado de referência signifique qualquer coisa.
+
+**Exercise 3.**Leia a memória total com `torch.cuda.get_device_properties(0).total_memory / 1e9`, como em `code/gpu_check.py`Divida a memória em bytes por 2 para obter a contagem de parâmetros para fp16, e mantenha uma margem, porque as ativações e o contexto CUDA também usam memória.
+
 ## Termos-chave
 
 | Term | What people say | What it actually means |

@@ -61,7 +61,7 @@ Isto descarrega o conjunto de dados de revisão de filmes do IMDB. Após o prime
 Alguns conjuntos de dados são grandes demais para caber no disco.
 
 ```python
-dataset = load_dataset("wikimedia/wikipedia", "20220301.en", split="train", streaming=True)
+dataset = load_dataset("wikimedia/wikipedia", "20231101.en", split="train", streaming=True)
 
 for i, example in enumerate(dataset):
     print(example["title"])
@@ -244,6 +244,16 @@ Esta lição produz:
 2. Transmitir o `c4`conjunto de dados e contar quantos exemplos você pode processar em 10 segundos
 3. Converte um conjunto de dados para Parquet e compare o tamanho do arquivo para CSV
 4. Criar uma divisão de trens/val/teste 70/15/15 com uma semente fixa e verificar os tamanhos
+
+### Indicios
+
+**Exercise 1.**Liga-me .`load_and_inspect("glue", "mrpc")`de`code/data_utils.py`, ou `load_dataset("glue", "mrpc")`Directamente e impressão`ds["train"][:5]`Cada exemplo deve ter`sentence1`- Não .`sentence2`, e `label`campos.
+
+**Exercise 2.**Carregar o conjunto de dados com `streaming=True`, como `stream_dataset`e ler exemplos em um ciclo que pára quando `time.time()`Imprima a contagem; executa-a duas vezes, porque a primeira corrida inclui a inicialização da conexão.
+
+**Exercise 3.**Salvar o mesmo conjunto de dados com `to_csv`E ...`to_parquet`, como `convert_format`faz, então compare os tamanhos com `ls -lh`ou `os.path.getsize`- Carregue o ficheiro do Parquet .`load_from_parquet`e verifique se a contagem das filas não mudou.
+
+**Exercise 4.**Utilização`train_test_split`duas vezes com um fixo `seed`A primeira divisão deve ser de 30% e a segunda divisão deve ser de 30% e a segunda divisão deve ser de 30% e a segunda divisão deve ser de 30% e a segunda divisão deve ser de 30% e a segunda divisão deve ser de 30% e a segunda divisão deve ser de 30% e a segunda divisão deve ser de 30% e a segunda divisão deve ser de 30% e a segunda divisão deve ser de 30% e a segunda divisão deve ser de 30% e a segunda divisão deve ser de 30% e a segunda divisão deve ser de 30% e a segunda divisão deve ser de 30% e a segunda divisão deve ser de 30% e a segunda divisão deve ser de 30% e a segunda divisão deve ser de 30% e a segunda divisão deve ser de 30% e a segunda divisão deve ser de 30% e a segunda divisão deve ser de 30% e a segunda divisão deve ser de 30% e a segunda divisão deve ser de 30% e a segunda divisão deve ser de 30% e a segunda divisão deve ser de 30% e a segunda divisão deve ser de 30% e a segunda divisão.
 
 ## Termos-chave
 

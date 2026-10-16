@@ -106,6 +106,14 @@ Não precisas de rebases, de pistas ou submodules para este curso.
 2. Criar um`.gitignore`que exclui os modelos de ficheiros de checkpoint (`.pt`- Não .`.pth`- Não .`.safetensors`)
 3. Veja o histórico de compromissos deste repo com `git log --oneline`E ler como as lições foram adicionadas
 
+### Indicios
+
+**Exercise 1.**Clique em Fork no GitHub, então `git clone`O URL do seu próprio garfo.`git push -u origin my-progress`, abrir o garfo no GitHub e confirmar que a lista de filiais mostra `my-progress`Com o seu ficheiro.
+
+**Exercise 2.**Adicionar um padrão por extensão, como `*.pt`, para um `.gitignore`Criar um arquivo vazio com cada extensão e executar `git status`Não podem aparecer na lista de ficheiros não rastreados.
+
+**Exercise 3.**Corra .`git log --oneline`E depois ...`git log --oneline -- phases/00-setup-and-tooling`Para mostrar apenas os compromissos que mudaram esta fase.`git show --stat <hash>`Para ver quais ficheiros de lições adicionou.
+
 ## Termos-chave
 
 | Term | What people say | What it actually means |

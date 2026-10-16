@@ -81,11 +81,11 @@ O que cada um faz:
 | Black Formatter | Auto-format on save, consistent style |
 | Ruff | Fast linting, catches common mistakes |
 
-O arquivo .`code/.vscode/extensions.json`Quando você abrir a pasta do projeto, o VS Code irá pedir-lhe para instalar.
+O arquivo .`code/vscode/extensions.json`Esta lição contém a lista completa de recomendações.`.vscode/extensions.json`na sua pasta do projeto, e VS Code pede-lhe para instalar-los quando abrir essa pasta.
 
 ### Passo 3: Configurar as configurações
 
-Copie as configurações de `code/.vscode/settings.json`Neste curso, ou aplicá-los manualmente através de`Settings > Open Settings (JSON)`- Não .
+Copie as configurações de `code/vscode/settings.json`Neste curso, ou aplicá-los manualmente através de`Settings > Open Settings (JSON)`- Não .
 
 As configurações-chave para o trabalho da IA:
 
@@ -200,6 +200,16 @@ Com esta configuração, o seu fluxo de trabalho diário parece:
 2. Copie o `settings.json`A partir desta lição, para a configuração do código VS
 3. Abra um arquivo Python e verifique se Pylance mostra dicas de tipo e formatos em preto no save
 4. Se você tem acesso a uma máquina remota, configure Remote SSH e abra uma pasta nela
+
+### Indicios
+
+**Exercise 1.**Instale as extensões da tabela no passo 2, ou instale cada ID em `code/vscode/extensions.json`com`code --install-extension <id>`- Corra .`code --list-extensions`e verificar cada identificação contra o ficheiro.
+
+**Exercise 2.**Configurações abertas > Configurações abertas (JSON) e copie o conteúdo de `code/vscode/settings.json`Se o arquivo já tem configurações, mesclar as teclas e manter válido JSON; VS Code marca um arquivo quebrado com uma linha vermelha.
+
+**Exercise 3.**Escreva uma função com uma anotação de tipo, e depois pendure em uma chamada para ela; Pylance mostra o tipo inferido. Adicione espaços extras em uma linha e salve o arquivo; Negro deve reformatar a linha em salvar.
+
+**Exercise 4.**Adicionar o servidor para `~/.ssh/config`Primeiro e confirme que`ssh <host>`O comando Remote SSH é usado para conectar; a barra de status mostra o nome do host quando o VS Code é executado na máquina remota.
 
 ## Termos-chave
 
