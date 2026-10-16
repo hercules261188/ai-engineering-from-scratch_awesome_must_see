@@ -50,7 +50,7 @@ METR (पूर्व-ARC Evals) विशेषज्ञ मानव समा
 | Property | Chatbot (single-turn) | Long-horizon agent |
 |---|---|---|
 | Run length | seconds | minutes to hours |
-| Tokens per run | 10^3 | 10^5 to 10^7 |
+| Tokens per run | $10^3$ | $10^5$ to $10^7$ |
 | State | ephemeral | durable, checkpointed |
 | Failure surface | model capability | capability + drift + loops + hacking |
 | Review unit | final answer | trajectory |

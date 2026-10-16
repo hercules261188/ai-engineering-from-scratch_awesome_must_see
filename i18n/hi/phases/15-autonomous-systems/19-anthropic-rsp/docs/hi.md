@@ -100,6 +100,6 @@ a5-rsp-ladder
 
 - [Anthropic — Responsible Scaling Policy v3.0](https://anthropic.com/responsible-scaling-policy/rsp-v3-0) पूर्ण 32-पृष्ठ नीति।
 - [Anthropic — RSP v3.0 announcement](https://www.anthropic.com/news/responsible-scaling-policy-v3) v2 से परिवर्तनों का सारांश।
-- [Anthropic — Frontier Safety Roadmap](https://www.anthropic.com/research/frontier-safety) RSP v3.0 से लिंक किया गया स्थायी दस्तावेज।
-- [Anthropic — Risk Report: Claude Opus 4.6](https://www.anthropic.com/research/risk-report-claude-opus-4-6) वर्तमान सीमा मॉडल पर एक प्रतिबिंब।
+- [Anthropic — Frontier Safety Roadmap](https://www.anthropic.com/responsible-scaling-policy/roadmap) RSP v3.0 से लिंक किया गया स्थायी दस्तावेज।
+- [Anthropic — Risk Report: February 2026](https://www.anthropic.com/feb-2026-risk-report) क्लाउड ओपस 4.6 पर एक प्रतिबिंब, जब यह प्रकाशित हुआ था।
 - [Anthropic — Measuring agent autonomy in practice](https://www.anthropic.com/research/measuring-agent-autonomy) एआई आर एंड डी-4 को मापी गई स्वायत्तता से जोड़ता है।
