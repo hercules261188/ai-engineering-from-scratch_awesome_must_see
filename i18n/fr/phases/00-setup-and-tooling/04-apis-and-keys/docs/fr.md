@@ -146,6 +146,14 @@ Cette leçon donne:
 2. Essayez la version HTTP brute et comparez le format de réponse à la version SDK
 3. Utilisez intentionnellement une mauvaise clé API et lisez le message d'erreur
 
+### Des indices
+
+**Exercise 1.**Créez une clé dans la console Anthropic, mettez-la `ANTHROPIC_API_KEY`Comme le montre la leçon, et courir `code/first_api_call.py`L'appel fonctionne lorsque le script imprime la réponse modèle et sans erreur.
+
+**Exercise 2.**Les deux fonctions sont en `code/first_api_call.py`Imprimez seulement le texte et le nombre de jetons.`print(response)`dans `call_with_sdk()`et `print(result)`dans `call_raw_http()`, puis exécutez le script pour voir les deux réponses complètes.`content`- Je suis là .`usage`, et `stop_reason`champs que le SDK transforme en attributs d'objet.
+
+**Exercise 3.**Réglage `ANTHROPIC_API_KEY`Trouvez le code d'état HTTP et le type d'erreur dans la sortie; une défaillance d'authentification renvoie un statut 401.
+
 ## Les termes clés
 
 | Term | What people say | What it actually means |

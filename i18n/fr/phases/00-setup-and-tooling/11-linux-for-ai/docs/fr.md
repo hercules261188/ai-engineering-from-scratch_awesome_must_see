@@ -305,3 +305,15 @@ s0-process-fork
 3. Commencez une séance de tmux, courez `sleep 300`à l'intérieur, détachement, liste des sessions, et reattacher.
 4. Utilisation `df -h`pour vérifier l'espace disque disponible, puis utiliser `du -sh ~/.cache/*`pour trouver ce qui occupe de l'espace dans votre cache.
 5. Transférer un fichier de votre machine locale à une machine à distance en utilisant `scp`, puis faites le même transfert avec `rsync`et comparer l'expérience.
+
+### Des indices
+
+**Exercise 1.**Utilisation `cd ~`- Je suis là .`mkdir`, et `cd`dans le nouveau dossier, puis courez `touch`avec trois noms de fichiers.`ls -la`pour la sortie, vérifiez que les trois fichiers montrent une taille de 0 et votre nom d'utilisateur en tant que propriétaire.
+
+**Exercise 2.**Installez avec `sudo apt install -y htop`, démarre, et appuyez `F6`(ou cliquez sur le nom de la colonne) pour trier par `MEM%`Le processus en haut de la liste utilise le plus de mémoire.
+
+**Exercise 3.**Utilisation `tmux new -s train`de la leçon, courir `sleep 300`, et se détacher avec `Ctrl+B`Alors ...`d`- On va courir .`tmux ls`Pour voir la séance, alors `tmux attach -t train`Le `sleep`Il doit encore courir.
+
+**Exercise 4.**On court .`df -h`et lire le `Avail`colonne pour le système de fichiers qui contient votre dossier d'origine.`du -sh ~/.cache/* | sort -h`Donc le plus grand dossier est sur la dernière ligne.
+
+**Exercise 5.**Copiez un fichier avec `scp file.txt user@host:~/`, puis courir`rsync -avP file.txt user@host:~/`Pour le même fichier.`rsync`commander une deuxième fois: il envoie presque rien, parce que le fichier sur le côté distant n'a pas changé.

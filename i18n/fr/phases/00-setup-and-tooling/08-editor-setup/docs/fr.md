@@ -81,11 +81,11 @@ Ce que chacun fait:
 | Black Formatter | Auto-format on save, consistent style |
 | Ruff | Fast linting, catches common mistakes |
 
-Le dossier `code/.vscode/extensions.json`Lorsque vous ouvrez le dossier du projet, VS Code vous demandera de les installer.
+Le dossier `code/vscode/extensions.json`Cette leçon contient la liste complète des recommandations.`.vscode/extensions.json`dans votre dossier de projet, et VS Code vous demande de les installer lorsque vous ouvrez ce dossier.
 
 ### Étape 3: Configurer les paramètres
 
-Copiez les paramètres à partir de `code/.vscode/settings.json`Dans cette leçon, ou les appliquer manuellement à travers `Settings > Open Settings (JSON)`- Je suis désolé .
+Copiez les paramètres à partir de `code/vscode/settings.json`Dans cette leçon, ou les appliquer manuellement à travers `Settings > Open Settings (JSON)`- Je suis désolé .
 
 Les paramètres clés pour le travail de l'IA:
 
@@ -200,6 +200,16 @@ Avec cette configuration, votre flux de travail quotidien ressemble à:
 2. - Copier le `settings.json`de cette leçon dans votre configuration de code VS
 3. Ouvrez un fichier Python et vérifiez que Pylance affiche des indices de type et des formats Noirs sur sauvegarde
 4. Si vous avez accès à une machine à distance, configurez Remote SSH et ouvrez un dossier dessus
+
+### Des indices
+
+**Exercise 1.**Installez les extensions de la table de l' étape 2, ou installez chaque ID dans `code/vscode/extensions.json`avec `code --install-extension <id>`- On va courir .`code --list-extensions`et vérifier chaque pièce d'identité contre le dossier.
+
+**Exercise 2.**Ouvrez les paramètres > Ouvrez les paramètres (JSON) et copiez le contenu de `code/vscode/settings.json`Si le fichier a déjà des paramètres, fusionnez les touches et gardez le JSON valide; VS Code marque un fichier cassé avec une ligne rouge.
+
+**Exercise 3.**Écrivez une fonction avec une annotation de type, puis faites défiler sur un appel à elle; Pylance montre le type déduit. Ajoutez des espaces supplémentaires dans une ligne et sauvegardez le fichier; Noir doit reformater la ligne sur sauvegarde.
+
+**Exercise 4.**Ajoutez le serveur à `~/.ssh/config`Tout d' abord et confirmez que `ssh <host>`utilisez la commande SSH à distance pour se connecter; la barre d'état affiche le nom de l'hôte lorsque VS Code est exécuté sur la machine à distance.
 
 ## Les termes clés
 

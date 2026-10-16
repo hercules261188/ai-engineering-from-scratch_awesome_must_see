@@ -395,3 +395,15 @@ Regardez !`outputs/prompt-debug-ai-code.md`pour une demande qui aide à diagnost
 3. Utilisation `tracemalloc`pour trouver quelle ligne de votre pipeline de chargement de données alloue le plus de mémoire.
 4. Configurez TensorBoard pour une simple séance d'entraînement et identifiez si le modèle est trop adapté.
 5. Utilisation `breakpoint()`Pratiquez l'inspection des formes, des dispositifs et des valeurs de gradient du débogageur.
+
+### Des indices
+
+**Exercise 1.**On court .`python3 phases/00-setup-and-tooling/12-debugging-and-profiling/code/debug_tools.py`et lire la sortie de chaque fonction de démonstration.`demo_nan_detection`de sorte que sa sortie se divise par zéro, et de nouveau courir; `detect_nan`doit imprimer un avertissement NaN avec le numéro de l'étape.
+
+**Exercise 2.**Retournez la boucle .`python -m cProfile -s cumtime your_script.py`, ou envelopper dans `cProfile.Profile()`- Lisez les lignes supérieures de la`cumtime`colonne; la fonction avec le plus grand temps qui est votre code est le plus lent.
+
+**Exercise 3.**Appel`tracemalloc.start()`avant le code de chargement des données et `tracemalloc.take_snapshot()`après, comme dans `demo_memory_tracking`- Imprimé`snapshot.statistics("lineno")[:5]`; la première ligne indique le dossier et le numéro de ligne avec la plus grande attribution.
+
+**Exercise 4.**Récupérer la perte de formation et la perte de validation à un`SummaryWriter`à chaque époque, puis courir `tensorboard --logdir=runs`Si la perte de formation continue de diminuer tandis que la perte de validation augmente, le modèle surpasse.
+
+**Exercise 5.**Je vous ai mis`breakpoint()`dans la boucle après `loss.backward()`et faire fonctionner le script.`(Pdb)`rapidement, imprimer `x.shape`- Je suis là .`x.device`, et `next(model.parameters()).grad`, puis tapez `c`Pour passer à l'étape suivante.

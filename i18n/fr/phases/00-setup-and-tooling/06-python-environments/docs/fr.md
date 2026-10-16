@@ -259,6 +259,16 @@ Cela crée une`.venv`à la racine repo avec des dépendances de base installées
 3. Écrivez une`pyproject.toml`pour un projet qui a besoin de PyTorch et de l'SDK Anthropic
 4. Installez délibérément un package à l'échelle mondiale (sans activer un venv), notez où il va, puis désinstallez-le
 
+### Des indices
+
+**Exercise 1.**On court .`bash phases/00-setup-and-tooling/06-python-environments/code/env_setup.sh`Lisez chaque ligne de sortie; quand un contrôle échoue, corrigez cet élément et exécutez le script à nouveau jusqu'à ce qu'aucun contrôle ne échoue.
+
+**Exercise 2.**Créer le deuxième environnement dans un nouveau dossier avec `uv venv`, l'activer, et installer un numpy plus ancien avec une pin de version comme `numpy==1.26.4`- On va courir .`python -c "import numpy; print(numpy.__version__)"`Dans chaque environnement, les deux versions doivent être différentes.
+
+**Exercise 3.**Commencez par l'exemple de pyproject.toml`torch`et `anthropic`sous `dependencies`- On va courir .`uv pip install -e .`ou `uv sync`dans un nouvel environnement; le fichier est correct lorsque les deux paquets importent sans erreur.
+
+**Exercise 4.**Désactivez tous les environnements, courez `pip install --user <small package>`, puis courir`pip show <package>`et lire le `Location`débrancher avec `pip uninstall <package>`et courir`pip show`Je le confirme encore une fois.
+
 ## Les termes clés
 
 | Term | What people say | What it actually means |

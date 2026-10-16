@@ -239,6 +239,14 @@ Cette leçon donne:
 2. Créez un bloc-notes avec des cellules de marquage et de code qui chargent un CSV, affichent un cadre de données et dessinent un graphique. Puis exécutez Kernel > Restarter & Exécuter tous pour vérifier qu'il fonctionne de haut en bas
 3. Prenez le code de `code/notebook_tips.py`, le coller dans un ordinateur portable Colab, et l'exécuter avec un GPU gratuit
 
+### Des indices
+
+**Exercise 1.**Commencez JupyterLab avec `jupyter lab`, puis mettre chaque version dans sa propre cellule qui commence par `%timeit`Utilisez la même taille de 100 000 dans les deux cellules pour mesurer le même travail.
+
+**Exercise 2.**Utilisation `pd.read_csv`Pour les données, afficher le cadre de données comme la dernière ligne d'une cellule, et tracer avec `df.plot()`Après Kernel > Restart & Run All, chaque cellule doit afficher un numéro dans son compteur d'exécution et aucune cellule ne peut afficher une erreur.
+
+**Exercise 3.**Dans Colab, sélectionnez Runtime > Change de type de runtime > GPU avant de coller le code.`code/notebook_tips.py`imprime sa section, et `torch.cuda.is_available()`Retour `True`dans une cellule.
+
 ## Les termes clés
 
 | Term | What people say | What it actually means |

@@ -106,6 +106,14 @@ Vous n'avez pas besoin de base, de sélection de cerises ou de sous-modules pour
 2. Créer une`.gitignore`qui exclut les dossiers de contrôle modèles (`.pt`- Je suis là .`.pth`- Je suis là .`.safetensors`)
 3. Regardez l' histoire de ces références avec `git log --oneline`et lire comment les leçons ont été ajoutées
 
+### Des indices
+
+**Exercise 1.**Cliquez sur Fork sur GitHub, puis `git clone`l'URL de votre propre fourchette.`git push -u origin my-progress`, ouvrez votre fourchette sur GitHub et confirmez que la liste des branches montre `my-progress`avec votre dossier.
+
+**Exercise 2.**Ajouter un modèle par extension, par exemple `*.pt`, à une `.gitignore`Créer un fichier vide avec chaque extension et exécuter `git status`Aucun d'eux ne peut figurer sur la liste des fichiers non suivis.
+
+**Exercise 3.**On court .`git log --oneline`et puis ...`git log --oneline -- phases/00-setup-and-tooling`Pour montrer uniquement les commissions qui ont changé cette phase.`git show --stat <hash>`Pour voir quels fichiers de leçons il a ajouté.
+
 ## Les termes clés
 
 | Term | What people say | What it actually means |

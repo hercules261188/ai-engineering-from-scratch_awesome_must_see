@@ -155,7 +155,7 @@ python:3.12-slim
 Voici le fichier Docker dans `code/Dockerfile`- Parcourez-le .
 
 ```dockerfile
-FROM nvidia/cuda:12.4.1-devel-ubuntu22.04
+FROM --platform=linux/amd64 nvidia/cuda:12.4.1-devel-ubuntu22.04
 
 ENV DEBIAN_FRONTEND=noninteractive
 ENV PYTHONUNBUFFERED=1
@@ -215,6 +215,8 @@ docker build -t ai-dev -f phases/00-setup-and-tooling/07-docker-for-ai/code/Dock
 ```
 
 Cela prend un certain temps la première fois (téléchargement de l'image de base CUDA + PyTorch).
+
+**macOS / Apple Silicon (M1/M2/M3/M4):**Le `--platform=linux/amd64`sur le `FROM`L'image de base CUDA envoie également une variante arm64 et Docker Desktop la choisit automatiquement sur Apple Silicon, mais PyTorch publie son `cu124`les roues pour x86_64 seulement, donc le `pip install torch==2.6.0+cu124`couche échoue avec `No matching distribution found for torch==2.6.0+cu124`. En branchant la plateforme, l'image x86_64 est tirée et exécutée sous émulation: la construction est plus lente et le conteneur n'a pas de GPU (il n'y a pas de CUDA sur un Mac).`--gpus all`de la `docker run`Pour le travail de la GPU sur Apple Silicon, exécutez les leçons natively avec la construction MPS de la leçon 01 et gardez cette image pour les hôtes x86_64 Linux avec un GPU NVIDIA.
 
 - Je vais le faire.
 
@@ -372,6 +374,16 @@ Retirez le `--gpus all`Le contenant fonctionne toujours pour les leçons basées
 2. Démarrez la pile composée de docker et vérifiez que Qdrant est accessible depuis le conteneur d' IA à `http://qdrant:6333/collections`
 3. Ajouter `flask`Pour le fichier Docker, reconstruire et exécuter un serveur API simple sur le port 5000.`-p 5000:5000`
 4. Mesurer la taille de l' image avec `docker images`Essayez de changer l' image de base de `devel`à `runtime`et comparer les tailles
+
+### Des indices
+
+**Exercise 1.**Construire avec le `docker build -t ai-dev -f phases/00-setup-and-tooling/07-docker-for-ai/code/Dockerfile .`commandement de la leçon, puis exécutez l'importation à l'intérieur `docker run --rm ai-dev`- Sur un Mac, écarte`--gpus all`Le contenant doit imprimer une version qui commence par:`2.6.0`- Je suis désolé .
+
+**Exercise 2.**On court .`docker compose up -d`dans le `code/`le dossier, puis ouvrez une coquille dans le `ai-dev`service avec `docker compose exec ai-dev bash`À l'intérieur, courir.`curl http://qdrant:6333/collections`; une réponse JSON signifie que le nom du service résulte sur le réseau de composition.
+
+**Exercise 3.**Ajouter un `RUN pip install flask`ligne vers le fichier Docker, reconstruire et démarrer le serveur avec `host="0.0.0.0"`, parce qu' un serveur lié à localhost à l'intérieur du conteneur n'est pas accessible de l'extérieur.`http://localhost:5000`sur votre machine pour confirmer que le port de cartographie fonctionne.
+
+**Exercise 4.**On court .`docker images ai-dev`et écrivez la colonne de taille.`devel`à `runtime`dans le `FROM`ligne, construire avec une nouvelle balise, et comparer les deux tailles; l'image de l'exécution laisse les compilateurs et les en-têtes.
 
 ## Les termes clés
 
