@@ -94,20 +94,20 @@ Với hai vector, bạn đo lường sự tương đồng như thế nào?
 
 **Cosine similarity**: cosine của góc giữa hai vector. dao động từ -1 (đối diện) đến 1 (tương tự).
 
-```
-cosine_sim(a, b) = dot(a, b) / (||a|| * ||b||)
+```math
+\mathop{\mathrm{cosine\_sim}}(a, b) = \frac{\mathop{\mathrm{dot}}(a, b)}{\lVert a \rVert \cdot \lVert b \rVert}
 ```
 
 **Dot product**: sản phẩm nội bộ thô. Các vector lớn hơn có điểm cao hơn. hữu ích khi độ lớn mang thông tin (các tài liệu dài hơn có thể có liên quan hơn).
 
-```
-dot(a, b) = sum(a_i * b_i)
+```math
+\mathop{\mathrm{dot}}(a, b) = \sum_i a_i b_i
 ```
 
 **L2 (Euclidean) distance**: đường thẳng trong không gian vector. khoảng cách nhỏ hơn = tương tự hơn. Nhận thức về sự khác biệt độ lớn.
 
-```
-L2(a, b) = sqrt(sum((a_i - b_i)^2))
+```math
+\mathop{\mathrm{L2}}(a, b) = \sqrt{\sum_i (a_i - b_i)^2}
 ```
 
 Sự tương đồng cosine là tiêu chuẩn. nó xử lý các tài liệu có chiều dài khác nhau một cách đẹp đẽ bởi vì nó bình thường hóa theo quy mô. Khi ai đó nói "sự tìm kiếm vector", họ gần như luôn có nghĩa là sự tương đồng cosine.

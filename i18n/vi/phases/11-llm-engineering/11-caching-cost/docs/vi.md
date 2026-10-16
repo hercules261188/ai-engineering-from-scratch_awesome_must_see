@@ -863,7 +863,7 @@ Batch API cung cấp giảm 50% trên tất cả các token. Kết quả đến 
 #     return None
 ```
 
-Trong sản xuất, thay thế quét tuyến tính bằng chỉ số vector (Redis Vector Search, Pinecone, hoặc pgvector). Quét tuyến tính hoạt động cho <1,000 mục. Ngoài ra, sử dụng ANN (các hàng xóm gần nhất) cho tìm kiếm O(log n).
+Trong sản xuất, thay thế quét tuyến tính bằng chỉ số vector (Redis Vector Search, Pinecone hoặc pgvector). Quét tuyến tính hoạt động cho <1,000 mục. Ngoài ra, sử dụng ANN (người láng giềng gần nhất) cho $O(\log n)$Tìm kiếm.
 
 ## Chuyển nó
 

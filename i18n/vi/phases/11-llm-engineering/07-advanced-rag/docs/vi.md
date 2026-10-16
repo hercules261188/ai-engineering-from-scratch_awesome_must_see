@@ -89,7 +89,7 @@ Các mô hình xếp hạng lại phổ biến (2026 lineup):
 - Jina-Reranker-v2 Nhiều ngôn ngữ: trọng lượng mở, hơn 100 ngôn ngữ
 - bge-re-ranker-v2-m3: trọng lượng mở, cơ sở mạnh
 - cross-encoder/ms-marco-MiniLM-L-6-v2: Open-weight, chạy trên CPU để tạo mẫu
-- ColBERTv2 / Jina-ColBERT-v2: Interaction Late-Multi-vector Ranger  O(tokens) không O(docs) tại thời điểm ghi điểm
+- ColBERTv2 / Jina-ColBERT-v2: các bộ phân cấp nhiều vector tương tác muộn  $O(\text{tokens})$Không .$O(\text{docs})$Khi ghi điểm
 
 ### Query Transformation
 

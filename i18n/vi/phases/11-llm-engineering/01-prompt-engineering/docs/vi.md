@@ -937,24 +937,24 @@ Phòng làm việc phụ trợ (`"{"`(cần phải được sử dụng để t�
 ### Google: Gemini với cài đặt an toàn
 
 ```python
-# import google.generativeai as genai
+# from google import genai
+# from google.genai import types
 #
-# genai.configure(api_key="your-key")
+# client = genai.Client()
 #
-# model = genai.GenerativeModel(
-#     "gemini-1.5-pro",
-#     system_instruction="You are a technical analyst. Be precise and cite sources.",
-#     generation_config=genai.GenerationConfig(
+# response = client.models.generate_content(
+#     model="gemini-3.8-flash",
+#     contents="Compare PostgreSQL and MySQL for write-heavy workloads.",
+#     config=types.GenerateContentConfig(
+#         system_instruction="You are a technical analyst. Be precise and cite sources.",
 #         temperature=0.3,
 #         max_output_tokens=2048,
 #     ),
 # )
-#
-# response = model.generate_content("Compare PostgreSQL and MySQL for write-heavy workloads.")
 # print(response.text)
 ```
 
-Gemini xử lý các hướng dẫn hệ thống như một phần của cấu hình mô hình, không phải như một tin nhắn. cửa sổ ngữ cảnh mã thông báo 2M có nghĩa là bạn có thể bao gồm các bộ ví dụ lớn với vài cú ảnh mà không phù hợp với GPT-4o hoặc Claude.
+Gemini xử lý các hướng dẫn hệ thống như một phần của cấu hình mô hình, không phải như một tin nhắn.
 
 ### Các mẫu đơn giản cung cấp-Agnostic
 
@@ -1023,6 +1023,6 @@ Mã Python (`code/prompt_engineering.py`) là một dây thử nghiệm độc l
 - [Wei et al., 2022 -- "Chain-of-Thought Prompting Elicits Reasoning in Large Language Models"](https://arxiv.org/abs/2201.11903)- bài báo cơ bản cho thấy rằng "think step by step" cải thiện độ chính xác LLM 10-40% trong các nhiệm vụ lý luận
 - [Zamfirescu-Pereira et al., 2023 -- "Why Johnny Can't Prompt"](https://arxiv.org/abs/2304.13529)-- nghiên cứu về cách những người không chuyên gia đấu tranh với kỹ thuật nhanh chóng và điều gì làm cho các lời nhắc hiệu quả
 - [Shin et al., 2023 -- "Prompt Engineering a Prompt Engineer"](https://arxiv.org/abs/2311.05661)-- sử dụng LLM để tự động tối ưu hóa lời nhắc, nền tảng của meta-prompting
-- [LMSYS Chatbot Arena](https://chat.lmsys.org/)-- so sánh trực tiếp mù quáng của LLM nơi bạn có thể kiểm tra cùng một prompt trên các mô hình và bỏ phiếu cho phản ứng nào là tốt hơn
+- [Arena (formerly LMSYS Chatbot Arena)](https://arena.ai/)-- so sánh trực tiếp mù quáng của LLM nơi bạn có thể kiểm tra cùng một prompt trên các mô hình và bỏ phiếu cho phản ứng nào là tốt hơn
 - [DAIR.AI Prompt Engineering Guide](https://www.promptingguide.ai/)-- danh mục đầy đủ các kỹ thuật nhanh chóng với ví dụ (không bắn, ít bắn, CoT, ReAct, tự nhất quán); các chuyên gia tham khảo sử dụng cho bề mặt rộng hơn "Kỹ thuật nhanh chóng".
-- [Anthropic prompt library](https://docs.anthropic.com/en/prompt-library)-- được sắp xếp, được biết đến tốt các yêu cầu theo trường hợp sử dụng; cho thấy các mô hình cấu trúc mà vận chuyển trong sản xuất.
+- [Claude prompting best practices](https://platform.claude.com/docs/en/build-with-claude/prompt-engineering/claude-prompting-best-practices)- Giới thiệu của Anthropic về cấu trúc prompt, với các ví dụ đã được thực hiện.

@@ -856,7 +856,7 @@ Nó cũng sản xuất `outputs/skill-eval-patterns.md`-- một khung quyết đ
 - [DeepEval Documentation](https://docs.confident-ai.com)-- Phụ trình đánh giá bản địa Python với 14+ métrics, tích hợp Pytest, và phát hiện ảo giác
 - [Braintrust Eval Guide](https://www.braintrust.dev/docs)-- nền tảng đánh giá sản xuất với theo dõi thí nghiệm, chức năng ghi điểm và quản lý bộ dữ liệu
 - [Ribeiro et al., 2020 -- "Beyond Accuracy: Behavioral Testing of NLP Models with CheckList"](https://arxiv.org/abs/2005.04118)-- phương pháp kiểm tra hành vi có hệ thống (sức năng tối thiểu, không thay đổi, kỳ vọng hướng) áp dụng cho đánh giá LLM
-- [LMSYS Chatbot Arena](https://chat.lmsys.org)-- nền tảng đánh giá con người trực tiếp nơi người dùng bỏ phiếu về kết quả mô hình, bộ dữ liệu so sánh cặp lớn nhất cho LLM
+- [Arena (formerly LMSYS Chatbot Arena)](https://arena.ai/)-- nền tảng đánh giá con người trực tiếp nơi người dùng bỏ phiếu về kết quả mô hình, bộ dữ liệu so sánh cặp lớn nhất cho LLM
 - [Es et al., "RAGAS: Automated Evaluation of Retrieval Augmented Generation" (EACL 2024 demo)](https://arxiv.org/abs/2309.15217)-- các số liệu không tham chiếu cho RAG (sự trung thành, sự liên quan của câu trả lời, độ chính xác về ngữ cảnh/tái nhớ); mô hình đánh giá quy mô để tạo ra những dấu hiệu không có nhãn.
 - [Liu et al., "G-Eval: NLG Evaluation using GPT-4 with Better Human Alignment" (EMNLP 2023)](https://arxiv.org/abs/2303.16634)-- chuỗi suy nghĩ + lấp đầy biểu mẫu như một giao thức thẩm phán; hiệu chuẩn và kết quả thiên vị mọi người cần.
 - [Hugging Face LLM Evaluation Guidebook](https://huggingface.co/spaces/OpenEvals/evaluation-guidebook)-- tư vấn thực tế về ô nhiễm dữ liệu, lựa chọn số liệu và khả năng tái tạo từ nhóm duy trì bảng xếp hạng LLM mở.

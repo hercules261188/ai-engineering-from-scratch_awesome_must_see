@@ -438,22 +438,20 @@ Tuyến đường ống kết hợp tất cả các kỹ thuật với một chi
 
 ```python
 def solve_with_escalation(question, examples, client, model):
-    system, user = build_cot_prompt(question, examples)
-    single_response = call_llm(client, model, system, user, temperature=0.0)
-    single_answer = extract_answer(single_response)
+    single_answer, _ = few_shot_cot_solve(question, examples, client, model)
 
     sc_answer, confidence, _, _ = self_consistency_solve(
         question, examples, client, model, n_samples=5
     )
 
-    if confidence >= 0.8:
+    if confidence >= 0.8 and single_answer == sc_answer:
         return sc_answer, "self_consistency", confidence
 
     tot_answer, _ = tree_of_thought_solve(question, client, model)
     return tot_answer, "tree_of_thought", None
 ```
 
-Lý thuyết leo thang: thử rẻ (single CoT) trước. Nếu sự tự tin nhất quán dưới 0,8 (hơn 4 trong 5 mẫu đồng ý), leo thang đến ToT. Điều này cân bằng chi phí và độ chính xác - hầu hết các vấn đề được giải quyết rẻ, các vấn đề khó khăn có tính toán nhiều hơn.
+Lý thuyết leo thang: thử rẻ (CT đơn) trước. Một con đường xác định duy nhất không cho thấy tỷ lệ phiếu bầu, vì vậy kiểm tra chất lượng của nó là sự đồng thuận: câu trả lời nhiệt độ-0 phải phù hợp với câu trả lời đa số từ các con đường lấy mẫu. Nếu không, hoặc nếu sự tin tưởng về tính nhất quán của bản thân dưới 0,8 (nếu 4 trong số 5 mẫu đồng ý), leo thang lên ToT. Điều này cân bằng giữa chi phí và độ chính xác -- hầu hết các vấn đề được giải quyết rẻ, các vấn đề khó khăn có tính toán nhiều hơn.
 
 ## Sử dụng nó
 

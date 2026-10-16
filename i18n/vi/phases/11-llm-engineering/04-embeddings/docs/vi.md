@@ -100,20 +100,20 @@ Với hai vector nhúng, ba cách để đo mức độ tương tự của chún
 
 **Cosine similarity**: cosine của góc giữa hai vector. dao động từ -1 (ngược lại) đến 1 (nghĩa giống nhau). Không xem xét độ lớn - một câu 10 từ và một tài liệu 500 từ có thể đạt được 1,0 nếu chúng chỉ ra cùng một hướng. Đây là mặc định cho 90% trường hợp sử dụng.
 
-```
-cosine_sim(a, b) = dot(a, b) / (||a|| * ||b||)
+```math
+\mathop{\mathrm{cosine\_sim}}(a, b) = \frac{\mathop{\mathrm{dot}}(a, b)}{\lVert a \rVert \cdot \lVert b \rVert}
 ```
 
 **Dot product**: sản phẩm bên trong thô của hai vector. giống hệt với sự tương đồng cosine khi vector được bình thường hóa (nghĩa đơn vị).
 
-```
-dot(a, b) = sum(a_i * b_i)
+```math
+\mathop{\mathrm{dot}}(a, b) = \sum_i a_i b_i
 ```
 
 **Euclidean (L2) distance**: khoảng cách đường thẳng trong không gian vector. nhỏ hơn = tương tự hơn. nhạy cảm với sự khác biệt độ lớn. Sử dụng khi vị trí tuyệt đối trong không gian quan trọng, không chỉ là hướng.
 
-```
-L2(a, b) = sqrt(sum((a_i - b_i)^2))
+```math
+\mathop{\mathrm{L2}}(a, b) = \sqrt{\sum_i (a_i - b_i)^2}
 ```
 
 Khi nào sử dụng:
@@ -134,7 +134,7 @@ Các cơ sở dữ liệu vector giải quyết điều này bằng thuật toá
 2. Các lớp trên cùng rất hiếm -- kết nối tầm xa giữa các cụm từ xa
 3. Các lớp dưới cùng dày đặc - kết nối hạt mỏng giữa các vector gần đó
 4. Tìm kiếm bắt đầu ở tầng trên cùng, tham lam xuống để tinh chỉnh
-5. Thu trả về kết quả top-k gần như trong O(log n) thời gian thay vì O(n)
+5. Tới lại kết quả top-k gần như trong $O(\log n)$thời gian thay vì $O(n)$
 
 HNSW giao dịch một sự mất tích độ chính xác nhỏ (thường là 95-99% nhớ lại) để tăng tốc độ lớn.
 
@@ -491,7 +491,7 @@ Bài học này mang lại:
 | Embedding | "Text to numbers" | A dense vector where geometric proximity encodes semantic similarity |
 | Word2Vec | "The OG embedding" | 2013 model that learned word vectors by predicting context words; proved vector arithmetic encodes meaning |
 | Cosine similarity | "How similar are two vectors" | Cosine of the angle between vectors; 1 = identical direction, 0 = orthogonal, -1 = opposite |
-| HNSW | "Fast vector search" | Hierarchical Navigable Small World graph -- multi-layer structure enabling O(log n) approximate nearest neighbor search |
+| HNSW | "Fast vector search" | Hierarchical Navigable Small World graph -- multi-layer structure enabling $O(\log n)$ approximate nearest neighbor search |
 | Bi-encoder | "Embed separately, compare fast" | Encodes query and document independently into vectors; enables pre-computation and fast retrieval |
 | Cross-encoder | "Slow but accurate reranker" | Processes query-document pair jointly through the full model; higher accuracy, no pre-computation |
 | Matryoshka embeddings | "Truncatable vectors" | Embeddings trained so the first N dimensions capture the most important information, enabling variable-size storage |
