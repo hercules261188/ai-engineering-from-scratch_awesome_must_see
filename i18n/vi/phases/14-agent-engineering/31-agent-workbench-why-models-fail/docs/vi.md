@@ -214,7 +214,6 @@ Cuốn sách, giấy tờ và thực hiện tham khảo:
 - [preprints.org, Harness Engineering for Language Agents (March 2026)](https://www.preprints.org/manuscript/202603.1756) khung học thuật như kiểm soát / cơ quan / runtime
 - [walkinglabs/awesome-harness-engineering](https://github.com/walkinglabs/awesome-harness-engineering) danh sách đọc được chọn qua bối cảnh, đánh giá, khả năng quan sát, dàn xếp
 - [ai-boost/awesome-harness-engineering](https://github.com/ai-boost/awesome-harness-engineering) danh sách chọn lọc thay thế (các công cụ, đánh giá, bộ nhớ, MCP, quyền)
-- [andrewgarst/agentic_harness](https://github.com/andrewgarst/agentic_harness) Thực hiện tham chiếu sẵn sàng sản xuất với bộ nhớ và eval hỗ trợ Redis
 - [HKUDS/OpenHarness](https://github.com/HKUDS/OpenHarness) Vỏ máy bay mở với máy bay cá nhân tích hợp
 
 Các chủ đề của Hacker News đáng đọc vì sự bất đồng, không phải sự đồng thuận:

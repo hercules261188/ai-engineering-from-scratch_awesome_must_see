@@ -140,7 +140,6 @@ Cổng là cạnh quyết định trong dòng chảy của bàn làm việc.
 - [Type-Checked Compliance: Deterministic Guardrails (arXiv 2604.01483)](https://arxiv.org/pdf/2604.01483) Lean 4 như giới hạn trên của định nghĩa gào
 - [logi-cmd/agent-guardrails — merge gate spec](https://github.com/logi-cmd/agent-guardrails) phạm vi + cổng thử nghiệm đột biến
 - [Guardrails AI x MLflow](https://guardrailsai.com/blog/guardrails-mlflow) Các xác thực viên xác định như là điểm số CI
-- [Akira, Real-Time Guardrails for Agentic Systems](https://www.akira.ai/blog/real-time-guardrails-agentic-systems) Cổng trước/ sau công cụ
 - Giai đoạn 14 · 27  phòng thủ tiêm nhanh (cặp đối thủ của cổng)
 - Giai đoạn 14 · 36  hợp đồng phạm vi này thực thi
 - Giai đoạn 14 · 37  hồ sơ phản hồi này cửa điểm

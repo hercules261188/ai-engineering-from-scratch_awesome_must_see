@@ -90,7 +90,7 @@ Di chuyển quyết định viết sản xuất từ khóa sang ủy quyền. Gi
 ## Đọc thêm
 
 - [Nuseibeh and Easterbrook, Requirements Engineering: A Roadmap](https://www.cs.toronto.edu/~sme/papers/2000/ICSE2000.pdf), cho mối quan hệ giữa các mục tiêu, đặc điểm chính xác, xác thực, đồng thuận và tiến hóa.
-- [Zave and Jackson, Four Dark Corners of Requirements Engineering](https://doi.org/10.1145/267895.267896), để phân biệt các giả định, yêu cầu và đặc điểm môi trường.
+- [Zave and Jackson, Four Dark Corners of Requirements Engineering](https://doi.org/10.1145/237432.237434), để phân biệt các giả định, yêu cầu và đặc điểm môi trường.
 - [Gotel and Finkelstein, An Analysis of the Requirements Traceability Problem](https://doi.org/10.1109/ICRE.1994.292398), để bảo tồn lý do tại sao yêu cầu tồn tại và nó đến từ đâu.
 
 ## Những gì bạn giữ
