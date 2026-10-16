@@ -89,7 +89,7 @@ Modelos comunes de re-ranqueamiento (2026 lineup):
 - Jina-Reranker-v2 Multilingüe: peso abierto, más de 100 idiomas
 - bge-re-ranquer-v2-m3: peso abierto, línea de base fuerte
 - código cruzado/ms-marco-MiniLM-L-6-v2: peso abierto, se ejecuta con CPU para la creación de prototipos
-- ColBERTv2 / Jina-ColBERT-v2: retrasos de interacción re-ranqueadores multi-vector  O(tokens) no O(docs) en el momento de marcar
+- ColBERTv2 / Jina-ColBERT-v2: re-ranqueadores multi-vectoriales de interacción tardía  $O(\text{tokens})$No lo he hecho .$O(\text{docs})$en el tiempo de puntuación
 
 ### Transformación de la consulta
 

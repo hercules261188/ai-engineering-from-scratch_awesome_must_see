@@ -100,20 +100,20 @@ Dadas dos vectores de incorporación, tres formas de medir su similitud:
 
 **Cosine similarity**El cosino del ángulo entre dos vectores. Va desde -1 (oposto) hasta 1 (dirección idéntica). Ignora la magnitud - una oración de 10 palabras y un documento de 500 palabras pueden obtener 1,0 si apuntan a la misma dirección.
 
-```
-cosine_sim(a, b) = dot(a, b) / (||a|| * ||b||)
+```math
+\mathop{\mathrm{cosine\_sim}}(a, b) = \frac{\mathop{\mathrm{dot}}(a, b)}{\lVert a \rVert \cdot \lVert b \rVert}
 ```
 
 **Dot product**El producto interno bruto de dos vectores. Identico a la similitud cosínica cuando los vectores se normalizan (duración de la unidad). Más rápido para calcular.
 
-```
-dot(a, b) = sum(a_i * b_i)
+```math
+\mathop{\mathrm{dot}}(a, b) = \sum_i a_i b_i
 ```
 
 **Euclidean (L2) distance**Es más pequeño = más similar. sensible a las diferencias de magnitud. Se utiliza cuando la posición absoluta en el espacio es importante, no sólo la dirección.
 
-```
-L2(a, b) = sqrt(sum((a_i - b_i)^2))
+```math
+\mathop{\mathrm{L2}}(a, b) = \sqrt{\sum_i (a_i - b_i)^2}
 ```
 
 Cuándo utilizar:
@@ -134,7 +134,7 @@ Las bases de datos vectoriales resuelven esto con algoritmos de vecino más cerc
 2. Las capas superiores son escasas - conexiones de largo alcance entre grupos distantes
 3. Las capas inferiores son densas - conexiones de granos finos entre vectores cercanos
 4. La búsqueda comienza en la capa superior, descendiendo codiciosamente para refinar
-5. Retorna resultados aproximados de top-k en tiempo O(log n) en lugar de O(n)
+5. Retorna resultados aproximados de la lista de resultados en $O(\log n)$tiempo en lugar de$O(n)$
 
 HNSW negocia una pequeña pérdida de precisión (generalmente 95-99% de recuperación) por ganancias masivas de velocidad.
 
@@ -491,7 +491,7 @@ Esta lección produce:
 | Embedding | "Text to numbers" | A dense vector where geometric proximity encodes semantic similarity |
 | Word2Vec | "The OG embedding" | 2013 model that learned word vectors by predicting context words; proved vector arithmetic encodes meaning |
 | Cosine similarity | "How similar are two vectors" | Cosine of the angle between vectors; 1 = identical direction, 0 = orthogonal, -1 = opposite |
-| HNSW | "Fast vector search" | Hierarchical Navigable Small World graph -- multi-layer structure enabling O(log n) approximate nearest neighbor search |
+| HNSW | "Fast vector search" | Hierarchical Navigable Small World graph -- multi-layer structure enabling $O(\log n)$ approximate nearest neighbor search |
 | Bi-encoder | "Embed separately, compare fast" | Encodes query and document independently into vectors; enables pre-computation and fast retrieval |
 | Cross-encoder | "Slow but accurate reranker" | Processes query-document pair jointly through the full model; higher accuracy, no pre-computation |
 | Matryoshka embeddings | "Truncatable vectors" | Embeddings trained so the first N dimensions capture the most important information, enabling variable-size storage |

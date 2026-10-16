@@ -182,6 +182,7 @@ mx-tool-call-loop
 Construir un registro que almacene las definiciones de herramientas y sus implementaciones. Cada herramienta tiene una definición de JSON Schema (lo que el modelo ve) y una función Python (lo que su código ejecuta).
 
 ```python
+import ast
 import json
 import math
 import time
@@ -290,10 +291,18 @@ def read_file(path):
 def run_code(code, language="python"):
     if language != "python":
         return {"error": True, "message": f"Language '{language}' not supported. Only 'python' is available."}
-    forbidden = ["import os", "import sys", "import subprocess", "exec(", "eval(", "__import__", "open("]
-    for pattern in forbidden:
-        if pattern in code:
-            return {"error": True, "message": f"Forbidden operation: {pattern}", "code": "SECURITY_VIOLATION"}
+    try:
+        tree = ast.parse(code)
+    except SyntaxError as e:
+        return {"error": True, "message": f"SyntaxError: {e}", "code": "SYNTAX_ERROR"}
+    unsafe_names = {"exec", "eval", "compile", "__import__", "open", "globals", "locals", "vars", "getattr", "setattr", "delattr"}
+    for node in ast.walk(tree):
+        if isinstance(node, (ast.Import, ast.ImportFrom)):
+            return {"error": True, "message": "Forbidden operation: import is not allowed", "code": "SECURITY_VIOLATION"}
+        if isinstance(node, ast.Attribute) and node.attr.startswith("__") and node.attr.endswith("__"):
+            return {"error": True, "message": "Forbidden operation: dunder attribute access is not allowed", "code": "SECURITY_VIOLATION"}
+        if isinstance(node, ast.Name) and node.id in unsafe_names:
+            return {"error": True, "message": f"Forbidden operation: {node.id} is not allowed", "code": "SECURITY_VIOLATION"}
     try:
         local_vars = {}
         exec(code, {"__builtins__": {"print": print, "range": range, "len": len, "str": str, "int": int, "float": float, "list": list, "dict": dict, "sum": sum, "min": min, "max": max, "abs": abs, "round": round, "sorted": sorted, "enumerate": enumerate, "zip": zip, "map": map, "filter": filter, "math": math}}, local_vars)
@@ -302,6 +311,8 @@ def run_code(code, language="python"):
     except Exception as e:
         return {"error": True, "message": f"{type(e).__name__}: {e}"}
 ```
+
+Una lista de bloqueo de substring lee el código como texto, por lo que pierde cualquier cosa que la coincidencia de cadenas no escriba literalmente.`import`Los datos de la información de la información de la información de la información de la información de la información de la información de la información de la información de la información de la información de la información de la información de la información de la información de la información de la información de la información de la información de la información de la información de la información de la información de la información de la información de la información.`__class__`y `__globals__`Las cadenas que se remontan al intérprete real) y los nombres construidos no seguros por estructura en lugar de por ortografía. Aun así, trate esto como un filtro de enseñanza, no como un límite real. Cualquier guardia en proceso comparte el intérprete con el código que ejecuta, y un llamador determinado todavía puede encontrar objetos accesibles. Los sistemas de producción ejecutan código no confiable en un proceso o contenedor separado (un subproceso con privilegios retirados, gVisor, Firecracker o un ejecutor de código alojado), donde un escape aterriza al atacante en una caja de desecho en lugar de su servicio.
 
 ### Paso 3: Registre todas las herramientas
 
@@ -328,7 +339,7 @@ def register_all_tools():
         read_file,
     )
     register_tool(
-        "run_code", "Execute Python code in a sandboxed environment. Set a 'result' variable to return output.",
+        "run_code", "Run a small Python snippet behind a static-analysis guard and a restricted interpreter. This is a teaching filter, not real isolation. Set a 'result' variable to return output.",
         {"type": "object", "properties": {"code": {"type": "string", "description": "Python code to execute"}, "language": {"type": "string", "enum": ["python"], "description": "Programming language"}}, "required": ["code"]},
         run_code,
     )

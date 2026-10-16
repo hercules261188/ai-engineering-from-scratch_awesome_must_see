@@ -94,20 +94,20 @@ Dadas dos vectores, ¿cómo se mide la similitud?
 
 **Cosine similarity**El cosino del ángulo entre dos vectores. varía de -1 (oposto) a 1 (identico). Ignora la magnitud, sólo se preocupa por la dirección. Esta es la opción predeterminada para RAG.
 
-```
-cosine_sim(a, b) = dot(a, b) / (||a|| * ||b||)
+```math
+\mathop{\mathrm{cosine\_sim}}(a, b) = \frac{\mathop{\mathrm{dot}}(a, b)}{\lVert a \rVert \cdot \lVert b \rVert}
 ```
 
 **Dot product**Los vectores más grandes obtienen puntajes más altos.
 
-```
-dot(a, b) = sum(a_i * b_i)
+```math
+\mathop{\mathrm{dot}}(a, b) = \sum_i a_i b_i
 ```
 
 **L2 (Euclidean) distance**Distancia recta en el espacio vectorial. Distancia más pequeña = más similar.
 
-```
-L2(a, b) = sqrt(sum((a_i - b_i)^2))
+```math
+\mathop{\mathrm{L2}}(a, b) = \sqrt{\sum_i (a_i - b_i)^2}
 ```
 
 La similitud cosínica es el estándar. maneja documentos de diferentes longitudes con gracia porque se normaliza en magnitud. Cuando alguien dice "busca vectorial", casi siempre se refieren a similitud cosínica.

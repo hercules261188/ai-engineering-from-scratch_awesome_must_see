@@ -438,22 +438,20 @@ El oleoducto combina todas las técnicas con una estrategia de escalada.
 
 ```python
 def solve_with_escalation(question, examples, client, model):
-    system, user = build_cot_prompt(question, examples)
-    single_response = call_llm(client, model, system, user, temperature=0.0)
-    single_answer = extract_answer(single_response)
+    single_answer, _ = few_shot_cot_solve(question, examples, client, model)
 
     sc_answer, confidence, _, _ = self_consistency_solve(
         question, examples, client, model, n_samples=5
     )
 
-    if confidence >= 0.8:
+    if confidence >= 0.8 and single_answer == sc_answer:
         return sc_answer, "self_consistency", confidence
 
     tot_answer, _ = tree_of_thought_solve(question, client, model)
     return tot_answer, "tree_of_thought", None
 ```
 
-La lógica de escalada: primero prueba barato (Cot único). Si la confianza en la autoconsistencia es inferior a 0.8 (menos de 4 de 5 muestras coinciden), escala a ToT. Esto equilibra el costo y la precisión - la mayoría de los problemas se resuelven a bajo costo, los problemas difíciles obtienen más computación.
+La lógica de escalada: primero prueba barato (Cot único). Un solo camino determinista no da participación de votos, por lo que su control de calidad es el acuerdo: la respuesta de temperatura-0 debe coincidir con la respuesta mayoritaria de los caminos muestrados. Si no lo hace, o si la confianza en la autoconsistencia es inferior a 0,8 (menos de 4 de 5 muestras coinciden), escala a ToT. Esto equilibra el costo y la precisión -- la mayoría de los problemas se resuelven a bajo costo, los problemas difíciles obtienen más computación.
 
 ## Usalo
 

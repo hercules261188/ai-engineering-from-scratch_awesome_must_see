@@ -863,7 +863,7 @@ La API de lote ofrece un descuento del 50% en todos los tokens. Los resultados l
 #     return None
 ```
 
-En la producción, reemplaza el escaneo lineal con un índice vectorial (Redis Vector Search, Pinecone o pgvector). El escaneo lineal funciona para <1,000 entradas.
+En la producción, reemplaza el escaneo lineal con un índice vectorial (Redis Vector Search, Pinecone o pgvector).$O(\log n)$- ¿Qué?
 
 ## Envío
 

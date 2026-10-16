@@ -11,7 +11,7 @@
 ## Objetivos de aprendizaje
 
 - Implementar LoRA mediante la inyección de matrices de adaptadores de bajo rango (A y B) en las capas de atención de un modelo preentrenado
-- Calcular los ahorros de parámetros de LoRA vs. ajuste fino completo: r r con dimensiones de d_modelo trenes 2*r*d parámetros en lugar de d^2
+- Calcular los ahorros de parámetros de LoRA vs ajuste fino completo: rango $r$con$d_{\text{model}}$dimensiones de los trenes $2 \cdot r \cdot d$los parámetros en lugar de $d^2$
 - Ajustar un modelo utilizando QLoRA (4 bits de base cuantizada + adaptadores LoRA) para que encaje en la memoria de la GPU del consumidor
 - Combinar los pesos de LoRA de nuevo en el modelo base para el despliegue y comparar la velocidad de inferencia con y sin adaptadores
 
@@ -37,21 +37,21 @@ Edward Hu y sus colegas de Microsoft publicaron LoRA en junio de 2021. La inform
 
 Aquí está la matemática. Una capa lineal estándar calcula:
 
-```
+```math
 y = Wx
 ```
 
-Donde W es una matriz d_out x d_in. para una proyección de atención 4096x4096, eso es 16,777,216 parámetros.
+¿ Dónde ?$W$es un $d_{\text{out}} \times d_{\text{in}}$Para una proyección de atención 4096x4096, eso es 16.777.216 parámetros.
 
-LoRA congela W y añade una descomposición de bajo rango:
+LoRA se congela .$W$y añade una descomposición de bajo rango:
 
-```
+```math
 y = Wx + BAx
 ```
 
-Donde B es (d_out x r) y A es (r x d_in). La rango r es mucho menor que d -- típicamente 8, 16 o 32.
+¿ Dónde ?$B$¿ Es verdad ?$(d_{\text{out}} \times r)$y $A$¿ Es verdad ?$(r \times d_{\text{in}})$- El rango .$r$es mucho más pequeño que $d$-- típicamente 8, 16 o 32.
 
-Para r=16 en una capa de 4096x4096:
+Para$r=16$en una capa de 4096x4096:
 - Parámetros originales: 4096 x 4096 = 16.777.216
 - Parámetros de la LRA: (4096 x 16) + (16 x 4096) = 65,536 + 65,536 = 131,072
 - Reducción: 131.072 / 16.777.216 = 0,78%
@@ -76,18 +76,18 @@ A se inicia con un gaussiano aleatorio. B se inicia con cero. Esto significa que
 
 ### El factor de escala: Alfa
 
-LoRA introduce un factor de escalado alfa que controla cuánto la actualización de bajo rango afecta la salida:
+LoRA introduce un factor de escala $\alpha$que controla la cantidad de cambios que la actualización de bajo rango afecta a la salida:
 
-```
-y = Wx + (alpha / r) * BAx
+```math
+y = Wx + \frac{\alpha}{r} \cdot BAx
 ```
 
-Cuando alfa = r, la escala es 1x. Cuando alfa = 2r (el estándar común), la escala es 2x. Este hiperparámetro controla la tasa de aprendizaje de la ruta LoRA independientemente de la tasa de aprendizaje base.
+¿ Cuándo ?$\alpha = r$, la escala es 1x. Cuando $\alpha = 2r$Este hiperparámetro controla la tasa de aprendizaje de la ruta LoRA independientemente de la tasa de aprendizaje base.
 
 Orientación práctica:
-- alfa = 2 * rank es una convención común de la comunidad (el papel original utilizado alfa = rank en la mayoría de los experimentos)
-- alfa = rango da 1x escala, conservador pero estable
-- Alfa superior significa actualizaciones más grandes por paso, que pueden acelerar la convergencia o causar inestabilidad
+- $\alpha = 2 \cdot \text{rank}$es una convención comunitaria común (el papel original utilizado $\alpha = \text{rank}$en la mayoría de los experimentos)
+- $\alpha = \text{rank}$da 1x escala, conservadora pero estable
+- Más alto .$\alpha$significa actualizaciones más grandes por paso, que pueden acelerar la convergencia o causar inestabilidad
 
 ### Dónde aplicar el LORA
 
@@ -104,7 +104,7 @@ El punto ideal para la mayoría de las tareas: q_proj + v_proj. Esto se dirige a
 
 ### Selección de rango
 
-El rango r controla la expresividad de la adaptación:
+El rango$r$controla la expresividad de la adaptación:
 
 | Rank | Trainable Params (per layer) | Best For |
 |------|---------------------------|----------|
@@ -115,7 +115,7 @@ El rango r controla la expresividad de la adaptación:
 | 64 | 524,288 | Diminishing returns for most tasks |
 | 128 | 1,048,576 | Rarely justified |
 
-Hu et al. demostraron que r=4 ya captura la mayor parte de la adaptación para tareas simples. r=8 y r=16 son las opciones más comunes en la práctica. Ir más allá de r=64 rara vez mejora la calidad y comienza a perder la ventaja de memoria de LoRA.
+Hu et al. demostraron que$r=4$La mayoría de las adaptaciones para tareas simples ya se encuentran en el mercado. $r=8$y $r=16$Las opciones más comunes en la práctica.$r=64$rara vez mejora la calidad y comienza a perder la ventaja de memoria de LoRA.
 
 ### QLoRA: Cuantización de 4 bits + LoRA
 
@@ -148,7 +148,7 @@ QLoRA hace tres contribuciones técnicas:
 | QLoRA r=16 (NF4) | 47.5 | 6.61 | 13.4 |
 | QLoRA r=64 (NF4) | 48.1 | 6.70 | 14.2 |
 
-LoRA en r=16 está dentro del 1% del ajuste fino completo en la mayoría de los puntos de referencia. QLoRA en r=16 pierde otra fracción del porcentaje.
+LoRA en $r=16$El nivel de calificación de los valores de referencia es inferior al 1% del ajuste completo en la mayoría de los valores de referencia.$r=16$El precio de la producción de los productos de la industria de la industria de la producción de productos de la industria de la industria de la producción de productos de la industria de la industria de la industria de la producción de productos de la industria de la industria de la industria de la industria de la producción de la industria de la industria de la industria de la industria de la industria de la industria de la industria de la industria de la industria de la industria de la industria de la industria de la industria de la industria de la industria de la industria de la industria de la industria de la industria de la industria de la industria de la industria de la industria de la industria de la industria de la industria de la industria de la industria de la industria de la industria de la industria de la industria de la industria de la industria de la industria de la industria de la industria de la industria de la industria de la industria de la industria de la industria de la industria de la industria de la industria de la industria de la industria de la industria de la industria de la industria de la industria de la industria de la industria de la industria de la industria de la industria de la industria de la industria de la industria de la industria de la industria de la industria de la industria de la industria de la industria de la industria de la industria de la industria de la industria de la industria de la industria de la industria de la industria de la industria de la industria de la industria de la del del del del del del del del del del del del del del del del del del del del del del del del del del del del del del del del del del del del del del del del del del del del del del del del del del del del del del del del del del del del del del del del del del del del del del del del del del del del del del del del del del del del del del del del del del del del del del del del del del del del del del del del del del del del del del del del del del del del del del del del del del del del del del del del del del del del del del del del del del del del del del del del del del del del del del del del del del del del del del del del del del del del del del del del del del del del del del del del del del del del del del del del del del del del del del del del del del del del del del del del del del del del del del del del del del del del del del del del del del del del del$r=64$esencialmente coincide con el ajuste completo mientras utiliza un 90% menos de memoria.
 
 ### Coste real
 
@@ -183,7 +183,7 @@ Después del entrenamiento, tienes dos cosas: el modelo base congelado y un pequ
 
 1. **Keep them separate**En el caso de los modelos de base, el modelo de base es el modelo de base, el modelo de base es el modelo de base.
 
-2. **Merge them permanently**El modelo combinado es del mismo tamaño que el original. No hay gastos generales de inferencia. No hay adaptador para administrar.
+2. **Merge them permanently**: Computación $W' = W + (\alpha/r) \cdot BA$El modelo fusionado es del mismo tamaño que el original, no hay gastos generales de inferencia, no hay adaptador para administrar.
 
 Para realizar múltiples tareas (adaptor de soporte al cliente, adaptador de código, adaptador de traducción), manténgalos separados.
 
@@ -531,11 +531,11 @@ Esta lección produce:
 | LoRA | "Efficient fine-tuning" | Low-Rank Adaptation: freeze base weights, train two small matrices A and B whose product approximates the full weight update |
 | QLoRA | "Fine-tune on a laptop" | Quantized LoRA: load the base model in 4-bit NF4, train LoRA adapters in fp16 on top, enabling 7B fine-tuning in 6GB VRAM |
 | Rank (r) | "How much the model can learn" | The inner dimension of the A and B matrices; controls expressiveness vs. parameter count |
-| Alpha | "LoRA learning rate" | Scaling factor applied to the LoRA output; alpha/r scales the adaptation's contribution to the final output |
+| Alpha | "LoRA learning rate" | Scaling factor applied to the LoRA output; $\alpha/r$ scales the adaptation's contribution to the final output |
 | NF4 | "4-bit quantization" | Normal Float 4: a 4-bit data type with quantization levels at normal distribution quantiles, optimal for neural network weights |
 | Adapter | "The small trained part" | The LoRA A and B matrices saved as a separate file (10-100MB), loadable on top of any copy of the base model |
 | Target modules | "Which layers to LoRA" | The specific linear layers (q_proj, v_proj, etc.) where LoRA adapters are injected |
-| Merging | "Bake it in" | Computing W + (alpha/r) * BA and replacing the original weight, eliminating the adapter overhead at inference |
+| Merging | "Bake it in" | Computing $W + (\alpha/r) \cdot BA$ and replacing the original weight, eliminating the adapter overhead at inference |
 | Paged optimizers | "Don't OOM during training" | Offloading optimizer states (Adam momentum, variance) to CPU when GPU memory is exhausted |
 | Catastrophic forgetting | "Fine-tuning broke everything else" | When updating all weights causes the model to lose previously learned capabilities |
 
