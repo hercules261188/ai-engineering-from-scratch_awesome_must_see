@@ -91,8 +91,8 @@ flowchart TD
 
 **How to fix:**区分. 代替模拟原价值,模拟连续值之间的变化:
 
-```
-diff[t] = value[t] - value[t-1]
+```math
+\text{diff}[t] = \text{value}[t] - \text{value}[t-1]
 ```
 
 如果一个分化轮不使系列停滞,请再次应用 (二级分化).大多数现实世界系列需要最多两轮.
@@ -109,7 +109,7 @@ diff[t] = value[t] - value[t-1]
 
 ### 自身相关性
 
-自动相对度测量时间 t 的值与时间 t-k 的值相对度 (过去的 k 步骤).自动相对度函数 (ACF) 为每个 lag k 绘制了这种相对度.
+自动相关性衡量了一个值的时间$t$与时间值相对应$t-k$($k$对于每次延迟,自动相关性函数 (ACF) 绘制了此相关性.$k$现在,我们要去.
 
 **ACF tells you:**
 - 如果在5步后ACF下降到零,则5步前的值是无关的.
@@ -142,7 +142,7 @@ diff[t] = value[t] - value[t-1]
 
 **How many lags?**如果 ACF 值高于10个滞后,则至少使用10个滞后.如果有周季节性,则包括7个滞后 (可能14个).更多的滞后给模型更多的历史,但也增加了更大的功能,增加了过度适应的风险.
 
-**The target alignment trap.**创建时,目标必须是时间 t 的值,所有功能必须使用时间 t-1 或更早的值.如果你意外地将时间 t 的值作为一个功能,你有一个完美的预测器 - - 和一个完全无用的模型.这是时间系列功能工程中最常见的错误.
+**The target alignment trap.**当创建延迟功能时,目标必须是当中的值 $t$, 所有特征都必须按时使用值$t-1$如果您意外地将值在时间内$t$作为一个特征,你有一个完美的预测器,一个完全无用的模型.这是时间序列特征工程中最常见的错误.
 
 ### 经验证
 
@@ -178,8 +178,8 @@ flowchart TD
 ```
 
 进行前进验证:
-1. 运行数据到时间 t
-2. 在时间 t+1 (或 t+1 到 t+k 多步) 中预测
+1. 保持数据的更新$t$
+2. 预测时间$t+1$(或$t+1$为了$t+k$对于多步骤)
 3. 滑向前窗户
 4. 复制
 
@@ -191,11 +191,11 @@ flowchart TD
 
 亚里马是经典时间序列模型. 它有三个组成部分:
 
-- **AR (Autoregressive):**预测从过去的值.AR(p) 使用最后的p值.
-- **I (Integrated):**为了实现静止性,进行分化.
-- **MA (Moving Average):**预测从过去的预测错误.
+- **AR (Autoregressive):**预测从过去的值.$p$价值观
+- **I (Integrated):**实现静止性的差异化.$d$区分的轮子.
+- **MA (Moving Average):**预测从过去的预测错误.$q$错误.
 
-根据ACF/PACF分析或自动搜索 (自动ARIMA) 选择p,d,q.
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,$p$现在$d$现在$q$基于ACF/PACF分析或自动搜索 (自动ARIMA).
 
 我们不会从零开始实现ARIMA,它需要数字优化,这超出了本课程的范围.关键的见解是了解每个组件的作用,
 
@@ -217,7 +217,7 @@ flowchart TD
 
 **Recursive (iterated):**预测一个步骤前进,使用预测作为下一步的输入. 简单,但错误积累 - 每个预测都使用了之前的预测,所以错误复合.
 
-**Direct:**训练一个单独的模型,为每个视界.模型-1预测t+1,模型-5预测t+5.没有错误积累,但每个模型都有较少的训练样本,并且它们没有分享信息.
+**Direct:**训练一个单独的模型,每个视界.$t+1$模型5预测$t+5$没有错误积累,但每个模型的训练样本数量较少,并且没有信息共享.
 
 **Multi-output:**训练一个同时输出所有视野的模型. 通过视野共享信息,但需要支持多个输出 (或自定义输失函数) 的模型.
 
@@ -228,7 +228,7 @@ flowchart TD
 | Mistake | Why it happens | How to fix |
 |---------|---------------|-----------|
 | Random train/test split | Habit from standard ML | Use walk-forward or temporal split |
-| Using future features | Feature at time t included by mistake | Audit every feature for temporal alignment |
+| Using future features | Feature at time $t$ included by mistake | Audit every feature for temporal alignment |
 | Overfitting to seasonality | Model memorizes calendar patterns | Hold out a full seasonal cycle in the test set |
 | Ignoring scale changes | Revenue doubles but patterns stay | Model percentage change instead of absolute |
 | Too many lag features | "More history is better" | Use ACF to determine relevant lags |
@@ -386,7 +386,7 @@ print(f"Mean score: {scores.mean():.4f} +/- {scores.std():.4f}")
 
 时间系列预测使用回归指标,但在时间意识的背景下:
 
-- **MAE (Mean Absolute Error):**平均 y_true - y_pred 语. 简单地解释在原始单位. "平均,预测是3.2度. "
+- **MAE (Mean Absolute Error):**平均值$\lvert y_{\text{true}} - y_{\text{pred}} \rvert$根据原始单位,预测平均是3.2度的.
 - **RMSE (Root Mean Squared Error):**平均二次错误的平方根. 惩罚大错误比MAE. 使用当大错误比许多小错误更糟时.
 - **MAPE (Mean Absolute Percentage Error):**平均错误/真值是100. 独立于规模,可用于不同的数组进行比较. 但在真值为零时未定义.
 - **Naive baseline comparison:**总是与简单的基线进行比较.季节性天真基线预测了过去一段时间的值 (昨天,上周).如果你的模型不能击败天真,那么有什么不对.
@@ -444,10 +444,10 @@ print(f"Mean score: {scores.mean():.4f} +/- {scores.std():.4f}")
 | Term | What people say | What it actually means |
 |------|----------------|----------------------|
 | Stationarity | "The stats don't change over time" | A series whose mean, variance, and autocorrelation structure are constant over time |
-| Differencing | "Subtract consecutive values" | Computing y[t] - y[t-1] to remove trends and achieve stationarity |
+| Differencing | "Subtract consecutive values" | Computing $y[t] - y[t-1]$ to remove trends and achieve stationarity |
 | Autocorrelation (ACF) | "How a series correlates with itself" | The correlation between a time series and a lagged copy of itself, as a function of the lag |
-| Partial autocorrelation (PACF) | "Direct correlation only" | Autocorrelation at lag k after removing the effect of all shorter lags |
-| Lag features | "Past values as inputs" | Using y[t-1], y[t-2], ..., y[t-k] as features to predict y[t] |
+| Partial autocorrelation (PACF) | "Direct correlation only" | Autocorrelation at lag $k$ after removing the effect of all shorter lags |
+| Lag features | "Past values as inputs" | Using $y[t-1], y[t-2], \ldots, y[t-k]$ as features to predict $y[t]$ |
 | Walk-forward validation | "Time-respecting cross-validation" | Evaluation where training data always precedes test data chronologically |
 | ARIMA | "The classic time series model" | AutoRegressive Integrated Moving Average: combines past values (AR), differencing (I), and past errors (MA) |
 | Seasonality | "Repeating calendar patterns" | Regular, predictable cycles in a time series tied to calendar periods (daily, weekly, yearly) |

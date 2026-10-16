@@ -28,15 +28,15 @@
 
 ### 最大利分类器
 
-由于线性分离的数据, 标签 y_i 在 {-1, +1} 和特征向量 x_i, 我们想要一个超平面 w^T x + b = 0 分离类.
+给出了线性分离的数据,$y_i \in \lbrace -1, +1 \rbrace$并且具有特征的向量$x_i$我们需要一个超级飞机$w^T x + b = 0$这将分开各类.
 
-从点 x_i 到超平面的距离是:
+距离一个点的距离$x_i$对于超平面是:
 
+```math
+\text{distance} = \frac{\lvert w^T x_i + b \rvert}{\lVert w \rVert}
 ```
-distance = |w^T x_i + b| / ||w||
-```
 
-对于正确分类的点:y_i * (w^T x_i + b) > 0. 边缘是从超平面到两侧最近的点的距离的两倍.
+对于正确分类的点:$y_i (w^T x_i + b) > 0$边缘是从超平面到两侧最接近的点的距离的两倍.
 
 ```mermaid
 graph LR
@@ -51,19 +51,23 @@ graph LR
 
 优化问题:
 
-```
-maximize    2 / ||w||     (the margin width)
-subject to  y_i * (w^T x_i + b) >= 1  for all i
-```
-
-同样 (最小化时的时间更容易优化):
-
-```
-minimize    (1/2) ||w||^2
-subject to  y_i * (w^T x_i + b) >= 1  for all i
+```math
+\begin{aligned}
+\text{maximize} \quad & \frac{2}{\lVert w \rVert} \quad \text{(the margin width)} \\
+\text{subject to} \quad & y_i (w^T x_i + b) \ge 1 \quad \text{for all } i
+\end{aligned}
 ```
 
-这是一个曲的方形程序. 它有一个独特的全球解决方案.坐落在边界边界 (w^T x_i + b) = 1) 的数据点是支持向量.它们是决定边界的唯一点.移动或移除任何非支持向量点,边界不会改变.
+同等 (最小化)$\lVert w \rVert^2$优化更容易):
+
+```math
+\begin{aligned}
+\text{minimize} \quad & \frac{1}{2} \lVert w \rVert^2 \\
+\text{subject to} \quad & y_i (w^T x_i + b) \ge 1 \quad \text{for all } i
+\end{aligned}
+```
+
+这是一个曲的平方程序. 它有一个独特的全球解决方案. 坐落在边界边界的数据点 (在哪里$y_i (w^T x_i + b) = 1$只有这些点才能确定决定的边界. 移动或移除任何非支持向量点,边界不会改变.
 
 ### 支持向量:少数关键
 
@@ -85,30 +89,32 @@ graph TD
 
 实际数据很少完全可以分开.一些点可能位于边界的错误侧面或边界内部.软边界公式允许通过引入宽松变量来违反.
 
-```
-minimize    (1/2) ||w||^2 + C * sum(xi_i)
-subject to  y_i * (w^T x_i + b) >= 1 - xi_i
-            xi_i >= 0  for all i
+```math
+\begin{aligned}
+\text{minimize} \quad & \frac{1}{2} \lVert w \rVert^2 + C \sum_i \xi_i \\
+\text{subject to} \quad & y_i (w^T x_i + b) \ge 1 - \xi_i \\
+& \xi_i \ge 0 \quad \text{for all } i
+\end{aligned}
 ```
 
-宽松变量 xi_i 测量了 i 点违反了边际的程度. C 控制了交易:
+宽松变量$\xi_i$测量了多少点$i$违反了边缘.$C$控制交易:
 
-| C value | Behavior |
+| $C$ value | Behavior |
 |---------|----------|
-| Large C | Penalizes violations heavily. Narrow margin, fewer misclassifications. Overfits |
-| Small C | Allows more violations. Wide margin, more misclassifications. Underfits |
+| Large $C$ | Penalizes violations heavily. Narrow margin, fewer misclassifications. Overfits |
+| Small $C$ | Allows more violations. Wide margin, more misclassifications. Underfits |
 
-是规律化强度,逆转.大 C = 规律化较少.小 C = 规律化较大.
+$C$换的规律化强度.$C$它们的度较小.$C$更多的规律化.
 
 ### 损失:SVM损失函数
 
 软边缘SVM可以被重写为无限制优化:
 
-```
-minimize    (1/2) ||w||^2 + C * sum(max(0, 1 - y_i * (w^T x_i + b)))
+```math
+\text{minimize} \quad \frac{1}{2} \lVert w \rVert^2 + C \sum_i \max(0, 1 - y_i (w^T x_i + b))
 ```
 
-术语max(0,1 - y_i * f(x_i)) 是链损失.当点正确分类后,它是零.当点在边缘内或错误分类后,它是线性.
+术语$\max(0, 1 - y_i f(x_i))$时刻的位置是的损失.当点正确分类,并且超过边缘时,它是零.当点在边缘内或错误分类时,它是线性.
 
 ```
 Hinge loss for a single point:
@@ -130,9 +136,11 @@ Linear penalty when y*f(x) < 1.
 
 进行物流损失 (物流回归) 的比较:
 
-```
-Hinge:     max(0, 1 - y*f(x))          Hard cutoff at margin
-Logistic:  log(1 + exp(-y*f(x)))        Smooth, never exactly zero
+```math
+\begin{aligned}
+\text{Hinge:} \quad & \max(0, 1 - y f(x)) && \text{Hard cutoff at margin} \\
+\text{Logistic:} \quad & \log(1 + \exp(-y f(x))) && \text{Smooth, never exactly zero}
+\end{aligned}
 ```
 
 损产生稀缺的解决方案 (只有支持向量有非零的贡献).物流损失使用所有数据点.这使得SVM在预测时间更有效的存储.
@@ -141,36 +149,40 @@ Logistic:  log(1 + exp(-y*f(x)))        Smooth, never exactly zero
 
 您可以使用链损失的梯度下降加上L2规律化来训练线性SVM,而不需要解决限制的QP:
 
+```math
+\begin{aligned}
+& L(w, b) = \frac{\lambda}{2} \lVert w \rVert^2 + \frac{1}{n} \sum_i \max(0, 1 - y_i (w^T x_i + b)) \\[6pt]
+& \text{Gradient with respect to } w\text{:} \\
+& \quad \text{If } y_i (w^T x_i + b) \ge 1\text{:} \quad \frac{\partial L}{\partial w} = \lambda w \\
+& \quad \text{If } y_i (w^T x_i + b) < 1\text{:} \quad \frac{\partial L}{\partial w} = \lambda w - y_i x_i \\[6pt]
+& \text{Gradient with respect to } b\text{:} \\
+& \quad \text{If } y_i (w^T x_i + b) \ge 1\text{:} \quad \frac{\partial L}{\partial b} = 0 \\
+& \quad \text{If } y_i (w^T x_i + b) < 1\text{:} \quad \frac{\partial L}{\partial b} = -y_i
+\end{aligned}
 ```
-L(w, b) = (lambda/2) * ||w||^2 + (1/n) * sum(max(0, 1 - y_i * (w^T x_i + b)))
 
-Gradient with respect to w:
-  If y_i * (w^T x_i + b) >= 1:  dL/dw = lambda * w
-  If y_i * (w^T x_i + b) < 1:   dL/dw = lambda * w - y_i * x_i
-
-Gradient with respect to b:
-  If y_i * (w^T x_i + b) >= 1:  dL/db = 0
-  If y_i * (w^T x_i + b) < 1:   dL/db = -y_i
-```
-
-这称为原始式.它运行在O(n * d) 每个时代,其中n是样本数,d是特征数.对于大小,稀少,高维度数据 (文本分类),这是快速的.
+这被称为原始式.$O(n \cdot d)$根据时间,$n$是样本数量和$d$对于大小,稀少,高维度数据 (文本分类),这是快速的.
 
 ### 双重配方和核心技巧
 
 根据第一阶段18课,KKT条件,SVM问题的拉格兰基双数是:
 
-```
-maximize    sum(alpha_i) - (1/2) * sum_ij(alpha_i * alpha_j * y_i * y_j * (x_i . x_j))
-subject to  0 <= alpha_i <= C
-            sum(alpha_i * y_i) = 0
+```math
+\begin{aligned}
+\text{maximize} \quad & \sum_i \alpha_i - \frac{1}{2} \sum_{i,j} \alpha_i \alpha_j y_i y_j (x_i \cdot x_j) \\
+\text{subject to} \quad & 0 \le \alpha_i \le C \\
+& \sum_i \alpha_i y_i = 0
+\end{aligned}
 ```
 
-双只涉及数据点之间的点产品x_i.x_j.这是关键见解.用内核函数K(x_i,x_j) 取代每个点产品,SVM可以学习非线性界限,而不会明确计算转换.
+双重只涉及点点产品$x_i \cdot x_j$它们是数据点之间的数据点.这是关键的见解.$K(x_i, x_j)$而SVM可以学习非线性界限,
 
-```
-Linear kernel:      K(x, z) = x . z
-Polynomial kernel:  K(x, z) = (x . z + c)^d
-RBF (Gaussian):     K(x, z) = exp(-gamma * ||x - z||^2)
+```math
+\begin{aligned}
+\text{Linear kernel:} \quad & K(x, z) = x \cdot z \\
+\text{Polynomial kernel:} \quad & K(x, z) = (x \cdot z + c)^d \\
+\text{RBF (Gaussian):} \quad & K(x, z) = \exp(-\gamma \lVert x - z \rVert^2)
+\end{aligned}
 ```
 
  RBF 核将数据映射到无限维度空间中.输入空间中接近的点具有接近 1 的核值.距离较远的点具有接近 0 的核值.它可以学习任何平滑的决策界限.
@@ -186,20 +198,22 @@ graph LR
     A -->|"Kernel trick<br>K(x,z) = phi(x).phi(z)"| B
 ```
 
-核技巧在高维空间中计算点产量,但从来没有到达那里.对于 D 维度的多项内核,明确的特征空间有 O  D 维度.但 K  x, z 计算在 O  D 时间.
+核算法计算了高维空间中的点数值,而没有去那里.$d$在$D$空间的特征是$O(D^d)$它们的尺寸.$K(x, z)$计算在$O(D)$时间.
 
 ### 逆转的SVM (SVR)
 
-支持向量回归将宽度的子环绕数据.子内部的点是零损失的.子以外的点是线性地处罚的.
+支持向量回归适合宽度的管道$\epsilon$管内点没有损失. 管外点是线性地处罚.
 
-```
-minimize    (1/2) ||w||^2 + C * sum(xi_i + xi_i*)
-subject to  y_i - (w^T x_i + b) <= epsilon + xi_i
-            (w^T x_i + b) - y_i <= epsilon + xi_i*
-            xi_i, xi_i* >= 0
+```math
+\begin{aligned}
+\text{minimize} \quad & \frac{1}{2} \lVert w \rVert^2 + C \sum_i (\xi_i + \xi_i^*) \\
+\text{subject to} \quad & y_i - (w^T x_i + b) \le \epsilon + \xi_i \\
+& (w^T x_i + b) - y_i \le \epsilon + \xi_i^* \\
+& \xi_i, \xi_i^* \ge 0
+\end{aligned}
 ```
 
-宽管 = 支持向量较少 = 适合性更高.窄管 = 支持向量较多 = 适合性更紧.
+其他$\epsilon$宽管 = 支持向量较少 = 适合性更高.窄管 = 支持向量较多 = 适合性更紧.
 
 ### 为什么SVM输给深度学习 (以及当他们仍然赢得时)
 
@@ -208,7 +222,7 @@ subject to  y_i - (w^T x_i + b) <= epsilon + xi_i
 | Factor | SVMs | Deep learning |
 |--------|------|---------------|
 | Feature engineering | Requires it | Learns features |
-| Scalability | O(n^2) to O(n^3) for kernel | O(n) per epoch with SGD |
+| Scalability | $O(n^2)$ to $O(n^3)$ for kernel | $O(n)$ per epoch with SGD |
 | Image/text/audio | Needs handcrafted features | Learns from raw data |
 | Large datasets (>100k) | Slow | Scales well |
 | GPU acceleration | Limited benefit | Massive speedup |
@@ -324,9 +338,9 @@ print(f"Accuracy: {clf.score(X_test, y_test):.4f}")
 print(f"Support vectors: {clf['svm'].n_support_}")
 ```
 
-重要:在训练SVM之前,总是扩展特征.SVM对特征大小敏感,因为边缘取决于未扩展的特征,而扭曲了几何学.
+重要:在训练SVM之前,总是扩展您的特性.SVM对特征大小敏感,因为边缘取决于$\lVert w \rVert$没有扩展的特征扭曲了几何学.
 
-对于大型数据集,使用`LinearSVC`(原始表达式,O(n) 按时代)`SVC`(双式表达,O(n^2) 到O(n^3)):
+对于大型数据集,使用`LinearSVC`(原始表达式,$O(n)$时间的时间`SVC`(双重表达,$O(n^2)$为了$O(n^3){}$):
 
 ```python
 from sklearn.svm import LinearSVC
@@ -341,13 +355,13 @@ clf = Pipeline([
 
 1. 生成一个2D线性可分离的数据集.训练你的线性SVM并识别支持向量. 检查支持向量是决策边界最接近的点.
 
-2. 在噪音集中的C从0.001到1000变化.为每个C值绘制决定界限.观察从宽边缘 (不适合) 到狭窄边缘 (过适合) 的过渡.
+2. 变化$C$在噪音集中的0.001到1000.$C$观察从宽 (不适合) 过渡到狭 (过适合).
 
 3. 创建一个类界限圆形 (非线性) 的数据集. 显示线性SVM失败.计算RBF内核矩阵,并显示内核诱导的功能空间中类变得可分离.
 
 4. 根据数据集进行链损失与物流损失的比较.训练线性SVM和物流回归.计算每个模型的决策边界 (支持向量与所有点) 贡献多少训练点.
 
-5. 执行SVR (epsilon-insensitive loss).将其调整为y = sin(x) +噪音. 围绕预测图画出epsilon管,并突出支持向量 (管外的点).
+5. 适应 子子子子子子子子子子子子子子子子子子子子子子子子子子子子子子子子子子子子子子子子子子子子子子子子子子子子子子子子子子子子子子子子子子子子子子子子子子子子子子子子子子子子子子子子子子子子子子子子子子子子子子子子子子子子子子子子子子子子子子子子子子子子子子子子$y = \sin(x) + \text{noise}$图形图形图形图形图形图形图形图形图形图形图形图形图形图形图形图形图形图形图形图形图形图形图形图形图形图形图形图形图形图形图形图形图形图形图形图形图形图形图形图形图形图形图形图形图形图形图形图形图形图形图形图形图形图形图形图形图形图形图形图形图形图形图形图形图形图形图形图形图形图形图形图形图形图形图形图形图形图形图形图形图形图形图形图形图形图形图形图形图形图形图形图形图形图形图形图形图形图形图形图形图形图形图形图形图形图形图形图形图形图形图形图形图形图形图形图形图形图形图形图形图形图形图形图形图形图形图形图形图形图形图形图形图形图形图形图形图形图形图形图形图形图形图形图形图形图形图形图形图形图形图形图形图形图形图形图形图形图形图形图形图形图形图形图形图形图形图形图形图形图形图形图形图形图形图形图形图形图形图形
 
 ## 关键词
 
@@ -355,16 +369,16 @@ clf = Pipeline([
 |------|----------------------|
 | Support vectors | The training points closest to the decision boundary. The only points that determine the hyperplane |
 | Margin | The distance between the decision boundary and the nearest support vectors. SVMs maximize this |
-| Hinge loss | max(0, 1 - y*f(x)). Zero when correctly classified and outside the margin. Linear penalty otherwise |
-| C parameter | Trade-off between margin width and classification errors. Large C = narrow margin, small C = wide margin |
+| Hinge loss | $\max(0, 1 - y f(x))$. Zero when correctly classified and outside the margin. Linear penalty otherwise |
+| C parameter | Trade-off between margin width and classification errors. Large $C$ = narrow margin, small $C$ = wide margin |
 | Soft margin | SVM formulation that allows margin violations via slack variables. Handles non-separable data |
 | Kernel trick | Computing dot products in a high-dimensional feature space without explicitly mapping to that space |
-| Linear kernel | K(x, z) = x . z. Equivalent to standard dot product. For linearly separable data |
-| RBF kernel | K(x, z) = exp(-gamma * \|\|x-z\|\|^2). Maps to infinite dimensions. Learns any smooth boundary |
-| Polynomial kernel | K(x, z) = (x . z + c)^d. Maps to a feature space of polynomial combinations |
+| Linear kernel | $K(x, z) = x \cdot z$. Equivalent to standard dot product. For linearly separable data |
+| RBF kernel | $K(x, z) = \exp(-\gamma \Vert x-z \Vert^2)$. Maps to infinite dimensions. Learns any smooth boundary |
+| Polynomial kernel | $K(x, z) = (x \cdot z + c)^d$. Maps to a feature space of polynomial combinations |
 | Dual formulation | Reformulation of the SVM problem that depends only on dot products between data points. Enables kernels |
 | SVR | Support Vector Regression. Fits an epsilon-tube around the data. Points inside the tube have zero loss |
-| Slack variables | xi_i: measures how much a point violates the margin. Zero for correctly classified points outside margin |
+| Slack variables | $\xi_i$: measures how much a point violates the margin. Zero for correctly classified points outside margin |
 | Maximum margin | The principle of choosing the hyperplane that maximizes the distance to the nearest points of each class |
 
 ## 进一步阅读

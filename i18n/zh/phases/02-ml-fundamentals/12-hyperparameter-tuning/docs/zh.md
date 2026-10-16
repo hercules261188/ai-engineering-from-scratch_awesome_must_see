@@ -16,7 +16,7 @@
 
 ## 问题
 
-您的梯度增强模型具有学习速度,树木数量,最大深度,每叶的最小样本,子样本比和列样本比.这相当于六个超参数.如果每个具有5个合理值,格格有5^6=15.625个组合.训练每一个需要10秒.这相当于43个小时的计算时间来尝试它们.
+您的梯度增强模型具有学习率,树木数量,最大深度,每叶的最小样本,次样本比和列样本比.这就是六个超参数.如果每个树木都有5个合理值,网格有$5^6 = 15{,}625$训练每一个需要10秒,这相当于43个小时的计算时间.
 
 网格搜索是显而易见的方法,规模最差的方法.随机搜索在计算较少的情况下更好.贝叶斯式优化通过从过去的评估中学习更好.知道要使用哪种策略,以及哪些超参数实际上很重要,可以节省几天的浪费GPU时间.
 
@@ -31,7 +31,7 @@
 | Learning rate | Step size per update | 0.001 to 1.0 |
 | Number of trees/epochs | How long to train | 10 to 10,000 |
 | Max depth | Model complexity | 1 to 30 |
-| Regularization (lambda) | Overfitting prevention | 0.0001 to 100 |
+| Regularization ($\lambda$) | Overfitting prevention | 0.0001 to 100 |
 | Batch size | Gradient estimation noise | 16 to 512 |
 | Dropout rate | Fraction of neurons dropped | 0.0 to 0.5 |
 
@@ -125,7 +125,7 @@ flowchart TD
 | Scheduler | Formula | When to use |
 |-----------|---------|-------------|
 | Step decay | Multiply by 0.1 every N epochs | Classic CNN training |
-| Cosine annealing | lr * 0.5 * (1 + cos(pi * t / T)) | Modern default |
+| Cosine annealing | $\text{lr} \cdot 0.5 \cdot (1 + \cos(\pi t / T))$ | Modern default |
 | Warmup + decay | Linear increase then cosine decay | Transformers |
 | One-cycle | Increase then decrease over one cycle | Fast convergence |
 | Reduce on plateau | Reduce by factor when metric stalls | Safe default |

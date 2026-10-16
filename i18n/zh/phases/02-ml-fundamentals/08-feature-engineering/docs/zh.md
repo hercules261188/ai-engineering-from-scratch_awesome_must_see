@@ -51,7 +51,7 @@ flowchart LR
 
 **Binning:**转换连续值为类别. 当特征与目标之间的关系非线性,但步骤式 (例如年龄组) 时有用.
 
-**Polynomial features:**允许线性模型以更多的特性来捕捉非线性关系.
+**Polynomial features:**创造了$x^2$现在$x^3$现在$x_1 x_2$通过线性模型,可以以更多的特性来捕捉非线性关系.
 
 ### 类别特征
 
@@ -69,10 +69,12 @@ flowchart LR
 
 **TF-IDF:**频率-反文档频率. 根据文档中的独特性,重量词. "the"等常见词变得较低. 罕见的,独特的词变得更重.
 
-```
-TF(word, doc) = count(word in doc) / total words in doc
-IDF(word) = log(total docs / docs containing word)
-TF-IDF = TF * IDF
+```math
+\begin{aligned}
+\text{TF}(\text{word}, \text{doc}) &= \frac{\text{count(word in doc)}}{\text{total words in doc}} \\
+\text{IDF}(\text{word}) &= \log \frac{\text{total docs}}{\text{docs containing word}} \\
+\text{TF-IDF} &= \text{TF} \cdot \text{IDF}
+\end{aligned}
 ```
 
 ### 缺失的价值观
@@ -87,7 +89,7 @@ TF-IDF = TF * IDF
 
 ### 功能互动
 
-有时,这种关系是结合中的.单独的"身高"和"体重"比"BMI =体重/身高^2"更少的预测性.
+只有"身高"和"体重"都能预测得更少.$\text{BMI} = \text{weight} / \text{height}^2$功能互动乘以功能空间,所以使用域知识来选择正确的.
 
 ### 功能选择
 

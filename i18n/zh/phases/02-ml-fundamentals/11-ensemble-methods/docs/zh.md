@@ -24,10 +24,10 @@
 
 ### 为什么团队工作
 
-假设您有N个独立的分类器,每个分类器的准确度为p > 0.5.
+假设你有$N$独立的分类器,每个分类器都具有精确性.$p > 0.5$多数票是正确的:
 
-```
-P(majority correct) = sum over k > N/2 of C(N,k) * p^k * (1-p)^(N-k)
+```math
+P(\text{majority correct}) = \sum_{k > N/2} \binom{N}{k} p^k (1-p)^{N-k}
 ```
 
 对于21个分类器,每种分类器具有60%的精度,多数票的精度约为74%. 在101个分类器,它上升到84%.
@@ -132,7 +132,7 @@ flowchart LR
 3. Final prediction: F_T(x)
 ```
 
-对于二次错误损失,伪残留仅仅是实际残留:`r_i = y_i - F_{t-1}(x_i)`每棵树都符合前一个树的错误.
+对于二次错误损失,伪残留仅仅是实际残留:$r_i = y_i - F_{t-1}(x_i)$每棵树都符合前一个树的错误.
 
 学习速度 (缩小) 控制着每个树的贡献.较小的学习速度需要更多的树木,但更好地概括.典型值:0.01到0.3.
 
@@ -349,7 +349,7 @@ class GradientBoostingScratch:
 ## 进一步阅读
 
 - [Schapire & Freund: Boosting: Foundations and Algorithms](https://mitpress.mit.edu/9780262526036/)亚达博斯创作者的书
-- [Friedman: Greedy Function Approximation: A Gradient Boosting Machine (2001)](https://statweb.stanford.edu/~jhf/ftp/trebst.pdf)-- 原始的梯度增强纸
+- [Friedman: Greedy Function Approximation: A Gradient Boosting Machine (2001)](https://doi.org/10.1214/aos/1013203451)-- 原始的梯度增强纸
 - [Chen & Guestrin: XGBoost (2016)](https://arxiv.org/abs/1603.02754)-- 博的纸
 - [Wolpert: Stacked Generalization (1992)](https://www.sciencedirect.com/science/article/abs/pii/S0893608005800231)-- 原始的堆叠纸
 - [scikit-learn Ensemble Methods](https://scikit-learn.org/stable/modules/ensemble.html)-- 实际参考

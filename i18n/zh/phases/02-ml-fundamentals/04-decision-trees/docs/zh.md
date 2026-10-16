@@ -48,10 +48,8 @@ graph TD
 
 **Gini impurity**测量随机选择的样本如果根据该节点的类分布标记,将被错误分类的概率.
 
-```
-Gini(S) = 1 - sum(p_k^2)
-
-where p_k is the proportion of class k in set S.
+```math
+\text{Gini}(S) = 1 - \sum_k p_k^2 \quad \text{where } p_k \text{ is the proportion of class } k \text{ in set } S.
 ```
 
 对于一个纯节点 (所有一个类),吉尼=0.对于一个50/50类的二进制分区,吉尼=0.5.较低更好.
@@ -64,8 +62,8 @@ Gini = 1 - (0.6^2 + 0.4^2) = 1 - (0.36 + 0.16) = 0.48
 
 **Entropy**测量节点中的信息内容 (混乱).
 
-```
-Entropy(S) = -sum(p_k * log2(p_k))
+```math
+\text{Entropy}(S) = -\sum_k p_k \log_2(p_k)
 ```
 
 对于纯节点,进化值=0.对于50/50的二进制分区,进化值=1.0.较低更好.
@@ -81,20 +79,21 @@ Entropy = -(0.6 * log2(0.6) + 0.4 * log2(0.4))
 
 **Information gain**分后的杂质 (化或基尼) 减少.
 
-```
-IG(S, feature, threshold) = Impurity(S) - weighted_avg(Impurity(S_left), Impurity(S_right))
-
-where the weights are the proportions of samples in each child.
+```math
+\begin{aligned}
+& IG(S, \text{feature}, \text{threshold}) = \text{Impurity}(S) - \text{weighted\_avg}(\text{Impurity}(S_{\text{left}}), \text{Impurity}(S_{\text{right}})) \\[4pt]
+& \text{where the weights are the proportions of samples in each child.}
+\end{aligned}
 ```
 
 它们的目标是: 尝试每一个功能和每一个可能的门.
 
 ### 分裂的方法
 
-对于一个数据集,在当前节点上具有 n 个特征和 m 样本:
+对于一个数据集$n$功能和$m$现在的节点的样本:
 
-1. 对于每个特征 j (j = 1 到 n):
-   - 按特征排序样本
+1. 对于每一个特征$j$($j = 1$为了$n$):
+   - 按特征分类样本$j$
    - 试试连续不同的值之间的每个中点作为门
    - 计算每个门的信息收益
 2. 选择具有最高信息获取的特征和门
@@ -109,7 +108,7 @@ where the weights are the proportions of samples in each child.
 
 **Pre-pruning**在树完全长大之前,停止:
 - 树木达到设定的深度时停止分开
-- 每叶的最小样本:如果节点的样本数小于k,则停止
+- 每叶的最小样本:如果节点数量少于 则停止$k$样本
 - 最低信息获取:如果最好的分离改善不度,则停止
 - 最多叶节:限制叶子总数
 
@@ -125,8 +124,8 @@ where the weights are the proportions of samples in each child.
 
 **Variance reduction**取代信息获取:
 
-```
-VR(S, feature, threshold) = Var(S) - weighted_avg(Var(S_left), Var(S_right))
+```math
+VR(S, \text{feature}, \text{threshold}) = \text{Var}(S) - \text{weighted\_avg}(\text{Var}(S_{\text{left}}), \text{Var}(S_{\text{right}}))
 ```
 
 选择最少变量的分区.树将输入空间分为区域,并预测每个区域的常数 (平均值).
@@ -155,7 +154,7 @@ graph TD
 
 **Bagging (bootstrap aggregating):**每棵树都采用一个引导链样本,一个随机样本,从训练数据中取代.大约63%的原始样本出现在每个引导链中 (其余的样本是可以用于验证的包装样本).
 
-**Feature randomization:**在每一个分区时,只考虑一个随机的特征子集.用于分类,默认是 sqrt(n_特征).对于回归,n_特征/3. 这阻止所有树木在同一主导特征上分区.
+**Feature randomization:**在每一个分区时,只考虑一个随机的子集.$\sqrt{n_{\text{features}}}$为了回归,$n_{\text{features}}/3$这样,所有的树木都不会在同一主导的特征上分裂.
 
 基本的见解:平均数量多个不合并的树木可以减少差异性,而不会增加偏见.
 
@@ -165,9 +164,8 @@ graph TD
 
 **Mean Decrease in Impurity (MDI):**对于每个特征,总结所有树木和使用该特征的所有节点的污染总减少.在早期的分离中产生更大的污染减少的特征更重要.
 
-```
-importance(feature_j) = sum over all nodes where feature_j is used:
-    (n_samples_at_node / n_total_samples) * impurity_decrease
+```math
+\text{importance}(\text{feature}_j) = \sum_{\text{nodes where feature}_j \text{ is used}} \frac{n_{\text{samples at node}}}{n_{\text{total samples}}} \cdot \text{impurity\_decrease}
 ```
 
 这种方法是快速的 (训练期间计算),但偏向于高卡丁度的特征和功能,有很多可能的分区点.
@@ -444,7 +442,7 @@ print(f"Feature importances: {rf.feature_importances_}")
 
 1. 训练一个单个决策树在3类的2D数据集上.手动追踪分区和绘制矩形决策边界.在max_depth=2 vsmax_depth=10上比较边界.
 
-2. 实现回归树的变量减小分化.生成y = sin(x) +噪音为200点,并将回归树匹配. 绘制树的零件定位预测与真曲线相比.
+2. 实现回归树的变量减小分离.$y = \sin(x) + \text{noise}$按图,将树的小部分定位预测与真曲线相对.
 
 3. 构建一个随机森林,包括1,5,10,50和200棵树. 测试地图训练精度和测试精度与树数.观察测试精度高原但不会减少 (森林抵抗过度适应).
 

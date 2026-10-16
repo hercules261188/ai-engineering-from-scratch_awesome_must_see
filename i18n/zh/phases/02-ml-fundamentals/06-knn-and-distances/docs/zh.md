@@ -56,12 +56,12 @@ graph TD
 
 | K | Behavior |
 |---|----------|
-| K = 1 | Decision boundary follows every point. Zero training error. High variance. Overfits |
+| $K = 1$ | Decision boundary follows every point. Zero training error. High variance. Overfits |
 | Small K (3-5) | Sensitive to local structure. Can capture complex boundaries |
 | Large K | Smoother boundaries. More robust to noise. May underfit |
-| K = N | Predicts the majority class for every point. Maximum bias |
+| $K = N$ | Predicts the majority class for every point. Maximum bias |
 
-对于一个数据集的N点,一个常见的起点是K = sqrt(N. 为了避免联系,使用奇数K进行二进制分类.
+共同的起点是$K = \sqrt{N}$对于一个数据集$N$为了避免结合,使用奇数K进行二进制分类.
 
 ```mermaid
 graph LR
@@ -83,32 +83,33 @@ graph LR
 
 **L2 (Euclidean)**长度是默认的.
 
-```
-d(a, b) = sqrt(sum((a_i - b_i)^2))
+```math
+d(a, b) = \sqrt{\sum_i (a_i - b_i)^2}
 ```
 
 对于特征尺度敏感. 在使用L2与KNN之前,始终标准化特征.
 
 **L1 (Manhattan)**较强于L2的异常值,因为它不方方分差异.
 
-```
-d(a, b) = sum(|a_i - b_i|)
+```math
+d(a, b) = \sum_i \lvert a_i - b_i \rvert
 ```
 
 **Cosine distance**测量向量之间的角度,忽略大小.
 
-```
-d(a, b) = 1 - (a . b) / (||a|| * ||b||)
+```math
+d(a, b) = 1 - \frac{a \cdot b}{\lVert a \rVert \, \lVert b \rVert}
 ```
 
-**Minkowski**概括L1和L2的参数p.
+**Minkowski**概括了 L1 和 L2 参数$p$现在,我们要去.
 
-```
-d(a, b) = (sum(|a_i - b_i|^p))^(1/p)
-
-p=1: Manhattan
-p=2: Euclidean
-p->inf: Chebyshev (max absolute difference)
+```math
+\begin{aligned}
+& d(a, b) = \left( \sum_i \lvert a_i - b_i \rvert^p \right)^{1/p} \\[6pt]
+& p=1\text{: Manhattan} \\
+& p=2\text{: Euclidean} \\
+& p \to \infty\text{: Chebyshev (max absolute difference)}
+\end{aligned}
 ```
 
 哪个指标使用取决于数据:
@@ -127,14 +128,15 @@ p->inf: Chebyshev (max absolute difference)
 
 **Distance-weighted KNN**按距离的逆向对每个邻居的重量:
 
+```math
+\begin{aligned}
+& \text{weight}_i = \frac{1}{\text{distance}_i + \epsilon} \\[6pt]
+& \text{For classification: weighted vote} \\
+& \text{For regression: weighted average} = \frac{\sum_i w_i y_i}{\sum_i w_i}
+\end{aligned}
 ```
-weight_i = 1 / (distance_i + epsilon)
 
-For classification: weighted vote
-For regression:     weighted average = sum(w_i * y_i) / sum(w_i)
-```
-
-问答点与训练点完全匹配时,epsilon可以防止零分.
+其他$\epsilon$问题点与训练点完全匹配时,
 
 体重KN对K的选择不太敏感,因为远方邻居的贡献不多.
 
@@ -162,7 +164,7 @@ When all distances are nearly equal, "nearest" is meaningless.
 
 ### 快速搜索近邻
 
-粗力 KNN计算了查询到每个训练点的距离.这就是每次查询的O(n * d).对于大型数据集,这太慢.
+按原力KNN计算从查询到每个训练点的距离.$O(n \cdot d)$对于大型数据集来说,这太慢了.
 
 基达树在各个层面上,在中值上分开一个维度.
 
@@ -178,7 +180,7 @@ graph TD
 
 为了找到最接近的邻居, 穿过树到包含查询的叶子, 然后回头, 检查邻居的分区只有如果它们可以包含更接近的点.
 
-平均查询时间:低维度的O(log n).但KD树在高维度 (d > 20) 中降至O(n,因为后续追踪消除越来越少的分支.
+平均查询时间: $O(\log n)$它们的尺寸较低,但KD树的降低为$O(n)$在高尺寸 ($d > 20$) 由于退缩,减少越来越少的分支.
 
 ### 球树:适量尺寸的树木更好
 
@@ -197,8 +199,8 @@ graph TD
 
 | Aspect | Lazy (KNN) | Eager (SVM, neural net) |
 |--------|------------|------------------------|
-| Training time | O(1) just store data | O(n * epochs) |
-| Prediction time | O(n * d) per query | O(d) or O(parameters) |
+| Training time | $O(1)$ just store data | $O(n \cdot \text{epochs})$ |
+| Prediction time | $O(n \cdot d)$ per query | $O(d)$ or $O(\text{parameters})$ |
 | Memory at prediction | Store entire training set | Store model parameters only |
 | Adapts to new data | Add points instantly | Retrain the model |
 | Decision boundary | Implicit, computed on the fly | Explicit, fixed after training |
@@ -213,12 +215,12 @@ graph TD
 
 而不是多数投票,KN为回归的平均值为K邻居的目标值.
 
-```
-prediction = (1/K) * sum(y_i for i in K nearest neighbors)
-
-Or with distance weighting:
-prediction = sum(w_i * y_i) / sum(w_i)
-where w_i = 1 / distance_i
+```math
+\begin{aligned}
+& \text{prediction} = \frac{1}{K} \sum_{i \in K \text{ nearest neighbors}} y_i \\[6pt]
+& \text{Or with distance weighting:} \\
+& \text{prediction} = \frac{\sum_i w_i y_i}{\sum_i w_i} \quad \text{where } w_i = \frac{1}{\text{distance}_i + \epsilon}
+\end{aligned}
 ```
 
 基因回归产生零件稳定 (或零件平滑与权重) 的预测.它不能超出训练数据范围.如果所有训练目标都在0到100之间,基因永远不会预测200.
@@ -345,7 +347,7 @@ distances, indices = index.search(query_vectors, k=5)
 
 ## 运动
 
-1. 实现KNN分类在3类的2D数据集上.绘制K=1,K=5,K=15,K=N的决策边界.观察过度适应到不足适应的过渡.
+1. 实现KNN分类在3类的2D数据集上.$K=1$现在$K=5$现在$K=15$其他$K=N$观察过度适应到不足的转变.
 
 2. 生成1000个随机点在2,5,10,50,50,100和500个维度中.对于每个维度,计算最大双向距离的比例到最低双向距离.绘制比与维度以可视化维度的诅咒.
 
@@ -353,7 +355,7 @@ distances, indices = index.search(query_vectors, k=5)
 
 4. 实现KD树,并对2D,10D和50D中的1k,10k和100k点数据集进行查询时间与粗体力测量.在哪个维度下,KD树停止比粗体力更快?
 
-5. 构建为y = sin(x) +噪音的权重KN回归器.与K=3, 10,30的非权重KN进行比较.
+5. 构建一个重量KNN回归器$y = \sin(x) + \text{noise}$比较与未加重的KNN$K=3, 10, 30$显示重量化产生了更平稳的预测,特别是在大K.
 
 ## 关键词
 
@@ -363,14 +365,14 @@ distances, indices = index.search(query_vectors, k=5)
 | Lazy learning | No computation at training time. All work happens at prediction time. KNN is the canonical example |
 | Eager learning | Heavy computation at training time to build a compact model. Most ML algorithms are eager |
 | Curse of dimensionality | In high dimensions, distances converge and neighborhoods expand to cover most of the space, making KNN ineffective |
-| KD-tree | Binary tree that recursively partitions space along feature axes. O(log n) queries in low dimensions |
+| KD-tree | Binary tree that recursively partitions space along feature axes. $O(\log n)$ queries in low dimensions |
 | Ball tree | Tree of nested hyperspheres. Works better than KD-trees in moderate dimensions (up to ~50) |
 | Weighted KNN | Neighbors weighted inversely by distance. Closer neighbors have more influence on the prediction |
 | Feature scaling | Normalizing features to comparable ranges. Required for distance-based methods like KNN |
 | Majority vote | Classification by counting which class is most common among K neighbors |
-| Brute force search | Computing distance to every training point. O(n*d) per query. Exact but slow for large n |
+| Brute force search | Computing distance to every training point. $O(n \cdot d)$ per query. Exact but slow for large $n$ |
 | Approximate nearest neighbor | Algorithms (HNSW, LSH, IVF) that find approximately nearest points much faster than exact search |
-| Voronoi diagram | The partition of space where each region contains all points closer to one training point than any other. K=1 KNN produces Voronoi boundaries |
+| Voronoi diagram | The partition of space where each region contains all points closer to one training point than any other. $K=1$ KNN produces Voronoi boundaries |
 
 ## 进一步阅读
 

@@ -176,7 +176,7 @@ flowchart LR
 
 测试组是神圣的.你只看一次.如果你继续根据测试性能调整你的模型,你就在测试组上有效地训练,你的报告数字是无意义的.
 
-对于小数据集,使用k倍交叉验证:将数据分为k部分,训练在k-1部分,验证剩余部分,旋转和平均结果.
+对于小数据集,使用k倍交叉验证:将数据分为 $k$零部件,火车上$k-1$部分,验证剩余部分,旋转,平均结果.
 
 ### 过度适应与不足
 
@@ -242,9 +242,9 @@ flowchart LR
 | Just right | Medium | Medium | Good generalization |
 | Too high (degree-20 polynomial for 10 points) | Low | High | Overfitting |
 
-总误差 = 偏差^2 + 变异 + 无可减小的噪音
+$\text{Total error} = \text{Bias}^2 + \text{Variance} + \text{Irreducible noise}$
 
-您不能减少不可减小的噪音 (这是数据本身的随机性).您想找到偏差^2+变异最小化的甜点点.
+您不能减少不可减轻的噪音 (这是数据本身的随机性).$\text{bias}^2 + \text{variance}$减少了这一点.
 
 ### 没有免费午餐理论
 

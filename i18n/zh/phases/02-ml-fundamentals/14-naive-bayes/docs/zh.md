@@ -30,8 +30,8 @@
 
 贝叶斯定理反转了条件概率:
 
-```
-P(class | features) = P(features | class) * P(class) / P(features)
+```math
+P(\text{class} \mid \text{features}) = \frac{P(\text{features} \mid \text{class}) \cdot P(\text{class})}{P(\text{features})}
 ```
 
 我们想要`P(class | features)`根据文件中的字符,一个文件属于一个类的概率.
@@ -43,15 +43,15 @@ P(class | features) = P(features | class) * P(class) / P(features)
 
 ### 无明自主假设
 
-计算`P(features | class)`总体而言,如果我们使用1万个词汇,我们需要估计2^10,000个可能的组合.
+计算`P(features | class)`对于一个词汇库的10万字,你需要估计一个分布在$2^{10{,}000}$它们是不可能的.
 
 简单的假设:每一个特征都在给定类别的条件下独立.
 
-```
-P(w1, w2, ..., wn | class) = P(w1 | class) * P(w2 | class) * ... * P(wn | class)
+```math
+P(w_1, w_2, \ldots, w_n \mid \text{class}) = P(w_1 \mid \text{class}) \cdot P(w_2 \mid \text{class}) \cdots P(w_n \mid \text{class})
 ```
 
-它们只需要一个数值,一个数值,一个数值,一个数值,一个数值.
+没有一个不可能的联合分布,你估计$n$每个需要一个数量.
 
 这种假设显然是错误的. "机器"和"学习"的单词在任何文档中都不独立.但分类器不需要正确的概率估计.它需要正确的排名 - - 哪个类具有最高的概率.独立假设引入系统错误,但这些错误对所有类别都同样影响,所以排名保持正确.
 
@@ -59,7 +59,7 @@ P(w1, w2, ..., wn | class) = P(w1 | class) * P(w2 | class) * ... * P(wn | class)
 
 原因有三个:
 
-1. **Ranking over calibration.**排名只需要排名最好的类别才是正确的.即使P(spam) =0.99999 当真实概率为0.7,排名器仍然选择了正确的垃圾邮件.我们不需要正确的概率.我们需要正确的赢家.
+1. **Ranking over calibration.**只有最好的类才是正确的.$P(\text{spam}) = 0.99999$现在,我们需要一个正确的概率,我们需要一个正确的赢家.
 
 2. **High bias, low variance.**独立假设是一个强大的先驱.它严重限制了模型,这防止过度匹配. 有限训练数据,一个略错误但稳定的模型比一个理论上正确但非常不稳定的模型更好.这是偏差变异的交易.
 
@@ -76,31 +76,33 @@ P(w1, w2, ..., wn | class) = P(w1 | class) * P(w2 | class) * ... * P(wn | class)
 - 没有垃圾邮件中提到"免费" 5 次,"钱" 10 次,"会议" 100 次 (115 个词汇总)
 - 40%的电子邮件是垃圾邮件,60%是非垃圾邮件
 
-平 (alpha=1):
+平 ($\alpha=1$):
 
-```
-P(free | spam)    = (80 + 1) / (150 + 3) = 81/153 = 0.529
-P(money | spam)   = (60 + 1) / (150 + 3) = 61/153 = 0.399
-P(meeting | spam) = (10 + 1) / (150 + 3) = 11/153 = 0.072
-
-P(free | not-spam)    = (5 + 1) / (115 + 3) = 6/118 = 0.051
-P(money | not-spam)   = (10 + 1) / (115 + 3) = 11/118 = 0.093
-P(meeting | not-spam) = (100 + 1) / (115 + 3) = 101/118 = 0.856
+```math
+\begin{aligned}
+P(\text{free} \mid \text{spam}) &= (80 + 1) / (150 + 3) = 81/153 = 0.529 \\
+P(\text{money} \mid \text{spam}) &= (60 + 1) / (150 + 3) = 61/153 = 0.399 \\
+P(\text{meeting} \mid \text{spam}) &= (10 + 1) / (150 + 3) = 11/153 = 0.072 \\[6pt]
+P(\text{free} \mid \text{not-spam}) &= (5 + 1) / (115 + 3) = 6/118 = 0.051 \\
+P(\text{money} \mid \text{not-spam}) &= (10 + 1) / (115 + 3) = 11/118 = 0.093 \\
+P(\text{meeting} \mid \text{not-spam}) &= (100 + 1) / (115 + 3) = 101/118 = 0.856
+\end{aligned}
 ```
 
 新电子邮件包含"免费" (2次),"钱" (1次),"会议" (0次).
 
+```math
+\begin{aligned}
+\log P(\text{spam} \mid \text{email}) &= \log(0.4) + 2 \log(0.529) + 1 \log(0.399) + 0 \log(0.072) \\
+&= -0.916 + 2(-0.637) + (-0.919) + 0 \\
+&= -3.109 \\[6pt]
+\log P(\text{not-spam} \mid \text{email}) &= \log(0.6) + 2 \log(0.051) + 1 \log(0.093) + 0 \log(0.856) \\
+&= -0.511 + 2(-2.976) + (-2.375) + 0 \\
+&= -8.838
+\end{aligned}
 ```
-log P(spam | email) = log(0.4) + 2*log(0.529) + 1*log(0.399) + 0*log(0.072)
-                    = -0.916 + 2*(-0.637) + (-0.919) + 0
-                    = -3.109
 
-log P(not-spam | email) = log(0.6) + 2*log(0.051) + 1*log(0.093) + 0*log(0.856)
-                        = -0.511 + 2*(-2.976) + (-2.375) + 0
-                        = -8.838
-```
-
-垃圾邮件以大差距获胜.出现两次的"免费"字是垃圾邮件的强烈证据.注意,不出现的"会议"对两个日志数量 (0 * log(P)) 贡献了零 - 在多项名词NB中,缺失的单词没有影响.是伯诺利NB明确模拟词缺失.
+讯邮件以大差距获胜. 两次出现的"免费"字是对讯邮件的强烈证据.$0 \cdot \log P$) - 在多项词 NB 中,缺失词没有影响.
 
 ### 三种方式
 
@@ -110,8 +112,8 @@ log P(not-spam | email) = log(0.6) + 2*log(0.051) + 1*log(0.093) + 0*log(0.856)
 
 模型将每个特征作为一个数值.最适合文字数据,其中特征是单词频率或TF-IDF值.
 
-```
-P(word_i | class) = (count of word_i in class + alpha) / (total words in class + alpha * vocab_size)
+```math
+P(\text{word}_i \mid \text{class}) = \frac{\text{count of } \text{word}_i \text{ in class} + \alpha}{\text{total words in class} + \alpha \cdot \text{vocab\_size}}
 ```
 
 其他`alpha`拉普莱斯平滑 (下面解释). 这种变体是文本分类的工作马.
@@ -120,8 +122,8 @@ P(word_i | class) = (count of word_i in class + alpha) / (total words in class +
 
 模型将每个功能作为正常分布.
 
-```
-P(x_i | class) = (1 / sqrt(2 * pi * var)) * exp(-(x_i - mean)^2 / (2 * var))
+```math
+P(x_i \mid \text{class}) = \frac{1}{\sqrt{2 \pi \cdot \text{var}}} \cdot \exp\left(-\frac{(x_i - \text{mean})^2}{2 \cdot \text{var}}\right)
 ```
 
 每个类别都有其各自的平均值和变异.
@@ -130,8 +132,8 @@ P(x_i | class) = (1 / sqrt(2 * pi * var)) * exp(-(x_i - mean)^2 / (2 * var))
 
 模型每个特征都作为二进制 (现或缺).最适合短文本或二进制特征向量.
 
-```
-P(word_i | class) = (docs in class containing word_i + alpha) / (total docs in class + 2 * alpha)
+```math
+P(\text{word}_i \mid \text{class}) = \frac{\text{docs in class containing } \text{word}_i + \alpha}{\text{total docs in class} + 2 \alpha}
 ```
 
 与多个字母不同,伯诺利明确地惩罚了一个词的缺失.如果"免费"通常在垃圾邮件中出现,但不在这个电子邮件中,伯诺利将其视为反对垃圾邮件的证据.
@@ -152,11 +154,11 @@ P(word_i | class) = (docs in class containing word_i + alpha) / (total docs in c
 
 平的平增加了少量`alpha`(通常是1) 对每一个特征数量:
 
-```
-P(word_i | class) = (count(word_i, class) + alpha) / (total_words_in_class + alpha * vocab_size)
+```math
+P(\text{word}_i \mid \text{class}) = \frac{\text{count}(\text{word}_i, \text{class}) + \alpha}{\text{total\_words\_in\_class} + \alpha \cdot \text{vocab\_size}}
 ```
 
-随着alpha=1,每个字至少得到一个微小的概率.在测试电子邮件中出现的"discombobulate"字不再杀死垃圾邮件概率.滑滑有贝耶斯解释:它相当于在词分布前放置统一的Dirichlet.
+随着$\alpha=1$测试电子邮件中出现的"解散"字不再杀死垃圾邮件的概率. 滑滑的解释是贝耶斯式:它相当于在词分布前放置统一的迪里赫莱特.
 
 较高的阿尔法意味着更强的平滑 (更均的分布).较低的阿尔法意味着模型更信任数据.阿尔法是一个调节的超参数.
 
@@ -175,8 +177,8 @@ P(word_i | class) = (count(word_i, class) + alpha) / (total_words_in_class + alp
 
 解决方案:在日志空间中工作.
 
-```
-log P(class | x1, x2, ..., xn) = log P(class) + sum_i log P(xi | class)
+```math
+\log P(\text{class} \mid x_1, x_2, \ldots, x_n) = \log P(\text{class}) + \sum_i \log P(x_i \mid \text{class})
 ```
 
 这将预测变成一个点数:
@@ -194,7 +196,7 @@ prediction = argmax(log_scores)
 
 | Aspect | Naive Bayes | Logistic Regression |
 |--------|------------|-------------------|
-| Type | Generative (models P(X\|Y)) | Discriminative (models P(Y\|X)) |
+| Type | Generative (models $P(X \mid Y){}$) | Discriminative (models $P(Y \mid X){}$) |
 | Training | Count frequencies | Optimize loss function |
 | Small data | Better (strong prior helps) | Worse (not enough to estimate weights) |
 | Large data | Worse (wrong assumption hurts) | Better (flexible boundary) |
@@ -221,8 +223,8 @@ flowchart LR
 
 实际上,我们在日志空间中工作,以避免浮点的下流.
 
-```
-log P(class | features) = log P(class) + sum_i log P(feature_i | class)
+```math
+\log P(\text{class} \mid \text{features}) = \log P(\text{class}) + \sum_i \log P(\text{feature}_i \mid \text{class})
 ```
 
 ```figure
@@ -239,7 +241,7 @@ naive-bayes
 
 1. **fit(X, y)**对于每个类,计算每个特征的频率. 添加拉普莱斯平滑. 计算日志概率. 存储类先例 (类频率日志).
 
-2. **predict_log_proba(X)**对于每个样本,计算 log P(class) + log P(feature_i 类) 对所有类.这是一个矩阵乘法: X @ log_probs.T + log_priors.
+2. **predict_log_proba(X)**: 对于每样品,计算$\log P(\text{class})$总和$\log P(\text{feature}_i \mid \text{class})$这是一个矩阵乘法:X @ log_probs.T + log_priors.
 
 3. **predict(X)**返回具有最高日志概率的类.
 
@@ -312,9 +314,9 @@ class GaussianNB:
 
 ### 预测速度
 
-简单的贝叶斯预测是矩阵乘法.
-- 多数NB:一个矩阵乘以 (n x d) @ (d x k) = O(n * d * k)
-- 盖斯NB:n * k 盖斯PDF评估,每个都包含d特征 = O(n * d * k)
+简单的贝叶斯预测是矩阵乘法.$n$含有$d$功能和$k$类:
+- 多数NB:一个矩阵乘以$(n \times d) \mathbin{@} (d \times k) = O(n \cdot d \cdot k)$
+- 盖斯尼NB: $n \cdot k$高斯的PDF评估,每个都在$d$特性 = $O(n \cdot d \cdot k)$
 
 两者在每一个维度都是线性的.比较KNN (需要计算距离到所有训练点) 或SVM与RBF内核 (需要对所有支持向量的内核评估).NB在预测时间上以大小顺序更快.
 
@@ -387,7 +389,7 @@ text_clf = Pipeline([
 
 ### 校准NB概率
 
-如果您需要可靠的概率估计 (例如,设定门值或与其他模型结合),请使用 sklearn 的校准分类CV:
+没有任何可能的测量.$P(\text{spam}) = 0.95$如果您需要可靠的概率估计 (例如,设定门值或与其他模型结合),请使用 sklearn 的校准分类CV:
 
 ```python
 from sklearn.calibration import CalibratedClassifierCV
@@ -405,7 +407,7 @@ proba = calibrated_nb.predict_proba(X_test)
 
 2. **Zero variance features.**盖斯NB按变异分为:如果一个特征为一个类别 (所有值均为相同) 具有零变异,概率计算会断裂.代码将一个小的平滑术语 (1e-9) 添加到所有变异中以防止这一点.
 
-3. **Class imbalance.**如果99%的电子邮件是非垃圾邮件,前 P(非垃圾邮件) = 0.99 非常强大,以至于它压倒了概率证据.你可以手动设置类优先级或在 sklearn 中使用class_prior参数.
+3. **Class imbalance.**如果99%的电子邮件不是垃圾邮件,$P(\text{not-spam}) = 0.99$您可以手动设置类优先级或在 sklearn 中使用class_prior参数.
 
 4. **Feature scaling.**多数项NB不需要扩展 (它运作在计算上).高斯式NB也不需要扩展 (它估计每个特征的统计).这是对物流回归和SVM的优势,这些特征规模很敏感.
 
@@ -431,7 +433,7 @@ proba = calibrated_nb.predict_proba(X_test)
 
 1. **Smoothing experiment.**训练 MultinomialNB 在文字数据上,以0.01,0.1,1.0,10.0,和100.0的阿尔法值. 图谱精度与阿尔法. 性能最高点在哪里?
 
-2. **Feature independence test.**拿一个真实的文本数据集. 选择两个明显相关的词语 ("机器"和"学习").计算P 字1类) *P 字2类) 和P 字1和字2类. 独立假设是多么错误的? 它是否影响了分类准确性?
+2. **Feature independence test.**选择两个明显相关的单词 ("机器"和"学习").计算$P(\text{word}_1 \mid \text{class}) \cdot P(\text{word}_2 \mid \text{class})$其他地方$P(\text{word}_1 \text{ AND } \text{word}_2 \mid \text{class})$独立假设有多错误?
 
 3. **Bernoulli implementation.**扩展代码使用BernoulliNB类.将字符包转换为二进制 (现/缺) 并对文本数据的MultinomialNB进行准确比较.Bernoulli什么时候获胜?
 
@@ -444,14 +446,14 @@ proba = calibrated_nb.predict_proba(X_test)
 | Term | What people say | What it actually means |
 |------|----------------|----------------------|
 | Naive Bayes | "Simple probabilistic classifier" | A classifier that applies Bayes' theorem with the assumption that features are conditionally independent given the class |
-| Conditional independence | "Features don't affect each other" | P(A, B \| C) = P(A \| C) * P(B \| C) -- knowing B tells you nothing new about A once you know C |
+| Conditional independence | "Features don't affect each other" | $P(A, B \mid C) = P(A \mid C) \cdot P(B \mid C)$ -- knowing $B$ tells you nothing new about $A$ once you know $C$ |
 | Laplace smoothing | "Add-one smoothing" | Adding a small count to every feature to prevent zero probabilities from dominating the prediction |
-| Prior | "What you believed before seeing data" | P(class) -- the probability of each class before observing any features |
-| Likelihood | "How well the data fits" | P(features \| class) -- the probability of observing these features if the class is known |
-| Posterior | "What you believe after seeing data" | P(class \| features) -- the updated probability of the class after observing the features |
-| Generative model | "Models how data is generated" | A model that learns P(X \| Y) and P(Y), then uses Bayes' theorem to get P(Y \| X) |
-| Discriminative model | "Models the decision boundary" | A model that directly learns P(Y \| X) without modeling how X is generated |
-| Log probability | "Avoid underflow" | Working with log P instead of P to prevent the product of many small numbers from becoming zero in floating point |
+| Prior | "What you believed before seeing data" | $P(\text{class})$ -- the probability of each class before observing any features |
+| Likelihood | "How well the data fits" | $P(\text{features} \mid \text{class})$ -- the probability of observing these features if the class is known |
+| Posterior | "What you believe after seeing data" | $P(\text{class} \mid \text{features})$ -- the updated probability of the class after observing the features |
+| Generative model | "Models how data is generated" | A model that learns $P(X \mid Y)$ and $P(Y)$, then uses Bayes' theorem to get $P(Y \mid X)$ |
+| Discriminative model | "Models the decision boundary" | A model that directly learns $P(Y \mid X)$ without modeling how $X$ is generated |
+| Log probability | "Avoid underflow" | Working with $\log P$ instead of $P$ to prevent the product of many small numbers from becoming zero in floating point |
 
 ## 进一步阅读
 

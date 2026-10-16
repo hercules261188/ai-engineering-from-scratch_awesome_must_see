@@ -62,8 +62,8 @@ flowchart TD
 
 考虑一个为1000个样本中的999个的特征为0.0. 其差距接近零. 没有模型可以使用它来区分类. 删除它.
 
-```
-variance(x) = mean((x - mean(x))^2)
+```math
+\text{variance}(x) = \text{mean}\bigl((x - \text{mean}(x))^2\bigr)
 ```
 
 设置门值 (例如0.01). 放下其以下变量的每个特征. 这就会消除不看目标变量的常态或近常态特征.
@@ -74,17 +74,17 @@ variance(x) = mean((x - mean(x))^2)
 
 ### 互通信息
 
-互通信息衡量了知道X特征的值有多大程度上减少了对目标Y的不确定性.
+互通信息衡量了特征的价值了解程度$X$减少对目标的不确定性$Y$现在,我们要去.
 
-```
-I(X; Y) = sum_x sum_y p(x, y) * log(p(x, y) / (p(x) * p(y)))
+```math
+I(X; Y) = \sum_x \sum_y p(x, y) \cdot \log \frac{p(x, y)}{p(x) \cdot p(y)}
 ```
 
-如果X和Y是独立的,p(x,y) =p(x) *p(y),所以日志术语是零,I(X;Y) =0.
+如果$X$其他$Y$独立的$p(x, y) = p(x) \cdot p(y)$现在,我们可以说,$I(X; Y) = 0$越多$X$告诉你关于$Y$互通信息越高.
 
 关键优势:相互信息捕捉到非线性关系.一个特征可能与目标没有相关性,但由于关系是方形或周期性,相互信息很高.
 
-对于连续特征,首先分为容器 (基于历史图的估计).容器数量影响了估计 - - 太少容器丢失了信息,太多容器增加了噪音.一个常见的选择:平方 (n) 容器或斯图尔格斯规则 (1 + log2(n)).
+对于连续的特征,首先分为垃圾桶 (基于历史图的估计). 垃圾桶数量影响了估计 - - 太少的垃圾桶丢失了信息,太多的垃圾桶增加了噪音.$\sqrt{n}$子或斯图尔格斯规则 ($1 + \log_2 n$)
 
 ```mermaid
 flowchart LR
@@ -116,14 +116,14 @@ flowchart TD
 
 通过RFE,模型可以将其所有剩余的特性视为相对的.删除一个特性会改变其它特性的重要性.这使得它比过方法更彻底.
 
-费用:你训练模型N - 目标时间.500个功能和10个目标,即490个训练跑.对于昂贵的模型,这很慢.你可以通过每步删除多个功能来加快它 (例如,每轮删除下 10%).
+成本:你训练模型$N - \text{target}$对于昂贵的模型来说,这很慢.你可以通过每步删除多个功能来加快它 (例如,每轮删除下 10%).
 
 ### 规范化
 
 规律化 L1 将权重的绝对值添加到损失函数:
 
-```
-loss = prediction_error + alpha * sum(|w_i|)
+```math
+\text{loss} = \text{prediction\_error} + \alpha \cdot \sum \lvert w_i \rvert
 ```
 
 超高的阿尔法意味着更多的重量达到完全零.
@@ -140,12 +140,10 @@ loss = prediction_error + alpha * sum(|w_i|)
 
 决策树及其集合 (随机森林,梯度增强) 自然地排列特征.每一个分离都会减少杂质 (Gini或化为分类,变异为回归).产生更大的杂质减少的特征更重要.
 
-对于一个随机森林,有T树:
+为了一个随机的森林$T$树木:
 
-```
-importance(feature_j) = (1/T) * sum over all trees of
-    sum over all nodes splitting on feature_j of
-        (n_samples * impurity_decrease)
+```math
+\text{importance}(\text{feature}_j) = \frac{1}{T} \sum_{\text{all trees}} \; \sum_{\text{all nodes splitting on } \text{feature}_j} (\text{n\_samples} \cdot \text{impurity\_decrease})
 ```
 
 这为每个特征提供了正常化的重要性分数. 它自动处理非线性关系和特征互动.
@@ -524,7 +522,7 @@ importances = rf.feature_importances_
 | Filter method | "Score features independently" | A feature selection approach that ranks features using a statistical measure without training a model, evaluating each feature in isolation |
 | Wrapper method | "Use the model to pick features" | A feature selection approach that evaluates feature subsets by training a model and using its performance as the selection criterion |
 | Embedded method | "The model selects features during training" | Feature selection that happens as part of model fitting, such as L1 regularization driving weights to zero |
-| Mutual information | "How much one variable tells you about another" | A measure of the reduction in uncertainty about Y given knowledge of X, capturing both linear and nonlinear dependencies |
+| Mutual information | "How much one variable tells you about another" | A measure of the reduction in uncertainty about $Y$ given knowledge of $X$, capturing both linear and nonlinear dependencies |
 | Recursive Feature Elimination | "Train, rank, prune, repeat" | An iterative wrapper method that trains a model, removes the least important feature(s), and repeats until a target count is reached |
 | L1 / Lasso regularization | "Penalty that kills features" | Adding the sum of absolute weight values to the loss function, which drives unimportant feature weights to exactly zero |
 | Variance threshold | "Remove constant features" | Dropping features whose variance across samples falls below a specified threshold, filtering out features that carry no information |

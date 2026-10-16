@@ -54,23 +54,24 @@ High variance (overfitting):
 
 ### 腐烂
 
-对于任何点 x,在二次损失下预期预测错误完全分解:
+任何一个问题$x$预期预测错误在二次损失下分解的确切:
 
+```math
+\begin{aligned}
+& \text{Expected Error} = \text{Bias}^2 + \text{Variance} + \text{Irreducible Noise} \\[6pt]
+& \text{where:} \\
+& \quad \text{Bias}^2 = (\mathbb{E}[\hat{f}(x)] - f(x))^2 \\
+& \quad \text{Variance} = \mathbb{E}[(\hat{f}(x) - \mathbb{E}[\hat{f}(x)])^2] \\
+& \quad \text{Noise} = \mathbb{E}[(y - f(x))^2] \quad (\sigma^2)
+\end{aligned}
 ```
-Expected Error = Bias^2 + Variance + Irreducible Noise
 
-where:
-  Bias^2   = (E[f_hat(x)] - f(x))^2
-  Variance = E[(f_hat(x) - E[f_hat(x)])^2]
-  Noise    = E[(y - f(x))^2]             (sigma^2)
-```
+- $f(x)$是真正的函数
+- $\hat{f}(x)$是你的模型的预测
+- $\mathbb{E}[\ldots]$是对不同培训组的预期
+- $y$是观察到的标签 (真实函数加噪音)
 
-- `f(x)`是真正的函数
-- `f_hat(x)`是你的模型的预测
-- `E[...]`是对不同培训组的预期
-- `y`是观察到的标签 (真实函数加噪音)
-
-噪音术语是不可减轻的. 任何模型都能在噪音数据上比sigma^2更好. 你的工作是找到偏差^2和变异之间的正确平衡.
+噪音是不可减轻的.$\sigma^2$你的工作是找到正确的平衡$\text{bias}^2$它们的变化.
 
 ### 模型复杂性与错误
 
@@ -131,9 +132,9 @@ graph LR
 
 | Regime | Parameters vs Samples | Behavior |
 |--------|----------------------|----------|
-| Underparameterized | p << n | Classical tradeoff applies |
-| Interpolation threshold | p ~ n | Variance peaks, test error spikes |
-| Overparameterized | p >> n | Implicit regularization kicks in, test error drops |
+| Underparameterized | $p \ll n$ | Classical tradeoff applies |
+| Interpolation threshold | $p \sim n$ | Variance peaks, test error spikes |
+| Overparameterized | $p \gg n$ | Implicit regularization kicks in, test error drops |
 
 实际目的:如果您使用神经网络或大型树团,不要在插射门点停留.要么远低于它 (明确规律化),要么远远超过它.最糟糕的地方就是在门点.
 
@@ -180,7 +181,7 @@ flowchart TD
 
 **Bagging (Bootstrap Aggregating)**训练数据的不同启动样本上训练多个模型,然后平均他们的预测.每个单个模型的差异很高,但平均差异要低得多.随机森林将用于决策树.
 
-为什么它运作数学上:如果你平均N独立预测,每个与差异sigma^2,平均差异是sigma^2 / N.模型不是真正独立的 (他们都看到类似的数据),所以减少小于1/N,但它仍然是实质性的.
+什么是数学上有效的原因:$N$独立的预测,每个都有变化$\sigma^2$平均差异是$\sigma^2 / N$模型并非真正独立 (它们都看到相似的数据),因此减少率不到$1/N$虽然它仍然是实质性的.
 
 **Boosting**通过顺序构建模型来减少偏差,每个新模型都集中在迄今为止的组合错误上.渐进增强和AdaBoost是主要的例子.如果添加过多的模型,增强可以过度适应,因此需要早期停止或规范化.
 
@@ -306,10 +307,10 @@ variance = np.mean(predictions.var(axis=0))
 total_error = np.mean(np.mean((predictions - y_true) ** 2, axis=1))
 ```
 
-- `mean_pred`是从启动线样本中估计的E[f_hat(x)
+- `mean_pred`是$\mathbb{E}[\hat{f}(x)]$根据启动线样本的估计
 - `bias_sq`是平均预测和真相之间的平方差距
 - `variance`是预测在启动线样本中平均分布
-- `total_error`差距2+变异+噪音
+- `total_error`应该大约等于$\text{bias}^2 + \text{variance} + \text{noise}$
 
 ### 步骤4:学习曲线
 
@@ -440,7 +441,7 @@ for alpha in alphas:
 
 2. 增加训练集的尺寸从30到300. 这如何影响变异组件?
 
-3. 添加L2规律化 (Ridge回归) 实验.对于固定高度多项式 (15度),扫 lambda从0到100. 图谱偏差^2和变异作为 lambda 的函数.
+3. 对于一个固定的高度多项式 (15度),扫描 lambda 从0到100. 剧情 $\text{bias}^2$它们的函数是 lambda.
 
 4. 从多项式修改到`sin(x)`偏差变化分解如何变化? 还有明确的最佳程度吗?
 

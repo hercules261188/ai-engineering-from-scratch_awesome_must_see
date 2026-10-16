@@ -81,11 +81,11 @@ flowchart TB
     Fold5 --> R
 ```
 
-1. 分成K等级的折叠
-2. 对于每一,将K-1列列在其余列上验证
-3. 平均K验证分数
+1. 分成数据$K$尺寸相同的折叠
+2. 为了每一,继续车$K-1$折叠并在剩余的折叠上验证
+3. 平均值$K$验证分数
 
-平均分数比任何单个分数更稳定的估计.
+$K=5$或$K=10$平均分数比任何单个分数更稳定的估计.
 
 **Stratified K-fold**您的数据集如果是70%A类和30%B类,每个 Fold 将大致相同的比例. 这对于不平衡的数据集来说很重要,随机分区可能将所有少数样本放在一个 Fold.
 
@@ -100,18 +100,18 @@ flowchart TB
 
 根据此矩阵,其他所有指标是:
 
-- **Accuracy**= (TP + TN) / (TP + TN + FP + FN).正确预测的部分.在类不平衡时误导.
-- **Precision**假正值是昂贵的 (例如,垃圾邮件过器标记真实电子邮件为垃圾邮件).
-- **Recall**(敏感性) =TP/ (TP+FN).我们从所有实际阳性中,我们发现了多少?
-- **F1 score**精度和回忆的和平均值. 任何一个都明显主导.
+- **Accuracy**$(TP + TN) / (TP + TN + FP + FN)$错误的类型是失衡的.
+- **Precision**$TP / (TP + FP)$假正值是昂贵的 (例如,垃圾邮件过器标记真实的电子邮件为垃圾邮件).
+- **Recall**它们的感觉$TP / (TP + FN)$假消极性是昂贵的 (例如,癌症查缺少瘤).
+- **F1 score**$2 \cdot \text{precision} \cdot \text{recall} / (\text{precision} + \text{recall})$协调精度和回忆的手段. 平衡两者,当没有一个明显的统治.
 - **AUC-ROC**接收器操作特征曲线下的区域.在各种分类门上绘制真正率与假正率.AUC = 0.5意味着随机猜测,AUC = 1.0意味着完美的分离. 门独立:它测量模型在哪个切割中如何排名正面比负面.
 
 ### 退缩指标
 
-- **MSE**平均平方错误 = 平均 y_true - y_pred) ^2). 处罚大错误方形. 敏感异常.
-- **RMSE**根平均平方错误 = 平方MSE. 与目标变量相同的单位.比MSE更容易解释.
-- **MAE**平均误差 (mean absolute error) =平均误差 (y_true - y_pred = 误差) 均为线性.比MSE更强到异常.
-- **R-squared**模型的变化分数是完美的.R^2 = 1.0. R^2 = 0.0意味着模型不比总是预测平均值更好.R^2可以是负的,如果模型比平均值差.
+- **MSE**平均平方错误 = $\text{mean}((y_{\text{true}} - y_{\text{pred}})^2)$对于大错误进行了四次处罚.
+- **RMSE**(根平均平方错误) = $\sqrt{\text{MSE}}$目标变量相同的单位,比MSE更容易解释.
+- **MAE**没有任何可能的错误.$\text{mean}(\lvert y_{\text{true}} - y_{\text{pred}} \rvert)$它们的性能比MSE更强,更强到更异常.
+- **R-squared**$1 - SS_{\text{res}} / SS_{\text{tot}}$在哪里$SS_{\text{res}} = \sum (y_{\text{true}} - y_{\text{pred}})^2$其他$SS_{\text{tot}} = \sum (y_{\text{true}} - y_{\text{mean}})^2$模型解释的差异分数. $R^2 = 1.0$很完美.$R^2 = 0.0$模型不比预测平均值更好.$R^2$如果模型比平均水平差,则可能是负的.
 
 ### 学习曲线
 
@@ -664,10 +664,10 @@ scores = cross_val_score(model, X, y, cv=StratifiedKFold(5), scoring="f1")
 |------|----------------|----------------------|
 | Overfitting | "Memorizing the training data" | The model captures noise in the training data, performing well on training but poorly on unseen data |
 | Cross-validation | "Testing on different subsets" | Systematically rotating which portion of data is used for validation, averaging results across all rotations |
-| Precision | "How many predicted positives are correct" | TP / (TP + FP): the fraction of positive predictions that are actually positive |
-| Recall | "How many actual positives we found" | TP / (TP + FN): the fraction of actual positives that were correctly identified |
+| Precision | "How many predicted positives are correct" | $TP / (TP + FP)$: the fraction of positive predictions that are actually positive |
+| Recall | "How many actual positives we found" | $TP / (TP + FN)$: the fraction of actual positives that were correctly identified |
 | AUC-ROC | "How well the model separates classes" | The area under the curve of true positive rate vs false positive rate across all thresholds, from 0.5 (random) to 1.0 (perfect) |
-| R-squared | "How much variance is explained" | 1 - (sum of squared residuals / total sum of squares): the fraction of target variance captured by the model |
+| R-squared | "How much variance is explained" | $1 - (\text{sum of squared residuals} / \text{total sum of squares})$: the fraction of target variance captured by the model |
 | Data leakage | "The model cheated" | Using information during training that would not be available at prediction time, leading to optimistic evaluation |
 | Learning curve | "How performance changes with more data" | A plot of training and validation scores vs training set size, revealing underfitting or overfitting |
 | Stratified split | "Keeping class ratios balanced" | Splitting data so each subset has the same proportion of each class as the full dataset |

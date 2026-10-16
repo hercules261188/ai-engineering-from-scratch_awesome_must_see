@@ -18,7 +18,7 @@
 
 根据其大小,你想预测瘤是否恶性或良性.你试图线性回归.它输出0.3或1.7或0.5等数字.这些数字意味着什么?1.7是"非常恶性"吗?0.5是"非常良性"吗?线性回归输出无限数量.分类需要0到1之间的有限概率,并明确决定:是否.
 
-逻辑回归解决了这个问题.它采用相同的线性组合 (wx + b) 并通过sigmoid函数,将任何数量压缩到范围 (0, 1).输出是概率.你设定一个门 (通常是0.5) 并做出决定.
+逻辑回归解决了这个问题.$wx + b$输出是一个概率.你设定一个门 (通常是0.5) 并做出决定.
 
 尽管其名称,物流回归是一种分类算法,而不是回归算法.这个名称来自它使用的物流 (sigmoid) 函数.
 
@@ -44,22 +44,22 @@ actual: 0   0   0   0   1   1   1   1   1   1
 
 状函数的作用是这样的:
 
-```
-sigmoid(z) = 1 / (1 + e^(-z))
+```math
+\sigma(z) = \frac{1}{1 + e^{-z}}
 ```
 
 性能:
-- 当z是大且正的时,sigmoid(z) 接近1
-- 当z是大且负的时,sigmoid(z) 接近0
-- 当z=0时,sigmoid(z) =0.5时
+- 什么时候$z$具有大规模和积极性的$\sigma(z)$方法 1
+- 什么时候$z$率是大,负,$\sigma(z)$接近0
+- 什么时候$z = 0$现在$\sigma(z) = 0.5$
 - 输出总是0到1之间
 - 功能在任何地方都很平滑,可区分
 
-衍生物具有方便的形式:sigmoid'(z) =sigmoid(z) * (1 - sigmoid(z)). 这使得梯度计算效率高.
+衍生品具有方便的形式:$\sigma'(z) = \sigma(z) (1 - \sigma(z))$这使得梯度计算效率高.
 
 ### 后勤回归 =线性模型 + 形
 
-模型计算z = wx + b (与线性回归相同),然后应用sigmoid:
+模型计算$z = wx + b$后面是指:
 
 ```mermaid
 flowchart LR
@@ -70,21 +70,21 @@ flowchart LR
     D -->|No| N[Predict 0]
 ```
 
-输出 p 解释为 P ((y=1 个 x),输入属于类1 的概率. 决策边界是wx + b = 0,这使得sigmoid输出完全是0.5.
+输出$p$解释为$P(y=1 \mid x)$输入属于1类的概率.$wx + b = 0$它们的输出量为0.5.
 
 ### 双边交叉缩损失
 
 对于物流回归,不能使用MSE.使用sigmoid的MSE创建了一个不曲的成本表面,具有许多本地最小值.
 
-```
-Loss = -(1/n) * sum(y * log(p) + (1-y) * log(1-p))
+```math
+\text{Loss} = -\frac{1}{n} \sum \left( y \log(p) + (1-y) \log(1-p) \right)
 ```
 
 为什么这能有效:
-- 当 y=1 和 p 接近 1: log(1) = 0,所以损失接近 0 (正确,低成本)
-- 当 y=1 和 p 接近 0: log(0) 接近负无限时,因此损失是巨大的 (错误,高成本)
-- 当 y=0 和 p 接近 0: log(1) = 0,所以损失接近 0 (正确,成本低)
-- 当 y=0 和 p 接近 1: log(0) 接近负无限时,因此损失是巨大的 (错误,高成本)
+- 什么时候$y=1$其他$p$接近1$\log(1) = 0$由于此类情况,
+- 什么时候$y=1$其他$p$接近0: $\log(0)$接近负无限,所以损失是巨大的 (错误,高成本)
+- 什么时候$y=0$其他$p$接近0: $\log(1) = 0$由于此类情况,
+- 什么时候$y=0$其他$p$接近1$\log(0)$接近负无限,所以损失是巨大的 (错误,高成本)
 
 由于这种损失函数是逻辑回归的曲,确保了单一的全球最低值.
 
@@ -92,12 +92,14 @@ Loss = -(1/n) * sum(y * log(p) + (1-y) * log(1-p))
 
 双向交叉透的梯度与sigmoid具有清洁的形式:
 
-```
-dL/dw = (1/n) * sum((p - y) * x)
-dL/db = (1/n) * sum(p - y)
+```math
+\begin{aligned}
+\frac{\partial L}{\partial w} &= \frac{1}{n} \sum (p - y) \, x \\
+\frac{\partial L}{\partial b} &= \frac{1}{n} \sum (p - y)
+\end{aligned}
 ```
 
-这些看起来与线性回归梯度相同.区别是p = sigmoid(wx + b) 而不是p = wx + b.sigmoid引入非线性,但梯度更新规则保持不变.
+它们看起来与线性回归梯度相同.$p = \sigma(wx + b)$没有$p = wx + b$形引入非线性,但梯度更新规则保持不变.
 
 ```mermaid
 flowchart TD
@@ -114,29 +116,29 @@ flowchart TD
 
 对于2D输入 (两个特征),决策边界是:
 
-```
-w1*x1 + w2*x2 + b = 0
+```math
+w_1 x_1 + w_2 x_2 + b = 0
 ```
 
 一边的点被分为1,另一边的点被分为0.物流回归总是产生线性决策边界.如果你需要一个曲线边界,你要么添加多项式特性,要么使用非线性模型.
 
 ### 多类分类与Softmax
 
-对于k类,使用软max函数:
+由于二进制物流回归处理两个类.$k$类,使用软max函数:
 
-```
-softmax(z_i) = e^(z_i) / sum(e^(z_j) for all j)
+```math
+\text{softmax}(z_i) = \frac{e^{z_i}}{\sum_j e^{z_j}}
 ```
 
-每个类都有自己的权重向量.模型为每个类计算一个分数z_i,然后softmax将分数转换为概率,总数为1.预测的类是具有最高概率的类.
+每个类都有自己的权重向量.模型计算一个分数.$z_i$对于每个类,软max将分数转换为概率,总数为1.预测的类是具有最高概率的类.
 
 损失函数变成了类型的交叉:
 
-```
-Loss = -(1/n) * sum(sum(y_k * log(p_k)))
+```math
+\text{Loss} = -\frac{1}{n} \sum \sum_k y_k \log(p_k)
 ```
 
-在此, y_k 为真类的1个,所有其他类型的0个 (单热编码).
+在哪里$y_k$为真类1和所有其他类型 (单热编码) 的0
 
 ### 评估指标
 
@@ -150,18 +152,18 @@ Loss = -(1/n) * sum(sum(y_k * log(p_k)))
 | Actually Negative | False Positive (FP) | True Negative (TN) |
 
 **Precision**预测的积极因素中,实际上有多少是积极的?
-```
-Precision = TP / (TP + FP)
+```math
+\text{Precision} = \frac{TP}{TP + FP}
 ```
 
 **Recall**(敏感性):从所有实际的积极因素中,我们抓到了多少?
-```
-Recall = TP / (TP + FN)
+```math
+\text{Recall} = \frac{TP}{TP + FN}
 ```
 
 **F1 Score**调整两个指标.
-```
-F1 = 2 * (Precision * Recall) / (Precision + Recall)
+```math
+F_1 = 2 \cdot \frac{\text{Precision} \cdot \text{Recall}}{\text{Precision} + \text{Recall}}
 ```
 
 什么时候优先考虑:
@@ -504,7 +506,7 @@ print(f"\nClassification Report:\n{classification_report(y_te, y_pred)}")
 
 ## 运动
 
-1. 生成一个线性不可分离的数据集 (例如,两个集中圆).训练物流回归并观察其失败.然后添加多项函数 (x1^2, x2^2, x1*x2) 并再次训练. 显示精度提高.
+1. 生成一个不线性可分离的数据集 (例如,两个集中圆). 训练物流回归并观察其故障. 然后添加多项函数 ($x_1^2, x_2^2, x_1 x_2$显示精度提高.
 2. 实现3级软max模型的多类混矩阵.计算每个类的精度和回忆.哪个类是最难分类的?
 3. 建立一个ROC曲线从零开始.为100个从0到1的门值计算真正率和虚假正率.使用拖式规则计算AUC (曲线下面的区域).
 
@@ -513,14 +515,14 @@ print(f"\nClassification Report:\n{classification_report(y_te, y_pred)}")
 | Term | What people say | What it actually means |
 |------|----------------|----------------------|
 | Logistic regression | "Regression for classification" | A linear model followed by a sigmoid function that outputs class probabilities |
-| Sigmoid function | "The S-curve" | The function 1/(1+e^(-z)) that maps any real number to the range (0, 1) |
-| Binary cross-entropy | "Log loss" | The loss function -[y*log(p) + (1-y)*log(1-p)] that penalizes confident wrong predictions severely |
+| Sigmoid function | "The S-curve" | The function $1/(1+e^{-z})$ that maps any real number to the range (0, 1) |
+| Binary cross-entropy | "Log loss" | The loss function $-[y \log(p) + (1-y) \log(1-p)]$ that penalizes confident wrong predictions severely |
 | Decision boundary | "The dividing line" | The surface where the model's output probability equals 0.5, separating predicted classes |
 | Softmax | "Multi-class sigmoid" | A function that converts a vector of scores into probabilities that sum to 1 |
-| Precision | "How many selected are relevant" | TP / (TP + FP), the fraction of positive predictions that are actually positive |
-| Recall | "How many relevant are selected" | TP / (TP + FN), the fraction of actual positives that the model correctly identifies |
-| F1 score | "Balanced accuracy" | The harmonic mean of precision and recall: 2*P*R / (P+R) |
+| Precision | "How many selected are relevant" | $TP / (TP + FP)$, the fraction of positive predictions that are actually positive |
+| Recall | "How many relevant are selected" | $TP / (TP + FN)$, the fraction of actual positives that the model correctly identifies |
+| F1 score | "Balanced accuracy" | The harmonic mean of precision and recall: $2PR / (P+R)$ |
 | Confusion matrix | "The error breakdown" | A table showing TP, TN, FP, FN counts for each class pair |
 | Threshold | "The cutoff" | The probability value above which the model predicts class 1 (default 0.5, tunable) |
-| One-hot encoding | "Binary columns for categories" | Representing class k as a vector of zeros with a 1 at position k |
-| Categorical cross-entropy | "Multi-class log loss" | The extension of binary cross-entropy to k classes using one-hot encoded labels |
+| One-hot encoding | "Binary columns for categories" | Representing class $k$ as a vector of zeros with a 1 at position $k$ |
+| Categorical cross-entropy | "Multi-class log loss" | The extension of binary cross-entropy to $k$ classes using one-hot encoded labels |

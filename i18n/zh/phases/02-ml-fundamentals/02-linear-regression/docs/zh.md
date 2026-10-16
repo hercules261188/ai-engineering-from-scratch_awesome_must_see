@@ -26,36 +26,36 @@
 
 ### 榜样
 
-线性回归假设输入 (x) 和输出 (y) 之间有线性关系:
+线性回归假设输入之间的线性关系 ($x$) 和产量 ($y$):
 
-```
+```math
 y = wx + b
 ```
 
-- `w`(重量/倾斜):当x增加1时,y 变化量是多少
-- `b`(偏差/截图):当x = 0时,y的值
+- `w`(重量/倾斜):多少$y$变化时$x$增加1
+- `b`价值: 价值: 价值: 价值: 价值: 价值: 价值: 价值: 价值: 价值: 价值: 价值: 价值: 价值: 价值: 价值: 价值: 价值: 价值: 价值: 价值: 价值: 价值: 价值: 价值: 价值: 价值: 价值: 价值: 价值: 价值: 价值: 价值: 价值: 价值: 价值: 价值: 价值: 价值:$y$什么时候$x = 0$
 
 对于多个输入 (特征),这扩展到:
 
-```
-y = w1*x1 + w2*x2 + ... + wn*xn + b
+```math
+y = w_1 x_1 + w_2 x_2 + \cdots + w_n x_n + b
 ```
 
-或是向量形式:`y = w^T * x + b`
+或是向量形式:$y = w^T x + b$
 
-目标:在所有训练示例中找到w和b的值,使预测的y尽可能接近实际y.
+目标:找到价值观$w$其他$b$预测的结果是$y$尽可能接近实际情况$y$在所有培训例子中.
 
 ### 成本函数 (平均平方错误)
 
 如何测量"尽可能接近"?你需要一个单一的数字来捕捉你的预测是多么错误.最常见的选择是平均平方错误 (MSE):
 
-```
-MSE = (1/n) * sum((y_predicted - y_actual)^2)
+```math
+\text{MSE} = \frac{1}{n} \sum (y_{\text{predicted}} - y_{\text{actual}})^2
 ```
 
 为什么是二次?两个原因.第一,它惩罚大错误比小错误 (一个错误10是100倍比一个错误10x).第二,二次函数在任何地方都是平滑的,可区分的,这使得优化更容易.
 
-成本函数创造了一个表面.对于单重量w和偏差b,MSE表面看起来像一个碗 (一个凸的抛物线).碗底是MSE最小化的.训练意味着找到底部.
+成本函数创造了一个表面.$w$偏见$b$子的底部是MSE最小化的地方.训练意味着找到底部.
 
 ### 渐进的下降
 
@@ -74,18 +74,22 @@ flowchart TD
 
 梯度告诉你两个东西:哪个方向移动每个参数,以及多少移动.
 
-对于 y_hat = wx + b 的 MSE:
+对于与$\hat{y} = wx + b$其他:
 
-```
-dMSE/dw = (2/n) * sum((y_hat - y) * x)
-dMSE/db = (2/n) * sum(y_hat - y)
+```math
+\begin{aligned}
+\frac{\partial \text{MSE}}{\partial w} &= \frac{2}{n} \sum (\hat{y} - y) \, x \\
+\frac{\partial \text{MSE}}{\partial b} &= \frac{2}{n} \sum (\hat{y} - y)
+\end{aligned}
 ```
 
 更新规则:
 
-```
-w = w - learning_rate * dMSE/dw
-b = b - learning_rate * dMSE/db
+```math
+\begin{aligned}
+w &= w - \text{learning\_rate} \cdot \frac{\partial \text{MSE}}{\partial w} \\
+b &= b - \text{learning\_rate} \cdot \frac{\partial \text{MSE}}{\partial b}
+\end{aligned}
 ```
 
 学习速度控制步骤的尺寸.太大:你超越最小值,偏差.太小:训练需要永远.典型的起始值:0.01,0.001,或0.0001.
@@ -94,18 +98,18 @@ b = b - learning_rate * dMSE/db
 
 对于线性回归,有一个直接公式,它提供了没有任何代的最佳权重:
 
-```
-w = (X^T * X)^(-1) * X^T * y
+```math
+w = (X^T X)^{-1} X^T y
 ```
 
-这将一个矩阵转换为w在一个步骤中解决.它对小数据集工作很好.对于大数据集 (数百万行或数千个特征),梯度下降是最喜欢的,因为矩阵逆转是O(n^3) 在数值特征中.
+这将逆转一个矩阵来解决$w$对于大型数据集 (数百万行或数千个特征),偏偏梯降,因为矩阵逆转是$O(n^3)$在特征数量上.
 
 ### 多个线性回归
 
 通过多个功能,模型成为:
 
-```
-y = w1*x1 + w2*x2 + ... + wn*xn + b
+```math
+y = w_1 x_1 + w_2 x_2 + \cdots + w_n x_n + b
 ```
 
 它们的重量是多少? 它们的重量是多少?
@@ -116,36 +120,38 @@ y = w1*x1 + w2*x2 + ... + wn*xn + b
 
 如果关系不是线性,则如何?
 
-```
-y = w1*x + w2*x^2 + w3*x^3 + b
+```math
+y = w_1 x + w_2 x^2 + w_3 x^3 + b
 ```
 
-这仍然是"线性"回归,因为模型在重量中是线性 (w1,w2,w3).
+这仍然是"线性"回归,因为模型在重量中是线性 ($w_1, w_2, w_3$您只是使用非线性特征$x$现在,我们要去.
 
 高度多项式可以适应更复杂的曲线,但有过度适应的风险.10度多项式将通过10点数据集中的每个点,但对新数据预测不好.
 
 ### 分数
 
-根据MSE的数据,你会发现你错了多少,但这个数字取决于y的尺度.
+股指数告诉你你错了多么,但这个数字取决于股的规模.$y$平方R ($R^2$) 提供一个规模独立的措施:
 
-```
-R^2 = 1 - (sum of squared residuals) / (sum of squared deviations from mean)
-    = 1 - SS_res / SS_tot
+```math
+\begin{aligned}
+R^2 &= 1 - \frac{\text{sum of squared residuals}}{\text{sum of squared deviations from mean}} \\
+&= 1 - \frac{SS_{\text{res}}}{SS_{\text{tot}}}
+\end{aligned}
 ```
 
-- 率为1.0:完美的预测
-- 模型不比每次预测平均值更好
-- R^2 < 0.0:模型比预测平均水平更糟
+- $R^2 = 1.0$预测:完美
+- $R^2 = 0.0$模型不比每次预测平均值更好
+- $R^2 < 0.0$模型比预测平均水平更糟
 
 ### 调节预览 (回)
 
 杆回归 (L2规律化) 增加了罚款:
 
-```
-Cost = MSE + lambda * sum(w_i^2)
+```math
+\text{Cost} = \text{MSE} + \lambda \sum w_i^2
 ```
 
-罚款术语不鼓励大重量.超参数lambda控制交易:较高的lambda意味着较小的重量和更大的规律化. 这将在稍后的课程中详细介绍. 现在,知道它存在和为什么它有帮助.
+罚款期不鼓励重量.$\lambda$控制交易:较高$\lambda$现在,我们知道它存在,为什么它有帮助.
 
 ```figure
 linear-regression-fit
@@ -520,24 +526,24 @@ print(f"Ridge coefficient: {ridge.coef_[0]:.4f}")
 ## 运动
 
 1. 运用批次梯度下降,股票梯度下降 (SGD) 和小型批次梯度下降.在同一数据集上比较缩速度.哪个趋于最快?哪个具有最平滑的成本曲线?
-2. 从立方函数生成数据 (y = ax^3 + bx^2 + cx + d + 噪音). 1,3和10级的合适多项数.比较训练R^2和测试R^2.在何种程度上过度合适变得明显?
-3. 运行拉索回归 (L1规律化:罚款阿尔法 *(上不_w_i 否)). 训练多个特征的住房数据.比较哪些重量达到零与.为什么L1产生稀疏的解决方案而L2没有?
+2. 产生从立方函数的数据 ($y = ax^3 + bx^2 + cx + d + \text{noise}$根据研究的结果,$R^2$测试$R^2$过度适应是多大程度上显而易见的?
+3. 实现拉索回归 (L1规律化: $\text{penalty} = \alpha \sum \lvert w_i \rvert$根据多个特性的房屋数据进行训练.比较哪些重量达到零与.为什么L1产生稀疏的解决方案而L2则没有?
 
 ## 关键词
 
 | Term | What people say | What it actually means |
 |------|----------------|----------------------|
-| Linear regression | "Draw a line through data" | Find weight w and bias b that minimize the sum of squared differences between wx+b and actual y values |
+| Linear regression | "Draw a line through data" | Find weight $w$ and bias $b$ that minimize the sum of squared differences between $wx+b$ and actual $y$ values |
 | Cost function | "How bad the model is" | A function that maps model parameters to a single number measuring prediction error, which optimization minimizes |
-| Mean squared error | "Average of squared errors" | (1/n) * sum of (predicted - actual)^2, penalizing large errors disproportionately |
+| Mean squared error | "Average of squared errors" | $\frac{1}{n} \sum (\text{predicted} - \text{actual})^2$, penalizing large errors disproportionately |
 | Gradient descent | "Walk downhill" | Iteratively adjust parameters in the direction that reduces the cost function, using partial derivatives |
 | Learning rate | "Step size" | A scalar that controls how much parameters change per gradient descent step |
-| Normal equation | "Solve it directly" | The closed-form solution w = (X^T X)^-1 X^T y that gives optimal weights without iteration |
-| R-squared | "How good the fit is" | The fraction of variance in y explained by the model, ranging from negative infinity to 1.0 |
+| Normal equation | "Solve it directly" | The closed-form solution $w = (X^T X)^{-1} X^T y$ that gives optimal weights without iteration |
+| R-squared | "How good the fit is" | The fraction of variance in $y$ explained by the model, ranging from negative infinity to 1.0 |
 | Feature scaling | "Make features comparable" | Transforming features to similar ranges (e.g., zero mean, unit variance) so gradient descent converges faster |
 | Regularization | "Penalize complexity" | Adding a term to the cost function that shrinks weights, preventing overfitting |
-| Ridge regression | "L2 regularization" | Linear regression with a penalty of lambda * sum(w_i^2) added to MSE |
-| Polynomial regression | "Fitting curves with linear math" | Linear regression on polynomial features (x, x^2, x^3, ...), still linear in the weights |
+| Ridge regression | "L2 regularization" | Linear regression with a penalty of $\lambda \sum w_i^2$ added to MSE |
+| Polynomial regression | "Fitting curves with linear math" | Linear regression on polynomial features ($x, x^2, x^3, \ldots$), still linear in the weights |
 | Overfitting | "Memorizing training data" | Using a model so complex that it fits noise in training data and fails on new data |
 
 ## 进一步阅读

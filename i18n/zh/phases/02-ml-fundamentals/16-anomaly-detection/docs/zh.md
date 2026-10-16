@@ -82,7 +82,7 @@ flowchart TD
 
 ### Z-Score方法
 
-计算每个特征的平均和标准偏差. 标记任何比平均标准偏差的点.
+计算每个特征的平均和标准偏差.$k$标准偏差与平均值.
 
 ```text
 z_score = (x - mean) / std
@@ -148,11 +148,11 @@ flowchart TD
 
 异常分数是基于所有树木的平均路径长度,以随机二进制搜索树的预期路径长度正常化:
 
-```
-score(x) = 2^(-average_path_length(x) / c(n))
+```math
+\text{score}(x) = 2^{-\text{average\_path\_length}(x) / c(n)}
 ```
 
-在哪里?`c(n)`接近1意味着异常.接近0.5意味着正常.接近0意味着非常正常 (密集集中).
+在哪里?`c(n)`是预期的路径长度$n$标记接近1意味着异常. 标记接近0.5意味着正常. 标记接近0意味着非常正常 (密集集中).
 
 **Strengths:**没有分布假设. 运行在高尺寸中. 尺寸很好 (样本尺寸是线下的,因为每个树使用一个子样本). 处理混合特征类型.
 
@@ -168,7 +168,7 @@ score(x) = 2^(-average_path_length(x) / c(n))
  LOF将一个点周围的地方密度与邻居周围的密度进行比较.
 
 **How it works:**
-1. 对于每个点,找到它的 k 最接近的邻居
+1. 对于每一个点,请查找其$k$最近的邻居
 2. 计算当地可达度密度 (邻居密度)
 3. 比较每个点的密度与邻居的密度
 4. 如果一个点的密度比其邻居低得多,则它是异常的
@@ -182,7 +182,7 @@ score(x) = 2^(-average_path_length(x) / c(n))
 
 **Strengths:**检测到地方异常 (在邻里不寻常的点,即使它们不是全球不寻常的点).
 
-**Weaknesses:**对于非常高的维度来说,它不起作用 (维度的诅咒影响了距离计算).
+**Weaknesses:**在大型数据集上缓慢 ($O(n^2)$对于选择的敏感性$k$在非常高的尺寸中不起作用 (尺寸的诅咒影响了距离计算).
 
 ### 进行比较
 
@@ -199,7 +199,7 @@ score(x) = 2^(-average_path_length(x) / c(n))
 
 - **Extreme class imbalance.**预测"正常"的情况,就能达到99.9%的准确度.
 - **AUROC is misleading.**由于存在严重的不平衡,即使模型在实际门上错过了大多数异常,AUROC也可以看起来很好.
-- **Better metrics:**精度@k (上方k标记的项目中,有多少是真实异常),AUPRC (精度回忆曲线下的区域),并以固定的假正率回忆.
+- **Better metrics:**精准@k (最好的$k$标记的项目,有多少真实异常),AUPRC (精度回收曲线下的区域),并以固定的假正率回收.
 
 ```mermaid
 flowchart LR
@@ -317,7 +317,7 @@ class IsolationForest:
         return scores
 ```
 
-正常化因素`c(n)`是一个包含 n 个元素的二进制搜索树中未能搜索的预期路径长度.`2 * H(n-1) - 2*(n-1)/n`在哪里`H`这种正常化确保不同尺寸的数据集中得分可比较.
+正常化因素`c(n)`是一个二进制搜索树中未能成功的预期路径长度$n$它们是等于`2 * H(n-1) - 2*(n-1)/n`在哪里`H`这种正常化确保不同尺寸的数据集中得分可比较.
 
 ### 演示场景
 
@@ -433,7 +433,7 @@ predictions = oc_svm.predict(X_test)
 
 2. **Multivariate anomalies.**创建2D数据,每个特征单独看起来正常,但组合是异常的 (例如,距离主集群角角的点). 显示每个特征的Z分数错过这些,但隔离森林抓住它们.
 
-3. **LOF from scratch.**根据相同数据,使用k-近邻实现本地外表因素.与 sklearn的本地外表因素进行比较.使用k=10和k=50 - 选择k如何影响结果?
+3. **LOF from scratch.**根据相同数据,使用k-近邻进行本地外表因素的实现.$k=10$其他$k=50$如何选择$k$影响结果?
 
 4. **Streaming anomaly detection.**修改Z-score检测器以在流媒体设置中工作:随着新点的到来更新运行平均和变异 (威尔福德的在线算法).
 
@@ -448,10 +448,10 @@ predictions = oc_svm.predict(X_test)
 | Contextual anomaly | "Normal value, wrong context" | An observation that is unusual given its context (time, location, etc.) but might be normal in another context |
 | Isolation Forest | "Random splits to find outliers" | An ensemble of random trees that isolates anomalies with fewer splits than normal points |
 | Local Outlier Factor | "Compare density to neighbors" | A method that flags points whose local density is much lower than their neighbors' density |
-| Z-score | "Standard deviations from mean" | (x - mean) / std, measuring how far a point is from the center in units of standard deviation |
-| IQR | "Interquartile range" | Q3 - Q1, measuring the spread of the middle 50% of data, used for robust outlier detection |
+| Z-score | "Standard deviations from mean" | $(x - \text{mean}) / \text{std}$, measuring how far a point is from the center in units of standard deviation |
+| IQR | "Interquartile range" | $Q3 - Q1$, measuring the spread of the middle 50% of data, used for robust outlier detection |
 | Contamination | "Expected fraction of anomalies" | A hyperparameter telling the detector what proportion of the data it should flag as anomalous |
-| Precision@k | "Of the top k flags, how many are real" | Precision computed on only the k most suspicious points, useful for imbalanced anomaly detection |
+| Precision@k | "Of the top k flags, how many are real" | Precision computed on only the $k$ most suspicious points, useful for imbalanced anomaly detection |
 | AUPRC | "Area under precision-recall curve" | A metric that summarizes precision-recall performance across all thresholds, better than AUROC for imbalanced data |
 
 ## 进一步阅读
