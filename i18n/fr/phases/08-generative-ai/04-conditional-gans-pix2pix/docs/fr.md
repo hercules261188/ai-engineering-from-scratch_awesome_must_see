@@ -9,34 +9,36 @@
 
 ## Le problème
 
-Un GAN inconditionnel échantillonne des visages arbitraires. Utilisés pour une démonstration, inutiles dans la production. Vous voulez: *mappage d'une esquisse à une photo*, *mappage d'une carte à une photo aérienne*, *mappage d'une scène de jour à la nuit*, *colorer une image à l'échelle de gris*. Dans toutes ces images, vous obtenez une image d'entrée`x`et doit sortir `y`Il y a beaucoup de choses plausibles.`y`- le`x`Une défaite adversaire ne le fait pas, car "il semble réel" est fort.
+Un GAN inconditionnel échantillonne des visages arbitraires. Utilisés pour une démonstration, inutiles dans la production. Vous voulez: *mappage d'une esquisse à une photo*, *mappage d'une carte à une photo aérienne*, *mappage d'une scène de jour à la nuit*, *colorer une image à l'échelle de gris*. Dans toutes ces images, vous obtenez une image d'entrée$x$et doit sortir $y$Il y a beaucoup de choses plausibles.$y$C' est par .$x$Une défaite adversaire ne le fait pas, car "il semble réel" est fort.
 
-Le GAN conditionnel (Mirza & Osindero, 2014) ajoute une condition `c`comme une entrée pour les deux `G`et `D`Pix2Pix (Isola et coll., 2017) a spécialisé ceci: condition est une image d'entrée complète, générateur est un U-Net, discriminateur est un classifiateur * patch-based* (PatchGAN), et perte est adversarial + L1. Cette recette surpasse les modèles de texte à image de zéro sur des domaines image à image étroits même en 2026 car elle est formée sur * données en paires *  vous avez exactement le signal dont vous avez besoin.
+Le GAN conditionnel (Mirza & Osindero, 2014) ajoute une condition $c$comme une entrée pour les deux $G$et $D$Pix2Pix (Isola et coll., 2017) a spécialisé ceci: condition est une image d'entrée complète, générateur est un U-Net, discriminateur est un classifiateur * patch-based* (PatchGAN), et perte est adversarial + L1. Cette recette surpasse les modèles de texte à image de zéro sur des domaines image à image étroits même en 2026 car elle est formée sur * données en paires *  vous avez exactement le signal dont vous avez besoin.
 
 ## Le concept
 
 ![Pix2Pix: U-Net generator, PatchGAN discriminator](../assets/pix2pix.svg)
 
-**Conditional G.** `G(x, z) → y`Dans Pix2Pix,`z`est dérapagé à l'intérieur de G (aucun bruit d'entrée  Isola trouvé le bruit explicite a été ignoré).
+**Conditional G.** $G(x, z) \to y$Dans Pix2Pix,$z$est dérapagé à l'intérieur de G (aucun bruit d'entrée  Isola trouvé le bruit explicite a été ignoré).
 
-**Conditional D.** `D(x, y) → [0, 1]`. L'entrée est la paire (condition, sortie).`y`est compatible avec `x`, pas seulement si `y`Ça a l'air réel.
+**Conditional D.** $D(x, y) \to [0, 1]$. L'entrée est la paire (condition, sortie).$y$est compatible avec $x$, pas seulement si $y$Ça a l'air réel.
 
 **U-Net generator.**Encoder-décoeur avec des connexions de saut à travers le goulet d'étranglement. Critical pour les tâches où l'entrée et la sortie partagent une structure de bas niveau (marges, silhouette). Sans les sauts, les détails à haute fréquence disparaissent.
 
-**PatchGAN discriminator.**Au lieu de produire un seul score réel/faux, D produit un `N×N`La moyenne est de 70×70 pixels. C'est une hypothèse de champ aléatoire de Markov: le réalisme est local.
+**PatchGAN discriminator.**Au lieu de produire un seul score réel/faux, D produit un $N \times N$La moyenne est de 70×70 pixels. C'est une hypothèse de champ aléatoire de Markov: le réalisme est local.
 
 **Loss.**
 
-```
-loss_G = -log D(x, G(x)) + λ · ||y - G(x)||_1
-loss_D = -log D(x, y) - log (1 - D(x, G(x)))
+```math
+\begin{aligned}
+\text{loss}_G &= -\log D(x, G(x)) + \lambda \cdot \lVert y - G(x) \rVert_1 \\
+\text{loss}_D &= -\log D(x, y) - \log(1 - D(x, G(x)))
+\end{aligned}
 ```
 
-Le terme L1 stabilise l'entraînement et pousse G vers la cible connue. L1 donne des bords plus tranchants que L2 (médians, pas moyens). `λ = 100`était le Pix2Pix par défaut.
+Le terme L1 stabilise l'entraînement et pousse G vers la cible connue. L1 donne des bords plus tranchants que L2 (médians, pas moyens). $\lambda = 100$était le Pix2Pix par défaut.
 
 ## CycleGAN  lorsque vous n'avez pas de paires
 
-Pix2Pix a besoin d' être couplé `(x, y)`Les données. CycleGAN (Zhu et coll., 2017) réduit cette exigence au prix d'une perte supplémentaire: la perte de la cohérence du cycle.`G: X → Y`et `F: Y → X`- Les entraîner ainsi .`F(G(x)) ≈ x`et `G(F(y)) ≈ y`Cela vous permet de traduire des chevaux en zèbres, en été en hiver, sans exemples parallèles.
+Pix2Pix a besoin d' être couplé $(x, y)$Les données. CycleGAN (Zhu et coll., 2017) réduit cette exigence au prix d'une perte supplémentaire: la perte de la cohérence du cycle.$G: X \to Y$et $F: Y \to X$- Les entraîner ainsi .$F(G(x)) \approx x$et $G(F(y)) \approx y$Cela vous permet de traduire des chevaux en zèbres, en été en hiver, sans exemples parallèles.
 
 En 2026, l'image-à-image non couplée est principalement réalisée via diffusion (ControlNet, IP-Adapter) plutôt que CycleGAN, mais l'idée de cohérence de cycle survit dans presque tous les documents d'adaptation de domaine non couplés.
 
@@ -46,7 +48,7 @@ gx-patchgan
 
 ## Faites-le
 
-`code/main.py`Il met en œuvre une petite GAN conditionnelle sur les données 1D.`c`est une étiquette de classe (0 ou 1). La tâche: produire un échantillon à partir de la distribution conditionnelle pour la classe donnée.
+`code/main.py`Il met en œuvre une petite GAN conditionnelle sur les données 1D.$c$est une étiquette de classe (0 ou 1). La tâche: produire un échantillon à partir de la distribution conditionnelle pour la classe donnée.
 
 ### Étape 1: ajouter la condition aux entrées G et D
 
@@ -84,9 +86,9 @@ for c in [0, 1]:
 ## Les pièges
 
 - **Condition ignored.**G apprend à se marginaliser, D ne pénalise jamais parce que le signal de condition est faible.
-- **L1 weight too low.**G dérive vers des sorties réelles arbitraires, pas fidèles.
-- **L1 weight too high.**G produit des résultats flou parce que L1 est toujours une norme de L_p.
-- **Ground-truth leakage in D.**Concaténate `(x, y)`comme entrée D, pas seulement `y`Sans ce D, on ne peut pas vérifier la cohérence.
+- **L1 weight too low.**G dérive vers des résultats d'apparence réelle arbitraire, pas fidèles.$\lambda \approx 100$pour les tâches de style Pix2Pix.
+- **L1 weight too high.**G produit des sorties floues parce que L1 est toujours un $L_p$La douche est en bas une fois que l'entraînement est stabilisé.
+- **Ground-truth leakage in D.**Concaténate $(x, y)$comme entrée D, pas seulement $y$Sans ce D, on ne peut pas vérifier la cohérence.
 - **Mode collapse per class.**Chaque classe peut s'effondrer indépendamment.
 
 ## Utilisez-le

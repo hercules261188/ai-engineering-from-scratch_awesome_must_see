@@ -26,13 +26,13 @@ Vous verrez également: IS (score d'initiation, en grande partie retraité), KID
 Heusel et coll. (2017).
 
 1. Extraire les fonctionnalités Inception-v3 (2048-D) pour N images réelles et N générées.
-2. Pour chaque piscine , un Gaussien .`μ_r, μ_g`et la covariance `Σ_r, Σ_g`- Je suis désolé .
-3. FID = `||μ_r - μ_g||² + Tr(Σ_r + Σ_g - 2 · (Σ_r · Σ_g)^0.5)`- Je suis désolé .
+2. Pour chaque piscine , un Gaussien .$\mu_r, \mu_g$et la covariance $\Sigma_r, \Sigma_g$- Je suis désolé .
+3. $\text{FID} = \lVert \mu_r - \mu_g \rVert^2 + \mathop{\mathrm{Tr}}\left(\Sigma_r + \Sigma_g - 2 \cdot (\Sigma_r \cdot \Sigma_g)^{0.5}\right)$- Je suis désolé .
 
 Interprétation: distance Fréchet entre deux gaussiens multivariés dans l'espace de caractéristiques.
 
 Mode d'échec:
-- **Biased on small N.**Le FID est le carré moyen sur la distribution de fonctionnalités  petit N sous-estime la covariance, donne un FID faussement faible.
+- **Biased on small N.**Le FID est le carré moyen sur la distribution des caractéristiques  petit N sous-estime la covariance, donne un FID faussement faible.$N \ge 10{,}000$- Je suis désolé .
 - **Inception-dependent.**Inception-v3 a été formé sur ImageNet. Les domaines éloignés d'ImageNet (faces, art, images de texte) produisent des FID sans sens. Utilisez un extracteur de fonctionnalités spécifique au domaine.
 - **Gaming.**Le surmatch de la pré-Inception donne une faible FID sans amélioration de la qualité visuelle.
 

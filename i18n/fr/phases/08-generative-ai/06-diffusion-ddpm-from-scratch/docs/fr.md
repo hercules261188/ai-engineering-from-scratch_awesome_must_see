@@ -9,47 +9,47 @@
 
 ## Le problème
 
-Tu veux un échantillon pour `p_data(x)`Les GAN jouent un jeu de minimax qui diverge souvent. Les VAE produisent des échantillons flou à partir d'un décodeur gaussien. Ce que vous voulez vraiment, c'est un objectif d'entraînement qui est (a) une seule perte stable (pas de point de selle, pas de minimax), (b) une limite inférieure sur `log p(x)`(pour que vous ayez des probabilités), et (c) des échantillons correspondant à la qualité de la SOTA.
+Tu veux un échantillon pour $p_{\text{data}}(x)$Les GAN jouent un jeu de minimax qui diverge souvent. Les VAE produisent des échantillons flou à partir d'un décodeur gaussien. Ce que vous voulez vraiment, c'est un objectif d'entraînement qui est (a) une seule perte stable (pas de point de selle, pas de minimax), (b) une limite inférieure sur $\log p(x)$(pour que vous ayez des probabilités), et (c) des échantillons correspondant à la qualité de la SOTA.
 
-Sohl-Dickstein et coll. (2015) ont eu une réponse théorique: définir une chaîne Markov `q(x_t | x_{t-1})`qui ajoute progressivement le bruit gaussien, et entraîne une chaîne inverse`p_θ(x_{t-1} | x_t)`Ho, Jain, Abbeel (2020) ont montré que la perte pouvait être simplifiée à une ligne  prédire le bruit  et nettoyé les mathématiques. En 2020 c'était une curiosité. En 2021 il a produit des échantillons de pointe. En 2022 il est devenu Stable Diffusion. En 2026 il est le substrat.
+Sohl-Dickstein et coll. (2015) ont eu une réponse théorique: définir une chaîne Markov $q(x_t \mid x_{t-1})$qui ajoute progressivement le bruit gaussien, et entraîne une chaîne inverse$p_\theta(x_{t-1} \mid x_t)$Ho, Jain, Abbeel (2020) ont montré que la perte pouvait être simplifiée à une ligne  prédire le bruit  et nettoyé les mathématiques. En 2020 c'était une curiosité. En 2021 il a produit des échantillons de pointe. En 2022 il est devenu Stable Diffusion. En 2026 il est le substrat.
 
 ## Le concept
 
 ![DDPM: forward noise, reverse denoise](../assets/ddpm.svg)
 
-**Forward process `q`.**Ajoutez le bruit gaussien `T`La forme fermée  la raison pour laquelle la mathématique est traitable  est que la mesure cumulée est également gaussienne:
+**Forward process $q$.**Ajoutez le bruit gaussien $T$La forme fermée  la raison pour laquelle la mathématique est traitable  est que la mesure cumulée est également gaussienne:
 
-```
-q(x_t | x_0) = N( sqrt(α̅_t) · x_0,  (1 - α̅_t) · I )
-```
-
-où `α̅_t = ∏_{s=1..t} (1 - β_s)`pour un calendrier de `β_t`- Je vous en prie .`β_t`de 1e-4 à 0,02 linéairement sur T=1000 étapes et `x_T`est approximativement `N(0, I)`- Je suis désolé .
-
-**Reverse process `p_θ`.**Apprenez à utiliser un réseau neuronal .`ε_θ(x_t, t)`qui prédit le bruit qui a été ajouté.`x_t`, désigne par:
-
-```
-x_{t-1} = (1 / sqrt(α_t)) · ( x_t - (β_t / sqrt(1 - α̅_t)) · ε_θ(x_t, t) )  +  σ_t · z
+```math
+q(x_t \mid x_0) = \mathcal{N}\left( \sqrt{\bar{\alpha}_t} \cdot x_0, (1 - \bar{\alpha}_t) \cdot I \right)
 ```
 
-où `σ_t`est soit `sqrt(β_t)`L'expression est laide mais c'est juste l'algèbre`x_{t-1}`vu le retrait `q(x_{t-1} | x_t, x_0)`et en remplacement `x_0`avec son estimation prévue pour le bruit.
+où $\bar\alpha_t = \prod_{s=1}^{t} (1 - \beta_s)$pour un calendrier de $\beta_t$- Je vous en prie .$\beta_t$de 1e-4 à 0,02 sur une ligne linéaire $T=1000$étapes et $x_T$est approximativement $\mathcal{N}(0, I)$- Je suis désolé .
+
+**Reverse process $p_\theta$.**Apprenez à utiliser un réseau neuronal .$\epsilon_\theta(x_t, t)$qui prédit le bruit qui a été ajouté.$x_t$, désigne par:
+
+```math
+x_{t-1} = \frac{1}{\sqrt{\alpha_t}} \cdot \left( x_t - \frac{\beta_t}{\sqrt{1 - \bar{\alpha}_t}} \cdot \epsilon_\theta(x_t, t) \right) + \sigma_t \cdot z
+```
+
+où $\sigma_t$est soit $\sqrt{\beta_t}$L'expression est laide mais c'est juste l'algèbre$x_{t-1}$vu le retrait $q(x_{t-1} \mid x_t, x_0)$et en remplacement $x_0$avec son estimation prévue pour le bruit.
 
 **Training loss.**
 
-```
-L_simple = E_{x_0, t, ε} [ || ε - ε_θ( sqrt(α̅_t) · x_0 + sqrt(1 - α̅_t) · ε,  t ) ||² ]
+```math
+L_{\text{simple}} = \mathbb{E}_{x_0, t, \epsilon} \left[ \left\lVert \epsilon - \epsilon_\theta\left( \sqrt{\bar{\alpha}_t} \cdot x_0 + \sqrt{1 - \bar{\alpha}_t} \cdot \epsilon, t \right) \right\rVert^2 \right]
 ```
 
-Pratique `x_0`à partir des données, choisissez un aléatoire `t`, échantillon `ε ~ N(0, I)`, calculer le bruit `x_t`Une perte, pas de minimax, pas de KL, pas de trucs de réparamétrisation.
+Pratique $x_0$à partir des données, choisissez un aléatoire $t$, échantillon $\epsilon \sim \mathcal{N}(0, I)$, calculer le bruit $x_t$Une perte, pas de minimax, pas de KL, pas de trucs de réparamétrisation.
 
-**Sampling.**Commencez`x_T ~ N(0, I)`- Répétez l' étape inverse de `t = T`à `1`- C'est fait.
+**Sampling.**Commencez$x_T \sim \mathcal{N}(0, I)$- Répétez l' étape inverse de $t = T$À 1.
 
 ## Pourquoi ça marche ?
 
 Trois intuitions:
 
-1. **Denoising is easy; generating is hard.**À `t=T`Les données sont de bruit pur, le réseau doit résoudre un problème trivial.`t=0`Le réseau ne doit nettoyer que quelques pixels.`t`Le problème est difficile mais le filet a de nombreux gradients qui circulent à travers les mêmes poids à partir de chaque niveau de bruit.
+1. **Denoising is easy; generating is hard.**À $t=T$Les données sont de bruit pur, le réseau doit résoudre un problème trivial.$t=0$Le réseau ne doit nettoyer que quelques pixels.$t$Le problème est difficile mais le filet a de nombreux gradients qui circulent à travers les mêmes poids à partir de chaque niveau de bruit.
 
-2. **Score matching in disguise.**Vincent (2011) a prouvé que prédire le bruit équivaut à estimer`∇_x log q(x_t | x_0)`Le SDE inverse utilise ce score pour monter le gradient de densité  une marche aléatoire guidée vers des régions à forte probabilité.
+2. **Score matching in disguise.**Vincent (2011) a prouvé que prédire le bruit équivaut à estimer$\nabla_x \log q(x_t \mid x_0)$Le SDE inverse utilise ce score pour monter le gradient de densité  une marche aléatoire guidée vers des régions à forte probabilité.
 
 3. **The ELBO reduces to simple MSE.**La limite inférieure variationnelle complète a un terme KL par étape temporelle. Avec la paramétrisation du DDPM, ces termes KL simplifient à MSE la prédiction du bruit avec des coefficients spécifiques; Ho a diminué les coefficients (appelant cela "perte simple") et la qualité *améliorée*.
 
@@ -59,7 +59,7 @@ diffusion-denoise
 
 ## Faites-le
 
-`code/main.py`Le réseau est un petit MLP qui prend`(x_t, t)`Le train est la perte d'une ligne.
+`code/main.py`Le réseau est un petit MLP qui prend$(x_t, t)$Le train est la perte d'une ligne.
 
 ### Étape 1: calendrier anticipé (formule fermé)
 
@@ -114,17 +114,17 @@ Pour un problème 1D avec 40 étapes de temps et un MLP de 24 unités, il appren
 
 Le réseau doit savoir quel temps il détecte.
 
-- **Sinusoidal embedding.**Comme le codage positionnel de Transformer.`embed(t) = [sin(t/ω_0), cos(t/ω_0), sin(t/ω_1), ...]`Passer par un MLP, diffuser sur le net.
+- **Sinusoidal embedding.**Comme le codage positionnel de Transformer.$\text{embed}(t) = [\sin(t/\omega_0), \cos(t/\omega_0), \sin(t/\omega_1), \ldots]$Passer par un MLP, diffuser sur le net.
 - **Film / group-norm conditioning.**L'intégration de projet à l'échelle/bias par canal (FiLM) à chaque bloc.
 
 Notre code jouet utilise le synusoïdal → concat.
 
 ## Les pièges
 
-- **Schedule matters a lot.**Linear `β`Le calendrier de calcul de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de cette valeur de cette valeur est de cette valeur est de cette valeur est de cette valeur est de cette valeur est de cette valeur est de cette valeur.
-- **Timestep embedding is fragile.**Passer cru `t`comme un flot fonctionne pour le jouet 1-D mais ne fonctionne pas pour les images; utilisez toujours une intégration appropriée.
-- **V-prediction vs ε-prediction.**Pour les régimes étroits (très petits ou très grands t), `ε`Il est très faible en signal-au-bruit.`v = α·ε - σ·x`) est plus stable; SDXL, SD3 et Flux l'utilisent.
-- **Classifier-free guidance.**Pour l'inférence, calculer à la fois conditionnelle et inconditionnelle `ε`Alors ...`ε_cfg = (1 + w) · ε_cond - w · ε_uncond`avec `w ≈ 3-7`- C'est le sujet de la leçon 8.
+- **Schedule matters a lot.**Linear $\beta$Le calendrier de calcul de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de la valeur de cette valeur de cette valeur est de cette valeur est de cette valeur est de cette valeur est de cette valeur est de cette valeur est de cette valeur.
+- **Timestep embedding is fragile.**Passer cru $t$comme un flot fonctionne pour le jouet 1-D mais ne fonctionne pas pour les images; utilisez toujours une intégration appropriée.
+- **V-prediction vs ε-prediction.**Pour les régimes étroits (très petits ou très grands t), $\epsilon$Il est très faible en signal-au-bruit.$v = \alpha \cdot \epsilon - \sigma \cdot x$) est plus stable; SDXL, SD3 et Flux l'utilisent.
+- **Classifier-free guidance.**Pour l'inférence, calculer à la fois conditionnelle et inconditionnelle $\epsilon$Alors ...$\epsilon_{\text{cfg}} = (1 + w) \cdot \epsilon_{\text{cond}} - w \cdot \epsilon_{\text{uncond}}$avec $w \approx 3\text{-}7$- C'est le sujet de la leçon 8.
 - **1000 steps is a lot.**La production utilise du DDIM (20-50 étapes), du DPM-Solver (10-20 étapes) ou de la distillation (1-4 étapes). Voir leçon 12.
 
 ## Utilisez-le
@@ -147,19 +147,19 @@ La diffusion est la colonne vertébrale générative universelle. Le flux de cor
 
 1. **Easy.**Changez le T de 40 à 10 en `code/main.py`- Comment la qualité de l'échantillon (histogramme visuel des sorties) se dégrade-t-elle ?
 2. **Medium.**Passez de la prédiction à la prédiction, faites la dérive inverse, comparez la qualité de l'échantillon final.
-3. **Hard.**Ajouter des instructions sans classifiant. Condition sur une étiquette de classe `c ∈ {0, 1}`, en la déduisant 10% du temps pendant la formation et lors de l'utilisation de l'échantillonnage `ε = (1+w)·ε_cond - w·ε_uncond`. Mesurer le taux de touches en mode conditionnel à `w = 0, 1, 3, 7`- Je suis désolé .
+3. **Hard.**Ajouter des instructions sans classifiant. Condition sur une étiquette de classe $c \in \lbrace 0, 1 \rbrace$, en la déduisant 10% du temps pendant la formation et lors de l'utilisation de l'échantillonnage $\epsilon = (1+w) \cdot \epsilon_{\text{cond}} - w \cdot \epsilon_{\text{uncond}}$. Mesurer le taux de touches en mode conditionnel à $w = 0, 1, 3, 7$- Je suis désolé .
 
 ## Les termes clés
 
 | Term | What people say | What it actually means |
 |------|-----------------|-----------------------|
-| Forward process | "Adding noise" | Fixed Markov chain `q(x_t \| x_{t-1})` that destroys the data. |
-| Reverse process | "Denoising" | Learned chain `p_θ(x_{t-1} \| x_t)` that reconstructs the data. |
+| Forward process | "Adding noise" | Fixed Markov chain $q(x_t \mid x_{t-1})$ that destroys the data. |
+| Reverse process | "Denoising" | Learned chain $p_\theta(x_{t-1} \mid x_t)$ that reconstructs the data. |
 | β schedule | "The noise ladder" | Per-step variance; linear, cosine, or sigmoid. |
-| α̅ | "Alpha bar" | Cumulative product `∏(1 - β)`; gives closed-form `x_t` from `x_0`. |
-| Simple loss | "MSE on noise" | `\|\|ε - ε_θ(x_t, t)\|\|²`; all variational derivations collapse to this. |
+| α̅ | "Alpha bar" | Cumulative product $\prod (1 - \beta)$; gives closed-form $x_t$ from $x_0$. |
+| Simple loss | "MSE on noise" | $\lVert \epsilon - \epsilon_\theta(x_t, t) \rVert^2$; all variational derivations collapse to this. |
 | ε-prediction | "Predict noise" | Output is the noise added; standard DDPM. |
-| V-prediction | "Predict velocity" | Output is `α·ε - σ·x`; better conditioning across t. |
+| V-prediction | "Predict velocity" | Output is $\alpha \cdot \epsilon - \sigma \cdot x$; better conditioning across t. |
 | DDPM | "The paper" | Ho et al. 2020; linear β, 1000 steps, U-Net. |
 | DDIM | "Deterministic sampler" | Non-Markov sampler, 20-50 steps, same training objective. |
 | Classifier-free guidance | "CFG" | Mix conditional and unconditional noise predictions to amplify conditioning. |
@@ -168,7 +168,7 @@ La diffusion est la colonne vertébrale générative universelle. Le flux de cor
 
 Le papier DDPM exécute T=1000 étapes inverses. Personne ne le fait en production. Chaque pile d'inférence réelle choisit une des trois stratégies  et chaque carte détermine clairement le cadre de production de "d'où vient la latence":
 
-1. **Faster sampler, same model.**DDIM (20-50 étapes), DPM-Solver++ (10-20), UniPC (8-16).`ε_θ`Les poids sont intacts, réduit la latence de 20 à 50 fois.
+1. **Faster sampler, same model.**DDIM (20-50 étapes), DPM-Solver++ (10-20), UniPC (8-16).$\epsilon_\theta$Les poids sont intacts, réduit la latence de 20 à 50 fois.
 2. **Distillation.**Formez un élève à correspondre à l'enseignant en moins d'étapes: Distillation progressive (2 → 1), Modèles de cohérence (arbitrary → 1-4), LCM, SDXL-Turbo, SD3-Turbo.
 3. **Caching and compilation.** `torch.compile(unet, mode="reduce-overhead")`, les arrière-plans de diffusion de TensorRT-LLM,`xformers`Attention SDPA, poids bf16. Coupe de latence par étape ~ 2x.
 

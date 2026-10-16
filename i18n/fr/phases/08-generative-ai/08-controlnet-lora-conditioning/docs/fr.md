@@ -39,15 +39,15 @@ features += weight_a * control_a(depth) + weight_b * control_b(pose)
 
 ### L'ACE (Hu et coll., 2021)
 
-Pour toute couche linéaire `W ∈ R^{d×d}`dans le modèle, congélation `W`et ajouter un delta de faible rang:
+Pour toute couche linéaire $W \in \mathbb{R}^{d \times d}$dans le modèle, congélation $W$et ajouter un delta de faible rang:
 
+```math
+W' = W + \Delta W, \quad \Delta W = B A, \quad A \in \mathbb{R}^{r \times d}, \quad B \in \mathbb{R}^{d \times r}
 ```
-W' = W + ΔW,  ΔW = B @ A,  A ∈ R^{r×d},  B ∈ R^{d×r}
-```
 
-avec `r << d`.Le rang 4-16 est standard pour l'attention, le rang 64-128 pour les notes fines lourdes.`2 · d · r`Au lieu de `d²`. Pour l' attention de l' SDXL avec `d=640`- Je suis là .`r=16`: 20k par paramètre par adaptateur au lieu de 410k  une réduction de 20x.
+avec $r \ll d$.Le rang 4-16 est standard pour l'attention, le rang 64-128 pour les notes fines lourdes.$2 \cdot d \cdot r$Au lieu de $d^2$. Pour l' attention de l' SDXL avec $d=640$- Je suis là .$r=16$: 20k par paramètre par adaptateur au lieu de 410k  une réduction de 20x.
 
-Pour en tirer une conclusion , vous pouvez mesurer la LoRA:`W' = W + α · B @ A`- Je suis là .`α = 0.5-1.5`Les LRA multiples s'accumulent additionnellement (avec l'avertissement habituel qu'ils interagissent de manière non linéaire).
+Pour en tirer une conclusion , vous pouvez mesurer la LoRA:$W' = W + \alpha \cdot B A$- Je suis là .$\alpha = 0.5\text{-}1.5$Les LRA multiples s'accumulent additionnellement (avec l'avertissement habituel qu'ils interagissent de manière non linéaire).
 
 ### Adapteur IP (Ye et coll., 2023)
 
@@ -74,7 +74,7 @@ v4-controlnet-zero
 
 `code/main.py`simulation des deux mécanismes sur le 1-D:
 
-1. **LoRA.**Une couche linéaire prétrainée `W`- Fermez-le, entraînez un bas rang.`B @ A`comme ça .`W + BA`Il correspond à une couche linéaire cible.`r = 1`suffit pour apprendre une correction de rang 1 parfaitement.
+1. **LoRA.**Une couche linéaire prétrainée $W$- Fermez-le, entraînez un bas rang.$BA$comme ça .$W + BA$Il correspond à une couche linéaire cible.$r = 1$suffit pour apprendre une correction de rang 1 parfaitement.
 
 2. **ControlNet-lite.**Un prédicteur de base gelée et un réseau côté qui lit un signal supplémentaire. La sortie du réseau côté est garée par un scalaire apprenable initialement à zéro (notre version de zéro-conv).
 
@@ -98,11 +98,11 @@ h = base(x) + gated
 
 ## Les pièges
 
-- **Over-scaling LoRAs.** `α = 2`ou `α = 3`est un hack commun "faire le plus fort" qui produit des sorties trop stylisées / cassées.`α ≤ 1.5`- Je suis désolé .
+- **Over-scaling LoRAs.** $\alpha = 2$ou $\alpha = 3$est un hack commun "faire le plus fort" qui produit des sorties trop stylisées / cassées.$\alpha \le 1.5$- Je suis désolé .
 - **ControlNet weight conflict.**L'utilisation d'un Pose ControlNet à un poids de 1,0 et d'un Depth ControlNet à un poids de 1,0 est généralement trop rapide.
 - **LoRA on the wrong base.**Les SDXL LoRA sont silencieusement non-op sur SD 1.5 parce que les dimensions d'attention ne correspondent pas.
 - **Textual Inversion drift.**Les jetons entraînés sur un point de contrôle dérivent mal sur un autre.
-- **LoRA weight-merging and storage.**Vous pouvez cuire un LoRA dans les poids du modèle de base pour une inférence plus rapide (pas d'ajout de temps de course), mais vous perdez la capacité d'échelle `α`Gardez les deux versions.
+- **LoRA weight-merging and storage.**Vous pouvez cuire un LoRA dans les poids du modèle de base pour une inférence plus rapide (pas d'ajout de temps de course), mais vous perdez la capacité d'échelle $\alpha$Gardez les deux versions.
 
 ## Utilisez-le
 
@@ -125,7 +125,7 @@ h = base(x) + gated
 
 1. **Easy.**Dans `code/main.py`, varient le rang de la LoRA `r`À quel rang le LoRA correspond exactement à un delta cible de rang 2 ?
 2. **Medium.**Exercez deux LoRA séparés sur deux transformations cibles. Chargez-les ensemble et montrez leur interaction additive.
-3. **Hard.**Utilisez des diffuseurs pour empiler: SDXL-base + Canny-ControlNet (poids 0,8) + un style LoRA (α 0,8) + IP-adapter (poids 0,6). Mesurer le compromis FID-contre-prompte-adhérence à mesure que les poids de l'emplacement varient.
+3. **Hard.**Utilisez des diffuseurs pour empiler: SDXL-base + Canny-ControlNet (poids 0,8) + un style LoRA ($\alpha$0,8) + IP-Adapter (poids 0,6). Mesurer le compromis FID- contre l'adhésion instantanée en fonction de la variation des poids de la pile.
 
 ## Les termes clés
 
@@ -133,9 +133,9 @@ h = base(x) + gated
 |------|-----------------|-----------------------|
 | ControlNet | "Spatial control" | Cloned encoder + zero-conv skips; reads a conditioning image. |
 | Zero convolution | "Starts as identity" | 1×1 conv initialized to zero; ControlNet starts as no-op. |
-| LoRA | "Low-rank adapter" | `W + B @ A`, `r << d`; 100x fewer params than a full fine-tune. |
+| LoRA | "Low-rank adapter" | $W + BA$, $r \ll d$; 100x fewer params than a full fine-tune. |
 | rank r | "The knob" | LoRA compression; 4-16 typical, 64+ for heavy personalization. |
-| α | "LoRA strength" | Runtime scaling of the LoRA delta. |
+| $\alpha$ | "LoRA strength" | Runtime scaling of the LoRA delta. |
 | IP-Adapter | "Reference image" | Small image-conditioning adapter via CLIP-image tokens. |
 | DreamBooth | "Full subject fine-tune" | Train the full model on ~30 images of a subject. |
 | Textual Inversion | "New token" | Learn a new word embedding only; legacy, mostly replaced. |
@@ -144,7 +144,7 @@ h = base(x) + gated
 
 Un vrai SaaS texte-à-image sert des centaines de LoRA et une douzaine de ControlNets sur le même point de contrôle de base. Le problème de service ressemble beaucoup à la multi-location LLM (la littérature de production couvre le cas LLM sous lotage continu et LoRAX / S-LoRA):
 
-- **Hot-swap LoRAs, do not merge.**La fusion`W' = W + α·B·A`dans la base donne ~ 3-5% plus rapide par étape d'inférence mais gèle `α`Les LRA sont maintenues chaudes dans le VRAM en tant que delta de rang-r; les diffuseurs sont exposés.`pipe.load_lora_weights()`+ `pipe.set_adapters([...], adapter_weights=[...])`Pour l'activation par demande, le coût de l'échange est le `2 · d · r · num_layers`Poids  à l'échelle de MB, sous-seconde.
+- **Hot-swap LoRAs, do not merge.**La fusion$W' = W + \alpha \cdot B \cdot A$dans la base donne ~ 3-5% plus rapide par étape d'inférence mais gèle $\alpha$Les LRA sont maintenues chaudes dans le VRAM en tant que delta de rang-r; les diffuseurs sont exposés.`pipe.load_lora_weights()`+ `pipe.set_adapters([...], adapter_weights=[...])`Pour l'activation par demande, le coût de l'échange est le `2 · d · r · num_layers`Poids  à l'échelle de MB, sous-seconde.
 - **ControlNet as a second attention lane.**Le codeur cloné fonctionne parallèlement à la base. Deux ControlNets de poids 1,0 chacun = deux passes supplémentaires à l'avant par étape, pas un pass fusionné. La taille du lot diminue quadratiquement. Budget pour ~ 1,5x coût de l'étape par ControlNet actif.
 - **Quantized LoRAs too.**Si vous avez quantifié la base (voir leçon 07, Flux sur 8 Go), le delta LoRA quantifie également de manière propre à 8 bits ou 4 bits.
 

@@ -164,4 +164,4 @@ Pour la plupart des produits 2026 la bonne réponse est "exécuter un modèle de
 - [Shi et al. (2023). MVDream](https://arxiv.org/abs/2308.16512) Diffusion multi-vue.
 - [Hong et al. (2023). LRM: Large Reconstruction Model for Single Image to 3D](https://arxiv.org/abs/2311.04400) LRM.
 - [Gao et al. (2024). CAT3D: Create Anything in 3D with Multi-View Diffusion Models](https://arxiv.org/abs/2405.10314)- C'est une catastrophe.
-- [Stability AI (2024). Stable Video 3D (SV3D)](https://stability.ai/research/sv3d)- Le SV3D.
+- [Stability AI (2024). Stable Video 3D (SV3D)](https://stability.ai/research/sv3d-novel-multi-view-synthesis-and-3d-generation-from-a-single-image-using-latent-video-diffusion)- Le SV3D.
