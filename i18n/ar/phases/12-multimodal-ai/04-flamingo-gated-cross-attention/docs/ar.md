@@ -30,18 +30,18 @@
 
 ### إعادة أخذ العينات من جهاز الاستشعار
 
-لكل صورة في المشاركة، ينتج ViT ن علامات اللصوص. يحتوي resampler Perceiver على K ثابتة latences يمكن التعلم (Flamingo يستخدم K = 64). كل بلوك resampler هو خطوتين فرعية:
+لكل صورة في المشاركة، ينتج (في تي)$N$إشارات اللصوص، لقد كان جهاز إعادة العينة$K$التعلم المتخفي الثابت (استخدمات فلامينغو $K=64$كل قطعة من أشكال العينة هي خطوتين فرعية:
 
-1. الاهتمام المتقاطع: الـ K المتخفية تتواجد فوق رموز N المزيفات (Q من الـ Latents، K/V من المزيفات).
+1. الاهتمام المتقاطع:$K$الـ "مُخفّضات" يُحضرونها$N$رموز اللصوص (Q من اللصوص ، K / V من اللصوص).
 2. الاهتمام الذاتي + FFN داخل الاختفاء.
 
-بعد 6 كتلة إعادة العينة ، تكون الخروج K = 64 رموز بصرية من dim 1024, بغض النظر عن عدد المفاتيح التي أنتجتها ViT. صورة 224x224 (196 معصية) وصورة 480x480 (900 معصية) تخرج كرموز 64 معصية.
+بعد 6 كتلة إعادة العينة، الخروج هو $K=64$علامات بصرية من dim 1024، بغض النظر عن عدد اللقطات التي أنتجتها ViT. صورة 224x224 (196 اللقطات) وصورة 480x480 (900 اللقطات) كلتا الخروج ك64 رموز resampler.
 
-بالنسبة إلى الفيديو، يتم تطبيق الاختبار التجاري بشكل زمني: تنتج ملصقات كل إطار 64 متخفية، وتسمح التشفير الموضعي الزمني للنموذج بتمييز t=0 عن t=N. يصبح الفيديو الكامل رموزًا بصرية T * 64.
+في الفيديو، يتم تطبيق الاختبار التجاري بشكل زمني: تُنتج ملصقات كل إطار 64 غطاءً، ويتيح تشفير الموقف التجاري لنموذج التمييز $t=0$من$t=N$الفيديو الكامل يصبح$T \cdot 64$رموز بصرية
 
 ### الاهتمام المتقاطع
 
-بين كل طبقة M من LLM المجمدة (Flamingo يستخدم M=4) ، إدراج كتلة جديدة مغلقة للاهتمام المتقاطع:
+بين كل$M$طبقات الـ LLM المجمدة (استخدمات فلامينغو $M=4$() إدراج حلقة جديدة من الإنتباه المتقاطع:
 
 ```
 x_after_llm_block = llm_block(x_before)
@@ -148,7 +148,7 @@ cross-attention-fusion
 | OBELICS | "Interleaved web corpus" | Open dataset of 141M web pages with images and text in reading order |
 | Chinchilla | "70B frozen base" | Flamingo's frozen text LLM, from DeepMind's Chinchilla paper |
 | Gate schedule | "How alpha moves" | The rate at which the cross-attention gate opens during training |
-| Cross-attn frequency | "Every M layers" | How often a gated cross-attention block is inserted; Flamingo uses M=4 |
+| Cross-attn frequency | "Every M layers" | How often a gated cross-attention block is inserted; Flamingo uses $M=4$ |
 | OpenFlamingo | "Open reproduction" | MosaicML/LAION open checkpoint at 3-9B; architecture-identical to Flamingo |
 
 ## المزيد من القراءة
