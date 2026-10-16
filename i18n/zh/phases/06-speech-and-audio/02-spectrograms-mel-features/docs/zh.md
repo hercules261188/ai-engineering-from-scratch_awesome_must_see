@@ -23,7 +23,7 @@
 
 **Log-magnitude.**度范围为5至6个级别.`log(|X| + 1e-6)`或`20 * log10(|X|)`每个生产管道都使用日志大小,而不是原始大小.
 
-**Mel scale.**频率`f`在Hz地图中到MEL`m`通过`m = 2595 * log10(1 + f / 700)`图表大致是线性低于1kHz,大致是高于高数. 80 melbin覆盖08kHz是标准ASR输入.
+**Mel scale.**频率`f`在Hz地图中到MEL`m`通过$m = 2595 \cdot \log_{10}(1 + f / 700)$图表大致是线性低于1kHz,大致是高于高数. 80 melbin覆盖08kHz是标准ASR输入.
 
 **Mel filterbank.**单个选器是单个选器,一个选器是单个选器,一个选器是单个选器.一个选器的选器是单个选器.一个选器的选器是单个选器.一个选器的选器是单个选器.一个选器是单个选器.一个选器是单个选器.一个选器是单个选器.一个选器是单个选器.一个选器是单个选器.一个选器是单个选器.一个选器是单个选器.一个选器是单个选器.
 
@@ -170,5 +170,5 @@ def dct_ii(x, n_coeffs):
 - [Davis, Mermelstein (1980). Comparison of parametric representations for monosyllabic word recognition](https://ieeexplore.ieee.org/document/1163420) 国际金融委员会论文.
 - [Stevens, Volkmann, Newman (1937). A Scale for the Measurement of the Psychological Magnitude Pitch](https://pubs.aip.org/asa/jasa/article-abstract/8/3/185/735757/)原始的MEL尺度.
 - [OpenAI — Whisper source, log_mel_spectrogram](https://github.com/openai/whisper/blob/main/whisper/audio.py)阅读参考实施.
-- [librosa feature extraction docs](https://librosa.org/doc/main/feature.html)参考`mfcc`现在`melspectrogram`跳/窗户.
+- [librosa feature extraction docs](https://librosa.org/doc/latest/api/feature.html)参考`mfcc`现在`melspectrogram`跳/窗户.
 - [NVIDIA NeMo — audio preprocessing](https://docs.nvidia.com/deeplearning/nemo/user-guide/docs/en/main/asr/asr_all.html#featurizers)生产规模的管道,用于Parakeet+加拿大车型.

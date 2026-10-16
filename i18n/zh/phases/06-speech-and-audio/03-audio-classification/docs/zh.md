@@ -119,7 +119,7 @@ class AudioCNN(nn.Module):
 
 列车在ESC-50上用单个RTX 4090的10分钟. 80%+精度.
 
-### 步骤5:2026年默认的 细调 BEAT
+### 步骤5:细调预训练的音频变压器 (AST显示)
 
 ```python
 from transformers import ASTFeatureExtractor, ASTForAudioClassification
@@ -135,7 +135,7 @@ inputs = ext(audio, sampling_rate=16000, return_tensors="pt")
 logits = model(**inputs).logits
 ```
 
-对于 BEAT 则使用`microsoft/BEATs-base`通过`beats`转换器API的形状相同.
+接面孔中心的例子是从 Hub 调整 AST. 接,默认的2026,不在 Hugging Face Hub:下载一个检查点从 [BEATs release in microsoft/unilm](https://github.com/microsoft/unilm/tree/master/beats)接下来,我们就把它装上了.`BEATs`其他`BEATsConfig`细调循环保持相同的形状.
 
 ## 用它
 

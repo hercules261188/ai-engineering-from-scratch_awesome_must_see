@@ -169,4 +169,4 @@ music = musicgen.generate([description], duration=30)
 - [ACE-Step](https://github.com/ace-step/ACE-Step)开放4B全歌发电机,2026年4月.
 - [Suno v5 platform docs](https://suno.com)商业质量领导者.
 - [AudioLDM2](https://arxiv.org/abs/2308.05734) 音乐+音效的隐藏传播.
-- [WMG-Suno settlement coverage](https://www.musicbusinessworldwide.com/suno-warner-music-settlement/)2025年11月前例.
+- [WMG-Suno settlement coverage](https://www.musicbusinessworldwide.com/warner-music-group-settles-with-suno-strikes-first-of-its-kind-deal-with-ai-song-generator/)2025年11月前例.

@@ -170,7 +170,7 @@ def flush_on_end(stt_client, audio_buffer):
 ## 进一步阅读
 
 - [Silero VAD](https://github.com/snakers4/silero-vad) 参考开放的VAD.
-- [Picovoice Cobra VAD](https://picovoice.ai/products/cobra/)商业精度领先者.
+- [Picovoice Cobra VAD](https://picovoice.ai/products/voice/voice-activity-detection/)商业精度领先者.
 - [Kyutai — Unmute + flush trick](https://kyutai.org/stt)200ms下级工程技巧.
 - [LiveKit — turn detection](https://docs.livekit.io/agents/logic/turns/)生产中的语义终点.
 - [WebRTC VAD](https://webrtc.googlesource.com/src/)遗产基线.

@@ -137,6 +137,6 @@ def dft(x):
 
 - [Shannon (1949). Communication in the Presence of Noise](https://people.math.harvard.edu/~ctm/home/text/others/shannon/entropy/entropy.pdf)样本定理背后的论文.
 - [Smith — The Scientist and Engineer's Guide to Digital Signal Processing](https://www.dspguide.com/ch8.htm)免费的法典DSP教科书.
-- [librosa docs — audio primer](https://librosa.org/doc/latest/tutorial.html)实用程序.
-- [Heinrich Kuttruff — Room Acoustics (6th ed.)](https://www.routledge.com/Room-Acoustics/Kuttruff/p/book/9781482260434)为什么现实世界音频不是一个清洁的阴影.
+- [librosa docs — audio primer](https://librosa.org/doc/latest/auto_tutorials/index.html)实用程序.
+- [Heinrich Kuttruff — Room Acoustics (6th ed.)](https://www.taylorfrancis.com/books/mono/10.1201/9781315372150/room-acoustics-heinrich-kuttruff)为什么现实世界音频不是一个清洁的阴影.
 - [Steve Eddins — FFT Interpretation notebook](https://blogs.mathworks.com/steve/2020/03/30/fft-spectrum-and-spectral-densities/)频率桶直觉在10分钟内清除了.

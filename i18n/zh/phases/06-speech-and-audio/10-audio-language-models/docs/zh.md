@@ -129,17 +129,18 @@ class AudioProjector(nn.Module):
 
 ```python
 from datasets import load_dataset
-mmau = load_dataset("MMAU/MMAU-Pro")
+mmau = load_dataset("gamma-lab-umd/MMAU-Pro", split="test")
+mcq = mmau.filter(lambda item: len(item["choices"] or []) > 1)
 
 correct = 0
-for item in mmau["test"]:
-    answer = call_model(item["audio"], item["question"], item["choices"])
-    if answer == item["correct_choice"]:
+for item in mcq:
+    answer = call_model(item["audio_path"], item["question"], item["choices"])
+    if answer == item["answer"]:
         correct += 1
-print(f"Accuracy: {correct / len(mmau['test']):.3f}")
+print(f"Accuracy: {correct / len(mcq):.3f}")
 ```
 
-单独报告每类别 (语音/声音/音乐/多音频). 总数隐藏在模型失败的地方.
+`audio_path`数据集的回报`data.zip`打分前,下载和打开zip. 这种精确匹配循环是智能检查,而不是基准得分符,因此其数量与已发布的MMAU-Pro结果是无法比较的. 官方评价者通过嵌入类似性 (NV-Embed-v2) 来匹配多选择答案,与LLM法官评分开放式答案,并通过regex规则检查指示后的答案:写预测给一个`model_output`列和运行`evaluate_mmau_pro_comprehensive.py`其他[MMAU-Pro repo](https://github.com/sonalkum/MMAUPro)报告每一个`category`总数隐藏在模型失败的地方.
 
 ## 用它
 
@@ -187,4 +188,4 @@ print(f"Accuracy: {correct / len(mmau['test']):.3f}")
 - [NVIDIA (2025). Audio Flamingo 3](https://arxiv.org/abs/2507.08128)开放长音频领导者.
 - [NVIDIA (2026). Audio Flamingo Next](https://arxiv.org/abs/2604.10905)长音频.
 - [Tang et al. (2023). SALMONN](https://arxiv.org/abs/2310.13289)双码码开创者
-- [MMAU-Pro leaderboard](https://mmaubenchmark.github.io/)2026年现场排名.
+- [MMAU-Pro leaderboard](https://sonalkum.github.io/mmau-pro/)2026年现场排名.
