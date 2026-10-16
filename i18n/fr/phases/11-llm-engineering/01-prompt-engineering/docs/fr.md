@@ -937,24 +937,24 @@ Le pré-remplissage assistant (`"{"`Il est plus fiable que les demandes JSON en 
 ### Google: Gémeaux avec réglages de sécurité
 
 ```python
-# import google.generativeai as genai
+# from google import genai
+# from google.genai import types
 #
-# genai.configure(api_key="your-key")
+# client = genai.Client()
 #
-# model = genai.GenerativeModel(
-#     "gemini-1.5-pro",
-#     system_instruction="You are a technical analyst. Be precise and cite sources.",
-#     generation_config=genai.GenerationConfig(
+# response = client.models.generate_content(
+#     model="gemini-3.8-flash",
+#     contents="Compare PostgreSQL and MySQL for write-heavy workloads.",
+#     config=types.GenerateContentConfig(
+#         system_instruction="You are a technical analyst. Be precise and cite sources.",
 #         temperature=0.3,
 #         max_output_tokens=2048,
 #     ),
 # )
-#
-# response = model.generate_content("Compare PostgreSQL and MySQL for write-heavy workloads.")
 # print(response.text)
 ```
 
-Gemini traite les instructions du système dans le cadre de la configuration du modèle, pas comme un message. La fenêtre contextuelle de jeton 2M signifie que vous pouvez inclure des ensembles d'exemples de quelques coups massifs qui ne conviendraient pas dans GPT-4o ou Claude.
+Gemini traite les instructions du système dans le cadre de la configuration du modèle, pas comme un message.
 
 ### Templates de commentaires de fournisseur-agnostique
 
@@ -1023,6 +1023,6 @@ Le code Python (`code/prompt_engineering.py`) est un harnais de test autonome.`s
 - [Wei et al., 2022 -- "Chain-of-Thought Prompting Elicits Reasoning in Large Language Models"](https://arxiv.org/abs/2201.11903)-- le document fondamental montrant que "penser étape par étape" améliore la précision du LLM de 10 à 40% sur les tâches de raisonnement
 - [Zamfirescu-Pereira et al., 2023 -- "Why Johnny Can't Prompt"](https://arxiv.org/abs/2304.13529)-- la recherche sur la façon dont les non-experts luttent avec l'ingénierie rapide et ce qui rend les demandes efficaces
 - [Shin et al., 2023 -- "Prompt Engineering a Prompt Engineer"](https://arxiv.org/abs/2311.05661)-- l'utilisation de la MLL pour optimiser automatiquement les invites, la base de la méta-invitation
-- [LMSYS Chatbot Arena](https://chat.lmsys.org/)-- une comparaison en direct avec les LLM où vous pouvez tester le même prompt sur tous les modèles et voter sur la meilleure réponse
+- [Arena (formerly LMSYS Chatbot Arena)](https://arena.ai/)-- une comparaison en direct avec les LLM où vous pouvez tester le même prompt sur tous les modèles et voter sur la meilleure réponse
 - [DAIR.AI Prompt Engineering Guide](https://www.promptingguide.ai/)- un catalogue exhaustif des techniques de prompt avec des exemples (zéro-shot, peu-shot, CoT, ReAct, auto-cohérence); les professionnels de référence utilisent pour la surface plus large de "ingénierie de prompt".
-- [Anthropic prompt library](https://docs.anthropic.com/en/prompt-library)- des indications bien connues par cas d'utilisation; montre les modèles structurels qui sont livrés en production.
+- [Claude prompting best practices](https://platform.claude.com/docs/en/build-with-claude/prompt-engineering/claude-prompting-best-practices)- Le guide de l'Anthropic sur la structure de prompt, avec des exemples travaillés.

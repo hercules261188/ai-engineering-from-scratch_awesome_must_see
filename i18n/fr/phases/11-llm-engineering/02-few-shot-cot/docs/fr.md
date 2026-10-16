@@ -438,22 +438,20 @@ Le pipeline combine toutes les techniques avec une stratégie d'escalade.
 
 ```python
 def solve_with_escalation(question, examples, client, model):
-    system, user = build_cot_prompt(question, examples)
-    single_response = call_llm(client, model, system, user, temperature=0.0)
-    single_answer = extract_answer(single_response)
+    single_answer, _ = few_shot_cot_solve(question, examples, client, model)
 
     sc_answer, confidence, _, _ = self_consistency_solve(
         question, examples, client, model, n_samples=5
     )
 
-    if confidence >= 0.8:
+    if confidence >= 0.8 and single_answer == sc_answer:
         return sc_answer, "self_consistency", confidence
 
     tot_answer, _ = tree_of_thought_solve(question, client, model)
     return tot_answer, "tree_of_thought", None
 ```
 
-La logique d'escalade: essayez d'abord un coût bon marché (Cot unique). Si la confiance en soi est inférieure à 0,8 (moins de 4 échantillons sur 5 sont d'accord), escaladez à ToT. Cela équilibre le coût et la précision - la plupart des problèmes sont résolus à bon marché, les problèmes difficiles obtiennent plus de calcul.
+La logique d'escalade: essayez d'abord le coût peu élevé (Cot unique). Une seule voie déterministe ne donne pas de part de vote, donc son contrôle de qualité est d'accord: la réponse température-0 doit correspondre à la réponse majoritaire des chemins échantillonnés. Si ce n'est pas le cas, ou si la confiance en l'autosuffisance est inférieure à 0,8 (moins de 4 échantillons sur 5 sont d'accord), escalader à ToT. Cela équilibre le coût et la précision -- la plupart des problèmes sont résolus à moindre coût, les problèmes difficiles obtiennent plus de calcul.
 
 ## Utilisez-le
 

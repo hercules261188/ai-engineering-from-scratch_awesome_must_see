@@ -94,20 +94,20 @@ Compte tenu de deux vecteurs, comment mesurer la similitude?
 
 **Cosine similarity**Le cossin est l'angle entre deux vecteurs. varie de -1 (opposé) à 1 (identique).
 
-```
-cosine_sim(a, b) = dot(a, b) / (||a|| * ||b||)
+```math
+\mathop{\mathrm{cosine\_sim}}(a, b) = \frac{\mathop{\mathrm{dot}}(a, b)}{\lVert a \rVert \cdot \lVert b \rVert}
 ```
 
 **Dot product**Les vecteurs plus grands obtiennent des scores plus élevés.
 
-```
-dot(a, b) = sum(a_i * b_i)
+```math
+\mathop{\mathrm{dot}}(a, b) = \sum_i a_i b_i
 ```
 
 **L2 (Euclidean) distance**La distance est plus longue que la distance de la distance vectorielle.
 
-```
-L2(a, b) = sqrt(sum((a_i - b_i)^2))
+```math
+\mathop{\mathrm{L2}}(a, b) = \sqrt{\sum_i (a_i - b_i)^2}
 ```
 
 La similitude cosine est la norme. Elle traite avec gracie des documents de différentes longueurs parce qu'elle se normalise par magnitude. Quand quelqu'un dit " recherche vectorielle ", ils veulent presque toujours dire similitude cosine.

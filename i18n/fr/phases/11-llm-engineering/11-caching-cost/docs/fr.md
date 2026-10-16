@@ -863,7 +863,7 @@ L'API de lot offre une réduction de 50% sur tous les jetons. Les résultats arr
 #     return None
 ```
 
-En production, remplacer l'analyse linéaire par un index vectoriel (Redis Vector Search, Pinecone ou pgvector).
+En production, remplacer le scan linéaire par un index vectoriel (Redis Vector Search, Pinecone ou pgvector).$O(\log n)$Je suis en train de chercher.
 
 ## La faire partir
 

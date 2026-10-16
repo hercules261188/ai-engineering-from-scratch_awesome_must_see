@@ -11,7 +11,7 @@
 ## Objectifs d'apprentissage
 
 - Implémentation de l'AER par injection de matrices adaptatrices de basse qualité (A et B) dans les couches d'attention d'un modèle prétrainé
-- Calculer les économies de paramètres de LoRA par rapport à l'ajustement complet: ranger r avec d_modèle dimensions trains 2*r*d paramètres au lieu de d^2
+- Calculer les économies de paramètres de LoRA par rapport à l' ajustement complet: rang $r$avec $d_{\text{model}}$dimensions des trains $2 \cdot r \cdot d$Paramètres au lieu de $d^2$
 - Télégraphie d'un modèle à l'aide de QLoRA (4 bits de base quantifiée + adaptateurs LoRA) pour s'intégrer dans la mémoire GPU du consommateur
 - Réunir les poids LoRA dans le modèle de base pour le déploiement et comparer la vitesse d'inférence avec et sans adaptateurs
 
@@ -37,21 +37,21 @@ Edward Hu et ses collègues de Microsoft ont publié LoRA en juin 2021. L'idée 
 
 Voici les mathématiques. Une couche linéaire standard compute:
 
-```
+```math
 y = Wx
 ```
 
-où W est une matrice d_out x d_in. pour une projection d'attention 4096x4096, c'est 16 777 216 paramètres.
+Où ?$W$est une $d_{\text{out}} \times d_{\text{in}}$Pour une projection d'attention de 4096x4096, c'est 16 777 216 paramètres.
 
-LoRA congèle W et ajoute une décomposition de faible rang:
+La LORA gèle .$W$et ajoute une décomposition de rang inférieur:
 
-```
+```math
 y = Wx + BAx
 ```
 
-où B est (d_out x r) et A est (r x d_in). Le rang r est beaucoup plus petit que d -- généralement 8, 16 ou 32.
+Où ?$B$est $(d_{\text{out}} \times r)$et $A$est $(r \times d_{\text{in}})$- Le rang .$r$est beaucoup plus petit que $d$-- généralement 8, 16 ou 32.
 
-Pour r=16 sur une couche de 4096x4096:
+Pour $r=16$sur une couche de 4096x4096:
 - Paramètres originaux: 4096 x 4096 = 16 777 216
 - Paramètres de l'AEM: (4096 x 16) + (16 x 4096) = 65 536 + 65 536 = 131 072
 - Réduction: 131.072 / 16.777.216 = 0,78%
@@ -76,18 +76,18 @@ A est initialisé avec un gaussien aléatoire. B est initialisé à zéro. Cela 
 
 ### Le facteur d'échelle: Alpha
 
-LoRA introduit un facteur d'échelle alpha qui contrôle la quantité d'effet de la mise à jour de basse qualité sur la sortie:
+L' ARL introduit un facteur d' évolutions $\alpha$qui contrôle la quantité d'effet de la mise à jour de bas rang sur la sortie:
 
-```
-y = Wx + (alpha / r) * BAx
+```math
+y = Wx + \frac{\alpha}{r} \cdot BAx
 ```
 
-Lorsque alpha = r, l'échelle est de 1x. Lorsque alpha = 2r (le défaut commun), l'échelle est de 2x. Cet hyperparamètre contrôle le taux d'apprentissage du parcours LoRA indépendamment du taux d'apprentissage de base.
+Quand ?$\alpha = r$, l' évolue est 1x. Quand $\alpha = 2r$(le standard commun), l'échelle est de 2x. Cet hyperparamètre contrôle le taux d'apprentissage du parcours LoRA indépendamment du taux d'apprentissage de base.
 
 Conseils pratiques:
-- alpha = 2 * rank est une convention commune de la communauté (le papier original utilisé alpha = rank dans la plupart des expériences)
-- alpha = rang donne une échelle de 1x, conservatrice mais stable
-- L'alpha plus élevé signifie des mises à jour plus importantes par étape, ce qui peut accélérer la convergence ou provoquer une instabilité
+- $\alpha = 2 \cdot \text{rank}$est une convention commune communautaire (le papier original utilisé $\alpha = \text{rank}$dans la plupart des expériences)
+- $\alpha = \text{rank}$donne une échelle de 1x, conservatrice mais stable
+- Plus haut $\alpha$signifie des mises à jour plus importantes par étape, ce qui peut accélérer la convergence ou provoquer une instabilité
 
 ### Où appliquer le LoRA
 
@@ -104,7 +104,7 @@ Le point de départ pour la plupart des tâches: q_proj + v_proj. Cela cible la 
 
 ### Sélection de rang
 
-Le rang r contrôle l'expressivité de l'adaptation:
+Le rang$r$contrôle l'expression de l'adaptation:
 
 | Rank | Trainable Params (per layer) | Best For |
 |------|---------------------------|----------|
@@ -115,7 +115,7 @@ Le rang r contrôle l'expressivité de l'adaptation:
 | 64 | 524,288 | Diminishing returns for most tasks |
 | 128 | 1,048,576 | Rarely justified |
 
-Hu et coll. ont montré que r=4 capture déjà la plupart de l'adaptation pour des tâches simples. r=8 et r=16 sont les choix les plus courants dans la pratique.
+Hu et al. ont montré que $r=4$Il est déjà possible de réaliser une adaptation à des tâches simples. $r=8$et $r=16$Les choix les plus courants sont en pratique.$r=64$Il améliore rarement la qualité et commence à perdre l'avantage de la mémoire de LoRA.
 
 ### QLoRA: Quantification à 4 bits + LoRA
 
@@ -148,7 +148,7 @@ La réduction des paramètres ou la quantification de la base nuisent-elles à l
 | QLoRA r=16 (NF4) | 47.5 | 6.61 | 13.4 |
 | QLoRA r=64 (NF4) | 48.1 | 6.70 | 14.2 |
 
-Le LoRA à r=16 est à moins de 1% de la réglage fine complète sur la plupart des critères de référence.
+- Je suis là .$r=16$Le taux de référence est inférieur à 1% de l'ajustement complet sur la plupart des indicateurs de référence.$r=16$Le taux de décomposition des données est de 0,5%$r=64$Il correspond essentiellement à un réglage complet tout en utilisant 90% de mémoire en moins.
 
 ### Coûts réels
 
@@ -183,7 +183,7 @@ Après l'entraînement, vous avez deux choses: le modèle de base gelé et un pe
 
 1. **Keep them separate**: Charger le modèle de base, charger l'adaptateur en haut. Swap adaptateurs pour différentes tâches. C'est ainsi que vous servez plusieurs variantes finement réglées d'un modèle de base.
 
-2. **Merge them permanently**: Compute W' = W + (alpha/r) * BA et conserve le résultat en tant que nouveau modèle complet. Le modèle fusionné est de la même taille que l'original. Aucun débit d'inférence. Aucun adaptateur à gérer.
+2. **Merge them permanently**: calcul $W' = W + (\alpha/r) \cdot BA$Le modèle fusionné est de la même taille que l'original, sans déduction, sans adaptateur à gérer.
 
 Pour effectuer plusieurs tâches (adaptateur de support client, adaptateur de code, adaptateur de traduction), gardez-les séparées.
 
@@ -531,11 +531,11 @@ Cette leçon donne:
 | LoRA | "Efficient fine-tuning" | Low-Rank Adaptation: freeze base weights, train two small matrices A and B whose product approximates the full weight update |
 | QLoRA | "Fine-tune on a laptop" | Quantized LoRA: load the base model in 4-bit NF4, train LoRA adapters in fp16 on top, enabling 7B fine-tuning in 6GB VRAM |
 | Rank (r) | "How much the model can learn" | The inner dimension of the A and B matrices; controls expressiveness vs. parameter count |
-| Alpha | "LoRA learning rate" | Scaling factor applied to the LoRA output; alpha/r scales the adaptation's contribution to the final output |
+| Alpha | "LoRA learning rate" | Scaling factor applied to the LoRA output; $\alpha/r$ scales the adaptation's contribution to the final output |
 | NF4 | "4-bit quantization" | Normal Float 4: a 4-bit data type with quantization levels at normal distribution quantiles, optimal for neural network weights |
 | Adapter | "The small trained part" | The LoRA A and B matrices saved as a separate file (10-100MB), loadable on top of any copy of the base model |
 | Target modules | "Which layers to LoRA" | The specific linear layers (q_proj, v_proj, etc.) where LoRA adapters are injected |
-| Merging | "Bake it in" | Computing W + (alpha/r) * BA and replacing the original weight, eliminating the adapter overhead at inference |
+| Merging | "Bake it in" | Computing $W + (\alpha/r) \cdot BA$ and replacing the original weight, eliminating the adapter overhead at inference |
 | Paged optimizers | "Don't OOM during training" | Offloading optimizer states (Adam momentum, variance) to CPU when GPU memory is exhausted |
 | Catastrophic forgetting | "Fine-tuning broke everything else" | When updating all weights causes the model to lose previously learned capabilities |
 

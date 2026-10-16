@@ -89,7 +89,7 @@ Modèles communs de réévaluation (2026 ligne):
 - Jina-Reranker-v2 Multilingue: poids ouvert, plus de 100 langues
 - bge-renanker-v2-m3: poids ouvert, ligne de départ forte
 - cross-encoder/ms-marco-MiniLM-L-6-v2: poids ouvert, fonctionne sur CPU pour la prototypage
-- ColBERTv2 / Jina-ColBERT-v2: ré-rangers multi-vectoriels d'interaction tardive  O(tokens) pas O(docs) au moment du score
+- ColBERTv2 / Jina-ColBERT-v2: ré-rangers multivéctoriels à interaction tardive  $O(\text{tokens})$- Je ne sais pas .$O(\text{docs})$au moment de la marque
 
 ### Transformation de requête
 
