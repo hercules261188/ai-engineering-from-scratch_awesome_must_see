@@ -9,47 +9,47 @@
 
 ## Sorun
 
-Örnek almak ister misin ?`p_data(x)`GAN'lar genellikle farklı bir minimum oyun oynar. VAE'ler Gaussian dekodöründen bulanık örnekler üretir. Gerçekten istediğiniz şey (a) tek sabit bir kayıp (saddle point, no minimax) olan bir eğitim hedefi.`log p(x)`(böylelikle olasılığınız var) ve (c) SOTA kalitesine uyan örnekler.
+Örnek almak ister misin ?$p_{\text{data}}(x)$GAN'lar genellikle farklı bir minimum oyun oynar. VAE'ler Gaussian dekodöründen bulanık örnekler üretir. Gerçekten istediğiniz şey (a) tek sabit bir kayıp (saddle point, no minimax) olan bir eğitim hedefi.$\log p(x)$(böylelikle olasılığınız var) ve (c) SOTA kalitesine uyan örnekler.
 
-Sohl-Dickstein et al. (2015) teorik bir cevabı vardı: Markov zinciri tanımlamak `q(x_t | x_{t-1})`Bu da yavaş yavaş Gaussian gürültüsünü ekler ve ters bir zincir oluşturur.`p_θ(x_{t-1} | x_t)`Bu, bir kayıpın bir satır olarak basitleştirilebileceğini gösterdi. 2020 yılında bu bir meraklılıktu. 2021 yılında en son örnekler üretti. 2022 yılında Stable Diffusion oldu. 2026 yılında altyapı.
+Sohl-Dickstein et al. (2015) teorik bir cevabı vardı: Markov zinciri tanımlamak $q(x_t \mid x_{t-1})$Bu da yavaş yavaş Gaussian gürültüsünü ekler ve ters bir zincir oluşturur.$p_\theta(x_{t-1} \mid x_t)$Bu, bir kayıpın bir satır olarak basitleştirilebileceğini gösterdi. 2020 yılında bu bir meraklılıktu. 2021 yılında en son örnekler üretti. 2022 yılında Stable Diffusion oldu. 2026 yılında altyapı.
 
 ## Anlaşım
 
 ![DDPM: forward noise, reverse denoise](../assets/ddpm.svg)
 
-**Forward process `q`.**Gaussian gürültüsünü ekleyin .`T`Kapalı form  matematikin ele alınması 'nin nedeni kumületif adımın da Gaussian olmasıdır:
+**Forward process $q$.**Gaussian gürültüsünü ekleyin .$T$Kapalı form  matematikin ele alınması 'nin nedeni kumületif adımın da Gaussian olmasıdır:
 
-```
-q(x_t | x_0) = N( sqrt(α̅_t) · x_0,  (1 - α̅_t) · I )
-```
-
-nerede`α̅_t = ∏_{s=1..t} (1 - β_s)``β_t`- Seç .`β_t`1e-4'den 0.02'e kadar lineer olarak T=1000 adım üzerinde ve `x_T`Yaklaşık olarak `N(0, I)`- Evet .
-
-**Reverse process `p_θ`.**Bir sinir ağını öğrenin .`ε_θ(x_t, t)`Bu da eklenen gürültüyü tahmin eder.`x_t`, aşağıdakilerle tanımlanır:
-
-```
-x_{t-1} = (1 / sqrt(α_t)) · ( x_t - (β_t / sqrt(1 - α̅_t)) · ε_θ(x_t, t) )  +  σ_t · z
+```math
+q(x_t \mid x_0) = \mathcal{N}\left( \sqrt{\bar{\alpha}_t} \cdot x_0, (1 - \bar{\alpha}_t) \cdot I \right)
 ```
 
-nerede`σ_t`Ya da`sqrt(β_t)`Bu ifade çirkin ama sadece cebir  çözmek için `x_{t-1}`Arka tarafı verildiği için`q(x_{t-1} | x_t, x_0)`ve yerine getirmek`x_0`gürültü tahminleri ile.
+nerede$\bar\alpha_t = \prod_{s=1}^{t} (1 - \beta_s)$$\beta_t$- Seç .$\beta_t$1e-4'den 0.02'e lineer olarak geçiyor.$T=1000$adımlar ve $x_T$Yaklaşık olarak $\mathcal{N}(0, I)$- Evet .
+
+**Reverse process $p_\theta$.**Bir sinir ağını öğrenin .$\epsilon_\theta(x_t, t)$Bu da eklenen gürültüyü tahmin eder.$x_t$, aşağıdakilerle tanımlanır:
+
+```math
+x_{t-1} = \frac{1}{\sqrt{\alpha_t}} \cdot \left( x_t - \frac{\beta_t}{\sqrt{1 - \bar{\alpha}_t}} \cdot \epsilon_\theta(x_t, t) \right) + \sigma_t \cdot z
+```
+
+nerede$\sigma_t$Ya da$\sqrt{\beta_t}$Bu ifade çirkin ama sadece cebir  çözmek için $x_{t-1}$Arka tarafı verildiği için$q(x_{t-1} \mid x_t, x_0)$ve yerine getirmek$x_0$gürültü tahminleri ile.
 
 **Training loss.**
 
-```
-L_simple = E_{x_0, t, ε} [ || ε - ε_θ( sqrt(α̅_t) · x_0 + sqrt(1 - α̅_t) · ε,  t ) ||² ]
+```math
+L_{\text{simple}} = \mathbb{E}_{x_0, t, \epsilon} \left[ \left\lVert \epsilon - \epsilon_\theta\left( \sqrt{\bar{\alpha}_t} \cdot x_0 + \sqrt{1 - \bar{\alpha}_t} \cdot \epsilon, t \right) \right\rVert^2 \right]
 ```
 
-Örnek`x_0`Verilerden, rastgele bir seçin.`t`, örnek`ε ~ N(0, I)`, gürültülü hesaplayın .`x_t`Bir atışta kapalı formda, gürültüye geri döner.
+Örnek$x_0$Verilerden, rastgele bir seçin.$t$, örnek$\epsilon \sim \mathcal{N}(0, I)$, gürültülü hesaplayın .$x_t$Bir atışta kapalı formda, gürültüye geri döner.
 
-**Sampling.**Başlayın .`x_T ~ N(0, I)`- Geri adımını tekrarla .`t = T`- ...`1`- Tamam.
+**Sampling.**Başlayın .$x_T \sim \mathcal{N}(0, I)$- Geri adımını tekrarla .$t = T$1'e kadar.
 
 ## Neden işe yarıyor?
 
 Üç içgüdü:
 
-1. **Denoising is easy; generating is hard.**- Evet .`t=T`, veriler saf gürültü  ağ küçük bir sorunu çözmek zorunda.`t=0`... ağ sadece birkaç piksel temizlemek zorunda.`t`Bu sorun zor ama ağın her gürültü seviyesinden aynı ağırlıklardan akıp giden birçok gradiyenti var.
+1. **Denoising is easy; generating is hard.**- Evet .$t=T$, veriler saf gürültü  ağ küçük bir sorunu çözmek zorunda.$t=0$... ağ sadece birkaç piksel temizlemek zorunda.$t$Bu sorun zor ama ağın her gürültü seviyesinden aynı ağırlıklardan akıp giden birçok gradiyenti var.
 
-2. **Score matching in disguise.**Vincent (2011) gürültü tahmininin tahminle eşdeğer olduğunu kanıtladı `∇_x log q(x_t | x_0)`Bu puanı kullanan geri SDE, yoğunluk gradiyenti 'nin yukarısına doğru yüksek olasılık bölgelerine doğru yönlendirilmiş rastgele bir yürüyüş yapar.
+2. **Score matching in disguise.**Vincent (2011) gürültü tahmininin tahminle eşdeğer olduğunu kanıtladı $\nabla_x \log q(x_t \mid x_0)$Bu puanı kullanan geri SDE, yoğunluk gradiyenti 'nin yukarısına doğru yüksek olasılık bölgelerine doğru yönlendirilmiş rastgele bir yürüyüş yapar.
 
 3. **The ELBO reduces to simple MSE.**DDPM'nin parametreleştirmesiyle bu KL terimleri, belirli koeficientlerle gürültü öngörüsü üzerinde MSE'ye basitleştirilmiştir; Ho koeficientleri düşürmüştür (sadece kayıp olarak adlandırılır) ve kalitesi * iyileştirilmiştir*.
 
@@ -59,7 +59,7 @@ diffusion-denoise
 
 ## Yapın
 
-`code/main.py`1 boyutlu DDPM uygulamasını uyguluyor. Veriler iki modlu bir karışım. "net" ise küçük bir MLP'dir.`(x_t, t)`Bu, bir çizgi kaybı, örneği alınarak geri zincir tekrarlanır.
+`code/main.py`1 boyutlu DDPM uygulamasını uyguluyor. Veriler iki modlu bir karışım. "net" ise küçük bir MLP'dir.$(x_t, t)$Bu, bir çizgi kaybı, örneği alınarak geri zincir tekrarlanır.
 
 ### Adım 1: Önceki program (kapalı form)
 
@@ -114,17 +114,17 @@ def sample(model, alpha_bars, T, rng):
 
 Ağ hangi zaman aşamasını tanımladığını bilmesi gerekiyor.
 
-- **Sinusoidal embedding.**Transformer pozisyon kodlaması gibi.`embed(t) = [sin(t/ω_0), cos(t/ω_0), sin(t/ω_1), ...]`Bir MLP'yi geçiyor ve ağda yayınlanıyor.
+- **Sinusoidal embedding.**Transformer pozisyon kodlaması gibi.$\text{embed}(t) = [\sin(t/\omega_0), \cos(t/\omega_0), \sin(t/\omega_1), \ldots]$Bir MLP'yi geçiyor ve ağda yayınlanıyor.
 - **Film / group-norm conditioning.**Proje, her blokta kanal ölçeğine/kıskançlığa (FiLM) yerleştirilmektedir.
 
 Oyuncak kodumuz sinusoidal → concat kullanıyor.
 
 ## Tuzaklar
 
-- **Schedule matters a lot.**Düzsel `β`DDPM'nin varsayılan, ancak cosine şeması (Nichol & Dhariwal, 2021) aynı hesaplama için daha iyi FID verir.
-- **Timestep embedding is fragile.**Çürük geçiyor .`t`bir yüzerken oyuncak 1-D için çalışır ama görüntüler için başarısız olur; her zaman uygun bir yerleştirme kullanın.
-- **V-prediction vs ε-prediction.**Sık rejimler için (çok küçük veya çok büyük t), `ε`Sinyal-gürültü zayıflığı.`v = α·ε - σ·x`) daha istikrarlıdır; SDXL, SD3 ve Flux kullanırlar.
-- **Classifier-free guidance.**Sonuçta, hem koşullu hem de koşulsuz hesaplayın.`ε`O zaman ...`ε_cfg = (1 + w) · ε_cond - w · ε_uncond`- Evet .`w ≈ 3-7`8. derste ele alındı.
+- **Schedule matters a lot.**Düzsel $\beta$DDPM'nin varsayılan, ancak cosine şeması (Nichol & Dhariwal, 2021) aynı hesaplama için daha iyi FID verir.
+- **Timestep embedding is fragile.**Çürük geçiyor .$t$bir yüzerken oyuncak 1-D için çalışır ama görüntüler için başarısız olur; her zaman uygun bir yerleştirme kullanın.
+- **V-prediction vs ε-prediction.**Sık rejimler için (çok küçük veya çok büyük t), $\epsilon$Sinyal-gürültü zayıflığı.$v = \alpha \cdot \epsilon - \sigma \cdot x$) daha istikrarlıdır; SDXL, SD3 ve Flux kullanırlar.
+- **Classifier-free guidance.**Sonuçta, hem koşullu hem de koşulsuz hesaplayın.$\epsilon$O zaman ...$\epsilon_{\text{cfg}} = (1 + w) \cdot \epsilon_{\text{cond}} - w \cdot \epsilon_{\text{uncond}}$- Evet .$w \approx 3\text{-}7$8. derste ele alındı.
 - **1000 steps is a lot.**Üretim DDIM (20-50 adım), DPM-Solver (10-20 adım) veya destillasyon (1-4 adım) kullanır.
 
 ## Kullan
@@ -147,19 +147,19 @@ Diffusion, evrensel üreticiden oluşan omurgasıdır. Akış eşleşimi (Desin 
 
 1. **Easy.**T' yi 40 ' dan 10 ' a değiştirin `code/main.py`- Örnek kalitesi (işlemlerin görsel histogramı) nasıl bozulur?
 2. **Medium.**E-büyüklüğünden V-büyüklüğüne geçin. Geri adımları tekrar alın. Son örnek kalitesini karşılaştırın.
-3. **Hard.**Sınıf etiketi üzerinde koşul `c ∈ {0, 1}`, eğitim sırasında ve örnekleme zamanında kullanımı %10 düşürmek `ε = (1+w)·ε_cond - w·ε_uncond`Şartlı modda vurma oranını ölçmek`w = 0, 1, 3, 7`- Evet .
+3. **Hard.**Sınıf etiketi üzerinde koşul $c \in \lbrace 0, 1 \rbrace$, eğitim sırasında ve örnekleme zamanında kullanımı %10 düşürmek $\epsilon = (1+w) \cdot \epsilon_{\text{cond}} - w \cdot \epsilon_{\text{uncond}}$Şartlı modda vurma oranını ölçmek$w = 0, 1, 3, 7$- Evet .
 
 ## Anahtar Terimler
 
 | Term | What people say | What it actually means |
 |------|-----------------|-----------------------|
-| Forward process | "Adding noise" | Fixed Markov chain `q(x_t \| x_{t-1})` that destroys the data. |
-| Reverse process | "Denoising" | Learned chain `p_θ(x_{t-1} \| x_t)` that reconstructs the data. |
+| Forward process | "Adding noise" | Fixed Markov chain $q(x_t \mid x_{t-1})$ that destroys the data. |
+| Reverse process | "Denoising" | Learned chain $p_\theta(x_{t-1} \mid x_t)$ that reconstructs the data. |
 | β schedule | "The noise ladder" | Per-step variance; linear, cosine, or sigmoid. |
-| α̅ | "Alpha bar" | Cumulative product `∏(1 - β)`; gives closed-form `x_t` from `x_0`. |
-| Simple loss | "MSE on noise" | `\|\|ε - ε_θ(x_t, t)\|\|²`; all variational derivations collapse to this. |
+| α̅ | "Alpha bar" | Cumulative product $\prod (1 - \beta)$; gives closed-form $x_t$ from $x_0$. |
+| Simple loss | "MSE on noise" | $\lVert \epsilon - \epsilon_\theta(x_t, t) \rVert^2$; all variational derivations collapse to this. |
 | ε-prediction | "Predict noise" | Output is the noise added; standard DDPM. |
-| V-prediction | "Predict velocity" | Output is `α·ε - σ·x`; better conditioning across t. |
+| V-prediction | "Predict velocity" | Output is $\alpha \cdot \epsilon - \sigma \cdot x$; better conditioning across t. |
 | DDPM | "The paper" | Ho et al. 2020; linear β, 1000 steps, U-Net. |
 | DDIM | "Deterministic sampler" | Non-Markov sampler, 20-50 steps, same training objective. |
 | Classifier-free guidance | "CFG" | Mix conditional and unconditional noise predictions to amplify conditioning. |
@@ -168,7 +168,7 @@ Diffusion, evrensel üreticiden oluşan omurgasıdır. Akış eşleşimi (Desin 
 
 DDPM kağıdı T=1000 ters adımları çalışır. Kimse üretimde bu gemi. Her gerçek sonuç yığın üç stratejiden birini seçer  ve her haritada temiz bir şekilde üretim çerçevesinde "kenden gecikme geliyor"
 
-1. **Faster sampler, same model.**DDIM (20-50 adım), DPM-Solver++ (10-20), UniPC (8-16).`ε_θ`Ağırlıklar dokunulmamış.
+1. **Faster sampler, same model.**DDIM (20-50 adım), DPM-Solver++ (10-20), UniPC (8-16).$\epsilon_\theta$Ağırlıklar dokunulmamış.
 2. **Distillation.**Öğrenciyi daha az adımla öğretmenine eşleştirmek için eğit: Gelişmiş Destillation (2 → 1), Düzgünlik Modeller (Özbürekli → 1-4), LCM, SDXL-Turbo, SD3-Turbo. Gecikme 5-10 x daha azaltır, yeniden eğitime ihtiyaç duyar.
 3. **Caching and compilation.** `torch.compile(unet, mode="reduce-overhead")`TensorRT-LLM'in yayılma arka planları.`xformers`/SDPA dikkat, bf16 ağırlıkları. Adımlık gecikme ~ 2 ×. (1) ve (2) ile yığılır.
 

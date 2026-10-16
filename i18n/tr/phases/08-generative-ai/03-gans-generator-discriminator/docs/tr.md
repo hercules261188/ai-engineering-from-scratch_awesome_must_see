@@ -11,12 +11,12 @@
 
 VAE'ler bulanık örnekler üretir çünkü MSE dekodör kaybı * ortalama * görüntü için Bayes-optimal ve birçok makul rakamın ortalaması bulanık bir rakamdır. * makulluğu * ödüllendiren bir kaybı istiyorsunuz, herhangi bir hedefe piksel açısından yakınlık değil. Makulluğu için kapalı bir biçim yoktur. Bunu öğrenmelisiniz.
 
-Goodfellow'un fikri: sınıflandırıcı eğitmek.`D(x)`Gerçek görüntüleri sahte görüntülerden ayırt etmek için bir jeneratör eğit.`G(z)`- Akılsızlık .`D`Kayıp sinyalini .`G`Neyse .`D`Bu sinyal güncelleştiriler gibi`G`Eğer iki ağ da bir araya gelirse,`G`Bilgi dağıtımını hiç yazmadan öğrenmiş.`log p(x)`- Evet .
+Goodfellow'un fikri: sınıflandırıcı eğitmek.$D(x)$Gerçek görüntüleri sahte görüntülerden ayırt etmek için bir jeneratör eğit.$G(z)$- Akılsızlık .$D$Kayıp sinyalini .$G$Neyse .$D$Bu sinyal güncelleştiriler gibi$G$Eğer iki ağ da bir araya gelirse,$G$Bilgi dağıtımını hiç yazmadan öğrenmiş.`log p(x)`- Evet .
 
 Bu bir karşılaşma eğitimi.
 
-```
-min_G max_D  E_real[log D(x)] + E_fake[log(1 - D(G(z)))]
+```math
+\min_G \max_D \; \mathbb{E}_{\text{real}}[\log D(x)] + \mathbb{E}_{\text{fake}}[\log(1 - D(G(z)))]
 ```
 
 2026'da GAN'lar artık SOTA jeneratörü değil (haşlama ve akış eşleşimi bu taçı yedi). Ancak StyleGAN 2/3 şimdiye kadar gönderilen en keskin yüz modelleri olarak kalır, GAN ayrımcıları, difüzyon eğitiminde * algı kaybı* olarak kullanılır ve karşıtlık eğitimi gerçek zamanlı difüzyon göndermenizi sağlayan hızlı 1 adımlı destillasiyonları (SDXL-Turbo, SD3-Turbo, LCM) güçlendirir.
@@ -25,20 +25,20 @@ min_G max_D  E_real[log D(x)] + E_fake[log(1 - D(G(z)))]
 
 ![GAN training: generator and discriminator in minimax](../assets/gan.svg)
 
-**Generator `G(z)`.**Bir gürültü vektörünü haritası `z ~ N(0, I)`bir örnek için `x̂`. Dekodör şeklinde bir ağ (sıkı veya transpose konfor).
+**Generator $G(z)$.**Bir gürültü vektörünü haritası $z \sim \mathcal{N}(0, I)$bir örnek için $\hat{x}$. Dekodör şeklinde bir ağ (sıkı veya transpose konfor).
 
-**Discriminator `D(x)`.**Bir örnekin bir skalar olasılık (veya puan) haritasına yerleştirildi.
+**Discriminator $D(x)$.**Bir örnekin bir skalar olasılık (veya puan) haritasına yerleştirildi.
 
 **Loss.**İki alternatif güncelleme:
 
-- **Train `D`:** `loss_D = -[ log D(x) + log(1 - D(G(z))) ]`- Gerçek = 1'de ikili çapraz entropi, sahte = 0'da.
-- **Train `G`:** `loss_G = -log D(G(z))`Bu Goodfellow'un kullandığı * doymayan * formdur (orjinal)`log(1 - D(G(z)))`                         `D`Kendine güvenen biri.
+- **Train $D$:** $\text{loss}_D = -[ \log D(x) + \log(1 - D(G(z))) ]$- Gerçek = 1'de ikili çapraz entropi, sahte = 0'da.
+- **Train $G$:** $\text{loss}_G = -\log D(G(z))$Bu Goodfellow'un kullandığı * doymayan * formdur (orjinal)$\log(1 - D(G(z)))$                         $D$Kendine güvenen biri.
 
-**Training loop.**Bir adım atmak .`D`Bir adım daha .`G`Tekrar ediyorum.
+**Training loop.**Bir adım atmak .$D$Bir adım daha .$G$Tekrar ediyorum.
 
-**Why it works.**- Eğer`G`Tam olarak eşleşir .`p_data`O zaman ...`D`Orası şansın değil . Her yerde 0.5 çıkış .`G`Daha fazla gradient kalmaz.
+**Why it works.**- Eğer$G$Tam olarak eşleşir .$p_{\text{data}}$O zaman ...$D$Orası şansın değil . Her yerde 0.5 çıkış .$G$Daha fazla gradient kalmaz.
 
-**Why it breaks.**Mod çöküşü (`G`Bir mod bulur `D`- ...bunu sonsuza kadar sınıflandırıp, bir araya getiremiyorum.`D`Çok hızlı öğrenir ve `log D`Bu nedenle, eğitimde de bir değişiklik yapılması gerekmektedir.
+**Why it breaks.**Mod çöküşü ($G$Bir mod bulur $D$- ...bunu sonsuza kadar sınıflandırıp, bir araya getiremiyorum.$D$Çok hızlı öğrenir ve $\log D$Bu nedenle, eğitimde de bir değişiklik yapılması gerekmektedir.
 
 ## GAN'ları çalıştıran variantlar
 
@@ -63,7 +63,7 @@ gan-minimax
 
 ### Adım 1: Doymayan kayıp
 
-Vanilya Goodfellow kaybı .`log(1 - D(G(z)))`D'nin G'nin sahte olduğunu yüksek güvenle sahte olarak sınıflandırırken 0'ya gider.`-log D(G(z))`D'nin güven içindeyken patlar ve G'ye güçlü bir sinyal verir.
+Vanilya Goodfellow kaybı .$\log(1 - D(G(z)))$D'nin G'nin sahte olduğunu yüksek güvenle sahte olarak sınıflandırırken 0'ya gider.$-\log D(G(z))$D'nin güven içindeyken patlar ve G'ye güçlü bir sinyal verir.
 
 ```python
 def g_loss(d_fake):
@@ -130,7 +130,7 @@ GAN'lar keskin ama dar. Bir kez alanınız  fotoğrafları açtığında, keyfi 
 ## Egzersizler
 
 1. **Easy.**Çık .`code/main.py`- O zaman ayarlayın.`D_LR = 5 * G_LR`G'nin kaybı ne kadar hızlı bir sabit haline gelir?
-2. **Medium.**Goodfellow BCE kaybını WGAN kaybıyla değiştirin: `loss_D = E[D(fake)] - E[D(real)]`- Evet .`loss_G = -E[D(fake)]`, ve D'nin ağırlıklarını `[-0.01, 0.01]`- Eğitim daha istikrarlı mı?
+2. **Medium.**Goodfellow BCE kaybını WGAN kaybıyla değiştirin: $\text{loss}_D = \mathbb{E}[D(\text{fake})] - \mathbb{E}[D(\text{real})]$- Evet .$\text{loss}_G = -\mathbb{E}[D(\text{fake})]$, ve D'nin ağırlıklarını `[-0.01, 0.01]`- Eğitim daha istikrarlı mı?
 3. **Hard.**1-D örneğini 2-D verilere (bir yüzük üzerinde 8 Gaussians karışımı) uzatın. Generatörün 1k, 5k, 10k adımlarında kaç tane 8 mod yakaladığını takip edin. Minibatch ayrımcılığını uygulayın ve yeniden ölçün.
 
 ## Anahtar Terimler
@@ -139,8 +139,8 @@ GAN'lar keskin ama dar. Bir kez alanınız  fotoğrafları açtığında, keyfi 
 |------|-----------------|-----------------------|
 | Generator | "G" | Noise-to-sample network, `G: z → x̂`. |
 | Discriminator | "D" | Classifier `D: x → [0, 1]`, real vs fake. |
-| Minimax | "The game" | `min_G max_D` of a joint objective. |
-| Non-saturating loss | "The fix" | Use `-log D(G(z))` for G instead of `log(1 - D(G(z)))`. |
+| Minimax | "The game" | $\min_G \max_D$ of a joint objective. |
+| Non-saturating loss | "The fix" | Use $-\log D(G(z))$ for G instead of $\log(1 - D(G(z)))$. |
 | Mode collapse | "G memorized one thing" | Generator produces few distinct outputs despite diverse data. |
 | WGAN | "Wasserstein" | Replace BCE with Earth-Mover distance + gradient penalty; smoother gradient. |
 | Spectral norm | "Lipschitz trick" | Constrain D's weight norms to bound its slope; stabilizes training. |
@@ -150,7 +150,7 @@ GAN'lar keskin ama dar. Bir kez alanınız  fotoğrafları açtığında, keyfi 
 
 GAN'lar artık açık alan üretimi için örnek kalitesi üzerinde kazanmazlar, ancak hala sonuçlandırma maliyetinde kazanırlar.
 
-- **No prefill, no decode stages.**Tek bir tane .`G(z)`TTFT ≈ toplam gecikme.
+- **No prefill, no decode stages.**Tek bir tane .$G(z)$TTFT ≈ toplam gecikme.
 - **No KV-cache pressure.**Tek durum ağırlıklar.Battery boyutu, cache değil, aktivasyon belleği ile sınırlıdır.
 - **Trivial continuous batching.**Her istek aynı sabit FLOPs'i aldığı için, sunucu'nun hedef yerleşimindeki statik bir parti genellikle en iyisidir.
 

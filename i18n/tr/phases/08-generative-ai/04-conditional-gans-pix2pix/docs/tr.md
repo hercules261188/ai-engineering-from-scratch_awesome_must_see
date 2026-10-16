@@ -9,34 +9,36 @@
 
 ## Sorun
 
-Şartsız bir GAN, keyfi yüzlere örnekler verir. Demo için yararlı, üretim için işe yaramaz. İsterseniz: * bir çizim resmi, * bir hava fotoğrafı haritası, * gündüz sahnesini gece haritası, * gri ölçekli bir resmini renklendirin.`x`ve çıkış yaptırmalı.`y`Bazı anlamlı bir karşılıklılık ile.`y`S / `x`Ortalama kare hatası onları bir karışıklığa dönüştürür.
+Şartsız bir GAN, keyfi yüzlere örnekler verir. Demo için yararlı, üretim için işe yaramaz. İsterseniz: * bir çizim resmi, * bir hava fotoğrafı haritası, * gündüz sahnesini gece haritası, * gri ölçekli bir resmini renklendirin.$x$ve çıkış yaptırmalı.$y$Bazı anlamlı bir karşılıklılık ile.$y$- Evet .$x$Ortalama kare hatası onları bir karışıklığa dönüştürür.
 
-Şartlı GAN (Mirza & Osindero, 2014) bir şart ekler `c`Her ikisine de bir giriş olarak `G`ve `D`Pix2Pix (Isola et al., 2017) bunu uzmanlaştırdı: koşul tam bir giriş görüntüsüdür, jeneratör bir U-Net, ayrımcı bir * patch tabanlı* sınıflandırıcıdır (PatchGAN), ve kayıp + L1'dir. Bu tarif 2026'da bile dar görüntü-resim alanlarında sıfırdan metin-resim modelleri üzerinde daha iyi performans gösteriyor çünkü * çift veriler* üzerinde eğitilmiştir.
+Şartlı GAN (Mirza & Osindero, 2014) bir şart ekler $c$Her ikisine de bir giriş olarak $G$ve $D$Pix2Pix (Isola et al., 2017) bunu uzmanlaştırdı: koşul tam bir giriş görüntüsüdür, jeneratör bir U-Net, ayrımcı bir * patch tabanlı* sınıflandırıcıdır (PatchGAN), ve kayıp + L1'dir. Bu tarif 2026'da bile dar görüntü-resim alanlarında sıfırdan metin-resim modelleri üzerinde daha iyi performans gösteriyor çünkü * çift veriler* üzerinde eğitilmiştir.
 
 ## Anlaşım
 
 ![Pix2Pix: U-Net generator, PatchGAN discriminator](../assets/pix2pix.svg)
 
-**Conditional G.** `G(x, z) → y`Pix2Pix'te.`z`G içindeki çıkış (gelen gelse gelen gürültü yok  Açık gürültü izole edilmedi).
+**Conditional G.** $G(x, z) \to y$Pix2Pix'te.$z$G içindeki çıkış (gelen gelse gelen gürültü yok  Açık gürültü izole edilmedi).
 
-**Conditional D.** `D(x, y) → [0, 1]`Giriş * çift* (şart, çıkış) bu ana fark: D'nin `y` ile uyumludur`x`Sadece ...`y`Gerçek görünüyor.
+**Conditional D.** $D(x, y) \to [0, 1]$Giriş * çift* (şart, çıkış) bu ana fark: D'nin $y$ ile uyumludur$x$Sadece ...$y$Gerçek görünüyor.
 
 **U-Net generator.**Boş boynuz üzerinden atlama bağlantıları olan kodlayıcı-dekoder. Giriş ve çıkış düşük düzeyde bir yapı paylaşan görevler için kritik. Atlamalar olmadan, yüksek frekanslı detaylar kaybolur.
 
-**PatchGAN discriminator.**Tek gerçek/sahte puan vermek yerine, D bir `N×N`Bu, Markov'un rastgele alan varsayımıdır: gerçekçilik yerel. Eğitmek çok daha hızlı, daha az parametreler, daha keskin çıkış.
+**PatchGAN discriminator.**Tek gerçek/sahte puan vermek yerine, D bir $N \times N$Bu, Markov'un rastgele alan varsayımıdır: gerçekçilik yerel. Eğitmek çok daha hızlı, daha az parametreler, daha keskin çıkış.
 
 **Loss.**
 
-```
-loss_G = -log D(x, G(x)) + λ · ||y - G(x)||_1
-loss_D = -log D(x, y) - log (1 - D(x, G(x)))
+```math
+\begin{aligned}
+\text{loss}_G &= -\log D(x, G(x)) + \lambda \cdot \lVert y - G(x) \rVert_1 \\
+\text{loss}_D &= -\log D(x, y) - \log(1 - D(x, G(x)))
+\end{aligned}
 ```
 
-L1 terimi eğitimleri istikrarlı hale getirir ve G'yi bilinen hedefe doğru itirir. L1 L2'den daha keskin kenarlar verir (ortalar, ortalama değil). `λ = 100`Pix2Pix'in öntanımlı olduğu.
+L1 terimi eğitimleri istikrarlı hale getirir ve G'yi bilinen hedefe doğru itirir. L1 L2'den daha keskin kenarlar verir (ortalar, ortalama değil). $\lambda = 100$Pix2Pix'in öntanımlı olduğu.
 
 ## CycleGAN  çift olmadığınızda
 
-Pix2Pix çiftleştirilmelidir `(x, y)`CycleGAN (Zhu et al., 2017) bu gereksinimleri bir ekstra kaybın bedeliyle düşürüyor: * döngü tutarlılığı kaybı.`G: X → Y`ve `F: Y → X`- Onları eğit .`F(G(x)) ≈ x`ve `G(F(y)) ≈ y`Bu atları zebralara çevirmenizi sağlar, yazdan kışa, çiftli örnekler olmadan.
+Pix2Pix çiftleştirilmelidir $(x, y)$CycleGAN (Zhu et al., 2017) bu gereksinimleri bir ekstra kaybın bedeliyle düşürüyor: * döngü tutarlılığı kaybı.$G: X \to Y$ve $F: Y \to X$- Onları eğit .$F(G(x)) \approx x$ve $G(F(y)) \approx y$Bu atları zebralara çevirmenizi sağlar, yazdan kışa, çiftli örnekler olmadan.
 
 2026'da eşleşmemiş görüntü-resim çoğunlukla CycleGAN yerine difüzyon (ControlNet, IP-Adapter) yoluyla yapılır, ancak döngü tutarlılığı fikri neredeyse her eşleşmemiş alan uyarlama kağıdında hayatta kalır.
 
@@ -46,7 +48,7 @@ gx-patchgan
 
 ## Yapın
 
-`code/main.py`1 boyutlu verilere küçük bir şartlı GAN uyguluyor.`c`sınıf etiketidir (0 veya 1). Görev: verilen sınıf için koşullu dağılımdan bir örnek üretmek.
+`code/main.py`1 boyutlu verilere küçük bir şartlı GAN uyguluyor.$c$sınıf etiketidir (0 veya 1). Görev: verilen sınıf için koşullu dağılımdan bir örnek üretmek.
 
 ### Adım 1: G ve D girişlerine koşul ekle
 
@@ -84,9 +86,9 @@ for c in [0, 1]:
 ## Tuzaklar
 
 - **Condition ignored.**G sınır dışı bırakmayı öğrenir, D asla cezalandırmaz çünkü durum sinyali zayıfdır. D durumu daha agresif bir şekilde (başka katman, sadece geç değil) düzeltir, projeksiyon ayrımcılığını kullan (Miyato & Koyama 2018).
-- **L1 weight too low.**G, sadık olmayan keyfi gerçek görünümlü çıkışlara doğru hareket eder.
-- **L1 weight too high.**G, L1'nin hala L_p norması olduğu için bulanık çıkışlar üretir.
-- **Ground-truth leakage in D.**Konkatenat `(x, y)`Sadece değil, D giriş olarak.`y`Bu D olmadan tutarlılığı kontrol edemezsiniz.
+- **L1 weight too low.**G, sadık olmayan, gerçek görünümlü geleneksel sonuçlara doğru hareket ediyor.$\lambda \approx 100$Pix2Pix tarzındaki görevler için.
+- **L1 weight too high.**G, L1 hala bir $L_p$Annel, antrenman sabitleştiğinde.
+- **Ground-truth leakage in D.**Konkatenat $(x, y)$Sadece değil, D giriş olarak.$y$Bu D olmadan tutarlılığı kontrol edemezsiniz.
 - **Mode collapse per class.**Her sınıf bağımsız olarak çökebilir.
 
 ## Kullan

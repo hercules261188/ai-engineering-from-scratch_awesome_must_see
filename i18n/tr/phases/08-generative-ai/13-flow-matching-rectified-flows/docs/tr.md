@@ -9,9 +9,9 @@
 
 ## Sorun
 
-DDPM'nin ters süreci, 1000 adımlık bir stohastik yürüyüşten `N(0, I)`Bu nedenle, bu işlemin bir sonraki aşamasında, bir sonraki aşamaları belirlemek için, bir sonraki aşamaları belirlemek için, bir sonraki aşamaları belirlemek için, bir sonraki aşamaları belirlemek için, bir sonraki aşamaları belirlemek için, bir sonraki aşamaları belirlemek için, bir sonraki aşamaları belirlemek için, bir sonraki aşamaları belirlemek için, bir sonraki aşamaları belirlemek için, bir sonraki aşamaları belirlemek için, bir sonraki aşamaları belirlemek için, bir sonraki aşamaları belirlemek için, bir sonraki aşamaları belirlemek için, bir sonraki aşamaları belirlemek için, bir sonraki aşamaları belirlemek için, bir sonraki aşamaları belirlemek için, bir sonraki aşamaları belirlemek için, bir sonraki aşamaları belirlemek için, bir sonraki aşamaları belirlemek için, bir sonraki aşamaları belirlemek için, bir sonraki aşamaları belirlemek için, bir sonraki aşamaları belirlemek için, bir sonraki aşamaları belirlemek için, bir sonraki aşamaları belirlemek için, bir sonraki aşamaları belirlemek için, bir sonraki aşamaları belirlemek için, bir aşamaları belirleme yapmak için, bir aşamaları belirlemeyi belirlemeyi gerektir.
+DDPM'nin ters süreci, 1000 adımlık bir stohastik yürüyüşten $\mathcal{N}(0, I)$Bu nedenle, bu işlemin bir sonraki aşamasında, bir sonraki aşamaları belirlemek için, bir sonraki aşamaları belirlemek için, bir sonraki aşamaları belirlemek için, bir sonraki aşamaları belirlemek için, bir sonraki aşamaları belirlemek için, bir sonraki aşamaları belirlemek için, bir sonraki aşamaları belirlemek için, bir sonraki aşamaları belirlemek için, bir sonraki aşamaları belirlemek için, bir sonraki aşamaları belirlemek için, bir sonraki aşamaları belirlemek için, bir sonraki aşamaları belirlemek için, bir sonraki aşamaları belirlemek için, bir sonraki aşamaları belirlemek için, bir sonraki aşamaları belirlemek için, bir sonraki aşamaları belirlemek için, bir sonraki aşamaları belirlemek için, bir sonraki aşamaları belirlemek için, bir sonraki aşamaları belirlemek için, bir sonraki aşamaları belirlemek için, bir sonraki aşamaları belirlemek için, bir sonraki aşamaları belirlemek için, bir sonraki aşamaları belirlemek için, bir sonraki aşamaları belirlemek için, bir sonraki aşamaları belirlemek için, bir sonraki aşamaları belirlemek için, bir aşamaları belirleme yapmak için, bir aşamaları belirlemeyi belirlemeyi gerektir.
 
-Eğer modelin sesden veriye giden yolu * düz çizgi* olsaydı,`t=1`- ...`t=0`Akış eşleşimi bunu doğrudan oluşturur:`x_1 ∼ N(0, I)`- ...`x_0 ∼ data`, vektör alanı trenle`v_θ(x, t)`Zaman türevine eşleşmek için, sonuçta entegre.
+Eğer modelin sesden veriye giden yolu * düz çizgi* olsaydı,$t=1$- ...$t=0$Akış eşleşimi bunu doğrudan oluşturur:$x_1 \sim \mathcal{N}(0, I)$- ...$x_0 \sim \text{data}$, vektör alanı trenle$v_\theta(x, t)$Zaman türevine eşleşmek için, sonuçta entegre.
 
 Düzeltilmiş akış (Liu 2022) daha da ileriye gidiyor: adım adım bir reflow prosedürü ile yolları düzeltir ve bu da gittikçe daha yakın bir lineer ODE üretir.
 
@@ -23,41 +23,41 @@ Düzeltilmiş akış (Liu 2022) daha da ileriye gidiyor: adım adım bir reflow 
 
 Define:
 
-```
-x_t = t · x_1 + (1 - t) · x_0,   t ∈ [0, 1]
-```
-
-nerede`x_0 ~ data`ve `x_1 ~ N(0, I)`Bu düz çizgi boyunca zaman türevini sabit:
-
-```
-dx_t / dt = x_1 - x_0
+```math
+x_t = t \cdot x_1 + (1 - t) \cdot x_0, \quad t \in [0, 1]
 ```
 
-Nöral vektör alanını tanımlayın `v_θ(x_t, t)`ve bu türevle eşleşmesi için eğitilmiştir:
+nerede$x_0 \sim \text{data}$ve $x_1 \sim \mathcal{N}(0, I)$Bu düz çizgi boyunca zaman türevini sabit:
 
-```
-L = E_{x_0, x_1, t} || v_θ(x_t, t) - (x_1 - x_0) ||²
+```math
+\frac{dx_t}{dt} = x_1 - x_0
 ```
 
-Bu da **conditional flow matching**Bu eğitim simülasyonsızdır: ODE'yi asla açmıyorsunuz.`(x_0, x_1, t)`ve geri çekilme.
+Nöral vektör alanını tanımlayın $v_\theta(x_t, t)$ve bu türevle eşleşmesi için eğitilmiştir:
+
+```math
+L = \mathbb{E}_{x_0, x_1, t} \left\lVert v_\theta(x_t, t) - (x_1 - x_0) \right\rVert^2
+```
+
+Bu da **conditional flow matching**Bu eğitim simülasyonsızdır: ODE'yi asla açmıyorsunuz.$(x_0, x_1, t)$ve geri çekilme.
 
 ### Örnekleme
 
 Sonuçta, öğrenilen vektör alanını * geriye* zaman içinde entegre edin:
 
-```
-x_{t-Δt} = x_t - Δt · v_θ(x_t, t)
+```math
+x_{t-\Delta t} = x_t - \Delta t \cdot v_\theta(x_t, t)
 ```
 
-Başlayın .`x_1 ~ N(0, I)`, Euler-adımı aşağıya`t=0`- Evet .
+Başlayın .$x_1 \sim \mathcal{N}(0, I)$, Euler-adımı aşağıya$t=0$- Evet .
 
 ### Düzeltilmiş akış (Liu 2022)
 
-Düz çizgi akışı çalışır ama öğrenilen yollar * aslında düz değil *  onlar eğri çünkü birçok `x_0`Aynı yere haritası yapabilirsiniz `x_1`Düzeltilmiş akışın yeniden akış aşaması:
+Düz çizgi akışı çalışır ama öğrenilen yollar * aslında düz değil *  onlar eğri çünkü birçok $x_0$Aynı yere haritası yapabilir .$x_1$Düzeltilmiş akışın yeniden akış aşaması:
 
-1. Rastgele eşleştirmeler ile tren akışı modeli v_1.
-2. Örnek N çift `(x_1, x_0)`'den v_1'i entegre ederek`x_1`İnişine kadar`x_0`- Evet .
-3. Bu çiftler artık "ODE eşleşmiş" olduğundan, aralarındaki düz çizgi interpolant gerçekten daha düz.
+1. Tren akış modeli $v_1$- Kesinlikle.
+2. Örnek N çift $(x_1, x_0)$Entegre ederek $v_1$-$x_1$İnişine kadar$x_0$- Evet .
+3. Tren$v_2$Bu çiftler artık "ODE eşleşmiş" olduklarından, aralarındaki düz çizgi interpolant gerçekten daha düz.
 4. Tekrar ediyorum.
 
 Pratikte 2 reflow iterasyonları, 2-4 adım sonucu çıkarmayı mümkün kılar. SDXL-Turbo, SD3-Turbo, LCM hepsi akışla eşleşen destil modellerdir.
@@ -72,7 +72,7 @@ Pratikte 2 reflow iterasyonları, 2-4 adım sonucu çıkarmayı mümkün kılar.
 
 ## Akış eşleşimi vs DDPM  tam bağlantı
 
-Gaussian koşullu bir yolla akış eşleşmesi, belirli bir gürültü programı ile * difüsiyondır.`x_t = α(t) x_0 + σ(t) x_1`Zamanlama ve akış eşleşimi , Stratonovich ' in reformülasyonu ile `v = α'·x_0 - σ'·x_1`Bu ikisi Gaussian yolları için cebirsel olarak eşittir.
+Gaussian koşullu bir yolla akış eşleşmesi, belirli bir gürültü programı ile * difüsiyondır.$x_t = \alpha(t) x_0 + \sigma(t) x_1$Zamanlama ve akış eşleşimi , Stratonovich ' in reformülasyonu ile $v = \alpha' \cdot x_0 - \sigma' \cdot x_1$Bu ikisi Gaussian yolları için cebirsel olarak eşittir.
 
 Akış eşleşimi ne ekledi: hedefin * netliği * (sıradan bir hız), temiz bir kayıp ve Gaussian olmayan interpolantlarla deney yapma izni.
 
@@ -82,7 +82,7 @@ normalizing-flow
 
 ## Yapın
 
-`code/main.py`1D akış eşleşmesini iki modlu Gaussian karışımı üzerinde uyguluyor.`v_θ(x, t)`Bu, bir incelik yaparak, bir incelik yaparak, bir incelik yaparak, bir incelik yaparak, bir incelik yaparak, bir incelik yaparak, bir incelik yaparak, bir incelik yaparak, bir incelik yaparak, bir incelik yaparak, bir incelik yaparak, bir incelik yaparak, bir incelik yaparak, bir incelik yaparak, bir incelik yaparak, bir incelik yaparak, bir incelik yaparak, bir incelik yaparak, bir incelik yaparak, bir incelik yaparak, bir incelik yaparak, bir incelik yaparak, bir incelik yaparak, bir incelik yaparak, bir incelik yaparak, bir incelik yaparak, bir incelik yaparak, bir incelik yaparak, bir incelik yaparak, bir incelik yaparak, bir incelik yaparak, bir incelik yaparak, bir incelik yaparak, bir incelik yaparak, bir incelik yaparak, bir incelik yaparak, bir incelik yaparak, bir incelemede, bir incelemede, bir incelemede, bir incelik yaparak, bir incelemede, bir incelemede, bir incelemede, bir incelemede, bir incelemede, bir incelemede, bir incelemede, bir incelemede, bir incelemede, bir şekilde, bir şekilde, bir şekilde, bir şekilde, bir şekilde, bir bir şekilde, bir şekilde, bir şekilde, bir şekilde, bir bir şekilde, bir şekilde, bir şekilde, bir şekilde, bir şekilde, bir şekilde, bir şekilde, bir bir şekilde, bir şekilde, bir şekilde, bir şekilde, bir, bir, bir, bir, bir, bir, bir, bir, bir, bir, bir, bir, bir, bir, bir, bir, bir, bir, bir, bir, bir, bir, bir, bir, bir, bir, bir, bir, bir, bir, bir, bir, bir, bir, bir, bir, bir, bir, bir, bir, bir, bir, bir, bir, bir, bir, bir, bir, bir, bir, bir, bir, bir, bir, bir, bir, bir, bir, bir, bir, bir, bir, bir, bir, bir, bir, bir, bir, bir, bir, bir, bir, bir, bir, bir, bir, bir, bir, bir
+`code/main.py`1D akış eşleşmesini iki modlu Gaussian karışımı üzerinde uyguluyor.$v_\theta(x, t)$Bu, bir incelik yaparak, bir incelik yaparak, bir incelik yaparak, bir incelik yaparak, bir incelik yaparak, bir incelik yaparak, bir incelik yaparak, bir incelik yaparak, bir incelik yaparak, bir incelik yaparak, bir incelik yaparak, bir incelik yaparak, bir incelik yaparak, bir incelik yaparak, bir incelik yaparak, bir incelik yaparak, bir incelik yaparak, bir incelik yaparak, bir incelik yaparak, bir incelik yaparak, bir incelik yaparak, bir incelik yaparak, bir incelik yaparak, bir incelik yaparak, bir incelik yaparak, bir incelik yaparak, bir incelik yaparak, bir incelik yaparak, bir incelik yaparak, bir incelik yaparak, bir incelik yaparak, bir incelik yaparak, bir incelik yaparak, bir incelik yaparak, bir incelik yaparak, bir incelik yaparak, bir incelik yaparak, bir incelemede, bir incelemede, bir incelemede, bir incelik yaparak, bir incelemede, bir incelemede, bir incelemede, bir incelemede, bir incelemede, bir incelemede, bir incelemede, bir incelemede, bir incelemede, bir şekilde, bir şekilde, bir şekilde, bir şekilde, bir şekilde, bir bir şekilde, bir şekilde, bir şekilde, bir şekilde, bir bir şekilde, bir şekilde, bir şekilde, bir şekilde, bir şekilde, bir şekilde, bir şekilde, bir bir şekilde, bir şekilde, bir şekilde, bir şekilde, bir, bir, bir, bir, bir, bir, bir, bir, bir, bir, bir, bir, bir, bir, bir, bir, bir, bir, bir, bir, bir, bir, bir, bir, bir, bir, bir, bir, bir, bir, bir, bir, bir, bir, bir, bir, bir, bir, bir, bir, bir, bir, bir, bir, bir, bir, bir, bir, bir, bir, bir, bir, bir, bir, bir, bir, bir, bir, bir, bir, bir, bir, bir, bir, bir, bir, bir, bir, bir, bir, bir, bir, bir, bir, bir, bir, bir, bir, bir
 
 ### Adım 1: Eğitim kaybı
 
@@ -115,10 +115,10 @@ def sample(net, num_steps):
 
 ## Tuzaklar
 
-- **Time parameterization.**Akış eşleşimi kullanımı `t ∈ [0, 1]`- Evet .`t=0`Verilerde,`t=1`DDPM kullanıyor `t ∈ [0, T]`- Evet .`t=0`Verilerde,`t=T`Aynı yönde, farklı ölçekte.
+- **Time parameterization.**Akış eşleşimi kullanımı $t \in [0, 1]$- Evet .$t=0$Verilerde,$t=1$DDPM kullanıyor $t \in [0, T]$- Evet .$t=0$Verilerde,$t=T$Aynı yönde, farklı ölçekte.
 - **Schedule choice.**Düzeltilmiş akışın düz çizgisi "akış eşleşme" programıdır, ancak daha iyi ölçek kapsamı için cosine veya logit-normal t örneğini kullanabilirsiniz (SD3 bunu yapar).
 - **Reflow cost.**Yeniden akış için çiftleştirilmiş veri kümesini oluşturmak, örnek başına tam bir sonuç geçişidir. Sadece 1-2 adım sonuç almanız gerektiğinde tekrar akış yapın.
-- **Classifier-free guidance still applies.**Sadece düzeltilen kombinasyonda ε ile v arasında değiş: `v_cfg = (1+w) v_cond - w v_uncond`- Evet .
+- **Classifier-free guidance still applies.**Sadece değiş .$\epsilon$için$v$Düzsel kombinasyonda: $v_{\text{cfg}} = (1+w) v_{\text{cond}} - w v_{\text{uncond}}$- Evet .
 
 ## Kullan
 
@@ -140,21 +140,21 @@ Bir makalede 2025-2026 yıllarında "difüzondan hızlı" dediğinde neredeyse h
 ## Egzersizler
 
 1. **Easy.**Çık .`code/main.py`ve gerçek veri dağıtımına karşı 1 adım vs 20 adım MSE karşılaştırın.
-2. **Medium.**Üniforma ' dan geç .`t`Örneklemeyi normal logit'e (t ortasında örneklemeyi yoğunlaştırır) yapılır.
-3. **Hard.**Bir reflow iterasyonunu uygulayın: ilk modeli entegre ederek çiftleştirilmiş (x_0, x_1) oluşturun, çiftler üzerinde ikinci bir model eğitiniz ve 1 adım örnek kalitesini karşılaştırın.
+2. **Medium.**Üniforma ' dan geç .$t$Örneklemeyi normal logit'e (t ortasında örneklemeyi yoğunlaştırır) yapılır.
+3. **Hard.**Tek tekrar tekrar uygulamak: çift oluşturmak $(x_0, x_1)$İlk modeli entegre ederek, çiftler üzerinde ikinci bir modeli eğitmek ve 1 adım örnek kalitesini karşılaştırmak.
 
 ## Anahtar Terimler
 
 | Term | What people say | What it actually means |
 |------|-----------------|-----------------------|
-| Flow matching | "Straight-line diffusion" | Train `v_θ(x, t)` to match `x_1 - x_0` along an interpolant. |
+| Flow matching | "Straight-line diffusion" | Train $v_\theta(x, t)$ to match $x_1 - x_0$ along an interpolant. |
 | Rectified flow | "Reflow" | Iterative procedure that straightens learned flows. |
-| Velocity field | "v_θ" | Output of the model — the direction to move `x_t`. |
-| Straight-line interpolant | "The path" | `x_t = (1-t)·x_0 + t·x_1`; trivial target derivative. |
+| Velocity field | "v_θ" | Output of the model — the direction to move $x_t$. |
+| Straight-line interpolant | "The path" | $x_t = (1-t) \cdot x_0 + t \cdot x_1$; trivial target derivative. |
 | Euler sampler | "1st order ODE solver" | Simplest integrator; works well when paths are straight. |
-| Logit-normal t | "SD3 sampling" | Concentrate `t` sampling toward mid-values where gradients are strongest. |
-| Consistency distillation | "1-step sampler" | Train a student to map any `x_t` directly to `x_0`. |
-| CFG with velocity | "v-CFG" | `v_cfg = (1+w) v_cond - w v_uncond`; same trick, new variable. |
+| Logit-normal t | "SD3 sampling" | Concentrate $t$ sampling toward mid-values where gradients are strongest. |
+| Consistency distillation | "1-step sampler" | Train a student to map any $x_t$ directly to $x_0$. |
+| CFG with velocity | "v-CFG" | $v_{\text{cfg}} = (1+w) v_{\text{cond}} - w v_{\text{uncond}}$; same trick, new variable. |
 
 ## Üretim notu: Flux.1-schnell en hızlı akış eşleşme
 

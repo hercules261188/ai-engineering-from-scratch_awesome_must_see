@@ -26,13 +26,13 @@ Ayrıca şunları göreceksiniz: IS (başlangıç puanı, büyük ölçüde emek
 Heusel et al. (2017). Adımlar:
 
 1. N gerçek görüntüler ve N oluşturulan görüntüler için Inception-v3 özelliklerini (2048-D) çıkarın.
-2. Her havuz için bir Gaussian ayarlayın: hesap ortalaması`μ_r, μ_g`ve kovarians `Σ_r, Σ_g`- Evet .
-3. FID = `||μ_r - μ_g||² + Tr(Σ_r + Σ_g - 2 · (Σ_r · Σ_g)^0.5)`- Evet .
+2. Her havuz için bir Gaussian ayarlayın: hesap ortalaması$\mu_r, \mu_g$ve kovarians $\Sigma_r, \Sigma_g$- Evet .
+3. $\text{FID} = \lVert \mu_r - \mu_g \rVert^2 + \mathop{\mathrm{Tr}}\left(\Sigma_r + \Sigma_g - 2 \cdot (\Sigma_r \cdot \Sigma_g)^{0.5}\right)$- Evet .
 
 Anlatma: Özellik alanındaki iki çok değişken Gaussyan arasındaki Fréchet mesafe.
 
 Başarısızlık modları:
-- **Biased on small N.**FID, özellik dağılımının ortalaması  küçük N'nin hafifçe ölçülmesi, yanlış düşük FID verir.
+- **Biased on small N.**FID, özellik dağılımının ortalaması karesidir  küçük N, kovaransı küçümser, yanlış düşük FID verir.$N \ge 10{,}000$- Evet .
 - **Inception-dependent.**ImageNet'ten uzak alanlar (yüzler, sanat, metin görüntüler) anlamsız FID üretir.
 - **Gaming.**Başlangıç öncesiye fazla uyum sağlayarak görsel kalitede iyileşme olmadan düşük FID sağlar.
 

@@ -1,6 +1,6 @@
 # Otomatik kodlayıcılar ve Variasyonel Otomatik kodlayıcılar (VAE)
 
-> Bir otomatik kodlayıcı sıkıştırır, sonra yeniden oluşturur. Hatırlıyor. Yaratmaz. Bir numara ekleyin  kodu Gaussian görünmesi için zorlayın  ve bir örneklemeci elde edersiniz.`z = μ + σ·ε`, bu yüzden 2026'da kullandığınız her gizli yayılma ve akış eşleşme görüntü modeli girişinde bir VAE'ye sahip.
+> Bir otomatik kodlayıcı sıkıştırır, sonra yeniden oluşturur. Hatırlıyor. Yaratmaz. Bir numara ekleyin  kodu Gaussian görünmesi için zorlayın  ve bir örneklemeci elde edersiniz.$z = \mu + \sigma \cdot \epsilon$, bu yüzden 2026'da kullandığınız her gizli yayılma ve akış eşleşme görüntü modeli girişinde bir VAE'ye sahip.
 
 **Type:** Build
 **Languages:** Python
@@ -11,9 +11,9 @@
 
 784 piksel MNIST rakamını 16 sayılık bir kodla sıkıştırın, sonra yeniden yapılandırın. Sıradan bir otomatik kodlayıcı MSE yeniden yapılandırmasını sağlar ancak kod alanı bir karışıklık.
 
-Aslında istediğiniz şey: (a) kod alanı temiz ve düzgün bir dağılımdır.`N(0, I)`, (b) herhangi bir örnekin çözümü bir olası rakam üretir ve (c) kodlayıcı ve dekoder hala iyi sıkıştırılır.
+Aslında istediğiniz şey: (a) kod alanı temiz ve düzgün bir dağılımdır.$\mathcal{N}(0, I)$, (b) herhangi bir örnekin çözümü bir olası rakam üretir ve (c) kodlayıcı ve dekoder hala iyi sıkıştırılır.
 
-Kingma'nın 2013 VAE'si kodlayıcının bir * dağıtım* çıkartması için eğitilmesiyle bunu çözer.`q(z|x) = N(μ(x), σ(x)²)`, bu dağılımı öncüye doğru çekerek`N(0, I)`KL cezası ile, sonra örnekleme yapılır.`z`-`q(z|x)`Anlamlama sırasında, kodlayıcıyı bırakın, örnekleyin.`z ~ N(0, I)`KL cezası, kod alanının yapılandırılmasını zorlar.
+Kingma'nın 2013 VAE'si kodlayıcının bir * dağıtım* çıkartması için eğitilmesiyle bunu çözer.$q(z \mid x) = \mathcal{N}(\mu(x), \sigma(x)^2)$, bu dağılımı öncüye doğru çekerek$\mathcal{N}(0, I)$KL cezası ile, sonra örnekleme yapılır.$z$-$q(z \mid x)$Anlamlama sırasında, kodlayıcıyı bırakın, örnekleyin.$z \sim \mathcal{N}(0, I)$KL cezası, kod alanının yapılandırılmasını zorlar.
 
 2026 yılında VAE'ler nadiren bağımsız olarak gönderir  çiğ görüntü kalitesi için difüzyonla üst sınıflandırılmıştır  ama her latent difüzyon modeli için tercih edilen kodlayıcılardır (SD 1/2/XL/3, Flux, AudioCraft).
 
@@ -21,22 +21,24 @@ Kingma'nın 2013 VAE'si kodlayıcının bir * dağıtım* çıkartması için e�
 
 ![Autoencoder vs VAE: the reparameterization trick](../assets/vae.svg)
 
-**Autoencoder.** `z = encoder(x)`- Evet .`x̂ = decoder(z)`, kayıp = `||x - x̂||²`- Kod alanı yapılandırılmamış.
+**Autoencoder.** $z = \text{encoder}(x)$- Evet .$\hat{x} = \text{decoder}(z)$, kayıp = $\lVert x - \hat{x} \rVert^2$- Kod alanı yapılandırılmamış.
 
-**VAE encoder.**İki vektör çıkışı: `μ(x)`ve `log σ²(x)`Bu tanımlar .`q(z|x) = N(μ, diag(σ²))`- Evet .
+**VAE encoder.**İki vektör çıkışı: $\mu(x)$ve $\log \sigma^2(x)$Bu tanımlar .$q(z \mid x) = \mathcal{N}(\mu, \mathop{\mathrm{diag}}(\sigma^2))$- Evet .
 
-**Reparameterization trick.**`q(z|x)`Örnekte farklılık gösterilmez.`z = μ + σ·ε`nerede`ε ~ N(0, I)`- Şimdi .`z``(μ, σ)`Parametre dışı bir gürültü ekle  gradientler akıyor `μ`ve `σ`- Evet .
+**Reparameterization trick.**$q(z \mid x)$Örnekte farklılık gösterilmez.$z = \mu + \sigma \cdot \epsilon$nerede$\epsilon \sim \mathcal{N}(0, I)$- Şimdi .$z$$(\mu, \sigma)$Parametre dışı bir gürültü ekle  gradientler akıyor `μ`ve $\sigma$- Evet .
 
 **Loss.**Kanıt Alt Bağlantısı (ELBO), iki terim:
 
-```
-loss = reconstruction + β · KL[q(z|x) || N(0, I)]
-     = ||x - x̂||²  + β · Σ_i ( σ_i² + μ_i² - log σ_i² - 1 ) / 2
+```math
+\begin{aligned}
+\text{loss} &= \text{reconstruction} + \beta \cdot \mathrm{KL}[q(z \mid x) \,\Vert\, \mathcal{N}(0, I)] \\
+&= \lVert x - \hat{x} \rVert^2 + \beta \cdot \sum_i \frac{\sigma_i^2 + \mu_i^2 - \log \sigma_i^2 - 1}{2}
+\end{aligned}
 ```
 
-Yeniden inşaat sürükler .`x̂`- Yolu `x`KL ' in itmesi .`q(z|x)`Bu yöntemin bir diğer yönü de, daha önce belirtilmiş olan bir sistemin bir parçası olarak, daha önce belirtilmiş olan bir sistemin bir parçası olarak, daha önce belirtilmiş olan bir sistemin bir parçası olarak, daha önce belirtilmiş olan bir sistemin bir parçası olarak, daha önce belirtilmiş olan bir sistemin bir parçası olarak, daha önce belirtilmiş olan bir sistemin bir parçası olarak, daha önce belirtilmiş olan bir sistemin bir parçası olarak, daha önce belirtilmiş olan bir sistemin bir parçası olarak, daha önce belirtilmiş bir sistemin bir parçası olarak, daha önce belirtilmiş bir sistemin bir parçası olarak, daha önce belirtilmiş bir sistemin bir parçası olarak, daha önce belirtilmiş bir sistemin bir parçası olarak, daha önce belirtilmiş bir sistemin bir parçası olarak, daha önce belirtilmiş bir sistemin bir parçası olarak, daha önce belirtilmiş bir sistemin bir parçası olarak, daha önce belirtilmiş bir sistemin bir parçası olarak, daha sonra belirtilmiş bir sistemin bir parçası olarak, daha sonra bir sistemin bir diğer sistemin bir parçası olarak, daha daha daha daha daha iyi bir şekilde, daha daha daha daha iyi bir şekilde, daha daha daha daha daha daha iyi bir şekilde, daha daha daha daha daha daha daha daha daha iyi bir şekilde, daha daha daha daha daha daha daha daha daha daha daha daha iyi bir şekilde, daha daha daha daha daha daha daha daha daha daha daha daha daha daha daha daha daha daha daha daha daha daha daha daha daha daha daha daha daha daha daha daha daha daha daha daha daha daha daha daha daha daha daha daha daha daha daha daha daha daha daha daha daha daha daha daha daha daha daha daha daha daha daha daha daha daha daha daha daha daha daha daha daha daha daha daha daha daha daha daha daha daha daha daha daha daha daha daha daha daha daha daha daha daha daha daha daha daha daha daha daha daha daha daha daha daha daha daha daha daha daha daha daha daha daha daha daha daha daha daha daha daha daha daha daha daha daha daha daha daha daha daha daha daha daha daha daha daha daha daha daha daha daha daha daha daha daha daha daha daha daha daha daha daha daha daha daha daha daha daha daha daha daha daha daha daha daha daha daha daha daha daha daha daha daha daha daha daha daha daha daha daha daha daha daha daha daha daha daha daha daha daha keşfetmekleyleyleyleyleyleyleyleyleyleyleyleyleyleyleyleyleyleyleyleyleyleyleyleyle
+Yeniden inşaat sürükler .$\hat{x}$- Yolu $x$KL ' in itmesi .$q(z \mid x)$- Önceden, küçük bir şey.$\beta$($<1$) = daha keskin örnekler, kod alanı daha az Gaussian. Büyük $\beta$($>1$) = temiz kod alanı, bulanık örnekler. β-VAE (Higgins 2017) bu düğmeyi ünlü kıldı ve çözünürlük araştırmasına başladı.
 
-**Sampling.**Sonuç: çekim`z ~ N(0, I)`Bir ileri geçiş  difüzyon gibi tekrarlayıcı örnekleme yok.
+**Sampling.**Sonuç: çekim$z \sim \mathcal{N}(0, I)$Bir ileri geçiş  difüzyon gibi tekrarlayıcı örnekleme yok.
 
 ```figure
 vae-latent-grid
@@ -56,7 +58,7 @@ def encode(x, enc):
     return mu, log_sigma2
 ```
 
-`log σ²`yerine`σ`Böylece ağ çıkışı kısıtlı değildir (s'nin yumuşak artışı bir tuzak  gradientleri σ ≈ 0'da ölür).
+$\log \sigma^2$yerine$\sigma$Böylece ağ çıkışı kısıtlı değildir (s'nin yumuşak artı bir tuzağıdır  gradientler 'de ölür.$\sigma \approx 0$)
 
 ### Adım 2: yeniden ölçümleme ve çözme
 
@@ -94,9 +96,9 @@ Bu, üreticik model. Beş satır.
 
 ## Tuzaklar
 
-- **Posterior collapse.**KL term sürücüleri `q(z|x) → N(0, I)`O kadar agresif ki`z`hakkında hiçbir bilgi taşımaz.`x`. Düzeltme: β-anelleme (start β=0, ramp to 1), serbest bitler veya KL'yi aktif olmayan boyutlarda atlayın.
+- **Posterior collapse.**KL term sürücüleri $q(z \mid x) \to \mathcal{N}(0, I)$O kadar agresif ki$z$hakkında hiçbir bilgi taşımaz.$x$. Düzeltme: β- annulleri (başlamak $\beta=0$, rampa 1)), boş bitler veya KL'yi aktif olmayan boyutlarda atlayın.
 - **Blurry samples.**Gaussian dekodör olasılığı, L2 için Bayes-optimal olan MSE yeniden yapılandırmasını içerir (ortalama)  bir dizi makul rakamın ortalaması bulanık bir rakamdır. Düzelt: ayrı dekodör (VQ-VAE, NVAE), veya VAE'yi yalnızca bir kodlayıcı ve yataklarda yığın yayılması olarak kullanın (Stable Diffusion yapar).
-- **β too large, too early.**Arka çöküşü gör, β≈0.01'den başlayın ve ramp.
+- **β too large, too early.**Arka çöküşü gör.$\beta \approx 0.01$ve ramp.
 - **Latent dim too small.**16-D, MNIST için, 256-D, ImageNet 2562, 2048-D için ImageNet 10242 için çalışır.
 
 ## Kullan
@@ -118,32 +120,32 @@ Bir latent-difüzyon modeli, kodlayıcı ve dekodör arasında yaşayan bir dif�
 
 - Kaydet .`outputs/skill-vae-trainer.md`- Evet .
 
-Yetenek alınması: veri kümesi profili + laten-dim hedefi + aşağıdaki kullanım (yakınlama, örnekleme veya laten-difüzyona giriş) ve çıkışlar: mimarlık seçimi (sırf/β/VQ/RVQ), β programı, laten-dim, dekodör olasılığı (Gaussian vs kategorik) ve değerlendirme planı (recon MSE, KL per dim, Fréchet mesafesi `q(z|x)`ve `N(0, I)`)
+Yetenek alınması: veri kümesi profili + laten-dim hedefi + aşağıdaki kullanım (yakınlama, örnekleme veya laten-difüzyona giriş) ve çıkışlar: mimarlık seçimi (sırf/β/VQ/RVQ), β programı, laten-dim, dekodör olasılığı (Gaussian vs kategorik) ve değerlendirme planı (recon MSE, KL per dim, Fréchet mesafesi $q(z \mid x)$ve $\mathcal{N}(0, I))$- Evet .
 
 ## Egzersizler
 
-1. **Easy.**Değişiklik`β`İçeride`code/main.py`- ...`0.01`- Evet .`0.1`- Evet .`1.0`- Evet .`5.0`Son yeniden yapılanma MSE ve KL'yi kaydet. Sentetik verileriniz için en iyi Pareto beta hangisi?
+1. **Easy.**Değişiklik$\beta$İçeride`code/main.py`- ...`0.01`- Evet .`0.1`- Evet .`1.0`- Evet .`5.0`MSE ve KL ' in son yeniden inşaatını kaydet .$\beta$Pareto, sentetik verileriniz için en iyi mi?
 2. **Medium.**Gaussian dekoder olasılığını Bernoulli olasılığı (çaplak entropi kaybı) ile değiştirin. Aynı sentetik verilerin ikili sürümünde örnek kalitesini karşılaştırın.
-3. **Hard.**Uzaklaştırma`code/main.py`Mini VQ-VAE'ye dönüştürülür: sürekli `z`K=32 giriş kod defterinde en yakın komşu arayışı ile. Yeniden inşa MSE'yi karşılaştırın ve kaç kod defter girişinin kullanıldığını bildirin (kod defter çöküşü gerçek).
+3. **Hard.**Uzaklaştırma`code/main.py`Mini VQ-VAE'ye dönüştürülür: sürekli $z$K=32 giriş kod defterinde en yakın komşu arayışı ile. Yeniden inşa MSE'yi karşılaştırın ve kaç kod defter girişinin kullanıldığını bildirin (kod defter çöküşü gerçek).
 
 ## Anahtar Terimler
 
 | Term | What people say | What it actually means |
 |------|-----------------|-----------------------|
-| Autoencoder | Encode-decode network | `x → z → x̂`, learn MSE. Not generative. |
+| Autoencoder | Encode-decode network | $x \to z \to \hat{x}$, learn MSE. Not generative. |
 | VAE | AE with a sampler | Encoder outputs a distribution, KL penalty shapes code space. |
-| ELBO | Evidence lower bound | `log p(x) ≥ recon - KL[q(z\|x) \|\| p(z)]`; tight when `q = p(z\|x)`. |
-| Reparameterization | `z = μ + σ·ε` | Rewrites stochastic node as deterministic + pure noise. Enables backprop through sampling. |
-| Prior | `p(z)` | Target distribution for the latent, typically `N(0, I)`. |
-| Posterior collapse | "KL term wins" | Encoder ignores `x`, outputs the prior; decoder must hallucinate. |
-| β-VAE | Tunable KL weight | `loss = recon + β·KL`. Higher β = more disentangled but blurrier. |
-| VQ-VAE | Discrete latent | Replace continuous `z` with nearest codebook vector; enables transformer modelling. |
+| ELBO | Evidence lower bound | $\log p(x) \ge \text{recon} - \mathrm{KL}[q(z \mid x) \Vert p(z)]$; tight when $q = p(z \mid x)$. |
+| Reparameterization | $z = \mu + \sigma \cdot \epsilon$ | Rewrites stochastic node as deterministic + pure noise. Enables backprop through sampling. |
+| Prior | $p(z)$ | Target distribution for the latent, typically $\mathcal{N}(0, I)$. |
+| Posterior collapse | "KL term wins" | Encoder ignores $x$, outputs the prior; decoder must hallucinate. |
+| β-VAE | Tunable KL weight | $\text{loss} = \text{recon} + \beta \cdot \mathrm{KL}$. Higher $\beta$ = more disentangled but blurrier. |
+| VQ-VAE | Discrete latent | Replace continuous $z$ with nearest codebook vector; enables transformer modelling. |
 
 ## Üretim notu: VAE bir difüzyon sunucusundaki en sıcak yoludur
 
 Stable Diffusion / Flux / SD3 borusunda VAE'ye istek başına iki kez çağrılır  bir kez kodlamak için (img2img / inpainting yapıyorsanız) ve bir kez de kodlamaktır. 10242'de dekodör geçişi genellikle tüm borusunda en büyük tek etkinleştirme hafızası zirvesidür çünkü yukarıdaki örnekler `128×128×16`- Yeterince .`1024×1024×3`İki pratik sonuç:
 
-- **Slice or tile the decode.** `diffusers`Açıklamalar`pipe.vae.enable_slicing()`ve `pipe.vae.enable_tiling()`Tiling küçük bir dikiş eseriyle ticaret yapıyor .`O(tile²)`- Anımsamak yerine .`O(H·W)`- 10242+ için gerekli.
+- **Slice or tile the decode.** `diffusers`Açıklamalar`pipe.vae.enable_slicing()`ve `pipe.vae.enable_tiling()`Tiling küçük bir dikiş eseriyle ticaret yapıyor .$O(\text{tile}^2)$- Anımsamak yerine .$O(H \cdot W)$- 10242+ için gerekli.
 - **bf16 decoder, fp32 numerics for the final resize.**SD 1.x VAE fp32'de serbest bırakıldı ve 10242+ SDXL gemilerinde fp16'a döküldüğünde *sessizçe NaNs* üretir.`madebyollin/sdxl-vae-fp16-fix` her zaman fp16- sabit variansı tercih edin veya bf16 kullanın.
 
 ## Daha Fazla Okumak

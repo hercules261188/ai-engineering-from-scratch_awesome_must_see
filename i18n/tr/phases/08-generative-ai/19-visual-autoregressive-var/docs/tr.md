@@ -21,7 +21,7 @@ Her ölçek, önceki tüm ölçeklere (kötü olarak " ölçek sırası") ve ken
 
 ### VQ-VAE Çok Ölçekli Tokenizer
 
-VAR ' ın bir **multi-scale discrete tokenizer**. Bir resim x için , gittikçe daha yüksek çözünürlüklü token ağlarının bir dizi üretir:
+VAR ' ın bir **multi-scale discrete tokenizer**- Bir görüntü için .$x$, bir dizi giderek daha yüksek çözünürlüklü token ağı üretir:
 
 ```
 x -> encoder -> latent f
@@ -31,13 +31,13 @@ f -> tokenize at 2x2: token grid z_2 of shape (2, 2)
 f -> tokenize at (H/p)x(W/p): token grid z_K of shape (H/p, W/p)
 ```
 
-Her z_k aynı kod defterini kullanır (tipik boyut 4096-16384). Her ölçekte belirtilme bağımsız değildir  her ölçekte kalanların toplamı f yeniden oluşturur:
+Her biri .$z_k$Aynı kod defteri kullanır (tipik boyut 4096-16384). Her ölçekte simgelik bağımsız değildir  her ölçekte kalanların toplamı yeniden yapılandırılır $f$- ...
 
-```
-f ≈ upsample(embed(z_1), target_size) + ... + upsample(embed(z_K), target_size)
+```math
+f \approx \mathop{\mathrm{upsample}}(\mathop{\mathrm{embed}}(z_1), \text{target\_size}) + \cdots + \mathop{\mathrm{upsample}}(\mathop{\mathrm{embed}}(z_K), \text{target\_size})
 ```
 
-Bu bir **residual VQ**K-1'in kaçırdığı şeyleri yakalar.
+Bu bir **residual VQ**Variant.$k$Ne ölçekleri yakalar $1 \ldots k-1$Dekoder tüm ölçek yerleşimlerinin toplamını alır ve görüntüyü üretir.
 
 Çok ölçekli VQ tokenizer bir kez (VQGAN gibi) eğitilir ve sonra dondurulur. Tüm üreticiler tarafından yapılır.
 
@@ -50,9 +50,9 @@ Giriş sırası yapısı:
 [START, z_1 tokens, z_2 tokens, z_3 tokens, ..., z_K tokens]
 ```
 
-Konum yerleşimleri, hem ölçek indeksi hem de ölçek içindeki uzay pozisyonunu kodlar. Dikkat ölçek sırasındaki sebepsel bir şeydir: ölçek k'deki token, pozisyon (i, j) ölçek 1..k'deki tüm tokenlere ve ölçek k'deki tokenlerin kendisinde kullanılan ölçek içi sırada daha önce gelen tokenlere bakabilir (VAR, ölçek içi nedensellik olmadan sabit konum dikkati kullanır  bir ölçek içindeki tüm pozisyonlar paralel olarak öngörülür).
+Konum yerleşimleri, ölçek indeksi ve ölçek içindeki uzay konumunu hem kodlar. Dikkat ölçek sırasındaki nedenseldir: ölçekteki token $k$, pozisyon$(i, j)$Tüm tokenlere bakmak için ölçekler .$1 \ldots k$ve ölçekli tokenlere .$k$VAR, ölçek içi bir sırada daha önce gelen (VAR, ölçek içi bir nedensizlik olmadan sabit konum dikkatini kullanır  bir ölçek içindeki tüm konumlar paralel olarak öngörülür).
 
-Eğitim kaybı: her bir ölçek k'de, tüm önceki ölçekli işaretler verildiğinde z_k belirtilerini tahmin edin. Ayrı VQ kodlarında çapraz entropi kaybı. "sequence" hariç GPT ile aynı yapı şimdi ölçekli yapılandırılmıştır.
+Eğitim kaybı: her ölçekte $k$, simgelerinin tahminini yap .$z_k$GPT'nin diğer tüm yapıları, "sequence" hariç, artık ölçekli yapılandırılmıştır.
 
 ### Nesil
 
@@ -66,7 +66,7 @@ decode: f = sum of embed-and-upsample scales 1..K
 image = VAE_decoder(f)
 ```
 
-K = 10 ölçek için, jenerasyon 10 dönüştürücü ileri geçiştir. Her geçiş tüm ölçeğini paralel olarak  bir ölçek içinde bir belirti başına bir autoregresyon üretir. 256x256 görüntü için bu yaklaşık 10 geçiş vs DiT'in 28-50'si.
+- Evet .$K = 10$Skalalar, jenerasyon 10 transformatör ileri geçiş. Her geçiş tüm ölçeğini paralel olarak üretir  bir ölçek içinde bir belirti otomatik geri dönüşü yoktur. 256x256 görüntü için bu yaklaşık 10 geçiş vs DiT'in 28-50'si.
 
 ### Neden Bir sonraki ölçek, bir sonraki ölçekten daha üstün
 
@@ -127,7 +127,7 @@ Bu ders bize çok yararlı .`outputs/skill-var-tokenizer-designer.md` Çok ölç
 | Multi-scale VQ tokenizer | "Residual VQ" | VQ-VAE that produces K token grids of increasing resolution, with decoder summing all scales |
 | Scale k | "Pyramid level k" | One of K resolution levels, from 1x1 at k=1 up to (H/p)x(W/p) at k=K |
 | Parallel-within-scale | "One forward per scale" | All tokens at scale k are predicted in one transformer pass, not autoregressively |
-| Causal-across-scales | "Scale-ordered attention" | Token at scale k can attend to all of scales 1..k but not scales k+1..K |
+| Causal-across-scales | "Scale-ordered attention" | Token at scale $k$ can attend to all of scales $1 \ldots k$ but not scales $k+1 \ldots K$ |
 | Residual VQ | "Additive tokenization" | Each scale's tokens encode the residual left by lower scales; decoder sums all scale embeddings |
 | VAR scaling law | "Image GPT scaling" | FID follows a predictable power law in compute, like language models' perplexity |
 | HART | "Hybrid VAR + text" | Text-conditional VAR variant combining MaskGIT-style iterative decoding with VAR's scale structure |

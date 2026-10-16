@@ -21,9 +21,9 @@ Bu, Stable Diffusion tarifi. SD 1.x / 2.x 860M U-Net kullanıyor.`64×64×4`SDXL
 
 **Two stages, separately trained.**
 
-1. **Stage 1 — VAE.**Kodlayıcı`E(x) → z`, dekodör`D(z) → x`. Hedef sıkıştırma: her alan eksisinde 8× aşağı örnek + kanalları ayarlayın böylece toplam gizli boyut piksel sayısının 1/16'sidir. Kayıp = yeniden yapılandırma (L1 + LPIPS algılama) + KL (küçük ağırlık böylece `z`Bu çok Gaussian zorunlu değil, çünkü tam örnekleme ihtiyacımız yok.`z`Genellikle bir düşmana karşı bir kayıpla eğitilmiştir. Bu yüzden kodlanmış görüntüler keskin.
+1. **Stage 1 — VAE.**Kodlayıcı$E(x) \to z$, dekodör$D(z) \to x$. Hedef sıkıştırma: her alan eksisinde 8× aşağı örnek + kanalları ayarlayın böylece toplam gizli boyut piksel sayısının 1/16'sidir. Kayıp = yeniden yapılandırma (L1 + LPIPS algılama) + KL (küçük ağırlık böylece $z$Bu çok Gaussian zorunlu değil, çünkü tam örnekleme ihtiyacımız yok.$z$Genellikle bir düşmana karşı bir kayıpla eğitilmiştir. Bu yüzden kodlanmış görüntüler keskin.
 
-2. **Stage 2 — diffusion on `z`.**Tedavi et .`z = E(x_real)`Bir U-Net (veya DiT) 'yi denetlemeyi eğit.`z_t`Sonuçta: örnek`z_0`O zaman difüzyondan.`x = D(z_0)`- Evet .
+2. **Stage 2 — diffusion on $z$.**Tedavi et .$z = E(x_{\text{real}})$Bir U-Net (veya DiT) 'yi denetlemeyi eğit.$z_t$Sonuçta: örnek$z_0$O zaman difüzyondan.$x = D(z_0)$- Evet .
 
 **Text conditioning.**İki ek bileşen. Dondurulmuş bir metin kodlayıcısı (SD 1.x için CLIP-L, SD 2/XL için CLIP-L+OpenCLIP-G, SD3 ve Flux için T5-XXL).`[Q = image features, K = V = text tokens]`Tek yol metin görüntüyü etkilemektir.
 
@@ -58,21 +58,21 @@ def encode(x):    return x * 0.5          # toy "compression" to smaller scale
 def decode(z):    return z * 2.0
 ```
 
-Gerçek bir VAE'nin eğitimli ağırlıkları vardır.`z`Orijinal veri alanını önemsemeden.
+Gerçek bir VAE'nin eğitimli ağırlıkları vardır.$z$Orijinal veri alanını önemsemeden.
 
 ### İkinci adım: `z`- Uzay
 
-DDPM'nin 06. dersiyle aynı.`z = E(x)`Örnek alınca`z_0`,  ile çözülür .`D(z_0)`- Evet .
+DDPM'nin 06. dersiyle aynı.$z = E(x)$Örnek alınca$z_0$,  ile çözülür .$D(z_0)$- Evet .
 
 ### Adım 3: sınıflandırıcı dışı rehberlik
 
-Eğitim sırasında sınıf etiketini %10'da bırakın (sürekli bir simge ile değiştirin).`ε_cond`ve `ε_uncond`O zaman:
+Eğitim sırasında sınıf etiketini %10'da bırakın (sürekli bir simge ile değiştirin).$\epsilon_{\text{cond}}$ve $\epsilon_{\text{uncond}}$O zaman:
 
 ```python
 eps_cfg = (1 + w) * eps_cond - w * eps_uncond
 ```
 
-`w = 0`= rehberlik yok (tam çeşitlilik),`w = 3`= default, `w = 7+`= doymuş / aşırı keskin.
+$w = 0$= rehberlik yok (tam çeşitlilik),$w = 3$= default, $w = 7+$= doymuş / aşırı keskin.
 
 ### Adım 4: Metin koşullandırması (konsept, kod değil)
 
@@ -90,7 +90,7 @@ Bu, sınıf koşullı bir difüzyon modeli ile sabit difüzyon arasındaki tek �
 - **Text encoder silently wrong.**SD3'nin T5-XXL'ye ihtiyacı var ve T5 = 128 tokeni vardır.`use_t5=True`Ya da hızlı sadakat kraterleri.
 - **Mixing latent spaces.**SDXL, SD3, Flux hepsi farklı VAE'ler kullanır. SDXL latenti üzerinde eğitilmiş bir LoRA SD3 üzerinde çalışmaz.
 - **CFG too high.** `w > 10`Doymuş, yağlı görüntüler üretir ve çeşitlilik masrafına karşı uyarıyı aşırı uyarır.`w = 3-7`- Evet .
-- **Negative prompts leaking.**Boş negatif istek sıfır simge olur; doldurulmuş negatif istek `ε_uncond`Bunlar aynı değil; bazı boru hattları sessizce sıfır açılır.
+- **Negative prompts leaking.**Boş negatif istek sıfır simge olur; doldurulmuş negatif istek $\epsilon_{\text{uncond}}$Bunlar aynı değil; bazı boru hattları sessizce sıfır açılır.
 
 ## Kullan
 
@@ -111,7 +111,7 @@ Bu, sınıf koşullı bir difüzyon modeli ile sabit difüzyon arasındaki tek �
 
 ## Egzersizler
 
-1. **Easy.**Çık .`code/main.py`Yönlendirmelerle`w ∈ {0, 1, 3, 7, 15}`Sınıflara göre ortalama örnek kaydet.`w`sınıf anlamları gerçek verilerin anlamlarından daha uzak mı?
+1. **Easy.**Çık .`code/main.py`Yönlendirmelerle$w \in \lbrace 0, 1, 3, 7, 15 \rbrace$Sınıflara göre ortalama örnek kaydet.$w$sınıf anlamları gerçek verilerin anlamlarından daha uzak mı?
 2. **Medium.**Oyuncak çizgisi kodlayıcıyı yeniden yapılandırma kaybı olan tanh-MLP kodlayıcı/dekoder çiftine değiştirin. Yeni latentlerde yayılımı yeniden eğit. Örnek kalitesi değişiyor mu?
 3. **Hard.**Düzenleyici ile gerçek Stable Diffusion inference ayarlayın: yük `sdxl-base`CFG=7 ile 30 Euler adımı at.`sdxl-turbo`Aynı konu, farklı kalite  neyin değiştiğini ve neden değiştiğini açıklayın.
 
@@ -121,8 +121,8 @@ Bu, sınıf koşullı bir difüzyon modeli ile sabit difüzyon arasındaki tek �
 |------|-----------------|-----------------------|
 | First stage | "The VAE" | Trained encoder/decoder pair; compresses 512² to 64². |
 | Second stage | "The U-Net" | Diffusion model over the latent space. |
-| CFG | "Guidance scale" | `(1+w)·ε_cond - w·ε_uncond`; tunes conditioning strength. |
-| Null token | "Empty prompt embed" | Unconditional embed used for `ε_uncond`. |
+| CFG | "Guidance scale" | $(1+w) \cdot \epsilon_{\text{cond}} - w \cdot \epsilon_{\text{uncond}}$; tunes conditioning strength. |
+| Null token | "Empty prompt embed" | Unconditional embed used for $\epsilon_{\text{uncond}}$. |
 | Cross-attention | "How text gets in" | Each U-Net block attends to text tokens as K and V. |
 | DiT | "Diffusion Transformer" | Replace U-Net with a transformer over latent patches; scales better. |
 | MMDiT | "Multi-modal DiT" | SD3's architecture: text and image streams with joint attention. |

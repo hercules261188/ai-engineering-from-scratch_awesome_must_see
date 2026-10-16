@@ -39,15 +39,15 @@ features += weight_a * control_a(depth) + weight_b * control_b(pose)
 
 ### LoRA (Hu et al., 2021)
 
-Herhangi bir doğrusal katman için `W ∈ R^{d×d}`Modelde, dondurma `W`ve aşağı derecede bir delta ekle:
+Herhangi bir doğrusal katman için $W \in \mathbb{R}^{d \times d}$Modelde, dondurma $W$ve aşağı derecede bir delta ekle:
 
+```math
+W' = W + \Delta W, \quad \Delta W = B A, \quad A \in \mathbb{R}^{r \times d}, \quad B \in \mathbb{R}^{d \times r}
 ```
-W' = W + ΔW,  ΔW = B @ A,  A ∈ R^{r×d},  B ∈ R^{d×r}
-```
 
-- Evet .`r << d`4-16 sıra dikkat için standart, 64-128 sıra ağır ince tonlar için.`2 · d · r`yerine`d²`. SDXL dikkat için `d=640`- Evet .`r=16`Adaptör başına 20k param 410k yerine  20x azaltma. Tüm model boyunca: bir LoRA genellikle 20-200MB vs. temel 5GB.
+- Evet .$r \ll d$4-16 sıra dikkat için standart, 64-128 sıra ağır ince tonlar için.$2 \cdot d \cdot r$yerine$d^2$. SDXL dikkat için $d=640$- Evet .$r=16$Adaptör başına 20k param 410k yerine  20x azaltma. Tüm model boyunca: bir LoRA genellikle 20-200MB vs. temel 5GB.
 
-Sonuç olarak , LoRA ' yı ölçebilirsiniz:`W' = W + α · B @ A`- Evet .`α = 0.5-1.5`Bir çok LoRA'nın ek olarak yığılması (doğru uyarı ile, doğrusal olmayan şekillerde etkileşime girmeleri) normaldir.
+Sonuç olarak , LoRA ' yı ölçebilirsiniz:$W' = W + \alpha \cdot B A$- Evet .$\alpha = 0.5\text{-}1.5$Bir çok LoRA'nın ek olarak yığılması (doğru uyarı ile, doğrusal olmayan şekillerde etkileşime girmeleri) normaldir.
 
 ### IP-Adapter (Ye et al., 2023)
 
@@ -74,7 +74,7 @@ v4-controlnet-zero
 
 `code/main.py`1-D'de iki mekanizmayı simüle eder:
 
-1. **LoRA.**Önceden eğitilmiş bir çizgi katman .`W`- Dondur. Düşük bir sınıfı eğit.`B @ A`Bu kadar .`W + BA`Hedef çizgisi katmanına eşleşir.`r = 1`Birinci seviye düzeltmesini mükemmel öğrenmek için yeterli.
+1. **LoRA.**Önceden eğitilmiş bir çizgi katman .$W$- Dondur. Düşük bir sınıfı eğit.$BA$Bu kadar .$W + BA$Hedef çizgisi katmanına eşleşir.$r = 1$Birinci seviye düzeltmesini mükemmel öğrenmek için yeterli.
 
 2. **ControlNet-lite.**Bir "dondurulmuş taban" tahmincisi ve bir " yan ağ " ek bir sinyal okuyor. yan ağın çıkışı sıfır olarak başlatılmış bir öğrenilebilir skalar tarafından kapalıdır (sıfır-conv versiyonumuz).
 
@@ -98,11 +98,11 @@ h = base(x) + gated
 
 ## Tuzaklar
 
-- **Over-scaling LoRAs.** `α = 2`veya `α = 3`Bu, "güçlü yap" hack'in yaygın bir yöntemidir.`α ≤ 1.5`- Evet .
+- **Over-scaling LoRAs.** $\alpha = 2$veya $\alpha = 3$Bu, "güçlü yap" hack'in yaygın bir yöntemidir.$\alpha \le 1.5$- Evet .
 - **ControlNet weight conflict.**Pose ControlNet'in 1.0 ağırlıklı ve 1.0 ağırlıklı derinlik kontrol ağının kullanılması genellikle aşırı atışlar yapar.
 - **LoRA on the wrong base.**SDXL LoRA'sı sessizce SD 1.5'de çalışmıyor çünkü dikkat boyutları eşleşmiyor.
 - **Textual Inversion drift.**Bir kontrol noktasında eğitilen tokenler diğerinde kötü hareket eder.
-- **LoRA weight-merging and storage.**Daha hızlı sonuçlar için temel model ağırlıklarına bir LoRA pişirebilirsiniz (kurut zamanının eklenmesi yok), ancak ölçekleme yeteneğini kaybediyorsunuz `α`İkisi de kalsın.
+- **LoRA weight-merging and storage.**Daha hızlı sonuçlar için temel model ağırlıklarına bir LoRA pişirebilirsiniz (kurut zamanının eklenmesi yok), ancak ölçekleme yeteneğini kaybediyorsunuz $\alpha$İkisi de kalsın.
 
 ## Kullan
 
@@ -125,7 +125,7 @@ h = base(x) + gated
 
 1. **Easy.**İçeri`code/main.py`, LoRA sıralarını değiştirir .`r`1 ile 4 arasında, LoRA tam olarak 2. sırada bir hedef delta ile aynıdır.
 2. **Medium.**İki ayrı LoRA'yı iki hedef dönüşümüne çalıştırın. Onları bir araya getirin ve katılımcı etkileşimlerini gösterin.
-3. **Hard.**Düğme için difüzerler kullanın: SDXL-base + Canny-ControlNet (vezi 0,8) + bir stil LoRA (α 0,8) + IP-Adapter (vezi 0,6). Düğme ağırlıkları değiştikçe FID-vs-prompt-yapışma değişikliğini ölçün.
+3. **Hard.**Dökme için difüzerler kullanın: SDXL-base + Canny-ControlNet (kolem 0,8) + bir stil LoRA ($\alpha$0.8) + IP-Adapter (vezi 0.6).
 
 ## Anahtar Terimler
 
@@ -133,9 +133,9 @@ h = base(x) + gated
 |------|-----------------|-----------------------|
 | ControlNet | "Spatial control" | Cloned encoder + zero-conv skips; reads a conditioning image. |
 | Zero convolution | "Starts as identity" | 1×1 conv initialized to zero; ControlNet starts as no-op. |
-| LoRA | "Low-rank adapter" | `W + B @ A`, `r << d`; 100x fewer params than a full fine-tune. |
+| LoRA | "Low-rank adapter" | $W + BA$, $r \ll d$; 100x fewer params than a full fine-tune. |
 | rank r | "The knob" | LoRA compression; 4-16 typical, 64+ for heavy personalization. |
-| α | "LoRA strength" | Runtime scaling of the LoRA delta. |
+| $\alpha$ | "LoRA strength" | Runtime scaling of the LoRA delta. |
 | IP-Adapter | "Reference image" | Small image-conditioning adapter via CLIP-image tokens. |
 | DreamBooth | "Full subject fine-tune" | Train the full model on ~30 images of a subject. |
 | Textual Inversion | "New token" | Learn a new word embedding only; legacy, mostly replaced. |
@@ -144,7 +144,7 @@ h = base(x) + gated
 
 Gerçek bir metin-yazar SaaS aynı temel kontrol noktasında yüzlerce LoRA ve bir düzine ControlNets'e hizmet verir. Servis sorunu LLM çok kiracılığına çok benziyor (prodüksiyon literatürü sürekli batching ve LoRAX / S-LoRA altında LLM durumunu kapsar):
 
-- **Hot-swap LoRAs, do not merge.**Birleştirme`W' = W + α·B·A`Üstelik bu aşamada ~ 3-5% daha hızlı bir sonuç çıkarır ama dondurulur.`α`LRA'ları VRAM'da r sıra delta olarak sıcak tutun; difüzerler açığa çıkarır.`pipe.load_lora_weights()`+ `pipe.set_adapters([...], adapter_weights=[...])`Arama başına etkinleştirme için.`2 · d · r · num_layers`ağırlıklar  MB ölçeği, alt ikinci.
+- **Hot-swap LoRAs, do not merge.**Birleştirme$W' = W + \alpha \cdot B \cdot A$Üstelik bu aşamada ~ 3-5% daha hızlı bir sonuç çıkarır ama dondurulur.$\alpha$LRA'ları VRAM'da r sıra delta olarak sıcak tutun; difüzerler açığa çıkarır.`pipe.load_lora_weights()`+ `pipe.set_adapters([...], adapter_weights=[...])`Arama başına etkinleştirme için.`2 · d · r · num_layers`ağırlıklar  MB ölçeği, alt ikinci.
 - **ControlNet as a second attention lane.**Klonlanmış kodlayıcı tabanla paralel olarak çalışır. Her biri 1.0 ağırlığında iki ControlNet = her adım için iki ekstra ileri geçiş, bir birleşik geçiş değil.
 - **Quantized LoRAs too.**Temelini kuantleştirirseniz (Desin 07, 8GB'de akış) LoRA delta da temiz bir şekilde 8 bit veya 4 bit olarak kuantleştirir. QLoRA tarzında yükleme, hafızayı patlatmadan 4 bitlik bir Flux tabanının üzerine 5-10 LoRA'yı yığmanıza olanak sağlar.
 

@@ -9,9 +9,9 @@
 
 ## Sorun
 
-Bir üreticik model bir iş yapar: Bilinmeyen bir dağıtımdan alınan eğitim örnekleri.`p_data(x)`Yüzler, cümleler, MIDI dosyaları, protein yapıları  göz kırpırsanız hepsi aynı sorun.
+Bir üreticik model bir iş yapar: Bilinmeyen bir dağıtımdan alınan eğitim örnekleri.$p_{\text{data}}(x)$Yüzler, cümleler, MIDI dosyaları, protein yapıları  göz kırpırsanız hepsi aynı sorun.
 
-- Sorun şu ki .`p_data`Bu örnekler, milyonlarca boyutlu bir alanda yaşıyor (bir 512x512 RGB görüntü yaklaşık 786k boyutlu), ve bu alanın içinde ince bir çeşitlilik üzerinde oturur ve sadece 10M örnekler vardır.
+- Sorun şu ki .$p_{\text{data}}$Bu örnekler, milyonlarca boyutlu bir alanda yaşıyor (bir 512x512 RGB görüntü yaklaşık 786k boyutlu), ve bu alanın içinde ince bir çeşitlilik üzerinde oturur ve sadece 10M örnekler vardır.
 
 Son on iki yılda beş aile hayatta kaldı. Her aile hangi ödüller verdiğini bilmek, bazı görevlerde neden kazanıyor ve diğerlerinde neden çöküyor, anlatabilir.
 
@@ -19,13 +19,13 @@ Son on iki yılda beş aile hayatta kaldı. Her aile hangi ödüller verdiğini 
 
 ![Five families of generative models — taxonomy by what they model](../assets/taxonomy.svg)
 
-**1. Explicit density, tractable.**Yazmın .`log p(x)`Bu, bir değerlendirme yapabilmek için bir toplam olarak kullanılır.`p(x) = ∏ p(x_i | x_<i)`Normalleşen akışlar (RealNVP, Glow) oluşturulur.`p(x)`Pro: tam olasılık, temiz eğitim kaybı. Con: autoregressive sonuçlandırma sıralı (uzun sırada yavaş), akışlar dönüştürülebilir mimarlıklara ihtiyaç duyar (memarlık açısından kısıtlayıcı).
+**1. Explicit density, tractable.**Yazmın .$\log p(x)$Bu, bir değerlendirme yapabilmek için bir toplam olarak kullanılır.$p(x) = \prod_i p(x_i \mid x_{<i})$Normalleşen akışlar (RealNVP, Glow) oluşturulur.$p(x)$Pro: tam olasılık, temiz eğitim kaybı. Con: autoregressive sonuçlandırma sıralı (uzun sırada yavaş), akışlar dönüştürülebilir mimarlıklara ihtiyaç duyar (memarlık açısından kısıtlayıcı).
 
-**2. Explicit density, approximate.**Bağlı`log p(x)`VAE'ler (Kingma 2013) bir varyasyon arka taraflı bir kodlayıcı-dekodör kullanır. Diffusion modelleri (DDPM, Ho 2020) bir denoiser eğitmek ve dolaylı olarak ağırlanmış ELBO'yu optimize eder.
+**2. Explicit density, approximate.**Bağlı$\log p(x)$VAE'ler (Kingma 2013) bir varyasyon arka taraflı bir kodlayıcı-dekodör kullanır. Diffusion modelleri (DDPM, Ho 2020) bir denoiser eğitmek ve dolaylı olarak ağırlanmış ELBO'yu optimize eder.
 
-**3. Implicit density.**Denetliği tamamen atlayın; bir jeneratör öğrenin `G(z)`Örnekler üreten ve ayrımcı olan bir grup.`D(x)`Bu, gerçekten sahteye anlatır. GAN'lar (Goodfellow 2014). Tahminde hızlı (bir ileri geçiş) ancak eğitim sırasında belirsiz olarak dengesiz. StyleGAN 1/2/3 2026'da bile sabit alan fotorealizmi için sanatın en son durumunu sürdürüyor.
+**3. Implicit density.**Denetliği tamamen atlayın; bir jeneratör öğrenin $G(z)$Örnekler üreten ve ayrımcı olan bir grup.$D(x)$Bu, gerçekten sahteye anlatır. GAN'lar (Goodfellow 2014). Tahminde hızlı (bir ileri geçiş) ancak eğitim sırasında belirsiz olarak dengesiz. StyleGAN 1/2/3 2026'da bile sabit alan fotorealizmi için sanatın en son durumunu sürdürüyor.
 
-**4. Score-based / continuous-time.**Çubuk yoğunluğunun eğilimi öğrenin `∇_x log p(x)`(score) doğrudan. Song & Ermon (2019) skor eşleşmesi, SDE'ye yayılmayı genelleştirdiğini gösterdi. Akış eşleşmesi (Lipman 2023) 2024-2026 sıcaklığıdır: simülasyonsuz eğitim, daha düz yollar, DDPM'den 4-10 kat daha hızlı örnekleme.
+**4. Score-based / continuous-time.**Çubuk yoğunluğunun eğilimi öğrenin $\nabla_x \log p(x)$(score) doğrudan. Song & Ermon (2019) skor eşleşmesi, SDE'ye yayılmayı genelleştirdiğini gösterdi. Akış eşleşmesi (Lipman 2023) 2024-2026 sıcaklığıdır: simülasyonsuz eğitim, daha düz yollar, DDPM'den 4-10 kat daha hızlı örnekleme.
 
 **5. Token-based autoregressive over discrete codes.**Yüksek-dim verileri bir VQ-VAE veya kalan kuantitör ile kısa bir ayrı jeton sekansına sıkıştırın, sonra jeton sekansını modellemek için bir Transformer kullanın. Parti, MuseNet, AudioLM, VALL-E, Sora'nın yama jetonçısı hepsinin bunu kullanması. Bu sep 1 artı öğrenilmiş jetonçudur.
 
@@ -53,7 +53,7 @@ Son on iki yılda beş aile hayatta kaldı. Her aile hangi ödüller verdiğini 
 Yeni bir üreticik model kağıdı düştüğünde, yöntem bölümünü okumadan önce bu beş soruya cevap verin.
 
 1. **What is being modeled?**Pikseller, gizli, ayrı simgeler, 3 boyutlu Gaussians, ağlar, dalga şekilleri?
-2. **Is the density explicit or implicit?**- Yazdılar mı ?`log p(x)`- Ne ?
+2. **Is the density explicit or implicit?**- Yazdılar mı ?$\log p(x)$- Ne ?
 3. **Sampling: one-shot or iterative?**İteratif, daha yavaş bir sonucu çıkarmak anlamına gelir; tek atış genellikle karşıtlık veya destilli anlamına gelir.
 4. **Conditioning: unconditional, class, text, image, pose?**Bu, kayıp ve mimarlık asfaltlamasını belirler.
 5. **Evaluation: FID, CLIP score, IS, human preference, task accuracy?**Her biri başarısızlık modlarını biliyor (Düşünme 14).
@@ -90,7 +90,7 @@ Hangi aile, 2026'da hangi görev için?
 | Text-to-video | Diffusion Transformer + flow matching | Sora, Veo 2, Kling. |
 | Speech + music | Token-based AR (AudioLM, VALL-E, MusicGen) or flow matching (AudioCraft 2) | Discrete tokens scale cheaply. |
 | 3D scenes | Gaussian Splatting fit, diffusion prior | 3D-GS for reconstruction, diffusion for novel-view. |
-| Density estimation (no sampling) | Flows | Only family with exact `log p(x)`. |
+| Density estimation (no sampling) | Flows | Only family with exact $\log p(x)$. |
 | Simulation / physics | Flow matching, score SDE | Straight-line paths, smooth vector fields. |
 
 ## Gönder
@@ -109,11 +109,11 @@ Bu beceride görevlerin tanımlanması ve çıkışları bulunur: (1) hangi aile
 
 | Term | What people say | What it actually means |
 |------|-----------------|-----------------------|
-| Generative model | "It makes new stuff" | Learns a sampler for `p_data(x)`, optionally exposes `log p(x)`. |
-| Explicit density | "You can evaluate it" | Model provides a closed-form or tractable `log p(x)`. |
-| Implicit density | "GAN-style" | Only a sampler — no way to evaluate `p(x)` of a given point. |
-| ELBO | "Evidence lower bound" | A tractable lower bound on `log p(x)`; VAEs and diffusion optimize it. |
-| Score | "Gradient of log-density" | `∇_x log p(x)`; diffusion and SDE models learn this field. |
+| Generative model | "It makes new stuff" | Learns a sampler for $p_{\text{data}}(x)$, optionally exposes $\log p(x)$. |
+| Explicit density | "You can evaluate it" | Model provides a closed-form or tractable $\log p(x)$. |
+| Implicit density | "GAN-style" | Only a sampler — no way to evaluate $p(x)$ of a given point. |
+| ELBO | "Evidence lower bound" | A tractable lower bound on $\log p(x)$; VAEs and diffusion optimize it. |
+| Score | "Gradient of log-density" | $\nabla_x \log p(x)$; diffusion and SDE models learn this field. |
 | Manifold hypothesis | "Data lives on a surface" | High-dim data concentrates on a low-dim manifold; why dimensionality reduction works. |
 | Autoregressive | "Predict the next piece" | Factorize joint as product of conditionals. |
 | Latent | "Compressed code" | Low-dim representation from which a decoder can reconstruct the input. |
