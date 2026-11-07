@@ -50,7 +50,7 @@ Estrutura de sequência de entrada:
 [START, z_1 tokens, z_2 tokens, z_3 tokens, ..., z_K tokens]
 ```
 
-As inserções de posição codificam tanto o índice de escala quanto a posição espacial dentro da escala.$k$, posição $(i, j)$Pode assistir a todos os tokens em escalas $1 \ldots k$e para tokens em escala $k$A VAR utiliza atenção posicional fixa sem causalidade intra-escala  todas as posições dentro de uma escala são previstas em paralelo.
+Os embebedamentos de posição codificam tanto o índice de escala quanto a posição espacial dentro da escala.$k$, posição $(i, j)$Pode assistir a todos os tokens em escalas $1 \ldots k$, incluindo todas as posições de escala $k$Não há ordem intra-escala e não há causalidade intra-escala, por isso todas as posições dentro de uma escala são previstas em paralelo.
 
 Perda de formação: em cada escala $k$, prever os tokens .$z_k$A perda de entropia cruzada nos códigos VQ discretos. A mesma estrutura que a GPT exceto a "sequência" é agora estruturada em escala.
 
