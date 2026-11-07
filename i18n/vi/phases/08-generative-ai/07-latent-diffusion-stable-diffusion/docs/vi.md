@@ -49,7 +49,7 @@ noise-schedule
 
 ## Hãy xây dựng nó
 
-`code/main.py`xếp hàng một đồ chơi 1-D "VAE" (tự xác định mã hóa + decoder, để chứng minh; một VAE thực sự sẽ là một con conv net) trên đầu DDPM từ Bài học 06 và thêm điều kiện lớp với hướng dẫn không phân loại. Nó cho thấy rằng cùng một mất tích phân tán hoạt động cho dù bạn chạy trên giá trị nguyên chất 1-D hoặc trên giá trị mã hóa  thông tin sâu sắc chính.
+`code/main.py`đạp một đồ chơi 1-D "VAE" (một mã hóa quy mô cố định bằng 0,5 và ngược chính xác của nó như decoder, để minh họa; một VAE thực sự sẽ là một con conv net) trên đầu của DDPM từ Bài học 06 và thêm điều kiện lớp với hướng dẫn không phân loại. Nó cho thấy rằng cùng một mất phân tán hoạt động cho dù bạn chạy trên giá trị nguyên liệu 1-D hoặc trên giá trị mã hóa. Đó là hiểu biết chính.
 
 ### Bước 1: mã hóa/bản giải mã
 
@@ -132,7 +132,7 @@ Các đống sản xuất vào năm 2026:
 
 Liên kết Flux là công thức "Tôi có một GPU tiêu dùng, tôi có thể vận chuyển này không?"
 
-1. **Staggered loading.**Flux có ba mạng không bao giờ cần phải tồn tại cùng nhau trong VRAM: T5-XXL mã hóa văn bản (~ 10 GB trong fp32), CLIP-L (còn nhỏ), 12B MMDiT và VAE. Mã hóa yêu cầu trước, * xóa * các mã hóa, tải DiT, từ chối, * xóa * DiT, tải VAE, giải mã. GPU 8GB tiêu dùng chỉ phù hợp với một giai đoạn tại một thời điểm.
+1. **Staggered loading.**Flux có bốn mạng không bao giờ cần tồn tại cùng nhau trong VRAM: T5-XXL mã hóa văn bản (~ 10 GB trong fp32), CLIP-L (còn), 12B MMDiT và VAE. Mã hóa yêu cầu trước, * xóa * các mã hóa, tải DiT, từ chối, * xóa * DiT, tải VAE, giải mã. GPU 8GB tiêu dùng chỉ phù hợp với một giai đoạn tại một thời điểm.
 2. **4-bit quantization via bitsandbytes.** `BitsAndBytesConfig(load_in_4bit=True, bnb_4bit_compute_dtype=torch.bfloat16)`trên cả mã hóa T5 và DiT. Giảm bộ nhớ 8x, giảm chất lượng không thể nhận thấy cho văn bản-đến hình ảnh theo các tiêu chuẩn của Aritra (được liên kết trong sổ ghi chép).
 3. **CPU offload.** `pipe.enable_model_cpu_offload()`tự động đổi các mô-đun giữa CPU và GPU khi mỗi bước tiến tiến.
 

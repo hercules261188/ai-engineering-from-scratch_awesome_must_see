@@ -99,7 +99,7 @@ def sample(dec, z_dim, rng):
 - **Posterior collapse.**KL term drive $q(z \mid x) \to \mathcal{N}(0, I)$quá mạnh mẽ mà$z$không có thông tin nào về $x$Phong sửa: β- hủy bỏ (bắt đầu $\beta=0$, ramp đến 1), free bits, hoặc bỏ qua KL trên kích thước không hoạt động.
 - **Blurry samples.**Thiết lập: decoder phân biệt (VQ-VAE, NVAE), hoặc chỉ sử dụng VAE như một bộ mã hóa và phân tán chồng trên các laten (đó là điều Stable Diffusion làm).
 - **β too large, too early.**Xem sự sụp đổ sau.$\beta \approx 0.01$và đường băng.
-- **Latent dim too small.**16-D hoạt động cho MNIST, 256-D cho ImageNet 2562, 2048-D cho ImageNet 10242. VAE của Stable Diffusion nén 512×512×3 → 64×64×4 (32x downsample factor trong không gian, 32x trong kênh).
+- **Latent dim too small.**16-D hoạt động cho MNIST, 256-D cho ImageNet 2562, 2048-D cho ImageNet 10242. VAE của Stable Diffusion nén 512×512×3 → 64×64×4 (8x downsample mỗi bên, 64x trong không gian; kênh đi từ 3 đến 4, do đó tổng thể ít hơn 48x giá trị).
 
 ## Sử dụng nó
 
