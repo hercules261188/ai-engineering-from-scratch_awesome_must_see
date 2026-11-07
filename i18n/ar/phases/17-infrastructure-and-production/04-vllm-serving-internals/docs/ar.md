@@ -11,7 +11,7 @@
 
 - شرح PagedAttention كمنصب متخزن KV: الكتل، جداول الكتل، ولماذا تبقى التجزئة أقل من 4% عند تحميل الإنتاج.
 - الرسم البياني لتنظيمات مستمرة على مستوى التكرار: كيف تترك التسلسلات المنتهية اللسلة والتي تتضمن جديدة دون استنزاف.
-- وصف المكملات المسبقة المقطوعة في جملة واحدة واسم مقياس التأخير الذي يحمي (لمحة: إنه ذيل TTFT ، وليس متوسط التنقل).
+- وصف المكملات المسبقة المقطوعة في جملة واحدة وأسم مقياس التأخير الذي يحمي (لمحة: هو ذيل ITL للكشفات المتزامنة، وليس متوسط التدفق).
 - تحقق من مزيج ميزات vLLM مقابل ماتريكية التوافق لنسخة الخاص بك قبل تمكين كل تحسين في وقت واحد.
 
 ## المشكلة
@@ -44,7 +44,7 @@
 
 لا يتم إعادة حجم الحزمة إلى رقم ثابت. تتشارك التسلسلات في مواقع مختلفة في خروجهما واحدة متضخمة إلى الأمام. في 2026 vLLM هذا يسمى `V1 scheduler`. عدم تغير المفتاح: يقوم المخطط بتشغيل مرة واحدة لكل تكرار للكشف وليس مرة واحدة لكل طلب.
 
-### الاحتمالات المسبقة المقطوعة تحمي ذيل TTFT
+### المكملات المسبقة المقطوعة تحمي ذيل الـ ITL
 
 يحتوي إعداد الـ 32k-token على Llama 3.3 70B على ~ 800 ms من إعداد الـ prefill النقي على H100 واحد. أثناء إعداد الـ prefill ، قم بتشخيص الرموز لكل تسلسل آخر في المجموعة. في حلقة خدمة ، يصبح تأخير الـ first-token latency (TTFT) من إشارة طويلة إطار التأخير بين الرموز (ITL) لعدد من المستخدمين الآخرين.
 
@@ -130,7 +130,7 @@ tensor-parallel
 | Chunked prefill | "prefill splitting" | Break long prefill into 512-token slices interleaved with decode |
 | TTFT | "first token time" | Prefill + queue + network; dominated by prefill at long prompts |
 | ITL | "inter-token latency" | Time between consecutive decode tokens; dominated by batch size |
-| Goodput | "throughput that meets SLO" | Tokens/sec where every request still hit TTFT and ITL targets |
+| Goodput | "throughput that meets SLO" | Requests/sec that still hit TTFT and ITL targets (Phase 17 · 08 reports it as the share of requests) |
 | V1 scheduler | "the new scheduler" | vLLM's 2026 scheduler; runs continuous batching with chunked prefill |
 | `--gpu-memory-utilization` | "the memory knob" | Fraction of HBM reserved for KV blocks after weights and activations |
 
