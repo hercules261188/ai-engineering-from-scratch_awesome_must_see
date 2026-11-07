@@ -71,7 +71,7 @@ after merge repeats and remove blanks: "hello"
 
 ### 布局分析
 
-对于结构文件,运行一个布局检测器 (LayoutLMv3, DocLayNet) 将每个区域标记为:标题,段落,图形,表格,脚注.读取顺序将成为"通过布局顺序区域进行反复,连接".
+对于结构化的文件,运行一个布局模型 (布局LMv3,或在DocLayNet数据集上训练的探测器),标签每个区域:标题,段落,图,表,脚注.读取顺序然后变成"通过布局顺序区域,连接".
 
 关于表格的使用**Key-Value extraction**模型 (可视化丰富的文件,LayoutLMv3可用于简单扫描).它们采集图像+检测的文本+位置,并预测结构化的键值对.
 
@@ -160,18 +160,23 @@ class TinyCRNN(nn.Module):
 
 ### 步骤3:合成OCR
 
-产生黑色到白色的数字字符串,
+生成黑白字符串,以进行端到端烟雾测试.每个字符成为一个六条列,以二进制拼写其词汇指数.图像必须携带字符的身份:如果每个字符是相同的空格框,模型无法判断`a`其他`x`损失将会停滞.
 
 ```python
 import numpy as np
+
+GLYPHS = "0123456789abcdefghijklmnopqrstuvwxyz"
 
 def synthetic_line(text, height=32, char_width=16):
     W = char_width * len(text)
     img = np.ones((height, W), dtype=np.float32)
     for i, c in enumerate(text):
         x = i * char_width
-        shade = 0.0 if c.isalnum() else 0.5
-        img[6:height - 6, x + 2:x + char_width - 2] = shade
+        code = GLYPHS.find(c) + 1
+        for bit in range(6):
+            if code >> bit & 1:
+                y = 4 + 4 * bit
+                img[y:y + 3, x + 2:x + char_width - 2] = 0.0
     return img
 
 
@@ -202,7 +207,7 @@ print(f"images: {imgs.shape}   targets: {targets.shape}   lengths: {lengths.toli
 model = TinyCRNN(vocab_size=len(vocab))
 opt = torch.optim.Adam(model.parameters(), lr=1e-3)
 
-for step in range(200):
+for step in range(400):
     strings = ["abc" + str(step % 10)] * 4 + ["xyz" + str((step + 1) % 10)] * 4
     imgs, targets, target_lens = build_batch(strings, vocab)
     log_probs = model(imgs)  # (W', 8, vocab)
@@ -211,7 +216,7 @@ for step in range(200):
     opt.zero_grad(); loss.backward(); opt.step()
 ```
 
-在这次微不足道的合成数据上,损失应该从3到0.2以上降低.
+在400步的时间内, 损失从双位数降至0.3左右.`code/main.py`运行相同的循环在自己的字符串集合上,然后解码三个试验字符串.
 
 ## 用它
 

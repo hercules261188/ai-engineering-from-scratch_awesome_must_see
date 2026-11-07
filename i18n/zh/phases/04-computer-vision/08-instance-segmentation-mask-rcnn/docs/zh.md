@@ -84,7 +84,7 @@ RoIAlign:
 
 ### 损失
 
-罩R-CNN的损失总共为四次:
+罩R-CNN总共损失了五次:
 
 ```math
 L = L_{\text{rpn\_cls}} + L_{\text{rpn\_box}} + L_{\text{box\_cls}} + L_{\text{box\_reg}} + L_{\text{mask}}
@@ -261,7 +261,7 @@ def train_step(model, images, targets, optimizer):
     return {k: v.item() for k, v in loss_dict.items()}
 ```
 
-其他`targets`列表必须包含每张图片的字符.`boxes`现在`labels`其他`masks`(如`(num_instances, H, W)`模型返回了训练期间的四次损失的定位和评估期间的预测列表,按键`model.training`现在,我们要去.
+其他`targets`列表必须包含每张图片的字符.`boxes`现在`labels`其他`masks`(如`(num_instances, H, W)`模型返回了训练期间5次损失的定位和评估期间预测列表,按键`model.training`现在,我们要去.
 
 其他`pycocotools`评估器为盒子和面具生产mAP@IoU=0.5:0.95,需要两个数字来确定盒子头还是面具头是瓶.
 

@@ -260,7 +260,7 @@ def sample_ddim(model, schedule, shape, steps=50, T=1000, device="cpu", eta=0.0)
     x = torch.randn(shape, device=device)
     alphas_cumprod = schedule["alphas_cumprod"].to(device)
 
-    ts = torch.linspace(T - 1, 0, steps + 1).long()
+    ts = torch.linspace(T - 1, -1, steps + 1).round().long()
     for i in range(steps):
         t = ts[i]
         t_prev = ts[i + 1]
@@ -276,7 +276,7 @@ def sample_ddim(model, schedule, shape, steps=50, T=1000, device="cpu", eta=0.0)
     return x
 ```
 
-`eta=0`总是完全确定性 (相同的噪音输入总是产生相同的输出).`eta=1`恢复了DDPM.
+时间表结束于`t_prev = -1`现在,最后一步是使用`a_prev = 1.0`他将清洁的归还.`x0_pred`没有剩余的噪音.`eta=0`总是完全确定性 (相同的噪音输入总是产生相同的输出).`eta=1`恢复DDPM当时间表访问每一个时间步骤 (`steps=T`)
 
 ## 用它
 
