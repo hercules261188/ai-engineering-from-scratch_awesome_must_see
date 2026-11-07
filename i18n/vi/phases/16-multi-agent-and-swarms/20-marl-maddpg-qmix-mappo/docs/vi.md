@@ -42,7 +42,7 @@ Chế độ thất bại: các nhà phê bình phát triển với các đại l
 
 ### QMIX (2018)  phân hủy giá trị
 
-Chỉ hợp tác. Giải thưởng toàn cầu là tổng của một hàm đơn giản của các giá trị Q mỗi đại lý:
+Chỉ có hợp tác.`Q_tot`là một hàm pha trộn đơn giản của các giá trị Q mỗi đại lý:
 
 ```math
 Q_{\text{tot}}(\tau, a) = f\big(Q_1(\tau_1, a_1), \ldots, Q_n(\tau_n, a_n)\big), \quad \frac{\partial f}{\partial Q_i} \ge 0

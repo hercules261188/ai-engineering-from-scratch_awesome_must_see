@@ -68,7 +68,7 @@ Vấn đề không phải là quốc gia chia sẻ bản thân nó là quốc gi
 
 1. **Attribute provenance on every write.**Mỗi mục trong hồ sơ nhà nước được chia sẻ là ai đã viết nó, khi nào, dưới thời nào, và (nếu có) nguồn nào mà đại lý trích dẫn.
 2. **Version writes; treat them as append-only.**Một sửa đổi là một mục mới thay thế cho mục cũ, không phải là một bản cập nhật tại chỗ.
-3. **Keep at least one agent that cannot write to shared state.**Một đại lý xác minh chỉ đọc lấy mẫu các mục nhập, lấy lại nguồn và đánh dấu sự không phù hợp. Bởi vì nó không thể viết cho hồ bơi, nó không thể bị nhiễm độc bởi hồ bơi.
+3. **Keep at least one agent that cannot write to shared state.**Một đại lý xác minh chỉ đọc lấy mẫu các mục nhập, lấy lại các nguồn và đánh dấu những bất đồng. Nó vẫn đọc hồ bơi, vì vậy nó có thể bị lừa bởi một mục nhập xấu, nhưng nó kiểm tra mỗi mục nhập so với nguồn gốc và không thể viết, vì vậy phán quyết của nó không bao giờ đưa một sự kiện độc vào trạng thái chia sẻ.
 
 ### Tỷ lệ tiền lệ của bảng đen (Hayes-Roth, 1985)
 

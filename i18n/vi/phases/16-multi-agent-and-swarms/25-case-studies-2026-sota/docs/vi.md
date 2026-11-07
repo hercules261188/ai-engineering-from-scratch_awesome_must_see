@@ -57,7 +57,7 @@ Bài học thiết kế:
 Trường hợp quy mô dân số sản xuất.
 
 - **Nov 2025:**Tàu Clawdbot (truyện viên mã hóa vòng ReAct của Peter Steinberger)
-- **Dec 2025 – Mar 2026:**đổi tên hai lần (Clawdbot → OpenClaw → tiếp tục dưới OpenClaw).
+- **Jan 2026:**đổi tên hai lần trong một tuần (Clawdbot → Moltbot vào ngày 27 tháng 1 sau khi có khiếu nại về nhãn hiệu, sau đó là Moltbot → OpenClaw ba ngày sau đó).
 - **Feb 2026:**Moltbook ra mắt như một mạng xã hội chỉ dành cho các đại lý trên cùng một nguyên thủy; ~ 2.3M tài khoản đại lý trong vài ngày.
 - **Mar 2026 (2026-03-10):**Meta mua lại Moltbook.
 - **Mar 2026:**Trung Quốc hạn chế OpenClaw trên máy tính của chính phủ.

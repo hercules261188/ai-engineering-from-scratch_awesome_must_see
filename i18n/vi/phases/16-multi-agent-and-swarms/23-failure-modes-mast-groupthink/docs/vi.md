@@ -112,7 +112,7 @@ STRATUS (NeurIPS 2025) báo cáo cải thiện hiệu quả giảm nhẹ 1,5 l�
 
 ### Việc kiểm toán trong chế độ thất bại
 
-Một thực tiễn tốt nhất năm 2026 là một kiểm toán về chế độ thất bại hàng năm (hoặc mỗi bản phát hành lớn):
+Một thực tiễn tốt nhất năm 2026 là một kiểm toán triệt để (và mỗi bản phát hành lớn) về chế độ thất bại:
 
 1. **Trace sample.**Thu thập khoảng 1000 dấu vết thực hành.
 2. **Categorize.**Đối với các lỗi của mỗi dấu vết, hãy lập bản đồ đến các danh mục MAST + Groupthink.
