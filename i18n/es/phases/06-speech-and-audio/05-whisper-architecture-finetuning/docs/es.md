@@ -36,9 +36,9 @@ El Large-v3 tiene parámetros de 1.55B. Turbo utiliza un decodificador de 4 capa
 <|startoftranscript|><|en|><|transcribe|><|notimestamps|> Hello world.<|endoftext|>
 ```
 
-- `<|en|>` etiqueta de lenguaje; obliga el comportamiento traducción-versus-transcripción.
-- `<|transcribe|>`o `<|translate|>` traducir la salida en inglés de cualquier entrada de idioma, o literalmente.
-- `<|notimestamps|>` saltar las temporadas de nivel de palabra (más rápido).
+- `<|en|>`: etiqueta de idioma; nombres del idioma hablado en el audio.
+- `<|transcribe|>`o `<|translate|>`: etiqueta de tarea; transcribir el discurso en su lenguaje de origen, o traducirlo a texto en inglés.
+- `<|notimestamps|>`: saltar las temporadas de nivel de palabra (más rápido).
 
 El prompt es lo que permite a un modelo hacer muchas tareas.`<|en|>`¿ Qué ?`<|fr|>`y transcribe francés.
 

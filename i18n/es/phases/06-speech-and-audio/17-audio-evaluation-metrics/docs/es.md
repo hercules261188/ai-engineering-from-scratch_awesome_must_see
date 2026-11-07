@@ -45,7 +45,7 @@ Cada tarea de audio tiene múltiples métricas, cada una midiendo un eje diferen
 
 **SECS (Speaker Encoder Cosine Similarity).**Para clonación de voz. ECAPA que incorpora cosino entre la referencia y la salida clonada. &gt; 0,75 = clona reconocible.
 
-**WER-on-ASR-round-trip.**ejecuta Whisper sobre la salida de TTS, computa WER contra el texto de entrada. Captura regresiones de inteligencia. 2026 SOTA: &lt; 2% CER.
+**WER-on-ASR-round-trip.**ejecuta Whisper sobre la salida de TTS, computa WER con el texto de entrada. Captura regresiones de inteligencia. 2026 SOTA: &lt; 2% WER en los conjuntos de prueba en inglés (en lugar de los conjuntos mandarinos reportan CER).
 
 **TTFA (time-to-first-audio).**La latencia del reloj de pared. Kokoro-82M: ~ 100 ms; F5-TTS: ~ 1 s.
 
@@ -79,7 +79,7 @@ Desbalanceado: **macro F1**¿ Qué es eso ?**per-class recall**.Informe por clas
 
 **CLAP Score.**Score de alineación de texto y audio utilizando embebedidos CLAP. &gt; 0.3 = alineación razonable.
 
-**Listening panel MOS.**Aún es la última palabra para la música de consumo. Suno v5 ELO 1293 en TTS Arena (desde preferencias humanas emparejadas).
+**Listening panel MOS.**Sin embargo, la última palabra para la música de consumo. Suno v5 obtuvo un ELO 1293 en el propio índice de preferencia de parejas de Suno. Ese es un número de proveedor; TTS Arena clasifica el habla, no la música.
 
 ### Indicadores de referencia de lenguaje de audio
 
