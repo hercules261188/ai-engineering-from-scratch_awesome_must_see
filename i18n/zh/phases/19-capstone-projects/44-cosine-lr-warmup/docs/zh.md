@@ -108,7 +108,7 @@ python3 code/main.py
 
 1. 加入一个逆方根变量,然后在200步的玩具训练运行中比较它.
 2. 添加一个`--restart`标志增加了第二次加热`total_steps / 2`保护玩具运行过程中热重启是否改善或受伤.
-3. 加入一个单元测试,即时间表是连续的:每一步`[0, total_steps]`差异`|lr(step+1) - lr(step)|`边界是`lr_max / warmup_steps`现在,我们要去.
+3. 添加一个单元测试,表示时间表是连续的:`warmup_steps > 0`为了每一步`[0, total_steps]`差异`|lr(step+1) - lr(step)|`升坡的最大的坡`lr_max / warmup_steps`的坡.`pi * (lr_max - lr_min) / (2 * (total_steps - warmup_steps))`短的尾段可能比升温坡度更,所以升温坡度本身不是安全的边界.
 4. 将时间表编写成一个`torch.optim.lr_scheduler.LambdaLR`课程使用简单的步骤函数,包装改变了什么?
 5. 添加一个`--plot-png`通过印一个真正的情节的旗`matplotlib`辩护课程的文本图表或PNG是否是CI运行的默认更好的.
 

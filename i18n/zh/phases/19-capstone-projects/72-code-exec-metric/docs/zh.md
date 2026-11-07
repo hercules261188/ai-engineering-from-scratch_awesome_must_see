@@ -69,7 +69,7 @@ DENIED = {
 
 每个子进程都会得到3秒的默认预算.`subprocess.run(..., timeout=t)`如果时间停止,跑者会抓住`TimeoutExpired`杀死过程,记录一个`timeout`运行者继续前进,运行者继续前进.
 
-时间间隔可根据任务配置到`task.metadata.timeout_s`长期的单元测试可能要求更多;课70的验证器将值限制在30秒,以保持套件的限制.
+时间是`timeout_s`论证`run_candidate`课75跑者每次跑一次`code_exec_timeout_s`长期的单元测试可能需要更多,但`run_candidate`缩小值到0.1到30秒之间,以保持套件的限制.
 
 ## 输出盖
 
@@ -83,7 +83,7 @@ DENIED = {
 pass_at_k(n, c, k) = 1 - C(n - c, k) / C(n, k)
 ```
 
-什么时候`n - c < k`值是 值是 值是`1`执行直接处理边缘案例.`pass_at_k(n, c, k)`对于第74课中的排名板层来说.
+什么时候`n - c < k`号码器`C(n - c, k)`按照通常的规则,是零 (你不能选择`k`低于`k`),所以值是`1`执行直接处理边缘案例.`pass_at_k(n, c, k)`对于第74课中的排名板层来说.
 
 ```mermaid
 flowchart LR

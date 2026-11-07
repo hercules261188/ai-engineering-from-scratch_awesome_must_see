@@ -1,6 +1,6 @@
 #   终端细调管道 (数据向SFT向DPO服务)
 
-> 基于你自己的数据训练的8B模型,根据你自己的偏好进行了DPO排列,量化,投机式解码, 2026 开放堆是Axolotl v0.8,TRL 0.15,代的Unsloth,量化的GPTQ/AWQ/GGUF,配送的VLLM 0.7和EAGLE-3. 终点是将整个管道可复制的运行  YAML 进入,服务端点 ,并在2026年模型开放框架下发布模型卡.
+> 根据你的数据训练的8B类模型,根据你的偏好进行了DPO排列,量化,投机式解码, 2026 开放堆是Axolotl v0.8,TRL 0.15,代的Unsloth,量化的GPTQ/AWQ/GGUF,配送的VLLM 0.7和EAGLE-3. 终点是可重复运行整个管道 (YAML中,服务端点外) 并根据2026年模型开放框架发布模型卡.
 
 **Type:** Capstone
 **Languages:** Python (pipeline), YAML (configs), Bash (scripts)
@@ -12,7 +12,7 @@
 
 每个认真的人工智能团队在2026年都会保持一个精细调节管道. 不是因为它们运输了一个边界基模型,而是因为下游适应 域 SFT,DPO与标记的偏好,蒸的草稿用于投机解码,使用EAGLE-3 是可测量的胜利现实. 亚克索洛特l v0.8处理多GPU SFT配置. 升值为0.15的DPO和GRPO. 不让你快速使用单GPU代. 通过使用 EAGLE-3 的 vLLM 0.7 能够在质量不损失的情况下推出2~3倍的解码吞吐量. 工具工作;工艺在YAML,数据卫生和评估纪律.
 
-您将通过SFT运行8B基 (Llama 3.3,Qwen3或Gemma 3) 然后通过任务特定数据进行DPO,为服务量化,并对lm-评估-harness,RewardBench-2,MT-Bench-v2和MMLU-Pro进行加密测量.您将根据2026模型开放框架生成一个模型卡.问题是可复制性一个命令重复整个管道端到端.
+您将通过SFT运行8B到14B基 (Llama 3.1 8B,Qwen3 14B或Gemma 3 12B) 然后通过任务特定数据进行DPO,量化服务,并测量利与lm-评估-杆,RewardBench-2,MT-Bench-v2和MMLU-Pro.您将根据2026模型开放框架制作一个模型卡.问题是可复制性:一个命令重复整个管道端到端.
 
 ## 概念
 
@@ -56,7 +56,7 @@ model card (2026 MOF) + safety eval (Llama Guard 4)
 ## 堆
 
 - 数据:用于减产的数据库,用于质量的Nemotron-CC分类器,用于PII的Presidio
-- 基:拉马3.3 8B,Qwen3 14B,或Gemma3 12B
+- 基:拉马3.1 8B,Qwen3 14B,或Gemma 3 12B
 - 光:Axolotl v0.8 配备ZERO-3,闪光注意3,包装序列
 - 偏好调整:DPO或GRPO的TRL0.15;单GPU代的Unsloth
 - 量化:GPTQ (马林),AWQ,GGUF通过 llama.cpp
@@ -120,7 +120,7 @@ $ ./pipeline.sh config/llama3.3-8b-domainX.yaml
 
 1. 运行SFT+DPO vs SFT+GRPO仅针对SFT+DPO,并使用相同的任务指标. 报告哪种优先方法获胜以及多少.
 
-2. 换Llama 3.3 8B为Qwen3 14B. 测量1百万美元的代币,质量相匹配.
+2. 换Llama 3.1 8B为Qwen3 14B. 测量1百万美元的代币,质量相匹配.
 
 3. 测量EAGLE-3域数据接受率与通用ShareGPT. 报告 delta和对延迟预算的含义.
 
@@ -148,5 +148,5 @@ $ ./pipeline.sh config/llama3.3-8b-domainX.yaml
 - [DeepSeek R1 paper (arXiv:2501.12948)](https://arxiv.org/abs/2501.12948) GRPO 方法
 - [vLLM + EAGLE-3 documentation](https://docs.vllm.ai)参考服务堆
 - [SGLang SpecForge](https://github.com/sgl-project/SpecForge)替代投机解码训练师
-- [Model Openness Framework 2026](https://isocpp.org/)公开释放分类标准
+- [Model Openness Framework (arXiv:2403.13784)](https://arxiv.org/abs/2403.13784): 开放分类标准
 - [lm-evaluation-harness](https://github.com/EleutherAI/lm-evaluation-harness)定律评价运行器

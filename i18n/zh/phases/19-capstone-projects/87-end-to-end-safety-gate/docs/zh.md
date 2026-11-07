@@ -9,7 +9,7 @@
 
 ## 问题
 
-课程82-86在这个轨道中每个都出货了单一的部分:一个类别,一个输入探测器,一个评估框架,一个输出分类器,一个规则引擎.一个真正的安全门必须编写它们,在请求生命周期中的合适时运行它们,决定在不同意时采取什么行动,并产生一个检查者可以在周一早上阅读的痕迹.
+课程82-86每一段都包含一个单一的部分:一个分类,一个输入探测器,一个评估框架,一个输出分类器,一个规则引擎. 一个真正的安全门必须组装运行时间的零件 (第83课检测器,第85课分类器和第86课规则引擎),在请求生命周期中的合适时刻运行它们,决定在不同意时采取什么行动, 编曲就是一个教训.
 
 门位于三个检查站. 在模型被调用之前,预代运行:课第83节的探测器看着提示,或者通过它,直接阻止它 (高安全性攻击),或者将旗附在下游层中进行权重. 流通过器缓冲块,如果出现禁止短语,就会早点结束流 (如果门只看起来是后期,前置注射存活下来). 后代运行模型完成后:从第85课开始的分类器路由器和从第86课开始的规则引擎检查了全部输出,门将他们的判决与前代信号汇集,门执行了最后的行动.
 
@@ -35,11 +35,11 @@ flowchart TB
 
 | Signal state | Action |
 |---|---|
+| detector confidence >= 0.85 on a non-benign category | block before generation |
 | any high severity | block |
-| any medium severity | redact |
-| any low severity | warn |
-| all none + detector confidence < 0.5 | allow |
-| detector confidence 0.5-0.85, no other signal | warn |
+| any medium severity (detector confidence 0.5 to 0.85, or early stream termination) | redact |
+| any low severity (detector confidence below 0.5 on a non-benign category) | warn |
+| detector says benign and no other signal | allow |
 
 区块返回拒绝.编辑将编辑分类器的文本发送,并应用规则引擎修复器. 警告发送原始的软通知. 允许发送原始的. 每个请求发出一个`RequestTrace`随着`request_id`现在`prompt`现在`pre_gen`检测员的判决`during_gen`标的标`post_gen`(分类程序行动+规则报告),`final_action`现在`final_output`其他`latency_ms`现在,我们要去.
 

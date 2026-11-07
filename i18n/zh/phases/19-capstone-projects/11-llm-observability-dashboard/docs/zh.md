@@ -85,7 +85,7 @@ ce-otel-drift
 
 8. **Alerting chain.**报警管理器向Slack进行警告,而对于关键违规则则则向PagerDuty进行访问.
 
-9. **Regression probe.**注入 bug:评估的聊天机器人开始泄漏假SSN1%的时间.测量MTTR:从 bug部署到 Slack警报.
+9. **Regression probe.**注入 bug:评估的聊天机器人开始 1% 的时间泄漏假SSN.测量检测时间 (MTTD):从部署 bug 到 Slack 警报.检测是仪表板拥有的 MTTR 的部分;修复和重新部署后.
 
 ## 用它
 
@@ -106,7 +106,7 @@ $ curl -X POST https://my-otel-collector/v1/traces -d @trace.json
 |:-:|---|---|
 | 25 | Trace-schema coverage | Number of SDK families producing canonical GenAI spans (target: 6+) |
 | 20 | Eval correctness | DeepEval / RAGAS scores vs hand-labeled set |
-| 20 | Dashboard UX | MTTR on injected regression (under 5 minutes target) |
+| 20 | Dashboard UX | MTTD on injected regression (under 5 minutes target) |
 | 20 | Cost / scale | Sustained ingest at 1k spans/sec without backlog |
 | 15 | Alerting + drift detection | Prometheus/Alertmanager chain exercised end to end |
 | **100** | | |

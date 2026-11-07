@@ -91,7 +91,7 @@ python3 code/main.py
 
 **Cross-encoder is not symmetric.** `rerank(q, d)`其他`rerank(d, q)`总是先输入查询. 如果你意外地交换,回忆会崩.
 
-**N is too low to expose the bug.**如果设置N=K,交叉编码器不能重新排序,它只能重重.升降器看起来是零.选择N至少是K的3倍.
+**N is too low to expose the bug.**如果设置N=K,交叉编码器可以重新排序K候选人,但不能把新的在顶部K.记住K不能移动,所以升降看起来是零.选择N至少是K的三倍.
 
 **Training data leaks into the eval.**如果手动标记的训练对包括评估查询,重新排名看起来很神奇. 严格分开训练和评估,即使在一个固定.
 

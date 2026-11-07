@@ -1,6 +1,6 @@
 # 标记化体 HDF5
 
-> 导演可以以线路速度流动. 磁盘上的JSONL不能存活16个数据加载器工作者. 具有可变化,成片整数数据集的 HDF5确实是这样的. 这一课将流通标记化构建成可变大小的 HDF5 数据集,在多个文件中分断写,在训练时间内内存地图读取,以及一个滑动窗口数据加载器,以正确包装生成固定长度的序列.
+> 导演可以以线路速度流动. 磁盘上的JSONL不能存活16个数据加载器工作者. 具有可变化,成片整数数据集的 HDF5确实是这样的. 这一课将流通代码化构建成可变大小的 HDF5 数据集,在多个文件中分成分片的写作,在训练时间中分成分片的读取,以及一个滑动窗口数据加载器,以正确包装生成固定长度的序列.
 
 **Type:** Build
 **Languages:** Python
@@ -18,7 +18,7 @@
 
 现代语言模型训练课程每秒数以万计的样本阅读代币, 磁盘上的JSONL在第一个冷缓存页面故障时死亡:JSON解析器缓慢,文档界限无法地址,寻求"样本4.217.884"需要扫描文件. 车也不适合,因为教练不想要柱子,$O(1)$随机访问.
 
-HDF5是合适的,因为它提供了一个零碎,可变化,仅整数的数据集,其零件在读取时是页面缓存友好的.`tokens[3,200,000 : 3,200,8192]`根据 HDF5 的数据,该文件的数据库将被转换为一个新分配的 NumPy 阵列.
+HDF5是合适的,因为它提供了一个零碎,可变化,仅整数的数据集,其零件在读取时是页面缓存友好的.`tokens[3_200_000 : 3_208_192]`根据 HDF5 的数据,该文件的数据库将被转换为一个新分配的 NumPy 阵列.
 
 构建问题是让写作方诚实. 易于滥用可变化数据集:一次写一份文件,HDF5文件被碎片化到无法使用. 写出所有文件,一个尺寸,一个过程死亡会失去整个碎片. 适当的纪律是缓冲,然后扩展, 缓冲尺寸与块尺寸相匹配,
 
@@ -35,7 +35,7 @@ flowchart TD
   Write --> Buffer
   Buffer --> Close[Final flush + close]
   Close --> ShardDone[Shard file finalized]
-  ShardDone --> MMapRead[Memory-mapped read]
+  ShardDone --> MMapRead[Chunked read]
   MMapRead --> Window[Sliding-window dataloader]
   Window --> Train[Train batch]
 ```
@@ -48,9 +48,9 @@ flowchart TD
 
 管道并行写分片:从19期课42中的每个输入分片产生一个HDF5输出分片.`shards.json`根据指标的数据,每个分片,文件路径,代币数量,文件数量,以及代币的 sha256.`shards.json`计算全球抵消和验证数据库.
 
-### 记忆图阅读
+### 碎片阅读
 
-在培训期间,每个员工在 `swmr=True`模式和要求`tokens[start:stop]`HDF5 的零件布局使得当零件热时,该页面被缓存支持. 工作者从来没有实现整个文件:该片段被复制到数据加载器的批量缓冲器中,然后数据加载器在批量时间复制到固定内存训练子中. 热路每零件过渡时有一个系统调用;其余的一切都是RAM访问.
+在培训期间,每个员工在 `swmr=True`模式和要求`tokens[start:stop]`现在,我们要去. HDF5的零件布局使得当零件热时,这是一种便宜的读取: h5py不会内存地图文件,它通过 HDF5零件缓存和OS页面缓存读取整个零件,然后复制请求的超级测试器. 工作者从来没有实现整个文件:切片被复制到数据加载器的批量缓冲器中,然后数据加载器在批量时复制到固定记忆训练子中. 热路每次切换的部分有一个系统调用; 其余的都是RAM访问.
 
 ### 滑窗数据加载器
 
@@ -67,10 +67,10 @@ cc-hdf5-corpus
 - `Tokenizer`对于演示,一个足够好的字节级确定性代币.`encode(text) -> list[int]`其他`vocab_size`现在,我们要去.
 - `HDF5ShardWriter`- 打开可变量整数数据集,缓冲代币到分片大小,重新大小并以固定大小的步骤写,记录`token_count`其他`sha256`像HDF5属性在接近.
 - `ShardedTokenizationPipeline`- 代输入文件,将它们转向编写器,并发出一个`shards.json`标记
-- `MmapTokenStore`- 打开碎片文件用于内存映射的读取,计算全球偏移,暴露一个单个`get_slice(start, stop)`果.
+- `MmapTokenStore`- 打开碎片文件,以便读取碎片 (名称是方便的; h5py读取碎片,而不是绘制文件),计算全球偏移,暴露单个`get_slice(start, stop)`果.
 - `SlidingWindowDataloader`- 从全球流量中随机选择窗户,并产生收益`(input_ids, target_ids)`编号阵列.
 
-文件底部的演示程序构建了一个小的内存体,将其分成两个片段,通过内存地图打开它们,运行数据加载器10批次,
+文件底部的演示程序构建了一个小的内存体,将其分成两个片段, 打开它们,
 
 运行它:
 
@@ -117,7 +117,7 @@ python3 code/main.py
 | Term | What people say | What it actually means |
 |------|-----------------|------------------------|
 | Resizable dataset | "Append-only" | An HDF5 dataset with `maxshape=(None,)` that grows via `resize` calls in chunk-sized strides |
-| Chunked layout | "How HDF5 stores it" | Fixed-size on-disk pages that the kernel can memory-map and the dataloader can read contiguously |
+| Chunked layout | "How HDF5 stores it" | Fixed-size on-disk blocks that HDF5 reads and caches as one unit, so the dataloader can read a contiguous range cheaply |
 | `swmr` mode | "Read-while-write" | Single-Writer-Multiple-Reader mode that lets dataloader workers share the file safely |
 | Shard index | "shards.json" | The durable index of all token shards with offsets and content hashes |
 | Sliding window | "Training sample" | A fixed-length slice of the global token stream that the trainer pairs with its shift-by-one target |
@@ -126,7 +126,7 @@ python3 code/main.py
 
 - [HDF5 chunking documentation](https://support.hdfgroup.org/documentation/hdf5/latest/hdf5_chunking.html)- 这一课使用的数据集的零碎,可变量格式布局
 - [h5py user guide](https://docs.h5py.org/en/stable/)- 对于 HDF5 的Python绑定
-- [NumPy memory mapping](https://numpy.org/doc/stable/reference/generated/numpy.memmap.html)- 读取侧原始的HDF5通过h5py暴露
+- [h5py chunked storage](https://docs.h5py.org/en/stable/high/dataset.html#chunked-storage)- h5py如何读取碎片数据集和大小碎片缓存
 - 阶段19 · 42 - 输出本课标示的下载器
 - 阶段19 · 44 - 消耗这个数据加载器的可西斯时间表
 - 19 · 45 阶段 - 完成训练阶段的AMP循环

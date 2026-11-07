@@ -57,7 +57,7 @@ sequenceDiagram
 
 ### 为什么要着种子
 
-每个级别都必须呼叫`torch.manual_seed(seed + rank)`为了乱,但`torch.manual_seed(seed)`参数 init.单个共享种子意味着每个级别都看到相同的批量顺序 (失败数据平行);参数的级别特定种子意味着初始参数不一致通过浮动epsilon和梯度同步不再使复制品相同.
+每个级别都必须呼叫`torch.manual_seed(seed + rank)`为了乱,但`torch.manual_seed(seed)`对于参数 init. 一个用于混合的共享种子意味着每个级别都看到相同的批量顺序 (输出数据平行). 对于参数来说,在构建时播出的排列0是使复制品相同的,它覆盖了每个排列初始化的任何东西. 共有的 init 种子是备份:如果播放被跳过或破碎, 排名特定的 init 给每一个复制品不同的起始重量, 试验对参数等效率是失败的.
 
 ```figure
 ci-ddp-grad-sync

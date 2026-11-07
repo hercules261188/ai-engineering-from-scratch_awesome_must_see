@@ -9,7 +9,7 @@
 
 ## 学习目标
 
-- 取出有效批量身份: `effective_batch = micro_batch * accum_steps`现在,我们要去.
+- 取出有效批量身份: `effective_batch = micro_batch * accum_steps * world_size`现在,`micro_batch * accum_steps`在本课中使用的单一设备上.
 - 实现每微批量损失规模化,使累积的梯度与单个全批次回归相匹配.
 - 跳过优化器同步到最后一批微量 (同步最后一步).
 - 读取一个吞吐量与有效批量曲线相比,并解释降低回报率.
