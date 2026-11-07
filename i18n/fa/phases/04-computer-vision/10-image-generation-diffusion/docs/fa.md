@@ -260,7 +260,7 @@ def sample_ddim(model, schedule, shape, steps=50, T=1000, device="cpu", eta=0.0)
     x = torch.randn(shape, device=device)
     alphas_cumprod = schedule["alphas_cumprod"].to(device)
 
-    ts = torch.linspace(T - 1, 0, steps + 1).long()
+    ts = torch.linspace(T - 1, -1, steps + 1).round().long()
     for i in range(steps):
         t = ts[i]
         t_prev = ts[i + 1]
@@ -276,7 +276,7 @@ def sample_ddim(model, schedule, shape, steps=50, T=1000, device="cpu", eta=0.0)
     return x
 ```
 
-`eta=0`کاملاً تعیین کننده است (درآمدی از همان صدا همیشه همان output را تولید می کند). `eta=1`بازیافت DDPM
+برنامه در ساعت 6 تموم میشه`t_prev = -1`، پس آخرین مرحله استفاده می کنه`a_prev = 1.0`و پاک کننده را بازمی گرداند`x0_pred`بدون شور باقی مانده`eta=0`کاملاً تعیین کننده است (درآمدی از همان صدا همیشه همان output را تولید می کند). `eta=1`بازیابی DDPM زمانی که برنامه به هر مرحله زمانی مراجعه می کند (`steps=T`)
 
 ## ازش استفاده کن
 

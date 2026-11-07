@@ -84,7 +84,7 @@ RoIAlign ماسک AP را به صورت رایگان با 3 تا 4 امتیاز 
 
 ### خسارت ها
 
-ماسک آر-CNN چهار خسارت را به هم اضافه کرده:
+ماسک آر- سی ان پنج خسارت را به هم اضافه کرده:
 
 ```math
 L = L_{\text{rpn\_cls}} + L_{\text{rpn\_box}} + L_{\text{box\_cls}} + L_{\text{box\_reg}} + L_{\text{mask}}
@@ -261,7 +261,7 @@ def train_step(model, images, targets, optimizer):
     return {k: v.item() for k, v in loss_dict.items()}
 ```
 
-.`targets`لیست باید دارای دیکت های هر تصویر باشد`boxes`،`labels`و`masks`(به عنوان`(num_instances, H, W)`مدل یک دیکت از چهار خسارت در طول آموزش و یک لیست از پیش بینی ها در طول ارزیابی را به دست می آورد.`model.training`. .
+.`targets`لیست باید دارای دیکت های هر تصویر باشد`boxes`،`labels`و`masks`(به عنوان`(num_instances, H, W)`مدل یک دیکت پنج خسارت در طول آموزش و یک لیست پیش بینی در طول ارزیابی را به دست می آورد.`model.training`. .
 
 .`pycocotools`evaluator mAP@IoU=0.5:0.95 را برای جعبه ها و ماسک ها تولید می کند؛ شما به هر دو عدد نیاز دارید تا بدانید که آیا سر جعبه یا سر ماسک گوشه بطری است.
 

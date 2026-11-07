@@ -71,7 +71,7 @@ CTC دلیل کار CRNN در سال 2015 است و هنوز هم بیشتر م�
 
 ### تجزیه طرح
 
-برای اسناد ساختاری، یک آشکارگر طرح (LayoutLMv3، DocLayNet) را اجرا کنید که هر منطقه را برچسب می دهد: عنوان، پاراگراف، شکل، جدول، نوتی زیر. ترتیب خواندن سپس "در طی مناطق به ترتیب طرح، کنکاتن" می شود.
+برای اسناد ساختاری، یک مدل طرح (LayoutLMv3 یا یک آشکارساز آموزش داده شده بر اساس مجموعه داده های DocLayNet) اجرا کنید که هر منطقه را برچسب می دهد: عنوان، پاراگراف، شکل، جدول، نوتی زیر. ترتیب خواندن سپس "در طی مناطق به ترتیب طرح، کنکاتین" می شود.
 
 برای فرم ها استفاده کنید **Key-Value extraction**مدل ها (دونا برای اسناد غنی از بصری، LayoutLMv3 برای اسکن ساده) آنها تصویر + متن شناسایی شده + موقعیت ها را می گیرند و زوج های کلیدی ساختاری را پیش بینی می کنند.
 
@@ -160,18 +160,23 @@ class TinyCRNN(nn.Module):
 
 ### مرحله سوم: OCR مصنوعی
 
-برای آزمایش دود از انتها تا انتها، رشته های انگشت سیاه به سفید تولید کنید.
+برای یک آزمایش دود از پایان تا پایان، رشته های سیاه به سفید تولید کنید. هر کاراکتر به یک ستون شش بار تبدیل می شود که شاخص لغت خود را به صورت دوگانه امضا می کند. تصویر باید هویت کاراکتر را حمل کند: اگر هر کاراکتر یک جعبه خالی یکسان باشد، مدل نمی تواند تشخیص دهد`a`از`x`و بازده اي به پايان مي رسه
 
 ```python
 import numpy as np
+
+GLYPHS = "0123456789abcdefghijklmnopqrstuvwxyz"
 
 def synthetic_line(text, height=32, char_width=16):
     W = char_width * len(text)
     img = np.ones((height, W), dtype=np.float32)
     for i, c in enumerate(text):
         x = i * char_width
-        shade = 0.0 if c.isalnum() else 0.5
-        img[6:height - 6, x + 2:x + char_width - 2] = shade
+        code = GLYPHS.find(c) + 1
+        for bit in range(6):
+            if code >> bit & 1:
+                y = 4 + 4 * bit
+                img[y:y + 3, x + 2:x + char_width - 2] = 0.0
     return img
 
 
@@ -202,7 +207,7 @@ print(f"images: {imgs.shape}   targets: {targets.shape}   lengths: {lengths.toli
 model = TinyCRNN(vocab_size=len(vocab))
 opt = torch.optim.Adam(model.parameters(), lr=1e-3)
 
-for step in range(200):
+for step in range(400):
     strings = ["abc" + str(step % 10)] * 4 + ["xyz" + str((step + 1) % 10)] * 4
     imgs, targets, target_lens = build_batch(strings, vocab)
     log_probs = model(imgs)  # (W', 8, vocab)
@@ -211,7 +216,7 @@ for step in range(200):
     opt.zero_grad(); loss.backward(); opt.step()
 ```
 
-از دست دادن باید از ~3 به ~0.2 در 200 مرحله روی این داده های مصنوعی معمولی کاهش یابد.
+از دست دادن دو رقمی به حدود 0.3 در عرض 400 مرحله بر روی این داده های مصنوعی معمولی کاهش می یابد.`code/main.py`در این حالت، یک حلقه مشابه را در مجموعه رشته های خود اجرا می کند و سپس سه رشته آزمون را رمزگذاری می کند.
 
 ## ازش استفاده کن
 

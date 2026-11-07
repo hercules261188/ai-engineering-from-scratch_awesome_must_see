@@ -100,7 +100,7 @@ Cutmix:
 
 ### صاف کردن برچسب
 
-يه پسر عموي اشتباه به جاي آموزش در مقابل`[0, 0, 1, 0, 0]`، قطار ضد`[eps/C, eps/C, 1-eps, eps/C, eps/C]`برای یه بچه کوچک`eps`مانند 0.1 . مانع از تولید الگوی به طور تعسفی تیز و بهبود کالیبریشن تقریبا بدون هزینه.`nn.CrossEntropyLoss(label_smoothing=0.1)`از پيترش 1.10
+يه پسر عموي اشتباه به جاي آموزش در مقابل`[0, 0, 1, 0, 0]`، قطار ضد`[eps/C, eps/C, 1-eps+eps/C, eps/C, eps/C]`برای یه بچه کوچک`eps`مانند 0.1 (هدف یک گرم با توزیع یکسانی مخلوط شده است، بنابراین هنوز هم به 1 می رسد). مانع از تولید الگوهای به طور تصادفی تیز می شود و کالیبری را تقریبا بدون هزینه بهبود می بخشد.`nn.CrossEntropyLoss(label_smoothing=0.1)`از پيترش 1.10
 
 ### ارزیابی فراتر از دقت
 
@@ -415,7 +415,7 @@ val_ds   = CIFAR10(root="./data", train=False, download=True, transform=eval_tf)
 | DataLoader | "The batcher" | Wraps a dataset with shuffling, batching, and (optional) multi-worker loading; gets blamed for half of training bugs |
 | Augmentation | "Random transforms" | Any pixel-level transform at training time that preserves the label; teaches invariances the CNN does not have natively |
 | Mixup / Cutmix | "Mix two images" | Blend both inputs and labels so the classifier learns smooth interpolations instead of hard boundaries |
-| Label smoothing | "Softer targets" | Replace one-hot with (1-eps, eps/(C-1), ...); improves calibration and slightly boosts accuracy |
+| Label smoothing | "Softer targets" | Replace one-hot with (1-eps+eps/C, eps/C, ...); improves calibration and slightly boosts accuracy |
 | Top-k accuracy | "Top-5" | The correct class is in the k highest-probability predictions; used on datasets with genuinely ambiguous classes |
 | Confusion matrix | "Where errors live" | C x C table where entry (i, j) counts images of true class i predicted as j; diagonal is right, off-diagonal tells you what to fix |
 

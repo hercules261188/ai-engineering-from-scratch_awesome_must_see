@@ -235,7 +235,7 @@ for step, batch in enumerate(dataloader):
 
 - **Model family**: SD 1.5 برای موسیقی های کمیونتی منبع باز، SDXL برای وفاداری بالاتر، SD3 / FLUX برای حالت فن و الزامات مجوز سخت.
 - **Scheduler**: DPM-Solver++ 2M Karras برای 20-30 مرحله، LCM-LoRA زمانی که تاخیر کمتر از 1s است.
-- **Precision**.`float16`در شماره 4080/4090`bfloat16`در A100 و جدیدتر`int8`(به وسیله`bitsandbytes`یا`compel`) وقتی VRAM تنگ است.
+- **Precision**.`float16`در شماره 4080/4090`bfloat16`در A100 و جدیدتر`int8`(به وسیله`bitsandbytes`) وقتی VRAM تنگ است.
 - **Conditioning**: کار بر روی متن ساده؛ برای کنترل قوی تر، ControlNet (مقدور، عمق، حالت) را در بالای لوله پایه اضافه کنید.
 
 برای نسل دسته بندی`AUTO1111`-`ComfyUI`ابزار جامعه هستند؛ برای APIs تولید،`diffusers`+ `accelerate`یا`optimum-nvidia`با تانسورRT

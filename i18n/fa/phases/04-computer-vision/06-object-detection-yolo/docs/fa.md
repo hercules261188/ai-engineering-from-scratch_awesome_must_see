@@ -203,8 +203,10 @@ def encode(box_xyxy, cell_x, cell_y, stride, anchor_wh):
     cy = 0.5 * (y1 + y2)
     w = x2 - x1
     h = y2 - y1
-    tx = cx / stride - cell_x
-    ty = cy / stride - cell_y
+    off_x = np.clip(cx / stride - cell_x, 1e-6, 1 - 1e-6)
+    off_y = np.clip(cy / stride - cell_y, 1e-6, 1 - 1e-6)
+    tx = np.log(off_x / (1 - off_x))
+    ty = np.log(off_y / (1 - off_y))
     tw = np.log(w / anchor_wh[0] + 1e-8)
     th = np.log(h / anchor_wh[1] + 1e-8)
     return np.array([tx, ty, tw, th])
@@ -223,7 +225,7 @@ def sigmoid(x):
     return 1.0 / (1.0 + np.exp(-x))
 ```
 
-آزمون: کد یک جعبه و سپس کد را پاک کنید  شما باید چیزی را به اصل بسیار نزدیک به دست آورید (تا اینکه برعکس sigmoid کاملا قابل برگشت نباشد وقتی `tx`در محدوده پس از سیگمائید نیست).
+آزمون: یک جعبه را که مرکز آن به طور دقیق در داخل سلول است رمزگذاری کنید، سپس رمزگذاری کنید، و باید جعبه اصلی را به خطا شناور برگردانید. `encode`ذخیره می کند مرکز تعویض به عنوان یک logit، برعکس از `sigmoid`در`decode`. کلپ باعث می شود که لوجیت محدود باشد. مرکز دقیقا در کنار سلول به حداکثر حرکت می کند`1e-6`سلول ها`assign_targets`در زیر همان جاستانها ذخیره می شود، بنابراین سر در فضا حرکت می کند که`decode`انتظار داره
 
 ### مرحله چهارم: حداقل سر یولو
 
@@ -273,8 +275,10 @@ def assign_targets(boxes_xyxy, classes, anchors, stride, grid_size, num_classes)
         best = int(np.argmax(ious))
         aw, ah = anchors[best]
 
-        target[gy, gx, best, 0] = cx / stride - gx
-        target[gy, gx, best, 1] = cy / stride - gy
+        off_x = np.clip(cx / stride - gx, 1e-6, 1 - 1e-6)
+        off_y = np.clip(cy / stride - gy, 1e-6, 1 - 1e-6)
+        target[gy, gx, best, 0] = np.log(off_x / (1 - off_x))
+        target[gy, gx, best, 1] = np.log(off_y / (1 - off_y))
         target[gy, gx, best, 2] = np.log(bw / aw + 1e-8)
         target[gy, gx, best, 3] = np.log(bh / ah + 1e-8)
         target[gy, gx, best, 4] = 1.0
@@ -319,7 +323,7 @@ def yolo_loss(pred, target, has_obj, lambda_coord=5.0, lambda_obj=1.0, lambda_no
                    "obj_neg": loss_obj_neg.item(), "cls": loss_cls.item()}
 ```
 
-پنج پارامتر هاي فوق العاده که هر آموزش YOLO يا سخت کد يا پاکش ميکنه`lambda_coord=5, lambda_noobj=0.5`در اصل YOLOv1 کاغذ است و هنوز هم به عنوان یک پیش فرض معقول کار می کند.
+چهار وزن از دست دادن که هر آموزش یولو یا کد سخت یا پاک کننده است.`lambda_coord=5, lambda_noobj=0.5`در اصل YOLOv1 کاغذ است و هنوز هم به عنوان یک پیش فرض معقول کار می کند.
 
 ### مرحله 7: خط لوله ی انفراس
 
