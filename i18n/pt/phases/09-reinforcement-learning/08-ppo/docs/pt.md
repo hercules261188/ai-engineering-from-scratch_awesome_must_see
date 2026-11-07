@@ -38,7 +38,7 @@ L^{\text{CLIP}}(\theta) = \mathbb{E}_t \left[ \min\left( r_t(\theta) A_t, \matho
 Dois termos:
 
 - Se a vantagem $A_t > 0$E a proporção tenta crescer para além.$1 + \epsilon$, o clip aplania a gradiente  não empurrar uma boa ação mais longe do que $+\epsilon$acima da velha probabilidade.
-- Se a vantagem $A_t < 0$E a proporção tenta crescer para além.$1 - \epsilon$(o que significa que faríamos uma ação ruim mais provável em comparação com a sua redução cortada), o clip caps a gradiente  não empurrar uma ação ruim abaixo $-\epsilon$- Não .
+- Se a vantagem $A_t < 0$e a proporção tenta cair abaixo.$1 - \epsilon$(o que significa que faríamos uma ação ruim muito menos provável do que a velha política fez), o clip aplania a gradiente: não empurrar uma ação ruim mais longe do que $-\epsilon$abaixo da velha probabilidade.
 
 O `min`O que é que se passa? - Não, não.
 

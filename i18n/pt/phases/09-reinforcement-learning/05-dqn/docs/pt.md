@@ -72,7 +72,7 @@ class ReplayBuffer:
         return rng.sample(self.buf, batch)
 ```
 
-- 50.000 para a Atari. 5.000 são suficientes para o nosso ambiente de brinquedos.
+- 106 capacidade para a Atari, como no DQN original (recolhe 50.000 transições antes de começar a aprendizagem); 5.000 são suficientes para o nosso ambiente de brinquedos.
 
 ### Passo 2: uma pequena rede Q (MLP manual)
 

@@ -1,6 +1,6 @@
 # RL para jogos  AlphaZero, MuZero e a Era do LLM-Razonamento
 
-> 1992: TD-Gammon venceu campeões humanos no backgammon com TD puro. 2016: AlphaGo venceu Lee Sedol. 2017: AlphaZero dominou xadrez, shogi e Go a partir do zero. 2024: DeepSeek-R1 provou a mesma receita, com o GRPO substituindo o PPO, trabalha no raciocínio.
+> 1992: TD-Gammon venceu campeões humanos no backgammon com TD puro. 2016: AlphaGo venceu Lee Sedol. 2017: AlphaZero dominou xadrez, shogi e Go a partir do zero. 2025: DeepSeek-R1 provou a mesma receita, com o GRPO substituindo o PPO, trabalha no raciocínio.
 
 **Type:** Build
 **Languages:** Python
@@ -60,7 +60,7 @@ Zero conhecimento humano, zero heurísticas artesanais, uma única receita que d
 
   $L_{\text{GRPO}}(\theta) = -\mathbb E_{q, \lbrace o_i \rbrace} \left[ \frac{1}{G} \sum_i A_i \cdot \log \pi_\theta(o_i \mid q) \right] + \beta \cdot \mathrm{KL}(\pi_\theta \Vert \pi_{\text{ref}})$
 
-Não há modelo de recompensa, não há crítico, não há MCTS. A linha de base relativa ao grupo substitui as três.
+Não há modelo de recompensa aprendido, nenhum crítico, nenhum MCTS. Um verificador baseado em regras fornece a recompensa, a linha de base relativa ao grupo substitui o crítico e o passo de busca é retirado.
 
 **The R1 recipe in full.**DeepSeek-R1 (DeepSeek 2025) é um dos dois modelos de um único documento:
 
@@ -86,7 +86,7 @@ f3-selfplay-ladder
 
 ## Construí-lo
 
-O código está em `code/main.py`Implementos **GRPO in miniature**O algoritmo é o mesmo que num LLM; apenas a política e o ambiente são mais simples. Ensinam a *perda* e a *vantagem relativa ao grupo*, que é a inovação de 2025.
+O código está em `code/main.py`Implementos **GRPO in miniature**O algoritmo é o mesmo que em um LLM; apenas a política e o ambiente são mais simples. Ensinam a * perda* e a * vantagem relativa ao grupo*, que é a inovação 2024 da DeepSeekMath.
 
 ### Passo 1: um ambiente de verificação pequeno
 
@@ -144,7 +144,7 @@ Os mesmos diagnósticos que o RLHF: KL para referência, entropia política, rec
 ## Encurralagens
 
 - **Reward hacking via verifier gaming.**O GRPO herda o risco da RLHF: se o verificador for errado ou explorável, o MLL encontrará o explorador.
-- **Group size too small.**A variação da linha de base do grupo é a seguinte:$1/\sqrt{G}$- Abaixo .$G = 4$, o sinal de vantagem é barulhento; escolha padrão é $G = 8$- A 64.
+- **Group size too small.**A variação da linha de base média do grupo é a seguinte:$1/G$(o seu erro padrão como $1/\sqrt{G}$Abaixo .$G = 4$, o sinal de vantagem é barulhento; escolha padrão é $G = 8$- A 64.
 - **Length bias.**Completos LLM de diferentes comprimentos têm diferentes log-probabilidades. Normalize por contagem de tokens, ou use log-prob de nível de sequência, ou truncate para a máxima comprimento.
 - **Pure self-play cycles.**O treinamento no estilo AlphaZero pode ficar preso em loops de domínio em jogos de soma geral.
 - **Search-policy mismatch.**O AlphaZero treina a política para imitar o resultado da pesquisa.
