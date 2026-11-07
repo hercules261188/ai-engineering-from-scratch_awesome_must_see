@@ -66,7 +66,7 @@ Chaque appel que le modèle émet a un`id`Chaque résultat que l'hôte renvoie d
 
 L'hôte exécute l'exécuteur de chaque appel sur son propre fil, coroutine ou travailleur à distance.`asyncio.gather`L'ordre de réalisation est imprévisible  l'identifiant est l'identifiant.
 
-Un bug commun: répondre avec des résultats dans l'ordre de la liste d'appels au lieu de l'ordre de finalisation.`tool_call_id`, mais si un résultat est abandonné ou dupliqué, la soumission hors ordre rend le débogage plus difficile.
+Un bug commun: répondre avec des résultats dans l'ordre de la liste d'appels au lieu de l'ordre de finalisation.`tool_call_id`, mais si un résultat est supprimé ou dupliqué, une liste de réponses qui est réorganisée loin de l'ordre dans lequel les résultats sont arrivés rend l'écart plus difficile à trouver dans les journaux.
 
 ### Appels d' outils de diffusion
 

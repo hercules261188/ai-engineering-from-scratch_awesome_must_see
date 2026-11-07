@@ -205,7 +205,7 @@ cd phases/13-tools-and-protocols/23-capstone-tool-ecosystem
 python3 code/main.py
 ```
 
-Il faut examiner cinq choses:
+Il faut examiner six choses:
 
 1. `server/discover`annonce révision `2026-07-28`et l'extension des tâches.
 2. Alice peut lire et générer un rapport, tandis que l'appel écrit de Bob est refusé.

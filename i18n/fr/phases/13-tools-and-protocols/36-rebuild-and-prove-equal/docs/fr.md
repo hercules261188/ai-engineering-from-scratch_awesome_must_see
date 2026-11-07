@@ -389,6 +389,29 @@ Les exigences:
 
 Le succès signifie que le dossier de preuve énumère quatre fonctions, chaque réclamation porte un identifiant de preuve, et `grade_label`échoue lorsqu'une chaîne d'étiquette est différente.
 
+## Laboratoire qualifié
+
+Cinq questions sur les fixations de cette leçon.`code/lab_answers.json`. Écrivez les nombres comme des chiffres ou comme des chaînes hexagonale comme `"0x40"`, et les listes comme des listes JSON.
+
+1. `t1`: percent_change_model(3, 105) sur x86_64.
+2. `t2`: percent_change_model(0, 5) sur x86_64.
+3. `t3`: grade_model ((100).
+4. `t4`: le nombre de cellules dans input_grid().
+5. `t5`: le nombre de cellules de grille où le modèle x86_64 s'accroche.
+
+Vérifiez vos réponses:
+
+```bash
+cd phases/13-tools-and-protocols/36-rebuild-and-prove-equal
+python3 code/lab.py
+```
+
+Le vérificateur calcule chaque valeur attendue à partir de `code/main.py`Il imprime`PASS`- Je suis là .`FAIL`ou `TODO`pour chaque tâche et un score, et il sort de 0 seulement quand les cinq passent. `python3 code/lab.py my-answers.json`Il vérifie un autre dossier. `code/tests/test_lab.py`prouve que le vérificateur accepte les bonnes réponses et rejette les mauvaises.
+
+### Je le vois courir.
+
+Le [Inside a Decompiler](https://aiengineeringfromscratch.com/inside-a-decompiler)La machine se termine par un pseudocode et le dépose comme il l'a déduit: la page ne le prouve pas.
+
 ## Les compétences en matière de sortie
 
 Cette leçon produit `outputs/skill-rebuild-and-prove-equal.md`. Utilisez-le pour transformer la preuve de fonction et la reconstruction d'un candidat en une preuve à deux pattes et un enregistrement de preuve.

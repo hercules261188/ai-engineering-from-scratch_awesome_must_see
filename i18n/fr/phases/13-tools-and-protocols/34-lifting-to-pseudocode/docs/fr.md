@@ -533,6 +533,29 @@ Les exigences:
 
 Le succès signifie`grade`à`-O0`et `grade`à`-O1`produire la même sortie sur le réseau, avec un `switch`et non`goto`- Je suis désolé .
 
+## Laboratoire qualifié
+
+Cinq questions sur les fixations de cette leçon.`code/lab_answers.json`. Écrivez les nombres comme des chiffres ou comme des chaînes hexagonale comme `"0x40"`, et les listes comme des listes JSON.
+
+1. `t1`: paramètres que la convention d'appel donne pourcentage_changement à -O1.
+2. `t2`: les fonctions phi sous forme de SSA de total à -O1.
+3. `t3`: le diviseur que le diviseur magie trouve pour 0x66666667 avec la barre 34.
+4. `t4`: la dernière déclaration du pseudocode percent_change à -O1, comme une ligne de texte.
+5. `t5`: le param_1 du type C récupéré du total à -O1.
+
+Vérifiez vos réponses:
+
+```bash
+cd phases/13-tools-and-protocols/34-lifting-to-pseudocode
+python3 code/lab.py
+```
+
+Le vérificateur calcule chaque valeur attendue à partir de `code/main.py`Il imprime`PASS`- Je suis là .`FAIL`ou `TODO`pour chaque tâche et un score, et il sort de 0 seulement quand les cinq passent. `python3 code/lab.py my-answers.json`Il vérifie un autre dossier. `code/tests/test_lab.py`prouve que le vérificateur accepte les bonnes réponses et rejette les mauvaises.
+
+### Je le vois courir.
+
+Le [Inside a Decompiler](https://aiengineeringfromscratch.com/inside-a-decompiler?opt=O0)machine exécute cette leçon comme sa presse élévateur, broches de type, jig structurant et imprimante, avec l'IR, SSA et pseudocode qui `code/main.py`Ce lien ouvre le `-O0`Objet: trois fentes de pile deviennent locales et le jig ferme les deux mâchoires pour le si/autrement.
+
 ## Artéfacts
 
 Cette leçon produit `outputs/skill-lifting-to-pseudocode.md`. Utilisez-le pour lever une fonction avec une dérivation pour chaque ligne et pour remplir la table de différence contre le texte d'un décompilateur.

@@ -52,12 +52,12 @@ Chaque fournisseur a besoin de cinq choses:
 | Result block | role `tool`, `tool_call_id` | `user` with `tool_result`, `tool_use_id` | `functionResponse` with matching `id` |
 | Force-a-tool | `tool_choice: {type: "function", function: {name}}` | `tool_choice: {type: "tool", name}` | `tool_config: {function_calling_config: {mode: "ANY"}}` |
 | Forbid tools | `tool_choice: "none"` | `tool_choice: {type: "none"}` | `mode: "NONE"` |
-| Strict schema | `strict: true` | schema-is-schema (always enforced) | `responseSchema` at request level |
+| Strict schema | `strict: true` | `strict: true` per tool (opt-in) | `responseSchema` at request level |
 
 ### Les limites que vous atteindrez
 
 - **OpenAI.**128 outils par requête. profondeur de schéma 5. chaîne d'arguments <= 8192 octets.`$ref`- Non , pas du tout .`oneOf`- Je suis là.`anyOf`- Je suis là.`allOf`avec chevauchement, chaque propriété répertoriée dans `required`- Je suis désolé .
-- **Anthropic.**64 outils par demande. La profondeur du schéma est effectivement illimitée mais une limite pratique 10.
+- **Anthropic.**64 outils par demande. La profondeur du schéma est effectivement illimitée mais une limite pratique 10.`strict: true`Le schéma est un contrat que le modèle tend à suivre, pas une garantie.
 - **Gemini.**64 fonctions par requête. Les types de schéma sont un sous-ensemble OpenAPI 3.0 (légère divergence de JSON Schema 2020-12).
 
 ### `tool_choice`comportement
@@ -94,7 +94,7 @@ Les erreurs d'argument invalide sont également différentes.
 
 - **OpenAI (non-strict).**Retours de modèle `arguments: "{bad json}"`Si votre analyse JSON échoue, vous injectez un message d'erreur et réappellez.
 - **OpenAI (strict).**La validation se produit lors du décoding; JSON non valide est impossible mais `refusal`peut apparaître.
-- **Anthropic.** `input`peut contenir des champs inattendus; le schéma est conseillé. Valider côté serveur.
+- **Anthropic (non-strict).** `input`Les données peuvent contenir des champs inattendus; le schéma est conseillé.`strict: true`Le prélèvement est limité au schéma.
 - **Gemini.**La particularité de OpenAPI 3.0: `enum`sur les champs d'objets ignorés silencieusement; validez-vous.
 
 ### Le modèle de traducteur

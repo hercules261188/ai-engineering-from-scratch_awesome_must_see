@@ -11,7 +11,7 @@
 
 - Expliquez pourquoi un LLM qui ne peut générer que du texte ne peut pas, par lui-même, prendre des mesures contre le monde réel.
 - Dessinez la boucle d'appel d'outil en quatre étapes (décrivez → décidez → exécutez → observez) et nommez le propriétaire de chaque étape.
-- Écrivez une description d'outil en trois parties: nom, entrée de schéma JSON et fonction d'exécuteur déterministe.
+- Écrivez une définition d'outil en quatre parties: nom, description, entrée de schéma JSON et fonction d'exécuteur déterministe.
 - Distinguer les outils purs et les outils ayant des effets secondaires et expliquer pourquoi la fraction est importante pour la sécurité.
 
 ## Le problème
@@ -28,7 +28,7 @@ La boucle de quatre étapes est l'invariable sous tout cela.
 
 ### Étape 1: décrire
 
-L'hôte déclare chaque outil avec trois champs.
+L'hôte déclare chaque outil au modèle avec trois champs. La quatrième partie, l'exécuteur, reste du côté hôte et n'atteint jamais le modèle.
 
 - **Name.**Un identifiant stable et lisible par machine.`get_weather`Pas "chose météo".
 - **Description.**Un bref résumé en langage naturel en un paragraphe. "Utilisez-le lorsque l'utilisateur demande les conditions actuelles d'une ville spécifique.
@@ -112,7 +112,7 @@ tp-tool-loop
 
 À quoi regarder:
 
-- Le registre des outils contient trois champs par outil: nom, description, schéma et référence d'exécuteur.
+- Le registre des outils contient quatre champs par outil: nom, description, schéma et référence d'exécuteur.
 - Le validateur est un sous-ensemble minimal de schéma JSON (types, requis, enum, min/max) écrit uniquement en stdlib.
 - Les agents de production ont besoin de ce type de disjoncteur.
 

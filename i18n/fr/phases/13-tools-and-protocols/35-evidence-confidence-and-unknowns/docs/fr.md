@@ -426,6 +426,29 @@ Les exigences:
 
 Le succès signifie un rapport dans lequel chaque phrase cite un id du paquet et celui de l' un.`unknown`La réclamation est partie.
 
+## Laboratoire qualifié
+
+Cinq questions sur les fixations de cette leçon.`code/lab_answers.json`. Écrivez les nombres comme des chiffres ou comme des chaînes hexagonale comme `"0x40"`, et les listes comme des listes JSON.
+
+1. `t1`: l'identifiant de preuve que compute_evidence_id donne pour ré-evidence-grade.json.
+2. `t2`: le nombre de limitations dans le dossier de notes.
+3. `t3`: le statut de la couverture des notes.
+4. `t4`: la confiance et l'autorité du dossier de notation, en tant que liste de deux lignes.
+5. `t5`: le SHA-256 de l'objet du dossier de notation.
+
+Vérifiez vos réponses:
+
+```bash
+cd phases/13-tools-and-protocols/35-evidence-confidence-and-unknowns
+python3 code/lab.py
+```
+
+Le vérificateur calcule chaque valeur attendue à partir de `code/main.py`Il imprime`PASS`- Je suis là .`FAIL`ou `TODO`pour chaque tâche et un score, et il sort de 0 seulement quand les cinq passent. `python3 code/lab.py my-answers.json`Il vérifie un autre dossier. `code/tests/test_lab.py`prouve que le vérificateur accepte les bonnes réponses et rejette les mauvaises.
+
+### Je le vois courir.
+
+Le [Inside a Decompiler](https://aiengineeringfromscratch.com/inside-a-decompiler?symbols=off)La machine conserve un registre de preuve avec quatre plateaux: observé, dérivé, déduit et inconnu. Ce lien ouvre la course avec la table des symboles désactivée, de sorte que le nom et la fin du fichier de fonction sont inconnus et les fichiers de démarrage sont déduits.
+
 ## Leçon d'artisanat
 
 Cette leçon produit `outputs/skill-evidence-ledger.md`Il indique à l'agent comment écrire chaque découverte en tant qu'enregistrement avec confiance, autorité, limitations et liens.`pass`- Je suis là .`fail`- Je suis là .`unknown`ou `unsupported`- Je suis désolé .
