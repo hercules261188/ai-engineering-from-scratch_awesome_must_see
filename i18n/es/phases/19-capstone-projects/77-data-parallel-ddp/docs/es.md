@@ -57,7 +57,7 @@ Un transformador tiene miles de tensores de parámetros. Un allreduce por tensor
 
 ### ¿Por qué se pincha la semilla?
 
-Cada rango debe llamar`torch.manual_seed(seed + rank)`para mezclar pero `torch.manual_seed(seed)`para el parámetro init. Una sola semilla compartida significa que cada rango ve el mismo orden de lote (parallelos de datos derrotando); una semilla específica de rango para parámetros significa que los parámetros iniciales no están de acuerdo por epsilon flotante y la sincronización de gradientes ya no hace que las réplicas sean idénticas.
+Cada rango debe llamar`torch.manual_seed(seed + rank)`para mezclar pero `torch.manual_seed(seed)`para el parámetro init. Una sola semilla compartida para mezclar significa que cada rango ve el mismo orden de lote (parallelos de datos derrotados). Para los parámetros, la clasificación 0 emitida en la construcción es lo que hace que las réplicas sean idénticas, y se sobreescribe cualquier que cada clasificación inicializado. La semilla de init compartida es la copia de seguridad: si la transmisión se omite o se rompe, la init específica de rango da a cada réplica diferentes pesos iniciales, y la sincronización de gradientes sola nunca las vuelve a juntar. Obtenga el patrón de semillas correcto o la prueba de equivalencia de parámetros falla en el paso 1.
 
 ```figure
 ci-ddp-grad-sync

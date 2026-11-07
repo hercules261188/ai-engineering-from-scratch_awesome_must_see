@@ -20,7 +20,7 @@ El modelo de lenguaje nuevo llega cada semana. La afirmación de marketing es qu
 
 Sin un arnés en su repo se comparan dos modelos por vibraciones. con un arnés se comparan por puntaje en un conjunto de tareas fijas con una métrica fija, en una salida JSON se puede diferir. El arnés es el contrato entre la carrera de ayer y la carrera de hoy. sin él, las regresiones envían.
 
-La trampa es sobreconectar el arnés a un solo modelo. La solución es la misma trampa inversa: el arnés es lo suficientemente pequeño como para leerlo en quince minutos, las tareas son lo suficientemente pequeñas como para enviarse en el repo, las métricas se escriben desde cero para que un colega pueda auditarlas, y el adaptador es el único lugar donde el código específico del modelo vive. Cambiar el adaptador, el tablero se mueve; cambiar las tareas, el tablero se mueve. Nada más debe moverse.
+La trampa es sobreconectar el arnés a un solo modelo. La solución es mantener todas las opciones específicas del modelo fuera del arnés: el arnés es lo suficientemente pequeño como para leerlo en quince minutos, las tareas son lo suficientemente pequeñas como para enviarse en el repo, las métricas se escriben desde cero para que un colega pueda auditarlas, y el adaptador es el único lugar donde el código específico del modelo vive. Cambiar el adaptador, el tablero se mueve; cambiar las tareas, el tablero se mueve. Nada más debe moverse.
 
 ## El concepto
 

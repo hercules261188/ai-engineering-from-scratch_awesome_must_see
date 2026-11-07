@@ -69,7 +69,7 @@ Envuelvemos al candidato prependendo .`import sys`y un guardia que se pega en mo
 
 Cada subproceso obtiene un presupuesto predeterminado de tres segundos de reloj de pared.`subprocess.run(..., timeout=t)`Si el tiempo de espera dispara, el corredor atrapa.`TimeoutExpired`, mata el proceso, y registra un `timeout`El corredor sigue adelante y el corredor sigue adelante.
 
-El tiempo de espera se puede configurar por tarea a través de `task.metadata.timeout_s`Las pruebas de unidad de larga duración pueden requerir más; el validador de la lección 70 limita el valor a treinta segundos para mantener la suite limitada.
+El tiempo de espera es el `timeout_s`argumento a`run_candidate`La lección 75 runner lo establece una vez por carrera .`code_exec_timeout_s`Los ensayos unitarios de larga duración pueden pedir más, pero `run_candidate`se limita al valor a entre 0,1 y 30 segundos para mantener la suite limitada.
 
 ## Capas de salida
 
@@ -83,7 +83,7 @@ Pass-at-k es la estimadora imparcial utilizada por HumanEval y sus amigos.`n`mue
 pass_at_k(n, c, k) = 1 - C(n - c, k) / C(n, k)
 ```
 
-¿ Cuándo ?`n - c < k`el numerador no está definido y el valor es `1`La implementación maneja el caso de borde directamente.`pass_at_k(n, c, k)`para su uso por la capa de clasificación en la lección 74.
+¿ Cuándo ?`n - c < k`, el numerador `C(n - c, k)`es cero por la convención habitual (no se puede elegir `k`fallas de menos de `k`), por lo que el valor es `1`La implementación maneja el caso de borde directamente.`pass_at_k(n, c, k)`para su uso por la capa de clasificación en la lección 74.
 
 ```mermaid
 flowchart LR

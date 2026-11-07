@@ -27,7 +27,7 @@ El color azul es el color de la pantalla, el color azul es el color de la pantal
 
 ## Señalización
 
-El tokenizer es`re.findall(r"\w+", text.lower())`. letra pequeña, alfanumérica corre, puntuación de caída. cada métrica en esta lección utiliza este tokenizer exacto. el corredor no tiene que elegir. si intercambias tokenizadores, estás ejecutando un punto de referencia diferente.
+El tokenizer es`re.findall(r"\w+", text.lower())`. letras menores, cadenas de caracteres de palabras (letras, dígitos y subrayantes), dejar todo lo demás. Cada métrica en esta lección utiliza este tokenizer exacto. El corredor no tiene que elegir. Si intercambias tokenizadores, estás ejecutando un punto de referencia diferente.
 
 ```python
 TOKEN_RE = re.compile(r"\w+", re.UNICODE)
@@ -66,7 +66,7 @@ Para tareas multitareales, tomamos la mejor F1 sobre la lista de objetivos. Eso 
 
 ## BLEEU-4
 
-BLEU es la métrica canónica de traducción automática y todavía aparece en el trabajo de resumen. La formulación que usamos es BLEU-4 a nivel de corpus con la penalidad de brevedad estándar y el suavización aditiva-uno en recuentos de n-gramos modificados para que un solo 4 gramos faltantes no empuje la puntuación a cero.
+BLEU es la métrica canónica de traducción automática y todavía aparece en el trabajo de resumen. La formulación que usamos es BLEU-4, de nivel de oración, calificada por par de predicción y referencia, con la pena de brevedad estándar y el suavización aditiva-uno en recuentos de n-gramos modificados para que un solo 4 gramos faltantes no empuje la puntuación a cero.
 
 Para cada par de referencia candidato, contamos n-grama modificada de precisión para n igual a 1, 2, 3, 4. La precisión modificada recoge el conteo de n-grama candidato por el conteo máximo de ese n-grama en cualquier referencia, por lo que un candidato no puede inflar repetindo una frase.
 
@@ -109,7 +109,7 @@ La tabla de numpy hace que la implementación sea legible; las listas de Python 
 
 ## Precisión
 
-Para las tareas de clasificación de múltiples objetivos, la precisión se reduce a una coincidencia exacta con un solo objetivo normalizado.`metric_name`sin pasar por las comparaciones de cuerdas dentro del corredor.
+Para las tareas de clasificación, la precisión se reduce a la coincidencia exacta: la predicción obtiene un puntaje de 1 si coincide con cualquier objetivo normalizado en la lista.`metric_name`sin pasar por las comparaciones de cuerdas dentro del corredor.
 
 ## Contrato de expedición
 

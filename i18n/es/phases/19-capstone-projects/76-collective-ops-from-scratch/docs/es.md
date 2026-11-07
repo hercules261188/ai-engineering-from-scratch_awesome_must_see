@@ -16,7 +16,7 @@
 
 ## El problema
 
-Una totalreducción ingenua sobre N filas envía N veces el tensor a una raíz y transmite N veces de vuelta.$O(N)$por rango, la raíz se convierte en un cuello de botella, y el suelo del reloj de la pared es el enlace más lento veces N.$2(N-1)$pedazos de tamaño $T/N$, por lo que los bytes por rango caen a $2T(N-1)/N$El árbol allreduce gana en pequeños enlaces de N y de alta latencia porque la profundidad es$\log_2(N)$el lúpulo en lugar de $2(N-1)$Elige la topología equivocada para la forma del grupo y la GPU más lenta dicta el tiempo de paso.
+Una totalreducción ingenua sobre N filas envía N veces el tensor a una raíz y transmite N veces de vuelta.$O(N)$por rango, la raíz se convierte en un cuello de botella, y el suelo del reloj de la pared es el enlace más lento veces N.$2(N-1)$pedazos de tamaño $T/N$, por lo que los bytes por rango caen a $2T(N-1)/N$, que se acerca $2T$El árbol allreduce gana en pequeños enlaces de N y de alta latencia porque la profundidad es $\log_2(N)$el lúpulo en lugar de $2(N-1)$Elige la topología equivocada para la forma del grupo y la GPU más lenta dicta el tiempo de paso.
 
 Cada marco de entrenamiento distribuido que leerás en esta pista depende de estos cuatro primitivos. PyTorch DDP sincroniza los gradientes con un allreduce por cubo de parámetros. ZeRO desglosará el estado de optimización mediante reduc_scatter y emitirá parámetros actualizados por allgather. FSDP convierte el todo hacia adelante en todo juntado más reduc_scatter. Necesidades paralelas de transmisión de tuberías para las activaciones en grupos de etapas. Si no se pueden implementar los cuatro colectivos, no se puede razonar sobre por qué los entrenamientos se detienen, por qué la desajuste de gradientes aparece en el rango 3, o por qué la burbuja de tubería se duplica cuando se intercambian topologías.
 
@@ -97,7 +97,7 @@ Modelos de producción:
 
 ## Envío
 
-Utilice las primitivas de red de cola en las lecciones 77-81. Lección 77 los cables todos reducen a DDP. Lección 78 los cables reducen_dispersón en ZeRO. Lección 79 los cables transmitidos en activaciones de tuberías. Lección 81 compone los cuatro en la demostración de extremo a extremo.
+Utilice las primitivas de red de cola en las lecciones 77-81. Las lecciones 77 reducen todos los cables en DDP. Las lecciones 78 reducen_scatter en ZeRO. Las lecciones 79 mueven las activaciones de tuberías con envío de punto a punto y recv, no colectivo. Las lecciones 81 componen a las cuatro en la demostración de extremo a extremo.
 
 ## Los ejercicios
 

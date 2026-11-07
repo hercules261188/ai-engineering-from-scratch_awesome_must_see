@@ -43,7 +43,7 @@ stateDiagram-v2
     DONE --> [*]
 ```
 
-`IDLE`Es el único punto de entrada legal. `DONE`Es la única salida legal.`AWAITING_TOOL`Es el único estado que produce un punto de atracción.
+`IDLE`Es el único punto de entrada legal. `DONE`Es la única salida legal.`AWAITING_TOOL`Es el único estado que da un punto de atracción por sí mismo.`on_pause`La Comisión de Asuntos Exteriores ha adoptado una decisión en el marco de la cual se ha adoptado un nuevo reglamento de la Comisión de Asuntos Exteriores.
 
 La máquina de estado es determinista. Dado el mismo registro de eventos, el arnés vuelve a entrar en el mismo estado. Esa propiedad es lo que le permite reproducir sesiones para el descomposición sin volver a llamar al modelo.
 

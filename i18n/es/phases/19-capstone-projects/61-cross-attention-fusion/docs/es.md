@@ -64,7 +64,7 @@ Las claves y valores de la imagen se calculan una vez al comienzo del decodifica
 
 ### Compuesto de bloques
 
-Un bloque de decodificación ejecuta: pre-LN -> autoatención -> residual -> pre-LN -> atención cruzada -> residual -> pre-LN -> feed-forward -> residual. Tres subcapas, cada una con su propia LayerNorm. El documento de Flamingo añadió una puerta de acceso aprendida sobre la atención cruzada para que el modelo pudiera optar por salir de la ruta de la imagen al costo de la estabilidad en el tiempo de entrenamiento; la línea de base canónica (utilizada aquí) no tiene puerta.
+Un bloque de decodificación ejecuta: pre-LN -> autoatención -> residual -> pre-LN -> atención cruzada -> residual -> pre-LN -> feed-forward -> residual. Tres subcapas, cada una con su propia LayerNorm. El documento Flamingo añadió una puerta tanh aprendida en la atención cruzada, iniciada en cero, por lo que el modelo de lenguaje congelado comienza sin cambios y el entrenamiento se mantiene estable; la línea de base canónica (utilizada aquí) no tiene puerta.
 
 ```python
 class DecoderBlock:

@@ -9,7 +9,7 @@
 
 ## El problema
 
-Las lecciones 82-86 en esta pista enviaron cada una una sola pieza: una taxonomía, un detector de entrada, un marco de evaluación, un clasificador de salidas, un motor de reglas. Una puerta de seguridad real tiene que componerlas, ejecutarlas en el momento adecuado en el ciclo de vida de la solicitud, decidir qué acción tomar cuando no están de acuerdo, y producir un rastro que un revisor puede leer el lunes por la mañana.
+Las lecciones 82-86 en esta pista enviaron cada una una sola pieza: una taxonomía, un detector de entrada, un marco de evaluación, un clasificador de salida, un motor de reglas. Una puerta de seguridad real tiene que componer las piezas de tiempo de ejecución (el detector de lección 83, el clasificador de lección 85 y el motor de reglas de la lección 86) ejecutarlas en el momento adecuado del ciclo de vida de la solicitud, decidir qué medidas tomar cuando no están de acuerdo, y producir un rastro que un revisor pueda leer el lunes por la mañana. La composición es la lección.
 
 La puerta está en tres puestos de control. La pre-gen se ejecuta antes de que se llame el modelo: el detector de la lección 83 mira el prompt y lo pasa, lo bloquea directamente (ataque de alta confianza), o une una bandera para que las capas aguas abajo pesan. Durante la generación se ejecuta mientras el modelo emite tokens: un filtro de transmisión amortiguará los trozos y terminará la transmisión temprano si aparece una frase prohibida (la inyección de prefijos sobrevive a esto si la puerta solo se ve post-hoc). La post-gen se ejecuta después de que el modelo termine: el router clasificador de la lección 85 y el motor de reglas de la lección 86 inspeccionan la salida completa, la puerta agrega sus veredictos con la señal pre-gen, y la puerta aplica una acción final.
 
@@ -35,11 +35,11 @@ El agregador combina cuatro señales de severidad: la confianza del detector (le
 
 | Signal state | Action |
 |---|---|
+| detector confidence >= 0.85 on a non-benign category | block before generation |
 | any high severity | block |
-| any medium severity | redact |
-| any low severity | warn |
-| all none + detector confidence < 0.5 | allow |
-| detector confidence 0.5-0.85, no other signal | warn |
+| any medium severity (detector confidence 0.5 to 0.85, or early stream termination) | redact |
+| any low severity (detector confidence below 0.5 on a non-benign category) | warn |
+| detector says benign and no other signal | allow |
 
 Bloque devuelve una negativa. Redact envía el texto editado por el clasificador y aplica el motor de reglas. Advierte a los barcos el original con un aviso suave. Permite a los barcos el original. Cada solicitud emite una`RequestTrace`con`request_id`¿ Qué ?`prompt`¿ Qué ?`pre_gen`(veredicto del detector),`during_gen`(trigger de filtro de tokens), `post_gen`(acción de clasificador + informe de normas), `final_action`¿ Qué ?`final_output`, y `latency_ms`¿ Qué ?
 

@@ -53,7 +53,7 @@ El ECE es parcial por el número de contenedores y el tamaño de la muestra. Con
 
 ## ¿Qué puntaje Brier hace que la ECE no
 
-El ECE sólo se preocupa por las brechas promedio. Un modelo que es demasiado seguro de la mitad de los contenedores y poco seguro de la otra mitad puede tener un ECE bajo mientras que está mal calibrado localmente.
+A la ECE sólo le importa la diferencia promedio en cada basura. Se necesita el hueco absoluto por contenedor, por lo que los huecos en diferentes contenedores no se anulan. Dentro de una basura pueden: si algunas predicciones en una basura son demasiado confiadas y otras son poco confiadas, los promedios de la basura pueden coincidir y la basura no añade casi nada a la ECE, mientras que cada predicción está mal calibrada. El puntaje Brier mide el error cuadrado contra el resultado verdadero por predicción, por lo que penaliza la propagación directamente.
 
 Para resultados binarios, Brier es `mean((p_i - y_i)^2)`Se descompone en fiabilidad, resolución e incertidumbre.
 
@@ -87,7 +87,7 @@ El arnés no asume que la confianza proviene de softmax.`[0, 1]`Para las tareas 
 
 - Todas las predicciones equivocadas: ECE es la confianza promedio, Brier es alta, la perplejidad es lo que el modelo piense del texto.
 - Todas las predicciones son correctas con alta confianza: ECE cerca de cero, Brier cerca de cero.
-- Predictor perfectamente incierto en p=0.5: ECE es 0.5 menos precisión, Brier es 0.25 menos término de corrección.
+- Predictor perfectamente incierto en p=0.5: cada predicción aterriza en un contenedor, por lo que ECE es `|0.5 - accuracy|`Brier es exactamente 0.25, porque`(0.5 - y)^2 = 0.25`si `y`es 0 o 1.
 - Entrada vacía: ECE, Brier y retorno de fiabilidad `0.0`(o matrices llenas de cero).`NaN`En el caso de tokens cero, ninguno de estos caminos emite una advertencia; el corredor inspecciona los valores y decide si debe informar o saltar.
 
 Un modelo real con un punto de referencia real no lo hará, pero un adaptador de buggy o una pequeña muestra lo hará, y el corredor no debe caer.

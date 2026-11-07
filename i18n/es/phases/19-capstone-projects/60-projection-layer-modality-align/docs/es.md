@@ -118,7 +118,7 @@ python3 -m unittest code/test_main.py
 
 4. Añadir una pequeña penalidad L2 en los pesos del proyector y observar cómo interactúa con la alineación cosina (cosina es invariable en escala, por lo que la penalidad en su mayoría reduce las direcciones no utilizadas).
 
-5. Persiste en pesas del proyector, luego recarga y ejecuta inferencias sin que el codificador de visión pase hacia atrás para verificar que solo se necesita el proyector en el momento de desplegamiento.
+5. Persiste en los pesos del proyector, luego recargue los pesos junto al codificador de visión congelado y ejecute la inferencia sin pase hacia atrás.
 
 ## Términos clave
 

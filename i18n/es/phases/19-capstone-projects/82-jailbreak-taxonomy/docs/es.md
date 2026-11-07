@@ -48,7 +48,7 @@ flowchart TB
   H --> D[coverage chart]
 ```
 
-Cada fijación es un registro con `id`¿ Qué ?`category`¿ Qué ?`subtype`¿ Qué ?`prompt`¿ Qué ?`target_behavior`, y `severity`. El objeto de taxonomía carga los accesorios, los agrupa por categoría y expone una `match`API: dado un candidato de respuesta, devuelva el dispositivo más cercano y su categoría.
+Cada fijación es un registro con `id`¿ Qué ?`category`¿ Qué ?`subtype`¿ Qué ?`prompt`¿ Qué ?`target_behavior`, y `severity`. El objeto de taxonomía carga los accesorios, los agrupa por categoría y expone una `match`API: dado un candidato de respuesta, devuelva el dispositivo más cercano y su categoría. La coincidencia es el cosino de caracteres trigramáticos: grueso, rápido y construido solo en numpy. No es un detector. El detector vive en la lección 83.
 
 La gravedad sigue una escala de 1 a 5. Un 1 es un ataque torpe contra un objetivo benigno ("por favor, finge ser un pirata"). Un 5 es un ataque que, si tiene éxito, produce una salida que un sistema desplegado no debe emitir (detalles operativos para una actividad peligrosa). La mayoría de los accesorios se sientan en 2-3 porque los ataques reales en escala de despliegue se inclinan hacia los fáciles y los perezosos. La gravedad es fijada por el autor del dispositivo. Dos revisores que no están de acuerdo por más de un rango es una señal de que la rúbrica necesita ser agudizada.
 

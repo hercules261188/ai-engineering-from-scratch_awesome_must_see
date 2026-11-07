@@ -123,7 +123,7 @@ $ team run --issue https://github.com/acme/widget/issues/842
 
 1. Inyectar un error obvio en un dif medio de ejecución (extra `return None`El informe de la Comisión sobre la evaluación de la calidad de los productos y de la calidad de los productos de la industria de la Unión Europea (UE) se presenta en el informe de la Comisión sobre la evaluación de los productos y de la calidad de los productos y de la calidad de los productos y de la calidad de los productos y de la calidad de los productos y de la calidad de los productos y de la calidad de los productos y de la calidad de los productos y de la calidad de los productos y de la calidad de los productos y de la calidad de los productos y de la calidad de los productos y de la calidad de los productos y de la calidad de los productos y de la calidad de los productos.
 
-2. Reducir a dos codificadores (arquitecto + codificador + revisor + probador, codificador ejecuta dos subtareas secuencialmente). Comparar el reloj de pared y la tasa de aprobación.
+2. Reducir a dos codificadores (arquitecto + dos codificadores + revisor + probador, cada codificador ejecuta dos subtareas secuencialmente). Comparar el reloj de pared y la tasa de aprobación.
 
 3. Reemplazar el coordinador de fusión con una restricción de escritora única (subtareas tocan conjuntos de archivos desarticulados).
 

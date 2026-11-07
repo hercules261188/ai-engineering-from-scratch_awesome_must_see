@@ -63,7 +63,7 @@ Los dos esquemas de clasificación sirven a objetivos diferentes.
 
 El puntaje medio es el promedio de las puntuaciones por tarea de un modelo. Es el informe de los números principales de los tablones de clasificación. Es sensible a los valores extremos y a los desequilibrios de tareas.
 
-La tasa de ganancia cuenta la frecuencia con que un modelo supera a todos los otros modelos en la misma tarea. Para cada tarea, el modelo con la puntuación más alta gana (dividido en lazos). La tasa de ganancia es igual a las ganancias divididas por el número de tareas en las que el modelo tiene una puntuación. Es menos sensible a los valores extremos y a las diferencias de escala, pero pierde información.
+La tasa de ganancia cuenta la frecuencia con que un modelo supera a todos los otros modelos en la misma tarea. Para cada tarea, el modelo con la puntuación más alta gana (un empate da una victoria completa a cada modelo empatado). La tasa de ganancia es igual a las ganancias divididas por el número de tareas en las que el modelo tiene una puntuación. Es menos sensible a los valores anuales y a las diferencias de escala, pero pierde información.
 
 ```python
 def win_rate(model_id, runs_by_task, all_models):
@@ -131,4 +131,4 @@ Leer .`main.py`La forma de datos (EvalRun, LeaderboardRow) viene primero, el agr
 
 ## Ir más allá
 
-El siguiente paso natural es la importancia de tareas en pareja en lugar de bootstrap sin pareja. Si el modelo A y B ambos ejecutaron las mismas cien tareas, la prueba apropiada es la banda de arranque en parejas de diferencias de tarea por tarea, que implementamos. Más allá de eso, se quiere una salida jerárquica que respete las familias de tareas (los problemas matemáticos no son independientes entre sí; un patrón de error aritmético afecta a diez de ellos). Eso es un seguimiento. El objetivo de esta lección es conseguir el piso correcto para que el evaluador informe un número que puedas defender.
+Los intervalos por modelo no están emparejados, pero las comparaciones de modelos deben ser emparejadas. Si los modelos A y B realizan las mismas cien tareas, la prueba apropiada es la banda de arranque emparejada en diferencias de tarea por tarea, que `bootstrap_pairwise_diff`Además, se quiere una salida jerárquica que respete las familias de tareas (los problemas matemáticos no son independientes entre sí; un patrón de error aritmético afecta a diez de ellos).

@@ -77,15 +77,15 @@ El registro de métricas es de dos dicts.`{(name, frozen_labels): int}`Los histo
 6. `wrap_tool_call(name)`decoratora que emite un espacio y actualiza las métricas.
 7. Demo: sintetiza una invocación completa de agente (gen_ai.chat span alrededor de las extensiones de herramientas), escribe traces.jsonl, imprime la exposición de Prometheus, sale de cero.
 
-El ID de la franja y el ID de la pista son cadenas hexáticas de 16 bytes, generadas a partir de `os.urandom`El exportador nunca lanza, los errores de IO aparecen pero el arnés sigue funcionando.
+El ID de rastreo es un valor de 16 bytes (32 caracteres hex) y el ID de espacio es un valor de 8 bytes (16 caracteres hex), ambos cortados de aleatorios `uuid4`El exportador nunca lanza, los errores de IO aparecen pero el arnés sigue funcionando.
 
-El histograma tiene un conjunto de cubo fijo (el OTel predeterminado para la latencia en milisegundos: 5, 10, 25, 50, 100, 250, 500, 1000, 2500, 5000, 10000, +Inf).
+El histograma tiene un conjunto fijo de cubo para la latencia en milisegundos: 5, 10, 25, 50, 100, 250, 500, 1000, 2500, 5000, 10000, +Inf. Es una versión recortada de los límites predeterminados del OTel SDK, que también incluyen 0, 75, 750, y 7500. Las muestras se almacenan como una lista; la exposición calcula los recuentos por cubo a pedido.
 
 ## ¿Por qué rodado a mano en lugar de opentelemetría-sdk
 
-El OTel Python SDK es una dependencia real. También es varios miles de líneas de código, múltiples procesos para el exportador de OTLP, y un costo de tiempo de ejecución que inunda un presupuesto de lección. La versión rodada a mano enseña el formato de cable. En producción se filtran los mismos atributos en el SDK real y se obtiene el exportador de OTLP, lotes y detección de recursos de forma gratuita.
+El OTel Python SDK es una dependencia real. También es varias miles de líneas de código, un hilo de exportación de fondo para el exportador de OTLP, y un costo de tiempo de ejecución que inunda un presupuesto de lección. La versión rodada a mano enseña el formato de cable. En producción se filtran los mismos atributos en el SDK real y se obtiene el exportador de OTLP, lotes y detección de recursos de forma gratuita.
 
-Los convenciones son estables. El formato de cable que emite la lección seguirá analizando en 2030 porque OTel nunca rompe los nombres de atributos de GenAI; sólo añaden nuevos.
+Las convenciones de GenAI todavía están marcadas con el nombre de Desarrollo en la especificación, y han cambiado de nombre a los atributos antes: `gen_ai.usage.prompt_tokens`Se convirtió en`gen_ai.usage.input_tokens`. Pin la versión de convenciones semánticas que emite y comprobar cuando actualice el SDK.
 
 ## Cómo se compone esto con el resto de la pista A
 

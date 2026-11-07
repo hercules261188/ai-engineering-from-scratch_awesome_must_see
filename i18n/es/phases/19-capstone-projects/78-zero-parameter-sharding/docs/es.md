@@ -16,7 +16,7 @@
 
 ## El problema
 
-Vanilla DDP replica todo: los parámetros, gradientes y estado optimizador están presentes en su totalidad en cada rango. Para un modelo de parámetro 7B en fp16 que significa 14 GB de parámetros, 14 GB de gradientes y 28 GB de estado optimizador por rango. El estado optimizador es el término más grande y el más fácil de desglosar porque solo se toca durante el paso, no durante el avance o el retroceso.
+La DDP de vainilla replica todo: los parámetros, los gradientes y el estado optimizador están presentes en su totalidad en cada rango. Para un modelo de parámetro 7B en fp16 que significa 14 GB de parámetros, 14 GB de gradientes y 56 GB de estado optimizador (los dos float32 Adam momentos) por rango. El entrenamiento de precisión mixta añade una copia maestra de los pesos de float32 de 28 GB en la parte superior. El estado optimista es el término más grande y más fácil de desglosar porque solo se toca durante el paso, no durante el avance o el retroceso.
 
 El ZeRO etapa 1 reduce el estado de optimización. Cada rango tiene 1/N de los momentos de Adam. Después de retroceder, en lugar de reducir el gradiente completo y pisar localmente, ZeRO reduce_scatters para que cada rango reciba solo el gradiente sumado de su fragmento. El rango aplica el paso más óptimo a su fragmento de los parámetros maestros. Los fragmentos de parámetros actualizados se reúnen para que cada rango tenga el modelo completo para el siguiente adelante. La memoria optimizadora cae en N. El tráfico de cable por paso es el mismo que DDP: un reduc_scatter más un allgather es igual a un allreduce por ancho de banda. La memoria gana, el rendimiento se mantiene.
 
@@ -92,7 +92,7 @@ Tres patrones endurecen el ZeRO lo suficiente como para enviar.
 
 **Mixed precision is the point.**ZeRO es una técnica de precisión mixta; la copia maestra de fp32 es lo que se fragmenta. ejecutar ZeRO sin precisión mixta paga el impuesto de memoria en el maestro de fp32 sin la ganancia de fp16 hacia adelante correspondiente.
 
-**Stage 1 is a near-free win.**El intercambio de datos es idéntico al DDP por ancho de banda. Los ahorros de memoria son lineales en N. El único costo es la contabilidad para el fragmento optimizador.
+**Stage 1 is a near-free win.**La comunicación es idéntica a DDP por ancho de banda. Los ahorros de memoria son lineales en N. El único costo es la contabilidad para el fragmento optimizador. La producción acumula por defecto a la etapa 1 a menos que la memoria de gradiente o parámetro también sea un problema. La etapa 2 reduce los gradientes sin ancho de banda adicional; solo la etapa 3 reduce los parámetros mismos, y comercializa el comunicador por capa para esa memoria.
 
 ## Usalo
 

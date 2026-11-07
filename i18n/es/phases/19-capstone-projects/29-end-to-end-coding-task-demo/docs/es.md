@@ -21,7 +21,7 @@ La mayoría de las demostraciones de agentes funcionan aisladas: una caja de are
 
 La cadena de puertas dice ALLOVE pero la caja de arena se niega por una razón que la cadena no anticipó. El arnés de evaluación registra un pase pero los espacios de OTel dicen que la puerta rechazó una herramienta que el agente afirma que usó. El contador Prometheus se incrementa dos veces cuando debe incrementarse una vez. El presupuesto de observación se ha superado pero el agente siguió adelante porque el presupuesto estaba rastreado en la cadena y la caja de arena no lo sabía.
 
-Esta lección es la prueba de integración para toda la pista. El agente tiene que hacer cuatro cosas para orden: leer el proyecto, ejecutar las pruebas, identificar el error del fallo de la prueba, escribir la corrección, volver a ejecutar las pruebas y detener. Cada operación pasa a través de la cadena de puertas. Cada ejecución de herramientas pasa a través de la caja de arena. Cada paso se envuelve en un lapso. El arnés de evaluación marca todo al final.
+Esta lección es la prueba de integración para toda la pista. El agente tiene que hacer seis cosas para orden: leer el proyecto, ejecutar las pruebas, identificar el error del fallo de la prueba, escribir la corrección, volver a ejecutar las pruebas y detener. Cada operación pasa a través de la cadena de puertas. Cada ejecución de herramientas pasa a través de la caja de arena. Cada paso se envuelve en un lapso. El arnés de evaluación marca todo al final.
 
 ## El concepto
 

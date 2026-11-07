@@ -16,7 +16,7 @@
 
 ## El problema
 
-Estableces un trabajo de entrenamiento de 18 horas. El reloj de la pared tiene 4 horas. El cluster se reinicia a las 11 porque alguien por encima de su nivel de pago aprobó una actualización del kernel. Sin puestos de control empiezas de nuevo. Sin resumen también pierdes el estado de optimización que tomó las primeras 11 horas para aprender, así que incluso si los pesos del modelo sobrevivieron, los momentos de AdamW se han ido y el siguiente paso acecha en una dirección que la trayectoria de entrenamiento ya había pasado.
+Estableces un trabajo de entrenamiento de 18 horas. El programador limita cada asignación a 4 horas, por lo que la carrera ya es una cadena de puestos de trabajo reanudados. Luego el cluster se reinicia a la hora 11 de la carrera porque alguien por encima de su nivel de pago aprobó una actualización del kernel. Sin puestos de control empiezas de nuevo. Sin resumen también pierdes el estado de optimización que tomó las primeras 11 horas para aprender, así que incluso si los pesos del modelo sobrevivieron, los momentos de AdamW se han ido y el siguiente paso acecha en una dirección que la trayectoria de entrenamiento ya había pasado.
 
 El artefacto correcto es un archivo único que contiene todo lo necesario para continuar: parámetros del modelo, estado de optimizador, estado de programador, el historial de pérdidas para las parámetros, el paso actual y el tiempo y los contadores de lote en época, y el estado de RNG para cada fuente de aleatoriedad. Sin el estado de RNG la curva de pérdida reanudada es otra. El mismo modelo, los mismos datos, diferentes mezclas, diferentes máscaras de abandono, diferente número en el panel.
 

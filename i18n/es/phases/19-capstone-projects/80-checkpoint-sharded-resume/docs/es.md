@@ -52,7 +52,7 @@ Tres campos son cargados.`world_size`hace que un currículum de un tamaño difer
 
 ### Escribación atómica
 
-El patrón estándar: escribe cada fragmento a `<name>.tmp`, escribe el manifiesto a `manifest.json.tmp`, fsync cada uno, luego renombrar. POSIX renombrar dentro del mismo sistema de archivos es atómico; o bien el nuevo archivo está completamente presente o el viejo es. Un accidente antes del renombrado final deja el punto de control anterior como el vivo. Sin escribir atómico un accidente puede dejar un fragmento parcial con un manifiesto presente que lo apunta, y la carga corrompe el estado optimizador en el currículum.
+El patrón estándar: escribe cada fragmento a `<name>.tmp`, escribe el manifiesto a `manifest.json.tmp`, sincronizar cada uno, renombrar los fragmentos, y renombrar el manifiesto último. Un cambio de nombre POSIX dentro del mismo sistema de archivos es atómico: o bien el nuevo archivo está completamente presente o el viejo está. Un conjunto de renombros no es una transacción, por lo que el renombro del manifiesto es el punto de compromiso, y el cargador verifica cada fragmento contra los hashes del manifiesto. Escriba cada punto de control en su propio directorio de pasos; luego un accidente antes de que el manifiesto cambie de nombre deja el punto de control anterior como el vivo. Reutilizar un directorio rompe esa garantía, porque los renombros de fragmentos reemplazan a los fragmentos antiguos antes de que los nuevos manifestos aterricen. Sin escribir atómico un choque puede dejar un fragmento parcial con un manifiesto presente que apunta a él, y la carga corrompe el estado optimista en el currículum.
 
 ### Tres modos de falla que el esquema debe defenderse contra
 

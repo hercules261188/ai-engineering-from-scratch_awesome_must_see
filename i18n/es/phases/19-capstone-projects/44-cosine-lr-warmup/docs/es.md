@@ -108,7 +108,7 @@ Modelos de producción:
 
 1. Añadir una variante inversa de la raíz cuadrada del cronograma y compararlo en una carrera de entrenamiento de juguete de 200 pasos. ¿Qué curva produce la menor pérdida final?
 2. Añadir un`--restart`bandera que añade un segundo calentamiento en `total_steps / 2`- Defender si los reinicios calientes mejoran o se dañan en la carrera de juguetes.
-3. Añadir un ensayo unitario que el horario es continuo: para cada paso en `[0, total_steps]`La diferencia`|lr(step+1) - lr(step)|`está limitado por `lr_max / warmup_steps`¿ Qué ?
+3. Añadir un ensayo unitario que el horario es continuo: con `warmup_steps > 0`, por cada paso en`[0, total_steps]`La diferencia`|lr(step+1) - lr(step)|`está limitado por la mayor de la pendiente de calentamiento `lr_max / warmup_steps`y la pendiente cosina más empinada.`pi * (lr_max - lr_min) / (2 * (total_steps - warmup_steps))`Un segmento corto cosino puede ser más empinado que la rampa de calentamiento, por lo que la pendiente de calentamiento por sí sola no es un límite seguro.
 4. Envía el horario en un `torch.optim.lr_scheduler.LambdaLR`La lección utiliza una función simple de paso; ¿qué cambia el envoltorio?
 5. Añadir un`--plot-png`bandera que escribe una trama real a través de `matplotlib`. Defender si la gráfica de texto de la lección o la PNG es la mejor opción predeterminada para ejecutar CI.
 

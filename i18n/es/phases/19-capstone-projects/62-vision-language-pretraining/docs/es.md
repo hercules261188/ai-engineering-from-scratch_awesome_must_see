@@ -18,7 +18,7 @@
 
 Un modelo de lenguaje de visión necesita dos habilidades. Debe clasificar: dado un título, encontrar la imagen correcta entre muchas. Debe generar: dado una imagen, escribir un título. Pretrainar el modelo en una habilidad solo le da medio sistema. CLIP clasificación clavada pero no puede subtítulos. GPT-4V puede subtítulos pero utiliza una cabeza de recuperación separada para el ranking.
 
-InfoNCE maneja la mitad de clasificación.Para un lote de pares N, el modelo trata a los pares N correspondientes como positivos y los `N^2 - N`los pares no emparejados como negativos, luego corre una pérdida de entropía cruzada en el resultado `(N, N)`La pérdida de LM maneja la mitad de generación: predicción estándar de next-token condicionada a la imagen. Ambas pérdidas son diferenciables y pueden compartir el peso del codificador, proyector y decodificador.
+InfoNCE maneja la mitad de clasificación.Para un lote de pares N, el modelo trata a los pares N correspondientes como positivos y los `N^2 - N`los pares no emparejados como negativos, luego corre una pérdida de entropía cruzada en el resultado `(N, N)`La pérdida de LM maneja la mitad de generación: predicción estándar de tokens siguientes condicionada a la imagen. Ambas pérdidas son diferenciables y comparten el peso del codificador y el proyector; el decodificador se basa solo en la pérdida de LM.
 
 ## El concepto
 
@@ -54,7 +54,7 @@ El decodificador consume tokens de memoria de imagen a través de la atención c
 
 ### Combinación de las pérdidas
 
-`total = contrastive + lm_weight * lm`donde`lm_weight`Es un escalar (a menudo 1.0). Las dos pérdidas comparten gradientes en el codificador y la proyección; sólo el decodificador recibe el gradiente de pérdida LM. Esta es la receta multi-tareas que usan los modelos de estilo CoCa, BLIP y SigLIP, con diferentes ponderaciones.
+`total = contrastive + lm_weight * lm`donde`lm_weight`Es una escala (a menudo 1.0). Las dos pérdidas comparten gradientes en el codificador y la proyección; el decodificador recibe gradiente sólo de la pérdida LM. Esta es la receta multi-tareas que CoCa y BLIP utilizan, con varias ponderaciones. SigLIP mantiene solo el término contrastivo y cambia softmax por una pérdida de par sigmoide.
 
 | Component | Loss surface | Affects |
 |-----------|--------------|---------|

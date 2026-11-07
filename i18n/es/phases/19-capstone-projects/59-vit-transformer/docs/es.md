@@ -69,7 +69,7 @@ ViT-Base es un codificador de 86M. Es pequeño para los estándares 2026 (SigLIP
 
 ### ¿La máscara causal o no?
 
-Los transformadores de visión son sólo codificadores y bidireccionales: token `i`puede asistir a la muestra .`j`La atención cruzada en el lado del decodificador en la lección 61 usará una máscara causal, pero dentro del codificador de visión, la atención está completamente conectada.
+Los transformadores de visión son sólo codificadores y bidireccionales: token `i`puede asistir a la muestra .`j`El decodificador de texto autoatención en la lección 61 utilizará una máscara causal (su atención cruzada a los parches de imagen no lo hace), pero dentro del codificador de visión, la atención está completamente conectada.
 
 ### Lo que aprende el token CLS
 

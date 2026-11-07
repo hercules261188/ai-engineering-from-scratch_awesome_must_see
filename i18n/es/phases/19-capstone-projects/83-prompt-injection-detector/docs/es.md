@@ -81,4 +81,4 @@ El corredor de métricas produce un informe JSON con precisión por categoría, 
 
 ## Leer más
 
-El detector es una de las tres señales que compone la puerta de extremo a extremo.
+El detector aquí es una de las cuatro señales que compone la puerta final a final, junto al filtro de token, el clasificador y el motor de reglas.

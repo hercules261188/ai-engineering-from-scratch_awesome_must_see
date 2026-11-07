@@ -91,7 +91,7 @@ La salida muestra la parte superior N del bi-encodor, la parte superior K del cr
 
 **Cross-encoder is not symmetric.** `rerank(q, d)`y `rerank(d, q)`siempre entre la consulta primero. si cambias accidentalmente, el recuerdo se derrumba.
 
-**N is too low to expose the bug.**Si se establece N = K, el codificador cruzado no puede reordenar; sólo puede volver a pesar. El ascensor parece cero.
+**N is too low to expose the bug.**Si se establece N = K, el codificador cruzado puede reordenar los candidatos K pero no puede traer uno nuevo en la parte superior de K. Recuerda que K no puede moverse, por lo que el ascensor parece cero.
 
 **Training data leaks into the eval.**Si los pares de entrenamiento etiquetados a mano incluyen las consultas de evaluación, el rango de reubicación se ve mágico.
 
