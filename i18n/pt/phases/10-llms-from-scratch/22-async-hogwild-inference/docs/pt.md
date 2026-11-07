@@ -55,7 +55,7 @@ O nome do artigo deriva de Hogwild! SGD (Recht et al., 2011), um optimizador de 
 
 ### A RoPE torna isto tratável
 
-Os rotários embutidos em posição (RoPE, Su et al. 2021) codificam informações de posição através da rotação nos vetores Q e K. Como as posições são rotações e não compensações coladas, a posição de um token pode mudar sem recomputar a entrada do cache KV. Quando o trabalhador `i`escreve no cache compartilhado em posição `p`, outros trabalhadores que lêem essa posição podem usar a entrada em cache diretamente  não é necessária re-rotação.
+Embedamentos de posição rotativa (RoPE, Su et al. 2021) codificar informações de posição através de rotação nos vetores Q e K. Como a pontuação de atenção entre uma consulta rotada e uma chave rotada depende apenas de sua distância relativa, um bloco inteiro de entradas em cache pode mudar para um novo offset sem recomputamento: gire a consulta em vez de voltar a rotear cada chave em cache. Hogwild! Inference faz isso uma vez por bloco de cache: para uma consulta em posição `i_q`e um bloco que começa em`i_k`A questão é rotada pela distância relativa.`i_q - i_k`É assim que cada trabalhador vê os blocos de cache compartilhados em sua própria ordem. O truque funciona para uma mudança uniforme de um bloco contíguo. Movendo tokens individuais para posições diferentes mudaria suas rotações e ainda precisa de recomputada.
 
 Em um modelo de posição aprendida ou posição absoluta, Hogwild! precisaria de invalidação do cache em cada escrita simultânea.
 

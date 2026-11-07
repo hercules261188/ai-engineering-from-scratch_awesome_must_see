@@ -28,7 +28,7 @@ Esta lição constrói um único módulo MTP e a perda de profundidade D a parti
 
 ### A receita de MTP sequencial
 
-DeepSeek-V3 adiciona `D`Modulos MTP em cima do modelo principal.`k`(para `k = 1..D`) prevê o token em profundidade `k` isto é, `t_{i+k}`dado um prefixo através da posição `i`- Não .
+DeepSeek-V3 adiciona `D`Modulos MTP em cima do modelo principal.`t_{i+1}`Cada módulo .`k`(para `k = 1..D`) prevê o token `k`Passo mais longe,`t_{i+k+1}`, dado um prefixo através da posição `i`- Não .
 
 Modulo `k`Consiste em:
 
@@ -49,13 +49,13 @@ h_i^{(k)} &= T_k\Big( M_k \cdot \mathop{\mathrm{concat}}\big(\mathop{\mathrm{RMS
 A previsão por profundidade é:
 
 ```math
-\text{logits}_{i+k} = \mathop{\mathrm{Out}}(h_i^{(k-1)}) \quad \text{for } k = 1, \ldots, D
+\text{logits}_{i+k+1} = \mathop{\mathrm{Out}}(h_i^{(k)}) \quad \text{for } k = 1, \ldots, D
 ```
 
-A perda por profundidade é a entropia cruzada contra a verdade fundamental .`t_{i+k}`- Não .
+A perda por profundidade é a entropia cruzada contra a verdade fundamental .`t_{i+k+1}`- Não .
 
 ```math
-L_k = \mathop{\mathrm{CE}}(\text{logits}_{i+k}, t_{i+k})
+L_k = \mathop{\mathrm{CE}}(\text{logits}_{i+k+1}, t_{i+k+1})
 ```
 
 A perda articular através de profundidades:
@@ -70,9 +70,9 @@ L_{\text{MTP}} = \frac{\lambda}{D} \sum_{k=1}^{D} L_k
 
 O MTP paralelo original do Gloeckle tinha cabeças de saída D, cada uma aplicada diretamente a `h_i^(0)`Cada cabeça prevê .`t_{i+k}`O que treina bem, mas as previsões não estão condicionadas umas às outras.`head_1`- A saída para ajudar .`head_2`- As cabeças disparam em paralelo.
 
-O projeto sequencial do DeepSeek-V3 construi.`h_i^(k)`de`h_i^(k-1)`+ a incorporação real do next-token `E(t_{i+k})`O que preserva a cadeia causal: prever .`t_{i+k+1}`, o módulo em profundidade `k+1`Vejo o que estava a acontecer .`t_{i+k}`. Isto é estruturalmente idêntico à forma como um decodificador autoregressivo consome sua própria saída  tornando os módulos MTP diretamente utilizáveis como desenhadores de decodificação especulativa.
+O projeto sequencial do DeepSeek-V3 construi.`h_i^(k)`de`h_i^(k-1)`+ a incorporação real do next-token `E(t_{i+k})`O que preserva a cadeia causal: prever .`t_{i+k+1}`, o módulo em profundidade `k`Vejo o que estava a acontecer .`t_{i+k}`. Isto é estruturalmente idêntico ao modo como um decodificador autoregressivo consome a sua própria saída, o que torna os módulos MTP directamente utilizáveis como desenhadores de decodificação especulativa.
 
-Na inferência: alimentação`h_i^(k-1)`e os desenhados `t_{i+k}`em módulo `k+1`, obter uma previsão para`t_{i+k+1}`Repito. É exatamente um esboço do estilo EAGLE, usando o módulo MTP treinado como o esboço da rede. DeepSeek-V3 relata aceitação de 80% + no primeiro módulo MTP e ~ 1,8x de velocidade.
+Na inferência: alimentação`h_i^(k-1)`e os desenhados `t_{i+k}`em módulo `k`, obter uma previsão para`t_{i+k+1}`Repito. É exatamente um esboço do estilo EAGLE, usando o módulo MTP treinado como o esboço da rede. DeepSeek-V3 relata aceitação de 80% + no primeiro módulo MTP e ~ 1,8x de velocidade.
 
 ### Contabilidade de parâmetros
 
@@ -141,7 +141,7 @@ Reutilizar a projeção de saída do modelo principal.
 
 ### Passo 5: perda por profundidade
 
-Entropia cruzada de softmax (logits) contra o token de verdade base em compensação`k`- Agregam-se através das profundidades com o`lambda / D`Fator de escala.
+Entropia cruzada de softmax (logits) contra o token de verdade base em compensação`k+1`- Agregam-se através das profundidades com o`lambda / D`Fator de escala.
 
 ### Passo 6: Contabilidade de parâmetros
 
@@ -176,18 +176,18 @@ Esta lição produz`outputs/skill-mtp-planner.md`. Tendo em conta uma especifica
 
 2. Compute o custo de parâmetro para um modelo 70B denso (escondido 8192, 80 camadas) com módulo D = 1 MTP. Compare com o custo de parâmetro 14B relatado pelo DeepSeek-V3. Explique por que o número do DeepSeek é maior: o bloco de transformador MTP herda a mesma estrutura MoE, inflacionando a contagem de parâmetros por módulo.
 
-3. Implementar D=2 no brinquedo: adicionar um segundo módulo MTP que leva $h^{(1)}$e prevê .`t_{i+2}`Verifique a perda conjunta e a contabilidade dos parâmetros coincide com as equações 19-21 do papel do DeepSeek.
+3. Implementar D=2 no brinquedo: adicionar um segundo módulo MTP que leva $h^{(1)}$e prevê .`t_{i+3}`Verifique a perda conjunta e a contabilidade dos parâmetros coincide com as equações 19-21 do papel do DeepSeek.
 
 4. Mudar o brinquedo para MTP paralelo (estilo de Gloeckle): adicionar cabeças de saída D em cima do estado oculto principal, cada uma prevendo um offset diferente. Medir como as perdas por profundidade comparam com a versão sequencial no mesmo sinal sintético. A versão sequencial deve produzir menor perda de profundidade k para k > 1 porque condiciona as previsões intermediárias.
 
-5. Utilize o módulo MTP formado como um esboço de estilo EAGLE: convoque o módulo k para propor `t_{i+k}`Se você atingir 50% + no brinquedo, você reproduz a propriedade empírica MTP-as-draft.
+5. Utilize o módulo MTP formado como um esboço de estilo EAGLE: convoque o módulo k para propor `t_{i+k+1}`Se você atingir 50% + no brinquedo, você reproduz a propriedade empírica MTP-as-draft.
 
 ## Termos-chave
 
 | Term | What people say | What it actually means |
 |------|----------------|------------------------|
 | MTP module | "Extra loss block" | A small transformer block plus projection that predicts a token `k` positions ahead of the main model |
-| Prediction depth | "Which offset" | The integer `k` such that module `k` predicts `t_{i+k}` from prefix through position `i` |
+| Prediction depth | "Which offset" | The integer `k` such that module `k` predicts `t_{i+k+1}` from prefix through position `i` (the main model is depth 0 and predicts `t_{i+1}`) |
 | Parallel MTP | "Gloeckle-style" | D independent heads on the same backbone hidden state, no conditional chain |
 | Sequential MTP | "DeepSeek-V3 style" | Each module conditions on the previous depth's hidden state plus the next token's embedding; preserves causal chain |
 | Shared output head | "Reuse the main head" | The MTP modules call the main model's LM head, not a separate output projection |

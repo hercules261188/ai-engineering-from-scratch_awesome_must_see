@@ -106,18 +106,18 @@ Partilha:
 O cálculo completo está em`code/main.py`O título:
 
 - Incorporar: `vocab * hidden = 129280 * 7168 = ~0.93B`- Não .
-- Os primeiros 3 blocos densos: atenção com MLA (~144M por bloco) + MLP denso (~260M por bloco) + normas.
-- 58 blocos de MoE: atenção com MLA (~144M) + 256 especialistas cada um (30M cada) + 1 especialista compartilhado (30M) + norma. Total ~ 7,95B por bloco, incluindo todos os especialistas. 461B total para os 58 blocos de MoE.
-- MTP: 14B.
+- Os primeiros 3 blocos densos: atenção com MLA (~84M por bloco na contagem simplificada da calculadora) + MLP SwiGLU denso (`3 * 7168 * 18432 = ~396M`- a taxa de redução de custos de produção,
+- 58 blocos de MoE: atenção com MLA (~84M) + 256 especialistas encaminhados (`3 * 7168 * 2048 = ~44M`A taxa de referência é de 1,00%, a taxa de referência é de 2,0%, a taxa de referência é de 2,0%, a taxa de referência é de 2,0%, a taxa de referência é de 3,0%, a taxa de referência é de 4,0%, a taxa de referência é de 4,0%, a taxa de referência é de 4,0%, a taxa de referência é de 4,0%, a taxa de referência é de 4,0%, a taxa de referência é de 4,0%, a taxa de referência é de 4,0%, a taxa de referência é de 4,0%, a taxa de referência é de 4,0%, a taxa de referência é de 4,0%, a taxa de referência é de 4,0%, a taxa de referência é de 4,0%, a taxa de referência é de 5,0%, a taxa de referência é de 5,0%, a taxa de 0,0%, a taxa de 0,0%, a taxa de 0,0%, a taxa de 0,0%, a taxa de 0,0%, a taxa de 0,0%, a taxa de 0,0%, a taxa de 0,0%, a taxa de 0,0%, a taxa de 0,9%.
+- MTP: o módulo publicado é 14B. A calculadora utiliza um stand-in denso de ~0,8B.
 
-O número de dados de DeepSeek é de 3 a 5% do valor publicado. O delta vem dos documentos de relatórios de contabilidade finos da DeepSeek no anexo 2 da Secção 2.
+O ponto de controle Hugging Face é 685B porque adiciona o módulo 14B MTP no topo do 671B. A diferença restante de ~1% vem de simplificações: a calculadora salta as dimensões RoPE descopladas em MLA, a cabeça de saída desligada e alguns pequenos tensores.
 
 Parâmetros ativos por forward:
 
-- Atenção: 144 M por camada * 61 = 8,8 B (todas as camadas de fogo).
-- MLP ativo: as primeiras 3 camadas densas (3 * 260M = 780M), 58 camadas MoE cada ativo com 8 encaminhadas + 1 compartilhada + carga aérea de encaminhamento.
-- Incorporar + normas: 1.2B.
-- Total ativo: aproximadamente 26B núcleo + 14B MTP (treinado mas não sempre executado em inferência) ≈ 37B.
+- Atenção: 84M por camada * 61 = ~5,1B (todas as camadas de fogo).
+- MLP ativo: as primeiras 3 camadas densas (`3 * 396M = ~1.2B`), 58 camadas de MoE cada uma activa com 8 roteados + 1 especialista compartilhado (`9 * 44M = ~396M`Por camada, cerca de 23B no total.
+- Embed + normas: ~ 0,9B.
+- Total ativo: ~30B da calculadora em relação ao 37B publicado. A maior parte da lacuna é atenção: MLA completo, com suas dimensões RoPE e cabeças de consulta e chave mais amplas, é maior do que a contagem simplificada. O módulo MTP não conta para o 37B.
 
 ### A relação 671B / 37B
 

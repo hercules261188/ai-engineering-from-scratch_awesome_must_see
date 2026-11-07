@@ -9,7 +9,7 @@
 
 ## Objetivos de aprendizagem
 
-- Compõem as onze lições anteriores (tokenizer, dados, pré-formação, escalação, SFT, RLHF, DPO, CAI, eval, quantização, inferência) em uma única especificação de pipeline reprodutível
+- Compõem as doze lições anteriores (dois lições de tokenizer, dados, pré-formação, escalação, SFT, RLHF, DPO, CAI, eval, quantização, inferência) em uma única especificação de pipeline reprodutível
 - Defina o contrato de artefatos entre fases: o que cada etapa consome, o que produz e como a próxima fase verifica a entrada
 - Construir um orquestrador que acompanhe experimentos, hashes artefatos, e portas de embarque decisões em limiares de avaliação
 - Desenhar o plano de reestruturação: quais artefatos são baratos de reestruturar, quais caros e quanto custa um posto de controlo corrupto
@@ -72,7 +72,7 @@ stages:
     cost_usd: 12
 ```
 
-O hash de saída do estágio N é o hash de entrada do estágio N + 1. Qualquer desvio e o pipeline para. É assim que você detecta a corrupção de dados cedo. É também como um colega de equipe em um continente diferente verifica que sua repetição produziu o mesmo artefato que o seu.
+O hash de saída do estágio N é o hash de entrada do estágio N + 1. Qualquer desvio e o pipeline para. É assim que você detecta a corrupção de dados cedo. É também como um colega de equipe em um continente diferente verifica que sua repetição de um estágio determinista produziu o mesmo artefato que o seu.
 
 Na prática, as equipes usam um pequeno esquema YAML mais um verificador de manifesto que difere da execução anterior com sucesso. Qualquer delta fora dos campos esperados (custo, relógio de parede) é uma bandeira vermelha.
 
@@ -150,7 +150,7 @@ O custo relatado da Llama 3 foi $61M. DeepSeek-V3 reported $5,6 milhões para a 
 
 Estes não são os mesmos. *Reproducible* significa o mesmo manifesto mais o mesmo código mais a mesma infraestrutura produz um ponto de controlo com métricas equivalentes a jusante. *Deterministic* significa saída bit-identical.
 
-A formação moderna de Mestrado em Direito Jurídico é reprodutiva, mas não determinista. O redução de ordem do treinamento distribuído, o não-determinismo do kernel da GPU (cuBLAS, flash-attn) e o arredondamento de precisão mista se combinam para produzir flutuantes que diferem no nível 1e-5 entre corridas. Isto é bom para as métricas finais, que não se movem. É fatal se estiver a tentar depurar com diferenças de nível de bits. A cura é registar o hash de entrada, hash de saída e métricas de cabeçalho de cada etapa -- se coincidirem, a corrida é "reproduzida" mesmo que os pesos não sejam bit-identicos.
+A formação moderna de Mestrado em Direito Jurídico é reprodutiva, mas não determinista. O redução de ordem do treinamento distribuído, o não-determinismo do kernel da GPU (cuBLAS, flash-attn) e o arredondamento de precisão mista se combinam para produzir flutuantes que diferem no nível 1e-5 entre corridas. Isto é bom para as métricas finais, que não se movem. É fatal se estiver a tentar depurar com diferenças de nível de bits. A cura é registrar o hash de entrada, hash de saída e métricas de cabeçalho de cada etapa. Em uma repetição, os hashes coincidem apenas para etapas deterministas, como processamento de dados e tokenization. Uma fase de treinamento escreve novos pesos, então o hash de saída muda. Para essas etapas, a corrida é "reproduzida" quando as métricas de cabeçalho coincidem, mesmo que os pesos não sejam bit-identicos.
 
 ```mermaid
 graph LR
