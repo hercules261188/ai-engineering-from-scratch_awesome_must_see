@@ -1,6 +1,6 @@
 # Variancias de atención  Ventana deslizante, Sparse, Diferencial
 
-> La atención completa es un círculo. Cada token ve cada token, y la memoria paga el precio. Cuatro variantes doblan la forma del círculo y recuperan la mitad del costo.
+> La atención completa es un círculo. Cada token ve cada token, y la memoria paga el precio. Tres variantes doblan la forma del círculo y recuperan la mitad del costo.
 
 **Type:** Build
 **Languages:** Python

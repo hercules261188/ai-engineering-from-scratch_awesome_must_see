@@ -40,12 +40,12 @@ L(N, D) = \frac{A}{N^\alpha} + \frac{B}{D^\beta} + E
 - $E \approx 1.69$, el techo de pérdida irreductible.
 - $A \approx 406$¿ Qué ?$B \approx 411$¿ Qué ?
 
-Dos términos se intercambian entre sí a medida que escalas.$N$en cálculo fijo ($C = 6ND$) y resolver:
+Dos términos se intercambian entre sí a medida que escalas.$N$en cálculo fijo ($C = 6ND$¿Qué es lo que se puede hacer?$\alpha$y $\beta$arriba, los exponentes salen en aproximadamente 0.45 para $N$y 0,55 para $D$, por lo que la relación óptima exacta se deriva lentamente con el presupuesto; `code/main.py`Los dos primeros enfoques de ajuste del papel, que miden el óptimo directamente, ponen ambos exponentes en aproximadamente 0.5.$D = 20N$En el$C = 6ND$y la regla general dice:
 
 ```math
 \begin{aligned}
-N_{\text{opt}} &\approx 0.6 \times (C/6)^{0.5} \\
-D_{\text{opt}} &\approx 0.6 \times (C/6)^{0.5} \\
+N_{\text{opt}} &\approx 0.22 \times (C/6)^{0.5} \\
+D_{\text{opt}} &\approx 4.5 \times (C/6)^{0.5} \\
 D_{\text{opt}} / N_{\text{opt}} &\approx 20
 \end{aligned}
 ```

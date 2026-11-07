@@ -80,7 +80,7 @@ Por un bloque con `d_model = d`y la expansión de FFN `r`¿Qué es esto ?
 - FFN (SwiGLU): `3 · d · (r · d)`¿ Qué es esto ?`3rd²`
 - Normas: insignificantes
 
-En el`d = 4096, r = 2.6, layers = 32`(aproximadamente Llama 3 8B), total: `32 · (4·4096² + 3·2.6·4096²) ≈ 32 · (16 + 32) M = ~1.5B parameters per layer × 32 ≈ 7B`(más incrustaciones y cabeza) Las coincidencias publicadas cuentan.
+En el`d = 4096, r = 2.6, layers = 32`(aproximadamente Llama 3 8B), total: `32 · (4·4096² + 3·2.6·4096²) ≈ 32 · (67M + 131M) ≈ 32 · 198M ≈ 6.3B`Los parámetros de los bloques, más aproximadamente 1B para las inserciones y la cabeza de salida (128K vocables × 4096, sin atarse).`r = 3.5`), que desplaza los parámetros de la atención a la FFN pero mantiene el total cerca de 8B.
 
 ## Construye el mismo
 

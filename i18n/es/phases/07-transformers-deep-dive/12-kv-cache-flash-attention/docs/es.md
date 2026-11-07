@@ -26,32 +26,32 @@ Para 2026 ambos son universales. Cada pila de inferencias de producción (vLLM, 
 
 ### Matemáticas de caché de KV
 
-Por capa de decodificación, por token, por cabeza:
+Por capa de decodificación, por token, en todas las cabezas de KV:
 
 ```
-bytes_per_token_per_layer = 2 * d_head * dtype_size
+bytes_per_token_per_layer = 2 * n_kv_heads * d_head * dtype_size
                           ^
                           K and V
 ```
 
-Para un modelo 7B con 32 capas, 32 cabezas, d_head=128, fp16:
+Para un modelo 7B con 32 capas, 32 cabezas (todas utilizadas para K y V), d_head=128, fp16:
 
 ```
-per token per layer = 2 * 128 * 2 = 512 bytes
-per token (32 layers) = 16 KB
-per 32K context = 512 MB
+per token per layer = 2 * 32 * 128 * 2 = 16384 bytes (16 KiB)
+per token (32 layers) = 512 KiB
+per 32K context = 16 GiB
 ```
 
 Para Llama 3 70B (80 capas, d_head=128, GQA con 8 capas de KV):
 
 ```
-per token per layer = 2 * 8 * 128 * 2 = 4096 bytes (4 KB)
-per 32K context = 10.4 GB
+per token per layer = 2 * 8 * 128 * 2 = 4096 bytes (4 KiB)
+per 32K context = 10 GiB
 ```
 
-Ese 10 GB es por lo que Llama 3 70B en 128K contexto necesita la mayoría de un 40 GB A100 sólo para KV caché en el tamaño de lote 1.
+Ese 10 GiB en 32K crece a 40 GiB en 128K, que es el conjunto de un A100 de 40 GB sólo para el caché KV en el tamaño de lote 1.
 
-**GQA is the KV-cache win.**MHA con 64 cabezas sería de 32 GB. MLA comprime aún más.
+**GQA is the KV-cache win.**El MHA con 64 cabezas de KV sería 8 veces más grande, aproximadamente 80 GiB en 32K.
 
 Arraste las dimensiones y observa el tamaño de la caché. Empuje la longitud de la secuencia o lote hacia arriba y vea qué tan rápido se desvanece más allá de una sola GPU:
 
@@ -124,6 +124,10 @@ flash-attention-memory
 
 ## Construye el mismo
 
+```figure
+iso-machine {"machine":"kv-cache"}
+```
+
 ¿ Qué ?`code/main.py`Implementamos:
 
 1. Un ingenuo .$O(N^2)$decodificador incremental.
@@ -172,9 +176,9 @@ def tiled_softmax_dot(q, K, V, tile=4):
 
 Una salida idéntica a bit `softmax(qK) V`en un solo disparo, pero en cualquier momento el juego de trabajo es un `tile × d_head`Bloqueo, no el completo `N × d_head`¿ Qué ?
 
-### Paso 3: Comparar la descifrado ingenuo vs caché en la generación de 100 tokens
+### Paso 3: Comparar la descifrado ingenuo con caché
 
-Cuenta las operaciones de atención.$O(N^2)$= 5050. En caché: $O(N)$El código imprime ambas cosas.
+Cuenta las operaciones de atención. Ambos decodificadores hacen las mismas comparaciones de clave de consulta: paso `t`Asiste a la reunión .`t`los tokens, por lo que el total es 1 + 2 + ... + N = N(N+1)/2. El código utiliza N = 10 e imprime 55 para cada decodificador. Para una generación de 100 tokens, ambos hacen 5050 comparaciones. La caché guarda las proyecciones K y V. Sin una caché, cada paso calcula K y V de nuevo para el prefijo completo, así que una generación de 100 tokens calcula 5050 estados de tokens. Con la caché, los K y V de cada token se calculan una vez, por lo que la misma generación calcula 100 estados de los tokens.
 
 ## Usalo
 

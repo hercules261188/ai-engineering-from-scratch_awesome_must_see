@@ -169,6 +169,10 @@ softmax-attention-scaling
 
 ## Construye el mismo
 
+```figure
+iso-machine {"machine":"self-attention"}
+```
+
 ### Paso 1: Softmax desde cero
 
 Softmax convierte logits en probabilidades.
