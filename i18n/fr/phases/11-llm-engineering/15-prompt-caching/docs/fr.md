@@ -46,7 +46,7 @@ Violez l'ordre  mettez le message de l'utilisateur au-dessus de la demande du sy
 
 ### Le calcul de l'équilibre
 
-Le prix de 25% d'écriture d'Anthropic signifie qu'un bloc caché doit être lu au moins deux fois pour économiser de l'argent net. 1 écrit + 1 lire représente en moyenne 0,675x le coût par requête (économise 32%); 1 écrit + 10 lit en moyenne 0,205x (économise 80%). Règle générale: cache tout ce que vous attendez de réutiliser au moins 3 fois dans le TTL.
+La prime d'écriture de 25% d'Anthropic (5 minutes TTL) se paie à la première lecture, car une lecture cache coûte 0,1 fois. 1 écrit + 1 lecture moyenne 0,675x coût par demande (économiser 32%); 1 écrit + 10 lecture moyenne 0,205x (économiser 80%). Le TTL d'une heure facture 2 fois pour l'écriture, donc ce bloc a besoin de deux lectures pour sortir en avant. Règle générale: cache tout ce que vous attendez de réutiliser au moins 3 fois dans le TTL; cela élimine les pannes sur l'un ou l'autre TTL.
 
 ```figure
 prompt-cache-hit

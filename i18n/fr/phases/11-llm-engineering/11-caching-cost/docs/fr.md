@@ -21,7 +21,7 @@ Vous construisez un chatbot RAG, il fonctionne magnifiquement, les utilisateurs 
 
 Puis la facture arrive.
 
-Coûts du GPT-5 $5 per million input tokens and $15 pour un million de produits.$15 input / $75 sorties. Les prix du Gemini 3 Pro $1.25 input / $5 sortie. GPT-5-mini est $0.25/$2. Les prix ci-dessous sont illustratifs; consultez toujours la page actuelle des prix du fournisseur.
+Coûts du GPT-5 $1.25 per million input tokens and $10 pour un million de produits.$5 input / $25 sorties. Gemini 3.1 Pro coûte $2 input / $12 sorties (indicateurs jusqu'à 200K de jetons).$0.25/$Le modèle GPT-4o, dans les mathématiques ci-dessous, est $2.50/$10. Les prix sont illustratifs; consultez toujours la page actuelle des prix du fournisseur.
 
 Voici les mathématiques qui tuent les startups:
 
