@@ -86,7 +86,7 @@ Pourquoi ça marche:
 - Quand ?$y=0$et $p$est proche de 0: $\log(1) = 0$, donc la perte est proche de 0 (correct, faible coût)
 - Quand ?$y=0$et $p$est proche de 1: $\log(0)$approche l'infini négatif, donc la perte est énorme (erreur, coût élevé)
 
-Cette fonction de perte est convexe pour la régression logistique, garantissant un minimum mondial unique.
+Cette fonction de perte est convexe pour la régression logistique, de sorte que chaque minimum local est un minimum global et la descente de gradient ne peut pas rester coincée dans une mauvaise. Sur les données parfaitement séparables, la perte continue de diminuer à mesure que les poids augmentent, de sorte qu'il n'existe pas de minimum fini; la régulation L2 corrige cela et rend le minimum unique.
 
 ### Une baisse progressive de la régression logistique
 

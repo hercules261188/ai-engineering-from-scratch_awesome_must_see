@@ -9,7 +9,7 @@
 
 ## Objectifs d'apprentissage
 
-- Mettre en œuvre des méthodes de filtrage (poids de variance, information mutuelle, chi-quadré) et des méthodes d'emballage (RFE, sélection avancée) à partir de zéro
+- Mettre en œuvre des méthodes de filtrage (poids de variance, information mutuelle), une méthode d'emballage (RFE) et des méthodes intégrées (importance de l'arbre L1) à partir de zéro, puis ajouter la sélection à l'avance dans les exercices
 - Expliquer pourquoi les informations mutuelles capturent des relations non linéaires entre caractéristiques et cibles qui manquent de corrélation
 - Comparer la régularisation de L1 (sélection intégrée) avec la RFE (sélection d'emballage) et évaluer leurs compromis informatiques
 - Construire un pipeline de sélection de fonctionnalités qui combine plusieurs méthodes et démontrer une généralisation améliorée sur les données conservées

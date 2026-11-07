@@ -340,7 +340,7 @@ print(f"Support vectors: {clf['svm'].n_support_}")
 
 Important: étalonnez toujours vos caractéristiques avant de former un SVM.$\lVert w \rVert$, et les caractéristiques non étalées déforment la géométrie.
 
-Pour les grands ensembles de données, utiliser `LinearSVC`(formule initiale, $O(n)$par époque) au lieu de `SVC`(double formulation, $O(n^2)$à $O(n^3){}$):
+Pour les grands ensembles de données, utiliser `LinearSVC`(formule initiale, $O(n \cdot d)$par époque, linéaire en $n$) au lieu de `SVC`(double formulation, $O(n^2)$à $O(n^3){}$):
 
 ```python
 from sklearn.svm import LinearSVC

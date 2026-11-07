@@ -104,7 +104,7 @@ Cette approche avide ne garantit pas l'arbre optimal au niveau mondial. Trouver 
 
 ### Conditions d'arrêt
 
-Sans s'arrêter, l'arbre pousse jusqu'à ce que chaque feuille soit pure (un échantillon par feuille).
+Sans conditions d'arrêt, l'arbre pousse jusqu'à ce que chaque feuille soit pure ou qu'aucune fracture ne puisse séparer ses échantillons, souvent jusqu'à un seul échantillon par feuille.
 
 **Pre-pruning**Arrête l'arbre avant qu'il ne pousse pleinement:
 - Profondeur maximale: arrête de se diviser lorsque l'arbre atteint une profondeur définie

@@ -82,7 +82,7 @@ Les modèles ont besoin de numéros, les catégories de code.
 Les données réelles ont des trous.
 
 - **Drop rows:**Seulement lorsque les données manquantes sont rares et aléatoires
-- **Mean/median imputation:**Simple, préservant la forme de distribution (la moyenne est plus robuste aux écarts)
+- **Mean/median imputation:**Simple, maintient le centre de la fonctionnalité (la médiane est plus robuste aux valeurs étrangères), mais réduit sa variance et accumule chaque valeur remplie sur un pic, de sorte que la forme de distribution change
 - **Mode imputation:**Pour les caractéristiques catégoriques
 - **Indicator column:**Ajouter une colonne binaire "was_this_missing" avant d'imputer.
 - **Forward/backward fill:**Pour les données de séries temporelles

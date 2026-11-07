@@ -417,7 +417,7 @@ Si votre modèle de ML de fantaisie perd à la base saisonnière naïve, vous av
 
 1. **Start with plotting.**Avant toute modélisation, tracez la série brute. Cherchez les tendances, la saisonnalité, les valeurs exceptionnelles, les ruptures structurelles (changements soudains de comportement).
 
-2. **Difference first, model second.**Si la série a une tendance claire, différencier avant de créer des caractéristiques de retard. Les modèles basés sur des arbres peuvent gérer les tendances, mais les modèles linéaires ne peuvent pas, et différencier ne fait jamais de mal.
+2. **Difference first, model second.**Si la série a une tendance claire, différencier avant de créer des caractéristiques de retard. Les modèles basés sur des arbres peuvent gérer les tendances, mais les modèles linéaires sans un terme de tendance explicite ne peuvent pas. Arrêtez une fois que la série est stationnaire: chaque round supplémentaire de différenciation ajoute du bruit et jette de l'information de niveau.
 
 3. **Hold out at least one full seasonal cycle.**Si vous avez une saisonnalité hebdomadaire, votre ensemble de tests a besoin d'au moins une semaine complète. Si mensuel, au moins un mois complet. Sinon, vous ne pouvez pas évaluer si le modèle a capturé le schéma saisonnier.
 
