@@ -169,6 +169,10 @@ softmax-attention-scaling
 
 ## آن را بسازید
 
+```figure
+iso-machine {"machine":"self-attention"}
+```
+
 ### مرحله ی اول: Softmax از ابتدا
 
 نرم ماکس Logits خام را به احتمالات تبدیل می کند.
