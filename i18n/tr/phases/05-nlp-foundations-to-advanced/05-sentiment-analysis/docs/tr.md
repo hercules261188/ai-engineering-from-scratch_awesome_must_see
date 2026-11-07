@@ -200,7 +200,7 @@ pipe.fit(X_train, y_train)
 print(pipe.score(X_test, y_test))
 ```
 
-Dikkat edilmesi gereken üç şey var.`stop_words=None`- Hayır.`ngram_range=(1, 2)`Bigramlar ekliyor.`not_good`Bir özellik haline gelir.`sublinear_tf=True`Bu üç işaret, SST-2'de %75 ve %85 doğruluklı bir başlangıç arasındaki farkı temsil eder.
+Dikkat edilmesi gereken üç şey var.`stop_words=None`- Hayır.`ngram_range=(1, 2)`Bigramlar ekliyor.`not good`bir özellik haline gelir (scikit-learn iki kelimeyi bir boşlukla birleştirir). `sublinear_tf=True`Bu üç işaret, SST-2'de %75 ve %85 doğruluklı bir başlangıç arasındaki farkı temsil eder.
 
 ### Transformatörün ne zaman kullanılması gerekiyor?
 

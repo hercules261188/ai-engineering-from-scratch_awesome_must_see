@@ -25,7 +25,7 @@ Bu ders üçü de ele alır, sonra hangisine ne zaman ulaşmamız gerektiğini a
 
 **FastText.**Bir kelime, karakterinin n-gramlarının toplamı ve kelimenin kendisi.`where``<wh, whe, her, ere, re>, <where>`. Sözcük vektörü, bu bileşen vektörlerinin toplamıdır.`whereupon`) bilinen n-gramlardan oluşur.
 
-**BPE (Byte-Pair Encoding).**Bireysel bayt (veya karakter) sözcükleri ile başlayın. Korpus'taki her yanlışı çift sayın. En sık gelen çiftleri yeni bir simgeye birleştirin.`k`Sonuç: sözlük bir sözlük`k + 256`Sık dizi (`ing`- Evet .`tion`- Evet .`the`) tek bir simge ve nadir kelimeler tanıdık parçalara ayrılır.
+**BPE (Byte-Pair Encoding).**Bireysel bayt (veya karakter) sözcükleri ile başlayın. Korpus'taki her yanlışı çift sayın. En sık gelen çiftleri yeni bir simgeye birleştirin.`k`Sonuç: temel sembollerin bir kelime birikimi artı `k`birleşmeler (`k + 256`(Baytlardan başlayan) frekanslı diziler (`ing`- Evet .`tion`- Evet .`the`) tek bir simge ve nadir kelimeler tanıdık parçalara ayrılır.
 
 ```figure
 n5-subword-merge

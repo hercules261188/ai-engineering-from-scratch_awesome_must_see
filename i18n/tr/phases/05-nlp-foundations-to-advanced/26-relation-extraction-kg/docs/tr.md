@@ -67,21 +67,21 @@ PATTERNS = [
 
 Bakın .`code/main.py`Hearst modelleri hala alan özel boru hattlarında gönderiliyor çünkü hataları çözülebilir.
 
-### Adım 2: denetim altında olan ilişki sınıflandırması
+### Adım 2: denetim altında olan sek2 sek ilişki çıkarımı
 
 ```python
-from transformers import AutoTokenizer, AutoModelForSequenceClassification
+from transformers import AutoTokenizer, AutoModelForSeq2SeqLM
 
 tok = AutoTokenizer.from_pretrained("Babelscape/rebel-large")
-model = AutoModelForSequenceClassification.from_pretrained("Babelscape/rebel-large")
+model = AutoModelForSeq2SeqLM.from_pretrained("Babelscape/rebel-large")
 
 text = "Tim Cook was born in Alabama. He later became CEO of Apple."
 encoded = tok(text, return_tensors="pt", truncation=True)
 output = model.generate(**encoded, max_length=200)
-triples = tok.batch_decode(output, skip_special_tokens=False)
+decoded = tok.batch_decode(output, skip_special_tokens=False)
 ```
 
-REBEL, bir seksanı birbiriyle ilişki çıkarıcıdır: metin içeri, üç kat dışarı, zaten Wikidata mülkiyet kimliklerinde. Uzak denetim verilerine göre ince ayarlanmıştır. Standart açık ağırlıklar temel çizgi.
+REBEL, BART tabanlı bir seq2seq ilişki çıkarıcısıdır: birim çiftlerini sınıflandırmak yerine üçlüler oluşturur.`<triplet>`- Evet .`<subj>`ve `<obj>`işaretçiler, böylece onları bölün (model kartın analizcisi gibi) elde etmek için `(subject, relation, object)`Uzaktan denetim verilerine göre ayarlanmış standart açık ağırlıklı temel.
 
 ### Adım 3: Ankerleme ile LLM ile yapılan çıkarma
 
