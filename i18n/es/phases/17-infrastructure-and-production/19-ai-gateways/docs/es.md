@@ -9,7 +9,7 @@
 
 ## Objetivos de aprendizaje
 
-- Enumera las seis características principales de la puerta de enlace (routing, fallback, retemptadas, límites de velocidad, secretos, observabilidad, barandillas).
+- Enumera las siete características principales de la puerta de enlace (routing, fallback, retemptadas, límites de velocidad, secretos, observabilidad, barandillas).
 - Mapa de cuatro puertas de acceso 2026 (LiteLLM, Portkey, Kong AI, Bifrost) para escalar los techos y casos de uso.
 - Cita el índice de referencia Kong (228% vs Portkey, 859% vs LiteLLM) y explica por qué importa para > 500 RPS.
 - Elija auto-hosted vs administrado dado el presupuesto de residencia de datos y operaciones.
@@ -22,7 +22,7 @@ Reinventando esto en la capa de aplicación, se combina cada servicio con cada p
 
 ## El concepto
 
-### Seis características centrales
+### Siete características centrales
 
 1. **Provider routing** OpenAI, Anthropic, Gemini, auto-hosted, etc. detrás de una API.
 2. **Fallback** en 429, 5xx, o fallas de calidad, vuelva a intentarlo en otro lugar.
@@ -109,7 +109,7 @@ Esta lección produce`outputs/skill-gateway-picker.md`Dada la escala, la postura
 ## Los ejercicios
 
 1. - ¿ Qué ?`code/main.py`. Configurar fallback desde OpenAI→Anthropic→auto-hosted. ¿Cuál es la tasa de impacto esperada con una tasa de error del proveedor del 5%?
-2. Su SLA es TTFT P99 < 200 ms en una línea de base de 300 ms. ¿Qué pasarelas se mantienen dentro del presupuesto?
+2. Su SLA es TTFT P99 < 320 ms y el modelo solo mide 300 ms en P99. ¿Qué puertas de entrada se mantienen dentro del presupuesto?
 3. Un cliente de atención médica requiere auto-hosting + redacción de PII + auditoría.
 4. Comparar LiteLLM vs Kong: ¿a qué límite RPS debe migrar un equipo?
 5. Diseñar una política de límite de tarifas para un SaaS multi-arrendatario: nivel gratuito, nivel de prueba, nivel pagado.

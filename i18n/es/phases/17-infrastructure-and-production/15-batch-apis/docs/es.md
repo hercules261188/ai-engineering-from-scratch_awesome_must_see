@@ -1,6 +1,6 @@
 # Las APIs de lote  el 50% de descuento como estándar de la industria
 
-> Cada proveedor principal envía una API de lote sincronizada con un descuento del 50% y una respuesta de 24 horas. OpenAI, Anthropic, Google y la mayoría de las plataformas de inferencia (Tier de lote de Fireworks, lote de Together) implementan el mismo patrón. El lote de pila con almacenamiento en caché rápido y las tuberías de la noche a la mañana caen a ~10% del coste sincrónico-desarrollado. La regla es brutalmente simple: si no es interactiva, pertenece al lote. Las líneas de generación de contenido, la clasificación de documentos, la extracción de datos, la generación de informes, el etiquetado en masa, el etiquetado de catálogos  cualquier cosa que tolere la latencia de 24 horas es dinero que queda en la mesa hasta que se mueva al lote. El patrón de producción de 2026 es la triaje de cada nueva carga de trabajo de LLM en tres carriles: interactiva (sincrónica con el almacenamiento en caché), seminteractiva (cuota sincrónica con fallback), lote (por la noche, entradas almacenadas en caché apiladas). Las cargas de trabajo que pretenden ser interactivas pero toleran minutos de latencia pierden más.
+> Cada proveedor principal envía una API de lote sincronizada con un descuento del 50% y una respuesta de 24 horas. OpenAI, Anthropic, Google y la mayoría de las plataformas de inferencia (Tier de lote de Fireworks, lote de Together) implementan el mismo patrón. El lote de pila con almacenamiento en caché rápido y las tuberías de la noche a la mañana caen a ~10% del coste sincrónico-desarrollado. La regla es brutalmente simple: si tolera horas de latencia, pertenece al lote. Las líneas de generación de contenido, la clasificación de documentos, la extracción de datos, la generación de informes, el etiquetado en masa, el etiquetado de catálogos  cualquier cosa que tolere la latencia de 24 horas es dinero que queda en la mesa hasta que se mueva al lote. El patrón de producción de 2026 es la triaje de cada nueva carga de trabajo de LLM en tres carriles: interactiva (sincrónica con el almacenamiento en caché), seminteractiva (cuota sincrónica con fallback), lote (por la noche, entradas almacenadas en caché apiladas). Las cargas de trabajo que pretenden ser interactivas pero toleran minutos de latencia pierden más.
 
 **Type:** Learn
 **Languages:** Python (stdlib, toy batch-vs-sync cost simulator)
@@ -52,7 +52,7 @@ La pila: lote + caché = ~10% de la factura sincronizada sin caché. Cualquier c
 
 **Semi-interactive** el usuario envía una tarea, verifica en minutos. colas de sincronización con fallback para sincronizar si el lote no está disponible.
 
-**Batch** el usuario espera resultados "a la mañana" o "a la próxima hora".
+**Batch** el usuario espera resultados "a la mañana" o "a finales del día".
 
 Error común: clasificar todo como interactivo porque la tubería es producción.
 

@@ -51,7 +51,7 @@ RTT interregional:
 - Estados Unidos-este-1  Europa-oeste-1: ~75 ms.
 - Estados Unidos-este-1  ap-sureste-1: ~ 220 ms.
 
-Si el enrutamiento lleva una solicitud de us-east-1 a un prefijo caliente en ap-southeast-1, el preempleo guardado (800 → 80 ms) es empequeñecido por 440 ms de ida y vuelta.`prefill_time + network_latency`A menudo la respuesta es mantener el enrutamiento regional excepto en prefijos masivos de varios MB donde prefill domina.
+Si el enrutamiento lleva una solicitud de us-est-1 a un prefijo caliente en ap-southeast-1, el prefill guardado (800 → 80 ms, por lo que 720 ms) se reduce a aproximadamente 500 ms una vez que se paga el ~220 ms RTT, y el margen desaparece si la región remota hace cola a la solicitud o ya ha desalojado el prefijo. GORGO (2026 investigación) hace que esto explícito  minimizar `prefill_time + network_latency`A menudo la respuesta es mantener el enrutamiento regional excepto en prefijos masivos de varios MB donde prefill domina.
 
 ### La "inflación transregional" comercial no ayuda aquí
 

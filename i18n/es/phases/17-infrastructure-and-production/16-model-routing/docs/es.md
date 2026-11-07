@@ -1,6 +1,6 @@
 # El modelo de enrutamiento como una primitiva de reducción de costos
 
-> Un corredor dinámico evalúa cada solicitud (tipo de tarea, longitud de token, similitud de incorporación, confianza) y envía consultas simples a un modelo barato, aumentando las complejas a un modelo fronterizo. También se llama cascada de modelos. Los estudios de caso de producción muestran una reducción de costes de 20-60% en la calidad de iso en las implementaciones de EE.UU./Reino Unido/UE; una mejora de la eficiencia de enrutamiento del 30% en el SaaS de gran volumen se convierte en un ahorro anual de seis cifras. El contexto de 2026 es que los precios de la inferencia LLM cayeron ~ 10 veces por año  un token de clase GPT-4 se fue de $20/M to ~$0,40/M desde finales de 2022 hasta 2026. La mayor parte de la caída es mejor para las pilas (fase 17 · 04-09), no para el hardware. El enrutamiento es cómo se convierte esa caída de precios en margen sin regresión del producto. El modo de falla es la deriva del modelo barato: la ruta empuja el 40% a un modelo más débil, la calidad cae del 3-5% en las tareas de razonamiento, nadie se da cuenta por un cuarto. Rutas de puertas por métricas de calidad en línea, no sólo conjuntos de evaluaciones fuera de línea.
+> Un corredor dinámico evalúa cada solicitud (tipo de tarea, longitud de token, similitud de incorporación, confianza) y envía consultas simples a un modelo barato, aumentando las complejas a un modelo fronterizo. También se llama cascada de modelos. Los estudios de caso de producción muestran una reducción de costes de 20-60% en la calidad de iso en las implementaciones de EE.UU./Reino Unido/UE; una mejora de la eficiencia de enrutamiento del 30% en el SaaS de gran volumen se convierte en un ahorro anual de seis cifras. El contexto de 2026 es que los precios de inferencia de LLM para un nivel de capacidad fijo han caído aproximadamente 10 veces por año (estimación de la inflación de LLM16z); en el nivel GPT-4 la caída es más lenta, desde $20/M to ~$0,40/M (alrededor de 50x) desde finales de 2022 hasta 2026. La mayor parte de la caída es mejor para las pilas (fase 17 · 04-09), no para el hardware. El enrutamiento es cómo se convierte esa caída de precios en margen sin regresión del producto. El modo de falla es la deriva del modelo barato: la ruta empuja el 40% a un modelo más débil, la calidad cae del 3-5% en las tareas de razonamiento, nadie se da cuenta por un cuarto. Rutas de puertas por métricas de calidad en línea, no sólo conjuntos de evaluaciones fuera de línea.
 
 **Type:** Learn
 **Languages:** Python (stdlib, toy cascading router simulator)
@@ -44,7 +44,7 @@ Si se envía el 70% a barato y el 30% a caro, su factura cae alrededor del 65% e
 
 Las pasarelas de IA (fase 17 · 19) exponen el enrutamiento.`router`Por ejemplo, el sistema de conexión de acceso a Internet (POS) es un sistema de conexión de acceso a Internet (POS) que permite a los usuarios acceder a Internet en forma automática.
 
-Fuente abierta: RouteLLM (LMSYS), No Diamond (comercial), Prompt Mule.
+Fuente abierta: RouteLLM (LMSYS), Prompt Mule. Comercial: No diamante.
 
 ### La curva de precios de 2026
 
@@ -69,7 +69,7 @@ Rutas de puertas por métricas de calidad en línea:
 ### Números que debes recordar
 
 - 2026 ahorros de enrutamiento en iso-calidad: estudios de caso del 20-60%.
-- Descenso de los precios de los LLM 2022-2026: ~ 10 veces por año agregado.
+- La caída del precio de la LLM en un nivel de capacidad fija: ~10x por año (estimación de la LLMflation a16z); aproximadamente 50x el total en el nivel GPT-4 de 2022 a 2026.
 - GPT-4 nivel 2022 vs 2026: ~$20/M → ~$0,40/M.
 - Impacto de latencia en cascada: ~ 1,2x mediana, ~ 2x escalada (~ 10% del tráfico).
 

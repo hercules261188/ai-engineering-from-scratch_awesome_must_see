@@ -34,7 +34,7 @@ Esta lección muestra las tres apuestas, la brecha de latencia, la brecha de Fin
 
 ### Diferencias de latencia en la escala
 
-El análisis artificial tiene un índice de referencia continuo. En implementaciones equivalentes Llama 3.1 405B (compartidas bajo demanda), la latencia media de primer token de Azure OpenAI es de alrededor de 50 ms; Bedrock es de alrededor de 75 ms. La brecha no es un fallo de AWS  es una diferencia de modelo de capacidad. Azure vende PTUs (Unidades de Despliegue Provisionadas), que reservan la capacidad de GPU para su inquilino. El equivalente de Bedrock (Provisioned Throughput) existe, pero comienza alrededor de $21/hora por unidad, y la mayoría de los clientes se quedan en el uso compartido a pedido.
+El análisis artificial tiene un índice de referencia continuo. En implementaciones equivalentes de Llama 3.1 405B, la latencia mediana de primer token de Azure es de alrededor de 50 ms con PTU; Bedrock en la demanda compartida es de alrededor de 75 ms. La brecha no es un fallo de AWS  es una diferencia de modelo de capacidad. Azure vende PTUs (Unidades de Despliegue Provisionadas), que reservan la capacidad de GPU para su inquilino. El equivalente de Bedrock (Provisioned Throughput) existe, pero comienza alrededor de $21/hora por unidad, y la mayoría de los clientes se quedan en el uso compartido a pedido.
 
 La capacidad compartida a pedido compite con el tráfico de todos los demás clientes. La capacidad dedicada no. Si el TTFT de su producto es < 100 ms en P99, compra PTUs en Azure, compra Bedrock Provisioned Throughput o acepta la variación predeterminada.
 
@@ -96,7 +96,7 @@ Esta lección produce`outputs/skill-managed-platform-picker.md`. Dado el perfil 
 2. Su producto necesita Claude 3.7 Sonnet y GPT-4o. Diseñar un despliegue de dos proveedores que va a qué hiperescalador, qué puerta de entrada se encuentra delante, ¿cuál es la política de fallas?
 3. Un cliente de atención médica regulada requiere BAAs, residencia de datos de EE.UU. Este, y sub-100ms P99 TTFT. Elija una plataforma y justifique con tres características específicas.
 4. Descubre que su factura de Bedrock ha aumentado 4 veces este mes sin cambios en el tráfico. ¿Cómo encontraría al culpable sin los perfiles de aplicación?
-5. Lea las páginas de precios de Azure OpenAI y Bedrock. ¿Para una carga de trabajo Claude de 100M-token/mes, que es más barata  API Antropic directa, Bedrock a pedido o Bedrock Provisioned Throughput?
+5. Para una carga de trabajo de 100M-token/mes Claude, que es más barato  API Antropic directa, Bedrock a pedido, o Bedrock Provisioned Throughput?
 
 ## Términos clave
 

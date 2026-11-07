@@ -108,7 +108,7 @@ Esta lección produce`outputs/skill-ab-plan.md`. Dado el cambio de característi
 2. Elija Statsig o GrowthBook para un cliente en el lugar regulado por la atención médica.
 3. Diseñar una A/B que teste GPT-4 vs GPT-3.5 en el costo por boleto resuelto. ¿Cuál es la métrica primaria, métrica de barandillas, secundaria?
 4. Su canario pasa pero A/B muestra una conversión de -1,2%. ¿Se envía?
-5. Aplicar CUPED a un preperíodo con un 60% de la variación de la post.
+5. Aplicar CUPED con una covariante preperiódica que explique el 60% de la variación postperiódica (correlación cuadrada 0,6).
 
 ## Términos clave
 

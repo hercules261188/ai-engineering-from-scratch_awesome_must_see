@@ -130,7 +130,7 @@ Esta lección produce`outputs/skill-finops-plan.md`.Dado el producto y la escala
 1. - ¿ Qué ?`code/main.py`¿A qué punto dispara el interruptor de muerte?
 2. Diseñar un panel de costos por inquilino, por tarea. ¿Cuáles son las 5 vistas que construye primero?
 3. Su inquilino más grande es unidad-economía-negativo. Propón tres intervenciones ordenadas por impacto del cliente.
-4. Calcula el coste por boleto resuelto para un producto de soporte: 3M tokens/bilet, ~800 boletos/día, tasa almacenada en caché GPT-5.
+4. Calcule el costo por boleto resuelto para un producto de soporte: 3M tokens/ticket, ~800 boletos/día, todas las entradas a la tasa caché de GPT-5 de $0.125/M (precio de lista de lanzamiento; compruebe la tarjeta de tarifa en vivo).
 5. Discutir si el etiquetado retroactivo puede funcionar alguna vez. ¿Cuándo es aceptable?
 
 ## Términos clave
