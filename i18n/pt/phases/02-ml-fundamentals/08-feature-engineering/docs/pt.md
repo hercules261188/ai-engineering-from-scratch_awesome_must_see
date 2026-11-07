@@ -82,7 +82,7 @@ Os modelos precisam de números, as categorias precisam de codificação.
 Os dados reais têm buracos.
 
 - **Drop rows:**Só quando os dados faltantes são raros e aleatórios
-- **Mean/median imputation:**Simples, preservam a forma de distribuição (a média é mais robusta para os valores de extrema variabilidade)
+- **Mean/median imputation:**Simples, mantém o centro da característica (mediana é mais robusta para valores fora), mas reduz sua variância e acumula cada valor preenchido em um pico, de modo que a forma de distribuição muda
 - **Mode imputation:**Para características categóricas
 - **Indicator column:**Adicione uma coluna binária "was_this_missing" antes de imputar. O fato de que os dados estão faltando pode ser informativo
 - **Forward/backward fill:**Para dados de séries temporais

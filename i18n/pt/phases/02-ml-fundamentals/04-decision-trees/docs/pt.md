@@ -104,7 +104,7 @@ Esta abordagem gananciosa não garante a árvore globalmente ideal. Encontrar a 
 
 ### Condições de parada
 
-Sem condições de parada, a árvore cresce até que cada folha seja pura (uma amostra por folha).
+Sem condições de parada, a árvore cresce até que cada folha seja pura ou sem fragmentação possa separar suas amostras, muitas vezes até uma única amostra por folha.
 
 **Pre-pruning**para a árvore antes de crescer completamente:
 - Profundeza máxima: parar de se dividir quando a árvore atingir uma profundidade definida
