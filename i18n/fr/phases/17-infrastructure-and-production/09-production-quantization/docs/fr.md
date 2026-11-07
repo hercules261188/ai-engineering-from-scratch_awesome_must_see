@@ -104,6 +104,8 @@ gpu-memory-breakdown
 
 `code/main.py`Il compute l'empreinte mémoire (poids + KV + activations) et le débit relatif sur les six formats pour une gamme de tailles de modèles.
 
+Le [Inside an LLM Serving GPU](https://aiengineeringfromscratch.com/inside-an-llm-serving-gpu?dtype=fp8&users=64)La machine montre FP8 sur un NVIDIA L4. Les poids tombent de 15,28 Go à 8,81 Go, le pool KV passe de 24 094 à 142 369 jetons, et la sortie mesurée à 64 utilisateurs passe de 250,85 à 735,91 jetons par seconde.
+
 ## La faire partir
 
 Cette leçon produit `outputs/skill-quantization-picker.md`. Compte tenu du matériel, de la taille du modèle, du type de charge de travail et de la tolérance de qualité, choisit un format et produit un plan d'étalonnage/validation.

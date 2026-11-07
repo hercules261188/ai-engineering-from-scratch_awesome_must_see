@@ -22,7 +22,7 @@ Les instructions de l'utilisateur incluent "Mon SSN est 123-45-6789. " L'adresse
 
 Par ailleurs, le module de votre groupe EKS peut atteindre n'importe quel hôte Internet, quelqu'un exfilte les données via DNS à un domaine contrôlé par l'attaquant.
 
-La sécurité des services de LLM doit s'attaquer à tous les trois vecteurs: les informations de confiance sous forme de voûte, le dépistage des données personnelles, le filtrage des sorties réseau, les journaux d'audit.
+La sécurité des services de LLM doit traiter les trois vecteurs et le prouver par la suite.
 
 ## Le concept
 

@@ -11,7 +11,7 @@
 
 - Expliquez PagedAttention comme un allocateur de cache KV: blocs, tables de blocs, et pourquoi la fragmentation reste inférieure à 4% à la charge de production.
 - Diagramme de la séquence continue au niveau de l'itération: comment les séquences terminées quittent le lot et les nouvelles se joignent sans se vider.
-- Décrire le pré-remplissage en morceaux dans une phrase et nommer la métrique de latence qu'elle protège (indice: c'est la queue TTFT, pas le débit moyen).
+- Décrire le pré-remplissage en morceaux dans une phrase et nommer la métrique de latence qu'elle protège (indice: il s'agit de la queue ITL des décodes concurrents, pas de la capacité moyenne).
 - Vérifiez une combinaison de fonctionnalités vLLM par rapport à la matrice de compatibilité de votre version avant d'activer chaque optimisation à la fois.
 
 ## Le problème
@@ -44,7 +44,7 @@ Le batchage continu fonctionne entre chaque étape de décode.`RUNNING`à chaque
 
 Les séquences à différentes positions dans leur sortie partagent une fusion vers l'avant.`V1 scheduler`. L'invariable de clé: le planificateur fonctionne une fois par itération de décode, pas une fois par requête.
 
-### Le préchargement en morceaux protège la queue TTFT
+### Le préchargement en morceaux protège la queue de l'ITL
 
 Le préfill est lié au calcul. Une demande de 32k-token sur Llama 3.3 70B prend ~ 800 ms de préfill pur sur un H100. Pendant que le préfill fonctionne, décodez les jetons pour chaque autre séquence dans la séquence d'attente. Dans une boucle de service, la latence de premier jeton (TTFT) d'un long demande devient la latence inter-token (ITL) blip pour des dizaines d'autres utilisateurs.
 
@@ -130,7 +130,7 @@ Cette leçon produit `outputs/skill-vllm-scheduler-reader.md`. Compte tenu de la
 | Chunked prefill | "prefill splitting" | Break long prefill into 512-token slices interleaved with decode |
 | TTFT | "first token time" | Prefill + queue + network; dominated by prefill at long prompts |
 | ITL | "inter-token latency" | Time between consecutive decode tokens; dominated by batch size |
-| Goodput | "throughput that meets SLO" | Tokens/sec where every request still hit TTFT and ITL targets |
+| Goodput | "throughput that meets SLO" | Requests/sec that still hit TTFT and ITL targets (Phase 17 · 08 reports it as the share of requests) |
 | V1 scheduler | "the new scheduler" | vLLM's 2026 scheduler; runs continuous batching with chunked prefill |
 | `--gpu-memory-utilization` | "the memory knob" | Fraction of HBM reserved for KV blocks after weights and activations |
 

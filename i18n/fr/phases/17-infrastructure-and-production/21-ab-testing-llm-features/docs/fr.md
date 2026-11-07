@@ -108,7 +108,7 @@ Cette leçon produit `outputs/skill-ab-plan.md`- Étant donné le changement de 
 2. Choisissez Statsig ou GrowthBook pour un client local réglementé par les soins de santé.
 3. Conçonnez une A/B qui teste GPT-4 contre GPT-3.5 sur le coût par billet résolu.
 4. Votre canary passe mais A/B montre une conversion de -1,2%.
-5. Appliquer CUPED à une période préalable avec 60% de la variance de poste.
+5. Appliquez CUPED avec une covariation pré-période qui explique 60% de la variance post-période (corrélation carrée 0,6).
 
 ## Les termes clés
 

@@ -77,11 +77,11 @@ Si votre pile doit être réaffectée, réparez-la avant de le faire.
 
 ### Cadence des métriques
 
-Les portes canaries vérifient toutes les 5 à 15 minutes selon le volume de trafic. 1% du trafic avec 10 req / min donne 50 à 150 points de données par fenêtre  suffisamment pour la latence mais bruyant pour les commentaires des utilisateurs. 10% donne ~ 10 fois plus. Les progrès doivent faire une pause suffisamment longue pour accumuler suffisamment d'échantillons à chaque étape.
+Les portes canaries vérifient toutes les 5 à 15 minutes selon le volume de trafic. 1% des 1000 req/min (10 req/min pour le canary) donne 50 à 150 points de données par fenêtre de 5 à 15 minutes  suffisamment pour la latence mais bruyant pour les commentaires des utilisateurs. 10% donne ~ 10 fois plus. Les progrès doivent faire une pause suffisamment longue pour accumuler suffisamment d'échantillons à chaque étape.
 
 ### L'étape A/B est facultative
 
-Si le nouveau modèle est nettement différent (comportement différent, courbe de coût différente, ton différent), A/B test à 50% après le passage des canaries.
+Si le nouveau modèle est nettement différent (comportement différent, courbe de coût différente, ton différent), A/B testé à 50% après le passage canary. Si c'est juste une version améliorée du même comportement, sauter à 100% lorsque canary gates passer. Amélioré signifie que l'évaluation hors ligne a montré le gain. Les portes canary ne mesurent pas la finition de tâche, donc le saut fait confiance à l'évaluation pour elle.
 
 ### Les chiffres que vous devriez vous rappeler
 

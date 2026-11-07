@@ -1,6 +1,6 @@
 # Les données de référence sont les données de référence de l'analyse de l'analyse de l'analyse de l'analyse de l'analyse de l'analyse de l'analyse de l'analyse de l'analyse de l'analyse de l'analyse de l'analyse de l'analyse de l'analyse de l'analyse de l'analyse de l'analyse de l'analyse de l'analyse de l'analyse de l'analyse de l'analyse de l'analyse de l'analyse de l'analyse de l'analyse de l'analyse de l'analyse de l'analyse de l'analyse de l'analyse de l'analyse de l'analyse de l'analyse de l'analyse de l'analyse de l'analyse de l'analyse de l'analyse de l'analyse de l'analyse de l'analyse de l'analyse de l'analyse de l'analyse de l'analyse de l'analyse de l'analyse de l'analyse de l'analyse de l'analyse de l'analyse de l'analyse de l'analyse de l'analyse de l'analyse de l'analyse de l'analyse de l'analyse de l'analyse de l'analyse de l'analyse de la base.
 
-> Quatre mesures déterminent si un déploiement d'inférence fonctionne. TTFT est pré-remplir plus que la file d'attente plus le réseau. TPOT (équivalemment ITL) est le coût de décode lié à la mémoire par jeton. La latence de bout en bout est TTFT plus TPOT fois longueur de sortie. Le débit est des jetons par seconde agrégés dans toute la flotte. Mais ce qui compte pour le produit, c'est le goodput  la fraction des demandes qui ont répondu à chaque SLO simultanément. Un débit élevé à un débit faible signifie que vous traitez des jetons qui n'atteignent jamais les utilisateurs à temps. Numéros de référence pour Llama-3.1-8B-Instruire sur le TRT-LLM en 2026: moyenne TTFT 162 ms, moyenne TPOT 7,33 ms, moyenne E2E 1,093 ms. Toujours signaler P50, P90, P99  jamais juste méchant. Et attention au piège de mesure: GenAI-Perf exclut le TTFT du calcul ITL, LLMPerf l'inclut; deux outils ne sont pas d'accord sur le TPOT pour la même course.
+> Cinq indicateurs déterminent si un déploiement d'inférence fonctionne. TTFT est pré-remplir plus que la file d'attente plus le réseau. TPOT (souvent dénommé ITL, bien que les outils ne soient pas d'accord sur le fait que ITL compte le premier jeton) est le coût de décode lié à la mémoire par jeton. La latence de bout en bout est TTFT plus TPOT fois longueur de sortie. Le débit est des jetons par seconde agrégés dans toute la flotte. Mais ce qui compte pour le produit, c'est le goodput  la fraction des demandes qui ont répondu à chaque SLO simultanément. Un débit élevé à un débit faible signifie que vous traitez des jetons qui n'atteignent jamais les utilisateurs à temps. Numéros de référence pour Llama-3.1-8B-Instruire sur le TRT-LLM en 2026: moyenne TTFT 162 ms, moyenne TPOT 7,33 ms, moyenne E2E 1,093 ms. Toujours signaler P50, P90, P99  jamais juste méchant. Et attention au piège de mesure: GenAI-Perf exclut le TTFT du calcul ITL, LLMPerf l'inclut; deux outils ne sont pas d'accord sur le TPOT pour la même course.
 
 **Type:** Learn
 **Languages:** Python (stdlib, toy percentile calculator and goodput reporter)
@@ -52,7 +52,7 @@ La métrique agrégée vous indique l'efficacité de la flotte, pas la santé de
 
 `goodput = fraction of requests meeting (TTFT <= a) AND (TPOT <= b) AND (E2E <= c)`
 
-Le SLO est une restriction multi-constraint. Une demande est "bonne" seulement si chaque contrainte est respectée. Goodput est la part.
+La SLO est une restriction multi-constance. Une demande est "bonne" seulement si chaque restriction est respectée. Goodput est la part. Certains papiers et tableaux de bord rapportent plutôt goodput comme un taux: demandes par seconde qui répondent à chaque SLO. Multipliez la part par le taux de demande pour convertir.
 
 En 2026, le goodput est la métrique utilisée dans les soumissions MLPerf Inference v6.0 et dans le suivi interne de SLA chez les fournisseurs de plateformes d'IA.
 
@@ -107,6 +107,8 @@ throughput-latency
 ## Utilisez-le
 
 `code/main.py`Il est également possible de générer une distribution de latence synthétique, d'appliquer un SLO et de calculer le goodput.
+
+Le [Inside an LLM Serving GPU](https://aiengineeringfromscratch.com/inside-an-llm-serving-gpu?users=1)La machine montre d'où vient le temps par jeton de sortie sur un NVIDIA L4. Une étape de décode est de 16,41 Go de poids, ce qui prend au moins 54,7 ms à 300 GB/s, et la étape mesurée a pris 60,16 ms.
 
 ## La faire partir
 

@@ -130,7 +130,7 @@ Cette leçon produit `outputs/skill-finops-plan.md`- En fonction du produit et d
 1. On court .`code/main.py`À quel point le commutateur de tuerie tire-t-il ?
 2. Conçuez un tableau de bord pour les coûts par habitant et par tâche.
 3. Votre plus grand locataire est unité-économie-négatif.
-4. Comptez le coût par billet résolu pour un produit de support: 3 M de jetons/billet, ~ 800 billets/jour, taux de mise en cache GPT-5.
+4. Comptez le coût par billet résolu pour un produit de support: 3 millions de jetons/billet, ~ 800 billets/jour, toutes les entrées au taux caché GPT-5 de 0,125 $ / M (prix de liste de lancement; vérifiez la carte de taux en direct).
 5. Débattez si l'étiquetage rétroactif peut fonctionner.
 
 ## Les termes clés

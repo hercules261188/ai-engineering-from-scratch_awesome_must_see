@@ -1,6 +1,6 @@
 # Les API de lot  la réduction de 50% en tant que norme de l'industrie
 
-> Chaque fournisseur majeur envoie une API de lot asynchrone avec une réduction de 50% et une rotation de 24 heures. OpenAI, Anthropic, Google et la plupart des plateformes d'inférence (batch tier de Fireworks, batch ensemble) mettent en œuvre le même schéma. Les lots de stockage avec un caching rapide et les pipelines de nuit diminuent à ~10% du coût synchrone-non-caché. La règle est brutalement simple: si elle n'est pas interactive, elle appartient au lot. Les lignes de production de contenu, la classification des documents, l'extraction de données, la production de rapports, l'étiquetage en vrac, l'étiquetage du catalogue  tout ce qui tolère une latence de 24 heures est de l'argent laissé sur la table jusqu'à ce qu'il passe au lot. Le modèle de production de 2026 consiste à trier chaque nouvelle charge de travail du LLM en trois voies: interactive (synchrone avec le caching), semi-interactive (couche asynchrone avec le fallback), lot (sur la nuit, entrée en cache empilée). Les charges de travail qui prétendent être interactives mais tolèrent les minutes de latence gaspillent le plus.
+> Chaque fournisseur majeur envoie une API de lot asynchrone avec une réduction de 50% et une rotation de 24 heures. OpenAI, Anthropic, Google et la plupart des plateformes d'inférence (batch tier de Fireworks, batch ensemble) mettent en œuvre le même schéma. Les lots de stockage avec un caching rapide et les pipelines de nuit diminuent à ~10% du coût synchrone-non-caché. La règle est brutalement simple: si elle tolère des heures de latence, elle appartient au lot. Les lignes de production de contenu, la classification des documents, l'extraction de données, la production de rapports, l'étiquetage en vrac, l'étiquetage du catalogue  tout ce qui tolère une latence de 24 heures est de l'argent laissé sur la table jusqu'à ce qu'il passe au lot. Le modèle de production de 2026 consiste à trier chaque nouvelle charge de travail du LLM en trois voies: interactive (synchrone avec le caching), semi-interactive (couche asynchrone avec le fallback), lot (sur la nuit, entrée en cache empilée). Les charges de travail qui prétendent être interactives mais tolèrent les minutes de latence gaspillent le plus.
 
 **Type:** Learn
 **Languages:** Python (stdlib, toy batch-vs-sync cost simulator)
@@ -52,7 +52,7 @@ La pile: lot + cache = ~10% de synchronisation de facture non caché. Toute char
 
 **Semi-interactive** l'utilisateur soumet une tâche, vérifie en quelques minutes.
 
-**Batch** l'utilisateur s'attend à des résultats "d'ici le matin" ou "à l'heure prochaine".
+**Batch** l'utilisateur s'attend à des résultats "dans la matinée" ou "dans la journée".
 
 Erreur commune: classer tout comme interactif parce que le pipeline est la production.
 

@@ -94,6 +94,8 @@ roofline
 
 `code/main.py`Il implémentera un cache KV de jouet radix-tree plus un planificateur avec deux politiques: FCFS et cache-conscient. Il exécute la même charge de travail à travers les deux, rapporte le taux de cache préfixe et le delta de débit. Puis il exécute une charge de travail "scrambled ordering" pour montrer l'effondrement de 6,4x.
 
+Le [Inside an LLM Serving GPU](https://aiengineeringfromscratch.com/inside-an-llm-serving-gpu?workload=shared&shared=4096)La machine montre le cache radix sur une vraie L4 run. Quatre groupes ont chacun leur propre prompt système de 4.096 jetons. La première demande d'un groupe calcule son prompt. Alors que ce prompt reste dans le cache, les demandes ultérieures du groupe ne calculent que la question de 128 jetons.
+
 ## La faire partir
 
 Cette leçon produit `outputs/skill-radix-scheduler-advisor.md`. Compte tenu de la description de la charge de travail (forme de modèle de demande, modèle de récupération, nombre de locataires concurrents), il produit une ordonnance de demande de demande et une recommandation de mise en œuvre de la SGLang.

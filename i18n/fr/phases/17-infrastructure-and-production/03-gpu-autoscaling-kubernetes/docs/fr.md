@@ -20,7 +20,7 @@ Votre équipe envoie un service de maîtrise de la loi sur Kubernetes.`DCGM_FI_D
 
 Vous utilisez le Cluster Autoscaler pour les nœuds. Une requête de jeton 1M arrive à 2 heures du matin; le cluster passe 3 minutes à fournir un nœud, et les temps de demande sont terminés.
 
-Vous déployez un modèle 70B qui nécessite 8 GPU sur 2 nœuds. Le cluster dispose de 7 GPU gratuits et 1 réparti sur 3 nœuds. Cluster Autoscaler fournit un nœud pour le 1 GPU manquant.
+Vous déployez un modèle 70B qui nécessite 8 GPU sur 2 nœuds. Le cluster a 7 GPU gratuits, dispersés sur 3 nœuds, et a besoin d'un autre. Cluster Autoscaler fournit un nœud pour le 1 GPU manquant. Les 7 GPU réservés restent inactifs pendant 4 minutes en train de brûler de l'argent pendant que Kubernetes reçoit le dernier GPU.
 
 Trois couches, trois modes d'échec différents. L'autoscalage conscient de la GPU en 2026 n'est pas "allumé à HPA". Il compose le provisionnement de nœuds, la planification de gangs et l'autoscalage des signaux d'application.
 

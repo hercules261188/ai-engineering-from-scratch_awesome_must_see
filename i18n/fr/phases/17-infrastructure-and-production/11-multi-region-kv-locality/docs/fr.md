@@ -51,7 +51,7 @@ RTT interrégionale:
 - États-Unis-Est-1  Eu-Ouest-1: ~75 ms.
 - États-Unis-est-1  ap-sud-est-1: ~ 220 ms.
 
-Si le routage prend une demande d'us-est-1 vers un préfixe chaud en ap-sud-est-1, le pré-remplissage enregistré (800 → 80 ms) est éclipsé de 440 ms aller-retour.`prefill_time + network_latency`La réponse est souvent de continuer à router régionalement sauf sur des préfixes massifs de plusieurs MB où le préfilement domine.
+Si le routage prend une demande de us-est-1 à un préfixe chaud en ap-sud-est-1, le préfilé enregistré (800 → 80 ms, donc 720 ms) se réduit à environ 500 ms une fois que le ~220 ms RTT est payé, et la marge disparaît si la région éloignée fait la queue de la demande ou a déjà expulsé le préfixe.`prefill_time + network_latency`La réponse est souvent de continuer à router régionalement sauf sur des préfixes massifs de plusieurs MB où le préfilement domine.
 
 ### Les "inférences transregionales" commerciales ne sont pas utiles ici.
 

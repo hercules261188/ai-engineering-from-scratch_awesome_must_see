@@ -1,6 +1,6 @@
 # Le modèle de routage comme un primitif de réduction des coûts
 
-> Un courtier dynamique évalue chaque demande (type de tâche, longueur de jeton, similarité d'intégration, confiance) et envoie des requêtes simples à un modèle bon marché, en augmentant les requêtes complexes à un modèle frontalier. On l'appelle aussi cascade de modèle. Des études de cas de production montrent une réduction de 20 à 60% des coûts à l'aide de l'iso-qualité dans les déploiements aux États-Unis/Royaume-Uni/UE; une amélioration de 30% de l'efficacité de routage sur le SaaS à volume élevé se transforme en économies annuelles de six chiffres. Le contexte de 2026 est que les prix des inférences LLM ont chuté ~ 10x par an  un jeton de classe GPT-4 est allé de $20/M to ~$0,40/M de fin 2022 à 2026. La plupart des dépôts sont plus efficaces pour les piles (phase 17 · 04-09), et non pour le matériel. Le routage est la façon dont vous convertissez cette baisse de prix en marge sans régression du produit. Le mode d'échec est le dérivé du modèle bon marché: le trajet pousse 40% vers un modèle plus faible, la qualité diminue de 3 à 5% sur les tâches de raisonnement, personne ne remarque pendant un quart. Les itinéraires de passerelle par métriques de qualité en ligne, pas seulement les ensembles d'évaluation hors ligne.
+> Un courtier dynamique évalue chaque demande (type de tâche, longueur de jeton, similarité d'intégration, confiance) et envoie des requêtes simples à un modèle bon marché, en augmentant les requêtes complexes à un modèle frontalier. On l'appelle aussi cascade de modèle. Des études de cas de production montrent une réduction de 20 à 60% des coûts à l'aide de l'iso-qualité dans les déploiements aux États-Unis/Royaume-Uni/UE; une amélioration de 30% de l'efficacité de routage sur le SaaS à volume élevé se transforme en économies annuelles de six chiffres. Le contexte de 2026 est que les prix d'inférence de la MLL pour un niveau de capacité fixe ont diminué d'environ 10 fois par an (estimation de la MLLflation de 16z); au niveau GPT-4 la baisse est plus lente, par rapport à $20/M to ~$0,40/M (environ 50 fois) de fin 2022 à 2026. La plupart des dépôts sont plus efficaces pour les piles (phase 17 · 04-09), et non pour le matériel. Le routage est la façon dont vous convertissez cette baisse de prix en marge sans régression du produit. Le mode d'échec est le dérivé du modèle bon marché: le trajet pousse 40% vers un modèle plus faible, la qualité diminue de 3 à 5% sur les tâches de raisonnement, personne ne remarque pendant un quart. Les itinéraires de passerelle par métriques de qualité en ligne, pas seulement les ensembles d'évaluation hors ligne.
 
 **Type:** Learn
 **Languages:** Python (stdlib, toy cascading router simulator)
@@ -44,7 +44,7 @@ Si vous roulez les 70% vers le bon marché et 30% vers le coûteux, votre factur
 
 Les passerelles d'IA (phase 17 · 19) exposent le routage.`router`Portkey a des gardiens + routage. Kong AI Gateway a un routage basé sur des plugins. Le marché de modèle OpenRouter expose une API de recommandation.
 
-Le code de base est basé sur le code de base.
+Le code de l'entreprise est le code de l'entreprise.
 
 ### La courbe des prix de 2026
 
@@ -69,7 +69,7 @@ Route de passerelle selon les mesures de qualité en ligne:
 ### Les chiffres que vous devriez vous rappeler
 
 - 2026 économie de routage à iso-qualité: 20 à 60% d'études de cas.
-- Réduction du prix des LLM 2022-2026: ~ 10 fois par an.
+- Réduction du prix de la LLM à un niveau de capacité fixe: ~10 fois par an (estimation de la LLMflation de 16z); environ 50 fois le total au niveau GPT-4 de 2022 à 2026.
 - Niveau GPT-4 2022 contre 2026: ~$20/M → ~$0,40/M.
 - Impact de la latence en cascade: ~ 1,2x la médiane, ~ 2x l'escalade (~ 10% du trafic).
 

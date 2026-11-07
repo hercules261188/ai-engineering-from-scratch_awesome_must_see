@@ -9,7 +9,7 @@
 
 ## Objectifs d'apprentissage
 
-- Enumérer les six caractéristiques de la passerelle principale (routage, retrait, retrait, limites de vitesse, secrets, observabilité, barreaux).
+- Enumérer les sept caractéristiques de la passerelle principale (routage, retrait, retrait, limites de vitesse, secrets, observabilité, barreaux).
 - Mettez en page quatre passerelles 2026 (LiteLLM, Portkey, Kong AI, Bifrost) pour élargir les plafonds et les cas d'utilisation.
 - Citez le point de référence Kong (228% contre Portkey, 859% contre LiteLLM) et expliquez pourquoi il importe pour >500 RPS.
 - Choisissez auto-hébergé par rapport à géré en fonction de la résidence des données et du budget des opérations.
@@ -22,7 +22,7 @@ Une nouvelle invention de cette technologie dans la couche d'applications coupe 
 
 ## Le concept
 
-### Six caractéristiques fondamentales
+### Sept caractéristiques fondamentales
 
 1. **Provider routing** OpenAI, Anthropic, Gemini, auto-hébergé, etc. derrière une seule API.
 2. **Fallback** sur 429, 5xx, ou défaillance de qualité, réessayez ailleurs.
@@ -109,7 +109,7 @@ Cette leçon produit `outputs/skill-gateway-picker.md`Compte tenu de l'ampleur, 
 ## Exercices
 
 1. On court .`code/main.py`. Configurer le retrait de OpenAI→Anthropic→auto-hébergé. Quel est le taux de succès attendu à 5% de taux d'erreur du fournisseur?
-2. Votre SLA est TTFT P99 < 200 ms sur une ligne de base de 300 ms. Quelles passerelles restent dans le budget ?
+2. Votre SLA est TTFT P99 < 320 ms et le modèle seul mesure 300 ms à P99.
 3. Un client de soins de santé a besoin d'un hébergement personnel + de rédaction des données personnelles + d'audit.
 4. Comparer LiteLLM vs Kong: à quel plafond RPS une équipe devrait migrer ?
 5. Conceptionner une politique de limite de tarifs pour un SaaS multi-locataire: niveau gratuit, niveau d'essai, niveau payant.
