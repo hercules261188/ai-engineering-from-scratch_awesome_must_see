@@ -22,7 +22,7 @@ Las redes neuronales no te dan ese lujo.
 
 Una red neuronal rota se ejecuta hasta la finalización, imprime un valor de pérdida y saca predicciones. La pérdida podría disminuir. Las predicciones podrían parecer plausibles. Pero el modelo está silenciosamente equivocado: aprender atajos, memorizar ruido o converger a un mínimo local inútil. Los investigadores de Google estiman que el 60-70% del tiempo de depuración de ML se gasta en errores "silenciosos" que no producen errores sino que degradan la calidad del modelo.
 
-La diferencia entre un modelo de trabajo y uno roto es a menudo una sola línea extraviada: una falta `zero_grad()`, una dimensión transpuesta, una tasa de aprendizaje de 10x. La canónica "Recepta para el entrenamiento de redes neuronales" (2019) se abre con esto: "Los errores de red neuronal más comunes son errores que no se estrellan".
+La diferencia entre un modelo de trabajo y uno roto es a menudo una sola línea extraviada: una falta `zero_grad()`La "Recepta para el entrenamiento de las redes neuronales" (2019) comienza con esto: "Los errores de red neuronal más comunes son los errores que no se estrellan".
 
 Esta lección te enseña a encontrar esos insectos.
 
