@@ -22,7 +22,7 @@ Sinir ağları size bu lüksü vermez.
 
 Kırık bir sinir ağı tamamlanıp, kayıp değeri yazdırır ve tahminler yapar. Kayıplar azaltabilir. Tahminler makul görünebilir. Ama model sessizce yanlış -- kısayolları öğrenmek, gürültü ezberlemek, veya işe yaramaz bir yerel minimum'a yaklaşmak. Google araştırmacıları, ML debugging süresinin %60-70'inin hata üretmeyen, ancak model kalitesini düşüren "sessiz" hatalar üzerinde harcandığını tahmin etti.
 
-İşlemli ve kırık bir model arasındaki fark genellikle tek bir yanlış çizgidir: eksik bir çizgi `zero_grad()`, bir geçiş boyutu, öğrenme oranı 10x. Kanonik "Nöral Ağ Eğitimi Tarifi" (2019) şöyle başlar: "En yaygın sinir ağ hataları çökmeyen hatalardır".
+İşlemli ve kırık bir model arasındaki fark genellikle tek bir yanlış çizgidir: eksik bir çizgi `zero_grad()`Kanonik "Nöral Ağ Eğitimi Tarifi" (2019) şöyle başlar: "En yaygın sinir ağ hataları çökmeyen hatalardır".
 
 Bu ders size bu böcekleri bulmayı öğretiyor.
 
