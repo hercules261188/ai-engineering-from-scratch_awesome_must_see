@@ -99,7 +99,7 @@ def sample(dec, z_dim, rng):
 - **Posterior collapse.**- Dispositivos de termo KL$q(z \mid x) \to \mathcal{N}(0, I)$tão agressivamente que$z$Não tem informações sobre $x$- Correcção: β- anulação (iniciada $\beta=0$, rampa para 1), bits livres, ou saltar o KL em dimensões inativas.
 - **Blurry samples.**A probabilidade do decodificador gaussiano implica a reconstrução do MSE, que é Bayes-ótima para L2 (a média)  a média de um conjunto de dígitos plausíveis é um dígito confuso.
 - **β too large, too early.**Veja o colapso posterior.$\beta \approx 0.01$e a rampa.
-- **Latent dim too small.**16-D funciona para MNIST, 256-D para ImageNet 2562, 2048-D para ImageNet 10242. O VAE da Diffusão Estavel comprime 512×512×3 → 64×64×4 (32x fator de amostra descendente em área espacial, 32x em canais).
+- **Latent dim too small.**16-D funciona para MNIST, 256-D para ImageNet 2562, 2048-D para ImageNet 10242. VAE da Stable Diffusion comprime 512×512×3 → 64×64×4 (8x downsample por lado, 64x em área espacial; canais vão de 3 para 4, então cerca de 48x menos valores no geral).
 
 ## Usá-lo
 

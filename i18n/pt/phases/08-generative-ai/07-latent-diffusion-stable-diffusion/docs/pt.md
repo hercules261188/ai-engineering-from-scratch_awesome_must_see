@@ -49,7 +49,7 @@ noise-schedule
 
 ## Construí-lo
 
-`code/main.py`Estabelece um brinquedo 1-D "VAE" (encodeador de identidade + decodeador, para demonstração; um verdadeiro VAE seria uma rede de conexão) em cima do DDPM da lição 06 e adiciona condicionamento de classe com orientação sem classificador.
+`code/main.py`A primeira fase do processo de classificação é a de um sistema de classificação de dados, que é um sistema de classificação de dados, que é um sistema de classificação de dados, que é um sistema de classificação de dados, que é um sistema de classificação de dados, que é um sistema de classificação de dados, que é um sistema de classificação de dados, que é um sistema de classificação de dados, que é um sistema de classificação de dados, que é um sistema de classificação de dados, que é um sistema de classificação de dados, que é um sistema de classificação de dados, que é um sistema de classificação de dados, que é um sistema de classificação de dados, que é um sistema de classificação de dados, que é um sistema de classificação de dados, que é um sistema de classificação de dados, que é um sistema de classificação de dados, que é um sistema de classificação de dados, que é um sistema de classificação de dados, que é um sistema de classificação de dados, que é um sistema de classificação de dados, que é um sistema de classificação de dados, que é um sistema de classificação de dados, que é um sistema de classificação de dados, que é um sistema de classificação de dados, que é um sistema de classificação de dados, que é um sistema de classificação de dados.
 
 ### Passo 1: codificador/decodificador
 
@@ -132,7 +132,7 @@ Salvar`outputs/skill-sd-prompter.md`. A Skill assume um prompt de texto + estilo
 
 A integração de Flux de referência é a receita canônica "Eu tenho uma GPU de consumo, posso enviar isso?" O truque é o mesmo de três botões de receita de produção de inferência de literatura de listas aplicadas a uma difusão DiT:
 
-1. **Staggered loading.**Flux tem três redes que nunca precisam coexistir na VRAM: T5-XXL codificador de texto (~ 10 GB em fp32), CLIP-L (pequeno), o 12B MMDiT e o VAE. Encode o prompt primeiro, * excluir* os codificadores, carregar o DiT, denoise, * excluir* o DiT, carregar o VAE, decodificar. GPUs de consumo de 8 GB apenas cabem em uma etapa por vez.
+1. **Staggered loading.**Flux tem quatro redes que nunca precisam coexistir na VRAM: T5-XXL codificador de texto (~ 10 GB em fp32), CLIP-L (pequeno), o 12B MMDiT e o VAE. Encode o prompt primeiro, * excluir* os codificadores, carregar o DiT, denoise, * excluir* o DiT, carregar o VAE, decodificar. GPUs de consumo de 8 GB apenas cabem em uma etapa por vez.
 2. **4-bit quantization via bitsandbytes.** `BitsAndBytesConfig(load_in_4bit=True, bnb_4bit_compute_dtype=torch.bfloat16)`No codificador T5 e no DiT. Cortando a memória 8x, a queda de qualidade é imperceptível para o texto-à-imagem por referências do Aritra (linkado no notebook).
 3. **CPU offload.** `pipe.enable_model_cpu_offload()`Auto-swaps módulos entre CPU e GPU como cada passo avança. Adiciona 10-20% de latência, mas faz o pipeline funcionar em tudo.
 
