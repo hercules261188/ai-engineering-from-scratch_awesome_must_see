@@ -108,7 +108,7 @@ Esta lição produz`outputs/skill-ab-plan.md`- Dada a alteração de caracterís
 2. Escolha Statsig ou GrowthBook para um cliente local regulado pela assistência médica.
 3. Desenhar um A/B que teste GPT-4 vs GPT-3.5 em custo por bilhete resolvido.
 4. O seu canário passa, mas A/B mostra conversão de -1,2%.
-5. Aplicar o CUPED a um período prévio com 60% da variação do posto.
+5. Aplicar CUPED com uma covariada pré-periódica que explique 60% da variância pós-periódica (correlação quadrada 0,6).
 
 ## Termos-chave
 

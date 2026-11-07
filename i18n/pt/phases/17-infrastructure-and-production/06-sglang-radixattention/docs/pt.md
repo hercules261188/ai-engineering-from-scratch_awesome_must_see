@@ -94,6 +94,8 @@ roofline
 
 `code/main.py`Implementa um cache KV de brinquedo radix-tree mais um cronógrafo com duas políticas: FCFS e cache-consciente. Executa a mesma carga de trabalho através de ambos, relata taxa de acidente de prefixo-cache e delta de throughput.
 
+O [Inside an LLM Serving GPU](https://aiengineeringfromscratch.com/inside-an-llm-serving-gpu?workload=shared&shared=4096)A máquina mostra o cache de radix em uma execução real L4. quatro grupos cada um têm seu próprio prompt de sistema de tokens 4.096. A primeira solicitação de um grupo calcula seu prompt. Enquanto esse prompt permanece no cache, solicitações posteriores do grupo computam apenas a pergunta de 128 tokens. Desligue o cache de radix para ver a média do primeiro token ir de 479 ms para 14.706 ms.
+
 ## Envia-o
 
 Esta lição produz`outputs/skill-radix-scheduler-advisor.md`. Dada uma descrição da carga de trabalho (forma do modelo de solicitação, padrão de recuperação, número de inquilinos simultâneos), produz uma prescrição de solicitação de solicitação e uma indicação de saída para a adopção do SGLang.

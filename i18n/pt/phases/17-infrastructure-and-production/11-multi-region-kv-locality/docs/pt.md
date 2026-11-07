@@ -51,7 +51,7 @@ RTT interregional:
 - EUA-Leste-1  Eu-Oeste-1: ~75 ms.
 - US-East-1  ap-southeast-1: ~ 220 ms.
 
-Se o roteamento leva uma solicitação de us-east-1 para um prefixo quente em ap-southeast-1, o prefill guardado (800 → 80 ms) é envenenado por 440 ms viagem de ida e volta.`prefill_time + network_latency`A resposta é manter o roteamento regional, exceto em prefixos massivos de vários MB onde prefill domina.
+Se o roteamento leva uma solicitação de us-east-1 para um prefixo quente em ap-southeast-1, o prefill salvado (800 → 80 ms, portanto 720 ms) reduz para cerca de 500 ms uma vez que o ~ 220 ms RTT é pago, e a margem desaparece se a região remota faz fila a solicitação ou já despejou o prefixo. GORGO (2026 pesquisa) faz isso explícito  minimizar `prefill_time + network_latency`A resposta é manter o roteamento regional, exceto em prefixos massivos de vários MB onde prefill domina.
 
 ### A "infereção transregional" comercial não ajuda aqui
 

@@ -104,6 +104,8 @@ gpu-memory-breakdown
 
 `code/main.py`Computa a pegada de memória (pesos + KV + ativações) e o throughput relativo nos seis formatos para uma gama de tamanhos de modelos. Mostra onde o cache KV domina, onde a compressão de peso paga e onde FP8 é a escolha segura.
 
+O [Inside an LLM Serving GPU](https://aiengineeringfromscratch.com/inside-an-llm-serving-gpu?dtype=fp8&users=64)A máquina mostra FP8 em um NVIDIA L4. Os pesos caem de 15,28 GB para 8,81 GB, o pool de KV cresce de 24,094 para 142,369 tokens, e a saída medida em 64 usuários vai de 250,85 para 735,91 tokens por segundo.
+
 ## Envia-o
 
 Esta lição produz`outputs/skill-quantization-picker.md`. Tendo em conta o hardware, o tamanho do modelo, o tipo de carga de trabalho e a tolerância à qualidade, escolhe um formato e elabora um plano de calibração/validação.

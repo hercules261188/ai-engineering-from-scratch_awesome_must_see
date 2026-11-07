@@ -77,11 +77,11 @@ Se a pilha precisar de ser redistribuída para o rollback, corrija-a antes de ro
 
 ### Cadência de métricas
 
-Canary gates verifica a cada 5-15 minutos dependendo do volume de tráfego. 1% do tráfego com 10 req / min dá 50-150 pontos de dados por janela  suficiente para latência, mas barulhento para o feedback do usuário. 10% dá ~ 10x mais.
+Canary gates verifica a cada 5-15 minutos dependendo do volume de tráfego. 1% de 1.000 req/min (10 req/min para o canário) dá 50-150 pontos de dados por janela de 5-15 minutos  suficiente para latência, mas barulhento para o feedback do usuário. 10% dá ~ 10x mais.
 
 ### O passo A/B é opcional
 
-Se o novo modelo é claramente diferente (comportamento diferente, curva de custo diferente, tom diferente), teste-o A/B em 50% após canário passar.
+Se o novo modelo é claramente diferente (comportamento diferente, curva de custo diferente, tom diferente), teste-o A/B em 50% após o canário passar. Se for apenas uma versão melhorada do mesmo comportamento, puxe para 100% quando os gatos canários passarem. Melhor significa que o eval offline mostrou o ganho. Os gatos canários não medem a conclusão da tarefa, então o skip confia no eval para isso.
 
 ### Números que você deve lembrar
 
