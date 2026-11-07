@@ -124,7 +124,7 @@ Việc tuyên bố về đeo đeo đeo đeo đeo đeo đeo đeo đeo đeo đeo �
 
 Đây là phần mà anh không cần phải lịch sự.
 
-- LangChain * Anatomy of an Agent Harness* liệt kê mười một thành phần:  các lời nhắc, công cụ, móng, hộp cát, dàn xếp, bộ nhớ, kỹ năng, các bộ phận phụ, và một "cuối ngốc" chạy thời gian.
+- LangChain * Anatomy of an Agent Harness * đi qua các thành phần của các bộ phận cốt lõi: các lời nhắc, công cụ, móng, hộp cát, dàn nhạc, bộ nhớ, kỹ năng, các bộ phận phụ, và một "cuối ngốc" chạy. Nó coi dây đeo như một đối tượng bạn cấu hình, không phải như một hệ thống bạn triển khai.
 - Công nghệ vận động của Addy Osmani đã đưa ra khung hình.`Agent = Model + Harness`và mô hình đinh, nhưng không nói được cái gì làm nên một dây đeo. Nó đọc như một lập trường, không phải là một thông số kỹ thuật.
 - Anthropic và OpenAI đi sâu nhất trên bề mặt nhưng ở trong thời gian chạy của riêng họ. Thông báo "các phần cúp-sự phân tách" trong tháng 4 năm 2026 Agents SDK là sản phẩm đầu tiên của nhà cung cấp rõ ràng ủng hộ sự phân chia máy tính điều khiển / máy tính dữ liệu. Đó là một ý tưởng nguyên thủy, không phải là một ý tưởng mới.
 - Cuốn sách agentic_harness xử lý harness như một đối tượng config (Jaymin West *Agentic Engineering*, chương 6) và dòng mạnh nhất trong nó là "hành cáp là ranh giới bảo mật chính trong một hệ thống agentic". Đó chỉ là chính sách ủy quyền, tái diễn.
@@ -193,7 +193,7 @@ Kỹ thuật bàn làm việc là kỷ luật làm cho các bề mặt đó rõ 
 Các khung của nhà cung cấp:
 
 - [Addy Osmani, Agent Harness Engineering](https://addyosmani.com/blog/agent-harness-engineering/) `Agent = Model + Harness`và mô hình cục; mỏng trên cơ sở hạ tầng
-- [LangChain, The Anatomy of an Agent Harness](https://blog.langchain.com/the-anatomy-of-an-agent-harness/) mười một thành phần: các lời nhắc, công cụ, móng, dàn nhạc, hộp cát, bộ nhớ, kỹ năng, các bộ phận phụ, thời gian chạy; bỏ qua hàng, triển khai, authz
+- [LangChain, The Anatomy of an Agent Harness](https://blog.langchain.com/the-anatomy-of-an-agent-harness/) Các thành phần của bộ phận cáp lõi: các lời nhắc, công cụ, móng, dàn nhạc, hộp cát, bộ nhớ, kỹ năng, phụ kiện, thời gian chạy; bỏ qua hàng, triển khai, authz
 - [OpenAI, Harness engineering: leveraging Codex in an agent-first world](https://openai.com/index/harness-engineering/) Quan điểm của nhóm Codex về bề mặt xung quanh thời gian chạy của chúng
 - [OpenAI, Unrolling the Codex agent loop](https://openai.com/index/unrolling-the-codex-agent-loop/) vòng tròn đại lý giảm xuống là `while`qua các cuộc gọi hàm
 - [Anthropic, Effective harnesses for long-running agents](https://www.anthropic.com/engineering/effective-harnesses-for-long-running-agents) bề mặt đường chân trời dài trong một thời gian chạy cụ thể

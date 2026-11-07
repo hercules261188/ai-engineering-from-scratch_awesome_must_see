@@ -22,7 +22,7 @@ Các đại lý vượt qua các bản demo. Họ thất bại trong sản xuấ
 
 ### Ba lớp đánh giá
 
-1. **Static benchmarks** SWE-bench Được xác minh cho mã (Dạy học 19), WebArena/OSWorld cho duyệt web / máy tính để bàn (Dạy học 20), GAIA cho người nói chung (Dạy học 19), BFCL V4 cho việc sử dụng công cụ (Dạy học 06). Sử dụng cho so sánh và khép lại giữa các mô hình.
+1. **Static benchmarks** SWE-bench Được xác minh cho mã (Dạy học 19), WebArena/OSWorld cho duyệt web / máy tính để bàn (Dạy học 20), GAIA cho người nói chung (Dạy học 19), BFCL V4 cho việc sử dụng công cụ (Dạy học 06). Sử dụng cho so sánh và khép cửa ngược giữa các mô hình.
 
 2. **Custom offline evals** hình dạng của sản phẩm của bạn:
    - LLM như một thẩm phán (Langfuse, Phoenix, Opik  Bài học 24).
@@ -54,7 +54,7 @@ Các đại lý vượt qua các bản demo. Họ thất bại trong sản xuấ
 
 ### Kết nối giai đoạn 14
 
-Mỗi bài học trong giai đoạn 14 tạo ra các trường hợp đánh giá:
+Hầu hết các bài học trong giai đoạn 14 tạo ra các trường hợp đánh giá. Bảng liệt kê các bài học với một rõ ràng nhất:
 
 | Lesson | Eval case it generates |
 |--------|------------------------|
@@ -77,7 +77,7 @@ Mỗi bài học trong giai đoạn 14 tạo ra các trường hợp đánh giá
 | 28 Orchestration | Supervisor routes to the right specialist |
 | 29 Runtime Shapes | DLQ handles N% failure |
 
-Nếu bộ đánh giá của bạn có các trường hợp cho mỗi người, bạn đã bao gồm giai đoạn 14.
+Nếu bộ đánh giá của bạn có một trường hợp cho mỗi hàng, bạn đã bao gồm lõi của giai đoạn 14.
 
 ### Khi phát triển dựa trên đánh giá thất bại
 

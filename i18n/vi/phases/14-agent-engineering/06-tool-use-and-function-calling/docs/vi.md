@@ -79,7 +79,7 @@ Quy tắc kỹ thuật: coi ID tương quan như là chịu tải, thay đổi c
 
 ### Sandboxing
 
-Việc thực hiện công cụ là ranh giới hộp cát. Xem Bài học 09 để biết chi tiết. Phiên bản ngắn: mỗi công cụ nên chỉ định bề mặt đọc/tập, truy cập mạng, thời gian, memory cap.`run_shell(cmd)`là một lá cờ đỏ; cụ thể `git_status()`an toàn hơn.
+Việc thực hiện công cụ là ranh giới hộp cát. Xem giai đoạn 13 · 26 để biết chi tiết. Phiên bản ngắn: mỗi công cụ nên chỉ định bề mặt đọc/tập, truy cập mạng, thời gian, memory cap.`run_shell(cmd)`là một lá cờ đỏ; cụ thể `git_status()`an toàn hơn.
 
 ```figure
 tool-routing

@@ -117,7 +117,7 @@ Kết quả: độ chính xác và chi phí cho mỗi giao thức; các trận �
 
 ## Đọc thêm
 
-- [Du et al., Society of Minds (arXiv:2305.14325)](https://arxiv.org/abs/2305.14325) tranh luận đa tác nhân
+- [Du et al., Improving Factuality and Reasoning in Language Models through Multiagent Debate (arXiv:2305.14325)](https://arxiv.org/abs/2305.14325) tranh luận đa tác nhân
 - [Sparse Communication Topology (arXiv:2406.11776)](https://arxiv.org/abs/2406.11776) Kết quả topology hiếm
 - [Anthropic, Building Effective Agents](https://www.anthropic.com/research/building-effective-agents) người tổ chức nhạc công như một biến thể tranh luận
 - [Madaan et al., Self-Refine (arXiv:2303.17651)](https://arxiv.org/abs/2303.17651) Phụng đồng minh tự phê bình mô hình đơn

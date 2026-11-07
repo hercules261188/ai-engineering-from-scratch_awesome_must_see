@@ -3,7 +3,7 @@
 > Bốn nguyên thủy: Agent, Task, Crew, Process. Hai hình dạng cấp cao: Crews (tự trị, hợp tác dựa trên vai trò) và Flow (tự động, xác định). CrewAI là thực hiện tham chiếu năm 2026, và tài liệu của nó là thẳng thắn: "cho bất kỳ ứng dụng sẵn sàng sản xuất nào, bắt đầu với Flow".
 
 **Type:** Learn + Build
-**Languages:** Python (stdlib)
+**Languages:** Python (with numpy)
 **Prerequisites:** Phase 14 · 12 (Workflow Patterns), Phase 14 · 14 (Actor Model)
 **Time:** ~75 minutes
 
@@ -14,8 +14,8 @@
 - Sự khác biệt giữa các nhóm (tự trị dựa trên vai trò) và các dòng chảy (chỉ định dựa trên sự kiện) và giải thích khuyến nghị sản xuất của các docs.
 - Các công cụ dây với `@tool`trang trí và `BaseTool`Subclass; lý luận về các kết quả có cấu trúc so với văn bản tự do.
 - Hãy cho tên bốn loại bộ nhớ CrewAI và khi nào mỗi loại sẽ được trả giá.
-- Thực hiện một đội ngũ 3 nhân viên (phác giả, nhà văn, biên tập viên) tạo ra một bản ngắn.
-- Nhận ra ba chế độ thất bại của CrewAI: Thổi bốc, thuế quản lý-LLM, giao hàng dễ vỡ.
+- Thực hiện một nhóm ba nhân viên (nghiên cứu, nhà văn, biên tập viên) bằng Python đơn giản tạo ra một đoạn ngắn.
+- Nhận ra bốn chế độ thất bại của CrewAI: "Thổi bốc", "Giá quản lý-LLM", "Handover" và "Crew-as-produc".
 
 ## Vấn đề
 
@@ -120,7 +120,7 @@ Khả năng trên phi hành đoàn với `memory=True`Memory là một trong nh�
 - Các ngân sách chậm thứ hai. Hiérarchical thêm đi lại và đi lại. Ngay cả Sequential cũng liên tục liên tục các yêu cầu bao gồm các câu chuyện sau và các kết quả trước đó.
 - Các vòng lặp đơn đại lý. Trượt khung; một vòng lặp đại lý (Dạy 1) cộng với một sổ đăng ký công cụ ngắn hơn.
 
-Bài học 17 (Tradeoffs của cơ quan cơ quan) đưa ra điều này trong một matrix.
+Bài học 28 (Phương pháp dàn nhạc) so sánh các topology cạnh nhau. Phiên bản ngắn: CrewAI ngồi trong góc "colaborative role-based".
 
 ### Hình dạng phụ thuộc
 
@@ -129,7 +129,7 @@ Không phụ thuộc vào LangChain. Python 3.10 đến 3.13. sử dụng `uv`Nh
 ### Khi mô hình này đi sai
 
 - **Prompt-bloat from backstories.**Một câu chuyện hậu cảnh 2000 từ cho mỗi đại lý và một đội ngũ 5 đại lý đốt cháy ngân sách ngữ cảnh trước khi gọi công cụ đầu tiên. Giữ câu chuyện hậu thuẫn dưới 200 từ. Sử dụng lại các cụm từ trên các đại lý; không lặp lại phong cách nhà năm lần.
-- **Manager-LLM token tax.**Quá trình phân cấp thêm một cuộc gọi LLM quản lý trước mỗi cuộc gọi chuyên gia. Trong một đội ngũ năm nhiệm vụ là sáu cuộc gọi LLM thay vì năm, và cuộc gọi quản lý mang theo danh sách nhiệm vụ đầy đủ cộng với các đầu ra trước đó.
+- **Manager-LLM token tax.**Quá trình phân cấp thêm một cuộc gọi LLM quản lý trước mỗi cuộc gọi chuyên gia. Trong một đội ngũ năm nhiệm vụ là mười cuộc gọi LLM thay vì năm, và cuộc gọi quản lý mang theo danh sách nhiệm vụ đầy đủ cộng với các đầu ra trước đó.
 - **Brittle handoffs.**Nhiệm vụ N.`expected_output`là "một phác thảo". Nhiệm vụ N+1 đọc nó như `context`Và cố gắng phân tích ba phần. LLM đã tạo ra bốn.`output_pydantic`trên Task N do đó Task N+1 đọc một đối tượng được gõ, không phải văn bản tự do.
 - **Crew-as-prod.**Đơn vị tự do Crew được vận chuyển đến sản xuất mà không có một vòng vòng vòng dòng.
 
@@ -139,7 +139,7 @@ ae-crew-vs-flow
 
 ## Hãy xây dựng nó
 
-`code/main.py`thực hiện các phiên bản STDlib của cả hai hình dạng cộng với một phi hành đoàn 3 nhân viên.
+`code/main.py`thực hiện phiên bản Python đơn giản của cả hai hình dạng cộng với một đội ngũ ba đại lý.
 
 Hình dạng:
 

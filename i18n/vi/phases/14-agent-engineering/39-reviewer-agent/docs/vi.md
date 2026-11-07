@@ -43,7 +43,7 @@ Năm chiều, mỗi điểm là 0-2.
 | Verification quality | Does the acceptance command actually prove the goal, or did it prove a weaker version? |
 | Handoff readiness | Could the next session pick up cleanly from the current state? |
 
-Tổng số 10 trong số đó là 7 là một thất bại mềm; 5 là một thất bại khó khăn.
+Tổng số 10 là một run dưới 7 là một thất bại mềm; một run dưới 5, hoặc bất kỳ kích thước nào ở 0, là một thất bại khó khăn.
 
 ### Người đánh giá là một vai trò riêng biệt, không phải là một mô hình riêng biệt
 

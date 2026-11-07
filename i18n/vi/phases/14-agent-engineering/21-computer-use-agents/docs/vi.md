@@ -10,7 +10,7 @@
 ## Mục tiêu học tập
 
 - Mô tả sử dụng máy tính của Claude: chụp màn hình vào, lệnh phím / chuột ra, không có API truy cập.
-- Tên gọi số điểm chuẩn của ba mô hình trên OSWorld / WebArena / Online-Mind2Web.
+- Hãy nhớ các số chuẩn khởi chạy bài học này đề cập: OpenAI CUA trên OSWorld / WebArena / WebVoyager, và Gemini 2.5 Computer Use trên Online-Mind2Web.
 - Giải thích mô hình an toàn mỗi bước của tài liệu sử dụng máy tính Gemini 2.5.
 - Tóm lại hợp đồng nhập không tin cậy được thực thi bởi cả ba mô hình.
 

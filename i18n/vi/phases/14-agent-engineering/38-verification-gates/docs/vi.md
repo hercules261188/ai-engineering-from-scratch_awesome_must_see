@@ -87,7 +87,7 @@ Kết quả: ba bản báo cáo phán quyết, mỗi bản lưu bên cạnh kị
 
 ## Các mô hình sản xuất trong tự nhiên
 
-Bốn mô hình nâng cổng từ "một công việc lông khác" lên "về quyết định".
+Năm mô hình nâng cổng từ "một công việc lông khác" lên "về quyết định".
 
 **Defense-in-depth, not single gate.**Hook trước giao dịch → kiểm tra tình trạng CI → hook trước công cụ authz → cổng trước hợp nhất. Mỗi lớp là xác định, do đó một thất bại trong một lớp được bắt bởi lớp tiếp theo. sổ chơi tháng 3 năm 2026 của microservices.io là rõ ràng: hook trước giao dịch không thể vượt qua bởi vì, không giống như một kỹ năng bên mô hình, nó không phụ thuộc vào đại lý theo hướng dẫn. Cổng xác minh nằm ở lớp CI / pre-merge.
 

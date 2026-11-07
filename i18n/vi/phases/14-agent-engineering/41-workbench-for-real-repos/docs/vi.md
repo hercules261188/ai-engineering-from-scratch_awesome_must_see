@@ -1,6 +1,6 @@
 # Bàn làm việc trên một chiếc xe đại diện thực sự
 
-> Một mươi một bài học về bề mặt không có giá trị gì nếu chúng không tồn tại tiếp xúc với một cơ sở mã thực sự. Bài học này thực hiện nhiệm vụ tương tự hai lần trên một ứng dụng mẫu nhỏ: chỉ đơn giản so với hướng dẫn bàn làm việc. Số lượng làm cho lập luận.
+> Một mươi một bài học của bề mặt bàn làm việc không có giá trị gì nếu chúng không tồn tại tiếp xúc với một cơ sở mã thực sự. Bài học này thực hiện nhiệm vụ tương tự hai lần trên một ứng dụng mẫu nhỏ: chỉ đơn giản so với bàn làm việc hướng dẫn. Số liệu làm cho lập luận.
 
 **Type:** Build
 **Languages:** Python (stdlib)

@@ -16,7 +16,7 @@
 
 ## Vấn đề
 
-Một cửa hàng sai cho một trong ba lớp truy vấn:
+Mỗi cửa hàng chỉ phù hợp với một trong ba lớp truy vấn:
 
 - **Semantic similarity**"Chúng ta đã thảo luận về sự trôi dạt của đại lý tuần trước?" Vector thắng; KV và biểu đồ thất bại.
 - **Fact lookup** "nọm điện thoại của người dùng là gì?" KV thắng; vector là lãng phí, biểu đồ là quá chết.
