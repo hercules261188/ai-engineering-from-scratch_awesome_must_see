@@ -11,5 +11,5 @@
   "phases/03-deep-learning-core/10-mini-framework/docs/en.md": "94d283931d471f9a757d50d4f12656d497b3cb78aacebeb7619a55e5c0e67325",
   "phases/03-deep-learning-core/11-intro-to-pytorch/docs/en.md": "097a4d314a056d0a9ddafedf0f6c2bfcc3812fe916591e48c3ae5daec7048331",
   "phases/03-deep-learning-core/12-intro-to-jax/docs/en.md": "9fe3133043ee5c5841555859f2e60f3cd11c6ee194ae7dd4ff6788a97d307a50",
-  "phases/03-deep-learning-core/13-debugging-neural-networks/docs/en.md": "f6eaa46e83913a121c488b047268074348f059bd269638f1960911b15a0c1ab2"
+  "phases/03-deep-learning-core/13-debugging-neural-networks/docs/en.md": "dc610caff98900df37b4c9d66a8dd7f1e959706f664201e7190268c9aa81a378"
 }
