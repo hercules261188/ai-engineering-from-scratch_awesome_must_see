@@ -57,7 +57,7 @@ Este es el caso de referencia para la especialización de roles (fase 16 · 08) 
 El caso de la población de producción.
 
 - **Nov 2025:**Las naves de Clawdbot (el agente local de codificación de ReAct-loop de Peter Steinberger).
-- **Dec 2025 – Mar 2026:**cambió su nombre dos veces (Clawdbot → OpenClaw → continuó bajo OpenClaw).
+- **Jan 2026:**cambió su nombre dos veces en una semana (Clawdbot → Moltbot el 27 de enero después de quejas de marca registrada, luego Moltbot → OpenClaw tres días después).
 - **Feb 2026:**Moltbook se lanza como una red social solo para agentes en los mismos primitivos; ~ 2.3M cuentas de agentes en pocos días.
 - **Mar 2026 (2026-03-10):**Meta adquiere Moltbook.
 - **Mar 2026:**China restringe OpenClaw en los ordenadores del gobierno.

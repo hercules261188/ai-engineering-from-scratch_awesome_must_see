@@ -112,7 +112,7 @@ Esta es una respuesta a incidentes de estilo SRE, aplicada a los sistemas de age
 
 ### La auditoría en modo de falla
 
-Las mejores prácticas para 2026 son una auditoría anual (o por liberación mayor) en el modo de falla:
+Una mejor práctica para 2026 es una auditoría trimestral (y por lanzamiento mayor) en modo de falla:
 
 1. **Trace sample.**Recoge 1000 huellas reales de ejecución.
 2. **Categorize.**Para los fallos de cada rastro, mapa a las categorías MAST + Groupthink.

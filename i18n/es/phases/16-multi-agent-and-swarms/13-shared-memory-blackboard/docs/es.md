@@ -68,7 +68,7 @@ El problema no es el estado compartido en sí mismo  es el estado compartido **w
 
 1. **Attribute provenance on every write.**Cada entrada en los registros estatales compartidos quién la escribió, cuándo, bajo qué instante y (si corresponde) qué fuente citó el agente.
 2. **Version writes; treat them as append-only.**Una corrección es una nueva entrada que sustituye a la antigua, no una actualización en el lugar.
-3. **Keep at least one agent that cannot write to shared state.**Un agente de verificación de sólo lectura toma muestras de entradas, recoge fuentes y señala inconsistencias.
+3. **Keep at least one agent that cannot write to shared state.**Un agente de verificación de sólo lectura muestra entradas, recoge fuentes y señala inconsistencias. Todavía lee el grupo, por lo que puede ser engañado por una mala entrada, pero verifica cada entrada contra la fuente original y no puede escribir, por lo que sus veredictos nunca devuelven un hecho envenenado al estado compartido.
 
 ### Precedente de tablero negro (Hayes-Roth, 1985)
 
