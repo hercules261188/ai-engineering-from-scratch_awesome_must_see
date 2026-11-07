@@ -26,32 +26,32 @@ D'ici 2026, les deux sont universels. Chaque pile d'inférence de production (vL
 
 ### Mathématiques de cache KV
 
-Par couche de décodeur, par jeton, par tête:
+Par couche de décodeur, par jeton, sur toutes les têtes KV:
 
 ```
-bytes_per_token_per_layer = 2 * d_head * dtype_size
+bytes_per_token_per_layer = 2 * n_kv_heads * d_head * dtype_size
                           ^
                           K and V
 ```
 
-Pour un modèle 7B avec 32 couches, 32 têtes, d_tête=128, fp16:
+Pour un modèle 7B de 32 couches, 32 têtes (toutes utilisées pour K et V), d_head=128, fp16:
 
 ```
-per token per layer = 2 * 128 * 2 = 512 bytes
-per token (32 layers) = 16 KB
-per 32K context = 512 MB
+per token per layer = 2 * 32 * 128 * 2 = 16384 bytes (16 KiB)
+per token (32 layers) = 512 KiB
+per 32K context = 16 GiB
 ```
 
 Pour Llama 3 70B (80 couches, d_head=128, GQA avec 8 têtes KV):
 
 ```
-per token per layer = 2 * 8 * 128 * 2 = 4096 bytes (4 KB)
-per 32K context = 10.4 GB
+per token per layer = 2 * 8 * 128 * 2 = 4096 bytes (4 KiB)
+per 32K context = 10 GiB
 ```
 
-Ce 10 Go est la raison pour laquelle Llama 3 70B dans le contexte 128K a besoin de la plupart d'un 40 GB A100 juste pour le cache KV à la taille de lot 1.
+Ce 10 GiB à 32K passe à 40 GiB à 128K, ce qui est l'ensemble d'un A100 de 40 GB seulement pour le cache KV à la taille de lot 1.
 
-**GQA is the KV-cache win.**MHA avec 64 têtes serait 32 Go. MLA comprimés encore plus.
+**GQA is the KV-cache win.**L'AMM avec 64 têtes KV serait 8 fois plus grand, environ 80 GiB à 32K.
 
 Tirez les dimensions et regardez le déplacement de la taille du cache. Poussez la longueur de la séquence ou le lot vers le haut et voyez à quelle vitesse il souffle au-delà d'un seul GPU:
 
@@ -124,6 +124,10 @@ flash-attention-memory
 
 ## Faites-le
 
+```figure
+iso-machine {"machine":"kv-cache"}
+```
+
 Regardez !`code/main.py`Nous mettons en œuvre:
 
 1. Une naïve .$O(N^2)$décodeur incrémentiel.
@@ -172,9 +176,9 @@ def tiled_softmax_dot(q, K, V, tile=4):
 
 Sortie par bits identiques à `softmax(qK) V`dans un seul coup, mais à tout moment le jeu de travail est un `tile × d_head`Le bloc, pas le plein.`N × d_head`- Je suis désolé .
 
-### Étape 3: comparer le décoding naïf et le décoding en cache sur la génération de 100 jetons
+### Étape 3: comparer le décoding naïf et le décoding en cache
 
-On compte les opérations d'attention.$O(N^2)$- 5050 en caisse:$O(N)$Le code imprime les deux.
+Les deux décodeurs effectuent les mêmes comparaisons de requêtes-clés: étape `t`Il y a des gens qui viennent .`t`Les jetons, donc le total est 1 + 2 + ... + N = N(N+1)/2. Le code utilise N = 10 et imprime 55 pour chaque décodeur. Pour une génération de 100 jetons, les deux font 5050 comparaisons. Le cache garde les projections K et V. Sans cache, chaque étape compute K et V à nouveau pour le préfixe complet, donc une génération de 100 jetons compute 5050 états de jetons. Avec le cache, les K et V de chaque jeton sont calculés une fois, de sorte que la même génération calcule 100 états de jeton.
 
 ## Utilisez-le
 

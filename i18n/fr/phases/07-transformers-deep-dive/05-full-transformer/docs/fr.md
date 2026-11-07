@@ -80,7 +80,7 @@ Pour un bloc avec `d_model = d`et l'expansion du FFN `r`- Le numéro de la liste
 - FFN (SwiGLU): `3 · d · (r · d)`- Je suis là.`3rd²`
 - Normes: négligeables
 
-À `d = 4096, r = 2.6, layers = 32`(environ Llama 3 8B), total: `32 · (4·4096² + 3·2.6·4096²) ≈ 32 · (16 + 32) M = ~1.5B parameters per layer × 32 ≈ 7B`Les correspondances publiées sont comptées.
+À `d = 4096, r = 2.6, layers = 32`(environ Llama 3 8B), total: `32 · (4·4096² + 3·2.6·4096²) ≈ 32 · (67M + 131M) ≈ 32 · 198M ≈ 6.3B`Les paramètres des blocs, plus environ 1B pour les emblèmes et la tête de sortie (128K vocabulaire × 4096, non lié).`r = 3.5`), qui déplace les paramètres de l'attention vers le FFN mais garde le total proche de 8B.
 
 ## Faites-le
 

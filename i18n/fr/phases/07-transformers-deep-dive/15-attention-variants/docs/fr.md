@@ -1,6 +1,6 @@
 # Attention Variantes  Fenêtre coulissante, épargne, différentielle
 
-> Chaque jeton voit chaque jeton, et la mémoire paie le prix.
+> Toutes les étiquettes sont un cercle, chaque jeton voit chaque jeton et la mémoire paie le prix.
 
 **Type:** Build
 **Languages:** Python
