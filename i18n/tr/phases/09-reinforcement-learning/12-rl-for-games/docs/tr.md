@@ -1,6 +1,6 @@
 # Oyunlar için RL  AlphaZero, MuZero ve LLM-Düşünme Çağı
 
-> 1992: TD-Gammon, saf TD ile backgammon'da insan şampiyonlarını yendi. 2016: AlphaGo Lee Sedol'u yendi. 2017: AlphaZero, satranç, shogi ve Go'yu sıfırdan baskın etti. 2024: DeepSeek-R1 aynı tarifleri kanıtladı.
+> 1992: TD-Gammon, saf TD ile backgammon'da insan şampiyonlarını yendi. 2016: AlphaGo Lee Sedol'u yendi. 2017: AlphaZero, satranç, shogi ve Go'yu sıfırdan baskın etti. 2025: DeepSeek-R1 aynı tarifleri kanıtladı.
 
 **Type:** Build
 **Languages:** Python
@@ -60,7 +60,7 @@ while True:
 
   $L_{\text{GRPO}}(\theta) = -\mathbb E_{q, \lbrace o_i \rbrace} \left[ \frac{1}{G} \sum_i A_i \cdot \log \pi_\theta(o_i \mid q) \right] + \beta \cdot \mathrm{KL}(\pi_\theta \Vert \pi_{\text{ref}})$
 
-Ödül modeli, eleştirmen, MCTS yoktur. Grup-sâlamlı temel üçü de değiştirir. Hesaplamaların bir kısmında akıl yürütme referansları üzerinde PPO-RLHF kalitesi ile eşleşir veya üstlenir.
+Öğrenilmiş ödül modeli, eleştirmen, MCTS yoktur. Kurallara dayalı bir doğrulayıcı ödül sağlar, grup ilişkili temel çizgi eleştirmeni değiştirir ve arama adımı düşürülür. Hesaplamaların bir kısmında akıl yürütme referansları üzerinde PPO-RLHF kalitesine eşittir veya üstlenir.
 
 **The R1 recipe in full.**DeepSeek-R1 (DeepSeek 2025) bir kağıtta iki modelden oluşur:
 
@@ -86,7 +86,7 @@ f3-selfplay-ladder
 
 ## Yapın
 
-Kodun içinde .`code/main.py`uygulamalar **GRPO in miniature** bir örnek grupları olan bir çeteci. Algoritm bir LLM ile aynıdır; sadece politika ve ortam daha basit. * kayıp * ve * grubun ilişkili avantajı * öğretir, bu da 2025 yeniliktir.
+Kodun içinde .`code/main.py`uygulamalar **GRPO in miniature**Bir LLM'de olduğu gibi algoritma da aynıdır; ancak politika ve ortam daha basit. * kaybı* ve * grubun artı avantajını* öğretir.
 
 ### Adım 1: Küçük bir doğrulama ortamı
 
@@ -144,7 +144,7 @@ RLHF ile aynı teşhisler: referans için KL, politika entropi, ödül-over-time
 ## Tuzaklar
 
 - **Reward hacking via verifier gaming.**GRPO, RLHF'nin riskini miras alır: Eğer doğrulayıcı yanlış ya da sömürülebilirse, LLM sömürüyü bulacaktır.
-- **Group size too small.**Grup başlangıç çizgisinin değişimi şöyle $1/\sqrt{G}$Aşağıda .$G = 4$, avantaj sinyali gürültülü , standart seçenek $G = 8$64'e kadar.
+- **Group size too small.**Grup ortalama başlangıç çizgisinin değişimi şöyle:$1/G$(Standard hatası gibi $1/\sqrt{G}$Aşağıda .$G = 4$, avantaj sinyali gürültülü , standart seçenek $G = 8$64'e kadar.
 - **Length bias.**Farklı uzunluklarda LLM tamamlamaları farklı log- olasılıklara sahiptir. Token sayısına göre normalleştirin veya dizi düzeyde log-prob kullanın veya maksimum uzunlukta kesin.
 - **Pure self-play cycles.**AlphaZero tarzı eğitim genel toplam oyunlarında egemenlik döngüsünde sıkışabilir.
 - **Search-policy mismatch.**AlphaZero, arama sonuçlarını taklit etmek için politikaları eğitir. Eğer politika ağı aramaların dağılımını temsil etmek için çok küçükse, eğitim stallları.

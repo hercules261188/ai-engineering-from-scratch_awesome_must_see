@@ -72,7 +72,7 @@ class ReplayBuffer:
         return rng.sample(self.buf, batch)
 ```
 
-~ Atari için 50.000 kapasite; bizim oyuncak ortamımız için 5.000 yeter.
+~ Atari için orijinal DQN'de olduğu gibi 106 kapasite (öğrenme başlamadan önce 50.000 geçiş toplar); Oyuncak çevremiz için 5.000 yeterlidir.
 
 ### Adım 2: Küçük bir Q-ağı (elçi MLP)
 

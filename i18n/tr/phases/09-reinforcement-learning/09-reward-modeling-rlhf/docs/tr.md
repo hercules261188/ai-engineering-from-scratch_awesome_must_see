@@ -113,7 +113,7 @@ def rlhf_step(theta, ref, w, prompt, rng, eps=0.2, beta=0.1, lr=0.05):
 
 ### Dördüncü adım: KL'yi izle
 
-İz ortalaması$\mathrm{KL}(\pi_\theta \Vert \pi_{\text{ref}})$Her güncelleme.`~5-10`politika çok uzakta $\pi_{\text{SFT}}$ daha düşük $\beta$Bu gerçek RLHF'deki en iyi teşhis.
+İz ortalaması$\mathrm{KL}(\pi_\theta \Vert \pi_{\text{ref}})$Her güncelleme.`~5-10`(KL'nin cevap başına nats, tokenlerin toplamı, TRL'lerin birim kayıtları) politika çok uzakta $\pi_{\text{SFT}}$: ya da $\beta$Bu gerçek RLHF'de en iyi teşhis.
 
 ### Adım 5: TRL ile üretim tarifi
 
