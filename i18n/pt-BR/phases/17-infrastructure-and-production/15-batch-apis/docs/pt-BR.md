@@ -1,6 +1,6 @@
 # APIs de lote  o desconto de 50% como padrão do setor
 
-> Todos os principais fornecedores enviam uma API de lote asíncrono com um desconto de 50% e uma rotação de ~ 24 horas. OpenAI, Anthropic, Google e a maioria das plataformas de inferência (Fireworks batch tier, Together batch) implementam o mesmo padrão. Batch de pilha com cache rápida e canalizações de noite caem para ~10% do custo sincrono-descoberto. A regra é brutalmente simples: se não é interativo, pertence ao lote. Os canais de geração de conteúdo, classificação de documentos, extração de dados, geração de relatórios, rotulagem em massa, etiquetado de catálogos  qualquer coisa tolerante à latença de 24 horas é dinheiro deixado na mesa até que se transfira para batches. O padrão de produção de 2026 consiste em triagar cada nova carga de trabalho do LLM em três linhas: interativa (sincronizada com o caching), semi-interativa (fila assíncrona com fallback), lote (overnight, input em caching empilhado). Cargas de trabalho que fingem ser interativas mas toleram minutos de atraso desperdiçam mais.
+> Todos os principais fornecedores enviam uma API de lote asíncrono com um desconto de 50% e uma rotação de ~ 24 horas. OpenAI, Anthropic, Google e a maioria das plataformas de inferência (Fireworks batch tier, Together batch) implementam o mesmo padrão. Batch de pilha com cache rápida e canalizações de noite caem para ~10% do custo sincrono-descoberto. A regra é brutalmente simples: se tolera horas de latência, pertence ao lote. Os canais de geração de conteúdo, classificação de documentos, extração de dados, geração de relatórios, rotulagem em massa, etiquetado de catálogos  qualquer coisa tolerante à latença de 24 horas é dinheiro deixado na mesa até que se transfira para batches. O padrão de produção de 2026 consiste em triagar cada nova carga de trabalho do LLM em três linhas: interativa (sincronizada com o caching), semi-interativa (fila assíncrona com fallback), lote (overnight, input em caching empilhado). Cargas de trabalho que fingem ser interativas mas toleram minutos de atraso desperdiçam mais.
 
 **Type:** Learn
 **Languages:** Python (stdlib, toy batch-vs-sync cost simulator)
@@ -52,7 +52,7 @@ A pilha: batch + cache = ~ 10% da conta sincronizada não caçada. Qualquer carg
 
 **Semi-interactive** usuário envia uma tarefa, verifica em minutos. fila de sincronização com fallback para sincronizar se o lote não estiver disponível. Pense em indexação RAG de volume moderado.
 
-**Batch** o usuário espera resultados "até manhã" ou "na próxima hora".
+**Batch** o usuário espera resultados "até a manhã" ou "até o final do dia".
 
 Erro comum: classificar tudo como interativo porque o pipeline é produção.
 

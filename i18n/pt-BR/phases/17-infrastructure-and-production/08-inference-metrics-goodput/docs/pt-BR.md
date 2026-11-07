@@ -1,6 +1,6 @@
 # Metricas de inferência  TTFT, TPOT, ITL, Goodput, P99
 
-> Quatro métricas determinam se uma implantação de inferência está a funcionar. TTFT é pre-reempimento mais fila mais rede. TPOT (equivalentemente ITL) é o custo de decodificação ligado à memória por token. A latência de ponta a ponta é TTFT mais TPOT vezes comprimento de saída. O rendimento é de tokens por segundo agregados em toda a frota. Mas o que importa para o produto é o goodput  a fracção de pedidos que atenderam a cada SLO simultaneamente. Alta capacidade de produção em baixa potência significa que você está processando tokens que nunca chegam aos usuários a tempo. Números de referência para Llama-3.1-8B-Instruir sobre TRT-LLM em 2026: média TTFT 162 ms, média TPOT 7,33 ms, média E2E 1,093 ms. Sempre relatar P50, P90, P99  nunca apenas mal. E observe a armadilha de medição: a GenAI-Perf exclui o TTFT do cálculo do ITL, a LLMPerf o inclui; duas ferramentas discordam sobre o TPOT para a mesma execução.
+> Cinco métricas determinam se uma implantação de inferência está a funcionar. TTFT é pre-reempimento mais fila mais rede. TPOT (muitas vezes referido como ITL, embora as ferramentas discordam sobre se o ITL conta o primeiro token) é o custo de decodificação vinculado à memória por token. A latência de ponta a ponta é TTFT mais TPOT vezes comprimento de saída. O rendimento é de tokens por segundo agregados em toda a frota. Mas o que importa para o produto é o goodput  a fracção de pedidos que atenderam a cada SLO simultaneamente. Alta capacidade de produção em baixa potência significa que você está processando tokens que nunca chegam aos usuários a tempo. Números de referência para Llama-3.1-8B-Instruir sobre TRT-LLM em 2026: média TTFT 162 ms, média TPOT 7,33 ms, média E2E 1,093 ms. Sempre relatar P50, P90, P99  nunca apenas mal. E observe a armadilha de medição: a GenAI-Perf exclui o TTFT do cálculo do ITL, a LLMPerf o inclui; duas ferramentas discordam sobre o TPOT para a mesma execução.
 
 **Type:** Learn
 **Languages:** Python (stdlib, toy percentile calculator and goodput reporter)
@@ -52,7 +52,7 @@ A métrica agregada diz-te a eficiência da frota, não a saúde individual.
 
 `goodput = fraction of requests meeting (TTFT <= a) AND (TPOT <= b) AND (E2E <= c)`
 
-O SLO é uma restrição múltipla. Um pedido é "bom" apenas se cada restrição for cumprida. Goodput é a participação.
+O SLO é uma restrição múltipla. Uma solicitação é "boa" somente se cada restrição for realizada. Goodput é a participação. Alguns papéis e painéis de controle relatam goodput como uma taxa em vez disso: solicitações por segundo que atendem a cada SLO. Multiplica a participação pela taxa de solicitação para converter. Alta capacidade em 60% goodput é falha. Baixa capacidade em 99% goodput é o objetivo.
 
 Em 2026, o goodput é a métrica usada nas submissões MLPerf Inference v6.0 e no rastreamento interno de SLA nos provedores de plataforma de IA.
 
@@ -107,6 +107,8 @@ throughput-latency
 ## Usá-lo
 
 `code/main.py`É uma calculadora de bom desempenho de brinquedo. Gerar uma distribuição de latência sintética, aplicar um SLO e calcular o bom desempenho. Também mostra a diferença GenAI-Perf vs LLMPerf TPOT no mesmo rastro.
+
+O [Inside an LLM Serving GPU](https://aiengineeringfromscratch.com/inside-an-llm-serving-gpu?users=1)A máquina mostra de onde vem o tempo por token de saída em uma NVIDIA L4.
 
 ## Envia-o
 

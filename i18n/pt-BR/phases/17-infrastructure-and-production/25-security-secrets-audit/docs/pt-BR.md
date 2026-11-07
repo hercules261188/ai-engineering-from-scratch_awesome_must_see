@@ -22,7 +22,7 @@ Separadamente, as instruções do usuário incluem "Meu SSN é 123-45-6789." A i
 
 Separadamente, o módulo de LLM do seu cluster EKS pode chegar a qualquer hospedeiro de Internet. Alguém exfila dados através da busca DNS para um domínio controlado pelo atacante. Nada o bloqueou.
 
-A segurança dos serviços LLM tem de abordar os três vetores: credenciais de segurança, limpeza de PII, filtragem de saída de rede, registros de auditoria.
+A segurança dos serviços LLM tem que abordar os três vetores e prová-lo depois. Credenciais com segurança de cofre.
 
 ## O conceito
 

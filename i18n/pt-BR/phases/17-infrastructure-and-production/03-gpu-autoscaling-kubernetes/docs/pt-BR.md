@@ -20,7 +20,7 @@ A sua equipa envia um serviço de LLM em Kubernetes.`DCGM_FI_DEV_GPU_UTIL`O HPA 
 
 Separadamente, você usa o Cluster Autoscaler para nós. Um sinal de 1M chega às 2 da manhã; o cluster passa 3 minutos provisionando um nó, e os tempos de solicitação.
 
-Separadamente, você implementa um modelo 70B que requer 8 GPUs em 2 nós. O cluster tem 7 GPUs livres e 1 espalhado por 3 nós. Cluster Autoscaler fornece um nó para o 1 GPU faltante. Sete nós esperam 4 minutos a queimar dinheiro enquanto Kubernetes recebe a última GPU.
+Separadamente, você implementa um modelo 70B que requer 8 GPUs em 2 nós. O cluster tem 7 GPUs livres, espalhados por 3 nós, e precisa de mais 1. Cluster Autoscaler fornece um nó para o 1 GPU faltante. As 7 GPUs reservadas ficam inativas por 4 minutos queimando dinheiro enquanto Kubernetes ganha a última GPU.
 
 Três camadas, três modos de falha diferentes. Autoescalação consciente da GPU em 2026 não é "ativar HPA". É compor provisionamento de nós, agendamento de banda e autoescalação de sinais de aplicação.
 

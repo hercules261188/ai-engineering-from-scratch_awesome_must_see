@@ -9,7 +9,7 @@
 
 ## Objetivos de aprendizagem
 
-- Enumerar as seis características principais do gateway (routing, fallback, retries, limites de taxa, segredos, observabilidade, barris).
+- Enumerar as sete características do gateway central (routing, fallback, retries, limites de taxa, segredos, observabilidade, barris).
 - Mapear quatro gateways 2026 (LiteLLM, Portkey, Kong AI, Bifrost) para escalar limites e casos de uso.
 - Cite o índice de referência Kong (228% contra Portkey, 859% contra LiteLLM) e explique por que é importante para > 500 RPS.
 - Escolha auto-hosted versus gerenciado dada a residência de dados e orçamento de operações.
@@ -22,7 +22,7 @@ Reinventando isso na camada de aplicativos, cada serviço é associado a cada pr
 
 ## O conceito
 
-### Seis características principais
+### Sete características principais
 
 1. **Provider routing** OpenAI, Anthropic, Gemini, auto-hosted, etc. por trás de uma API.
 2. **Fallback** em 429, 5xx, ou falha de qualidade, tente novamente em outro lugar.
@@ -109,7 +109,7 @@ Esta lição produz`outputs/skill-gateway-picker.md`Dada a escala, a postura das
 ## Exercícios
 
 1. Corra .`code/main.py`Configurar fallback de OpenAI→Anthropic→auto-hosted. Qual é a taxa de impacto esperada com taxa de erro de fornecedor de 5%?
-2. O seu SLA é TTFT P99 < 200 ms em uma linha de base de 300 ms. Quais gateways mantêm dentro do orçamento?
+2. O seu SLA é TTFT P99 < 320 ms e o modelo sozinho mede 300 ms em P99.
 3. Um cliente de saúde precisa de auto-hosting + redação de PII + auditoria.
 4. Comparar LiteLLM vs Kong: a que limite máximo de RPS deve migrar uma equipa?
 5. Desenhar uma política de limite de taxas para um SaaS multi-arrendatário: nível gratuito, nível de teste, nível pago. Token-bucket ou janela deslizante?

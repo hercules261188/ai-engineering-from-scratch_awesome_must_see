@@ -130,7 +130,7 @@ Esta lição produz`outputs/skill-finops-plan.md`- Tendo em conta o produto e a 
 1. Corra .`code/main.py`Em que ponto do "s" o interruptor de morte dispara?
 2. Desenhe um painel de custos por inquilino, por tarefa.
 3. O teu maior inquilino é negativo por unidade econômica, e propõe três intervenções por impacto do cliente.
-4. Calcula o custo por bilhete resolvido para um produto de suporte: 3M tokens/bilhete, ~800 bilhetes/dia, taxa em cache GPT-5.
+4. Calcule o custo por bilhete resolvido para um produto de suporte: 3M tokens/ticket, ~ 800 bilhetes/dia, todas as entradas na taxa caché GPT-5 de $0,125/M (preço da lista de lançamento; verifique o cartão de taxa ao vivo).
 5. Argumentem se a etiquetação retroativa pode funcionar.
 
 ## Termos-chave
