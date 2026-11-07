@@ -268,7 +268,7 @@ python3 code/main.py
 python3 -m unittest discover code/tests -v
 ```
 
-Çıktıran dört şeyi kontrol edin:
+Çıktıran beş şeyi kontrol edin:
 
 1. Her arama bağımsızdır.
 2. Her isteğin var .`_meta`yetenekleri.

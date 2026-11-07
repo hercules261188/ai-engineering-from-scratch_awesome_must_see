@@ -84,7 +84,7 @@ Başparmak kuralı:`action`Argument üç değerden fazlasa, araçları bölün.
 ### Parametre tasarımı
 
 - **Enum every closed set.** `units: "celsius" | "fahrenheit"`Hayır .`units: string`Enumlar, modelin kabul edilebilir değerlerin evrenini anlatır.
-- **Required vs optional.**Açık AI sıkı modunda her alanın kullanılması gerekir.`required`; bir  ekle`is_default: true`Şifreye bir kural koyun ve modelin onu atmasına izin verin.
+- **Required vs optional.**Açık AI sıkı modunda her alanın kullanılması gerekir.`required`Bu yüzden model bir tane atamaz.`null`Ve model göndersin.`null`değersiz olduğu zaman.
 - **Typed IDs.** `note_id: string`Tamam ama bir ekle `pattern`(`^note-[0-9]{8}$`Halüsinasyonlu kimlikleri yakalamak için.
 - **No overly flexible types.**Sakın `type: any`Model şekiller halüsinasyon yapar.
 - **Describe the field.** `{"type": "string", "description": "ISO 8601 date in UTC, e.g. 2026-04-22"}`- Belirtişi modelin sorgularının bir parçası.

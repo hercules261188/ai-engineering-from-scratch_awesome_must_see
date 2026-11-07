@@ -389,6 +389,29 @@ Gereksinimler:
 
 Başarılı olmak, kanıt kaydı dört işlevi listeler, her iddia bir kanıt kimliği taşır ve `grade_label`etiket bir ip farklı olduğunda başarısız olur.
 
+## Sınıflandırılmış Laboratuvar
+
+Bu dersin ayarları hakkında beş soru.`code/lab_answers.json`. Sayıları sayılar olarak ya da  gibi altıbuçluk ipler olarak yaz .`"0x40"`, ve listeler JSON listeleri olarak.
+
+1. `t1`%_change_model(3, 105) x86_64'te.
+2. `t2`%_change_model(0, 5) x86_64'te.
+3. `t3`: grade_model(100).
+4. `t4`: input_grid'deki hücrelerin sayısı().
+5. `t5`: x86_64 modelinin tuzağa düştüğü ağ hücrelerinin sayısı.
+
+Cevaplarınızı kontrol edin:
+
+```bash
+cd phases/13-tools-and-protocols/36-rebuild-and-prove-equal
+python3 code/lab.py
+```
+
+Kontrolcü , her beklenen değerini `code/main.py`- Bu, yazılı.`PASS`- Evet .`FAIL`veya `TODO`Her görev ve puan için, ve sadece beşinin geçtiği zaman 0'dan çıkıyor. `python3 code/lab.py my-answers.json`Başka bir dosyayı kontrol ediyor.`code/tests/test_lab.py`kontrol eden kişinin doğru cevapları kabul ettiğini ve yanlışını reddettiğini kanıtlar.
+
+### Çıkıyor gör .
+
+- Evet .[Inside a Decompiler](https://aiengineeringfromscratch.com/inside-a-decompiler)Bu ders, bu iddiayı kontrol edilen bir adım haline getiren bir adımdır.
+
 ## Çıktıran beceriler
 
 Bu ders bize çok yararlı .`outputs/skill-rebuild-and-prove-equal.md`. Fonksiyon kanıtını ve bir adayın yeniden oluşturulmasını iki ayaklı bir kanıt ve bir kanıt kaydı haline getirmek için kullanın.

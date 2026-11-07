@@ -205,7 +205,7 @@ cd phases/13-tools-and-protocols/23-capstone-tool-ecosystem
 python3 code/main.py
 ```
 
-Beş şeyi kontrol et:
+Altı şeyi kontrol et:
 
 1. `server/discover`reklamlar revisyon `2026-07-28`Ve Görevler uzantısı.
 2. Alice bir rapor okuyabilir ve oluşturabilirken Bob'un yazılı çağrısı reddedilmiştir.

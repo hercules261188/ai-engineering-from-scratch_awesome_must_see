@@ -471,6 +471,29 @@ Gereksinimler:
 
 Başarılı olmak demektir .`python3 code/main.py cfg`Her olası kişiye, bunu kanıtlayan yer değiştirme ile birlikte isimler verir ve oracle karşılaştırması her nesneyi hala geçerli kılar.
 
+## Sınıflandırılmış Laboratuvar
+
+Bu dersin ayarları hakkında beş soru.`code/lab_answers.json`. Sayıları sayılar olarak ya da  gibi altıbuçluk ipler olarak yaz .`"0x40"`, ve listeler JSON listeleri olarak.
+
+1. `t1`: -O1 derecesinde rekürsiv düşüşü çözme talimatları.
+2. `t2`: -O1'de toplamda temel bloklar.
+3. `t3`: -O1'de toplamda döngü başlığı adresini hex olarak.
+4. `t4`: sweep-trap.o'da, 0x14'i kapsayan çizgisi temizleme talimatının başlandığı adres, altı boyutlu olarak.
+5. `t5`-O0'daki atlama tablounda yer alan yerler.
+
+Cevaplarınızı kontrol edin:
+
+```bash
+cd phases/13-tools-and-protocols/33-disassembly-and-control-flow
+python3 code/lab.py
+```
+
+Kontrolcü , her beklenen değerini `code/main.py`- Bu, yazılı.`PASS`- Evet .`FAIL`veya `TODO`Her görev ve puan için, ve sadece beşinin geçtiği zaman 0'dan çıkıyor. `python3 code/lab.py my-answers.json`Başka bir dosyayı kontrol ediyor.`code/tests/test_lab.py`kontrol eden kişinin doğru cevapları kabul ettiğini ve yanlışını reddettiğini kanıtlar.
+
+### Çıkıyor gör .
+
+- Evet .[Inside a Decompiler](https://aiengineeringfromscratch.com/inside-a-decompiler?program=trap&sweep=linear)Makine bu dersi, kodlama tahtası ve blok tahtası olarak çalıştırır.`sweep-trap.o`Düzsel tarama ile: yatak, dört veri baytını kod olarak çözmüş ve bir pin atlama hedefini işaretler.`0x14`İçinde`addq`- ...`0x13`Decodaları geri dönüşlü düşüşe çevirin.
+
 ## Ders Artifakti
 
 Bu ders de içerir .`outputs/skill-disassembly-and-control-flow.md`Bir nesne ve bir fonksiyon adını kontrol edilmiş bir liste, bloklar, yazılmış kenarlar, dominanterler ve her çözülmemiş aktarım haline getirmek için kullanın.

@@ -380,6 +380,29 @@ Gereksinimler:
 
 Başarılı olmak, ithalat listesi, segment haritası ve her fonksiyon aralığı, testler sırasında araç çalıştırılmadan kaydedilen araç çıkışı ile uyumlu anlamına gelir.
 
+## Sınıflandırılmış Laboratuvar
+
+Bu dersin ayarları hakkında beş soru.`code/lab_answers.json`. Sayıları sayılar olarak ya da  gibi altıbuçluk ipler olarak yaz .`"0x40"`, ve listeler JSON listeleri olarak.
+
+1. `t1`: e_shoff of ledger-x86_64-O1.o, as a number.
+2. `t2`: %_de %_de %_de %_de %_de %_de %_de %_de %_de %_de %_de %_de %_de %_de %_de %_de %_de %_de %_de %_de %_de %_de %_de %_de %_de %_de %_de %_de %_de %_de %_de %_de %_de %_de %_de %_de %_de %_de %_de %_de %_de %_de %_de %_de %_de %_de %_de %_de %_de %_de %_de %_de %_de %_de %_de %_de %_de %_de %_de %_de %_de %_de %_de %_de %_de %_de %_de %_de %_de %_de %_de %_de %_de %_de %_de %_de %_de %_de %_de %_de %_de %_de %_de %_de %_de %_de %_de %_de %_de %_de %_de %_de %_de %_de %_de_de %_de_de_de_de_de_de_de_de_de_de_de___de_de____de_de_____de____________________________________________________________________________________________________________________________________________________________________________________
+3. `t3`: .text dosyasının büyüklükte-x86_64-O1.o'da, hex olarak değiştirilmesi.
+4. `t4`: büyüklükte yer değiştirme türü isimleri-x86_64-O0.o, bir liste olarak sıralanmıştır.
+5. `t5`: .rodata+0x14'deki beş int değerleri, bir liste olarak, büyüklük-x86_64-O1.o'da.
+
+Cevaplarınızı kontrol edin:
+
+```bash
+cd phases/13-tools-and-protocols/32-program-anatomy-elf-from-scratch
+python3 code/lab.py
+```
+
+Kontrolcü , her beklenen değerini `code/main.py`- Bu, yazılı.`PASS`- Evet .`FAIL`veya `TODO`Her görev ve puan için, ve sadece beşinin geçtiği zaman 0'dan çıkıyor. `python3 code/lab.py my-answers.json`Başka bir dosyayı kontrol ediyor.`code/tests/test_lab.py`kontrol eden kişinin doğru cevapları kabul ettiğini ve yanlışını reddettiğini kanıtlar.
+
+### Çıkıyor gör .
+
+- Evet .[Inside a Decompiler](https://aiengineeringfromscratch.com/inside-a-decompiler)Makine bu dersleri ilk iki istasyon olarak çalıştırır.`percent_change`, ve kabin açılır .`.text`Simgolu açıp simge masasında hangi gerçekleri taşıdığını gör.
+
 ## Ders Artifakti
 
 Bu ders bize çok yararlı .`outputs/skill-program-anatomy-elf-from-scratch.md`. Claude, Cursor, Codex, OpenClaw, Hermes veya SKILL.md okuyan herhangi bir ajanla kullanın. Bu beceri, kullanıcının oluşturduğu bir düzen raporu haline getirilen bir kompile edilen nesne veya yürütülebilirliği dönüştürür. Rapor, her yapının, sembolün ve yer değiştirmenin dosya aralığını, yakaladığı araç çıkışına karşı kontrol eder.

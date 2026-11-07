@@ -533,6 +533,29 @@ Gereksinimler:
 
 Başarılı olmak demektir .`grade`- ...`-O0`ve `grade`- ...`-O1`Aynı çıkışın ağ üzerinde üretilmesi, bir `switch`Ve hayır .`goto`- Evet .
 
+## Sınıflandırılmış Laboratuvar
+
+Bu dersin ayarları hakkında beş soru.`code/lab_answers.json`. Sayıları sayılar olarak ya da  gibi altıbuçluk ipler olarak yaz .`"0x40"`, ve listeler JSON listeleri olarak.
+
+1. `t1`: çağrı konvansiyonunun %_change'i -O1'de verdiği parametreler.
+2. `t2`: phi fonksiyonları -O1'de toplam SSA biçiminde.
+3. `t3`: magic_divisor'ın 0x66666667 için bulduğu bölücü, shift 34 ile.
+4. `t4`%_change pseudokodu'nun son ifadesi -O1, tek bir metin satırı olarak.
+5. `t5`: -O1'deki toplam param_1'ün geri alınmış C tipi.
+
+Cevaplarınızı kontrol edin:
+
+```bash
+cd phases/13-tools-and-protocols/34-lifting-to-pseudocode
+python3 code/lab.py
+```
+
+Kontrolcü , her beklenen değerini `code/main.py`- Bu, yazılı.`PASS`- Evet .`FAIL`veya `TODO`Her görev ve puan için, ve sadece beşinin geçtiği zaman 0'dan çıkıyor. `python3 code/lab.py my-answers.json`Başka bir dosyayı kontrol ediyor.`code/tests/test_lab.py`kontrol eden kişinin doğru cevapları kabul ettiğini ve yanlışını reddettiğini kanıtlar.
+
+### Çıkıyor gör .
+
+- Evet .[Inside a Decompiler](https://aiengineeringfromscratch.com/inside-a-decompiler?opt=O0)Makine bu dersleri asansör baskı, tip penleri, yapılandırma jig ve baskı makinesi olarak çalışır, IR, SSA ve pseudokod ile`code/main.py`Bu bağlantı `-O0`nesne: üç yığın boşluğu yerleşik hale gelir ve jig, her iki çenemi de eğer/diğer için kapatır.
+
 ## Sanatlı
 
 Bu ders bize çok yararlı .`outputs/skill-lifting-to-pseudocode.md`. Her satır için bir türev ile bir işlevi kaldırmak ve bir dekompiler metnini karşı fark tablosunu doldurmak için kullanın.

@@ -354,7 +354,7 @@ Bu ders bize çok yararlı .`outputs/skill-mcp-auth.md`. MCP sunucu yapılandır
 
 ## Egzersizler
 
-1. Çık .`code/main.py`IdP'nin 6'da bir anahtarı nasıl döndüğünü, planlanan `refresh_jwks`yayınlanan set'i yeniden çekir ve hem eski token (tıklama penceresi) hem de yeni token yeniden başlatılmadan geçerlidir.
+1. Çık .`code/main.py`. Akışın izini sür. IdP'nin, senaryo çıkışının 6. aşamasında (yukarıdaki akışın 7. aşamasında) nasıl bir anahtarı döndürdüğünü, programlanmış `refresh_jwks`yayınlanan set'i yeniden çekir ve hem eski token (tıklama penceresi) hem de yeni token yeniden başlatılmadan geçerlidir.
 
 2. Korunan kaynak metadatalarına yeni bir IDP ekleyin `authorization_servers`list. Yeni IdP tarafından imzalanan bir token gönderin ve onaylayıcı tarafından kabul edildiğini onaylayın. Listelenmemiş bir IdP tarafından imzalanan bir token gönderin ve onaylayıcı tarafından reddedilenleri onaylayın.`WWW-Authenticate: Bearer error="invalid_token", error_description="iss not allowed"`- Evet .
 

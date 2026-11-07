@@ -11,7 +11,7 @@
 
 - Sadece metin oluşturabilen bir LLM'nin kendi başına gerçek dünyaya karşı neden eylemler yapamayacağını açıklayın.
 - Dört adımlı araç çağrısı döngüsünü çizin (describe → decide → execute → observe) ve her adımın sahibi kim olduğunu söyleyin.
-- Bir araç açıklamasını üç bölüm olarak yazın: isim, JSON Schema girişi ve belirleyici bir yürütücü fonksiyonu.
+- Bir araç tanımını dört bölüm olarak yazın: isim, açıklama, JSON Schema giriş ve bir belirleyici yürütücü fonksiyonu.
 - Saf ve yan etkileri olan araçları ayırt edin ve bölünmenin neden güvenliğe önem verdiğini belirtin.
 
 ## Sorun
@@ -28,7 +28,7 @@ Dört adımlı döngü bunların altındaki değişmezliktir.
 
 ### Birinci adım: tanımlayın
 
-Ev sahibi her bir aracı üç alanla açıklar.
+Ev sahibi, her aracı üç alanla modelde açıklar. Dördüncü bölüm, uygulayıcı, ev sahibi tarafında kalır ve asla modelde bulunmaz.
 
 - **Name.**Kalıcı, makine okuyabilir bir kimlik.`get_weather`"Vahitler" değil.
 - **Description.**Bir paragraflık doğal dil kısacası. "Kullanıcı belirli bir şehrin mevcut koşulları hakkında sorular sorarken kullanın. Tarihsel veriler için kullanmayın".
@@ -112,7 +112,7 @@ tp-tool-loop
 
 Neye bakılır:
 
-- Araç kayıtları her bir araç için üç alanı içerir: isim, açıklama, şema ve bir yürütücü referansı.
+- Araç kayıtları her bir araç için dört alan içerir: isim, açıklama, şema ve bir yürütücü referansı. Sadece ilk üç tane modeline gider.
 - Validatör, sadece stdlib'de yazılmış en az JSON Schema alt kümesi (tipler, gerekli, enum, min/max) dir.
 - Çaplıkların tekrar sayısı beş.
 

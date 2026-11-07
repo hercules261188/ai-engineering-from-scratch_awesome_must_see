@@ -426,6 +426,29 @@ Gereksinimler:
 
 Başarı , her cümlenin bir paketden bir kimliği ve birinin kimliğini belirten bir raporu ifade eder .`unknown`İddia yok.
 
+## Sınıflandırılmış Laboratuvar
+
+Bu dersin ayarları hakkında beş soru.`code/lab_answers.json`. Sayıları sayılar olarak ya da  gibi altıbuçluk ipler olarak yaz .`"0x40"`, ve listeler JSON listeleri olarak.
+
+1. `t1`: verili kanıt id ki hesaplama_delil_id veriliyor rea-evidence-grade.json.
+2. `t2`: not kayıtlarında sınırlama sayısı.
+3. `t3`: not kayıtlarının ilişki_koşul durumu.
+4. `t4`: iki iplik bir liste olarak, not kayıtlarının güven ve yetki.
+5. `t5`: not kayıtı konuunun SHA-256'sı.
+
+Cevaplarınızı kontrol edin:
+
+```bash
+cd phases/13-tools-and-protocols/35-evidence-confidence-and-unknowns
+python3 code/lab.py
+```
+
+Kontrolcü , her beklenen değerini `code/main.py`- Bu, yazılı.`PASS`- Evet .`FAIL`veya `TODO`Her görev ve puan için, ve sadece beşinin geçtiği zaman 0'dan çıkıyor. `python3 code/lab.py my-answers.json`Başka bir dosyayı kontrol ediyor.`code/tests/test_lab.py`kontrol eden kişinin doğru cevapları kabul ettiğini ve yanlışını reddettiğini kanıtlar.
+
+### Çıkıyor gör .
+
+- Evet .[Inside a Decompiler](https://aiengineeringfromscratch.com/inside-a-decompiler?symbols=off)makine dört tabaklı bir kanıt defteri tutar: gözlemlenmiş, çıkarılmış, çıkarılmış ve bilinmeyen. Bu bağlantı simge tablosu kapatılmış olarak çalışmayı açar, bu nedenle işlev dosyasının adı ve sonu bilinmeyen olarak ve başlangıç dosyaları çıkarılmış olarak.
+
 ## Ders Artifakti
 
 Bu ders bize çok yararlı .`outputs/skill-evidence-ledger.md`Bu, bir ajanın her bulguyu güven, yetki, sınırlamalar ve bağlantılarla bir kayıt olarak nasıl yazacağını söyler.`pass`- Evet .`fail`- Evet .`unknown`veya`unsupported`- Evet .

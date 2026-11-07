@@ -66,7 +66,7 @@ Model gönderdiği her çağrıda bir `id`Ev sahibi gönderdiği her sonuç ayn�
 
 Ev sahibi her çağrı icracı'nı kendi ip, coroutine veya uzaktan çalışan üzerinde çalıştırır. En basit harness bir ip havuzu kullanır; üretim asyncio ile `asyncio.gather`Tamamlama sırası öngörülemez  kimlik tanımlayıcıdır.
 
-Genel bir hata: cevaplama sonuçları, tamamlama sırası yerine çağrı listesi sırası ile. Bu genellikle çalışır çünkü model sadece `tool_call_id`, ama sonuç düşürülürse veya çoğaltılırsa, sipariş dışı gönderme debugging zorlaştırır.
+Genel bir hata: cevaplama sonuçları, tamamlama sırası yerine çağrı listesi sırası ile. Bu genellikle çalışır çünkü model sadece `tool_call_id`, ama bir sonuç düşürülürse veya çoğaltılırsa, sonuçlar gelen sıradan uzaklaştırılmış bir cevap listesi, boşluğu günlüklerde bulmakta zorlaşır. Açık tanımlarla tamamlama sırasıyla cevap vermek tercih edilir.
 
 ### Akış araç çağrıları
 

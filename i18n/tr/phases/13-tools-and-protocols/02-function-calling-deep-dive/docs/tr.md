@@ -52,12 +52,12 @@ Her sağlayıcı beş şeye ihtiyaç duyar:
 | Result block | role `tool`, `tool_call_id` | `user` with `tool_result`, `tool_use_id` | `functionResponse` with matching `id` |
 | Force-a-tool | `tool_choice: {type: "function", function: {name}}` | `tool_choice: {type: "tool", name}` | `tool_config: {function_calling_config: {mode: "ANY"}}` |
 | Forbid tools | `tool_choice: "none"` | `tool_choice: {type: "none"}` | `mode: "NONE"` |
-| Strict schema | `strict: true` | schema-is-schema (always enforced) | `responseSchema` at request level |
+| Strict schema | `strict: true` | `strict: true` per tool (opt-in) | `responseSchema` at request level |
 
 ### Gerçekten bulacağın sınırlar
 
 - **OpenAI.**128 araç talep başına. Şema derinliği 5. Argument dizilisi <= 8192 byte.`$ref`Hayır .`oneOf`- Ne ?`anyOf`- Ne ?`allOf``required`- Evet .
-- **Anthropic.**Bu nedenle, programın en iyi şekilde yapılması gereken bir şey de var.
+- **Anthropic.**Bu nedenle, bu konularda, düzenli olarak ve düzenli olarak, düzenli olarak, düzenli olarak, düzenli olarak, düzenli olarak, düzenli olarak, düzenli olarak, düzenli olarak, düzenli olarak, düzenli olarak, düzenli olarak, düzenli olarak, düzenli olarak, düzenli olarak, düzenli olarak, düzenli olarak, düzenli olarak, düzenli olarak, düzenli olarak, düzenli olarak, düzenli olarak, düzenli olarak, düzenli olarak, düzenli olarak, düzenli olarak, düzenli olarak, düzenli olarak, düzenli olarak, düzenli olarak, düzenli olarak, düzenli olarak, düzenli olarak, düzenli olarak, düzenli olarak ve düzenli olarak, düzenli olarak, düzenli olarak, düzenli olarak, düzenli olarak, düzenli olarak, düzenli olarak, düzenli olarak, düzenli olarak, düzenli olarak, düzenli olarak, düzenli olarak, düzenli olarak, düzenli olarak, düzenli olarak, düzenli olarak, düzenli olarak, düzenli olarak, düzenli olarak, düzenli olarak, düzenli olarak, düzenli olarak, düzenli olarak, düzenli olarak, düzenli olarak, düzenli olarak, düzenli olarak, düzenli olarak, düzenli olarak, düzenli olarak, düzenli olarak, düzenli olarak, düzenli olarak, düzenli olarak, düzenli olarak, düzenli olarak, düzenli olarak, düzenli olarak, düzenli olarak, düzenli olarak, düzenli olarak, düzenli olarak, düzenli olarak, düzenli olarak, düzenli olarak, düzenli olarak, düzenli olarak, düzenli olarak, düzenli olarak, düzenli olarak, düzenli olarak, düzenli olarak, düzenli olarak, düzenli olarak, düzenli olarak, düzenli olarak, düzenli olarak, düzenli olarak, düzenli olarak, düzenli olarak, düzenli olarak, düzenli olarak, düzenli olarak, düzenli olarak, düzenli olarak, düzenli olarak, düzenli olarak, düzenli olarak, düzenli olarak, düzenli olarak, düzenli olarak, düzenli olarak, düzenli olarak, düzenli olarak, düzenli olarak, düzenli olarak, düzenli olarak, düzenli olarak, düzenli olarak, düzenli olarak, düzenli olarak, düzenli olarak, düzenli olarak, düzenli olarak, düzenli olarak, düzenli olarak, düzenli olarak, düzenli olarak, düzenli olarak, düzenli olarak, düzenli`strict: true`Bu sistem olmadan, şema, modelin takip etme eğiliminde olduğu bir sözleşmedir, bir garanti değil.
 - **Gemini.**İsteğe göre 64 işlev. Şema türleri OpenAPI 3.0 alt kümesidir (JSON Şema 2020-12) paralel çağrılar eşsiz kimliklerden Gemini 3'den beri.
 
 ### `tool_choice`davranış
@@ -94,7 +94,7 @@ Geçersiz argüman hataları da farklı görünüyor.
 
 - **OpenAI (non-strict).**Model ödevleri `arguments: "{bad json}"`JSON analiziniz başarısız olursa hata mesajı enjekte eder ve tekrar ararsınız.
 - **OpenAI (strict).**Deşifreleme sırasında doğrulama gerçekleşir; geçersiz JSON imkansızdır ama `refusal`- Görebilir.
-- **Anthropic.** `input`beklenmedik alanlar içerebilir; şema tavsiye edici.
+- **Anthropic (non-strict).** `input`Bu, beklenmedik alanlar içerebilir; şema tavsiyeci.`strict: true`, örnekleme şema ile sınırlıdır.
 - **Gemini.**OpenAPI 3.0 garipliği: `enum`Sessizce görmezden gelen nesne alanlarında; kendinizi doğrulayın.
 
 ### Tercüman örneği
