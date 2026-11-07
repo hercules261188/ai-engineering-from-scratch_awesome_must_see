@@ -43,7 +43,7 @@ flowchart LR
 | Verification quality | Does the acceptance command actually prove the goal, or did it prove a weaker version? |
 | Handoff readiness | Could the next session pick up cleanly from the current state? |
 
-कुल 10 में से एक 7 से नीचे की दौड़ एक नरम विफलता है; 5 से नीचे की दौड़ एक कठिन विफलता है।
+10 में से कुल। 7 से नीचे की दौड़ एक नरम विफलता है; 5 से नीचे की दौड़ या 0 पर कोई भी आयाम एक कठिन विफलता है।
 
 ### समीक्षक एक अलग भूमिका है, एक अलग मॉडल नहीं
 

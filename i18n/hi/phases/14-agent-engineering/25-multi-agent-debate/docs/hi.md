@@ -117,7 +117,7 @@ python3 code/main.py
 
 ## आगे पढ़ना
 
-- [Du et al., Society of Minds (arXiv:2305.14325)](https://arxiv.org/abs/2305.14325) बहु-एजेंट बहस
+- [Du et al., Improving Factuality and Reasoning in Language Models through Multiagent Debate (arXiv:2305.14325)](https://arxiv.org/abs/2305.14325) बहु-एजेंट बहस
 - [Sparse Communication Topology (arXiv:2406.11776)](https://arxiv.org/abs/2406.11776) दुर्लभ टॉपॉलजी परिणाम
 - [Anthropic, Building Effective Agents](https://www.anthropic.com/research/building-effective-agents) बहस के रूप में संगीतकार-कर्मियों
 - [Madaan et al., Self-Refine (arXiv:2303.17651)](https://arxiv.org/abs/2303.17651) एकल मॉडल स्व-आलोचना प्रतिद्वंद्वी
