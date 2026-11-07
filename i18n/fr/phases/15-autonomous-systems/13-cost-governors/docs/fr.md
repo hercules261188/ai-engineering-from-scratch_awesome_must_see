@@ -58,7 +58,7 @@ Le Kit d'outils de gouvernance des agents de Microsoft couvre les exigences du T
 
 ### Les observations $1,200 → $4 800 cas
 
-Le cas réel dans les documents de Microsoft: un agent de commerce électronique dont le coût mensuel a triplé après l'ajout d'un nouvel outil. L'outil permettait à l'agent de passer un sondage sur l'état des commandes pendant chaque séance. Aucune détection de boucle. Pas de capuche par outil. Aucune alerte sur la croissance hebdomadaire. La fixation était une limite par outil plus une alerte de croissance quotidienne. Il s'agit d'un modèle: chaque nouvelle surface d'outil est une nouvelle boucle potentielle; chaque nouvel outil a besoin de son propre plafond et de son propre alerte.
+Le cas réel dans les documents de Microsoft: un agent de commerce électronique dont le coût mensuel a quadruplé après l'ajout d'un nouvel outil. L'outil permettait à l'agent de passer un sondage sur l'état des commandes pendant chaque séance. Aucune détection de boucle. Pas de capuche par outil. Aucune alerte sur la croissance hebdomadaire. La fixation était une limite par outil plus une alerte de croissance quotidienne. Il s'agit d'un modèle: chaque nouvelle surface d'outil est une nouvelle boucle potentielle; chaque nouvel outil a besoin de son propre plafond et de son propre alerte.
 
 ```figure
 cost-governor-stack

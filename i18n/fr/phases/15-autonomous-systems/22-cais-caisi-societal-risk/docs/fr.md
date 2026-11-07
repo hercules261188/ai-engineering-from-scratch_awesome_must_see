@@ -19,7 +19,7 @@ Le contenu pratique: le cadre des quatre risques du CAIS est la taxonomie des ri
 
 ### CAIS  Centre de sécurité de l'IA
 
-- Fondée: 2022 à San Francisco, par Dan Hendrycks et ses collègues (le nom "Zhang" fait référence à un collaborateur précoce, pas à un cofondateur actuel; voir le site CAIS pour le leadership actuel).
+- Fondée en 2022 à San Francisco par Dan Hendrycks et Oliver Zhang. Hendrycks est directeur exécutif et de recherche; Zhang est directeur général.
 - Statut: 501 ((c) ((3) à but non lucratif.
 - Résultats remarquables de 2023: déclaration sur le risque d'extinction, co-signée par des centaines de chercheurs et de PDG. Elle déclare: "Médier le risque d'extinction de l'IA devrait être une priorité mondiale aux côtés d'autres risques à l'échelle sociale tels que les pandémies et la guerre nucléaire".
 - Les résultats de 2026: tableau de bord de l'IA pour l'évaluation des modèles frontaliers, Index du travail à distance (jointement avec l'IA à l'échelle), document de stratégie de super-intelligence, newsletter de l'IA Frontiers.
