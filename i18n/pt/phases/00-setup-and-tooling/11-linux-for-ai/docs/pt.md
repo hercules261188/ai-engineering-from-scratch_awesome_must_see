@@ -39,7 +39,7 @@ O seu diretório de casa é`~`ou `/home/your-username`Quase tudo o que fazemos a
 
 ## Mandamentos Essenciais
 
-Estes são os 15 comandos que cobrem 95% do que você fará em uma caixa de GPU remota.
+Estes são os 13 comandos que cobrem a maior parte do que você fará em uma caixa de GPU remota.
 
 ### Movendo-se
 
