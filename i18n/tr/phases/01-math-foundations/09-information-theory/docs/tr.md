@@ -202,7 +202,7 @@ I(X;Y) &= H(X) - H(X \mid Y) \\
 2. MI puanı ile sıralama özellikleri.
 3. Yukarıdakiları tut .$k$Özellikler.
 
-Bu özellik ve hedef arasındaki herhangi bir ilişki için çalışır - doğrusal, doğrusal olmayan, tek sesli veya değil. Korrelasyon sadece doğrusal ilişkileri yakalar. MI her şeyi yakalar.
+Bu özellik ve hedef arasındaki herhangi bir ilişki için çalışır - doğrusal, doğrusal olmayan, monoton veya değil. Pearson korelasyonu sadece doğrusal ilişkileri yakalar. MI herhangi bir bağımlılığı yakalar, ancak sonlu verilerle tahminine yeterli örnekler ve mantıklı bir binman gerekir.
 
 | Method | Detects | Computational cost | Handles categorical? |
 |--------|---------|-------------------|---------------------|

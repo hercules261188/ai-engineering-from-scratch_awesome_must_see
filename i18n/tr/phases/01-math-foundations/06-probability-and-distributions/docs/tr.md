@@ -190,14 +190,14 @@ Yukarıdaki tabloda sırada ve sütunda toplamlar, kenarlıklardır.
 
 ### Normal Değişiklik Neden Her Yerde Görülüyor?
 
-Merkez Sınır Teoremi: birçok bağımsız rastgele değişkenin toplamı (veya ortalaması) orijinal dağılımdan bağımsız olarak normal bir dağılım için birleşti.
+Merkez Sınır Teoremi: bir kez merkezi ve ölçeklendirilmiş aynı dağılımdan birçok bağımsız rastgele değişkenin ortalaması $\sqrt{n}$, orijinal dağılımın şekli ne olursa olsun, değişimi son bir sürece normal bir dağılım yaklaşır.
 
 ```
 Roll 1 die:  uniform distribution (flat)
 Average of 2 dice:  triangular (peaked)
 Average of 30 dice: nearly perfect bell curve
 
-This works for ANY starting distribution.
+This works for ANY starting distribution with finite variance.
 ```
 
 İşte bu yüzden:
@@ -470,7 +470,7 @@ print(f"Log-softmax: {log_probs}")
 | Expected value | "The average" | The probability-weighted sum of all outcomes. The loss function is an expected value |
 | Variance | "How spread out" | The expected squared deviation from the mean. High variance = noisy, unstable estimates |
 | Normal distribution | "The bell curve" | $f(x) = (1/\sqrt{2\pi\sigma^2}) \cdot \exp(-(x-\mu)^2/(2\sigma^2))$. Appears everywhere due to the CLT |
-| Central Limit Theorem | "Averages become normal" | The mean of many independent samples converges to a normal distribution regardless of the source |
+| Central Limit Theorem | "Averages become normal" | The centered, scaled mean of many independent samples converges to a normal distribution for any source with finite variance |
 | Joint distribution | "Two variables together" | $P(X, Y)$ describes the probability of every combination of $X$ and $Y$ outcomes |
 | Marginal distribution | "Sum out the other variable" | $P(X) = \sum_y P(X, Y)$. Recovers one variable's distribution from the joint |
 | Log probability | "Log of the probability" | $\log P(x)$. Turns products into sums, preventing numerical underflow in long sequences |

@@ -121,7 +121,7 @@ ML'de karşılaştığınız zincirlerin çoğu her iki şartı da karşılar.
 
 **Absorbing states.**Bir devlet içine girdiğin zaman asla çıkmazsan, onu içine alıyorsun.$P[i][i] = 1$Markov zincirlerini terminal durumlarla modellemenin içine alıyor. Sonlanan bir oyun, çırpınan bir müşteri, metin sonundaki bir token'e çarpan bir token dizisi.
 
-**Mixing time.**Düzgün dağılım zincirinin "yaklaşması" için kaç adım var? Formal olarak, düzgünlüğün toplam değişim mesafesine kadar adım sayısı bir eşiğin altında düşer.$P$(1 eksi ikinci en büyük öz değeri) karıştırma süresini kontrol eder.
+**Mixing time.**Düzgün dağılım zincirinin "yaklaşması" için kaç adım var? Formal olarak, sabitliğin toplam değişim mesafesine kadar adım sayısı bir eşiğin altında düşer.$P$(1 eksi öz değerden başka en büyük öz değer büyüklüğü 1) karıştırma zamanını kontrol eder.
 
 ### Dil Modelleri ile Bağlantı
 

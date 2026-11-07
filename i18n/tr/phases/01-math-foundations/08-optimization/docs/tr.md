@@ -46,7 +46,7 @@ Tüm algoritma bu.
 
 ```mermaid
 graph TD
-    A["* Starting point (high loss)"] --> B["Moving downhill along gradient"]
+    A["* Starting point (high loss)"] --> B["Moving downhill, against the gradient"]
     B --> C["Approaching minimum"]
     C --> D["o Minimum (low loss)"]
 ```
@@ -158,7 +158,7 @@ Ortak programlar:
 
 ### Konves vs. konves olmayan
 
-Bir eğri fonksiyonun en az bir tane olması gerekmektedir.$f(x) = x^2$-Konküks.
+Bir eğri fonksiyonda kötü yerel minimum yoktur: her yerel minimum küresel minimumtır.$f(x) = x^2$-Konuşmuş ve minimum eşsiz.
 
 Nöral ağ kaybı fonksiyonları konveks değildir. Birçok yerel minimum, otlak noktaları ve düz bölgelere sahiptir.
 

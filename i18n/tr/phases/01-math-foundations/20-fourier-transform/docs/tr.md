@@ -34,7 +34,7 @@ Verilmiştir .$N$örnekler $x[0], x[1], \ldots, x[N-1]$, Diskret Fourier Transfo
 X[k] = \sum_{n=0}^{N-1} x[n] \, e^{-2\pi i k n/N} \qquad \text{for } k = 0, 1, \ldots, N-1
 ```
 
-Her biri .$X[k]$Bu karmaşık bir sayıdır.$\lvert X[k] \rvert$frekans amplitudu size söyler.$k$- Fase .$\angle X[k]$Bu frekansın faz geçişini gösterir.
+Her biri .$X[k]$Bu karmaşık bir sayıdır.$\lvert X[k] \rvert$frekans amplituduna orantılıdır $k$Normalleşme olmadan, genişliğin gerçek sinüsü.$A$Bu tam olarak bin ' e düşer .$k$ver .$\lvert X[k] \rvert = AN/2$, o yüzden böl $N/2$Amplitudu okumak için.$\angle X[k]$Bu frekansın faz geçişini gösterir.
 
 Anahtar bilgi:$e^{-2\pi i k n/N}$frekansında dönen bir fazördür.$k$DFT , sinyal ve her bir sinyal arasındaki ilişkiyi hesaplar .$N$Eğer sinyal frekanslı bir enerji içerirse$k$Eğer bu değilse, sıfırın yakınında.
 
@@ -103,7 +103,7 @@ graph TD
     end
 ```
 
-FFT, sinyal uzunluğunun 2'lik bir güç olması gerektiğini gerektirir.
+Burada oluşturulan radix-2 FFT sinyal uzunluğu 2'nin gücü olduğunda en hızlıdır. Bir alt sorunun eşsiz uzunluğu olduğunda, düzine geri düşer.`dft`, yani sinyaller genellikle hız için 2'nin bir sonraki gücüne sıfır olarak doldurulur.`numpy.fft`Karışık radikal algoritmaları ile herhangi bir uzunlukla çalışırlar, ancak küçük ilk faktörlerle uzunluklarda en hızlılar.
 
 ### Spektral analiz
 

@@ -18,7 +18,7 @@
 
 Ders 08'de, gradient düşüşü, momentum ve Adam'ı öğrendiniz. Bu optimizörler herhangi bir yüzeyde aşağıya doğru yürürler. Ama hiçbir garanti yok. Konves olmayan bir manzarada gradient düşüşü kötü bir yerel minimumda düşebilir, bir sedil noktasına sıkışabilir veya sonsuza dek sallanabilir. Neural ağlar konvessi olmayan ve başka bir alternatif olmadığı için yine de kullandınız.
 
-Ancak makine öğreniminde birçok sorun eğri. Düzgün gerileme, lojistik gerileme, SVM, LASSO, kıyı gerileme. Bunlar için daha güçlü bir şey var: matematiksel garantilerle optimize. eğri bir sorunun tam olarak bir vadisi vardır. Aşağıya doğru yürüyen herhangi bir algoritma küresel minimum'a ulaşır. Tekrar başlatma gerekmez. Öğrenme oranı programları yoktur. Dua yok.
+Ama makine öğreniminde birçok sorun konveks. Düzsel gerileme, lojistik gerileme, SVM, LASSO, kıyılar gerileme. Bu kişiler için daha güçlü bir şey var: matematik garantileri ile optimizasyon. Bir konveks problemin yanlış vadileri yoktur: her yerel minimum küresel minimum. En az bir derecede yumuşak bir konveks fonksiyon için, uygun bir adım boyutu ile gradient düşüşü ona yaklaşıyor. Yeniden başlatmaya gerek yok. Öğrenme oranı programı yok. Dua yok.
 
 Konvessiyet'i anlamak üç şey yapar. Birincisi, size sorununuz kolay (konves) ile sert (konvessi olmayan) olduğunda söyler. İkincisi, konves problemleri için Newton'un yöntemi gibi daha hızlı araçlar verir. Üçüncüsü, ML'de ortaya çıkan kavramları açıklar: düzenlenme bir kısıtlama, SVM'lerde çiftelik ve derin öğrenmenin neden her güzel konvessiyetin verilmesine rağmen çalışması.
 
@@ -91,13 +91,13 @@ Konves optimizasyonunun merkezi teoremi:
 
 **For a convex function, every local minimum is a global minimum.**
 
-Bu da gradient düşüşü tuzağa düşebileceğinden, herhangi bir aşağı yamaç yolu aynı cevaba yol açar.
+Bu, gradient düşüşünün kötü bir yerel minimumda sıkışamayacağı anlamına gelir. Başlayabileceği her minimum aynı kayba sahiptir.
 
 ```mermaid
 graph LR
     subgraph "Convex: ONE answer"
         direction TB
-        C1["Loss surface has a single valley"] --> C2["Gradient descent ALWAYS finds the global minimum"]
+        C1["Loss surface has no false valleys"] --> C2["Gradient descent with a suitable step converges to the global minimum"]
     end
     subgraph "Non-convex: MANY traps"
         direction TB
