@@ -9,7 +9,7 @@
 
 ## Objetivos de aprendizagem
 
-- Implementar métodos de filtragem (prazo de variação, informação mútua, quadrado de chi) e métodos de embalagem (RFE, seleção para a frente) a partir do zero
+- Implementar métodos de filtragem ( limiar de variação, informação mútua), um método de envoltura (RFE) e métodos incorporados (L1, importância de árvore) a partir do zero, e adicionar a seleção avançada nos exercícios
 - Explique por que a informação mútua capta relações não lineares de características-alvo que a correlação não apresenta
 - Compare a regularização L1 (seleção incorporada) com a RFE (seleção de embalagens) e avaliar as suas compensações computacionais
 - Construir um pipeline de seleção de recursos que combina vários métodos e demonstre uma melhor generalização em dados mantidos

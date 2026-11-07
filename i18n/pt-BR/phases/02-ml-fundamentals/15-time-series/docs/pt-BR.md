@@ -417,7 +417,7 @@ Se o seu modelo de ML de fantasia perde para a linha de base sazonal ingênua, v
 
 1. **Start with plotting.**Antes de qualquer modelagem, trace a série crua. Procure tendências, estacionalidade, valores fora da linha, rupturas estruturais (mudanças repentinas no comportamento). Uma inspeção visual de 30 segundos muitas vezes diz mais de uma hora de análise automatizada.
 
-2. **Difference first, model second.**Se a série tiver uma tendência clara, diferencie-a antes de criar características de lag. Os modelos baseados em árvores podem lidar com tendências, mas os modelos lineares não podem, e a diferenciação nunca faz mal.
+2. **Difference first, model second.**Se a série tiver uma tendência clara, diferencie-a antes de criar características de atraso. Os modelos baseados em árvores podem lidar com tendências, mas os modelos lineares sem um termo de tendência explícito não podem. Parar uma vez que a série está estacionária: cada rodada extra de diferenciação adiciona ruído e joga fora informações de nível.
 
 3. **Hold out at least one full seasonal cycle.**Se tiver uma estacionalidade semanal, o seu conjunto de testes precisa de pelo menos uma semana completa.
 

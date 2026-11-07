@@ -340,7 +340,7 @@ print(f"Support vectors: {clf['svm'].n_support_}")
 
 Importante: sempre escalando as suas características antes de treinar um SVM. Os SVM são sensíveis às magnitudes das características porque a margem depende de$\lVert w \rVert$, e as características não escaladas distorcem a geometria.
 
-Para grandes conjuntos de dados, use `LinearSVC`(formulação primária, $O(n)$por época) em vez de `SVC`(formulação dupla, $O(n^2)$- Não .$O(n^3){}$):
+Para grandes conjuntos de dados, use `LinearSVC`(formulação primária, $O(n \cdot d)$por época, linear em $n$) em vez de `SVC`(formulação dupla, $O(n^2)$- Não .$O(n^3){}$):
 
 ```python
 from sklearn.svm import LinearSVC
