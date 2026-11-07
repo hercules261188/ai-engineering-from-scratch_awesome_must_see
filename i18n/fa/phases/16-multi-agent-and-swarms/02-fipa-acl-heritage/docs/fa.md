@@ -1,6 +1,6 @@
 # میراث FIPA-ACL و قوانین سخنرانی
 
-> قبل از MCP، قبل از A2A، FIPA-ACL وجود داشت. در سال 2000 بنیاد IEEE برای عوامل فیزیکی هوشمند یک زبان ارتباطی عامل با بیست عملکردی، دو زبان محتوا و مجموعه ای از پروتکل های تعامل را تصویب کرد. این از صنعت محو شد زیرا هزینه های آنتولوژی برای وب بیش از حد سنگین بود، اما احیای LLM از سیستم های چند عامل به طور آرام همان ایده ها را بدون معنای رسمی پیاده سازی می کند: قراردادهای JSON برای عملکردی ها، زبان طبیعی برای آنتولوژی ها است. این درس به طور جدی FIPA-ACL را می خواند تا بتوانید ببینید که کدام تصمیمات پروتکل 2026 دوباره اختراع شده اند، که چه چیزی جدید است، و در کجا موج فعلی مشکلات حل شده در دهه 2000 را دوباره کشف می کند.
+> قبل از MCP، قبل از A2A، FIPA-ACL وجود داشت. در سال 2000 بنیاد اجنتی های فیزیکی هوشمند (FIPA که در سال 2005 به کمیته استاندارد های انجمن کامپیوتر IEEE تبدیل شد) یک زبان ارتباطی اجنتی با بیست عملکردی، دو زبان محتوا و مجموعه ای از پروتکل های تعامل را تصویب کرد. این از صنعت محو شد زیرا هزینه های آنتولوژی برای وب بیش از حد سنگین بود، اما احیای LLM از سیستم های چند عامل به طور آرام همان ایده ها را بدون معنای رسمی پیاده سازی می کند: قراردادهای JSON برای عملکردی ها، زبان طبیعی برای آنتولوژی ها است. این درس به طور جدی FIPA-ACL را می خواند تا بتوانید ببینید که کدام تصمیمات پروتکل 2026 دوباره اختراع شده اند، که چه چیزی جدید است، و در کجا موج فعلی مشکلات حل شده در دهه 2000 را دوباره کشف می کند.
 
 **Type:** Learn
 **Languages:** Python (stdlib)
@@ -193,7 +193,7 @@ python3 code/main.py
 | Term | What people say | What it actually means |
 |------|----------------|------------------------|
 | Speech act | "An utterance that does something" | Austin/Searle: utterances as actions. The theoretical parent of ACL. |
-| FIPA | "That old XML thing" | IEEE Foundation for Intelligent Physical Agents. Standardized ACL in 2000. |
+| FIPA | "That old XML thing" | Foundation for Intelligent Physical Agents. Standardized ACL in 2000; became an IEEE Computer Society standards committee in 2005. |
 | ACL | "Agent Communication Language" | FIPA's envelope format: performative + content + metadata. |
 | Performative | "The verb" | The intent class of a message: `inform`, `request`, `propose`, `cfp`, etc. |
 | KQML | "FIPA's predecessor" | Knowledge Query and Manipulation Language (1993). Simpler, narrower. |
