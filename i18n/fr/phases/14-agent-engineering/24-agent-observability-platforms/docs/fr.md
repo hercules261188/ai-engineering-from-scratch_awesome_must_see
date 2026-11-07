@@ -1,6 +1,6 @@
 # L'agent observé: Langfuse, Phoenix, Opik
 
-> Trois plates-formes d'observabilité d'agents open source dominent 2026. Langfuse (MIT)  6M+ installations/mois, suivi + gestion rapide + évaluations + répétition de session. Arize Phoenix (Elastic 2.0)  évaluations approfondies spécifiques à l'agent, pertinence RAG, automatisation OpenInference. Comet Opik (Apache 2.0)  optimisation automatique des rappel, garde-corps, détection des hallucinations par juge LLM.
+> Trois plateformes d'observabilité d'agents auto-hébergés dominent 2026. Langfuse (MIT)  6M+ installations/mois, suivi + gestion rapide + évaluations + répétition de session. Arize Phoenix (Elastic 2.0)  évaluations profondes spécifiques à l'agent, pertinence RAG, automatisation OpenInference. Comet Opik (Apache 2.0)  optimisation automatique des rappel, garde-corps, détection des hallucinations par juge LLM.
 
 **Type:** Learn
 **Languages:** Python (stdlib)
@@ -9,7 +9,7 @@
 
 ## Objectifs d'apprentissage
 
-- Nombre des trois principales plateformes d'observabilité des agents open source et leurs licences.
+- Nombre des trois principales plateformes d'observabilité d'agents auto-hébergés et leurs licences, et dites quelle licence n'est pas open source OSI.
 - Distinguer ce que chacun est le plus fort à: Langfuse (sessions mgmt + instantanées), Phoenix (RAG + auto-instrumentation), Opik (optimisation + garde-corps).
 - Expliquez pourquoi 89% des organisations déclarent avoir l'observabilité des agents en place d'ici 2026.
 - Mettre en œuvre un pipeline de trace à tableau de bord avec évaluation par le juge de la LLM.

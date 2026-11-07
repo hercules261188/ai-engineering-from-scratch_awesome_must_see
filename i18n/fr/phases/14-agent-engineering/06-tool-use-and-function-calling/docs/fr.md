@@ -79,7 +79,7 @@ Règle d'ingénierie: traiter les identifiants de corrélation comme des charges
 
 ### La boîte à sable
 
-L'exécution de l'outil est la limite de la boîte à sable. Voir leçon 09 pour plus de détails.`run_shell(cmd)`est un drapeau rouge; spécifique `git_status()`C'est plus sûr.
+L'exécution de l'outil est la limite de la boîte à sable. Voir la phase 13 · 26 pour plus de détails.`run_shell(cmd)`est un drapeau rouge; spécifique `git_status()`C'est plus sûr.
 
 ```figure
 tool-routing

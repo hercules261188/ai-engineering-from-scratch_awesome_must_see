@@ -106,7 +106,7 @@ Le coureur est un épais enveloppeur qui survit à chaque migration de cadre par
 2. Ajouter un `redaction`étape qui délimite les lignes correspondantes `^Bearer `ou `password=`- Test sur un enregistrement de fixation.
 3. Cap total `feedback_record.jsonl`taille à 1 MB en tournant à `.1`- Je suis là .`.2`défendre la politique de rotation.
 4. Ajouter un `parent_command_id`Alors les chaînes de retest sont visibles: quelle commande a produit l'entrée que la commande suivante a consommée.
-5. En cas de problème de sécurité, il est nécessaire de mettre en évidence les caractéristiques principales de l'UTI.
+5. Envoyez le JSONL dans un petit TUI qui met en évidence la dernière sortie non zéro.
 
 ## Les termes clés
 

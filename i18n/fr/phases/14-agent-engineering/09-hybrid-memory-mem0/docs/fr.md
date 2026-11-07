@@ -16,7 +16,7 @@
 
 ## Le problème
 
-Un magasin est faux pour l'une des trois classes de requêtes:
+Chaque magasin est adapté à une seule des trois classes de requêtes:
 
 - **Semantic similarity**"Qu'est-ce que nous avons discuté de la dérive d'agent la semaine dernière?" Vector gagne, KV et la défaite graphique.
 - **Fact lookup** "Quel est le numéro de téléphone de l'utilisateur?" KV gagne; vecteur est gaspillé, graphe est exagéré.

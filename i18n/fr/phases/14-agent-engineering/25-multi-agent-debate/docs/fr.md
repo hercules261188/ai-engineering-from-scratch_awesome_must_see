@@ -117,7 +117,7 @@ Résultats: précision et coût par protocole; correspondances rares en pleine m
 
 ## Pour en savoir plus
 
-- [Du et al., Society of Minds (arXiv:2305.14325)](https://arxiv.org/abs/2305.14325) débat canonique multi-agent
+- [Du et al., Improving Factuality and Reasoning in Language Models through Multiagent Debate (arXiv:2305.14325)](https://arxiv.org/abs/2305.14325) débat canonique multi-agent
 - [Sparse Communication Topology (arXiv:2406.11776)](https://arxiv.org/abs/2406.11776) résultats de topologie rares
 - [Anthropic, Building Effective Agents](https://www.anthropic.com/research/building-effective-agents) les travailleurs-orchestre en tant que variante de débat
 - [Madaan et al., Self-Refine (arXiv:2303.17651)](https://arxiv.org/abs/2303.17651) contrepartie autocritique de modèle unique

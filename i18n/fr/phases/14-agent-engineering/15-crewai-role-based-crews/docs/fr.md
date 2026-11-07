@@ -3,7 +3,7 @@
 > Quatre primitives: Agent, tâche, équipage, processus. Deux formes de haut niveau: équipages (collaboration autonome, basée sur le rôle) et flux (événement-driven, déterministe). CrewAI est la mise en œuvre de référence 2026 et ses documents sont simples: "pour toute application prête à la production, commencer par un flux".
 
 **Type:** Learn + Build
-**Languages:** Python (stdlib)
+**Languages:** Python (with numpy)
 **Prerequisites:** Phase 14 · 12 (Workflow Patterns), Phase 14 · 14 (Actor Model)
 **Time:** ~75 minutes
 
@@ -14,8 +14,8 @@
 - Distinguer les équipes (basées sur des rôles autonomes) des flux (déterministique axée sur les événements) et expliquer la recommandation de production des docteurs.
 - Les outils en fil avec la`@tool`décorateur et `BaseTool`sous-classe; raison sur les sorties structurées par rapport au texte libre.
 - Nommez les quatre types de mémoire CrewAI et quand chacun se dépense.
-- Mettre en œuvre un équipage de trois agents (chercheur, écrivain, rédacteur en chef) qui produit un résumé.
-- Détectez les trois modes de défaillance de CrewAI: le gonflement rapide, l'impôt sur le gestionnaire et les transferts fragiles.
+- Implémenter un équipage de trois agents (chercheur, écrivain, éditeur) en Python simple qui produit un bref.
+- Détectez les quatre modes d'échec de CrewAI: "Bloat prompt", "Tax manager-LLM", "Hands-off fragile", "Crew-as-produc".
 
 ## Le problème
 
@@ -120,7 +120,7 @@ Activer l' équipage avec `memory=True`La mémoire est l'un des endroits où Cre
 - Les budgets de latence sous-seconde. Hiérarchique ajoute aller-retour. Même Sequential sérialise les demandes qui incluent des histoires de fond et des sorties précédentes.
 - Les boucles à agent unique. Sautez le cadre; une boucle à agent (leçon 1) plus un registre d'outils est plus court.
 
-La leçon 17 (Agent Framework Tradeoffs) explique cela dans une matrice.
+Leçon 28 (Patrons d'orchestration) compare les topologies côte à côte.
 
 ### Forme de dépendance
 
@@ -129,7 +129,7 @@ Indépendante de LangChain. Python 3.10 à 3.13. Utilisations `uv`Le nombre d' �
 ### Où ce modèle va mal
 
 - **Prompt-bloat from backstories.**Un récit de 2000 mots par agent et un équipage de cinq agents brûle le budget contextuel avant le premier appel d'outil. Gardez les récit de 200 mots.
-- **Manager-LLM token tax.**Le processus hiérarchique ajoute un appel de gestion LLM avant chaque appel spécialisé. Sur une équipe de cinq tâches qui est six appels de gestion LLM au lieu de cinq, et l'appel de gestion porte la liste complète des tâches plus les sorties précédentes.
+- **Manager-LLM token tax.**Le processus hiérarchique ajoute un appel de gestion LLM avant chaque appel spécialisé. Sur une équipe de cinq tâches qui est dix appels de gestion LLM au lieu de cinq, et l'appel de gestion porte la liste complète des tâches plus les sorties précédentes.
 - **Brittle handoffs.**La tâche N's `expected_output`est "un schéma". La tâche N+1 la lit comme `context`Le LLM a produit quatre, les agents en aval, les annonces.`output_pydantic`sur la tâche N, la tâche N+1 lit un objet typé, pas du texte libre.
 - **Crew-as-prod.**La production de l'équipage libre est effectuée sans enveloppe de flux. La variabilité de sortie est élevée; la répétition est impossible; le coup de feu sur appel ne peut pas différencier une mauvaise course contre une bonne.
 
@@ -139,7 +139,7 @@ ae-crew-vs-flow
 
 ## Faites-le
 
-`code/main.py`Il implémentera des versions STDlib des deux formes plus un équipage de trois agents.
+`code/main.py`Il utilise des versions Python simples des deux formes plus un équipage de trois agents.
 
 La forme:
 

@@ -43,7 +43,7 @@ Cinq dimensions, chacun avec un score de 0 à 2.
 | Verification quality | Does the acceptance command actually prove the goal, or did it prove a weaker version? |
 | Handoff readiness | Could the next session pick up cleanly from the current state? |
 
-Un échec inférieur à 7 est un échec doux; un échec inférieur à 5 est un échec dur.
+Un dépassement inférieur à 7 est un défaut doux; un dépassement inférieur à 5, ou toute dimension à 0, est un défaut dur.
 
 ### Le réviseur est un rôle distinct, pas un modèle distinct
 

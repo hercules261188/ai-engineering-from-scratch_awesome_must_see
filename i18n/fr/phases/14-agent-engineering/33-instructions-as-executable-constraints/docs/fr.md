@@ -104,11 +104,11 @@ Résultats: réglementation paralysée, trace d'exécution, pass/fail par règle
 
 Trois modèles séparent un ensemble de règles qui dure un quart d'heure d'un ensemble qui se décompose en une semaine.
 
-**Severity tagging at write time.**Chaque règle est conforme .`severity`Le numéro de la liste:`block`- Je suis là .`warn`ou `info`Le contrôleur rapporte les trois; le temps d' exécution ne refuse que de l' accélérer .`block`La plupart des équipes exagèrent la gravité précoce puis l'affaiblissent discrètement sous pression de délai; l'étiquetage à l'heure d'écriture force l'étalonnage à l'avant.`block`réglementation en une `overrides.jsonl`journal de vérification.
+**Severity tagging at write time.**Chaque règle est conforme .`severity`Le numéro de la liste:`block`- Je suis là .`warn`ou `info`Le contrôleur rapporte les trois; le temps d' exécution ne refuse que de l' accélérer .`block`La plupart des équipes exagèrent la gravité précoce puis l'affaiblissent discrètement sous pression de délai; l'étiquetage à l'heure d'écriture force l'étalonnage à l'avant.`block`La règle est de`overrides.jsonl`journal de vérification.
 
 **Rule expiry as a forcing function.**Chaque règle est une règle .`expires_at`date (par défaut 90 jours après l'écriture). Le vérificateur émet un avertissement lorsqu'une règle inexpirée a été violée à zéro pour 60 jours consécutifs; le prochain examen trimestriel justifie soit de la conserver, soit de l'affaiblir à `info`Les données de production de Cloudflare AI Code Review (avril 2026, 131.246 critiques se déroulent sur 5.169 repos en 30 jours) ont montré que les ensembles de règles avec expiration explicite sont restés sous 30 règles par repos; les ensembles sans ont augmenté à 80 + avec la plupart jamais tiré.
 
-**Markdown-as-source, JSON-as-cache.** `agent-rules.md`est le dossier de l'auteur; `agent-rules.lock.json`Le blocage est régénéré par un crochet pré-commit. les différences de marquage sont révisibles; le partage JSON reste à l'écart de chaque virage. La même forme que`package.json`- Je suis là .`package-lock.json`et `Cargo.toml`- Je suis là .`Cargo.lock`- Je suis désolé .
+**Markdown-as-source, JSON-as-cache.** `agent-rules.md`est le dossier de l'auteur; `agent-rules.lock.json`Le blocage est régénéré par un crochet pré-commit. Les différences de marquage sont révisibles; le partage de marquage reste à l'écart de chaque virage, car le contrôleur ne charge que le petit JSON prédéfini.`package.json`- Je suis là .`package-lock.json`et `Cargo.toml`- Je suis là .`Cargo.lock`- Je suis désolé .
 
 ## Utilisez-le
 

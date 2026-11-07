@@ -54,7 +54,7 @@ Tout flux d'agent qui vous intéresse peut être intégré à un évaluateur-opt
 
 ### Lier la phase 14 ensemble
 
-Chaque leçon de la phase 14 génère des cas d'évaluation:
+La plupart des leçons de la phase 14 génèrent des cas d'évaluation.
 
 | Lesson | Eval case it generates |
 |--------|------------------------|
@@ -77,7 +77,7 @@ Chaque leçon de la phase 14 génère des cas d'évaluation:
 | 28 Orchestration | Supervisor routes to the right specialist |
 | 29 Runtime Shapes | DLQ handles N% failure |
 
-Si votre suite d'évaluation contient des cas pour chacun, vous avez couvert la phase 14.
+Si votre suite d'évaluation a un cas pour chaque rangée, vous avez couvert le noyau de la phase 14.
 
 ### Lorsque le développement axé sur l'évaluation échoue
 
