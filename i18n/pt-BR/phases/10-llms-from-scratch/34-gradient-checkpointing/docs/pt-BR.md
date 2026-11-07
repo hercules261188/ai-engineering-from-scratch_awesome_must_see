@@ -11,7 +11,7 @@
 
 O treinamento de um transformador armazena, para cada camada, as entradas para cada operação que é diferenciada para trás: as entradas de atenção, as projeções Q/K/V, a saída softmax, as entradas FFN, as saídas normais e o fluxo residual.`d`, comprimento da sequência `L`, lote `B`, isto é por ordem de`12 * B * L * d`flutuam por camada.
 
-Para o`d=8192, L=8192, B=1`, que é 800 MB / camada em BF16. Um modelo de 64 camadas é 51 GB de ativações  e isso é antes de você multiplicar pelo tamanho do microbatch, antes de adicionar atenção-softmax intermediários (`L^2`por cabeça), e antes de fazerem cópias parciais tensor-paralelas.
+Para o`d=8192, L=8192, B=1`, que é cerca de 805M valores, ou 1,6 GB / camada em BF16. um modelo de 64 camadas é cerca de 103 GB de ativações, e isso é antes de você multiplicar pelo tamanho do microbatch, antes de adicionar atenção-softmax intermediários (`L^2`por cabeça), e antes de fazerem cópias parciais tensor-paralelas.
 
 A conta bilateral: BF16 pesos mais estado de otimização pode caber em 80GB, mas as ativações empurram você para além. Gradiente de controle (aka recomputação de ativação) é a solução padrão. Largar a maioria das ativações; refazer o avanço durante o retorno para recuperá-los. Custo: FLOPs extras. Benefício: diminuição da memória pela proporção de segmentos de pontos de controle para as camadas totais.
 

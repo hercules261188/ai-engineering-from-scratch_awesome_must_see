@@ -16,7 +16,7 @@
 
 ## O problema
 
-A atenção softmax padrão tem uma propriedade matemática que se transforma em uma dor de cabeça operacional em escala.`q`, os pesos de atenção são`softmax(qK^T / sqrt(d))`. Softmax nunca pode produzir zeros exatos  cada token não correspondente obtém alguma massa positiva. Essa massa residual é ruído, e ele se escala com o comprimento do contexto. Em 128k tokens, mesmo que cada token não correspondente obtenha apenas 0,001% da probabilidade, 127.999 deles combinados contribuem cerca de 12% do total. O modelo tem que aprender a percorrer um piso ruído que cresce com o contexto.
+A atenção softmax padrão tem uma propriedade matemática que se transforma em uma dor de cabeça operacional em escala.`q`, os pesos de atenção são`softmax(qK^T / sqrt(d))`Softmax nunca pode produzir zeros exatos: cada token não correspondente obtém alguma massa positiva. Essa massa residual é ruído, e ele se escala com o comprimento do contexto. Em 128k tokens, mesmo que cada token não correspondente obtenha apenas 0,0001% da probabilidade, 127.999 deles combinados contribuem cerca de 13% do total. O modelo tem que aprender a percorrer um piso ruído que cresce com o contexto.
 
 Empiricamente, isso aparece como interferência da cabeça de atenção: citações alucinadas em RAG de longo contexto, falhas perdidas no meio em tarefas de recuperação de tokens de 100k e degradação sutil da precisão em referências de agulha em manada de feno acima de 32k. O papel do Transformador Diferencial (arXiv:2410.05258, ICLR 2025) mediu a lacuna: os Transformadores DIFF atingiram menor perplexidade, maior precisão de contexto longo e menos alucinações do que as linhas de base do mesmo tamanho.
 

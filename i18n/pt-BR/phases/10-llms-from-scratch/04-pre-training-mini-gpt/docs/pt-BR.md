@@ -222,6 +222,10 @@ A projeção de saída (cabeça de logits) compartilha pesos com a matriz de inc
 
 ## Construí-lo
 
+```figure
+iso-machine {"machine":"mini-gpt"}
+```
+
 ### Passo 1: Introdução de camada
 
 Embedings de tokens mapeam cada um dos 50.257 tokens possíveis para um vetor de 768 dimensões. Embedings de posição adicionam informações sobre onde cada token fica na sequência. Os dois são somados.
