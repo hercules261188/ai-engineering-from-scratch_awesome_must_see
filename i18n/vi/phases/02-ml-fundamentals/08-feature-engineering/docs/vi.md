@@ -82,7 +82,7 @@ Các mô hình cần số, các loại cần mã hóa.
 Dữ liệu thực có lỗ hổng.
 
 - **Drop rows:**Chỉ khi dữ liệu bị thiếu hiếm và ngẫu nhiên
-- **Mean/median imputation:**Đơn giản, giữ lại hình dạng phân phối (đường trung bình mạnh hơn để ngoại lệ)
+- **Mean/median imputation:**Đơn giản, giữ trung tâm của tính năng (đường trung bình mạnh hơn để ngoại lệ), nhưng thu hẹp sự khác biệt của nó và tích tụ mỗi giá trị được lấp vào một đỉnh, do đó hình dạng phân phối thay đổi
 - **Mode imputation:**Đối với các tính năng phân loại
 - **Indicator column:**Thêm một cột nhị phân "was_this_missing" trước khi tính toán.
 - **Forward/backward fill:**Đối với dữ liệu chuỗi thời gian

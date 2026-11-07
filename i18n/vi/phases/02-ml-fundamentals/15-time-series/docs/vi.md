@@ -417,7 +417,7 @@ Nếu mô hình ML hay của bạn bị mất đến cơ sở ngây thơ theo m�
 
 1. **Start with plotting.**Trước khi mô hình hóa, hãy vẽ các chuỗi nguyên liệu. Tìm kiếm xu hướng, tính theo mùa, mức độ ngoại lệ, sự gián đoạn cấu trúc (các thay đổi đột ngột trong hành vi).
 
-2. **Difference first, model second.**Nếu dòng có xu hướng rõ ràng, hãy phân biệt trước khi tạo ra các tính năng chậm trễ. Các mô hình dựa trên cây có thể xử lý xu hướng, nhưng các mô hình tuyến tính không thể, và phân biệt không bao giờ làm tổn thương.
+2. **Difference first, model second.**Nếu loạt có xu hướng rõ ràng, hãy phân biệt trước khi tạo ra các tính năng chậm trễ. Các mô hình dựa trên cây có thể xử lý xu hướng, nhưng các mô hình tuyến tính mà không có thuật ngữ xu hướng rõ ràng không thể. Ngừng khi loạt không dừng lại: mỗi vòng phân biệt thêm thêm tiếng ồn và ném đi thông tin cấp độ.
 
 3. **Hold out at least one full seasonal cycle.**Nếu bạn có tính theo mùa hàng tuần, bộ thử nghiệm của bạn cần ít nhất một tuần đầy đủ. Nếu hàng tháng, ít nhất một tháng đầy đủ. Nếu không bạn không thể đánh giá liệu mô hình có nắm bắt mô hình theo mùa hay không.
 

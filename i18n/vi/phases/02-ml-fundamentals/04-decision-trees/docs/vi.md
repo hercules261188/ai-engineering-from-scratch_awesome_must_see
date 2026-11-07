@@ -104,7 +104,7 @@ Cách tiếp cận tham lam này không đảm bảo cây tối ưu trên toàn 
 
 ### Điều kiện dừng
 
-Không ngừng, cây phát triển cho đến khi mỗi lá sạch (một mẫu mỗi lá).
+Không có điều kiện dừng lại, cây phát triển cho đến khi mỗi lá là tinh khiết hoặc không có chia tách có thể tách các mẫu của nó, thường xuống đến một mẫu đơn lẻ cho mỗi lá.
 
 **Pre-pruning**ngăn chặn cây trước khi nó phát triển đầy đủ:
 - Độ sâu tối đa: dừng chia khi cây đạt độ sâu nhất định

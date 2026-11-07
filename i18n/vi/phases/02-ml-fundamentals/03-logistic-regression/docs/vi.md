@@ -86,7 +86,7 @@ Tại sao điều này hiệu quả:
 - Khi nào $y=0$và $p$là gần 0: $\log(1) = 0$, do đó tổn thất gần 0 (đúng, chi phí thấp)
 - Khi nào $y=0$và $p$gần 1 .$\log(0)$tiếp cận vô hạn âm, do đó mất mát là rất lớn (sai, chi phí cao)
 
-Chức năng mất mát này là ngọc cho sự lùi hậu cần, đảm bảo một mức tối thiểu toàn cầu duy nhất.
+Chức năng mất mát này là ngọc để hồi quy hậu cần, vì vậy mỗi mức tối thiểu địa phương là mức tối thiểu toàn cầu và sự giảm gradient không thể bị mắc kẹt trong một dữ liệu xấu.
 
 ### Sự giảm dần về hậu cần
 

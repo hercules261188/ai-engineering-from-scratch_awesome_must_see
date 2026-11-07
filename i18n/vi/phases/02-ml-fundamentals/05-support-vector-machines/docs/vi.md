@@ -340,7 +340,7 @@ print(f"Support vectors: {clf['svm'].n_support_}")
 
 Quan trọng: luôn luôn mở rộng các tính năng của bạn trước khi đào tạo một SVM. SVM nhạy cảm với các tính năng lớn bởi vì biên phụ thuộc vào $\lVert w \rVert$, và các tính năng không quy mô làm biến dạng hình học.
 
-Đối với các bộ dữ liệu lớn, sử dụng `LinearSVC`(pháp nguyên thủy, $O(n)$(trong thời đại) thay vì `SVC`(sự tạo ra đôi, $O(n^2)$đến$O(n^3){}$):
+Đối với các bộ dữ liệu lớn, sử dụng `LinearSVC`(pháp nguyên thủy, $O(n \cdot d)$theo thời đại, tuyến tính trong $n$) thay vì `SVC`(sự tạo ra đôi, $O(n^2)$đến$O(n^3){}$):
 
 ```python
 from sklearn.svm import LinearSVC

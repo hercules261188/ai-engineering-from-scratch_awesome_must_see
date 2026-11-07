@@ -9,7 +9,7 @@
 
 ## Mục tiêu học tập
 
-- Thực hiện các phương pháp lọc (nới hạn biến thể, thông tin lẫn nhau, chi-quad) và phương pháp bao bì (RFE, lựa chọn phía trước) từ đầu
+- Thực hiện các phương pháp lọc (nới hạn biến thể, thông tin lẫn nhau), phương pháp bao bì (RFE), và các phương pháp nhúng (L1, tầm quan trọng của cây) từ đầu, sau đó thêm lựa chọn trước trong các bài tập
 - Giải thích tại sao thông tin lẫn nhau nắm bắt các mối quan hệ không tuyến tính tính- mục tiêu mà mối tương quan không có
 - So sánh L1 regularization (đánh chọn tích hợp) với RFE (đánh chọn bao bì) và đánh giá các tradeoff tính toán của chúng
 - Xây dựng một đường ống chọn tính năng kết hợp nhiều phương pháp và chứng minh tổng quát hóa tốt hơn trên dữ liệu được giữ
