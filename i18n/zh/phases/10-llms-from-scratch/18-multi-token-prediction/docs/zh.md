@@ -28,7 +28,7 @@
 
 ### 序列MTP配方
 
-深度搜索V3增加了`D`单元的模块在主模型上.`k`(为`k = 1..D`) 预测了符号的深度`k`就是说,`t_{i+k}`通过位置给出一个前`i`现在,我们要去.
+深度搜索V3增加了`D`基本模型的顶部MTP模块.`t_{i+1}`每个模块`k`(为`k = 1..D`) 预测标志`k`进一步的步骤,`t_{i+k+1}`通过位置给出一个前`i`现在,我们要去.
 
 模块`k`组成:
 
@@ -49,13 +49,13 @@ h_i^{(k)} &= T_k\Big( M_k \cdot \mathop{\mathrm{concat}}\big(\mathop{\mathrm{RMS
 预测是:
 
 ```math
-\text{logits}_{i+k} = \mathop{\mathrm{Out}}(h_i^{(k-1)}) \quad \text{for } k = 1, \ldots, D
+\text{logits}_{i+k+1} = \mathop{\mathrm{Out}}(h_i^{(k)}) \quad \text{for } k = 1, \ldots, D
 ```
 
-对于深度的损失,是与真相相相反的交叉透.`t_{i+k}`其他:
+对于深度的损失,是与真相相相反的交叉透.`t_{i+k+1}`其他:
 
 ```math
-L_k = \mathop{\mathrm{CE}}(\text{logits}_{i+k}, t_{i+k})
+L_k = \mathop{\mathrm{CE}}(\text{logits}_{i+k+1}, t_{i+k+1})
 ```
 
 关节损失在深度:
@@ -70,9 +70,9 @@ L_{\text{MTP}} = \frac{\lambda}{D} \sum_{k=1}^{D} L_k
 
 格洛克尔的原始平行MTP有D输出头,每个直接应用到`h_i^(0)`每个头脑都预测`t_{i+k}`它们可以从同一条脊椎隐藏状态中运行,但预测并非相互条件.`head_1`输出可以帮助`head_2`头部同时开火.
 
-探V3的序列设计构建`h_i^(k)`其他`h_i^(k-1)`加上实际的下一个代币嵌入式`E(t_{i+k})`这样可以保持因果链:`t_{i+k+1}`入深度的模块`k+1`看到什么是`t_{i+k}`结构上,这与自动降低解码器如何消耗自己的输出相似,使MTP模块直接可作为投机解码设计者使用.
+探V3的序列设计构建`h_i^(k)`其他`h_i^(k-1)`加上实际的下一个代币嵌入式`E(t_{i+k})`这样可以保持因果链:`t_{i+k+1}`入深度的模块`k`看到什么是`t_{i+k}`结构上,这与自动降低解码器的使用方式相同,使MTP模块直接可作为投机解码设计者使用.
 
-在推断时:料`h_i^(k-1)`其他国家`t_{i+k}`进入模块`k+1`预测到什么时候?`t_{i+k+1}`探V3报告了第一个MTP模块的80%+接受度,速度提高了1.8倍.
+在推断时:料`h_i^(k-1)`其他国家`t_{i+k}`进入模块`k`预测到什么时候?`t_{i+k+1}`探V3报告了第一个MTP模块的80%+接受度,速度提高了1.8倍.
 
 ### 参数会计
 
@@ -141,7 +141,7 @@ def combine(prev_hidden, next_token_embed, M_k):
 
 ### 步骤5:每深度损失
 
-软max的交叉缩 (logits) 与地面真相符号的抵消`k`通过深度的集成`lambda / D`扩展因素
+软max的交叉缩 (logits) 与地面真相符号的抵消`k+1`通过深度的集成`lambda / D`扩展因素
 
 ### 步骤 6:参数会计
 
@@ -176,18 +176,18 @@ def combine(prev_hidden, next_token_embed, M_k):
 
 2. 计算密集70B模型 (隐藏8192,80层) 的参数上层费用.与D=1MTP模块的DepSeek-V3报告的14B上层费用进行比较.解释为什么DepSeek的数量更高:MTP变压器块继承了相同的MoE结构,从而增加了每个模块参数数数.
 
-3. 插入玩具中的D=2:添加第二个MTP模块,$h^{(1)}$预测`t_{i+2}`检查联合损失和参数会计符合深度搜索论文19-21的方程.
+3. 插入玩具中的D=2:添加第二个MTP模块,$h^{(1)}$预测`t_{i+3}`检查联合损失和参数会计符合深度搜索论文19-21的方程.
 
 4. 切换玩具为平行MTP (Gloeckle式):在主要隐藏状态之上添加D输出头,每个都预测不同的偏移.测量每深度的损失与同一合成信号的连续版本相比较.连续版本应该产生较低的 k > 1的深度损失,因为它会对中间预测进行条件.
 
-5. 使用训练有素的MTP模块作为EAGLE样式的草案:调用模块 k提出 `t_{i+k}`根据模型的预测,这些图标的接受率是对待的. 如果在玩具上达到50%以上,你将复制了经验性MTP-as-draft属性.
+5. 使用训练有素的MTP模块作为EAGLE样式的草案:调用模块 k提出 `t_{i+k+1}`根据模型的预测,这些图标的接受率是对待的. 如果在玩具上达到50%以上,你将复制了经验性MTP-as-draft属性.
 
 ## 关键词
 
 | Term | What people say | What it actually means |
 |------|----------------|------------------------|
 | MTP module | "Extra loss block" | A small transformer block plus projection that predicts a token `k` positions ahead of the main model |
-| Prediction depth | "Which offset" | The integer `k` such that module `k` predicts `t_{i+k}` from prefix through position `i` |
+| Prediction depth | "Which offset" | The integer `k` such that module `k` predicts `t_{i+k+1}` from prefix through position `i` (the main model is depth 0 and predicts `t_{i+1}`) |
 | Parallel MTP | "Gloeckle-style" | D independent heads on the same backbone hidden state, no conditional chain |
 | Sequential MTP | "DeepSeek-V3 style" | Each module conditions on the previous depth's hidden state plus the next token's embedding; preserves causal chain |
 | Shared output head | "Reuse the main head" | The MTP modules call the main model's LM head, not a separate output projection |

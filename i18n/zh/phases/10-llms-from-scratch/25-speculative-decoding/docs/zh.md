@@ -85,7 +85,7 @@ For each drafted token x_t:
 
 子-2 (2024) 增加了动态树木拓:树在不确定的地段上长得更宽,而在自信的地方保持狭窄.`α_effective`没有增加验证成本.
 
-3 (Li等) 2025年",EAGLE-3:通过训练时间测试扩大大型语言模型的推理加速") 消除了固定的顶层功能依赖性,并将草案训练以新的"测试时间模拟"损失. 接受率从0.75 (EAGLE-2) 升至0.82 (EAGLE-3) ,平均代币/验证率从3.0升至4.5.
+3 (Li等) 2025年",EAGLE-3:通过训练时间测试扩大大型语言模型的推理加速") 消除了固定的顶层功能依赖性,并将草案训练以新的"测试时间模拟"损失. 接受率从0.75 (EAGLE-2) 升至0.82 (EAGLE-3) ,平均代币/验证率从3.0升至4.5. 这些数据来自一个参考设置. 接受取决于模型对,草稿树和流量:第10期15期在聊天基准上每次接受路径代币0.88至0.92的报价,第17期05期计划在生产总值聊天上0.6至0.8.
 
 ### 树木注意力检查
 
@@ -132,13 +132,13 @@ def speculative_step(p_target, q_draft, K, temperature=1.0):
     """One round of speculative decoding. Returns list of accepted tokens."""
     # 1. Draft K tokens
     draft_tokens = []
-    q_probs = []
+    q_dists = []
     state = draft_state_init()
     for _ in range(K):
         probs = softmax(q_draft(state) / temperature)
         t = np.random.choice(len(probs), p=probs)
         draft_tokens.append(t)
-        q_probs.append(probs[t])
+        q_dists.append(probs)
         state = draft_step(state, t)
 
     # 2. Target computes p at every drafted position + 1 extra
@@ -148,10 +148,10 @@ def speculative_step(p_target, q_draft, K, temperature=1.0):
     accepted = []
     for k, tok in enumerate(draft_tokens):
         r = np.random.uniform()
-        if r < p_probs_all[k][tok] / q_probs[k]:
+        if r < p_probs_all[k][tok] / q_dists[k][tok]:
             accepted.append(tok)
         else:
-            residual = np.maximum(p_probs_all[k] - q_probs[k], 0)
+            residual = np.maximum(p_probs_all[k] - q_dists[k], 0)
             residual /= residual.sum()
             accepted.append(np.random.choice(len(residual), p=residual))
             return accepted
