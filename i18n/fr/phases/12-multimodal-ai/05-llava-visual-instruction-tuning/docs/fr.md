@@ -1,6 +1,6 @@
 # LLaVA et réglage des instructions visuelles
 
-> LLaVA (avril 2023) est l'architecture multimodal la plus copiée de la planète. Il a remplacé le Q-Former de BLIP-2 par un MLP à 2 couches, a remplacé l'attention croisée fermée de Flamingo par une concatenation de jetons naïve et a été formé sur 158k tours d'instruction visuelle générés par GPT-4 à partir de légendes uniquement textuelles. Tout praticien qui a construit un VLM entre 2023 et 2026 a construit une variante de LLaVA. LLaVA-1.5 a ajouté AnyRes. La résolution de la LVA-NEXT a augmenté. LLaVA-OneVision image unifiée, multi-image et vidéo dans une recette. Cette leçon lit la recette, met en œuvre le projecteur et explique pourquoi "le plus simple a gagné".
+> LLaVA (avril 2023) est l'architecture multimodal la plus copiée de la planète. Il a remplacé le Q-Former de BLIP-2 par un MLP à 2 couches, a remplacé l'attention croisée fermée de Flamingo par une concatenation de jetons naïve et a été formé sur 158k tours d'instruction visuelle générés par GPT-4 à partir de légendes uniquement textuelles. Tout praticien qui a construit un VLM entre 2023 et 2026 a construit une variante de LLaVA. LLaVA-1.5 a été échangé dans un projecteur MLP et un encodeur 336px. LLaVA-NeXT a ajouté une carreaux AnyRes pour les entrées à haute résolution. LLaVA-OneVision image unifiée, multi-image et vidéo dans une recette. Cette leçon lit la recette, met en œuvre le projecteur et explique pourquoi "le plus simple a gagné".
 
 **Type:** Build
 **Languages:** Python (stdlib, projector + instruction-template builder)
@@ -32,10 +32,10 @@ Le résultat: un VLM qui a couru sur 8 A100 pendant une journée, a battu Flamin
 
 ### L'architecture
 
-LLaVA-1.5 à 13B:
+LLaVA-1.5 à 7B:
 - Encodeur de vision: CLIP ViT-L/14 @ 336 (congelé pendant la phase 1, défriché optionnellement pendant la phase 2).
 - Projecteur: 2 couches de MLP avec activation GELU, `1024 → 4096 → 4096`- Je suis désolé .
-- LLM: Vicuna-13B (plus tard Llama-3.1-8B).
+- LLM: Vicuna-7B v1.5 (une variante 13B utilise Vicuna-13B; les fourches ultérieures sont passées à Llama-3.1-8B).
 
 Passer en avant une image + texte:
 
@@ -83,10 +83,11 @@ Aucun de ces éléments ne touche directement l'image  seulement la description 
 LLaVA-1.5 (octobre 2023) a ajouté:
 - Les données de tâches académiques (VQA, OKVQA, RefCOCO) mélangées à la mise en forme des instructions.
 - Un meilleur système rapide.
-- 2048 → 32k contexte.
+- Un projecteur MLP à 2 couches à la place de la couche linéaire unique originale, et CLIP ViT-L/14 à 336px (576 jetons) à la place de 224px (256 jetons).
+- Une variante HD qui divise la grille dans le journal, que LLaVA-NeXT expédia plus tard sous le nom d'AnyRes.
 
 LLaVA-NeXT (janvier 2024) a ajouté:
-- AnyRes: divisez les images haute résolution en une grille de 2x2 ou 1x3 de 336x336 cultures, plus une miniature globale de basse résolution. Chaque culture devient 576 jetons; total d'environ 2880 jetons visuels par image.
+- AnyRes: divisez les images haute résolution en une grille de 2x2 ou 1x3 de 336 cultures, plus une miniature mondiale de basse résolution. Chaque culture devient 576 jetons. Une grille de 2x2 plus la miniature donne environ 2880 jetons visuels par image. Une grille de 1x3 a moins de cultures, donc elle coûte moins de jetons. Les tâches OCR et graphiques ont augmenté.
 - Meilleur mélange de données d'instruction avec ShareGPT4V (titres GPT-4V de haute qualité).
 - Les mécanismes de droit de base plus forts (Mistral-7B, Yi-34B).
 
@@ -98,8 +99,8 @@ Leçon 12.08 couvre OneVision en profondeur. version courte: même projecteur, m
 
 | | Q-Former (BLIP-2) | MLP (LLaVA) |
 |---|---|---|
-| Visual tokens per image | 32 | 576 (base) or 2880 (AnyRes) |
-| Trainable params | 188M + LM | 40M + LM |
+| Visual tokens per image | 32 | 576 (base) or about 2880 (AnyRes, 2x2 grid) |
+| Trainable params | 188M + LM | ~22M (7B) + LM |
 | Stage 1 loss | ITC+ITM+ITG | LM only |
 | LLM drop-in | Requires retrain | Swap with minimal retrain |
 | Multi-image | Awkward | Natural (concat) |

@@ -128,7 +128,7 @@ mm-agent-loop
 
 `code/main.py`est l'échafaudage en pierre de taille:
 
-- Définition JSON du schéma d'action (10 actions).
+- Définition JSON du schéma d' action (10 actions: les neuf énumérées ci-dessus plus `screenshot_region`, un outil de culture + zoom).
 - Faux état de navigateur comme dicté.
 - Le squelette de boucle d'agent: état de réception, émission d'action, application, boucle.
 - Un mini-benchmark de 10 tâches (pages synthétiques) pour mesurer le taux de réussite de bout en bout.
@@ -140,7 +140,7 @@ Cette leçon produit `outputs/skill-multimodal-agent-designer.md`. Compte tenu d
 
 ## Exercices
 
-1. Élargir le schéma d' action avec un `screenshot_region`outil (crop + zoom). Quelles tâches sont utiles ?
+1. Le schéma du code ajoute un `screenshot_region`Les actions principales sont les 9 actions principales.
 
 2. Lisez AgentVista (arXiv:2602.23166). Décrivez la catégorie de tâches la plus difficile et pourquoi les modèles frontaliers échouent toujours.
 

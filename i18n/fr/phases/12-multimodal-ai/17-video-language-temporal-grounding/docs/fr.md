@@ -1,6 +1,6 @@
 # Modèles vidéo: jetons temporaires et mise au sol
 
-> La vidéo n'est pas une pile de photos. Un clip de 5 secondes a un ordre causal, des verbes d'action et un calendrier d'événement qu'un modèle d'image ne peut pas représenter. Video-LLaMA (Zhang et coll., juin 2023) a expédié le premier open video-LLM avec fondation audiovisuelle. VideoChat et Video-LLaVA ont étalé le modèle. En 2025, le TMRoPE de Qwen2.5-VL a fermé le fossé avec les modèles de propriété frontalière. Chaque système a résolu les jetons temporels différemment  Q-former par clip, concat-pool par frame, TMRoPE par jeton. Cette leçon lit les modèles, construit un échantillonneur de cadre uniforme contre dynamique et évalue les tâches de mise à terre temporelle.
+> La vidéo n'est pas une pile de photos. Un clip de 5 secondes a un ordre causal, des verbes d'action et un calendrier d'événement qu'un modèle d'image ne peut pas représenter. Video-LLaMA (Zhang et coll., juin 2023) a expédié le premier open video-LLM avec fondation audiovisuelle. VideoChat et Video-LLaVA ont étalé le modèle. En 2025, le M-RoPE de Qwen2.5 VL, aligné sur le temps, a fermé le fossé avec les modèles de propriété frontalière. Chaque système a résolu les jetons temporels différemment  Q-former par clip, concat-pool par cadre, M-RoPE aligné sur le temps par jeton. Cette leçon lit les modèles, construit un échantillonneur de cadre uniforme contre dynamique et évalue les tâches de mise à terre temporelle.
 
 **Type:** Build
 **Languages:** Python (stdlib, frame sampler + temporal-grounding evaluator)
@@ -11,7 +11,7 @@
 
 - Expliquez pourquoi le codage positionnel temporel modifie les performances de la vidéo VLM indépendamment du codageur de vision.
 - Comparer l'échantillonnage uniforme, dynamique-FPS et événement-driven de cadres sur les jetons-par seconde par rapport à la précision de mise à terre.
-- Décrivez les conceptions Q-ex-per-clip (Video-LLaMA) vs. pooled-per-frame (Video-LLaVA) vs. M-RoPE-per-token (Qwen2.5-VL).
+- Décrivez les conceptions Q-ex-per-clip (Video-LLaMA) vs pooled-per-frame (Video-LLaVA) vs M-RoPE par jeton (Qwen2.5-VL) alignées sur le temps.
 - Nombre des quatre critères de référence pour la vidéo: VideoMME, TempCompass, EgoSchema, Video-MMMU.
 
 ## Le problème
@@ -26,7 +26,7 @@ Il existe trois stratégies de réduction:
 
 Chaque trade-off est différent. le sous-échantillonnage perd les détails temporels. le pooling perd les détails spatiaux. le Q-former perd un peu les deux mais économise des jetons.
 
-Le codeur de position temporelle est l'autre axe: comment le modèle sait-il que le cadre 5 est venu avant le cadre 6 ? Les options incluent le simple RoPE temporel 1D (Video-LLaMA), les emblèmes temporels apprises (Video-LLaVA) et le TMRoPE (Qwen2.5-VL, 3D complet).
+Le codeur de position temporelle est l'autre axe: comment le modèle sait-il que le cadre 5 est venu avant le cadre 6 ? Les options incluent le simple RoPE temporel 1D (Video-LLaMA), les emblèmes temporels apprises (Video-LLaVA) et le M-RoPE aligné sur le temps (Qwen2.5-VL, 3D complet).
 
 ## Le concept
 
@@ -46,17 +46,17 @@ VideoChat a gardé l'idée de Video-LLaMA mais a abandonné l'audio et simplifi�
 
 Aucun ne peut traiter de longues vidéos.
 
-### Qwen2,5-VL et TMRoPE
+### Qwen2,5-VL et M-RoPE aligné sur le temps
 
-Qwen2.5-VL introduit TMRoPE  Embedding de position rotative temporelle-modalité. Chaque jeton de patch porte une position (t, h, w) où t est le timestamp réel (pas l'index du cadre).
+Qwen2.5-VL conserve le M-RoPE de Qwen2-VL (Inplementation de position rotative multimodale) et aligne son axe temporel avec le temps absolu. Chaque jeton de patch porte une position (t, h, w) où t suit le timestamp réel (pas l'index du cadre). Qwen2.5-Omni (Létion 12.20) nomme plus tard sa version audio et vidéo de la même idée TMRoPE, Time-aligné Multimodal RoPE.
 
 Différences clés par rapport à l'intégration temporelle simple:
 
 - Le modèle voit "à 4,2 secondes" et non "à 15".
 - Chaque jeton visuel tourne indépendamment par son timestamp.
-- Si vous prenez un échantillon à 2 FPS ici et 4 FPS là, TMRoPE gère l'espacement inégalitaire de manière native.
+- Si vous prenez un échantillon à 2 FPS ici et 4 FPS là, M-RoPE aligné sur le temps traite l'espacement inégalitaire de manière native.
 
-TMRoPE permet de " à quelle seconde le chat saute-t-il ? " Le modèle peut sortir " à 4,2 secondes. " Video-LLaMA ne pouvait dire que " tôt dans le clip. "
+Le M-RoPE aligné sur le temps permet de poser des questions " à quelle seconde le chat saute-t-il ? " Le modèle peut exécuter " à 4,2 secondes. " Le vidéo-LLaMA ne pouvait dire que " tôt dans le clip. "
 
 ### Stratégies de prélèvement d'échantillons
 
@@ -70,7 +70,7 @@ Tasté + contexte: échantillon aux limites des prises de vue + quelques cadres 
 
 ### Rassemblement par cadre
 
-À 1 FPS et 576 jetons par image, un clip de 5 minutes est de 172.800 jetons. Faible avec le contexte 128k de Qwen2.5-VL-72B mais coûteux.
+À 1 FPS et 576 jetons par image, un clip de 5 minutes est de 172.800 jetons. Cela dépasse le contexte 128k de Qwen2.5-VL-72B, donc vous devez d'abord laisser tomber le taux de images ou les jetons de pool par image.
 
 Le pool bilinéaire 3x3 se réduit à 64 jetons par cadre -> 19 200 jetons pendant 5 minutes.
 
@@ -91,7 +91,7 @@ Format de sortie pour la mise à terre temporelle:
 
 - "Le chat saute autour de la marque de 4 secondes". Facile à analyser mais imprecise.
 - JSON structuré: `{"event": "jump", "start": 4.1, "end": 4.3}`Le Qwen2.5VL est équipé de ce train.
-- Basé sur des jetons: spécial `<time>4.1</time>`Les jetons sont interconnectés avec la réponse.
+- Basé sur des jetons: spécial `<time>4.1</time>`Certains modèles vidéo utilisent ce code; Qwen2.5-VL instead encode le temps dans ses M-RoPE position IDs et réponses en texte ou JSON.
 
 Le format de sortie JSON de Qwen2.5VL partage directement.
 
@@ -99,7 +99,7 @@ Le format de sortie JSON de Qwen2.5VL partage directement.
 
 Pour les VLM vidéo en 2026:
 
-- Encodeur: SigLIP 2 avec M-RoPE ou TMRoPE (Qwen2.5-VL).
+- Encodeur: SigLIP 2 ou ViT à résolution native, avec M-RoPE aligné sur le temps dans le LLM (Qwen2.5-VL).
 - Prise d'échantillons de cadres: FPS dynamique (1-4 en fonction du mouvement) avec capot maximal de cadres.
 - Le poids par cadre: 3x3 bilinéaire.
 - Sortie: JSON structuré avec champs de temps + événement.
@@ -115,7 +115,7 @@ video-temporal-patches
 
 - Des échantillonnages de cadres FPS uniformes et dynamiques.
 - Un évaluateur de la fondation temporelle de jouets: étant donné un événement de "vérité fondamentale" au moment T et une sortie de modèle, la précision est notée avec tolérance.
-- Une comparaison entre les vidéos-LLaMA (16 images, Q-former), Vidéos-LLaVA (8 images, MLP), Qwen2.5-VL (FPS dynamique + TMRoPE).
+- Une comparaison entre les vidéos-LLaMA (16 images, Q-former), Vidéos-LLaVA (8 images, MLP), Qwen2.5-VL (FPS dynamique + M-RoPE aligné sur le temps).
 
 ## La faire partir
 
@@ -125,7 +125,7 @@ Cette leçon produit `outputs/skill-video-vlm-frame-planner.md`. En fonction d'u
 
 1. Pour une démonstration de cuisson de 3 minutes, choisissez uniforme contre FPS dynamique.
 
-2. TMRoPE ajoute ce qu'une simple table d'intégration temporelle ne peut pas faire spécifiquement ?
+2. Le M-RoPE aligné sur le temps ajoute-t-il précisément ce qu'une simple table d'intégration temporelle ne peut pas faire?
 
 3. Écrivez un schéma JSON pour le repérage temporel qu'un VLM peut apprendre à émettre.
 
@@ -138,7 +138,7 @@ Cette leçon produit `outputs/skill-video-vlm-frame-planner.md`. En fonction d'u
 | Term | What people say | What it actually means |
 |------|-----------------|------------------------|
 | Temporal grounding | "Time-localized answers" | VLM outputs a specific timestamp range for when an event happens |
-| TMRoPE | "Time-Multimodal RoPE" | 3D rotary position with absolute timestamps, used by Qwen2.5-VL |
+| Time-aligned M-RoPE | "TMRoPE" | 3D rotary position whose temporal axis follows absolute timestamps; Qwen2.5-VL uses it for video, and Qwen2.5-Omni names its audio and video form TMRoPE |
 | Dynamic FPS | "Motion-aware sampling" | Sample more frames in high-motion segments, fewer in static ones |
 | Frame pooling | "Spatial compress per frame" | Reduce patches per frame with bilinear interpolation before the LLM |
 | Video Q-former | "Clip compressor" | Cross-attention bottleneck mapping N frames to K learned queries |

@@ -1,6 +1,6 @@
 # De CLIP à BLIP-2  Q-Former comme pont de modalité
 
-> CLIP aligne l'image et le texte, mais ne peut générer de légendes, répondre à des questions ou tenir une conversation. BLIP-2 (Salesforce, 2023) a résolu cela avec un petit pont entraînable: 32 vecteurs de requête apprenables assistent sur les caractéristiques d'un ViT gelé via l'attention croisée, puis s'insèrent directement dans le flux d'entrée d'un LLM gelé. 188 millions de paramètres de pont ont relié un LLM 11B à un ViT-g/14. Chaque VLM basé sur un adaptateur jusqu'en 2026  MiniGPT-4, InstructBLIP, les cousins de LLaVA  est un descendant. Cette leçon lit l'architecture du Q-Former, explique son entraînement en deux étapes et construit une version de jouet qui alimente des jetons visuels dans un décodeur de texte gelé.
+> CLIP aligne l'image et le texte, mais ne peut générer de légendes, répondre à des questions ou tenir une conversation. BLIP-2 (Salesforce, 2023) a résolu cela avec un petit pont entraînable: 32 vecteurs de requête apprenables assistent sur les caractéristiques d'un ViT gelé via l'attention croisée, puis s'insèrent directement dans le flux d'entrée d'un LLM gelé. 188 millions de paramètres de pont ont relié un ViT-g/14 à des LLM gelés de taille équivalente au 11B Flan-T5-XXL. Chaque VLM basé sur un adaptateur jusqu'en 2026  MiniGPT-4, InstructBLIP, les cousins de LLaVA  est un descendant. Cette leçon lit l'architecture du Q-Former, explique son entraînement en deux étapes et construit une version de jouet qui alimente des jetons visuels dans un décodeur de texte gelé.
 
 **Type:** Build
 **Languages:** Python (stdlib, cross-attention + learnable-query demo)
@@ -117,7 +117,7 @@ Cette leçon produit `outputs/skill-modality-bridge-picker.md`. Compte tenu de l
 
 4. Lisez la section 3.2 du document BLIP-2 (arXiv:2301.12597) sur la façon dont le Q-Former est initialisé.
 
-5. Pour une vidéo de 10 minutes à 1 FPS échantillonnée à 60 images, calculer le coût de jeton par image à (Q-Former → 32 jetons/image) vs (MLP projecteur → 576 jetons/image).
+5. Pour une vidéo de 10 minutes à 1 FPS échantillonnée à 60 images, calculez le coût de jeton par image à (Q-Former → 32 jetons/image) vs (MLP projecteur → 576 jetons/image). Combien de images chaque pont peut s'intégrer dans une fenêtre contextuelle de 128k-token LLM avant que le texte prompt ne trouve de la place ?
 
 ## Les termes clés
 
@@ -132,7 +132,7 @@ Cette leçon produit `outputs/skill-modality-bridge-picker.md`. Compte tenu de l
 | Two-stage pretraining | "Representation then generative" | Stage 1 trains Q-Former alone (ITC/ITM/ITG); Stage 2 attaches frozen LLM and trains only the projection + Q-Former |
 | Frozen backbone | "Do not finetune" | The vision encoder and LLM weights are fixed; only the bridge trains |
 | Projection head | "Linear to LLM dim" | Final linear layer mapping Q-Former output to the LLM's embedding dimension |
-| Perceiver resampler | "Flamingo's version" | Similar learnable-query cross-attention, used by Flamingo at every layer rather than as a single bridge |
+| Perceiver resampler | "Flamingo's version" | Similar learnable-query cross-attention; Flamingo runs it once per image to make fixed latents, then reads them through gated cross-attention at every LLM layer |
 
 ## Pour en savoir plus
 

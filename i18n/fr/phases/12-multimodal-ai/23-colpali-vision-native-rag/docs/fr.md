@@ -95,10 +95,10 @@ Aucun OCR, les chiffres, les graphiques, les polices, la mise en page vont tous 
 
 Un rapport financier de 50 pages avec 729 correctifs par page et 128 dimensions intégrées:
 
-- ColPali: 50 * 729 * 128 * 4 octets = ~ 18 Mo brut, ~ 4 Mo après PQ.
+- ColPali: 50 * 729 * 128 * 4 octets = ~ 18 Mo brut, ~ 2,3 Mo après 8x PQ.
 - RAC texte: 50 morceaux * 768-dim * 4 octets = ~ 150 kB.
 
-ColPali est ~ 30 fois plus de stockage par document. À l'échelle, OPQ / PQ le réduit à ~ 5-10 fois, généralement tolérable.
+ColPali est ~ 120x plus de stockage par document brut. À l'échelle, 8x OPQ / PQ le réduit à ~ 15x, généralement tolérable.
 
 ### Quand le texte-RAG gagne toujours
 

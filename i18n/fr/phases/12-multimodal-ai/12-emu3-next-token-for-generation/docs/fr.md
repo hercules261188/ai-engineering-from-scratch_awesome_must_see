@@ -28,9 +28,9 @@ Deux ans plus tard, la famille de génération unifiée open source (Emu3, Show-
 
 L'ingrédient clé est le jeton visuel. Emu3 entraîne un jeton personnalisé de classe IBQ (Quantizer de couteau inverse, famille SBER-MoVQGAN) à 8x8 de réduction de résolution par jeton. Une image 512x512 devient 64x64 = 4096 jetons à la taille du codebook 32768.
 
-Il est plus grand que les 1024 jetons de Chameleon par 512x512 à K=8192 mais moins cher par jeton (les recherches de codebook plus petites, codec plus simple).
+Ce chiffre est supérieur aux 1024 jetons de Chameleon par 512x512 à K=8192 sur les deux axes: quatre fois plus que les jetons et un codebook quatre fois plus grand.
 
-Pour la vidéo: un tokenizer VQ 3D encode un patch spatiotemporal (4x4x4 pixels) à un nombre entier. Un clip 4s à 8 FPS a 32 images; à 256x256 avec une réduction spatiale 4x et temporelle 4x, le nombre de jetons est (256/4) * (256/4) * (32/4) = 64 * 64 * 8 = 32 768 jetons.
+Pour la vidéo: un tokenizer VQ 3D encode un patch spatiotemporal (4 images x 8 pixels x 8 pixels) à un nombre entier. Un clip 4s à 8 FPS a 32 images; à 256×256 avec une réduction spatiale 8x et temporelle 4x, le nombre de jetons est (256/8) * (256/8) * (32/4) = 32 * 32 * 8 = 8192 jetons.
 
 La qualité du tokenizer est le plafond.
 
@@ -68,14 +68,14 @@ Pas de tête spécifique, juste des modèles de commande différents, le même p
 Dans le document Emu3 (septembre 2024):
 
 - Génération d'images: dépasse SDXL sur MJHQ-30K FID (5.4 vs 5.6), GenEval dans son ensemble (0.54 vs 0.55  égale statistique), et le composite de Deep-Eval sur par.
-- Perception d'image: dépasse le LLaVA-1.6 sur VQAv2 (75.1 contre 72.4) et correspond approximativement à MMMU.
+- Perception d'image: suit LLaVA-1.6 sur VQAv2 (75.1 vs 81.8) et MMMU (31.6 vs 35.1), mais le bat sur SEED-Bench, OCRBench et ChartQA.
 - Génération vidéo: qualité de vidéo de 4 secondes à FVD compétitive avec des modèles de l'ère Sora publiquement comparés.
 
 Les chiffres ne gagnent pas toujours  Emu3 négocie un point ici pour un point là  mais l'affirmation "la prédiction du prochain jeton est tout ce dont vous avez besoin" est défendable dans toutes les modalités.
 
 ### Coût de calcul
 
-Emu3 a été formé sur ~300 milliards de jetons multimodals avec un modèle de paramètre 7B. Les heures de GPU sont à peu près comparables à la pré-entraînement Llama-2-7B (2k-4k GPU-années sur le silicium de classe A100).
+Emu3 est un modèle de paramètre 8B. Le document ne publie pas un total d'heures GPU; pour l'échelle, la prétraine Llama-2-7B utilise environ 184 000 heures GPU A100, environ 21 années GPU.
 
 En inférence, Emu3 est plus lent que SDXL par image: 4096 jetons d'image à 30 tok/s est ~ 2 minutes par image 512x512 , contre 2-5 secondes pour SDXL. Le décoding spéculatif et l'optimisation de cache KV réduisent l'écart mais ne le ferment pas.
 
@@ -106,11 +106,11 @@ Cette leçon produit `outputs/skill-token-gen-cost-analyzer.md`. Compte tenu de 
 
 1. Emu3 produit 4096 jetons par image 512x512 à une réduction de 8x8. Compute l'équivalent pour 1024x1024 et 2048x2048.
 
-2. Lisez la section 3.3 de l'Emu3 sur le jeton vidéo. Décrivez la forme du patch VQ 3D et pourquoi il est 4x4x4 et non 8x8x1.
+2. Lisez la section 3.3 de l'Emu3 sur le jeton vidéo. Décrivez la forme du patch VQ 3D et pourquoi il couvre 4 images x 8x8 pixels au lieu d'une seule image.
 
 3. Le poids de la direction sans classifiant 5.0 contre 3.0: quel effet visuel ?`code/main.py`- Je suis désolé .
 
-4. Comptez les FLOP de formation pour les Emu3-7B à 300B et comparez-les à la Diffusion Stable 3.
+4. Comptez les FLOP de formation pour Emu3 (8B) à un jeton supposé de 300B et comparez-les à la diffusion stable 3.
 
 5. L'Emu3 est supérieur à SDXL sur FID mais pas sur VQAv2 par rapport aux VLM spécialisés.
 
@@ -120,7 +120,7 @@ Cette leçon produit `outputs/skill-token-gen-cost-analyzer.md`. Compte tenu de 
 |------|-----------------|------------------------|
 | Next-token prediction | "NTP" | Standard autoregressive loss: predict token[i+1] given token[0..i]; works for every modality when tokenized |
 | IBQ tokenizer | "Inverse bottleneck quantizer" | A class of VQ-VAE with larger codebooks (32768+) and better reconstruction than Chameleon's |
-| 3D VQ | "Spatiotemporal quantizer" | Codebook indexed by (time, row, col); one token covers a 4x4x4 pixel cube |
+| 3D VQ | "Spatiotemporal quantizer" | Codebook indexed by (time, row, col); one token covers 4 frames x 8x8 pixels |
 | Classifier-free guidance | "CFG" | Mix conditional and unconditional logits with weight gamma; boosts image quality at inference |
 | Unified vocabulary | "Shared tokens" | Text + image + video all draw from the same integer space; model predicts whichever modality comes next |
 | MJHQ-30K | "Image gen benchmark" | Midjourney-quality benchmark with 30k prompts; Emu3 reports FID here |

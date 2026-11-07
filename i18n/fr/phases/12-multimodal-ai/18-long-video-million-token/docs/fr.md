@@ -10,7 +10,7 @@
 ## Objectifs d'apprentissage
 
 - Calculer le nombre total de jetons visuels pour la vidéo longue format à des FPS et des pools variables.
-- Expliquez les trois voies d'échelle: contexte brut (Gemini 1.5), attention aux anneaux (LWM), compression des jetons (LongVILA / Video-XL).
+- Expliquez les quatre voies d'échelle: contexte brut (Gemini 1.5), attention aux anneaux (LWM), compression des jetons (LongVILA / Video-XL), récupération agent (VideoAgent).
 - Comparer les VLM vidéo contextuelle brute contre les VLM vidéo de récupération agencée (VideoAgent) sur la précision et la latence.
 - Conçuez un test à l'aiguille dans un paquet de foin pour une vidéo de 30 minutes et mesurez le rappel à une minute spécifique.
 
@@ -20,7 +20,7 @@ Un seul cadre de patches de taille Qwen2.5VL à 384 résolution native est de ~ 
 
 Un film de 2 heures à 1 FPS est de 583k jetons. Au-delà de la plupart des modèles ouverts de 2026; nécessite Gemini 2.5 Pro ou un regroupement plus agressif.
 
-Trois sentiers d'escalade sont apparus.
+Quatre sentiers d'escalade sont apparus.
 
 ## Le concept
 
@@ -36,7 +36,7 @@ Ingénierie: une mise en œuvre d'attention personnalisée avec hiérarchie de m
 
 L'attention à l'anneau répartit de longues séquences entre les appareils dans un "anneau" où chaque appareil tient une pièce.
 
-LWM (Liu et coll., 2024) a formé un modèle de contexte de 1M-token de cette façon.
+LWM (Liu et coll., 2024) a formé un modèle de contexte de 1M-token de cette façon. Les échelles de mémoire par appareil avec la pièce que chaque appareil détient, de sorte que l'ajout de dispositifs étend le contexte approximativement linéairement.
 
 LongVILA (arXiv:2408.10188) a adapté le modèle aux VLM. Vidéos de 1400 images à 192 jetons par image = 268k contexte, entraînées avec l'attention des anneaux sur le parallélisme à 8 voies.
 
@@ -118,7 +118,7 @@ Cette leçon produit `outputs/skill-long-video-strategy-planner.md`. Compte tenu
 
 3. Comparer le contexte brut Qwen2.5-VL-72B (context 80k) à l'agent vidéo (Claude 3.5 + récupération) sur une vidéo d'une heure.
 
-4. Les coûts de mémoire de l'attention à l'anneau s'échelonnent linéairement en longueur de séquence et en nombre de périphériques.
+4. Les échelles de mémoire de l'attention à l'appareil avec la longueur de la séquence divisée par le nombre d'appareils, tandis que le calcul de l'attention totale reste quadratique.
 
 5. Lisez Gemini 1.5 Section 5 sur l'aiguille dans un tas de foin.
 

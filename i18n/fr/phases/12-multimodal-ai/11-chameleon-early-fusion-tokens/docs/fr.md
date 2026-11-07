@@ -39,7 +39,7 @@ Le tokenizer est un autoencodeur variatif quantifié par vecteur.
 
 Formation: Perte de reconstruction de l'AEV + perte d'engagement + perte de codebook.
 
-Pour le Chameleon: une image devient 32*32 = 1024 jetons tirés d'un vocabulaire de 8192. Concaténé avec des jetons de texte (du vocabulaire BPE du LLM, disons 32000).
+Pour Chameleon: une image devient 32*32 = 1024 jetons tirés d'un vocabulaire de 8192. Placez ces ID d'image dans le même espace d'ID que les jetons BPE texte. Le jeton unique de Chameleon a 65 536 entrées, et ce nombre inclut déjà les codes d'image 8192 et les jetons spéciaux tels que les séparateurs d'image. Le transformateur voit une séquence, une perte.
 
 ### Le vocabulaire partagé
 

@@ -1,6 +1,6 @@
 # Vue à toute résolution: patch-n'-pack et NaFlex
 
-> Les images réelles ne sont pas 224x224 carrés. Un reçu est 9:16, un graphique est 16:9, une analyse médicale peut être 4096x4096, une capture d'écran mobile est 9:19.5. La réponse VLM pré-2024  redimensionner tout à un carré fixe  a jeté le signal qui rend OCR, compréhension de documents et analyse de scène haute résolution fonctionnant. NaViT (Google, 2023) a montré que vous pouviez emballer des correctifs à résolution variable dans un seul lot de transformateur avec un masque de bloc-diagonale. Le M-RoPE (2024) de Qwen2-VL a complètement abandonné les tables de position absolue. L'AnyRes de LLaVA-NeXT a plaqué des images haute résolution dans une base + sous-images. La variante NaFlex de SigLIP 2 (2025) est maintenant l'encodeur par défaut pour les VLM ouverts qui veulent un seul point de contrôle pour servir chaque ratio d'aspect. Cette leçon met en œuvre le patch-n'-pack de bout en bout.
+> Les images réelles ne sont pas 224x224 carrés. Un reçu est 1: 3, un graphique est 16: 9, une analyse médicale peut être 4096x4096, une capture d'écran mobile est 9:19.5. La réponse VLM pré-2024  redimensionner tout à un carré fixe  a jeté le signal qui rend OCR, compréhension de documents et analyse de scène haute résolution fonctionnant. NaViT (Google, 2023) a montré que vous pouviez emballer des correctifs à résolution variable dans un seul lot de transformateur avec un masque de bloc-diagonale. Le M-RoPE (2024) de Qwen2-VL a complètement abandonné les tables de position absolue. L'AnyRes de LLaVA-NeXT a plaqué des images haute résolution dans une base + sous-images. La variante NaFlex de SigLIP 2 (2025) est maintenant l'encodeur par défaut pour les VLM ouverts qui veulent un seul point de contrôle pour servir chaque ratio d'aspect. Cette leçon met en œuvre le patch-n'-pack de bout en bout.
 
 **Type:** Build
 **Languages:** Python (stdlib, patch packer + block-diagonal mask)
@@ -55,7 +55,7 @@ L'AnyRes de LLaVA-NeXT est l'alternative pragmatique.
 
 Pour une image 672x672 à la grille 2x2 plus une miniature: 4 * 576 + 576 = 2880 jetons visuels.
 
-AnyRes est la voie de choix lorsque votre encodeur est gelé et ne prend en charge qu'une seule résolution. Il exploite le nombre de jetons pour les grandes images (une image de 1344x1344 à la grille 4x4 est de 9216 + 576 ≈ 9800 jetons, qui remplit la plupart d'un contexte LLM 8k).
+AnyRes est la voie de choix lorsque votre encodeur est gelé et ne prend en charge qu'une seule résolution. Il exploite le nombre de jetons pour les grandes images (une image de 1344x1344 à la grille 4x4 est de 9216 + 576 ≈ 9800 jetons, qui dépasse un contexte LLM de 8k avant l'arrivée de tout texte).
 
 ### Le produit est le produit de l'équipement de la production de l'équipement.
 

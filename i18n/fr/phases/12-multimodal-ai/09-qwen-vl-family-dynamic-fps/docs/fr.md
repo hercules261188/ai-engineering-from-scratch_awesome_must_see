@@ -53,7 +53,7 @@ Résultat: Qwen2-VL-7B a paré GPT-4o sur plusieurs critères de référence mul
 
 Le changement majeur de Qwen2.5VL était la vidéo.
 
-- Les symboles de temps absolus. Au lieu d'indices de position (cadre 0, 1, 2...), utilisez des timestamps réels. "À 0:04, le chat saute. " Le modèle voit`<time>0.04</time>`des jetons interlevées avec des jetons de cadre.
+- Le temps absolu dans les identifiants de position. Au lieu des indices de cadres (cadres 0, 1, 2...), l'axe temporel de M-RoPE suit les timestamps réels, de sorte que l'écart entre les identifiants de deux cadres suit les secondes entre eux. "À 0:04, le chat saute. " Aucun jeton texte supplémentaire ne porte le temps, de sorte que le codage n'ajoute aucune longueur de séquence.
 - FPS dynamique. échantillonnage à 1 FPS pour des images lentes, 4 FPS+ pour l'action. L'utilisateur ou l'entraîneur choisit; M-RoPE s'adapte.
 - Attention à la fenêtre dans le ViT. L'attention spatiale est fenêtrenée (locale dans les blocs) pour le débit; attention globale toutes les quelques couches.
 - Format de sortie explicite JSON. Formé sur les données d'appel d'outil: "{\"outil\": \"cliquez\", \"coords\": [380, 220]}". Agent prêt à sortir de la boîte.
@@ -92,7 +92,7 @@ Vu la durée de la vidéo `T`secondes et un budget de jetons cibles `B`- Le num�
 1. Calculez le FPS maximum que vous pouvez vous permettre: `fps_max = B / (T * tokens_per_frame)`- Je suis désolé .
 2. Choisissez une FPS cible .`{1, 2, 4, 8}`qui satisfait `fps <= fps_max`- Je suis désolé .
 3. Si le mouvement est élevé (heuristique ou explicite demande de l'utilisateur), choisissez un FPS plus élevé.
-4. Prîtres uniformes au SPF choisi; insérer `<time>t</time>`des jetons entre les cadres.
+4. Prenez un échantillon uniforme au FPS choisi; définissez l'identifiant temporel M-RoPE de chaque cadre à partir de son timestamp en quelques secondes.
 
 Qwen2.5-VL entraîne cette logique implicitement; à l'inférence, l'utilisateur contrôle via `fps`Paramètre: une séquence d'action de 60 secondes à 4 FPS avec 81 jetons par cadre = 19440 jetons, gérable dans un contexte de 32k.
 
@@ -147,7 +147,7 @@ Cette leçon produit `outputs/skill-qwen-vl-pipeline-designer.md`. En fonction d
 |------|-----------------|------------------------|
 | M-RoPE | "Multimodal RoPE" | 3D rotary position embedding with temporal, height, and width bands in the hidden dim |
 | Dynamic FPS | "Smart sampling" | Frame sampling rate chosen per video based on motion, duration, and token budget |
-| Absolute time token | "Timestamp token" | `<time>t</time>` interleaved in the sequence so the model sees actual seconds not frame index |
+| Absolute time encoding | "Time-aligned M-RoPE" | Temporal position IDs set from each frame's timestamp, so the model sees actual seconds, not frame index, with no extra tokens |
 | Window attention | "Local attention" | Spatial self-attention restricted to small windows for speed; global attention added periodically |
 | Structured agent output | "JSON mode" | Training data supervision teaching the VLM to emit parseable JSON with coords and tool names |
 | min_pixels / max_pixels | "Resolution bounds" | Per-request Qwen2.5-VL controls bounding total pixel count and therefore token count |

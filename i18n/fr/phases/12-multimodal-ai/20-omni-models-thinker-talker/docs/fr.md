@@ -12,7 +12,7 @@
 - Divisez le pipeline d'inférence en Thinker (réflexion par texte) et Talker (synthèse de la parole) et expliquez pourquoi le streaming parallèle fonctionne.
 - Calculer le budget de temps à premier octet audio (TTFAB) pour une interaction de conversation, composante par composante.
 - Décrivez la position alignée dans le temps de TMRoPE en codant à travers la vision, l'audio et le texte dans le Thinker.
-- Nombre des trois modes de conversation en temps réel: demi-duplex, tour à tour, plein-duplex.
+- Nombrez les deux modèles de conversation en temps réel, demi-duplex et plein-duplex, et expliquez comment la prise de tour VAD conduit la transmission demi-duplex.
 
 ## Le problème
 
@@ -85,7 +85,7 @@ Pour une interaction de streaming typique:
 - Décodeur résiduel-VQ: 30 ms.
 - Décode de forme d'onde de parole: 50-80 ms.
 
-TTFAB total: 320-510 ms à 7B, 600-900 ms à 70B. La qualité frontalière signifie généralement 70B+; d'où l'écart de latence frontalière.
+TTFAB total: 320-490 ms à 7B, 600-900 ms à 70B. La qualité frontalière signifie généralement 70B+; d'où l'écart de latence frontalière.
 
 ### Mathématiques du taux de jetons
 

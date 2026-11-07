@@ -11,7 +11,7 @@
 
 - Expliquer la diffusion discrète masquée: le calendrier qui masque uniformément les jetons demande ensuite au transformateur de les récupérer.
 - Comparer le décoding d'image parallèle (Show-o, MaskGIT) au décoding d'image autorégressif (Chameleon, Emu3) en termes de vitesse et de qualité.
-- Nombre des trois tâches que Show-o gère dans un seul point de contrôle: T2I, VQA, peinture d'image.
+- Nombre des quatre tâches que Show-o gère dans un seul point de contrôle: génération de texte, VQA, T2I, peinture d'images.
 - Choisissez un calendrier de masquage (cosine, linéaire, tronqué) et raisonnez de son effet sur la qualité de l'échantillon.
 
 ## Le problème

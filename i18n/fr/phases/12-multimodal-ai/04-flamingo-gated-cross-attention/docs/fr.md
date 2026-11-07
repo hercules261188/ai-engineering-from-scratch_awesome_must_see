@@ -20,7 +20,7 @@ BLIP-2 alimente 32 jetons visuels dans la couche d'entrée d'un LLM gelé. Fonct
 
 La réponse de Flamingo: ne modifiez pas du tout le flux d'entrée du LLM. Insérer des couches de croisement supplémentaires entre les blocs de LLM existants. Les jetons de texte circulent toujours à travers l'auto-attention de la LLM comme toujours. Entre quelques blocs de LLM, les jetons de texte interagissent également avec les caractéristiques de l'image via une nouvelle couche fermée. La porte (initialisée à zéro) signifie que à l'étape zéro les nouvelles couches sont sans opérations  le modèle se comporte exactement comme le LLM prétrainé. Au fur et à mesure que l'entraînement progresse, la porte s'ouvre et les informations visuelles commencent à circuler.
 
-La deuxième question Flamingo a répondu: comment gérer un nombre variable d'images (0, 1 ou plusieurs) par prompt? Un rééchantillon Perceiver  un petit module de réflexion croisée qui prend le nombre de patches que vous avez et produit un nombre fixe de jetons visifs latents. La couche d'attention croisée LLM voit la même forme indépendamment du nombre d'images dans le prompt.
+La deuxième question a été posée par Flamingo: comment gérer un nombre variable d'images (0, 1 ou plusieurs) par requête ? Un rééchantillonneur Percepteur  un petit module d'attention croisée qui prend le nombre de patchs que vous avez et produit un nombre fixe de jetons visuels latents par image. Le total augmente avec le nombre d'images, mais chaque jeton texte ne lit que les latences d'une seule image, donc ce que tout jeton texte voit en croisée d'attention a la même forme indépendamment du nombre d'images dans le prompt.
 
 ## Le concept
 
@@ -59,7 +59,7 @@ C'est le choix de conception le plus important dans Flamingo: le conditionnement
 
 ### Attention croisée masquée pour les entrées interdites
 
-Dans un prompt comme "<image A> caption A <image B> caption B <image C> ?", chaque jeton de texte ne doit voir que des images qui lui ont précédé dans la séquence.`t`ne prend en charge que les jetons de repérage d'image dont l'index d'image `i < i_t`où `i_t`est l' image la plus récente avant la position `t`"Voice seulement la dernière image précédente" ou "Voice toutes les images précédentes" sont tous deux des choix valides; Flamingo a choisi le premier.
+Dans un prompt comme "<image A> caption A <image B> caption B <image C> ?", chaque jeton de texte ne doit voir que des images qui lui ont précédé dans la séquence.`t`ne prend en charge que les jetons de repérage d' image `i_t`Où ?`i_t`est l' image la plus récente avant la position `t`Les "Vie seulement la dernière image précédente" ou "Vie toutes les images précédentes" sont tous deux des choix valides; Flamingo a choisi la première.
 
 ### Apprendre en quelques coups dans le contexte
 
@@ -76,7 +76,7 @@ Le modèle voit le schéma de finition et produit "oiseau" (ou ce que l'image3 m
 Flamingo a été formé sur trois ensembles de données:
 
 1. MultiModal MassiveWeb (M3W): 43 millions de pages Web avec des images et du texte interligés, reconstruisant l'ordre de lecture.
-2. Pares image-texte (ALIGN + LTIP): 4,4B pares.
+2. Pares image-texte: ALIGN (1,8B pares) plus LTIP (312M pares), soit environ 2,1B pares au total.
 3. Parts vidéo-texte (VTP): 27 millions de courts clips vidéo.
 
 OBELICS (2023) est une reproduction ouverte du corpus web interlevé, sur lequel Idefics, Idefics2 et la plupart des modèles "flamingo-like" ouverts s'entraînent.
@@ -102,7 +102,7 @@ Otter (2023) s'appuie sur OpenFlamingo avec l'ajustement des instructions sur MI
 | Frozen LLM | Yes | Yes |
 | Few-shot in-context | Weak | Strong — the paper's centerpiece |
 | Interleaved inputs | No native support | Yes, the design target |
-| Training data | 130M pairs | 1.3B pairs + 43M interleaved pages |
+| Training data | 130M pairs | ~2.1B pairs + 27M video clips + 43M interleaved pages |
 | Parameter count | 188M trained | ~10B trained (cross-attn layers) |
 | Compute | Days on 8 A100s | Weeks on thousands of TPUv4 |
 

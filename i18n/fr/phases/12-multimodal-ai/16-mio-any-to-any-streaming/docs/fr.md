@@ -21,7 +21,7 @@ Un modèle multimodal unifié est facile à revendiquer et difficile à construi
 Les défis de l'ingénierie:
 
 - Les tokenizers doivent exister pour chaque modalité, compresser sans perte - suffisamment pour la reconstruction, et produire des jetons à des taux que le transformateur peut consommer.
-- Un seul vocabulaire doit allouer de l'espace pour le texte (32k+), l'image (16k+), la parole (4k+), la musique (8k+).
+- Un seul vocabulaire doit allouer de l'espace pour le texte (32k+), l'image (8k+), la parole (4k+), la musique (8k+).
 - Les données de formation doivent couvrir chaque paire d'entrées et de sorties (textes→image, images→speech, speech→image, etc.) ou le modèle doit être composé.
 - L'inference doit diffuser des jetons de sortie assez rapidement pour une latence de conversation (<500ms temps à premier octet audio).
 
@@ -32,21 +32,21 @@ Les défis de l'ingénierie:
 La pile de jetons de MIO:
 
 - Le texte: BPE standard, vocables ~32000.
-- Image: SEED-Tokenizer (2023)  VAE quantifié avec un codebook discret, 4096 entrées, 32x32 jetons par image.
-- Discours: SpeechTokenizer résiduel-VQ (2023)  encode la forme d'onde 16 kHz en 8 livres de code hiérarchiques; le premier niveau est le contenu grossier, les niveaux ultérieurs ajoutent la prosodie et l'identité du haut-parleur.
-- Musique: résiduel similaire-VQ (famille de la musique Gen / Encodec de Meta), 4 à 8 livres de code.
+- Image: SEED-Tokenizer (2023), un jeton d'image discrète avec un codebook 8192 entrés qui émet 32 jetons par image.
+- Discours: SpeechTokenizer résiduel-VQ (2023), qui encode une forme d'onde de 16 kHz en 8 livres de code hiérarchiques; le premier niveau est un contenu grossier, les niveaux ultérieurs ajoutent une prosodie et une identité de haut-parleur. MIO conserve le niveau de contenu plus les trois premiers niveaux de timbre, 1024 codes chacun, donc 4096 identifiants de discours.
+- Musique: résiduel similaire-VQ (famille de Meta MusicGen / Encodec), 4-8 livres de code. MIO lui-même ne fournit pas de jeton musical (sa quatrième modalité est la vidéo, comme les cadres à travers le jeton image); le jouet de cette leçon ajoute de la musique pour montrer comment une nouvelle modalité revendique une gamme d'identification.
 
 Chaque modalité produit des jetons entiers. Les jetons obtiennent des plages d'identification disjointes dans le vocabulaire partagé:
 
 ```
 text:   0..31999
-image:  32000..36095  (4096 image tokens)
-speech: 36096..40191  (4096 speech base tokens, plus residual layers)
-music:  40192..48383  (8192 music tokens)
-sep:    48384..48390  (<image>, <speech>, <music>, </...>, etc.)
+image:  32000..40191  (8192 image tokens)
+speech: 40192..44287  (4 codebooks x 1024 speech tokens)
+music:  44288..52479  (8192 music tokens, the toy's extension)
+sep:    52480..52485  (<image>, <speech>, <music>, </...>)
 ```
 
-Total: ~ 48k vocabulaire. L'intégration d'entrée et la projection de sortie couvrent tout cela.
+Total: 52 000 mots. L'intégration et la projection de sortie s'étendent sur tout.
 
 ### Décode de diffusion
 
@@ -57,7 +57,7 @@ Le schéma de diffusion:
 1. L'utilisateur parle en microphone; le jeton audio en temps réel émet des jetons de parole tous les 50 ms.
 2. MIO consomme des jetons à leur arrivée (précomplissement immédiat + avance progressive).
 3. Les jetons de sortie sont diffusés comme générés; un décodeur de voix parallèle les convertit en échantillons audio avec une latence de ~50-150 ms.
-4. Temps à premier octet audio: ~300-500 ms dans le papier MIO, approchant ~250 ms de GPT-4o.
+4. Temps à premier octet audio: le document MIO ne rapporte aucun numéro de latence. Le budget ci-dessous place cette conception à environ 300 ms au mieux, contre ~250 ms de GPT-4o.
 
 Mini-Omni (arXiv:2408.16725), GLM-4-Voice (arXiv:2412.02612), et Moshi (arXiv:2410.00037) sont des conceptions de streaming de la parole-LLM complémentaires.
 
@@ -100,7 +100,7 @@ Pour un produit conversationnel, la latence de chaque composant compte:
 - Le premier jeton de sortie: ~50ms.
 - Décodeur de parole parallèle résiduel-VQ +: ~100-150 ms.
 
-Temps total de la première octet audio: ~ 300 ms minimum. GPT-4o revendique ~ 250 ms. Moshi revendique 160 ms. MIO / AnyGPT sont dans la plage de 400 à 600 ms par référence publique.
+Le temps total de la première octet audio: ~ 300 ms minimum. GPT-4o revendique ~ 250 ms. Moshi revendique ~ 160 ms. Ni MIO ni AnyGPT ne publient un chiffre mesuré, alors traitez ce budget comme une estimation, pas une référence.
 
 ### Pourquoi tout le monde reste dur
 
@@ -134,7 +134,7 @@ Cette leçon produit `outputs/skill-any-to-any-pipeline-auditor.md`. Compte tenu
 
 2. Le SpeechTokenizer residual-VQ utilise 8 codebooks. Proposez pourquoi le décoding parallèle des niveaux résiduels est nécessaire (versus séquentiel) et quelles économies de latence cela apporte.
 
-3. Votre vocabulaire a 32k de texte + 4k d'image + 4k de parole. Ajoutez 8k de musique et ~10 séparateurs. Quel est le coût du paramètre d'intégration-matrice à dim 4096 caché?
+3. Votre vocabulaire a 32k de texte + 8k d'image + 4k de parole. Ajoutez 8k de musique et ~10 séparateurs. Quel est le coût du paramètre d'intégration-matrice à dim 4096 caché?
 
 4. La chaîne de pensée visuelle émet une image intermédiaire.
 
@@ -146,7 +146,7 @@ Cette leçon produit `outputs/skill-any-to-any-pipeline-auditor.md`. Compte tenu
 |------|-----------------|------------------------|
 | Any-to-any | "Multimodal in/out" | A single model that accepts and emits text, image, speech, and music in any direction |
 | Residual-VQ | "Speech tokenizer stack" | Multi-codebook tokenization where each layer adds information; base layer is content, later layers are prosody |
-| SEED-Tokenizer | "Image codes" | Discrete image tokenizer with 4096-entry codebook used by MIO |
+| SEED-Tokenizer | "Image codes" | Discrete image tokenizer with an 8192-entry codebook and 32 tokens per image, used by MIO |
 | Chain-of-visual-thought | "Visual scratchpad" | The model generates an intermediate image as a reasoning step before its final answer |
 | Time-to-first-audio-byte | "TTFAB" | Latency from user voice to first audio output; <500ms for conversational feel |
 | Four-stage curriculum | "Training recipe" | Alignment -> interleaved -> speech-enhanced -> SFT, in that order |

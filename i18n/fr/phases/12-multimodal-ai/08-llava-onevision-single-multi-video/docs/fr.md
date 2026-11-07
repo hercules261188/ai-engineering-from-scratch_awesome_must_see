@@ -1,6 +1,6 @@
 # LLaVA-OneVision: image unique, image multi, vidéo dans un modèle
 
-> Avant LLaVA-OneVision (Li et coll., août 2024) le monde VLM ouvert avait des lignées distinctes: LLaVA-1.5 pour les images uniques, les modèles multi-image comme Mantis et VILA, les modèles vidéo comme Video-LLaVA et Video-LLaMA. Chacun a remporté sa référence et échoué aux autres. LLaVA-OneVision a soutenu qu'un seul programme d'études pouvait former un modèle pour dominer les trois scénarios, et que les effets émergents de transfert de tâches (habiletés de l'image unique exportées vers la vidéo, raisonnement multi-image exporté vers l'image unique) ont dépassé la somme des spécialistes. La recette est trompeusement simple: un budget de jeton visuel qui reste constant dans tous les scénarios, plus un programme explicite qui passe d'une seule image à OneVision (multi-image) à la vidéo. Cette leçon est consacrée au budget, au programme et aux comportements émergents.
+> Avant LLaVA-OneVision (Li et coll., août 2024) le monde VLM ouvert avait des lignées distinctes: LLaVA-1.5 pour les images uniques, les modèles multi-image comme Mantis et VILA, les modèles vidéo comme Video-LLaVA et Video-LLaMA. Chacun a remporté sa référence et échoué aux autres. LLaVA-OneVision a soutenu qu'un seul programme d'études pouvait former un modèle pour dominer les trois scénarios, et que les effets émergents de transfert de tâches (habiletés de l'image unique exportées vers la vidéo, raisonnement multi-image exporté vers l'image unique) ont dépassé la somme des spécialistes. La recette est trompeusement simple: un budget de jeton visuel équilibré entre les scénarios, plus un programme explicite qui passe d'une seule image à OneVision (multi-image) à la vidéo. Cette leçon est consacrée au budget, au programme et aux comportements émergents.
 
 **Type:** Build
 **Languages:** Python (stdlib, token budget solver + curriculum planner)
@@ -9,7 +9,7 @@
 
 ## Objectifs d'apprentissage
 
-- Conçuez un budget de jeton visuel qui maintient une constante sur les entrées d'image unique, multi-image et vidéo.
+- Conçuez un budget de jeton visuel qui reste équilibré sur les entrées d'image unique, multi-image et vidéo.
 - Commandez un programme de formation qui transforme les compétences d'une seule image en vidéo sans oublier catastrophiquement.
 - Expliquez pourquoi un modèle unique dépasse les spécialistes du même nombre de paramètres lorsqu'un programme est bien fait.
 - Nombre des trois capacités émergentes rapportées par LLaVA-OneVision: le raisonnement multi-caméras, l'interrogatoire de marque, l'agent de capture d'écran de l'iPhone.
@@ -32,13 +32,13 @@ Avant OneVision, la réponse par défaut était "traînez un scénario, ignorez 
 
 ### Le budget des jetons OneVision
 
-LLaVA-OneVision choisit un budget unifié de jetons visuels d'environ 3000 à 4000 jetons par échantillon, alloués différemment par scénario:
+LLaVA-OneVision ne fixe pas un nombre exact de jetons. Il équilibre le nombre maximum de jetons visuels par échantillon de sorte que les trois scénarios se trouvent dans la même plage, environ 6 000 à 9 000 jetons, alloués différemment par scénario:
 
-- Image unique: AnyRes-9 (3x3 carreaux + miniature), chaque carreaux à 384 avec 729 patches, pooling bilinéaire agressif 2x2 → 182 par carreaux. Total: 9 * 182 + 182 = 1820 jetons.
-- Multi-image: chaque image à résolution modérée (384, pas de carrelage), 729 jetons sans pooling. Budget 6 images → 4374 jetons.
-- Vidéo: 32 images à 384 résolutions avec un pool bilinéaire agressif 3x3 → 81 jetons par image.
+- Image unique: AnyRes-Max-9 (jusqu'à 9 tuiles + une vue de base), chaque vue 384x384 donnant 729 jetons de SigLIP SO400M. Maximum: 729 * (1 + 9) = 7290 jetons.
+- Multi-image: chaque image à 384 sans carrelage, 729 jetons sans pooling. Jusqu'à 12 images → 8748 jetons.
+- Vidéo: jusqu'à 32 images à 384 avec un pooling bilinéaire 2x2 → 196 jetons par image.
 
-L'allocation maintient des jetons totaux à peu près constants. Le LLM ne voit jamais un lot qui souffle son contexte. L'encodeur produit une géométrie différente par scénario, mais le LLM consomme le même budget.
+L'allocation maintient les totaux maximaux dans la même bande, de sorte qu'aucun scénario ne domine le contexte ou le gradient.`code/main.py`Le planificateur ci-dessous utilise un budget de jouets plus petit de 4096 pour montrer la même logique d'équilibrage.
 
 ### Le programme en trois étapes
 
@@ -111,14 +111,14 @@ Cette leçon produit `outputs/skill-onevision-budget-planner.md`. Compte tenu d'
 
 4. Le document rapporte des benchmarks vidéo formés sur seulement 8 images par échantillon. Cela se généralise-t-il à des vidéos de 30 secondes à l'inférence?
 
-5. Le pooling bilinéaire de 24x24 patches à 12x12 est une réduction de 4x par dim.
+5. Le pooling bilinéaire de 24x24 patches à 12x12 est une réduction de 2x par dimension, donc 4x moins de jetons.
 
 ## Les termes clés
 
 | Term | What people say | What it actually means |
 |------|-----------------|------------------------|
-| OneVision scenario | "Single-image, multi-image, or video" | One of three input shapes the unified VLM handles; the budget stays constant across |
-| Token budget | "How many tokens per sample" | Total visual tokens the LLM sees per training / inference sample, typically 3000-4000 |
+| OneVision scenario | "Single-image, multi-image, or video" | One of three input shapes the unified VLM handles; the budget stays balanced across |
+| Token budget | "How many tokens per sample" | Total visual tokens the LLM sees per training / inference sample, about 6k to 9k at most in LLaVA-OneVision |
 | Curriculum | "Training order" | Stage ordering (single-image → multi-image → video) chosen for emergent transfer |
 | Bilinear pooling | "Token shrink" | Applying bilinear interpolation to the patch grid (2D) to reduce token count while preserving locality |
 | Emergent skill | "Not trained, still works" | Capability that appears at inference without matching training data, due to curriculum composition |

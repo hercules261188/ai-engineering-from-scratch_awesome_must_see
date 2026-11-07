@@ -51,7 +51,7 @@ Le masque:
 M[i, j] = 1 if:
   (i is text and j is text and j <= i)   # causal for text
   OR (i is image and j is image and same_image_block(i, j))   # bidirectional within image
-  OR (i is text and j is image and j < i_image_end)   # text attends to previous images
+  OR (i is text and j is image and j < i)   # text attends to images that closed before it
   OR (i is image and j is text and j < i_image_start)   # image attends to preceding text
 ```
 
@@ -97,7 +97,7 @@ Les effets négatifs: la transfusion est un modèle à double perte, ce qui rend
 
 Janus-Pro (leçon 12.15) affinera l'idée de Transfusion en découplant le codeur de vision pour la compréhension et la génération  SigLIP pour l'un, VQ pour l'autre  tout en partageant le corps du transformateur. Show-o (leçon 12.14) swaps diffusion pour diffusion discrète (prédiction masquée).
 
-Les VLM de production 2026 qui émettent des images  Gemini 3 Pro, GPT-5, chemin de génération d'images de Claude Opus 4.7  utilisent presque certainement un descendant de cette famille.
+Les modèles de production fermés qui émettent des images natives peuvent utiliser certains descendants de cette famille, mais leurs architectures ne sont pas publiées, alors traitez toute telle affirmation comme une devinette.
 
 ```figure
 cfg-guidance-scale
@@ -111,7 +111,7 @@ cfg-guidance-scale
 - Les images sont des grilles de 4x4 octets.
 - Une paire de projections linéaires partagées de poids agit comme le substitut du transformateur; perte de NTP sur le texte, perte de MSE sur les correctifs bruyants.
 - La boucle d'entraînement alternera les deux pertes, le masque d'attention est explicite.
-- La génération produit une légende texte et une image 4x4 dans un passage avant.
+- Une démo de masque imprime le modèle d'attention triangulaire de bloc pour un texte, une image, une séquence de texte. La génération n'est pas exécutée: un échantillon réel décode le jeton de texte par jeton, puis dénonce les patchs d'image sur plusieurs étapes, comme les exercices ci-dessous comptent.
 
 Le transformateur est un jouet, les tuyaux à deux pertes, la construction du masque d'attention et la boucle d'inférence sont les vrais artefacts.
 
