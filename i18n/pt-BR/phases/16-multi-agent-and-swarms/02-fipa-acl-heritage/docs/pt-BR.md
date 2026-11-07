@@ -1,6 +1,6 @@
 # Património da FIPA-ACL e leis de discurso
 
-> Antes da MCP, antes da A2A, havia a FIPA-ACL. Em 2000, a Fundação IEEE para Agentes Físicos Inteligentes ratificou uma linguagem de comunicação de agentes com vinte performativos, duas linguagens de conteúdo e um conjunto de protocolos de interação  contrato net, assinar/notificar, solicitação-quando. Ele desapareceu da indústria porque a carga de ontologia era muito pesada para a web, mas o revival do LLM de sistemas multi-agente está silenciosamente reimplementando as mesmas ideias sem a semântica formal: os contratos JSON representam os performativos, a linguagem natural representa as ontologias. Esta lição leva a sério a FIPA-ACL para que você possa ver quais decisões do protocolo 2026 são reinvenções, que são novidades, e onde a onda atual vai redescobrir problemas já resolvidos na década de 2000.
+> Antes da MCP, antes da A2A, havia a FIPA-ACL. Em 2000, a Fundação para Agentes Físicos Inteligentes (FIPA, que tornou-se um comitê de padrões da IEEE Computer Society em 2005) ratificou uma linguagem de comunicação de agente com vinte performativos, duas linguagens de conteúdo e um conjunto de protocolos de interação  contrato net, assinar / notificar, solicitação-quando. Ele desapareceu da indústria porque a carga de ontologia era muito pesada para a web, mas o revival do LLM de sistemas multi-agente está silenciosamente reimplementando as mesmas ideias sem a semântica formal: os contratos JSON representam os performativos, a linguagem natural representa as ontologias. Esta lição leva a sério a FIPA-ACL para que você possa ver quais decisões do protocolo 2026 são reinvenções, que são novidades, e onde a onda atual vai redescobrir problemas já resolvidos na década de 2000.
 
 **Type:** Learn
 **Languages:** Python (stdlib)
@@ -193,7 +193,7 @@ Documentar estas cinco perguntas para qualquer novo protocolo antes de enviá-lo
 | Term | What people say | What it actually means |
 |------|----------------|------------------------|
 | Speech act | "An utterance that does something" | Austin/Searle: utterances as actions. The theoretical parent of ACL. |
-| FIPA | "That old XML thing" | IEEE Foundation for Intelligent Physical Agents. Standardized ACL in 2000. |
+| FIPA | "That old XML thing" | Foundation for Intelligent Physical Agents. Standardized ACL in 2000; became an IEEE Computer Society standards committee in 2005. |
 | ACL | "Agent Communication Language" | FIPA's envelope format: performative + content + metadata. |
 | Performative | "The verb" | The intent class of a message: `inform`, `request`, `propose`, `cfp`, etc. |
 | KQML | "FIPA's predecessor" | Knowledge Query and Manipulation Language (1993). Simpler, narrower. |

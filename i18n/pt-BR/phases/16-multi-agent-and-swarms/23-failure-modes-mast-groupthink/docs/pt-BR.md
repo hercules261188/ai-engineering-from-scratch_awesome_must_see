@@ -112,7 +112,7 @@ Esta é a resposta a incidentes no estilo SRE, aplicada a sistemas de agentes.
 
 ### A auditoria de modo de falha
 
-Uma melhor prática para 2026 é uma auditoria anual (ou por lançamento maior) de modo de falha:
+Uma das melhores práticas para 2026 é uma auditoria trimestral (e por lançamento principal) de modo de falha:
 
 1. **Trace sample.**Coletar 1000 traços reais de execução.
 2. **Categorize.**Para cada falha de rastreamento, mapear para categorias MAST + Groupthink.
