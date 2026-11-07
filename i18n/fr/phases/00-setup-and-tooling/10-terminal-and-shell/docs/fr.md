@@ -97,7 +97,7 @@ python train.py > output.log 2> errors.log
 python train.py > train_full.log 2>&1
 ```
 
-Les trois redirections dont vous avez besoin:
+Les quatre redirections et le tuyau dont vous avez besoin:
 
 | Symbol | What it does |
 |--------|-------------|

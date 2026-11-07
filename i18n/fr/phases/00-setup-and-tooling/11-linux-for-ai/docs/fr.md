@@ -39,7 +39,7 @@ Votre répertoire de domicile est `~`ou `/home/your-username`Presque tout ce que
 
 ## Commandements essentiels
 
-Ce sont les 15 commandes qui couvrent 95% de ce que vous ferez sur une boîte de GPU à distance.
+Ce sont les 13 commandes qui couvrent la plupart de ce que vous ferez sur une boîte de GPU à distance.
 
 ### Les déplacements
 
