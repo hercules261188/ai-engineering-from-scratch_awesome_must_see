@@ -128,7 +128,7 @@ mm-agent-loop
 
 `code/main.py`é o andaime de pedra:
 
-- Definição JSON do esquema de ação (10 ações).
+- Esquema de ação definição JSON (10 ações: as nove acima listadas mais `screenshot_region`, uma ferramenta de crescimento + zoom).
 - O estado do navegador falso como ditado.
 - O esqueleto do agente: estado de recepção, emissão de ação, aplicação, ciclo.
 - Mini-marca de referência de 10 tarefas (páginas sintéticas) para medir a taxa de sucesso de ponta a ponta.
@@ -140,7 +140,7 @@ Esta lição produz`outputs/skill-multimodal-agent-designer.md`. Tendo em conta 
 
 ## Exercícios
 
-1. Extenda o esquema de ação com um `screenshot_region`ferramenta (crop + zoom). Que tarefas são de benefício?
+1. O esquema do código adiciona um `screenshot_region`O que é que as tarefas beneficiam?
 
 2. Leia AgentVista (arXiv:2602.23166). Descreva a categoria de tarefas mais difíceis e por que os modelos de fronteira ainda falham.
 

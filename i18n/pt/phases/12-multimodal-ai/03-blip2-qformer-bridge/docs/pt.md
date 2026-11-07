@@ -1,6 +1,6 @@
 # Do CLIP ao BLIP-2  Q-Former como ponte de modalidade
 
-> O CLIP alinha imagem e texto, mas não pode gerar legendas, responder perguntas ou manter uma conversa. BLIP-2 (Salesforce, 2023) resolveu que com uma pequena ponte treinável: 32 vetores de consulta aprendizagem atender sobre os recursos de um ViT congelado através da atenção cruzada, em seguida, slot diretamente no fluxo de entrada de um LLM congelado. 188 milhões de parâmetros de ponte conectaram um LLM 11B a um ViT-g/14. Cada VLM baseado em adaptador até 2026  MiniGPT-4, InstructBLIP, primos de LLaVA  é um descendente. Esta lição lê a arquitetura do Q-Former, explica o seu treinamento em duas etapas e constrói uma versão de brinquedo que alimenta tokens visuais em um decodificador de texto congelado.
+> O CLIP alinha imagem e texto, mas não pode gerar legendas, responder perguntas ou manter uma conversa. BLIP-2 (Salesforce, 2023) resolveu que com uma pequena ponte treinável: 32 vetores de consulta aprendizagem atender sobre os recursos de um ViT congelado através da atenção cruzada, em seguida, slot diretamente no fluxo de entrada de um LLM congelado. 188 milhões de parâmetros de ponte conectaram um ViT-g/14 a LLMs congeladas de tamanho igual ao 11B Flan-T5-XXL. Cada VLM baseado em adaptador até 2026  MiniGPT-4, InstructBLIP, primos de LLaVA  é um descendente. Esta lição lê a arquitetura do Q-Former, explica o seu treinamento em duas etapas e constrói uma versão de brinquedo que alimenta tokens visuais em um decodificador de texto congelado.
 
 **Type:** Build
 **Languages:** Python (stdlib, cross-attention + learnable-query demo)
@@ -117,7 +117,7 @@ Esta lição produz`outputs/skill-modality-bridge-picker.md`. Dada a configuraç
 
 4. Leia a Seção 3.2 do artigo BLIP-2 (arXiv:2301.12597) sobre como o Q-Former é iniciado.
 
-5. Para um vídeo de 10 minutos a 1 FPS amostrado para 60 quadros, calcule o custo de token por quadro em (Q-Former → 32 tokens / frame) vs (projector MLP → 576 tokens / frame). Qual se encaixa em uma janela de contexto de LLM com 128k-token?
+5. Para um vídeo de 10 minutos a 1 FPS amostrado para 60 quadros, calcule o custo de token por quadro em (Q-Former → 32 tokens/frame) vs (projector MLP → 576 tokens/frame). Quantas quadros cada ponte pode caber em uma janela de contexto de LLM de 128k-token antes que o texto de solicitação obtenha algum espaço?
 
 ## Termos-chave
 
@@ -132,7 +132,7 @@ Esta lição produz`outputs/skill-modality-bridge-picker.md`. Dada a configuraç
 | Two-stage pretraining | "Representation then generative" | Stage 1 trains Q-Former alone (ITC/ITM/ITG); Stage 2 attaches frozen LLM and trains only the projection + Q-Former |
 | Frozen backbone | "Do not finetune" | The vision encoder and LLM weights are fixed; only the bridge trains |
 | Projection head | "Linear to LLM dim" | Final linear layer mapping Q-Former output to the LLM's embedding dimension |
-| Perceiver resampler | "Flamingo's version" | Similar learnable-query cross-attention, used by Flamingo at every layer rather than as a single bridge |
+| Perceiver resampler | "Flamingo's version" | Similar learnable-query cross-attention; Flamingo runs it once per image to make fixed latents, then reads them through gated cross-attention at every LLM layer |
 
 ## Mais leitura
 

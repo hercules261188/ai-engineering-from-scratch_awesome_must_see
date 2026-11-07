@@ -51,7 +51,7 @@ A máscara:
 M[i, j] = 1 if:
   (i is text and j is text and j <= i)   # causal for text
   OR (i is image and j is image and same_image_block(i, j))   # bidirectional within image
-  OR (i is text and j is image and j < i_image_end)   # text attends to previous images
+  OR (i is text and j is image and j < i)   # text attends to images that closed before it
   OR (i is image and j is text and j < i_image_start)   # image attends to preceding text
 ```
 
@@ -97,7 +97,7 @@ Desvantagem: A transfusão é um modelo de dupla perda, tornando a dinâmica de 
 
 Janus-Pro (Lessão 12.15) aperfeiçoou a ideia da Transfusion descouplando o codificador de visão para compreensão e geração  SigLIP para um, VQ para o outro  enquanto compartilha o corpo do transformador. Show-o (Lessão 12.14) troca difusão por difusão discreta (previsão mascarada).
 
-2026 produção VLMs que emitem imagens  Gemini 3 Pro, GPT-5, Claude Opus 4.7 caminho de geração de imagens  quase certamente usar algum descendente desta família.
+Modelos de produção fechados que emitem imagens nativamente podem usar algum descendente desta família, mas suas arquiteturas não são publicadas, então trate qualquer alegação como um adivinho.
 
 ```figure
 cfg-guidance-scale
@@ -111,7 +111,7 @@ cfg-guidance-scale
 - As imagens são redes de 4x4 bytes.
 - Um par de projeções lineares de peso compartilhado atua como o substitutor do transformador; perda de NTP no texto, perda de MSE em parches barulhentos.
 - O ciclo de treinamento alternou as duas perdas, a máscara de atenção é explícita.
-- A geração produz uma legenda de texto e uma imagem 4x4 em uma passagem para a frente.
+- Uma demonstração de máscara imprime o padrão de atenção triangular de bloco para um texto, imagem, sequência de texto. A geração não é executada: um sampler real decodificaria o token de texto por token, depois denotava os patches de imagem em muitas etapas, conforme os exercícios abaixo contam.
 
 A canalização de duas perdas, a construção da máscara de atenção e o ciclo de inferência são os verdadeiros artefatos.
 

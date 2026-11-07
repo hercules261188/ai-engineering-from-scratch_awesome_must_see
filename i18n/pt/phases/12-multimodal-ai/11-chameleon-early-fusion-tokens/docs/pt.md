@@ -39,7 +39,7 @@ O tokenizer é um autoencodeador variável quantizado por vetores.
 
 Formação: perda de reconstrução de VAE + perda de compromisso + perda de livro de códigos.
 
-Para o chameleão: uma imagem torna-se 32*32 = 1024 tokens extraídos de um vocabulário de 8192. Concatenate com tokens de texto (do vocabulário BPE do LLM, digamos 32000).
+Para Chameleon: uma imagem torna-se 32*32 = 1024 tokens extraídos de um vocabulário de 8192. Coloque esses IDs de imagem no mesmo espaço de ID que os tokens BPE de texto. O tokenizer único do Chameleon tem 65.536 entradas, e essa contagem já inclui os códigos de imagem 8192 e os tokens especiais, como os separadores de imagem. O transformador vê uma sequência, uma perda.
 
 ### O vocabulário compartilhado
 

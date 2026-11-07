@@ -95,10 +95,10 @@ Não há OCR em nenhum lugar, figuras, gráficos, fontes, layout tudo fluem para
 
 Um relatório financeiro de 50 páginas com 729 patches por página e embutidos em 128 dimensões:
 
-- ColPali: 50 * 729 * 128 * 4 bytes = ~ 18 MB crus, ~ 4 MB após PQ.
+- ColPali: 50 * 729 * 128 * 4 bytes = ~ 18 MB crus, ~ 2,3 MB após 8x PQ.
 - Text-RAG: 50 pedaços * 768-dim * 4 bytes = ~ 150 kB.
 
-O ColPali é ~ 30x mais armazenamento por documento. Em escala, o OPQ / PQ reduz-o para ~ 5-10x, geralmente tolerável.
+O ColPali é ~ 120x mais armazenamento por documento bruto. Em escala, 8x OPQ / PQ reduz para ~ 15x, geralmente tolerável.
 
 ### Quando o texto-RAG ainda vence
 
