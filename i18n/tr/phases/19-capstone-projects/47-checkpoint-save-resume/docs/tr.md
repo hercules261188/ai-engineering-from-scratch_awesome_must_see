@@ -16,7 +16,7 @@
 
 ## Sorun
 
-18 saatlik bir eğitim işi ayarladın. Duvar saati kapısı 4 saat. Kluster saat 11'de yeniden başlıyor çünkü maaş derecenizin üstündeki biri çekirdek yükseltmesini onayladı. Kontrol noktaları olmadan yeniden başlıyorsun. Yeniden başvurmadan ilk 11 saat boyunca öğrenmek için gereken optimizer durumunu da kaybediyorsunuz. Yani model ağırlıkları hayatta kalmış olsa bile, AdamW anları gitti ve bir sonraki adım eğitim yörüngesinin geçmiş olduğu bir yöne doğru gizlenir.
+18 saatlik bir eğitim işi ayarladın. Programcı her tahvilin 4 saatine kadar sınırlandırılır, bu yüzden çalışmak zaten bir iş zinciri. Sonra klaster 11 saatte yeniden başlıyor çünkü maaş derecenizin üstündeki biri çekirdek yükseltmesini onayladı. Kontrol noktaları olmadan yeniden başlıyorsun. Yeniden başvurmadan ilk 11 saat boyunca öğrenmek için gereken optimizer durumunu da kaybediyorsunuz. Yani model ağırlıkları hayatta kalmış olsa bile, AdamW anları gitti ve bir sonraki adım eğitim yörüngesinin geçmiş olduğu bir yöne doğru gizlenir.
 
 Doğru eseri, devam etmek için gereken her şeyi tutan tek bir dosyadır: model parametreleri, optimizer durumu, programcı durumu, planlar için kayıp geçmişi, mevcut adım ve dönem ve seri-epoca sayıcıları ve her rastlantı kaynağı için RNG durumu. RNG durumu olmadan, yeniden başlatılan kayıp eğri farklı bir eğridir. Aynı model, aynı veriler, farklı karıştırma, farklı çıkış maskesi, farklı numara.
 

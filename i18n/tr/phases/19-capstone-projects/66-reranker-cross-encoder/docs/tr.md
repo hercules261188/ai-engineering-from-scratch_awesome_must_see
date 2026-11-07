@@ -91,7 +91,7 @@ python3 code/main.py
 
 **Cross-encoder is not symmetric.** `rerank(q, d)`ve `rerank(d, q)`Eğer yanlışlıkla bir şey değiştirirseniz, hatırlama çökür.
 
-**N is too low to expose the bug.**Eğer N = K ayarlıyorsanız, çapraz kodlayıcı yeniden düzenleyemez; sadece yeniden ağırlıklandırabilir. Asansör sıfır görünüyor. N'yi en az üç kez K'ye seçin.
+**N is too low to expose the bug.**N = K ayarladığınızda, çapraz kodlayıcı K adaylarını yeniden düzenleyebilir, ancak yeni bir tane yukarı K'ye getiremez. K'ye hatırlayın hareket edemez, bu yüzden asansör sıfır görünüyor. N'yi en az üç kez K'ye seçin.
 
 **Training data leaks into the eval.**El etiketli eğitim çiftleri değerlendirme sorgularını içerirse, yeniden sıralama sihirli görünür.
 

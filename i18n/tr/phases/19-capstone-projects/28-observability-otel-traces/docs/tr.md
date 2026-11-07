@@ -77,15 +77,15 @@ Metrik kayıtları iki dict'ten oluşur.`{(name, frozen_labels): int}`Histograml
 6. `wrap_tool_call(name)`Bir süslemeci, bir süreyi yayar ve ölçümleri güncelleyebilir.
 7. Demo: tam bir ajan çağrısını sentez eder (gen_ai.chat tool spans etrafında uzanır), traces.jsonl yazar, Prometheus açıklamasını yazdırır, sıfırdan çıkır.
 
-Uçuş kimliği ve iz kimliği 16 baytlı altıbuçlı iplerdir, `os.urandom`Bu, OTel'in W3C iz bağlamına uyuyor.
+İzleme kimliği 16 bayt değeridir (32 hex karakter) ve uzay kimliği 8 bayt değeridir (16 hex karakter), her ikisi de rastgele olarak kesilmiştir `uuid4`Otel'in kullandığı W3C Trace Context boyutlarına uyuyor.
 
-Histogram sabit bir kova seti (milisaniyeli gecikme için standart OTel: 5, 10, 25, 50, 100, 250, 500, 1000, 2500, 5000, 10000, +Inf) vardır.
+Histogram, milisaniyede gecikme için sabit bir kova ayarına sahiptir: 5, 10, 25, 50, 100, 250, 500, 1000, 2500, 5000, 10000, +Inf. Ayrıca 0, 75, 750, ve 7500'i içeren OTel SDK standart sınırlarının bir kesilmiş sürümüdür. Örnekler bir liste olarak depolanır; ekspozisyon talep üzerine her kova sayısını hesaplar.
 
 ## Neden açık metrik SDK yerine elle fırlatılmış?
 
-OTel Python SDK gerçek bir bağımlılıktır. OTLP ihracatçısı için birkaç bin satır kod, birden fazla işlem ve ders bütçesini dolduran bir çalıştırma süresi maliyetidir. Elden yuvarlanan sürüm tel biçimini öğretir. Üretim sırasında aynı özellikleri gerçek SDK'ye telleştirir ve OTLP ihracatçısını, seri ve kaynak tespitini ücretsiz alırsınız.
+OTel Python SDK gerçek bir bağımlılıktır. Ayrıca birkaç bin satır kod, OTLP ihracatçısı için arka plan ihracat teli ve ders bütçesini dolduran bir çalıştırma süresi maliyetidir. Elden yuvarlanan sürüm tel biçimini öğretir. Üretim sırasında aynı özellikleri gerçek SDK'ye telleştirir ve OTLP ihracatçısı, parti ve kaynak tespitini ücretsiz alırsınız.
 
-Sözleşmeler istikrarlıdır. Dersin yaydığı tel biçimi 2030'da analiz edilmeye devam edecek çünkü OTel GenAI özelliği isimlerini asla kırmaz; sadece yeni isimler ekler.
+GenAI'nin konvensiyonları hala spesifikasyonda Gelişme ile işaretlenmiştir ve daha önce özelliklerin adı değiştirilmiştir: `gen_ai.usage.prompt_tokens`- Evet .`gen_ai.usage.input_tokens`Çıkardığın semantik konvansiyon versiyonunu sabitle ve SDK'yi yükseltirken kontrol et.
 
 ## Bu A'nın geri kalanıyla nasıl birleşti?
 

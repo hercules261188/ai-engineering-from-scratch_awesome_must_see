@@ -57,7 +57,7 @@ Bir transformatör binlerce parametre tensörüne sahiptir. Tensör başına bir
 
 ### Neden tohumları sıkıştırıyorsun?
 
-Her rütbe çağıracak .`torch.manual_seed(seed + rank)`- Çekmek için .`torch.manual_seed(seed)`Parametre init için. Tek paylaşılmış tohum her sıra aynı parti sırasını görür (verileri eşzamanlı olarak yenir); parametre için sıra-spesifik bir tohum, başlangıç parametreleri yüzen epsilon ve gradient senkronizasyonu tarafından anlaşılmıyor anlamına gelir.
+Her rütbe çağıracak .`torch.manual_seed(seed + rank)`- Çekmek için .`torch.manual_seed(seed)`parametre init için. Karıştırmak için tek paylaşılmış tohum her sıra aynı parti sırasını görür (parallelim verileri yenmek). Parametre için, inşaat sırasında yayınlanan 0 sıra replikleri aynı hale getirir ve her sıra başlıklı ne varsa üstü yazır. Paylaşılan init tohumunun yedeklenmesi: yayın atlatılır veya bozulursa, sıra-spesifik init her replikaya farklı başlangıç ağırlıkları verir ve gradient senkronizasyonu tek başına onları asla bir araya getirmez. Tohum örneğini doğru yapın yoksa parametre eşdeğerliği testi 1. adımda başarısız olur.
 
 ```figure
 ci-ddp-grad-sync

@@ -18,7 +18,7 @@
 
 Görme dili modeli iki beceriye ihtiyaç duyar. Bir başlık verildiğinde, birçok kişi arasında doğru görüntü bulmalıdır. Bir görüntü verildiğinde, bir başlık yazmalıdır. Bir beceri üzerinde modelin eğitimi tek başına size yarı bir sistem verir. CLIP çivi sıralaması ama başlık yapamaz. GPT-4V başlık yapabilir, ancak sıralama için ayrı bir geri alma başlığı kullanır. Çoklu objektif önceden eğitimi her ikisini de bir geçit ile elde eder.
 
-InfoNCE sıralama yarısını ele alır. N çiftler için model N eşleşen çiftleri pozitif olarak ve `N^2 - N`Yanlış eşleşen çiftler negatif olarak, sonra sonuçta çapraz entropi kaybı `(N, N)`LM kaybı, neslin yarısını ele alır: görüntüye bağlı standart bir sonraki belirti tahminidir. Her iki kaybı da farklılaştırılabilir ve kodlayıcı, projektor ve dekodör ağırlıklarını paylaşabilir.
+InfoNCE sıralama yarısını ele alır. N çiftler için model N eşleşen çiftleri pozitif olarak ve `N^2 - N`Yanlış eşleşen çiftler negatif olarak, sonra sonuçta çapraz entropi kaybı `(N, N)`LM kaybı, jenerasyon yarısını ele alır: görüntüye bağlı standart bir sonraki belirti tahminidir. Her iki kaybı da farklılaştırılabilir ve kodlayıcı ve projektor ağırlıklarını paylaşır; dekodör LM kaybı üzerinde tek başına çalışır.
 
 ## Anlaşım
 
@@ -54,7 +54,7 @@ Dekoder, görüntü belleği belirtilerini çapraz dikkat yoluyla tüketir ve he
 
 ### Kayıpları birleştirmek
 
-`total = contrastive + lm_weight * lm`nerede`lm_weight`Bu iki kayıp, gradientleri kodlayıcı ve projeksiyonda paylaşır; sadece dekodör LM kayıp gradienti alır. Bu CoCa, BLIP ve SigLIP tarzındaki modellerin çeşitli ağırlıklarla kullandığı çok görevli bir tarif.
+`total = contrastive + lm_weight * lm`nerede`lm_weight`Bu iki kayıp, gradientleri kodlayıcı ve projeksiyonda paylaşır; dekoder sadece LM kayıpından gradient alır. Bu CoCa ve BLIP'in çeşitli ağırlıklarla kullandığı çok görevli bir tarifdir. SigLIP sadece kontrast termini tutar ve bir sigmoid çift kayıp için softmax'ı değiştirir.
 
 | Component | Loss surface | Affects |
 |-----------|--------------|---------|

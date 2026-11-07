@@ -27,7 +27,7 @@ Stdlib + numpy yeter. BLEU sayıyor ve bir klem. ROUGE-L dinamik programlama. F1
 
 ## Tokenizasyon
 
-Tokenizer `re.findall(r"\w+", text.lower())`Bu dersdeki her metrik tam olarak bu tokenizer kullanıyor. Koşucu seçemez. Tokenizerleri değiştirirseniz, farklı bir referans göstergesini çalıştırıyorsunuz.
+Tokenizer `re.findall(r"\w+", text.lower())`. Küçük harfler, kelimeler (harfler, rakamlar ve alt çizgiler) sırası, diğer her şeyi bırakın. Bu dersdeki her metrik tam olarak bu işaretlemeci kullanır. Koşucu seçemez. Eğer işaretlemeci değiştirirseniz, farklı bir referans göstergesini çalıştırıyorsunuz.
 
 ```python
 TOKEN_RE = re.compile(r"\w+", re.UNICODE)
@@ -66,7 +66,7 @@ flowchart LR
 
 ## BLEU-4
 
-BLEU, kanonik makine çevirisi metrikidir ve halen özetleme çalışmalarında ortaya çıkar. Kullandığımız formül, standart kısalık cezası ve n-gram sayımlarında değiştirilmiş ek-bir düzeltme ile korpus seviyesindeki BLEU-4'dir.
+BLEU, kanonik makine çevirisi metrikidir ve halen özetleme çalışmalarında ortaya çıkar. Kullandığımız formül, cümle seviyesindeki BLEU-4, tahmin ve referans çiftine puanlanmış, standart kısalık cezası ve n-gram sayımlarında değiştirilmiş ek-bir düzeltme ile, böylece kayıp olan tek bir 4 gram puanı sıfıra doğru itmez.
 
 Her aday-referans çift için, n eşit olduğu için değiştirilmiş n-gram hassaslığı sayıyoruz 1, 2, 3, 4. değiştirilmiş hassaslık, aday n-gram sayısını herhangi bir referansdaki n-gram sayısının maksimum sayısına kadar keser, bu nedenle bir aday bir cümleyi tekrarlayarak şişemez. Dört hassaslığın geometrik ortalaması kısalık cezası ile sarılır.
 
@@ -109,7 +109,7 @@ Numpy tablosu uygulamanın okunmasını sağlar; saf Python listeleri de çalı�
 
 ## Dürüstlük
 
-Çoklu hedef sınıflandırma görevleri için, doğruluk tek bir normal hedefle tam eşleşmeye düşürülür.`metric_name`Koşucu içinde bir dizi karşılaştırma yapmadan.
+Sınıflandırma görevleri için, doğruluk tam eşleşmeye düşer: tahmin listedeki herhangi bir normal hedefle eşleşirse 1 puan alır.`metric_name`Koşucu içinde bir dizi karşılaştırma yapmadan.
 
 ## Gönderiş sözleşmesi
 

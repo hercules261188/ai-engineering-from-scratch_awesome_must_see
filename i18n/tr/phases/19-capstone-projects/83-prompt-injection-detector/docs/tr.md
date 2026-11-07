@@ -81,4 +81,4 @@ Metrikler koşucusu, kategoriler başına hassaslık, hatırlama, F1 ve ham say�
 
 ## Daha Fazla Okumak
 
-Bu pistte 84 ila 87 dersler.
+Bu pistte 84 ila 87 dersler. Detektor, işaret filtresi, sınıflandırıcı ve kural motorunun yanında, sonun sonuna kadar kapı oluşturan dört sinyaldır.

@@ -52,7 +52,7 @@ flowchart TD
 
 ### Atomik yazma
 
-Standart örneği: her parçayı yaz `<name>.tmp`, manifesti yaz `manifest.json.tmp`Yeni dosya tamamen mevcut veya eski dosya. Son yeniden isimlendirme öncesi bir çöküş önceki kontrol noktasını canlı olarak terk eder. Atom yazılmadan bir çöküş, bir parçacık bırakır.
+Standart örneği: her parçayı yaz `<name>.tmp`, manifesti yaz `manifest.json.tmp`, her birini sinxine, parçaların adını değiştir, ve manifestin son adını değiştir. Aynı dosya sistemindeki bir POSIX yeniden adlandırılması atomiktir: ya yeni dosya tam olarak mevcuttur ya da eski dosya mevcuttur. Yeniden adlandırılan bir dizi işlem değildir, bu nedenle manifest yeniden adlandırılması commit noktasıdır ve yükleyici her parçayı manifest hashlerine karşı kontrol eder. Her kontrol noktasını kendi adım dizinine yaz; sonra manifestin yeniden adlandırılmasından önce bir çöküş önceki kontrol noktasını canlı olarak terk eder. Bir dizinin yeniden kullanılması bu garantiyi kırıyor, çünkü parçaların yeniden adlandırılması yeni manifestoların yerleşmesinden önce eski parçaların yerini alıyor. Atom yazısı olmadan bir çöküş, bir parçacık bırakabilir ve yük, başvuruda optimizer durumunu bozar.
 
 ### Şema üç başarısızlık modundan korunmalıdır
 

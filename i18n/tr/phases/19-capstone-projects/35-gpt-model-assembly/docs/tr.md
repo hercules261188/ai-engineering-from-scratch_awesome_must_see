@@ -81,7 +81,7 @@ cc-gpt-assembly
 - `class GPTModel`- İşaret yerleştirme, pozisyon yerleştirme, yerleştirme, düşme, on iki `TransformerBlock`S, son LayerNorm ve bir `lm_head`Bayrak kurulduğunda simgeyi yerleştirmeye bağlayan.
 - A.`count_parameters`eşsiz parametreler sayısını geri veren yardımcı (böylece ağırlık bağlanması sayıda sayılır).
 - A.`generate`Bu, sıcaklık, üst-k, çoklu ve kaydırıcı pencereler bağlamını yapan bir işlevdir.
-- Model oluşturan bir demo, referans 124M'nin yanında parametreler sayısını yazdırırır ve boru hattının sonlarını sonuna kadar göstermek için sabit bir istekle kısa bir dizini oluşturur.
+- Model oluşturan bir demo, referans 124M'nin yanında parametreler sayısını yazdırırır ve boru hattını sonundan sonuna göstermek için sabit bir istekle kısa bir dizini oluşturur.
 
 Çek şunu:
 
@@ -89,7 +89,7 @@ cc-gpt-assembly
 python3 code/main.py
 ```
 
-Çıktı: 124M referansı yanında parametreler sayımı, rastgele bir istekle oluşturulan token kimlikleri ve LM başının ve token gömülmesinin bağlama sırasında depolama payı olduğunu doğrulanması.
+Çıktı: 124M referansı yanında parametreler sayımı, sabit bir istekle oluşturulan token kimlikleri ve LM başının ve token yerleştirme bağlantısı etkin olduğunda depolama payının onaylanması.
 
 Demo'yu hızlı tutmak için senaryo ayrıca küçük bir yapılandırma (`d_model=64`- Evet .`num_layers=2`124M yapılandırması oluşturulur, ancak sadece parametrelerinin sayımı ve bir ileri geçiş uygulanır.
 

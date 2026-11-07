@@ -34,7 +34,7 @@ flowchart LR
     Writer --> Report[Demo report]
 ```
 
-Beş aşama. Tohum üç hipotezin bir listesidir. Programlayıcı üç paralel yuva ile altı deney yürütür. Otobüs bir veya daha fazla kağıt tetikleyicisini bildirir. Seçicisi en iyi sonucu seçer. Eleştirmen döngüsü bu sonucu oluşturan bir taslak üzerinde tekrarlanır. Kağıt yazarı son LaTeX, BibTeX ve manifestoyu yayar.
+6 aşama. Tohum üç hipotezin bir listesidir. Programlayıcı, üç paralel yuva ile altı deney yürütür. Otobüs bir veya daha fazla kağıt tetikleyicisini bildirir. Seçicisi en iyi sonucu seçer. Eleştirmen döngüsü, bu sonuca dayanan bir taslak üzerinde tekrarlanır. Kağıt yazarı son LaTeX, BibTeX ve manifestoyu yayar.
 
 ## Neden kopyalamıyorsun, neden ithal ediyorsun?
 

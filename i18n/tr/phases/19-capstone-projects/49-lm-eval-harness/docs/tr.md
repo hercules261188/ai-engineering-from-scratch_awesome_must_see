@@ -20,7 +20,7 @@ Her hafta yeni bir dil modeli geliyor. Pazarlama iddiası iyi yapıyor. Dürüst
 
 Repo'da bir harness olmadan iki modeli vibes ile karşılaştırırsınız. bir harness ile sabit bir metrikle sabit bir görev kümesi üzerinde puan ile karşılaştırırsınız, bir JSON çıkışında farklılık gösterebilirsiniz. Harness dün çalışması ile bugünkü çalışması arasındaki sözleşmedir.
 
-Tuzak, kemerleri tek bir modele fazla bağlıyor. Düzeltme aynı tersine bir tuzak: harnes on beş dakika içinde okunacak kadar küçük, görevler repo'da gönderilmek için yeterince küçük, ölçümler sıfırdan yazılır böylece bir meslektaş onları denetleyebilir ve adapter model-specifik kodun yaşadığı tek yerdir. Adaptörü değiştir, lider çizelgesi hareket eder; görevleri değiştir, lider çizelgesi hareket eder. Başka hiçbir şey hareket etmesin.
+Tuzak, kemerleri tek bir modele fazla bağlıyor. Çözüm, her model-specifik seçeneği harnesten uzak tutmaktır: harnes on beş dakika içinde okunacak kadar küçüktür, görevler repo'da gönderilmek için yeterince küçüktür, ölçütler sıfırdan yazılır, böylece bir meslektaş onları denetleyebilir ve adapter model-specifik kodun yaşadığı tek yerdir. Adaptörü değiştir, lider çizelgesi hareket eder; görevleri değiştir, lider çizelgesi hareket eder. Başka hiçbir şey hareket etmesin.
 
 ## Anlaşım
 

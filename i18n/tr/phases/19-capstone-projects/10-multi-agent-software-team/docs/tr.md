@@ -123,7 +123,7 @@ $ team run --issue https://github.com/acme/widget/issues/842
 
 1. Açık bir hata , ortalama bir defektörde enjekte edilmelidir (ekstra `return None`Dönüştürücü'nin yanlış onay oranını ölçün. Dönüştürücü'nin yanlış onayının % 5'ten az olduğu sürece uyarın.
 
-2. İki kodlayıcıya (memur + kodlayıcı + yorumcu + tester) indir.
+2. İki kodlayıcıya (memur + iki kodlayıcı + gözden geçirmeci + tester) indirginleştirin, her kodlayıcı iki alt görevyi sıradan çalıştırır. Duvar saatini ve geçiş oranını karşılaştırın.
 
 3. Birleştirme koordinatörünü tek yazıcı kısıtlamasıyla değiştirin (alt görevler ayrılmış dosya kümelerine dokunur).
 

@@ -64,7 +64,7 @@ Resim anahtarları ve değerleri, çözme başlangıcında bir kez hesaplanır v
 
 ### Blok bileşimi
 
-Bir dekoder bloğu çalışır: pre-LN -> kendinize dikkat -> geri kalan -> pre-LN -> çapraz dikkat -> geri kalan -> pre-LN -> ileriye aktar -> geri kalan. Her biri kendi LayerNorm ile üç alt katman. Flamingo kağıdı çapraz dikkat üzerine öğrenilmiş bir kapı ekledi, böylece model eğitim zamanı istikrar maliyetinde görüntü yolundan çıkıp çıkılabilir; kanonik temel çizginin (burada kullanılır) kapısı yoktur.
+Bir dekoder bloğu çalışır: pre-LN -> kendinize dikkat -> geri kalan -> pre-LN -> çapraz dikkat -> geri kalan -> pre-LN -> ileriye aktar -> geri kalan. Her biri kendi LayerNorm ile üç alt katman. Flamingo kağıdı çapraz dikkat üzerine zero'dan başlatılmış bir tanh kapısı ekledi, böylece dondurulmuş dil modeli değişmez olarak başlar ve eğitim istikrarlı kalır; kanonik temel çizgi (burada kullanılır) kapısı yoktur.
 
 ```python
 class DecoderBlock:

@@ -118,7 +118,7 @@ python3 -m unittest code/test_main.py
 
 4. Projector ağırlıklarına küçük bir L2 cezası ekleyin ve kosinus ayarıyla nasıl etkileşime girdiğini izleyin (kosinus ölçek değişmez, bu nedenle cezası çoğunlukla kullanılmayan yönleri küçültürür).
 
-5. Projector ağırlıklarını sürdürün, sonra yeniden yüklenme ve görüntü kodlayıcıyı geriye geçmeden sonuçlandırmayı çalıştırın.
+5. Projector ağırlıklarını ısrarla yükle, sonra dondurulmuş görüntü kodlayıcıının yanında yeniden yükle ve geriye geçiş olmadan sonuç çıkar. Projector'un gönderdiğiniz tek yeni esrarın olduğunu kontrol edin; kodlayıcı hala yayımlama zamanında ileri geçişini yürütür.
 
 ## Anahtar Terimler
 

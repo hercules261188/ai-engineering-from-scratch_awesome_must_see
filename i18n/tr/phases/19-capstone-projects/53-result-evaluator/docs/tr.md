@@ -70,7 +70,7 @@ Değerlendirici üç bağımsız hesaplama yapar ve onları hüküm yolunda birl
 
 Kafasızlık kayıplarda eksponensal bir artıştır. Kayıplarda 0,1 düşüş, kafasızlıkta çok daha büyük bir düşüştür. İki yapılandırma arasında doğrudan kafasızlığı karşılaştırmak iyidir, ancak tek bir raporda doğrusal ölçümlerle karıştırmak normallaşmayı gerektirir.
 
-Ders , herhangi bir metrikin normalleşmesini sağlar .`scale`alanı `"log"`Bu, daha sonra log alanında uygulanır. 32'den 28'e düşen karmaşıklık düşüşü `log(28) - log(32) = -0.133`Daha düşük bir metrikte daha iyi bir metrik var, bu da yüzde iki eşiğinden çok daha üstündür.
+Ders , herhangi bir metrikin normalleşmesini sağlar .`scale`alanı `"log"`Bu, daha sonra log alanında uygulanır. 32'den 28'e düşen bir karmaşıklık düşüşü `log(32) = 3.466``log(28) = 3.332`Daha düşük bir metrikte göreceli gelişme daha iyi bir metrikte .`(3.466 - 3.332) / 3.466 = 0.039`Bu da yüzde 2 e ulaşmayı sağlar.
 
 ```text
 if scale == "log":

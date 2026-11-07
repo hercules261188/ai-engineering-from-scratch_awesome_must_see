@@ -53,7 +53,7 @@ ECE, kutu sayısına ve örnek boyutuna göre tarafsızdır. On kutu ve yüz tah
 
 ## Brier'in ECE'nin yapmadığı puan
 
-ECE sadece ortalama boşluklar hakkında endişeleniyor. Bir model kutuların yarısına aşırı güvenir ve diğer yarısına güvenirken yerel olarak kötü kalibrelenirken düşük ECE'ye sahip olabilir. Brier puanı, tahmin başına gerçek sonuç karşısında karelerde hata ölçer, bu nedenle doğrudan yayılmayı cezalandırır.
+ECE sadece her kutudaki ortalama boşluğu önemsiyor. Her kutuda mutlak boşluk gerekmektedir, bu yüzden farklı kutularda boşluklar iptal edilmez. Bir kutu içinde yapabilirler: bir kutudaki bazı tahminler aşırı güvenlidir ve diğerleri de güvensizse, kutu ortalamaları eşleşebilir ve kutu ECE'ye neredeyse hiçbir şey eklemez, her tahmin kötü kalibrlenirken. Brier puanı, tahmin başına gerçek sonuç karşısında karelerde hata ölçer, bu yüzden doğrudan yayılmayı cezalandırır.
 
 İkili sonuçlar için Brier `mean((p_i - y_i)^2)`Bu, güvenilirliğe, çözünürlüğüne ve belirsizliklere ayrılır.
 
@@ -87,7 +87,7 @@ Harness, güvenin softmax' dan geldiğini düşünmez.`[0, 1]`Çoklu seçim gör
 
 - Tüm tahminler yanlış: ECE ortalama güven, Brier yüksek, karmaşıklık modelin metne ne düşündüğünü.
 - Tüm tahminler yüksek güvenle doğru: ECE sıfır yakınında, Brier sıfır yakınında.
-- P=0.5'de tamamen belirsiz bir tahminçi: ECE 0.5 eksi doğruluk, Brier 0.25 eksi bir doğrulama terimi.
+- P=0.5'de tamamen belirsiz bir tahminçi: Her tahmin bir kutuya yerleşiyor, bu yüzden ECE `|0.5 - accuracy|`Brier tam olarak 0.25'dir, çünkü`(0.5 - y)^2 = 0.25`ya da`y`0 veya 1'dir.
 - Boş giriş: ECE, Brier ve güvenilirlik geri dönüşü `0.0`(veya sıfır dolmuş dizileri).`NaN`Bu yollardan hiçbiri uyarı yaymaz; koşucu değerleri inceliyor ve rapor vermek veya atlamak için karar veriyor.
 
 Bu vakalar testlere yerleştirilir. Gerçek bir referans üzerinde gerçek bir model onlara çarpar, ama bir buggy adaptörü veya küçük bir örnek çarpar ve koşucu düşmemesi gerekir.

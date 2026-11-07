@@ -69,7 +69,7 @@ ViT-Base, 86M parametre kodlayıcıdır. 2026 standartlarına göre küçüktür
 
 ### - Sebep maskası mı yoksa değil mi?
 
-Görüş Transformerleri sadece kodlama ve iki yönlü: token `i`- Evet .`j`61 dersindeki dekodör taraflı çapraz dikkat bir sebep maskası kullanır, ama görme kodörünün içinde dikkat tamamen bağlantılıdır.
+Görüş Transformerleri sadece kodlama ve iki yönlü: token `i`- Evet .`j`Bu nedenle, bu yöntemin kullanımı ile ilgili olarak, bu yöntemin kullanımı ile ilgili olarak, bu yöntemin kullanımı ile ilgili olarak, bu yöntemin kullanımı ile ilgili olarak, bu yöntemin kullanımı ile ilgili olarak, bu yöntemin kullanımı ile ilgili olarak, bu yöntemin kullanımı ile ilgili olarak, bu yöntemin kullanımı ile ilgili olarak, bu yöntemin kullanımı ile ilgili olarak, bu yöntemin kullanımı ile ilgili olarak, bu yöntemin kullanımı ile ilgili olarak, bu yöntemin kullanımı ile ilgili olarak, bu yöntemin kullanımı ile ilgili olarak, bu yöntemin kullanımı ile ilgili olarak, bu yöntemin kullanımı ile ilgili olarak, bu yöntemin kullanımı ile ilgili olarak, bu yöntemin kullanımı ile ilgili olarak, bu yöntemin kullanımı ile ilgili olarak, bu yöntemin kullanımı ile ilgili olarak, bu yöntemin kullanımı ile ilgili olarak, bu yöntemin kullanımı ile ilgili olarak, bu yöntemin kullanımı ile ilgili olarak, bu yöntemin kullanımı ile ilgili olarak, bu yöntemin kullanımı ile ilgili olarak, bu yöntemin kullanımı ile ilgili olarak, bu yöntemin kullanımı ile ilgili olarak, bu yöntemin kullanımı ile ilgili olarak, bu yöntemin kullanımı ile ilgili olarak, bu yöntemin kullanılabilir olarak,
 
 ### CLS tokeninin öğrendiği şeyler
 

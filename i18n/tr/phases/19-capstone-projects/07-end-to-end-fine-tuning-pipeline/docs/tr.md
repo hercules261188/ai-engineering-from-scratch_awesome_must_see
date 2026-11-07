@@ -1,6 +1,6 @@
 # Capstone 07  Sonundan Sonuna Düzeltme Kök hattı (SFT'ye DPO'ya veri hizmet etmek için)
 
-> Kendi verilerinizle eğitilmiş, kendi tercihlerinizle DPO-ağırlaştırılmış, kuantistik, spekülasyonsal olarak çözülmüş ve ölçülebilir $/1M token'larda servis edilmiş bir 8B modeli. 2026 açık yığın Axolotl v0.8, TRL 0.15, İterasyon için Unsloth, Kvantizasyon için GPTQ/AWQ/GGUF, servis için EAGLE-3 ile vLLM 0.7'dir. Son taş, tüm boru hattını yeniden üretilebilir şekilde  YAML'de çalıştırmak,  son noktasını hizmet vermek ve 2026 Model Açıklık Çerçeği çerçevesinde bir model kart yayınlamak.
+> Kendi verilerinizle eğitilmiş, kendi tercihlerinizle DPO-ağırlaştırılmış, kuantistik, spekülasyonsal olarak çözülmüş ve ölçülebilir $ / 1M tokenlerde servis edilmiş bir 8B sınıf modeli. 2026 açık yığın Axolotl v0.8, TRL 0.15, İterasyon için Unsloth, Kvantizasyon için GPTQ/AWQ/GGUF, servis için EAGLE-3 ile vLLM 0.7'dir. Son taş, tüm boru hattını tekrarlanabilir şekilde çalıştırmak (YAML içinde, servis sonu nokta dışında) ve 2026 Model Açıklık Çerçeği kapsamında bir model kart yayınlamak.
 
 **Type:** Capstone
 **Languages:** Python (pipeline), YAML (configs), Bash (scripts)
@@ -12,7 +12,7 @@
 
 2026'da her ciddi AI ekibi ince ayarlama hattını tutar. Sınır baz modeli göndermek için değil, aşağı doğru uyarlama  alan SFT, DPO etiketlenmiş tercihler karşı, spekülasyonsal dekodlama için destillemiş taslaklar, EAGLE-3  ile hizmet vermek ölçülebilir kazançların yaşadığı yer. Axolotl v0.8 çoklu GPU SFT yapılandırmalarını işliyor. TRL 0.15 DPO ve GRPO'yu ele alıyor. Unsloth, hızlı bir tek GPU iterasyonu sağlar. EAGLE-3 ile vLLM 0.7 kalitesi kaybı olmadan 2-3x dekodleme throughput zorlar. Araçlama işliyor; meslek YAML'lerde, veri hijyeninde ve değerlendirme disiplindedir.
 
-SFT üzerinden 8B tabanı (Llama 3.3, Qwen3 veya Gemma 3) çalıştırır, sonra görev-özel verilere DPO, servis için kuantitasyon yapar ve lm değerlendirme-harness, RewardBench-2, MT-Bench-v2 ve MMLU-Pro karşı kazançları ölçer. 2026 Model Açıklık Çerçeve altında bir model kartı üreteceksiniz.
+SFT üzerinden 8B ile 14B tabanı (Llama 3.1 8B, Qwen3 14B veya Gemma 3 12B) çalıştırır, sonra görev-özel veriler üzerine DPO çalıştırır, servisi için kuantitasyon yapar ve lm değerlendirme-harness, RewardBench-2, MT-Bench-v2 ve MMLU-Pro ile kazançları ölçer. 2026 Model Açıklık Çerçeği altında bir model kartı üreteceksiniz.
 
 ## Anlam
 
@@ -56,7 +56,7 @@ model card (2026 MOF) + safety eval (Llama Guard 4)
 ## Yüküm
 
 - Veriler: Detup için veri kaynağı, Kalite için Nemotron-CC sınıflandırıcısı, PII için Presidio
-- Üssü: Llama 3.3 8B, Qwen3 14B veya Gemma 3 12B
+- Üssü: Llama 3.1 8B, Qwen3 14B veya Gemma 3 12B
 - SFT: ZeRO-3, Flash Attention 3, paketlenmiş dizilerle Axolotl v0.8
 - Tercihleri ayarlama: DPO veya GRPO için TRL 0,15; tek GPU iterasyonu için Unsloth
 - Kvantizasyon: GPTQ (Marlin), AWQ, GGUF via llama.cpp
@@ -120,7 +120,7 @@ $ ./pipeline.sh config/llama3.3-8b-domainX.yaml
 
 1. Aynı görev-specifik referans değerinde SFT-sadece vs SFT+DPO vs SFT+GRPO çalıştırın. Hangi tercih yöntemi kazanıyor ve ne kadar kazanıyor rapor edin.
 
-2. Llama 3.3 8B'yi Qwen3 14B'ye değiştir. $ 1M jetonlarını eşleşen kalitede ölç.
+2. Llama 3.1 8B'yi Qwen3 14B'ye değiştir. $ 1M jetonlarını eşleşen kalitede ölç.
 
 3. Alan verileri ile genel ShareGPT'de EAGLE-3 kabul oranını ölçün.
 
@@ -148,5 +148,5 @@ $ ./pipeline.sh config/llama3.3-8b-domainX.yaml
 - [DeepSeek R1 paper (arXiv:2501.12948)](https://arxiv.org/abs/2501.12948) GRPO metodolojisi
 - [vLLM + EAGLE-3 documentation](https://docs.vllm.ai) Referans servis yığın
 - [SGLang SpecForge](https://github.com/sgl-project/SpecForge) alternatif spekülatör kodlama eğitmeni
-- [Model Openness Framework 2026](https://isocpp.org/) Açık serbest bırakma sınıflandırma standardı
+- [Model Openness Framework (arXiv:2403.13784)](https://arxiv.org/abs/2403.13784): açık serbest bırakma sınıflandırma standardı
 - [lm-evaluation-harness](https://github.com/EleutherAI/lm-evaluation-harness) kanonik değerlendirme koşucusu

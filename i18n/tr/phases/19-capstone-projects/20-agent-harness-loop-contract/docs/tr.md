@@ -43,7 +43,7 @@ stateDiagram-v2
     DONE --> [*]
 ```
 
-`IDLE`Bu, yasal giriş noktası.`DONE`Bu tek yasal çıkış.`AWAITING_TOOL`Bu, çekim noktasını veren tek durumdur.
+`IDLE`Bu, yasal giriş noktası.`DONE`Bu tek yasal çıkış.`AWAITING_TOOL`- tek çekim noktası olan bu durum.`on_pause`Bu, bir devlete ait değil: bütçe bitince veya bir kurşun gözden geçirilmesini istediğinde herhangi bir aktif devlete ateş eder.
 
 Bu durum makinesi belirleyici. Aynı olay günlüğünü göz önüne alarak, harness aynı durumuna geri döner. Bu özellik, modelini tekrar çağrılmadan debugging seanslarını tekrar oynama olanağı sağlar.
 

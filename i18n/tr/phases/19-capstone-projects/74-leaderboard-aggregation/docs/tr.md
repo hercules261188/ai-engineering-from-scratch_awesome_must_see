@@ -63,7 +63,7 @@ Bir görev puan alırsa `[0, 1]`Ve bir tane daha .`[0, 100]`Bir toplamlayıcı, 
 
 Ortalama puan, bir model için görev başına puanların ortalamasıdır. Başlık sayı leaderboard raporudur.
 
-Kazanç oranı, bir modelin aynı görevde diğer tüm modellerden ne sıklıkta geçtiğini hesaplar. Her görev için en yüksek puan alan model kazanır (taktı bölünür). Kazanç oranı, modelin puan alan görevlerin sayısına bölünmüş kazançlara eşit olur.
+Kazanma oranı, bir modelin aynı görevde diğer tüm modellerden ne sıklıkta geçtiğini hesaplar. Her görev için en yüksek puanlı model kazanır (bir eşitlik her eşitliğe sahip model için tam bir kazanç sağlar). Kazanma oranı, modelin puanlı olduğu görevlerin sayısına bölünmüş kazançlara eşittir.
 
 ```python
 def win_rate(model_id, runs_by_task, all_models):
@@ -131,4 +131,4 @@ Oku `main.py`Top aşağı. Veriler şekli (EvalRun, LeaderboardRow) önce gelir,
 
 ## Daha ileri gitmeye çalışıyorum .
 
-Doğal bir sonraki adım eşleşmemiş bir başlangıç şeridi yerine çiftleme görevi anlamıdır. Eğer A ve B modelleri aynı yüz görevi gerçekleştirirse, uygun test, görevden görev farklılıkları üzerinde çiftleştirilmiş bir başlangıç çizgisidir. Bundan öte, görev aileleri saygı derecesinde bir hiyerarşik başlangıç çizgisi istiyorsunuz (matematik sorunlar birbirinden bağımsız değildir; bir aritmetik hata örneği onlarını etkiler). Bu bir takip. Bu dersin amacı, düzeyi doğru yapmaktır. Böylece değerlendirme, savunabileceğiniz bir rakamı rapor eder.
+Modelle ilgili aralıkları eşleşmez, ancak model karşılaştırmaları eşleştirilmelidir. A ve B modelleri her ikisi de aynı yüz görevi gerçekleştirirse, uygun test görevden görev farklılıkları üzerinde eşleşmiş başlangıç parçasıdır.`bootstrap_pairwise_diff`Bu ders, bir dizi sayıyı doğru hale getirmek için, değerlendirme raporlarını savunabildiğiniz bir sayıyı rapor eder.

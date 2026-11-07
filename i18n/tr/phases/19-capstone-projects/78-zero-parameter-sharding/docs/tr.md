@@ -16,7 +16,7 @@
 
 ## Sorun
 
-Vanilla DDP her şeyi çoğaltır: parametreler, gradientler ve optimizer durum her sıra üzerinde tam olarak mevcuttur. Fp16'da 7B-parametrli bir model için bu, her sıra için 14 GB parametre, 14 GB gradient ve 28 GB optimizer durum anlamına gelir. Optimizer durum en büyük terimdir ve parçalanması en kolaydır çünkü sadece adım sırasında dokunur, ileri veya geri dönerken değil.
+Vanilla DDP her şeyi çoğaltır: parametreler, gradientler ve optimizer durum her sıra üzerinde tam olarak mevcuttur. Fp16'da 7B-parametre modeli için bu, her sıra için 14 GB parametreler, 14 GB gradient ve 56 GB optimizer durum (iki float32 Adam anı) anlamına gelir. Karışık hassaslık eğitimi, yukarıda bulunan ağırlıkların 28 GB float32 master kopyasını ekler. Optimizer durumu en büyük terimdir ve en kolay parçalanır çünkü sadece adım sırasında dokunur, ileri veya geri dönerken değil.
 
 ZeRO 1. aşaması, optimizasyon durumunu azaltıyor. Her sıra Adem anlarının 1/N'ini tutar. Geriye doğru, tüm gradientin azaltılmasına ve yerel olarak adım atılmasına karşılık, ZeRO yayılanları azaltır, böylece her sıra sadece parçacıklarının toplam gradientinini alır. Renk, ana parametrelerin parçacığına optimizasyon adımını uyguluyor. Güncelleştirilmiş parametreler parçaları sonra tümü yeniden toplanarak her sıra bir sonraki ileri için tam modeline sahip olur. Optimizer hafızası N oranında düşer. Adım başına kablo trafiği DDP ile aynıdır: bir reduc_scatter artı bir allgather, bant genişliği ile bir allreduce'ye eşittir. Hatıra kazanır, akış gücü kalır.
 
@@ -92,7 +92,7 @@ python3 code/main.py
 
 **Mixed precision is the point.**ZeRO, karışık hassasiyetli bir tekniktir; fp32 master kopyası parçalanır. ZERO'yu karışık hassasiyetsiz çalıştırmak, ilgili fp16 ileri kazanç olmadan fp32 master'da hafıza vergisini öder. Üretim çalışmalar her zaman ZeRO'yu otomatik döküm veya bf16 ağırlıklarla eşleştirir.
 
-**Stage 1 is a near-free win.**Bağlantı, bant genişliği açısından DDP ile aynıdır. bellek tasarrufu N'de doğrusaldır. Tek maliyet optimizer parçacığı için muhasebeleme.
+**Stage 1 is a near-free win.**Komün, bant genişliği açısından DDP ile aynıdır. Hatırlama tasarrufları N'de doğrusaldır. Tek maliyet optimizer şard için muhasebeleme. Gelişme veya parametre belleği de bir sorun değilse üretim yığınları varsayılan olarak 1. aşamaya geçiyor. 2. aşama ekstra bant genişliği olmayan gradientleri kısaltır; sadece 3. aşama parametreleri kendileri kısaltır ve bu hafıza için katmanlı comm ticaret yapar.
 
 ## Kullan
 

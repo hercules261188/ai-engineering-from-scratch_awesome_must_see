@@ -108,7 +108,7 @@ python3 code/main.py
 
 Her metrik doğrudan bir üretim referans değerine yerleştirir:
 
-- **Retrieval.**MS-COCO 5K val, Flickr30K, ImageNet sıfır çekim hepsi aynı benzerlik matrisinde R@K sorunlarıdır.
+- **Retrieval.**MS-COCO 5K val ve Flickr30K aynı benzerlik matrisi üzerinde R@K sorunlarıdır. ImageNet sıfır çekim aynı matrisi de kullanır, her sınıf için bir istek yerleştirme ile, ancak sınıf isteklerine göre R@1 olan üst-1 sınıflandırma doğruluğunu bildirir. Sentetik eval'i gerçek dosyalarla değiştirin ve işlev imzası değişmez.
 - **VQA.**VQA v2, GQA, OK-VQA aynı tam eşleşen şekli kullanır (VQA v2 için tek cevap EM yerine yumuşak acc ile).
 - **BLEU-4.**MS-COCO başlıklı, NoCaps, Flickr30K başlıklı hepsi BLEU-4 artı CIDEr ve METEOR kullanıyor. CIDEr eklemek bir işlev daha.
 
@@ -141,7 +141,7 @@ python3 -m unittest code/test_main.py
 
 4. R@K'nin yanında hesaplama ortalama karşılıklı sıralama (MRR) MRR, doğru öğenin üst K'nin ötesinde yer aldığı yere karşı hassasdır; R@K, üst K'ye düşüp yer aldığı yere karşı hassasdır.
 
-5. Evalüasyonu eğitim sırasında beş kontrol noktasında (addım 0, 10, 20, 30, 40, 50) çalıştırın ve öğrenme eğriyi çizin.
+5. Evalüasyonu eğitim sırasında altı kontrol noktasında (addım 0, 10, 20, 30, 40, 50) çalıştırın ve öğrenme eğriyi çizin.
 
 ## Anahtar Terimler
 

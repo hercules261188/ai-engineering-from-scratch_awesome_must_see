@@ -9,7 +9,7 @@
 
 ## Sorun
 
-Bu parçaların her biri tek bir parça gönderdi: bir taksonomi, bir giriş algılayıcısı, bir değerlendirme çerçevesine, bir çıkış sınıflandırıcısına, bir kural motoruna. Gerçek bir güvenlik kapısı bunları oluşturmalı, talep yaşam döngüsünde doğru anda çalıştırmalı, anlaşmazlıklarda ne yapacağına karar vermelidir ve bir inceleyicinin Pazartesi sabahı okuyabileceği bir iz üretmelidir. Kompozisyon dersi.
+Bu parçaların her biri bir tek parça gönderdi: bir taksonomi, bir giriş algılayıcısı, bir değerlendirme çerçevesini, bir çıkış sınıflandırıcısı, bir kural motoru. Gerçek bir güvenlik kapısı çalıştırma zaman parçalarını (dersi 83 dedektörü, dersi 85 sınıflandırıcısı ve dersi 86 kural motorunu) oluşturmalı, talep yaşam döngüsünde doğru anda çalıştırmalı, anlaşmazlıklarda ne yapacağına karar vermelidir ve bir inceleyicinin Pazartesi sabahı okuyabileceği bir iz oluşturmalıdır. Kompozisyon ders.
 
 Kapı üç kontrol noktasında yer almaktadır. Pre-gen model çağrılmadan önce çalışır: Ders 83'ten gelen detektor, uyarıyı izler ve ya geçirir, doğrudan engeller (yüksek güven saldırısı) veya aşağıdaki katmanların ağırlanması için bir bayrak bağlar. Modelin jetonlar gönderdiği için gen sırasında çalışır: akış filtresi parçaları tamponlar ve yasak bir cümle ortaya çıkarsa akışı erken bitirir (prefix enjeksiyonu kapının sadece post-hoc görünmesi durumunda bunu sağ kalır). Post-gen model bittikten sonra çalışır: ders 85'ten sınıflandırıcı yönlendiricisi ve ders 86'dan kural motorları tam çıkışı inceler, kapı ön-gen sinyali ile hükümlerini toplar ve kapı son bir eylem uyglar.
 
@@ -35,11 +35,11 @@ Aggregator dört ciddiyet sinyali birleştirir: detektör güven (dersi 83), tok
 
 | Signal state | Action |
 |---|---|
+| detector confidence >= 0.85 on a non-benign category | block before generation |
 | any high severity | block |
-| any medium severity | redact |
-| any low severity | warn |
-| all none + detector confidence < 0.5 | allow |
-| detector confidence 0.5-0.85, no other signal | warn |
+| any medium severity (detector confidence 0.5 to 0.85, or early stream termination) | redact |
+| any low severity (detector confidence below 0.5 on a non-benign category) | warn |
+| detector says benign and no other signal | allow |
 
 Block reddetmeyi gönderir. Redakt sınıflandırıcı tarafından düzenlenmiş metni gönderir ve kural motor düzeltmeciyi uyguluyor.`RequestTrace`- Evet .`request_id`- Evet .`prompt`- Evet .`pre_gen`(Detector hüküm),`during_gen`(token-filter tetikleme), `post_gen`(sınıflandırıcı eylem + kural rapor), `final_action`- Evet .`final_output`ve`latency_ms`- Evet .
 

@@ -69,7 +69,7 @@ Başvuruyu hazırlayarak bağlıyoruz .`import sys`ve maymunlar için bir koruyu
 
 Her alt işlem üç saniyelik bir bütçe alır.`subprocess.run(..., timeout=t)`Eğer zaman sonunu alırsa, koşucu yakalar.`TimeoutExpired`, süreci öldürür ve bir kayıt yapar `timeout`Bu görevin puanı sıfırdır.
 
-Zamanlama süreci  ile görev başına yapılandırılabilir.`task.metadata.timeout_s`Uzun süreli birim testleri daha fazla talep edebilir; ders 70'den gelen onaylayıcı, süiti sınırlandırmak için değeri otuz saniyeye sınırlıyor.
+Zaman kesimi .`timeout_s`- Dönüşüm`run_candidate`Ders 75 koşucusu , bir koşuya bir kez ayarlıyor .`code_exec_timeout_s`Uzun süreli birim testleri daha fazlasını isteyebilir, ama`run_candidate`Suit'i sınırlandırmak için değerleri 0,1 ile 30 saniye arasında sıkıştırır.
 
 ## Çıktılık kap
 
@@ -83,7 +83,7 @@ Pass-at-k, HumanEval ve arkadaşları tarafından kullanılan tarafsız bir tahm
 pass_at_k(n, c, k) = 1 - C(n - c, k) / C(n, k)
 ```
 
-Ne zaman ?`n - c < k`Sayıcı tanımlanmamış ve değer `1`Uygulama, kenarlık olayını doğrudan ele alır.`pass_at_k(n, c, k)`Ders 74'te liderlik katmanının kullanımı için.
+Ne zaman ?`n - c < k`, sayıcı `C(n - c, k)`Normal konvansiyonla sıfırdır (seçemezsiniz)`k``k`), değer de `1`Uygulama, kenarlık olayını doğrudan ele alır.`pass_at_k(n, c, k)`Ders 74'te liderlik katmanının kullanımı için.
 
 ```mermaid
 flowchart LR

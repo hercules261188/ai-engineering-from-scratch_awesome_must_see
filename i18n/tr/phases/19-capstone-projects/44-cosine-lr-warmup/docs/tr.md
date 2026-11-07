@@ -108,7 +108,7 @@ Dört model programı bir üretim eserine dönüştürüyor.
 
 1. Programın ters kare kökü olan bir varianti ekle ve 200 adımlık oyuncak eğitim koşusunda karşılaştır.
 2. Bir ekle`--restart`Bayrak ikinci bir                  `total_steps / 2`Oyuncak koşusunda sıcak yeniden başlatmaların iyileşip zarar vermediğini savun.
-3. Birim testi ekle: programın sürekli olduğunu gösterin: her adım için `[0, total_steps]`Farklılık`|lr(step+1) - lr(step)|` ile sınırlıdır`lr_max / warmup_steps`- Evet .
+3. Birim testi ekleyerek programın sürekli olduğunu gösterir: `warmup_steps > 0`, her adımda .`[0, total_steps]`Farklılık`|lr(step+1) - lr(step)|`                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             `lr_max / warmup_steps`Ve en dik göğüs yamacı .`pi * (lr_max - lr_min) / (2 * (total_steps - warmup_steps))`Kısa bir kosinus bölümü ısınma rampasından daha dik olabilir, bu yüzden ısınma yamacının tek başına güvenli bir sınır değildir.
 4. Programı bir `torch.optim.lr_scheduler.LambdaLR`Bu yüzden çerçeve koduyla oluşur. Ders basit bir adım fonksiyonunu kullanır.
 5. Bir ekle`--plot-png`Gerçek bir planı yazmış bir bayrak .`matplotlib`. Dersin metin planı veya PNG'nin CI çalışmalar için daha iyi standard olup olmadığını savun.
 

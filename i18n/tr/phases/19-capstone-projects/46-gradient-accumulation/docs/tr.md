@@ -9,7 +9,7 @@
 
 ## Öğrenme Hedefleri
 
-- Etkin parti kimliğini çıkar: `effective_batch = micro_batch * accum_steps`- Evet .
+- Etkin parti kimliğini çıkar: `effective_batch = micro_batch * accum_steps * world_size`, yani `micro_batch * accum_steps`Bu derste kullanılan tek cihaz üzerinde.
 - Mikro-batch kaybı ölçeklemesini uygulayın, böylece toplanan gradient tek bir tam batch geriye eşleşir.
 - Son mikro-batch'e kadar optimizer senkronizasyonunu atlayın (son adımla senkronize).
 - Etkin parti eğriyle bir geçiş oranını okuyun ve düşen geri dönüşü açıklayın.

@@ -85,7 +85,7 @@ ce-otel-drift
 
 8. **Alerting chain.**Prometheus ihracatçısı eval puan toplamlarını ve gecikme yüzdelerini okuyor; Alertmanager uyarılar için Slack ve kritik ihlal için PagerDuty yollarını okuyor.
 
-9. **Regression probe.**Bir hata enjekte edin: değerlendirilmiş chatbot% 1'de sahte SSN sızmaya başlar. MTTR ölçün: deployed bug Slack uyarısı.
+9. **Regression probe.**Bir hata enjekte edin: değerlendirilmiş chatbot, sahte SSN'leri zamanın %1'inde sızdırmaya başlar. Detektörlüğü ölçmek için zaman (MTTD): deployed bug'dan Slack uyarısına. Detektörlük, tablonun sahip olduğu MTTR'nin parçasıdır; düzeltme ve yeniden dağıtım sonrasında gelir.
 
 ## Kullan
 
@@ -106,7 +106,7 @@ $ curl -X POST https://my-otel-collector/v1/traces -d @trace.json
 |:-:|---|---|
 | 25 | Trace-schema coverage | Number of SDK families producing canonical GenAI spans (target: 6+) |
 | 20 | Eval correctness | DeepEval / RAGAS scores vs hand-labeled set |
-| 20 | Dashboard UX | MTTR on injected regression (under 5 minutes target) |
+| 20 | Dashboard UX | MTTD on injected regression (under 5 minutes target) |
 | 20 | Cost / scale | Sustained ingest at 1k spans/sec without backlog |
 | 15 | Alerting + drift detection | Prometheus/Alertmanager chain exercised end to end |
 | **100** | | |

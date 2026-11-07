@@ -21,7 +21,7 @@
 
 Kapı zinciri izin diyor ama kum kutusu, zincir beklemiyen bir nedenle reddediyor. Değerlendirme harnesinin bir geçiş kaydettiği ama OTel kapının kullandığını iddia eden bir araç reddettiğini söylüyor. Prometheus sayıcısı bir kez artırılması gerektiğinde iki kez artırılır. Gözlem bütçesi aşıldı ama ajan devam etti çünkü bütçe zincirde izlenmişti ve kum kutusu bilmiyordu.
 
-Bu ders tüm pist için entegrasyon testidir. Ajanın dört şeyi yapması gerekir: projeyi okuyun, testleri çalıştırın, test başarısızlığından çıkan hatayı tanımlayın, düzeltmeyi yazın, testleri tekrar çalıştırın ve durun. Her işlem kapı zinciri üzerinden geçer. Her araç yürütülmesi kum kutu üzerinden geçer. Her adım bir uzayda sarılır. Evalu harness tüm şeyi sonuna puanlar.
+Bu ders tüm pist için entegrasyon testidir. Ajanın altı şeyi yapması gerekir: projeyi okuyun, testleri çalıştırın, test başarısızlığından çıkan hatayı tanımlayın, düzeltmeyi yazın, testleri tekrar çalıştırın ve durun. Her işlem kapı zinciri üzerinden geçer. Her araç yürütülmesi kum kutu üzerinden geçer. Her adım bir uzayda sarılır. Evalu harness tüm şeyi sonuna puanlar.
 
 ## Anlaşım
 

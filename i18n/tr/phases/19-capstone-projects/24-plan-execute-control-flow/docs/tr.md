@@ -88,7 +88,7 @@ Bir izleyici veya UI bunu kaldırılan adımlar üzerinde bir çarpışma ve ekl
 
 ## İki bütçe, ikisi de zor.
 
-`max_steps`Default on iki. İki kez yeniden planlayan ve her seferinde on altı yürütmeyle üç adım ekleyen bir çizgi beş adımlı plan, bütçeden fazla olur. İcracı yeniden planı reddedecek ve FAILED'i geri döndürecek.
+`max_steps`Tüm oturum boyunca, yeniden planlamalar dahil toplam adımlar için sınırlamalar. Öntanımlı olarak 12. Başarısız girişimler de sayılır. Son adımda başarısız olan beş adımlı bir plan beş idam için harcadı. Her bir yeniden plan bu adımı tekrar denese ve üç yeni adım eklerse ve ilk düzeltmenin son adımı tekrar başarısız olursa sayısı dokuz olur ve ikinci düzeltmenin dört tane daha ihtiyacı vardır: on üç. İnkârcı 12.'yi atıyor, 13.'i reddediyor ve FAILED reason'i geri getirir.`step_budget`- Evet .
 
 `max_replans`Bu, bir planın en önemli sınırıdır. Aynı bozuk planı bir dizi kez geri veren bir plancı, adım bütçesi onu yakalamadan önce bir döngü yapar. Default beş. Bu daha önemli bir sınırdır.
 
