@@ -222,6 +222,10 @@ La proyección de salida (cabeza de logits) comparte pesos con la matriz de inco
 
 ## Construye el mismo
 
+```figure
+iso-machine {"machine":"mini-gpt"}
+```
+
 ### Paso 1: Incorporar una capa
 
 Las incorporaciones de tokens mapean cada una de las 50.257 tokens posibles a un vector de 768 dimensiones.

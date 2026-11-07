@@ -28,7 +28,7 @@ Esta lección construye un módulo MTP único y la pérdida de profundidad D des
 
 ### La receta de MTP secuencial
 
-DeepSeek-V3 añade `D`Modulos MTP en la parte superior del modelo principal.`k`(para `k = 1..D`) predice el token en profundidad `k` es decir, `t_{i+k}`dado un prefijo a través de la posición `i`¿ Qué ?
+DeepSeek-V3 añade `D`Modulos MTP en la parte superior del modelo principal.`t_{i+1}`Cada módulo .`k`(para `k = 1..D`) predice el token `k`pasos más lejos, `t_{i+k+1}`, dado un prefijo a través de la posición `i`¿ Qué ?
 
 Modulo `k`se compone de:
 
@@ -49,13 +49,13 @@ h_i^{(k)} &= T_k\Big( M_k \cdot \mathop{\mathrm{concat}}\big(\mathop{\mathrm{RMS
 La predicción por profundidad es:
 
 ```math
-\text{logits}_{i+k} = \mathop{\mathrm{Out}}(h_i^{(k-1)}) \quad \text{for } k = 1, \ldots, D
+\text{logits}_{i+k+1} = \mathop{\mathrm{Out}}(h_i^{(k)}) \quad \text{for } k = 1, \ldots, D
 ```
 
-La pérdida por profundidad es la entropía cruzada contra la verdad fundamental .`t_{i+k}`¿Qué es esto ?
+La pérdida por profundidad es la entropía cruzada contra la verdad fundamental .`t_{i+k+1}`¿Qué es esto ?
 
 ```math
-L_k = \mathop{\mathrm{CE}}(\text{logits}_{i+k}, t_{i+k})
+L_k = \mathop{\mathrm{CE}}(\text{logits}_{i+k+1}, t_{i+k+1})
 ```
 
 La pérdida articular a través de profundidades:
@@ -70,9 +70,9 @@ L_{\text{MTP}} = \frac{\lambda}{D} \sum_{k=1}^{D} L_k
 
 El MTP paralelo original de Gloeckle tenía cabezas de salida D, cada una aplicada directamente a `h_i^(0)`Cada cabeza predice .`t_{i+k}`Eso se entrena bien, pero las predicciones no están condicionadas entre sí.`head_1`La salida para ayudar .`head_2` las cabezas disparar en paralelo.
 
-El diseño secuencial de DeepSeek-V3 construye `h_i^(k)`de la`h_i^(k-1)`más la incorporación real de la siguiente ficha `E(t_{i+k})`. Que preserva la cadena causal: predecir`t_{i+k+1}`, el módulo en profundidad `k+1`ve lo que estaba en`t_{i+k}`. Esto es estructuralmente idéntico a la forma en que un decodificador autoregresor consume su propia salida  haciendo que los módulos MTP sean directamente utilizables como diseñadores de decodificación especulativa.
+El diseño secuencial de DeepSeek-V3 construye `h_i^(k)`de la`h_i^(k-1)`más la incorporación real de la siguiente ficha `E(t_{i+k})`. Que preserva la cadena causal: predecir`t_{i+k+1}`, el módulo en profundidad `k`ve lo que estaba en`t_{i+k}`. Esto es estructuralmente idéntico a la forma en que un decodificador autorregresor consume su propia salida, lo que hace que los módulos MTP sean directamente utilizables como diseñadores de decodificación especulativa.
 
-En la inferencia: alimento `h_i^(k-1)`y el redactado `t_{i+k}`en módulo `k+1`, obtener una predicción para`t_{i+k+1}`Repito. Es exactamente un borrador de estilo EAGLE, utilizando el módulo entrenado MTP como la red de borrador. DeepSeek-V3 informa de aceptación de 80% + en el primer módulo MTP y ~ 1.8x de velocidad.
+En la inferencia: alimento `h_i^(k-1)`y el redactado `t_{i+k}`en módulo `k`, obtener una predicción para`t_{i+k+1}`Repito. Es exactamente un borrador de estilo EAGLE, utilizando el módulo entrenado MTP como la red de borrador. DeepSeek-V3 informa de aceptación de 80% + en el primer módulo MTP y ~ 1.8x de velocidad.
 
 ### Contabilidad de parámetros
 
@@ -141,7 +141,7 @@ Reutilice la proyección de salida del modelo principal.
 
 ### Paso 5: pérdida por profundidad
 
-Entropia cruzada de softmax (logits) contra el token de verdad de base en compensación `k`. Agregar a través de las profundidades con el `lambda / D`factor de escala.
+Entropia cruzada de softmax (logits) contra el token de verdad de base en compensación `k+1`. Agregar a través de las profundidades con el `lambda / D`factor de escala.
 
 ### Paso 6: Contabilidad de parámetros
 
@@ -176,18 +176,18 @@ Esta lección produce`outputs/skill-mtp-planner.md`. Dado que se ha especificado
 
 2. Compute el coste de un modelo 70B denso (oculto 8192, 80 capas) con módulo D=1 MTP. Compara con el coste de 14B reportado por DeepSeek-V3. Explique por qué el número de DeepSeek es mayor: el bloque de transformador MTP hereda la misma estructura MoE, inflando el recuento de parámetros por módulo.
 
-3. Implementar D=2 en el juguete: añadir un segundo módulo MTP que toma $h^{(1)}$y predice`t_{i+2}`Verifique la pérdida conjunta y la contabilidad de parámetros coincide con las ecuaciones 19-21 del documento de DeepSeek.
+3. Implementar D=2 en el juguete: añadir un segundo módulo MTP que toma $h^{(1)}$y predice`t_{i+3}`Verifique la pérdida conjunta y la contabilidad de parámetros coincide con las ecuaciones 19-21 del documento de DeepSeek.
 
 4. Cambiar el juguete a MTP paralelo (estilo de Gloeckle): añadir cabezas de salida D en la parte superior del estado oculto principal, cada uno prediciendo un desvio diferente. Medir cómo las pérdidas por profundidad se comparan con la versión secuencial en la misma señal sintética. La versión secuencial debe producir una menor pérdida de profundidad k para k > 1 porque se condiciona con las predicciones intermedias.
 
-5. Utilice el módulo de MTP formado como un borrador de estilo EAGLE: llama al módulo k para proponer `t_{i+k}`Si se alcanza el 50% + en el juguete, se ha reproducido la propiedad empírica MTP-as-draft.
+5. Utilice el módulo de MTP formado como un borrador de estilo EAGLE: llama al módulo k para proponer `t_{i+k+1}`Si se alcanza el 50% + en el juguete, se ha reproducido la propiedad empírica MTP-as-draft.
 
 ## Términos clave
 
 | Term | What people say | What it actually means |
 |------|----------------|------------------------|
 | MTP module | "Extra loss block" | A small transformer block plus projection that predicts a token `k` positions ahead of the main model |
-| Prediction depth | "Which offset" | The integer `k` such that module `k` predicts `t_{i+k}` from prefix through position `i` |
+| Prediction depth | "Which offset" | The integer `k` such that module `k` predicts `t_{i+k+1}` from prefix through position `i` (the main model is depth 0 and predicts `t_{i+1}`) |
 | Parallel MTP | "Gloeckle-style" | D independent heads on the same backbone hidden state, no conditional chain |
 | Sequential MTP | "DeepSeek-V3 style" | Each module conditions on the previous depth's hidden state plus the next token's embedding; preserves causal chain |
 | Shared output head | "Reuse the main head" | The MTP modules call the main model's LM head, not a separate output projection |

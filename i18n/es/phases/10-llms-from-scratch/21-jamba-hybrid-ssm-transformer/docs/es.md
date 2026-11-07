@@ -77,10 +77,10 @@ Las capas de Mamba son ellas mismas conscientes de la posición (a través de la
 
 Para una forma Jamba-1 (32 capas: 28 Mamba + 4 Atención, oculta 4096, 32 cabezas de atención):
 
-- Caché KV (sólo capas de atención): `2 * 4 * 32 * 128 * 256k * 2 = 8.4 GB`En 256k BF16 sólo las 4 capas de atención contribuyen.
+- Caché KV (sólo capas de atención): `2 * 4 * 32 * 128 * 256k * 2 = 16 GB`El Jamba liberado utiliza GQA con 8 cabezas de KV en esas capas, lo que lleva a 4 GB, la cifra en el papel Jamba.
 - Estado del MSS: `28 * hidden * state_size`El estado típico de Mamba es de 16 por característica, oculto 4096: `28 * 4096 * 16 * 2 = 3.7 MB`- ¿Qué?
 
-Comparar con un transformador puro en 32 capas, la misma oculta, MHA completo en 32 cabezas: `2 * 32 * 32 * 128 * 256k * 2 = 128 GB`La reducción de 8 veces en el caché de KV.`2 * 32 * 8 * 128 * 256k * 2 = 32 GB`), el híbrido 1:7 de Jamba con 16 GB es todavía 2 veces más pequeño.
+Comparar con un transformador puro en 32 capas, la misma oculta, MHA completo en 32 cabezas: `2 * 32 * 32 * 128 * 256k * 2 = 128 GB`La reducción de 8 veces en el caché de KV.`2 * 32 * 8 * 128 * 256k * 2 = 32 GB`), un híbrido 1:7 con 32 cabezas de KV en 16 GB es todavía 2 veces más pequeño.
 
 Eso es lo que AI21 significa por "contexto de 256k en una GPU de 80 GB". El caché KV de un transformador puro de MHA completo no encajaría; incluso una línea de base GQA no deja espacio para pesos y activaciones; Jamba sí.
 

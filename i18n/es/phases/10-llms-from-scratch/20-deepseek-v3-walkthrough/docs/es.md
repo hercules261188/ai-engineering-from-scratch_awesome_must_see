@@ -106,18 +106,18 @@ mtp_module: 1               (1 MTP module at depth 1)
 El cálculo completo se realiza en`code/main.py`El titular:
 
 - Incluir: `vocab * hidden = 129280 * 7168 = ~0.93B`¿ Qué ?
-- Los primeros 3 bloques densos: atención con MLA (~144M por bloque) + MLP denso (~260M por bloque) + normas.
-- 58 bloques de MoE: atención con MLA (~144M) + 256 expertos cada uno (30M cada uno) + 1 experto compartido (30M) + norma. Total ~7.95B por bloque, incluidos todos los expertos. 461B total para los 58 bloques de MoE.
-- Modulo MTP: 14B.
+- Los primeros 3 bloques densos: atención con MLA (~84M por bloque en el recuento simplificado de la calculadora) + MLP SwiGLU denso (`3 * 7168 * 18432 = ~396M`El número de personas que han recibido las ayudas de la Comisión es de 1,4% en el total.
+- 58 bloques de la MOE: atención con MLA (~84M) + 256 expertos enrutados (`3 * 7168 * 2048 = ~44M`El proyecto de investigación de la Comisión de Investigación y Tecnología (EIT) se ha desarrollado en el marco de la investigación de la investigación de la investigación y de la investigación de la investigación de la tecnología de la información.
+- Modulo MTP: el módulo publicado es 14B. La calculadora utiliza un stand-in denso de ~0,8B.
 
-El número de datos de la calculadora es de entre el 3-5% de los documentos de la sección 2 de apéndice de DeepSeek.
+El punto de control de Hugging Face es 685B porque agrega el módulo 14B MTP en la parte superior del 671B. La brecha restante del 1% proviene de simplificaciones: la calculadora omite las dimensiones RoPE descopladas en MLA, la cabeza de salida desatada y algunos pequeños tensores.
 
 Parámetros activos por prospecto:
 
-- Atención: 144M por capa * 61 = 8,8B (todas las capas se incendian).
-- MLP activo: las primeras 3 capas densas (3 * 260M = 780M), 58 capas MoE activas cada una con 8 enrutadas + 1 compartida + gastos generales de enrutamiento.
-- Incluir + normas: 1.2B.
-- Total activo: aproximadamente 26B núcleo + 14B MTP (entrenado pero no siempre ejecutado a la inferencia) ≈ 37B.
+- Atención: 84M por capa * 61 = ~5,1B (todas las capas se incendian).
+- Actividad de la PLM: las primeras 3 capas densas (`3 * 396M = ~1.2B`), 58 capas de EMS cada una activa con 8 enrutados + 1 experto compartido (`9 * 44M = ~396M`Por capa, ~23B total.
+- Incluir + normas: ~ 0,9B.
+- Total activo: ~30B desde la calculadora frente al 37B publicado. La mayor parte de la brecha es la atención: MLA completo, con sus dimensiones RoPE y más amplias consultas y cabezas de llave, es mayor que el conteo simplificado.
 
 ### La relación 671B / 37B
 

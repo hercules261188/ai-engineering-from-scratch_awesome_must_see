@@ -11,7 +11,7 @@
 
 El entrenamiento de un transformador almacena, para cada capa, las entradas de cada operación que se diferencia hacia atrás: las entradas de atención, las proyecciones Q/K/V, la salida de softmax, las entradas FFN, las salidas normales y el flujo residual.`d`, longitud de la secuencia `L`, lote `B`, esto es por orden de`12 * B * L * d`flotan por capa.
 
-Para`d=8192, L=8192, B=1`, es 800 MB / capa en BF16. Un modelo de 64 capas es 51 GB de activaciones  y eso es antes de que se multiplica por el tamaño del microbatch, antes de que se añade la atención-softmax intermedios (`L^2`y antes de que se factoren las copias parciales tensor-paralelo.
+Para`d=8192, L=8192, B=1`, es aproximadamente 805M valores, o 1.6 GB / capa en BF16. un modelo de 64 capas es aproximadamente 103 GB de activaciones, y eso es antes de que se multiplica por el tamaño del microbatch, antes de que se añade la atención-softmax intermedios (`L^2`y antes de que se factoren las copias parciales tensor-paralelo.
 
 El proyecto de ley de dos caras: los pesos BF16 más el estado de optimización pueden caber en 80 GB, pero las activaciones te empujan más allá. El punto de control gradual (también conocido como recomputo de activación) es la solución estándar. Deja caer la mayoría de las activaciones; vuelve a avanzar durante el retroceso para recuperarlas. Costo: FLOPs adicionales. Beneficio: caídas de memoria por la proporción de los segmentos de los puntos de control a las capas totales.
 
