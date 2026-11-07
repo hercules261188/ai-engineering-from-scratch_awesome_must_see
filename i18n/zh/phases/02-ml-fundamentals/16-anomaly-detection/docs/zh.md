@@ -267,6 +267,14 @@ def iqr_detect(X, factor=1.5):
 从零开始实现建立了隔离树,这些树随机分区特征空间:
 
 ```python
+def _c_factor(n):
+    if n <= 1:
+        return 0.0
+    if n == 2:
+        return 1.0
+    return 2.0 * (np.log(n - 1) + 0.5772156649) - 2.0 * (n - 1.0) / n
+
+
 class IsolationTree:
     def __init__(self, max_depth):
         self.max_depth = max_depth
@@ -290,6 +298,13 @@ class IsolationTree:
         self.left = IsolationTree(self.max_depth).fit(X[left_mask], depth + 1)
         self.right = IsolationTree(self.max_depth).fit(X[~left_mask], depth + 1)
         return self
+
+    def path_length(self, x, depth=0):
+        if self.is_leaf:
+            return depth + _c_factor(self.size)
+        if x[self.feature] < self.threshold:
+            return self.left.path_length(x, depth + 1)
+        return self.right.path_length(x, depth + 1)
 ```
 
 距离一个点的路径长度决定了其异常分数.
@@ -301,8 +316,14 @@ class IsolationForest:
     def __init__(self, n_estimators=100, max_samples=256, seed=42):
         self.n_estimators = n_estimators
         self.max_samples = max_samples
+        self.seed = seed
+        self.trees = []
+        self.n_train = 0
 
     def fit(self, X):
+        self.n_train = X.shape[0]
+        rng = np.random.RandomState(self.seed)
+        self.trees = []
         sample_size = min(self.max_samples, X.shape[0])
         max_depth = int(np.ceil(np.log2(sample_size)))
         for _ in range(self.n_estimators):
@@ -310,14 +331,19 @@ class IsolationForest:
             tree = IsolationTree(max_depth=max_depth)
             tree.fit(X[idx])
             self.trees.append(tree)
+        return self
 
     def anomaly_score(self, X):
-        avg_path = average path length across all trees
-        scores = 2.0 ** (-avg_path / c(max_samples))
-        return scores
+        avg_path = np.zeros(X.shape[0])
+        for tree in self.trees:
+            for i in range(X.shape[0]):
+                avg_path[i] += tree.path_length(X[i])
+        avg_path /= self.n_estimators
+        c = _c_factor(min(self.max_samples, self.n_train))
+        return 2.0 ** (-avg_path / c) if c > 0 else np.zeros(X.shape[0])
 ```
 
-正常化因素`c(n)`是一个二进制搜索树中未能成功的预期路径长度$n$它们是等于`2 * H(n-1) - 2*(n-1)/n`在哪里`H`这种正常化确保不同尺寸的数据集中得分可比较.
+正常化因素`c(n)`(`_c_factor`在代码中) 是一个二进制搜索树中未能成功的预期路径长度$n$它们是等于`2 * H(n-1) - 2*(n-1)/n`在哪里`H`编码使用标准近似方法`H(i) ≈ ln(i) + 0.5772`根据"森林隔离"的原始论文,这种正常化确保数据集的分数可相比.
 
 ### 演示场景
 

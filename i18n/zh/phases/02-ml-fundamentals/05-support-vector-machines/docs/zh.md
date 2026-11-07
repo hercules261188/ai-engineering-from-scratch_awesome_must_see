@@ -340,7 +340,7 @@ print(f"Support vectors: {clf['svm'].n_support_}")
 
 重要:在训练SVM之前,总是扩展您的特性.SVM对特征大小敏感,因为边缘取决于$\lVert w \rVert$没有扩展的特征扭曲了几何学.
 
-对于大型数据集,使用`LinearSVC`(原始表达式,$O(n)$时间的时间`SVC`(双重表达,$O(n^2)$为了$O(n^3){}$):
+对于大型数据集,使用`LinearSVC`(原始表达式,$O(n \cdot d)$按时代,线性在$n$) 而不是`SVC`(双重表达,$O(n^2)$为了$O(n^3){}$):
 
 ```python
 from sklearn.svm import LinearSVC

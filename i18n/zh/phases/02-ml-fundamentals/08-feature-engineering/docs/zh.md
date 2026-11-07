@@ -82,7 +82,7 @@ flowchart LR
 实际数据有漏洞.
 
 - **Drop rows:**只有缺失数据是罕见的,随机的
-- **Mean/median imputation:**简单,保持分布形状 (中位数更坚固到异常)
+- **Mean/median imputation:**简单,保持特征的中心 (中值更强到异常值),但缩小其变量,并将每个填充值堆积在一个尖上,因此分布形状变化
 - **Mode imputation:**对于类别特征
 - **Indicator column:**在计算之前添加一个二进制列"was_this_missing".数据缺失的事实本身可以是信息性的
 - **Forward/backward fill:**时间序列数据
