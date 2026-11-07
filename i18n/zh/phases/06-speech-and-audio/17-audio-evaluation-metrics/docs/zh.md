@@ -45,7 +45,7 @@
 
 **SECS (Speaker Encoder Cosine Similarity).**对于语音克隆.ECAPA 嵌入引用和克隆输出之间的共数. &gt; 0.75 =可识别的克隆.
 
-**WER-on-ASR-round-trip.**运行Whisper在TTS输出上,计算WER与输入文本.捕获可理解性回归. 2026 SOTA: &lt;2% CER.
+**WER-on-ASR-round-trip.**运行Whisper在TTS输出上,计算WER与输入文本相比.捕获可理解性回归. 2026 SOTA:在英语测试组上&lt;2%WER (而不是曼德林组报告 CER).
 
 **TTFA (time-to-first-audio).**长时间: 长时间: 短时间: 短时间: 短时间:
 
@@ -79,7 +79,7 @@
 
 **CLAP Score.**通过CLAP嵌入式的文字音频配列分数.
 
-**Listening panel MOS.**对于消费者级音乐,Suno v5 ELO 1293在TTS Arena (来自人类对配的偏好).
+**Listening panel MOS.**苏诺 V5 在苏诺自己的双重偏好基准上获得了ELO 1293分.这是一个供应商号码;TTS Arena排名了语音,而不是音乐.
 
 ### 音频语言基准指标
 
