@@ -203,8 +203,10 @@ def encode(box_xyxy, cell_x, cell_y, stride, anchor_wh):
     cy = 0.5 * (y1 + y2)
     w = x2 - x1
     h = y2 - y1
-    tx = cx / stride - cell_x
-    ty = cy / stride - cell_y
+    off_x = np.clip(cx / stride - cell_x, 1e-6, 1 - 1e-6)
+    off_y = np.clip(cy / stride - cell_y, 1e-6, 1 - 1e-6)
+    tx = np.log(off_x / (1 - off_x))
+    ty = np.log(off_y / (1 - off_y))
     tw = np.log(w / anchor_wh[0] + 1e-8)
     th = np.log(h / anchor_wh[1] + 1e-8)
     return np.array([tx, ty, tw, th])
@@ -223,7 +225,7 @@ def sigmoid(x):
     return 1.0 / (1.0 + np.exp(-x))
 ```
 
-Teste: codificar uma caixa e depois decodificar  você deve voltar a algo muito próximo do original (até o sigmoide inverso não ser perfeitamente invertível quando `tx`não está na faixa pós- sigmoide).
+Teste: codifique uma caixa cujo centro está estritamente dentro da célula, decodifique, e deve recuperar a caixa original para o erro de flutuação. `encode`armazenar o centro de compensação como logit, o inverso do `sigmoid`em `decode`O clip mantém a lógica finita; um centro exatamente na borda de uma célula se move no máximo `1e-6`Células.`assign_targets`abaixo armazena os mesmos logits, então a cabeça trens no espaço que `decode`- Espera.
 
 ### Passo 4: Uma cabeça YOLO mínima
 
@@ -273,8 +275,10 @@ def assign_targets(boxes_xyxy, classes, anchors, stride, grid_size, num_classes)
         best = int(np.argmax(ious))
         aw, ah = anchors[best]
 
-        target[gy, gx, best, 0] = cx / stride - gx
-        target[gy, gx, best, 1] = cy / stride - gy
+        off_x = np.clip(cx / stride - gx, 1e-6, 1 - 1e-6)
+        off_y = np.clip(cy / stride - gy, 1e-6, 1 - 1e-6)
+        target[gy, gx, best, 0] = np.log(off_x / (1 - off_x))
+        target[gy, gx, best, 1] = np.log(off_y / (1 - off_y))
         target[gy, gx, best, 2] = np.log(bw / aw + 1e-8)
         target[gy, gx, best, 3] = np.log(bh / ah + 1e-8)
         target[gy, gx, best, 4] = 1.0
@@ -319,7 +323,7 @@ def yolo_loss(pred, target, has_obj, lambda_coord=5.0, lambda_obj=1.0, lambda_no
                    "obj_neg": loss_obj_neg.item(), "cls": loss_cls.item()}
 ```
 
-Cinco hiperparâmetros que cada tutorial do YOLO codifica ou varre.`lambda_coord=5, lambda_noobj=0.5`O papel original do YOLOv1 e ainda funciona como um padrão razoável.
+Quatro pesos de perda que cada tutorial do YOLO codifica ou varre.`lambda_coord=5, lambda_noobj=0.5`O papel original do YOLOv1 e ainda funciona como um padrão razoável.
 
 ### Passo 7: Linha de inferência
 

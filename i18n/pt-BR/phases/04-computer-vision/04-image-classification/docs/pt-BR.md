@@ -100,7 +100,7 @@ Por que ajuda: o modelo deixa de memorizar alvos picantes e aprende a interpolar
 
 ### Limeamento de rótulos
 
-Um primo de confusão, em vez de treinar contra o`[0, 0, 1, 0, 0]`, treno contra`[eps/C, eps/C, 1-eps, eps/C, eps/C]`Para um pequeno .`eps`O modelo não produz logites arbitrariamente afiados e melhora a calibração quase sem custo.`nn.CrossEntropyLoss(label_smoothing=0.1)`desde a PyTorch 1.10.
+Um primo de confusão, em vez de treinar contra o`[0, 0, 1, 0, 0]`, treno contra`[eps/C, eps/C, 1-eps+eps/C, eps/C, eps/C]`Para um pequeno .`eps`O modelo não produz logites arbitrariamente afiados e melhora a calibração sem quase nenhum custo.`nn.CrossEntropyLoss(label_smoothing=0.1)`desde a PyTorch 1.10.
 
 ### Avaliação além da precisão
 
@@ -415,7 +415,7 @@ Esta lição produz:
 | DataLoader | "The batcher" | Wraps a dataset with shuffling, batching, and (optional) multi-worker loading; gets blamed for half of training bugs |
 | Augmentation | "Random transforms" | Any pixel-level transform at training time that preserves the label; teaches invariances the CNN does not have natively |
 | Mixup / Cutmix | "Mix two images" | Blend both inputs and labels so the classifier learns smooth interpolations instead of hard boundaries |
-| Label smoothing | "Softer targets" | Replace one-hot with (1-eps, eps/(C-1), ...); improves calibration and slightly boosts accuracy |
+| Label smoothing | "Softer targets" | Replace one-hot with (1-eps+eps/C, eps/C, ...); improves calibration and slightly boosts accuracy |
 | Top-k accuracy | "Top-5" | The correct class is in the k highest-probability predictions; used on datasets with genuinely ambiguous classes |
 | Confusion matrix | "Where errors live" | C x C table where entry (i, j) counts images of true class i predicted as j; diagonal is right, off-diagonal tells you what to fix |
 
