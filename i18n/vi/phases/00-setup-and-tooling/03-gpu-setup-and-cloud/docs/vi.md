@@ -55,7 +55,13 @@ Hãy kiểm tra xem có có gì không.
 nvidia-smi
 ```
 
-Lắp đặt PyTorch với CUDA:
+cài đặt PyTorch với CUDA. trên Linux bánh xe mặc định sẽ được chuyển với CUDA. trên Windows, sao chép lệnh CUDA từ bộ chọn ở pytorch.org.
+
+```bash
+pip install torch torchvision torchaudio
+```
+
+Sau đó kiểm tra xem PyTorch có thấy GPU không:
 
 ```python
 import torch

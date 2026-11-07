@@ -97,7 +97,7 @@ python train.py > output.log 2> errors.log
 python train.py > train_full.log 2>&1
 ```
 
-Ba chuyển hướng bạn cần:
+Bốn đường chuyển hướng và ống dẫn bạn cần:
 
 | Symbol | What it does |
 |--------|-------------|

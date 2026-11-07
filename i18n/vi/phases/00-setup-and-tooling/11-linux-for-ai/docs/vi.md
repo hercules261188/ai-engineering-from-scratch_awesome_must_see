@@ -39,7 +39,7 @@ Thư mục nhà của anh là`~`hoặc `/home/your-username`Hầu như mọi th�
 
 ## Những điều răn quan trọng
 
-Đây là 15 lệnh bao gồm 95% những gì bạn sẽ làm trên một hộp GPU từ xa.
+Đây là 13 lệnh bao gồm hầu hết những gì bạn sẽ làm trên một hộp GPU từ xa.
 
 ### Di chuyển xung quanh
 
