@@ -16,7 +16,7 @@
 
 ## Vấn đề
 
-Bài học 17 là phương pháp đo lường. Bài học 30 là trạng thái đo lường năm 2026. Hình ảnh đã thay đổi đáng kể giữa năm 2024 và cuối năm 2025: mỗi lĩnh vực đã vượt qua ngưỡng mà các khung 2024 không dự đoán.
+Bài học 17 là phương pháp đo lường. Bài học 30 là trạng thái đo lường năm 2026. Hình ảnh đã thay đổi đáng kể giữa năm 2024 và cuối năm 2025: ba trong bốn lĩnh vực đã vượt qua ngưỡng mà các khung 2024 không dự đoán.
 
 ## Khái niệm
 
@@ -47,6 +47,8 @@ Những tác động:
 - Mã hóa đại lý là nguyên thủy tự động tấn công. trợ giúp mạng AI trước đó được giới hạn ở mức đoạn mã; dòng công việc đại lý tích hợp công nhận, khai thác, hậu khai thác và giải phóng.
 - Dấu hiệu là 4-6 bước của con người; tăng khả năng trong tương lai sẽ làm giảm số lượng đó.
 - Sử dụng hai lần phòng thủ: Phi công "luồng truy cập đáng tin cậy" của OpenAI cung cấp cho các tổ chức an ninh được kiểm tra (các công ty phản ứng tình huống đã thành lập, chính phủ) quyền truy cập khả năng cho phòng thủ.
+
+Mặt phòng thủ của công việc này bắt đầu bằng việc đọc mã biên soạn mà bạn được phép phân tích.[Lesson 13.32](../../../13-tools-and-protocols/32-program-anatomy-elf-from-scratch/docs/en.md), phá vỡ trong [Lesson 13.33](../../../13-tools-and-protocols/33-disassembly-and-control-flow/docs/en.md), nâng lên mã giả trong [Lesson 13.34](../../../13-tools-and-protocols/34-lifting-to-pseudocode/docs/en.md), và một sổ cái bằng chứng giữ các sự kiện quan sát được tách biệt với những người suy luận trong[Lesson 13.35](../../../13-tools-and-protocols/35-evidence-confidence-and-unknowns/docs/en.md)- [Inside a Decompiler](https://aiengineeringfromscratch.com/inside-a-decompiler)máy cho thấy toàn bộ đường ống trên một chức năng. một đại lý làm công việc này cần cùng một sổ cái, bởi vì một phân tích tự tin vẫn có thể dựa trên một đoán.
 
 ### Tiêu vũ hạt nhân
 

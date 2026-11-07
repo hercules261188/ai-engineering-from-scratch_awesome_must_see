@@ -53,7 +53,7 @@ Có thể sai gì?
 
 - Sự chênh lệch phần thưởng ngầm `beta * (log(pi/pi_ref)_w - log(pi/pi_ref)_l)`Một sự ưu tiên nhỏ có thể tạo ra một khoảng cách lớn tùy tiện.
 - Các ổ đĩa mất chọn và từ chối log-prob trong các hướng đối lập. nó có thể đẩy được chọn log-prob tuyệt đối xuống miễn là bị từ chối rơi nhanh hơn.
-- Tích thích ngoài phân phối (cặp hiếm hiếm so với cặp hiếm hiếm) tạo ra những phần thưởng ngầm tùy ý.
+- Các ưu tiên không phân phối (cặp đôi khi cả hai câu trả lời đều hiếm trong chính sách tham chiếu) tạo ra những phần thưởng ngầm tùy ý.
 
 ### IPO (Azar et al., 2024)
 

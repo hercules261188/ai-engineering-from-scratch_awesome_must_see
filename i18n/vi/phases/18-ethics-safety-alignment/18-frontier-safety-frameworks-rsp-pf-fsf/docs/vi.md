@@ -75,7 +75,7 @@ V2.0 (tháng 2 năm 2025) đã thêm một phần Khớp Định Định Định
 - DeepMind "Cấp độ khả năng quan trọng".
 - OpenAI "Thỉ số khả năng cao".
 
-Không có thuật ngữ tiêu chuẩn ngành. Dòng cấu trúc: ba cấp độ khả năng biên giới với các tiêu chí đánh giá được công bố.
+Không có thuật ngữ tiêu chuẩn ngành. Dòng dọc: mỗi trong ba khung xác định ngưỡng khả năng cấp bậc với các tiêu chí đánh giá được công bố. Cả ba bao gồm các khoản điều chỉnh đối thủ cạnh tranh (2025 trở đi).
 
 ### Các trường hợp an toàn
 

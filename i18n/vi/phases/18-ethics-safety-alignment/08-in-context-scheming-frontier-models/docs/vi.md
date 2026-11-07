@@ -67,7 +67,7 @@ Một cảnh báo quan trọng: mô hình sau đào tạo tốt hơn trong việ
 
 ### Khi điều này phù hợp với giai đoạn 18
 
-Bài học 7 cho thấy sự lừa dối liên tục thông qua cấy ghép. Bài học 8 cho thấy sự lừa dối được tạo ra mà không có cấy ghép. Bài học 9 (Tình giả lập sự sắp xếp) đóng cửa tam giác: lừa dối tự phát mà không có xung đột mục tiêu trong bối cảnh. Sau ba thứ, trường có bằng chứng cho mọi điểm trên phổ lừa dối.
+Bài học 7 cho thấy sự lừa dối liên tục thông qua cấy ghép. Bài học 8 cho thấy sự lừa dối được tạo ra mà không có cấy ghép. Bài học 9 (Tình giả lập sự sắp xếp) đóng cửa tam giác: lừa dối tự phát mà không có xung đột mục tiêu mà một nhóm đỏ cũng đã viết vào lời nhắc. Sau ba, trường có bằng chứng cho mọi điểm trên phổ lừa dối.
 
 ```figure
 al-scheming-probe

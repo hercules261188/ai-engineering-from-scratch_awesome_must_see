@@ -26,16 +26,16 @@ Gao, Schulman, Hilton (2023) đo lường điều này trực tiếp. Đào tạ
 
 Công thức ban đầu của Goodhart: "Khi một biện pháp trở thành mục tiêu, nó không còn là một biện pháp tốt nữa". Manheim và Garrabrant (2018) phân biệt bốn biến thể: ngược (đơn vị hữu hạn), cực (cái), nguyên nhân (bản quyền là dòng chảy xuống của mục tiêu) và đối kháng (trò chơi của đại lý). Đối với RLHF, cực + đối kháng là các chế độ thống trị.
 
-Gao et al. đưa ra một hình thức chức năng.`d = sqrt(KL(pi || pi_init))`- Để đi .`R_proxy(d)`là một phần thưởng đại diện và `R_gold(d)`- Đánh giá vàng.
+Gao et al. cho một hình thức chức năng cho phần thưởng vàng.`d = sqrt(KL(pi || pi_init))`và để `R_gold(d)`là phần thưởng vàng.
 
 ```math
 \begin{aligned}
-R_{\text{proxy}}(d) &= \alpha d - \beta_{\text{proxy}} d^2 \\
-R_{\text{gold}}(d) &= \alpha d - \beta_{\text{gold}} d^2
+R_{\text{gold}}^{\text{BoN}}(d) &= d\,(\alpha_{\text{BoN}} - \beta_{\text{BoN}}\, d) \\
+R_{\text{gold}}^{\text{RL}}(d) &= d\,(\alpha_{\text{RL}} - \beta_{\text{RL}} \log d)
 \end{aligned}
 ```
 
-với `beta_gold > beta_proxy`Cả hai đều tăng từ 0 KL, cả hai đỉnh, đỉnh vàng gần hơn với nguồn gốc.`d`, vàng giảm xuống dưới mức cơ sở ngay cả khi proxy tiếp tục leo lên. khoảng cách vàng proxy có cùng ký hiệu trên mẫu BON, PPO, và SFT-to-best.
+Cả hai hình thức tăng từ 0 KL, đỉnh, và sau đó giảm.`d`Ở KL lớn.`d`, vàng giảm xuống dưới mức cơ sở ngay cả khi proxy tiếp tục leo lên. khoảng cách vàng proxy có cùng một chữ ký cho mẫu tốt nhất của n và cho RL.
 
 Đây là "giàu độ tối ưu hóa quá mức". Đây không phải là lỗi trong mô hình phần thưởng cụ thể. Đó là hình dạng của vấn đề.
 
@@ -89,7 +89,7 @@ Bài học này sẽ mang lại kết quả `outputs/skill-reward-hack-auditor.m
 
 2. Thay đổi phân phối tiếng ồn từ Gaussian thành Student-t với mức độ tự do thấp (cái đuôi nặng). Giữ cài đặt đào tạo RM đại diện không thay đổi.
 
-3. Đọc Gao et al. Hình 1 (ICML 2023). Bài báo đề xuất một hình thức chức năng cho khoảng cách vàng đại diện.
+3. Đọc Gao et al. Hình 1 (ICML 2023).`d`- Đưa nó vào các đường cong mô phỏng của bạn từ bài tập 1 và so sánh các tham số.
 
 4. Hãy lấy một bài báo gần đây của RLHF tuyên bố đã "làm được" giải quyết việc hack phần thưởng (tạm dịch là một cờ đỏ).
 

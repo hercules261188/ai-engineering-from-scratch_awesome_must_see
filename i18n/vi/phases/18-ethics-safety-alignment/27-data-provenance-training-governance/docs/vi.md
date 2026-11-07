@@ -48,7 +48,7 @@ DPC Ireland (21 tháng 5 năm 2025): Kế hoạch đào tạo của Meta về n�
 
 Nguyên tắc hội tụ: lợi ích hợp pháp có thể biện minh cho việc đào tạo về nội dung bên đầu tiên có sẵn cho công chúng với sự từ chối.
 
-### ANPD Brazil (tháng 6 năm 2024)
+### ANPD Brazil (tháng 7 năm 2024)
 
 Việc xử lý dữ liệu người dùng Brazil của Meta được đình chỉ vì sự minh bạch thông tin không đủ. Kết quả khác với các DPA của EU  ANPD ưu tiên tính minh bạch hơn sự chấp nhận lợi ích hợp pháp.
 

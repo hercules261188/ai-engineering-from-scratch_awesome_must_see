@@ -12,7 +12,7 @@
 - Định nghĩa thiệt hại đại diện đối với phân bổ và đưa ra một ví dụ về mỗi trong việc triển khai LLM.
 - Hãy nêu tên ba loại đánh giá-métric từ Gallegos et al. 2024 và mô tả một métric từ mỗi loại.
 - Mô tả tính liên kết và lý do tại sao phép đo công bằng dựa trên sự không chắc chắn của WinoIdentity giải quyết các khoảng trống trong đánh giá thiên vị một trục.
-- Mô tả hai cách tiếp cận cơ học-sự giải thích về thiên vị (nơ ron giới tính, đặc điểm SAE, thao tác đầu chú ý).
+- Mô tả ba cách tiếp cận cơ học-sự giải thích về thiên vị (nơ ron giới tính, đặc điểm SAE, thao tác đầu chú ý).
 
 ## Vấn đề
 
