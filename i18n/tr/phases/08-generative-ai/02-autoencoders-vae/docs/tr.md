@@ -99,7 +99,7 @@ Bu, üreticik model. Beş satır.
 - **Posterior collapse.**KL term sürücüleri $q(z \mid x) \to \mathcal{N}(0, I)$O kadar agresif ki$z$hakkında hiçbir bilgi taşımaz.$x$. Düzeltme: β- annulleri (başlamak $\beta=0$, rampa 1)), boş bitler veya KL'yi aktif olmayan boyutlarda atlayın.
 - **Blurry samples.**Gaussian dekodör olasılığı, L2 için Bayes-optimal olan MSE yeniden yapılandırmasını içerir (ortalama)  bir dizi makul rakamın ortalaması bulanık bir rakamdır. Düzelt: ayrı dekodör (VQ-VAE, NVAE), veya VAE'yi yalnızca bir kodlayıcı ve yataklarda yığın yayılması olarak kullanın (Stable Diffusion yapar).
 - **β too large, too early.**Arka çöküşü gör.$\beta \approx 0.01$ve ramp.
-- **Latent dim too small.**16-D, MNIST için, 256-D, ImageNet 2562, 2048-D için ImageNet 10242 için çalışır.
+- **Latent dim too small.**16-D, MNIST için, 256-D, ImageNet 2562, 2048-D için ImageNet 10242 için çalışır. Stable Diffusion'ın VAE'si 512×512×3 → 64×64×4'i (bir tarafta aşağı örnek, boşluk alanında 64x; kanallar 3'ten 4'e gidiyor, bu nedenle toplamda yaklaşık 48x daha az değer).
 
 ## Kullan
 

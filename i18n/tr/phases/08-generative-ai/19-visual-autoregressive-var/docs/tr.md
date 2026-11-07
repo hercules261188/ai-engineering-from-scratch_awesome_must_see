@@ -50,7 +50,7 @@ Giriş sırası yapısı:
 [START, z_1 tokens, z_2 tokens, z_3 tokens, ..., z_K tokens]
 ```
 
-Konum yerleşimleri, ölçek indeksi ve ölçek içindeki uzay konumunu hem kodlar. Dikkat ölçek sırasındaki nedenseldir: ölçekteki token $k$, pozisyon$(i, j)$Tüm tokenlere bakmak için ölçekler .$1 \ldots k$ve ölçekli tokenlere .$k$VAR, ölçek içi bir sırada daha önce gelen (VAR, ölçek içi bir nedensizlik olmadan sabit konum dikkatini kullanır  bir ölçek içindeki tüm konumlar paralel olarak öngörülür).
+Konum yerleşimleri, ölçek indeksi ve ölçek içindeki uzay konumunu hem kodlar. Dikkat ölçek sırası ve ölçek içindeki blok açısından nedençi: ölçekteki token $k$, pozisyon$(i, j)$Tüm tokenlere bakmak için ölçekler .$1 \ldots k$, her ölçek pozisyonunu da dahil eder .$k$Bir ölçek içi düzen ve ölçek içi sebepsizlik yoktur, bu yüzden bir ölçek içindeki tüm pozisyonlar paralel olarak tahmin edilir.
 
 Eğitim kaybı: her ölçekte $k$, simgelerinin tahminini yap .$z_k$GPT'nin diğer tüm yapıları, "sequence" hariç, artık ölçekli yapılandırılmıştır.
 

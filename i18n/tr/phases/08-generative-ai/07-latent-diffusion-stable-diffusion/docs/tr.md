@@ -49,7 +49,7 @@ noise-schedule
 
 ## Yapın
 
-`code/main.py`Ders 06'dan DDPM'nin üstüne bir oyuncak 1-D "VAE" (tıpkı gösterim için kimlik kodlayıcı + dekoder; gerçek bir VAE bir konfor ağı olurdu) yığar ve sınıflandırıcı-sağ rehberliği ile sınıf koşullandırmasını ekler.
+`code/main.py`Öğrenci 06-dan DDPM'nin üstüne bir oyuncak 1-D "VAE" (sıkı bir ölçekle 0.5 kodlayıcı ve tam tersine dekodör olarak gösterim için; gerçek bir VAE bir konfor ağı olurdu) yığar ve sınıflandırıcı-sağ rehberliği ile sınıf koşullandırmasını ekler.
 
 ### Adım 1: Kodlayıcı/Kodlayıcı
 
@@ -132,7 +132,7 @@ Bu, sınıf koşullı bir difüzyon modeli ile sabit difüzyon arasındaki tek �
 
 Referans Flux entegrasyonu kanonik "Benim tüketici bir GPU var, bunu gönderebilir miyim?" tarifi.
 
-1. **Staggered loading.**Flux'in VRAM'da birlikte yaşamaya ihtiyacı olmayan üç ağı vardır: T5-XXL metin kodleyicisi (fp32'de ~ 10 GB), CLIP-L (küçük), 12B MMDiT ve VAE. Önce istekle kodlayın, * kodlayıcıları silin, DiT'yi yükleyin, denoise, * delete* DiT'yi yükleyin, VAE'yi yükleyin, dekode edin.
+1. **Staggered loading.**Flux, VRAM'da birlikte yaşamaya gerekmeyen dört ağ vardır: T5-XXL metin kodleyicisi (fp32'de ~ 10 GB), CLIP-L (küçük), 12B MMDiT ve VAE. Önce istekle kodlayın, * kodlayıcıları silin, DiT yükleyin, denoise, * delete* DiT, VAE yükleyin, dekode edin.
 2. **4-bit quantization via bitsandbytes.** `BitsAndBytesConfig(load_in_4bit=True, bnb_4bit_compute_dtype=torch.bfloat16)`T5 kodlayıcı ve DiT'de. 8× hafıza keser, Aritra'nın referans değerleri (notbukta bağlantılı) için metin-resim oranında kalitede düşüş algılanamaz.
 3. **CPU offload.** `pipe.enable_model_cpu_offload()`CPU ve GPU arasında otomatik olarak modül değiştirir. Her ileri geçiş ilerlerken, %10-20 gecikme artırır.
 
