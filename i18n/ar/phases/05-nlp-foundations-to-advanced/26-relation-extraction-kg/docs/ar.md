@@ -67,21 +67,21 @@ PATTERNS = [
 
 انظر`code/main.py`أنماط (هيرست) لا تزال تسير في خطوط الأنابيب الخاصة بالمنطقة لأنها قابلة للتحليل
 
-### الخطوة الثانية: تصنيف العلاقة المراقبة
+### الخطوة الثانية: استخراج العلاقة التالية
 
 ```python
-from transformers import AutoTokenizer, AutoModelForSequenceClassification
+from transformers import AutoTokenizer, AutoModelForSeq2SeqLM
 
 tok = AutoTokenizer.from_pretrained("Babelscape/rebel-large")
-model = AutoModelForSequenceClassification.from_pretrained("Babelscape/rebel-large")
+model = AutoModelForSeq2SeqLM.from_pretrained("Babelscape/rebel-large")
 
 text = "Tim Cook was born in Alabama. He later became CEO of Apple."
 encoded = tok(text, return_tensors="pt", truncation=True)
 output = model.generate(**encoded, max_length=200)
-triples = tok.batch_decode(output, skip_special_tokens=False)
+decoded = tok.batch_decode(output, skip_special_tokens=False)
 ```
 
-REBEL هو إستخراج العلاقة التالية: النص في، ثلاث مرات خارج، بالفعل في ويكيديتا هويات الممتلكات. محسنة على بيانات الإشراف عن بعد. القاعدة القياسية للوزن المفتوح.
+REBEL هو مستخرج علاقة seq2seq القائم على BART: فإنه يولد ثلاثي بدلاً من تصنيف أزواج الكيانات. النص في، ثلاثي خارج، مع أسماء العلاقة التي تم أخذها من خصائص ويكيديتا. السلاسل المفكورة لا تزال تحمل REBEL `<triplet>`،`<subj>`و`<obj>`علامات، حتى تقسيم على (كما يفعل محلل بطاقة النموذج) للحصول على `(subject, relation, object)`سجلات، تحسّن على بيانات الإشراف عن بعد، نقطة أساسية مع الوزن المفتوح
 
 ### الخطوة الثالثة: استخراج معتمد بالدرجة الأولى مع الركاب
 
