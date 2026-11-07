@@ -53,7 +53,7 @@ Qwen2-VL ने फिक्स्ड-रिज़ॉल्यूशन + Q-Form
 
 Qwen2.5VL का बड़ा बदलाव वीडियो था। गतिशील FPS सिर्फ "आवश्यकता पर अधिक फ्रेम का नमूना" नहीं है।
 
-- पूर्ण समय टोकन. स्थिति सूचकांक (चौरस 0, 1, 2...) के बजाय, वास्तविक समय टिकट का उपयोग करें. "0:04, बिल्ली कूदता है।" मॉडल देखता है`<time>0.04</time>`फ्रेम टोकन के साथ इंटरलेव किए गए टोकन।
+- स्थिति आईडी में पूर्ण समय। फ्रेम सूचकांक (फ्रेम 0, 1, 2...) के बजाय, एम-रोपी की समय अक्ष वास्तविक समय टिकटों का अनुसरण करती है, इसलिए दो फ्रेम आईडी के बीच का अंतर उनके बीच के सेकंडों को ट्रैक करता है। "0:04 पर, बिल्ली कूदती है।" कोई अतिरिक्त पाठ टोकन समय नहीं ले जाते हैं, इसलिए एन्कोडिंग अनुक्रम की लंबाई नहीं जोड़ता है।
 - गतिशील एफपीएस. धीमी फुटेज के लिए 1 एफपीएस पर नमूना, कार्रवाई के लिए 4+ एफपीएस। उपयोगकर्ता या प्रशिक्षक चुनते हैं; एम-रोपीई अनुकूलित होता है।
 - विंटा ध्यान ViT में खिड़की ध्यान खिड़की (स्थानिक ब्लॉक के भीतर) के लिए पारगमन के लिए; वैश्विक ध्यान हर कुछ परतों में।
 - स्पष्ट JSON आउटपुट प्रारूप। उपकरण-कॉल डेटा पर प्रशिक्षितः "{\"उपकरण\": \"क्लिक\", \"कोर्ड्स\": [380, 220]}". एजेंट-तैयार बॉक्स से बाहर।
@@ -92,7 +92,7 @@ M-RoPE छिपे हुए dim को तीन बैंड में वि
 1. अधिकतम FPS की गणना करें जो आप अपने लिए कर सकते हैंः `fps_max = B / (T * tokens_per_frame)`. .
 2.  से एक लक्ष्य FPS चुनें`{1, 2, 4, 8}`जो संतुष्ट करता है `fps <= fps_max`. .
 3. यदि गति उच्च है (ऑप्टिकल-फ्लो हेउरिस्टिक या स्पष्ट उपयोगकर्ता अनुरोध), उच्च एफपीएस चुनें। यदि गति कम है, तो कम चुनें।
-4. चयनित एफपीएस पर नमूना समान रूप से; सम्मिलित करें `<time>t</time>`फ्रेम के बीच टोकन।
+4. चयनित एफपीएस पर समान रूप से नमूना; प्रत्येक फ्रेम की M-RoPE समय पहचान को सेकंड में अपने समय टिकट से सेट करें।
 
 Qwen2.5-VL इस तर्क को अप्रत्यक्ष रूप से प्रशिक्षित करता है; निष्कर्ष पर उपयोगकर्ता नियंत्रण के माध्यम से `fps`पैरामीटर. एक 60 सेकंड की कार्रवाई क्रम 4 FPS के साथ 81 टोकन प्रति फ्रेम = 19440 टोकन, 32k संदर्भ में प्रबंधनीय।
 
@@ -147,7 +147,7 @@ mm-mrope-axes
 |------|-----------------|------------------------|
 | M-RoPE | "Multimodal RoPE" | 3D rotary position embedding with temporal, height, and width bands in the hidden dim |
 | Dynamic FPS | "Smart sampling" | Frame sampling rate chosen per video based on motion, duration, and token budget |
-| Absolute time token | "Timestamp token" | `<time>t</time>` interleaved in the sequence so the model sees actual seconds not frame index |
+| Absolute time encoding | "Time-aligned M-RoPE" | Temporal position IDs set from each frame's timestamp, so the model sees actual seconds, not frame index, with no extra tokens |
 | Window attention | "Local attention" | Spatial self-attention restricted to small windows for speed; global attention added periodically |
 | Structured agent output | "JSON mode" | Training data supervision teaching the VLM to emit parseable JSON with coords and tool names |
 | min_pixels / max_pixels | "Resolution bounds" | Per-request Qwen2.5-VL controls bounding total pixel count and therefore token count |

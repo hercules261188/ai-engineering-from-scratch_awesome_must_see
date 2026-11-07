@@ -1,6 +1,6 @@
 # CLIP से BLIP-2 तक  Q-Former Modality Bridge के रूप में
 
-> क्लिप छवि और पाठ को संरेखित करता है, लेकिन उपशीर्षक उत्पन्न नहीं कर सकता है, प्रश्नों का उत्तर नहीं दे सकता है, या बातचीत नहीं कर सकता है। BLIP-2 (Salesforce, 2023) ने एक छोटे से प्रशिक्षित पुल के साथ हल कियाः 32 सीखने योग्य क्वेरी वेक्टर क्रॉस-अटेंशन के माध्यम से जमे हुए ViT की विशेषताओं पर ध्यान देते हैं, फिर सीधे जमे हुए LLM के इनपुट स्ट्रीम में स्लॉट करते हैं। 188 मिलियन पुल पैरामीटर एक 11B LLM को एक ViT-g/14 से जोड़ते हैं। 2026 तक हर एडाप्टर आधारित वीएलएम  मिनीजीपीटी-4, इंस्ट्रक्टब्लिप, एलएवीए के चचेरे भाई  एक वंशज है। यह पाठ Q-Former की वास्तुकला पढ़ता है, इसके दो चरणों के प्रशिक्षण की व्याख्या करता है, और एक खिलौना संस्करण बनाता है जो एक जमे हुए पाठ डिकोडर में दृश्य टोकन को खिलाता है।
+> क्लिप छवि और पाठ को संरेखित करता है, लेकिन उपशीर्षक उत्पन्न नहीं कर सकता है, प्रश्नों का उत्तर नहीं दे सकता है, या बातचीत नहीं कर सकता है। BLIP-2 (Salesforce, 2023) ने एक छोटे से प्रशिक्षित पुल के साथ हल कियाः 32 सीखने योग्य क्वेरी वेक्टर क्रॉस-अटेंशन के माध्यम से जमे हुए ViT की विशेषताओं पर ध्यान देते हैं, फिर सीधे जमे हुए LLM के इनपुट स्ट्रीम में स्लॉट करते हैं। 188 मिलियन पुल पैरामीटर एक वीटी-जी/14 को 11 बी फ्लेन-टी5-एक्सएक्सएल के रूप में बड़े जमे हुए एलएलएम से जोड़ते हैं। 2026 तक हर एडाप्टर आधारित वीएलएम  मिनीजीपीटी-4, इंस्ट्रक्टब्लिप, एलएवीए के चचेरे भाई  एक वंशज है। यह पाठ Q-Former की वास्तुकला पढ़ता है, इसके दो चरणों के प्रशिक्षण की व्याख्या करता है, और एक खिलौना संस्करण बनाता है जो एक जमे हुए पाठ डिकोडर में दृश्य टोकन को खिलाता है।
 
 **Type:** Build
 **Languages:** Python (stdlib, cross-attention + learnable-query demo)
@@ -117,7 +117,7 @@ modality-projection
 
 4. Q-Former को कैसे आरंभ किया जाता है, इस बारे में BLIP-2 पेपर (arXiv:2301.12597) की धारा 3.2 को पढ़ें। समझाएं कि BERT-बेस से आरंभ करने से (जिसके लिए यह यादृच्छिक नहीं है) अभिसरण को तेज क्यों किया जाता है।
 
-5. 1 एफपीएस पर 10 मिनट के वीडियो के लिए 60 फ्रेम तक नमूने, प्रति फ्रेम टोकन लागत की गणना (क्यू-फॉर्म → 32 टोकन / फ्रेम) बनाम (एमएलपी प्रोजेक्टर → 576 टोकन / फ्रेम) पर करें। जो 128k टोकन एलएलएम संदर्भ विंडो में फिट बैठता है?
+5. 1 एफपीएस पर 10 मिनट के वीडियो के लिए 60 फ्रेम तक नमूने, प्रति फ्रेम टोकन लागत की गणना (क्यू-फॉर्म → 32 टोकन / फ्रेम) बनाम (एमएलपी प्रोजेक्टर → 576 टोकन / फ्रेम) पर करें। शीघ्र पाठ को कोई जगह मिलने से पहले प्रत्येक पुल 128k टोकन एलएलएम संदर्भ विंडो में कितने फ्रेम फिट हो सकता है?
 
 ## प्रमुख शर्तें
 
@@ -132,7 +132,7 @@ modality-projection
 | Two-stage pretraining | "Representation then generative" | Stage 1 trains Q-Former alone (ITC/ITM/ITG); Stage 2 attaches frozen LLM and trains only the projection + Q-Former |
 | Frozen backbone | "Do not finetune" | The vision encoder and LLM weights are fixed; only the bridge trains |
 | Projection head | "Linear to LLM dim" | Final linear layer mapping Q-Former output to the LLM's embedding dimension |
-| Perceiver resampler | "Flamingo's version" | Similar learnable-query cross-attention, used by Flamingo at every layer rather than as a single bridge |
+| Perceiver resampler | "Flamingo's version" | Similar learnable-query cross-attention; Flamingo runs it once per image to make fixed latents, then reads them through gated cross-attention at every LLM layer |
 
 ## आगे पढ़ना
 
