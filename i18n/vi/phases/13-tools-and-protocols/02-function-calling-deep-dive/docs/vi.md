@@ -52,12 +52,12 @@ Mỗi nhà cung cấp cần 5 điều:
 | Result block | role `tool`, `tool_call_id` | `user` with `tool_result`, `tool_use_id` | `functionResponse` with matching `id` |
 | Force-a-tool | `tool_choice: {type: "function", function: {name}}` | `tool_choice: {type: "tool", name}` | `tool_config: {function_calling_config: {mode: "ANY"}}` |
 | Forbid tools | `tool_choice: "none"` | `tool_choice: {type: "none"}` | `mode: "NONE"` |
-| Strict schema | `strict: true` | schema-is-schema (always enforced) | `responseSchema` at request level |
+| Strict schema | `strict: true` | `strict: true` per tool (opt-in) | `responseSchema` at request level |
 
 ### Những giới hạn mà bạn thực sự sẽ đạt được
 
 - **OpenAI.**128 công cụ mỗi yêu cầu. Độ sâu sơ đồ 5. Dòng tranh luận <= 8192 byte.`$ref`Không .`oneOf`- Không.`anyOf`- Không.`allOf`với sự chồng chéo, mọi tài sản được liệt kê trong `required`- Tôi không biết.
-- **Anthropic.**64 công cụ mỗi yêu cầu. Độ sâu sơ đồ thực sự không giới hạn nhưng giới hạn thực tế 10. Không có cờ chế độ nghiêm ngặt; sơ đồ là một hợp đồng và mô hình có xu hướng tuân thủ.
+- **Anthropic.**64 công cụ mỗi yêu cầu. Độ sâu của kế hoạch thực sự không giới hạn nhưng giới hạn thực tế 10. Sử dụng công cụ nghiêm ngặt là lựa chọn với `strict: true`Nếu không có nó, kế hoạch là một hợp đồng mà mô hình có xu hướng tuân theo, không phải là một bảo đảm.
 - **Gemini.**64 chức năng mỗi yêu cầu. Các loại Schema là OpenAPI 3.0 (sự khác biệt nhẹ từ JSON Schema 2020-12).
 
 ### `tool_choice`hành vi
@@ -94,7 +94,7 @@ Các lỗi lập luận không hợp lệ cũng trông khác nhau.
 
 - **OpenAI (non-strict).**Phản hồi mô hình `arguments: "{bad json}"`, phân tích JSON của bạn thất bại, bạn tiêm một thông điệp lỗi và gọi lại.
 - **OpenAI (strict).**Việc xác thực xảy ra trong quá trình giải mã; JSON không hợp lệ là không thể nhưng `refusal`có thể xuất hiện.
-- **Anthropic.** `input`có thể chứa các trường bất ngờ; schema là tư vấn.
+- **Anthropic (non-strict).** `input`có thể chứa các trường bất ngờ; sơ đồ là tư vấn.`strict: true`, lấy mẫu được hạn chế theo quy trình.
 - **Gemini.**Khái niệm của OpenAPI 3.0: `enum`trên các trường đối tượng bị bỏ qua lặng lẽ; xác nhận bản thân.
 
 ### Mô hình dịch giả

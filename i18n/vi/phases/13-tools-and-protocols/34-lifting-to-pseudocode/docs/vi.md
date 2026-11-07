@@ -533,6 +533,29 @@ Yêu cầu:
 
 Thành công là nghĩa của`grade``-O0`và `grade``-O1`tạo ra cùng một đầu ra trên lưới, với một `switch`Và không`goto`- Tôi không biết.
 
+## Phòng thí nghiệm được xếp hạng
+
+Năm câu hỏi về các thiết bị của bài học này. Tìm mỗi câu trả lời với mã bạn xây dựng, sau đó viết nó vào `code/lab_answers.json`. Viết số như số hoặc như chuỗi hex như `"0x40"`, và danh sách như danh sách JSON.
+
+1. `t1`: các tham số mà các quy định gọi cho percent_change ở -O1.
+2. `t2`: phi hàm trong dạng SSA tổng tại -O1.
+3. `t3`: bộ phân chia mà magic_divisor tìm thấy cho 0x66666667 với shift 34.
+4. `t4`: câu nói cuối cùng của mã giả định percent_change ở -O1, như một dòng văn bản.
+5. `t5`: loại C được phục hồi của param_1 tổng tại -O1.
+
+Hãy kiểm tra câu trả lời của bạn:
+
+```bash
+cd phases/13-tools-and-protocols/34-lifting-to-pseudocode
+python3 code/lab.py
+```
+
+Người kiểm tra tính toán mỗi giá trị dự kiến từ `code/main.py`trên các thiết bị đã được thực hiện.`PASS`- `FAIL`hoặc `TODO`cho mỗi nhiệm vụ và điểm số, và nó chỉ thoát khỏi 0 khi tất cả năm vượt qua. `python3 code/lab.py my-answers.json`kiểm tra một tập tin khác. `code/tests/test_lab.py`chứng minh rằng người kiểm tra chấp nhận câu trả lời đúng và từ chối câu trả lời sai.
+
+### Xem nó chạy
+
+- [Inside a Decompiler](https://aiengineeringfromscratch.com/inside-a-decompiler?opt=O0)máy chạy bài học này như máy in nâng, pin kiểu, cấu trúc jig và máy in, với IR, SSA và mã giả`code/main.py`- Cụm vân tay.`-O0`đối tượng: ba khe xếp trở thành địa phương và jig đóng cả hai hàm cho nếu / khác.
+
 ## Các tác phẩm
 
 Bài học này sẽ mang lại kết quả `outputs/skill-lifting-to-pseudocode.md`Sử dụng nó để nâng một hàm với một dẫn xuất cho mỗi dòng và để lấp đầy bảng khác biệt với văn bản của một decompiler.

@@ -426,6 +426,29 @@ Yêu cầu:
 
 Thành công là một báo cáo trong đó mỗi câu trích dẫn một ID từ gói và một `unknown`yêu cầu đã biến mất.
 
+## Phòng thí nghiệm được xếp hạng
+
+Năm câu hỏi về các thiết bị của bài học này. Tìm mỗi câu trả lời với mã bạn xây dựng, sau đó viết nó vào `code/lab_answers.json`. Viết số như số hoặc như chuỗi hex như `"0x40"`, và danh sách như danh sách JSON.
+
+1. `t1`: ID bằng chứng mà tính toán_evidence_id cho cho thực-evidence-grade.json.
+2. `t2`: số hạn chế trong hồ sơ điểm.
+3. `t3`: tình trạng liên quan_căn hộ của hồ sơ điểm.
+4. `t4`: sự tin tưởng và thẩm quyền của hồ sơ điểm, như một danh sách hai chuỗi.
+5. `t5`: SHA-256 của đối tượng ghi nhận điểm.
+
+Hãy kiểm tra câu trả lời của bạn:
+
+```bash
+cd phases/13-tools-and-protocols/35-evidence-confidence-and-unknowns
+python3 code/lab.py
+```
+
+Người kiểm tra tính toán mỗi giá trị dự kiến từ `code/main.py`trên các thiết bị đã được thực hiện.`PASS`- `FAIL`hoặc `TODO`cho mỗi nhiệm vụ và điểm số, và nó chỉ thoát khỏi 0 khi tất cả năm vượt qua. `python3 code/lab.py my-answers.json`kiểm tra một tập tin khác. `code/tests/test_lab.py`chứng minh rằng người kiểm tra chấp nhận câu trả lời đúng và từ chối câu trả lời sai.
+
+### Xem nó chạy
+
+- [Inside a Decompiler](https://aiengineeringfromscratch.com/inside-a-decompiler?symbols=off)máy giữ một sổ cái bằng chứng với bốn ngăn: quan sát, dẫn xuất, suy luận và không biết. Liên kết này mở chạy với bảng biểu tượng tắt, do đó tên và cuối của tệp hàm là không biết và các tệp bắt đầu là suy luận.
+
 ## Bài học: Cây tạo vật
 
 Bài học này sẽ mang lại kết quả `outputs/skill-evidence-ledger.md`Nó cho biết cho một đại lý làm thế nào để viết mỗi phát hiện như một hồ sơ với sự tin tưởng, thẩm quyền, giới hạn, và liên kết. Nó cho đại lý biết làm thế nào để giữ những điều không rõ như sửa đổi, và khi một yêu cầu là`pass`- `fail`- `unknown`, hoặc`unsupported`- Tôi không biết.

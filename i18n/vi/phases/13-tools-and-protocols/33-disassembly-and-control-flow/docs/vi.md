@@ -471,6 +471,29 @@ Yêu cầu:
 
 Thành công là nghĩa của`python3 code/main.py cfg`đặt tên cho mọi người có thể gọi với việc di chuyển chứng minh nó, và sự so sánh của Oracle vẫn truyền trên mọi đối tượng.
 
+## Phòng thí nghiệm được xếp hạng
+
+Năm câu hỏi về các thiết bị của bài học này. Tìm mỗi câu trả lời với mã bạn xây dựng, sau đó viết nó vào `code/lab_answers.json`. Viết số như số hoặc như chuỗi hex như `"0x40"`, và danh sách như danh sách JSON.
+
+1. `t1`: hướng dẫn cho phép giảm giảm thu hồi giải mã ở mức -O1.
+2. `t2`: tổng số khối cơ bản ở -O1.
+3. `t3`: địa chỉ của đầu vòng tròn tổng cộng ở -O1, như hex.
+4. `t4`: trong sweep-trap.o, địa chỉ nơi hướng dẫn trôi qua tuyến tính bao gồm 0x14 bắt đầu, như hex.
+5. `t5`: các mục trong bảng nhảy của điểm ở -O0.
+
+Hãy kiểm tra câu trả lời của bạn:
+
+```bash
+cd phases/13-tools-and-protocols/33-disassembly-and-control-flow
+python3 code/lab.py
+```
+
+Người kiểm tra tính toán mỗi giá trị dự kiến từ `code/main.py`trên các thiết bị đã được thực hiện.`PASS`- `FAIL`hoặc `TODO`cho mỗi nhiệm vụ và điểm số, và nó chỉ thoát khỏi 0 khi tất cả năm vượt qua. `python3 code/lab.py my-answers.json`kiểm tra một tập tin khác. `code/tests/test_lab.py`chứng minh rằng người kiểm tra chấp nhận câu trả lời đúng và từ chối câu trả lời sai.
+
+### Xem nó chạy
+
+- [Inside a Decompiler](https://aiengineeringfromscratch.com/inside-a-decompiler?program=trap&sweep=linear)Máy chạy bài học này như chiếc giường và bảng khối của nó.`sweep-trap.o`với xoáy tuyến tính: giường cho thấy bốn byte dữ liệu được giải mã như mã, và một pin đánh dấu mục tiêu nhảy ở `0x14`bên trong `addq``0x13`- Đổi máy giải mã xuống để nhìn thấy sự nhảy bỏ qua dữ liệu.
+
 ## Bài học: Cây tạo vật
 
 Bài học này bao gồm:`outputs/skill-disassembly-and-control-flow.md`Sử dụng nó để biến một đối tượng và một tên chức năng thành một danh sách được kiểm tra, khối, cạnh được gõ, chủ quyền, và mọi chuyển giao chưa được giải quyết. Nó đòi hỏi một so sánh Oracle, cả hai phương pháp giải thể, kế toán byte, bằng chứng di chuyển cho mỗi bảng được phục hồi, và một tuyên bố về những gì vẫn còn không rõ.

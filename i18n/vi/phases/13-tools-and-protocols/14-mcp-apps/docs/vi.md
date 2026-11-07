@@ -268,7 +268,7 @@ python3 code/main.py
 python3 -m unittest discover code/tests -v
 ```
 
-Kiểm tra bốn điều trong đầu ra:
+Kiểm tra 5 điều trong đầu ra:
 
 1. Mỗi cuộc gọi đều độc lập.
 2. Mọi yêu cầu đều có`_meta`khả năng.

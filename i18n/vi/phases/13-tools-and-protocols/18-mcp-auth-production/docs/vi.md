@@ -354,7 +354,7 @@ Bài học này sẽ mang lại kết quả `outputs/skill-mcp-auth.md`. Với c
 
 ## Các bài tập
 
-1. Đi chạy`code/main.py`- Theo dõi dòng chảy. Nhận thấy cách IdP xoay một phím trong bước 6, các kế hoạch `refresh_jwks`kéo lại bộ đã xuất bản, và cả token cũ (trung cửa sổ chồng chéo) và token mới được xác nhận mà không cần khởi động lại.
+1. Đi chạy`code/main.py`. Theo dõi dòng chảy. Lưu ý cách IdP xoay một phím trong bước 6 của đầu ra kịch bản (phases 7 of the flow above), các lịch trình `refresh_jwks`kéo lại bộ đã xuất bản, và cả token cũ (trung cửa sổ chồng chéo) và token mới được xác nhận mà không cần khởi động lại.
 
 2. Thêm một IDP mới vào metadata nguồn được bảo vệ `authorization_servers`list. phát hành một token được ký bởi IDP mới và xác nhận người xác nhận chấp nhận nó. phát hành một token được ký bởi một IDP không được liệt kê và xác nhận người xác nhận từ chối với `WWW-Authenticate: Bearer error="invalid_token", error_description="iss not allowed"`- Tôi không biết.
 

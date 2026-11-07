@@ -11,7 +11,7 @@
 
 - Giải thích tại sao một LLM chỉ có thể tạo ra văn bản không thể, một mình, thực hiện hành động chống lại thế giới thực.
 - Hình vẽ vòng gọi công cụ bốn bước (xác định → quyết định → thực hiện → quan sát) và đặt tên ai là chủ sở hữu của mỗi bước.
-- Viết mô tả công cụ như ba phần: tên, đầu vào JSON Schema và hàm thực thi xác định.
+- Viết định nghĩa công cụ như bốn phần: tên, mô tả, đầu vào JSON Schema và hàm thực thi xác định.
 - Sự khác biệt giữa các công cụ tinh khiết và tác dụng phụ và nêu rõ tại sao việc chia cắt quan trọng đối với an toàn.
 
 ## Vấn đề
@@ -28,7 +28,7 @@ Các vòng lặp bốn bước là sự bất biến bên dưới tất cả nh�
 
 ### Bước 1: mô tả
 
-Người chủ tuyên bố mỗi công cụ với ba trường.
+Người chủ tuyên bố mỗi công cụ cho mô hình với ba trường. Phần thứ tư, người thực thi, vẫn ở bên chủ và không bao giờ đạt đến mô hình.
 
 - **Name.**Một thẻ nhận dạng ổn định, có thể đọc được bằng máy.`get_weather`Không phải "cái thời tiết".
 - **Description.**Một đoạn ngắn ngôn ngữ tự nhiên. "Điều sử dụng khi người dùng hỏi về điều kiện hiện tại cho một thành phố cụ thể.
@@ -112,7 +112,7 @@ tp-tool-loop
 
 Những gì cần xem:
 
-- Các tool registry có ba trường cho mỗi tool: tên, mô tả, schema và một trình tham khảo thực thi.
+- Các tool registry có bốn trường cho mỗi tool: tên, mô tả, schema và một tham chiếu trình thực hiện. Chỉ ba trường đầu tiên đi đến mô hình.
 - Các xác thực viên là một bộ phụ quy trình JSON tối thiểu (loại, yêu cầu, enum, min/max) được viết bằng stdlib.
 - Các đại lý sản xuất cần một bộ cắt mạch chính xác như thế này.
 

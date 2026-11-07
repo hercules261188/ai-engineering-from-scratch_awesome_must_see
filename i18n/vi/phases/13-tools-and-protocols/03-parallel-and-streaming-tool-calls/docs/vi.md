@@ -66,7 +66,7 @@ Mỗi cuộc gọi mà mô hình phát ra đều có một`id`. Mỗi kết qu�
 
 Người chủ chạy trình thực hiện mỗi cuộc gọi trên dây chuyền riêng, coroutine hoặc người làm việc từ xa.`asyncio.gather`hoặc cấu trúc đồng thời. Trật tự hoàn thành là không thể đoán trước  ID là nhận dạng.
 
-Một lỗi phổ biến: trả lời với kết quả theo thứ tự danh sách gọi thay vì thứ tự hoàn thành.`tool_call_id`, nhưng nếu kết quả bị bỏ rơi hoặc sao chép, việc gửi ngoài trật tự sẽ làm cho việc gỡ lỗi khó khăn hơn.
+Một lỗi phổ biến: trả lời với kết quả theo thứ tự danh sách gọi thay vì thứ tự hoàn thành.`tool_call_id`, nhưng nếu kết quả bị bỏ rơi hoặc sao chép, một danh sách trả lời được sắp xếp lại khỏi thứ tự kết quả đã đến làm cho khoảng cách khó tìm thấy trong nhật ký.
 
 ### Các cuộc gọi của công cụ streaming
 

@@ -389,6 +389,29 @@ Yêu cầu:
 
 Thành công có nghĩa là hồ sơ chứng minh liệt kê bốn chức năng, mỗi tuyên bố mang theo một ID chứng minh, và `grade_label`thất bại khi một chuỗi nhãn khác nhau.
 
+## Phòng thí nghiệm được xếp hạng
+
+Năm câu hỏi về các thiết bị của bài học này. Tìm mỗi câu trả lời với mã bạn xây dựng, sau đó viết nó vào `code/lab_answers.json`. Viết số như số hoặc như chuỗi hex như `"0x40"`, và danh sách như danh sách JSON.
+
+1. `t1`: percent_change_model(3, 105) trên x86_64.
+2. `t2`: percent_change_model(0, 5) trên x86_64.
+3. `t3`: grade_model(100).
+4. `t4`: số lượng ô trong input_grid().
+5. `t5`: số lượng các tế bào lưới mà mô hình x86_64 bị mắc kẹt.
+
+Hãy kiểm tra câu trả lời của bạn:
+
+```bash
+cd phases/13-tools-and-protocols/36-rebuild-and-prove-equal
+python3 code/lab.py
+```
+
+Người kiểm tra tính toán mỗi giá trị dự kiến từ `code/main.py`trên các thiết bị đã được thực hiện.`PASS`- `FAIL`hoặc `TODO`cho mỗi nhiệm vụ và điểm số, và nó chỉ thoát khỏi 0 khi tất cả năm vượt qua. `python3 code/lab.py my-answers.json`kiểm tra một tập tin khác. `code/tests/test_lab.py`chứng minh rằng người kiểm tra chấp nhận câu trả lời đúng và từ chối câu trả lời sai.
+
+### Xem nó chạy
+
+- [Inside a Decompiler](https://aiengineeringfromscratch.com/inside-a-decompiler)máy kết thúc với mã giả và lưu trữ nó như suy luận: trang không chứng minh nó. Bài học này là bước biến tuyên bố đó thành một kiểm tra một.
+
 ## Kỹ năng sản xuất
 
 Bài học này sẽ mang lại kết quả `outputs/skill-rebuild-and-prove-equal.md`Sử dụng nó để biến chứng tính chức năng và xây dựng lại một ứng cử viên thành chứng minh hai chân và hồ sơ chứng minh. Kỹ năng này đòi hỏi phải liệt kê trước mã giả, một lưới với mỗi lớp nguy hiểm, che giấu di chuyển cộng với kiểm tra liên tục và một tổng hợp bị đóng lỗi.

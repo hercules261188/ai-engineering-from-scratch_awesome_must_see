@@ -205,7 +205,7 @@ cd phases/13-tools-and-protocols/23-capstone-tool-ecosystem
 python3 code/main.py
 ```
 
-Hãy kiểm tra 5 điều:
+Hãy kiểm tra sáu điều:
 
 1. `server/discover`quảng cáo sửa đổi `2026-07-28`và mở rộng nhiệm vụ.
 2. Alice có thể đọc và tạo ra một báo cáo, trong khi cuộc gọi của Bob được từ chối.
