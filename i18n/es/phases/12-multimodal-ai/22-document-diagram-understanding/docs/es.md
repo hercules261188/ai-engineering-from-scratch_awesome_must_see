@@ -74,7 +74,7 @@ LayoutLMv3 es el máximo de comprensión de documentos basados en OCR. Fuerte en
 
 ### DocLLM (2023)
 
-DocLLM (Wang et al., arXiv:2401.00908) es el hermano generativo de LayoutLM. Genera respuestas de forma libre condicionadas a tokens de diseño. Mejor para QA en documentos; todavía depende de la entrada de OCR.
+DocLLM (Wang et al., arXiv:2401.00908, presentado el 31 de diciembre de 2023, por lo que el ID lleva un prefijo de enero de 2024) es el hermano generativo de LayoutLM. Genera respuestas de forma libre condicionadas a tokens de diseño. Mejor para QA en documentos; todavía depende de la entrada de OCR.
 
 ### Era 3  nativo de VLM (2024+)
 
@@ -83,7 +83,7 @@ DocLLM (Wang et al., arXiv:2401.00908) es el hermano generativo de LayoutLM. Gen
 - El AnyRes de lápiz LLaVA-NeXT 336 funciona para documentos pequeños.
 - Qwen2.5VL de resolución dinámica maneja 2048+ píxeles de forma nativa.
 - Claude Opus 4.7 admite documentos de 2576px.
-- PaliGemma 2 (abril 2025) se entrena específicamente para documentos + escritura a mano.
+- PaliGemma 2 (diciembre 2024) se prepara específicamente para documentos + escritura a mano.
 
 La brecha entre el tubo de VLM-nativo y el OCR se cerró rápidamente.
 

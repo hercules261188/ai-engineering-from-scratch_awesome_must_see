@@ -1,6 +1,6 @@
 # LLaVA y ajuste de instrucciones visuales
 
-> La LAVA (abril 2023) es la arquitectura multimodal más copiada del planeta. Remplazó el Q-Former de BLIP-2 con un MLP de 2 capas, reemplazó la atención cruzada cerrada de Flamingo con una concatenation token ingenua y entrenó en 158k giros de instrucción visual generados por GPT-4 a partir de títulos de texto. Cualquier practicante que construyó un VLM entre 2023 y 2026 construyó alguna variante de LLaVA. LLaVA-1.5 se añadió AnyRes. LaVA-NeXT ha aumentado la resolución. LLaVA-OneVision imagen unificada, multi-imagen y video en una sola receta. Esta lección lee la receta, aplica el proyector y explica por qué "el más simple ganó".
+> La LAVA (abril 2023) es la arquitectura multimodal más copiada del planeta. Remplazó el Q-Former de BLIP-2 con un MLP de 2 capas, reemplazó la atención cruzada cerrada de Flamingo con una concatenation token ingenua y entrenó en 158k giros de instrucción visual generados por GPT-4 a partir de títulos de texto. Cualquier practicante que construyó un VLM entre 2023 y 2026 construyó alguna variante de LLaVA. LLaVA-1.5 cambió en un proyector MLP y un codificador de 336px. LLaVA-NeXT añadió un revestimiento AnyRes para la entrada de alta resolución. LLaVA-OneVision imagen unificada, multi-imagen y video en una sola receta. Esta lección lee la receta, aplica el proyector y explica por qué "el más simple ganó".
 
 **Type:** Build
 **Languages:** Python (stdlib, projector + instruction-template builder)
@@ -32,10 +32,10 @@ El resultado: un VLM que corrió en 8 A100 durante un día, venció a Flamingo e
 
 ### La arquitectura
 
-LLaVA-1.5 en 13B:
+LLaVA-1.5 en 7B:
 - Encodrador de visión: CLIP ViT-L/14 @ 336 (congelado durante la etapa 1, opcionalmente descongelado en la etapa 2).
 - Proyector: MLP de 2 capas con activación GELU, `1024 → 4096 → 4096`¿ Qué ?
-- LLM: Vicuna-13B (más tarde Llama-3.1-8B).
+- LLM: Vicuna-7B v1.5 (una variante 13B utiliza Vicuna-13B; más tarde las tenedores se trasladaron a Llama-3.1-8B).
 
 Pasar hacia adelante una imagen + texto de la solicitud:
 
@@ -83,10 +83,11 @@ Nada de esto toca directamente a la imagen  sólo la descripción del texto. GPT
 El artículo 1 del Reglamento (UE) n.o 1095/2013 se modifica en el anexo I del Reglamento (UE) n.o 1095/2013.
 - Datos de tareas académicas (VQA, OKVQA, RefCOCO) mezclados en la sintonización de instrucciones.
 - Mejor sistema de inmediato.
-- 2048 → 32k contexto.
+- Un proyector MLP de 2 capas en lugar de la capa lineal original, y CLIP ViT-L/14 en 336px (576 tokens) en lugar de 224px (256 tokens).
+- Una variante de HD que divide la rejilla en el periódico, que LLaVA-NeXT envió más tarde como AnyRes.
 
 El proyecto LLaVA-NeXT (enero 2024) añadió:
-- AnyRes: dividir imágenes de alta resolución en una cuadrícula de 2x2 o 1x3 de 336x336 cultivos, más una miniatura global de baja resolución. Cada cultivo se convierte en 576 tokens; un total de alrededor de 2880 tokens visuales por imagen.
+- AnyRes: dividir imágenes de alta resolución en una cuadrícula de 2x2 o 1x3 de 336x336 cultivos, más una miniatura global de baja resolución. Cada cultivo se convierte en 576 tokens. Una cuadrícula de 2x2 más la miniatura da aproximadamente 2880 tokens visuales por imagen. Una cuadrícula de 1x3 tiene menos cultivos, por lo que cuesta menos tokens.
 - Mejor mezcla de datos de instrucciones con ShareGPT4V (capciones GPT-4V de alta calidad).
 - Métodos de formación en base más sólida (Mistral-7B, Yi-34B).
 
@@ -98,8 +99,8 @@ Lección 12.08 cubre OneVision en profundidad. versión corta: el mismo proyecto
 
 | | Q-Former (BLIP-2) | MLP (LLaVA) |
 |---|---|---|
-| Visual tokens per image | 32 | 576 (base) or 2880 (AnyRes) |
-| Trainable params | 188M + LM | 40M + LM |
+| Visual tokens per image | 32 | 576 (base) or about 2880 (AnyRes, 2x2 grid) |
+| Trainable params | 188M + LM | ~22M (7B) + LM |
 | Stage 1 loss | ITC+ITM+ITG | LM only |
 | LLM drop-in | Requires retrain | Swap with minimal retrain |
 | Multi-image | Awkward | Natural (concat) |
@@ -114,7 +115,7 @@ MLP gana en la simplicidad y la flexibilidad de tokens. Q-Former gana en el pres
 A chat between a curious human and an artificial intelligence assistant. The assistant gives helpful, detailed, and polite answers to the human's questions. USER: <image> Describe this image in detail. ASSISTANT: The image shows ...
 ```
 
-`<image>`El Tokenizer ve una secuencia ligeramente más larga de lo que se ha entrenado, pero el LLM maneja la entrada nueva porque la etapa 1 lo enseñó.
+`<image>`El Tokenizer ve una secuencia ligeramente más larga de la que se entrenó, pero el LLM maneja la entrada nueva porque la etapa 1 la enseñó a hacerlo.
 
 ### Economía de parámetros
 

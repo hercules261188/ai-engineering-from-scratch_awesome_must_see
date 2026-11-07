@@ -95,10 +95,10 @@ No hay OCR en ninguna parte. Las figuras, gráficos, fuentes, diseño todo fluye
 
 Un informe financiero de 50 páginas con 729 parches por página y embebidos de 128 dimensiones:
 
-- ColPali: 50 * 729 * 128 * 4 bytes = ~ 18 MB crudo, ~ 4 MB después de PQ.
+- ColPali: 50 * 729 * 128 * 4 bytes = ~ 18 MB crudo, ~ 2.3 MB después de 8x PQ.
 - Text-RAG: 50 trozos * 768-dim * 4 bytes = ~ 150 kB.
 
-ColPali es ~ 30 veces más almacenamiento por documento. En escala, OPQ / PQ lo reduce a ~ 5-10x, generalmente tolerable.
+ColPali es ~ 120 veces más almacenamiento por documento crudo. En escala, 8x OPQ / PQ lo reduce a ~ 15x, generalmente tolerable.
 
 ### Cuando el texto-RAG todavía gana
 

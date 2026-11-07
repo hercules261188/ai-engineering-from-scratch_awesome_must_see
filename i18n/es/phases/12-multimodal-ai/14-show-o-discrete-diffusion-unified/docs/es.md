@@ -11,7 +11,7 @@
 
 - Explica la difusión discreta enmascarada: el calendario que enmascara los tokens de forma uniforme luego pide al transformador que los recupere.
 - Compare la descodificación de imágenes paralelas (Show-o, MaskGIT) con la descodificación de imágenes autoregresivas (Chameleon, Emu3) en velocidad y calidad.
-- Nombre de las tres tareas que se realizan en un solo punto de control: T2I, VQA, pintura de imagen.
+- Nombre de las cuatro tareas que se realizan en un solo punto de control: generación de texto, VQA, T2I, pintura de imágenes.
 - Seleccione un calendario de enmascaramiento (cosino, lineal, truncado) y razone su efecto sobre la calidad de la muestra.
 
 ## El problema

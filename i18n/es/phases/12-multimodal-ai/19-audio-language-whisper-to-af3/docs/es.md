@@ -54,7 +54,7 @@ Whisper fue entrenado en datos dominantes del habla. Es más débil para la mús
 
 BEATs (Chen et al., 2022) es un transformador auto supervisado entrenado en AudioSet. Captura música y sonidos ambientales mejor que Whisper en el mismo conteo de parámetros.
 
-AF-Whisper (híbrido de Audio Flamingo 3): Whisper + BEATs se presenta como la entrada de audio.
+AF-Whisper (encoder de Audio Flamingo 3): comienza con el encoder Whisper-large-v3 y sigue entrenándolo en voz, sonido y música juntos, por lo que un encoder lleva tanto la señal lingüística como la acústica.
 
 ### Audio Q-former
 
@@ -70,7 +70,7 @@ Qwen-Audio (Chu et al., 2023): arquitectura similar, entrenada en un conjunto de
 
 LTU  Escucha, piensa, entienda (Gong et al., 2023): datos de razonamiento explícito, enfoque en la cadena de pensamiento sobre los clips de audio.
 
-Audio Flamingo 3 (Goel et al., julio 2025): la SOTA abierta actual. 8B LLM backbone (Qwen2 7B), Whisper-large encoder concat BEATs, 64-query Q-former, entrenamiento en 1M + pares de instrucción de audio-texto. MMAU 0.72, coincide con la frontera patentada en algunas subtareas.
+Audio Flamingo 3 (Goel et al., julio 2025): la actual SOTA abierta. 7B LLM backbone (Qwen2.5-7B), un codificador de audio AF-Whisper construido a partir de Whisper-large-v3, pequeñas capas de adaptador en el LLM, entrenamiento en pares de instrucción de audio-texto 1M +. MMAU 0.72, coincide con la frontera patentada en algunas subtareas.
 
 AF3 también introduce una cadena de pensamiento a pedido para el audio: el modelo puede emitir tokens de pensamiento opcionalmente ("permítanme identificar los instrumentos primero: ...") antes de la respuesta final.
 

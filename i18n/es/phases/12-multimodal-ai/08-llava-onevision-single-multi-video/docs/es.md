@@ -1,6 +1,6 @@
 # LLaVA-OneVision: imagen única, imagen múltiple, vídeo en un modelo
 
-> Antes de LLaVA-OneVision (Li et al., agosto 2024) el mundo de VLM abierto tenía linajes separados: LLaVA-1.5 para imágenes individuales, modelos de imágenes múltiples como Mantis y VILA, modelos de video como Video-LLaVA y Video-LLaMA. Cada uno ganó su punto de referencia y falló en los otros. LLaVA-OneVision argumentó que un solo plan de estudios podría capacitar a un modelo para dominar los tres escenarios, y que los efectos emergentes de transferencia de tareas (habilidades de imagen única exportadas al video, razonamiento de imágenes múltiples exportados a imagen única) superan a la suma de especialistas. La receta es engañosamente simple: un presupuesto de fichaje visual que se mantiene constante en todos los escenarios, además de un plan de estudios explícito que pasa de una sola imagen a OneVision (multi-imagen) a video. Esta lección lee el presupuesto, el programa de estudios y los comportamientos emergentes.
+> Antes de LLaVA-OneVision (Li et al., agosto 2024) el mundo de VLM abierto tenía linajes separados: LLaVA-1.5 para imágenes individuales, modelos de imágenes múltiples como Mantis y VILA, modelos de video como Video-LLaVA y Video-LLaMA. Cada uno ganó su punto de referencia y falló en los otros. LLaVA-OneVision argumentó que un solo plan de estudios podría capacitar a un modelo para dominar los tres escenarios, y que los efectos emergentes de transferencia de tareas (habilidades de imagen única exportadas al video, razonamiento de imágenes múltiples exportados a imagen única) superan a la suma de especialistas. La receta es engañosamente simple: un presupuesto de fichaje visual equilibrado entre escenarios, más un plan de estudios explícito que pasa de una sola imagen a OneVision (multi-imagen) a video. Esta lección lee el presupuesto, el programa de estudios y los comportamientos emergentes.
 
 **Type:** Build
 **Languages:** Python (stdlib, token budget solver + curriculum planner)
@@ -9,7 +9,7 @@
 
 ## Objetivos de aprendizaje
 
-- Diseñar un presupuesto de tokens visuales que mantenga constantes en entradas de una sola imagen, múltiples imágenes y videos.
+- Diseñar un presupuesto de tokens visuales que se mantenga equilibrado en entradas de una sola imagen, múltiples imágenes y vídeo.
 - Ordenar un plan de formación que transfiera habilidades de una sola imagen a video sin olvidar catastróficamente.
 - Explica por qué un modelo único supera a los especialistas en el mismo número de parámetros cuando el plan de estudios se hace correctamente.
 - Nombre de las tres capacidades emergentes reportadas por LLaVA-OneVision: razonamiento multi-cámara, puesta de marca, agente de capturas de pantalla del iPhone.
@@ -32,13 +32,13 @@ Pre-OneVision, la respuesta predeterminada era "entrenar un escenario, ignorar l
 
 ### El presupuesto de tokens de OneVision
 
-LLaVA-OneVision elige un presupuesto unificado de tokens visuales de aproximadamente 3000-4000 tokens por muestra, asignados de manera diferente por escenario:
+LLaVA-OneVision no fija un número exacto de tokens. Equilibra el número máximo de tokens visuales por muestra para que los tres escenarios se encuentren en el mismo rango, aproximadamente de 6.000 a 9.000 tokens, asignados de manera diferente por escenario:
 
-- Imagen única: AnyRes-9 (3x3 azulejos + miniatura), cada azulejo en 384 con 729 parches, bilinear agresivo de 2x2 → 182 por azulejo. Total: 9 * 182 + 182 = 1820 tokens.
-- Multi-imagen: cada imagen con resolución moderada (384, sin azulejos), 729 tokens sin pooling. Presupuesto 6 imágenes → 4374 tokens.
-- Video: 32 cuadros con 384 resoluciones con un pool bilinear agresivo de 3x3 → 81 tokens por cuadro.
+- Imagen única: AnyRes-Max-9 (hasta 9 azulejos + una vista base), cada vista 384x384 dando 729 tokens de SigLIP SO400M. Máximo: 729 * (1 + 9) = 7290 tokens.
+- Multi-imagen: cada imagen en 384 sin tejas, 729 tokens sin agrupamiento. Hasta 12 imágenes → 8748 tokens.
+- Video: hasta 32 cuadros en 384 con 2x2 bilinear → 196 tokens por cuadro.
 
-La asignación mantiene tokens totales aproximadamente constantes. El LLM nunca ve un lote que sopla su contexto. El codificador produce una geometría diferente por escenario, pero el LLM consume el mismo presupuesto.
+La asignación mantiene los totales máximos en la misma banda, por lo que ningún escenario domina el contexto o el gradiente.`code/main.py`el planificador de abajo utiliza un presupuesto de juguete más pequeño de 4096 para mostrar la misma lógica de equilibrio.
 
 ### El plan de estudios en tres etapas
 
@@ -111,14 +111,14 @@ Esta lección produce`outputs/skill-onevision-budget-planner.md`. Dado una distr
 
 4. El artículo informa de los puntos de referencia de vídeo entrenados en sólo 8 cuadros por muestra. ¿Se generaliza eso a videos de 30 segundos en la inferencia? ¿Qué rompe primero  el presupuesto de token o el razonamiento temporal?
 
-5. La combinación bilinear de parches 24x24 a 12x12 es una reducción de 4x por dim. Implemente la combinación en stdlib Python y verifique que la media sobre cada bloque 2x2 coincida con la salida bilinear.
+5. La combinación bilinear de parches 24x24 a 12x12 es una reducción de 2x por dimensión, por lo que 4x menos tokens. Implemente la combinación en stdlib Python y verifique que la media sobre cada bloque 2x2 coincida con la salida bilinear.
 
 ## Términos clave
 
 | Term | What people say | What it actually means |
 |------|-----------------|------------------------|
-| OneVision scenario | "Single-image, multi-image, or video" | One of three input shapes the unified VLM handles; the budget stays constant across |
-| Token budget | "How many tokens per sample" | Total visual tokens the LLM sees per training / inference sample, typically 3000-4000 |
+| OneVision scenario | "Single-image, multi-image, or video" | One of three input shapes the unified VLM handles; the budget stays balanced across |
+| Token budget | "How many tokens per sample" | Total visual tokens the LLM sees per training / inference sample, about 6k to 9k at most in LLaVA-OneVision |
 | Curriculum | "Training order" | Stage ordering (single-image → multi-image → video) chosen for emergent transfer |
 | Bilinear pooling | "Token shrink" | Applying bilinear interpolation to the patch grid (2D) to reduce token count while preserving locality |
 | Emergent skill | "Not trained, still works" | Capability that appears at inference without matching training data, due to curriculum composition |

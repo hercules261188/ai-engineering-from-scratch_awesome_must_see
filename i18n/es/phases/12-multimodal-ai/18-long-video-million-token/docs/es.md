@@ -10,7 +10,7 @@
 ## Objetivos de aprendizaje
 
 - Calcule el recuento total de tokens visuales para el vídeo de formato largo a diferentes FPS y pooling.
-- Explica las tres vías de escala: contexto bruto (Gemini 1.5), atención a anillos (LWM), compresión de tokens (LongVILA / Video-XL).
+- Explica las cuatro vías de escala: contexto bruto (Gemini 1.5), atención a anillos (LWM), compresión de tokens (LongVILA / Video-XL), recuperación agente (VideoAgent).
 - Comparar VLMs de video de contexto crudo con VLMs de video de recuperación de agentes (VideoAgent) en precisión y latencia.
 - Diseñar una prueba de aguja en un manto de heno para un video de 30 minutos y medir el recuerdo en un minuto específico.
 
@@ -20,7 +20,7 @@ Un solo marco de parches de tamaño Qwen2.5VL con 384 resoluciones nativas es de
 
 Una película de 2 horas a 1 FPS es de 583k tokens. Más allá de la mayoría de los modelos abiertos de 2026; requiere Gemini 2.5 Pro o un pooling más agresivo.
 
-Surgieron tres caminos de escala.
+Se han dado cuatro caminos de escala.
 
 ## El concepto
 
@@ -36,7 +36,7 @@ Ingeniería: una implementación de atención personalizada con jerarquía de me
 
 La atención en el anillo distribuye largas secuencias entre dispositivos en un "anillo" donde cada dispositivo tiene un pedazo.
 
-LWM (Liu et al., 2024) entrenó un modelo de contexto de 1M-token de esta manera.
+LWM (Liu et al., 2024) entrenó un modelo de contexto de 1M-token de esta manera. Escales de memoria por dispositivo con el pedazo que cada dispositivo tiene, por lo que agregar dispositivos extiende el contexto aproximadamente linealmente.
 
 LongVILA (arXiv:2408.10188) adaptó el patrón a VLMs. 1400-frame videos a 192 tokens por fotograma = 268k contexto, entrenado con la atención del anillo a través del paralelismo de 8 vías.
 
@@ -118,7 +118,7 @@ Esta lección produce`outputs/skill-long-video-strategy-planner.md`. Dada la dur
 
 3. Comparar el contexto bruto Qwen2.5-VL-72B (contexto 80k) con VideoAgent (Claude 3.5 + recuperación) en un video de 1 hora. ¿Cuál gana en el recuerdo? ¿Cuál gana en la latencia?
 
-4. El costo de memoria de la atención de anillo se escala linealmente en longitud de secuencia y linealmente en número de dispositivos.
+4. Las escalas de memoria de la atención de anillo por dispositivo con longitud de secuencia dividida por el número de dispositivos, mientras que el cálculo de la atención total se mantiene cuadrático.
 
 5. Lea Gemini 1.5 Sección 5 sobre aguja en un haystack. ¿Qué encontró el periódico sobre el recuerdo en el límite de token 1M vs 10M?
 

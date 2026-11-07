@@ -20,7 +20,7 @@ BLIP-2 alimenta 32 tokens visuales en la capa de entrada de un LLM congelado. Fu
 
 La respuesta de Flamingo: no cambies en absoluto el flujo de entrada del LLM. Insertar capas de atención cruzada adicionales entre los bloques de LLM existentes. Los tokens de texto siguen fluyendo a través de la autoatención causal del LLM como siempre. Entre cada pocos bloques de LLM, los tokens de texto también atenden a las características de la imagen a través de una nueva capa cerrada. La puerta (iniciada a cero) significa que en el paso cero las nuevas capas no funcionan  el modelo se comporta exactamente como el LLM pre-entrenado. A medida que avanza el entrenamiento, la puerta se abre y la información visual comienza a fluir.
 
-La segunda pregunta Flamingo respondió: ¿cómo manejar un número variable de imágenes (0, 1 o muchas) por pedido? Un re-sampler Perceptor  un pequeño módulo de atención cruzada que toma cualquier número de parches que tenga y produce un número fijo de fijos tokens visuales latentes. La capa de atención cruzada LLM ve la misma forma independientemente de cuántas imágenes estén en el pedido.
+La segunda pregunta que Flamingo respondió: ¿cómo manejar un número variable de imágenes (0, 1 o muchas) por solicitud? Un resampler Perceptor  un pequeño módulo de atención cruzada que toma cualquier número de parches que tengas y produce un número fijo de tokens visuales latente por imagen. El total crece con el recuento de imágenes, pero cada token de texto lee solo los latences de una imagen, por lo que lo que cualquier token de texto único ve en la atención cruzada tiene la misma forma independientemente de cuántas imágenes hay en el prompt.
 
 ## El concepto
 
@@ -59,7 +59,7 @@ Esta es la elección de diseño más importante en Flamingo: el acondicionamient
 
 ### Atención cruzada enmascarada para entradas entrelazadas
 
-En un mensaje de respuesta como "<imagen A> subtítulo A <imagen B> subtítulo B <imagen C> ?", cada token de texto solo debe ver imágenes que se presentaron antes que él en la secuencia. La máscara de atención cruzada aplica: token de texto en posición `t`sólo se atiende a las fichas de resampler de imagen cuyo índice de imagen `i < i_t`donde`i_t`es la imagen más reciente antes de la posición `t`"Vea sólo la última imagen anterior" o "ve todas las imágenes anteriores" son ambas opciones válidas; Flamingo eligió la primera.
+En un mensaje de respuesta como "<imagen A> subtítulo A <imagen B> subtítulo B <imagen C> ?", cada token de texto solo debe ver imágenes que se presentaron antes que él en la secuencia. La máscara de atención cruzada aplica: token de texto en posición `t`sólo atiende a los tokens de resampler de imagen `i_t`, donde `i_t`es la imagen más reciente antes de la posición `t`Las señales de cada otra imagen están enmascaradas. "Vea sólo la última imagen anterior" o "ve todas las imágenes anteriores" son ambas opciones válidas; Flamingo eligió la primera.
 
 ### Aprendizaje en pocos disparos en contexto
 
@@ -76,7 +76,7 @@ El modelo ve el patrón de finalización y las salidas "pájaro" (o lo que sea q
 Flamingo entrenado en tres conjuntos de datos:
 
 1. MultiModal MassiveWeb (M3W): 43 millones de páginas web con imágenes y texto entrelazados, reconstruyendo el orden de lectura.
-2. Parejas de imagen y texto (ALIGN + LTIP): 4.4B.
+2. Parejas de imagen y texto: ALIGN (1.8B parejas) más LTIP (312M parejas), aproximadamente 2.1B parejas en total.
 3. Parejas de vídeo-texto (VTP): 27 millones de cortos clips de vídeo.
 
 OBELICS (2023) es una reproducción abierta del corpus web entrelazado, en el que entrenan Idefics, Idefics2 y los modelos más abiertos "como Flamingo".
@@ -102,7 +102,7 @@ Otter (2023) se basa en OpenFlamingo con la sintonización de instrucciones en M
 | Frozen LLM | Yes | Yes |
 | Few-shot in-context | Weak | Strong — the paper's centerpiece |
 | Interleaved inputs | No native support | Yes, the design target |
-| Training data | 130M pairs | 1.3B pairs + 43M interleaved pages |
+| Training data | 130M pairs | ~2.1B pairs + 27M video clips + 43M interleaved pages |
 | Parameter count | 188M trained | ~10B trained (cross-attn layers) |
 | Compute | Days on 8 A100s | Weeks on thousands of TPUv4 |
 
