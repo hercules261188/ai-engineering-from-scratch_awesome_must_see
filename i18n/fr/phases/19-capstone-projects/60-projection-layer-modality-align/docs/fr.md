@@ -118,7 +118,7 @@ python3 -m unittest code/test_main.py
 
 4. Ajoutez une petite pénalité L2 sur les poids du projecteur et observez comment il interagit avec l'alignement cosine (cosine est invariable dans l'échelle, de sorte que la pénalité réduit principalement les directions non utilisées).
 
-5. Persistant peses de projecteur, puis recharger et exécuter l'inférence sans le codeur de vision passer en arrière pour vérifier que seul le projecteur est nécessaire au moment du déploiement.
+5. Persistez les poids du projecteur, puis les rechargez à côté de l'encodeur de vision gelé et effectuez l'inférence sans passer en arrière. Vérifiez que le projecteur est le seul nouvel artefact que vous expédez; l'encodeur exécute toujours son passage en avant au moment du déploiement.
 
 ## Les termes clés
 

@@ -16,7 +16,7 @@
 
 ## Le problème
 
-Une allréduction naïve sur N rangs envoie N fois le tensor à une racine et transmet N fois de retour.$O(N)$par rang, la racine devient un goulet d'étranglement, et le sol du mur-horloge est le lien le plus lent fois N.$2(N-1)$des morceaux de taille $T/N$, donc par ordre de baisse des octets à $2T(N-1)/N$L'arbre allreduce gagne sur les liens de faible N et de grande latence parce que la profondeur est$\log_2(N)$au lieu de l' oignon$2(N-1)$Choisissez la mauvaise topologie pour la forme du cluster et le GPU le plus lent dicte le temps de la marche.
+Une allréduction naïve sur N rangs envoie N fois le tensor à une racine et transmet N fois de retour.$O(N)$par rang, la racine devient un goulet d'étranglement, et le sol du mur-horloge est le lien le plus lent fois N.$2(N-1)$des morceaux de taille $T/N$, donc par ordre de baisse des octets à $2T(N-1)/N$, qui approche $2T$L'arbre allreduce gagne sur les liens de petite N et de grande latence parce que la profondeur est$\log_2(N)$au lieu de l' oignon$2(N-1)$Choisissez la mauvaise topologie pour la forme du cluster et le GPU le plus lent dicte le temps de la marche.
 
 Chaque cadre de formation distribué que vous allez lire dans cette piste dépend de ces quatre primitives. PyTorch DDP synchronise les gradients avec un allreduce par bouquet de paramètres. ZeRO réduit l'état de l'optimisateur en réduisant_scatter et diffuse des paramètres actualisés par allgather. FSDP transforme le tout en allgather plus reduce_scatter. Les besoins parallèles de la transmission de pipeline pour les activations entre les groupes de phases. Si vous ne pouvez pas mettre en œuvre les quatre collectifs, vous ne pouvez pas raisonner sur les raisons pour lesquelles les entraînements sont bloqués, pourquoi le déséquilibre des gradients apparaît au troisième rang, ou pourquoi la bulle du pipeline double lorsque vous échangez des topologies.
 
@@ -97,7 +97,7 @@ Modèles de production:
 
 ## La faire partir
 
-Utilisez les primitifs de filet de filet dans les leçons 77-81. Les fils 77 réduisent tous en DDP. Les fils 78 réduisent_scatter en ZeRO. Les fils 79 diffusent en activations de pipeline. Les fils 81 composent les quatre dans la démo de bout en bout.
+Utilisez les primitifs de filet de filet dans les leçons 77-81. Les fils 77 réduisent tous en DDP. Les fils 78 réduisent_scatter en ZeRO.
 
 ## Exercices
 

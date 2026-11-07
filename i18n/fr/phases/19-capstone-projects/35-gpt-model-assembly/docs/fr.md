@@ -81,7 +81,7 @@ cc-gpt-assembly
 - `class GPTModel`avec embedding symbolique, position embedding, embedding drop-out, douze `TransformerBlock`s, la dernière LayerNorm, et une `lm_head`qui se lie à l'embedding du symbole lorsque le drapeau est placé.
 - Une .`count_parameters`l'aide qui renvoie le nombre unique de paramètres (donc le lien de poids est honoré dans le compte).
 - Une .`generate`fonction qui fait la température, top-k, multinomiale, et le contexte de fenêtre coulissante.
-- Une démo qui construit le modèle, imprime le nombre de paramètres à côté de la référence 124M, et génère une courte séquence à partir d'un prompt fixe pour montrer les extrémités du pipeline.
+- Une démo qui construit le modèle, imprime le nombre de paramètres à côté de la référence 124M, et génère une courte séquence à partir d'un prompt fixe pour montrer le pipeline de bout en bout.
 
 - Je vais le faire.
 
@@ -89,7 +89,7 @@ cc-gpt-assembly
 python3 code/main.py
 ```
 
-Sortie: compte des paramètres aux côtés de la référence 124M, généré des identifiants de jetons à partir d'un prompt aléatoire, et une confirmation que la tête LM et le jeton intégré partagent le stockage lorsque la liaison est activée.
+Résultats: compte des paramètres aux côtés de la référence 124M, généré des identifiants de jetons à partir d'un prompt fixe, et une confirmation que la tête LM et le jeton intégré partagent le stockage lorsque la liaison est activée.
 
 Pour maintenir la démo rapide, le script exécute également une petite configuration (`d_model=64`- Je suis là .`num_layers=2`Le paramètre 124M est construit mais seul le nombre de paramètres et un passage vers l'avant sont exercés.
 

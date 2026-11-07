@@ -63,7 +63,7 @@ Les deux systèmes de classement servent des objectifs différents.
 
 Le score moyen est la moyenne des scores par tâche pour un modèle. Il s'agit du rapport des classements de tête. Il est sensible aux valeurs anormales et aux déséquilibres de tâches.
 
-Le taux de victoire compte la fréquence avec laquelle un modèle bat tous les autres modèles sur la même tâche. Pour chaque tâche, le modèle avec le score le plus élevé gagne (spartie de liens). Le taux de victoire est égal aux gains divisés par le nombre de tâches où le modèle a un score. Il est moins sensible aux valeurs et aux différences d'échelle, mais perd de l'information.
+Le taux de victoire compte la fréquence avec laquelle un modèle bat tous les autres modèles sur la même tâche. Pour chaque tâche, le modèle avec le score le plus élevé gagne (un égal donne une victoire complète à chaque modèle égal). Le taux de victoire équivaut à des victoires divisées par le nombre de tâches où le modèle a un score. Il est moins sensible aux valeurs et aux différences d'échelle, mais perd de l'information.
 
 ```python
 def win_rate(model_id, runs_by_task, all_models):
@@ -131,4 +131,4 @@ Lire `main.py`La forme des données (EvalRun, LeaderboardRow) arrive en premier,
 
 ## On va plus loin
 
-La prochaine étape naturelle est la signification des tâches partagées au lieu de la bande de démarrage non partagée. Si le modèle A et B exécutaient tous les deux les mêmes centaines de tâches, le test approprié est le démarrage par paires sur les différences tâche par tâche, que nous mettons en œuvre. Au-delà de cela, vous voulez un bootstrap hiérarchique qui respecte les familles de tâches (les problèmes mathématiques ne sont pas indépendants les uns des autres; un schéma d'erreur arithmétique affecte dix d'entre eux). C'est une suite. Le but de cette leçon est de bien faire le plancher pour que l'évaluation rapporte un nombre que vous pouvez défendre.
+Les intervalles par modèle sont non couplés, mais les comparaisons de modèles doivent être couplées. Si les modèles A et B ont tous deux exécuté les mêmes centaines de tâches, le test approprié est le démarrage par paires sur les différences tâche par tâche, qui `bootstrap_pairwise_diff`En plus de cela, vous voulez une bande de démarrage hiérarchique qui respecte les familles de tâches (les problèmes mathématiques ne sont pas indépendants les uns des autres; un schéma d'erreur arithmétique affecte dix d'entre eux).

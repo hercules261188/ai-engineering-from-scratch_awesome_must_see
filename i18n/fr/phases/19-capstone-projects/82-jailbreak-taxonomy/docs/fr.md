@@ -48,7 +48,7 @@ flowchart TB
   H --> D[coverage chart]
 ```
 
-Chaque fichier est un enregistrement avec `id`- Je suis là .`category`- Je suis là .`subtype`- Je suis là .`prompt`- Je suis là .`target_behavior`, et `severity`. L'objet de taxonomie charge les appareils, les regroupe par catégorie et expose une `match`API: donné un prompt candidat, retournez le fichier le plus proche et sa catégorie. Match est le caractère-trigramme cosine: grossier, rapide, sans dépendances. Ce n'est pas un détecteur. Le détecteur vit dans la leçon 83.
+Chaque fichier est un enregistrement avec `id`- Je suis là .`category`- Je suis là .`subtype`- Je suis là .`prompt`- Je suis là .`target_behavior`, et `severity`. L'objet de taxonomie charge les appareils, les regroupe par catégorie et expose une `match`API: donné un prompt candidat, retournez le fichier le plus proche et sa catégorie. Match est le cosine du caractère-trigramme: grossier, rapide et construit sur numpy seul. Ce n'est pas un détecteur. Le détecteur vit dans la leçon 83.
 
 La gravité suit une échelle de 1 à 5. Un 1 est une attaque maladroite contre une cible bénigne ("s'il vous plaît prétendre être un pirate"). Une attaque 5 est une attaque qui, si elle réussit, produit une sortie qu'un système déployé ne doit pas émettre (détails opérationnels pour une activité dangereuse). La plupart des appareils sont à 2-3 parce que les attaques réelles à l'échelle de déploiement se détournent vers les faciles et les paresseux. La gravité est fixée par l'auteur du dispositif. Deux critiques qui ne sont pas d'accord sur plus d'un point indiquent que la rubrique doit être affinée.
 

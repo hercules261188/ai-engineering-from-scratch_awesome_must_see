@@ -52,7 +52,7 @@ Trois champs sont portables.`world_size`fait un CV de taille différente échoue
 
 ### Écriture atomique
 
-Le modèle standard: écrire chaque fragment à `<name>.tmp`, écrivez le manifeste à `manifest.json.tmp`Un crash avant le renommé final laisse le point de contrôle précédent comme celui en cours. Sans écrire atomique un crash peut laisser une fragmentation partielle avec un manifeste présent qui le pointe vers elle, et la charge corrompt l'état optimisateur sur le CV.
+Le modèle standard: écrire chaque fragment à `<name>.tmp`, écrivez le manifeste à `manifest.json.tmp`, synchronisez chacune, renommez les fragments et renommez le dernier manifeste. Un renommé POSIX dans le même système de fichiers est atomique: soit le nouveau fichier est entièrement présent, soit l'ancien. Un ensemble de renommés n'est pas une transaction, donc le renom de manifeste est le point de commande, et le chargement vérifie chaque fragment contre les hashes de manifeste. Écrivez chaque point de contrôle dans son propre répertoire de étapes; puis un crash avant le renom de manifeste laisse le point de contrôle précédent comme celui en cours de fonctionnement. La réutilisation d'un répertoire rompt cette garantie, car les renommés de fragments remplacent les anciens fragments avant que les nouveaux manifestes ne parviennent. Sans écriture atomique, un crash peut laisser une fragmentation partielle avec un manifeste présent qui le pointe vers elle, et la charge corrompt l'état optimisé sur le CV.
 
 ### Trois modes d'échec contre lesquels le schéma doit se défendre
 

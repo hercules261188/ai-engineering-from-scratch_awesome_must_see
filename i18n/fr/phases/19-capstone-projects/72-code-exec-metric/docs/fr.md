@@ -69,7 +69,7 @@ Nous envelopper le candidat en prépendant `import sys`et un gardien qui patche 
 
 Chaque sous-processus a un budget par défaut de trois secondes.`subprocess.run(..., timeout=t)`Si le temps d'arrêt est en train de décoller, le coureur prend.`TimeoutExpired`, tue le processus, et enregistre un`timeout`Le coureur passe à zéro, le coureur passe à zéro.
 
-Le temps de retrait est configurable par tâche à travers `task.metadata.timeout_s`Les tests d'unité à long terme peuvent demander plus; le validateur de la leçon 70 limite la valeur à trente secondes pour garder la suite limitée.
+Le temps de repos est le `timeout_s`argument à`run_candidate`La leçon 75 du coureur le fixe une fois par course .`code_exec_timeout_s`Les tests à long terme peuvent demander plus, mais `run_candidate`Il est possible de réduire la valeur à 0,1 à 30 secondes pour limiter la suite.
 
 ## Caps de sortie
 
@@ -83,7 +83,7 @@ Pass-at-k est l'estimation impartiale utilisée par HumanEval et ses amis.`n`éc
 pass_at_k(n, c, k) = 1 - C(n - c, k) / C(n, k)
 ```
 
-Quand ?`n - c < k`le numérateur est indéfini et la valeur est `1`La mise en œuvre traite directement le cas de bord.`pass_at_k(n, c, k)`pour une utilisation par la couche de classement dans la leçon 74.
+Quand ?`n - c < k`, le numérateur `C(n - c, k)`est zéro selon la convention habituelle (vous ne pouvez pas choisir `k`défaillances de moins de `k`), la valeur est donc `1`La mise en œuvre traite directement le cas de bord.`pass_at_k(n, c, k)`pour une utilisation par la couche de classement dans la leçon 74.
 
 ```mermaid
 flowchart LR

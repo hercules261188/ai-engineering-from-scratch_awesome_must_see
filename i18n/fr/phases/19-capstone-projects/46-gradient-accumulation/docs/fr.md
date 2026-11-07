@@ -9,7 +9,7 @@
 
 ## Objectifs d'apprentissage
 
-- Dériver l'identité effective du lot: `effective_batch = micro_batch * accum_steps`- Je suis désolé .
+- Dériver l'identité effective du lot: `effective_batch = micro_batch * accum_steps * world_size`, qui est `micro_batch * accum_steps`sur le dispositif unique utilisé dans cette leçon.
 - Implémenter une mise à l'échelle de perte par micro lot afin que le gradient accumulé correspond à un seul lot complet en arrière.
 - Sautez la synchronisation de l'optimisateur jusqu'au dernier micro-batch (synchronisation sur dernière étape).
 - Lisez un débit par rapport à la courbe de lot effective et expliquez le rendement en diminution.

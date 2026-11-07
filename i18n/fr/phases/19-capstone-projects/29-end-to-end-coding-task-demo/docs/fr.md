@@ -21,7 +21,7 @@ La plupart des démonstrations d'agents fonctionnent en isolement: une boîte à
 
 La chaîne de portes dit "AUTHED", mais la boîte à sable refuse pour une raison que la chaîne n'a pas anticipée. L'appareil d'évaluation enregistre un passage mais les spans OTel disent que la passerelle a refusé un outil que l'agent prétend avoir utilisé. Le compteur Prometheus est augmenté deux fois lorsqu'il doit être augmenté une fois. Le budget de l'observation est dépassé mais l'agent a continué parce que le budget était suivi dans la chaîne et la boîte à sable ne savait pas.
 
-Cette leçon est le test d'intégration pour toute la piste. L'agent doit faire quatre choses pour l'ordre: lire le projet, exécuter les tests, identifier le bug de l'échec du test, écrire la correction, réexécuter les tests, et arrêter. Chaque opération passe par la chaîne de passerelle. Chaque exécution d'outil passe par la boîte à sable. Chaque étape est enveloppée dans une période. Le harnais d'évaluation marque tout à la fin.
+Cette leçon est le test d'intégration pour toute la piste. L'agent doit faire six choses pour l'ordre: lire le projet, exécuter les tests, identifier le bug de l'échec du test, écrire la correction, réexécuter les tests, et arrêter. Chaque opération passe par la chaîne de passerelle. Chaque exécution d'outil passe par la boîte à sable. Chaque étape est enveloppée dans une période. Le harnais d'évaluation marque tout à la fin.
 
 ## Le concept
 

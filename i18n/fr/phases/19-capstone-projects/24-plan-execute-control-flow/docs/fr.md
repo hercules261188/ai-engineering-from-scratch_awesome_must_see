@@ -88,7 +88,7 @@ Un traceur ou une interface utilisateur peut rendre cela comme une percée sur l
 
 ## Deux budgets, tous deux difficiles
 
-`max_steps`Un plan linéaire en cinq étapes qui se replante deux fois et ajoute trois étapes à chaque fois qu'il atteint seize exécutions et dépasserait le budget. L'exécuteur refusera le replan et retournera FAILED.
+`max_steps`limite l'exécution totale des étapes tout au long de la session, y compris les replans. Le défaut est 12. Les tentatives ratées comptent aussi. Un plan en cinq étapes qui échoue sur sa dernière étape a coûté cinq exécutions. Si chaque révision tente à nouveau cette étape et en ajoute trois nouvelles, et que la dernière étape de la première révision échoue à nouveau, le nombre est de neuf, et la deuxième révision a besoin de quatre de plus: treize. L'exécuteur court le douzième, refuse le treizième, et revient FAILED avec raison.`step_budget`- Je suis désolé .
 
 `max_replans`Le plan de réparation est de 5 fois, ce qui est la limite la plus importante. Un plan qui renvoie le même plan cassé cinq fois consécutives serait autrement en boucle jusqu'à ce que le budget de l'étape le saisisse.
 

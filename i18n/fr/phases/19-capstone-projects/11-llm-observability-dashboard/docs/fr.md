@@ -85,7 +85,7 @@ ce-otel-drift
 
 8. **Alerting chain.**L'exportateur Prometheus lit les agrégats de scores d'évaluation et les percentiles de latence; Alertmanager accède à Slack pour les avertissements et PagerDuty pour les violations critiques.
 
-9. **Regression probe.**Injecter un bug: le chatbot évalué commence à fuir de faux SSN 1% du temps. Mesurer MTTR: de bug déployé à l'alerte Slack.
+9. **Regression probe.**Injecter un bug: le chatbot évalué commence à fuir de faux SSN 1% du temps. Mesurer le temps de détection (MTTD): de bug déployé à l'alerte Slack. La détection est la partie de MTTR du tableau de bord; la correction et le redéploiement viennent après.
 
 ## Utilisez-le
 
@@ -106,7 +106,7 @@ $ curl -X POST https://my-otel-collector/v1/traces -d @trace.json
 |:-:|---|---|
 | 25 | Trace-schema coverage | Number of SDK families producing canonical GenAI spans (target: 6+) |
 | 20 | Eval correctness | DeepEval / RAGAS scores vs hand-labeled set |
-| 20 | Dashboard UX | MTTR on injected regression (under 5 minutes target) |
+| 20 | Dashboard UX | MTTD on injected regression (under 5 minutes target) |
 | 20 | Cost / scale | Sustained ingest at 1k spans/sec without backlog |
 | 15 | Alerting + drift detection | Prometheus/Alertmanager chain exercised end to end |
 | **100** | | |

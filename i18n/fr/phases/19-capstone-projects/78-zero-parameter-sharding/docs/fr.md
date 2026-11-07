@@ -16,7 +16,7 @@
 
 ## Le problème
 
-Le Vanilla DDP réplique tout: les paramètres, les gradients et l'état optimisateur sont présents dans leur intégralité sur chaque rang. Pour un modèle de paramètre 7B en fp16, cela signifie 14 Go de paramètres, 14 Go de gradients et 28 Go d'état optimisateur par rang. L'état optimisateur est le plus grand terme et le plus facile à déchiffrer car il n'est touché que pendant la étape, pas pendant l'avant ou l'arrière.
+Le DDP de vanille reproduit tout: les paramètres, les gradients et l'état optimisateur sont présents dans leur intégralité sur chaque rang. Pour un modèle de paramètre 7B en fp16, ce qui signifie 14 Go de paramètres, 14 Go de gradients et 56 Go d'état optimisé (les deux float32 Adam moments) par rang. L'entraînement de précision mixte ajoute une copie maîtresse de 28 Go des poids en haut. L'état optimisateur est le plus grand terme et le plus facile à déchiqueter car il n'est touché que pendant la marche, pas pendant l'avance ou l'arrière.
 
 La phase 1 de ZeRO réduit l'état d'optimisation. Chaque rang contient 1/N des moments d'Adam. Après l'arrière, au lieu de réduire le gradient complet et de marcher localement, ZeRO réduit_scatters de sorte que chaque rang ne reçoit que le gradient sumé de son fragment. Le rang applique l'étape optimisatrice à son fragment des paramètres principaux. Les fragments de paramètre mis à jour se rassemblent alors pour que chaque rang ait le modèle complet pour le prochain avancé. La mémoire optimisée diminue de N. Le trafic de fil par étape est le même que le DDP: un réduire_scatter plus un allgather équivaut à un allréduire par bande passante. La mémoire gagne, le débit reste.
 
@@ -92,7 +92,7 @@ Trois modèles durcissent suffisamment le ZeRO pour le déployer.
 
 **Mixed precision is the point.**La technique de ZERO est une technique de précision mixte; la copie principale de fp32 est ce qui est fragmenté.
 
-**Stage 1 is a near-free win.**La communication est identique à la DDP par bande passante. Les économies de mémoire sont linéaires en N. Le seul coût est la comptabilité du shard optimisateur. La production stacks par défaut à l'étape 1 à moins que la mémoire de shard paramètre soit également un problème; puis étape 2 ou 3 négocie la communication pour la mémoire.
+**Stage 1 is a near-free win.**La communication est identique à la communication par bande passante. Les économies de mémoire sont linéaires en N. Le seul coût est la comptabilité de la section optimisatrice. La production stacks par défaut à l'étape 1 à moins que la mémoire de gradient ou de paramètre ne soit également un problème.
 
 ## Utilisez-le
 

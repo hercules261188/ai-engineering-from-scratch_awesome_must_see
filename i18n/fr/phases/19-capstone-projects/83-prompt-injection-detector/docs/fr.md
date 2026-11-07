@@ -81,4 +81,4 @@ On court .`python3 main.py`La démo charge la taxonomie, met le détecteur sur c
 
 ## Pour en savoir plus
 
-Le détecteur est l'un des trois signaux que compose la porte de bout en bout.
+Le détecteur est l'un des quatre signaux que la passerelle compose, à côté du filtre, du classifiateur et du moteur de règles.

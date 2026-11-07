@@ -65,11 +65,11 @@ Le FFN va`hidden -> 4 * hidden -> hidden`Le facteur 4 est empirique et s'appliqu
 | 12 blocks | about 85M |
 | Plus front end | about 86M total |
 
-ViT-Base est un encodeur de 86M. Ce qui est petit par rapport aux normes 2026 (SigLIP-So400M est 400M, le Qwen-VL ViT est 675M), mais l'architecture est identique en largeur et en profondeur.
+ViT-Base est un encodeur de paramètre 86M. Ce qui est petit par rapport aux normes 2026 (SigLIP-So400M est 400M, le Qwen-VL ViT est 675M), mais l'architecture est identique en largeur et en profondeur.
 
 ### Masque de cause ou pas ?
 
-Les transformateurs de vision sont uniquement encodés et bidirectionnels: token `i`peut assister à la démonstration `j`L'attention croisée côté décodeur dans la leçon 61 utilisera un masque de causalité, mais à l'intérieur du codeur de vision, l'attention est entièrement connectée.
+Les transformateurs de vision sont uniquement encodés et bidirectionnels: token `i`peut assister à la démonstration `j`Le décodeur de texte auto-attention dans la leçon 61 utilisera un masque causale (son attention croisée sur les patchs d'image ne le fait pas), mais à l'intérieur du codeur de vision, l'attention est entièrement connectée.
 
 ### Ce que le jeton CLS apprend
 

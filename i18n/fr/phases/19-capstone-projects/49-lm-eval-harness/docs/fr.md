@@ -20,7 +20,7 @@ Un nouveau modèle de langage arrive chaque semaine. La revendication du marketi
 
 Sans harnais dans votre repo, vous comparez deux modèles par vibration. Avec un harnais, vous les comparez par score sur un ensemble de tâches fixes avec une métrique fixe, sur une sortie JSON, vous pouvez différer. Le harnais est le contrat entre la course d'hier et la course d'aujourd'hui. Sans lui, les régressions vont.
 
-Le piège est de trop adapter le harnais à un seul modèle. La solution est la même piège à l'envers: le harnais est assez petit pour être lu en quinze minutes, les tâches sont assez petites pour être expédiées dans le repo, les mesures sont écrites à partir de zéro pour qu'un collègue puisse les vérifier, et l'adaptateur est le seul endroit où le code spécifique au modèle vit. S'échangez l'adaptateur, le tableau de bord bouge; échangez les tâches, le tableau de bord bouge. Rien d'autre ne devrait bouger.
+Le piège est de trop adapter le harnais à un seul modèle. Le problème est de garder chaque choix spécifique au modèle hors du harnais: le harnais est assez petit pour être lu en quinze minutes, les tâches sont assez petites pour être expédiées dans le repo, les mesures sont écrites à partir de zéro pour qu'un collègue puisse les vérifier, et l'adaptateur est le seul endroit où le code spécifique au modèle vit. S'échangez l'adaptateur, le tableau de bord bouge; échangez les tâches, le tableau de bord bouge. Rien d'autre ne devrait bouger.
 
 ## Le concept
 

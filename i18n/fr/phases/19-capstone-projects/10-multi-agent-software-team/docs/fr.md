@@ -123,7 +123,7 @@ $ team run --issue https://github.com/acme/widget/issues/842
 
 1. Injecter un bug évident dans un diff mid- run (extra `return None`La mesure du taux de fausse approbation de l'examinateur.
 
-2. Réduire à deux codeurs (architecte + codeur + réviseur + testeur, codeur exécute deux sous-tâches séquentiellement).
+2. Réduire à deux codeurs (architecte + deux codeurs + réviseur + testeur, chaque codeur exécute deux sous-tâches séquentiellement).
 
 3. Remplacez le coordinateur de fusion par une contrainte de rédacteur unique (les sous-tâches touchent des ensembles de fichiers disjoints). Mesurer la charge de planification sur l'architecte.
 

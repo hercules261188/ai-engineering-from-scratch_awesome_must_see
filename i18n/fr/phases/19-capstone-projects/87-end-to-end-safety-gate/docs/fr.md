@@ -9,7 +9,7 @@
 
 ## Problème
 
-Les leçons 82-86 de cette piste ont chacune envoyé une seule pièce: une taxonomie, un détecteur d'entrée, un cadre d'évaluation, un classificateur de sortie, un moteur de règles. Une véritable passerelle de sécurité doit les composer, les exécuter au bon moment du cycle de vie de la demande, décider de quelle action prendre lorsqu'ils ne sont pas d'accord, et produire une trace qu'un examinateur peut lire le lundi matin.
+Les leçons 82-86 de cette piste ont chacune fourni une seule pièce: une taxonomie, un détecteur d'entrée, un cadre d'évaluation, un classificateur de sortie, un moteur de règles. Une véritable passerelle de sécurité doit comporter les pièces de détecteur de lecture 83, le classifiateur de lecture 85 et le moteur de règles de lecture 86, les exécuter au bon moment du cycle de vie de la demande, décider de quelle action prendre lorsqu'elles ne sont pas d'accord et produire une trace que l'examenateur peut lire lundi matin. La composition est la leçon.
 
 La porte est à trois points de contrôle. La pré-génération fonctionne avant que le modèle ne soit appelé: le détecteur de la leçon 83 regarde le prompt et le passe, le bloque directement (attaque de haute confiance) ou attache un drapeau pour peser les couches en aval. Pendant la génération, le modèle émet des jetons: un filtre de streaming tamponne les morceaux et met fin au flux tôt si une phrase interdite apparaît (l'injection de préfixe survit si la passerelle ne semble post-hoc). La post-gen fonctionne après la fin du modèle: le routeur de classification de la leçon 85 et le moteur de règles de la leçon 86 inspecter la sortie complète, la passerelle agrégera leurs verdicts avec le signal de pré-gen, et la passerelle applique une action finale.
 
@@ -35,11 +35,11 @@ L'agrégateur combine quatre signaux de gravité: la confiance du détecteur (le
 
 | Signal state | Action |
 |---|---|
+| detector confidence >= 0.85 on a non-benign category | block before generation |
 | any high severity | block |
-| any medium severity | redact |
-| any low severity | warn |
-| all none + detector confidence < 0.5 | allow |
-| detector confidence 0.5-0.85, no other signal | warn |
+| any medium severity (detector confidence 0.5 to 0.85, or early stream termination) | redact |
+| any low severity (detector confidence below 0.5 on a non-benign category) | warn |
+| detector says benign and no other signal | allow |
 
 Block renvoie un refus. Redact envoie le texte modifié par le classifiateur et applique le régulateur-moteur fixateur. Avertissez les expéditeurs de l'original avec un avis doux. Permet aux expéditeurs de l'original. Chaque demande émet un `RequestTrace`avec `request_id`- Je suis là .`prompt`- Je suis là .`pre_gen`(verdict du détecteur),`during_gen`(démarreur de filtrage des jetons), `post_gen`(action de classification + rapport de règles), `final_action`- Je suis là .`final_output`, et `latency_ms`- Je suis désolé .
 

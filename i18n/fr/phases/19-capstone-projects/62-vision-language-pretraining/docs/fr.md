@@ -18,7 +18,7 @@
 
 Un modèle de langage de vision a besoin de deux compétences. Il doit classer: donné une légende, trouver la bonne image parmi beaucoup. Il doit générer: donné une image, écrire une légende. Préentrainer le modèle sur une compétence seule vous donne la moitié d'un système. CLIP classement clés mais ne peut pas légende. GPT-4V peut légende mais utilise une tête de récupération séparée pour le classement. Préentraînement multi-objectif obtient les deux en un seul passage.
 
-Pour un lot de paires N, le modèle traite les paires correspondantes N comme positives et les paires correspondantes `N^2 - N`Les paires de défauts sont négatifs, puis une perte d'entropie croisée sur le résultat `(N, N)`La perte LM gère la moitié de la génération: prédiction standard de jeton suivant conditionnée sur l'image.
+Pour un lot de paires N, le modèle traite les paires correspondantes N comme positives et les paires correspondantes `N^2 - N`Les paires de défauts sont négatifs, puis une perte d'entropie croisée sur le résultat `(N, N)`La perte de LM gère la moitié de la génération: prédiction standard du prochain jeton conditionné sur l'image.
 
 ## Le concept
 
@@ -54,7 +54,7 @@ Le décodeur consomme des jetons de mémoire d'image via l'attention croisée et
 
 ### Combiner les pertes
 
-`total = contrastive + lm_weight * lm`où `lm_weight`Le décodeur de l'écodeur est un gradient de perte de LM. C'est la recette multi-tasks que les modèles de style CoCa, BLIP et SigLIP utilisent tous, avec des pondérations différentes.
+`total = contrastive + lm_weight * lm`où `lm_weight`Le décodeur reçoit le gradient de la perte de LM seulement. C'est la recette multi-tasks que CoCa et BLIP utilisent, avec diverses pondérations. SigLIP conserve seulement le terme contrastant et swaps softmax pour une perte de paire sigmoïde.
 
 | Component | Loss surface | Affects |
 |-----------|--------------|---------|

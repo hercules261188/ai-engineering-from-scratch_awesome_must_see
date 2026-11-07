@@ -57,7 +57,7 @@ Un transformateur a des milliers de tensors de paramètres. Un allreduce par ten
 
 ### Pourquoi enfoncer la graine ?
 
-Chaque rang doit appeler`torch.manual_seed(seed + rank)`pour le mélange mais `torch.manual_seed(seed)`pour le paramètre init. Une seule graine partagée signifie que chaque rang voit le même ordre de lot (parallèle des données défaites); une graine spécifique de rang pour les paramètres signifie que les paramètres initiaux ne sont pas d'accord par epsilon flottant et la synchronisation des gradients ne rend plus les réplices identiques.
+Chaque rang doit appeler`torch.manual_seed(seed + rank)`pour le mélange mais `torch.manual_seed(seed)`pour le paramètre init. Une seule semence partagée pour le mélange signifie que chaque rang voit le même ordre de lot (parallèle de défaite des données). Pour les paramètres, le rang 0 diffusé à la construction est ce qui rend les répliques identiques, et il éclipse tout ce que chaque rang a initialement. La semence init partagée est la sauvegarde: si la diffusion est sautée ou cassée, init spécifique au rang donne à chaque réplique des poids de départ différents, et la synchronisation de gradient seule ne les regroupe jamais. Prenez le modèle de semence correctement ou l'essai d'équivalence des paramètres échoue à l'étape 1.
 
 ```figure
 ci-ddp-grad-sync

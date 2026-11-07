@@ -70,7 +70,7 @@ L'évaluateur effectue trois calculs indépendants et les rejoint dans le chemin
 
 La perplexité est exponentielle en perte. Une baisse de 0,1 en perte est une baisse beaucoup plus importante en perplexité. La comparaison de la perplexité directement entre deux configurations est bonne, mais le mélanger avec des métriques linéaires dans un seul rapport nécessite une normalisation.
 
-La leçon normalise toute mesure dont `scale`champ est `"log"`Le seuil est ensuite appliqué dans l'espace de log.`log(28) - log(32) = -0.133`une meilleure métrique, qui est bien au-dessus du seuil de 2%.
+La leçon normalise toute mesure dont `scale`champ est `"log"`Le seuil est ensuite appliqué dans l'espace de log.`log(32) = 3.466`contre `log(28) = 3.332`L' amélioration relative sur une métrique inférieure est meilleure est`(3.466 - 3.332) / 3.466 = 0.039`, qui élimine le seuil de 2%.
 
 ```text
 if scale == "log":

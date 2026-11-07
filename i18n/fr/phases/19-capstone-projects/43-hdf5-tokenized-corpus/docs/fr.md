@@ -1,6 +1,6 @@
 # Corpus sélectionné HDF5
 
-> Le corpus téléchargé doit atterrir dans une disposition que l'entraîneur peut diffuser à la vitesse de la ligne. JSONL sur disque ne survit pas à 16 travailleurs de chargeur de données. HDF5 avec un ensemble de données entiers taillés en morceaux. Cette leçon construit la jetonisation de streaming dans un ensemble de données HDF5 dimensionnable, écriture fragmentée sur plusieurs fichiers, lecture en mémoire cartographiée au moment de la formation, et un chargement de données de fenêtre coulissante qui produit des séquences de longueur fixe avec le bon emballage.
+> Le corpus téléchargé doit atterrir dans une disposition que l'entraîneur peut diffuser à la vitesse de la ligne. JSONL sur disque ne survit pas à 16 travailleurs de chargeur de données. HDF5 avec un ensemble de données entiers taillés en morceaux. Cette leçon construit la jetonisation de streaming dans un ensemble de données HDF5 dimensionnable, écrit en morceaux sur plusieurs fichiers, les lectures en morceaux au moment de la formation, et un chargement de données de fenêtre coulissante qui produit des séquences de longueur fixe avec le bon emballage.
 
 **Type:** Build
 **Languages:** Python
@@ -18,7 +18,7 @@
 
 Une formation moderne de langage-modèle lit des jetons à des centaines de milliers d'échantillons par seconde sur des dizaines de travailleurs. JSONL sur disque meurt lors de la première erreur de page de cache froide: le parseur JSON est lent, les limites du document ne sont pas adressables, et la recherche de "échantillon 4,217,884" nécessite la numérisation du fichier. Même le Parquet, qui se comprime bien, ne convient pas bien parce que l'entraîneur ne veut pas de colonnes; il veut un flux de jetons plat avec $O(1)$accès aléatoire.
 
-HDF5 convient car il offre un ensemble de données en morceaux, dimensionnables, uniquement entiers dont les morceaux sont conviviaux en cas de lecture.`tokens[3,200,000 : 3,200,8192]`HDF5 copie l'hyperlab demandé du cache de la page dans un tableau NumPy nouvellement alloué. Le coût est un poignet de fichier ouvert et une empreinte de cache de page de taille de pièce par travailleur, ce qui est négligeable par rapport au coût de décoding JSONL.
+HDF5 convient car il offre un ensemble de données en morceaux, dimensionnables, uniquement entiers dont les morceaux sont conviviaux en cas de lecture.`tokens[3_200_000 : 3_208_192]`HDF5 copie l'hyperlab demandé du cache de la page dans un tableau NumPy nouvellement alloué. Le coût est un poignet de fichier ouvert et une empreinte de cache de page de taille de pièce par travailleur, ce qui est négligeable par rapport au coût de décoding JSONL.
 
 Le problème de la construction est de rendre le côté écrit honnête. Les ensembles de données dimensionnables sont faciles à utiliser à mauvais escient: écrivez un document à la fois et le fichier HDF5 est fragmenté au point d'être inutilisable. Écrivez tous les documents en une seule taille et un processus de mort perd toute la fragmentation. La bonne discipline est le tampon-alors-extension, avec une taille tampon qui correspond à la taille de la pièce, et une écriture fragmentée qui divise la charge de travail entre les fichiers de sorte qu'un crash perd au plus une fragmentation.
 
@@ -35,7 +35,7 @@ flowchart TD
   Write --> Buffer
   Buffer --> Close[Final flush + close]
   Close --> ShardDone[Shard file finalized]
-  ShardDone --> MMapRead[Memory-mapped read]
+  ShardDone --> MMapRead[Chunked read]
   MMapRead --> Window[Sliding-window dataloader]
   Window --> Train[Train batch]
 ```
@@ -48,9 +48,9 @@ L' ensemble de données de jetons est créé avec `maxshape=(None,)`et une fixat
 
 Un seul fichier HDF5 est un seul point de défaillance. Le pipeline écrit des fragments en parallèle: chaque fragment d'entrée de la phase 19 leçon 42 produit un fragment de sortie HDF5.`shards.json`Les données sont indiquées par fragment, par chemin de fichier, par nombre de jetons, par nombre de documents et par sha256 sur les jetons.`shards.json`pour calculer les compensations globales et valider le corpus.
 
-### Lire en mémoire
+### Leur lecture en morceaux
 
-Au moment de la formation, chaque travailleur ouvre sa part de fichiers HDF5 dans `swmr=True`mode et demande `tokens[start:stop]`Le travail ne matérialise jamais l'ensemble du fichier: la tranche est copiée dans le tampon de lot du chargement de données, que le chargement de données copie ensuite dans un tensor d'entraînement en mémoire fixe au moment du lot. Le chemin de chaleur a un syscall par transion de lot; tout le reste est l'accès à la RAM.
+Au moment de la formation, chaque travailleur ouvre sa part de fichiers HDF5 dans `swmr=True`mode et demande `tokens[start:stop]`- Je suis désolé . La mise en page de la pièce de HDF5 rend cette lecture bon marché une fois que la pièce est chaude: h5py ne fait pas la carte mémoire du fichier, il lit des morceaux entiers à travers le cache de la pièce de HDF5 et le cache de la page du système d'exploitation, puis copie l'hyperslab demandé. Le travailleur ne matérialise jamais l'ensemble du fichier: la tranche est copiée dans le tampon de lot du chargement de données, que le chargement de données copie ensuite dans un tensor d'entraînement en mémoire fixe au moment du lot. Le chemin chaud a un syscall par transion de pièce; tout le reste est l'accès à la RAM.
 
 ### Le chargeur de données de la fenêtre coulissante
 
@@ -67,10 +67,10 @@ cc-hdf5-corpus
 - `Tokenizer`- un jeton déterministe de niveau octet suffisamment bon pour la démo.`encode(text) -> list[int]`et `vocab_size`- Je suis désolé .
 - `HDF5ShardWriter`- ouvre un ensemble de données entiers dimensionnables, tamponne les jetons à la taille de la pièce, redimensionne et écrit en étapes de taille fixe, enregistre `token_count`et `sha256`comme les attributs HDF5 sur close.
 - `ShardedTokenizationPipeline`- il y a des documents de saisie, il les envoie à un écrivain et il émet un`shards.json`l'indice.
-- `MmapTokenStore`- ouvre des fichiers fragmentés pour les lectures cartographiées en mémoire, compute des compensations globales, expose une seule `get_slice(start, stop)`- Je suis en train de le faire.
+- `MmapTokenStore`- ouvre des fichiers fragmentés pour les lectures en morceaux (le nom est une commodité; h5py lit des morceaux, il ne cartographient pas le fichier), calcule des compensations globales, expose une seule `get_slice(start, stop)`- Je suis en train de le faire.
 - `SlidingWindowDataloader`- choisit des fenêtres aléatoires du flux global et donne des résultats `(input_ids, target_ids)`Des matrices numériques.
 
-Une démo au bas du fichier crée un minuscule corpus de mémoire, le symbolise en deux fragments, les ouvre via une carte de mémoire, exécute le chargement de données pendant 10 lots, et imprime la forme par lots et une somme de contrôle.
+Une démo au bas du fichier crée un minuscule corpus de mémoire, le symbolise en deux fragments, les ouvre pour les lectures en morceaux, exécute le chargement de données pour 10 lots, et imprime la forme par lots et une somme de contrôle.
 
 - Je vais le faire.
 
@@ -117,7 +117,7 @@ Modèles de production:
 | Term | What people say | What it actually means |
 |------|-----------------|------------------------|
 | Resizable dataset | "Append-only" | An HDF5 dataset with `maxshape=(None,)` that grows via `resize` calls in chunk-sized strides |
-| Chunked layout | "How HDF5 stores it" | Fixed-size on-disk pages that the kernel can memory-map and the dataloader can read contiguously |
+| Chunked layout | "How HDF5 stores it" | Fixed-size on-disk blocks that HDF5 reads and caches as one unit, so the dataloader can read a contiguous range cheaply |
 | `swmr` mode | "Read-while-write" | Single-Writer-Multiple-Reader mode that lets dataloader workers share the file safely |
 | Shard index | "shards.json" | The durable index of all token shards with offsets and content hashes |
 | Sliding window | "Training sample" | A fixed-length slice of the global token stream that the trainer pairs with its shift-by-one target |
@@ -126,7 +126,7 @@ Modèles de production:
 
 - [HDF5 chunking documentation](https://support.hdfgroup.org/documentation/hdf5/latest/hdf5_chunking.html)- la mise en page des données en morceaux, dimensionnables, que cette leçon utilise
 - [h5py user guide](https://docs.h5py.org/en/stable/)- Liens Python pour HDF5
-- [NumPy memory mapping](https://numpy.org/doc/stable/reference/generated/numpy.memmap.html)- l'exposition primitive HDF5 par le côté de lecture par le
+- [h5py chunked storage](https://docs.h5py.org/en/stable/high/dataset.html#chunked-storage)- comment h5py lit les ensembles de données en morceaux et taille le cache en morceaux
 - Phase 19 · 42 - le téléchargeur dont la sortie est symbolisée par cette leçon
 - Phase 19 · 44 - le calendrier cosine qui consomme ce chargeur de données
 - Phase 19 · 45 - la boucle AMP qui termine la phase d'entraînement

@@ -108,7 +108,7 @@ Modèles de production:
 
 1. Ajoutez une variante inverse de la racine carrée du calendrier et comparez-la sur une course d'entraînement de 200 étapes.
 2. Ajouter un `--restart`le drapeau qui ajoute un second réchauffement à `total_steps / 2`Défendre si les redémarrages chauds améliorent ou nuisent pendant la course de jouets.
-3. Ajouter un test unitaire qui montre que le calendrier est continu: pour chaque étape `[0, total_steps]`la différence `|lr(step+1) - lr(step)|`est limitée par `lr_max / warmup_steps`- Je suis désolé .
+3. Ajouter un test unitaire indiquant que le calendrier est continu: avec `warmup_steps > 0`, pour chaque étape .`[0, total_steps]`la différence `|lr(step+1) - lr(step)|`est délimitée par la plus grande pente de réchauffement `lr_max / warmup_steps`et la pente cosine la plus raide`pi * (lr_max - lr_min) / (2 * (total_steps - warmup_steps))`Un court segment cossinal peut être plus raide que la rampe de réchauffement, donc la pente de réchauffement seule n'est pas une limite sûre.
 4. Faites le programme en un `torch.optim.lr_scheduler.LambdaLR`La leçon utilise une fonction simple étape; que change l'emballage?
 5. Ajouter un `--plot-png`drapeau qui écrit une vraie intrigue via `matplotlib`. Défendre si le graphique de texte de la leçon ou la PNG est le meilleur paramètre pour les exécutions CI.
 

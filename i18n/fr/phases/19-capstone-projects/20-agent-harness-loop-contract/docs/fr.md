@@ -43,7 +43,7 @@ stateDiagram-v2
     DONE --> [*]
 ```
 
-`IDLE`est le seul point d'entrée légal. `DONE`C'est la seule issue légale.`AWAITING_TOOL`C'est le seul état qui produit un point de traction.
+`IDLE`est le seul point d'entrée légal. `DONE`C'est la seule issue légale.`AWAITING_TOOL`est le seul état qui produit un point de tir par lui-même.`on_pause`Le gouvernement de l'Union européenne, qui a été créé par le Conseil de l'Europe, a décidé de mettre en place un programme de révision de la politique de l'Union européenne, qui ne serait pas un État: il lance à partir d'un État actif quand le budget est épuisé ou qu'un crochet demande un réexamen.
 
 La machine d'état est déterministe. étant donné le même journal d'événement, le harnais entre de nouveau dans le même état. Cette propriété est ce qui vous permet de refaire des sessions pour débogage sans réappeler le modèle.
 

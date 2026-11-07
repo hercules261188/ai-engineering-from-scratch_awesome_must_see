@@ -77,15 +77,15 @@ Le registre des mesures est de deux dictes.`{(name, frozen_labels): int}`Les his
 6. `wrap_tool_call(name)`décorateur qui émet une durée et met à jour les métriques.
 7. Demo: synthétise une invocation complète d'agent (gen_ai.chat span autour des spans d'outils), écrit traces.jsonl, imprime l'exposition Prometheus, sort de zéro.
 
-L'identifiant de span et l'identifiant de trace sont des chaînes hexagonale de 16 bytes, générées à partir de `os.urandom`L'exportateur ne lance jamais, les erreurs IO apparaissent mais le harnais continue de fonctionner.
+L' id trace est une valeur de 16 octets (32 caractères hex) et l' id span est une valeur de 8 octets (16 caractères hex), les deux coupés de caractères aléatoires `uuid4`Il est possible de trouver des informations sur les données de l'exportateur, mais il est possible de les utiliser.
 
-L'histogramme a un ensemble de bouquet fixe (le nombre de temps de latence par défaut OTel en millisecondes: 5, 10, 25, 50, 100, 250, 500, 1000, 2500, 5000, 10000, +Inf). Les échantillons sont stockés sous forme de liste; l'exposition compute les comptes par bouquet sur demande.
+L'histogramme a un bucket fixe pour la latence en millisecondes: 5, 10, 25, 50, 100, 250, 500, 1000, 2500, 5000, 10000, +Inf. Il s'agit d'une version réduite des limites par défaut du SDK OTel, qui comprennent également 0, 75, 750 et 7500. Les échantillons sont stockés sous forme de liste; l'exposition compute les comptes par bucket sur demande.
 
 ## Pourquoi roule à la main au lieu d'ouverture-métrie-sdk
 
-Le SDK OTel Python est une vraie dépendance. Il s'agit également de plusieurs milliers de lignes de code, de plusieurs processus pour l'exportateur OTLP et d'un coût de fonctionnement qui inonde un budget de leçon. La version roulée à la main enseigne le format de fil.
+Le SDK OTel Python est une vraie dépendance. Il s'agit également de plusieurs milliers de lignes de code, d'un fil d'exportation de fond pour l'exportateur OTLP et d'un coût de fonctionnement qui inond un budget de leçon. La version roulée à la main enseigne le format de fil.
 
-Les conventions sont stables. Le format de fil émis par la leçon continuera à être analysé en 2030 parce que OTel ne casse jamais les noms d'attributs GenAI; ils en ajoutent seulement de nouveaux.
+Les conventions de GenAI sont toujours marquées Développement dans la spécification, et elles ont déjà renommé des attributs: `gen_ai.usage.prompt_tokens`Il est devenu `gen_ai.usage.input_tokens`. Pin la version de conventions sémantiques que vous émettez et vérifier quand vous mettez à niveau le SDK.
 
 ## Comment cela se compose avec le reste de la piste A
 

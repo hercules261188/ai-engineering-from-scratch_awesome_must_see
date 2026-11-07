@@ -16,7 +16,7 @@
 
 ## Le problème
 
-Vous avez fixé un emploi d'entraînement de 18 heures. Le couvercle de l'horloge est de 4 heures. Le cluster redémarre à 11 heures parce que quelqu'un au-dessus de votre grade de rémunération a approuvé une mise à niveau du noyau. Sans checkpoints, vous recommencez. Sans CV, vous perdez également l'état d'optimisation qui a pris les 11 premières heures pour apprendre, donc même si les poids du modèle ont survécu, les moments AdamW sont partis et la prochaine étape se cache dans une direction que la trajectoire d'entraînement avait déjà dépassée.
+Vous avez fixé un emploi d'entraînement de 18 heures. Le planificateur limite chaque allocation à 4 heures, de sorte que la course est déjà une chaîne de postes de travail repris. Puis le cluster redémarre à l'heure 11 de la course parce que quelqu'un au-dessus de votre grade de rémunération a approuvé une mise à niveau du noyau. Sans checkpoints, vous recommencez. Sans CV, vous perdez également l'état d'optimisation qui a pris les 11 premières heures pour apprendre, donc même si les poids du modèle ont survécu, les moments AdamW sont partis et la prochaine étape se cache dans une direction que la trajectoire d'entraînement avait déjà dépassée.
 
 Le bon artefact est un seul fichier qui contient tout ce qui est nécessaire pour continuer: les paramètres du modèle, l'état de l'optimisateur, l'état du planificateur, l'historique de perte des parcelles, les compteurs de phase et d'époque actuels et de lot en époque, et l'état du RNG pour chaque source de hasard. Sans l'état RNG, la courbe de perte repris est une courbe différente. Le même modèle, les mêmes données, différents mélanges, différents masques de dérapagement, différents numéros sur le tableau de bord.
 

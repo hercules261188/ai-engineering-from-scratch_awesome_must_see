@@ -64,7 +64,7 @@ Les clés d'image et les valeurs sont calculées une fois au début du décode e
 
 ### Composition des blocs
 
-Un bloc de décodeur fonctionne: pré-LN -> auto-attention -> résiduel -> pré-LN -> attention croisée -> résiduel -> pré-LN -> flux-avant -> résiduel. Trois sous-couches, chacune avec sa propre LayerNorm. Le papier Flamingo a ajouté une passerelle apprise sur l'attention croisée afin que le modèle puisse se retirer du chemin de l'image au coût de la stabilité du temps de formation; la ligne de base canonique (utilisée ici) n'a pas de passerelle.
+Un bloc de décodeur fonctionne: pré-LN -> auto-attention -> résiduel -> pré-LN -> attention croisée -> résiduel -> pré-LN -> flux-avant -> résiduel. Trois sous-couches, chacune avec sa propre LayerNorm. Le papier Flamingo a ajouté une passerelle tanh apprise sur l'attention croisée, initialisée à zéro, de sorte que le modèle de langage gelé commence inchangé et la formation reste stable; la ligne de base canonique (utilisée ici) n'a pas de passerelle.
 
 ```python
 class DecoderBlock:

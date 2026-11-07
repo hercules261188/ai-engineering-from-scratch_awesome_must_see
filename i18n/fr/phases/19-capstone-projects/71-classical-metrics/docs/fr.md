@@ -27,7 +27,7 @@ Le code est un code de code de code de code de code de code de code de code de c
 
 ## Les démarches
 
-Le jeton est `re.findall(r"\w+", text.lower())`- les courriers minuscules, alphanumériques, la ponctuation de la chute. chaque métrique dans cette leçon utilise exactement ce jeton. le coureur ne peut pas choisir. si vous échangez des jetons, vous exécutez un autre point de référence.
+Le jeton est `re.findall(r"\w+", text.lower())`. minuscules, séries de caractères de mots (lettres, chiffres et soulignement), déposez tout le reste. chaque métrique dans cette leçon utilise exactement ce jeton. Le coureur ne peut pas choisir. Si vous échangez des jetons, vous exécutez un autre point de référence.
 
 ```python
 TOKEN_RE = re.compile(r"\w+", re.UNICODE)
@@ -66,7 +66,7 @@ Pour les tâches multi-objectifs, nous prenons la meilleure F1 au-dessus de la l
 
 ## Le projet de loi
 
-La formule que nous utilisons est BLEU-4 au niveau du corpus avec la pénalité de breveté standard et le doucement additif-un sur les n-grammes modifiés, de sorte qu'un seul 4 grammes manquants ne pousse pas le score à zéro.
+BLEU est la métrique canonique de traduction automatique et elle apparaît toujours dans les travaux de résumé. La formulation que nous utilisons est BLEU-4 au niveau de la phrase, marquée par prédiction et par paire de référence, avec la peine de breveté standard et le doucement additif-un sur les nombres de n-grammes modifiés afin qu'un seul 4 grammes manquants ne pousse pas le score à zéro.
 
 Pour chaque paire de référence de candidat, nous comptons la précision n-gramme modifiée pour n égale 1, 2, 3, 4. La précision modifiée clipe le nombre n-gramme du candidat par le nombre maximum de n-gramme dans n-une référence, de sorte qu'un candidat ne peut pas gonfler en répétant une phrase. La moyenne géométrique sur les quatre précisions est enveloppée par la peine de breveté.
 
@@ -109,7 +109,7 @@ La table numpy rend l'implémentation lisible; les listes Python pures fonctionn
 
 ## La précision
 
-Pour les tâches de classification multi-objectifs, la précision est réduite à une correspondance exacte avec une seule cible normalisée.`metric_name`sans passer par des comparaisons de chaîne à l'intérieur du coureur.
+Pour les tâches de classification, la précision est réduite à une correspondance exacte: la prédiction obtient un score 1 si elle correspond à une cible normalisée de la liste.`metric_name`sans passer par des comparaisons de chaîne à l'intérieur du coureur.
 
 ## Contrat d'expédition
 

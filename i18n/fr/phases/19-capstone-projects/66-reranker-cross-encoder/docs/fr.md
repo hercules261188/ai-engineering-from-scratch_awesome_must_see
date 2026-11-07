@@ -91,7 +91,7 @@ La sortie montre le haut N du bi-encodeur, le haut K du cross-encodeur et un ré
 
 **Cross-encoder is not symmetric.** `rerank(q, d)`et `rerank(d, q)`Si vous changez accidentellement, le rappel s'effondre.
 
-**N is too low to expose the bug.**Si vous définissez N = K, le cross-encoder ne peut pas réorganiser; il ne peut que ré pondérer. L'ascenseur semble zéro. Choisissez N au moins trois fois K.
+**N is too low to expose the bug.**Si vous définissez N = K, le cross-encoder peut réorganiser les candidats K mais ne peut pas en apporter un nouveau dans le haut K. Rappelez-vous que K ne peut pas bouger, donc le lift semble zéro.
 
 **Training data leaks into the eval.**Si les paires d'entraînement étiquetées à la main incluent les requêtes d'évaluation, le renouvellement de rang semble magique.
 

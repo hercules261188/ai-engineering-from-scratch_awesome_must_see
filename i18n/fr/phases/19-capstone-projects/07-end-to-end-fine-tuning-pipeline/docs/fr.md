@@ -1,6 +1,6 @@
 # Capstone 07  Pipeline de fin-à-fin de réglage (données de SFT à DPO à servir)
 
-> Un modèle 8B formé sur vos propres données, aligné sur vos propres préférences, quantifié, décodé par des spéculations, et servi à des jetons mesurables de 1 million de dollars. La pile ouverte 2026 est Axolotl v0.8, TRL 0.15, Unsloth pour l'itération, GPTQ/AWQ/GGUF pour la quantification, vLLM 0.7 avec EAGLE-3 pour la serveur. La pierre angulaire est de faire fonctionner le pipeline entier de manière reproduisable  YAML dans, servir le point d'extrémité  et publier une carte modèle dans le cadre du modèle 2026 Openness Framework.
+> Un modèle de classe 8B formé sur vos propres données, aligné sur vos propres préférences, quantifié, décodé par des spéculations et servi à des jetons mesurables de 1 million de dollars. La pile ouverte 2026 est Axolotl v0.8, TRL 0.15, Unsloth pour l'itération, GPTQ/AWQ/GGUF pour la quantification, vLLM 0.7 avec EAGLE-3 pour la serveur. La pierre angulaire est de faire fonctionner le pipeline entier de manière reproduisable (YAML en, serveur de point de sortie) et de publier une carte modèle dans le cadre du Cadre d'ouverture modèle 2026.
 
 **Type:** Capstone
 **Languages:** Python (pipeline), YAML (configs), Bash (scripts)
@@ -12,7 +12,7 @@
 
 Chaque équipe sérieuse d'IA en 2026 maintient un pipeline d'ajustement fin sur le robinet. Non pas parce qu'ils expédient un modèle de base frontalier, mais parce que l'adaptation en aval  domaine SFT, DPO contre les préférences étiquetées, les dessins distillés pour le décoding spéculatif, servant avec EAGLE-3  est où les gains mesurables vivent. Axolotl v0.8 gère les configurations SFT multi-GPU. TRL 0,15 gère le DPO et le GRPO. Unsloth vous donne une itération rapide à GPU unique. VLLM 0.7 avec EAGLE-3 pousse le décodage de débit 2-3x sans perte de qualité. L'outillage fonctionne; l'artisanat est dans les YAML, l'hygiène des données et la discipline d'évaluation.
 
-Vous exécuterez une base 8B (Llama 3.3, Qwen3 ou Gemma 3) via SFT puis DPO sur les données spécifiques à la tâche, quantifier pour servir et mesurer les gains par rapport à lm-évaluation-harness, RewardBench-2, MT-Bench-v2 et MMLU-Pro. Vous produirez une carte modèle en vertu du Cadre d'ouverture du modèle 2026.
+Vous exécuterez une base 8B à 14B (Llama 3.1 8B, Qwen3 14B ou Gemma 3 12B) via SFT puis DPO sur les données spécifiques à la tâche, quantifier pour servir et mesurer les gains par rapport à lm-évaluation-harness, RewardBench-2, MT-Bench-v2 et MMLU-Pro. Vous produirez une carte modèle dans le cadre du modèle 2026 Openess Framework.
 
 ## Concept
 
@@ -56,7 +56,7 @@ model card (2026 MOF) + safety eval (Llama Guard 4)
 ## La pile
 
 - Données: Datatrove pour déduction, classifiant Nemotron-CC pour qualité, Presidio pour III
-- Base: Llama 3.3 8B, Qwen3 14B ou Gemma 3 12B
+- Base: Llama 3.1 8B, Qwen3 14B ou Gemma 3 12B
 - SFT: Axolotl v0.8 avec ZeRO-3, Attention Flash 3, séquences emballées
 - Téléchargement de la préférence: TRL 0,15 pour le DPO ou le GRPO; Unsloth pour l'itération à GPU unique
 - Quantification: GPTQ (Marlin), AWQ, GGUF par l'intermédiaire de llama.cpp
@@ -120,7 +120,7 @@ $ ./pipeline.sh config/llama3.3-8b-domainX.yaml
 
 1. Exécutez SFT-only vs SFT+DPO vs SFT+GRPO sur le même benchmark spécifique à la tâche.
 
-2. Échangez le Llama 3.3 8B contre Qwen3 14B. Mesurez les jetons de 1 million de dollars à la même qualité.
+2. Échangez le Llama 3.1 8B contre Qwen3 14B. Mesurez les jetons de 1 million de dollars à la même qualité.
 
 3. Mesurer le taux d'acceptation EAGLE-3 sur les données de domaine par rapport au ShareGPT générique.
 
@@ -148,5 +148,5 @@ $ ./pipeline.sh config/llama3.3-8b-domainX.yaml
 - [DeepSeek R1 paper (arXiv:2501.12948)](https://arxiv.org/abs/2501.12948) Méthodologie du GRPO
 - [vLLM + EAGLE-3 documentation](https://docs.vllm.ai) pile de service de référence
 - [SGLang SpecForge](https://github.com/sgl-project/SpecForge) entraîneur de décoding spéculatif alternatif
-- [Model Openness Framework 2026](https://isocpp.org/) la norme de classification des libérations ouvertes
+- [Model Openness Framework (arXiv:2403.13784)](https://arxiv.org/abs/2403.13784): la norme de classification des libérations ouvertes
 - [lm-evaluation-harness](https://github.com/EleutherAI/lm-evaluation-harness) coureur d'évaluation canonique

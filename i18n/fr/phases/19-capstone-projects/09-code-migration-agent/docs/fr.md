@@ -18,7 +18,7 @@ Vous construirez un agent qui prend un repo Java 8 (ou Python 2 repo) et produit
 
 Le pipeline a deux couches.**deterministic substrate**(OpenRewrite pour Java, libcst pour Python) exécute la plupart des réécrits mécaniques en toute sécurité: importations, signatures de méthode, modifications de sécurité nulles, essayez-les avec des ressources, remplacements d'API dépassés.**agent layer**(OpenAI Agents SDK ou LangGraph sur Claude Opus 4.7 et GPT-5.4-Codex) traite des cas que les recettes ne peuvent pas: mises à niveau de fichiers de construction (Maven/Gradle/pyproject), conflits de dépendance transitifs, feuilles de test, annotations personnalisées.
 
-Chaque repo reçoit une boîte à sable Daytona avec le temps d'exécution cible préinstallé. L'agent itérée: exécuter la construction, classer les défaillances, appliquer la correction, réexécuter. Limits d'intensité: 30 minutes par repo, 8 $ par repo, 20 tournées d'agent. Si tous les tests passent et que le delta de couverture n'est pas négatif, la branche ouvre un PR. Si non, le repo est déposé sous une classe de défaillance avec des preuves.
+Chaque repo reçoit une boîte à sable Daytona avec le temps d'exécution cible préinstallé. L'agent itérée: exécuter la construction, classer les défaillances, appliquer la correction, réexécuter. Limits d'intensité: 30 minutes par repo, 8 $ par repo, 20 tournées d'agent. Si tous les tests passent et la couverture diminue de pas plus de 2 points de pourcentage, la branche ouvre un PR. Si non, le repo est déposé sous une classe de défaillance avec des preuves.
 
 La taxonomie de l'échec est la livrable. Sur 50 repos, ce qui est cassé? transitive deps? annotations personnalisées? construire version de l'outil? test flocons non liés à la migration? chaque classe obtient un compte et un exemplaire différence. Les futurs auteurs de recettes peuvent cibler les trois premiers.
 
@@ -77,7 +77,7 @@ ce-migration-funnel
 
 4. **Budget caps.**30 minutes de temps par répondeur, 8 $, 20 tournées d'agent.
 
-5. **Test + coverage gate.**Après la mise en place est verte, exécutez la suite de test. Comparer la couverture à la repo de base. Si la couverture a chuté de plus de 2%, le fichier sous " couverture_régrésion ".
+5. **Test + coverage gate.**Après la mise en place est verte, exécutez la suite de test. Comparer la couverture à la repo de base. Si la couverture a chuté de plus de 2 points de pourcentage, le fichier sous " couverture_régrésion ".
 
 6. **PR open.**En cas de succès, appuyez sur la branche, ouvrez la relation avec la différence et un résumé des recettes appliquées et qui engage l'agent auteur.
 
