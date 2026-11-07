@@ -69,7 +69,7 @@ Los rastreadores estándar permiten detectar detecciones de baja confianza (< 0,
 
 ### SAM 2 seguimiento basado en la memoria
 
-SAM 2 maneja el vídeo manteniendo un **memory bank**En un marco, se da un prompt (clic, caja, texto) que codifica la instancia en memoria. En los cuadros posteriores, la memoria se atende cruzado contra las características del nuevo marco, y el decodificador produce una máscara para la misma instancia en el nuevo marco.
+SAM 2 maneja el vídeo manteniendo un **memory bank**En un marco, se da un prompt (clic, caja o máscara) que codifica la instancia en memoria. En los cuadros posteriores, la memoria se atende cruzado contra las características del nuevo marco, y el decodificador produce una máscara para la misma instancia en el nuevo marco.
 
 No hay filtro Kalman, no hay tarea húngara, la asociación está implícita en la operación de memoria-atención.
 

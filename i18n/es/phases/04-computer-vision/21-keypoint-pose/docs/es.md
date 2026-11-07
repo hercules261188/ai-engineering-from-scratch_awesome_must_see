@@ -60,7 +60,7 @@ Por qué las mapas de calor funcionan mejor que la regresión directa: la estruc
 
 ### Localización de subpixel
 
-Argmax da coordenadas enteras. Para la precisión de sub píxeles, refina ajustando una parábola al argmax y sus vecinos, o utiliza el conocido offset `(dx, dy) = 0.25 * (heatmap[y, x+1] - heatmap[y, x-1], ...)`dirección.
+Argmax da coordenadas de números enteros. Para la precisión de sub píxeles, refina ajustando una parábola a la argmax y sus vecinos, o desplaza la argmax hacia el vecino superior con `dx = 0.25 * (heatmap[y, x+1] - heatmap[y, x-1])`y lo mismo para `dy`, como lo hace el código.
 
 ### Los campos de afinidad de parte (PAF)
 

@@ -1,6 +1,6 @@
 # Visión en tiempo real  Despliegue de borde
 
-> La inferencia de borde es la disciplina de conseguir que un modelo de 90 fps ejecute a 30 fps en un dispositivo con 2 GB de RAM.
+> La inferencia de borde es la disciplina de conseguir que un modelo con 90% de precisión se ejecute a 30 fps en un dispositivo con 2 GB de RAM.
 
 **Type:** Learn + Build
 **Languages:** Python
@@ -41,7 +41,7 @@ flowchart LR
     style PWR fill:#dbeafe,stroke:#2563eb
 ```
 
-- **Latency**El promedio de sólo p50 esconde el comportamiento de cola que es importante para los sistemas en tiempo real.
+- **Latency**El informe de sólo p50 (o la media) oculta el comportamiento de cola que es importante para los sistemas en tiempo real.
 - **Peak memory**El objetivo de la OOM es el máximo que el dispositivo pueda ver, no el promedio de estado estacionario.
 - **Power / energy**En el caso de los dispositivos de alta velocidad, el tiempo de utilización de la CPU/GPU es de aproximadamente un millón de juegos por inferencia en un dispositivo alimentado por batería.
 

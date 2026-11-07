@@ -92,7 +92,7 @@ Z &= d
 \end{aligned}
 ```
 
-Los datos intrínsecos provienen de metadatos EXIF, un patrón de calibración o un estimador intrínseco monocular (Perspective Fields, UniDepth). Sin intrínsecos, todavía se puede renderizar una nube de puntos asumiendo un principio de 60 a 70 ° FOV y resolución moderada  utilizable para la visualización, no para la medición.
+Los datos intrínsecos provienen de metadatos EXIF, un patrón de calibración o un estimador intrínseco monocular (Perspective Fields, UniDepth).
 
 ### Evaluación
 

@@ -67,7 +67,7 @@ Los pros:
 - La inflación I3D ofrece aprendizaje gratuito.
 
 Las ventajas:
-- T/8 más FLOPs que la contraparte 2D (para el núcleo temporal de 3 apilados 3 veces).
+- Alrededor de 3x las FLOPs de la red 2D se ejecutan marco por marco, porque cada núcleo 3x3 se convierte en 3x3x3.
 - Los núcleos temporales son pequeños; el movimiento a largo alcance requiere un enfoque de pirámide o doble corriente.
 
 Cuando utilizar: reconocimiento de acción donde el movimiento es la señal (Algo-Algo V2, Kinética con clases de movimiento pesado).

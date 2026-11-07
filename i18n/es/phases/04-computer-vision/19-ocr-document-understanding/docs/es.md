@@ -71,7 +71,7 @@ Los modelos de extremo a extremo necesitan más datos y cálculo, pero no se deb
 
 ### Parse de diseño
 
-Para documentos estructurados, ejecuta un detector de diseño (LayoutLMv3, DocLayNet) que etiqueta cada región: Título, párrafo, figura, tabla, nota a pie de página.
+Para documentos estructurados, ejecuta un modelo de diseño (LayoutLMv3, o un detector entrenado en el conjunto de datos DocLayNet) que etiqueta cada región: Título, párrafo, figura, tabla, nota a pie de página.
 
 Para los formularios, utilizar **Key-Value extraction**Los modelos (Donut para documentos ricos en visualización, LayoutLMv3 para escaneos simples) toman imágenes + texto detectado + posiciones y predicen pares de valores clave estructurados.
 
@@ -160,18 +160,23 @@ Entrada de altura fija (la CNN max-pools altura a 1).
 
 ### Paso 3: OCR sintético
 
-Generar cuerdas de dígitos blanco-negro para una prueba de humo de extremo a extremo.
+Generar cadenas de blanco y negro para una prueba de humo de extremo a extremo. Cada carácter se convierte en una columna de seis barras que escriben su índice de vocabulario en binario. La imagen debe llevar la identidad del personaje: si cada carácter fuera la misma caja en blanco, el modelo no podría decir `a`de la`x`, y la pérdida se detendría.
 
 ```python
 import numpy as np
+
+GLYPHS = "0123456789abcdefghijklmnopqrstuvwxyz"
 
 def synthetic_line(text, height=32, char_width=16):
     W = char_width * len(text)
     img = np.ones((height, W), dtype=np.float32)
     for i, c in enumerate(text):
         x = i * char_width
-        shade = 0.0 if c.isalnum() else 0.5
-        img[6:height - 6, x + 2:x + char_width - 2] = shade
+        code = GLYPHS.find(c) + 1
+        for bit in range(6):
+            if code >> bit & 1:
+                y = 4 + 4 * bit
+                img[y:y + 3, x + 2:x + char_width - 2] = 0.0
     return img
 
 
@@ -202,7 +207,7 @@ Un conjunto de datos OCR real añade fuentes, ruido, rotación, borrado y color.
 model = TinyCRNN(vocab_size=len(vocab))
 opt = torch.optim.Adam(model.parameters(), lr=1e-3)
 
-for step in range(200):
+for step in range(400):
     strings = ["abc" + str(step % 10)] * 4 + ["xyz" + str((step + 1) % 10)] * 4
     imgs, targets, target_lens = build_batch(strings, vocab)
     log_probs = model(imgs)  # (W', 8, vocab)
@@ -211,7 +216,7 @@ for step in range(200):
     opt.zero_grad(); loss.backward(); opt.step()
 ```
 
-La pérdida debería caer de ~3 a ~0.2 en 200 pasos en estos datos sintéticos triviales.
+La pérdida debería caer de dos dígitos a aproximadamente 0,3 dentro de 400 pasos en estos datos sintéticos triviales. `code/main.py`ejecuta el mismo bucle en su propio conjunto de cuerdas y luego decodifica tres cuerdas de prueba.
 
 ## Usalo
 

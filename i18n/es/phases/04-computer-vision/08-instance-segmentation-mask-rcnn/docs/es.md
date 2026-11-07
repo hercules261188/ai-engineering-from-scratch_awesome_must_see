@@ -84,7 +84,7 @@ Muestre la máscara de 28x28 al tamaño original de píxeles de la propuesta par
 
 ### Las pérdidas
 
-Mask R-CNN tiene cuatro pérdidas sumadas:
+Mask R-CNN tiene cinco pérdidas sumadas:
 
 ```math
 L = L_{\text{rpn\_cls}} + L_{\text{rpn\_box}} + L_{\text{box\_cls}} + L_{\text{box\_reg}} + L_{\text{mask}}
@@ -261,7 +261,7 @@ def train_step(model, images, targets, optimizer):
     return {k: v.item() for k, v in loss_dict.items()}
 ```
 
-El `targets`La lista debe tener dicts por imagen con `boxes`¿ Qué ?`labels`, y `masks`(como `(num_instances, H, W)`El modelo devuelve un dictado de cuatro pérdidas durante el entrenamiento y una lista de predicciones durante la evaluación, con teclas en `model.training`¿ Qué ?
+El `targets`La lista debe tener dicts por imagen con `boxes`¿ Qué ?`labels`, y `masks`(como `(num_instances, H, W)`El modelo devuelve un dictado de cinco pérdidas durante el entrenamiento y una lista de predicciones durante la evaluación, con teclas en `model.training`¿ Qué ?
 
 El `pycocotools`evaluador produce mAP@IoU=0.5:0.95 tanto para cajas como para máscaras; necesita ambos números para saber si la cabeza de caja o la cabeza de máscara es el cuello de botella.
 

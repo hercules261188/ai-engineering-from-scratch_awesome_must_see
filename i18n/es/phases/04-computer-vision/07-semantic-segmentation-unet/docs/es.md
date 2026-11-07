@@ -129,7 +129,7 @@ La media de la UIE oculta una clase en 15% cuando otras nueve en 85%.
 
 ### Compromiso de resolución de entrada
 
-El codificador de U-Net reduce la resolución a la mitad cuatro veces, por lo que la entrada debe ser divisible por 16. Las imágenes médicas son a menudo 512x512 o 1024x1024.`H * W * C_max`, y en 1024x1024 con 1024 canales de cuello de botella el pase hacia adelante ya utiliza gigabytes de VRAM.
+El codificador de U-Net reduce la resolución a la mitad cuatro veces, por lo que las conexiones de salto se alinean exactamente solo cuando la entrada es divisible por 16. Otros tamaños necesitan relleno o el redimensionamiento en el bloque ascendente (escenada 2). Las imágenes médicas son a menudo 512x512 o 1024x1024.`H * W * C_max`, y en 1024x1024 con 1024 canales de cuello de botella el pase hacia adelante ya utiliza gigabytes de VRAM.
 
 Dos soluciones estándar:
 1. Tela la entrada  proceso 256x256 azulejos con superposición y costura.

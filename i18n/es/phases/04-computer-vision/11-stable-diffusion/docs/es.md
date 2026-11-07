@@ -235,7 +235,7 @@ En la producción, las decisiones que realmente tomas:
 
 - **Model family**: SD 1.5 para la comunidad de código abierto de las canciones finas, SDXL para mayor fidelidad, SD3 / FLUX para el estado de la técnica y estrictos requisitos de licencias.
 - **Scheduler**: DPM-Solver++ 2M Karras para 20-30 pasos, LCM-LoRA cuando la latencia es inferior a 1s.
-- **Precision**¿ Qué es esto ?`float16`en el 4080/4090, `bfloat16`en la A100 y más recientes, `int8`(por medio de `bitsandbytes`o `compel`) cuando el VRAM está apretado.
+- **Precision**¿ Qué es esto ?`float16`en el 4080/4090, `bfloat16`en la A100 y más recientes, `int8`(por medio de `bitsandbytes`) cuando el VRAM está apretado.
 - **Conditioning**: trabaja en texto plano; para un control más fuerte, añadir ControlNet (canny, profundidad, pose) en la parte superior de la tubería base.
 
 Para la generación de lotes, `AUTO1111`- ¿ Qué ?`ComfyUI`son las herramientas comunitarias; para las APIs de producción, `diffusers`¿ Qué es eso ?`accelerate`o `optimum-nvidia`con la compilación TensorRT.
