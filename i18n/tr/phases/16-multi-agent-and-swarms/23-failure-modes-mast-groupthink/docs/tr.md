@@ -112,7 +112,7 @@ Bu SRE tarzında bir olay tepkisi, ajan sistemlerine uygulanır.
 
 ### Başarısızlık modunun denetimi
 
-2026'da en iyi uygulama, yıllık (veya büyük bir yayın için) başarısızlık modunun denetlenmesidir:
+2026'da en iyi uygulama, üç aylık (ve büyük yayınlar için) başarısızlık modunun denetlenmesidir:
 
 1. **Trace sample.**1000'e kadar gerçek idam izini toplayın.
 2. **Categorize.**Her iz başarısızlığı için MAST + Groupthink kategorilerine harita yapın.

@@ -68,7 +68,7 @@ Sorun ortak devlet değildir.**without provenance and without an independent ver
 
 1. **Attribute provenance on every write.**Paylaşılan devlet kayıtlarında bulunan her giriş, kim yazdı, ne zaman, hangi çağrı altında ve (mümkünse) ajanın hangi kaynağı belirtti.
 2. **Version writes; treat them as append-only.**Düzeltme, eski bir giriş yerine yeni bir girişdir, yerleşik bir güncelleştirme değil.
-3. **Keep at least one agent that cannot write to shared state.**Sadece okuyabilen bir doğrulama aracı girişleri örnekler, kaynakları yeniden alır ve tutarlılıkları işaretler.
+3. **Keep at least one agent that cannot write to shared state.**Sadece okuyabilen bir doğrulama ajanı girişleri örnekler, kaynakları yeniden alır ve tutarlılıkları işaretler. Hala havuzu okuyor, bu yüzden kötü bir girişle kandırılabilir, ancak her girişini orijinal kaynağa karşı kontrol eder ve yazamaz, bu nedenle hükümleri asla zehirli bir gerçeği paylaşılmış bir duruma geri getirmez.
 
 ### Blackboard precedeni (Hayes-Roth, 1985)
 

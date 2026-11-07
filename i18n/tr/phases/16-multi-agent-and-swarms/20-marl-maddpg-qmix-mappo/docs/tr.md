@@ -42,7 +42,7 @@ Başarısızlık modu: eleştirmenler N ajanlarla büyür (gönüllülük tüm e
 
 ### QMIX (2018)  değer parçalanması
 
-Toplam ödül, bir ajan başına Q değerlerinin monoton fonksiyonunun toplamıdır:
+Sadece kooperatif.`Q_tot`bir ajan başına Q değerlerinin monoton karıştırma fonksiyonu:
 
 ```math
 Q_{\text{tot}}(\tau, a) = f\big(Q_1(\tau_1, a_1), \ldots, Q_n(\tau_n, a_n)\big), \quad \frac{\partial f}{\partial Q_i} \ge 0

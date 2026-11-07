@@ -57,7 +57,7 @@ Bu, rol uzmanlaşması (Fase 16 · 08) ve yapılandırılmış topoloji (Fase 16
 Üretim nüfus ölçeği vakası.
 
 - **Nov 2025:**Clawdbot (Peter Steinberger'ın yerel ReAct-loop kodlama ajanı) gemileri.
-- **Dec 2025 – Mar 2026:**iki kez yeniden adlandırıldı (Clawdbot → OpenClaw → OpenClaw altında devam etti).
+- **Jan 2026:**Bir hafta içinde iki kez yeniden adlandırıldı (Clawdbot → Moltbot 27 Ocak'ta ticari marka şikayetlerinden sonra, sonra üç gün sonra Moltbot → OpenClaw).
 - **Feb 2026:**Moltbook aynı primitivlerde sadece ajanlar için kullanılan sosyal ağ olarak başlatılıyor. ~ 2,3 milyon ajan hesabı birkaç gün içinde.
 - **Mar 2026 (2026-03-10):**Meta Moltbook'u satın alıyor.
 - **Mar 2026:**Çin OpenClaw'ı hükümet bilgisayarlarına kısıtlıyor.
