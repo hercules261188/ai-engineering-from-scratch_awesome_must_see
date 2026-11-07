@@ -108,7 +108,7 @@ Kết quả: bảng số trước/sau cho thấy việc lấy lại cải thiệ
 
 Mỗi số liệu chỉ số được lập trực tiếp trên một chỉ số chuẩn sản xuất:
 
-- **Retrieval.**MS-COCO 5K val, Flickr30K, ImageNet zero-shot là tất cả các vấn đề R@K trên cùng một matrix tương tự. Thay thế các tập tin thực với các tập tin tổng hợp và chữ ký chức năng không thay đổi.
+- **Retrieval.**MS-COCO 5K val và Flickr30K là các vấn đề R@K trên cùng một matrix tương đồng. ImageNet zero-shot cũng sử dụng matrix đó, với một prompt được nhúng mỗi lớp, nhưng nó báo cáo độ chính xác phân loại top-1, đó là R@1 trên class prompt. Thay thế eval tổng hợp bằng các tập tin thực và chữ ký chức năng không thay đổi.
 - **VQA.**VQA v2, GQA, OK-VQA sử dụng cùng một hình dạng phù hợp chính xác (với acc mềm thay vì EM trả lời đơn cho VQA v2).
 - **BLEU-4.**MS-COCO captioning, NoCaps, Flickr30K captioning tất cả sử dụng BLEU-4 cộng với CIDEr và METEOR.
 
@@ -141,7 +141,7 @@ python3 -m unittest code/test_main.py
 
 4. Lập trung bình tính toán cấp độ tương đối (MRR) bên cạnh R@K. MRR nhạy cảm với nơi mục chính xác rơi ra ngoài K trên; R@K nhạy cảm với việc liệu nó rơi vào K trên.
 
-5. Thực hiện đánh giá trên mô hình tại năm điểm kiểm soát trong quá trình đào tạo (giải 0, 10, 20, 30, 40, 50) và vẽ đường cong học tập.
+5. Thực hiện đánh giá trên mô hình tại sáu điểm kiểm soát trong quá trình đào tạo (giải 0, 10, 20, 30, 40, 50) và vẽ đường cong học tập.
 
 ## Các điều khoản chính
 

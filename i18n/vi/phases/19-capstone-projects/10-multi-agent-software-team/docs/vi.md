@@ -123,7 +123,7 @@ $ team run --issue https://github.com/acme/widget/issues/842
 
 1. Nhổ một lỗi rõ ràng vào một diff mid- run (extra `return None`Chỉ số số số lượng thông qua sai của nhà phê duyệt.
 
-2. Giảm xuống hai bộ lập trình (đầu thủ + bộ lập trình + kiểm tra + kiểm tra, bộ lập trình chạy hai nhiệm vụ phụ theo trình tự). So sánh đồng hồ tường và tốc độ vượt qua.
+2. Giảm xuống hai bộ lập trình (đầu thủ + hai bộ lập trình + kiểm tra + kiểm tra, mỗi bộ lập trình chạy hai nhiệm vụ phụ theo trình tự). So sánh đồng hồ tường và tốc độ vượt qua.
 
 3. Thay thế điều phối viên kết hợp bằng một hạn chế viết đơn (các nhiệm vụ phụ chạm vào tập tin không liên kết).
 

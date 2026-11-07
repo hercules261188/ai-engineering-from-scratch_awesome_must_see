@@ -1,6 +1,6 @@
 # Capstone 07  Đường ống điều chỉnh tinh tế từ đầu đến cuối (Dữ liệu đến SFT đến DPO để phục vụ)
 
-> Một mô hình 8B được đào tạo dựa trên dữ liệu của bạn, DPO-được sắp xếp theo sở thích của bạn, được định lượng, giải mã theo suy đoán, và được phục vụ với các token có thể đo lường được $/1 triệu. Dòng mở 2026 là Axolotl v0.8, TRL 0.15, Unsloth cho lặp lại, GPTQ / AWQ / GGUF cho định lượng, vLLM 0.7 với EAGLE-3 cho phục vụ. Điểm cuối là chạy toàn bộ đường ống có thể tái tạo  YAML vào, phục vụ điểm cuối  và xuất bản một thẻ mô hình theo khuôn khổ Model 2026 Openness Framework.
+> Một mô hình lớp 8B được đào tạo dựa trên dữ liệu của bạn, DPO-được sắp xếp theo sở thích của bạn, được định lượng, giải mã theo suy đoán, và phục vụ với các token có thể đo lường được $ / 1M. Dòng mở 2026 là Axolotl v0.8, TRL 0.15, Unsloth cho lặp lại, GPTQ / AWQ / GGUF cho định lượng, vLLM 0.7 với EAGLE-3 cho phục vụ. Điểm cuối là chạy toàn bộ đường ống có thể tái tạo (YAML trong, served endpoint out) và xuất bản một thẻ mô hình theo khuôn khổ Model Openness 2026
 
 **Type:** Capstone
 **Languages:** Python (pipeline), YAML (configs), Bash (scripts)
@@ -12,7 +12,7 @@
 
 Mỗi nhóm AI nghiêm túc vào năm 2026 đều có một đường ống điều chỉnh tinh tế. Không phải vì họ vận chuyển một mô hình cơ sở biên giới, nhưng bởi vì việc điều chỉnh dòng chảy  miền SFT, DPO chống lại ưu tiên được dán nhãn, bản thảo chưng cất cho việc giải mã phỏng đoán, phục vụ với EAGLE-3  là nơi mà chiến thắng có thể đo lường sống. Axolotl v0.8 xử lý cấu hình SFT đa GPU. TRL 0.15 xử lý DPO và GRPO. Unsloth giúp bạn lặp lại một GPU nhanh. vLLM 0.7 với EAGLE-3 đẩy decode thông qua 2-3x mà không mất chất lượng. Công cụ làm việc; công việc là trong YAML, vệ sinh dữ liệu, và kỷ luật đánh giá.
 
-Bạn sẽ chạy một cơ sở 8B (Llama 3.3, Qwen3 hoặc Gemma 3) thông qua SFT sau đó DPO trên dữ liệu cụ thể nhiệm vụ, định lượng để phục vụ và đo lường lợi nhuận so với lm-evaluation-harness, RewardBench-2, MT-Bench-v2 và MMLU-Pro. Bạn sẽ tạo ra một thẻ mô hình theo khuôn khổ Model Openness 2026 . Điểm là khả năng tái tạo
+Bạn sẽ chạy một cơ sở 8B đến 14B (Llama 3.1 8B, Qwen3 14B, hoặc Gemma 3 12B) thông qua SFT sau đó DPO trên dữ liệu cụ thể về nhiệm vụ, định lượng để phục vụ và đo lường lợi nhuận so với lm-evaluation-harness, RewardBench-2, MT-Bench-v2 và MMLU-Pro. Bạn sẽ sản xuất một thẻ mô hình theo khuôn khổ Model Openess Framework 2026. Điểm là khả năng tái tạo: một lệnh lặp lại toàn bộ đường ống từ đầu đến cuối.
 
 ## Khái niệm
 
@@ -56,7 +56,7 @@ model card (2026 MOF) + safety eval (Llama Guard 4)
 ## Thống
 
 - Dữ liệu: Datatrove cho dedup, trình phân loại Nemotron-CC cho chất lượng, Presidio cho PII
-- Cơ sở: Llama 3.3 8B, Qwen3 14B, hoặc Gemma 3 12B
+- Cơ sở: Llama 3.1 8B, Qwen3 14B, hoặc Gemma 3 12B
 - SFT: Axolotl v0.8 với ZeRO-3, Flash Attention 3, chuỗi đóng gói
 - Tích thích: TRL 0,15 cho DPO hoặc GRPO; Unsloth cho lặp lại GPU đơn
 - Số lượng: GPTQ (Marlin), AWQ, GGUF thông qua llama.cpp
@@ -120,7 +120,7 @@ $ ./pipeline.sh config/llama3.3-8b-domainX.yaml
 
 1. Chỉ chạy SFT-Solly vs SFT+DPO vs SFT+GRPO trên cùng một tiêu chuẩn cụ thể cho nhiệm vụ.
 
-2. Thay đổi Llama 3.3 8B với Qwen3 14B. đo các token $ / 1M với chất lượng phù hợp.
+2. Thay đổi Llama 3.1 8B với Qwen3 14B. đo các token $ / 1M với chất lượng phù hợp.
 
 3. Đánh giá tỷ lệ chấp nhận EAGLE-3 trên dữ liệu miền so với ShareGPT chung.
 
@@ -148,5 +148,5 @@ $ ./pipeline.sh config/llama3.3-8b-domainX.yaml
 - [DeepSeek R1 paper (arXiv:2501.12948)](https://arxiv.org/abs/2501.12948) Phương pháp GRPO
 - [vLLM + EAGLE-3 documentation](https://docs.vllm.ai) hàng phục vụ tham chiếu
 - [SGLang SpecForge](https://github.com/sgl-project/SpecForge) huấn luyện viên giải mã đầu cơ thay thế
-- [Model Openness Framework 2026](https://isocpp.org/) tiêu chuẩn phân loại tự do mở
+- [Model Openness Framework (arXiv:2403.13784)](https://arxiv.org/abs/2403.13784): tiêu chuẩn phân loại giải phóng mở
 - [lm-evaluation-harness](https://github.com/EleutherAI/lm-evaluation-harness) canonical eval runner

@@ -108,7 +108,7 @@ Các mô hình sản xuất:
 
 1. Thêm một biến thể ngược của đường lập trình và so sánh nó trên một cuộc chạy huấn luyện đồ chơi 200 bước.
 2. Thêm một `--restart`cờ thêm một sự nóng lên thứ hai tại `total_steps / 2`Bảo vệ xem khởi động lại ấm có cải thiện hay bị tổn thương trong việc chạy đồ chơi.
-3. Thêm một unit test rằng lịch trình là liên tục: cho mỗi bước trong `[0, total_steps]`sự khác biệt`|lr(step+1) - lr(step)|`được giới hạn bởi `lr_max / warmup_steps`- Tôi không biết.
+3. Thêm một unit test cho thấy lịch trình là liên tục: với `warmup_steps > 0`, cho mỗi bước vào `[0, total_steps]`sự khác biệt`|lr(step+1) - lr(step)|`được giới hạn bởi độ sườn ấm lớn hơn `lr_max / warmup_steps`và dốc nhất của cosine `pi * (lr_max - lr_min) / (2 * (total_steps - warmup_steps))`Một đoạn cosine ngắn có thể là tre hơn thang thang nóng lên, vì vậy chiều dốc nóng lên một mình không phải là một đường dây an toàn.
 4. Chuyển lịch trình vào một `torch.optim.lr_scheduler.LambdaLR`Bài học sử dụng một hàm bước đơn giản; bao bì thay đổi gì?
 5. Thêm một `--plot-png`cờ viết một âm mưu thực sự qua `matplotlib`Bảo vệ liệu bản đồ văn bản của bài học hay PNG là mặc định tốt hơn cho các chạy CI.
 

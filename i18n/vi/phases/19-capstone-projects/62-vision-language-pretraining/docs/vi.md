@@ -18,7 +18,7 @@
 
 Một mô hình ngôn ngữ thị giác cần hai kỹ năng. Nó phải xếp hạng: được đưa ra một tiêu đề, tìm thấy hình ảnh phù hợp trong số nhiều. Nó phải tạo ra: được đưa ra một hình ảnh, viết tiêu đề. Việc huấn luyện trước mô hình chỉ một kỹ năng cho bạn một nửa hệ thống. CLIP xếp hạng đóng móng nhưng không thể ghi tiêu đề. GPT-4V có thể ghi tiêu đề nhưng sử dụng một đầu lấy riêng biệt cho xếp hạng.
 
-InfoNCE xử lý phân nửa xếp hạng. Đối với một loạt các cặp N, mô hình xử lý các cặp N phù hợp như tích cực và các `N^2 - N`cặp không phù hợp như âm, sau đó chạy một mất entropy chéo trên kết quả `(N, N)`LM mất xử lý nửa thế hệ: dự đoán chuẩn next-token tùy thuộc vào hình ảnh. Cả hai lỗ đều có thể phân biệt và có thể chia sẻ trọng lượng mã hóa, máy chiếu và mã hóa.
+InfoNCE xử lý phân nửa xếp hạng. Đối với một loạt các cặp N, mô hình xử lý các cặp N phù hợp như tích cực và các `N^2 - N`cặp không phù hợp như âm, sau đó chạy một mất entropy chéo trên kết quả `(N, N)`Matrix tương tự. LM mất xử lý nửa thế hệ: dự đoán tiêu chuẩn next-token tùy thuộc vào hình ảnh. Cả hai lỗ đều có thể phân biệt và chia sẻ trọng lượng mã hóa và máy chiếu; decoder chỉ tập trung vào lỗ LM.
 
 ## Khái niệm
 
@@ -54,7 +54,7 @@ Bộ giải mã tiêu thụ các mã ký ức hình ảnh thông qua sự chú �
 
 ### Kết hợp các tổn thất
 
-`total = contrastive + lm_weight * lm`nơi `lm_weight`là một đường độ (thường là 1.0). hai lỗ chia sẻ gradient vào mã hóa và chiếu; chỉ có decoder nhận gradient mất LM. Đây là công thức đa nhiệm mà các mô hình kiểu CoCa, BLIP và SigLIP đều sử dụng, với trọng lượng khác nhau.
+`total = contrastive + lm_weight * lm`nơi `lm_weight`là một đường độ (thường là 1.0). hai lỗ chia sẻ gradient vào mã hóa và chiếu; decoder nhận gradient từ mất LM chỉ. Đây là công thức đa nhiệm mà CoCa và BLIP sử dụng, với các trọng lượng khác nhau. SigLIP chỉ giữ được thuật ngữ tương phản và thay đổi softmax cho một mất cặp sigmoid.
 
 | Component | Loss surface | Affects |
 |-----------|--------------|---------|

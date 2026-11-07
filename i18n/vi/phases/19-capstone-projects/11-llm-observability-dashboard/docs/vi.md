@@ -85,7 +85,7 @@ ce-otel-drift
 
 8. **Alerting chain.**Prometheus xuất khẩu đọc tổng số điểm đánh giá và phần trăm độ trễ; Alertmanager hướng đến Slack để cảnh báo và PagerDuty cho vi phạm quan trọng.
 
-9. **Regression probe.**Nhổ một lỗi: chatbot được đánh giá bắt đầu rò rỉ SSN giả 1% thời gian. đo MTTR: từ lỗi được triển khai đến cảnh báo Slack.
+9. **Regression probe.**Nhổ ra một lỗi: chatbot được đánh giá bắt đầu rò rỉ SSN giả 1% thời gian. đo thời gian phát hiện (MTTD): từ lỗi được triển khai đến cảnh báo Slack. Phát hiện là phần của MTTR bảng điều khiển sở hữu; sửa chữa và tái triển khai sau đó.
 
 ## Sử dụng nó
 
@@ -106,7 +106,7 @@ $ curl -X POST https://my-otel-collector/v1/traces -d @trace.json
 |:-:|---|---|
 | 25 | Trace-schema coverage | Number of SDK families producing canonical GenAI spans (target: 6+) |
 | 20 | Eval correctness | DeepEval / RAGAS scores vs hand-labeled set |
-| 20 | Dashboard UX | MTTR on injected regression (under 5 minutes target) |
+| 20 | Dashboard UX | MTTD on injected regression (under 5 minutes target) |
 | 20 | Cost / scale | Sustained ingest at 1k spans/sec without backlog |
 | 15 | Alerting + drift detection | Prometheus/Alertmanager chain exercised end to end |
 | **100** | | |

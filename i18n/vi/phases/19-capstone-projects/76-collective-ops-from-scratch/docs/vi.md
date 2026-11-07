@@ -16,7 +16,7 @@
 
 ## Vấn đề
 
-Một tất cả giảm bớt ngây thơ trên N hàng gửi N lần tensor đến một gốc và phát N lần trở lại.$O(N)$mỗi cấp bậc, gốc trở thành một nút thắt chai, và sàn tường-clock là liên kết chậm nhất nhân N.$2(N-1)$Các mảnh kích thước $T/N$, vì vậy mỗi cấp độ byte giảm xuống $2T(N-1)/N$Treeallreduce thắng trên các liên kết nhỏ N và độ trễ cao vì độ sâu là $\log_2(N)$$2(N-1)$Chọn topology sai cho hình dạng cluster và GPU chậm nhất chỉ ra thời gian bước.
+Một tất cả giảm bớt ngây thơ trên N hàng gửi N lần tensor đến một gốc và phát N lần trở lại.$O(N)$mỗi cấp bậc, gốc trở thành một nút thắt chai, và sàn tường-clock là liên kết chậm nhất nhân N.$2(N-1)$Các mảnh kích thước $T/N$, vì vậy mỗi cấp độ byte giảm xuống $2T(N-1)/N$, gần tới $2T$N tăng lên và không bao giờ vượt quá nó, bất kể kích thước cluster. Tree allreduce thắng trên các liên kết nhỏ N và độ trễ cao vì độ sâu là $\log_2(N)$$2(N-1)$Chọn topology sai cho hình dạng cluster và GPU chậm nhất chỉ ra thời gian bước.
 
 Mỗi khung đào tạo phân tán mà bạn sẽ đọc bài hát này phụ thuộc vào bốn nguyên thủy này. PyTorch DDP đồng bộ hóa gradient với một allreduce mỗi bình tham số. ZeRO cắt giảm trạng thái tối ưu bằng cách giảm_scatter và phát sóng các tham số cập nhật bởi allgather. FSDP biến toàn bộ phía trước thành allgather cộng với reduce_scatter. Các nhu cầu song song đường ống phát sóng cho các hoạt động trên các nhóm giai đoạn. Nếu bạn không thể thực hiện bốn tập thể, bạn không thể lý luận về lý do tại sao các tập luyện dừng lại, tại sao sự không phù hợp của gradient xuất hiện ở cấp 3, hoặc tại sao bong bóng đường ống tăng gấp đôi khi bạn trao đổi các topology.
 
@@ -97,7 +97,7 @@ Các mô hình sản xuất:
 
 ## Chuyển nó
 
-Sử dụng các nguyên thủy lưới hàng rào trong bài học 77-81. Bài học 77 dây tất cả giảm thành DDP. Bài học 78 dây giảm_scatter thành ZeRO. Bài học 79 dây phát sóng thành hoạt động đường ống. Bài học 81 kết hợp tất cả bốn trong bản demo đầu đến cuối.
+Sử dụng các nguyên thủy lưới hàng rào trong bài học 77-81. Bài học 77 dây tất cả giảm thành DDP. Bài học 78 dây giảm_scatter thành ZeRO. Bài học 79 di chuyển hoạt động đường ống với gửi đến điểm và recv, không phải là tập thể. Bài học 81 kết hợp tất cả bốn trong demo cuối đến cuối.
 
 ## Các bài tập
 

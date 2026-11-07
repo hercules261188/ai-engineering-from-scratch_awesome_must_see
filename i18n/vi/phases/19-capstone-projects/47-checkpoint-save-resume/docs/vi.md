@@ -16,7 +16,7 @@
 
 ## Vấn đề
 
-Anh định làm việc huấn luyện 18 giờ. Bức cáp đồng hồ tường là 4 giờ. Cluster khởi động lại lúc 11 giờ vì ai đó trên cấp lương của bạn đã phê duyệt nâng cấp hạt nhân. Không có điểm kiểm soát thì bắt đầu lại. Không có resume bạn cũng mất trạng thái tối ưu hóa mà mất 11 giờ đầu tiên để học, vì vậy ngay cả khi trọng lượng mô hình tồn tại, những khoảnh khắc AdamW đã biến mất và bước tiếp theo đang ẩn náu theo hướng mà quỹ đạo đào tạo đã di chuyển qua.
+Anh định làm việc huấn luyện 18 giờ. Người lập lịch giới hạn mỗi khoản phân bổ là 4 giờ, vì vậy việc chạy đã là một chuỗi các công việc được nối lại. Sau đó cluster khởi động lại vào giờ 11 của chạy bởi vì ai đó trên cấp lương của bạn đã phê duyệt nâng cấp hạt nhân. Không có điểm kiểm soát thì bắt đầu lại. Không có resume bạn cũng mất trạng thái tối ưu hóa mà mất 11 giờ đầu tiên để học, vì vậy ngay cả khi trọng lượng mô hình tồn tại, những khoảnh khắc AdamW đã biến mất và bước tiếp theo đang ẩn náu theo hướng mà quỹ đạo đào tạo đã di chuyển qua.
 
 Các tạo vật đúng là một tập tin duy nhất chứa tất cả mọi thứ cần thiết để tiếp tục: các tham số mô hình, trạng thái tối ưu hóa, trạng thái lập lịch, lịch sử mất mát cho các bản đồ, bước hiện tại và thời đại và số lượng hàng loạt trong thời đại, và trạng thái RNG cho mỗi nguồn ngẫu nhiên. Nếu không có trạng thái RNG, đường cong mất mát được nối lại là đường cong khác. Cùng một mô hình, cùng một dữ liệu, khác nhau trộn, khác nhau mặt nạ bỏ, khác nhau số trên bảng điều khiển.
 

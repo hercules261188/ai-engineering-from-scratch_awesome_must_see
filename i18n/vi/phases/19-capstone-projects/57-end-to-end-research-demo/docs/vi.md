@@ -34,7 +34,7 @@ flowchart LR
     Writer --> Report[Demo report]
 ```
 
-Các chương trình lập trình trình chạy sáu thí nghiệm trên các trường hợp này với ba khe ngang. Bus báo cáo một hoặc nhiều kích hoạt giấy. Người chọn chọn chọn kết quả tốt nhất. Loop phê bình lặp lại trên một bản thảo được xây dựng từ kết quả đó. Nhà viết giấy phát hành LaTeX cuối cùng, BibTeX và manifesto.
+6 giai đoạn. hạt giống là một danh sách ba giả thuyết. người lập kế hoạch chạy 6 thí nghiệm trên chúng với 3 khe song song. xe buýt báo cáo một hoặc nhiều kích hoạt giấy. người chọn chọn chọn kết quả tốt nhất. vòng lặp phê bình lặp lại trên một bản thảo được xây dựng từ kết quả đó. người viết giấy phát ra LaTeX cuối cùng, BibTeX và manifesto.
 
 ## Tại sao nhập khẩu, không sao chép
 

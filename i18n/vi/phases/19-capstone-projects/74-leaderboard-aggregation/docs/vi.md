@@ -63,7 +63,7 @@ Hai kế hoạch xếp hạng phục vụ các mục tiêu khác nhau.
 
 Điểm trung bình là trung bình điểm số mỗi nhiệm vụ cho một mô hình. Đây là báo cáo số lượng hàng đầu của bảng xếp hạng. Nó nhạy cảm với các điểm khác biệt và sự mất cân bằng nhiệm vụ.
 
-Tỷ lệ thắng tính toán một mô hình đánh bại mỗi mô hình khác trong cùng một nhiệm vụ. Đối với mỗi nhiệm vụ, mô hình có điểm số cao nhất thắng (các kết nối chia). Tỷ lệ thắng bằng với chiến thắng chia bằng số lượng nhiệm vụ mà mô hình có điểm số. Nó ít nhạy cảm với các điểm khác biệt và quy mô nhưng mất thông tin.
+Tỷ lệ thắng tính toán một mô hình đánh bại mỗi mô hình khác trong cùng một nhiệm vụ. Đối với mỗi nhiệm vụ, mô hình có điểm số cao nhất thắng (một trận hòa cho mỗi mô hình được kết hợp hoàn toàn). Tỷ lệ thắng bằng với chiến thắng chia bằng số nhiệm vụ mà mô hình có điểm số. Nó ít nhạy cảm với các điểm khác biệt và quy mô nhưng mất thông tin.
 
 ```python
 def win_rate(model_id, runs_by_task, all_models):
@@ -131,4 +131,4 @@ Nó không chạy mô hình. Nó không gọi lớp métric. Nó không thực h
 
 ## Đi xa hơn nữa
 
-Bước tiếp theo là quan trọng công việc đôi thay vì bootstrap không đôi. Nếu mô hình A và B đều chạy cùng một trăm nhiệm vụ, thử nghiệm thích hợp là bootstrap kết hợp về sự khác biệt nhiệm vụ theo nhiệm vụ, mà chúng tôi thực hiện. Ngoài ra, bạn muốn một bootstrap hàng bậc tôn trọng các gia đình nhiệm vụ (vấn đề toán học không độc lập với nhau; một mô hình sai lầm toán học ảnh hưởng đến mười trong số họ). Đó là một sự tiếp tục. Mục đích của bài học này là để có được sàn đúng để đánh giá báo cáo một số bạn có thể bảo vệ.
+Các khoảng thời gian cho mỗi mô hình không được ghép nối, nhưng so sánh mô hình nên được ghép nối. Nếu mô hình A và B đều chạy cùng một trăm nhiệm vụ, thử nghiệm thích hợp là bootstrap ghép nối trên các khác biệt nhiệm vụ-về-các nhiệm vụ, mà `bootstrap_pairwise_diff`Ngoài ra, bạn muốn một bootstrap hàng bậc cao tôn trọng các gia đình nhiệm vụ (vấn đề toán học không độc lập với nhau; một mô hình sai lầm toán học ảnh hưởng đến mười trong số đó). Đó là một sự tiếp tục. Điểm của bài học này là để có được sàn đúng để đánh giá báo cáo một số bạn có thể bảo vệ.

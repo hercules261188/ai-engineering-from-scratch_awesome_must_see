@@ -91,7 +91,7 @@ Kết quả xuất hiện cho thấy N trên cùng của bộ mã hóa hai, K tr
 
 **Cross-encoder is not symmetric.** `rerank(q, d)`và `rerank(d, q)`Nếu bạn không tình cờ đổi, thì nhớ lại sẽ sụp đổ.
 
-**N is too low to expose the bug.**Nếu bạn đặt N = K, cross-encoder không thể sắp xếp lại; nó chỉ có thể cân nặng lại. thang máy trông giống như không. chọn N ít nhất ba lần K.
+**N is too low to expose the bug.**Nếu bạn đặt N = K, bộ mã hóa chéo có thể sắp xếp lại các ứng cử viên K nhưng không thể đưa một ứng cử viên mới vào đầu K. Hãy nhớ rằng ở K không thể di chuyển, vì vậy thang máy trông giống như không.
 
 **Training data leaks into the eval.**Nếu các cặp huấn luyện được dán nhãn bằng tay bao gồm các truy vấn đánh giá, xếp hạng lại trông kỳ diệu.
 

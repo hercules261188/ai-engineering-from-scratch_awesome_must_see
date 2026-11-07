@@ -21,7 +21,7 @@ Hầu hết các trình diễn đại lý hoạt động một cách riêng bi�
 
 Mạng cổng nói "HỌNG" nhưng hộp cát từ chối vì lý do mà chuỗi không dự đoán. Vị kiểm tra ghi lại một thông qua nhưng các thông tin của OTel nói rằng cổng đã từ chối một công cụ mà nhân viên cho rằng nó đã sử dụng. Máy đếm Prometheus được tăng gấp đôi khi nó nên được tăng một lần. Ngân sách quan sát đã vượt quá nhưng đại lý vẫn tiếp tục vì ngân sách đã được theo dõi trong chuỗi và hộp cát không biết.
 
-Bài học này là thử nghiệm tích hợp cho toàn bộ đường đua. Đại lý phải làm bốn điều để: đọc dự án, chạy các thử nghiệm, xác định lỗi từ sự thất bại của thử nghiệm, viết sửa chữa, chạy lại các thử nghiệm và dừng. Mỗi hoạt động đi qua chuỗi cổng. Mỗi hành động thực hiện công cụ đi qua hộp cát. Mỗi bước được gói trong một khoảng thời gian. Vỏ đánh giá ghi điểm toàn bộ ở cuối.
+Bài học này là thử nghiệm tích hợp cho toàn bộ đường đua. Đại lý phải làm sáu điều để: đọc dự án, chạy các thử nghiệm, xác định lỗi từ sự thất bại của thử nghiệm, viết sửa chữa, chạy lại các thử nghiệm và dừng. Mỗi hoạt động đi qua chuỗi cổng. Mỗi hành động thực hiện công cụ đi qua hộp cát. Mỗi bước được gói trong một khoảng thời gian. Vỏ đánh giá ghi điểm toàn bộ ở cuối.
 
 ## Khái niệm
 

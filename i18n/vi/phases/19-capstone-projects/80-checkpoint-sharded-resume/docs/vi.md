@@ -52,7 +52,7 @@ Ba cánh đồng có thể mang tải.`world_size`làm cho một hồ sơ về m
 
 ### Viết nguyên tử
 
-Mô hình tiêu chuẩn: viết mỗi mảnh thành `<name>.tmp`, viết bản báo cáo cho `manifest.json.tmp`, fsync mỗi, sau đó đổi tên. POSIX đổi tên trong cùng một hệ thống tệp là nguyên tử; hoặc tệp mới hoàn toàn hiện diện hoặc cũ là. Một vụ tai nạn trước khi đổi tên cuối cùng rời khỏi điểm kiểm soát trước đó như là một cuộc sống. Không viết nguyên tử một vụ tai nạn có thể để lại một mảnh vỡ một phần với một biểu hiện hiện hiện đang chỉ ra nó, và tải làm hỏng trạng thái tối ưu hóa trên resume.
+Mô hình tiêu chuẩn: viết mỗi mảnh thành `<name>.tmp`, viết bản báo cáo cho `manifest.json.tmp`, đồng bộ mỗi, đổi tên các mảnh, và đổi tên biểu đồ cuối cùng. Một đổi tên POSIX trong cùng một hệ thống tệp là nguyên tử: hoặc tệp mới hoàn toàn hiện diện hoặc tệp cũ là. Một tập hợp đổi tên không phải là một giao dịch, vì vậy đổi tên biểu hiện là điểm tham gia, và bộ tải kiểm tra từng mảnh so với các hash biểu hiện. Viết mỗi điểm kiểm soát vào thư mục bước của riêng nó; sau đó một vụ tai nạn trước khi tên chuyển đổi biểu hiện rời khỏi điểm kiểm soát trước đó như một sống. Việc tái sử dụng một thư mục phá vỡ đảm bảo đó, bởi vì tên đổi tên mảnh thay thế các mảnh cũ trước khi các mảnh mới xuất hiện. Nếu không có viết nguyên tử, một vụ tai nạn có thể để lại một mảnh vỡ một phần với một biểu hiện hiện đang chỉ ra nó, và tải trọng làm hỏng trạng thái tối ưu hơn trong resume.
 
 ### Ba chế độ thất bại mà schema phải bảo vệ chống lại
 

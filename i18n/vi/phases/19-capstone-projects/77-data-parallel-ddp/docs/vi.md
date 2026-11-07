@@ -57,7 +57,7 @@ Một biến thể có hàng ngàn tensor tham số. Một allreduce mỗi tenso
 
 ### Tại sao lại đập hạt giống
 
-Mỗi cấp bậc phải gọi`torch.manual_seed(seed + rank)`để trộn nhưng `torch.manual_seed(seed)`cho parameter init. Một hạt giống chia sẻ duy nhất có nghĩa là mỗi cấp độ thấy cùng một thứ tự hàng loạt (trận bại dữ liệu song song; một hạt giống cụ thể cho các parameter có nghĩa là các tham số ban đầu không đồng ý bởi float epsilon và sự đồng bộ hóa gradient không còn làm cho các bản sao giống nhau.
+Mỗi cấp bậc phải gọi`torch.manual_seed(seed + rank)`để trộn nhưng `torch.manual_seed(seed)`cho tham số init. Một hạt giống chia sẻ duy nhất để trộn có nghĩa là mỗi cấp độ thấy thứ tự hàng loạt tương tự (trận bại dữ liệu song song). Đối với các tham số, thứ hạng 0 phát sóng khi xây dựng là điều làm cho các bản sao giống nhau, và nó ghi lại bất cứ thứ hạng nào bắt đầu. Hạt init chia sẻ là sao lưu: nếu phát sóng bị bỏ qua hoặc bị phá vỡ, init cụ thể cấp độ cho mỗi bản sao có trọng lượng khởi đầu khác nhau, và sự đồng bộ hóa gradient đơn độc không bao giờ kéo chúng lại với nhau. Hãy lấy mẫu hạt giống đúng hoặc thử nghiệm cho sự tương đương các tham số thất bại ở bước 1.
 
 ```figure
 ci-ddp-grad-sync

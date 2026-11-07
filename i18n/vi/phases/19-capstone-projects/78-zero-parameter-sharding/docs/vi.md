@@ -16,7 +16,7 @@
 
 ## Vấn đề
 
-Vanilla DDP sao chép mọi thứ: các tham số, gradient và trạng thái tối ưu hóa đều có mặt đầy đủ trên mọi bậc. Đối với một mô hình tham số 7B trong fp16 có nghĩa là 14 GB các tham số, 14 GB của gradient, và 28 GB trạng thái tối ưu hóa mỗi bậc.
+Vanilla DDP sao chép mọi thứ: các tham số, gradient và trạng thái tối ưu hóa đều có mặt trên mọi cấp bậc. Đối với mô hình tham số 7B trong fp16 có nghĩa là 14 GB các tham số, 14 GB các gradient và 56 GB trạng thái tối ưu hơn ( hai khoảnh khắc float32 Adam) cho mỗi hạng. Việc huấn luyện chính xác hỗn hợp thêm một bản sao float32 28 GB của trọng lượng trên cùng. Tình trạng tối ưu hóa là thuật ngữ lớn nhất và dễ dàng nhất để chia nhỏ bởi vì nó chỉ được chạm vào trong bước, không phải trong thời gian tiến về phía trước hoặc trở lại.
 
 ZeRO giai đoạn 1 làm giảm trạng thái tối ưu hóa. Mỗi bậc chứa 1/N của thời điểm Adam. Sau khi quay trở lại, thay vì giảm độ sốc đầy đủ và bước lên địa phương, ZeRO giảm_scatters vì vậy mỗi cấp nhận chỉ độ sốc tổng của mảnh của nó. Các cấp độ áp dụng bước tối ưu hóa hơn cho mảnh của các tham số chủ yếu. Các parameter được cập nhật chia nhỏ sau đó tất cả được tập hợp lại để mỗi cấp có mô hình đầy đủ cho tiếp theo tiến lên. Tưởng thức tối ưu hóa giảm N. Giao thông dây mỗi bước là giống như DDP: một reduce_scatter cộng với một allgather bằng một allreduce bằng băng thông. Tưởng thức thắng, thông lượng giữ vững.
 
@@ -92,7 +92,7 @@ Ba mô hình làm ZeRO cứng đủ để vận chuyển.
 
 **Mixed precision is the point.**ZeRO là một kỹ thuật chính xác hỗn hợp; bản sao fp32 là những gì được phân mảnh. chạy ZeRO mà không có chính xác hỗn hợp trả thuế bộ nhớ trên fp32 master mà không có sự tương ứng của fp16 chiến thắng phía trước.
 
-**Stage 1 is a near-free win.**Các thông tin liên lạc giống nhau với DDP theo băng thông. Tiết kiệm bộ nhớ là tuyến tính trong N. Chi phí duy nhất là việc lưu trữ sổ sách cho chip tối ưu hóa.
+**Stage 1 is a near-free win.**Các thông tin liên lạc giống nhau với DDP theo băng thông. Tiết kiệm bộ nhớ là tuyến tính trong N. Chi phí duy nhất là việc lưu trữ sổ sách cho chip tối ưu hóa. Số sản xuất mặc định đến giai đoạn 1 trừ khi độ lưu trữ gradient hoặc tham số cũng là một vấn đề.
 
 ## Sử dụng nó
 

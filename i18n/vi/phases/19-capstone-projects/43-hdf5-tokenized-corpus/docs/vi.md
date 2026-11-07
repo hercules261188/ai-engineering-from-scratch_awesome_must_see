@@ -1,6 +1,6 @@
 # HDF5 Tokenized Corpus
 
-> Các bản tải xuống phải hạ cánh trong một bố cục mà huấn luyện viên có thể phát trực tuyến từ tốc độ đường. JSONL trên đĩa không tồn tại 16 nhân viên tải dữ liệu. HDF5 với một bộ dữ liệu số nguyên có thể thay đổi kích thước. Bài học này xây dựng các mã thông báo trực tuyến thành một bộ dữ liệu HDF5 có thể kích thước, viết từng mảnh trên nhiều tệp, đọc trong bộ nhớ trong thời gian đào tạo, và một bộ tải dữ liệu cửa sổ trượt tạo ra các chuỗi dài cố định với gói đúng.
+> Các bản tải xuống phải hạ cánh trong một bố cục mà huấn luyện viên có thể phát trực tuyến từ tốc độ đường. JSONL trên đĩa không tồn tại 16 nhân viên tải dữ liệu. HDF5 với một bộ dữ liệu số nguyên có thể thay đổi kích thước. Bài học này xây dựng các mã thông báo trực tuyến thành một bộ dữ liệu HDF5 có thể kích thước, viết từng mảnh trên nhiều tệp, đọc từng mảnh trong thời gian đào tạo, và một bộ tải dữ liệu cửa sổ trượt tạo ra các chuỗi chiều dài cố định với gói đúng.
 
 **Type:** Build
 **Languages:** Python
@@ -18,7 +18,7 @@
 
 Một chương trình đào tạo ngôn ngữ hiện đại đọc mã thông báo với hàng trăm ngàn mẫu mỗi giây trên hàng chục công nhân. JSONL trên đĩa chết khi lỗi trang lưu trữ lạnh đầu tiên: trình phân tích JSON chậm, ranh giới tài liệu không thể địa chỉ, và tìm kiếm "chọn mẫu 4,217,884" đòi hỏi phải quét tệp. Ngay cả Parquet, mà nén tốt, là một sự phù hợp kém bởi vì huấn luyện viên không muốn cột; nó muốn một dòng token phẳng với $O(1)$truy cập ngẫu nhiên.
 
-HDF5 phù hợp bởi vì nó cung cấp một bộ dữ liệu nhỏ, có thể kích thước, chỉ có số nguyên, các mảnh của nó là trang cache thân thiện tại thời điểm đọc.`tokens[3,200,000 : 3,200,8192]`và HDF5 sao chép các hyperslab yêu cầu từ bộ nhớ cache trang vào một mảng NumPy vừa được phân bổ. Chi phí là một tay xử lý tập tin mở và một dấu chân bộ nhớ cache trang kích thước nhỏ cho mỗi người lao động, điều này là không đáng kể so với chi phí giải mã JSONL.
+HDF5 phù hợp bởi vì nó cung cấp một bộ dữ liệu nhỏ, có thể kích thước, chỉ có số nguyên, các mảnh của nó là trang cache thân thiện tại thời điểm đọc.`tokens[3_200_000 : 3_208_192]`và HDF5 sao chép các hyperslab yêu cầu từ bộ nhớ cache trang vào một mảng NumPy vừa được phân bổ. Chi phí là một tay xử lý tập tin mở và một dấu chân bộ nhớ cache trang kích thước nhỏ cho mỗi người lao động, điều này là không đáng kể so với chi phí giải mã JSONL.
 
 Vấn đề xây dựng là làm cho mặt viết thành thật. Các tập hợp dữ liệu có thể được quy mô lớn dễ sử dụng sai: viết một tài liệu một lúc và tệp HDF5 bị phân mảnh đến mức không thể sử dụng. Viết tất cả các tài liệu trong một kích thước và một quá trình chết mất toàn bộ mảnh. Phân tích đúng là buffer-then-extend, với kích thước buffer phù hợp với kích thước của phần, và viết chia nhỏ chia khối lượng làm việc trên các tệp để một vụ tai nạn mất tối đa một mảnh.
 
@@ -35,7 +35,7 @@ flowchart TD
   Write --> Buffer
   Buffer --> Close[Final flush + close]
   Close --> ShardDone[Shard file finalized]
-  ShardDone --> MMapRead[Memory-mapped read]
+  ShardDone --> MMapRead[Chunked read]
   MMapRead --> Window[Sliding-window dataloader]
   Window --> Train[Train batch]
 ```
@@ -48,9 +48,9 @@ Bộ dữ liệu token được tạo bằng `maxshape=(None,)`và một cố đ
 
 Một tập tin HDF5 duy nhất là một điểm thất bại duy nhất. Các đường ống viết các đoạn song song: mỗi đoạn đầu vào từ giai đoạn 19 bài học 42 tạo ra một đoạn đầu ra HDF5.`shards.json`Các bản ghi chỉ mục, mỗi mảnh, đường dẫn tập tin, số lượng token, số lượng tài liệu, và một sha256 trên các token.`shards.json`để tính toán các khoản bù trừ toàn cầu và xác nhận corpus.
 
-### Đọc theo bộ nhớ
+### Đọc phần nhỏ
 
-Trong thời gian đào tạo mỗi công nhân mở phần của mình của các tệp HDF5 trong `swmr=True`chế độ và yêu cầu `tokens[start:stop]`. HDF5 bố cục làm cho nó một trang cache-backed đọc khi phần nóng. Người lao động không bao giờ thực hiện toàn bộ tập tin: phần được sao chép vào bộ đệm hàng loạt của bộ tải dữ liệu, mà bộ tải dữ liệu sau đó sao chép vào một tensor đào tạo bộ nhớ gắn vào thời gian hàng loạt.
+Trong thời gian đào tạo mỗi công nhân mở phần của mình của các tệp HDF5 trong `swmr=True`chế độ và yêu cầu `tokens[start:stop]`- Tôi không biết. Layout của HDF5 làm cho việc này trở thành một đọc rẻ khi phần mềm nóng: h5py không lập bản đồ bộ nhớ của tệp, nó đọc toàn bộ phần mềm thông qua bộ nhớ cache HDF5 và bộ nhớ cache trang OS, sau đó sao chép hyperslab được yêu cầu ra. Người lao động không bao giờ thực hiện toàn bộ tập tin: mảnh được sao chép vào bộ đệm hàng loạt của bộ tải dữ liệu, sau đó bộ tải dữ liệu sao chép vào một tensor đào tạo bộ nhớ bị gắn vào thời gian hàng loạt. Hướng dẫn nóng có một syscall mỗi phần chuyển đổi; tất cả những gì còn lại là truy cập RAM.
 
 ### Bộ tải dữ liệu cửa sổ trượt
 
@@ -67,10 +67,10 @@ cc-hdf5-corpus
 - `Tokenizer`- một token deterministic cấp độ byte đủ tốt cho demo.`encode(text) -> list[int]`và `vocab_size`- Tôi không biết.
 - `HDF5ShardWriter`- mở một bộ dữ liệu số nguyên có thể kích thước, buffer token đến kích thước phần, kích thước lại và viết bằng các bước kích thước cố định, ghi lại `token_count`và `sha256`như thuộc tính HDF5 trên gần.
 - `ShardedTokenizationPipeline`- lặp lại các tài liệu nhập, định tuyến chúng đến một nhà văn, và phát ra một `shards.json`chỉ số.
-- `MmapTokenStore`- mở các tập tin shard cho các bài đọc trong bộ nhớ, tính toán các thay thế toàn cầu, phơi bày một đơn `get_slice(start, stop)`API.
+- `MmapTokenStore`- mở các tập tin shard cho các đọc mảnh (tên là một tiện lợi; h5py đọc các mảnh, nó không lập bản đồ tập tin), tính toán các thay thế toàn cầu, phơi bày một đơn `get_slice(start, stop)`API.
 - `SlidingWindowDataloader`- chọn cửa sổ ngẫu nhiên từ dòng chảy toàn cầu và đầu tư `(input_ids, target_ids)`Các mảng số.
 
-Một bản demo ở dưới cùng của tệp xây dựng một bộ nhớ nhỏ, mã hóa thành hai mảnh, mở chúng qua bản đồ bộ nhớ, chạy bộ nhớ dữ liệu cho 10 lô, và in hình dạng mỗi lô và một số lượng kiểm tra.
+Một bản demo ở dưới cùng của tệp xây dựng một bộ nhớ nhỏ, mã hóa thành hai mảnh, mở chúng cho đọc mảnh, chạy bộ tải dữ liệu cho 10 lô, và in hình dạng mỗi lô và một số lượng kiểm tra.
 
 Đi đi.
 
@@ -117,7 +117,7 @@ Các mô hình sản xuất:
 | Term | What people say | What it actually means |
 |------|-----------------|------------------------|
 | Resizable dataset | "Append-only" | An HDF5 dataset with `maxshape=(None,)` that grows via `resize` calls in chunk-sized strides |
-| Chunked layout | "How HDF5 stores it" | Fixed-size on-disk pages that the kernel can memory-map and the dataloader can read contiguously |
+| Chunked layout | "How HDF5 stores it" | Fixed-size on-disk blocks that HDF5 reads and caches as one unit, so the dataloader can read a contiguous range cheaply |
 | `swmr` mode | "Read-while-write" | Single-Writer-Multiple-Reader mode that lets dataloader workers share the file safely |
 | Shard index | "shards.json" | The durable index of all token shards with offsets and content hashes |
 | Sliding window | "Training sample" | A fixed-length slice of the global token stream that the trainer pairs with its shift-by-one target |
@@ -126,7 +126,7 @@ Các mô hình sản xuất:
 
 - [HDF5 chunking documentation](https://support.hdfgroup.org/documentation/hdf5/latest/hdf5_chunking.html)- các mảnh, kích thước thiết kế tập dữ liệu này bài học sử dụng
 - [h5py user guide](https://docs.h5py.org/en/stable/)- Python liên kết cho HDF5
-- [NumPy memory mapping](https://numpy.org/doc/stable/reference/generated/numpy.memmap.html)- phần đọc nguyên thủy HDF5 phơi bày qua h5py
+- [h5py chunked storage](https://docs.h5py.org/en/stable/high/dataset.html#chunked-storage)- cách h5py đọc tập dữ liệu bị phân mảnh và kích thước bộ nhớ cache bị phân mảnh
 - Giai đoạn 19 · 42 - trình tải xuống mà đầu ra của bài học này là biểu tượng
 - Giai đoạn 19 · 44 - lịch trình cosine tiêu thụ bộ tải dữ liệu này
 - Giai đoạn 19 · 45 - vòng AMP kết thúc bước tập luyện

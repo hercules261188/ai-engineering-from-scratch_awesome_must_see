@@ -69,7 +69,7 @@ ViT-Base là một bộ mã hóa tham số 86M. Điều đó nhỏ đối với 
 
 ### Mặt nạ nguyên nhân hay không?
 
-Vision Transformers chỉ có mã hóa và hai chiều: token `i`có thể tham dự để token `j`Không có mặt nạ. Sự chú ý chéo bên giải mã trong bài học 61 sẽ sử dụng một mặt nạ nguyên nhân, nhưng bên trong bộ mã hóa thị giác, sự chú ý được kết nối hoàn toàn.
+Vision Transformers chỉ có mã hóa và hai chiều: token `i`có thể tham dự để token `j`Các bản phân giải văn bản tự chú ý trong bài học 61 sẽ sử dụng một mặt nạ nguyên nhân (trong sự chú ý của nó đến các bản vá hình ảnh không), nhưng bên trong bộ phân giải thị giác, sự chú ý được kết nối hoàn toàn.
 
 ### Những gì token CLS học được
 

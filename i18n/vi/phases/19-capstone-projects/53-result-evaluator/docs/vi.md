@@ -70,7 +70,7 @@ Người đánh giá chạy ba tính toán độc lập và kết hợp chúng t
 
 Sự bối rối là một sự sụt giảm về tổn thất. Một sự sụt giảm 0,1 trong tổn thất là một sự sụt giảm lớn hơn nhiều về sự bối rối. So sánh sự bối rối trực tiếp giữa hai cấu hình là tốt, nhưng kết hợp nó với các số liệu tuyến tính trong một báo cáo duy nhất đòi hỏi phải bình thường hóa.
 
-Bài học bình thường hóa bất kỳ métric nào mà `scale`trường là `"log"`bằng cách lấy nhật ký tự nhiên trước khi tính toán sự cải thiện. ngưỡng sau đó được áp dụng trong không gian nhật ký.`log(28) - log(32) = -0.133`trên một mức thấp hơn là métric tốt hơn, đó là vượt quá ngưỡng hai phần trăm.
+Bài học bình thường hóa bất kỳ métric nào mà `scale`trường là `"log"`bằng cách lấy nhật ký tự nhiên trước khi tính toán sự cải thiện. ngưỡng sau đó được áp dụng trong không gian nhật ký.`log(32) = 3.466`chống lại`log(28) = 3.332`Sự cải thiện tương đối trên một métric thấp hơn là tốt hơn là `(3.466 - 3.332) / 3.466 = 0.039`, làm cho ngưỡng 2% được xóa.
 
 ```text
 if scale == "log":

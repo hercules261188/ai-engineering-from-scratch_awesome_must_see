@@ -18,7 +18,7 @@ Bạn sẽ xây dựng một đại lý lấy một Java 8 repo (hoặc Python 2
 
 Hãng đường ống có hai lớp.**deterministic substrate**(OpenRewrite cho Java, libcst cho Python) chạy phần lớn các bản viết lại cơ học một cách an toàn: nhập khẩu, chữ ký phương pháp, chỉnh sửa an toàn không, thử với các nguồn lực, thay thế API lỗi thời. Nó nhanh chóng và tạo ra sự khác biệt có thể kiểm toán.**agent layer**(OpenAI Agents SDK hoặc LangGraph trên Claude Opus 4.7 và GPT-5.4-Codex) xử lý các trường hợp các công thức không thể: nâng cấp tập tin xây dựng (Maven / Gradle / pyproject), xung đột phụ thuộc chuyển tiếp, vỏ thử nghiệm, ghi chú tùy chỉnh.
 
-Mỗi repo nhận được một hộp cát Daytona với thời gian chạy mục tiêu được cài đặt trước. Đại lý lặp lại: chạy xây dựng, phân loại lỗi, áp dụng sửa chữa, chạy lại. Giới hạn cứng: 30 phút mỗi repo, 8 đô la mỗi repo, 20 lượt đại lý. Nếu tất cả các thử nghiệm vượt qua và delta bảo hiểm không âm tính, chi nhánh mở PR. Nếu không, repo được nộp dưới lớp thất bại với bằng chứng.
+Mỗi repo nhận được một hộp cát Daytona với thời gian chạy mục tiêu được cài đặt trước. Đại lý lặp lại: chạy xây dựng, phân loại lỗi, áp dụng sửa chữa, chạy lại. Giới hạn cứng: 30 phút mỗi repo, 8 đô la mỗi repo, 20 lượt đại lý. Nếu tất cả các thử nghiệm vượt qua và bảo hiểm giảm không hơn 2 điểm phần trăm, chi nhánh mở PR. Nếu không, repo được nộp dưới lớp thất bại với bằng chứng.
 
 Các phân loại thất bại là có thể cung cấp. Trong 50 repos, những gì đã bị hỏng? Transitive deps? thông chú tùy chỉnh? xây dựng phiên bản công cụ? thử các vỏ không liên quan đến di cư? Mỗi lớp nhận được một con số và một sự khác biệt ví dụ. Các tác giả công thức trong tương lai có thể nhắm mục tiêu vào ba người hàng đầu.
 
@@ -77,7 +77,7 @@ ce-migration-funnel
 
 4. **Budget caps.**30 phút đồng hồ tường mỗi repo, chi phí 8 đô la, 20 lượt đại lý. bất kỳ sự phá vỡ nào dừng lại và các tập tin dưới "budget_exhausted" với sự khác biệt hiện tại.
 
-5. **Test + coverage gate.**Sau khi xây dựng được làm xanh, chạy bộ thử nghiệm. So sánh bảo hiểm với repo cơ sở. Nếu bảo hiểm giảm hơn 2%, tập tin dưới "cụ thể_đưa chuộng".
+5. **Test + coverage gate.**Sau khi xây dựng được làm xanh, chạy bộ thử nghiệm. So sánh bảo hiểm với repo cơ sở. Nếu bảo hiểm giảm hơn 2 điểm phần trăm, hãy tập tin dưới "cụ thể_đưa chuộng".
 
 6. **PR open.**Khi thành công, đẩy chi nhánh, mở PR với sự khác biệt và một bản tóm tắt của các công thức được áp dụng và những gì cam kết của đại lý tác giả.
 

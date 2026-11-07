@@ -20,7 +20,7 @@ Một mô hình ngôn ngữ mới xuất hiện mỗi tuần. Người ta tuyên
 
 Nếu không có một vòng xoáy trong repo của bạn bạn so sánh hai mô hình theo vibes. Với một vòng xoáy bạn so sánh chúng theo điểm số trên một bộ nhiệm vụ cố định với một métric cố định, trên một đầu ra JSON bạn có thể khác biệt.
 
-Cái bẫy là quá phù hợp với một mô hình. Việc sửa chữa là cùng một cái bẫy ngược lại: vòng xoáy đủ nhỏ để đọc trong mười lăm phút, các nhiệm vụ đủ nhỏ để gửi vào repo, các số liệu được viết từ đầu để một đồng nghiệp có thể kiểm tra chúng, và bộ điều chỉnh là nơi duy nhất mã cụ thể mô hình sống. Thay đổi bộ điều chỉnh, bảng xếp hạng di chuyển; thay đổi các nhiệm vụ, bảng xếp hạng di chuyển. Không gì khác nên di chuyển.
+Cái bẫy là quá phù hợp với một mô hình. Việc khắc phục là giữ mọi lựa chọn cụ thể cho mô hình ra khỏi vòng xoáy: vòng xoáy đủ nhỏ để đọc trong mười lăm phút, các nhiệm vụ đủ nhỏ để gửi vào repo, các số liệu được viết từ đầu để một đồng nghiệp có thể kiểm tra chúng, và bộ điều chỉnh là nơi duy nhất mã cụ thể cho mô hình sống. Thay đổi bộ điều chỉnh, bảng xếp hạng di chuyển; thay đổi các nhiệm vụ, bảng xếp hạng di chuyển. Không gì khác nên di chuyển.
 
 ## Khái niệm
 

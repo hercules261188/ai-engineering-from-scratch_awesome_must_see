@@ -64,7 +64,7 @@ Các phím hình ảnh và giá trị được tính toán một lần vào lúc
 
 ### Thành phần khối
 
-Một khối decoder chạy: pre-LN -> tự chú ý -> dư -> pre-LN -> sự chú ý chéo -> dư -> pre-LN -> feed-forward -> dư. Ba tầng dưới, mỗi lớp có LayerNorm riêng. Bức giấy Flamingo thêm một cổng học về sự chú ý chéo để mô hình có thể chọn ra khỏi con đường hình ảnh với chi phí ổn định thời gian đào tạo; đường cơ sở kanonic (được sử dụng ở đây) không có cổng.
+Một khối decoder chạy: pre-LN -> tự chú ý -> dư -> pre-LN -> sự chú ý chéo -> dư -> pre-LN -> feed-forward -> dư. Ba tầng dưới, mỗi lớp có LayerNorm riêng của nó. Bức giấy Flamingo thêm một cổng tanh học được về sự chú ý chéo, khởi đầu ở 0, do đó mô hình ngôn ngữ đóng băng bắt đầu không thay đổi và đào tạo vẫn ổn định; đường cơ sở công giáo (được sử dụng ở đây) không có cổng.
 
 ```python
 class DecoderBlock:

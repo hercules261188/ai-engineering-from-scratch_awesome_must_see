@@ -81,7 +81,7 @@ cc-gpt-assembly
 - `class GPTModel`với token embedding, position embedding, embedding dropup, 12 `TransformerBlock`S, LayerNorm cuối cùng, và một `lm_head`liên quan đến biểu tượng được nhúng khi cờ được đặt.
 - A `count_parameters`trợ lý trả lại số parameter độc đáo (vì vậy việc liên kết trọng lượng được tôn trọng trong số).
 - A `generate`chức năng làm nhiệt độ, top-k, đa số, và khung cửa sổ trượt.
-- Một bản demo xây dựng mô hình, in số parameter bên cạnh tham chiếu 124M, và tạo ra một chuỗi ngắn từ một lời nhắc cố định để hiển thị đường ống kết thúc đến cuối.
+- Một bản demo xây dựng mô hình, in số parameter bên cạnh tham chiếu 124M, và tạo ra một chuỗi ngắn từ một lời nhắc cố định để hiển thị đường ống dẫn đầu đến cuối.
 
 Đi đi.
 
@@ -89,7 +89,7 @@ cc-gpt-assembly
 python3 code/main.py
 ```
 
-Kết quả: số parameter bên cạnh tham chiếu 124M, tạo ra ID token từ một lời nhắc ngẫu nhiên, và xác nhận rằng đầu LM và token nhúng chia sẻ lưu trữ khi liên kết được bật.
+Kết quả: số parameter bên cạnh tham chiếu 124M, tạo ra ID token từ một prompt cố định, và xác nhận rằng đầu LM và token nhúng chia sẻ lưu trữ khi liên kết được bật.
 
 Để giữ cho bản demo nhanh chóng, kịch bản cũng chạy một cấu hình nhỏ (`d_model=64`- `num_layers=2`(văn) kết thúc đến kết thúc và inline chuỗi token được tạo ra.
 

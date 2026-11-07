@@ -9,7 +9,7 @@
 
 ## Mục tiêu học tập
 
-- Thuộc tính hiệu quả của lô: `effective_batch = micro_batch * accum_steps`- Tôi không biết.
+- Thuộc tính hiệu quả của lô: `effective_batch = micro_batch * accum_steps * world_size`, đó là `micro_batch * accum_steps`trên một thiết bị duy nhất bài học này sử dụng.
 - Thực hiện quy mô mất per micro batch để gradient tích lũy phù hợp với một batch hoàn toàn ngược lại.
 - Tẩy đồng bộ hóa tối ưu hóa cho đến micro-batch cuối cùng (sinc-on-last-step).
 - Đọc thông qua so với đường cong hàng hiệu quả và giải thích lợi nhuận giảm.

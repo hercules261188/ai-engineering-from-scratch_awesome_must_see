@@ -118,7 +118,7 @@ python3 -m unittest code/test_main.py
 
 4. Thêm một hình phạt L2 nhỏ trên trọng lượng máy chiếu và xem nó tương tác như thế nào với sự sắp xếp cosine (cosine là không thay đổi quy mô, vì vậy hình phạt chủ yếu thu hẹp các hướng không được sử dụng).
 
-5. Cung trọng đầu tiên của máy chiếu tiếp tục, sau đó tải lại và chạy suy luận mà không cần bộ mã hóa tầm nhìn để xác minh rằng chỉ cần đầu tiên là máy chiếu vào thời điểm triển khai.
+5. Cần giữ trọng lượng máy chiếu, sau đó tải lại chúng bên cạnh bộ mã hóa tầm nhìn đóng băng và chạy suy luận mà không có quá trình ngược.
 
 ## Các điều khoản chính
 

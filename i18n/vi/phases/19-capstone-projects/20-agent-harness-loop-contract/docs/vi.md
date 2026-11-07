@@ -43,7 +43,7 @@ stateDiagram-v2
     DONE --> [*]
 ```
 
-`IDLE`là điểm nhập cảnh hợp pháp duy nhất. `DONE`là lối thoát hợp pháp duy nhất.`AWAITING_TOOL`là trạng thái duy nhất tạo ra điểm kéo.
+`IDLE`là điểm nhập cảnh hợp pháp duy nhất. `DONE`là lối thoát hợp pháp duy nhất.`AWAITING_TOOL`là trạng thái duy nhất tạo ra một điểm kéo tự nó.`on_pause`, không phải là một quốc gia: nó phát nổ từ bất kỳ quốc gia hoạt động nào khi ngân sách hết hoặc một cái móng yêu cầu xem xét.
 
 Máy trạng thái là xác định. Với cùng một nhật ký sự kiện, vòng xoắn lại vào cùng một trạng thái. thuộc tính đó là điều cho phép bạn chơi lại các phiên để gỡ lỗi mà không cần gọi lại mô hình.
 

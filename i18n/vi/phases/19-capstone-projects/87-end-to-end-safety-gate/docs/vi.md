@@ -9,7 +9,7 @@
 
 ## Vấn đề
 
-Bài học 82-86 trong bài hát này mỗi bài đều gửi một phần: một phân loại, một bộ phát hiện đầu vào, một khung đánh giá, một phân loại đầu ra, một công cụ quy tắc. Một cổng an toàn thực sự phải soạn chúng, chạy chúng vào thời điểm thích hợp trong vòng đời yêu cầu, quyết định hành động nào để thực hiện khi chúng không đồng ý, và tạo ra một dấu vết mà một nhà đánh giá có thể đọc vào sáng thứ Hai.
+Bài học 82-86 trong bài hát này mỗi bài đều gửi một phần đơn lẻ: một phân loại, một bộ phát hiện đầu vào, một khung đánh giá, một phân loại đầu ra, một động cơ quy tắc. Một cổng an toàn thực sự phải tạo ra các bộ phận thời gian chạy (chứng nhận bài học 83, trình phân loại bài học 85, và công cụ quy tắc bài học 86) , chạy chúng vào đúng thời điểm trong vòng đời yêu cầu, quyết định hành động nào để thực hiện khi họ không đồng ý, và tạo ra một dấu vết mà một nhà đánh giá có thể đọc vào sáng thứ Hai. Sự sáng tác là bài học.
 
 Cổng nằm ở ba điểm kiểm soát. Pre-gen chạy trước khi mô hình được gọi: máy dò từ bài học 83 nhìn vào lời nhắc và hoặc vượt qua nó, chặn nó thẳng (việc tấn công độ tin cậy cao), hoặc gắn một cờ để các lớp xuống dòng cân. Trong khi gen chạy khi mô hình phát ra các token: một bộ lọc streaming bơm các khối và kết thúc dòng chảy sớm nếu một cụm từ bị cấm xuất hiện (súng tiền tố tồn tại nếu cổng chỉ trông post-hoc). Post-gen chạy sau khi mô hình hoàn thành: bộ định tuyến phân loại từ bài học 85 và động cơ quy tắc từ bài học 86 kiểm tra đầu ra đầy đủ, cổng tổng hợp phán quyết của họ với tín hiệu trước gen, và cổng áp dụng một hành động cuối cùng.
 
@@ -35,11 +35,11 @@ Bộ tổng hợp kết hợp bốn tín hiệu độ nghiêm trọng: tín hi�
 
 | Signal state | Action |
 |---|---|
+| detector confidence >= 0.85 on a non-benign category | block before generation |
 | any high severity | block |
-| any medium severity | redact |
-| any low severity | warn |
-| all none + detector confidence < 0.5 | allow |
-| detector confidence 0.5-0.85, no other signal | warn |
+| any medium severity (detector confidence 0.5 to 0.85, or early stream termination) | redact |
+| any low severity (detector confidence below 0.5 on a non-benign category) | warn |
+| detector says benign and no other signal | allow |
 
 Block trả lại từ chối. Redact gửi văn bản được chỉnh sửa bởi phân loại và áp dụng bộ sửa các quy tắc. cảnh báo gửi bản gốc bằng một thông báo mềm. Cho phép gửi bản gốc. Mỗi yêu cầu phát ra một `RequestTrace`với `request_id`- `prompt`- `pre_gen`(Phán quyết của thám tử),`during_gen`(trigger mã thông báo lọc), `post_gen`(các hành động phân loại + báo cáo quy tắc), `final_action`- `final_output`, và`latency_ms`- Tôi không biết.
 

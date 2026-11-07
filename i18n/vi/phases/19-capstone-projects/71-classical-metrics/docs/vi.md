@@ -27,7 +27,7 @@ Stdlib cộng numpy là đủ. BLEU là đếm và một clamp. ROUGE-L là lậ
 
 ## Đánh dấu
 
-Chiếc token là `re.findall(r"\w+", text.lower())`. chữ viết lách, chữ số bảng chữ cái, dấu chấm giảm. mỗi metric trong bài học này sử dụng chính xác tokenizer này. người chạy không được chọn. nếu bạn trao đổi tokenizers, bạn đang chạy một tiêu chuẩn khác.
+Chiếc token là `re.findall(r"\w+", text.lower())`. chữ viết lách, chuỗi các ký tự từ (biểu chữ, chữ số, và dấu nhấn), bỏ tất cả mọi thứ khác. Mỗi métric trong bài học này sử dụng biểu tượng chính xác này. Người chạy không được chọn. Nếu bạn trao đổi biểu tượng, bạn đang chạy một tiêu chuẩn khác.
 
 ```python
 TOKEN_RE = re.compile(r"\w+", re.UNICODE)
@@ -66,7 +66,7 @@ flowchart LR
 
 ## BLEU-4
 
-BLEU là phép đo dịch máy tính của truyền thống và nó vẫn xuất hiện trong công việc tổng kết. Công thức chúng tôi sử dụng là BLEU-4 với mức độ corpus với hình phạt ngắn hạn tiêu chuẩn và thanh trơn thêm-một trên số n-gram sửa đổi để một gram thiếu sót duy nhất không đẩy điểm số xuống 0.
+BLEU là phép đo dịch máy tính truyền thống và nó vẫn xuất hiện trong công việc tổng kết. Công thức chúng tôi sử dụng là mức câu BLEU-4, được ghi điểm cho mỗi cặp dự đoán và tham chiếu, với hình phạt ngắn hạn tiêu chuẩn và thanh trơn thêm một trên số n-gram sửa đổi để một gram thiếu sót duy nhất không đẩy điểm đến không.
 
 Đối với mỗi cặp tham khảo ứng cử viên, chúng ta đếm độ chính xác n-gram sửa đổi cho n bằng 1, 2, 3, 4. Độ chính xác sửa đổi clip số n-gram ứng cử viên bằng số n-gram tối đa của n-gram đó trong bất kỳ tham khảo nào, vì vậy một ứng cử viên không thể bồng lên bằng cách lặp lại một cụm từ.
 
@@ -109,7 +109,7 @@ Bảng numpy làm cho việc thực hiện dễ đọc; danh sách Python tinh k
 
 ## Độ chính xác
 
-Đối với các nhiệm vụ phân loại đa mục tiêu, độ chính xác giảm xuống để phù hợp chính xác với một mục tiêu chuẩn hóa duy nhất. Chúng tôi phơi bày nó như một chức năng riêng biệt để người phát sóng có thể phát sóng trên`metric_name`mà không cần phải đi qua các so sánh chuỗi bên trong người chạy.
+Đối với các nhiệm vụ phân loại, độ chính xác giảm xuống là phù hợp chính xác: dự đoán ghi điểm 1 nếu nó phù hợp với bất kỳ mục tiêu chuẩn hóa nào trong danh sách. Chúng tôi phơi bày nó như một chức năng riêng biệt để người phát xuất có thể gửi trên `metric_name`mà không cần phải đi qua các so sánh chuỗi bên trong người chạy.
 
 ## Hợp đồng vận chuyển
 

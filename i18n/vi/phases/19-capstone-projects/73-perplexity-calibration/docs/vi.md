@@ -53,7 +53,7 @@ ECE bị thiên vị bởi số lượng thùng và kích thước mẫu. Với 
 
 ## Điểm Brier nào mà ECE không
 
-ECE chỉ quan tâm đến khoảng cách trung bình. Một mô hình tự tin quá nhiều về một nửa thùng rác và không tự tin về một nửa khác có thể có ECE thấp trong khi được chuẩn bị kém tại địa phương. Điểm Brier đo lường lỗi vuông so với kết quả thực cho mỗi dự đoán, vì vậy nó phạt lây lan trực tiếp.
+ECE chỉ quan tâm đến khoảng cách trung bình trong mỗi thùng rác. Nó mất khoảng trống tuyệt đối cho mỗi thùng, vì vậy khoảng trống trong các thùng khác nhau không hủy bỏ. Bên trong một thùng chứa có thể: nếu một số dự đoán trong một thùng chứa quá tự tin và những dự đoán khác không tự tin, các trung bình thùng chứa có thể phù hợp và thùng chứa không thêm hầu như bất cứ điều gì vào ECE, trong khi mỗi dự đoán được chuẩn bị kém. Điểm Brier đo lường lỗi vuông so với kết quả thực cho mỗi dự đoán, vì vậy nó phạt sự lan truyền trực tiếp.
 
 Đối với kết quả nhị phân, Brier là `mean((p_i - y_i)^2)`Nó phân hủy thành độ tin cậy, độ phân giải và sự không chắc chắn. Chúng tôi tính toán điểm số và phân hủy. Người chạy báo cáo về scalar nhưng ghi lại phân hủy cho bảng điều khiển.
 
@@ -87,7 +87,7 @@ Bộ đeo không giả định sự tự tin đến từ Softmax.`[0, 1]`Đối 
 
 - Tất cả dự đoán sai: ECE là mức độ tự tin trung bình, Brier là cao, sự bối rối là bất cứ điều gì mô hình nghĩ về văn bản.
 - Tất cả các dự đoán đều chính xác với sự tin tưởng cao: ECE gần không, Brier gần không.
-- Tự đoán hoàn toàn không chắc chắn ở p = 0,5: ECE là 0,5 trừ độ chính xác, Brier là 0,25 trừ một thuật ngữ sửa chữa.
+- Dự báo hoàn toàn không chắc chắn ở p=0.5: mọi dự đoán đều rơi vào một thùng, do đó ECE là `|0.5 - accuracy|`Brier chính xác là 0.25, bởi vì`(0.5 - y)^2 = 0.25`Nếu `y`là 0 hoặc 1.
 - Lập vào trống: ECE, Brier, và độ tin cậy trả lại `0.0`(hoặc các mảng không đầy).`NaN`cho trường hợp mã số không. Không có một con đường nào phát ra cảnh báo; người chạy kiểm tra các giá trị và quyết định báo cáo hay bỏ qua.
 
 Một mô hình thực sự trên một điểm chuẩn thực sự sẽ không tấn công chúng, nhưng một bộ chuyển đổi lỗi hoặc một mẫu nhỏ sẽ làm, và người chạy không nên bị tai nạn.

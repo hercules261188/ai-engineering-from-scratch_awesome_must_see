@@ -88,7 +88,7 @@ Một trình theo dõi hoặc UI có thể render này như một sự đột ph
 
 ## Hai ngân sách, cả hai đều khó khăn
 
-`max_steps`giới hạn tổng số các bước thực hiện trong suốt toàn phiên, bao gồm cả các kế hoạch lại. Tầm là mười hai. Một kế hoạch năm bước tuyến tính tái lập hai lần và thêm ba bước mỗi lần đạt mười sáu lần thực hiện và sẽ vượt quá ngân sách. Người thực thi sẽ từ chối kế hoạch lại và trả lại FAILED.
+`max_steps`giới hạn tổng số các bước thực hiện trong toàn bộ phiên họp, bao gồm cả kế hoạch lại. Tầm là 12 Những nỗ lực thất bại cũng được tính. Một kế hoạch 5 bước thất bại trong bước cuối cùng đã mất 5 hành quyết. Nếu mỗi bản sửa đổi thử lại bước đó và thêm ba bước mới, và bước cuối cùng của bản sửa đổi đầu tiên lại thất bại, con số là chín, và bản sửa đổi thứ hai cần thêm bốn bước: mười ba. Người hành quyết chạy lần thứ 12, từ chối lần thứ 13, và trả lại thất bại với lý trí.`step_budget`- Tôi không biết.
 
 `max_replans`giới hạn số lần người lập kế hoạch được gọi sau kế hoạch đầu tiên. mặc định là năm. Đây là giới hạn quan trọng hơn. Một người lập kế hoạch trả lại cùng một kế hoạch bị hỏng năm lần liên tiếp sẽ lặp lại vòng lặp cho đến khi ngân sách bước bắt được nó. Capping kế hoạch lại làm cho sự thất bại nhanh hơn và lý do rõ ràng hơn.
 

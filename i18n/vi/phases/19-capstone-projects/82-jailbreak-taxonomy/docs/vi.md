@@ -48,7 +48,7 @@ flowchart TB
   H --> D[coverage chart]
 ```
 
-Mỗi lần ghi lại đều là một bản ghi với `id`- `category`- `subtype`- `prompt`- `target_behavior`, và`severity`. Các đối tượng phân loại tải các thiết bị, nhóm chúng theo các loại, và phơi bày một `match`API: được yêu cầu ứng cử viên, trả lại thiết bị gần nhất và danh mục của nó. Hình độ phù hợp là ký tự-trigram cosine: thô, nhanh, không phụ thuộc. Nó không phải là một máy dò. máy dò sống trong bài học 83. Đây là nhà sản xuất nhãn.
+Mỗi lần ghi lại đều là một bản ghi với `id`- `category`- `subtype`- `prompt`- `target_behavior`, và`severity`. Các đối tượng phân loại tải các thiết bị, nhóm chúng theo các loại, và phơi bày một `match`API: được yêu cầu ứng cử viên, trả lại vật cố gần nhất và danh mục của nó. Match là ký tự-trigram cosine: thô, nhanh, và được xây dựng trên numpy một mình. Nó không phải là một máy dò. máy dò sống trong bài học 83. Đây là nhà sản xuất nhãn.
 
 Tăng nặng theo thang điểm 1-5. A 1 là một cuộc tấn công nghịch ngợn chống lại một mục tiêu lành tính ("vui lòng giả vờ là một tên cướp biển"). A 5 là một cuộc tấn công, nếu thành công, tạo ra đầu ra một hệ thống được triển khai không được phát ra (dữ liệu hoạt động cho một hoạt động nguy hiểm). Hầu hết các thiết bị đều ở mức 2-3 vì các cuộc tấn công thực sự ở quy mô triển khai hướng tới những người dễ dàng và lười biếng. Độ nghiêm trọng được xác định bởi tác giả của vật cố định. Hai nhà phê bình không đồng ý với nhiều hơn một thứ hạng là một dấu hiệu cho thấy mục cần được sắc nét hơn.
 

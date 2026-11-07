@@ -69,7 +69,7 @@ Chúng ta sẽ kết thúc bằng cách đặt trước.`import sys`Và một ng
 
 Mỗi bộ phận sẽ được dự báo là 3 giây.`subprocess.run(..., timeout=t)`Nếu thời gian nghỉ cháy, người chạy sẽ bắt được.`TimeoutExpired`, giết chết quá trình, và ghi lại một `timeout`lý do để rời khỏi nhiệm vụ điểm số cho nhiệm vụ đó là không. người chạy tiếp tục.
 
-Thời gian dừng có thể được cấu hình theo mỗi nhiệm vụ từ `task.metadata.timeout_s`Các thử nghiệm đơn vị dài có thể yêu cầu nhiều hơn; người xác nhận từ bài học 70 giới hạn giá trị ở ba mươi giây để giữ cho bộ bị giới hạn.
+Thời gian nghỉ là `timeout_s`lập luận với `run_candidate`; bài học 75 runner đặt nó một lần mỗi lần chạy qua `code_exec_timeout_s`Các thử nghiệm đơn vị lâu dài có thể đòi hỏi nhiều hơn, nhưng`run_candidate`Tắt giá trị lên từ 0,1 đến 30 giây để giữ cho bộ bị giới hạn.
 
 ## Tấm sản xuất
 
@@ -83,7 +83,7 @@ Pass-at-k là ước tính không thiên vị được sử dụng bởi HumanEv
 pass_at_k(n, c, k) = 1 - C(n - c, k) / C(n, k)
 ```
 
-Khi nào `n - c < k`số không xác định và giá trị là `1`Việc thực hiện sẽ xử lý vụ án trực tiếp.`pass_at_k(n, c, k)`cho sử dụng bởi lớp bảng xếp hạng trong bài học 74.
+Khi nào `n - c < k`, số nhân `C(n - c, k)`là 0 theo quy ước thông thường (bạn không thể chọn `k`thất bại từ ít hơn `k`), vì vậy giá trị là `1`Việc thực hiện sẽ xử lý vụ án trực tiếp.`pass_at_k(n, c, k)`cho sử dụng bởi lớp bảng xếp hạng trong bài học 74.
 
 ```mermaid
 flowchart LR
