@@ -124,7 +124,7 @@ flowchart LR
 
 اين قسمتي که لازم نيست با ادب رفتار کني
 
-- آناتومی یک آژانت هارنس LangChain * ۱۱ عنصر را فهرست می کند: پرامپت ها، ابزارها، هوک ها، جعبه های شن، آرکیستراسیون، حافظه، مهارت ها، زیرنویس ها و یک "لپ" احمقانه در زمان اجرا.
+- *آناطومی یک آژانت هارنس* لانگ چین از طریق اجزای اصلی هارنس عبور می کند: پیام ها، ابزارها، هوک ها، جعبه های شن، آرکیستر، حافظه، مهارت ها، زیربند ها و یک "لپ احمق" زمان اجرا. این به عنوان یک شی که شما تنظیم می کنید، نه یک سیستم که شما در آن قرار می دهید، به عنوان یک شی که شما تنظیم می کنید، به نظر می رسد.
 - ادي اوسماني "آجنت هيرنس انجنيري" نقشه رو مي زنه`Agent = Model + Harness`و الگوی رخت، اما نمی گوید که یک آستین از چه چیزی ساخته شده است.
 - اینترنتی و OpenAI در سطح عمیق ترین هستند اما در زمان اجرا خود باقی می مانند. اعلام "تفرق هارنس-کمپیوتر" در آوریل 2026 در SDK آژانس اولین فروشنده است که به طور صریح تقسیم کنترل-طرح / داده-طرح را تأیید می کند. این یک ایده ابتدایی است، نه یک ایده جدید.
 - کتاب agentic_harness به عنوان یک شی تشکیل دهنده (Jaymin West *Agentic Engineering * فصل 6) ، با استفاده از آن، با توجه به این که "harness مرز امنیتی اصلی در یک سیستم agentic است" ، قوی ترین خط آن است.
@@ -193,7 +193,7 @@ python3 code/main.py
 فریم فروشنده:
 
 - [Addy Osmani, Agent Harness Engineering](https://addyosmani.com/blog/agent-harness-engineering/) `Agent = Model + Harness`و الگوی رختری؛ نازک در زیرساخت
-- [LangChain, The Anatomy of an Agent Harness](https://blog.langchain.com/the-anatomy-of-an-agent-harness/) 11 عنصر: پیام، ابزار، هک، ورق بندی، جعبه های شن، حافظه، مهارت ها، زیربند، زمان اجرا؛ صف ها، انتشار، authz حذف می شود
+- [LangChain, The Anatomy of an Agent Harness](https://blog.langchain.com/the-anatomy-of-an-agent-harness/) اجزای اصلی آرم: پیام، ابزار، هک، ورق بندی، جعبه های شن، حافظه، مهارت ها، زیربند ها، زمان اجرا؛ صف ها، انتشار، authz حذف می شود
 - [OpenAI, Harness engineering: leveraging Codex in an agent-first world](https://openai.com/index/harness-engineering/) دیدگاه تیم کودکس در مورد سطوح اطراف زمان اجرا
 - [OpenAI, Unrolling the Codex agent loop](https://openai.com/index/unrolling-the-codex-agent-loop/) حلقه عامل به یک کاهش می یابد `while`در تماس های تابع
 - [Anthropic, Effective harnesses for long-running agents](https://www.anthropic.com/engineering/effective-harnesses-for-long-running-agents) سطوح افق بلند در یک زمان اجرا خاص

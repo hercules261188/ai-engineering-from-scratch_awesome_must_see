@@ -43,7 +43,7 @@ flowchart LR
 | Verification quality | Does the acceptance command actually prove the goal, or did it prove a weaker version? |
 | Handoff readiness | Could the next session pick up cleanly from the current state? |
 
-کل از 10، یک مسابقه زیر 7 شکست نرم است؛ یک مسابقه زیر 5 شکست سخت است.
+کل از 10 . یک اجرا زیر 7 یک شکست نرم است. یک اجرا زیر 5 یا هر ابعاد در 0 یک شکست سخت است.
 
 ### بازرس نقش جداگانه ای است نه یک مدل جداگانه
 

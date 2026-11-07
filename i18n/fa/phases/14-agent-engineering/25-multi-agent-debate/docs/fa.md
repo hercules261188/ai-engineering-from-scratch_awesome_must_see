@@ -117,7 +117,7 @@ python3 code/main.py
 
 ## خواندن بیشتر
 
-- [Du et al., Society of Minds (arXiv:2305.14325)](https://arxiv.org/abs/2305.14325) بحث کاینونیک چند عامل
+- [Du et al., Improving Factuality and Reasoning in Language Models through Multiagent Debate (arXiv:2305.14325)](https://arxiv.org/abs/2305.14325) بحث کاینونیک چند عامل
 - [Sparse Communication Topology (arXiv:2406.11776)](https://arxiv.org/abs/2406.11776) نتایج توپولوژی نادر
 - [Anthropic, Building Effective Agents](https://www.anthropic.com/research/building-effective-agents) کارگران سازنده به عنوان یک نوع بحث
 - [Madaan et al., Self-Refine (arXiv:2303.17651)](https://arxiv.org/abs/2303.17651) نمونه ی یک نمونه ی خود منتقد
