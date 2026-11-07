@@ -71,7 +71,7 @@ after merge repeats and remove blanks: "hello"
 
 ### लेआउट पार्सिंग
 
-संरचित दस्तावेजों के लिए, एक लेआउट डिटेक्टर (लेआउटLMv3, डॉकलेनेट) चलाएं जो प्रत्येक क्षेत्र को लेबल करता हैः शीर्षक, पैराग्राफ, आकृति, तालिका, फुटनोट। पढ़ने का क्रम फिर "लेआउट क्रम में क्षेत्रों के माध्यम से दोहराया जाता है, संगत" हो जाता है।
+संरचित दस्तावेजों के लिए, एक लेआउट मॉडल (लेआउटLMv3, या डॉकलेनेट डेटासेट पर प्रशिक्षित एक डिटेक्टर) चलाएं जो प्रत्येक क्षेत्र को लेबल करता हैः शीर्षक, पैराग्राफ, आकृति, तालिका, फुटनोट। पढ़ने का क्रम फिर "लेआउट क्रम में क्षेत्रों के माध्यम से दोहराया जाता है, संगत। "
 
 प्रपत्रों के लिए प्रयोग करें **Key-Value extraction**मॉडल (दृश्य-समृद्ध दस्तावेजों के लिए डोनेट, सादे स्कैन के लिए लेआउटLMv3) । वे छवि + पता लगाया पाठ + स्थान लेते हैं और संरचित कुंजी-मूल्य जोड़े की भविष्यवाणी करते हैं।
 
@@ -160,18 +160,23 @@ class TinyCRNN(nn.Module):
 
 ### चरण 3: सिंथेटिक ओसीआर
 
-अंत-से-अंत धुएं परीक्षण के लिए काले-से-सफेद अंक स्ट्रिंग उत्पन्न करें।
+अंत-से-अंत धुएं परीक्षण के लिए काले-सफेद स्ट्रिंग्स उत्पन्न करें। प्रत्येक वर्ण छह बार का स्तंभ बन जाता है जो बाइनरी में अपने शब्दावली सूचकांक को वर्तनी देता है। छवि को चरित्र की पहचान लेनी चाहिएः यदि प्रत्येक वर्ण एक ही खाली बॉक्स था, तो मॉडल नहीं बता सकता`a`से`x`, और हार रुक जाएगी.
 
 ```python
 import numpy as np
+
+GLYPHS = "0123456789abcdefghijklmnopqrstuvwxyz"
 
 def synthetic_line(text, height=32, char_width=16):
     W = char_width * len(text)
     img = np.ones((height, W), dtype=np.float32)
     for i, c in enumerate(text):
         x = i * char_width
-        shade = 0.0 if c.isalnum() else 0.5
-        img[6:height - 6, x + 2:x + char_width - 2] = shade
+        code = GLYPHS.find(c) + 1
+        for bit in range(6):
+            if code >> bit & 1:
+                y = 4 + 4 * bit
+                img[y:y + 3, x + 2:x + char_width - 2] = 0.0
     return img
 
 
@@ -202,7 +207,7 @@ print(f"images: {imgs.shape}   targets: {targets.shape}   lengths: {lengths.toli
 model = TinyCRNN(vocab_size=len(vocab))
 opt = torch.optim.Adam(model.parameters(), lr=1e-3)
 
-for step in range(200):
+for step in range(400):
     strings = ["abc" + str(step % 10)] * 4 + ["xyz" + str((step + 1) % 10)] * 4
     imgs, targets, target_lens = build_batch(strings, vocab)
     log_probs = model(imgs)  # (W', 8, vocab)
@@ -211,7 +216,7 @@ for step in range(200):
     opt.zero_grad(); loss.backward(); opt.step()
 ```
 
-इस क्षुल्लक सिंथेटिक डेटा पर 200 चरणों पर नुकसान ~ 3 से ~ 0.2 तक गिरना चाहिए।
+इस तुच्छ संश्लेषणात्मक आंकड़ों पर 400 चरणों के भीतर हानि दो अंकों से घटकर लगभग 0.3 हो जाएगी।`code/main.py`अपने स्वयं के स्ट्रिंग सेट पर एक ही लूप चलाता है और फिर तीन परीक्षण स्ट्रिंग को डिकोड करता है।
 
 ## इसका प्रयोग करें
 

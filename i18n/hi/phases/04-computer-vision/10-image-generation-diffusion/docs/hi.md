@@ -260,7 +260,7 @@ def sample_ddim(model, schedule, shape, steps=50, T=1000, device="cpu", eta=0.0)
     x = torch.randn(shape, device=device)
     alphas_cumprod = schedule["alphas_cumprod"].to(device)
 
-    ts = torch.linspace(T - 1, 0, steps + 1).long()
+    ts = torch.linspace(T - 1, -1, steps + 1).round().long()
     for i in range(steps):
         t = ts[i]
         t_prev = ts[i + 1]
@@ -276,7 +276,7 @@ def sample_ddim(model, schedule, shape, steps=50, T=1000, device="cpu", eta=0.0)
     return x
 ```
 
-`eta=0`पूरी तरह से निर्धारक है (एक ही शोर इनपुट हमेशा एक ही आउटपुट का उत्पादन करता है) ।`eta=1`डीडीपीएम को ठीक करता है।
+कार्यक्रम का अंत `t_prev = -1`, तो अंतिम कदम का उपयोग करता है `a_prev = 1.0`और साफ-सफाई को लौटा देता है`x0_pred`बिना किसी शेष शोर के। `eta=0`पूरी तरह से निर्धारक है (एक ही शोर इनपुट हमेशा एक ही आउटपुट का उत्पादन करता है) ।`eta=1`DDPM को जब कार्यक्रम हर समय चरण का दौरा करता है (`steps=T`) ।
 
 ## इसका प्रयोग करें
 
