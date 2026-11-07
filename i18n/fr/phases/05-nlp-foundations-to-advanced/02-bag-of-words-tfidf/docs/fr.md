@@ -126,7 +126,7 @@ def tfidf(bow_matrix):
 >>> tfidf(bow)
 ```
 
-Trois documents, cinq mots vocabulaires (`the`- Je suis là .`cat`- Je suis là .`sat`- Je suis là .`dog`- Je suis là .`ran``the`apparaît dans les trois, donc son IDF est faible. `dog`Les vecteurs sont rares (la plupart des entrées sont petites) et les mots discriminatifs apparaissent.
+Trois documents, cinq mots vocabulaires (`the`- Je suis là .`cat`- Je suis là .`sat`- Je suis là .`dog`- Je suis là .`ran``the`apparaît dans les trois, donc son IDF est faible. `dog`Les mots discriminatifs apparaissent dans un seul, donc leur IDF est élevée.
 
 ### Étape 5: normaliser les rangées L2
 

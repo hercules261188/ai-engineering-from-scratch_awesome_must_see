@@ -200,7 +200,7 @@ pipe.fit(X_train, y_train)
 print(pipe.score(X_test, y_test))
 ```
 
-Trois choses à remarquer.`stop_words=None`Il ne peut pas se permettre de négationner.`ngram_range=(1, 2)`ajoute des bigrammes donc `not_good`devient une caractéristique. `sublinear_tf=True`Ces trois indicateurs représentent la différence entre une base de 75% et une base de 85% sur SST-2.
+Trois choses à remarquer.`stop_words=None`Il ne peut pas se permettre de négationner.`ngram_range=(1, 2)`ajoute des bigrammes donc `not good`devient une caractéristique (scikit-learn relie les deux mots par un espace). `sublinear_tf=True`Ces trois indicateurs représentent la différence entre une base de 75% et une base de 85% sur SST-2.
 
 ### Quand trouver un transformateur
 
