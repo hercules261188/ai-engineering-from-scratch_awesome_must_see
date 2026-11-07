@@ -40,12 +40,12 @@ L(N, D) = \frac{A}{N^\alpha} + \frac{B}{D^\beta} + E
 - $E \approx 1.69$没有任何可能的损失.
 - $A \approx 406$现在$B \approx 411$现在,我们要去.
 
-根据你的规模,两个术语对彼此进行交易.$N$在固定计算 ($C = 6ND$) 并解决:
+根据你的规模,两个术语对彼此进行交易.$N$在固定计算 ($C = 6ND$通过" $\alpha$其他$\beta$值为 0.45 左右.$N$对于$D$根据预算,正确的最佳比率缓慢变化.`code/main.py`根据该论文的第一两个适应方法,直接测量最佳值,将两个指标设置为0.5.$D = 20N$在$C = 6ND$指的规则是:
 
 ```math
 \begin{aligned}
-N_{\text{opt}} &\approx 0.6 \times (C/6)^{0.5} \\
-D_{\text{opt}} &\approx 0.6 \times (C/6)^{0.5} \\
+N_{\text{opt}} &\approx 0.22 \times (C/6)^{0.5} \\
+D_{\text{opt}} &\approx 4.5 \times (C/6)^{0.5} \\
 D_{\text{opt}} / N_{\text{opt}} &\approx 20
 \end{aligned}
 ```

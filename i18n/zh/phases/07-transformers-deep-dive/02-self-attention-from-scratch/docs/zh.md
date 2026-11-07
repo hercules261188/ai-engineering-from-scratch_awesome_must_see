@@ -169,6 +169,10 @@ softmax-attention-scaling
 
 ## 建立它
 
+```figure
+iso-machine {"machine":"self-attention"}
+```
+
 ### 步骤1:从零开始软max
 
 软max将原始的 logits转换为概率.

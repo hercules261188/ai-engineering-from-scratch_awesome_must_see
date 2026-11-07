@@ -80,7 +80,7 @@ x → LN → MHA(masked self) → + → LN → MHA(cross to encoder) → + → L
 - 转移: 转移:`3 · d · (r · d)`≈ ≈`3rd²`
 - 标准: 无关可视
 
-在`d = 4096, r = 2.6, layers = 32`(大约是Llama 3 8B),总数: `32 · (4·4096² + 3·2.6·4096²) ≈ 32 · (16 + 32) M = ~1.5B parameters per layer × 32 ≈ 7B`发行匹配数量.
+在`d = 4096, r = 2.6, layers = 32`(大约是Llama 3 8B),总数: `32 · (4·4096² + 3·2.6·4096²) ≈ 32 · (67M + 131M) ≈ 32 · 198M ≈ 6.3B`实际模型使用GQA (K和V投影较小) 和更广泛的FFN (Financial Classification)`r = 3.5`),从注意力转移到FFN,但总数保持在8B附近.
 
 ## 建立它
 
