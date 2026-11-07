@@ -52,12 +52,12 @@ Cada fornecedor precisa de cinco coisas:
 | Result block | role `tool`, `tool_call_id` | `user` with `tool_result`, `tool_use_id` | `functionResponse` with matching `id` |
 | Force-a-tool | `tool_choice: {type: "function", function: {name}}` | `tool_choice: {type: "tool", name}` | `tool_config: {function_calling_config: {mode: "ANY"}}` |
 | Forbid tools | `tool_choice: "none"` | `tool_choice: {type: "none"}` | `mode: "NONE"` |
-| Strict schema | `strict: true` | schema-is-schema (always enforced) | `responseSchema` at request level |
+| Strict schema | `strict: true` | `strict: true` per tool (opt-in) | `responseSchema` at request level |
 
 ### Limite que você vai realmente atingir
 
 - **OpenAI.**128 ferramentas por pedido. profundidade de esquema 5. cadeia de argumentos <= 8192 bytes.`$ref`Não , não .`oneOf`- Não .`anyOf`- Não .`allOf`com sobreposição, todas as propriedades enumeradas em `required`- Não .
-- **Anthropic.**64 ferramentas por pedido. Profundidade do esquema efetivamente ilimitada mas limite prático 10.
+- **Anthropic.**64 ferramentas por pedido. Profundidade do esquema efetivamente ilimitada mas limite prático 10.`strict: true`O esquema é um contrato que o modelo tende a seguir, não uma garantia.
 - **Gemini.**64 funções por solicitação. Os tipos de esquema são um subconjunto OpenAPI 3.0 (uma pequena divergência do JSON Schema 2020-12).
 
 ### `tool_choice`comportamento
@@ -94,7 +94,7 @@ Os erros de argumento inválido também parecem diferentes.
 
 - **OpenAI (non-strict).**Reto de modelo `arguments: "{bad json}"`Se o seu JSON falhar, injetam uma mensagem de erro e chamam novamente.
 - **OpenAI (strict).**A validação ocorre durante a decodificação; JSON inválido é impossível, mas `refusal`Pode aparecer.
-- **Anthropic.** `input`Pode conter campos inesperados; esquema é de aconselhamento. Validação do lado do servidor.
+- **Anthropic (non-strict).** `input`O esquema é de aconselhamento. Validação do lado do servidor.`strict: true`A amostragem é limitada ao esquema.
 - **Gemini.**A peculiaridade da OpenAPI 3.0: `enum`em campos objetos silenciosamente ignorados; validar-se.
 
 ### O padrão de tradutor

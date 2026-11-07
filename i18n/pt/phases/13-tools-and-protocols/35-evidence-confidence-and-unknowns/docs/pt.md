@@ -426,6 +426,29 @@ Requisitos:
 
 O sucesso significa um relatório em que cada frase cita um ID do pacote e o único`unknown`A reivindicação desapareceu.
 
+## Laboratório de graduação
+
+Cinco perguntas sobre os dispositivos desta lição.`code/lab_answers.json`Escrever números como números ou como cadeias hexáceas como `"0x40"`, e listas como listas JSON.
+
+1. `t1`: o ID de prova que a computação_evidência_id dá para rea-evidência-grade.json.
+2. `t2`: o número de limitações no registo de notas.
+3. `t3`O nível de cobertura da nota é o seguinte:
+4. `t4`A confiança e a autoridade do registo de notação, como uma lista de duas cordas.
+5. `t5`: o SHA-256 do objecto do registo de nota.
+
+Verifique as suas respostas:
+
+```bash
+cd phases/13-tools-and-protocols/35-evidence-confidence-and-unknowns
+python3 code/lab.py
+```
+
+O verificador calcula cada valor esperado a partir de `code/main.py`- O que é que é?`PASS`- Não .`FAIL`ou `TODO`Para cada tarefa e uma pontuação, e sai de 0 apenas quando os cinco passarem. `python3 code/lab.py my-answers.json`Verifica outro ficheiro.`code/tests/test_lab.py`prova que o verificador aceita as respostas certas e rejeita as erradas.
+
+### Veja como corre.
+
+O [Inside a Decompiler](https://aiengineeringfromscratch.com/inside-a-decompiler?symbols=off)A máquina mantém um livro de evidências com quatro bandejas: observado, derivado, inferido e desconhecido. Este link abre a execução com a tabela de símbolos desligada, de modo que o nome e o fim do arquivo da função são desconhecidos e os arquivos de início são inferidos.
+
 ## Lição Artifacto
 
 Esta lição produz`outputs/skill-evidence-ledger.md`Diz ao agente como escrever cada descoberta como um registro com confiança, autoridade, limitações e links.`pass`- Não .`fail`- Não .`unknown`, ou `unsupported`- Não .

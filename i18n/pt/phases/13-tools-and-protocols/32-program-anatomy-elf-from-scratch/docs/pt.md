@@ -380,6 +380,29 @@ Requisitos:
 
 O sucesso significa que a lista de importação, o mapa de segmento e cada intervalo de funções concordam com a saída da ferramenta capturada, sem nenhuma execução de ferramentas durante os testes.
 
+## Laboratório de graduação
+
+Cinco perguntas sobre os dispositivos desta lição.`code/lab_answers.json`Escrever números como números ou como cadeias hexáceas como `"0x40"`, e listas como listas JSON.
+
+1. `t1`: e_shoff do livro-razão-x86_64-O1.o, como número.
+2. `t2`: st_size of percent_change no livro-razão-x86_64-O1.o.
+3. `t3`: de texto .text em livro-razão-x86_64-O1.o, como hex.
+4. `t4`: nomes dos tipos de realocação no livro-razão-x86_64-O0.o, ordenados, como lista.
+5. `t5`: os cinco valores int em .rodata+0x14 no livro-razão-x86_64-O1.o, como uma lista.
+
+Verifique as suas respostas:
+
+```bash
+cd phases/13-tools-and-protocols/32-program-anatomy-elf-from-scratch
+python3 code/lab.py
+```
+
+O verificador calcula cada valor esperado a partir de `code/main.py`- O que é que é?`PASS`- Não .`FAIL`ou `TODO`Para cada tarefa e uma pontuação, e sai de 0 apenas quando os cinco passarem. `python3 code/lab.py my-answers.json`Verifica outro ficheiro.`code/tests/test_lab.py`prova que o verificador aceita as respostas certas e rejeita as erradas.
+
+### Veja como corre.
+
+O [Inside a Decompiler](https://aiengineeringfromscratch.com/inside-a-decompiler)A máquina executa esta lição como suas duas primeiras estações.`percent_change`, e o gabinete abre-se .`.text`Desliga os símbolos para ver quais fatos a tabela de símbolos apresenta.
+
 ## Lição Artifacto
 
 Esta lição produz`outputs/skill-program-anatomy-elf-from-scratch.md`. Use-o com Claude, Cursor, Codex, OpenClaw, Hermes ou qualquer agente que leia SKILL.md. A habilidade transforma um objeto compilado ou executável que o usuário construiu em um relatório de layout. O relatório dá a faixa de arquivos de cada estrutura, símbolo e realocação, verificada contra a saída da ferramenta capturada.

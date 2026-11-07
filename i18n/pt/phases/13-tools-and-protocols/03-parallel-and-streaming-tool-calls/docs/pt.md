@@ -66,7 +66,7 @@ Cada chamada que o modelo emite tem um`id`Cada resultado que o anfitrião retorn
 
 O host executa o executor de cada chamada em seu próprio fio, coroutine ou operador remoto.`asyncio.gather`O número de identificação é o número de identificação.
 
-Um erro comum: responder com resultados na ordem da lista de chamadas em vez de ordem de conclusão.`tool_call_id`, mas se um resultado for deixado de lado ou duplicado, a submissão fora de ordem torna o depuração mais difícil.
+Um erro comum: responder com resultados na ordem da lista de chamadas em vez de ordem de conclusão.`tool_call_id`, mas se um resultado for retirado ou duplicado, uma lista de respostas que é reordenada longe da ordem em que os resultados chegaram torna a lacuna mais difícil de encontrar nos registros.
 
 ### Chamadas de ferramentas de streaming
 

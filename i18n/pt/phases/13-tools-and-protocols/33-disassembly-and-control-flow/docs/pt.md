@@ -471,6 +471,29 @@ Requisitos:
 
 O sucesso significa`python3 code/main.py cfg`Nomeia todas as possíveis chamadas com a mudança que prova isso, e a comparação do oráculo ainda passa por todos os objetos.
 
+## Laboratório de graduação
+
+Cinco perguntas sobre os dispositivos desta lição.`code/lab_answers.json`Escrever números como números ou como cadeias hexáceas como `"0x40"`, e listas como listas JSON.
+
+1. `t1`: instruções que decodificam a descida recorrente em grau -O1.
+2. `t2`: blocos básicos no total em -O1.
+3. `t3`: endereço do cabeçalho do loop no total em -O1, como hex.
+4. `t4`: em sweep-trap.o, o endereço onde começa a instrução linear de varredura que abrange 0x14, como hex.
+5. `t5`: entradas na tabela de salto de grau em -O0.
+
+Verifique as suas respostas:
+
+```bash
+cd phases/13-tools-and-protocols/33-disassembly-and-control-flow
+python3 code/lab.py
+```
+
+O verificador calcula cada valor esperado a partir de `code/main.py`- O que é que é?`PASS`- Não .`FAIL`ou `TODO`Para cada tarefa e uma pontuação, e sai de 0 apenas quando os cinco passarem. `python3 code/lab.py my-answers.json`Verifica outro ficheiro.`code/tests/test_lab.py`prova que o verificador aceita as respostas certas e rejeita as erradas.
+
+### Veja como corre.
+
+O [Inside a Decompiler](https://aiengineeringfromscratch.com/inside-a-decompiler?program=trap&sweep=linear)A máquina executa esta lição como seu decodificador de blocos e blocos.`sweep-trap.o`com varredura linear: a cama mostra os quatro bytes de dados decodificados como código, e um pin marca o alvo de salto em `0x14`dentro do`addq`- Não .`0x13`- Desliga o decodificador para descida recorrente para ver o salto saltar os dados.
+
 ## Lição Artifacto
 
 Esta lição inclui `outputs/skill-disassembly-and-control-flow.md`. Utilize-o para transformar um objeto e um nome de função em uma listagem verificada, blocos, bordas digitalizadas, dominadores e todas as transferências não resolvidas. Requer uma comparação oracular, ambos os métodos de desmontagem, contabilidade de byte, evidências de realocação para cada tabela recuperada e uma declaração do que permaneceu desconhecido.

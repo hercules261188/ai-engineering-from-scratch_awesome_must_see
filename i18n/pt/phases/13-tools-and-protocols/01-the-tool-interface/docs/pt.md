@@ -11,7 +11,7 @@
 
 - Explique por que um Mestrado em Direito que só pode gerar texto não pode, por si só, tomar medidas contra o mundo real.
 - Desenhe o ciclo de chamada de ferramenta de quatro passos (descreva → decide → execute → observe) e nomee quem possui cada passo.
-- Escreva uma descrição de ferramenta como três partes: nome, entrada de JSON Schema e função de executor determinista.
+- Escreva uma definição de ferramenta como quatro partes: nome, descrição, entrada de JSON Schema e função de executor determinista.
 - Distinguir entre as ferramentas puras e as que produzem efeitos colaterais e explicar por que a divisão é importante para a segurança.
 
 ## O problema
@@ -28,7 +28,7 @@ O ciclo de quatro passos é a invariante por baixo de tudo isto.
 
 ### Passo um: descrever
 
-O anfitrião declara cada ferramenta com três campos.
+O host declara cada ferramenta ao modelo com três campos. A quarta parte, o executor, permanece no lado do host e nunca chega ao modelo.
 
 - **Name.**Um identificador estável e legível por máquina.`get_weather`Não é "o tempo".
 - **Description.**Um breve texto em um parágrafo em língua natural. "Use quando o usuário perguntar sobre as condições atuais de uma cidade específica.
@@ -112,7 +112,7 @@ tp-tool-loop
 
 O que ver:
 
-- O registro de ferramentas contém três campos por ferramenta: nome, descrição, esquema e referência de executor.
+- O registro de ferramentas contém quatro campos por ferramenta: nome, descrição, esquema e referência de executor.
 - O validador é um subconjunto mínimo de JSON Schema (tipos, requeridos, enum, min/max) escrito apenas em stdlib.
 - O número de iterações do circuito limita a cinco.
 

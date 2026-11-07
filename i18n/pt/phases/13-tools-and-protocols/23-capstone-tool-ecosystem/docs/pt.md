@@ -205,7 +205,7 @@ cd phases/13-tools-and-protocols/23-capstone-tool-ecosystem
 python3 code/main.py
 ```
 
-Inspectem cinco coisas:
+Inspectem seis coisas:
 
 1. `server/discover`publicita revisão `2026-07-28`e a extensão das tarefas.
 2. Alice pode ler e gerar um relatório, enquanto a chamada escrita de Bob é negada.

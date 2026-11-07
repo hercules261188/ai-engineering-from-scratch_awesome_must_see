@@ -354,7 +354,7 @@ Esta lição produz`outputs/skill-mcp-auth.md`. Dada uma configuração de servi
 
 ## Exercícios
 
-1. Corra .`code/main.py`Observe como o IDP gira uma chave no passo 6, o programado `refresh_jwks`Retira o conjunto publicado e tanto o token antigo (janela de sobreposição) como um token novo validam sem reiniciar.
+1. Corra .`code/main.py`. Rastrear o fluxo. Observe como o IdP gira uma chave no passo 6 da saída do script (passo 7 do fluxo acima), o programado `refresh_jwks`Retira o conjunto publicado e tanto o token antigo (janela de sobreposição) como um token novo validam sem reiniciar.
 
 2. Adicionar um novo IDP aos metadados de recursos protegidos `authorization_servers`Lista. Emite um token assinado pelo novo IDP e confirme que o validador o aceita. Emite um token assinado por um IDP não listado e confirme que o validador rejeita com `WWW-Authenticate: Bearer error="invalid_token", error_description="iss not allowed"`- Não .
 
