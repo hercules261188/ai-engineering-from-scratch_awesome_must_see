@@ -85,7 +85,7 @@ Changements de l'Eagle-1:
 
 L'AIGLE-2 (2024) ajoute une topologie dynamique des arbres: l'arbre s'élargit là où le projet est incertain et reste étroit là où il est sûr.`α_effective`sans augmenter le coût de vérification.
 
-L'AIGLE-3 (Li et coll. 2025, "EAGLE-3: Accélération de l'inférence des grands modèles linguistiques via Test de formation-temps") élimine la dépendance fixe des fonctionnalités de la couche supérieure et entraîne le projet avec une nouvelle perte de "simulation de temps de test"  le projet est formé sur des résultats qui correspondent à la distribution du temps de test de la cible plutôt que la distribution de formation forcée par l'enseignant. Le taux d'acceptation passe de 0,75 (EAGLE-2) à 0,82 (EAGLE-3), et le taux moyen de jetons/vérification passe de 3,0 à 4,5.
+L'AIGLE-3 (Li et coll. 2025, "EAGLE-3: Accélération de l'inférence des grands modèles linguistiques via Test de formation-temps") élimine la dépendance fixe des fonctionnalités de la couche supérieure et entraîne le projet avec une nouvelle perte de "simulation de temps de test"  le projet est formé sur des résultats qui correspondent à la distribution du temps de test de la cible plutôt que la distribution de formation forcée par l'enseignant. Le taux d'acceptation passe de 0,75 (EAGLE-2) à 0,82 (EAGLE-3), et le taux moyen de jetons/vérification passe de 3,0 à 4,5. Ces chiffres proviennent d'une seule configuration de référence. L'acceptation dépend de la paire de modèles, de l'arbre de projet et du trafic: la phase 10 · 15 cite 0,88 à 0,92 par jeton de chemin accepté sur les benchmarks de chat, et la phase 17 · 05 des plans avec 0,6 à 0,8 sur le chat général de production.
 
 ### Vérifie l'attention des arbres
 
@@ -132,13 +132,13 @@ def speculative_step(p_target, q_draft, K, temperature=1.0):
     """One round of speculative decoding. Returns list of accepted tokens."""
     # 1. Draft K tokens
     draft_tokens = []
-    q_probs = []
+    q_dists = []
     state = draft_state_init()
     for _ in range(K):
         probs = softmax(q_draft(state) / temperature)
         t = np.random.choice(len(probs), p=probs)
         draft_tokens.append(t)
-        q_probs.append(probs[t])
+        q_dists.append(probs)
         state = draft_step(state, t)
 
     # 2. Target computes p at every drafted position + 1 extra
@@ -148,10 +148,10 @@ def speculative_step(p_target, q_draft, K, temperature=1.0):
     accepted = []
     for k, tok in enumerate(draft_tokens):
         r = np.random.uniform()
-        if r < p_probs_all[k][tok] / q_probs[k]:
+        if r < p_probs_all[k][tok] / q_dists[k][tok]:
             accepted.append(tok)
         else:
-            residual = np.maximum(p_probs_all[k] - q_probs[k], 0)
+            residual = np.maximum(p_probs_all[k] - q_dists[k], 0)
             residual /= residual.sum()
             accepted.append(np.random.choice(len(residual), p=residual))
             return accepted

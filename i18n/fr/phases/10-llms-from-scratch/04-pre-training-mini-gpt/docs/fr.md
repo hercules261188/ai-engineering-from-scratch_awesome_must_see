@@ -222,6 +222,10 @@ La projection de sortie (tête de logits) partage des poids avec la matrice d'in
 
 ## Faites-le
 
+```figure
+iso-machine {"machine":"mini-gpt"}
+```
+
 ### Étape 1: Intégrer une couche
 
 Les emplacements de jetons cartographient chacun des 50 257 jetons possibles à un vecteur 768 dimensions.

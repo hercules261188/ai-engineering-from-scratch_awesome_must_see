@@ -106,18 +106,18 @@ Pars le:
 Le calcul complet se fait en `code/main.py`Le titre:
 
 - Intégration: `vocab * hidden = 129280 * 7168 = ~0.93B`- Je suis désolé .
-- Les 3 premiers blocs denses: attention avec MLA (~144M par bloc) + MLP dense (~260M par bloc) + normes.
-- 58 blocs MoE: attention avec MLA (~144M) + 256 experts chacun (30M chacun) + 1 expert partagé (30M) + norme. Total ~7.95B par bloc, y compris tous les experts. 461B total pour les 58 blocs MoE.
-- Module MTP: 14B.
+- Les trois premiers blocs denses: attention avec MLA (~84M par bloc dans le compte simplifié de la calculatrice) + SwiGLU MLP denses (`3 * 7168 * 18432 = ~396M`Environ 1,4 B au total.
+- 58 blocs de MoE: attention avec des députés (~84 millions) + 256 experts affectés (`3 * 7168 * 2048 = ~44M`Par exemple, les données de l'expertise de l'interface de communication (environ 44M) et de l'expertise de l'interface de communication (environ 44M) sont utilisées pour les blocs de communication.
+- Module MTP: le module publié est 14B. La calculatrice utilise un stand-in dense de ~0,8B.
 
-Total total: ~476B pour l'architecture de base + 14B MTP + distinctement le numéro 671B publié représente des paramètres structurels supplémentaires (tensors de biais, composants spécifiques aux experts, échelle partagée des experts, etc.). Le nombre que nous reproduisons dans la calculatrice est à l'intérieur de 3-5% de la publication  le delta provient des documents de rapport de comptabilité de grains fins de DeepSeek dans son annexe de la section 2.
+Le point de contrôle Hugging Face est 685B car il ajoute le module MTP 14B au dessus du 671B. L'écart restant de ~1% provient de simplifications: le calculateur saute les dimensions RoPE découplées en MLA, la tête de sortie non liée et quelques petits tensors.
 
 Paramètres actifs par transfert:
 
-- Attention: 144 M par couche * 61 = 8,8 B (toutes couches en feu).
-- MLP actif: les 3 premières couches denses (3 * 260M = 780M), 58 couches MoE actives chacune avec 8 routiers + 1 partagé + coût de routage.
-- Embedding + normes: 1.2B.
-- Total actif: environ 26B de noyau + 14B MTP (entraîné mais pas toujours exécuté à l'inférence) ≈ 37B.
+- Attention: 84 M par couche * 61 = ~5,1B (toutes couches en feu).
+- L'activité de la PMP: les 3 premières couches denses (`3 * 396M = ~1.2B`), 58 couches de MoE actives chacune avec 8 parcourues + 1 expert partagé (`9 * 44M = ~396M`Environ 24B au total.
+- Embedding + normes: ~ 0,9B.
+- Total actif: ~30B de la calculatrice par rapport au 37B publié. La plupart du décalage est l'attention: le MLA complet, avec ses dimensions RoPE et ses requêtes plus larges et les têtes de clé, est plus grand que le compte simplifié. Le module MTP ne compte pas vers le 37B.
 
 ### Le rapport 671B / 37B
 

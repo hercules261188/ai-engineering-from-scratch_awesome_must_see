@@ -11,7 +11,7 @@
 
 La formation d'un transformateur stocke, pour chaque couche, les entrées de chaque opération différenciée en arrière: les entrées d'attention, les projections Q/K/V, la sortie softmax, les entrées FFN, les sorties de norme et le flux résiduel.`d`, longueur de la séquence `L`, lot `B`, c' est à l' ordre de `12 * B * L * d`flottent par couche.
 
-Pour `d=8192, L=8192, B=1`Un modèle de 64 couches est 51 Go d'activations  et c'est avant que vous multipliez par la taille du microbatch, avant que vous ajoutiez des intermédiaires attention-softmax (`L^2`par tête), et avant de faire des copies partielles parallèles à la tenseur.
+Pour `d=8192, L=8192, B=1`, c'est environ 805M valeurs, ou 1,6 GB / couche en BF16. un modèle 64 couches est environ 103 GB d'activations, et c'est avant que vous multipliez par la taille de microbatch, avant que vous ajoutez attention-softmax intermédiaires (`L^2`par tête), et avant de faire des copies partielles parallèles à la tenseur.
 
 Le projet de loi bilatéral: les poids BF16 plus l'état de l'optimisateur peuvent s'adapter à 80 Go, mais les activations vous poussent au-delà. Le contrôle de gradation (alias recomptage d'activation) est la solution standard.
 

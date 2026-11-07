@@ -16,7 +16,7 @@
 
 ## Le problème
 
-L'attention standard softmax a une propriété mathématique qui se transforme en un mal de tête opérationnel à l'échelle.`q`, les poids d' attention sont `softmax(qK^T / sqrt(d))`. Softmax ne peut jamais produire de zéros exacts  chaque jeton non correspondant obtient une masse positive. Cette masse résiduelle est du bruit, et elle s'égale avec la longueur du contexte.
+L'attention standard softmax a une propriété mathématique qui se transforme en un mal de tête opérationnel à l'échelle.`q`, les poids d' attention sont `softmax(qK^T / sqrt(d))`Softmax ne peut jamais produire de zéros exacts: chaque jeton non correspondant obtient une masse positive. Cette masse résiduelle est du bruit, et elle s'égale avec la longueur du contexte.
 
 En empirie, cela apparaît comme une interference de la tête d'attention: des citations hallucinées dans des RAG de long contexte, des échecs perdus au milieu sur les tâches de récupération de 100k-tokens et une dégradation subtile de la précision sur les points de référence de l'aiguille dans le paillot de foin après 32k. Le document Transformateur différentiel (arXiv:2410.05258, ICLR 2025) a mesuré l'écart: les Transformateurs DIFF ont atteint une plus faible perplexité, une plus grande précision dans le long contexte et moins d'hallucinations que les lignes de base de la même taille.
 

@@ -77,10 +77,10 @@ Les couches de Mamba sont elles-mêmes conscientes de la position (via la récur
 
 Pour une forme Jamba-1 (32 couches: 28 Mamba + 4 Attention, 4096, 32 têtes d'attention cachées):
 
-- Cache KV (seulement les couches d'attention): `2 * 4 * 32 * 128 * 256k * 2 = 8.4 GB`Les quatre couches d'attention contribuent.
+- Cache KV (seulement les couches d'attention): `2 * 4 * 32 * 128 * 256k * 2 = 16 GB`Le Jamba libéré utilise GQA avec 8 têtes KV dans ces couches, ce qui porte à 4 GB, le chiffre dans le papier Jamba.
 - État du MSS: `28 * hidden * state_size`par préfixe de jeton, mais c'est une taille fixe par couche, pas en évolue avec la longueur de la séquence.`28 * 4096 * 16 * 2 = 3.7 MB`- Tout à fait.
 
-Comparer à un transformateur pur à 32 couches, le même caché, plein MHA à 32 têtes: `2 * 32 * 32 * 128 * 256k * 2 = 128 GB`En effet, la plupart des modèles 2024 utilisent des modèles de base (environ 8 fois plus de KV) que les modèles de base (environ 8 fois plus de KV).`2 * 32 * 8 * 128 * 256k * 2 = 32 GB`), le hybride 1:7 de Jamba à 16 Go est encore deux fois plus petit.
+Comparer à un transformateur pur à 32 couches, le même caché, plein MHA à 32 têtes: `2 * 32 * 32 * 128 * 256k * 2 = 128 GB`En effet, la plupart des modèles 2024 utilisent des modèles de base (environ 8 fois plus de KV) que les modèles de base (environ 8 fois plus de KV).`2 * 32 * 8 * 128 * 256k * 2 = 32 GB`Le Jamba, à 4 Go, est 8 fois plus petit.
 
 C'est ce que signifie AI21 par "context 256k sur un seul GPU de 80 Go". Le cache KV d'un transformateur pur à MHA complet ne conviendrait pas; même une ligne de base GQA ne laisse aucune place aux poids et aux activations; Jamba le fait.
 
