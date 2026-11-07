@@ -235,7 +235,7 @@ for step, batch in enumerate(dataloader):
 
 - **Model family**: SD 1.5 لموسيقى مجتمع مفتوحة المصدر ، SDXL لتحقيق أعلى ، SD3 / FLUX للحصول على أحدث وتطلبات الترخيص الصارمة.
 - **Scheduler**: DPM-Solver++ 2M Karras لمدة 20-30 خطوة، LCM-LoRA عندما يكون التأخير أقل من 1 ثانية.
-- **Precision**: `float16`في 4080/4090`bfloat16`على A100 وأحدث،`int8`(بـ (`bitsandbytes`أو`compel`) عندما تكون VRAM ضيقة.
+- **Precision**: `float16`في 4080/4090`bfloat16`على A100 وأحدث،`int8`(بـ (`bitsandbytes`) عندما تكون VRAM ضيقة.
 - **Conditioning**: يعمل النص البسيط؛ لإضافة ControlNet (قوة، عمق، وضع) على رأس خط الأنابيب الأساسي لتحسين التحكم.
 
 لإنتاج اللحوم`AUTO1111`- لا ، لا`ComfyUI`هي أدوات المجتمع؛ لخدمات الإنتاج،`diffusers`+ `accelerate`أو`optimum-nvidia`مع تجميع TensorRT.

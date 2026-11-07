@@ -203,8 +203,10 @@ def encode(box_xyxy, cell_x, cell_y, stride, anchor_wh):
     cy = 0.5 * (y1 + y2)
     w = x2 - x1
     h = y2 - y1
-    tx = cx / stride - cell_x
-    ty = cy / stride - cell_y
+    off_x = np.clip(cx / stride - cell_x, 1e-6, 1 - 1e-6)
+    off_y = np.clip(cy / stride - cell_y, 1e-6, 1 - 1e-6)
+    tx = np.log(off_x / (1 - off_x))
+    ty = np.log(off_y / (1 - off_y))
     tw = np.log(w / anchor_wh[0] + 1e-8)
     th = np.log(h / anchor_wh[1] + 1e-8)
     return np.array([tx, ty, tw, th])
@@ -223,7 +225,7 @@ def sigmoid(x):
     return 1.0 / (1.0 + np.exp(-x))
 ```
 
-الاختبار: تشفير مربع ثم فك تشفير يجب أن تحصل على شيء قريب جدا من الأصلي (حتى العكس sigmoid ليس قابلا للتحويل بشكل كامل عندما `tx`ليس في النطاق بعد السجماوي).
+الاختبار: تشفير مربع مركزها داخل الخلية، ثم فك تشفير، ويجب أن تحصل على مربع الأصلي مرة أخرى إلى خطأ العائمة. `encode`تخزين المقاطع المركزية كمناسبة، والعكس من `sigmoid`في`decode`. المقطوعة تبقي اللغز محدودة ؛ مركز على حافة الخلية تحرك أكثر من`1e-6`الخلايا`assign_targets`تحتها تخزن نفس المواقع، لذلك الرأس تدير في الفضاء الذي `decode`يتوقع
 
 ### الخطوة الرابعة: رأس يولو الحد الأدنى
 
@@ -273,8 +275,10 @@ def assign_targets(boxes_xyxy, classes, anchors, stride, grid_size, num_classes)
         best = int(np.argmax(ious))
         aw, ah = anchors[best]
 
-        target[gy, gx, best, 0] = cx / stride - gx
-        target[gy, gx, best, 1] = cy / stride - gy
+        off_x = np.clip(cx / stride - gx, 1e-6, 1 - 1e-6)
+        off_y = np.clip(cy / stride - gy, 1e-6, 1 - 1e-6)
+        target[gy, gx, best, 0] = np.log(off_x / (1 - off_x))
+        target[gy, gx, best, 1] = np.log(off_y / (1 - off_y))
         target[gy, gx, best, 2] = np.log(bw / aw + 1e-8)
         target[gy, gx, best, 3] = np.log(bh / ah + 1e-8)
         target[gy, gx, best, 4] = 1.0
@@ -319,7 +323,7 @@ def yolo_loss(pred, target, has_obj, lambda_coord=5.0, lambda_obj=1.0, lambda_no
                    "obj_neg": loss_obj_neg.item(), "cls": loss_cls.item()}
 ```
 
-خمسة مُعايير فائقة التي يُحرم بها كل دراسة "يوولو" أو تُسحفها`lambda_coord=5, lambda_noobj=0.5`يعكس ورقة YOLOv1 الأصلية ومازال يعمل كخفض معقول.
+أربعة أوزان خسارة كل دراسة يوولو إما تشفير أو مسح.`lambda_coord=5, lambda_noobj=0.5`يعكس ورقة YOLOv1 الأصلية ومازال يعمل كخفض معقول.
 
 ### الخطوة 7: خط أنابيب الإستدلال
 

@@ -84,7 +84,7 @@ RoIAlign:
 
 ### الخسائر
 
-" ماسك آر سي إن " لديها أربع خسائر إضافية:
+" ماسك آر سي إن " لديها خمسة خسائر إضافية:
 
 ```math
 L = L_{\text{rpn\_cls}} + L_{\text{rpn\_box}} + L_{\text{box\_cls}} + L_{\text{box\_reg}} + L_{\text{mask}}
@@ -261,7 +261,7 @@ def train_step(model, images, targets, optimizer):
     return {k: v.item() for k, v in loss_dict.items()}
 ```
 
-- نعم`targets`يجب أن يكون في القائمة إشارات لكل صورة`boxes`،`labels`و`masks`(كما`(num_instances, H, W)`النموذج يعيد إشارة أربعة خسائر أثناء التدريب و قائمة من التنبؤات أثناء تقييم، على مفتاح `model.training`. . .
+- نعم`targets`يجب أن يكون في القائمة إشارات لكل صورة`boxes`،`labels`و`masks`(كما`(num_instances, H, W)`النموذج يعيد بيان الخسائر الخمسة خلال التدريب و قائمة من التنبؤات خلال التقييم، على مفتاح `model.training`. . .
 
 - نعم`pycocotools`يقوم المقيّم بتصنيع mAP@IoU=0.5:0.95 لكل من الصناديق والقناع، تحتاج إلى كلا الرقمين لمعرفة ما إذا كان رأس الصندوق أو رأس القناع هو عقد الزجاجة.
 

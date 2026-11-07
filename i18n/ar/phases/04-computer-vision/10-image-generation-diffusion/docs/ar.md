@@ -260,7 +260,7 @@ def sample_ddim(model, schedule, shape, steps=50, T=1000, device="cpu", eta=0.0)
     x = torch.randn(shape, device=device)
     alphas_cumprod = schedule["alphas_cumprod"].to(device)
 
-    ts = torch.linspace(T - 1, 0, steps + 1).long()
+    ts = torch.linspace(T - 1, -1, steps + 1).round().long()
     for i in range(steps):
         t = ts[i]
         t_prev = ts[i + 1]
@@ -276,7 +276,7 @@ def sample_ddim(model, schedule, shape, steps=50, T=1000, device="cpu", eta=0.0)
     return x
 ```
 
-`eta=0`هو تحديد كامل (المدخول نفس الضجيج دائماً ينتج نفس الخروج). `eta=1`يعود الـ DDPM
+الموعد ينتهي في`t_prev = -1`، لذا الخطوة الأخيرة تستخدم`a_prev = 1.0`ويعيد النظيف`x0_pred`بدون ضجيج متبقي`eta=0`هو تحديد كامل (المدخول نفس الضجيج دائماً ينتج نفس الخروج). `eta=1`يسترد DDPM عندما يزور الجدول الزمني كل خطوة زمنية (`steps=T`)
 
 ## استخدمها
 

@@ -71,7 +71,7 @@ after merge repeats and remove blanks: "hello"
 
 ### تحليل التخطيط
 
-بالنسبة للوثائق المهيكلة، قم بتشغيل كاشف التخطيط (LayoutLMv3 ، DocLayNet) الذي يضع علامة على كل منطقة: عنوان ، الفقرة ، الرسم ، الجدول ، ملاحظة أسفل. يصبح ترتيب القراءة بعد ذلك "تكرر عبر المناطق في ترتيب التخطيط ، المزدوج".
+بالنسبة للوثائق المهيكلة، قم بتشغيل نموذج التخطيط (LayoutLMv3 أو كاشف مدرب على مجموعة بيانات DocLayNet) الذي يسمي كل منطقة: عنوان، الفقرة، الرسم، الجدول، ملاحظة أسفل. ثم يصبح ترتيب القراءة "تكرر من خلال المناطق في ترتيب التخطيط، المرتبة".
 
 في الاستمارات، استخدم **Key-Value extraction**النماذج (دونوت للوثائق الغنية بالبصر، LayoutLMv3 للتسحينات العادية).
 
@@ -160,18 +160,23 @@ class TinyCRNN(nn.Module):
 
 ### الخطوة الثالثة: OCR الاصطناعي
 
-توليد سلسلة من الأرقام السوداء إلى البيضاء لاختبار الدخان من النهاية إلى النهاية.
+إنشاء سلسلة سوداء على بيضاء لاختبار الدخان من نهاية إلى نهاية. كل شخصية تصبح عمودًا من ستة قضبان تحدد مؤشر المفردات الخاصة بها بالجهاز الثنائي. يجب أن تحمل الصورة هوية الشخصية: إذا كان كل شخصية هي نفس مربع فارغ ، لن يستطيع النموذج معرفة`a`من`x`، والخسارة ستستمر
 
 ```python
 import numpy as np
+
+GLYPHS = "0123456789abcdefghijklmnopqrstuvwxyz"
 
 def synthetic_line(text, height=32, char_width=16):
     W = char_width * len(text)
     img = np.ones((height, W), dtype=np.float32)
     for i, c in enumerate(text):
         x = i * char_width
-        shade = 0.0 if c.isalnum() else 0.5
-        img[6:height - 6, x + 2:x + char_width - 2] = shade
+        code = GLYPHS.find(c) + 1
+        for bit in range(6):
+            if code >> bit & 1:
+                y = 4 + 4 * bit
+                img[y:y + 3, x + 2:x + char_width - 2] = 0.0
     return img
 
 
@@ -202,7 +207,7 @@ print(f"images: {imgs.shape}   targets: {targets.shape}   lengths: {lengths.toli
 model = TinyCRNN(vocab_size=len(vocab))
 opt = torch.optim.Adam(model.parameters(), lr=1e-3)
 
-for step in range(200):
+for step in range(400):
     strings = ["abc" + str(step % 10)] * 4 + ["xyz" + str((step + 1) % 10)] * 4
     imgs, targets, target_lens = build_batch(strings, vocab)
     log_probs = model(imgs)  # (W', 8, vocab)
@@ -211,7 +216,7 @@ for step in range(200):
     opt.zero_grad(); loss.backward(); opt.step()
 ```
 
-يجب أن تنخفض الخسارة من ~ 3 إلى ~ 0.2 على 200 خطوة على هذه البيانات الاصطناعية البسيطة.
+يجب أن تنخفض الخسارة من رقمين إلى حوالي 0.3 في غضون 400 خطوة على هذه البيانات الاصطناعية البسيطة.`code/main.py`يستخدم نفس الحلقة على مجموعة السلاسل الخاصة به ثم يفك ثلاثة سلاسل اختبارية.
 
 ## استخدمها
 
