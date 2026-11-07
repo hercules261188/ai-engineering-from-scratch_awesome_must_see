@@ -12,7 +12,7 @@
 - Définir les dommages représentatifs par rapport aux dommages alloués et donner un exemple de chacun dans un déploiement de MLL.
 - Nombre des trois catégories d'évaluation-métrie de Gallegos et coll. 2024 et décrivez une métrique de chacune.
 - Décrivez l'intersectionnalité et pourquoi la mesure de l'équité basée sur l'incertitude de WinoIdentity aborde les lacunes dans l'évaluation du biais à un seul axe.
-- Décrire deux approches mécanistes-interprétables du biais (néurones de genre, caractéristiques de l'ESA, manipulation de la tête d'attention).
+- Décrivez trois approches mécanistes-interprétables du biais (néurones de genre, caractéristiques de l'ESA, manipulation de la tête d'attention).
 
 ## Le problème
 

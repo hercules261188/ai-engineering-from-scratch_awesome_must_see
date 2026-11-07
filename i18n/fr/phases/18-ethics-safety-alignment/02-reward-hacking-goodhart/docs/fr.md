@@ -26,16 +26,16 @@ Gao, Schulman, Hilton (2023) ont mesuré cela directement. Traînez un modèle d
 
 La formule originale de Goodhart: "Quand une mesure devient une cible, elle cesse d'être une bonne mesure". Manheim et Garrabrant (2018) distinguent quatre variantes: régressionnelle (échantillon fini), extrême (tail), causale (proxy est en aval de la cible) et adversarial (jeu d'agent).
 
-Gao et coll. donnent une forme fonctionnelle.`d = sqrt(KL(pi || pi_init))`- Je vous en prie .`R_proxy(d)`être une récompense de proxy et `R_gold(d)`Je veux dire, une récompense en or.
+Gao et coll. donnent une forme fonctionnelle pour la récompense en or.`d = sqrt(KL(pi || pi_init))`et laisse`R_gold(d)`Il faut que ce soit une récompense en or.
 
 ```math
 \begin{aligned}
-R_{\text{proxy}}(d) &= \alpha d - \beta_{\text{proxy}} d^2 \\
-R_{\text{gold}}(d) &= \alpha d - \beta_{\text{gold}} d^2
+R_{\text{gold}}^{\text{BoN}}(d) &= d\,(\alpha_{\text{BoN}} - \beta_{\text{BoN}}\, d) \\
+R_{\text{gold}}^{\text{RL}}(d) &= d\,(\alpha_{\text{RL}} - \beta_{\text{RL}} \log d)
 \end{aligned}
 ```
 
-avec `beta_gold > beta_proxy`Les deux montent de zéro KL, les deux atteignent leur sommet, le sommet d'or est plus proche de l'origine.`d`L'écart entre le proxy-or est identique dans le prélèvement de prélèvements de BON, PPO et SFT-to-best.
+Les deux formes augmentent de zéro KL, atteignent leur sommet, puis tombent.`d`Au large KL. Alors au large `d`L'écart entre le proxy-or est le même pour le meilleur échantillonnage et pour le RL.
 
 C'est la " courbe de suroptimisation ". Ce n'est pas un bug dans un modèle de récompense spécifique.
 
@@ -89,7 +89,7 @@ Cette leçon produit `outputs/skill-reward-hack-auditor.md`. Compte tenu d'un mo
 
 2. Modifiez la distribution du bruit de Gaussian à un Student-t avec un faible degré de liberté (poids lourd). Gardez l'installation de formation RM proxy inchangée. Quels changements sur l'emplacement de pointe et l'effondrement post-pico?
 
-3. Lisez Gao et coll. Figure 1 (ICML 2023). Le document propose une forme fonctionnelle pour l'écart proxy-or.
+3. Lire Gao et coll. Figure 1 (ICML 2023). Le document propose une forme fonctionnelle de la récompense en or en fonction de `d`Ajustez-le à vos courbes simulées de l'exercice 1 et comparez les paramètres.
 
 4. Prenez un article récent de la RLHF qui prétend avoir " résolu " le piratage des récompenses (la phrase est un drapeau rouge).
 

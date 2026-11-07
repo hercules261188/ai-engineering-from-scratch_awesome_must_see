@@ -16,7 +16,7 @@
 
 ## Le problème
 
-La leçon 17 est la méthodologie de mesure. La leçon 30 est l'état de la mesure de 2026. La situation a changé de manière significative entre 2024 et la fin de 2025: chaque domaine a franchi un seuil que les cadres de 2024 n'ont pas anticipé.
+La leçon 17 est la méthodologie de mesure. La leçon 30 est l'état de la mesure de 2026. La situation a considérablement changé entre 2024 et la fin de 2025: trois des quatre domaines ont franchi un seuil que les cadres de 2024 n'ont pas prévu.
 
 ## Le concept
 
@@ -47,6 +47,8 @@ Les conséquences:
 - Le codage agentique est le primitif de l'automatisation des attaques. L'aide cybernétique antérieure à l'IA était limitée au niveau des extraits de code; les flux de travail agentiques intègrent la reconnaissance, l'exploitation, la post-exploitation et l'exfiltration.
 - Les 4 à 6 étapes humaines sont le goulot d'étranglement; les gains de capacité futurs réduiraient ce nombre.
 - Deuxième utilisation défensive: le pilote d'accès fiable d'OpenAI fournit aux organisations de sécurité vérifiées (entreprises de réaction aux incidents établies, gouvernement) un accès aux capacités de défense.
+
+Le côté défensif de ce travail commence par la lecture du code compilé que vous êtes autorisé à analyser.[Lesson 13.32](../../../13-tools-and-protocols/32-program-anatomy-elf-from-scratch/docs/en.md), démantèlement en [Lesson 13.33](../../../13-tools-and-protocols/33-disassembly-and-control-flow/docs/en.md), en lelevant à un pseudocode en [Lesson 13.34](../../../13-tools-and-protocols/34-lifting-to-pseudocode/docs/en.md), et un registre de preuves qui garde les faits observés séparés de ceux déduits dans[Lesson 13.35](../../../13-tools-and-protocols/35-evidence-confidence-and-unknowns/docs/en.md)- Le .[Inside a Decompiler](https://aiengineeringfromscratch.com/inside-a-decompiler)Une machine montre le pipeline complet sur une fonction. un agent qui fait ce travail a besoin du même registre, parce qu'une décompilation confiante peut encore reposer sur une devinette.
 
 ### Le nucléaire
 

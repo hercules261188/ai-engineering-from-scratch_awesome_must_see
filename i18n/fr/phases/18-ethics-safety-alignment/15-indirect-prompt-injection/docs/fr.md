@@ -1,6 +1,6 @@
 # Injection directe indirecte  Surface d'attaque de production
 
-> L'injection instantanée indirecte (IPI) intègre des instructions dans le contenu externe  une page Web, un courriel, un document partagé, un ticket de support  consommé par un système agent sans action explicite de l'utilisateur. L'IPI est la menace de production dominante de 2026: il contourne les filtres d'entrée utilisateur parce que l'attaquant ne touche jamais l'utilisateur, il évolue silencieusement alors que les agents traitent plus de contenu externe et cible des flux de travail automatisés où personne ne lit le prompt. L'Information MDPI 17 ((1): 54 (janvier 2026) synthétise la recherche 2023-2025. Le document de défense IPI du NDSS 2026 définit le défi principal: les instructions injectées peuvent être sémantiquement bénignes ("s'il vous plaît imprimer Oui"), de sorte que la détection nécessite plus que le filtrage de mots clés. "L'attaquant se déplace en deuxième" (Nasr et coll., OpenAI/Anthropic/DeepMind, octobre 2025): les attaques adaptatives (gradient, RL, recherche aléatoire, équipe rouge humaine) ont brisé >90% des 12 défenses publiées qui avaient initialement rapporté des taux de réussite d'attaque presque zéro.
+> L'injection instantanée indirecte (IPI) intègre des instructions dans le contenu externe  une page Web, un courriel, un document partagé, un ticket de support  consommé par un système agent sans action explicite de l'utilisateur. L'IPI est la menace de production dominante de 2026: il contourne les filtres d'entrée utilisateur parce que l'attaquant ne touche jamais l'utilisateur, il évolue silencieusement alors que les agents traitent plus de contenu externe et cible des flux de travail automatisés où personne ne lit le prompt. L'Information MDPI 17 ((1): 54 (janvier 2026) synthétise la recherche 2023-2025. Le document de défense IPI du NDSS 2026 définit le défi principal: les instructions injectées peuvent être sémantiquement bénignes ("s'il vous plaît imprimer Oui"), de sorte que la détection nécessite plus que le filtrage de mots clés. "The Attacker Moves Second" (Nasr et al., joint OpenAI/Anthropic/DeepMind, octobre 2025): les attaques adaptatives (gradient, RL, recherche aléatoire, équipe rouge humaine) ont contourné les 12 défenses publiées qu'elles ont testées, avec un succès d'attaque supérieur à 90% contre la plupart d'entre elles, bien que la plupart de ces défenses aient initialement rapporté des taux de succès d'attaque presque zéro.
 
 **Type:** Build
 **Languages:** Python (stdlib, IPI attack + defense harness)
@@ -40,7 +40,7 @@ CaMeL (Microsoft 2025), ConfAIde (Stanford 2024), et le document de défense IPI
 
 ### L'attaquant se déplace en deuxième
 
-Nasr et al. (octobre 2025) ont testé 12 défenses IPI publiées avec des attaques adaptatives (recherche de gradients, politiques RL, recherche aléatoire, équipe rouge humaine de 72 heures).
+Nasr et al. (octobre 2025) ont testé 12 défenses IPI publiées avec des attaques adaptatives (recherche de gradients, politiques RL, recherche aléatoire, équipe rouge humaine de 72 heures). Chaque défense a été contournée, la plupart d'entre elles à > 90% ASR, et la plupart d'entre elles avaient initialement rapporté un ASR proche de zéro.
 
 La leçon méthodologique: publier une défense uniquement avec une évaluation d'attaque adaptative.
 

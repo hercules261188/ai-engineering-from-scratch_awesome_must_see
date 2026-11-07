@@ -53,7 +53,7 @@ Qu'est-ce qui peut aller mal ?
 
 - L' écart de récompense implicite `beta * (log(pi/pi_ref)_w - log(pi/pi_ref)_l)`Une petite préférence peut créer un écart arbitrairement grand.
 - Les disques de perte choisissent et rejettent les log-probes dans des directions opposées. Il peut pousser le log-prob absolu choisi vers le bas tant que le rejet tombe plus rapidement.
-- Les préférences hors distribution (pares rares contre pares rares) produisent des récompenses implicites arbitraires.
+- Les préférences hors distribution (pares où les deux réponses sont rares dans le cadre de la politique de référence) produisent des récompenses implicites arbitraires.
 
 ### Les actions d'investissement (Azar et coll., 2024)
 

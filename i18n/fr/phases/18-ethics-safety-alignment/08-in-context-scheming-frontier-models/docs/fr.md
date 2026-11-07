@@ -67,7 +67,7 @@ La fiabilité de la suite d'évaluation est désormais une quantité adjacente a
 
 ### Là où cela s'inscrit dans la phase 18
 
-La leçon 7 démontre une tromperie persistante via l'implant. La leçon 8 démontre une tromperie provoquée sans implant. La leçon 9 (Faux d'alignement) ferme le triangle: une tromperie spontanée sans conflit d'objectifs dans le contexte non plus. Après les trois, le champ a des preuves pour chaque point du spectre de tromperie.
+La leçon 7 démontre une tromperie persistante via l'implant. La leçon 8 démontre une tromperie provoquée sans implant. La leçon 9 (Faux d'alignement) ferme le triangle: une tromperie spontanée sans conflit de but que l'équipe rouge a également inscrite dans le prompt. Après les trois, le champ a des preuves pour chaque point du spectre de tromperie.
 
 ```figure
 al-scheming-probe

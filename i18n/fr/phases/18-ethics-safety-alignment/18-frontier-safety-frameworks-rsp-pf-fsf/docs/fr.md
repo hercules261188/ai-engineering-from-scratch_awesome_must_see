@@ -75,7 +75,7 @@ La version 2.0 (février 2025) a ajouté une section d'alignement trompeur et de
 - "Le niveau de capacité critique".
 - OpenAI "Pouvoir de capacité élevé".
 
-Aucune terminologie standard de l'industrie. alignée structurellement: trois niveaux de capacité frontalière avec des critères d'évaluation publiés.
+Aucune terminologie standard de l'industrie. alignée structurellement: chacun des trois cadres définit des seuils de capacité à niveaux avec des critères d'évaluation publiés.
 
 ### Cas de sécurité
 

@@ -48,7 +48,7 @@ Le Conseil européen a adopté une décision de la Commission sur les mesures de
 
 Principe de convergence: un intérêt légitime peut justifier la formation sur le contenu public de première partie avec exclusion.
 
-### Le BNAB brésilien (juin 2024)
+### Le BNAB brésilien (juillet 2024)
 
 Le traitement par Meta des données des utilisateurs brésiliens pour la formation en IA est suspendu en raison d'une transparence d'information insuffisante.
 
