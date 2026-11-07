@@ -58,7 +58,7 @@ El conjunto de herramientas de gobernanza de agentes de Microsoft cubre los requ
 
 ### Lo observado .$1,200 → $4.800 casos
 
-El caso real en los documentos de Microsoft: un agente de comercio electrónico cuyo costo mensual se triplicó después de que se agregó una nueva herramienta. La herramienta permitió al agente hacer encuestas sobre el estado de los pedidos durante cada sesión. No detectamos bucles. No hay gorra por herramienta. No hay alerta sobre el crecimiento semana tras semana. La solución era una tapa por herramienta más una alerta diaria de crecimiento. Esta es una plantilla: cada nueva superficie de herramienta es un nuevo bucle potencial; cada nueva herramienta necesita su propio límite y su propia alerta.
+El caso real en los documentos de Microsoft: un agente de comercio electrónico cuyo costo mensual se cuadruplicó después de que se añadió una nueva herramienta. La herramienta permitió al agente hacer encuestas sobre el estado de los pedidos durante cada sesión. No detectamos bucles. No hay gorra por herramienta. No hay alerta sobre el crecimiento semana tras semana. La solución era una tapa por herramienta más una alerta diaria de crecimiento. Esta es una plantilla: cada nueva superficie de herramienta es un nuevo bucle potencial; cada nueva herramienta necesita su propio límite y su propia alerta.
 
 ```figure
 cost-governor-stack
