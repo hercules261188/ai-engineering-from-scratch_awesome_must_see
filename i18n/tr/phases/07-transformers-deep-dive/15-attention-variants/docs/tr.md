@@ -1,6 +1,6 @@
 # Dikkat Variantları  Çelişkili Pencere, Çekil, Farklı
 
-> Tam dikkat bir döngüdür. Her simge her simgeyi görür ve hafıza bedelini öder. Dört varians döngünün şeklini eğer ve maliyetin yarısını geri alır.
+> Tam dikkat bir döngüdür. Her simge her simgeyi görür ve hafıza fiyatı öder. Üç farklılık döngünün şeklini eğer ve maliyetin yarısını geri alır.
 
 **Type:** Build
 **Languages:** Python

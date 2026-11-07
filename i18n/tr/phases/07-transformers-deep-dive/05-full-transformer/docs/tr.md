@@ -80,7 +80,7 @@ Bir blok için `d_model = d`ve FFN genişlemesi `r`- ...
 - FFN (SwiGLU): `3 · d · (r · d)`- Evet .`3rd²`
 - Normalar: önemsiz
 
-- Evet .`d = 4096, r = 2.6, layers = 32`(yaklaşık Llama 3.8B), toplam: `32 · (4·4096² + 3·2.6·4096²) ≈ 32 · (16 + 32) M = ~1.5B parameters per layer × 32 ≈ 7B`(daha yerleştirmeler ve baş) Yayınlanan eşleşmeler sayılır.
+- Evet .`d = 4096, r = 2.6, layers = 32`(yaklaşık Llama 3.8B), toplam: `32 · (4·4096² + 3·2.6·4096²) ≈ 32 · (67M + 131M) ≈ 32 · 198M ≈ 6.3B`Bu, yayınlanan 8B'ye yakın bir yere düşer. Gerçek model GQA (küçük K ve V projeksiyonları) ve daha geniş bir FFN (`r = 3.5`), parametreyi dikkatten FFN'ye taşıyor ancak toplamı 8B'ye yakın tutuyor.
 
 ## Yapın
 

@@ -40,12 +40,12 @@ L(N, D) = \frac{A}{N^\alpha} + \frac{B}{D^\beta} + E
 - $E \approx 1.69$, azaltabilir kayıp tavanı.
 - $A \approx 406$- Evet .$B \approx 411$- Evet .
 
-İki terim birbirine karşı ticaret yaparken ölçerken.$N$sabit hesaplama ($C = 6ND$) ve çözmek için:
+İki terim birbirine karşı ticaret yaparken ölçerken.$N$sabit hesaplama ($C = 6ND$Bu da bir çözüm.$\alpha$ve $\beta$yukarıda, gösterge yaklaşık 0.45'te çıkar $N$ve 0.55 için$D$, böylece tam en iyi oran bütçe ile yavaş yavaş hareket eder .`code/main.py`Bu sayede, bir sabit oranın empirik kuralı ortaya çıkar.$D = 20N$İçeride$C = 6ND$Ve parmak kuralı şöyle:
 
 ```math
 \begin{aligned}
-N_{\text{opt}} &\approx 0.6 \times (C/6)^{0.5} \\
-D_{\text{opt}} &\approx 0.6 \times (C/6)^{0.5} \\
+N_{\text{opt}} &\approx 0.22 \times (C/6)^{0.5} \\
+D_{\text{opt}} &\approx 4.5 \times (C/6)^{0.5} \\
 D_{\text{opt}} / N_{\text{opt}} &\approx 20
 \end{aligned}
 ```

@@ -169,6 +169,10 @@ softmax-attention-scaling
 
 ## Yapın
 
+```figure
+iso-machine {"machine":"self-attention"}
+```
+
 ### Adım 1: Softmax sıfırdan
 
 Softmax çiğ logitleri olasılıklara dönüştürür.
