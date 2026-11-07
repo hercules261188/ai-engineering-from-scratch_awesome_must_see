@@ -25,7 +25,7 @@ Esta lição vai caminhar para os três, e depois explica qual alcançar para qu
 
 **FastText.**Uma palavra é a soma de seus caracteres n-gramas mais a própria palavra. `where`torna-se`<wh, whe, her, ere, re>, <where>`O vector de palavra é a soma dos vectores componentes.`whereupon`) são compostas por n-gramas conhecidos.
 
-**BPE (Byte-Pair Encoding).**Comece com um vocabulário de bytes individuais (ou caracteres). Conte cada par adjacente no corpus. Combine o par mais frequente em um novo token. Repita para `k`O resultado: um vocabulário de `k + 256`Tokens em que seqüências frequentes (`ing`- Não .`tion`- Não .`the`As palavras raras são divididas em pedaços familiares.
+**BPE (Byte-Pair Encoding).**Comece com um vocabulário de bytes individuais (ou caracteres). Conte cada par adjacente no corpus. Combine o par mais frequente em um novo token. Repita para `k`Iterações. Resultado: um vocabulário dos símbolos base mais `k`fusões (`k + 256`Tokens quando você começa a partir de bytes) onde sequências frequentes (`ing`- Não .`tion`- Não .`the`As palavras raras são divididas em pedaços familiares.
 
 ```figure
 n5-subword-merge

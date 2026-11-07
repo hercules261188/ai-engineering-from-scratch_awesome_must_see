@@ -126,7 +126,7 @@ def tfidf(bow_matrix):
 >>> tfidf(bow)
 ```
 
-Três documentos, cinco palavras vocabulares (`the`- Não .`cat`- Não .`sat`- Não .`dog`- Não .`ran` ).`the`Aparece em todos os três, por isso, as forças armadas são baixas.`dog`Os vetores são escassos (a maioria das entradas são pequenas) e as palavras discriminatórias pop.
+Três documentos, cinco palavras vocabulares (`the`- Não .`cat`- Não .`sat`- Não .`dog`- Não .`ran` ).`the`Aparece em todos os três, por isso, as forças armadas são baixas.`dog`Com um vocabulário real de milhares de palavras, estes vetores são escassos (a maioria das entradas são zero).
 
 ### Passo 5: Normalização de linhas L2
 

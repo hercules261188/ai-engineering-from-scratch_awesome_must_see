@@ -200,7 +200,7 @@ pipe.fit(X_train, y_train)
 print(pipe.score(X_test, y_test))
 ```
 
-Três coisas a notar.`stop_words=None`mantém as negações. `ngram_range=(1, 2)`Adiciona bigrams assim `not_good`torna-se uma característica. `sublinear_tf=True`Estes três sinais representam a diferença entre uma linha de base com 75% de precisão e uma linha de base com 85% de precisão na SST-2.
+Três coisas a notar.`stop_words=None`mantém as negações. `ngram_range=(1, 2)`Adiciona bigrams assim `not good`torna-se um recurso (scikit-learn une as duas palavras com um espaço). `sublinear_tf=True`Estes três sinais representam a diferença entre uma linha de base com 75% de precisão e uma linha de base com 85% de precisão na SST-2.
 
 ### Quando procurar um transformador
 
