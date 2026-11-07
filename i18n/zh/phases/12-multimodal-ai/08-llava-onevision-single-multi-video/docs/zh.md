@@ -1,6 +1,6 @@
 # 单机图像,多个图像,视频在一个模型
 
-> 在LLaVA-OneVision之前 (Li等,2024年8月) 开放VLM世界有不同的流派:LLaVA-1.5用于单个图像,像Mantis和VILA这样的多图像模型,像Video-LLaVA和Video-LLaMA这样的视频模型. 每个赢得了自己的基准, 拉瓦-一视觉认为,单一的课程可以培养一个模型来主导三个场景, 配方非常简单:视觉代币预算, 保持在场景中恒定, 这一课讲述了预算,课程,以及新兴行为.
+> 在LLaVA-OneVision之前 (Li等,2024年8月) 开放VLM世界有不同的流派:LLaVA-1.5用于单个图像,像Mantis和VILA这样的多图像模型,像Video-LLaVA和Video-LLaMA这样的视频模型. 每个赢得了自己的基准, 拉瓦-一视觉认为,单一的课程可以培养一个模型来主导三个场景, 配方非常简单:视觉代币预算平衡了各种场景, 这一课讲述了预算,课程,以及新兴行为.
 
 **Type:** Build
 **Languages:** Python (stdlib, token budget solver + curriculum planner)
@@ -9,7 +9,7 @@
 
 ## 学习目标
 
-- 设计一个视觉标志的预算,以保持单个图像,多图像和视频输入的恒定性.
+- 设计一个视觉标志的预算,保持在单个图像,多图像和视频输入中平衡.
 - 订购一个培训课程,将技能从单一图像转移到视频,
 - 解释为什么一个模型在课程正确完成时,比相同参数数量的专家更好.
 - 列出LLaVA-OneVision报告的三个新兴功能:多摄像头推理,设置标记提示,iPhone屏幕截图代理.
@@ -32,13 +32,13 @@
 
 ### 视代币预算
 
-根据LLaVA-OneVision的数据,每个样本的视觉代币预算约为3000-4000代币,每个场景分配不同:
+拉瓦-一视觉不确定一个确切的代币数量. 它平衡每样本的最大视觉代币数量,因此三个场景都处于相同的范围内,大约有6,000到9,000个代币,每个场景分配不同:
 
-- 单个图像:AnyRes-9 (3x3片 + 缩写图片),每片以384个,有729个补丁,每片的2x2 → 182个攻击性双线聚合.总数:9 * 182 + 182 = 1820个代币.或者AnyRes-4以729-每片 = 2916 + 729.
-- 图像多个:每个图像的分辨率均等 (384 个,没有板), 729 个代币,没有聚合.预算 6 个图像 → 4374 个代币.
-- 视频: 32 张画,分辨率为 384 张,具有攻击性的 3x3 双线积分组 → 每张画的 81 个代币.
+- 单个图像:AnyRes-Max-9 (高达9个片+一个基视图),每一个384x384视图提供729个SIGLIP SO400M的代币.最大:729 * (1 + 9) =7290个代币.
+- 多图像:每张图像在384个,没有,729个,没有聚合.多达12个图像 →8748个.
+- 视频:每幅共 32 个图片,共 384 个图片,共 2 × 2 双线性结合 → 196 个图片.
 
-编码器每场景产生不同的几何学,但LLM消耗相同的预算.
+编码器每场景产生不同的几何学,但LLM消耗类似的预算. `code/main.py`下面的规划器使用较小的玩具预算4096来显示相同的平衡逻辑.
 
 ### 三阶段课程
 
@@ -111,14 +111,14 @@ l5-onevision-budget
 
 4. 报告报告的视频基准仅在每样本8个框架上训练. 这是否将其总体化为30秒的视频?
 
-5. 双线聚合24x24补丁到12x12是每次减小的4x. 实现在 stdlib Python 中的聚合并并验证每一个2x2块的平均值是否匹配双线输出.
+5. 双线聚合24x24补丁到12x12是每维度的2x减少,因此4x少的代币.在 stdlib Python 中实现聚合并并验证每个2x2块的平均值是否匹配双线输出.
 
 ## 关键词
 
 | Term | What people say | What it actually means |
 |------|-----------------|------------------------|
-| OneVision scenario | "Single-image, multi-image, or video" | One of three input shapes the unified VLM handles; the budget stays constant across |
-| Token budget | "How many tokens per sample" | Total visual tokens the LLM sees per training / inference sample, typically 3000-4000 |
+| OneVision scenario | "Single-image, multi-image, or video" | One of three input shapes the unified VLM handles; the budget stays balanced across |
+| Token budget | "How many tokens per sample" | Total visual tokens the LLM sees per training / inference sample, about 6k to 9k at most in LLaVA-OneVision |
 | Curriculum | "Training order" | Stage ordering (single-image → multi-image → video) chosen for emergent transfer |
 | Bilinear pooling | "Token shrink" | Applying bilinear interpolation to the patch grid (2D) to reduce token count while preserving locality |
 | Emergent skill | "Not trained, still works" | Capability that appears at inference without matching training data, due to curriculum composition |

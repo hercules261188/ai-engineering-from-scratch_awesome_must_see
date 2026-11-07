@@ -1,6 +1,6 @@
 # 从CLIP到BLIP-2 Q-Former作为一种模拟桥梁
 
-> CLIP将图像和文字相对应,但不能生成标题,回答问题,或进行对话. 通过跨度注意力来通过结结结 ViT 的特征,然后直接插入结结 LLM 的输入流中, 188万个桥梁参数将11B LLM连接到ViT-g/14. 到2026年,每一个基于适配器的VLM都是 MiniGPT-4,InstructBLIP,LLaVA的表弟都是后代. 这一课程阅读了Q-Former的架构,解释了它的两阶段训练,
+> CLIP将图像和文字相对应,但不能生成标题,回答问题,或进行对话. 通过跨度注意力来通过结结结 ViT 的特征,然后直接插入结结 LLM 的输入流中, 188万个桥梁参数将ViT-g/14连接到像11BFlan-T5-XXL这样大的结 LLM. 到2026年,每一个基于适配器的VLM都是 MiniGPT-4,InstructBLIP,LLaVA的表弟都是后代. 这一课程阅读了Q-Former的架构,解释了它的两阶段训练,
 
 **Type:** Build
 **Languages:** Python (stdlib, cross-attention + learnable-query demo)
@@ -117,7 +117,7 @@ modality-projection
 
 4. 阅读BLIP-2论文 (arXiv:2301.12597) 的3.2节,说明Q-Former如何初始化.解释为什么从BERT-base初始化 (非随机) 加速了融合.
 
-5. 对于一个10分钟的视频,以1FPS样本为60个,计算每代币成本在 (Q-Former → 32代币/) vs (MLP投影器 → 576代币/).哪个适合一个128k代币的LLM文本窗口?
+5. 对于一个10分钟的视频,以1FPS样本为60个框架,计算每个框架代币成本 (Q-Former → 32代币/框架) 与 (MLP投影器 → 576代币/框架).
 
 ## 关键词
 
@@ -132,7 +132,7 @@ modality-projection
 | Two-stage pretraining | "Representation then generative" | Stage 1 trains Q-Former alone (ITC/ITM/ITG); Stage 2 attaches frozen LLM and trains only the projection + Q-Former |
 | Frozen backbone | "Do not finetune" | The vision encoder and LLM weights are fixed; only the bridge trains |
 | Projection head | "Linear to LLM dim" | Final linear layer mapping Q-Former output to the LLM's embedding dimension |
-| Perceiver resampler | "Flamingo's version" | Similar learnable-query cross-attention, used by Flamingo at every layer rather than as a single bridge |
+| Perceiver resampler | "Flamingo's version" | Similar learnable-query cross-attention; Flamingo runs it once per image to make fixed latents, then reads them through gated cross-attention at every LLM layer |
 
 ## 进一步阅读
 

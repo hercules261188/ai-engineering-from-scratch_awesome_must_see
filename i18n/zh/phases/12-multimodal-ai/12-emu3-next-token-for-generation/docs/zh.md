@@ -28,9 +28,9 @@
 
 基本成分是视觉代币器.Emu3训练一个定制 IBQ类代币器 (反瓶定量器,SBER-MoVQGAN家族) 每代币的分辨率降低8x8.一个512x512图像成为64x64 = 4096代币,代码书大小32768.
 
-这比Chameleon的1024个代币大于512x512个代币,但每代币价格更便宜 (更小的代码簿查找,更简单的代码).关键指标:重建PSNR在30.5dB,与稳定扩散的连续潜伏空间在32dB竞争.
+这比Chameleon的1024个代币大于512x512个代币,在两个轴上K=8192:代币的四倍和代码书的四倍.额外的容量购买了重建质量.关键指标:重建PSNR在30.5dB,与稳定扩散的连续潜伏空间在32dB竞争.
 
-视频:一个3DVQ代码器将空间时间补丁 (4x4x4像素) 编码为一个整数.在8FPS的4s剪辑有32个;在256x256的4x空间和4x时间缩小时,代码数量为 (256/4) * (256/4) * (32/4) = 64 * 64 * 8 = 32,768代币.
+视频:一个3DVQ代码器将空间时间补丁 (4框 x 8×8像素) 编码为一个整数.在 8FPS的4s剪辑有32框;在8×空间和4×时间缩小的256×256时,代码数为 (256/8) * (256/8) * (32/4) = 32 * 32 * 8 = 8,192代币.
 
 标器质量是天花板. 标器的贡献部分是"我们培养了一个非常好的标器".
 
@@ -68,14 +68,14 @@
 根据Emu3论文 (2024年9月):
 
 - 图像生成:在MJHQ-30K FID (5.4 vs 5.6) 上击败了SDXL,GenEval整体 (0.54 vs 0.55 统计),以及Deep-Eval的复合平衡.
-- 图像感知:在VQAv2 (75.1vs72.4) 上超过LLaVA-1.6并且在MMMU上大致匹配.
+- 图像感知:在VQAv2 (75.1 vs 81.8) 和MMMU (31.6 vs 35.1) 上追踪LLaVA-1.6,但在SEED-Bench,OCRBench和ChartQA上击败了它.
 - 视频生成:在竞争性FVD中,与 Sora时代公开标记的模型,进行4秒的录像质量.
 
  Emu3 交易一个点在这里,一个点在那里,但"下一个代币预测是你需要的"的说法可以通过各种方式辩护.
 
 ### 计算成本
 
-基于7B参数模型的300亿多模特代币,Emu3训练.GPU小时与Llama-2-7B预训练 (A100级上的2k-4kGPU年) 差不多相似.像Stable Diffusion 3这样的扩散模型在类似的预算中训练,但需要单独的文本编码器和更复杂的管道.
+图文中没有发布 GPU-小时总数;为了扩展,Llama-2-7B预训练使用了约184k A100 GPU-小时,大约是21 GPU-年.像稳定扩散3这样的扩散模型在类似的预算中训练,但需要单独的文本编码器和更复杂的管道.
 
 在推断时,Emu3 比每张图像的SDXL慢:4096个图像代币30次/秒为每张512x512图像的2分钟,而SDXL则为2-5秒.投机解码和KV缓存优化缩小了差距,但并没有关闭它.autoregressive图像代码是计算重的;这是常设的交易.
 
@@ -106,11 +106,11 @@ l5-emu3-next-token
 
 1. 根据 Emu3 的数据,每一个512x512图像的数值为4096个代币,每一个图像的数值为8x8个.
 
-2. 阅读Emu3视频标记器3.3节. 描述3DVQ补丁形状,以及为什么它是4x4x4而不是8x8x1.
+2. 阅读Emu3视频代码标记器3.3节. 描述3DVQ补丁形状,以及为什么它覆盖4个框架×8x8像素而不是单个框架.
 
 3. 没有分类器的指导权重5.0对3.0:什么视觉效果?`code/main.py`现在,我们要去.
 
-4. 计算Emu3-7B的FLOP训练,以300B代币进行比较.
+4. 计算Emu3 (8B) 的FLOP训练,以假设的300B代币,并与稳定扩散3进行比较.
 
 5. 对于FID而言,Emu3比SDXL更好,但对于VQAv2而言与专业VLM而言,不一样.
 
@@ -120,7 +120,7 @@ l5-emu3-next-token
 |------|-----------------|------------------------|
 | Next-token prediction | "NTP" | Standard autoregressive loss: predict token[i+1] given token[0..i]; works for every modality when tokenized |
 | IBQ tokenizer | "Inverse bottleneck quantizer" | A class of VQ-VAE with larger codebooks (32768+) and better reconstruction than Chameleon's |
-| 3D VQ | "Spatiotemporal quantizer" | Codebook indexed by (time, row, col); one token covers a 4x4x4 pixel cube |
+| 3D VQ | "Spatiotemporal quantizer" | Codebook indexed by (time, row, col); one token covers 4 frames x 8x8 pixels |
 | Classifier-free guidance | "CFG" | Mix conditional and unconditional logits with weight gamma; boosts image quality at inference |
 | Unified vocabulary | "Shared tokens" | Text + image + video all draw from the same integer space; model predicts whichever modality comes next |
 | MJHQ-30K | "Image gen benchmark" | Midjourney-quality benchmark with 30k prompts; Emu3 reports FID here |

@@ -1,6 +1,6 @@
 # 视频语言模型:暂时标志和地图
 
-> 视频不是一堆照片. 一个5秒的剪辑有因果顺序,动作动词和事件时间, 视频-LLaMA (Zhang等,2023年6月) 发送了首个具有视频接地的开放视频-LLM. 视频聊天和视频-LLaVA扩大了模式. 到2025年,Qwen2.5VL的TMRoPE将与边境专业型号的差距缩小. 每个系统都以不同的方式解决时间代币 每片Q-former,每框 concat-pool,每代币TMRoPE. 这一课程阅读了模式,构建了一个统一对动态框架样本,
+> 视频不是一堆照片. 一个5秒的剪辑有因果顺序,动作动词和事件时间, 视频-LLaMA (Zhang等,2023年6月) 发送了首个具有视频接地的开放视频-LLM. 视频聊天和视频-LLaVA扩大了模式. 到2025年,Qwen2.5VL的时间调整M-RoPE将与边境专业型号的差距缩小. 每个系统都以不同的方式解决时间代币 每片的Q-former,每框的 concat-pool,每代币的时间一致的M-RoPE. 这一课程阅读了模式,构建了一个统一对动态框架样本,
 
 **Type:** Build
 **Languages:** Python (stdlib, frame sampler + temporal-grounding evaluator)
@@ -11,7 +11,7 @@
 
 - 解释为什么时间定位编码会独立于视觉编码器改变视频VLM性能.
 - 根据每秒代币与地面准确度进行统一,动态FPS和事件驱动的框架样本测试.
-- 描述Q-former-per-clip (视频-LLaMA) 与聚合式-per-frame (视频-LLaVA) 与M-RoPE-per-token (Qwen2.5-VL) 设计.
+- 描述Q前每片 (Video-LLaMA) 与聚合每框 (Video-LLaVA) 与时间一致的M-RoPE每代币 (Qwen2.5-VL) 设计.
 - 举个视频基准:视频MME,TempCompass,EgoSchema,视频MMMU.
 
 ## 问题
@@ -26,7 +26,7 @@
 
 每个交易都不同. 副样本输出时间细节. 聚合输出空间细节. 问元输出了两个小点,但节省了代币.
 
-时间位置编码是另一轴:模型如何知道5个框架是在6个框架之前出现的? 选项包括简单的1D时间 RoPE (Video-LLaMA),学习时间嵌入式 (Video-LLaVA),以及TMRoPE (Qwen2.5-VL,全3D).
+时间位置编码是另一轴:模型如何知道5个框架是在6个框架之前出现的? 选项包括简单的1D时间 RoPE (Video-LLaMA),学习时间嵌入式 (Video-LLaVA),以及时间调整的M-RoPE (Qwen2.5-VL,全3D).
 
 ## 概念
 
@@ -46,17 +46,17 @@
 
 两者都不是长视频处理器.
 
-### 文2.5VL和TMRoPE
+### 文2.5VL和时间配合的M-RoPE
 
-Qwen2.5-VL推出了TMRoPE  时代模式旋转位置嵌入.每个补丁代币具有 (t, h, w) 位置,其中t是实际的时间 (而不是框架指数).
+文2.5-VL保留了文2-VL的M-RoPE (多动旋转位置嵌入) 并将其时间轴与绝对时间相对.每个补丁符号都携带一个 (t, h, w) 位置,其中t遵循实际时间标志 (而不是框架指数).文2.5-Omni (课 12.20) 后来将其音频和视频版本命名为TMRoPE,时间相对齐多动旋转ROPE.
 
 简单的时间嵌入的关键区别:
 
 - 模型看到"4.2秒"而不是"15段".
 - 每个视觉代币以其时间标签独立旋转.
-- 如果您在此处采样2FPS,在此处采样4FPS,TMRoPE将在本地处理不均的间隔.
+- 如果您在此采样2FPS和4FPS,时机调整的M-RoPE将在原生地处理不均的间隔.
 
-罗PE可以启用"猫跳什么秒钟?"的查询. 模型可以输出"4.2秒钟". 视频-LLaMA只能说"在剪辑的早期".
+时间调整的M-RoPE可以实现"猫跳什么秒钟?"的查询.模型可以输出"4.2秒钟".视频-LLaMA只能说"在剪辑中早期".
 
 ### 框架采样策略
 
@@ -70,7 +70,7 @@ Qwen2.5-VL推出了TMRoPE  时代模式旋转位置嵌入.每个补丁代币具�
 
 ### 每个的集成
 
-在每幅5秒的576个代币,一个5分钟的剪辑是172,800个代币.可用Qwen2.5-VL-72B的128k语境,但昂贵.
+在每幅576个图像的1FPS和576个代币时,一个5分钟的剪辑是172,800个代币. 这超越了Qwen2.5-VL-72B的128k文本,所以你必须首先放下每幅的图像速度或积分代币.
 
 两行数组的数量减少到每一个图片的64个代币 -> 5 分钟的19200个代币.
 
@@ -91,7 +91,7 @@ Qwen2.5-VL推出了TMRoPE  时代模式旋转位置嵌入.每个补丁代币具�
 
 - 简单的分析,但不准确.
 - 结构化JSON: `{"event": "jump", "start": 4.1, "end": 4.3}`文2.5VL是这辆车的.
-- 基于代币:特殊`<time>4.1</time>`文2.5VL的内部格式.
+- 基于代币:特殊`<time>4.1</time>`某些视频模型使用此方法; Qwen2.5-VL 相反,在M-RoPE位置ID和答案中编码时间.
 
 基于代币的使用最准确. Qwen2.5VL 的 JSON输出格式直接解析.
 
@@ -99,7 +99,7 @@ Qwen2.5-VL推出了TMRoPE  时代模式旋转位置嵌入.每个补丁代币具�
 
 2026年视频VLM:
 
-- 编码器:M-RoPE或TMRoPE (Qwen2.5-VL) 的SigLIP 2.
+- 编码器:SigLIP 2或本地分辨率 ViT,在LLM中与时间相一致的M-RoPE (Qwen2.5-VL).
 - 模样:动态FPS (根据运动为1-4),最大盖.
 - 单个图像组合:3×3双线.
 - 输出:结构化JSON,时间+事件字段.
@@ -115,7 +115,7 @@ video-temporal-patches
 
 - 统一和动态FPS框架样本仪.
 - 玩具时间定位评估器:在时间T时出现"基本真理"事件,以及模型输出结果,
-- 视频-LLaMA (16个,Q-前),视频-LLaVA (8个,MLP),Qwen2.5-VL (动态FPS +TMRoPE) 的比较.
+- 视频-LLaMA (16个,Q-前),视频-LLaVA (8个,MLP),Qwen2.5-VL (动态FPS +时间调整M-RoPE) 的比较.
 
 ## 运送它
 
@@ -125,7 +125,7 @@ video-temporal-patches
 
 1. 为了做三分钟的演示,选择制服与动态FPS.
 
-2. 简单的时间嵌入表不能做什么?
+2. 时间调整的M-RoPE增加了一个简单的时间嵌入表不能做的具体内容.
 
 3. 写一个JSON图案,用于时间定位,一个VLM可以学习发射.包括错误案例.
 
@@ -138,7 +138,7 @@ video-temporal-patches
 | Term | What people say | What it actually means |
 |------|-----------------|------------------------|
 | Temporal grounding | "Time-localized answers" | VLM outputs a specific timestamp range for when an event happens |
-| TMRoPE | "Time-Multimodal RoPE" | 3D rotary position with absolute timestamps, used by Qwen2.5-VL |
+| Time-aligned M-RoPE | "TMRoPE" | 3D rotary position whose temporal axis follows absolute timestamps; Qwen2.5-VL uses it for video, and Qwen2.5-Omni names its audio and video form TMRoPE |
 | Dynamic FPS | "Motion-aware sampling" | Sample more frames in high-motion segments, fewer in static ones |
 | Frame pooling | "Spatial compress per frame" | Reduce patches per frame with bilinear interpolation before the LLM |
 | Video Q-former | "Clip compressor" | Cross-attention bottleneck mapping N frames to K learned queries |

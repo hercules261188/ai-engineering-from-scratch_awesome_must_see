@@ -20,7 +20,7 @@
 
 弗拉明戈的答案:不要改变LLM的输入流. 插入现有LLM区间的额外的跨注意层. 文字代币仍然像往常一样流出在LLM的因果自我注意力中. 在每几个LLM块之间,文字代币通过新的封闭层来交叉访问图像功能. 门 (初始化为零) 意味着在零步骤时,新层是无运作的 随着训练的进步,门户就打开,视觉信息开始流动.
 
-弗拉明戈回答了第二个问题:每提示如何处理每次图像的可变数量 (0, 1,或多个) ?一个感知器重样仪是一个小的跨注意力模块,它取出你拥有的任何数量的补丁并产生固定数量的视觉隐藏代币.无论提示中有多少图像,LLM跨注意力层都会看到相同的形状.
+弗拉明戈回答第二个问题:你如何处理每次提示的可变数量图像 (0, 1,或多个)? 感知器重样仪 是一个小的跨度注意力模块,它取出你拥有的任何数量的补丁,并产生每张图像的固定数量的视觉隐形代币. 随着图像数量增加,总数增加,但每个文本标志只读取一个图像的隐藏,所以任何单个文本标志在交叉关注中看到的东西,
 
 ## 概念
 
@@ -59,7 +59,7 @@ x_before_next_block = gated
 
 ### 面具的交叉注意力,用于交叉输入
 
-在"<图片A>标签A <图片B>标签B <图片C> ?"这样的提示中,每个文本标签只应该看到序列中之前的图像.`t`仅使用图像复样符号,其图像指数`i < i_t`在哪里`i_t`是位置前最新的图像`t`"只看到最后一个前面的图像"或"看到所有前面的图像"都是有效的选择;
+在"<图片A>标签A <图片B>标签B <图片C> ?"这样的提示中,每个文本标签只应该看到序列中之前的图像.`t`仅仅使用图像的样本代币`i_t`在哪里`i_t`是位置前最新的图像`t`鱼选择了前一个. 鱼选择了前一个.
 
 ### 在环境中学习
 
@@ -76,7 +76,7 @@ x_before_next_block = gated
 弗拉明戈训练了三个数据集:
 
 1. 多模 MassiveWeb (M3W): 43万页面的图像和文本交织在一起,重建阅读顺序.
-2. 图像-文本对 (ALIGN + LTIP):4.4B对.
+2. 图像文字对:ALIGN (1.8B对) 加上LTIP (312M对),总共约2.1B对.
 3. 视频文本对 (VTP):27M短视频片段.
 
 欧贝利克斯 (2023) 是互联网体的开放复制,Idefics,Idefics2和大多数开放的"像弗拉明戈"模型都在训练中.
@@ -102,7 +102,7 @@ Otter (2023) 基于OpenFlamingo,并调整了MIMIC-IT (多模式指令的数据�
 | Frozen LLM | Yes | Yes |
 | Few-shot in-context | Weak | Strong — the paper's centerpiece |
 | Interleaved inputs | No native support | Yes, the design target |
-| Training data | 130M pairs | 1.3B pairs + 43M interleaved pages |
+| Training data | 130M pairs | ~2.1B pairs + 27M video clips + 43M interleaved pages |
 | Parameter count | 188M trained | ~10B trained (cross-attn layers) |
 | Compute | Days on 8 A100s | Weeks on thousands of TPUv4 |
 

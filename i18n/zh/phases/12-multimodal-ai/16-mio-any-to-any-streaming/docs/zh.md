@@ -21,7 +21,7 @@
 工程挑战:
 
 - 代币化必须存在于每个模式, 压缩不损失, 足以重建, 并以变压器能消耗的速度生产代币.
-- 一个单词库必须为文本 (32k+),图像 (16k+),语音 (4k+),音乐 (8k+) 配置空间.至少有四万多个条目.
+- 一个单词库必须为文本 (32k+),图像 (8k+),语音 (4k+),音乐 (8k+) 配置空间.至少有五万多个条目.
 - 培训数据必须涵盖每个输入输出对 (文字→图像,图像→语音,语音→图像等) 或模型必须组成.
 - 输入必须流出代币足够快,以实现对话延迟 (<500ms时间到第一音频字节).
 
@@ -32,21 +32,21 @@
 子的标记器堆:
 
 - 文字:标准BPE,词汇~32000.
-- 图片:SEED-Tokenizer (2023) 量化VAE与单独的代码簿,4096条,每张图片的 32x32个代币.
-- 语音:语音托基尼泽残留-VQ (2023) 将16kHz波形编码成8个层次代码书;第一层是粗的内容,后层添加 prosody 和扬声器身份.
-- 音乐:类似的残余VQ (Meta的音乐Gen / Encodec家族),4-8本代码书.
+- 图像:SEED-Tokenizer (2023),一个单独的图像代币器,具有8192条输入代码簿,每张图像发射32个代币.
+- 语音:语音托基尼泽残留-VQ (2023),将16kHz波形编码成8个层次代码书;第一层是粗的内容,后层添加了 prosody 和扬声器身份.MIO保持了内容水平加上前三个音调水平,每个 1024 个代码,因此 4096 个语音标识.
+- 音乐:类似的残余VQ (Meta的 MusicGen / Encodec家族),4-8代码书.MIO本身不运送音乐代码器 (其第四种方式是视频,像通过图像代码器的框架);本课的玩具添加音乐来展示一种新方式如何声称身份范围.
 
 每种模式都产生整数代币.这些代币在共享词汇中获得不同 ID 范围:
 
 ```
 text:   0..31999
-image:  32000..36095  (4096 image tokens)
-speech: 36096..40191  (4096 speech base tokens, plus residual layers)
-music:  40192..48383  (8192 music tokens)
-sep:    48384..48390  (<image>, <speech>, <music>, </...>, etc.)
+image:  32000..40191  (8192 image tokens)
+speech: 40192..44287  (4 codebooks x 1024 speech tokens)
+music:  44288..52479  (8192 music tokens, the toy's extension)
+sep:    52480..52485  (<image>, <speech>, <music>, </...>)
 ```
 
-总数:约48万个词汇. 输入嵌入和输出投影覆盖了它.
+总数:大约52k词汇. 输入嵌入和输出投影覆盖了它.
 
 ### 流式解码
 
@@ -57,7 +57,7 @@ sep:    48384..48390  (<image>, <speech>, <music>, </...>, etc.)
 1. 用户在麦克风中说话;实时音频代码器每50ms就发出语音代码.
 2. 随着其到达,MIO 消耗代币 (即时预填+增量前).
 3. 输出代币随着生成而流出;一个平行语音解码器将它们转换为50-150ms延迟的音频样本.
-4. 在MIO纸上,时间到第一个音频字节: ~300-500ms,接近GPT-4o的 ~250ms.
+4. 时间到第一音频字节:MIO论文没有延迟数.下面的预算使这个设计最好是300ms左右,而GPT-4o的 ~250ms.
 
 迷你Omni (arXiv:2408.16725),GLM-4-Voice (arXiv:2412.02612),和Moshi (arXiv:2410.00037) 是互补流通语音LLM设计.
 
@@ -100,7 +100,7 @@ sep:    48384..48390  (<image>, <speech>, <music>, </...>, etc.)
 - 输出标志: ~50ms.
 - 并行残留VQ+语音解码器: ~100-150ms.
 
-总时间到第一个音频字节: ~300ms最小.GPT-4o声称 ~250ms.Moshi声称 160ms.MIO/AnyGPT在公众基准的400-600ms范围.
+总时间到第一个音频字节: ~300ms最小.GPT-4o声称 ~250ms.Moshi声称 160ms.MIO和AnyGPT都没有发布测量数据,所以把这个预算作为估计,而不是基准.
 
 ### 为什么任何人都会坚持
 
@@ -134,7 +134,7 @@ any-to-any-stream
 
 2. 语音托基尼泽残留-VQ使用8本代码书. 提出为什么平行解码残留水平是必要的 (相对于连续) 以及它带来的延迟节约.
 
-3. 您的词汇有32k文字 +4k图像 +4k语音. 添加8k音乐和10个分离器.隐藏 dim4096的嵌入矩阵参数成本是多少?
+3. 您的词汇有32k文字+8k图像+4k语音. 添加8k音乐和10个分离器.隐藏 dim4096的嵌入矩阵参数成本是多少?
 
 4. 视觉思想链发出了中间的图像.
 
@@ -146,7 +146,7 @@ any-to-any-stream
 |------|-----------------|------------------------|
 | Any-to-any | "Multimodal in/out" | A single model that accepts and emits text, image, speech, and music in any direction |
 | Residual-VQ | "Speech tokenizer stack" | Multi-codebook tokenization where each layer adds information; base layer is content, later layers are prosody |
-| SEED-Tokenizer | "Image codes" | Discrete image tokenizer with 4096-entry codebook used by MIO |
+| SEED-Tokenizer | "Image codes" | Discrete image tokenizer with an 8192-entry codebook and 32 tokens per image, used by MIO |
 | Chain-of-visual-thought | "Visual scratchpad" | The model generates an intermediate image as a reasoning step before its final answer |
 | Time-to-first-audio-byte | "TTFAB" | Latency from user voice to first audio output; <500ms for conversational feel |
 | Four-stage curriculum | "Training recipe" | Alignment -> interleaved -> speech-enhanced -> SFT, in that order |

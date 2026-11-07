@@ -53,7 +53,7 @@
 
 动态FPS不仅仅是"需要更多的框架".
 
-- 实际时间标签. "在0:04时,猫跳跃".模型看到`<time>0.04</time>`交叉的代币与框架代币.
+- 位置ID中的绝对时间.而不是框架指标 (框架0,1,2...),M-RoPE的时间轴遵循实际时间标签,因此两个框架 ID之间的差距追踪它们之间的秒钟. "在0:04时,猫跳跃".没有额外的文本代币携带时间,因此编码不添加序列长度.
 - 动态FPS. 测试速度为1FPS,用于缓慢的镜头,用于行动的FPS为4+ FPS. 用户或训练师选择;M-RoPE适应.
 - 空间注意力为吞吐量 (区块内) 提供窗口;全球注意力每几层.
 - 经过工具调用数据训练: "{\"工具\": \"点击\", \"符号\": [380, 220]}". 代理准备出盒.
@@ -92,7 +92,7 @@ q_{\text{rot}}[2i+1] &= q[2i] \sin(m \theta_i) + q[2i+1] \cos(m \theta_i) \\
 1. 计算你能负担的最大FPS:`fps_max = B / (T * tokens_per_frame)`现在,我们要去.
 2. 选择一个目标FPS`{1, 2, 4, 8}`这满足了`fps <= fps_max`现在,我们要去.
 3. 如果运动高 (光流论或用户明确要求),请选择更高的FPS. 如果运动低,请选择更低.
-4. 在选择的FPS均样本;插入 `<time>t</time>`之间的代币.
+4. 在选定的FPS上均样本;在秒钟内设置每个框架的M-RoPE时间ID从其时间标签.
 
 wen2.5VL 暗示了这种逻辑;`fps`参数:一个60秒的动作序列,4FPS,每框81个代币 =19440个代币,可在32k环境中管理.
 
@@ -147,7 +147,7 @@ mm-mrope-axes
 |------|-----------------|------------------------|
 | M-RoPE | "Multimodal RoPE" | 3D rotary position embedding with temporal, height, and width bands in the hidden dim |
 | Dynamic FPS | "Smart sampling" | Frame sampling rate chosen per video based on motion, duration, and token budget |
-| Absolute time token | "Timestamp token" | `<time>t</time>` interleaved in the sequence so the model sees actual seconds not frame index |
+| Absolute time encoding | "Time-aligned M-RoPE" | Temporal position IDs set from each frame's timestamp, so the model sees actual seconds, not frame index, with no extra tokens |
 | Window attention | "Local attention" | Spatial self-attention restricted to small windows for speed; global attention added periodically |
 | Structured agent output | "JSON mode" | Training data supervision teaching the VLM to emit parseable JSON with coords and tool names |
 | min_pixels / max_pixels | "Resolution bounds" | Per-request Qwen2.5-VL controls bounding total pixel count and therefore token count |
