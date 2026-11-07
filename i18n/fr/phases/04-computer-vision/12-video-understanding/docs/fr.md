@@ -67,7 +67,7 @@ Les avantages:
 - L'inflation I3D donne un apprentissage gratuit.
 
 Les inconvénients:
-- T/8 plus de FLOP que la contrepartie 2D (pour le noyau temporel de 3 empilés 3 fois).
+- Environ 3x les FLOP du réseau 2D fonctionnent cadre par cadre, parce que chaque noyau 3x3 devient 3x3x3.
 - Les noyaux temporaires sont petits; le mouvement à longue portée nécessite une approche pyramidale ou à double courant.
 
 Quand utiliser: reconnaissance d'action où le mouvement est le signal (Quelque chose-Quelque chose V2, Kinétique avec classes lourdes en mouvement).

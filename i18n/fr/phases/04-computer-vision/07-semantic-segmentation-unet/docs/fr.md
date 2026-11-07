@@ -129,7 +129,7 @@ Les taux de participation sont de 15% pour une classe, alors que les autres neuf
 
 ### Compromise de résolution des entrées
 
-Le codeur d'U-Net réduit de moitié la résolution de quatre fois, de sorte que l'entrée doit être divisible par 16.`H * W * C_max`, et à 1024x1024 avec 1024 canaux à goulot d'étranglement, le passage avant utilise déjà des gigaoctets de VRAM.
+Le codeur U-Net réduit de moitié la résolution de quatre fois, de sorte que les connexions de saut ne s'alignent exactement que lorsque l'entrée est divisible par 16.`H * W * C_max`, et à 1024x1024 avec 1024 canaux à goulot d'étranglement, le passage avant utilise déjà des gigaoctets de VRAM.
 
 Deux solutions standard:
 1. Tissage des tuiles d'entrée  processus 256x256 avec chevauchement et couture.

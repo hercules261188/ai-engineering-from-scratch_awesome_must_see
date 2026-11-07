@@ -71,7 +71,7 @@ Les modèles de bout en bout ont besoin de plus de données et de calculs, mais 
 
 ### Partage de la mise en page
 
-Pour les documents structurés, utilisez un détecteur de mise en page (LayoutLMv3, DocLayNet) qui étiquette chaque région: Titre, paragraphe, figure, tableau, note de bas de page.
+Pour les documents structurés, exécutez un modèle de mise en page (LayoutLMv3, ou un détecteur formé sur le jeu de données DocLayNet) qui étiquette chaque région: titre, paragraphe, figure, tableau, note de bas de page. L'ordre de lecture devient alors "itérée à travers les régions dans l'ordre de mise en page, concaténat".
 
 Pour les formulaires, utilisez **Key-Value extraction**Les modèles (donut pour les documents riches en visuel, LayoutLMv3 pour les scans simples) prennent des images + texte détecté + positions et prédisent des paires de valeurs de clés structurées.
 
@@ -160,18 +160,23 @@ Entrée à hauteur fixe (la CNN max-pools hauteur à 1). Largeur est la dimensio
 
 ### Étape 3: RCR synthétique
 
-Générer des chaînes de chiffres noir sur blanc pour un test de fumée de bout en bout.
+Générer des chaînes noir-blanc pour un test de fumée de bout en bout. Chaque caractère devient une colonne de six barres qui orthografe son indice de vocabulaire en binaire. L'image doit porter l'identité du caractère: si chaque caractère était la même boîte vide, le modèle ne pourrait pas dire `a`de `x`, et la perte serait retardée.
 
 ```python
 import numpy as np
+
+GLYPHS = "0123456789abcdefghijklmnopqrstuvwxyz"
 
 def synthetic_line(text, height=32, char_width=16):
     W = char_width * len(text)
     img = np.ones((height, W), dtype=np.float32)
     for i, c in enumerate(text):
         x = i * char_width
-        shade = 0.0 if c.isalnum() else 0.5
-        img[6:height - 6, x + 2:x + char_width - 2] = shade
+        code = GLYPHS.find(c) + 1
+        for bit in range(6):
+            if code >> bit & 1:
+                y = 4 + 4 * bit
+                img[y:y + 3, x + 2:x + char_width - 2] = 0.0
     return img
 
 
@@ -202,7 +207,7 @@ Un vrai ensemble de données OCR ajoute des polices, du bruit, de la rotation, d
 model = TinyCRNN(vocab_size=len(vocab))
 opt = torch.optim.Adam(model.parameters(), lr=1e-3)
 
-for step in range(200):
+for step in range(400):
     strings = ["abc" + str(step % 10)] * 4 + ["xyz" + str((step + 1) % 10)] * 4
     imgs, targets, target_lens = build_batch(strings, vocab)
     log_probs = model(imgs)  # (W', 8, vocab)
@@ -211,7 +216,7 @@ for step in range(200):
     opt.zero_grad(); loss.backward(); opt.step()
 ```
 
-La perte devrait diminuer de ~3 à ~0,2 sur 200 étapes sur ces données synthétiques triviales.
+La perte devrait baisser de deux chiffres à environ 0,3 dans les 400 étapes sur ces données synthétiques triviales. `code/main.py`fonctionne la même boucle sur son propre ensemble de chaînes et décode ensuite trois chaînes d'essai.
 
 ## Utilisez-le
 

@@ -60,7 +60,7 @@ Pourquoi les cartes thermiques fonctionnent mieux que la régression directe: la
 
 ### Localisation sous-pixel
 
-Argmax donne des coordonnées entières. Pour une précision sous-pixel, affiner en fixant une parabole à l'argmax et à ses voisins, ou utiliser le bien connu offset `(dx, dy) = 0.25 * (heatmap[y, x+1] - heatmap[y, x-1], ...)`- Dans quelle direction ?
+Argmax donne des coordonnées entières. Pour une précision sous-pixel, affiner en fixant une parabole à l'argmax et à ses voisins, ou déplacer l'argmax vers le voisin supérieur avec `dx = 0.25 * (heatmap[y, x+1] - heatmap[y, x-1])`et la même chose pour `dy`, comme le code le fait.
 
 ### Les champs d'affinité de partie (PAF)
 

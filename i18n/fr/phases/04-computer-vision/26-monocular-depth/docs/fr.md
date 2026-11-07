@@ -92,7 +92,7 @@ Z &= d
 \end{aligned}
 ```
 
-L'intrinsèque provient des métadonnées EXIF, d'un schéma d'étalonnage ou d'un estimateur intrinsèque monoculaire (Perspective Fields, UniDepth). Sans intrinsèque, vous pouvez toujours rendre un nuage de point en supposant un principe de 60 à 70 ° FOV et de résolution modérée  utilisable pour la visualisation, pas pour la mesure.
+Les données intrinsèques proviennent des métadonnées EXIF, d'un schéma d'étalonnage ou d'un estimateur intrinsèque monoculaire (Perspective Fields, UniDepth). Sans intrinsèque, vous pouvez toujours rendre un nuage de point en supposant un point FOV de 60 à 70 ° et un point principal au centre de l'image.
 
 ### Évaluation
 

@@ -84,7 +84,7 @@ Prenez le masque 28x28 à la taille de pixel originale de la proposition pour pr
 
 ### Les pertes
 
-Mask R-CNN a quatre pertes ajoutées:
+Mask R-CNN a cinq pertes ajoutées:
 
 ```math
 L = L_{\text{rpn\_cls}} + L_{\text{rpn\_box}} + L_{\text{box\_cls}} + L_{\text{box\_reg}} + L_{\text{mask}}
@@ -261,7 +261,7 @@ def train_step(model, images, targets, optimizer):
     return {k: v.item() for k, v in loss_dict.items()}
 ```
 
-Le `targets`La liste doit contenir des dicts par image avec `boxes`- Je suis là .`labels`, et `masks`(comme `(num_instances, H, W)`Le modèle renvoie un dict de quatre pertes pendant l'entraînement et une liste de prédictions pendant l'évaluation, en fonction de la tactique `model.training`- Je suis désolé .
+Le `targets`La liste doit contenir des dicts par image avec `boxes`- Je suis là .`labels`, et `masks`(comme `(num_instances, H, W)`Le modèle renvoie un dict de cinq pertes lors de l'entraînement et une liste de prédictions lors de l'évaluation, en fonction de la tactique `model.training`- Je suis désolé .
 
 Le `pycocotools`l'évaluateur produit mAP@IoU=0.5:0.95 pour les boîtes et les masques; vous avez besoin des deux numéros pour savoir si la tête de boîte ou la tête de masque est le col de bouteille.
 
