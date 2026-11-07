@@ -42,7 +42,7 @@ Mode d'échec: les critiques se développent avec N agents (l'entrée comprend t
 
 ### QMIX (2018)  décomposition de la valeur
 
-La récompense globale est la somme d'une fonction monotone des valeurs Q par agent:
+La valeur commune d'action `Q_tot`est une fonction de mélange monotone de Q-values par agent:
 
 ```math
 Q_{\text{tot}}(\tau, a) = f\big(Q_1(\tau_1, a_1), \ldots, Q_n(\tau_n, a_n)\big), \quad \frac{\partial f}{\partial Q_i} \ge 0

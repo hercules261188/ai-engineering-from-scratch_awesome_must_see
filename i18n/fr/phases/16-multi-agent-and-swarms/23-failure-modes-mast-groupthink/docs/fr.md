@@ -112,7 +112,7 @@ C'est une réponse à des incidents de style SRE, appliquée aux systèmes d'age
 
 ### L'audit en mode défaillance
 
-Une meilleure pratique pour 2026 est un audit annuel (ou par version majeure) en mode défaillance:
+Une meilleure pratique pour 2026 est un audit trimestriel (et par major-release) en mode défaillance:
 
 1. **Trace sample.**Ramassez 1000 traces d'exécution réelles.
 2. **Categorize.**Pour chaque défaillance de la trace, carte des catégories MAST + Groupthink.

@@ -57,7 +57,7 @@ Il s'agit du cas de référence pour la spécialisation des rôles (phase 16 · 
 Le cas de la production à l'échelle de la population.
 
 - **Nov 2025:**Les navires de Clawdbot (l'agent de codage local de Peter Steinberger)
-- **Dec 2025 – Mar 2026:**renommé deux fois (Clawdbot → OpenClaw → continué sous OpenClaw).
+- **Jan 2026:**renommé deux fois en une semaine (Clawdbot → Moltbot le 27 janvier après des plaintes de marque, puis Moltbot → OpenClaw trois jours plus tard).
 - **Feb 2026:**Moltbook est lancé comme un réseau social uniquement pour les agents sur les mêmes primitifs; ~ 2,3 millions de comptes d'agents en quelques jours.
 - **Mar 2026 (2026-03-10):**Meta acquiert Moltbook.
 - **Mar 2026:**La Chine restreint OpenClaw sur les ordinateurs du gouvernement.
