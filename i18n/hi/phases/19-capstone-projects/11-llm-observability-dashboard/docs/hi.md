@@ -85,7 +85,7 @@ ce-otel-drift
 
 8. **Alerting chain.**प्रोमेथियस निर्यातक मूल्यांकन स्कोर संश्लेषकों और विलंबता प्रतिशत को पढ़ता है; चेतावनी के लिए स्लैक और महत्वपूर्ण उल्लंघन के लिए पेजड्यूटी के लिए अलर्टमैनेजर मार्ग।
 
-9. **Regression probe.**बग इंजेक्ट करेंः मूल्यांकन किया गया चैटबॉट 1% समय में नकली SSNs लीक करना शुरू कर देता है। MTTR मापेंः बग से स्लैक अलर्ट तक तैनात।
+9. **Regression probe.**बग इंजेक्ट करेंः मूल्यांकन किया गया चैटबॉट समय के 1% में नकली SSNs लीक करना शुरू कर देता है। पता लगाने के लिए समय मापें (MTTD): बग से स्लैक अलर्ट तक तैनात किया गया। पता लगाने डैशबोर्ड के स्वामित्व वाले MTTR का हिस्सा है; फिक्स और रीडिलॉय इसके बाद आते हैं।
 
 ## इसका प्रयोग करें
 
@@ -106,7 +106,7 @@ $ curl -X POST https://my-otel-collector/v1/traces -d @trace.json
 |:-:|---|---|
 | 25 | Trace-schema coverage | Number of SDK families producing canonical GenAI spans (target: 6+) |
 | 20 | Eval correctness | DeepEval / RAGAS scores vs hand-labeled set |
-| 20 | Dashboard UX | MTTR on injected regression (under 5 minutes target) |
+| 20 | Dashboard UX | MTTD on injected regression (under 5 minutes target) |
 | 20 | Cost / scale | Sustained ingest at 1k spans/sec without backlog |
 | 15 | Alerting + drift detection | Prometheus/Alertmanager chain exercised end to end |
 | **100** | | |
