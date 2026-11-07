@@ -58,7 +58,7 @@ Microsoft'un Ajan Yönetimi Araç Kütleği, OWASP Ajan Top 10 ve AB AI Yasası'
 
 ### Görülmüştür .$1,200 → $4.800 dava
 
-Microsoft dosyalarında gerçek durum: yeni bir araç eklendiğinde aylık maliyetleri üç katına çıkmış bir e-ticaret ajansı. Araç, ajanın her oturumda sipariş durumunu sorgulamasına izin verdi. Çubuk algılama yok. Bir alet için şapka yok. Haftalar arası büyüme konusunda uyarı yok. Düzenleme, her aletin kapalılık ve günlük büyüme uyarısıydı. Bu bir şablon: her yeni araç yüzeyi yeni bir potansiyel döngüdür; her yeni araç kendi kapalı ve kendi uyarısı gerekir.
+Microsoft dosyalarında gerçek durum: yeni bir araç eklendiğinde aylık maliyetleri dört katına çıkmış bir e-ticaret ajansı. Araç, ajanın her oturumda sipariş durumunu sorgulamasına izin verdi. Çubuk algılama yok. Bir alet için şapka yok. Haftalar arası büyüme konusunda uyarı yok. Düzenleme, her aletin kapalılık ve günlük büyüme uyarısıydı. Bu bir şablon: her yeni araç yüzeyi yeni bir potansiyel döngüdür; her yeni araç kendi kapalı ve kendi uyarısı gerekir.
 
 ```figure
 cost-governor-stack

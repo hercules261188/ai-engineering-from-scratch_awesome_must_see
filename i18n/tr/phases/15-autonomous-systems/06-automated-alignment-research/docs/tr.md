@@ -1,6 +1,6 @@
 # Otomatik Düzeltme Araştırması (Antropik AAR)
 
-> Anthropic, bağımsız kum kutularında Claude Opus 4.6 Autonomous Alignment Araştırmacılarının paralel ekiplerini çalıştı ve kayıtları herhangi bir kum kutuunun dışında yaşayan paylaşılan bir forum aracılığıyla koordine etti (bu nedenle ajanlar kendi kayıtlarını silemezler). Zayıf-güçlü eğitim sorunu konusunda AAR'lar insan araştırmacılarını geçirdi. İş akışlarını belirleyen Anthropic'in kendi özetli bayrakları genellikle AAR esnekliğini kısıtlar ve performansını düşürür. Otomatik ayarlama araştırması, RSP'nin tespit etmek istediği tam yanlış ayarlama risklerine kadar zaman çizgisini sıkıştırmak için baskı adımıdır.
+> Anthropic, bağımsız kum kutularında Claude Opus 4.6 Autonomous Alignment Araştırmacılarının paralel ekiplerini çalıştı ve kayıtları herhangi bir kum kutuunun dışında yaşayan paylaşılan bir forum aracılığıyla koordine etti (bu nedenle ajanlar kendi kayıtlarını silemezler). Zayıf-güçlü eğitim sorunu konusunda AAR'lar insan araştırmacılarını geçirdi. İş akışlarını belirleyen Anthropic'in kendi özetli bayrakları genellikle AAR esnekliğini kısıtlar ve performansını düşürür. Otomatik uyum araştırması zaman çizgisini sıkıştırır ve RSP'nin tespit etmek amacıyla aynı yanlış uyum riskleri üzerine bunu yapar.
 
 **Type:** Learn
 **Languages:** Python (stdlib, parallel-research-forum simulator)

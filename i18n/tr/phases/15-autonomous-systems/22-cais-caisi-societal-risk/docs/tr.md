@@ -19,7 +19,7 @@ Pratik içeriği: CAIS'in dört risk çerçevesinin literatürde en çok alınt�
 
 ### CAIS  AI Güvenliği Merkezi
 
-- San Francisco'da 2022 yılında Dan Hendrycks ve meslektaşları tarafından kurulmuştur ( "Zhang" adı, mevcut bir ortak kurucu değil, erken bir işbirlikçiyi ifade eder; mevcut liderlik için CAIS web sitesine bakın).
+- 2022 yılında San Francisco'da Dan Hendrycks ve Oliver Zhang tarafından kurulmuştur. Hendrycks, Yönetim ve Araştırma Direktörüdür; Zhang Yönetim Direktörüdür.
 - Durum: 501 ((c) ((3) kâr amacı gütmeyen kuruluş.
 - Görkemli 2023 sonucu: yüzlerce araştırmacı ve CEO'nun ortak imzaladığı yok olma riskiyle ilgili açıklama. "İS'ten yok olma riskini azaltmak, salgın hastalıklar ve nükleer savaş gibi diğer toplumsal risklerle birlikte küresel bir öncelik olmalıdır" dedi.
 - 2026 çıkışları: Sınır model değerlendirmesi için AI Tablosu, Uzaktan İş İndeksi (Scale AI ile birlikte), Süper zeka Stratejisi Kağıdı, AI Sınırları haber bültenleri.

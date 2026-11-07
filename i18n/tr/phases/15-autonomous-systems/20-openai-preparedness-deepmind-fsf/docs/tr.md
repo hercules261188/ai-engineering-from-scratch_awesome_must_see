@@ -30,7 +30,7 @@ V2'de anahtar çerçeve: Araştırma Kategorileri otomatik olarak hafiflemeleri 
 
 Yapı:
 
-- **Critical Capability Levels (CCLs)**: beş alan boyunca yetenek eşiği: Siber, Biyolojik, ML Araştırma ve Geliştirme, CBRN, Otonomya (M.L. Araştırma ve Geliştirme ve Siber)
+- **Critical Capability Levels (CCLs)**: yetenek eşiği üç gruba ayrılmıştır: kötüye kullanımı (CBRN, Siber, Zararlı Manipülasyon), ML Araştırma ve Geliştirme ve bir keşifsel yanlış uyumlulık yolu.
 - **Tracked Capability Levels**Ek olarak Nisan 2026'da ek bir granularlık. Konkret örnek: ML R&D özerkliği seviye 1 = rekabetçi maliyet karşılığında AI R&D borusunu tamamen otomatikleştirme karşılığında insan + AI araçlar.
 - **Deceptive alignment monitoring**: araçsal akıl kullanımı kötüye kullanılması için otomatik izleme konusunda açık bir taahhüt.
 
@@ -94,7 +94,7 @@ a5-tracked-vs-research
 | Tracked Category | "Mandatory mitigation" | Triggers Capabilities + Safeguards Reports; SAG review |
 | Research Category | "Monitored only" | Tracked but no automatic mitigation; includes Long-range Autonomy |
 | Frontier Safety Framework | "DeepMind's scaling policy" | FSF v3 (Sept 2025) + Tracked Capability Levels (Apr 2026) |
-| CCL | "Critical Capability Level" | DeepMind threshold per domain (Cyber, Bio, ML R&D, CBRN) |
+| CCL | "Critical Capability Level" | DeepMind threshold per domain (CBRN, Cyber, Harmful Manipulation, ML R&D) |
 | ML R&D autonomy level 1 | "R&D automation" | Fully automate AI R&D pipeline at competitive cost |
 | Sandbagging | "Strategic underperformance" | Model underperforms on evals; in OpenAI Research Categories |
 | Instrumental reasoning | "Means-ends reasoning" | Reasoning about how to achieve goals; target of DeepMind monitoring |

@@ -1,6 +1,6 @@
 # Tarayıcı Ajanları ve Uzun Uzaylı Web Görevleri
 
-> ChatGPT ajanı ( Temmuz 2025) Operatör ve derin araştırmaları bir tarayıcı/terminal ajanına birleştirdi ve BrowseComp SOTA'yı %68,9'a koydu. OpenAI, 31 Ağustos 2025'te Operator'u ürün katmanında birleştirmeyi kapattı. Anthropic'in Vercept satın alımı, OSWorld'deki Claude Sonnet'i %15'ten %72,5'e yükseltti. WebArena-Verified (ServiceNow, ICLR 2026) orijinal WebArena'da yanlış negatif oranın yüzde 11,3 puanını sabitledi ve 258 görevli Hard alt kümesini gönderdi. Sayılar gerçek. OpenAI'nin hazırlık başkanı açıkça, tarayıcı ajanlarına dolaylı bir şekilde enjeksiyon yapmanın "tamamen düzeltilebilecek bir hata olmadığını" belirtti. 2025  2026 saldırıları: Tainted Memories (Atlas CSRF), HashJack (Cato Networks), ve Perplexity Comet'te tek tıkla kaçırmalar.
+> ChatGPT ajanı ( Temmuz 2025) Operatör ve derin araştırmaları bir tarayıcı/terminal ajanına birleştirdi ve BrowseComp SOTA'yı %68,9'a koydu. OpenAI, 31 Ağustos 2025'te Operator'u ürün katmanında birleştirmeyi kapattı. Anthropic'in Vercept satın alımı, OSWorld'deki Claude Sonnet'i %15'ten %72,5'e yükseltti. WebArena-Verified (ServiceNow, ICLR 2026) orijinal WebArena'da ~11.3% yanlış negatif oranı sabitledi ve 258-iş Hard alt kümesini gönderdi. Sayılar gerçek. OpenAI'nin hazırlık başkanı açıkça, tarayıcı ajanlarına dolaylı bir şekilde enjeksiyon yapmanın "tamamen düzeltilebilecek bir hata olmadığını" belirtti. 2025  2026 saldırıları: Tainted Memories (Atlas CSRF), HashJack (Cato Networks), ve Perplexity Comet'te tek tıkla kaçırmalar.
 
 **Type:** Learn
 **Languages:** Python (stdlib, indirect prompt-injection attack surface model)
@@ -9,7 +9,7 @@
 
 ## Sorun
 
-Bir tarayıcı ajansı, güvenilmeyen içeriği okuyan ve sonuçta eylemler yapan uzun uzayda bir ajan. Ajanın ziyaret ettiği her sayfa, kullanıcı tarafından yazılmamış bir giriş. Her sayfada her form potansiyel bir komut kanalıdır. 20252026 saldırı korpusu bunun hipotetik olmadığını göstermektedir: Zararlı Hatırlar bir saldırganın saldırganın hafızasına kötü niyetli talimatları bir yapılmış sayfa üzerinden bağlamasını sağlar; HashJack, ajanın ziyaret ettiği URL parçalarında komutları gizler; Kafasızlık Komet kaçıranları tek bir tıkla vurur.
+Bir tarayıcı ajansı, güvenilmeyen içeriği okuyan ve sonuçta eylemler yapan uzun uzayda bir ajan. Ajanın ziyaret ettiği her sayfa, kullanıcı tarafından yazılmamış bir giriş. Her sayfada her form potansiyel bir komut kanalıdır. 20252026 saldırı korpusu bunun hipotetik olmadığını göstermektedir: Zararlı Hatırlar bir saldırganın saldırganın hafızasına kötü niyetli talimatları bir yapılmış sayfa üzerinden bağlamasını sağlar; HashJack, ajanın ziyaret ettiği URL parçalarında komutları gizler; Kafasızlık Komet kaçıranları tek bir tıklama yapar.
 
 OpenAI'nin hazırlık başkanı sessiz kısmını yüksek sesle söyledi: dolaylı enjeksiyon "tamamen düzeltilebilecek bir hata değildir". Bu saldırının nedeni, ajanın okuma-işleme sınırında yaşadığından, mimari açıdan bulanık olmasıdır.
 
