@@ -260,7 +260,7 @@ def sample_ddim(model, schedule, shape, steps=50, T=1000, device="cpu", eta=0.0)
     x = torch.randn(shape, device=device)
     alphas_cumprod = schedule["alphas_cumprod"].to(device)
 
-    ts = torch.linspace(T - 1, 0, steps + 1).long()
+    ts = torch.linspace(T - 1, -1, steps + 1).round().long()
     for i in range(steps):
         t = ts[i]
         t_prev = ts[i + 1]
@@ -276,7 +276,7 @@ def sample_ddim(model, schedule, shape, steps=50, T=1000, device="cpu", eta=0.0)
     return x
 ```
 
-`eta=0`é totalmente determinista (a mesma entrada de ruído produz sempre a mesma saída). `eta=1`recupera a DDPM.
+O horário termina em `t_prev = -1`, então o último passo usa`a_prev = 1.0`e devolve o limpo .`x0_pred`sem ruído residual. `eta=0`é totalmente determinista (a mesma entrada de ruído produz sempre a mesma saída). `eta=1`Recuperar o DDPM quando o cronograma visita cada etapa (`steps=T`)).
 
 ## Usá-lo
 

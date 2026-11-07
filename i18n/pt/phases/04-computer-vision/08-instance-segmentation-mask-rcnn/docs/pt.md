@@ -84,7 +84,7 @@ Apresenta a máscara de 28x28 para o tamanho original da proposta para produzir 
 
 ### Perdas
 
-Mas R-CNN tem quatro perdas adicionadas:
+Mas R-CNN tem cinco perdas adicionadas:
 
 ```math
 L = L_{\text{rpn\_cls}} + L_{\text{rpn\_box}} + L_{\text{box\_cls}} + L_{\text{box\_reg}} + L_{\text{mask}}
@@ -261,7 +261,7 @@ def train_step(model, images, targets, optimizer):
     return {k: v.item() for k, v in loss_dict.items()}
 ```
 
-O `targets`A lista deve ter dicts por imagem com `boxes`- Não .`labels`, e `masks`(como `(num_instances, H, W)`O modelo retorna um ditado de quatro perdas durante o treinamento e uma lista de previsões durante a avaliação, com teclado em `model.training`- Não .
+O `targets`A lista deve ter dicts por imagem com `boxes`- Não .`labels`, e `masks`(como `(num_instances, H, W)`O modelo retorna um ditado de cinco perdas durante o treinamento e uma lista de previsões durante a avaliação, com teclado em `model.training`- Não .
 
 O `pycocotools`O evaluador produz mAP@IoU=0.5:0.95 tanto para caixas como para máscaras; é necessário ambos os números para saber se a cabeça de caixa ou a cabeça de máscara é o gargalo de engarrafamento.
 

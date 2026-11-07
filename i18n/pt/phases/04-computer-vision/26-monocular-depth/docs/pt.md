@@ -92,7 +92,7 @@ Z &= d
 \end{aligned}
 ```
 
-Intrínseca vem de metadados EXIF, um padrão de calibração ou um estimador intrínseco monocular (Perspective Fields, UniDepth). Sem intrínseca, você ainda pode render uma nuvem de pontos assumindo um princípio de 60 a 70 ° FOV e resolução moderada  utilizável para visualização, não para medição.
+Intrínseca vem de metadados EXIF, um padrão de calibração ou um estimador intrínseco monocular (Perspective Fields, UniDepth). Sem intrínseca, você ainda pode render uma nuvem de pontos assumindo um 60-70 ° FOV e um ponto principal no centro da imagem. Isso é útil para visualização, não para medição.
 
 ### Avaliação
 

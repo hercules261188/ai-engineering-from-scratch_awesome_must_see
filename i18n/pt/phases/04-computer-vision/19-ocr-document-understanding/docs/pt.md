@@ -71,7 +71,7 @@ Os modelos de ponta a ponta precisam de mais dados e computação, mas ignoram a
 
 ### Partilha de layout
 
-Para documentos estruturados, execute um detector de layout (LayoutLMv3, DocLayNet) que rotula cada região: Título, parágrafo, Figura, Tabela, Nota de rodapé.
+Para documentos estruturados, execute um modelo de layout (LayoutLMv3, ou um detector treinado no conjunto de dados DocLayNet) que etiquete cada região: Título, parágrafo, Figura, Tabela, Nota de rodapé.
 
 Para os formulários, utilizar **Key-Value extraction**Modelos (Donut para documentos ricos em visão, LayoutLMv3 para digitalização simples).
 
@@ -160,18 +160,23 @@ Entrada de altura fixa (o CNN max-pools altura para 1). Largura é a dimensão d
 
 ### Passo 3: OCR sintético
 
-Gerenciar cordas de dígitos preto a branco para um teste de fumaça de ponta a ponta.
+Gerar cordas preto-a-branca para um teste de fumaça de ponta a ponta. Cada personagem se torna uma coluna de seis barras que ortografia seu índice de vocabulário em binário. A imagem deve carregar a identidade do personagem: se cada personagem fosse a mesma caixa em branco, o modelo não poderia dizer `a`de`x`, e a perda ficaria atrasada.
 
 ```python
 import numpy as np
+
+GLYPHS = "0123456789abcdefghijklmnopqrstuvwxyz"
 
 def synthetic_line(text, height=32, char_width=16):
     W = char_width * len(text)
     img = np.ones((height, W), dtype=np.float32)
     for i, c in enumerate(text):
         x = i * char_width
-        shade = 0.0 if c.isalnum() else 0.5
-        img[6:height - 6, x + 2:x + char_width - 2] = shade
+        code = GLYPHS.find(c) + 1
+        for bit in range(6):
+            if code >> bit & 1:
+                y = 4 + 4 * bit
+                img[y:y + 3, x + 2:x + char_width - 2] = 0.0
     return img
 
 
@@ -202,7 +207,7 @@ Um conjunto de dados OCR real adiciona fontes, ruído, rotação, borbulho e cor
 model = TinyCRNN(vocab_size=len(vocab))
 opt = torch.optim.Adam(model.parameters(), lr=1e-3)
 
-for step in range(200):
+for step in range(400):
     strings = ["abc" + str(step % 10)] * 4 + ["xyz" + str((step + 1) % 10)] * 4
     imgs, targets, target_lens = build_batch(strings, vocab)
     log_probs = model(imgs)  # (W', 8, vocab)
@@ -211,7 +216,7 @@ for step in range(200):
     opt.zero_grad(); loss.backward(); opt.step()
 ```
 
-A perda deve cair de ~3 para ~0,2 em 200 passos com estes dados sintéticos triviais.
+A perda deve cair de dois dígitos para cerca de 0,3 dentro de 400 passos com estes dados sintéticos triviais. `code/main.py`corre o mesmo ciclo em seu próprio conjunto de cordas e depois decodifica três cordas de ensaio.
 
 ## Usá-lo
 

@@ -129,7 +129,7 @@ A média da UO oculta uma classe a 15% quando outras nove são a 85%.
 
 ### Comércio de resolução de entrada
 
-O codificador da U-Net reduz a resolução em quatro vezes, de modo que a entrada deve ser divisível por 16.`H * W * C_max`, e em 1024x1024 com 1024 canais de garganta, a passagem avançada já usa gigabytes de VRAM.
+O codificador da U-Net reduz a resolução em quatro vezes, de modo que as conexões de skip se alinham exatamente apenas quando a entrada é divisível por 16. Outros tamanhos precisam de engarrafamento ou o redimensionamento no bloco superior (passo 2).`H * W * C_max`, e em 1024x1024 com 1024 canais de garganta, a passagem avançada já usa gigabytes de VRAM.
 
 Dois métodos de solução padrão:
 1. Tela de entrada processar 256x256 de telhas com sobreposição e costura.

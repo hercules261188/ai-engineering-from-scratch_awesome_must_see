@@ -1,6 +1,6 @@
 # Visão em tempo real  Deploição de Edge
 
-> A inferência de borda é a disciplina de obter um modelo de 90 pontos de precisão para executar a 30 fps em um dispositivo com 2 GB de RAM.
+> A inferência de borda é a disciplina de obter um modelo com 90% de precisão para executar a 30 fps em um dispositivo com 2 GB de RAM.
 
 **Type:** Learn + Build
 **Languages:** Python
@@ -41,7 +41,7 @@ flowchart LR
     style PWR fill:#dbeafe,stroke:#2563eb
 ```
 
-- **Latency**A média de apenas p50 oculta o comportamento da cauda que é importante para os sistemas em tempo real.
+- **Latency**A informação apenas p50 (ou a média) oculta o comportamento da cauda que é importante para os sistemas em tempo real.
 - **Peak memory**O que importa é que os OOM sejam fatais em alvos embutidos.
 - **Power / energy**A utilização de CPU/GPU é frequentemente proporcional ao tempo de utilização.
 
