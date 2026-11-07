@@ -39,7 +39,7 @@ Ev defteriniz `~`veya `/home/your-username`Neredeyse yaptığın her şey burada
 
 ## Temel Emirler
 
-Bunlar uzaktan bir GPU kutusunda yapacağınız şeyin %95'ini kapsayan 15 komut.
+Bunlar uzaktan bir GPU kutusunda yapacağınız şeylerin çoğunu kapsadığı 13 komut.
 
 ### Çevreye Geziyor
 

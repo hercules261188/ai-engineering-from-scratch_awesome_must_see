@@ -97,7 +97,7 @@ python train.py > output.log 2> errors.log
 python train.py > train_full.log 2>&1
 ```
 
-İhtiyacınız olan üç yönlendirme:
+Dört yönlendirme ve ihtiyacın olan boru:
 
 | Symbol | What it does |
 |--------|-------------|

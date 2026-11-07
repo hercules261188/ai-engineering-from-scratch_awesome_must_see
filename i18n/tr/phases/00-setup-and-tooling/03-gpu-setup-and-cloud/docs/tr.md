@@ -55,7 +55,13 @@ Bir tane var mı diye kontrol et.
 nvidia-smi
 ```
 
-PyTorch' i CUDA ile yükle:
+PyTorch'ı CUDA ile yükleyin. Linux'ta varsayılan tekerlekler CUDA ile gemiye gönderilir. Windows'ta, pytorch.org'daki seçiciden CUDA komutunu kopyalayın.
+
+```bash
+pip install torch torchvision torchaudio
+```
+
+Sonra PyTorch'ın GPU'yu görmediğini kontrol et.
 
 ```python
 import torch
