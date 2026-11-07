@@ -117,7 +117,8 @@ Algorithm:
   3. If u < p(x) / (M * q(x)), accept x
   4. Otherwise, reject and go to step 1
 
-Acceptance rate = 1/M
+Acceptance rate = Z/M, where Z is the integral of p(x)
+                (Z = 1, so the rate is 1/M, when p is normalized)
 ```
 
 जितना अधिक कसकर सीमा $M$, स्वीकृति दर जितनी अधिक है। कम आयामों (1-3) में, अस्वीकृति नमूना लेने का काम अच्छी तरह से होता है। उच्च आयामों में, स्वीकृति दर तेजी से गिरती है क्योंकि अधिकांश प्रस्ताव मात्रा अस्वीकार हो जाती है। यह अस्वीकृति नमूना लेने के लिए आयामता का अभिशाप है।

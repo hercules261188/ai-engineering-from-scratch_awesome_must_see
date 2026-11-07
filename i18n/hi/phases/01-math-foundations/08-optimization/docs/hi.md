@@ -46,7 +46,7 @@ w = w - \text{lr} \cdot \text{gradient}
 
 ```mermaid
 graph TD
-    A["* Starting point (high loss)"] --> B["Moving downhill along gradient"]
+    A["* Starting point (high loss)"] --> B["Moving downhill, against the gradient"]
     B --> C["Approaching minimum"]
     C --> D["o Minimum (low loss)"]
 ```
@@ -158,7 +158,7 @@ w &= w - \text{lr} \cdot \hat{m} / (\sqrt{\hat{v}} + \epsilon)
 
 ### कंवेक्स बनाम गैर-कंवेक्स
 
-एक घुमावदार समारोह में एक न्यूनतम है. ग्रेडिएंट अवतरण हमेशा यह पाता है. एक वर्गिक जैसे$f(x) = x^2$घुंघराली है।
+एक घुमावदार फ़ंक्शन में कोई बुरा स्थानीय न्यूनतम नहीं हैः प्रत्येक स्थानीय न्यूनतम एक वैश्विक न्यूनतम है। एक चिकनी घुमावदार फ़ंक्शन के लिए जिसमें न्यूनतम है, एक पर्याप्त छोटी सीखने की दर के साथ ग्रेडिएंट गिरावट इसके पास मिलती है। एक चतुर्भुज जैसे $f(x) = x^2$एक संकुचित है, और इसके न्यूनतम अद्वितीय है।
 
 तंत्रिका नेटवर्क हानि कार्य गैर-कुंभिक हैं। उनके पास कई स्थानीय न्यूनतम, सaddle points और flat regions हैं।
 

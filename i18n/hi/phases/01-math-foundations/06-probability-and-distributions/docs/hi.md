@@ -190,14 +190,14 @@ P(X = x) = \sum_{y} P(X = x, Y = y)
 
 ### क्यों हर जगह सामान्य वितरण दिखाई देता है
 
-केंद्रीय सीमा प्रमेयः कई स्वतंत्र यादृच्छिक चर का योग (या औसत) मूल वितरण के बावजूद एक सामान्य वितरण के लिए अभिसरण करता है।
+केंद्रीय सीमा प्रमेयः एक ही वितरण से कई स्वतंत्र यादृच्छिक चर का औसत, एक बार केंद्रित और स्केल द्वारा $\sqrt{n}$, एक सामान्य वितरण के करीब आता है, मूल वितरण का आकार जो भी हो, जब तक कि इसका अंतर सीमित हो। केंद्रित और स्केल योग के लिए भी यही लागू होता है।
 
 ```
 Roll 1 die:  uniform distribution (flat)
 Average of 2 dice:  triangular (peaked)
 Average of 30 dice: nearly perfect bell curve
 
-This works for ANY starting distribution.
+This works for ANY starting distribution with finite variance.
 ```
 
 यही कारण है कि:
@@ -470,7 +470,7 @@ print(f"Log-softmax: {log_probs}")
 | Expected value | "The average" | The probability-weighted sum of all outcomes. The loss function is an expected value |
 | Variance | "How spread out" | The expected squared deviation from the mean. High variance = noisy, unstable estimates |
 | Normal distribution | "The bell curve" | $f(x) = (1/\sqrt{2\pi\sigma^2}) \cdot \exp(-(x-\mu)^2/(2\sigma^2))$. Appears everywhere due to the CLT |
-| Central Limit Theorem | "Averages become normal" | The mean of many independent samples converges to a normal distribution regardless of the source |
+| Central Limit Theorem | "Averages become normal" | The centered, scaled mean of many independent samples converges to a normal distribution for any source with finite variance |
 | Joint distribution | "Two variables together" | $P(X, Y)$ describes the probability of every combination of $X$ and $Y$ outcomes |
 | Marginal distribution | "Sum out the other variable" | $P(X) = \sum_y P(X, Y)$. Recovers one variable's distribution from the joint |
 | Log probability | "Log of the probability" | $\log P(x)$. Turns products into sums, preventing numerical underflow in long sequences |
