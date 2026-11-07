@@ -202,7 +202,7 @@ Propriétés:
 2. Les caractéristiques de classement par score MI.
 3. Gardez le dessus .$k$Les caractéristiques.
 
-Cela fonctionne pour toute relation entre fonction et cible -- linéaire, non linéaire, monotone, ou non. La corrélation ne capture que les relations linéaires.
+Ce système fonctionne pour toute relation entre caractéristique et cible - linéaire, non linéaire, monotone ou non. La corrélation Pearson ne capture que des relations linéaires.
 
 | Method | Detects | Computational cost | Handles categorical? |
 |--------|---------|-------------------|---------------------|

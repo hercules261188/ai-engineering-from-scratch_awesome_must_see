@@ -34,7 +34,7 @@ Cela importe pour ML parce que la pensée du domaine de fréquence apparaît par
 X[k] = \sum_{n=0}^{N-1} x[n] \, e^{-2\pi i k n/N} \qquad \text{for } k = 0, 1, \ldots, N-1
 ```
 
-Chacun d' eux .$X[k]$C'est un nombre complexe.$\lvert X[k] \rvert$vous indique l'amplitude de la fréquence $k$- C' est sa phase .$\angle X[k]$vous indique le décalage de phase de cette fréquence.
+Chacun d' eux .$X[k]$C'est un nombre complexe.$\lvert X[k] \rvert$est proportionnelle à l'amplitude de fréquence $k$Sans normalisation, un vrai sinus d'amplitude.$A$qui tombe exactement sur Bin $k$donne$\lvert X[k] \rvert = AN/2$, alors divisez par $N/2$Pour lire l'amplitude.$\angle X[k]$vous indique le décalage de phase de cette fréquence.
 
 Le point de vue clé: $e^{-2\pi i k n/N}$est un phasor rotatif à fréquence $k$. Le DFT calcule la corrélation entre le signal et chacun des $N$Si le signal contient de l'énergie à la fréquence$k$Si ce n'est pas le cas, il est proche de zéro.
 
@@ -103,7 +103,7 @@ graph TD
     end
 ```
 
-La FFT exige que la longueur du signal soit de puissance 2.
+Le radix-2 FFT construit ici est le plus rapide lorsque la longueur du signal est une puissance de 2. Chaque fois qu'un sous-problème a une longueur irrégulière, il tombe à nouveau à la plaine `dft`, les signaux sont donc souvent réglés à zéro à la puissance suivante de 2 pour la vitesse.`numpy.fft`Ils sont plus rapides sur les longueurs avec de petits facteurs primaires.
 
 ### Analyse spectrale
 

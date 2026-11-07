@@ -121,7 +121,7 @@ La plupart des chaînes rencontrées dans ML satisfont aux deux conditions.
 
 **Absorbing states.**Un état est absorbant si une fois que vous y entrez, vous ne sortez jamais ($P[i][i] = 1$L'absorption des processus de modélisation de chaînes de Markov avec des états terminaux - un jeu qui se termine, un client qui se révolte, une séquence de jetons qui frappe le jeton de fin de texte.
 
-**Mixing time.**Combien d'étapes jusqu'à ce que la chaîne soit "close" à la distribution stationnaire?$P$(1 moins la deuxième plus grande valeur propre) contrôle le temps de mélange.
+**Mixing time.**Combien d'étapes jusqu'à ce que la chaîne soit "close" à la distribution stationnaire?$P$(1 moins la plus grande magnitude de valeur propre autre que la valeur propre 1) contrôle le temps de mélange.
 
 ### Connexion avec les modèles linguistiques
 

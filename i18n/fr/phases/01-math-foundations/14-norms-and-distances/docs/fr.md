@@ -102,7 +102,7 @@ L1 et L2 sont des cas particuliers de la norme Lp:
 \lVert x \rVert_p = (|x_1|^p + |x_2|^p + \cdots + |x_n|^p)^{1/p}
 ```
 
-Vérités différentes de $p$produire des "boulons d'unité" de différentes formes (l'ensemble de tous les points à distance 1 de l'origine):
+Vérités différentes de $p$produisent des "boulons d'unité" de différentes formes (l'ensemble de tous les points à une distance maximale de 1 de l'origine; les formes ci-dessous sont leurs limites):
 
 ```
 p=1:    Diamond shape      (corners on axes)

@@ -117,7 +117,8 @@ Algorithm:
   3. If u < p(x) / (M * q(x)), accept x
   4. Otherwise, reject and go to step 1
 
-Acceptance rate = 1/M
+Acceptance rate = Z/M, where Z is the integral of p(x)
+                (Z = 1, so the rate is 1/M, when p is normalized)
 ```
 
 Plus la limite est serrée$M$Dans les dimensions faibles (1-3), le prélèvement d'échantillons de rejet fonctionne bien. Dans les dimensions élevées, le taux d'acceptation diminue de manière exponentielle parce que la plupart du volume de proposition est rejeté.
