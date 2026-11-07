@@ -21,7 +21,7 @@ El cambio de DP a MC es filosóficamente importante: pasamos de *modelo conocido
 
 **The core idea, in one line:** $V^\pi(s) = \mathbb E_\pi[G_t \mid s_t = s] \approx (1/N) \sum_i G^{(i)}(s)$donde$G^{(i)}(s)$se observan resultados tras las visitas a $s$en el marco de la política $\pi$¿ Qué ?
 
-**First-visit vs every-visit MC.**Dado un episodio que visita el estado $s$En el caso de las primeras visitas, el MC cuenta solo el retorno de la primera visita; en cada visita, el MC cuenta todas las visitas. Ambas son imparciales en el límite.
+**First-visit vs every-visit MC.**Dado un episodio que visita el estado $s$En el caso de los MC de primera visita, el MC de primera visita cuenta sólo el retorno de la primera visita; cada visita MC cuenta todas las visitas. El MC de primera visita es imparcial. Cada visita MC puede ser ligeramente parcial después de un número finito de episodios, porque promedia un número aleatorio de retornos por episodio y ese número puede correlacionar con los retornos, pero ambos convergen a $V^\pi(s)$La primera visita es más sencilla de analizar (muestras de ID). cada visita utiliza más datos por episodio y suele converger más rápido en la práctica.
 
 **Incremental mean.**En lugar de almacenar todos los resultados, actualice el promedio de ejecución:
 
@@ -195,7 +195,7 @@ Refuse to run MC on non-episodic tasks without a finite horizon cap. Refuse to r
 | Monte Carlo | "Random sampling" | Estimate expectations by averaging over iid samples from the distribution. |
 | Return $G_t$ | "Future reward" | Sum of discounted rewards from step $t$ to episode end: $\sum_{k\ge 0} \gamma^k r_{t+k+1}$. |
 | First-visit MC | "Count each state once" | Only the first visit in an episode contributes to the value estimate. |
-| Every-visit MC | "Use all visits" | Every visit contributes; slightly biased but more sample-efficient. |
+| Every-visit MC | "Use all visits" | Every visit contributes; slightly biased for finite samples, consistent in the limit, and more sample-efficient. |
 | ε-greedy | "Exploration noise" | Pick greedy action with prob $1-\epsilon$; random action with prob $\epsilon$. |
 | Importance sampling | "Correcting for sampling from the wrong distribution" | Reweight returns by $\pi(a \mid s)/\mu(a \mid s)$ products to estimate $V^\pi$ from $\mu$ data. |
 | On-policy | "Learn from my own data" | Target policy = behavior policy. Vanilla MC, PPO, SARSA. |
