@@ -34,7 +34,7 @@ Chuyển đổi Fourier chuyển đổi dữ liệu từ miền thời gian sang
 X[k] = \sum_{n=0}^{N-1} x[n] \, e^{-2\pi i k n/N} \qquad \text{for } k = 0, 1, \ldots, N-1
 ```
 
-Mỗi người$X[k]$là một số phức tạp.$\lvert X[k] \rvert$cho bạn biết độ tần số của tần số $k$- Chuyện này.$\angle X[k]$cho bạn thấy sự thay đổi giai đoạn của tần số đó.
+Mỗi người$X[k]$là một số phức tạp.$\lvert X[k] \rvert$là tương xứng với độ tần số $k$Không có bình thường hóa, một âm âm thực sự của độ dồn.$A$Nó nằm ngay trên Bin.$k$cho $\lvert X[k] \rvert = AN/2$, vậy chia bằng $N/2$để đọc độ dồn.$\angle X[k]$cho bạn thấy sự thay đổi giai đoạn của tần số đó.
 
 Những thông tin quan trọng:$e^{-2\pi i k n/N}$là một phasor quay ở tần số $k$DFT tính toán mối tương quan giữa tín hiệu và mỗi tín hiệu.$N$tần số không gian bằng nhau. Nếu tín hiệu chứa năng lượng ở tần số$k$Nếu không, nó gần bằng không.
 
@@ -103,7 +103,7 @@ graph TD
     end
 ```
 
-FFT yêu cầu chiều dài tín hiệu phải là một sức mạnh 2. Trong thực tế, tín hiệu được đánh giá bằng không đến sức mạnh tiếp theo của 2.
+Xây dựng ở đây là xích cực-2 FFT nhanh nhất khi chiều dài tín hiệu là một sức mạnh của 2. Bất cứ khi một phụ vấn đề có chiều dài lẻ, nó rơi lại với bình thường `dft`, vì vậy tín hiệu thường được đánh giá bằng không đến năng lượng tiếp theo của 2 cho tốc độ.`numpy.fft`xử lý bất kỳ chiều dài nào với thuật toán gốc hỗn hợp, nhưng chúng nhanh nhất trên chiều dài với các yếu tố nguyên tố nhỏ.
 
 ### Phân tích quang phổ
 

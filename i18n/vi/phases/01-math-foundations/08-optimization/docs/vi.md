@@ -46,7 +46,7 @@ w = w - \text{lr} \cdot \text{gradient}
 
 ```mermaid
 graph TD
-    A["* Starting point (high loss)"] --> B["Moving downhill along gradient"]
+    A["* Starting point (high loss)"] --> B["Moving downhill, against the gradient"]
     B --> C["Approaching minimum"]
     C --> D["o Minimum (low loss)"]
 ```
@@ -158,7 +158,7 @@ Các lịch trình chung:
 
 ### Phép trục trặc đối với không trục trặc
 
-Một hàm ngọc có một tối thiểu.$f(x) = x^2$là tròn.
+Một hàm ngọc không có tối thiểu địa phương xấu: mỗi tối thiểu địa phương là tối thiểu toàn cầu. Đối với một hàm ngọc trơn với tối thiểu, sự giảm gradient với tốc độ học tập đủ nhỏ hội tụ với nó.$f(x) = x^2$là ngọc, và tối thiểu của nó là độc đáo.
 
 Các chức năng mất mạng thần kinh không phải ngọc. Chúng có nhiều mức tối thiểu địa phương, điểm saddle và khu vực phẳng.
 

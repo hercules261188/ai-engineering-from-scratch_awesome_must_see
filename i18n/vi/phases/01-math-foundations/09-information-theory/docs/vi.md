@@ -202,7 +202,7 @@ Các tính chất:
 2. Các tính năng xếp hạng theo điểm MI.
 3. Hãy giữ được đỉnh $k$Các tính năng.
 
-Điều này hoạt động cho bất kỳ mối quan hệ nào giữa tính năng và mục tiêu -- tuyến tính, không tuyến tính, đơn điệu, hay không. Sự tương quan chỉ bắt được mối quan hệ tuyến tính. MI bắt được mọi thứ.
+Điều này hoạt động cho bất kỳ mối quan hệ nào giữa tính năng và mục tiêu - tuyến tính, không tuyến tính, đơn điệu, hoặc không. Sự tương quan Pearson chỉ bắt được mối quan hệ tuyến tính. MI bắt được bất kỳ sự phụ thuộc nào, nhưng với dữ liệu hữu hạn ước tính của nó cần đủ mẫu và một kết hợp hợp hợp lý.
 
 | Method | Detects | Computational cost | Handles categorical? |
 |--------|---------|-------------------|---------------------|

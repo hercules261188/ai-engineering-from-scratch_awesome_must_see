@@ -121,7 +121,7 @@ Hầu hết các chuỗi mà bạn gặp trong ML đáp ứng cả hai điều k
 
 **Absorbing states.**Một trạng thái hấp thụ nếu một khi bạn vào đó, bạn không bao giờ rời khỏi ($P[i][i] = 1$Trải theo các quy trình mô hình chuỗi Markov với các trạng thái cuối cùng - một trò chơi kết thúc, một khách hàng đang lắc lắc, một chuỗi mã thông báo tấn công vào mã thông báo cuối văn bản.
 
-**Mixing time.**Số bước cho đến khi chuỗi "gần" với phân phối tĩnh?$P$(1 trừ giá trị tự lớn thứ hai) điều khiển thời gian trộn.
+**Mixing time.**Số bước cho đến khi chuỗi "gần" với phân phối tĩnh? Về hình thức, số bước cho đến khi khoảng cách thay đổi tổng thể từ tĩnh giảm xuống dưới một số ngưỡng.$P$(1 trừ kích thước giá trị tự lớn nhất ngoài giá trị tự 1) điều khiển thời gian trộn.
 
 ### Kết nối với các mô hình ngôn ngữ
 

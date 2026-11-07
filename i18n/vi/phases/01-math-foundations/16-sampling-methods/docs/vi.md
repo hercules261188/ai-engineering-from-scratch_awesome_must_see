@@ -117,7 +117,8 @@ Algorithm:
   3. If u < p(x) / (M * q(x)), accept x
   4. Otherwise, reject and go to step 1
 
-Acceptance rate = 1/M
+Acceptance rate = Z/M, where Z is the integral of p(x)
+                (Z = 1, so the rate is 1/M, when p is normalized)
 ```
 
 Càng chặt hơn thì càng chặt hơn$M$, tỷ lệ chấp nhận cao hơn. Trong các chiều kích thấp (1-3), lấy mẫu từ chối hoạt động tốt. Trong các chiều kích cao, tỷ lệ chấp nhận giảm theo cấp số lượng bởi vì phần lớn khối lượng đề xuất bị từ chối. Đây là lời nguyền về chiều kích cho lấy mẫu từ chối.

@@ -18,7 +18,7 @@
 
 Bài học 08 dạy bạn giảm gradient, động lực và Adam. Những người tối ưu hóa đi xuống dốc trên bất kỳ bề mặt nào. Nhưng họ không có đảm bảo. giảm gradient trên một cảnh quan không ngón có thể rơi vào mức tối thiểu địa phương xấu, bị mắc kẹt trên một điểm saddle, hoặc dao động mãi mãi. Bạn đã sử dụng nó dù sao vì mạng thần kinh không ngón và không có lựa chọn nào khác.
 
-Nhưng nhiều vấn đề trong máy học đều ngập cong. Lịch ngược tuyến tính, ngập cong logistics, SVMs, LASSO, ngập cong. Đối với những vấn đề này, có một cái gì đó mạnh hơn: tối ưu hóa với các đảm bảo toán học. Một vấn đề ngập cong có chính xác một thung lũng. Bất kỳ thuật toán nào đi xuống đồi sẽ đạt được mức tối thiểu toàn cầu. Không cần khởi động lại. Không có lịch trình tốc độ học tập. Không có lời cầu nguyện.
+Nhưng nhiều vấn đề trong máy học đều ngập cong. Lịch ngược tuyến tính, trở lại hậu cần, SVM, LASSO, trở lại sườn. Đối với những thứ này, có một cái gì đó mạnh hơn tồn tại: tối ưu hóa với đảm bảo toán học. Một vấn đề cong không có thung lũng giả: mỗi mức tối thiểu địa phương là mức tối thiểu toàn cầu. Đối với một hàm ngọc trơn với tối thiểu, sự giảm gradient với kích thước bước phù hợp hội tụ với nó. Không cần khởi động lại. Không có lịch trình học tập. Không cầu nguyện.
 
 Việc hiểu sự ngập cong làm ba điều. Thứ nhất, nó cho bạn biết khi nào vấn đề của bạn là dễ dàng (ngập cong) so với khó khăn (không ngập cong). Thứ hai, nó cho bạn các công cụ nhanh hơn như phương pháp Newton cho các vấn đề ngập cong. Thứ ba, nó giải thích các khái niệm xuất hiện trong suốt ML: quy định hóa như một hạn chế, sự hai chiều trong SVM, và tại sao việc học sâu hoạt động mặc dù vi phạm mọi tính chất ngập cong tốt cho bạn.
 
@@ -91,13 +91,13 @@ Các định lý trung tâm của tối ưu hóa ngọc:
 
 **For a convex function, every local minimum is a global minimum.**
 
-Điều này có nghĩa là sự giảm gradient không thể bị mắc kẹt. Bất kỳ đường xuống đồi nào dẫn đến câu trả lời tương tự.
+Điều này có nghĩa là sự giảm gradient không thể bị mắc kẹt trong một mức tối thiểu địa phương xấu. Mỗi mức tối thiểu mà nó có thể đạt được đều có cùng một tổn thất. Đối với một hàm cong trơn có mức tối thiểu, sự giảm gradient với kích thước bước phù hợp được đảm bảo hội tụ đến giá trị tối ưu.
 
 ```mermaid
 graph LR
     subgraph "Convex: ONE answer"
         direction TB
-        C1["Loss surface has a single valley"] --> C2["Gradient descent ALWAYS finds the global minimum"]
+        C1["Loss surface has no false valleys"] --> C2["Gradient descent with a suitable step converges to the global minimum"]
     end
     subgraph "Non-convex: MANY traps"
         direction TB
