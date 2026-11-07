@@ -16,7 +16,7 @@
 
 ## 问题
 
-第17课是测量方法.第30课是测量2026年状态.2024年到2025年底之间情况发生了重大变化:每个领域都跨越了2024年框架未预测的门.
+第17课是测量方法. 第30课是测量2026年状态.2024年到2025年底之间情况发生了重大变化:四个领域中的三个跨越了2024年框架未预测的门.
 
 ## 概念
 
@@ -47,6 +47,8 @@
 - 机器人编码是攻击自动化原始的.之前的人工智能网络援助仅限于代码片段水平;机器人工作流程集成侦察,利用,后利用和泄密.
 - 未来的能力增长将减少这一数量.
 - 防卫双重用途:OpenAI的"可靠访问"试点提供了检查的安全组织 (建立的事件响应公司,政府) 防卫能力访问.如果试点扩展,访问不对称性有利于防卫者.
+
+通过分析编译的代码,你可以开始进行防御. 第13阶段的反向工程轨道教你自己构建的程序,只有静态分析:[Lesson 13.32](../../../13-tools-and-protocols/32-program-anatomy-elf-from-scratch/docs/en.md)拆除[Lesson 13.33](../../../13-tools-and-protocols/33-disassembly-and-control-flow/docs/en.md)转换为伪代码[Lesson 13.34](../../../13-tools-and-protocols/34-lifting-to-pseudocode/docs/en.md)根据" 证据"的数据,[Lesson 13.35](../../../13-tools-and-protocols/35-evidence-confidence-and-unknowns/docs/en.md)现在,我们要去.[Inside a Decompiler](https://aiengineeringfromscratch.com/inside-a-decompiler)机器显示一个函数的全部管道. 执行这个工作的代理需要同一个账本,因为一个自信的解译仍然可以依赖于猜测.
 
 ### 核电
 
