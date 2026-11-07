@@ -16,7 +16,7 @@
 
 ## Sorun
 
-Standart softmax dikkat, matematik özelliklerine sahip ve bu da ölçekte bir operasyonal baş ağrısına dönüşür.`q`, dikkat ağırlıkları `softmax(qK^T / sqrt(d))`Softmax asla tam sıfırlar üretemez  her eşleşmeyen token bazı pozitif kütle elde eder. O kalan kütle gürültüdür ve bağlam uzunluğu ile ölçebilir. 128k jetonlarda, her eşleşmeyen jeton sadece % 0.001% olasılığı alırsa bile, bunların toplamının yaklaşık % 127.999'ünü birleştirir.
+Standart softmax dikkat, matematik özelliklerine sahip ve bu da ölçekte bir operasyonal baş ağrısına dönüşür.`q`, dikkat ağırlıkları `softmax(qK^T / sqrt(d))`Softmax asla tam sıfırlar üretemez: her eşleşmeyen token bazı pozitif kütle elde eder. Bu kalan kütle gürültüdür ve bağlam uzunluğu ile ölçebilir. 128k tokenlerde, her eşleşmeyen token sadece % 0.0001 olasılığı alırsa bile, bunların toplamının yaklaşık % 13'ünü toplamda 127.999'ü sağlar.
 
 Empirik olarak bu dikkat başı müdahalesi olarak ortaya çıkar: uzun bağlamlı RAG'de halüsinasyonlu alıntılar, 100k işaretini almak görevlerinde ortalama başarısızlıklar ve 32k'den fazla iğne-haystack referanslarında ince doğruluk bozulması. Farklı Transformatör kağıdı (arXiv:2410.05258, ICLR 2025) boşluğu ölçtü: DIFF Transformatörler daha düşük karmaşıklığa, daha yüksek uzun bağlam doğruluğuna ve aynı boyutdaki temel çizgilerden daha az halüsinasyona sahipti.
 

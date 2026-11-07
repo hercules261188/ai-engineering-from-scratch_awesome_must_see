@@ -77,10 +77,10 @@ Mamba katmanları kendileri konum farkındadır (tekrarlanma yoluyla). Mamba tab
 
 Jamba-1 şekli için (32 katman: 28 Mamba + 4 Dikkat, gizlenmiş 4096, 32 dikkat başlığı):
 
-- KV önbelleği (yalnızca dikkat katmanları): `2 * 4 * 32 * 128 * 256k * 2 = 8.4 GB`Sadece 4 dikkat katmanı katkı sağlar.
+- KV önbelleği (yalnızca dikkat katmanları): `2 * 4 * 32 * 128 * 256k * 2 = 16 GB`Bu sayede, Jamba kağıdında bulunan rakam 4 GB'ye ulaşır.
 - SSM durumu: `28 * hidden * state_size`Bu, bir katman için sabit bir boyut, dizilerin uzunluğu ile ölçeklenmemektedir.`28 * 4096 * 16 * 2 = 3.7 MB`- Toplam.
 
-32 katlı saf bir Transformer ile karşılaştırın, aynı gizli, 32 başlı tam MHA:`2 * 32 * 32 * 128 * 256k * 2 = 128 GB`KV önbelleğinin 8 kat azalma.`2 * 32 * 8 * 128 * 256k * 2 = 32 GB`Jamba'nın 1:7 hibrid 16 GB'lı haliyle 2 kat daha küçük.
+32 katlı saf bir Transformer ile karşılaştırın, aynı gizli, 32 başlı tam MHA:`2 * 32 * 32 * 128 * 256k * 2 = 128 GB`KV önbelleğinin 8 kat azalma.`2 * 32 * 8 * 128 * 256k * 2 = 32 GB`), 16 GB'da 32 KV başlığı olan 1:7 hibrid hala 2 kat daha küçüktür.
 
 AI21'in "tek 80GB GPU'da 256k bağlam" olarak anlamı budur. "Tüm MHA saf bir Transformer'ın KV önbelleği uyum sağlamaz; hatta bir GQA temel hattı ağırlıklar ve etkinleştirmeler için yer bırakmaz; Jamba'nın yapması gerekir.
 

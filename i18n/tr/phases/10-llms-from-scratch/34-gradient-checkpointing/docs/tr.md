@@ -11,7 +11,7 @@
 
 Bir transformatör eğitimi, her katman için geriye ayrılmış her operasyonun girişlerini saklar: dikkat girişleri, Q/K/V projeksiyonları, softmax çıkışı, FFN girişleri, norm çıkışları ve kalan akım. Gizli boyutlu bir katman için `d`, dizi uzunluğu `L`, parti`B`Bu , emir üzerine .`12 * B * L * d`katman başına yüzen.
 
-- Evet .`d=8192, L=8192, B=1`Bu, BF16'da katman başına 800 MB'dir. 64 katlı bir model 51 GB aktivasyonlara sahiptir.`L^2`(bkz: baş başına) ve tensor paralel kısmi kopyaları oluşturmadan önce.
+- Evet .`d=8192, L=8192, B=1`Bu, yaklaşık 805M değerleri veya BF16'da 1.6 GB/katman. 64 katlı bir model yaklaşık 103 GB aktivasyonlar içerir.`L^2`(bkz: baş başına) ve tensor paralel kısmi kopyaları oluşturmadan önce.
 
 İki taraflı fatur: BF16 ağırlıkları artı optimizer durumu 80GB'ye uygun olabilir, ancak etkinleştirmeler sizi öteye itebilir. Gradient kontrol noktası (aka activation recalculation) standart düzeltme. Çoğu etkinleştirmeyi bırakın; geriye dönerken ileriyi tekrar yapın.
 

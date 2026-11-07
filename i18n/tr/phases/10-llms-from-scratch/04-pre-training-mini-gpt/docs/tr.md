@@ -222,6 +222,10 @@ Bir eğitim adım:
 
 ## Yapın
 
+```figure
+iso-machine {"machine":"mini-gpt"}
+```
+
 ### Adım 1: Katman Ekle
 
 Token yerleşimleri, 50.257 olası tokenin her birini 768 boyutlu bir vektöre haritasıyor. Konum yerleşimleri, her tokenin sırada nerede yer aldığı hakkında bilgi ekliyor.
