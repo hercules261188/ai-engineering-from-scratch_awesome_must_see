@@ -1,6 +1,6 @@
 # من CLIP إلى BLIP-2  Q-Former كجسر التنقل
 
-> CLIP يصف الصورة والنص ولكن لا يمكن أن تولد العناوين الرئيسية أو الإجابة على الأسئلة أو إجراء محادثة. حل BLIP-2 (Salesforce، 2023) ذلك مع جسر صغير قابل للتدريب: 32 متجهة استفسار قابلة للتعلم تلتحق بميزات ViT المجمدة عن طريق الانتباه المتقاطع، ثم يقع مباشرة في تدفق مدخل LLM المجمد. 188 مليون مبرمير من الجسر ربط 11B LLM إلى ViT-g/14. كل VLM القائم على المكيّف حتى 2026  MiniGPT-4, InstructBLIP، أقارب LLaVA  هو نَسْل. هذه الدروس تقرأ بنية Q-Former ، وتفسير تدريبها المرحليين ، وبناء نسخة لعبة التي تغذي الرموز المرئية في جهاز تشكيل نص تجمد.
+> CLIP يصف الصورة والنص ولكن لا يمكن أن تولد العناوين الرئيسية أو الإجابة على الأسئلة أو إجراء محادثة. حل BLIP-2 (Salesforce، 2023) ذلك مع جسر صغير قابل للتدريب: 32 متجهة استفسار قابلة للتعلم تلتحق بميزات ViT المجمدة عن طريق الانتباه المتقاطع، ثم يقع مباشرة في تدفق مدخل LLM المجمد. 188 مليون مبرمير من الجسر ربط ViT-g/14 إلى LLMs المجمدة كبيرة مثل 11B Flan-T5-XXL. كل VLM القائم على المكيّف حتى 2026  MiniGPT-4, InstructBLIP، أقارب LLaVA  هو نَسْل. هذه الدروس تقرأ بنية Q-Former ، وتفسير تدريبها المرحليين ، وبناء نسخة لعبة التي تغذي الرموز المرئية في جهاز تشكيل نص تجمد.
 
 **Type:** Build
 **Languages:** Python (stdlib, cross-attention + learnable-query demo)
@@ -117,7 +117,7 @@ modality-projection
 
 4. اقرأ القسم 3.2 من ورقة BLIP-2 (arXiv:2301.12597) حول كيفية تشغيل Q-Former. شرح لماذا تشغيل من قاعدة BERT (ليس عشوائية) يسرع التقارب.
 
-5. للفيديو لمدة 10 دقائق عند 1 FPS تم اختباره إلى 60 إطارًا ، احسب تكلفة رمز لكل إطار عند (Q-Former → 32 رمزا / إطار) مقابل (مُرسل MLP → 576 رمزا / إطار). أي منها يناسب نافذة سياق LLM ذات رمزا 128k؟
+5. للفيديو لمدة 10 دقائق عند 1 FPS تم اختباره إلى 60 إطارًا ، احسب تكلفة رمز لكل إطار عند (Q-Former → 32 رمزا / إطار) مقابل (مقاطع MLP → 576 رمزا / إطار). كم عدد الإطارات التي يمكن أن يتناسب بها كل جسر في نافذة سياق LLM ذات رمزا 128k قبل أن يحصل النص المطلوب على أي مساحة؟
 
 ## الشروط الرئيسية
 
@@ -132,7 +132,7 @@ modality-projection
 | Two-stage pretraining | "Representation then generative" | Stage 1 trains Q-Former alone (ITC/ITM/ITG); Stage 2 attaches frozen LLM and trains only the projection + Q-Former |
 | Frozen backbone | "Do not finetune" | The vision encoder and LLM weights are fixed; only the bridge trains |
 | Projection head | "Linear to LLM dim" | Final linear layer mapping Q-Former output to the LLM's embedding dimension |
-| Perceiver resampler | "Flamingo's version" | Similar learnable-query cross-attention, used by Flamingo at every layer rather than as a single bridge |
+| Perceiver resampler | "Flamingo's version" | Similar learnable-query cross-attention; Flamingo runs it once per image to make fixed latents, then reads them through gated cross-attention at every LLM layer |
 
 ## المزيد من القراءة
 
