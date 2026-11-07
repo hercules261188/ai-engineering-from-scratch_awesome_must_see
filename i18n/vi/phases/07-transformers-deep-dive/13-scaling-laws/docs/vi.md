@@ -40,12 +40,12 @@ L(N, D) = \frac{A}{N^\alpha} + \frac{B}{D^\beta} + E
 - $E \approx 1.69$, mức tối đa mất mát không thể giảm.
 - $A \approx 406$- $B \approx 411$- Tôi không biết.
 
-Hai thuật ngữ giao dịch với nhau khi bạn mở rộng quy mô.$N$với tính toán cố định ($C = 6ND$) và giải quyết:
+Hai thuật ngữ giao dịch với nhau khi bạn mở rộng quy mô.$N$với tính toán cố định ($C = 6ND$(văn) và giải quyết.$\alpha$và $\beta$ở trên, các biểu tượng xuất hiện ở khoảng 0,45 cho $N$và 0,55 cho $D$, do đó tỷ lệ tối ưu chính xác thay đổi chậm với ngân sách; `code/main.py`Các phương pháp đầu tiên của bài báo, đo lường tối ưu trực tiếp, đặt cả hai biểu tượng ở khoảng 0,5. Điều đó cho ra quy tắc thực nghiệm của một tỷ lệ cố định.$D = 20N$trong $C = 6ND$Và quy tắc ngón tay là:
 
 ```math
 \begin{aligned}
-N_{\text{opt}} &\approx 0.6 \times (C/6)^{0.5} \\
-D_{\text{opt}} &\approx 0.6 \times (C/6)^{0.5} \\
+N_{\text{opt}} &\approx 0.22 \times (C/6)^{0.5} \\
+D_{\text{opt}} &\approx 4.5 \times (C/6)^{0.5} \\
 D_{\text{opt}} / N_{\text{opt}} &\approx 20
 \end{aligned}
 ```

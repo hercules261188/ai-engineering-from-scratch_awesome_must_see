@@ -80,7 +80,7 @@ Một khối với `d_model = d`và mở rộng FFN `r`- Có thể là:
 - FFN (SwiGLU): `3 · d · (r · d)`≈ ≈`3rd²`
 - Các tiêu chuẩn: không đáng kể
 
-Tại `d = 4096, r = 2.6, layers = 32`(khoảng Llama 3 8B), tổng số: `32 · (4·4096² + 3·2.6·4096²) ≈ 32 · (16 + 32) M = ~1.5B parameters per layer × 32 ≈ 7B`(cộng với các bản nhúng và đầu)
+Tại `d = 4096, r = 2.6, layers = 32`(khoảng Llama 3 8B), tổng số: `32 · (4·4096² + 3·2.6·4096²) ≈ 32 · (67M + 131M) ≈ 32 · 198M ≈ 6.3B`các thông số trong các khối, cộng với khoảng 1B cho đầu nhúng và đầu ra (128K từ ngữ × 4096, không bị ràng buộc).`r = 3.5`), chuyển các thông số từ sự chú ý đến FFN nhưng giữ tổng số gần 8B.
 
 ## Hãy xây dựng nó
 

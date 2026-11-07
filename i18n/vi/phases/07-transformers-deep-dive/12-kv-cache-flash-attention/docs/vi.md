@@ -26,32 +26,32 @@ Hai cách tối ưu hóa, cả hai từ Dao et al., đã đẩy suy luận biên
 
 ### KV cache toán học
 
-Mỗi lớp giải mã, mỗi token, mỗi đầu:
+Mỗi lớp giải mã, mỗi token, trên tất cả các đầu KV:
 
 ```
-bytes_per_token_per_layer = 2 * d_head * dtype_size
+bytes_per_token_per_layer = 2 * n_kv_heads * d_head * dtype_size
                           ^
                           K and V
 ```
 
-Đối với mô hình 7B với 32 lớp, 32 đầu, d_head=128, fp16:
+Đối với mô hình 7B với 32 lớp, 32 đầu (tất cả được sử dụng cho K và V), d_head=128, fp16:
 
 ```
-per token per layer = 2 * 128 * 2 = 512 bytes
-per token (32 layers) = 16 KB
-per 32K context = 512 MB
+per token per layer = 2 * 32 * 128 * 2 = 16384 bytes (16 KiB)
+per token (32 layers) = 512 KiB
+per 32K context = 16 GiB
 ```
 
 Đối với Llama 3 70B (80 lớp, d_head=128, GQA với 8 đầu KV):
 
 ```
-per token per layer = 2 * 8 * 128 * 2 = 4096 bytes (4 KB)
-per 32K context = 10.4 GB
+per token per layer = 2 * 8 * 128 * 2 = 4096 bytes (4 KiB)
+per 32K context = 10 GiB
 ```
 
-Đó là lý do tại sao Llama 3 70B ở 128K cần hầu hết 40 GB A100 chỉ cho bộ nhớ cache KV ở kích thước batch 1.
+10 GiB ở 32K tăng lên 40 GiB ở 128K, đó là toàn bộ 40 GB A100 chỉ cho bộ nhớ cache KV ở kích thước lô 1.
 
-**GQA is the KV-cache win.**MHA với 64 đầu sẽ là 32 GB. MLA nén hơn nữa.
+**GQA is the KV-cache win.**MHA với 64 đầu KV sẽ lớn hơn 8 lần, khoảng 80 GiB ở 32K. MLA nén hơn nữa.
 
 Nhổ kích thước và xem kích thước cache di chuyển. Nhấn chiều dài chuỗi hoặc hàng lên và xem nó thổi nhanh như thế nào qua một GPU duy nhất:
 
@@ -124,6 +124,10 @@ flash-attention-memory
 
 ## Hãy xây dựng nó
 
+```figure
+iso-machine {"machine":"kv-cache"}
+```
+
 Nhìn xem`code/main.py`Chúng tôi thực hiện:
 
 1. Một kẻ ngây thơ .$O(N^2)$decoder tăng trưởng.
@@ -172,9 +176,9 @@ def tiled_softmax_dot(q, K, V, tile=4):
 
 Khả năng phát ra bit giống nhau với `softmax(qK) V`trong một lần chụp, nhưng bất cứ lúc nào bộ làm việc là một `tile × d_head`khối, không phải toàn bộ `N × d_head`- Tôi không biết.
 
-### Bước 3: So sánh mã hóa ngây thơ so với mã hóa được lưu trữ trong caching trên thế hệ 100 token
+### Bước 3: So sánh mã hóa ngây thơ với mã hóa cache
 
-- Lưu ý các hoạt động chú ý.$O(N^2)$= 5050. $O(N)$Mã in cả hai.
+Biết tính các hoạt động chú ý. Cả hai máy giải mã đều so sánh khóa truy vấn tương tự: bước `t`tham dự hơn `t`token, do đó tổng số là 1 + 2 + ... + N = N(N+1)/2. Mã sử dụng N = 10 và in 55 cho mỗi decoder. Đối với thế hệ 100 token, cả hai đều so sánh 5050. Cache lưu lại các dự đoán K và V. Không có cache, mỗi bước tính lại K và V cho tiền tố đầy đủ, vì vậy một thế hệ 100 token tính toán 5050 trạng thái token. Với bộ nhớ cache, K và V của mỗi token được tính một lần, vì vậy cùng một thế hệ tính toán 100 trạng thái token.
 
 ## Sử dụng nó
 

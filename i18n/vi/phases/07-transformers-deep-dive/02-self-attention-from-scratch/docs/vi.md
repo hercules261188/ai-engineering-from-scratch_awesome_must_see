@@ -169,6 +169,10 @@ softmax-attention-scaling
 
 ## Hãy xây dựng nó
 
+```figure
+iso-machine {"machine":"self-attention"}
+```
+
 ### Bước 1: Softmax từ đầu
 
 Softmax chuyển đổi logits nguyên liệu thành xác suất.

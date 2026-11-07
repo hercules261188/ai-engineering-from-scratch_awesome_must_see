@@ -1,6 +1,6 @@
 # Sự chú ý Các biến thể  cửa sổ trượt, Sparse, Differential
 
-> Tất cả sự chú ý là một vòng tròn. Mỗi token nhìn thấy mỗi token, và bộ nhớ trả giá. Bốn biến thể xoay hình dạng của vòng tròn và phục hồi một nửa chi phí.
+> Tất cả sự chú ý là một vòng tròn. Mỗi token nhìn thấy mỗi token, và bộ nhớ trả giá. Ba biến thể xoay hình dạng của vòng tròn và phục hồi một nửa chi phí.
 
 **Type:** Build
 **Languages:** Python
