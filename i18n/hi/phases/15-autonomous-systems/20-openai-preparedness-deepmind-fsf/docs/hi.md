@@ -30,7 +30,7 @@ v2 में कुंजी फ्रेमिंगः अनुसंधा�
 
 संरचनाः
 
-- **Critical Capability Levels (CCLs)**: पांच क्षेत्रों में क्षमता की सीमाएंः साइबर, बायो, एमएल आरएंडडी, सीबीआरएन, स्वायत्तता (एमएल आरएंडडी और साइबर में फंटा हुआ) ।
+- **Critical Capability Levels (CCLs)**: क्षमता सीमाओं तीन समूहों मेंः दुरुपयोग (सीबीआरएन, साइबर, हानिकारक हेरफेर), एमएल अनुसंधान एवं विकास, और एक खोजात्मक गलत संरेखण ट्रैक। स्वायत्तता अपना डोमेन नहीं है; यह एमएल अनुसंधान एवं विकास और साइबर में फटा हुआ है।
 - **Tracked Capability Levels**: अप्रैल 2026 में अतिरिक्त क्षुद्रता जोड़ी गई। ठोस उदाहरणः एमएल आर एंड डी स्वायत्तता स्तर 1 = प्रतिस्पर्धी लागत बनाम मानव + एआई उपकरणों के साथ एआई आर एंड डी पाइपलाइन को पूरी तरह से स्वचालित करें।
 - **Deceptive alignment monitoring**: साधन-कारण के दुरुपयोग के लिए स्वचालित निगरानी के लिए स्पष्ट प्रतिबद्धता।
 
@@ -94,7 +94,7 @@ a5-tracked-vs-research
 | Tracked Category | "Mandatory mitigation" | Triggers Capabilities + Safeguards Reports; SAG review |
 | Research Category | "Monitored only" | Tracked but no automatic mitigation; includes Long-range Autonomy |
 | Frontier Safety Framework | "DeepMind's scaling policy" | FSF v3 (Sept 2025) + Tracked Capability Levels (Apr 2026) |
-| CCL | "Critical Capability Level" | DeepMind threshold per domain (Cyber, Bio, ML R&D, CBRN) |
+| CCL | "Critical Capability Level" | DeepMind threshold per domain (CBRN, Cyber, Harmful Manipulation, ML R&D) |
 | ML R&D autonomy level 1 | "R&D automation" | Fully automate AI R&D pipeline at competitive cost |
 | Sandbagging | "Strategic underperformance" | Model underperforms on evals; in OpenAI Research Categories |
 | Instrumental reasoning | "Means-ends reasoning" | Reasoning about how to achieve goals; target of DeepMind monitoring |
