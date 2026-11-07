@@ -113,7 +113,7 @@ def rlhf_step(theta, ref, w, prompt, rng, eps=0.2, beta=0.1, lr=0.05):
 
 ### Passo 4: monitorar o KL
 
-Mediana de pista$\mathrm{KL}(\pi_\theta \Vert \pi_{\text{ref}})$Se passar,`~5-10`A política tem desviado muito de $\pi_{\text{SFT}}$ mais baixo $\beta$Este é o diagnóstico mais alto em real RLHF.
+Mediana de pista$\mathrm{KL}(\pi_\theta \Vert \pi_{\text{ref}})$Se passar,`~5-10`(KL por resposta em nats, somada em tokens, registros unitários de TRL) a política se afastou muito de $\pi_{\text{SFT}}$: ou $\beta$é muito baixo (aumentar para retirar a política) ou a recompensa hacking está começando.
 
 ### Passo 5: receita de produção com TRL
 
