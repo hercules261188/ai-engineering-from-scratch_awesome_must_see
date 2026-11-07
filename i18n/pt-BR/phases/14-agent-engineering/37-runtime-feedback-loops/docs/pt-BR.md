@@ -106,7 +106,7 @@ O corredor é uma fina envolvente que sobrevive a cada migração de quadro porq
 2. Adicionar um`redaction`passo que desliza linhas correspondentes `^Bearer `ou `password=`Teste num registro de fixação.
 3. Total de limite`feedback_record.jsonl`tamanho de 1 MB rotando para `.1`- Não .`.2`Defenda a política de rotação.
 4. Adicionar um`parent_command_id`Então, as cadeias de retest são visíveis: qual comando produziu a entrada que o comando seguinte consumiu.
-5. Entra o JSONL em um pequeno TUI que destaca a última saída não zero.
+5. Enviar o JSONL em um pequeno TUI que destaca a última saída não zero.
 
 ## Termos-chave
 

@@ -3,7 +3,7 @@
 > Quatro primitivas: Agente, tarefa, tripulação, processo. Duas formas de nível superior: equipes (autônoma, colaboração baseada em papéis) e fluxos (evento-driven, determinista). CrewAI é a implementação de referência de 2026, e seus documentos são contundentes: "para qualquer aplicação pronta para produção, comece com um fluxo".
 
 **Type:** Learn + Build
-**Languages:** Python (stdlib)
+**Languages:** Python (with numpy)
 **Prerequisites:** Phase 14 · 12 (Workflow Patterns), Phase 14 · 14 (Actor Model)
 **Time:** ~75 minutes
 
@@ -14,8 +14,8 @@
 - Distinguir as equipas (baseadas em funções autônomas) das fluxos (determinísticas orientadas por eventos) e explicar a recomendação de produção dos docentes.
 - Ferramentas de fio com o `@tool`decorador e `BaseTool`Subclasse; razão sobre saídas estruturadas versus texto livre.
 - Nomear os quatro tipos de memória CrewAI e quando cada um paga.
-- Implementar uma equipe de três agentes (investigador, escritor, editor) que produz um resumo.
-- Determine os três modos de falha da CrewAI: "Inflação rápida", "imposto de gerente-LLM", "transmissões frágeis".
+- Implementar uma equipe de três agentes (investigador, escritor, editor) em Python simples que produz um breve.
+- Determine os quatro modos de falha da CrewAI: "Inflação rápida", "imposto de gerente", "transmissões frágeis", "Crew-as-prod".
 
 ## O problema
 
@@ -120,7 +120,7 @@ Ativar a tripulação com `memory=True`A memória é um dos lugares onde a CrewA
 - Orçamentos de latência subsegundo. Hierárquico adiciona viagens de ida e volta. Mesmo Sequential serializa instruções que incluem histórias de fundo e saídas anteriores.
 - Loops de agente único. Esqueça a estrutura; um loop de agente (Lessão 1) mais um registro de ferramentas é mais curto.
 
-A lição 17 (Agent Framework Tradeoffs) expõe isto numa matriz.
+A lição 28 (Orchestration Patterns) compara as topologias lado a lado.
 
 ### Forma de dependência
 
@@ -129,7 +129,7 @@ Independente da LangChain. Python 3.10 a 3.13.`uv`Contagem de estrelas: veja[cre
 ### Onde este padrão vai mal
 
 - **Prompt-bloat from backstories.**Uma história de fundo de 2000 palavras por agente e uma equipe de cinco agentes queima o orçamento contextual antes da primeira chamada de ferramenta. Mantenha as histórias de fundo abaixo de 200 palavras. Reutilize frases em todos os agentes; não repita o estilo da casa cinco vezes.
-- **Manager-LLM token tax.**O processo hierárquico adiciona uma chamada de LLM do gerente antes de cada chamada especialista. Em uma equipe de cinco tarefas que é de seis chamadas de LLM em vez de cinco, e a chamada do gerente carrega a lista completa de tarefas mais saídas anteriores.
+- **Manager-LLM token tax.**O processo hierárquico adiciona uma chamada de LLM do gerente antes de cada chamada especialista. Em uma equipe de cinco tarefas que é de dez chamadas de LLM em vez de cinco, e a chamada do gerente carrega a lista completa de tarefas mais saídas anteriores.
 - **Brittle handoffs.**A tarefa N's `expected_output`A tarefa N+1 diz que `context`O LLM produziu quatro, o agente ad-libs, resolveu com o agente de segurança.`output_pydantic`na tarefa N, então a tarefa N+1 lê um objeto digitado, não texto livre.
 - **Crew-as-prod.**A tripulação de forma livre enviada para a produção sem um envolvente de fluxo. A variabilidade de saída é alta; repetição é impossível; a chamada não pode diferenciar uma corrida ruim contra uma boa.
 
@@ -139,7 +139,7 @@ ae-crew-vs-flow
 
 ## Construí-lo
 
-`code/main.py`Implementa versões STDlib de ambas as formas mais uma tripulação de três agentes.
+`code/main.py`A única dependência fora da biblioteca padrão é numpy, para a similaridade ridicularizada.
 
 Forma:
 

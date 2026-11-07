@@ -1,6 +1,6 @@
 # O banco de trabalho num verdadeiro repo
 
-> Eleven lições de superfícies não vale nada se não sobreviverem ao contato com uma base de código real. Esta lição realiza a mesma tarefa duas vezes em um pequeno aplicativo de amostra: apenas de instrução versus guiada por banco de trabalho. Os números fazem o argumento.
+> Eleven lições de superfícies de banco de trabalho não vale nada se não sobreviverem ao contato com uma base de código real. Esta lição realiza a mesma tarefa duas vezes em um pequeno aplicativo de amostra: apenas de instrução versus guiado por banco de trabalho. Os números fazem o argumento.
 
 **Type:** Build
 **Languages:** Python (stdlib)

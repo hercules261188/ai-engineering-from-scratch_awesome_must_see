@@ -22,7 +22,7 @@ Os agentes passam por demonstrações. Eles falham na produção de maneiras que
 
 ### Três camadas de avaliação
 
-1. **Static benchmarks** SWE-bench Verificado para código (Lessão 19), WebArena/OSWorld para navegação / desktop (Lessão 20), GAIA para generalista (Lessão 19), BFCL V4 para uso de ferramentas (Lessão 06). Uso para comparação entre modelos e gating de regressão. Contaminação é real: SWE-bench+ encontrou vazamento de solução de 32,67%.
+1. **Static benchmarks** SWE-bench Verificado para código (Lessão 19), WebArena/OSWorld para navegação / desktop (Lessão 20), GAIA para generalista (Lessão 19), BFCL V4 para uso de ferramentas (Lessão 06). Uso para comparação entre modelos e fechamento de regressão. Contaminação é real: SWE-bench+ encontrou vazamento de solução de 32,67%.
 
 2. **Custom offline evals** a forma do seu produto:
    - LLM como juiz (Langfuse, Phoenix, Opik  Lição 24).
@@ -54,7 +54,7 @@ Este é o Auto-Refino (Lessão 05) generalizado. Qualquer fluxo de agentes que v
 
 ### A ligação da fase 14
 
-Cada lição da Fase 14 gera casos de avaliação:
+A maioria das lições na Fase 14 gera casos de avaliação.
 
 | Lesson | Eval case it generates |
 |--------|------------------------|
@@ -77,7 +77,7 @@ Cada lição da Fase 14 gera casos de avaliação:
 | 28 Orchestration | Supervisor routes to the right specialist |
 | 29 Runtime Shapes | DLQ handles N% failure |
 
-Se a sua equipa de avaliação tiver casos para cada um, já cobriu a Fase 14.
+Se a sua suite de avaliação tem um caso para cada linha, você cobriu o núcleo da Fase 14.
 
 ### Quando o desenvolvimento orientado pela avaliação falhar
 

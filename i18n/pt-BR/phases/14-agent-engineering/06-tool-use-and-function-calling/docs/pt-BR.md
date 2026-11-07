@@ -79,7 +79,7 @@ Regra de engenharia: tratar as identidades de correlação como suportes de carg
 
 ### Sandboxing
 
-A execução da ferramenta é a fronteira da caixa de areia. Veja a lição 09 para detalhes. Versão curta: cada ferramenta deve especificar a superfície de leitura/escrita, acesso à rede, tempo de saída, limite de memória.`run_shell(cmd)`é uma bandeira vermelha; especificamente `git_status()`É mais seguro.
+A execução da ferramenta é a fronteira da caixa de areia. Veja a Fase 13 · 26 para detalhes. Versão curta: cada ferramenta deve especificar a superfície de leitura / escrita, acesso à rede, tempo de saída, limite de memória.`run_shell(cmd)`é uma bandeira vermelha; especificamente `git_status()`É mais seguro.
 
 ```figure
 tool-routing
