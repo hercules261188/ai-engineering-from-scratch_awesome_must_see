@@ -68,7 +68,7 @@ O problema não é o estado compartilhado em si.**without provenance and without
 
 1. **Attribute provenance on every write.**Cada entrada em registros estaduais compartilhados quem a escreveu, quando, sob que prompt e (se aplicável) qual a fonte citada pelo agente.
 2. **Version writes; treat them as append-only.**Uma correcção é uma nova entrada que substitui a antiga, não uma atualização no local.
-3. **Keep at least one agent that cannot write to shared state.**Um agente de verificação de somente leitura recolhe amostras de entradas, recorre a fontes e sinaliza inconsistências.
+3. **Keep at least one agent that cannot write to shared state.**Um agente de verificação de somente leitura mostra entradas, recorre fontes e sinaliza inconsistências. Ele ainda lê o pool, então pode ser enganado por uma entrada ruim, mas verifica cada entrada contra a fonte original e não pode escrever, então seus veredictos nunca alimentam um fato envenenado de volta ao estado compartilhado.
 
 ### Precedente de quadro negro (Hayes-Roth, 1985)
 

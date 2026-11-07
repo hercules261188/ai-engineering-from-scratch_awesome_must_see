@@ -42,7 +42,7 @@ Modo de falha: os críticos crescem com N agentes (a entrada inclui todas as aç
 
 ### QMIX (2018)  decomposição de valor
 
-A recompensa global é a soma de uma função monótona de valores Q por agente:
+A cooperação é a única base de acção comum.`Q_tot`é uma função de mistura monótona de valores Q por agente:
 
 ```math
 Q_{\text{tot}}(\tau, a) = f\big(Q_1(\tau_1, a_1), \ldots, Q_n(\tau_n, a_n)\big), \quad \frac{\partial f}{\partial Q_i} \ge 0
