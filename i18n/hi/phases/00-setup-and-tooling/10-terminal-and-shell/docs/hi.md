@@ -97,7 +97,7 @@ python train.py > output.log 2> errors.log
 python train.py > train_full.log 2>&1
 ```
 
-तीन पुनर्निर्देशन आप की जरूरत हैः
+चार पुनर्निर्देश और पाइप आप की जरूरत हैः
 
 | Symbol | What it does |
 |--------|-------------|

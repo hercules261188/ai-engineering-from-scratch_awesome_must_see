@@ -55,7 +55,13 @@ s0-gpu-dispatch
 nvidia-smi
 ```
 
-CUDA के साथ PyTorch स्थापित करें:
+पीटॉर्च को CUDA के साथ स्थापित करें. लिनक्स पर डिफ़ॉल्ट व्हील CUDA के साथ जहाज करता है. विंडोज पर, pytorch.org पर चयनकर्ता से CUDA कमांड कॉपी करें.
+
+```bash
+pip install torch torchvision torchaudio
+```
+
+तो जांचें कि PyTorch GPU देखता हैः
 
 ```python
 import torch
