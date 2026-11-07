@@ -34,7 +34,7 @@ Dado$N$amostras $x[0], x[1], \ldots, x[N-1]$, a Transformação de Fourier Discr
 X[k] = \sum_{n=0}^{N-1} x[n] \, e^{-2\pi i k n/N} \qquad \text{for } k = 0, 1, \ldots, N-1
 ```
 
-Cada um .$X[k]$É um número complexo.$\lvert X[k] \rvert$Diz-lhe a amplitude de frequência .$k$- A fase .$\angle X[k]$Diz-lhe a fase de compensação dessa frequência.
+Cada um .$X[k]$É um número complexo.$\lvert X[k] \rvert$é proporcional à amplitude de frequência $k$Sem normalização, um sino real de amplitude.$A$Que cai exactamente no bin .$k$dá$\lvert X[k] \rvert = AN/2$, então divide por $N/2$Para ler a amplitude.$\angle X[k]$Diz-lhe a fase de compensação dessa frequência.
 
 A principal ideia:$e^{-2\pi i k n/N}$é um fator rotativo em frequência $k$O DFT calcula a correlação entre o sinal e cada um dos $N$Se o sinal contém energia em frequência$k$Se não, é quase zero.
 
@@ -103,7 +103,7 @@ graph TD
     end
 ```
 
-O FFT exige que o comprimento do sinal seja de 2 potências. Na prática, os sinais são empurrados a zero para a próxima potência de 2.
+O radix-2 FFT construído aqui é mais rápido quando o comprimento do sinal é um poder de 2. Sempre que um sub-problema tem comprimento ímpar, ele cai de volta à planície `dft`, por isso os sinais são muitas vezes empurrados a zero para a próxima potência de 2 para a velocidade.`numpy.fft`Os algoritmos de radix mistos são mais rápidos em longitudes com pequenos fatores primos.
 
 ### Análise espectral
 

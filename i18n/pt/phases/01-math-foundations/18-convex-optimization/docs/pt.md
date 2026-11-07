@@ -18,7 +18,7 @@
 
 A lição 08 ensinou-lhe descida de gradiente, impulso e Adão. Esses optimistas caminham descendo em qualquer superfície. Mas eles não têm garantias.
 
-Mas muitos problemas no aprendizado de máquina são convexos. Regressão linear, regressão logística, SVMs, LASSO, regressão de crista. Para estes, existe algo mais forte: otimização com garantias matemáticas. Um problema convexo tem exatamente um vale. Qualquer algoritmo que caminhe para baixo vai atingir o mínimo global. Não é necessário reiniciar. Não há horários de taxa de aprendizagem. Não há oração.
+Mas muitos problemas no aprendizado de máquina são convexos. Regressão linear, regressão logística, SVMs, LASSO, regressão de cresta. Para estes, existe algo mais forte: a otimização com garantias matemáticas. Um problema convexo não tem valles falsos: cada mínimo local é um mínimo global. Para uma função convexa lisa que tenha um mínimo, converge-se a ela a descida de gradiente com um tamanho adequado de degrau. Não é preciso reiniciar. Não há horários de aprendizagem. Sem oração.
 
 Compreender a convexidade faz três coisas. Primeiro, ele diz quando o seu problema é fácil (convexo) versus difícil (não convexo). Segundo, ele lhe dá ferramentas mais rápidas como o método de Newton para problemas convexos. Terceiro, ele explica conceitos que aparecem em todo o ML: regularização como restrição, dualidade em SVMs, e por que o aprendizado profundo funciona apesar de violar todas as propriedades agradáveis que a convexidade lhe dá.
 
@@ -91,13 +91,13 @@ O teorema central da otimização convexa:
 
 **For a convex function, every local minimum is a global minimum.**
 
-O algoritmo é garantido para convergir para a solução ideal.
+O que significa que a descida de gradiente não pode ficar presa em um mínimo local ruim. Cada mínimo que pode alcançar tem a mesma perda. Para uma função convexa lisa que tem um mínimo, a descida de gradiente com um tamanho de degrau adequado é garantida para convergir para o valor ideal.
 
 ```mermaid
 graph LR
     subgraph "Convex: ONE answer"
         direction TB
-        C1["Loss surface has a single valley"] --> C2["Gradient descent ALWAYS finds the global minimum"]
+        C1["Loss surface has no false valleys"] --> C2["Gradient descent with a suitable step converges to the global minimum"]
     end
     subgraph "Non-convex: MANY traps"
         direction TB

@@ -46,7 +46,7 @@ w = w - \text{lr} \cdot \text{gradient}
 
 ```mermaid
 graph TD
-    A["* Starting point (high loss)"] --> B["Moving downhill along gradient"]
+    A["* Starting point (high loss)"] --> B["Moving downhill, against the gradient"]
     B --> C["Approaching minimum"]
     C --> D["o Minimum (low loss)"]
 ```
@@ -158,7 +158,7 @@ Horários comuns:
 
 ### Convexo vs não convexo
 
-Uma função convexa tem um mínimo. descida gradiente sempre encontra.$f(x) = x^2$é convexa.
+Uma função convexa não tem mínimos locais ruins: cada mínimo local é um mínimo global. Para uma função convexa lisa que tem um mínimo, a descida de gradiente com uma taxa de aprendizagem pequena o suficiente converge para ele. Um tipo quadrático $f(x) = x^2$é convexa e o seu mínimo é único.
 
 As funções de perda de rede neural não são convexas.
 

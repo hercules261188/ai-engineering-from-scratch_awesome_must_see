@@ -202,7 +202,7 @@ Propriedades:
 2. Características de classificação por pontuação MI.
 3. Mantém o topo .$k$características.
 
-Isto funciona para qualquer relação entre característica e alvo -- linear, não linear, monótono ou não. A correlação só capta relações lineares.
+Isso funciona para qualquer relação entre característica e alvo - linear, não linear, monótono ou não. A correlação de Pearson só capta relações lineares.
 
 | Method | Detects | Computational cost | Handles categorical? |
 |--------|---------|-------------------|---------------------|
