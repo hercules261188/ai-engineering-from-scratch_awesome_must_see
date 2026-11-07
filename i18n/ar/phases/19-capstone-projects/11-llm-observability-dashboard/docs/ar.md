@@ -85,7 +85,7 @@ ce-otel-drift
 
 8. **Alerting chain.**يقرأ مصدر Prometheus مجموعات درجة التقييم وفرص المدة المتأخرة؛ أورترمانجر طرق إلى Slack للحصول على التحذيرات و PagerDuty للانتهاكات الحرجة.
 
-9. **Regression probe.**حقن خطأ: يبدأ الروبوت المكتشف في تسريب SSNs مزيفة في 1% من الأحيان. قياس MTTR: من خطأ نشر إلى تنبيه Slack.
+9. **Regression probe.**حقن خطأ: يبدأ الروبوت المكتشف في تسريب SSNs مزيفة في 1% من الوقت. قياس الوقت للكشف (MTTD): من خطأ نشر إلى تنبيه Slack. الكشف هو الجزء من MTTR المخصص للوحة التحكمية؛ والإصلاح وإعادة نشر يأتي بعد ذلك.
 
 ## استخدمها
 
@@ -106,7 +106,7 @@ $ curl -X POST https://my-otel-collector/v1/traces -d @trace.json
 |:-:|---|---|
 | 25 | Trace-schema coverage | Number of SDK families producing canonical GenAI spans (target: 6+) |
 | 20 | Eval correctness | DeepEval / RAGAS scores vs hand-labeled set |
-| 20 | Dashboard UX | MTTR on injected regression (under 5 minutes target) |
+| 20 | Dashboard UX | MTTD on injected regression (under 5 minutes target) |
 | 20 | Cost / scale | Sustained ingest at 1k spans/sec without backlog |
 | 15 | Alerting + drift detection | Prometheus/Alertmanager chain exercised end to end |
 | **100** | | |
