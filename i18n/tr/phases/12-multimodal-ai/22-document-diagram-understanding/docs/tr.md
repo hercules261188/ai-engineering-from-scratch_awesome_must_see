@@ -74,7 +74,7 @@ LayoutLMv3 OCR tabanlı belge anlayışının zirvesidir. Formlar ve faturalarda
 
 ### Doküman (2023)
 
-DocLLM (Wang et al., arXiv:2401.00908) LayoutLM'in doğuşcu kardeşidir.
+DocLLM (Wang et al., arXiv:2401.00908, 31 Aralık 2023'te gönderilmiş, bu nedenle kimlik bir Ocak 2024 önlüğü taşıyor) LayoutLM'nin üretici kardeşidir.
 
 ### 3. dönem  VLM-devli (2024+)
 
@@ -83,7 +83,7 @@ DocLLM (Wang et al., arXiv:2401.00908) LayoutLM'in doğuşcu kardeşidir.
 - LLaVA-NeXT 336-til AnyRes küçük belgeler için çalışır.
 - Qwen2.5VL dinamik çözünürlük 2048+ piksel doğuştan ele alıyor.
 - Claude Opus 4.7 2576px belgeleri destekler.
-- PaliGemma 2 (April 2025) özel olarak belgelere + el yazısına yönelik eğitimler sunar.
+- PaliGemma 2 (Aralık 2024) özel olarak belgeler + el yazısı için trenler.
 
 VLM-native ve OCR-pipeline arasındaki boşluk hızla kapatıldı. 2026 yılına kadar VLM-native:
 

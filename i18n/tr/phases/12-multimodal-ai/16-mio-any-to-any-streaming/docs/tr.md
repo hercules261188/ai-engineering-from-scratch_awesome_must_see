@@ -21,7 +21,7 @@ Birleştirilmiş multimodal model iddia etmek kolaydır ve ölçekte inşa etmek
 Mühendislik zorlukları:
 
 - Tokenizers her modalite için var olmalıdır, yeniden inşa için yeterince kayıpsız sıkıştırmalı ve transformatör tüketebilecek hızlarda token üretmelidir.
-- Tek bir kelime birikimi metin (32k+), görüntü (16k+), konuşma (4k+), müzik (8k+) için alan ayırmalıdır.
+- Tek bir kelime birikimi metin (32k+), görüntü (8k+), konuşma (4k+), müzik (8k+) için alan ayırmalıdır.
 - Eğitim verileri her giriş-çıktı çiftini kapsamalıdır (metin→resim, resim→düşüm, konuşma→resim vb.) veya model oluşturulmalıdır.
 - Inference, konuşma gecikmesi için çıkış jetonlarını yeterince hızlı akıtmalıdır (<500ms time-to-first-audio-byte).
 
@@ -32,21 +32,21 @@ Mühendislik zorlukları:
 MIO'nun simgelik yığın:
 
 - Metin: standart BPE, kelime ~32000.
-- Resim: SEED-Tokenizer (2023)  diskre kod defteri ile kuantist VAE, 4096 giriş, resim başına 32x32 jeton.
-- Konuşma: Konuşma Tokenizer residual-VQ (2023)  16kHz dalga şeklini 8 hiyerarşik kod defterine kodlar; ilk seviyede kaba içerik, daha sonraki seviyelerde prosodi ve hoparlör kimliği eklenir.
-- Müzik: benzer kalan-VQ (Meta'nın MusicGen / Encodec ailesi), 4-8 kod kitabı.
+- Resim: SEED-Tokenizer (2023), bir görüntü başına 32 token yayan 8192 giriş kod defteri olan ayrı bir görüntü tokenizeri.
+- Konuşma: Konuşma Tokenizer geri kalan-VQ (2023), 16kHz dalga biçimini 8 hiyerarşik kod defterine kodlayan; ilk seviyede kaba içerik, daha sonraki seviyelerde prosodi ve hoparlör kimliği eklenir. MIO içerik seviyesini ekleyerek ilk üç timbre seviyesini, her biri 1024 kodunu tutar, bu nedenle 4096 konuşma kimliği tutar.
+- Müzik: benzer kalan-VQ (Meta'nın MusicGen / Encodec ailesi), 4-8 kod kitabı. MIO kendisi bir müzik tokenizerini göndermez (dördüncü modaliteti görüntü tokenizer aracılığıyla çerçeveler olarak video); bu dersin oyuncağı yeni bir modalitenin bir ID aralığını nasıl iddia ettiğini göstermek için müzik ekler.
 
 Her modalitede tam sayı belirtiler üretilir. belirtiler paylaşılan kelimebizinde ayrı tanımlama aralıkları elde eder:
 
 ```
 text:   0..31999
-image:  32000..36095  (4096 image tokens)
-speech: 36096..40191  (4096 speech base tokens, plus residual layers)
-music:  40192..48383  (8192 music tokens)
-sep:    48384..48390  (<image>, <speech>, <music>, </...>, etc.)
+image:  32000..40191  (8192 image tokens)
+speech: 40192..44287  (4 codebooks x 1024 speech tokens)
+music:  44288..52479  (8192 music tokens, the toy's extension)
+sep:    52480..52485  (<image>, <speech>, <music>, </...>)
 ```
 
-Toplam: ~ 48k kelime birikimi. Giriş yerleştirme ve çıkış projeksiyonu tümünü kapsar.
+Toplam: ~ 52k kelime birikimi. Giriş yerleştirme ve çıkış projeksiyonu tümünü kapsar.
 
 ### Akışlı dekode
 
@@ -57,7 +57,7 @@ Akış tarzı:
 1. Kullanıcı mikrofonla konuşur; gerçek zamanlı ses jetonları her 50 ms'de konuşma jetonları yayar.
 2. MIO, gelen tokenleri tüketir (sürekli önceden doldurma + artışlı ileri).
 3. Çıktılık jetonları üretildiği gibi akıyor; paralel bir konuşma dekodörü onları ~ 50-150ms gecikme ile ses örneklerine dönüştürüyor.
-4. MIO kağıdındaki ilk ses baytına kadar zaman: ~300-500 ms, GPT-4o'nun ~250 ms'ine yaklaşmaktadır.
+4. MIO kağıdı gecikme sayısını bildirmez. Aşağıdaki bütçe bu tasarımı en iyi 300 ms'e, GPT-4o'nun ~ 250 ms'ine karşı koyar.
 
 Mini-Omni (arXiv:2408.16725), GLM-4-Voice (arXiv:2412.02612), ve Moshi (arXiv:2410.00037) tamamlayıcı akış konuşma-LLM tasarımlarıdır.
 
@@ -100,7 +100,7 @@ Bir konuşma ürünü için, her bileşenin gecikmesi önemlidir:
 - İlk çıkış simgesi: ~ 50 ms.
 - Paralel kalan-VQ + konuşma dekodörü: ~ 100-150 ms.
 
-Toplam zaman-to-first-audio-byte: ~300ms minimum. GPT-4o ~250ms iddia eder. Moshi 160ms iddia eder. MIO / AnyGPT kamu referansları başına 400-600ms aralığında.
+Toplam zaman-to-first-audio-byte: ~300ms minimum. GPT-4o ~250ms iddia eder. Moshi 160ms iddia eder. Ne MIO ne de AnyGPT ölçümlü bir rakam yayınlamaz, bu yüzden bu bütçeyi bir tahmin olarak değerlendirin, bir referans değil.
 
 ### Neden herkesin zorlukları var ?
 
@@ -134,7 +134,7 @@ Bu ders bize çok yararlı .`outputs/skill-any-to-any-pipeline-auditor.md`. Konu
 
 2. SpeechTokenizer residual-VQ 8 kod defteri kullanır. Geri kalan seviyelerin paralel dekodlanmasının neden gerekli olduğunu (sıralı karşı karşıya) ve ne kadar gecikme tasarrufu getirdiğini önerin.
 
-3. Sözcüklerinizde 32k metin + 4k görüntü + 4k konuşma var. 8k müzik ve ~10 ayırıcı ekleyin. Gizli dim 4096'da yerleştirme-matriks parametresi maliyeti nedir?
+3. Sözcükleriniz 32k metin + 8k görüntü + 4k konuşma. 8k müzik ve ~10 ayırıcı ekleyin. Gizli dim 4096'da yerleştirme-matriks parametresi maliyeti nedir?
 
 4. Görsel düşünce zinciri bir ara görüntü verir. Hangi sorular yararlı?
 
@@ -146,7 +146,7 @@ Bu ders bize çok yararlı .`outputs/skill-any-to-any-pipeline-auditor.md`. Konu
 |------|-----------------|------------------------|
 | Any-to-any | "Multimodal in/out" | A single model that accepts and emits text, image, speech, and music in any direction |
 | Residual-VQ | "Speech tokenizer stack" | Multi-codebook tokenization where each layer adds information; base layer is content, later layers are prosody |
-| SEED-Tokenizer | "Image codes" | Discrete image tokenizer with 4096-entry codebook used by MIO |
+| SEED-Tokenizer | "Image codes" | Discrete image tokenizer with an 8192-entry codebook and 32 tokens per image, used by MIO |
 | Chain-of-visual-thought | "Visual scratchpad" | The model generates an intermediate image as a reasoning step before its final answer |
 | Time-to-first-audio-byte | "TTFAB" | Latency from user voice to first audio output; <500ms for conversational feel |
 | Four-stage curriculum | "Training recipe" | Alignment -> interleaved -> speech-enhanced -> SFT, in that order |

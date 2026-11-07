@@ -11,7 +11,7 @@
 
 - Maskeli ayrı yayımı açıklayın: simgelerinin bir şekilde maskelediği program, daha sonra transformatörden onları kurtarmasını ister.
 - Hız ve kalite açısından paralel görüntü çözümü (Show-o, MaskGIT) ile autoregressive görüntü çözümü (Chameleon, Emu3) karşılaştırın.
-- Show-o'nun tek kontrol noktasında yerine getirdiği üç görevi: T2I, VQA, görüntü boyaması.
+- Show-o'nun tek kontrol noktasında yerine getirdiği dört görevi neyinleştirebilirsiniz: metin oluşturma, VQA, T2I, görüntü boyaması.
 - Bir maskeleme programı seçin (kozin, doğrusal, kısaltılmış) ve örnek kalitesine etkisini düşünün.
 
 ## Sorun

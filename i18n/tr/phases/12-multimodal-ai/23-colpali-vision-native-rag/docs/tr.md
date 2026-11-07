@@ -95,10 +95,10 @@ Görme doğası olan bir RAG için:
 
 Sayfa başına 729 patch ve 128 boyutlu yerleştirmeler ile 50 sayfalık bir finansal rapor:
 
-- ColPali: 50 * 729 * 128 * 4 byte = ~18 MB çiğ, ~4 MB PQ'den sonra.
+- ColPali: 50 * 729 * 128 * 4 byte = ~18 MB çiğ, ~2.3 MB 8x PQ'dan sonra.
 - Metin-RAG: 50 parça * 768-dim * 4 byte = ~ 150 kB.
 
-ColPali, bir belge için ~ 30 kat daha fazla depolama alanı içerir. Ölçüsünde, OPQ / PQ genellikle tolere edilebilir olan ~ 5-10 katı azaltır.
+ColPali, çiğ belge başına ~ 120 kat daha fazla depolama alanı sağlar. Ölçüsünde 8x OPQ / PQ genellikle tolere edilebilir olan ~ 15x'e düşürür.
 
 ### SMS-RAG hala kazanırken
 

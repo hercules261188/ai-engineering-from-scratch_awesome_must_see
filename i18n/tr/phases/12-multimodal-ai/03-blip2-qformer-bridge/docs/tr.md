@@ -1,6 +1,6 @@
 # CLIP'den BLIP-2'ye  Modalite Köprüsü olarak Q-Former
 
-> CLIP, resim ve metni bir arada tutar, ancak başlıkları oluşturamaz, soruları cevaplayamaz veya bir sohbet yapamaz. BLIP-2 (Salesforce, 2023) bunu küçük bir eğitimli köprü ile çözdü: 32 öğrenilebilir sorgu vektörü, dondurulmuş bir ViT'nin özelliklerini çapraz dikkat yoluyla takip ederek, sonra dondurulmuş bir LLM'nin giriş akışına doğrudan yerleştirir. 188M köprü parametresi bir 11B LLM'yi bir ViT-g/14 ile bağladı. 2026 yılına kadar her adaptör tabanlı VLM  MiniGPT-4, InstructBLIP, LLaVA'nın kuzenleri  bir soylu. Bu ders, Q-Former'ın mimarisini okuyor, iki aşamalı eğitimini açıklıyor ve donmuş bir metin dekodere görsel jetonları besleyen bir oyuncak versiyonu oluşturur.
+> CLIP, resim ve metni bir arada tutar, ancak başlıkları oluşturamaz, soruları cevaplayamaz veya bir sohbet yapamaz. BLIP-2 (Salesforce, 2023) bunu küçük bir eğitimli köprü ile çözdü: 32 öğrenilebilir sorgu vektörü, dondurulmuş bir ViT'nin özelliklerini çapraz dikkat yoluyla takip ederek, sonra dondurulmuş bir LLM'nin giriş akışına doğrudan yerleştirir. 188M köprü parametresi bir ViT-g/14'i 11B Flan-T5-XXL kadar büyük dondurulmuş LLM'lere bağladı. 2026 yılına kadar her adaptör tabanlı VLM  MiniGPT-4, InstructBLIP, LLaVA'nın kuzenleri  bir soylu. Bu ders, Q-Former'ın mimarisini okuyor, iki aşamalı eğitimini açıklıyor ve donmuş bir metin dekodere görsel jetonları besleyen bir oyuncak versiyonu oluşturur.
 
 **Type:** Build
 **Languages:** Python (stdlib, cross-attention + learnable-query demo)
@@ -117,7 +117,7 @@ Bu ders bize çok yararlı .`outputs/skill-modality-bridge-picker.md`. Hedef bir
 
 4. BLIP-2 makalesinin (arXiv:2301.12597) 3.2. bölümünü okuyun. Q-Former'in nasıl initialize edildiğini açıklayın.
 
-5. 60 kadroya kadar örneklenen 1 FPS'de 10 dakikalık bir video için, kadro başına token maliyetini (Q-Former → 32 token/frame) vs (MLP projeksiyonu → 576 token/frame) hesaplayın.
+5. 60 çerçeveye kadar örneklenen 1 FPS'de 10 dakikalık bir video için, çerçeve başına token maliyetini (Q-Former → 32 token/frame) vs (MLP projeksiyonu → 576 token/frame) hesaplayın.
 
 ## Anahtar Terimler
 
@@ -132,7 +132,7 @@ Bu ders bize çok yararlı .`outputs/skill-modality-bridge-picker.md`. Hedef bir
 | Two-stage pretraining | "Representation then generative" | Stage 1 trains Q-Former alone (ITC/ITM/ITG); Stage 2 attaches frozen LLM and trains only the projection + Q-Former |
 | Frozen backbone | "Do not finetune" | The vision encoder and LLM weights are fixed; only the bridge trains |
 | Projection head | "Linear to LLM dim" | Final linear layer mapping Q-Former output to the LLM's embedding dimension |
-| Perceiver resampler | "Flamingo's version" | Similar learnable-query cross-attention, used by Flamingo at every layer rather than as a single bridge |
+| Perceiver resampler | "Flamingo's version" | Similar learnable-query cross-attention; Flamingo runs it once per image to make fixed latents, then reads them through gated cross-attention at every LLM layer |
 
 ## Daha Fazla Okumak
 

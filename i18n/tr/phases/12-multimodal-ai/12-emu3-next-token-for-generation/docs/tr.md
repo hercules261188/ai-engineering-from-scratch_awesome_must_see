@@ -28,9 +28,9 @@ Bahis yayınlandığında tartışmalıydı. İki yıl sonra, açık kaynaklı t
 
 Ana bileşen görsel tokenizer. Emu3 bir token başına 8x8 çözünürlük azaltma ile özel IBQ sınıfı tokenizer (Inverse Bottleneck Quantizer, SBER-MoVQGAN ailesi) eğitir. 512x512 bir görüntü 64x64 = 4096 token kod defteri büyüklüğünde 32768 olur.
 
-Bu, Chameleon'un 512x512 başına 1024 tokenden daha büyüktür, ancak her token için daha ucuz (kodu defteri araması, daha basit kodek). Ana metrik: 30,5 dB'de PSNR yeniden inşa edilmesi, Stable Diffusion'ın 32 dB'de sürekli gizli alanıyla rekabetçi.
+Bu, her iki eksede 512x512 başına 1024 simgelik simgelikten daha büyüktür: K=8192: simgelerin dört katı ve kod defteri dört katı büyüktür. Ekstra kapasite yeniden inşaat kalitesini satın alır. Anahtar ölçüm: yeniden inşaat PSNR 30,5 dB'de, Stable Diffusion'un sürekli gizli alanı 32 dB'de rekabetçi.
 
-Video için: 3D VQ tokenizer bir uzay-zaman yama (4x4x4 piksel) bir tamsayı kodlar. 8 FPS'de 4s klipi 32 çerçeveye sahiptir; 4x uzay ve 4x zamanlı azaltma ile 256x256'da, token sayısı (256/4) * (256/4) * (32/4) = 64 * 64 * 8 = 32,768 token.
+Video için: 3D VQ tokenizer bir uzay-zaman yamağını (4 çerçeve x 8x8 piksel) bir tamsayıya kodlar. 8 FPS'de 4s klipi 32 çerçeveye sahiptir; 8x uzaylı ve 4x zamanlı azaltma ile 256x256'da, token sayısı (256/8) * (256/8) * (32/4) = 32 * 32 * 8 = 8,192 token.
 
 Tokenizer kalitesi tavan. Emu3'ün katkı kısmen "çok iyi bir tokenizer eğittik".
 
@@ -68,14 +68,14 @@ Görev özel başlık yok, farklı istek şablonları, aynı kontrol noktası.
 Emu3 makalesinden (Ecuba 2024):
 
 - Resim üretimi: MJHQ-30K FID (5.4 vs 5.6) üzerinde SDXL'i yener, GenEval genel olarak (0.54 vs 0.55  istatistiksel denge) ve Deep-Eval'in bileşik eşdeğerini.
-- Görüntü algısı: VQAv2'de LLaVA-1.6'u (75.1 vs. 72.4) yener ve MMMU'da yaklaşık olarak eşleşir.
+- Resim algısı: VQAv2 (75.1 vs 81.8) ve MMMU (31.6 vs 35.1) üzerinde LLaVA-1.6 izler, ancak SEED-Bench, OCRBench ve ChartQA'da yener.
 - Video üretimi: 4 saniyelik video kalitesi, Sora çağının kamuoyuna göre standartlaştırılmış modelleri ile rekabetçi FVD'de.
 
 Sayılar her zaman kazanmıyor  Emu3 burada bir noktayı bir noktaya karşı tutar  ama "sonraki jeton tahmininin tek ihtiyacı olan şey" iddiası, modaliteler arasında savunulabilir.
 
 ### Hesaplama maliyeti
 
-Emu3 yaklaşık 300 milyar multimodal jeton üzerinde 7B parametre modeli ile eğitilmiştir. GPU saatleri Llama-2-7B öncesi eğitimiyle (A100 sınıfı silikon üzerinde 2k-4k GPU yılları) yaklaşık olarak karşılaştırılabilir. Stable Diffusion 3 gibi difüzyon modelleri benzer bütçelerde trenler ancak ayrı metin kodlayıcılara ve daha karmaşık boru hattlarına ihtiyaç duyar.
+Emu3 8B parametre modelidir. Kağıt GPU saat toplamını yayınlamıyor; ölçek için Llama-2-7B öncesi eğitim yaklaşık 184k A100 GPU saat, yaklaşık 21 GPU-yıl kullanıyor.
 
 Sonuç olarak, Emu3 görüntü başına SDXL'den daha yavaş: 30 tok/s'de 4096 görüntü jetonu, 512x512 görüntü başına ~ 2 dakika, SDXL için 2-5 saniye. Speküel çözme ve KV-cache optimizasyonu boşluğu daraltır, ancak kapatmaz. Autoregressive görüntü gen hesaplama ağırdır; bu daimi pazarlama.
 
@@ -106,11 +106,11 @@ Bu ders bize çok yararlı .`outputs/skill-token-gen-cost-analyzer.md`. Bir jene
 
 1. Emu3 512x512 görüntü başına 4096 token üretir. 8x8 azaltımıyla. 1024x1024 ve 2048x2048 için eşdeğer hesaplayın.
 
-2. Emu3'ü video tokenizer'deki 3.3 bölümde okuyun. 3D VQ yama şeklini ve neden 8x8x1 değil 4x4x4 olduğunu açıklayın.
+2. Emu3'ü video tokenizer'deki 3.3 bölümde okuyun. 3D VQ yama şeklini ve tek bir çerçeve yerine 4 çerçeve x 8x8 piksellik neden olduğunu açıklayın.
 
 3. Sınıflandırıcısız rehberlik ağırlığı 5.0 vs 3.0: hangi görsel etki? Matematikleri izleyin `code/main.py`- Evet .
 
-4. Emu3-7B için FLOP'leri hesaplayın ve Stable Diffusion 3 ile karşılaştırın.
+4. Emu3 (8B) için hesaplama eğitim FLOP'larını, 300B token olarak varsayılan bir değerle hesaplayın ve Stable Diffusion 3 ile karşılaştırın.
 
 5. Emu3 FID'de SDXL'yi yener, ancak VQAv2 vs. uzmanlaşmış VLM'lerde değil.
 
@@ -120,7 +120,7 @@ Bu ders bize çok yararlı .`outputs/skill-token-gen-cost-analyzer.md`. Bir jene
 |------|-----------------|------------------------|
 | Next-token prediction | "NTP" | Standard autoregressive loss: predict token[i+1] given token[0..i]; works for every modality when tokenized |
 | IBQ tokenizer | "Inverse bottleneck quantizer" | A class of VQ-VAE with larger codebooks (32768+) and better reconstruction than Chameleon's |
-| 3D VQ | "Spatiotemporal quantizer" | Codebook indexed by (time, row, col); one token covers a 4x4x4 pixel cube |
+| 3D VQ | "Spatiotemporal quantizer" | Codebook indexed by (time, row, col); one token covers 4 frames x 8x8 pixels |
 | Classifier-free guidance | "CFG" | Mix conditional and unconditional logits with weight gamma; boosts image quality at inference |
 | Unified vocabulary | "Shared tokens" | Text + image + video all draw from the same integer space; model predicts whichever modality comes next |
 | MJHQ-30K | "Image gen benchmark" | Midjourney-quality benchmark with 30k prompts; Emu3 reports FID here |

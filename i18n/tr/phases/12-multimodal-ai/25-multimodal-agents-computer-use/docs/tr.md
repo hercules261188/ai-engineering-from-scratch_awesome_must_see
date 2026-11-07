@@ -128,7 +128,7 @@ mm-agent-loop
 
 `code/main.py`- Taşlı bir asfalt:
 
-- Eylem şeması JSON tanımlaması (10 eylem).
+- Eylem şeması JSON tanımlama (10 eylem: yukarıda listelenen dokuz ek `screenshot_region`, bir biçim + zoom aracı).
 - Sahte tarayıcı durumu dikt olarak.
 - Ajan kemiri: alış, hareket, uygula, kemir.
 - 10 görevli mini-benchmark (sentezik sayfalar) son-son başarıyı ölçmek için.
@@ -140,7 +140,7 @@ Bu ders bize çok yararlı .`outputs/skill-multimodal-agent-designer.md`. Bilgis
 
 ## Egzersizler
 
-1. Eylem şeması ile genişlet `screenshot_region`Hangi görevler yararlıdır?
+1. Kodun şeması bir  ekliyor.`screenshot_region`dokuz temel eylem için araç (crop + zoom). Hangi görevler yararlıdır?
 
 2. AgentVista'yı okuyun (arXiv:2602.23166). En zor görev kategorisini ve neden sınır modelleri hala başarısız olduğunu açıklayın.
 

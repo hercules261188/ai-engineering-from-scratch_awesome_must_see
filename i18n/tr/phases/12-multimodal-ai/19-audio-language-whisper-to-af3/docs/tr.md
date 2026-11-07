@@ -54,7 +54,7 @@ Whisper konuşma baskın verileri üzerinde eğitilmiştir.
 
 BEATs (Chen et al., 2022) AudioSet üzerinde eğitilmiş bir kendiliğinden denetimli bir dönüştürücüdür.
 
-AF-Whisper (Audio Flamingo 3'ün hibrid): Whisper + BEAT'lar ses giriş olarak özellikler içerir. Whisper dil sinyali taşır, BEAT'ler akustik sinyali taşır.
+AF-Whisper (Audio Flamingo 3'ün kodlayıcı): Whisper-large-v3 kodlayıcısından başlayın ve konuşma, ses ve müzik üzerinde birlikte eğitmeye devam edin, böylece bir kodlayıcı hem dilsel hem de akustik sinyal taşır.
 
 ### Sesli Q-former
 
@@ -70,7 +70,7 @@ Qwen-Audio (Chu et al., 2023): benzer mimarlık, daha zengin bir veri kümesi ü
 
 LTU  Dinle, Düşün, Anla (Gong et al., 2023): açık mantık verileri, ses klipleri üzerinde düşünce zinciri odaklan. Daha küçük ama daha odaklı.
 
-Audio Flamingo 3 (Goel et al., Temmuz 2025): mevcut açık SOTA. 8B LLM omurgası (Qwen2 7B), Whisper-large encoder concat BEATs, 64 sorgu Q-former, 1M+ ses metni talimat çiftleri üzerinde eğitim. MMAU 0.72, bazı alt görevlerde özel sınırla eşleşir.
+Audio Flamingo 3 (Goel et al., Temmuz 2025): mevcut açık SOTA. 7B LLM omurgası (Qwen2.5-7B), Whisper-large-v3'den inşa edilmiş bir AF-Whisper ses kodlayıcı, LLM'ye küçük adaptör katmanları, 1M+ ses-metin talimat çiftleri üzerinde eğitim. MMAU 0.72, bazı alt görevlerde özel sınırla eşleşir.
 
 AF3 ayrıca ses için talep üzerine düşünce zinciri de sunar: model, son cevabın öncesinde düşünce belirtileri ("al önce aletleri tanımlayacağım: ...") seçeneği olarak yayılabilir. Karmaşık akıl yürütme görevlerinde doğruluk düşünce etkinleştirildiğinde 3-5 puan yükselmektedir.
 

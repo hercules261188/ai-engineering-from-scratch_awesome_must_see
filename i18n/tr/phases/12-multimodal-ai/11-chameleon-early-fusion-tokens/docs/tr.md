@@ -39,7 +39,7 @@ Tokenizer, vektörlü kuantitasyonlu bir otomatik kodlayıcıdır.
 
 Eğitim: VAE yeniden yapılandırma kaybı + bağlılık kaybı + kod defteri kaybı.
 
-Şameleon için: bir görüntü 32*32 = 1024 token oluşturuyor. 8192 kelimeden alınmıştır. Metin tokenleriyle (LLM'nin BPE kelimelerinden, 32000 diyoruz) birleştirilmiştir. Son kelime: 40192. Transformatör bir dizi, bir kayıp görür.
+Chameleon için: bir görüntü 32*32 = 1024 simge olur. Bu simge kimliklerini metin BPE simgelerinin aynı kimlik alanına koyun. Chameleon'un tek simgeci 65,536 giriş vardır ve bu sayıya zaten 8192 görüntü kodları ve görüntü ayırıcıları gibi özel simgeler dahil. Transformatör bir dizi, bir kaybı görür.
 
 ### Paylaşılan kelime birikimi
 

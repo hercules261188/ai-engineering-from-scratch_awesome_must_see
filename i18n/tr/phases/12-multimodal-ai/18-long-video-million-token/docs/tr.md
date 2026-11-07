@@ -10,7 +10,7 @@
 ## Öğrenme Hedefleri
 
 - Uzun format videoları için toplam görsel işaret sayısını değişen FPS ve birleştirme ile hesaplayın.
-- Ölçekleme yollarını açıklayın: kaba bağlam (Gemini 1.5), yüzük dikkat (LWM), simge sıkıştırma (LongVILA / Video-XL).
+- Dört ölçekleme yolunu açıklayın: kaba bağlam (Gemini 1.5), yüzük dikkat (LWM), simge sıkıştırma (LongVILA / Video-XL), ajantik geri alım (VideoAgent).
 - Doğruluk ve gecikme konusunda çiğ bağlam video VLM'leri vs. ajantik-içtikleme video VLM'leri (VideoAgent) karşılaştırın.
 - 30 dakikalık bir video için bir iğne-hay asmak testi tasarlayın ve belirli bir dakikada hatırlama ölçün.
 
@@ -20,7 +20,7 @@ Qwen2.5 VL boyutlu bir çubuk, 384 yerel çözünürlükte ~729 token. 3x3 birle
 
 1 FPS'de 2 saatlik bir film 583k jeton tutar. 2026 açık modellerinin çoğundan öte; Gemini 2.5 Pro veya daha agresif birleştirme gerektirir.
 
-Üç merdiven yolu ortaya çıktı.
+Dört merdiven yolu ortaya çıktı.
 
 ## Anlaşım
 
@@ -36,7 +36,7 @@ Mühendislik: hafıza hiyerarşisi (yerel + küresel + nadir) ve uzun bağlamlı
 
 Yüzük dikkat, her bir cihazın bir parça tutduğu bir "zeng"deki cihazlar arasında uzun diziler dağıtır.
 
-LWM (Liu et al., 2024) 1M-token bağlam modeli bu şekilde eğitildi. Eğitim hesaplama ölçekleri bağlam ile doğrusal olarak, karadesel olarak değil  dikkat üzerinde karadesel vurma halka cihazları boyunca amortize edilir.
+LWM (Liu et al., 2024) 1M-token bağlam modeliyi bu şekilde eğitmiştir. Her cihazın tutan parça ile cihaz başına hafıza ölçekleri, böylece cihazlar eklemek bağlamı yaklaşık olarak doğrusal olarak genişletiyor. Toplam dikkat hesaplama bağlamda hala karelidir; halka cihazlar arasında çalışan bölünür ve anahtar / değer hesaplama ile geçiyor.
 
 LongVILA (arXiv:2408.10188) örneği VLM'lere uyarladı. 1400-frame videoları çerçeve başına 192 token = 268k bağlamda, 8 yön paralellik boyunca halka dikkatle eğitilmiştir.
 
@@ -118,7 +118,7 @@ Bu ders bize çok yararlı .`outputs/skill-long-video-strategy-planner.md`. Vide
 
 3. 1 saatlik bir videoda Kwen2.5-VL-72B (80k bağlam) ile VideoAgent (Claude 3.5 + kurtarma) karşılaştırın. Hangi geri çağırma üzerinde kazanır? Hangi gecikme üzerinde kazanır?
 
-4. Ring dikkatinin hafıza maliyetleri, dizilerin uzunluğunda ve cihaz sayısında doğrusal olarak ölçeyor.
+4. Ring dikkatinin cihaz başına hafıza ölçekleri, dizi uzunluğu cihaz sayısına bölünürken, toplam dikkat hesaplaması kare kalır.
 
 5. Gemini 1.5 Bölüm 5'i okuyun. 1M vs 10M token sınırında hatırlama hakkında ne buldu?
 

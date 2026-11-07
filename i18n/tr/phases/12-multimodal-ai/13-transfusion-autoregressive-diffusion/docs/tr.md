@@ -51,7 +51,7 @@ Maske:
 M[i, j] = 1 if:
   (i is text and j is text and j <= i)   # causal for text
   OR (i is image and j is image and same_image_block(i, j))   # bidirectional within image
-  OR (i is text and j is image and j < i_image_end)   # text attends to previous images
+  OR (i is text and j is image and j < i)   # text attends to images that closed before it
   OR (i is image and j is text and j < i_image_start)   # image attends to preceding text
 ```
 
@@ -97,7 +97,7 @@ Eksik taraf: Transfüzyon ikili kayblı bir modeldir, bu da eğitim dinamiklerin
 
 Janus-Pro (Desin 12.15) Transfusion'un fikrini, Transfusion'un transforman vücudu paylaşırken bir tanesi için SigLIP, diğer tanesi için VQ'yi ayırarak ve anlayış ve jenerasyon için vizyon kodlayıcısını ayırarak geliştirir. Show-o (Desin 12.14) difüzyonu diskret difüzyon (maskeli tahmin) için değiştirir.
 
-2026 üretiminde görüntü yayımlayan VLM'ler  Gemini 3 Pro, GPT-5, Claude Opus 4.7'in görüntü oluşturma yolu  neredeyse kesinlikle bu ailenin bazı soyundan gelmektedir.
+Yerel olarak görüntüler yayımlayan kapalı üretim modelleri bu ailenin bazı soylarını kullanabilir, ancak mimarlıkları yayınlanmamıştır, bu nedenle bu tür herhangi bir iddiayı bir tahmin olarak değerlendirin.
 
 ```figure
 cfg-guidance-scale
@@ -111,7 +111,7 @@ cfg-guidance-scale
 - Resimler 4x4 bayt ağları.
 - Ortak ağırlıklı bir çift doğrusal projeksiyon, transformatörün yerine geçer; metinde NTP kaybı, gürültülü yamalarda MSE kaybı.
 - Eğitim döngüsü iki kayıpı değiştirir, dikkat maskası açıkça.
-- Genre bir ileri geçit içinde bir metin başlığı ve 4x4 resmi üretir.
+- Bir maske demo, bir metin, görüntü, metin dizisi için blok üçgenli dikkat kalıbını yazdırır. Üretim çalıştırılmıyor: gerçek bir örneklemeci metin jetonunu jeton olarak çözür, ardından aşağıdaki egzersizlerin sayıldığı gibi, görüntü yamalarını birçok adım boyunca tanımlar.
 
 İki kayıplı tesisat, dikkat maskası yapımı ve sonuç döngüsü gerçek eserlerdir.
 

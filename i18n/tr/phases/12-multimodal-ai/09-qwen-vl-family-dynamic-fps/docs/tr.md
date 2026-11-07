@@ -53,7 +53,7 @@ Sonuç: Qwen2-VL-7B, birkaç multimodal referans değerinde GPT-4o ile eşleşti
 
 Qwen2.5 VL'nin büyük değişikliği videoydu. Dinamik FPS sadece "gerekirse daha fazla çerçeve örneklemek" değil.
 
-- Kesin zaman işaretleri. konum göstergeleri yerine (sırh 0, 1, 2...), gerçek zaman damgaları kullanın. "0:04, kedi atlar".`<time>0.04</time>`Çerçeve tokenleriyle birbirine karışmış simgeler.
+- M-RoPE'nin zaman aksı çerçeve indekslerinin yerine gerçek zaman damgalarını takip eder, bu nedenle iki çerçeve ID'lerinin arasındaki boşluklar aralarındaki saniyeleri izler. "0:04'te kedi atlar".
 - Dinamik FPS. 1 FPS'de yavaş görüntüler için örnek, 4+ FPS'de eylem için. Kullanıcı veya eğitmen seçer; M-RoPE uyarlanır.
 - ViT'de pencereler dikkat. Yerel dikkat, geçiş için pencereler (blükler içinde yerel) ve birkaç katman sonra küresel dikkat.
 - Açık JSON çıkış biçimi. Araç çağrı verileri üzerinde eğitilmiş: "{\"ağız\": \"tıklayın\", \"harekler\": [380, 220]}".
@@ -92,7 +92,7 @@ Videoyu gösterdiğimizde .`T`saniye ve hedef token bütçesi `B`- ...
 1. Yapabileceğiniz maksimum FPS'i hesaplayın: `fps_max = B / (T * tokens_per_frame)`- Evet .
 2. Hedef FPS ' den birini seç .`{1, 2, 4, 8}`Bu tatmin eder.`fps <= fps_max`- Evet .
 3. Hareket yüksekse (optik akış heuristik veya açık kullanıcı isteği), daha yüksek FPS seçin.
-4. Seçilen FPS'de örnekler aynı şekilde; ekle `<time>t</time>`Çerçeve arasındaki işaretler.
+4. Seçilen FPS'de benzer bir şekilde örnek alın; her çerçevenin zamansal kimliğini M-RoPE'den saniyeler içinde ayarlayın.
 
 Qwen2.5-VL bu mantığı içeren bir şekilde eğitir; sonuçta kullanıcı `fps`Parametre. 4 FPS'de 60 saniyelik bir eylem dizisi, çerçeve başına 81 token = 19440 token ile, 32k bağlamda yönetilebilir.
 
@@ -147,7 +147,7 @@ Bu ders bize çok yararlı .`outputs/skill-qwen-vl-pipeline-designer.md`. Bir vi
 |------|-----------------|------------------------|
 | M-RoPE | "Multimodal RoPE" | 3D rotary position embedding with temporal, height, and width bands in the hidden dim |
 | Dynamic FPS | "Smart sampling" | Frame sampling rate chosen per video based on motion, duration, and token budget |
-| Absolute time token | "Timestamp token" | `<time>t</time>` interleaved in the sequence so the model sees actual seconds not frame index |
+| Absolute time encoding | "Time-aligned M-RoPE" | Temporal position IDs set from each frame's timestamp, so the model sees actual seconds, not frame index, with no extra tokens |
 | Window attention | "Local attention" | Spatial self-attention restricted to small windows for speed; global attention added periodically |
 | Structured agent output | "JSON mode" | Training data supervision teaching the VLM to emit parseable JSON with coords and tool names |
 | min_pixels / max_pixels | "Resolution bounds" | Per-request Qwen2.5-VL controls bounding total pixel count and therefore token count |

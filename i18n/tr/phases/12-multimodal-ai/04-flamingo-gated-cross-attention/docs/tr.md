@@ -20,7 +20,7 @@ BLIP-2, 32 görsel tokeni dondurulmuş bir LLM'nin giriş katmanına ekler. Tek 
 
 Flamingo'nun cevabı: LLM'nin giriş akışını hiç değiştirmeyin. Mevcut LLM blokları arasında ek çapraz dikkat katmanları ekleyin. Metin işaretleri her zamanki gibi LLM'nin sebepli öz dikkatini akıttır. LLM blokları arasında, metin tokenleri de yeni kapalı bir katman üzerinden görüntü özelliklerine karşı karşıya gelir. Geçit (sıfır olarak başlangıç yapılır) sıfır adımda yeni katmanların hiç çalışmadığını gösterir. Eğitim ilerledikçe kapı açılır ve görsel bilgi akmaya başlar.
 
-Flamingo ikinci soruya cevap verdi: bir istekle değişken bir görüntü sayısını (0, 1 veya çok) nasıl işletiyorsunuz? Bir Perceiver resampler  herhangi bir sayıda yama almayı ve sabit bir sayıda görsel gizli jeton ürettiği küçük çapraz dikkat modülü. LLM çapraz dikkat katmanı, istekle kaç görüntü varsa da aynı şekli görür.
+Flamingo ikinci soruya cevap verdi: Bir istek için değişken bir görüntü sayısını (0, 1 veya çok) nasıl ele alırsınız? Bir Perceiver resampler  küçük bir çapraz dikkat modülü, sahip olduğunuz herhangi bir sayıda yama alır ve her görüntü için sabit bir sayıda görsel gizli jeton üretir. Toplam görüntü sayısıyla birlikte büyür, ancak her metin işaretinin yalnızca bir görüntüün gizlilerini okumasına izin verilir. Bu nedenle herhangi bir tek metin işaretinin çapraz ilgi içinde gördüğü şey, isteklendirme sırasında kaç görüntü bulunmasına bakmaksızın aynı şekle sahiptir.
 
 ## Anlaşım
 
@@ -59,7 +59,7 @@ Flamingo'da en önemli tasarım seçeneği bu: görsel kondisyona sahip olmak, b
 
 ### Çelişkili girişler için maskeli çapraz dikkat
 
-"<image A> caption A <image B> caption B <image C> ?" gibi bir istekle, her metin simgesi sırada sadece ondan önce gelen resimleri görmelidir.`t`Sadece görüntü indeksini oluşturan resampler tokenlerine katılır `i < i_t`nerede`i_t`konumdan önce en son görüntüdür `t`"Sadece son önceki görüntüyü görür" veya "sonraki tüm görüntüleri görür" her ikisi de geçerli seçimlerdir; Flamingo ilkini seçti.
+"<image A> caption A <image B> caption B <image C> ?" gibi bir istekle, her metin simgesi sırada sadece ondan önce gelen resimleri görmelidir.`t`Sadece resampler simgelerini kullanır `i_t`, nerede `i_t`konumdan önce en son görüntüdür `t`Flamingo, "sonuncu önceki görüntüyü sadece görür" veya "sonraki tüm görüntüleri görür" iki geçerli seçimdir.
 
 ### Konekst içi az çekimli öğrenme
 
@@ -76,7 +76,7 @@ Model tamamlama kalıbını görür ve "kuş" (veya görüntü 3 gösterdiği he
 Flamingo üç veri kümesi üzerine eğitilmiştir:
 
 1. MultiModal MassiveWeb (M3W): 43M web sayfası, birbirine karışmış görüntüler ve metinlerle okuma sırasını yeniden yapılandırır.
-2. Resim-Messim Çiftleri (ALIGN + LTIP): 4.4B Çiftler.
+2. Resim-Messim Çiftleri: ALIGN (1.8B çift) artı LTIP (312M çift), toplamda yaklaşık 2.1B çift.
 3. Video-Text Çiftleri (VTP): 27M kısa video klipi.
 
 OBELICS (2023), Idefics, Idefics2 ve en açık "Flamingo benzeri" modellerin eğitildiği birbirine yapışmış web corpusunun açık bir çoğaltmasıdır.
@@ -102,7 +102,7 @@ Otter (2023) OpenFlamingo'yu MIMIC-IT'de (mültimodaal talimatların bir veri k�
 | Frozen LLM | Yes | Yes |
 | Few-shot in-context | Weak | Strong — the paper's centerpiece |
 | Interleaved inputs | No native support | Yes, the design target |
-| Training data | 130M pairs | 1.3B pairs + 43M interleaved pages |
+| Training data | 130M pairs | ~2.1B pairs + 27M video clips + 43M interleaved pages |
 | Parameter count | 188M trained | ~10B trained (cross-attn layers) |
 | Compute | Days on 8 A100s | Weeks on thousands of TPUv4 |
 

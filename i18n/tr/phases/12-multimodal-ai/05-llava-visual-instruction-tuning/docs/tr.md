@@ -1,6 +1,6 @@
 # LLaVA ve Görsel talimat ayarlama
 
-> LLaVA (April 2023) gezegenin en çok kopyalanan multimodal mimarisidir. BLIP-2'nin Q-Former'ini 2 katlı MLP ile değiştirdi, Flamingo'nun kapalı çapraz dikkatini naif bir simge zinciriyle değiştirdi ve GPT-4 tarafından yalnızca metin başlıklarından üretilen 158k görsel talimat dönüşlerinde eğitildi. 2023 ile 2026 yılları arasında bir VLM inşa eden herhangi bir uygulayıcı LLaVA'nın bir çeşitini inşa etti. LLaVA-1.5 AnyRes ekledi. LVA-NeXT çözünürlüğü yükseldi. LLaVA-OneVision tek bir tarifle birleşik görüntü, çoklu görüntü ve video. Bu ders, reçeti okuyor, projeksiyonu uyguluyor ve neden "simpler kazanmış" olduğunu açıklıyor.
+> LLaVA (April 2023) gezegenin en çok kopyalanan multimodal mimarisidir. BLIP-2'nin Q-Former'ini 2 katlı MLP ile değiştirdi, Flamingo'nun kapalı çapraz dikkatini naif bir simge zinciriyle değiştirdi ve GPT-4 tarafından yalnızca metin başlıklarından üretilen 158k görsel talimat dönüşlerinde eğitildi. 2023 ile 2026 yılları arasında bir VLM inşa eden herhangi bir uygulayıcı LLaVA'nın bir çeşitini inşa etti. LLaVA-1.5 bir MLP projeksiyoncu ve 336px kodlayıcı ile değiştirildi. LLaVA-NeXT yüksek çözünürlüklü giriş için AnyRes kapak ekledi. LLaVA-OneVision tek bir tarifle birleşik görüntü, çoklu görüntü ve video. Bu ders, reçeti okuyor, projeksiyonu uyguluyor ve neden "simpler kazanmış" olduğunu açıklıyor.
 
 **Type:** Build
 **Languages:** Python (stdlib, projector + instruction-template builder)
@@ -32,10 +32,10 @@ Sonuç: bir gün boyunca 8 A100'de çalışan, MMMU'de Flamingo'yu yenen ve topl
 
 ### Mimarlık
 
-13B'de LLaVA-1.5:
+LLaVA-1.5 7B'de:
 - Görme kodlayıcı: CLIP ViT-L/14 @ 336 (sasta 1 sırasında dondurulmuş, seçenek olarak 2. aşamada dondurulmuş).
 - Projector: GELU aktivasyonu ile 2 katlı MLP, `1024 → 4096 → 4096`- Evet .
-- LLM: Vicuna-13B (sonradan Llama-3.1-8B).
+- LLM: Vicuna-7B v1.5 (13B varianti Vicuna-13B kullanır; daha sonra çatallar Llama-3.1-8B'ye taşınır).
 
 Resim + metin sorgulamasını ileriye aktar:
 
@@ -83,10 +83,11 @@ Bu hiçbir şey resme doğrudan dokunmaz  sadece metin açıklaması. GPT-4 inan
 LLaVA-1.5 (Oktyabr 2023) eklendi:
 - Akademik görev verileri (VQA, OKVQA, RefCOCO) talimat ayarlamalarına karıştı.
 - Sistem hızlandırması daha iyi.
-- 2048 → 32k bağlamı.
+- Orijinal tek çizgi katman yerine iki katlı MLP projeksiyonu ve 224px (256 token) yerine 336px (576 token) ile CLIP ViT-L/14'i. Eğitim sekansları 2048 token üzerinde kaldı.
+- Gazetede bir şebeke bölücü HD varianti, daha sonra LLaVA-NeXT'in AnyRes olarak gönderdiği.
 
 LLaVA-NeXT (Ocak 2024) ekledi:
-- AnyRes: yüksek çözünürlüklü görüntüleri 336x336 üründen oluşan 2x2 veya 1x3 şablonuna bölünerek, bir küresel düşük çözünürlüklü küçük resim eklenir. Her ürün 576 jeton olur; toplamda her görüntü için yaklaşık 2880 görsel jeton. OCR ve grafik görevleri atladı.
+- AnyRes: yüksek çözünürlüklü görüntüleri 336x336 bitkiyi 2x2 veya 1x3 şebekesine bölünerek, bir küresel düşük çözünürlüklü küçük resimler ekleyerek. Her bir biçim 576 jeton olur. 2x2 şebekesi ekleyerek küçük resimler görüntü başına yaklaşık 2880 görsel jeton verir. 1x3 şebekesi daha az bitkiye sahip, bu nedenle daha az jeton maliyetini artırır. OCR ve grafik görevleri atladı.
 - Daha iyi talimat verileri karışımı ShareGPT4V ile (yüksek kaliteli GPT-4V başlıkları)
 - Daha güçlü temel LLM (Mistral-7B, Yi-34B).
 
@@ -98,8 +99,8 @@ LLaVA-NeXT (Ocak 2024) ekledi:
 
 | | Q-Former (BLIP-2) | MLP (LLaVA) |
 |---|---|---|
-| Visual tokens per image | 32 | 576 (base) or 2880 (AnyRes) |
-| Trainable params | 188M + LM | 40M + LM |
+| Visual tokens per image | 32 | 576 (base) or about 2880 (AnyRes, 2x2 grid) |
+| Trainable params | 188M + LM | ~22M (7B) + LM |
 | Stage 1 loss | ITC+ITM+ITG | LM only |
 | LLM drop-in | Requires retrain | Swap with minimal retrain |
 | Multi-image | Awkward | Natural (concat) |

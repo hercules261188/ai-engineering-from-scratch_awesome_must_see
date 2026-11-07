@@ -1,6 +1,6 @@
 # LLaVA-OneVision: Tek Resim, Çok Resim, Tek Modeldeki Video
 
-> LLaVA-OneVision'dan önce (Li et al., Ağustos 2024) açık VLM dünyası ayrı soylara sahipti: Tek görüntüler için LLaVA-1.5, Mantis ve VILA gibi çok görüntü modeli, Video-LLaVA ve Video-LLaMA gibi video modeller. Her biri kendi referansını kazandı ve diğerlerinde başarısız oldu. LLaVA-OneVision, tek bir ders programının üç senaryoda da egemenlik gösterebilecek bir model yetiştirebileceğini ve ortaya çıkan görev transfer etkilerinin (tek görüntü becerileri videoya ihraç edilir, çok görüntü mantıklamaları tek görüntüye ihraç edilir) uzmanların toplamını yendiğini savundu. Reçet yanıltıcı bir şekilde basit: senaryolar boyunca sabit kalan görsel bir belirti bütçesi, ek olarak tek görüntüden OneVision (çok görüntü) videoya geçen açık bir ders programı. Bu ders bütçeyi, ders programını ve ortaya çıkan davranışları okur.
+> LLaVA-OneVision'dan önce (Li et al., Ağustos 2024) açık VLM dünyası ayrı soylara sahipti: Tek görüntüler için LLaVA-1.5, Mantis ve VILA gibi çok görüntü modeli, Video-LLaVA ve Video-LLaMA gibi video modeller. Her biri kendi referansını kazandı ve diğerlerinde başarısız oldu. LLaVA-OneVision, tek bir ders programının üç senaryoda da egemenlik gösterebilecek bir model yetiştirebileceğini ve ortaya çıkan görev transfer etkilerinin (tek görüntü becerileri videoya ihraç edilir, çok görüntü mantıklamaları tek görüntüye ihraç edilir) uzmanların toplamını yendiğini savundu. Reçet yanıltıcı bir şekilde basit: senaryolar arasında dengelenen görsel bir belirti bütçesi, ek olarak tek görüntüden OneVision (çok görüntü) videoya giden açık bir ders planı. Bu ders bütçeyi, ders programını ve ortaya çıkan davranışları okur.
 
 **Type:** Build
 **Languages:** Python (stdlib, token budget solver + curriculum planner)
@@ -9,7 +9,7 @@
 
 ## Öğrenme Hedefleri
 
-- Tek görüntü, çok görüntü ve video girişleri boyunca sabit olan görsel bir jeton bütçesini tasarlayın.
+- Tek görüntü, çok görüntü ve video girişleri arasında dengelenen görsel bir jeton bütçesini tasarlayın.
 - Tek görüntüden videoya yetenekleri felaketli bir unutma olmadan aktaran bir eğitim programı sipariş edin.
 - Ders programı doğru yapıldığında tek bir model neden aynı parametreler sayımında uzmanlardan üstün olduğunu açıklayın.
 - LLaVA-OneVision tarafından bildirilen üç yeni yetenek adı: çoklu kamera akıl yürütme, işaretleme uyarısı, iPhone ekran görüntüsü ajanı.
@@ -32,13 +32,13 @@ Pre-OneVision, varsayılan cevap "bir senaryoyu eğit, diğerlerini görmezden g
 
 ### OneVision token bütçesi
 
-LLaVA-OneVision, örnek başına yaklaşık 3000-4000 tane görsel jeton bütçesini seçer ve senaryo başına farklı olarak tahsis edilir:
+LLaVA-OneVision, tam bir token sayısını belirlemez. Örnek başına maksimum görsel-token sayısını dengeleyir, böylece üç senaryo aynı aralığında, yaklaşık 6.000 ila 9.000 token'e, senaryo başına farklı olarak tahsis edilir:
 
-- Tek görüntü: AnyRes-9 (3x3 bez + küçük resim), her bez 384'te 729 yama ile, saldırgan çift çizgi birleştirme 2x2 → 182 per bez. Toplam: 9 * 182 + 182 = 1820 jeton.
-- Çoklu görüntü: her görüntü orta çözünürlükte (384, kapaklama yok), birleştirme olmadan 729 jeton.
-- Video: 32 çubuk 384 çözünürlükte agresif 3x3 bilineer havuz → 81 token per frame.
+- Tek görüntü: AnyRes-Max-9 (bundan 9 bez + bir baz görünüm), her 384x384 görünüm SigLIP SO400M'den 729 token verir. Maksimum: 729 * (1 + 9) = 7290 token.
+- Çoklu görüntü: her görüntü 384'te, kapak olmadan, 729 token birleştirilmeden. 12 görüntüye kadar → 8748 token.
+- Video: 32 kadra kadar 384'e 2x2 bilineer birleştirme → 196 token per frame.
 
-Bu, bir programın entegre edilmesi için kullanılan bir programdır.
+Bu nedenle, hiçbir senaryo bağlamı veya gradiyenti üzerinde egemenlik göstermez.`code/main.py`Aşağıdaki planlayıcı aynı denge mantığını göstermek için daha küçük bir oyuncak bütçesi 4096 kullanıyor.
 
 ### Üç aşamalı ders programı
 
@@ -111,14 +111,14 @@ Bu ders bize çok yararlı .`outputs/skill-onevision-budget-planner.md`. Hedef g
 
 4. Gazete, örnek başına sadece 8 çerçeve üzerinde eğitilen video referanslarını rapor ediyor. Bu, sonuçta 30 saniyelik videolara genel mi?
 
-5. 24x24 patchlerin 12x12'e binaylı birleştirilmesi, dim başına 4x azaltma anlamına gelir. stdlib Python'da birleştirmeyi uygulayın ve her 2x2 blok üzerindeki ortalamanın binaylı çıkışla eşleşmediğini kontrol edin.
+5. 24x24 patchlerin 12x12'e binayol birleştirilmesi, boyut başına 2x azaltma anlamına gelir, bu nedenle 4x daha az jeton. stdlib Python'da birleştirmeyi uygulayın ve her 2x2 blok üzerindeki ortalamanın binayol çıkışına eşleştiğini kontrol edin.
 
 ## Anahtar Terimler
 
 | Term | What people say | What it actually means |
 |------|-----------------|------------------------|
-| OneVision scenario | "Single-image, multi-image, or video" | One of three input shapes the unified VLM handles; the budget stays constant across |
-| Token budget | "How many tokens per sample" | Total visual tokens the LLM sees per training / inference sample, typically 3000-4000 |
+| OneVision scenario | "Single-image, multi-image, or video" | One of three input shapes the unified VLM handles; the budget stays balanced across |
+| Token budget | "How many tokens per sample" | Total visual tokens the LLM sees per training / inference sample, about 6k to 9k at most in LLaVA-OneVision |
 | Curriculum | "Training order" | Stage ordering (single-image → multi-image → video) chosen for emergent transfer |
 | Bilinear pooling | "Token shrink" | Applying bilinear interpolation to the patch grid (2D) to reduce token count while preserving locality |
 | Emergent skill | "Not trained, still works" | Capability that appears at inference without matching training data, due to curriculum composition |

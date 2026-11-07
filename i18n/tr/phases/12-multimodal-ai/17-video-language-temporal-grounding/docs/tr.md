@@ -1,6 +1,6 @@
 # Video Dil Modelleri: Zamanlı İşaretler ve Yerleştirme
 
-> Video bir sürü fotoğraf değil. 5 saniyelik bir klip, bir görüntü modeli temsil edemeyeceği sebepçi sırayla, eylem fiillerine ve olay zamanlamasına sahiptir. Video-LLaMA (Zhang et al., Haziran 2023) ilk açık video-LLM'yi ses-görsel yerleştirme ile gönderdi. VideoChat ve Video-LLaVA bu örneği genişletti. 2025 yılına kadar Qwen2.5 VL'nin TMRoPE, sınır özel modelleri ile olan boşluğu kapattı. Her sistem zamanlı tokenleri farklı olarak çözdü. Klip başına Q-former, çerçeve başına concat-pool, token başına TMRoPE. Bu ders, kalıpları okuyor, bir benzerlik karşı dinamik çerçeve örneği oluşturur ve zamanlı yerleştirme görevlerini değerlendirir.
+> Video bir sürü fotoğraf değil. 5 saniyelik bir klip, bir görüntü modeli temsil edemeyeceği sebepçi sırayla, eylem fiillerine ve olay zamanlamasına sahiptir. Video-LLaMA (Zhang et al., Haziran 2023) ilk açık video-LLM'yi ses-görsel yerleştirme ile gönderdi. VideoChat ve Video-LLaVA bu örneği genişletti. 2025 yılına kadar Qwen2.5 VL'nin zaman uyumlu M-RoPE, sınır özel modelleri ile arasındaki boşluğu kapattı. Her sistem zamanlı tokenleri farklı olarak çözdü. Klip başına Q-former, çerçeve başına concat-pool, zamanlı olarak uzlaştırılmış M-RoPE, token başına. Bu ders, kalıpları okuyor, bir benzerlik karşı dinamik çerçeve örneği oluşturur ve zamanlı yerleştirme görevlerini değerlendirir.
 
 **Type:** Build
 **Languages:** Python (stdlib, frame sampler + temporal-grounding evaluator)
@@ -11,7 +11,7 @@
 
 - Zamanlı konum kodlaması neden görüntü kodlayıcıdan bağımsız olarak video VLM performansını değiştirdiğini açıklayın.
 - Sekundu başına tokenler vs yerleştirme doğruluğunda benzer, dinamik-FPS ve olay yönlendirilmiş çerçeve örneklemesini karşılaştırın.
-- Q-former-per-clip (Video-LLaMA) vs pooled-per-frame (Video-LLaVA) vs M-RoPE-per-token (Qwen2.5-VL) tasarımlarını açıklayın.
+- Video-LLaMA vs. pooled-per-frame (Video-LLaVA) vs. time-aligned M-RoPE per token (Qwen2.5-VL) tasarımlarını açıklayın.
 - VideoMME, TempCompass, EgoSchema, Video-MMMU gibi dört video referans değerini söyleyin.
 
 ## Sorun
@@ -26,7 +26,7 @@
 
 Her bir değişim farklıdır. Alt örnekleme zamansal ayrıntıları kaybeder. Birleştirme uzaysal ayrıntıları kaybeder.
 
-Zamanlı konum kodlaması diğer eksendir: model frame 5'in frame 6'dan önce geldiğini nasıl biliyor? Seçenekler arasında basit 1D temporal RoPE (Video-LLaMA), öğrenilmiş temporal embedments (Video-LLaVA) ve TMRoPE (Qwen2.5-VL, tam 3D) bulunur.
+Zamanlı konum kodlaması diğer eksendir: model frame 5'in frame 6'dan önce geldiğini nasıl biliyor? Seçenekler arasında basit 1D temporal RoPE (Video-LLaMA), öğrenilmiş temporal embeddings (Video-LLaVA) ve zaman uyumlu M-RoPE (Qwen2.5-VL, tam 3D) bulunur.
 
 ## Anlaşım
 
@@ -46,17 +46,17 @@ VideoChat, Video-LLaMA fikrini korudu ancak sesini düşürdü ve basitleştirdi
 
 İkisi de uzun videoları kullanmıyor.
 
-### Qwen2.5-VL ve TMRoPE
+### Qwen2.5 VL ve zaman uyumlu M-RoPE
 
-Qwen2.5-VL TMRoPE  Zamanlı-Modelli Rotary Position Embedding'i tanıttı. Her patch tokeninde t gerçek zaman damgası (cadra endeksi değil) olduğu (t, h, w) bir pozisyon vardır.
+Qwen2.5-VL, Qwen2-VL'nin M-RoPE'sini (Multimodal Rotary Position Embedding) tutar ve zaman aksını mutlak zaman ile uyumlu hale getirir. Her patch token, t'nin gerçek zaman damgasını (cadra endeksi değil) takip ettiği bir (t, h, w) pozisyon taşıyor. Qwen2.5-Omni (Desin 12.20) daha sonra aynı fikrin ses ve video sürümünü TMRoPE, Zaman Ayarlı Multimodal RoPE olarak adlandırır.
 
 Basit temporal yerleştirme ile ilgili temel farklar:
 
 - Model "4,2 saniye" olarak görüyor, "15 çerçeve" olarak görmüyor.
 - Her bir görüntü simgesi zaman damlasıyla bağımsız olarak döner.
-- Eğer burada 2 FPS ve orada 4 FPS ile örnek alırsanız, TMRoPE eşitsiz mesafeyi doğal olarak ele alır.
+- Eğer burada 2 FPS ve orada 4 FPS'de örnek alırsanız, zaman uyumlu M-RoPE eşitsiz mesafeyi doğal olarak ele alır.
 
-TMRoPE, "Kedi kaç saniye atlar?" sorularını etkinleştirir. Modelle "4,2 saniye" çıkarabilir. Video-LLaMA sadece "klipteki erken saatler" diyebilir.
+Zaman doğrultusunda M-RoPE, "Kedi kaç saniye atlar?" sorularını etkinleştirir. Modelle "4,2 saniye" çıkarabilir. Video-LLaMA sadece "klipteki erken saatlerde" diyebilir.
 
 ### Çerçeve örnekleme stratejileri
 
@@ -70,7 +70,7 @@ Anahtar çerçeve + bağlam: çekim sınırları + birkaç bitişik çerçeve ö
 
 ### Çerçeve başına birleştirme
 
-1 FPS ve 576 token bir çerçeve, 5 dakikalık bir klip 172.800 token. Qwen2.5-VL-72B'nin 128k bağlamıyla yapılabilir ama pahalı.
+1 FPS ve 576 token per frame'de, 5 dakikalık bir klip 172.800 token'e eşittir. Bu Qwen2.5-VL-72B'nin 128k bağlamını aşar, bu yüzden önce frame rate veya pool token'ları düşürmelisin.
 
 3x3 binlineer havuzu, çerçeve başına 64 tokene kadar azalır -> 5 dakika boyunca 19.200 tokene.
 
@@ -91,7 +91,7 @@ Zamanlı yerleştirme için çıkış biçimleri:
 
 - "Kedi 4 saniyelik çizginin etrafında atlar". Anlamak kolaydır ama net değil.
 - Yapılandırılmış JSON: `{"event": "jump", "start": 4.1, "end": 4.3}`- Qwen2.5 VL bu şekilde çalıştırıyor.
-- Token tabanlı: özel `<time>4.1</time>`Bu, Qwen2.5VL'nin iç biçimi.
+- Token tabanlı: özel `<time>4.1</time>`Bazı video modeller bunu kullanır; Qwen2.5-VL bunun yerine M-RoPE pozisyon kimliklerinde ve cevaplarında zamanı metinde veya JSON'da kodlar.
 
 Token tabanlı, aşağı akıntılı kullanım için en doğru. Qwen2.5-VL'nin JSON çıkış biçimi doğrudan analiz edilir.
 
@@ -99,7 +99,7 @@ Token tabanlı, aşağı akıntılı kullanım için en doğru. Qwen2.5-VL'nin J
 
 2026'da video VLM'ler için:
 
-- Kodlayıcı: SigLIP 2 M-RoPE veya TMRoPE (Qwen2.5-VL) ile.
+- Kodlayıcı: SigLIP 2 veya doğuştan çözünürlüklü ViT, LLM'de zaman uyumlu M-RoPE (Qwen2.5-VL).
 - Çerçeve örneği: dinamik FPS (1-4 hareketine bağlı olarak) maksimum çerçeve kapalı.
 - Çerçeve başına birleştirme: 3x3 milyar.
 - Çıktı: zaman + olay alanları ile yapılandırılmış JSON.
@@ -115,7 +115,7 @@ video-temporal-patches
 
 - Teker teker ve dinamik FPS çerçeve örnekleri.
 - Oyuncak zamansal yerleştirme değerlendiricisi: T zamanında "yerçek gerçek" olayı ve bir model çıkışı verildiğinde, doğruluğu tolerans ile puanlayın.
-- Video-LLaMA (16 çerçeve, eski Q), Video-LLaVA (8 çerçeve, MLP), Qwen2.5-VL (dinamik FPS + TMRoPE) arasındaki bir karşılaştırma.
+- Video-LLaMA (16 çerçeve, eski Q), Video-LLaVA (8 çerçeve, MLP), Qwen2.5-VL (dinamik FPS + zaman uyumlu M-RoPE) arasındaki bir karşılaştırma.
 
 ## Gönder
 
@@ -125,7 +125,7 @@ Bu ders bize çok yararlı .`outputs/skill-video-vlm-frame-planner.md`. Bir vide
 
 1. 3 dakikalık bir yemek demosu için, üniforma vs dinamik FPS seçin.
 
-2. TMRoPE, basit bir zamanlı yerleştirme tablosunun yapamayacağı özel olarak neyi ekliyor?
+2. Zamanla uyumlu M-RoPE, basit bir zamanlı yerleştirme tablosunun yapamayacağı özel olarak neyi ekler?
 
 3. VLM'nin yaymayı öğrenebileceği zamanlı yerleştirme için JSON şeması yazın. Hata durumlarını da dahil edin.
 
@@ -138,7 +138,7 @@ Bu ders bize çok yararlı .`outputs/skill-video-vlm-frame-planner.md`. Bir vide
 | Term | What people say | What it actually means |
 |------|-----------------|------------------------|
 | Temporal grounding | "Time-localized answers" | VLM outputs a specific timestamp range for when an event happens |
-| TMRoPE | "Time-Multimodal RoPE" | 3D rotary position with absolute timestamps, used by Qwen2.5-VL |
+| Time-aligned M-RoPE | "TMRoPE" | 3D rotary position whose temporal axis follows absolute timestamps; Qwen2.5-VL uses it for video, and Qwen2.5-Omni names its audio and video form TMRoPE |
 | Dynamic FPS | "Motion-aware sampling" | Sample more frames in high-motion segments, fewer in static ones |
 | Frame pooling | "Spatial compress per frame" | Reduce patches per frame with bilinear interpolation before the LLM |
 | Video Q-former | "Clip compressor" | Cross-attention bottleneck mapping N frames to K learned queries |
