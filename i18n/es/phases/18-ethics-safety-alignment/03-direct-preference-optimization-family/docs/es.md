@@ -53,7 +53,7 @@ L_{\text{DPO}} = -\log \sigma\!\left(
 
 - La brecha implícita de recompensas `beta * (log(pi/pi_ref)_w - log(pi/pi_ref)_l)`Una pequeña preferencia puede producir una brecha arbitrariamente grande.
 - El disco de pérdida selecciona y rechaza las pruebas de registro en direcciones opuestas. Puede empujar la prueba de registro absoluta elegida hacia abajo siempre que la rechazada caiga más rápido. Este es el fenómeno de la respuesta elegida degradada.
-- Las preferencias fuera de distribución (par raro raro vs par raro raro) producen recompensas implícitas arbitrarias.
+- Las preferencias fuera de distribución (parejas en las que ambas respuestas son raras en el marco de la política de referencia) producen recompensas implícitas arbitrarias.
 
 ### El mercado de la inversión se ha convertido en un mercado de inversión.
 

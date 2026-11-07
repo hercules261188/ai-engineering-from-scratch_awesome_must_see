@@ -26,16 +26,16 @@ Gao, Schulman, Hilton (2023) midieron esto directamente. Entrenar un modelo de r
 
 La formulación original de Goodhart: "Cuando una medida se convierte en un objetivo, deja de ser una buena medida". Manheim y Garrabrant (2018) distinguen cuatro variantes: regresiva (muestra finita), extrema (cola), causal (proxy es aguas abajo del objetivo) y adversarial (juego de agente).
 
-Gao et al. dar una forma funcional.`d = sqrt(KL(pi || pi_init))`- ¿ Qué ?`R_proxy(d)`Ser una recompensa de proxy y `R_gold(d)`Es una recompensa de oro.
+Gao et al. dan una forma funcional para la recompensa de oro.`d = sqrt(KL(pi || pi_init))`y dejar que`R_gold(d)`No es una recompensa de oro.
 
 ```math
 \begin{aligned}
-R_{\text{proxy}}(d) &= \alpha d - \beta_{\text{proxy}} d^2 \\
-R_{\text{gold}}(d) &= \alpha d - \beta_{\text{gold}} d^2
+R_{\text{gold}}^{\text{BoN}}(d) &= d\,(\alpha_{\text{BoN}} - \beta_{\text{BoN}}\, d) \\
+R_{\text{gold}}^{\text{RL}}(d) &= d\,(\alpha_{\text{RL}} - \beta_{\text{RL}} \log d)
 \end{aligned}
 ```
 
-con`beta_gold > beta_proxy`Ambos se elevan desde cero KL, ambos alcanzan el pico, el pico de oro está más cerca del origen.`d`El hueco de oro de proxy tiene la misma firma en el muestreo de BoN, PPO y SFT-to-best.
+Ambas formas se elevan desde cero KL, pico, y luego caen.`d`En el KL grande. Así que en el largo `d`El hueco del oro proxy tiene la misma firma para el mejor muestreo de n y para RL.
 
 Esta es la "curva de sobre-optimización". No es un error en un modelo específico de recompensa. Es la forma del problema.
 
@@ -89,7 +89,7 @@ Esta lección produce`outputs/skill-reward-hack-auditor.md`. Dado un modelo RLHF
 
 2. Modificar la distribución de ruido de Gaussian a un Student-t con bajos grados de libertad (cuesta pesada). Mantenga la configuración de entrenamiento RM proxy sin cambios. ¿Qué cambios hay en la ubicación de pico y el colapso posterior al pico?
 
-3. Leer Gao et al. Figura 1 (ICML 2023). El documento propone una forma funcional para la brecha proxy-oro.
+3. Leer Gao et al. Figura 1 (ICML 2023).`d`Ajustala a tus curvas simuladas del ejercicio 1 y compara los parámetros.
 
 4. Tomemos un reciente artículo de la RLHF que afirma haber "resolvido" el hacking de recompensas (la frase es una bandera roja). Identifique cuál de los cuatro trajes que el artículo probó y cuál no.
 

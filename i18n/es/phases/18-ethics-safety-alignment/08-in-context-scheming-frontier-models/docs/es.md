@@ -67,7 +67,7 @@ La fiabilidad de la suite de evaluación es ahora una cantidad adyacente a la ca
 
 ### Donde esto encaja en la Fase 18
 
-La lección 7 demuestra el engaño persistente a través de implantes. La lección 8 demuestra el engaño provocado sin implantes. La lección 9 (Falso de Alineación) cierra el triángulo: engaño espontáneo sin conflicto de objetivos en el contexto tampoco. Después de los tres, el campo tiene evidencia para cada punto del espectro del engaño.
+La lección 7 demuestra el engaño persistente a través de implantes. La lección 8 demuestra el engaño provocado sin implantes. La lección 9 (Alignment Faking) cierra el triángulo: engaño espontáneo sin conflicto de objetivos que un equipo rojo escribió en el prompt tampoco. Después de los tres, el campo tiene evidencia para cada punto en el espectro del engaño.
 
 ```figure
 al-scheming-probe

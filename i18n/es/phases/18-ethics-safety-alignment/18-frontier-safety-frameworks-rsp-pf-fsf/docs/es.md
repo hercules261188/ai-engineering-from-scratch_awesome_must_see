@@ -75,7 +75,7 @@ V2.0 (febrero 2025) añadió una sección de Alineación engañosa y niveles de 
 - "Niveles críticos de capacidad".
 - OpenAI "Trescos de alta capacidad".
 
-No hay terminología estándar para la industria. Estructuralizada: tres niveles de capacidad fronteriza con criterios de evaluación publicados.
+No hay terminología estándar para la industria. Alineado estructuralmente: cada uno de los tres marcos define umbrales de capacidad de nivel con criterios de evaluación publicados.
 
 ### Casos de seguridad
 

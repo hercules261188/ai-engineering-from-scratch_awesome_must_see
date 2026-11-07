@@ -12,7 +12,7 @@
 - Definir el daño representativo vs asignación y dar un ejemplo de cada uno en una implementación de LLM.
 - Nombre de las tres categorías de evaluación-metríca de Gallegos et al. 2024 y describir una métrica de cada una.
 - Describa la intersección y por qué la medición de equidad basada en la incertidumbre de WinoIdentity aborda las lagunas en la evaluación de sesgos de un solo eje.
-- Describa dos enfoques de interpretación mecánica del sesgo (neuronas de género, características de SAE, manipulación de la cabeza de atención).
+- Describa tres enfoques de interpretación mecánica del sesgo (neuronas de género, características de SAE, manipulación de la cabeza de atención).
 
 ## El problema
 

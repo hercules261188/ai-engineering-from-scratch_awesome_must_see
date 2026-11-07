@@ -48,7 +48,7 @@ El Comité de la Comisión de la Unión Europea (CDI) ha aprobado el proyecto de
 
 Principio convergente: el interés legítimo puede justificar la formación sobre el contenido de primera parte disponible al público con exclusión.
 
-### ANPD brasileño (junio 2024)
+### ANPD brasileño (julio 2024)
 
 Suspendió el procesamiento de datos de usuarios brasileños por parte de Meta para la capacitación en IA por falta de transparencia de la información.
 

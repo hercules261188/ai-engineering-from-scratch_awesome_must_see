@@ -16,7 +16,7 @@
 
 ## El problema
 
-La lección 17 es la metodología de medición. La lección 30 es el estado de la medición de 2026. La imagen cambió significativamente entre 2024 y finales de 2025: cada dominio cruzó un umbral que los marcos de 2024 no anticipaban.
+La lección 17 es la metodología de medición. La lección 30 es el estado de la medición de 2026. La imagen cambió significativamente entre 2024 y finales de 2025: tres de los cuatro dominios cruzaron un umbral que los marcos de 2024 no anticipaban.
 
 ## El concepto
 
@@ -47,6 +47,8 @@ Las implicaciones:
 - El código de agentes es el primitivo de la automatización de ataques. La asistencia cibernética anterior de IA estaba limitada a nivel de fragmentos de código; los flujos de trabajo de agentes integran el reconocimiento, la explotación, la posexplotación y la exfiltración.
 - Los 4-6 pasos humanos son el cuello de botella; los futuros avances de capacidad reducirían esa cantidad.
 - Uso dual defensivo: el piloto de "acceso confiable" de OpenAI proporciona a las organizaciones de seguridad verificadas (empresas de respuesta a incidentes establecidas, gobierno) acceso a la capacidad para la defensa.
+
+El lado defensivo de este trabajo comienza con la lectura del código compilado que se le permite analizar. La pista de ingeniería inversa en la Fase 13 lo enseña en programas que se construyen usted mismo, con solo análisis estático: un lector ELF en [Lesson 13.32](../../../13-tools-and-protocols/32-program-anatomy-elf-from-scratch/docs/en.md), desmontaje en[Lesson 13.33](../../../13-tools-and-protocols/33-disassembly-and-control-flow/docs/en.md), se eleva a pseudocodo en [Lesson 13.34](../../../13-tools-and-protocols/34-lifting-to-pseudocode/docs/en.md), y un libro de pruebas que mantiene los hechos observados aparte de los deducidos en[Lesson 13.35](../../../13-tools-and-protocols/35-evidence-confidence-and-unknowns/docs/en.md)- El .[Inside a Decompiler](https://aiengineeringfromscratch.com/inside-a-decompiler)Una máquina muestra la línea completa de una función. un agente que hace este trabajo necesita el mismo libro mayor, porque una descomposición segura todavía puede apoyarse en una suposición.
 
 ### El sistema nuclear
 
