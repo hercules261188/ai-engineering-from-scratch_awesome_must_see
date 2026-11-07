@@ -10,7 +10,7 @@
 ## Objetivos de aprendizagem
 
 - Descreva o uso do computador Claude: captura de tela, comando do teclado/m mouse, sem API de acessibilidade.
-- Cite os números de referência dos três modelos no OSWorld / WebArena / Online-Mind2Web.
+- Lembre-se dos números de referência de lançamento que esta lição cita: OpenAI CUA no OSWorld / WebArena / WebVoyager, e Gemini 2.5 Utilização de Computador no Online-Mind2Web.
 - Explique o padrão de segurança por passo dos documentos de utilização de computador Gemini 2.5.
 - Resumir o contrato de entrada não confiável que todos os três modelos aplicam.
 

@@ -16,7 +16,7 @@
 
 ## O problema
 
-Uma loja é errada para uma das três classes de consulta:
+Cada loja é adequada para apenas uma das três classes de consulta:
 
 - **Semantic similarity**"O que discutimos sobre o agente drift na semana passada?" Vence o Vector, KV e grafico.
 - **Fact lookup** "Qual é o número de telefone do usuário?" KV ganha; vetor é desperdício, gráfico é exagerado.

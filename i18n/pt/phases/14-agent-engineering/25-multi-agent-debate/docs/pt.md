@@ -117,7 +117,7 @@ Resultados: precisão e custo por protocolo; correspondências escassas em 2/3 d
 
 ## Mais leitura
 
-- [Du et al., Society of Minds (arXiv:2305.14325)](https://arxiv.org/abs/2305.14325) debate canônico multi-agente
+- [Du et al., Improving Factuality and Reasoning in Language Models through Multiagent Debate (arXiv:2305.14325)](https://arxiv.org/abs/2305.14325) debate canônico multi-agente
 - [Sparse Communication Topology (arXiv:2406.11776)](https://arxiv.org/abs/2406.11776) resultados de topologia escassos
 - [Anthropic, Building Effective Agents](https://www.anthropic.com/research/building-effective-agents) trabalhadores-orquestrais como variante de debate
 - [Madaan et al., Self-Refine (arXiv:2303.17651)](https://arxiv.org/abs/2303.17651) Contralor de autocrítica de modelo único
