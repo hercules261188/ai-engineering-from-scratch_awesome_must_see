@@ -117,7 +117,8 @@ Algorithm:
   3. If u < p(x) / (M * q(x)), accept x
   4. Otherwise, reject and go to step 1
 
-Acceptance rate = 1/M
+Acceptance rate = Z/M, where Z is the integral of p(x)
+                (Z = 1, so the rate is 1/M, when p is normalized)
 ```
 
 هرچه تنگ تر باشه$M$در ابعاد پایین (1-3) ، نمونه گیری رد خوب کار می کند. در ابعاد بالا، نرخ پذیرش به طور نمایی کاهش می یابد زیرا بیشتر حجم پیشنهاد رد می شود. این لعنتی از ابعاد برای نمونه گیری رد است.

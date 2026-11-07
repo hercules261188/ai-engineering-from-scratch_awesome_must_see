@@ -46,7 +46,7 @@ w = w - \text{lr} \cdot \text{gradient}
 
 ```mermaid
 graph TD
-    A["* Starting point (high loss)"] --> B["Moving downhill along gradient"]
+    A["* Starting point (high loss)"] --> B["Moving downhill, against the gradient"]
     B --> C["Approaching minimum"]
     C --> D["o Minimum (low loss)"]
 ```
@@ -158,7 +158,7 @@ w &= w - \text{lr} \cdot \hat{m} / (\sqrt{\hat{v}} + \epsilon)
 
 ### مخلوط با غیر مخلوط
 
-یک تابع مخلوط حداقل یک تابع دارد.$f(x) = x^2$مخروط است.
+یک تابع مخروط حداقل های محلی بدی ندارد: هر حداقل محلی حداقل جهانی است. برای یک تابع مخروط صاف که حداقل دارد، کاهش گرادینت با نرخ یادگیری کمی به اندازه کافی به آن نزدیک می شود. یک شکل مربع مانند $f(x) = x^2$مخلوط است و حداقل آن منحصر به فرد است.
 
 عملکردهای از دست دادن شبکه عصبی غیر خم هستند. آنها دارای بسیاری از حداقل های محلی، نقاط سیله و مناطق صاف هستند.
 

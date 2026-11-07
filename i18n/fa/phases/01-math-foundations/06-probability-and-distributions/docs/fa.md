@@ -190,14 +190,14 @@ P(X = x) = \sum_{y} P(X = x, Y = y)
 
 ### چرا توزیع عادی در همه جا ظاهر می شود
 
-نظریه محدودیتی مرکزی: مجموع (یا متوسط) بسیاری از متغیرهای تصادفی مستقل به توزیع عادی متقابل می شود، بدون توجه به توزیع اصلی.
+نظریه محدودیتی مرکزی: متوسط بسیاری از متغیرهای تصادفی مستقل از یک توزیع، یک بار متمرکز و مقیاس بندی شده توسط $\sqrt{n}$، به توزیع طبیعی نزدیک می شود، هر شکل توزیع اصلی باشد، تا زمانی که تفاوت آن محدود باشد.
 
 ```
 Roll 1 die:  uniform distribution (flat)
 Average of 2 dice:  triangular (peaked)
 Average of 30 dice: nearly perfect bell curve
 
-This works for ANY starting distribution.
+This works for ANY starting distribution with finite variance.
 ```
 
 به همین دلیل:
@@ -470,7 +470,7 @@ print(f"Log-softmax: {log_probs}")
 | Expected value | "The average" | The probability-weighted sum of all outcomes. The loss function is an expected value |
 | Variance | "How spread out" | The expected squared deviation from the mean. High variance = noisy, unstable estimates |
 | Normal distribution | "The bell curve" | $f(x) = (1/\sqrt{2\pi\sigma^2}) \cdot \exp(-(x-\mu)^2/(2\sigma^2))$. Appears everywhere due to the CLT |
-| Central Limit Theorem | "Averages become normal" | The mean of many independent samples converges to a normal distribution regardless of the source |
+| Central Limit Theorem | "Averages become normal" | The centered, scaled mean of many independent samples converges to a normal distribution for any source with finite variance |
 | Joint distribution | "Two variables together" | $P(X, Y)$ describes the probability of every combination of $X$ and $Y$ outcomes |
 | Marginal distribution | "Sum out the other variable" | $P(X) = \sum_y P(X, Y)$. Recovers one variable's distribution from the joint |
 | Log probability | "Log of the probability" | $\log P(x)$. Turns products into sums, preventing numerical underflow in long sequences |
