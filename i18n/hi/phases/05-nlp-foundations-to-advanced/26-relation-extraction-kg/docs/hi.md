@@ -67,21 +67,21 @@ PATTERNS = [
 
 देखो`code/main.py`हर्स्ट पैटर्न अभी भी डोमेन विशिष्ट पाइपलाइन में जहाज क्योंकि वे डिबग करने योग्य हैं।
 
-### चरण 2: पर्यवेक्षित संबंध वर्गीकरण
+### चरण 2: पर्यवेक्षित अनुक्रमिक संबंध निकासी
 
 ```python
-from transformers import AutoTokenizer, AutoModelForSequenceClassification
+from transformers import AutoTokenizer, AutoModelForSeq2SeqLM
 
 tok = AutoTokenizer.from_pretrained("Babelscape/rebel-large")
-model = AutoModelForSequenceClassification.from_pretrained("Babelscape/rebel-large")
+model = AutoModelForSeq2SeqLM.from_pretrained("Babelscape/rebel-large")
 
 text = "Tim Cook was born in Alabama. He later became CEO of Apple."
 encoded = tok(text, return_tensors="pt", truncation=True)
 output = model.generate(**encoded, max_length=200)
-triples = tok.batch_decode(output, skip_special_tokens=False)
+decoded = tok.batch_decode(output, skip_special_tokens=False)
 ```
 
-REBEL एक sequ2seq संबंध निकालनेः पाठ में, तिगुना बाहर, पहले से ही विकिडाटा संपत्ति आईडी में। दूरस्थ निगरानी डेटा पर ठीक से ट्यून किया गया। मानक खुला वजन बेसलाइन।
+REBEL एक BART आधारित seq2seq संबंध निकालनेः यह इकाई जोड़े वर्गीकृत करने के बजाय ट्रिपल उत्पन्न करता है। पाठ में, ट्रिपल आउट, संबंध नामों के साथ विकिडाटा गुणों से लिया गया है। डिकोड स्ट्रिंग अभी भी REBEL के साथ हैं `<triplet>`,`<subj>`और `<obj>`मार्कर, तो उन पर विभाजित (जैसा मॉडल कार्ड के पार्सर करता है) प्राप्त करने के लिए `(subject, relation, object)`रिकॉर्ड. दूर से निगरानी के डेटा पर ठीक से समायोजित. मानक खुला वजन आधार।
 
 ### चरण 3: एंकरिंग के साथ एलएलएम-प्रोम्प्ट निकासी
 
