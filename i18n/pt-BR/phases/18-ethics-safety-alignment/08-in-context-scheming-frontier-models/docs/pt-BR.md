@@ -67,7 +67,7 @@ A confiabilidade da suíte de avaliação é agora uma quantidade adjacente às 
 
 ### Onde isto encaixa na Fase 18
 
-A lição 7 demonstra o engano persistente através de implantes. A lição 8 demonstra o engano provocado sem implantes. A lição 9 (Alignment Faking) fecha o triângulo: o engano espontâneo sem conflito de objetivos no contexto também. Após os três, o campo tem evidências para cada ponto no espectro de engano.
+A lição 7 demonstra o engano persistente através de implantes. A lição 8 demonstra o engano provocado sem implantes. A lição 9 (Alignment Faking) fecha o triângulo: o engano espontâneo sem conflito de objetivos que uma equipe vermelha escreveu no prompt também. Após os três, o campo tem evidências para cada ponto no espectro de engano.
 
 ```figure
 al-scheming-probe

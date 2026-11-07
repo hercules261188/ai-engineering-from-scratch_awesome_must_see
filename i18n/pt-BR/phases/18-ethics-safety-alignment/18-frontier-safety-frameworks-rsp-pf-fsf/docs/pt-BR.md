@@ -75,7 +75,7 @@ A versão 2.0 (Fevereiro 2025) adicionou uma seção de alinhamento enganoso e n
 - DeepMind "Capacitados Críticos".
 - OpenAI "Predes de alta capacidade".
 
-Não há terminologia padrão para a indústria. Estrutura alinhada: três níveis de capacidade de fronteira com critérios de avaliação publicados.
+Não há terminologia padrão para a indústria. Estructuralmente alinhado: cada um dos três quadros define limiares de capacidade em níveis com critérios de avaliação publicados.
 
 ### Casos de segurança
 

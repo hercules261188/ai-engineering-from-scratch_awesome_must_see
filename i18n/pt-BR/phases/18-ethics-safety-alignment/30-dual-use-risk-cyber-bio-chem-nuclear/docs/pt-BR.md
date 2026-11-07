@@ -16,7 +16,7 @@
 
 ## O problema
 
-A lição 17 é a metodologia de medição. A lição 30 é o estado de 2026 da medição. A imagem mudou significativamente entre 2024 e o final de 2025: cada domínio atravessou um limiar que as estruturas de 2024 não anteciparam.
+A lição 17 é a metodologia de medição. A lição 30 é o estado de 2026 da medição. A imagem mudou significativamente entre 2024 e o final de 2025: três dos quatro domínios cruzaram um limiar que os quadros de 2024 não anteciparam.
 
 ## O conceito
 
@@ -47,6 +47,8 @@ Implicações:
 - A codificação agencial é a primitiva de automação de ataques. A assistência cibernética anterior da IA foi limitada ao nível de snippet de código; fluxos de trabalho agenciais integram reconhecimento, exploração, pós-exploração e exfiltração.
 - Os 4-6 passos humanos são o gargalo; ganhos futuros de capacidade reduziriam essa contagem.
 - Uso duplo defensivo: O piloto de "accesso confiável" da OpenAI fornece às organizações de segurança verificadas (empresas de resposta a incidentes estabelecidas, governo) acesso a capacidades para a defesa.
+
+O lado defensivo deste trabalho começa com a leitura do código compilado que você pode analisar.[Lesson 13.32](../../../13-tools-and-protocols/32-program-anatomy-elf-from-scratch/docs/en.md), desmontagem em [Lesson 13.33](../../../13-tools-and-protocols/33-disassembly-and-control-flow/docs/en.md), elevação para pseudocódulo em [Lesson 13.34](../../../13-tools-and-protocols/34-lifting-to-pseudocode/docs/en.md), e um livro de evidências que mantém os fatos observados separados dos inferidos em[Lesson 13.35](../../../13-tools-and-protocols/35-evidence-confidence-and-unknowns/docs/en.md)- O .[Inside a Decompiler](https://aiengineeringfromscratch.com/inside-a-decompiler)Uma máquina mostra o pipeline completo em uma função. um agente que faz este trabalho precisa do mesmo livro, porque uma decompilhação confiante ainda pode descansar em uma suposição.
 
 ### Nuclear
 

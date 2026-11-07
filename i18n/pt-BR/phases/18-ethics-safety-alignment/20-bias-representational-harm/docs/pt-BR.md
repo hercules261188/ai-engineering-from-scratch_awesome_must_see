@@ -12,7 +12,7 @@
 - Define os danos representativos versus atribuídos e dê um exemplo de cada um em uma implantação de MLL.
 - Nomear as três categorias de avaliação-metrica de Gallegos et al. 2024 e descrever uma métrica de cada uma.
 - Descreva a interseccionalidade e por que a medição de equidade baseada na incerteza da WinoIdentity aborda as lacunas na avaliação de preconceitos de um eixo único.
-- Descreva duas abordagens de interpretação mecanicista para o viés (neurônios de gênero, características de SAE, manipulação da cabeça de atenção).
+- Descreva três abordagens de interpretação mecanicista para o viés (neurônios de gênero, características de SAE, manipulação da cabeça de atenção).
 
 ## O problema
 
