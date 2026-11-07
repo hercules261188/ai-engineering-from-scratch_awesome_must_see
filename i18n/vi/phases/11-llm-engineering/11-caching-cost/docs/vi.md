@@ -21,7 +21,7 @@ Bạn xây dựng một chatbot RAG, nó hoạt động tuyệt vời người d
 
 Rồi hóa đơn đến.
 
-Chi phí GPT-5 $5 per million input tokens and $15/million sản lượng.$15 input / $75 đầu ra.$1.25 input / $5 đầu ra. GPT-5-mini là $0.25/$2. Giá dưới đây là minh họa; luôn luôn kiểm tra trang giá hiện tại của nhà cung cấp.
+Chi phí GPT-5 $1.25 per million input tokens and $10/million sản lượng.$5 input / $25 đầu ra. Gemini 3.1 Pro chi phí $2 input / $12 đầu ra (giải hành lên đến 200K token). GPT-5-mini là $0.25/$2. GPT-4o, mô hình trong toán học dưới đây, là $2.50/$10. Giá cả là minh họa; luôn luôn kiểm tra trang giá hiện tại của nhà cung cấp.
 
 Đây là toán học giết chết các startup:
 
