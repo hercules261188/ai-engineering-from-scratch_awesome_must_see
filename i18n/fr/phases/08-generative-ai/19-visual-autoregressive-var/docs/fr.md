@@ -50,7 +50,7 @@ Structure de séquence d'entrée:
 [START, z_1 tokens, z_2 tokens, z_3 tokens, ..., z_K tokens]
 ```
 
-Les emplacements de position codent à la fois l'indice d'échelle et la position spatiale dans l'échelle.$k$, position $(i, j)$peut assister à tous les jetons à l' échelle $1 \ldots k$et aux jetons à l' échelle $k$La VAR utilise une attention positionnelle fixe sans causalité intra-échelle  toutes les positions dans une échelle sont prédites en parallèle.
+Les emplacements de position codent à la fois l'indice d'échelle et la position spatiale à l'intérieur de l'échelle.$k$, position $(i, j)$peut assister à tous les jetons à l' échelle $1 \ldots k$, y compris chaque position de l' échelle $k$Il n'y a pas d'ordre intra-échelle et aucune causalité intra-échelle, donc toutes les positions dans une échelle sont prédites en parallèle.
 
 Perte de formation: à chaque échelle $k$, prédire les jetons $z_k$La même structure que la GPT, sauf la "sequence", est maintenant structurée à l'échelle.
 

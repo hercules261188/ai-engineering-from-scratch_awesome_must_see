@@ -49,7 +49,7 @@ noise-schedule
 
 ## Faites-le
 
-`code/main.py`Il met un jouet 1-D "VAE" (encodeur d'identité + décodeur, pour démonstration; un vrai VAE serait un réseau de convex) en haut du DDPM de la leçon 06 et ajoute un conditionnement de classe avec une orientation sans classifiant. Il montre que la même perte de diffusion fonctionne que vous exécutez sur des valeurs 1D brutes ou sur des valeurs codées  l'information clé.
+`code/main.py`Il ajoute un jouet 1-D "VAE" (un encodeur à échelle fixe par 0,5 et son inverse exact comme décodeur, pour la démonstration; un vrai VAE serait un convnet) sur le dessus du DDPM de la leçon 06 et ajoute un conditionnement de classe avec une orientation sans classifiant. Il montre que la même perte de diffusion fonctionne que vous exécutez sur des valeurs 1D brutes ou sur des valeurs codées. C'est l'idée clé.
 
 ### Étape 1: codeur/décodeur
 
@@ -132,7 +132,7 @@ Stacks de production en 2026:
 
 L'intégration de référence Flux est la recette canonique "J'ai un GPU de consommation, puis-je expédier ceci?"
 
-1. **Staggered loading.**Flux a trois réseaux qui n'ont jamais besoin de coexister dans VRAM: T5-XXL encodeur de texte (~ 10 Go en fp32), CLIP-L (petit), le 12B MMDiT, et le VAE. Encodez le prompt d'abord, * supprimez* les encodeurs, chargez le DiT, dénoncez, * supprimez* le DiT, chargez le VAE, décodez. Les GPU de 8 Go de consommation ne s'adaptent qu'à une étape à la fois.
+1. **Staggered loading.**Flux a quatre réseaux qui n'ont jamais besoin de coexister dans VRAM: T5-XXL encodeur de texte (~ 10 Go en fp32), CLIP-L (petit), le 12B MMDiT, et le VAE. Encodez le prompt d'abord, * supprimez* les encodeurs, chargez le DiT, dénoncez, * supprimez* le DiT, chargez le VAE, décodez. Les GPU de 8 Go de consommation ne s'adaptent qu'à une étape à la fois.
 2. **4-bit quantization via bitsandbytes.** `BitsAndBytesConfig(load_in_4bit=True, bnb_4bit_compute_dtype=torch.bfloat16)`Le codeur T5 et le DiT. Coupe la mémoire 8x, la baisse de qualité est imperceptible pour les textes à images par référence d'Aritra (lié dans le carnet).
 3. **CPU offload.** `pipe.enable_model_cpu_offload()`Il échange automatiquement les modules entre le processeur et la GPU à mesure que chaque passage avance.
 
