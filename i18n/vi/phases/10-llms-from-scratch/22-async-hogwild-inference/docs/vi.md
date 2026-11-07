@@ -55,7 +55,7 @@ Tên của bài báo là Hogwild! SGD (Recht et al., 2011), một trình tối �
 
 ### RoPE làm cho điều này dễ dàng
 
-Rotary Position Embeddings (RoPE, Su et al. 2021) mã hóa thông tin vị trí thông qua xoay quanh các vector Q và K. Bởi vì vị trí là xoay quanh và không phải là sự bù đắp, vị trí của token có thể thay đổi mà không cần tính lại mục cache KV. Khi người lao động `i`ghi vào cache chia sẻ ở vị trí `p`, các nhân viên khác đọc vị trí đó có thể sử dụng mục được lưu trữ trong cache trực tiếp không cần phải quay lại.
+Các vị trí quay (RoPE, Su et al. 2021) mã hóa thông tin vị trí thông qua quay trong các vector Q và K. Bởi vì điểm chú ý giữa một truy vấn xoay và một phím xoay chỉ phụ thuộc vào khoảng cách tương đối của chúng, một khối các mục được lưu trữ trong cache có thể di chuyển đến một sự thay thế mới mà không cần tính toán lại: xoay truy vấn thay vì quay lại mỗi phím được lưu trữ trong cache. Hogwild! Inference thực hiện điều này một lần cho mỗi khối cache: cho truy vấn tại vị trí `i_q`và một khối bắt đầu từ `i_k`theo quan điểm của người lao động đó, câu hỏi được xoay bởi khoảng cách tương đối `i_q - i_k`Đó là cách mà mỗi người làm việc nhìn thấy các khối cache chia sẻ theo thứ tự của riêng mình. Trù này hoạt động cho một chuyển đổi đồng nhất của một khối liền kề.
 
 Trong mô hình vị trí học hoặc vị trí tuyệt đối, Hogwild! sẽ cần phải vô hiệu hóa cache trên mỗi lần viết đồng thời. RoPE cho phép cache duy trì ổn định.
 

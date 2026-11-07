@@ -222,6 +222,10 @@ Dự án đầu ra ( đầu logits) chia sẻ trọng lượng với các mã h�
 
 ## Hãy xây dựng nó
 
+```figure
+iso-machine {"machine":"mini-gpt"}
+```
+
 ### Bước 1: Đặt lớp
 
 Các token embedment lập bản đồ mỗi 50257 token có thể được chuyển thành một vector 768 chiều.

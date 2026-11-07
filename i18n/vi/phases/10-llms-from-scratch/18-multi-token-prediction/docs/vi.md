@@ -28,7 +28,7 @@ Bài học này xây dựng một mô-đun MTP duy nhất và mất độ sâu D
 
 ### Công thức MTP theo trình tự
 
-DeepSeek-V3 thêm `D`Các mô-đun MTP trên đầu mô-đun chính.`k`(để `k = 1..D`) dự đoán các token sâu `k` nghĩa là, `t_{i+k}`được cho một dấu tiền từ vị trí `i`- Tôi không biết.
+DeepSeek-V3 thêm `D`Các mô-đun MTP trên đầu mô hình chính. mô hình chính dự đoán `t_{i+1}`Mỗi mô-đun`k`(để `k = 1..D`) dự đoán token `k`bước ra ngoài hơn, `t_{i+k+1}`, được cho một dấu tiền qua vị trí `i`- Tôi không biết.
 
 Module `k`bao gồm:
 
@@ -49,13 +49,13 @@ h_i^{(k)} &= T_k\Big( M_k \cdot \mathop{\mathrm{concat}}\big(\mathop{\mathrm{RMS
 Dự đoán sâu sắc là:
 
 ```math
-\text{logits}_{i+k} = \mathop{\mathrm{Out}}(h_i^{(k-1)}) \quad \text{for } k = 1, \ldots, D
+\text{logits}_{i+k+1} = \mathop{\mathrm{Out}}(h_i^{(k)}) \quad \text{for } k = 1, \ldots, D
 ```
 
-Sự mất mát sâu sắc là sự thấu hiểu giữa sự thật và sự thật cơ bản .`t_{i+k}`- Có thể là:
+Sự mất mát sâu sắc là sự thấu hiểu giữa sự thật và sự thật cơ bản .`t_{i+k+1}`- Có thể là:
 
 ```math
-L_k = \mathop{\mathrm{CE}}(\text{logits}_{i+k}, t_{i+k})
+L_k = \mathop{\mathrm{CE}}(\text{logits}_{i+k+1}, t_{i+k+1})
 ```
 
 Sự mất khớp qua độ sâu:
@@ -70,9 +70,9 @@ L_{\text{MTP}} = \frac{\lambda}{D} \sum_{k=1}^{D} L_k
 
 MTP song song ban đầu của Gloeckle có đầu đầu phát D, mỗi đầu được áp dụng trực tiếp cho `h_i^(0)`Mỗi đầu tiên tiên đoán`t_{i+k}`Điều đó tập hợp tốt, nhưng các dự đoán không được điều kiện với nhau.`head_1`- Tạo ra để giúp đỡ`head_2` đầu bắn song song.
 
-Thiết kế liên tục của DeepSeek-V3 xây dựng `h_i^(k)`từ `h_i^(k-1)`cộng với thực tế next-token nhúng `E(t_{i+k})`Điều đó giữ nguyên chuỗi nguyên nhân: dự đoán`t_{i+k+1}`, mô-đun ở độ sâu `k+1`thấy cái gì đang xảy ra `t_{i+k}`. Điều này có cấu trúc giống hệt với cách một máy giải mã tự động tiêu thụ đầu ra của riêng nó  làm cho các mô-đun MTP trực tiếp có thể sử dụng như các trình soạn thảo giải mã đầu cơ.
+Thiết kế liên tục của DeepSeek-V3 xây dựng `h_i^(k)`từ `h_i^(k-1)`cộng với thực tế next-token nhúng `E(t_{i+k})`Điều đó giữ nguyên chuỗi nguyên nhân: dự đoán`t_{i+k+1}`, mô-đun ở độ sâu `k`thấy cái gì đang xảy ra `t_{i+k}`. Điều này có cấu trúc giống hệt với cách một máy giải mã tự động tiêu thụ đầu ra của riêng nó, làm cho các mô-đun MTP trực tiếp có thể sử dụng như các trình soạn thảo giải mã đầu cơ.
 
-Khi kết luận: thức ăn `h_i^(k-1)`và các bản thảo `t_{i+k}`vào mô-đun `k+1`, có được một dự đoán cho `t_{i+k+1}`. Lặp lại. Đó chính xác là một bản thảo kiểu EAGLE, sử dụng mô-đun MTP được đào tạo như là bản thảo mạng. DeepSeek-V3 báo cáo chấp nhận 80% + trên mô-đun MTP đầu tiên và tăng tốc ~ 1.8x.
+Khi kết luận: thức ăn `h_i^(k-1)`và các bản thảo `t_{i+k}`vào mô-đun `k`, có được một dự đoán cho `t_{i+k+1}`. Lặp lại. Đó chính xác là một bản thảo kiểu EAGLE, sử dụng mô-đun MTP được đào tạo như là bản thảo mạng. DeepSeek-V3 báo cáo chấp nhận 80% + trên mô-đun MTP đầu tiên và tăng tốc ~ 1.8x.
 
 ### Tài khoản tham số
 
@@ -141,7 +141,7 @@ Sử dụng lại dự đoán đầu ra của mô hình chính.
 
 ### Bước 5: Thiệt độ mất
 
-Cross-entropy của softmax (đơn vị) đối với token thực tại mặt đất khi bù đắp `k`- Tối đa độ sâu với `lambda / D`yếu tố quy mô.
+Cross-entropy của softmax (đơn vị) đối với token thực tại mặt đất khi bù đắp `k+1`- Tối đa độ sâu với `lambda / D`yếu tố quy mô.
 
 ### Bước 6: Tài khoản tham số
 
@@ -176,18 +176,18 @@ Bài học này sẽ mang lại kết quả `outputs/skill-mtp-planner.md`. Vớ
 
 2. Xét số lượng trên của một mô hình 70B dày đặc (bỏ 8192, 80 lớp) với mô-đun D=1 MTP. So sánh với số lượng trên 14B được báo cáo của DeepSeek-V3. Giải thích lý do tại sao số lượng của DeepSeek cao hơn: khối biến đổi MTP thừa hưởng cấu trúc MoE tương tự, làm tăng số lượng các tham số mỗi mô-đun.
 
-3. Thực hiện D=2 trong đồ chơi: thêm một mô-đun MTP thứ hai$h^{(1)}$và dự đoán`t_{i+2}`- Kiểm tra sự mất mát chung và tính toán các tham số phù hợp với phương trình 19-21 của bài DeepSeek.
+3. Thực hiện D=2 trong đồ chơi: thêm một mô-đun MTP thứ hai$h^{(1)}$và dự đoán`t_{i+3}`- Kiểm tra sự mất mát chung và tính toán các tham số phù hợp với phương trình 19-21 của bài DeepSeek.
 
 4. Chuyển đồ chơi sang MTP song song (Gloeckle-style): thêm đầu đầu ra D trên đỉnh trạng thái ẩn chính, mỗi dự đoán một sự bù đắp khác nhau. đo cách các tổn thất theo độ sâu so sánh với phiên bản theo trình trên cùng một tín hiệu tổng hợp. phiên bản theo trình nên tạo ra tổn thất độ sâu k thấp hơn cho k > 1 vì nó điều kiện trên các dự đoán trung gian.
 
-5. Sử dụng mô-đun MTP được đào tạo như một bản thảo kiểu EAGLE: gọi mô-đun k để đề xuất `t_{i+k}`đo tỷ lệ chấp nhận của các mã thông báo dự thảo này so với dự đoán của mô hình chính trên một chuỗi được giữ. Nếu bạn đạt 50% + trên đồ chơi, bạn đã tái tạo thuộc tính MTP-as-draft thực nghiệm.
+5. Sử dụng mô-đun MTP được đào tạo như một bản thảo kiểu EAGLE: gọi mô-đun k để đề xuất `t_{i+k+1}`đo tỷ lệ chấp nhận của các mã thông báo dự thảo này so với dự đoán của mô hình chính trên một chuỗi được giữ. Nếu bạn đạt 50% + trên đồ chơi, bạn đã tái tạo thuộc tính MTP-as-draft thực nghiệm.
 
 ## Các điều khoản chính
 
 | Term | What people say | What it actually means |
 |------|----------------|------------------------|
 | MTP module | "Extra loss block" | A small transformer block plus projection that predicts a token `k` positions ahead of the main model |
-| Prediction depth | "Which offset" | The integer `k` such that module `k` predicts `t_{i+k}` from prefix through position `i` |
+| Prediction depth | "Which offset" | The integer `k` such that module `k` predicts `t_{i+k+1}` from prefix through position `i` (the main model is depth 0 and predicts `t_{i+1}`) |
 | Parallel MTP | "Gloeckle-style" | D independent heads on the same backbone hidden state, no conditional chain |
 | Sequential MTP | "DeepSeek-V3 style" | Each module conditions on the previous depth's hidden state plus the next token's embedding; preserves causal chain |
 | Shared output head | "Reuse the main head" | The MTP modules call the main model's LM head, not a separate output projection |

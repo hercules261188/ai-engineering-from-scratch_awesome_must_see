@@ -46,7 +46,7 @@ Ba đầu ra của nhánh được kết hợp qua một cổng học được h
 
 Bước lựa chọn (những khối top-k) là riêng biệt. Các hoạt động riêng biệt phá vỡ dòng chảy gradient. Công việc chú ý ít trước đó hoặc bỏ qua backprop thông qua lựa chọn (các khóa học) hoặc sử dụng thư giãn liên tục mà không cung cấp sự ít thực tế khi suy luận.
 
-NSA bỏ qua điều này: sự chú ý của các nhánh nén là một sự chú ý thô lỗ phân biệt trên toàn bộ chuỗi. Hoạt động top-k chỉ sử dụng lại điểm chú ý cao nhất từ nhánh nén để chọn những khối hạt mỏng để tải. Các gradient chảy qua các điểm số của các nhánh nén (được ảnh hưởng đến cả kết quả nén và logic lựa chọn), và đóng góp của các khối được chọn vào kết quả cuối cùng cũng có thể phân biệt. Không phân biệt được`top_k`hoạt động là không hoạt động trên biểu đồ tính toán phía trước nó chỉ kiểm soát những khối nào được tải từ bộ nhớ.
+NSA bỏ qua điều này: sự chú ý của các nhánh nén là một sự chú ý thô lỗ phân biệt trên toàn bộ chuỗi. Hoạt động top-k chỉ sử dụng lại điểm chú ý cao nhất từ nhánh nén để chọn những khối hạt mỏng để tải. Các gradient đạt đến điểm số của nhánh nén thông qua sản lượng của nhánh nén, chứ không phải thông qua sự lựa chọn các khối. Bên trong các khối được chọn, sự chú ý đến các khóa và giá trị được chọn là sự chú ý bình thường, vì vậy đóng góp của chúng vào kết quả cuối cùng cũng có thể phân biệt được. - `top_k`tự chọn chỉ số không có gradient: nó chỉ kiểm soát các khối được tải từ bộ nhớ.
 
 Đây là lý do tại sao NSA có thể được sử dụng trong việc huấn luyện trước cuối đến cuối. mô hình học cách định tuyến thông tin qua ba chi nhánh chung, tạo ra một mô hình hiếm có mà khi suy luận thực sự cung cấp tốc độ hứa hẹn.
 

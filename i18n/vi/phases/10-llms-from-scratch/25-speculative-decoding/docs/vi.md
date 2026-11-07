@@ -85,7 +85,7 @@ Thay đổi của EAGLE-1:
 
 EAGLE-2 (2024) thêm topology cây động: cây phát triển rộng hơn nơi có dự án không chắc chắn và duy trì hẹp khi nó tự tin.`α_effective`không tăng chi phí xác minh.
 
-Eagle-3 (Li et al. 2025, "EAGLE-3: Scaling Up Inference Acceleration of Large Language Models via Training-Time Test") loại bỏ sự phụ thuộc tính năng lớp trên cố định và đào tạo bản thảo với một lỗ hổng "simulans thời gian thử nghiệm" mới. Tỷ lệ chấp nhận tăng từ 0,75 (EAGLE-2) lên 0,82 (EAGLE-3), và trung bình token / xác minh từ 3,0 lên 4,5.
+Eagle-3 (Li et al. 2025, "EAGLE-3: Scaling Up Inference Acceleration of Large Language Models via Training-Time Test") loại bỏ sự phụ thuộc tính năng lớp trên cố định và đào tạo bản thảo với một lỗ hổng "simulans thời gian thử nghiệm" mới. Tỷ lệ chấp nhận tăng từ 0,75 (EAGLE-2) lên 0,82 (EAGLE-3), và trung bình token / xác minh từ 3,0 lên 4,5. Những con số này đến từ một thiết lập tham chiếu. Việc chấp nhận phụ thuộc vào cặp mô hình, cây dự thảo và lưu lượng truy cập: Giai đoạn 10 · 15 trích dẫn 0,88 đến 0,92 cho mỗi token đường được chấp nhận trên các tiêu chuẩn trò chuyện, và Giai đoạn 17 · 05 kế hoạch với 0,6 đến 0,8 trên trò chuyện chung sản xuất.
 
 ### Kiểm tra sự chú ý của cây
 
@@ -132,13 +132,13 @@ def speculative_step(p_target, q_draft, K, temperature=1.0):
     """One round of speculative decoding. Returns list of accepted tokens."""
     # 1. Draft K tokens
     draft_tokens = []
-    q_probs = []
+    q_dists = []
     state = draft_state_init()
     for _ in range(K):
         probs = softmax(q_draft(state) / temperature)
         t = np.random.choice(len(probs), p=probs)
         draft_tokens.append(t)
-        q_probs.append(probs[t])
+        q_dists.append(probs)
         state = draft_step(state, t)
 
     # 2. Target computes p at every drafted position + 1 extra
@@ -148,10 +148,10 @@ def speculative_step(p_target, q_draft, K, temperature=1.0):
     accepted = []
     for k, tok in enumerate(draft_tokens):
         r = np.random.uniform()
-        if r < p_probs_all[k][tok] / q_probs[k]:
+        if r < p_probs_all[k][tok] / q_dists[k][tok]:
             accepted.append(tok)
         else:
-            residual = np.maximum(p_probs_all[k] - q_probs[k], 0)
+            residual = np.maximum(p_probs_all[k] - q_dists[k], 0)
             residual /= residual.sum()
             accepted.append(np.random.choice(len(residual), p=residual))
             return accepted

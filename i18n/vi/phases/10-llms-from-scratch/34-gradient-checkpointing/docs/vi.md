@@ -11,7 +11,7 @@
 
 Việc đào tạo một bộ biến đổi lưu trữ, cho mỗi lớp, các đầu vào cho mỗi hoạt động được phân biệt ngược: đầu vào chú ý, dự đoán Q / K / V, đầu ra softmax, đầu vào FFN, đầu ra chuẩn và dòng dư thừa. Đối với một lớp có kích thước ẩn `d`, chiều dài chuỗi `L`, lô`B`, đây là theo lệnh của `12 * B * L * d`Lượng nước lơ lửng trên mỗi lớp.
 
-Vì `d=8192, L=8192, B=1`, đó là 800 MB / lớp trong BF16. Một mô hình 64 lớp là 51 GB của kích hoạt  và đó là trước khi bạn nhân bằng kích thước microbatch, trước khi bạn thêm trung gian chú ý-softmax (`L^2`mỗi đầu), và trước khi bạn tính toán các bản sao phụ song thoáng.
+Vì `d=8192, L=8192, B=1`, đó là khoảng 805M giá trị, hoặc 1.6 GB / lớp trong BF16. Một mô hình 64 lớp là khoảng 103 GB của kích hoạt, và đó là trước khi bạn nhân bằng kích thước microbatch, trước khi bạn thêm trung gian chú ý-softmax (`L^2`mỗi đầu), và trước khi bạn tính toán các bản sao phụ song thoáng.
 
 Các hóa đơn hai mặt: BF16 trọng lượng cộng với trạng thái tối ưu hóa có thể phù hợp với 80GB, nhưng kích hoạt đẩy bạn qua. kiểm tra điểm (tương tự là tính toán lại kích hoạt) là sự cố tiêu chuẩn. Thả hầu hết các kích hoạt; làm lại phía trước trong thời gian ngược để lấy lại chúng. Chi phí: FLOPs bổ sung. Lợi ích: trí nhớ giảm theo tỷ lệ các phân đoạn điểm kiểm tra với tổng lớp.
 

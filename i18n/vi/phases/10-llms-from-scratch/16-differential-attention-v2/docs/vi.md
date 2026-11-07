@@ -16,7 +16,7 @@
 
 ## Vấn đề
 
-Sự chú ý softmax tiêu chuẩn có tính chất toán học biến thành một cơn đau đầu hoạt động trên quy mô.`q`, trọng lượng chú ý là `softmax(qK^T / sqrt(d))`. Softmax không bao giờ có thể tạo ra những con số không chính xác  mỗi token không phù hợp có một số khối lượng tích cực. khối lượng dư thừa đó là tiếng ồn, và nó cân bằng với chiều dài ngữ cảnh. Tại các token 128k, ngay cả khi mỗi token không phù hợp chỉ có 0,001% xác suất, 127.999 trong số chúng kết hợp đóng góp khoảng 12% tổng cộng. Mô hình phải học cách định tuyến xung quanh một tầng tiếng ồn phát triển với ngữ cảnh.
+Sự chú ý softmax tiêu chuẩn có tính chất toán học biến thành một cơn đau đầu hoạt động trên quy mô.`q`, trọng lượng chú ý là `softmax(qK^T / sqrt(d))`Softmax không bao giờ có thể tạo ra những con số không chính xác: mỗi token không phù hợp nhận được một số khối lượng tích cực. khối lượng dư thừa đó là tiếng ồn, và nó cân bằng với chiều dài ngữ cảnh. Ở các token 128k, ngay cả khi mỗi token không phù hợp chỉ nhận được 0.0001% xác suất, 127.999 trong số chúng kết hợp đóng góp khoảng 13% tổng cộng. Mô hình phải học cách định tuyến xung quanh một tầng tiếng ồn phát triển với ngữ cảnh.
 
 Về cơ bản, điều này xuất hiện như sự can thiệp của đầu chú ý: các trích dẫn ảo giác trong RAG trong bối cảnh dài, thất bại trong giữa trong các nhiệm vụ lấy lại 100k token, và sự suy giảm độ chính xác tinh tế trên các tiêu chuẩn kim cương trong đống cỏ sau 32k. Bức giấy biến đổi khác biệt (arXiv:2410.05258, ICLR 2025) đo khoảng cách: DIFF Transformers đạt độ bối rối thấp hơn, độ chính xác ngữ cảnh dài cao hơn và ít ảo giác hơn so với các đường cơ sở cùng kích thước.
 

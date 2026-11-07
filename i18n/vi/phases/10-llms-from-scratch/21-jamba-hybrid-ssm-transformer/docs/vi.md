@@ -77,10 +77,10 @@ Các lớp Mamba tự nhận thức vị trí (thông qua sự tái phát). Các
 
 Đối với hình dạng Jamba-1 (32 lớp: 28 Mamba + 4 chú ý, ẩn 4096, 32 đầu chú ý):
 
-- KV cache (chỉ là các lớp chú ý): `2 * 4 * 32 * 128 * 256k * 2 = 8.4 GB`ở 256k BF16. Chỉ có 4 lớp chú ý đóng góp.
+- KV cache (chỉ là các lớp chú ý): `2 * 4 * 32 * 128 * 256k * 2 = 16 GB`Chỉ có 4 lớp chú ý đóng góp. Jamba được phát hành sử dụng GQA với 8 đầu KV trong các lớp đó, đưa điều này lên 4 GB, con số trong giấy Jamba.
 - Tình trạng SSM: `28 * hidden * state_size`cho mỗi dấu tiền, nhưng đây là một kích thước cố định cho mỗi lớp, không quy mô với chiều dài chuỗi. trạng thái Mamba điển hình là 16 cho mỗi tính năng, ẩn 4096: `28 * 4096 * 16 * 2 = 3.7 MB`Toàn bộ.
 
-So sánh với một Transformer tinh khiết ở 32 lớp, cùng một ẩn, đầy đủ MHA ở 32 đầu: `2 * 32 * 32 * 128 * 256k * 2 = 128 GB`Tỷ lệ dự trữ KV giảm 8 lần.`2 * 32 * 8 * 128 * 256k * 2 = 32 GB`), hệ thống hybrid 1:7 của Jamba với 16 GB vẫn nhỏ hơn 2 lần.
+So sánh với một Transformer tinh khiết ở 32 lớp, cùng một ẩn, đầy đủ MHA ở 32 đầu: `2 * 32 * 32 * 128 * 256k * 2 = 128 GB`Tỷ lệ dự trữ KV giảm 8 lần.`2 * 32 * 8 * 128 * 256k * 2 = 32 GB`), một máy hybrid 1:7 với 32 đầu KV ở 16 GB vẫn nhỏ hơn 2 lần.
 
 Đó là điều AI21 có nghĩa là "256k ngữ cảnh trên một GPU 80GB duy nhất". Cache KV của một Transformer tinh khiết đầy đủ MHA sẽ không phù hợp; ngay cả một đường cơ sở GQA không để lại chỗ cho trọng lượng và kích hoạt; Jamba làm vậy.
 
