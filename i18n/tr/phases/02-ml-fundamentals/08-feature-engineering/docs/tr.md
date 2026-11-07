@@ -82,7 +82,7 @@ Modellerin sayılara, kategorilerin kodlanmasına ihtiyacı var.
 Gerçek verilerde boşluklar var.
 
 - **Drop rows:**Kayıp veriler nadir ve rastgele olduğunda
-- **Mean/median imputation:**Basit, dağılım şeklini korur (ortalama, dış değerlere daha sağlamdır)
+- **Mean/median imputation:**Basit, özelliğin merkezini korur (ortalama daha sağlamdır), ancak varyansiyonunu küçültürür ve her doldurulmuş değeri bir pikte yığar, böylece dağılım şekli değişir
 - **Mode imputation:**Kategorik özellikler için
 - **Indicator column:**İletişimden önce "was_this_missing" ikili bir sütunu ekleyin. Verilerin eksik olduğu gerçeği kendisi bilgi vericidir
 - **Forward/backward fill:**Zaman dizisi verileri için

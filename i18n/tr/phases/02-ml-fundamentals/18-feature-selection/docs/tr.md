@@ -9,7 +9,7 @@
 
 ## Öğrenme Hedefleri
 
-- Filtrleme yöntemlerini (varians eşiği, karşılıklı bilgi, chi-square) ve sarma yöntemlerini (RFE, ileriye seçme) sıfırdan uygulamak
+- Filtrleme yöntemlerini (varians eşiği, karşılıklı bilgi), bir sarma yöntemini (RFE) ve yerleştirilmiş yöntemleri (L1, ağaç önemi) sıfırdan uygulayın, sonra egzersizlerde ileriye seçimi ekleyin
 - Karşılıklı bilgi neden bağlantıların eksik olduğu çizgisiz özellik-hedef ilişkileri yakalar?
 - L1 düzenlenmesini (kişili seçimi) RFE ile (kalip seçimi) karşılaştırın ve hesaplama işlemleri karşılaştırın
 - Çoklu yöntemleri birleştiren ve tutulan veriler üzerinde daha iyi genelleştirmeyi gösteren bir özellik seçimi boru hattı oluşturun

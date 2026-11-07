@@ -86,7 +86,7 @@ Neden işe yarıyor:
 - Ne zaman ?$y=0$ve $p$0'ya yakın: $\log(1) = 0$, yani kaybı 0 yakın (doğru, düşük maliyet)
 - Ne zaman ?$y=0$ve $p$1'e yakın.$\log(0)$Negatif sonsuzluk yaklaşır, bu yüzden kayıp büyüktür ( yanlışı, yüksek maliyet)
 
-Bu kayıp işlevi, lojistik gerileme için eğri ve tek bir küresel minimum garanti eder.
+Bu kayıp işlevi lojistik gerileme için eğri, bu nedenle her yerel minimum küresel bir minimum ve gradient düşüşü kötü birinde sıkışamaz. mükemmel ayrılabilir verilerde kayıp ağırlıkların büyüdükçe düşmeye devam eder, bu nedenle sınırlı minimum yoktur; L2 düzenlenmesi bunu düzeltir ve minimumı eşsiz yapar.
 
 ### Logistik Geri Dönüşüm için Aralıklı Düşüş
 

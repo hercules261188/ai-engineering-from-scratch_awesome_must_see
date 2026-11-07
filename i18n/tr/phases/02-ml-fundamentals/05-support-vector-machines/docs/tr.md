@@ -340,7 +340,7 @@ print(f"Support vectors: {clf['svm'].n_support_}")
 
 Önemli: SVM'yi eğitmeden önce her zaman özelliklerinizi ölçeklendirin.$\lVert w \rVert$, ve ölçülmemiş özellikler geometriyi çarpıtır.
 
-Büyük veri kümeleri için kullan `LinearSVC`(başlangıç formu, $O(n)$(Epoha başına) yerine `SVC`(ikili formülasyon, $O(n^2)$- ...$O(n^3){}$):
+Büyük veri kümeleri için kullan `LinearSVC`(başlangıç formu, $O(n \cdot d)$Dönem boyunca, doğrusal olarak $n$) yerine `SVC`(ikili formülasyon, $O(n^2)$- ...$O(n^3){}$):
 
 ```python
 from sklearn.svm import LinearSVC

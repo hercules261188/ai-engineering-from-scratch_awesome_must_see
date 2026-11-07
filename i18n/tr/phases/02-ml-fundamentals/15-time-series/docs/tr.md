@@ -417,7 +417,7 @@ Eğer süslü ML modeliniz mevsimsel saf bir başlangıç çizgisine kaybedirse,
 
 1. **Start with plotting.**Herhangi bir modelleme yapmadan önce, çiğ serileri çizin. Eğilimleri, mevsimselliği, dış değerleri, yapısal kesintileri (harekette ani değişiklikler) araştırın. 30 saniyelik görsel inceleme genellikle size bir saatten fazla otomatik analiz anlatır.
 
-2. **Difference first, model second.**Eğer seri açık bir eğilim gösterirse, gecikme özellikleri oluşturmadan önce fark et. Ağaç tabanlı modeller eğilimleri ele alabilir, ancak doğrusal modeller edemez ve farklılaştırmak asla zarar vermez.
+2. **Difference first, model second.**Eğer dizide açık bir eğilim varsa, gecikme özellikleri oluşturmadan önce fark edin.Ağaç tabanlı modeller eğilimleri ele alabilir, ancak açık bir eğilim terimi olmayan doğrusal modeller edemez. Dizin sabit olduğunda durun: her ekstra farklılık döngüsü gürültü ekler ve düzeysel bilgiyi atır.
 
 3. **Hold out at least one full seasonal cycle.**Eğer haftalık mevsimsellik varsa, test setinize en az bir hafta, aylıksa en az bir ay gerekmektedir. Aksi takdirde modelin mevsimsel örneği yakaladığını değerlendiremezsiniz.
 

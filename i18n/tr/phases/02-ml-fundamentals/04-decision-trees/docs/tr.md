@@ -104,7 +104,7 @@ Bu açgözlülükle yaklaşım küresel olarak en iyi ağacı garanti etmez. En 
 
 ### Durdurma koşulları
 
-Ağaç, her yaprak saf olana kadar (yarrak başına bir örnek) durmadan büyür.
+Ağaç, durma koşulları olmadan her yaprak saf olana kadar veya parçalanmadan örneklerini ayırana kadar büyür, genellikle bir yaprak başına tek bir örnekten aşağı. Bu eğitim verilerini mükemmel bir şekilde ezberler ve korkunç bir şekilde genelleştirir.
 
 **Pre-pruning**ağaç tamamen büyümeden önce durdurur:
 - Maksimum derinlik: ağaç belirlenmiş bir derinliğe ulaştığında bölünmeyi durdurur
