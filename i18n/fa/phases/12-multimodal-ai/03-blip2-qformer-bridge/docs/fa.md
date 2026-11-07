@@ -1,6 +1,6 @@
 # از CLIP به BLIP-2  Q-Former به عنوان پل مودالیت
 
-> CLIP تصویر و متن را همبستگی می کند اما نمی تواند زیرنویس تولید کند، سوالات را پاسخ دهد یا مکالمه ای داشته باشد. BLIP-2 (Salesforce، 2023) با یک پل کوچکی قابل آموزش حل کرد: 32 ویکتور سوال قابل یادگیری از طریق توجه متقابل از ویژگی های یک ViT منجمد به همراه می شوند، سپس مستقیماً به جریان ورودی LLM منجمد وارد می شوند. 188 ميليون پارامتر پل يک مدرک 11B LLM را با يک ViT-g/14 متصل ميکنه هر VLM مبتنی بر آداپتور تا سال 2026  MiniGPT-4, InstructBLIP، پسر عمو LLaVA  یک نسل است. این درس معماری Q-Former را می خواند، آموزش دو مرحله ای آن را توضیح می دهد و یک نسخه اسباب بازی را ایجاد می کند که نمادهای بصری را به یک کدرسنده متن منجمد می دهد.
+> CLIP تصویر و متن را همبستگی می کند اما نمی تواند زیرنویس تولید کند، سوالات را پاسخ دهد یا مکالمه ای داشته باشد. BLIP-2 (Salesforce، 2023) با یک پل کوچکی قابل آموزش حل کرد: 32 ویکتور سوال قابل یادگیری از طریق توجه متقابل از ویژگی های یک ViT منجمد به همراه می شوند، سپس مستقیماً به جریان ورودی LLM منجمد وارد می شوند. 188 میلیون پارامتر پل یک ViT-g/14 را به LLM های منجمد بزرگ به اندازه 11B Flan-T5-XXL متصل کرد. هر VLM مبتنی بر آداپتور تا سال 2026  MiniGPT-4, InstructBLIP، پسر عمو LLaVA  یک نسل است. این درس معماری Q-Former را می خواند، آموزش دو مرحله ای آن را توضیح می دهد و یک نسخه اسباب بازی را ایجاد می کند که نمادهای بصری را به یک کدرسنده متن منجمد می دهد.
 
 **Type:** Build
 **Languages:** Python (stdlib, cross-attention + learnable-query demo)
@@ -117,7 +117,7 @@ modality-projection
 
 4. بخش 3.2 مقاله BLIP-2 (arXiv:2301.12597) را در مورد چگونگی ابتدایی Q-Former بخوانید. توضیح دهید که چرا ابتدایی از پایگاه BERT (نه تصادفی) به سرعت به هم نزدیک می شود.
 
-5. برای یک ویدیو ۱۰ دقیقه ای با ۱ FPS که به ۶۰ فریم نمونه شده است، هزینه توکن در هر فریم را در (Q-Former → ۳۲ توکن/ فریم) به مقابل (MLP پروژکتور → ۵۷۶ توکن/ فریم) محاسبه کنید. کدام یک از این توکن ها در پنجره زمینه LLM ۱۲۸k قرار دارد؟
+5. برای یک ویدیو 10 دقیقه ای با 1 FPS که به 60 فریم نمونه شده است، هزینه توکن هر فریم را در (Q-Former → 32 توکن / فریم) به مقابل (MLP پروژکتور → 576 توکن / فریم) محاسبه کنید. قبل از اینکه متن فوری جایی پیدا کند، هر پل می تواند چند فریم را در یک پنجره زمینه LLM 128k توکن قرار دهد؟
 
 ## اصطلاحات کلیدی
 
@@ -132,7 +132,7 @@ modality-projection
 | Two-stage pretraining | "Representation then generative" | Stage 1 trains Q-Former alone (ITC/ITM/ITG); Stage 2 attaches frozen LLM and trains only the projection + Q-Former |
 | Frozen backbone | "Do not finetune" | The vision encoder and LLM weights are fixed; only the bridge trains |
 | Projection head | "Linear to LLM dim" | Final linear layer mapping Q-Former output to the LLM's embedding dimension |
-| Perceiver resampler | "Flamingo's version" | Similar learnable-query cross-attention, used by Flamingo at every layer rather than as a single bridge |
+| Perceiver resampler | "Flamingo's version" | Similar learnable-query cross-attention; Flamingo runs it once per image to make fixed latents, then reads them through gated cross-attention at every LLM layer |
 
 ## خواندن بیشتر
 
