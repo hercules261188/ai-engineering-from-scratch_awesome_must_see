@@ -1,6 +1,6 @@
 # 游戏的RL AlphaZero,MuZero,和LLM推理时代
 
-> 1992年:TD-Gammon在纯TD后游中击败了人类冠军. 2016年:AlphaGo击败了Lee Sedol. 2017年:AlphaZero从零开始主导了象棋,肖吉和GO. 2024年:DeepSeek-R1证明了相同的配方,GRP取代了PPO,基于推理.游戏是推动这一阶段的每一个突破的基准.
+> 1992年:TD-Gammon在纯TD后游中击败了人类冠军. 2016年:AlphaGo击败了Lee Sedol. 2017年:AlphaZero从零开始主导了象棋,肖吉和GO. 2025年:DeepSeek-R1证明了相同的配方,GRP取代了PPO,基于推理.游戏是推动这一阶段的每一个突破的基准.
 
 **Type:** Build
 **Languages:** Python
@@ -60,7 +60,7 @@ while True:
 
   $L_{\text{GRPO}}(\theta) = -\mathbb E_{q, \lbrace o_i \rbrace} \left[ \frac{1}{G} \sum_i A_i \cdot \log \pi_\theta(o_i \mid q) \right] + \beta \cdot \mathrm{KL}(\pi_\theta \Vert \pi_{\text{ref}})$
 
-没有奖励模型,没有批评者,没有MCTS. 组相关基线取代了所有三个. 在计算的部分情况下,在推理基准上匹配或超过PPO-RLHF质量.
+没有学习的奖励模型,没有评论员,没有MCTS.基于规则的验证器提供奖励,组相关的基线取代了评论员,搜索步骤被放弃.在计算的小部分上匹配或超过推理基准的PPO-RLHF质量.
 
 **The R1 recipe in full.**根据该报告,该报告的内容包括:
 
@@ -86,7 +86,7 @@ f3-selfplay-ladder
 
 ## 建立它
 
-编码在`code/main.py`实现**GRPO in miniature**一个具有多组样品的强盗.算法与LLM相同;只有政策和环境更简单.它教导了*损失*和*团体相对优势*,即2025年的创新.
+编码在`code/main.py`实现**GRPO in miniature**专业的专业知识是:一个具有多组样本的强盗.算法与LLM相同;只有政策和环境更简单.它教导了*损失*和*组相关优势*,这是DeepSeekMath的2024年创新.
 
 ### 步骤1:一个小的验证器环境
 
@@ -144,7 +144,7 @@ def grpo_step(theta, p_idx, G=8, beta=0.01, lr=0.1, rng=None):
 ## 陷
 
 - **Reward hacking via verifier gaming.**经验者可能会发现实验者是错误的或可利用的.
-- **Group size too small.**基因基因变异是$1/\sqrt{G}$在下面$G = 4$优势信号是噪音的;标准选择是$G = 8$现在,我们要做什么?
+- **Group size too small.**基准差异为:$1/G$(其标准错误如$1/\sqrt{G}$下面$G = 4$优势信号是噪音的;标准选择是$G = 8$现在,我们要做什么?
 - **Length bias.**通过代币计数正常化,或使用序列级日志检查,或缩小到最大长度.
 - **Pure self-play cycles.**球运动的总数可以被各种对手游泳池减轻 (联盟比赛,10课).
 - **Search-policy mismatch.**如果政策网太小,不能代表搜索的分布,训练站.

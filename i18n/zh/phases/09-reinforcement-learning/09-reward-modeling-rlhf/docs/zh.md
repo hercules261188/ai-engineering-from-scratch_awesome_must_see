@@ -113,7 +113,7 @@ def rlhf_step(theta, ref, w, prompt, rng, eps=0.2, beta=0.1, lr=0.05):
 
 ### 步骤4:监控KL
 
-轨道平均值$\mathrm{KL}(\pi_\theta \Vert \pi_{\text{ref}})$如果它过去,`~5-10`政策已经远离了$\pi_{\text{SFT}}$低$\beta$这就是真正的RLHF的顶级诊断.
+轨道平均值$\mathrm{KL}(\pi_\theta \Vert \pi_{\text{ref}})$如果它过去,`~5-10`政策已经远离了 $\pi_{\text{SFT}}$两个$\beta$现在,如果这个问题是很低的, (请提高它,以撤回政策),或者奖励黑客开始了.
 
 ### 步骤5:使用TRL的生产配方
 

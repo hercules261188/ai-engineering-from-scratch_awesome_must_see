@@ -72,7 +72,7 @@ class ReplayBuffer:
         return rng.sample(self.buf, batch)
 ```
 
-对于阿塔利的容量大约为5万,
+作为原始DQN,Atari的容量为106次 (学习开始之前收集5万次转型);我们的玩具环境5000次.
 
 ### 步骤2:一个小的Q网络 (手动MLP)
 

@@ -21,7 +21,7 @@
 
 **The core idea, in one line:** $V^\pi(s) = \mathbb E_\pi[G_t \mid s_t = s] \approx (1/N) \sum_i G^{(i)}(s)$在哪里$G^{(i)}(s)$访问后的回报$s$政策$\pi$现在,我们要去.
 
-**First-visit vs every-visit MC.**考虑到一个访问国家事件$s$首先,每次访问的MC只会计算出第一次访问的回报;每次访问的MC只会计算所有访问.这两次访问在限制中都是无偏见的.第一次访问更容易分析 (iid样本).每次访问每集使用更多数据,通常在实践中更快地融合.
+**First-visit vs every-visit MC.**考虑到一个访问国家事件$s$许多次,第一次访问MC只计算出第一次访问的回报;每次访问MC都计算出所有访问.第一次访问MC是无偏见的.每次访问MC可以在有限数集后略有偏见,因为它平均每集的随机回报数量,并且该数量可以与回报相对而相结合,但两者都相近.$V^\pi(s)$访问数量将会增加到无限.第一次访问更容易分析 (iid样本).每次访问每集都使用更多数据,并且通常在实践中更快地趋同.
 
 **Incremental mean.**更新运行平均值:
 
@@ -195,7 +195,7 @@ Refuse to run MC on non-episodic tasks without a finite horizon cap. Refuse to r
 | Monte Carlo | "Random sampling" | Estimate expectations by averaging over iid samples from the distribution. |
 | Return $G_t$ | "Future reward" | Sum of discounted rewards from step $t$ to episode end: $\sum_{k\ge 0} \gamma^k r_{t+k+1}$. |
 | First-visit MC | "Count each state once" | Only the first visit in an episode contributes to the value estimate. |
-| Every-visit MC | "Use all visits" | Every visit contributes; slightly biased but more sample-efficient. |
+| Every-visit MC | "Use all visits" | Every visit contributes; slightly biased for finite samples, consistent in the limit, and more sample-efficient. |
 | ε-greedy | "Exploration noise" | Pick greedy action with prob $1-\epsilon$; random action with prob $\epsilon$. |
 | Importance sampling | "Correcting for sampling from the wrong distribution" | Reweight returns by $\pi(a \mid s)/\mu(a \mid s)$ products to estimate $V^\pi$ from $\mu$ data. |
 | On-policy | "Learn from my own data" | Target policy = behavior policy. Vanilla MC, PPO, SARSA. |
