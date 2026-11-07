@@ -79,7 +79,7 @@ Regla de ingeniería: tratar las identificaciones de correlación como carga, ca
 
 ### El sandboxing
 
-La ejecución de herramientas es el límite de la caja de arena. Véase la lección 09 para detalles. versión corta: cada herramienta debe especificar la superficie de lectura/escritura, acceso a la red, tiempo de espera, límite de memoria.`run_shell(cmd)`es una bandera roja; específico `git_status()`Es más seguro.
+La ejecución de herramientas es el límite de la caja de arena. Ver la fase 13 · 26 para detalles. versión corta: cada herramienta debe especificar la superficie de lectura / escritura, acceso a la red, tiempo de espera, límite de memoria.`run_shell(cmd)`es una bandera roja; específico `git_status()`Es más seguro.
 
 ```figure
 tool-routing

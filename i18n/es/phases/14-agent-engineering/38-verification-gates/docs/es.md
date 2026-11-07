@@ -87,7 +87,7 @@ Resultado: tres informes de veredicto, cada uno guardado junto al guión.
 
 ## Modelos de producción en la naturaleza
 
-Cuatro patrones elevan la puerta de "otro trabajo de peludo" a "el borde decisivo".
+Cinco patrones elevan la puerta de "otro trabajo de peludo" a "el borde decisivo".
 
 **Defense-in-depth, not single gate.**El gancho precomit → verificación del estado de CI → gancho pre-herramienta authz → gancho pre-merger. Cada capa es determinista por lo que un fallo en una capa es atrapado por la siguiente. el libro de juego de marzo de 2026 de microservices.io es explícito: el gancho precomit es impensable porque, a diferencia de una habilidad del lado del modelo, no depende del agente que sigue las instrucciones.
 

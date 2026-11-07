@@ -22,7 +22,7 @@ Los agentes pasan demos. Ellos fallan en la producción de maneras que las demos
 
 ### Tres capas de evaluación
 
-1. **Static benchmarks** SWE-bench Verificado para código (lección 19), WebArena/OSWorld para navegación / escritorio (lección 20), GAIA para generalista (lección 19), BFCL V4 para uso de herramientas (lección 06). Uso para comparación entre modelos y puertas de regresión. Contaminación es real: SWE-bench+ encontró una fuga de solución del 32,67%. Siempre informe de puntajes verificados / + auditados.
+1. **Static benchmarks** SWE-bench Verificado para código (lección 19), WebArena/OSWorld para navegación / escritorio (lección 20), GAIA para generalista (lección 19), BFCL V4 para uso de herramientas (lección 06). Uso para comparación entre modelos y cerraduras de regresión. Contaminación es real: SWE-bench+ encontró una fuga de solución del 32.67% . Siempre informe de puntajes en SWE-bench Verified o en un conjunto de auditorías de fugas como SWE-bench+.
 
 2. **Custom offline evals** la forma de su producto:
    - LLM como juez (Langfuse, Phoenix, Opik  Lección 24).
@@ -54,7 +54,7 @@ Este es el auto-refinado (lección 05) generalizado. Cualquier flujo de agentes 
 
 ### Enlazación de la fase 14
 
-Cada lección en la Fase 14 genera casos de evaluación:
+La mayoría de las lecciones en la Fase 14 generan casos de evaluación.
 
 | Lesson | Eval case it generates |
 |--------|------------------------|
@@ -77,7 +77,7 @@ Cada lección en la Fase 14 genera casos de evaluación:
 | 28 Orchestration | Supervisor routes to the right specialist |
 | 29 Runtime Shapes | DLQ handles N% failure |
 
-Si su suite de evaluación tiene casos para cada uno, ha cubierto la Fase 14.
+Si su suite de evaluación tiene un caso para cada fila, ha cubierto el núcleo de la Fase 14.
 
 ### Cuando el desarrollo basado en la evaluación no funciona
 

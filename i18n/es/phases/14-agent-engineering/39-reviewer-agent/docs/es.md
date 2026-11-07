@@ -43,7 +43,7 @@ Cinco dimensiones, cada una con un puntaje de 0 a 2.
 | Verification quality | Does the acceptance command actually prove the goal, or did it prove a weaker version? |
 | Handoff readiness | Could the next session pick up cleanly from the current state? |
 
-Un total de 10 es un fracaso suave, un fracaso bajo 5 es un fracaso duro.
+Un eje inferior a 7 es un fracaso suave; un eje inferior a 5, o cualquier dimensión en 0, es un fracaso duro.
 
 ### El revisor es un papel separado, no un modelo separado
 

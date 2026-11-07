@@ -124,7 +124,7 @@ El resultado no es que el arnés gane para siempre. Los modelos absorben los tru
 
 Esta es la parte en la que no necesitas ser educado.
 
-- LangChain *Anatomy of an Agent Harness* enumera once componentes  instrucciones, herramientas, ganchos, cajas de arena, orquestación, memoria, habilidades, sub-subgencios y un "bucle tonto" de tiempo de ejecución. No nombra filas, trabajadores como unidad de implementación, semántica de activación, persistencia de sesión como una preocupación separada o política de autorización. Trata al arnés como un objeto que configuras, no como un sistema que despliegas.
+- La *Anatomía de un agente de LangChain* recorre los componentes principales del arnés: las instrucciones, herramientas, ganchos, cajas de arena, orquestación, memoria, habilidades, subagentes y un "bucle tonto" de tiempo de ejecución. No nombra filas, trabajadores como unidad de despliegue, semántica de activación, persistencia de sesión como una preocupación separada o política de autorización. Trata el arnés como un objeto que configuras, no como un sistema que despliegas.
 - Addy Osmani's *Agent Harness Engineering* aterriza el marco `Agent = Model + Harness`y el patrón de ratchet, pero no dice de qué se construye un arnés.
 - Anthropic y OpenAI van más profundo en las superficies pero permanecen dentro de sus propios tiempos de ejecución. El anuncio de "separación de arnés-computación" en el APRIL 2026 Agents SDK es la primera pieza de proveedor que respalda explícitamente la división de control-plano / plano de datos. Esa es una idea primitiva, no una nueva.
 - El libro de arneses agentes trata el arneses como un objeto de configuración (Jaymin West *Agentic Engineering*, capítulo 6) y la línea más fuerte en él es "el arneses es el límite de seguridad primario en un sistema agente". Eso es sólo política de autorización, reiterado.
@@ -193,7 +193,7 @@ Las personas que se encuentran en la zona de trabajo de la empresa deben tener e
 Enmarcamientos de los proveedores:
 
 - [Addy Osmani, Agent Harness Engineering](https://addyosmani.com/blog/agent-harness-engineering/)¿ Qué es esto ?`Agent = Model + Harness`y el patrón de ratchets; delgado en la infraestructura
-- [LangChain, The Anatomy of an Agent Harness](https://blog.langchain.com/the-anatomy-of-an-agent-harness/) once componentes: instrucciones, herramientas, ganchos, orquestación, cajas de arena, memoria, habilidades, sub-gentes, tiempo de ejecución; omite colas, despliegue, authz
+- [LangChain, The Anatomy of an Agent Harness](https://blog.langchain.com/the-anatomy-of-an-agent-harness/) componentes del arnés central: instrucciones, herramientas, ganchos, orquestación, cajas de arena, memoria, habilidades, subbagentes, tiempo de ejecución; omite colas, despliegue, authz
 - [OpenAI, Harness engineering: leveraging Codex in an agent-first world](https://openai.com/index/harness-engineering/) La visión del equipo del Codex de las superficies alrededor de su tiempo de ejecución
 - [OpenAI, Unrolling the Codex agent loop](https://openai.com/index/unrolling-the-codex-agent-loop/) el bucle de agente reducido a un `while`en llamadas de funciones
 - [Anthropic, Effective harnesses for long-running agents](https://www.anthropic.com/engineering/effective-harnesses-for-long-running-agents) superficies de largo horizonte dentro de un tiempo de ejecución específico

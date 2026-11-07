@@ -16,7 +16,7 @@
 
 ## El problema
 
-Una tienda está mal para una de las tres clases de consultas:
+Cada tienda es adecuada para una de las tres clases de consultas:
 
 - **Semantic similarity**¿Qué hablamos sobre la deriva de agentes la semana pasada? Vector gana, KV y grafo faltan.
 - **Fact lookup** "cuál es el número de teléfono del usuario?" KV gana; vector es un desperdicio, gráfico es un exceso.

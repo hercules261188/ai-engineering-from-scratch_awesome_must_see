@@ -3,7 +3,7 @@
 > Cuatro primitivas: agente, tarea, tripulación, proceso. Dos formas de nivel superior: equipos (autónomo, colaboración basada en roles) y flujos (evento-driven, determinista). CrewAI es la implementación de referencia de 2026, y sus documentos son contundentes: "para cualquier aplicación lista para la producción, comience con un flujo".
 
 **Type:** Learn + Build
-**Languages:** Python (stdlib)
+**Languages:** Python (with numpy)
 **Prerequisites:** Phase 14 · 12 (Workflow Patterns), Phase 14 · 14 (Actor Model)
 **Time:** ~75 minutes
 
@@ -14,8 +14,8 @@
 - Distinguir a los equipos (basados en roles autónomos) de los flujos (determinísticos basados en eventos) y explicar la recomendación de producción de los docentes.
 - Herramientas de alambre con el `@tool`decoratora y`BaseTool`Subclase; razonamiento sobre las salidas estructuradas vs texto libre.
 - Nombre de los cuatro tipos de memoria CrewAI y cuando cada uno paga.
-- Implementar un equipo de tres agentes (investigador, escritor, editor) que produzca un resumen.
-- Detecta los tres modos de falla de CrewAI: Inflación rápida, impuestos de gerente-LLM, entregas frágiles.
+- Implemente un equipo de tres agentes (investigador, escritor, editor) en Python simple que produzca un breve.
+- Detecta los cuatro modos de falla de CrewAI: Incremento rápido, impuestos de gerente-LLM, entregas frágiles, Crew-as-prod.
 
 ## El problema
 
@@ -120,7 +120,7 @@ Habilitar a la tripulación con `memory=True`El sistema de memoria de CrewAI es 
 - Los presupuestos de latencia subsegundos. Jerárquico añade viajes de ida y vuelta. Incluso Sequential serializa las instrucciones que incluyen historias de fondo y salidas anteriores.
 - Los bucles de agente único. Salta el marco; un bucle de agente (lección 1) más un registro de herramientas es más corto.
 
-La lección 17 (Tradeoffs de Marco de Agentes) expone esto en una matriz.
+La lección 28 (Orquestación de patrones) compara las topologías lado a lado.
 
 ### Forma de dependencia
 
@@ -129,7 +129,7 @@ Independiente de LangChain. Python 3.10 a 3.13. utiliza `uv`Cuenta de estrellas:
 ### Cuando este patrón va mal
 
 - **Prompt-bloat from backstories.**Una historia de fondo de 2000 palabras por agente y un equipo de cinco agentes quema el presupuesto de contexto antes de la primera llamada de herramienta. Mantenga las historias de fondo de menos de 200 palabras.
-- **Manager-LLM token tax.**El proceso jerárquico agrega una llamada de LLM del gerente antes de cada llamada especialista. En un equipo de cinco tareas que es seis llamadas de LLM en lugar de cinco, y la llamada del gerente lleva la lista completa de tareas más las salidas anteriores.
+- **Manager-LLM token tax.**El proceso jerárquico agrega una llamada de LLM del gerente antes de cada llamada especialista. En un equipo de cinco tareas que es diez llamadas de LLM en lugar de cinco, y la llamada del gerente lleva la lista completa de tareas más las salidas anteriores.
 - **Brittle handoffs.**La tarea N's `expected_output`La tarea N+1 lo lee como `context`La LLM produjo cuatro, los agentes de la corriente baja, los ad-libs.`output_pydantic`En la tarea N, la tarea N+1 lee un objeto mecanografiado, no texto libre.
 - **Crew-as-prod.**El equipo de forma libre se envía a la producción sin envoltura de flujo. La variabilidad de salida es alta; la repetición es imposible; en la llamada no puede diferenciar una carrera mala contra una buena.
 
@@ -139,7 +139,7 @@ ae-crew-vs-flow
 
 ## Construye el mismo
 
-`code/main.py`Implementa versiones de STDlib de ambas formas más un equipo de tres agentes.
+`code/main.py`La única dependencia fuera de la biblioteca estándar es Numpy, por la similitud burlada.
 
 Forma:
 
