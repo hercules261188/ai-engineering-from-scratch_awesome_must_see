@@ -20,7 +20,7 @@ BLIP-2 alimenta 32 tokens visuais na camada de entrada de um LLM congelado. Func
 
 A resposta do Flamingo: não alterem o fluxo de entrada do LLM. Insira camadas de atenção cruzada extra entre os blocos de LLM existentes. Os tokens de texto ainda fluem através da auto-atenção causal do LLM como sempre. Entre cada poucos blocos de LLM, tokens de texto também atendam às características da imagem através de uma nova camada fechada. O portal (iniciado para zero) significa que no passo zero as novas camadas são sem operações  o modelo se comporta exatamente como o LLM pré-treinado. À medida que o treinamento progride, o portão abre-se e a informação visual começa a fluir.
 
-A segunda pergunta Flamingo respondeu: como você lida com um número variável de imagens (0, 1 ou muitas) por prompt? Um resampler Perceptor  um pequeno módulo de atenção cruzada que toma qualquer número de patches que você tem e produz um número fixo de tokens visuais latentes. A camada de atenção cruzada LLM vê a mesma forma independentemente de quantas imagens estão no prompt.
+A segunda pergunta que Flamingo respondeu: como lidar com um número variável de imagens (0, 1 ou muitas) por pedido? Um resampler Perceptor  um pequeno módulo de atenção cruzada que toma o número de patches que você tem e produz um número fixo de tokens visuais latentes por imagem. O total cresce com a contagem de imagens, mas cada token de texto lê apenas os latentes de uma imagem, então o que qualquer token de texto vê em atenção cruzada tem a mesma forma, independentemente de quantas imagens estão no prompt.
 
 ## O conceito
 
@@ -59,7 +59,7 @@ Esta é a escolha de design mais importante no Flamingo: o condicionamento visua
 
 ### A atenção cruzada mascarada para entradas entrelaçadas
 
-Em um prompt como "<imagem A> legenda A <imagem B> legenda B <imagem C> ?", cada token de texto deve ver apenas imagens que vieram antes dele na sequência. A máscara de atenção cruzada impõe: token de texto na posição `t`Atende apenas a imagem resampler tokens cujo índice de imagem `i < i_t`onde`i_t`é a imagem mais recente antes da posição `t`"Vede apenas a última imagem anterior" ou "veja todas as imagens anteriores" são ambas opções válidas; Flamingo escolheu a primeira.
+Em um prompt como "<imagem A> legenda A <imagem B> legenda B <imagem C> ?", cada token de texto deve ver apenas imagens que vieram antes dele na sequência. A máscara de atenção cruzada impõe: token de texto na posição `t`Atende apenas aos tokens de resampler de imagem `i_t`, onde`i_t`é a imagem mais recente antes da posição `t`"Vede apenas a última imagem anterior" ou "vê todas as imagens anteriores" são ambas opções válidas; Flamingo escolheu a primeira.
 
 ### Aprendizagem em poucos tiros no contexto
 
@@ -76,7 +76,7 @@ O modelo vê o padrão de conclusão e produz " pássaro" (ou o que a imagem 3 m
 Flamingo treinado em três conjuntos de dados:
 
 1. MultiModal MassiveWeb (M3W): 43 milhões de páginas web com imagens e texto entrelaçados, reconstruindo a ordem de leitura.
-2. Pares de imagem-texto (ALIGN + LTIP): 4,4B pares.
+2. Pairos de imagem-texto: ALIGN (1.8B pares) mais LTIP (312M pares), cerca de 2,1B pares no total.
 3. Pairagem de vídeo-texto (VTP): 27 milhões de clips de vídeo curtos.
 
 OBELICS (2023) é uma reprodução aberta do corpus web entrelaçado, que Idefics, Idefics2 e os modelos mais abertos "como Flamingo" treinam.
@@ -102,7 +102,7 @@ Otter (2023) baseia-se no OpenFlamingo com sintonização de instruções no MIM
 | Frozen LLM | Yes | Yes |
 | Few-shot in-context | Weak | Strong — the paper's centerpiece |
 | Interleaved inputs | No native support | Yes, the design target |
-| Training data | 130M pairs | 1.3B pairs + 43M interleaved pages |
+| Training data | 130M pairs | ~2.1B pairs + 27M video clips + 43M interleaved pages |
 | Parameter count | 188M trained | ~10B trained (cross-attn layers) |
 | Compute | Days on 8 A100s | Weeks on thousands of TPUv4 |
 

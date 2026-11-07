@@ -28,9 +28,9 @@ A aposta foi controversa quando foi publicada. Dois anos depois, a família de g
 
 O ingrediente chave é o tokenizer visual. Emu3 treina um tokenizer personalizado da classe IBQ (Quantizer de garganta inversa, família SBER-MoVQGAN) a 8x8 de redução de resolução por token. Uma imagem de 512x512 torna-se 64x64 = 4096 tokens no tamanho do livro de código 32768.
 
-Esta é maior do que os 1024 tokens do Chameleon por 512x512 em K=8192 mas mais barato por token (buscas de código menores, codec mais simples).
+O valor é maior que os 1024 tokens de Chameleon por 512x512 em K=8192 em ambos os eixos: quatro vezes os tokens e um livro de códigos quatro vezes maior. A capacidade extra compra qualidade de reconstrução. A métrica chave: reconstrução PSNR a 30,5 dB, competitiva com o espaço latente contínuo da Stable Diffusion a 32 dB.
 
-Para vídeo: um tokenizer VQ 3D codifica um patch espaciotemporal (4x4x4 pixels) para um número inteiro. Um clip 4s em 8 FPS tem 32 quadros; em 256x256 com 4x redução espacial e 4x temporal, a contagem de tokens é (256/4) * (256/4) * (32/4) = 64 * 64 * 8 = 32.768 tokens.
+Para vídeo: um tokenizer VQ 3D codifica um patch espaciotemporal (4 quadros x 8x8 pixels) para um número inteiro. Um clip 4s em 8 FPS tem 32 quadros; em 256x256 com redução espacial 8x e temporal 4x, a contagem de tokens é (256/8) * (256/8) * (32/4) = 32 * 32 * 8 = 8.192 tokens.
 
 A qualidade do tokenizer é o teto.
 
@@ -68,14 +68,14 @@ Sem cabeças específicas, apenas modelos de instruções diferentes, o mesmo po
 Do artigo Emu3 (septembro 2024):
 
 - Geração de imagem: supera a SDXL no MJHQ-30K FID (5.4 vs 5.6), GenEval em geral (0.54 vs 0.55  empatia estatística), e o composto de Deep-Eval no par.
-- Percepção de imagem: supera a LLaVA-1.6 na VQAv2 (75.1 vs 72.4) e coincide aproximadamente na MMMU.
+- Percepção de imagem: segue LLaVA-1.6 no VQAv2 (75.1 vs 81.8) e MMMU (31.6 vs 35.1), mas supera no SEED-Bench, OCRBench e ChartQA.
 - Geração de vídeo: qualidade de vídeo de 4 segundos em FVD competitivo com modelos de referência pública da era Sora.
 
 Os números nem sempre estão ganhando  Emu3 negocia um ponto aqui por um ponto lá  mas a afirmação "a previsão do próximo token é tudo o que você precisa" é defensivel em todas as modalidades.
 
 ### Custo de cálculo
 
-Emu3 foi treinado em ~300 bilhões de tokens multimodal com um modelo de parâmetro 7B. Horas de GPU aproximadamente comparáveis ao pre-treinamento Llama-2-7B (2k-4k GPU-anos no silício da classe A100). Modelos de difusão como Stable Diffusion 3 treinam em orçamentos semelhantes, mas precisam de codificadores de texto separados e pipelines mais complexos.
+O Emu3 é um modelo de parâmetro 8B. O artigo não publica um total de horas de GPU; para escala, o pre-treinamento Llama-2-7B usou cerca de 184k A100 horas de GPU, aproximadamente 21 anos de GPU.
 
 Em inferência, Emu3 é mais lento do que SDXL por imagem: 4096 tokens de imagem a 30 tok/s é ~2 minutos por imagem 512x512 versus 2-5 segundos para SDXL. A descodificação especulativa e a otimização do cache KV reduzem a lacuna, mas não a fecham.
 
@@ -106,11 +106,11 @@ Esta lição produz`outputs/skill-token-gen-cost-analyzer.md`. Dada uma especifi
 
 1. Emu3 produz 4096 tokens por imagem de 512x512 com redução de 8x8.
 
-2. Leia a Seção 3.3 do Emu3 no tokenizer de vídeo. Descreva a forma do parche VQ 3D e por que é 4x4x4 e não 8x8x1.
+2. Leia a Seção 3.3 do Emu3 no tokenizer de vídeo. Descreva a forma do patch VQ 3D e por que abrange 4 quadros x 8x8 pixels em vez de um único quadro.
 
 3. Peso de orientação livre de classificadores 5.0 vs 3.0: que efeito visual?`code/main.py`- Não .
 
-4. Compute os FLOP de treinamento para Emu3-7B a 300B tokens e compare com a Diffusão Estabilizada 3.
+4. Compute os FLOP de formação para Emu3 (8B) a um suposto valor de 300B e compare com a Diffusão Estabil 3.
 
 5. A Emu3 supera a SDXL na FID, mas não na VQAv2 versus VLM especializados.
 
@@ -120,7 +120,7 @@ Esta lição produz`outputs/skill-token-gen-cost-analyzer.md`. Dada uma especifi
 |------|-----------------|------------------------|
 | Next-token prediction | "NTP" | Standard autoregressive loss: predict token[i+1] given token[0..i]; works for every modality when tokenized |
 | IBQ tokenizer | "Inverse bottleneck quantizer" | A class of VQ-VAE with larger codebooks (32768+) and better reconstruction than Chameleon's |
-| 3D VQ | "Spatiotemporal quantizer" | Codebook indexed by (time, row, col); one token covers a 4x4x4 pixel cube |
+| 3D VQ | "Spatiotemporal quantizer" | Codebook indexed by (time, row, col); one token covers 4 frames x 8x8 pixels |
 | Classifier-free guidance | "CFG" | Mix conditional and unconditional logits with weight gamma; boosts image quality at inference |
 | Unified vocabulary | "Shared tokens" | Text + image + video all draw from the same integer space; model predicts whichever modality comes next |
 | MJHQ-30K | "Image gen benchmark" | Midjourney-quality benchmark with 30k prompts; Emu3 reports FID here |

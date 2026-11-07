@@ -1,6 +1,6 @@
 # Modelos de Língua em Vídeo: Tokens Temporais e Grounding
 
-> O vídeo não é uma pilha de fotos. Um clip de 5 segundos tem ordem causal, verbos de ação e cronometragem de eventos que um modelo de imagem não pode representar. Video-LLaMA (Zhang et al., junho 2023) enviou o primeiro open video-LLM com a terração audiovisual. O VideoChat e o Video-LLaVA escalaram o padrão. Até 2025, o TMRoPE da Qwen2.5-VL encerrou a lacuna com os modelos proprietários de fronteira. Cada sistema resolveu tokens temporais de forma diferente  Q-former por clip, concat-pool por frame, TMRoPE por token. Esta lição lê os padrões, constrói um amostragem de quadro uniforme versus dinâmico e avalia as tarefas de aterragem temporal.
+> O vídeo não é uma pilha de fotos. Um clip de 5 segundos tem ordem causal, verbos de ação e cronometragem de eventos que um modelo de imagem não pode representar. Video-LLaMA (Zhang et al., junho 2023) enviou o primeiro open video-LLM com a terração audiovisual. O VideoChat e o Video-LLaVA escalaram o padrão. Até 2025, o M-RoPE de Qwen2.5VL, alinhado com o tempo, encerrou a lacuna com os modelos proprietários de fronteira. Cada sistema resolveu tokens temporais de forma diferente  Q-former por clip, concat-pool por frame, M-RoPE alinhado no tempo por token. Esta lição lê os padrões, constrói um amostragem de quadro uniforme versus dinâmico e avalia as tarefas de aterragem temporal.
 
 **Type:** Build
 **Languages:** Python (stdlib, frame sampler + temporal-grounding evaluator)
@@ -11,7 +11,7 @@
 
 - Explique por que a codificação posicional temporal altera o desempenho do VLM de vídeo independentemente do codificador de visão.
 - Compare a amostragem uniforme, dinâmica-FPS e de quadros orientados por eventos em tokens-por-segundo versus precisão de aterragem.
-- Descreva Q-former-per-clip (Video-LLaMA) vs pooled-per-frame (Video-LLaVA) vs M-RoPE-per-token (Qwen2.5-VL) projetos.
+- Descreva Q-former-per-clip (Video-LLaMA) vs pooled-per-frame (Video-LLaVA) vs time-aligned M-RoPE per token (Qwen2.5-VL) designs.
 - Cite os quatro critérios de referência para o vídeo: VideoMME, TempCompass, EgoSchema, Video-MMMU.
 
 ## O problema
@@ -26,7 +26,7 @@ Existem três estratégias de redução:
 
 Cada troca é diferente. sub-sampling perde detalhes temporais. pooling perde detalhes espaciais. Q-former perde um pouco, mas economiza tokens.
 
-A codificação de posição temporal é o outro eixo: como o modelo sabe que o quadro 5 veio antes do quadro 6? As opções incluem RoPE temporal simples 1D (Video-LLaMA), incorporações temporais aprendidas (Video-LLaVA) e TMRoPE (Qwen2.5-VL, 3D completa).
+A codificação da posição temporal é o outro eixo: como o modelo sabe que o quadro 5 veio antes do quadro 6? As opções incluem RoPE temporal simples 1D (Video-LLaMA), incorporações temporais aprendidas (Video-LLaVA) e M-RoPE alinhado com o tempo (Qwen2.5-VL, 3D completo).
 
 ## O conceito
 
@@ -46,17 +46,17 @@ O VideoChat manteve a ideia de Video-LLaMA, mas deixou cair o áudio e simplific
 
 Nenhum deles lida com vídeo longo.
 
-### Qwen2,5-VL e TMRoPE
+### Qwen2,5-VL e M-RoPE alinhado com o tempo
 
-Qwen2.5-VL introduziu TMRoPE  Temporal-Modality Rotary Position Embedding. Cada patch token carrega uma posição (t, h, w) onde t é o timestamp real (não o índice de quadro).
+Qwen2.5-VL mantém o M-RoPE (Inmoblagem de Posição Rotária Multimodal) do Qwen2-VL e alinha seu eixo temporal com o tempo absoluto. Cada token de parche carrega uma posição (t, h, w) onde t segue o timestamp real (não o índice de quadro). Qwen2.5-Omni (Lessão 12.20) mais tarde nomeou sua versão de áudio e vídeo da mesma ideia TMRoPE, Time-alignado Multimodal RoPE.
 
 Diferenças fundamentais do simples incorporamento temporal:
 
 - O modelo vê "em 4,2 segundos" e não "no quadro 15".
 - Cada token visual gira independentemente por sua marca de tempo.
-- Compativel com FPS dinâmico. Se você amostrar a 2 FPS aqui e 4 FPS ali, o TMRoPE lida com o espaçamento desigual de forma nativa.
+- Compativel com FPS dinâmico. Se você amostrar a 2 FPS aqui e 4 FPS ali, M-RoPE alinhado no tempo lida com o espaçamento desigual de forma nativa.
 
-O TMRoPE permite que "em que segundo o gato salta?" consultas. O modelo pode emitir "em 4,2 segundos".
+O M-RoPE alinhado com o tempo permite que "em que segundo o gato salta?" consultas. O modelo pode emitir "em 4,2 segundos".
 
 ### Estratexias de amostragem de quadro
 
@@ -70,7 +70,7 @@ Quadro de teclado + contexto: amostra em limites de tomadas + alguns quadros adj
 
 ### Reunião por quadro
 
-A 1 FPS e 576 tokens por quadro, um clip de 5 minutos é de 172.800 tokens.
+A 1 FPS e 576 tokens por quadro, um clip de 5 minutos é 172.800 tokens. Isso supera o contexto de 128k do Qwen2.5-VL-72B, então você deve deixar cair a taxa de quadros ou os tokens de pool por quadro primeiro.
 
 3x3 bilinear pool reduz para 64 tokens por quadro -> 19.200 tokens por 5 minutos.
 
@@ -91,7 +91,7 @@ Formatos de saída para aterragem temporal:
 
 - "O gato salta ao redor da marca de 4 segundos". Facil de analisar mas impreciso.
 - JSON estruturado: `{"event": "jump", "start": 4.1, "end": 4.3}`O Qwen2.5VL treina isto.
-- Baseado em tokens: especial `<time>4.1</time>`Os tokens estão entrelaçados com a resposta.
+- Baseado em tokens: especial `<time>4.1</time>`Alguns modelos de vídeo usam isso; Qwen2.5-VL em vez disso codifica o tempo em seus IDs de posição M-RoPE e respostas em texto ou JSON.
 
 O formato de saída JSON do Qwen2.5VL analisa diretamente.
 
@@ -99,7 +99,7 @@ O formato de saída JSON do Qwen2.5VL analisa diretamente.
 
 Para VLMs de vídeo em 2026:
 
-- Encoder: SigLIP 2 com M-RoPE ou TMRoPE (Qwen2.5-VL).
+- Encoder: SigLIP 2 ou ViT de resolução nativa, com M-RoPE alinhado com o tempo no MLL (Qwen2.5-VL).
 - Amostragem de quadro: FPS dinâmico (1-4 dependendo do movimento) com tampa máxima do quadro.
 - A combinação por quadro: 3x3 bilinear.
 - Saída: JSON estruturado com campos de tempo + evento.
@@ -115,7 +115,7 @@ video-temporal-patches
 
 - Amplificadores de quadros de FPS uniformes e dinâmicos.
 - Um avaliador de fixação temporal de brinquedos: dado um evento de "verdade básica" no tempo T e uma saída de modelo, pontuação de precisão com tolerância.
-- Uma comparação entre o Video-LLaMA (16 quadros, Q-former), o Video-LLaVA (8 quadros, MLP), o Qwen2.5-VL (FPS dinâmico + TMRoPE).
+- Uma comparação entre o Video-LLaMA (16 quadros, Q-former), o Video-LLaVA (8 quadros, MLP), o Qwen2.5-VL (FPS dinâmico + M-RoPE alinhado no tempo).
 
 ## Envia-o
 
@@ -125,7 +125,7 @@ Esta lição produz`outputs/skill-video-vlm-frame-planner.md`. Dada uma tarefa d
 
 1. Para uma demonstração de 3 minutos, escolha uniforme vs FPS dinâmico.
 
-2. O TMRoPE acrescenta o que especificamente uma simples tabela de inserção temporal não pode fazer?
+2. O M-RoPE alinhado com o tempo acrescenta o que especificamente uma simples tabela de inserção temporal não pode fazer?
 
 3. Escreva um esquema JSON para o aterramento temporal que um VLM possa aprender a emitir. Incluir casos de erro.
 
@@ -138,7 +138,7 @@ Esta lição produz`outputs/skill-video-vlm-frame-planner.md`. Dada uma tarefa d
 | Term | What people say | What it actually means |
 |------|-----------------|------------------------|
 | Temporal grounding | "Time-localized answers" | VLM outputs a specific timestamp range for when an event happens |
-| TMRoPE | "Time-Multimodal RoPE" | 3D rotary position with absolute timestamps, used by Qwen2.5-VL |
+| Time-aligned M-RoPE | "TMRoPE" | 3D rotary position whose temporal axis follows absolute timestamps; Qwen2.5-VL uses it for video, and Qwen2.5-Omni names its audio and video form TMRoPE |
 | Dynamic FPS | "Motion-aware sampling" | Sample more frames in high-motion segments, fewer in static ones |
 | Frame pooling | "Spatial compress per frame" | Reduce patches per frame with bilinear interpolation before the LLM |
 | Video Q-former | "Clip compressor" | Cross-attention bottleneck mapping N frames to K learned queries |

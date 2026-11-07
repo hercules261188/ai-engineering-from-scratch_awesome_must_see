@@ -11,7 +11,7 @@
 
 - Explicar a difusão discreta mascarada: o cronograma que mascara os tokens uniformemente e então pede ao transformador para recuperá-los.
 - Compare a descodificação de imagem paralela (Show-o, MaskGIT) com a descodificação de imagem autoregressiva (Chameleon, Emu3) em velocidade e qualidade.
-- Nomear as três tarefas que o Show-o realiza num único ponto de controlo: T2I, VQA, pintura de imagem.
+- Nomear as quatro tarefas que o Show-o realiza num único ponto de controlo: geração de texto, VQA, T2I, pintura de imagem.
 - Escolha um cronograma de enmascaramento (cosinoso, linear, truncado) e racionalize o seu efeito sobre a qualidade da amostra.
 
 ## O problema

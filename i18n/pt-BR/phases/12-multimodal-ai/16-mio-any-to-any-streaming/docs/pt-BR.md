@@ -21,7 +21,7 @@ Um modelo multimodal unificado é fácil de reivindicar e difícil de construir 
 Os desafios de engenharia:
 
 - Os tokenizers devem existir para todas as modalidades, comprimir sem perdas - o suficiente para reconstrução, e produzir tokens às taxas que o transformador pode consumir.
-- Um único vocabulário deve atribuir espaço para texto (32k+), imagem (16k+), fala (4k+), música (8k+).
+- Um único vocabulário deve atribuir espaço para texto (32k+), imagem (8k+), fala (4k+), música (8k+).
 - Os dados de formação devem abranger cada par de entrada e saída (texto→imagem, imagem→discurso, fala→imagem, etc.) ou o modelo deve ser composto.
 - A inferência deve transmitir tokens de saída rápido o suficiente para a latência de conversação (<500ms tempo-a-primeiro-byte de áudio).
 
@@ -32,21 +32,21 @@ Os desafios de engenharia:
 A pilha de tokenizer da MIO:
 
 - Texto: BPE padrão, vocabulário ~32000.
-- Imagem: SEED-Tokenizer (2023)  VAE quantizado com livro de código discreto, 4096 entradas, 32x32 tokens por imagem.
-- Discurso: SpeechTokenizer residual-VQ (2023)  codifica a forma de onda de 16 kHz em 8 codebooks hierárquicos; o primeiro nível é conteúdo grosseiro, níveis posteriores adicionam prosodia e identidade do alto-falante.
-- Música: resíduos similares-VQ (família MusicGen / Encodec da Meta), 4-8 codebooks.
+- Imagem: SEED-Tokenizer (2023), um tokenizador de imagem discreto com um livro de código de 8192 entradas que emite 32 tokens por imagem.
+- Discurso: SpeechTokenizer residual-VQ (2023), que codifica uma forma de onda de 16 kHz em 8 codebooks hierárquicos; o primeiro nível é conteúdo grosseiro, níveis posteriores adicionam prosodia e identidade do alto-falante. MIO mantém o nível de conteúdo mais os três primeiros níveis de timbre, 1024 códigos cada, então 4096 IDs de fala.
+- Música: similar residual-VQ (Meta's MusicGen / Encodec family), 4-8 codebooks. MIO não envia um tokenizer de música (sua quarta modalidade é vídeo, como quadros através do tokenizer de imagem); o brinquedo desta lição adiciona música para mostrar como uma nova modalidade reivindica uma faixa de ID.
 
 Cada modalidade produz tokens inteiros. Os tokens recebem intervalos de ID desarticulados no vocabulário compartilhado:
 
 ```
 text:   0..31999
-image:  32000..36095  (4096 image tokens)
-speech: 36096..40191  (4096 speech base tokens, plus residual layers)
-music:  40192..48383  (8192 music tokens)
-sep:    48384..48390  (<image>, <speech>, <music>, </...>, etc.)
+image:  32000..40191  (8192 image tokens)
+speech: 40192..44287  (4 codebooks x 1024 speech tokens)
+music:  44288..52479  (8192 music tokens, the toy's extension)
+sep:    52480..52485  (<image>, <speech>, <music>, </...>)
 ```
 
-Total: ~ 48k vocabulário. A inserção de entrada e projeção de saída abrangem todo.
+Total: ~ 52k vocabulário. A inserção de entrada e projeção de saída abrangem todo.
 
 ### Descódigo de streaming
 
@@ -57,7 +57,7 @@ O padrão de streaming:
 1. O usuário fala em microfone; o tokenizer de áudio em tempo real emite tokens de fala a cada 50 ms.
 2. MIO consome tokens à sua chegada (preenchimento imediato + avanço incremental).
 3. Os tokens de saída fluem como gerados; um decodificador de voz paralelo os converte em amostras de áudio com ~ 50-150ms de latência.
-4. Tempo de primeira audiobitação: ~300-500ms no papel MIO, aproximando-se dos ~250ms do GPT-4o.
+4. Tempo-a-primeira-byte de áudio: o documento MIO não relata nenhum número de latência. O orçamento abaixo coloca este design em cerca de 300ms na melhor das hipóteses, contra ~250ms do GPT-4o.
 
 Mini-Omni (arXiv:2408.16725), GLM-4-Voice (arXiv:2412.02612), e Moshi (arXiv:2410.00037) são projetos complementares de streaming de fala-LLM. Moshi, em particular, alcança 160ms viagem de ida e volta em uma única GPU.
 
@@ -100,7 +100,7 @@ Para um produto de conversação, a latência de cada componente importa:
 - Primeiro token de saída: ~ 50ms.
 - Descóder de voz paralelo residual-VQ +: ~ 100-150ms.
 
-Tempo total de primeira audiobita: ~ 300ms mínimo. GPT-4o afirma ~ 250ms. Moshi afirma 160ms. MIO / AnyGPT estão na faixa de 400-600ms por referência pública.
+Tempo total de primeira audiobita: ~ 300ms mínimo. GPT-4o afirma ~ 250ms. Moshi afirma 160ms. Nem MIO nem AnyGPT publica um número medido, então trate este orçamento como uma estimativa, não um benchmark.
 
 ### Porque é que qualquer um fica duro
 
@@ -134,7 +134,7 @@ Esta lição produz`outputs/skill-any-to-any-pipeline-auditor.md`- Tendo em cont
 
 2. O SpeechTokenizer residual-VQ utiliza 8 codesbooks. Propõe por que a decodificação paralela dos níveis residuais é necessária (versus sequencial) e quais economias de latência traz.
 
-3. O seu vocabulário tem 32k texto + 4k imagem + 4k fala. Adicione música 8k e ~10 separadores. Qual é o custo do parâmetro de matrizes de incorporação em dim 4096 oculto?
+3. O seu vocabulário tem 32k texto + 8k imagem + 4k fala. Adicione música 8k e ~10 separadores. Qual é o custo do parâmetro de matrizes de incorporação em dim 4096 oculto?
 
 4. A cadeia de pensamento visual emite uma imagem intermediária. Que tipos de perguntas beneficiam?
 
@@ -146,7 +146,7 @@ Esta lição produz`outputs/skill-any-to-any-pipeline-auditor.md`- Tendo em cont
 |------|-----------------|------------------------|
 | Any-to-any | "Multimodal in/out" | A single model that accepts and emits text, image, speech, and music in any direction |
 | Residual-VQ | "Speech tokenizer stack" | Multi-codebook tokenization where each layer adds information; base layer is content, later layers are prosody |
-| SEED-Tokenizer | "Image codes" | Discrete image tokenizer with 4096-entry codebook used by MIO |
+| SEED-Tokenizer | "Image codes" | Discrete image tokenizer with an 8192-entry codebook and 32 tokens per image, used by MIO |
 | Chain-of-visual-thought | "Visual scratchpad" | The model generates an intermediate image as a reasoning step before its final answer |
 | Time-to-first-audio-byte | "TTFAB" | Latency from user voice to first audio output; <500ms for conversational feel |
 | Four-stage curriculum | "Training recipe" | Alignment -> interleaved -> speech-enhanced -> SFT, in that order |
