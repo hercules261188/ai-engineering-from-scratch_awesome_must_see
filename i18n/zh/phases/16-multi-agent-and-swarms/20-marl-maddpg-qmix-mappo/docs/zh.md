@@ -42,7 +42,7 @@ critic update:   TD on Q_i(x, a_1..n) given next-state joint estimate
 
 ### 值分解 QMIX (2018)
 
-总奖项是每代理Q值的单调函数的总和:
+只有合作. 共同行动价值`Q_tot`是每剂Q值的单调混合函数:
 
 ```math
 Q_{\text{tot}}(\tau, a) = f\big(Q_1(\tau_1, a_1), \ldots, Q_n(\tau_n, a_n)\big), \quad \frac{\partial f}{\partial Q_i} \ge 0

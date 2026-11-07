@@ -68,7 +68,7 @@ agent-C ──pub────▶ │                  │ ──▶ agent-F (sub
 
 1. **Attribute provenance on every write.**根据什么提示,如果适用,代理引用哪个来源. 下游代理阅读怀疑,关键是来源.
 2. **Version writes; treat them as append-only.**修改是取代旧的新条目,而不是现场更新.
-3. **Keep at least one agent that cannot write to shared state.**仅读的验证器检测到输入,重新查找来源,并标记不一致.
+3. **Keep at least one agent that cannot write to shared state.**一个只读的验证器代理采样输入,重新查找来源,并标记不一致性.它仍然读取池,因此可以被一个错误的输入所欺骗,但它会检查每个输入与原始的源头相比,并且无法写,因此它的判决从来没有把毒的事实重新传递到共享状态.
 
 ### 黑板先例 (海斯-罗思,1985年)
 

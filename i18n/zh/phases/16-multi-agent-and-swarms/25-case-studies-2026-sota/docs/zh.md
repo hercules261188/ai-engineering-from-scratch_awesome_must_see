@@ -57,7 +57,7 @@
 产量人口规模的情况.
 
 - **Nov 2025:**鱼 (Peter Steinberger的当地ReAct循环编码代理) 舰船.
-- **Dec 2025 – Mar 2026:**改名为两次 (Clawdbot → OpenClaw →继续在 OpenClaw 下).
+- **Jan 2026:**在一周内改名为两次 (在商标投诉后1月27日Clawdbot → Moltbot,然后三天后Moltbot → OpenClaw).
 - **Feb 2026:**马尔特本作为一个只代理的社交网络,
 - **Mar 2026 (2026-03-10):**梅塔收购了Moltbook.
 - **Mar 2026:**中国限制了OpenClaw的政府计算机.
