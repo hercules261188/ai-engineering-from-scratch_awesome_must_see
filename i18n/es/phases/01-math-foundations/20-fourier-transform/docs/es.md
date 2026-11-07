@@ -34,7 +34,7 @@ Se dio $N$muestras $x[0], x[1], \ldots, x[N-1]$, la Transformación de Fourier d
 X[k] = \sum_{n=0}^{N-1} x[n] \, e^{-2\pi i k n/N} \qquad \text{for } k = 0, 1, \ldots, N-1
 ```
 
-Cada uno .$X[k]$Es un número complejo.$\lvert X[k] \rvert$Te dice la amplitud de frecuencia .$k$Su fase .$\angle X[k]$te dice la fase de compensación de esa frecuencia.
+Cada uno .$X[k]$Es un número complejo.$\lvert X[k] \rvert$es proporcional a la amplitud de frecuencia $k$Sin normalización, un seno real de amplitud.$A$que cae exactamente en Bin $k$da .$\lvert X[k] \rvert = AN/2$, así que dividir por $N/2$Para leer la amplitud.$\angle X[k]$te dice la fase de compensación de esa frecuencia.
 
 La clave de la información:$e^{-2\pi i k n/N}$es un faseor giratorio en frecuencia $k$. El DFT calcula la correlación entre la señal y cada uno de los $N$las frecuencias de igual espacio. si la señal contiene energía en frecuencia$k$Si no, es cerca de cero.
 
@@ -103,7 +103,7 @@ graph TD
     end
 ```
 
-El FFT requiere que la longitud de la señal sea de 2 potencia. En la práctica, las señales se empalan a cero a la siguiente potencia de 2.
+El radix-2 FFT construido aquí es más rápido cuando la longitud de la señal es una potencia de 2. Siempre que un sub-problema tiene longitud impar, cae de nuevo a la llanura `dft`, por lo que las señales a menudo son emparejadas a cero a la siguiente potencia de 2 para la velocidad.`numpy.fft`manejan cualquier longitud con algoritmos de radix mixtos, pero son más rápidos en longitudes con pequeños factores primos.
 
 ### Análisis espectral
 

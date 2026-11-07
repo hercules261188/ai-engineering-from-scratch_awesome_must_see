@@ -18,7 +18,7 @@
 
 La lección 08 te enseñó la descenda de gradiente, el impulso y Adam. Esos optimizadores caminan por la ladera en cualquier superficie. Pero no tienen garantías. La descenda de gradiente en un paisaje no convexo puede aterrizar en un mínimo local malo, quedarse atascado en un punto de silla o oscilar para siempre. Lo usaste de todos modos porque las redes neuronales no son convexas y no hay alternativa.
 
-Pero muchos problemas en el aprendizaje automático son convexos. Regresión lineal, regresión logística, SVMs, LASSO, regresión de cresta. Para estos, existe algo más fuerte: optimización con garantías matemáticas. Un problema convexo tiene exactamente un valle. Cualquier algoritmo que camine descendente alcanzará el mínimo global. No se necesita reinicio. No hay horarios de tasa de aprendizaje. No hay oración.
+Pero muchos problemas en el aprendizaje automático son convexos. Regresión lineal, regresión logística, SVMs, LASSO, regresión de cresta. Para estos, existe algo más fuerte: optimización con garantías matemáticas. Un problema convexo no tiene valles falsos: cada mínimo local es un mínimo global. Para una función convexa lisa que tenga un mínimo, converge a ella un descenso de gradiente con un tamaño de paso adecuado. No es necesario reiniciar. No hay horarios de aprendizaje. No hay oración.
 
 Comprender la convexidad hace tres cosas. Primero, le dice cuándo su problema es fácil (convexa) versus duro (no convexa). Segundo, le da herramientas más rápidas como el método de Newton para problemas convexos. Tercero, explica conceptos que aparecen en todo ML: regularización como una restricción, dualidad en SVMs, y por qué el aprendizaje profundo funciona a pesar de violar cada propiedad agradable que le da la convexidad.
 
@@ -91,13 +91,13 @@ El teorema central de la optimización convexa:
 
 **For a convex function, every local minimum is a global minimum.**
 
-Esto significa que el descenso de gradiente no puede quedar atrapado. Cualquier camino descendente conduce a la misma respuesta. El algoritmo está garantizado para converger a la solución óptima.
+Esto significa que el descenso de gradiente no puede quedar atrapado en un mínimo local malo. Cada mínimo que puede alcanzar tiene la misma pérdida. Para una función convexa lisa que tiene un mínimo, el descenso de gradiente con un tamaño de paso adecuado está garantizado para converger al valor óptimo.
 
 ```mermaid
 graph LR
     subgraph "Convex: ONE answer"
         direction TB
-        C1["Loss surface has a single valley"] --> C2["Gradient descent ALWAYS finds the global minimum"]
+        C1["Loss surface has no false valleys"] --> C2["Gradient descent with a suitable step converges to the global minimum"]
     end
     subgraph "Non-convex: MANY traps"
         direction TB

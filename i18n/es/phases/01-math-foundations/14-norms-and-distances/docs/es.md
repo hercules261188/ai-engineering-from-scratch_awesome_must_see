@@ -102,7 +102,7 @@ L1 y L2 son casos especiales de la norma Lp:
 \lVert x \rVert_p = (|x_1|^p + |x_2|^p + \cdots + |x_n|^p)^{1/p}
 ```
 
-Diferentes valores de $p$producen "bolas de unidad" de diferentes formas (el conjunto de todos los puntos a la distancia 1 del origen):
+Diferentes valores de $p$producen "bolas de unidad" de diferentes formas (el conjunto de todos los puntos a una distancia máxima de 1 del origen; las formas siguientes son sus límites):
 
 ```
 p=1:    Diamond shape      (corners on axes)

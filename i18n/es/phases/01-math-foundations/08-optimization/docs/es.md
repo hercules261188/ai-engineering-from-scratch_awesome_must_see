@@ -46,7 +46,7 @@ Es todo el algoritmo.
 
 ```mermaid
 graph TD
-    A["* Starting point (high loss)"] --> B["Moving downhill along gradient"]
+    A["* Starting point (high loss)"] --> B["Moving downhill, against the gradient"]
     B --> C["Approaching minimum"]
     C --> D["o Minimum (low loss)"]
 ```
@@ -158,7 +158,7 @@ Horarios comunes:
 
 ### Conveja vs no conveja
 
-Una función convexa tiene un mínimo.$f(x) = x^2$es convexa.
+Una función convexa no tiene mínimos locales malos: cada mínimo local es un mínimo global. Para una función convexa lisa que tiene un mínimo, la descenso de gradiente con una tasa de aprendizaje lo suficientemente pequeña converge a ella.$f(x) = x^2$es convexa, y su mínimo es único.
 
 Las funciones de pérdida de la red neuronal no son convexas. Tienen muchos mínimos locales, puntos de silla y regiones planas.
 

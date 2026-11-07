@@ -121,7 +121,7 @@ La mayoría de las cadenas que encuentras en ML cumplen ambas condiciones.
 
 **Absorbing states.**Un estado es absorbente si una vez que entras en él, nunca sales ($P[i][i] = 1$Absorber procesos de modelos de cadenas de Markov con estados terminales: un juego que termina, un cliente que se agita, una secuencia de tokens que golpea el token final del texto.
 
-**Mixing time.**¿Cuántos pasos hasta que la cadena está "cerca" de la distribución estacionaria? formalmente, el número de pasos hasta que la distancia total de variación de estacionariedad cae por debajo de algún umbral. mezcla rápida = pocos pasos necesarios.$P$(1 menos el segundo valor propio más grande) controla el tiempo de mezcla.
+**Mixing time.**¿Cuántos pasos hasta que la cadena está "cerca" de la distribución estacionaria? formalmente, el número de pasos hasta que la distancia total de variación de estacionariedad cae por debajo de algún umbral. mezcla rápida = pocos pasos necesarios.$P$(1 menos la magnitud de valor propio más grande que el valor propio 1) controla el tiempo de mezcla.
 
 ### Conexión con modelos de idiomas
 

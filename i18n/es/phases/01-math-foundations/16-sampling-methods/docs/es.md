@@ -117,7 +117,8 @@ Algorithm:
   3. If u < p(x) / (M * q(x)), accept x
   4. Otherwise, reject and go to step 1
 
-Acceptance rate = 1/M
+Acceptance rate = Z/M, where Z is the integral of p(x)
+                (Z = 1, so the rate is 1/M, when p is normalized)
 ```
 
 Cuanto más estrecha sea la línea$M$En las dimensiones bajas (1-3), el muestreo de rechazo funciona bien. En las dimensiones altas, la tasa de aceptación disminuye exponencialmente porque la mayor parte del volumen de la propuesta es rechazada. Esta es la maldición de dimensionalidad para el muestreo de rechazo.

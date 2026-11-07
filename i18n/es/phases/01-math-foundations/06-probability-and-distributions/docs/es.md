@@ -190,14 +190,14 @@ Los totales de filas y columnas de la tabla anterior son los márgenes.
 
 ### Por qué la distribución normal aparece en todas partes
 
-El Teorema del límite central: la suma (o promedio) de muchas variables aleatorias independientes converge a una distribución normal, independientemente de la distribución original.
+El Teorema del límite central: el promedio de muchas variables aleatorias independientes de la misma distribución, una vez centradas y escaladas por $\sqrt{n}$, se acerca a una distribución normal, cualquiera que sea la forma de la distribución original, siempre que su varianza sea finita.
 
 ```
 Roll 1 die:  uniform distribution (flat)
 Average of 2 dice:  triangular (peaked)
 Average of 30 dice: nearly perfect bell curve
 
-This works for ANY starting distribution.
+This works for ANY starting distribution with finite variance.
 ```
 
 Por eso es que:
@@ -470,7 +470,7 @@ Construiste esto desde cero, ahora sabes lo que hacen las llamadas de la bibliot
 | Expected value | "The average" | The probability-weighted sum of all outcomes. The loss function is an expected value |
 | Variance | "How spread out" | The expected squared deviation from the mean. High variance = noisy, unstable estimates |
 | Normal distribution | "The bell curve" | $f(x) = (1/\sqrt{2\pi\sigma^2}) \cdot \exp(-(x-\mu)^2/(2\sigma^2))$. Appears everywhere due to the CLT |
-| Central Limit Theorem | "Averages become normal" | The mean of many independent samples converges to a normal distribution regardless of the source |
+| Central Limit Theorem | "Averages become normal" | The centered, scaled mean of many independent samples converges to a normal distribution for any source with finite variance |
 | Joint distribution | "Two variables together" | $P(X, Y)$ describes the probability of every combination of $X$ and $Y$ outcomes |
 | Marginal distribution | "Sum out the other variable" | $P(X) = \sum_y P(X, Y)$. Recovers one variable's distribution from the joint |
 | Log probability | "Log of the probability" | $\log P(x)$. Turns products into sums, preventing numerical underflow in long sequences |
