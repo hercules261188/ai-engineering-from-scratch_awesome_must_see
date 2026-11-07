@@ -21,7 +21,7 @@
 
 **The core idea, in one line:** $V^\pi(s) = \mathbb E_\pi[G_t \mid s_t = s] \approx (1/N) \sum_i G^{(i)}(s)$कहाँ$G^{(i)}(s)$$s$नीति के अंतर्गत$\pi$. .
 
-**First-visit vs every-visit MC.**एक एपिसोड को देखते हुए जो राज्य का दौरा करता है $s$कई बार, पहली यात्रा एमसी केवल पहली यात्रा से वापसी की गणना करता है; प्रत्येक यात्रा एमसी सभी यात्राओं की गणना करता है। दोनों सीमा में निष्पक्ष हैं। पहली यात्रा का विश्लेषण करना आसान है (iid नमूने) । प्रत्येक यात्रा प्रति एपिसोड अधिक डेटा का उपयोग करती है और आमतौर पर व्यवहार में तेजी से अभिसरण करती है।
+**First-visit vs every-visit MC.**एक एपिसोड को देखते हुए जो राज्य का दौरा करता है $s$कई बार, पहली यात्रा एमसी केवल पहली यात्रा से वापसी की गणना करता है; प्रत्येक यात्रा एमसी सभी यात्राओं की गणना करता है। पहली यात्रा एमसी निष्पक्ष है। प्रत्येक यात्रा एमसी एपिसोड की एक सीमित संख्या के बाद थोड़ा पक्षपातपूर्ण हो सकता है, क्योंकि यह प्रति एपिसोड यादृच्छिक संख्या के औसत है और यह संख्या वापसी के साथ सहसंबंधित हो सकती है, लेकिन दोनों एक दूसरे के साथ समाहित हो सकते हैं।$V^\pi(s)$जैसे-जैसे विज़िट काउंट अनंत तक जाता है। पहली यात्रा का विश्लेषण करना आसान होता है (iid नमूने) । प्रत्येक यात्रा में प्रति एपिसोड अधिक डेटा का उपयोग होता है और आमतौर पर अभ्यास में तेजी से अभिसरण होता है।
 
 **Incremental mean.**सभी रिटर्न को संग्रहीत करने के बजाय, चलती औसत को अपडेट करेंः
 
@@ -195,7 +195,7 @@ Refuse to run MC on non-episodic tasks without a finite horizon cap. Refuse to r
 | Monte Carlo | "Random sampling" | Estimate expectations by averaging over iid samples from the distribution. |
 | Return $G_t$ | "Future reward" | Sum of discounted rewards from step $t$ to episode end: $\sum_{k\ge 0} \gamma^k r_{t+k+1}$. |
 | First-visit MC | "Count each state once" | Only the first visit in an episode contributes to the value estimate. |
-| Every-visit MC | "Use all visits" | Every visit contributes; slightly biased but more sample-efficient. |
+| Every-visit MC | "Use all visits" | Every visit contributes; slightly biased for finite samples, consistent in the limit, and more sample-efficient. |
 | ε-greedy | "Exploration noise" | Pick greedy action with prob $1-\epsilon$; random action with prob $\epsilon$. |
 | Importance sampling | "Correcting for sampling from the wrong distribution" | Reweight returns by $\pi(a \mid s)/\mu(a \mid s)$ products to estimate $V^\pi$ from $\mu$ data. |
 | On-policy | "Learn from my own data" | Target policy = behavior policy. Vanilla MC, PPO, SARSA. |
