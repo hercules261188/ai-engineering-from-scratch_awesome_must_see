@@ -48,7 +48,7 @@ flowchart TB
   H --> D[coverage chart]
 ```
 
-Cada dispositivo é um disco com `id`- Não .`category`- Não .`subtype`- Não .`prompt`- Não .`target_behavior`, e `severity`. O objeto de taxonomia carrega os aparelhos, agrupá-los por categoria e expõe uma `match`API: dado um candidato de solicitação, retorne a fixação mais próxima e sua categoria. Match é caracter trigrama cosino: grosseiro, rápido, sem dependências. Não é um detector. O detector vive na lição 83.
+Cada dispositivo é um disco com `id`- Não .`category`- Não .`subtype`- Não .`prompt`- Não .`target_behavior`, e `severity`. O objeto de taxonomia carrega os aparelhos, agrupá-los por categoria e expõe uma `match`API: dado um candidato de solicitação, retorne a fixação mais próxima e sua categoria. Match é caracter trigrama cosino: grosseiro, rápido e construído apenas em numpy. Não é um detector. O detector vive na lição 83.
 
 A gravidade segue uma escala de 1 a 5. Um 1 é um ataque desajeitado contra um alvo benigno ("por favor, finge ser um pirata"). Um 5 é um ataque que, se tiver sucesso, produz uma saída que um sistema implantado não deve emitir (detalhes operacionais para uma atividade perigosa). A maioria dos equipamentos fica em 2-3 porque os ataques reais na escala de implantação se desviam para os fáceis e preguiçosos. A gravidade é definida pelo autor do dispositivo. Dois revisores que discordam por mais de uma posição é um sinal de que a rubrica precisa ser reforçada.
 

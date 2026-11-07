@@ -1,6 +1,6 @@
 # Corpus Tokenizado HDF5
 
-> O corpus baixado tem de aterrar num layout que o treinador pode transmitir a velocidade da linha. JSONL no disco não sobrevive a 16 trabalhadores do carregador de dados. HDF5 com um conjunto de dados inteiros dimensionáveis, em pedaços. Esta lição constrói a tokenization de streaming em um conjunto de dados HDF5 dimensionável, escrita fragmentada em vários arquivos, leitura de memória mapeada no tempo de treinamento e um carregador de dados de janela deslizante que produz sequências de comprimento fixo com a embalagem certa.
+> O corpus baixado tem de aterrar num layout que o treinador pode transmitir a velocidade da linha. JSONL no disco não sobrevive a 16 trabalhadores do carregador de dados. HDF5 com um conjunto de dados inteiros dimensionáveis, em pedaços. Esta lição constrói a tokenization de streaming em um conjunto de dados HDF5 dimensionável, escrita fragmentada em vários arquivos, leituras em pedaços no tempo de treinamento e um carregador de dados de janela deslizante que produz sequências de comprimento fixo com a embalagem certa.
 
 **Type:** Build
 **Languages:** Python
@@ -18,7 +18,7 @@
 
 Uma formação moderna de modelos de linguagem lê tokens a centenas de milhares de amostras por segundo em dezenas de trabalhadores. O JSONL no disco morre na primeira falha da página de cache frio: o parsementa JSON é lento, os limites do documento não são endereçáveis, e procurar "sampulhar 4.217.884" requer escanear o arquivo. Mesmo o Parquet, que comprime bem, é um péssimo ajuste porque o treinador não quer colunas; ele quer um fluxo de token plano com $O(1)$Acesso aleatório.
 
-O HDF5 se encaixa porque oferece um conjunto de dados fragmentado, dimensionável, apenas num número inteiro cujos fragmentos são amigáveis ao cache de páginas no momento da leitura.`tokens[3,200,000 : 3,200,8192]`O custo é um manuseio de arquivo aberto e uma pegada de página de caché de tamanho de pedaço por trabalhador, o que é insignificante em comparação com o custo de decodificação JSONL.
+O HDF5 se encaixa porque oferece um conjunto de dados fragmentado, dimensionável, apenas num número inteiro cujos fragmentos são amigáveis ao cache de páginas no momento da leitura.`tokens[3_200_000 : 3_208_192]`O custo é um manuseio de arquivo aberto e uma pegada de página de caché de tamanho de pedaço por trabalhador, o que é insignificante em comparação com o custo de decodificação JSONL.
 
 O problema da construção é fazer o lado de escrever honesto. Os conjuntos de dados dimensionáveis são fáceis de usar de forma indevida: escreva um documento de cada vez e o arquivo HDF5 é fragmentado até o ponto de ser inutilizável. Escreva todos os documentos em um único tamanho e uma morte processo perde todo o fragmento. A disciplina certa é o buffer-then-extend, com um tamanho de buffer que corresponde ao tamanho do pedaço, e uma escrita fragmentada que divide a carga de trabalho em arquivos para que um crash perca no máximo um fragmento.
 
@@ -35,7 +35,7 @@ flowchart TD
   Write --> Buffer
   Buffer --> Close[Final flush + close]
   Close --> ShardDone[Shard file finalized]
-  ShardDone --> MMapRead[Memory-mapped read]
+  ShardDone --> MMapRead[Chunked read]
   MMapRead --> Window[Sliding-window dataloader]
   Window --> Train[Train batch]
 ```
@@ -48,9 +48,9 @@ O conjunto de dados de token é criado com `maxshape=(None,)`e um fixo `chunks=(
 
 Um único arquivo HDF5 é um único ponto de falha. O pipeline escreve fragmentos em paralelo: cada fragmento de entrada da lição 42 da fase 19 produz um fragmento de saída HDF5.`shards.json`registros de índice, por fragmento, o caminho do arquivo, a contagem de tokens, a contagem de documentos e um sha256 sobre os tokens.`shards.json`Para calcular compensações globais e validar o corpus.
 
-### Leitura em memória
+### Leia em pedaços
 
-Durante o período de formação, cada trabalhador abre a sua quota de ficheiros HDF5 em `swmr=True`modo e pede para`tokens[start:stop]`O trabalho nunca materializa o arquivo inteiro: a fatia é copiada no buffer de lote do carregador de dados, que o carregador de dados copia em um tensor de treinamento de memória fixa no momento do lote. O caminho de caché tem um syscall por transição de lote; tudo o resto é acesso à RAM.
+Durante o período de formação, cada trabalhador abre a sua quota de ficheiros HDF5 em `swmr=True`modo e pede para`tokens[start:stop]`- Não . O layout de pedaços do HDF5 torna esta uma leitura barata quando o pedaço está quente: h5py não mapeia a memória do arquivo, lê pedaços inteiros através do cache de pedaços HDF5 e do cache de páginas do sistema operacional, e depois copia o hiperlab solicitado. O trabalhador nunca materializa todo o arquivo: a fatia é copiada no tampão de lote do carregador de dados, que o carregador de dados copia em seguida num tensor de treinamento de memória fixa no momento do lote. O caminho quente tem um syscall por transição de pedaço; tudo o resto é acesso RAM.
 
 ### Carregador de dados de janela deslizante
 
@@ -67,10 +67,10 @@ cc-hdf5-corpus
 - `Tokenizer`- um tokenizer determinista de nível de byte bom o suficiente para a demonstração.`encode(text) -> list[int]`E ...`vocab_size`- Não .
 - `HDF5ShardWriter`- abre um conjunto de dados inteiros dimensionáveis, reserva tokens para tamanho de pedaço, redimensionou e escreve em passos de tamanho fixo, registros `token_count`E ...`sha256`como atributos HDF5 em close.
 - `ShardedTokenizationPipeline`- retrata os documentos de entrada, encaminha-os para um escritor e emite um `shards.json`Indice.
-- `MmapTokenStore`- abre arquivos de fragmentos para leituras de memória, calcula offsets globais, expõe um único `get_slice(start, stop)`- A API.
+- `MmapTokenStore`- abre arquivos de fragmentos para leituras em pedaços (o nome é conveniente; h5py lê pedaços, não mapeia o arquivo), calcula offsets globais, expõe um único `get_slice(start, stop)`- A API.
 - `SlidingWindowDataloader`- seleciona janelas aleatórias do fluxo global e dá resultados `(input_ids, target_ids)`Arrays NumPy.
 
-Uma demonstração na parte inferior do arquivo constrói um pequeno corpus de memória, tokeniza em dois fragmentos, abre-os através de um mapa de memória, executa o carregador de dados por 10 lotes e imprime a forma por lotes e uma soma de verificação.
+Uma demonstração na parte inferior do arquivo constrói um pequeno corpus de memória, tokeniza em dois fragmentos, abre-os para leituras em pedaços, executa o carregador de dados por 10 lotes e imprime a forma por lote e uma soma de verificação.
 
 - É o que é ?
 
@@ -117,7 +117,7 @@ Padrões de produção:
 | Term | What people say | What it actually means |
 |------|-----------------|------------------------|
 | Resizable dataset | "Append-only" | An HDF5 dataset with `maxshape=(None,)` that grows via `resize` calls in chunk-sized strides |
-| Chunked layout | "How HDF5 stores it" | Fixed-size on-disk pages that the kernel can memory-map and the dataloader can read contiguously |
+| Chunked layout | "How HDF5 stores it" | Fixed-size on-disk blocks that HDF5 reads and caches as one unit, so the dataloader can read a contiguous range cheaply |
 | `swmr` mode | "Read-while-write" | Single-Writer-Multiple-Reader mode that lets dataloader workers share the file safely |
 | Shard index | "shards.json" | The durable index of all token shards with offsets and content hashes |
 | Sliding window | "Training sample" | A fixed-length slice of the global token stream that the trainer pairs with its shift-by-one target |
@@ -126,7 +126,7 @@ Padrões de produção:
 
 - [HDF5 chunking documentation](https://support.hdfgroup.org/documentation/hdf5/latest/hdf5_chunking.html)- o layout de conjunto de dados em pedaços, dimensionável que esta lição usa
 - [h5py user guide](https://docs.h5py.org/en/stable/)- Ligações Python para HDF5
-- [NumPy memory mapping](https://numpy.org/doc/stable/reference/generated/numpy.memmap.html)- a exposição primitiva do lado de leitura HDF5 através de h5py
+- [h5py chunked storage](https://docs.h5py.org/en/stable/high/dataset.html#chunked-storage)- como h5py lê conjuntos de dados em pedaços e dimensionar o cache em pedaços
 - Fase 19 · 42 - o download cuja saída esta lição tokeniza
 - Fase 19 · 44 - o cronograma cosínico que consome este carregador de dados
 - Fase 19 · 45 - o ciclo AMP que encerra a etapa de treinamento

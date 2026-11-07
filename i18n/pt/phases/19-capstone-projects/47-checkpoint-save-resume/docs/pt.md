@@ -16,7 +16,7 @@
 
 ## O problema
 
-Tu estabeleceste um emprego de treinamento por 18 horas. O tapete do relógio de parede é de 4 horas. O cluster reinicia às 11h porque alguém acima do seu nível de remuneração aprovou uma atualização do kernel. Sem pontos de controlo, começa de novo. Sem currículo, você também perde o estado de otimização que levou as primeiras 11 horas para aprender, então mesmo que os pesos do modelo sobrevivam, os momentos AdamW desapareceram e o próximo passo se espreita em uma direção que a trajetória de treinamento já tinha passado.
+Tu estabeleceste um emprego de treinamento por 18 horas. O cronógrafo limita cada atribuição a 4 horas, de modo que a execução já é uma cadeia de empregos retomados. Então o cluster reinicia na hora 11 da execução porque alguém acima do seu nível de remuneração aprovou uma atualização do kernel. Sem pontos de controlo, começa de novo. Sem currículo, você também perde o estado de otimização que levou as primeiras 11 horas para aprender, então mesmo que os pesos do modelo sobrevivam, os momentos AdamW desapareceram e o próximo passo se espreita em uma direção que a trajetória de treinamento já tinha passado.
 
 O artefato certo é um único arquivo que contém tudo o que é necessário para continuar: parâmetros do modelo, estado do optimizador, estado do cronista, o histórico de perdas para as parámetros, o passo atual e os contadores de época e batch-in-epoch, e o estado de RNG para cada fonte de aleatoriedade. Sem o estado RNG, a curva de perda retomada é uma curva diferente. O mesmo modelo, os mesmos dados, diferentes misturas, diferentes máscaras de abandono, diferentes números no painel.
 

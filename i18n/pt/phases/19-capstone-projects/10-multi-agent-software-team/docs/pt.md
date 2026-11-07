@@ -123,7 +123,7 @@ $ team run --issue https://github.com/acme/widget/issues/842
 
 1. Injectar um bug óbvio em um diferencial de meia execução (extra `return None`A taxa de aprovação falsa do revisor é medida.
 
-2. Reduzir para dois programadores (arquiteto + programador + revisor + testador, programador executa duas subtarefas sequencialmente). Compare o relógio de parede e a taxa de passagem.
+2. Reduzir para dois programadores (arquiteto + dois programadores + revisor + testador, cada programador executa duas subtarefas sequencialmente). Compare o relógio de parede e a taxa de passagem.
 
 3. Substitua o coordenador de fusão por uma restrição de um único escritor (subtarefas tocam conjuntos de arquivos disjunto).
 

@@ -9,7 +9,7 @@
 
 ## Objetivos de aprendizagem
 
-- Derivar a identidade de lote efetiva: `effective_batch = micro_batch * accum_steps`- Não .
+- Derivar a identidade de lote efetiva: `effective_batch = micro_batch * accum_steps * world_size`, que é `micro_batch * accum_steps`no único dispositivo que esta lição usa.
 - Implementar a escalação de perda por micro-parcela para que o gradiente acumulado coincida com um único lote completo para trás.
 - Escapar a sincronização do optimizador até o último micro-batch (sincronização no último passo).
 - Leia uma passagem contra a curva de lote efetiva e explique o retorno decrescente.

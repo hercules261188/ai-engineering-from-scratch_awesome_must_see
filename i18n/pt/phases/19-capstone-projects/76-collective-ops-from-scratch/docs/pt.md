@@ -16,7 +16,7 @@
 
 ## O problema
 
-Uma totalredução ingênua sobre N filas envia N vezes o tensor para uma raiz e transmite N vezes de volta.$O(N)$Por grau, a raiz torna-se um gargalo de engarrafamento, e o piso do relógio de parede é o link mais lento vezes N.$2(N-1)$pedaços de tamanho $T/N$, então , por rank bytes cair para $2T(N-1)/N$Os resultados da análise de dados são:$\log_2(N)$- O que é o sal?$2(N-1)$Escolha a topologia errada para a forma do cluster e a GPU mais lenta dita o tempo de passagem.
+Uma totalredução ingênua sobre N filas envia N vezes o tensor para uma raiz e transmite N vezes de volta.$O(N)$Por grau, a raiz torna-se um gargalo de engarrafamento, e o piso do relógio de parede é o link mais lento vezes N.$2(N-1)$pedaços de tamanho $T/N$, então , por rank bytes cair para $2T(N-1)/N$, que se aproxima $2T$A árvore allreduce ganha em ligações de pequena N e de alta latência porque a profundidade é $\log_2(N)$- O que é o sal?$2(N-1)$Escolha a topologia errada para a forma do cluster e a GPU mais lenta dita o tempo de passagem.
 
 Cada estrutura de treinamento distribuída que você vai ler esta faixa depende destes quatro primitivos. A PyTorch DDP sincroniza gradientes com um allreduce por balde de parâmetros. A ZeRO reduz o estado de otimização através da redução_dispersão e transmite os parâmetros atualizados pela allgather. O FSDP transforma o avanço completo em allgather + reduce_scatter. Necessidades paralelas de transmissão de canais para ativas em grupos de estágios. Se não conseguir implementar os quatro coletivos, não pode argumentar sobre por que o treinamento está parado, por que a desatividade de gradientes aparece na posição 3, ou por que a bolha de pipeline duplica-se quando trocamos topologias.
 
@@ -97,7 +97,7 @@ Padrões de produção:
 
 ## Envia-o
 
-Use os primitivos de rede de fila nas lições 77-81. Lição 77 fios todos reduzir em DDP. Lição 78 fios reduzir_dispersão em ZeRO. Lição 79 fios transmitir em ativas de pipeline. Lição 81 compõe os quatro para a demonstração de ponta a ponta.
+Use os primitivos de rede de fila nas lições 77-81. Lição 77 fios todos reduzem em DDP. Lição 78 fios reduzem_dispersão em ZeRO. Lição 79 move ativações de pipeline com ponto a ponto enviar e recv, não um coletivo. Lição 81 compõe os quatro para a demo de ponta a ponta.
 
 ## Exercícios
 

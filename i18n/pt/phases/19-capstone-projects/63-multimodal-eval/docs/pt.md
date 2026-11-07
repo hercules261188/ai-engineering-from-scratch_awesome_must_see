@@ -108,7 +108,7 @@ Resultado: a tabela métrica antes/após mostra a recuperação melhorando de qu
 
 Cada métrica mapeia diretamente um índice de referência de produção:
 
-- **Retrieval.**MS-COCO 5K val, Flickr30K, ImageNet zero-shot são todos problemas R@K na mesma matriz de semelhança.
+- **Retrieval.**MS-COCO 5K val e Flickr30K são problemas R@K na mesma matriz de semelhança. ImageNet zero-shot usa essa matriz também, com uma embuxação de prompt por classe, mas relata a precisão de classificação top-1, que é R@1 sobre as instruções de classe. Substitua a avaliação sintética com os arquivos reais e a assinatura da função é inalterada.
 - **VQA.**VQA v2, GQA, OK-VQA usam a mesma forma de correspondência exata (com ac em vez de EM de resposta única para VQA v2).
 - **BLEU-4.**A legenda MS-COCO, NoCaps, Flickr30K, todas usam o BLEU-4 mais CIDER e METEOR.
 
@@ -141,7 +141,7 @@ python3 -m unittest code/test_main.py
 
 4. Computação média de grau recíproco (MRR) ao lado de R@K. O MRR é sensível aonde o item correto cai além do topo K; o R@K é sensível a se cai no topo K.
 
-5. Execute a avaliação no modelo em cinco pontos de controlo durante o treinamento (passo 0, 10, 20, 30, 40, 50) e trace a curva de aprendizagem.
+5. Exercer a avaliação no modelo em seis pontos de controlo durante o treinamento (passo 0, 10, 20, 30, 40, 50) e traçar a curva de aprendizagem.
 
 ## Termos-chave
 

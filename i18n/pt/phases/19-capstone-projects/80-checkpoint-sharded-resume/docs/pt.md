@@ -52,7 +52,7 @@ Três campos estão carregando.`world_size`faz um currículo de um tamanho difer
 
 ### Escrita atômica
 
-O padrão padrão: escrever cada fragmento para `<name>.tmp`, escreva o manifesto para `manifest.json.tmp`O sistema de arquivos é completamente presente ou o antigo. Um crash antes do renome final deixa o ponto de verificação anterior como o vivo. Sem escrever atômico um crash pode deixar um fragmento parcial com um manifesto presente que aponta para ele, e a carga corrompe o estado de optimizador no currículo.
+O padrão padrão: escrever cada fragmento para `<name>.tmp`, escreva o manifesto para `manifest.json.tmp`, sync cada um, renomear os fragmentos, e renomear o manifesto último. Um renome POSIX dentro do mesmo sistema de arquivos é atômico: ou o novo arquivo está totalmente presente ou o antigo está. Um conjunto de renomeamentos não é uma transação, então o renomeamento do manifesto é o ponto de compromisso, e o carregador verifica cada fragmento contra os hashes do manifesto. Escreva cada ponto de verificação em seu próprio diretório de passos; em seguida, um crash antes do renome do manifesto deixa o ponto de verificação anterior como o vivo. Reutilizar um diretório rompe essa garantia, porque os renomes de fragmentos substituem os antigos fragmentos antes que os novos manifestos aterrissem. Sem escrever atômico, um crash pode deixar um fragmento parcial com um manifesto presente que aponta para ele, e a carga corrompe o estado de otimização no currículo.
 
 ### Três modos de falha contra os quais o esquema deve se defender
 

@@ -81,4 +81,4 @@ Corra .`python3 main.py`A demonstração carrega a taxonomia, põe o detector em
 
 ## Mais leitura
 
-O detector aqui é um dos três sinais que compõe o portal de ponta a ponta.
+O detector aqui é um dos quatro sinais que o portal final compõe, ao lado do filtro de token, do classificador e do motor de regras.

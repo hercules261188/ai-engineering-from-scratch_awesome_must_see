@@ -53,7 +53,7 @@ O ECE é parcialmente calculado pelo número de recipientes e tamanho da amostra
 
 ## O que Brier faz que a ECE não
 
-O ECE só se importa com as lacunas médias. Um modelo que é demasiado confiante em metade dos contentores e pouco confiante na outra metade pode ter um baixo ECE enquanto está mal calibrado localmente.
+A ECE só se importa com a diferença média em cada lixo. É preciso o espaço absoluto por contenedor, por isso, os espaços em diferentes contenedores não se cancelam. Dentro de um canhão eles podem: se algumas previsões em um canhão são demasiado confiantes e outras são pouco confiantes, as médias do canhão podem coincidir e o canhão não adiciona quase nada ao ECE, enquanto cada previsão é mal calibrada. A pontuação Brier mede o erro quadrado contra o resultado verdadeiro por previsão, por isso penaliza a propagação diretamente.
 
 Para resultados binários, Brier é `mean((p_i - y_i)^2)`O corredor informa o escalar mas registra a decomposição para o painel.
 
@@ -87,7 +87,7 @@ O arame não assume que a confiança venha de softmax.`[0, 1]`Para tarefas de m�
 
 - Todas as previsões erradas: ECE é a confiança média, Brier é alta, perplexidade é o que o modelo pensa do texto.
 - Todas as previsões corretas com alta confiança: ECE perto de zero, Brier perto de zero.
-- Preditor perfeitamente incerto em p = 0,5: ECE é 0,5 menos precisão, Brier é 0,25 menos um termo de correção.
+- Preditor perfeitamente incerto em p = 0,5: cada previsão cai em um lixo, então ECE é `|0.5 - accuracy|`O Brier é exactamente 0,25, porque`(0.5 - y)^2 = 0.25`se `y`é 0 ou 1.
 - Entrada em branco: ECE, Brier e retorno de confiabilidade `0.0`(ou matrizes com zero) Retorna perplexidade `NaN`Para o caso de tokens zero, nenhum desses caminhos emite um aviso; o corredor inspeciona os valores e decide se deve relatar ou saltar.
 
 Um modelo real com um ponto de referência real não vai bater-lhes, mas um adaptador de buggy ou uma pequena amostra vai, e o corredor não deve acertar.

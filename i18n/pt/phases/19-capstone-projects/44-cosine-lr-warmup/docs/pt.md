@@ -108,7 +108,7 @@ Padrões de produção:
 
 1. Adicione uma variante inversa da raiz quadrada do cronograma e compare-a em uma corrida de treino de brinquedos de 200 passos.
 2. Adicionar um`--restart`bandeira que adiciona um segundo aquecimento em `total_steps / 2`Defender se o reinicio quente melhora ou magoa na corrida do brinquedo.
-3. Adicionar um teste unitário que o cronograma é contínuo: para cada passo em `[0, total_steps]`A diferença`|lr(step+1) - lr(step)|`é limitada por `lr_max / warmup_steps`- Não .
+3. Adicionar um teste unitário que indique que o cronograma é contínuo: com `warmup_steps > 0`, por cada passo .`[0, total_steps]`A diferença`|lr(step+1) - lr(step)|`é delimitado pela maior de calentamento inclinação `lr_max / warmup_steps`e a mais íngreme inclinação cosínica.`pi * (lr_max - lr_min) / (2 * (total_steps - warmup_steps))`Um segmento curto cosino pode ser mais íngreme que a rampa de aquecimento, por isso a inclinação de aquecimento por si só não é um limite seguro.
 4. Transmitir o cronograma em um `torch.optim.lr_scheduler.LambdaLR`A lição usa uma função simples de passo; o que a embalagem muda?
 5. Adicionar um`--plot-png`bandeira que escreve uma trama real via `matplotlib`Defender se o gráfico de texto da lição ou a PNG é o melhor padrão para executar CI.
 

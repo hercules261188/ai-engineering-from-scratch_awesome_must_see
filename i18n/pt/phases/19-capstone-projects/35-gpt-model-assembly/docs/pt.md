@@ -81,7 +81,7 @@ cc-gpt-assembly
 - `class GPTModel`com embedding simbólico, posicionamento embebed, embebedamento abandonado, doze `TransformerBlock`S, LayerNorm final e um `lm_head`que se liga ao embedding do símbolo quando a bandeira é definida.
 - A.`count_parameters`auxiliar que retorna a contagem de parâmetros única (de modo que a ligação de peso é honrada na contagem).
 - A.`generate`função que faz temperatura, top-k, multinomiais, e deslizante contexto de janela.
-- Uma demonstração que constrói o modelo, imprime a contagem de parâmetros ao lado do 124M de referência e gera uma curta sequência a partir de um prompt fixo para mostrar o pipeline termina para o fim.
+- Uma demonstração que constrói o modelo, imprime a contagem de parâmetros ao lado do 124M de referência e gera uma curta sequência a partir de um prompt fixo para mostrar o pipeline de ponta a ponta.
 
 - É o que é ?
 
@@ -89,7 +89,7 @@ cc-gpt-assembly
 python3 code/main.py
 ```
 
-Saída: contagem de parâmetros ao lado da referência 124M, ids de token gerados a partir de um prompt aleatório e uma confirmação de que a cabeça LM e o token de incorporação compartilham armazenamento quando a ligação está ligada.
+Output: contagem de parâmetros ao lado da referência 124M, ids de token gerados a partir de um prompt fixo e uma confirmação de que a cabeça LM e o token de incorporação compartilham armazenamento quando a ligação está ligada.
 
 Para manter a demonstração rápida, o script também executa uma pequena configuração (`d_model=64`- Não .`num_layers=2`O sistema de configuração 124M é construído, mas apenas o número de parâmetros e uma passagem para a frente são exercidos.
 

@@ -21,7 +21,7 @@ A maioria das demonstrações de agentes trabalham isoladamente: uma caixa de ar
 
 A cadeia de portas diz PERMISSO, mas a caixa de areia recusa por uma razão que a cadeia não antecipou. O arnés de avaliação registra uma passagem, mas os portões do OTel dizem que o portal recusou uma ferramenta que o agente diz que usou. O contador Prometheus é incrementado duas vezes quando deve ser incrementado uma vez. O orçamento da observação foi excedido, mas o agente continuou porque o orçamento estava localizado na cadeia e a caixa de areia não sabia.
 
-Esta lição é o teste de integração para toda a faixa. O agente tem que fazer quatro coisas para o fim: ler o projeto, executar os testes, identificar o bug da falha do teste, escrever a correção, reiniciar os testes e parar. Cada operação passa pela cadeia de portas. Cada execução de ferramenta passa pela caixa de areia. Cada passo é envolto em um espaço. O arame de avaliação marca a coisa toda no final.
+Esta lição é o teste de integração para toda a faixa. O agente tem que fazer seis coisas para o fim: ler o projeto, executar os testes, identificar o bug da falha do teste, escrever a correção, reiniciar os testes e parar. Cada operação passa pela cadeia de portas. Cada execução de ferramenta passa pela caixa de areia. Cada passo é envolto em um espaço. O arame de avaliação marca a coisa toda no final.
 
 ## O conceito
 

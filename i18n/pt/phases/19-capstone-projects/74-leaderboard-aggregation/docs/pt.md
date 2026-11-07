@@ -63,7 +63,7 @@ Os dois esquemas de classificação servem objetivos diferentes.
 
 A pontuação média é a média das pontuações por tarefa de um modelo. É o relatório de números de cabeçalhos dos rankings. É sensível a valores fora do plano e a desequilíbrios de tarefas.
 
-A taxa de vitória conta a frequência com que um modelo vence todos os outros modelos na mesma tarefa. Para cada tarefa, o modelo com a maior pontuação ganha (cortes divididos). A taxa de vitória é igual a vitórias divididas pelo número de tarefas onde o modelo tem uma pontuação. É menos sensível aos valores e às diferenças de escala, mas perde informações.
+A taxa de vitória conta a frequência com que um modelo vence todos os outros modelos na mesma tarefa. Para cada tarefa, o modelo com a maior pontuação ganha (um empate dá uma vitória completa a cada modelo empatado). A taxa de vitória é igual a ganhos divididos pelo número de tarefas onde o modelo tem uma pontuação. É menos sensível aos valores fora e às diferenças de escala, mas perde informações.
 
 ```python
 def win_rate(model_id, runs_by_task, all_models):
@@ -131,4 +131,4 @@ Leia `main.py`A forma de dados (EvalRun, LeaderboardRow) vem em primeiro lugar, 
 
 ## Vai mais longe
 
-O próximo passo natural é significar tarefas em pares em vez de arranque sem pares. Se o modelo A e o modelo B executaram as mesmas cem tarefas, o teste apropriado é o arranque em par na diferença de tarefa por tarefa, que implementamos. Além disso, você quer um arranque hierárquico que respeite as famílias de tarefas (problemas matemáticas não são independentes uns dos outros; um padrão de erro aritmético afeta dez deles). Isso é um seguimento. O objetivo desta lição é conseguir o piso certo para que o avaliador informe um número que você possa defender.
+Os intervalos por modelo são impares, mas as comparações de modelos devem ser emparejadas. Se o modelo A e B executaram as mesmas cem tarefas, o teste apropriado é o bootstrap emparelhado em diferenças de tarefa por tarefa, que `bootstrap_pairwise_diff`Além disso, você quer uma arranque hierárquica que respeite as famílias de tarefas (problemas matemáticos não são independentes uns dos outros; um padrão de erro aritmético afeta dez deles). Isso é um seguimento.

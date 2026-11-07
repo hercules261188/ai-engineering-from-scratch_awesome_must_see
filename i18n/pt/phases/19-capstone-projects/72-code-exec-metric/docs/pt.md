@@ -69,7 +69,7 @@ Vamos encerrar o candidato pela prepêndio .`import sys`E um guarda que pega mac
 
 Cada subprocesso recebe um orçamento padrão de três segundos.`subprocess.run(..., timeout=t)`Se o tempo de espera for, o corredor apanha.`TimeoutExpired`, mata o processo, e registra um`timeout`O resultado da tarefa é zero. O corredor segue em frente.
 
-O timeout é configurável por tarefa até `task.metadata.timeout_s`Os testes unitários de longa duração podem exigir mais; o validador da lição 70 limita o valor a 30 segundos para manter a suíte limitada.
+O tempo de espera é o `timeout_s`Argumento para `run_candidate`A lição 75 runner define-a uma vez por corrida .`code_exec_timeout_s`Os testes unitários de longa duração podem exigir mais, mas`run_candidate`O valor é reduzido a 0,1 a 30 segundos para manter a suíte limitada.
 
 ## Capítulo de saída
 
@@ -83,7 +83,7 @@ Pass-at-k é a estimadora imparcial usada pela HumanEval e amigos.`n`amostras in
 pass_at_k(n, c, k) = 1 - C(n - c, k) / C(n, k)
 ```
 
-Quando ?`n - c < k`O numerador é indefinido e o valor é `1`A implementação trata directamente do caso de borda.`pass_at_k(n, c, k)`para utilização pela camada de classificação na lição 74.
+Quando ?`n - c < k`, o numerador `C(n - c, k)`é zero pela convenção habitual (não pode escolher `k`falhas de menos de `k`), o valor é `1`A implementação trata directamente do caso de borda.`pass_at_k(n, c, k)`para utilização pela camada de classificação na lição 74.
 
 ```mermaid
 flowchart LR

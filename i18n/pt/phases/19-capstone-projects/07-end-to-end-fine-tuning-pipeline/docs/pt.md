@@ -1,6 +1,6 @@
 # Capstone 07  Pipeline de ajuste fino de ponta a ponta (Dados para SFT para DPO para servido)
 
-> Um modelo 8B treinado com os seus próprios dados, alinhado com o DPO com as suas próprias preferências, quantizado, decodificado especulativamente e servido a tokens mensuráveis de US$ 1 milhão. A pilha aberta 2026 é Axolotl v0.8, TRL 0.15, Unsloth para iteração, GPTQ/AWQ/GGUF para quantização, vLLM 0.7 com EAGLE-3 para servir. A pedra final é executar de forma reprodutiva todo o pipeline  YAML, servir o ponto final  e publicar um modelo de cartão sob o Marco de Abridão Modelo 2026.
+> Um modelo de classe 8B treinado com os seus próprios dados, alinhado com o DPO com as suas próprias preferências, quantizado, decifrado especulativamente e servido a tokens mensuráveis de US$ 1 milhão. A pilha aberta 2026 é Axolotl v0.8, TRL 0.15, Unsloth para iteração, GPTQ/AWQ/GGUF para quantização, vLLM 0.7 com EAGLE-3 para servir. A pedra angular consiste em executar de forma reprodutiva todo o gasoduto (YAML em, ponto final de serviço) e publicar um modelo de cartão no âmbito do Marco de Abridão Modelo 2026.
 
 **Type:** Capstone
 **Languages:** Python (pipeline), YAML (configs), Bash (scripts)
@@ -12,7 +12,7 @@
 
 Todas as equipes de IA serias em 2026 mantêm um pipeline de ajuste fino. Não porque eles enviam um modelo base de fronteira, mas porque a adaptação para baixo  domínio SFT, DPO contra preferências rotuladas, rascunhos destilados para decodificação especulativa, servindo com EAGLE-3  é onde as vitórias mensuráveis vivem. Axolotl v0.8 lida com configurações SFT de várias GPUs. O TRL 0,15 opera com DPO e GRPO. O Unsloth dá-te uma rápida iteração de GPU. VLLM 0,7 com EAGLE-3 empurra o decodificador de rendimento 2-3x sem perda de qualidade. A ferramenta funciona; o trabalho está nos YAMLs, na higiene de dados e na disciplina de avaliação.
 
-Você executará uma base 8B (Llama 3.3, Qwen3 ou Gemma 3) através de SFT, em seguida, DPO em dados específicos de tarefas, quantizará para servir e medirá ganhos em relação ao recurso de avaliação de lm, RewardBench-2, MT-Bench-v2 e MMLU-Pro. Você produzirá um modelo de cartão sob o Modelo 2026 Openness Framework.
+Você executará uma base de 8B a 14B (Llama 3.1 8B, Qwen3 14B ou Gemma 3 12B) através de SFT, em seguida, DPO em dados específicos de tarefas, quantizar para servir e medir ganhos em relação a lm-evaluation-harness, RewardBench-2, MT-Bench-v2 e MMLU-Pro. Você produzirá um modelo de cartão sob o 2026 Model Openness Framework.
 
 ## Conceptos
 
@@ -56,7 +56,7 @@ model card (2026 MOF) + safety eval (Llama Guard 4)
 ## Estaca
 
 - Dados: Datatrove para dedup, classificador Nemotron-CC para qualidade, Presidio para PII
-- Base: Llama 3.3 8B, Qwen3 14B ou Gemma 3 12B
+- Base: Llama 3.1 8B, Qwen3 14B ou Gemma 3 12B
 - SFT: Axolotl v0.8 com ZeRO-3, Flash Attention 3, sequências embaladas
 - A regulação preferencial: TRL 0,15 para DPO ou GRPO; Unsloth para iteração de GPU única
 - Quantização: GPTQ (Marlin), AWQ, GGUF via llama.cpp
@@ -120,7 +120,7 @@ $ ./pipeline.sh config/llama3.3-8b-domainX.yaml
 
 1. Execute apenas SFT versus SFT+DPO versus SFT+GRPO no mesmo benchmark específico de tarefa.
 
-2. Troca Llama 3.3 8B por Qwen3 14B. Messa os tokens de $ 1M em qualidade correspondente.
+2. Troca Llama 3.1 8B por Qwen3 14B. Messa os tokens de $ 1M em qualidade correspondente.
 
 3. Meter a taxa de aceitação da EAGLE-3 em dados de domínio versus ShareGPT genérico.
 
@@ -148,5 +148,5 @@ $ ./pipeline.sh config/llama3.3-8b-domainX.yaml
 - [DeepSeek R1 paper (arXiv:2501.12948)](https://arxiv.org/abs/2501.12948) Metodologia do GRPO
 - [vLLM + EAGLE-3 documentation](https://docs.vllm.ai) Estaca de serviço de referência
 - [SGLang SpecForge](https://github.com/sgl-project/SpecForge) treinador alternativo de descodificação especulativa
-- [Model Openness Framework 2026](https://isocpp.org/) o padrão de classificação de libertação aberta
+- [Model Openness Framework (arXiv:2403.13784)](https://arxiv.org/abs/2403.13784): o padrão de classificação de libertação aberta
 - [lm-evaluation-harness](https://github.com/EleutherAI/lm-evaluation-harness) canônico avaliador runner
