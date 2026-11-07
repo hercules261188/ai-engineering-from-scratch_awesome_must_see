@@ -34,7 +34,7 @@ Bu ders üç bahsi, gecikme boşluğu, FinOps boşluğu ve kilitleme riskiyi har
 
 ### Ölçüsünde gecikme farkı
 
-Yapay Analiz sürekli referans değerleri kullanıyor. Eşdeğer Llama 3.1 405B dağıtımlarında (dava üzerine paylaşılan), Azure OpenAI ortalama ilk jeton gecikmesi yaklaşık 50 ms; Bedrock yaklaşık 75 ms. Bu boşluk AWS başarısızlığı değil  kapasite model farkıdır. Azure, kiracı için GPU kapasitesini rezerve eden PTU'ları (Provisioned Throughput Units) satıyor. Bedrock'un eşdeğeri (Provisioned Throughput) var ama birim başına saatte yaklaşık 21 $ başlıyor ve çoğu müşteri talep üzerine paylaşılan bir hizmette kalıyor.
+Yapay Analiz sürekli referans değerleri kullanıyor. Eşdeğer Llama 3.1 405B dağıtımlarında, Azure ortalama ilk jeton gecikmesi PTU'larla yaklaşık 50 ms; talep üzerine paylaşılan Bedrock yaklaşık 75 ms. Bu boşluk AWS başarısızlığı değil  kapasite model farkıdır. Azure, kiracı için GPU kapasitesini rezerve eden PTU'ları (Provisioned Throughput Units) satıyor. Bedrock'un eşdeğeri (Provisioned Throughput) var ama birim başına saatte yaklaşık 21 $ başlıyor ve çoğu müşteri talep üzerine paylaşılan bir hizmette kalıyor.
 
 İstek üzerine paylaşılan kapasite diğer tüm müşterilerin trafiği ile rekabet eder. Dedicated kapasite değil. Eğer ürün SLA'sı TTFT < 100 ms ise, ya Azure'da PTU'lar satın alırsınız, ya da Bedrock Provisioned Throughput satın alırsınız veya varyasyonu kabul edersiniz.
 
@@ -96,7 +96,7 @@ Bu ders bize çok yararlı .`outputs/skill-managed-platform-picker.md`. İş yü
 2. Ürününüz Claude 3.7 Sonnet ve GPT-4o'ya ihtiyaç duyar. Hangi hiperkaler'e giden iki tedarikçi dağıtımını tasarlayın, önde hangi kapı oturuyor, başarısızlık politikası nedir?
 3. Düzenlenmiş bir sağlık hizmetleri müşteri BAAs, ABD Doğu veri oturum ve sub-100ms P99 TTFT gerektirir. Bir platform seçin ve üç özel özellikle haklı çıkarın.
 4. Bu ay Bedrock faturanın trafik değişiminin olmamasına rağmen 4 kat artığını keşfedin.
-5. Azure OpenAI ve Bedrock fiyat sayfalarını okuyun. 100M-token / ay Claude iş yükü için, daha ucuz  doğrudan Anthropic API, Bedrock talep üzerine veya Bedrock sağlanan geçiş?
+5. Antropic API ve Bedrock fiyatlama sayfalarını okuyun. 100M-token / ay Claude iş yükü için, hangi daha ucuz  doğrudan Anthropic API, Bedrock talep üzerine, veya Bedrock sağlanan geçiş?
 
 ## Anahtar Terimler
 

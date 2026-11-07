@@ -22,7 +22,7 @@ Bu nedenle, bu uygulamaların kullanıcısı tarafından gönderilen bilgiler i�
 
 Ayrı bir şekilde, EKS klüsterinizin LLM kapsülü herhangi bir internet barındırmacıya ulaşabilir.
 
-LLM hizmetleri için güvenlik üç vektörü de ele almalıdır.
+LLM hizmetleri için güvenlik üç vektörü de ele almak ve sonra kanıtlamak zorundadır.
 
 ## Anlaşım
 

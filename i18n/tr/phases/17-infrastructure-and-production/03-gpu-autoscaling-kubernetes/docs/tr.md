@@ -20,7 +20,7 @@ Ekibiniz Kubernetes'e LLM hizmetini veriyor.`DCGM_FI_DEV_GPU_UTIL`HPA iş saatle
 
 Ayrı bir şekilde, düğümler için Cluster Autoscaler kullanıyorsunuz. 1M-token istekleri sabah 2'de gelir; kümeler 3 dakika bir düğüm sağlıyor ve talep süreleri çıkıyor.
 
-Ayrı bir şekilde, 2 düğüm üzerinde 8 GPU gerektiren 70B modelini dağıtıyorsunuz. Kluster 7 GPU'ya sahiptir ve 1 3 düğüm üzerinde yayılmıştır. Kluster Autoscaler 1 eksik GPU için bir düğüm sağlar.
+Ayrı bir şekilde, 2 düğüm üzerinde 8 GPU gerektiren 70B modelini dağıtıyorsunuz. Kluster 7 GPU'ya sahiptir, 3 düğüm üzerinde dağılmış ve 1 daha gerektirir. Kluster Autoscaler 1 eksik GPU için bir düğüm sağlar. 7 rezerve GPU'lar, Kubernetes'in son GPU'sunu yüklenirken 4 dakika para yakmak için hareketsiz kalır.
 
 Üç katman, üç farklı başarısızlık modu. 2026'da GPU-a karşı otomatik ölçeklendirme HPA'yı açmıyor.
 

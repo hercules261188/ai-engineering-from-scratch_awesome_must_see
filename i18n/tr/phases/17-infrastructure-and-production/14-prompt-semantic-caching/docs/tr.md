@@ -2,7 +2,7 @@
 
 > **Pricing snapshot dated 2026-04.**Aşağıdaki sayısal iddialar bu dersin yayınlandığı sırada kaydedilen satıcı oran kartlarını yansıtır; aşağıdaki değeri aktarmadan önce bağlantılı belgelere karşı doğrulayın.
 
-> Önbelleğe kaydetme iki katmanla gerçekleşir. L2 (sunducu düzeyinde) önbelleğe / önbelleğe kaydetme tekrarlanan önbellekler için dikkat KV'yi tekrarlar  Anthropic'in önbelleğe kaydetme belgeleri uzun çağrılarda %90'a kadar maliyet azaltımı ve %85 gecikme azaltımı ile reklam yapmaktadır. Claude 3.5 Sonnet önbelleği okumaları $0.30/M vs $3.00/M taze, 5 dakikalık TTL ve 1 saatlik TTL seçeneği için 2 kez yazma primosu ile (docs.anthropic.com, 2026-04). OpenAI prompt caching, istekler için otomatik olarak geçerlidir ≥1024 token ve fiyatlar cached giriş yaklaşık %90 indirim vs. taze (platform.openai.com, 2026-04); model başına tam cached oran canlı oran kartına bağlıdır. L1 (app düzeyinde) semantik önbelleği, LLM'yi tamamen benzerlik hitlerini yerleştirmekle atlıyor. Satıcı "95% doğruluk" eşleşme doğruluğunu ifade eder, hit oranı değil  rapor edilen üretim hit oranları %10 (açık sohbet) ile %70 (strukturel FAQ) arasında değişir; hiçbir sağlayıcı resmi bir temel çizgi yayınlamaz, bu nedenle bunları garanti yerine topluluk telemetrisi olarak değerlendirin. Üretim tuzağı: paralelleşme önbelleği öldürür (birinci önbelleğe yazmadan önce verilen N paralel istekler harcamaları birkaç kat artırabilir) ve önleme içindeki dinamik içeriğin önbelleğin vurulmasını tamamen engeller. ProjectDiscovery, kaydedilebilir önbellekten dinamik metin taşımakla %7'den %74'lik bir hit oranına (2025-11) geçiş yapıldığını bildirdi.
+> Önbelleğe kaydetme iki katmanla gerçekleşir. L2 (sunducu düzeyinde) önbelleğe / önbelleğe kaydetme tekrarlanan önbellekler için dikkat KV'yi tekrarlar  Anthropic'in önbelleğe kaydetme belgeleri uzun çağrılarda %90'a kadar maliyet azaltımı ve %85 gecikme azaltımı ile reklam yapmaktadır. Claude 3.5 Sonnet önbelleği okumaları $0.30/M vs $3.00/M taze, 5 dakikalık TTL ve 1 saatlik TTL seçeneği için 2 kez yazma primosu ile (docs.anthropic.com, 2026-04). OpenAI prompt caching, istekler için otomatik olarak geçerlidir ≥1024 token ve fiyatlar cached giriş yaklaşık %90 indirim vs. taze (platform.openai.com, 2026-04); model başına tam cached oran canlı oran kartına bağlıdır. L1 (app düzeyinde) semantik önbelleği, LLM'yi tamamen benzerlik hitlerini yerleştirmekle atlıyor. Satıcı "95% doğruluk" eşleşme doğruluğunu ifade eder, hit oranı değil  rapor edilen üretim hit oranları %10 (açık sohbet) ile %70 (strukturel FAQ) arasında değişir. Sıkı bir istintap setinde ses ajanları %50-80% olarak rapor edilir. Hiçbir sağlayıcı resmi bir temel hat yayınlamaz. Bu nedenle bunları garanti yerine topluluk telemetrisi olarak değerlendirin. Üretim tuzağı: paralelleşme önbelleği öldürür (birinci önbelleğe yazmadan önce verilen N paralel istekler harcamaları birkaç kat artırabilir) ve önleme içindeki dinamik içeriğin önbelleğin vurulmasını tamamen engeller. ProjectDiscovery, kaydedilebilir önbellekten dinamik metin taşımakla %7'den %74'lik bir hit oranına (2025-11) geçiş yapıldığını bildirdi.
 
 **Type:** Learn
 **Languages:** Python (stdlib, toy two-layer cache simulator)
@@ -55,7 +55,7 @@ Satıcı doğruluk iddiaları, geri gönderilen önbelleğe kaydedilen yanıtın
 
 Ajanınız 10 araç çağrısını paralel olarak yapar. 10'unun hepsi aynı 4K-token sistem uyarısına sahiptir. Antropik önbelleği yazıları istek başına; ilk önbelleği yazma, sağlayıcı istekleri gördükten sonra yaklaşık 300 ms tamamlanır. 2-10 istek aynı milisaniye penceresinde gelir ve her bir önbelleği eksik görür. 10 yazma primini ödersiniz, 0 okuma indirimini.
 
-Düzeltme: sıradan ilk  ile parti tek başına 1 talebi yapın, sonra 1'in önbelleği doldurulduğunda 2-10'u ateşleyin. İlk araç çağrısına 300 ms ekler; faturanın 5-10 katını kaydeder.
+Düzeltme: sıradan ilk  ile parti tek başına 1 talebi yapın, sonra 1'in önbelleği doldurulduğunda 2-10'u ateşleyin. İlk araç çağrısına 300 ms ekler; 5-10x fatura enflasyonundan kaçınır.
 
 ### Dinamik içeriği anti-önemli
 
@@ -91,7 +91,7 @@ Fiyat noktaları 2026-04'te bağlantılı satıcı belgeleri üzerinden ele alı
 - Antropik önbelleğe alınan okuma: Claude 3.5 Sonnet'te 0.30 $/M, taze girişten yaklaşık 10 kat daha ucuz (docs.anthropic.com).
 - Antropik önbelleği yazma primü: 1.25x (5 dakikalık TTL) veya 2x (1 saatlik TTL).
 - OpenAI otomatik önbelleği: ≥1024 token için geçerlidir; mevcut oran kartlarında yeni girişlerin yaklaşık% 10'u karşılığında önbelleğe girilen giriş (platform.openai.com).
-- Semantik önbelleği isabet oranı (halk tarafından bildirilmiş): ~ 10% açık sohbet; ~ 70% yapılandırılmış Soru sorusu. Satıcı belgelemiş bir temel çizgi değil.
+- Semantik önbelleği isabet oranı (halk tarafından bildirilmiş): ~ 10% açık sohbet; ~ 70% yapılandırılmış Soru sorusu; sabit bir istek sorusu seti üzerinde ses ajanları için 50-80% . Satıcı belgelemiş bir temel çizgi değil.
 - ProjectDiscovery: %7 → %74 hit oranı, dinamikleri öntanımdan çıkararak (proyect blog, 2025-11).
 - Paralelleşme karşıtı örneği: N paralel istekler ilk önbelleği yazmayı kaçırırken tipik 510x fatura enflasyonu raporları.
 

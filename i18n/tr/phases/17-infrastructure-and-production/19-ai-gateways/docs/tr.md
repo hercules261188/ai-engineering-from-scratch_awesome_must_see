@@ -9,7 +9,7 @@
 
 ## Öğrenme Hedefleri
 
-- Altı temel geçit özelliklerini (routing, fallback, retry, hız limitleri, sırlar, gözlemlenebilirlik, koruma) listeleyin.
+- Yedi temel geçit özelliğini (routing, fallback, retry, hız limitleri, sırlar, gözlemlenebilirlik, koruma) listeleyin.
 - Çatılar ve kullanım durumları ölçeklendirilirken 2026'da dört geçit (LiteLLM, Portkey, Kong AI, Bifrost) haritasını yapın.
 - Kong referans değerini alıntılayın (228% vs Portkey, 859% vs LiteLLM) ve neden >500 RPS için önemli olduğunu açıklayın.
 - Verilerin konut ve operasyon bütçesi verildiği için kendi kendine barındırılan vs yönetilen seçin.
@@ -22,7 +22,7 @@ Bu uygulama katmanında yeniden icat etmek her hizmeti her sağlayıcıya eşle�
 
 ## Anlaşım
 
-### Altı temel özellik
+### Yedi temel özellik
 
 1. **Provider routing** OpenAI, Anthropic, Gemini, kendi kendine barındırılan, vb.
 2. **Fallback**429, 5xx'te veya kalite başarısızlığı, başka bir yerde tekrar deneyin.
@@ -109,7 +109,7 @@ Bu ders bize çok yararlı .`outputs/skill-gateway-picker.md`Ölçek, operasyon 
 ## Egzersizler
 
 1. Çık .`code/main.py`. OpenAI→Anthropic→self-hosted'den geri dönüş ayarlayın. % 5 servisçi hata oranında beklenen hit oranı nedir?
-2. SLA'nın TTFT P99 < 200 ms'dir. 300 ms'lik bir başlangıç çizgisinde. Hangi geçitler bütçenin içinde kalır?
+2. SLA'nın TTFT P99 < 320 ms ve modelin tek başına 300 ms ölçülür.
 3. Sağlık hizmetleri için kendi kendine konutlama + kişisel bilgi düzenleme + denetim gerekir. Portkey OSS veya Kong'u seçin.
 4. LiteLLM vs Kong'u karşılaştırın: Bir takım hangi RPS tavanına göç etmeli?
 5. Çok kiracı SaaS için ücret sınırlama politikası tasarlayın: ücretsiz, deneme, ücretli seviyeler. Token-bucket veya kaydırıcı pencere?

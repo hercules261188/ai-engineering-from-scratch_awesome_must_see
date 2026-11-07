@@ -130,7 +130,7 @@ Bu ders bize çok yararlı .`outputs/skill-finops-plan.md`. Ürün ve ölçek g�
 1. Çık .`code/main.py`- Öldürücü ne zaman ateş eder?
 2. Bir kiracı başına, görev başına maliyetle bir tablo tasarlayın.
 3. En büyük kiracı ünite ekonomisi negatif.
-4. Destek ürünü için çözülmüş bir bilet başına maliyet hesaplama: 3M token/biletin, ~800 bilet/gün, GPT-5 önbelleğe alınan oran.
+4. Destek ürünü için çözülmüş bir bilet başına maliyet hesaplayın: 3M token/biletin, ~800 bilet/gün, tüm girişler GPT-5 önbelleğe kaydedilen oranla $0.125/M (başlatma listesi fiyatı; canlı oran kartını kontrol edin).
 5. Geriye dönük etiketlemeyi ne zaman kabul edilebilir?
 
 ## Anahtar Terimler

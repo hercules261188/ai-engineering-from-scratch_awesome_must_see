@@ -1,6 +1,6 @@
 # Satış API'leri  Endüstri Standartı olarak %50 indirim
 
-> Her büyük sağlayıcı %50 indirim ve ~24 saatlik dönüşüm ile async parti API'si gönderir. OpenAI, Anthropic, Google ve çoğu sonuçlama platformu (Fireworks parti seviyesinde, Together parti) aynı kalıpı uyguluyor. Hızlı önbelleğe alınan ve gece geçici boru hattı olan yığın seri, sinkron-yüklenmemiş maliyetin %10'una düşer. Kural çok basit: Eğer etkileşimsizse, partiye ait. İçerik üretimi boruları, belge sınıflandırması, veri çıkarımı, rapor üretimi, toplu etiketleme, katalog etiketleme  24 saat gecikmeye toleranslı olan her şey, toplamaya geçene kadar masada kalan para. 2026 üretim tarzı, her yeni LLM çalışma yükünün üç dizine ayrılmasıdır: etkileşimli (memleketle eşzamanlı), yarı etkileşimli (sinkron olmayan sırada geri dönüş), seri (gece, önbelleğe girilen giriş yığılmış). İnteraktifmiş gibi davranan ama dakikalarca gecikme süreci geçiren iş yükleri en çok harcanır.
+> Her büyük sağlayıcı %50 indirim ve ~24 saatlik dönüşüm ile async parti API'si gönderir. OpenAI, Anthropic, Google ve çoğu sonuçlama platformu (Fireworks parti seviyesinde, Together parti) aynı kalıpı uyguluyor. Hızlı önbelleğe alınan ve gece geçici boru hattı olan yığın seri, sinkron-yüklenmemiş maliyetin %10'una düşer. Kural çok basit: saatlerce gecikme süreci kabul ederse, partiye ait. İçerik üretimi boruları, belge sınıflandırması, veri çıkarımı, rapor üretimi, toplu etiketleme, katalog etiketleme  24 saat gecikmeye toleranslı olan her şey, toplamaya geçene kadar masada kalan para. 2026 üretim tarzı, her yeni LLM çalışma yükünün üç dizine ayrılmasıdır: etkileşimli (memleketle eşzamanlı), yarı etkileşimli (sinkron olmayan sırada geri dönüş), seri (gece, önbelleğe girilen giriş yığılmış). İnteraktifmiş gibi davranan ama dakikalarca gecikme süreci geçiren iş yükleri en çok harcanır.
 
 **Type:** Learn
 **Languages:** Python (stdlib, toy batch-vs-sync cost simulator)
@@ -52,7 +52,7 @@ Satır: parti + önbelleğe = %10 eşzamanlı önbelleğe alınmamış faturanı
 
 **Semi-interactive** kullanıcı bir görev gönderir, dakika içinde geri kontrol eder. Batch mevcut değilse senkronize etmek için fallback ile asynk kuyruk. Orta çaplı RAG indeksleme düşünün.
 
-**Batch** kullanıcı sonuçları "sabah" veya "kötü saat"e kadar bekler. İçerik boruları, ölçekte sınıflandırma, çevrimdışı analiz. Her zaman seri, her zaman yığın önbelleği.
+**Batch** kullanıcı sonuçları "sabah" veya "günün sonuna kadar" bekler. İçerik boruları, ölçekte sınıflandırma, çevrimdışı analiz. Her zaman seri, her zaman yığın önbelleği.
 
 Genel hata: her şeyi etkileşimli olarak sınıflandırmak çünkü boru hattı üretimdir. Üretim bir gecikme speçikası değildir  SLA.
 

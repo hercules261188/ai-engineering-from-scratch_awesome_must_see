@@ -1,6 +1,6 @@
 # Model Routing, Masrafları Azaltacak Bir Primitif
 
-> Dinamik bir broker her talebi değerlendirir (tüm görev türü, token uzunluğu, yerleştirme benzerliği, güven) ve basit sorguları ucuz bir modele gönderir, karmaşık sorguları sınır modeline yükselir. Model kaskadı olarak da adlandırılır. Üretim vaka çalışmaları, ABD/İngiltere/AB dağıtımları arasında iso-kalite'de maliyetlerin %20-60 oranında azalması göstermektedir; yüksek hacmi SaaS'de %30 yönlendirme verimliliğinin iyileştirilmesi, yıllık altı rakamlı tasarruf haline gelir. 2026 bağlamında LLM sonucu fiyatları yılda ~ 10 kat düştü  bir GPT-4 sınıfı token gitti $20/M to ~$2022'nin sonundan 2026'ya kadar 0.40/M. Çoğu düşüş, donanım değil, daha iyi servis halinde (Fase 17 · 04-09), Routing, fiyat düşüşünü ürün gerilemesi olmadan marj olarak dönüştürmenin yoludur. Başarısızlık modusu ucuz model sürüşüdür: rota %40'ı zayıf bir modele doğru itiyor, kalitesi akıl yürütme görevlerinde %3-5% düşüyor, kimse bir çeyrek bile fark etmez. Geçit yolları çevrimiçi kalite ölçümleri ile, sadece çevrimiçi değerleme setleri ile değil.
+> Dinamik bir broker her talebi değerlendirir (tüm görev türü, token uzunluğu, yerleştirme benzerliği, güven) ve basit sorguları ucuz bir modele gönderir, karmaşık sorguları sınır modeline yükselir. Model kaskadı olarak da adlandırılır. Üretim vaka çalışmaları, ABD/İngiltere/AB dağıtımları arasında iso-kalite'de maliyetlerin %20-60 oranında azalması göstermektedir; yüksek hacmi SaaS'de %30 yönlendirme verimliliğinin iyileştirilmesi, yıllık altı rakamlı tasarruf haline gelir. 2026 bağlamında, sabit kapasite seviyesinin LLM çıkarım fiyatlarının yılda yaklaşık 10 kat düştüğü (a16z LLMflation tahmininde); GPT-4 seviyesinde düşüş daha yavaş, $20/M to ~$2022'nin sonundan 2026'ya kadar 0.40/M (yaklaşık 50x) Çoğu düşüş, donanım değil, daha iyi servis halinde (Fase 17 · 04-09), Routing, fiyat düşüşünü ürün gerilemesi olmadan marj olarak dönüştürmenin yoludur. Başarısızlık modusu ucuz model sürüşüdür: rota %40'ı zayıf bir modele doğru itiyor, kalitesi akıl yürütme görevlerinde %3-5% düşüyor, kimse bir çeyrek bile fark etmez. Geçit yolları çevrimiçi kalite ölçümleri ile, sadece çevrimiçi değerleme setleri ile değil.
 
 **Type:** Learn
 **Languages:** Python (stdlib, toy cascading router simulator)
@@ -44,7 +44,7 @@ Eğer %70'i ucuz ve %30'u pahalı bir şekilde yönlendirseniz, faturalarınız 
 
 AI geçitleri (Fase 17 · 19) yönlendirmeyi ortaya çıkarır. LiteLLM `router`Portkey'in gardiyanları + yönlendirme. Kong AI Gateway'in eklenti tabanlı yönlendirme. OpenRouter'ın model pazarı bir önerme API'si ortaya çıkarır.
 
-Açık kaynaklı: RouteLLM (LMSYS), Diamond değil (ticari), Prompt Mule.
+Açık kaynaklı: RouteLLM (LMSYS), Quick Mule. Ticari: Elmas değil.
 
 ### 2026 fiyat eğri
 
@@ -69,7 +69,7 @@ Online kalite ölçümleri ile geçit yolları:
 ### Hatırlamalısın numaralar
 
 - 2026 yönlendirme tasarrufu iso-kalitede: 20-60% vaka çalışmaları.
-- LLM fiyatlarının düşüşü 2022-2026: ~ 10 kat yıllık toplam.
+- LLM fiyatlarının sabit kapasite düzeyinde düşmesi: ~10 kat yıllık (a16z LLMflation tahmininde); GPT-4 seviyesinde yaklaşık 50 katlık toplam 2022-2026 yılları arasında.
 - GPT-4 seviyesinde 2022 vs. 2026: ~$20/M → ~$0.40/M.
 - Kaskadalı gecikme etkisi: ~1.2x ortalama, ~2x yükseldi (trafikin ~ 10%).
 

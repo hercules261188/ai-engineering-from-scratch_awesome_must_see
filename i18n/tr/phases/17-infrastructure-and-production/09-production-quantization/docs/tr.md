@@ -104,6 +104,8 @@ gpu-memory-breakdown
 
 `code/main.py`bir dizi model boyutu için hafıza ayak izi (koşum + KV + etkinleştirmeler) ve altı format boyunca nispeten geçiş hesaplar. KV önbelleğinin üstün olduğu, ağırlık sıkıştırmasının ödediği ve FP8'in güvenli seçimi olduğu yerleri gösterir.
 
+- Evet .[Inside an LLM Serving GPU](https://aiengineeringfromscratch.com/inside-an-llm-serving-gpu?dtype=fp8&users=64)NVIDIA L4'te FP8 gösterir. Ağırlıklar 15.28 GB'dan 8.81 GB'ye düşer, KV havuzu 24.094'den 142.369 token'e çıkar ve 64 kullanıcıda ölçülen çıkış saniyede 250.85'den 735.91 token'e çıkar.
+
 ## Gönder
 
 Bu ders bize çok yararlı .`outputs/skill-quantization-picker.md`. Hardver, model boyutu, iş yükü türü ve kalite toleransına göre bir format seçer ve kalibrasyon/validasyon planı oluşturur.

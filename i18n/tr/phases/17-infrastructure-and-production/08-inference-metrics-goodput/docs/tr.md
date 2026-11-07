@@ -1,6 +1,6 @@
 # İndirim Metrikleri  TTFT, TPOT, ITL, Goodput, P99
 
-> Dört metrik bir sonuç dağıtımının işe yaramayacağını belirler. TTFT, ön doldurma artı sıra artı ağ. TPOT (aynı şekilde ITL) bir token başına hafıza bağlı dekod maliyetidir. Son-son gecikme TTFT artı TPOT çarpı çıkış uzunluğu. Geçim, filonun her birinde toplanan saniyede tokenlerdir. Ama ürün için önemli olan şey, her SLO'yu aynı anda karşılayan isteklerin %2'si. Yüksek geçiş, düşük iyi çıkış demek oluyor ki kullanıcılara asla zamanında ulaşmayan tokenleri işletiyorsunuz. 2026 yılında Llama-3.1-8B-Instruct on TRT-LLM için referans numaraları: ortalama TTFT 162 ms, ortalama TPOT 7,33 ms, ortalama E2E 1,093 ms. Her zaman P50, P90, P99 'yi bildir. Ve ölçüm tuzağına dikkat edin: GenAI-Perf TTFT'yi ITL hesaplamasından çıkarır, LLMPerf onu içerir; aynı çalışmada TPOT hakkında iki araç anlaşmazlık yaşıyor.
+> Beş metrik bir sonuç dağıtımının işe yaramayacağını belirler. TTFT, ön doldurma artı sıra artı ağ. TPOT (sık sık ITL olarak bildirilir, ancak araçlar ITL'nin ilk token sayılmasından farklıdır) bir token için hafıza bağlı dekodlama maliyetidir. Son-son gecikme TTFT artı TPOT çarpı çıkış uzunluğu. Geçim, filonun her birinde toplanan saniyede tokenlerdir. Ama ürün için önemli olan şey, her SLO'yu aynı anda karşılayan isteklerin %2'si. Yüksek geçiş, düşük iyi çıkış demek oluyor ki kullanıcılara asla zamanında ulaşmayan tokenleri işletiyorsunuz. 2026 yılında Llama-3.1-8B-Instruct on TRT-LLM için referans numaraları: ortalama TTFT 162 ms, ortalama TPOT 7,33 ms, ortalama E2E 1,093 ms. Her zaman P50, P90, P99 'yi bildir. Ve ölçüm tuzağına dikkat edin: GenAI-Perf TTFT'yi ITL hesaplamasından çıkarır, LLMPerf onu içerir; aynı çalışmada TPOT hakkında iki araç anlaşmazlık yaşıyor.
 
 **Type:** Learn
 **Languages:** Python (stdlib, toy percentile calculator and goodput reporter)
@@ -52,7 +52,7 @@ Toplam metrik, filo verimliliğini anlatır, bireysel talep sağlığını anlat
 
 `goodput = fraction of requests meeting (TTFT <= a) AND (TPOT <= b) AND (E2E <= c)`
 
-SLO, çok kısıtlama. Bir istek sadece her kısıtlama yerine getirildiğinde "iyi" olur. Goodput payıdır. 60% goodput'ta yüksek throughput başarısızlık demektir. 99% goodput'ta düşük throughput hedeftir.
+SLO bir çok kısıtlama. Bir istek sadece her kısıtlama yerine getirildiğinde "iyi" olur. Goodput payıdır. Bazı kağıtlar ve tablolar bunun yerine goodput oranını bildirir: her SLO'ya uyan saniyede istekler. Kaldırmak için payı istek oranıyla çarpıtın. Yüksek throughput %60 goodput başarısızlık demektir. Düşük throughput %99 goodput hedeftir.
 
 2026 yılında, goodput, MLPerf Inference v6.0 gönderilerinde ve AI platform sağlayıcılarında SLA iç takipinde kullanılan ölçümdür.
 
@@ -107,6 +107,8 @@ throughput-latency
 ## Kullan
 
 `code/main.py`Bu, bir oyuncak iyilik hesaplayıcıdır. Sintez bir gecikme dağılımını oluşturun, SLO uygulayın ve iyilik hesaplayın. Aynı iz üzerinde GenAI-Perf vs LLMPerf TPOT farkını da gösterir.
+
+- Evet .[Inside an LLM Serving GPU](https://aiengineeringfromscratch.com/inside-an-llm-serving-gpu?users=1)bir decode adımı, en az 54,7 ms'i 300 GB/s'de alırken ölçülen adımı 60,16 ms'i alır.
 
 ## Gönder
 

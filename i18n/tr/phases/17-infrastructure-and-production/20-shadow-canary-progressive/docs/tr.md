@@ -77,11 +77,11 @@ Eğer yığın yeniden dağıtılmak için geri dönüş gerektiriyorsa, fırlat
 
 ### Metrikler kadansı
 
-Kanarlı kapılar trafik hacmine bağlı olarak her 5-15 dakikada bir kontrol eder. %1 trafiğin 10 req/min ile penceresi başına 50-150 veri noktası verir  gecikme için yeterli ama kullanıcı geri bildirimleri için gürültülü. %10 ~ 10 kat daha fazla verir.
+Kanarya kapıları trafik hacmine bağlı olarak her 5-15 dakikada bir kontrol eder. 1000 req/minten %1'i (kanarya için 10 req/min) 5-15 dakikalık pencerede 50-150 veri noktası verir.
 
 ### A/B adımı seçeneğe bağlıdır.
 
-Yeni model belirgin bir şekilde farklı ise (farklı davranış, farklı maliyet eğri, farklı ton), kanary geçtikten sonra %50'de A/B testini yapın.
+Yeni model belirgin bir şekilde farklı ise (farklı davranış, farklı maliyet eğri, farklı ton), A/B testini kanary geçtikten sonra %50'de yapın. Eğer aynı davranışın sadece geliştirilmiş bir versiyonu ise, kanary kapıları geçtiğinde %100'e atlayın.
 
 ### Hatırlamalısın numaralar
 

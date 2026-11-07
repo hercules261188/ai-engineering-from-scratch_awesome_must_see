@@ -108,7 +108,7 @@ Bu ders bize çok yararlı .`outputs/skill-ab-plan.md`Özellik değişikliği, i
 2. Sağlık hizmetleri ile düzenlenen bir yerleşim müşteri için Statsig veya GrowthBook'u seçin.
 3. GPT-4 vs GPT-3.5'i çözülmüş bilet fiyatına test eden bir A/B tasarlayın.
 4. Kanarya geçiyor ama A/B %1,2 dönüşüm gösterir.
-5. CUPED'i, bir ön dönemde, post varyansiyonunun %60'ı ile uygulayın.
+5. CUPED'i, dönem öncesi bir değişkenle uygulayın ve bu değişkenlik dönem sonrası değişkenliğin %60'ını açıklar (sıkram korelasyon 0,6).
 
 ## Anahtar Terimler
 
