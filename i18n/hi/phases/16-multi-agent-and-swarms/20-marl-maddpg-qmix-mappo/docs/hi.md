@@ -42,7 +42,7 @@ critic update:   TD on Q_i(x, a_1..n) given next-state joint estimate
 
 ### QMIX (2018)  मूल्य विघटन
 
-केवल सहकारी। वैश्विक पुरस्कार प्रति एजेंट क्यू-मूल्यों के एक एकांत समारोह का योग हैः
+केवल सहकारी। संयुक्त कार्य-मूल्य`Q_tot`प्रति एजेंट Q-मूल्यों का एक एकांत मिश्रण फ़ंक्शन हैः
 
 ```math
 Q_{\text{tot}}(\tau, a) = f\big(Q_1(\tau_1, a_1), \ldots, Q_n(\tau_n, a_n)\big), \quad \frac{\partial f}{\partial Q_i} \ge 0
