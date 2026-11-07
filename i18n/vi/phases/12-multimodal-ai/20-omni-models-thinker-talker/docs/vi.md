@@ -12,7 +12,7 @@
 - Chia đường ống dẫn suy luận thành Thinker (sự lý luận văn bản) và Talker (sự tổng hợp ngôn ngữ) và giải thích tại sao streaming song song hoạt động.
 - Xét ngân sách thời gian đến đầu tiên-byte âm thanh (TTFAB) cho một tương tác trò chuyện, thành phần theo thành phần.
 - Mô tả vị trí phù hợp với thời gian của TMRoPE mã hóa qua thị giác, âm thanh và văn bản trong Thinker.
-- Hãy cho chúng ta biết tên ba kiểu trò chuyện thời gian thực: nửa kép, quay lại, và đầy đủ kép.
+- Hãy nêu tên hai mô hình trò chuyện thời gian thực, nửa duplex và đầy đủ duplex, và giải thích cách VAD chuyển đổi thúc đẩy giao dịch bán duplex.
 
 ## Vấn đề
 
@@ -85,7 +85,7 @@ Người kế nhiệm. Qwen3-80B Thinker, lớn hơn Talker, cải thiện TMRoP
 - Tự giải mã residual-VQ: 30ms.
 - Tự giải mã dạng sóng nói: 50-80ms.
 
-Tổng TTFAB: 320-510ms tại 7B, 600-900ms tại 70B. Chất lượng biên giới thường có nghĩa là 70B +; do đó khoảng cách độ trễ biên giới.
+Tổng TTFAB: 320-490ms tại 7B, 600-900ms tại 70B. Chất lượng biên giới thường có nghĩa là 70B +; do đó khoảng cách độ trễ biên giới.
 
 ### Phương pháp toán tỷ lệ token
 

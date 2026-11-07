@@ -20,7 +20,7 @@ BLIP-2 cung cấp 32 token thị giác vào lớp đầu vào của LLM đóng b
 
 Câu trả lời của Flamingo: không thay đổi dòng đầu vào của LLM. Đặt thêm các lớp chú ý chéo giữa các khối LLM hiện có. Các mã thông báo văn bản vẫn chảy qua sự chú ý tự do của LLM như thường lệ. Giữa mỗi vài khối LLM, các mã thông báo văn bản cũng xuyên qua các tính năng hình ảnh thông qua một lớp bị khóa mới. Cổng (được khởi tạo thành không) có nghĩa là ở bước không, các lớp mới là không có hoạt động. Khi đào tạo tiến triển, cánh cổng mở ra và thông tin trực quan bắt đầu chảy.
 
-Flamingo trả lời câu hỏi thứ hai: làm thế nào để xử lý một số hình ảnh biến đổi (0, 1 hoặc nhiều) mỗi prompt? Một Perceiver resampler  một mô-đun liên quan nhỏ có thể lấy bất kỳ số lượng các bản vá nào bạn có và tạo ra một số lượng cố định của các token ẩn thị.
+Flamingo trả lời câu hỏi thứ hai: làm thế nào để xử lý một số hình ảnh biến (0, 1 hoặc nhiều) mỗi yêu cầu? Một thiết bị lấy mẫu lại Perceiver là một mô-đun nhỏ liên quan đến sự chú ý, lấy bất cứ số lượng các bản vá nào bạn có và tạo ra một số lượng cố định của các token ẩn hình ảnh cho mỗi hình ảnh. Tổng số tăng lên với số lượng hình ảnh, nhưng mỗi mã thông báo văn bản chỉ đọc các dấu ẩn của một hình ảnh, vì vậy bất kỳ mã thông báo văn bản nào nhìn thấy trong sự chú ý chéo đều có cùng một hình dạng bất kể có bao nhiêu hình ảnh trong thư nhắc.
 
 ## Khái niệm
 
@@ -59,7 +59,7 @@ x_before_next_block = gated
 
 ### Sự chú ý chéo che giấu cho các đầu vào được giao tiếp
 
-Trong một lệnh như "<image A> caption A <image B> caption B <image C> ?", mỗi mã thông báo văn bản chỉ nên hiển thị các hình ảnh trước đó trong chuỗi.`t`chỉ tham gia vào các token resampler hình ảnh có chỉ số hình ảnh `i < i_t`nơi `i_t`là hình ảnh gần đây nhất trước vị trí `t`"Hãy nhìn thấy hình ảnh trước cuối cùng" hoặc "hãy nhìn thấy tất cả hình ảnh trước" là cả hai lựa chọn hợp lệ; Flamingo chọn trước.
+Trong một lệnh như "<image A> caption A <image B> caption B <image C> ?", mỗi mã thông báo văn bản chỉ nên hiển thị các hình ảnh trước đó trong chuỗi.`t`chỉ tham gia vào các token resampler của hình ảnh `i_t`, nơi `i_t`là hình ảnh gần đây nhất trước vị trí `t`"Cô chỉ nhìn thấy hình ảnh trước cuối cùng" hoặc "cô nhìn thấy tất cả hình ảnh trước" là cả hai lựa chọn hợp lệ; Flamingo chọn thứ nhất.
 
 ### Học tập trong bối cảnh ít ảnh
 
@@ -76,7 +76,7 @@ Mô hình nhìn thấy mô hình hoàn thành và xuất hiện "con chim" (ho�
 Flamingo được đào tạo trên ba bộ dữ liệu:
 
 1. MultiModal MassiveWeb (M3W): 43M trang web với hình ảnh và văn bản được giao lưu, tái cấu trúc thứ tự đọc.
-2. Cặp hình ảnh-môn văn bản (ALIGN + LTIP): 4,4B cặp.
+2. Cặp hình ảnh-môn văn: ALIGN (1.8B cặp) cộng với LTIP (312M cặp), tổng cộng khoảng 2.1B cặp.
 3. Video-Text Pairs (VTP): 27M clip video ngắn.
 
 OBELICS (2023) là một bản sao mở của các kết nối web được giao lưu, mà Idefics, Idefics2 và hầu hết các mô hình "Flamingo-like" mở được đào tạo.
@@ -102,7 +102,7 @@ Otter (2023) xây dựng trên OpenFlamingo với điều chỉnh hướng dẫn
 | Frozen LLM | Yes | Yes |
 | Few-shot in-context | Weak | Strong — the paper's centerpiece |
 | Interleaved inputs | No native support | Yes, the design target |
-| Training data | 130M pairs | 1.3B pairs + 43M interleaved pages |
+| Training data | 130M pairs | ~2.1B pairs + 27M video clips + 43M interleaved pages |
 | Parameter count | 188M trained | ~10B trained (cross-attn layers) |
 | Compute | Days on 8 A100s | Weeks on thousands of TPUv4 |
 

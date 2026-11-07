@@ -1,6 +1,6 @@
 # LLaVA-OneVision: Một hình ảnh, nhiều hình ảnh, video trong một mô hình
 
-> Trước LLaVA-OneVision (Li et al., tháng 8 năm 2024) thế giới VLM mở có dòng dõi riêng biệt: LLaVA-1.5 cho hình ảnh đơn, các mô hình hình ảnh đa như Mantis và VILA, các mô hình video như Video-LLaVA và Video-LLaMA. Mỗi người đều giành được điểm chuẩn của mình và thất bại ở những người khác. LLaVA-OneVision lập luận rằng một chương trình giảng dạy duy nhất có thể đào tạo một mô hình để thống trị cả ba kịch bản, và rằng các hiệu ứng chuyển giao nhiệm vụ mới nổi (nghệ năng hình ảnh duy nhất được xuất khẩu sang video, lý luận nhiều hình ảnh được xuất khẩu sang hình ảnh duy nhất) vượt qua tổng số các chuyên gia. Công thức này rất đơn giản: một ngân sách biểu tượng hình ảnh duy trì liên tục trong mọi kịch bản, cộng với một chương trình giảng dạy rõ ràng chuyển từ hình ảnh đơn đến OneVision (phần hình đa) sang video. Bài học này đọc ngân sách, chương trình học, và hành vi mới nổi.
+> Trước LLaVA-OneVision (Li et al., tháng 8 năm 2024) thế giới VLM mở có dòng dõi riêng biệt: LLaVA-1.5 cho hình ảnh đơn, các mô hình hình ảnh đa như Mantis và VILA, các mô hình video như Video-LLaVA và Video-LLaMA. Mỗi người đều giành được điểm chuẩn của mình và thất bại ở những người khác. LLaVA-OneVision lập luận rằng một chương trình giảng dạy duy nhất có thể đào tạo một mô hình để thống trị cả ba kịch bản, và rằng các hiệu ứng chuyển giao nhiệm vụ mới nổi (nghệ năng hình ảnh duy nhất được xuất khẩu sang video, lý luận nhiều hình ảnh được xuất khẩu sang hình ảnh duy nhất) vượt qua tổng số các chuyên gia. Công thức này là một cách đơn giản: một ngân sách biểu tượng trực quan cân bằng giữa các kịch bản, cộng với một chương trình giảng dạy rõ ràng chuyển từ hình ảnh đơn đến OneVision (phần hình đa) sang video. Bài học này đọc ngân sách, chương trình học, và hành vi mới nổi.
 
 **Type:** Build
 **Languages:** Python (stdlib, token budget solver + curriculum planner)
@@ -9,7 +9,7 @@
 
 ## Mục tiêu học tập
 
-- Thiết kế ngân sách biểu tượng trực quan giữ liên tục trên đầu vào hình ảnh đơn, nhiều hình ảnh và video.
+- Thiết kế ngân sách biểu tượng trực quan giữ cân bằng giữa đầu vào hình ảnh đơn, nhiều hình ảnh và video.
 - Đặt một chương trình giảng dạy đào tạo chuyển giao kỹ năng từ hình ảnh đơn sang video mà không bị lãng quên thảm khốc.
 - Giải thích tại sao một mô hình duy nhất đánh bại các chuyên gia ở cùng một số parameter khi chương trình giảng dạy được thực hiện đúng.
 - Hãy nêu tên ba khả năng mới nổi được báo cáo bởi LLaVA-OneVision: lý luận nhiều máy ảnh, yêu cầu đặt dấu, đại lý chụp màn hình iPhone.
@@ -32,13 +32,13 @@ Trước OneVision, câu trả lời mặc định là "để đào tạo một 
 
 ### Ngân sách mã thông báo OneVision
 
-LLaVA-OneVision chọn một ngân sách thị thực thống nhất khoảng 3000-4000 token cho mỗi mẫu, phân bổ khác nhau cho mỗi kịch bản:
+LLaVA-OneVision không xác định một con số mã thông báo chính xác. Nó cân bằng con số mã thông báo trực quan tối đa cho mỗi mẫu, vì vậy ba kịch bản rơi vào cùng phạm vi, khoảng 6.000 đến 9.000 mã thông báo, được phân bổ khác nhau cho mỗi kịch bản:
 
-- Hình đơn: AnyRes-9 (3x3 gạch + thumbnail), mỗi gạch ở 384 với 729 đệm, tích hợp hình dạng hai tuyến tính tích cực 2x2 → 182 mỗi gạch. Tổng cộng: 9 * 182 + 182 = 1820 mã thông báo.
-- Multi-image: mỗi hình ảnh ở độ phân giải vừa phải (384, không có mảng), 729 token mà không có hợp tác.
-- Video: 32 khung hình với độ phân giải 384 với tích hợp 3x3 bilinear hung hăng → 81 token mỗi khung hình.
+- Hình đơn: AnyRes-Max-9 (tối đa 9 tấm + một khung hình cơ sở), mỗi khung hình 384x384 cho ra 729 token từ SigLIP SO400M. Tối đa: 729 * (1 + 9) = 7290 token.
+- Multi-image: mỗi hình ảnh ở 384 không có tấm, 729 token không hợp nhất.
+- Video: lên đến 32 khung hình ở 384 với 2x2 bilinear pooling → 196 token mỗi khung hình.
 
-Các mã hóa phân bổ duy trì tổng số token gần như không đổi. LLM không bao giờ thấy một lô mà thổi ngữ cảnh của nó.
+Việc phân bổ giữ tổng số tối đa trong cùng một dải, do đó không có kịch bản nào thống trị bối cảnh hoặc độ nghiêng.`code/main.py`Planner dưới đây sử dụng một ngân sách đồ chơi nhỏ hơn của 4096 để hiển thị logic cân bằng tương tự.
 
 ### Chương trình giảng dạy ba giai đoạn
 
@@ -111,14 +111,14 @@ Bài học này sẽ mang lại kết quả `outputs/skill-onevision-budget-plan
 
 4. Bài báo báo cáo các tiêu chuẩn video được đào tạo chỉ trên 8 khung hình mỗi mẫu. Liệu điều đó có tổng quát hóa thành video 30 giây khi suy luận?
 
-5. Kết hợp hai tuyến của 24x24 các bản vá đến 12x12 là giảm 4x cho mỗi dim. Thực hiện việc kết hợp trong stdlib Python và xác minh rằng trung bình trên mỗi khối 2x2 phù hợp với đầu ra hai tuyến.
+5. Kết hợp hai tuyến của 24x24 patch đến 12x12 là giảm 2x mỗi chiều kích, do đó 4x ít hơn token. Thực hiện việc kết hợp trong stdlib Python và xác minh rằng trung bình trên mỗi khối 2x2 phù hợp với đầu ra hai tuyến.
 
 ## Các điều khoản chính
 
 | Term | What people say | What it actually means |
 |------|-----------------|------------------------|
-| OneVision scenario | "Single-image, multi-image, or video" | One of three input shapes the unified VLM handles; the budget stays constant across |
-| Token budget | "How many tokens per sample" | Total visual tokens the LLM sees per training / inference sample, typically 3000-4000 |
+| OneVision scenario | "Single-image, multi-image, or video" | One of three input shapes the unified VLM handles; the budget stays balanced across |
+| Token budget | "How many tokens per sample" | Total visual tokens the LLM sees per training / inference sample, about 6k to 9k at most in LLaVA-OneVision |
 | Curriculum | "Training order" | Stage ordering (single-image → multi-image → video) chosen for emergent transfer |
 | Bilinear pooling | "Token shrink" | Applying bilinear interpolation to the patch grid (2D) to reduce token count while preserving locality |
 | Emergent skill | "Not trained, still works" | Capability that appears at inference without matching training data, due to curriculum composition |

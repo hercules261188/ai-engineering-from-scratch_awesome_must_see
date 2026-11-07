@@ -51,7 +51,7 @@ Mặt nạ:
 M[i, j] = 1 if:
   (i is text and j is text and j <= i)   # causal for text
   OR (i is image and j is image and same_image_block(i, j))   # bidirectional within image
-  OR (i is text and j is image and j < i_image_end)   # text attends to previous images
+  OR (i is text and j is image and j < i)   # text attends to images that closed before it
   OR (i is image and j is text and j < i_image_start)   # image attends to preceding text
 ```
 
@@ -97,7 +97,7 @@ Nhược điểm: Phân truyền là mô hình mất kép, làm cho động lự
 
 Janus-Pro (Dạy 12.15) tinh chỉnh ý tưởng của Transfusion bằng cách tách lập mã hình ảnh để hiểu và tạo ra SigLIP cho một, VQ cho một  trong khi chia sẻ cơ thể biến đổi. Show-o (Dạy 12.14) thay đổi phân tán cho phân tán riêng biệt (bản đoán đeo mặt nạ).
 
-2026 sản xuất VLM phát ra hình ảnh  Gemini 3 Pro, GPT-5, Claude Opus 4.7 của hình ảnh tạo đường  gần như chắc chắn sử dụng một số hậu duệ của gia đình này. chi tiết là độc quyền.
+Các mô hình sản xuất đóng cửa phát ra hình ảnh theo bản địa có thể sử dụng một số hậu duệ của gia đình này, nhưng kiến trúc của chúng không được công bố, vì vậy hãy coi bất kỳ tuyên bố như vậy như một phỏng đoán.
 
 ```figure
 cfg-guidance-scale
@@ -111,7 +111,7 @@ cfg-guidance-scale
 - Hình ảnh là 4x4 lưới của các byte.
 - Một cặp dự đoán tuyến tính chia sẻ trọng lượng hoạt động như là bộ thay thế biến đổi; mất NTP trên văn bản, mất MSE trên các bản vá âm thanh.
 - Chuyện tập trung thay đổi hai lỗ, mặt nạ chú ý là rõ ràng.
-- Thế hệ tạo ra một dòng chữ và hình ảnh 4x4 trong một đoạn đi trước.
+- Một bản demo mặt nạ in mô hình chú ý ba góc khối cho một văn bản, hình ảnh, chuỗi văn bản.
 
 Bộ biến đổi là một đồ chơi. Phòng ống nước mất hai lỗ, xây dựng mặt nạ chú ý, và vòng suy luận là những đồ tạo vật thực sự.
 

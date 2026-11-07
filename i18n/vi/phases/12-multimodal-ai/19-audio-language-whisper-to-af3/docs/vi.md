@@ -54,7 +54,7 @@ Whisper được đào tạo dựa trên dữ liệu nói chung. Nó yếu hơn 
 
 BEATs (Chen et al., 2022) là một bộ biến đổi tự giám sát được đào tạo trên AudioSet.
 
-AF-Whisper (Audio Flamingo 3's hybrid): Concat Whisper + BEATs có tính năng như đầu vào âm thanh.
+AF-Whisper (coder của Audio Flamingo 3: bắt đầu từ bộ mã hóa Whisper-large-v3 và tiếp tục đào tạo nó về giọng nói, âm thanh và âm nhạc cùng nhau, vì vậy một bộ mã hóa mang cả tín hiệu ngôn ngữ và âm thanh.
 
 ### Audio Q-former
 
@@ -70,7 +70,7 @@ Qwen-Audio (Chu et al., 2023): kiến trúc tương tự, được đào tạo t
 
 LTU  Listen, Think, Understand (Gong et al., 2023): dữ liệu lý luận rõ ràng, tập trung vào chuỗi suy nghĩ hơn các clip âm thanh.
 
-Audio Flamingo 3 (Goel et al., tháng 7 năm 2025): SOTA mở hiện tại. 8B LLM backbone (Qwen2 7B), Whisper-large encoder concat BEATs, 64-query Q-former, đào tạo trên 1M + cặp hướng dẫn văn bản âm thanh. MMAU 0.72, phù hợp với biên giới độc quyền trên một số nhiệm vụ phụ.
+Audio Flamingo 3 (Goel et al., tháng 7 năm 2025): SOTA mở hiện tại. 7B LLM backbone (Qwen2.5-7B), một bộ mã hóa âm thanh AF-Whisper được xây dựng từ Whisper-large-v3, các lớp bộ chuyển đổi nhỏ vào LLM, đào tạo trên các cặp hướng dẫn âm thanh văn bản 1M +. MMAU 0.72, phù hợp với biên giới độc quyền trên một số nhiệm vụ phụ.
 
 AF3 cũng giới thiệu chuỗi suy nghĩ theo yêu cầu cho âm thanh: mô hình có thể tùy chọn phát ra các token suy nghĩ ("hãy cho tôi xác định các công cụ trước: ...") trước khi trả lời cuối cùng. Độ chính xác trong các nhiệm vụ suy luận phức tạp nâng cao 3-5 điểm khi suy nghĩ được bật.
 

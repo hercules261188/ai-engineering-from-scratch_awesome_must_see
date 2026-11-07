@@ -1,6 +1,6 @@
 # Từ CLIP đến BLIP-2  Q-Former như cầu Modality
 
-> CLIP sắp xếp hình ảnh và văn bản nhưng không thể tạo tiêu đề, trả lời câu hỏi hoặc tổ chức cuộc trò chuyện. BLIP-2 (Salesforce, 2023) giải quyết điều đó với một cây cầu có thể đào tạo nhỏ: 32 vector truy vấn có thể học được tham gia qua các tính năng của ViT đóng băng thông qua sự chú ý chéo, sau đó slot trực tiếp vào dòng đầu vào của LLM đóng băng. 188 triệu tham số cầu nối một LLM 11B với một ViT-g/14. Mỗi VLM dựa trên bộ điều chỉnh thông qua năm 2026  MiniGPT-4, InstructBLIP, anh em họ của LLaVA  là một hậu duệ. Bài học này đọc kiến trúc của Q-Former, giải thích đào tạo hai giai đoạn của nó, và xây dựng một phiên bản đồ chơi cung cấp các token hình ảnh vào một bộ giải mã văn bản đóng băng.
+> CLIP sắp xếp hình ảnh và văn bản nhưng không thể tạo tiêu đề, trả lời câu hỏi hoặc tổ chức cuộc trò chuyện. BLIP-2 (Salesforce, 2023) giải quyết điều đó với một cây cầu có thể đào tạo nhỏ: 32 vector truy vấn có thể học được tham gia qua các tính năng của ViT đóng băng thông qua sự chú ý chéo, sau đó slot trực tiếp vào dòng đầu vào của LLM đóng băng. 188M tham số cầu kết nối một ViT-g/14 với LLM đóng băng lớn như 11B Flan-T5-XXL. Mỗi VLM dựa trên bộ điều chỉnh thông qua năm 2026  MiniGPT-4, InstructBLIP, anh em họ của LLaVA  là một hậu duệ. Bài học này đọc kiến trúc của Q-Former, giải thích đào tạo hai giai đoạn của nó, và xây dựng một phiên bản đồ chơi cung cấp các token hình ảnh vào một bộ giải mã văn bản đóng băng.
 
 **Type:** Build
 **Languages:** Python (stdlib, cross-attention + learnable-query demo)
@@ -117,7 +117,7 @@ Bài học này sẽ mang lại kết quả `outputs/skill-modality-bridge-picke
 
 4. Đọc Phần 3.2 của bài báo BLIP-2 (arXiv:2301.12597) về cách khởi tạo Q-Former. Giải thích tại sao khởi tạo từ cơ sở BERT (không ngẫu nhiên) tăng tốc sự hội tụ.
 
-5. Đối với một video 10 phút với 1 FPS lấy mẫu đến 60 khung hình, tính toán chi phí token mỗi khung hình ở (Q-Former → 32 token / khung hình) so với (MLP projector → 576 token / khung hình).
+5. Đối với một video 10 phút với 1 FPS lấy mẫu đến 60 khung hình, tính toán chi phí mã thông báo mỗi khung hình tại (Q-Former → 32 mã thông báo / khung hình) so với (MLP dự đoán → 576 mã thông báo / khung hình).
 
 ## Các điều khoản chính
 
@@ -132,7 +132,7 @@ Bài học này sẽ mang lại kết quả `outputs/skill-modality-bridge-picke
 | Two-stage pretraining | "Representation then generative" | Stage 1 trains Q-Former alone (ITC/ITM/ITG); Stage 2 attaches frozen LLM and trains only the projection + Q-Former |
 | Frozen backbone | "Do not finetune" | The vision encoder and LLM weights are fixed; only the bridge trains |
 | Projection head | "Linear to LLM dim" | Final linear layer mapping Q-Former output to the LLM's embedding dimension |
-| Perceiver resampler | "Flamingo's version" | Similar learnable-query cross-attention, used by Flamingo at every layer rather than as a single bridge |
+| Perceiver resampler | "Flamingo's version" | Similar learnable-query cross-attention; Flamingo runs it once per image to make fixed latents, then reads them through gated cross-attention at every LLM layer |
 
 ## Đọc thêm
 

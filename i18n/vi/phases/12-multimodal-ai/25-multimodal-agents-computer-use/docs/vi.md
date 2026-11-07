@@ -128,7 +128,7 @@ mm-agent-loop
 
 `code/main.py`là sàn đá cột:
 
-- Action schema JSON definition (10 hành động).
+- Action schema JSON definition (10 hành động: 9 hành động được liệt kê ở trên cộng với `screenshot_region`, một công cụ thu hoạch + phóng to).
 - Tờ trạng thái trình duyệt giả như lệnh.
 - Cơ thể vòng tròn của đại lý: nhận trạng thái, phát hành hành động, áp dụng, vòng tròn.
 - 10 nhiệm vụ mini-benchmark (đảng tổng hợp) để đo lường tỷ lệ thành công từ đầu đến cuối.
@@ -140,7 +140,7 @@ Bài học này sẽ mang lại kết quả `outputs/skill-multimodal-agent-desi
 
 ## Các bài tập
 
-1. Chuyển rộng kế hoạch hành động bằng một `screenshot_region`công cụ (crop + zoom). Những nhiệm vụ nào có lợi?
+1. Chế hoạch của mã thêm một `screenshot_region`công cụ (crop + zoom) cho chín hành động cốt lõi.
 
 2. Đọc AgentVista (arXiv:2602.23166). Mô tả danh mục nhiệm vụ khó khăn nhất và lý do tại sao các mô hình biên giới vẫn thất bại.
 

@@ -10,7 +10,7 @@
 ## Mục tiêu học tập
 
 - Xét tổng số mã thông báo thị giác cho video hình dạng dài với FPS và tích hợp khác nhau.
-- Giải thích ba con đường quy mô: bối cảnh thô (Gemini 1.5), chú ý vòng (LWM), nén token (LongVILA / Video-XL).
+- Giải thích bốn con đường quy mô: bối cảnh thô (Gemini 1.5), chú ý vòng (LWM), nén token (LongVILA / Video-XL), lấy lại cơ quan (VideoAgent).
 - So sánh VLMs video trong bối cảnh nguyên liệu với VLMs video thu hồi bằng máy chủ (VideoAgent) về độ chính xác và độ trễ.
 - Thiết kế một thử nghiệm kim trong một đống cỏ cho một video 30 phút và đo lường hồi tưởng vào một phút cụ thể.
 
@@ -20,7 +20,7 @@ Một khung hình đơn của các bản vá kích thước Qwen2.5VL với đ�
 
 Một bộ phim 2 giờ với 1 FPS là 583k token. Ngoài hầu hết các mô hình mở 2026; yêu cầu Gemini 2.5 Pro hoặc hợp tác mạnh mẽ hơn.
 
-Ba con đường leo lên đã xuất hiện.
+Bốn con đường leo lên đã xuất hiện.
 
 ## Khái niệm
 
@@ -36,7 +36,7 @@ Kỹ thuật: một ứng dụng chú ý tùy chỉnh với hệ thống phân c
 
 Sự chú ý vòng phân phối các chuỗi dài giữa các thiết bị trong một "phòng" nơi mỗi thiết bị giữ một phần. Sự chú ý trên toàn bộ chuỗi xảy ra bởi mỗi thiết bị gửi phần của nó đến thứ tiếp theo trong một mô hình vòng, tính toán sự chú ý một phần, và tổng hợp.
 
-LWM (Liu et al., 2024) đã đào tạo một mô hình ngữ cảnh 1M-token theo cách này. đào tạo tính toán các quy mô theo đường thẳng với ngữ cảnh, không phải hình vuông.
+LWM (Liu et al., 2024) đã đào tạo một mô hình ngữ cảnh 1M-token theo cách này. Phân tích bộ nhớ trên mỗi thiết bị với phần mà mỗi thiết bị nắm giữ, do đó việc thêm các thiết bị mở rộng ngữ cảnh về mặt tuyến tính.
 
 LongVILA (arXiv:2408.10188) đã điều chỉnh mô hình cho VLMs. 1400-phần video với 192 token mỗi khung = 268k ngữ cảnh, được đào tạo với sự chú ý vòng qua song song đường 8-way.
 
@@ -118,7 +118,7 @@ Bài học này sẽ mang lại kết quả `outputs/skill-long-video-strategy-p
 
 3. So sánh ngữ cảnh nguyên chất Qwen2.5-VL-72B (80k ngữ cảnh) với VideoAgent (Claude 3.5 + lấy lại) trên một video 1 giờ.
 
-4. Chi phí bộ nhớ của sự chú ý vòng xoay theo đường thẳng theo chiều dài chuỗi và theo đường thẳng theo số thiết bị. Giải thích tại sao và những gì thất bại nếu bạn bỏ ra giai đoạn quay vòng.
+4. Lượng bộ nhớ của sự chú ý vòng cho mỗi thiết bị với chiều dài chuỗi chia theo số lượng thiết bị, trong khi tính toán sự chú ý tổng thể vẫn giữ nguyên hình vuông. Giải thích tại sao và điều gì thất bại nếu bạn bỏ giai đoạn quay vòng.
 
 5. Đọc Gemini 1.5 Phần 5 về kim cương.
 

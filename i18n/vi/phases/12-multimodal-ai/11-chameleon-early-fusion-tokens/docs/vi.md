@@ -39,7 +39,7 @@ Tokenizer là một bộ mã hóa tự động biến thể theo phương thức
 
 Việc đào tạo: VAE tái tạo mất + mất cam kết + mất sổ sách code.
 
-Đối với Chameleon: một hình ảnh trở thành 32 * 32 = 1024 token được rút ra từ một từ vựng của 8192.
+Đối với Chameleon: một hình ảnh trở thành 32 * 32 = 1024 mã thông báo được rút ra từ một từ vựng của 8192. Đặt các ID hình ảnh đó trong cùng không gian ID với các mã thông báo văn bản BPE. Chameleon chỉ có 65,536 mục nhập, và số lượng đó đã bao gồm mã hình ảnh 8192 và các mã thông báo đặc biệt như bộ tách hình ảnh.
 
 ### Thuật ngữ chung
 

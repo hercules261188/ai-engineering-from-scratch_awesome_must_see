@@ -1,6 +1,6 @@
 # LLaVA và điều chỉnh hướng dẫn thị giác
 
-> LLaVA (ngày tháng 4 năm 2023) là kiến trúc đa phương thức được sao chép nhiều nhất trên hành tinh. Nó thay thế BLIP-2's Q-Former bằng một MLP 2 lớp, thay thế sự chú ý chéo của Flamingo bằng sự kết nối mã thông báo ngây thơ, và được đào tạo trên 158k lượt hướng dẫn thị giác được tạo bởi GPT-4 từ các tiêu đề chỉ văn bản. Bất kỳ học viên nào xây dựng một VLM giữa năm 2023 và 2026 đã xây dựng một số biến thể của LLaVA. LLaVA-1.5 đã thêm AnyRes. LVA-Next tăng độ phân giải. LLaVA-OneVision hình ảnh thống nhất, nhiều hình ảnh và video trong một công thức. Bài học này đọc công thức, thực hiện máy chiếu và giải thích tại sao "simple hơn thắng".
+> LLaVA (ngày tháng 4 năm 2023) là kiến trúc đa phương thức được sao chép nhiều nhất trên hành tinh. Nó thay thế BLIP-2's Q-Former bằng một MLP 2 lớp, thay thế sự chú ý chéo của Flamingo bằng sự kết nối mã thông báo ngây thơ, và được đào tạo trên 158k lượt hướng dẫn thị giác được tạo bởi GPT-4 từ các tiêu đề chỉ văn bản. Bất kỳ học viên nào xây dựng một VLM giữa năm 2023 và 2026 đã xây dựng một số biến thể của LLaVA. LLaVA-1.5 được đổi thành một máy chiếu MLP và một bộ mã hóa 336px. LLaVA-NeXT đã thêm AnyRes tay cho đầu vào độ phân giải cao. LLaVA-OneVision hình ảnh thống nhất, nhiều hình ảnh và video trong một công thức. Bài học này đọc công thức, thực hiện máy chiếu và giải thích tại sao "simple hơn thắng".
 
 **Type:** Build
 **Languages:** Python (stdlib, projector + instruction-template builder)
@@ -32,10 +32,10 @@ Kết quả: một VLM chạy trên 8 chiếc A100 trong một ngày, đánh b�
 
 ### Kiến trúc
 
-LLaVA-1.5 ở 13B:
+LLaVA-1.5 ở 7B:
 - Bộ mã hóa tầm nhìn: CLIP ViT-L/14 @ 336 (đóng trong giai đoạn 1, tùy chọn không đóng băng giai đoạn 2).
 - Động cơ chiếu: 2 lớp MLP với kích hoạt GELU, `1024 → 4096 → 4096`- Tôi không biết.
-- LLM: Vicuna-13B (sau này là Llama-3.1-8B).
+- LLM: Vicuna-7B v1.5 (một biến thể 13B sử dụng Vicuna-13B; sau đó các cành chuyển sang Llama-3.1-8B).
 
 Chuyển tiếp một hình ảnh + văn bản prompt:
 
@@ -83,10 +83,11 @@ Không có gì trong những điều này chạm trực tiếp vào hình ảnh 
 LLaVA-1.5 (tháng 10 năm 2023) thêm:
 - Dữ liệu về nhiệm vụ học thuật (VQA, OKVQA, RefCOCO) trộn vào điều chỉnh hướng dẫn.
 - Hệ thống nhanh hơn.
-- 2048 → 32k ngữ cảnh.
+- Một máy chiếu MLP 2 tầng thay vì lớp tuyến tính đơn gốc, và CLIP ViT-L/14 ở 336px (576 token) thay vì 224px (256 token).
+- Một biến thể HD chia lưới trong báo, mà LLaVA-NeXT sau đó gửi như AnyRes.
 
 LLaVA-NeXT (từ tháng 1 năm 2024) thêm:
-- AnyRes: chia hình ảnh độ phân giải cao thành một lưới 2x2 hoặc 1x3 gồm 336x336 cây trồng, cộng với một hình ảnh nhỏ độ phân giải thấp toàn cầu. Mỗi cây trồng trở thành 576 token; tổng cộng khoảng 2880 token thị giác mỗi hình ảnh.
+- AnyRes: chia hình ảnh độ phân giải cao thành một lưới 2x2 hoặc 1x3 gồm 336x336 cây trồng, cộng với một hình ảnh nhỏ độ phân giải thấp toàn cầu. Mỗi cây trồng trở thành 576 token. Một lưới 2x2 cộng với hình ảnh nhỏ cung cấp khoảng 2880 token hình ảnh cho mỗi hình ảnh. Một lưới 1x3 có ít cây trồng, vì vậy nó tốn ít token hơn.
 - Sự kết hợp dữ liệu hướng dẫn tốt hơn với ShareGPT4V (chữ bản GPT-4V chất lượng cao).
 - Các LLM cơ sở mạnh hơn (Mistral-7B, Yi-34B).
 
@@ -98,8 +99,8 @@ Bài học 12.08 bao gồm OneVision sâu sắc. Phiên bản ngắn: cùng mộ
 
 | | Q-Former (BLIP-2) | MLP (LLaVA) |
 |---|---|---|
-| Visual tokens per image | 32 | 576 (base) or 2880 (AnyRes) |
-| Trainable params | 188M + LM | 40M + LM |
+| Visual tokens per image | 32 | 576 (base) or about 2880 (AnyRes, 2x2 grid) |
+| Trainable params | 188M + LM | ~22M (7B) + LM |
 | Stage 1 loss | ITC+ITM+ITG | LM only |
 | LLM drop-in | Requires retrain | Swap with minimal retrain |
 | Multi-image | Awkward | Natural (concat) |
@@ -114,7 +115,7 @@ MLP thắng về sự đơn giản và tính linh hoạt của token. Q-Former t
 A chat between a curious human and an artificial intelligence assistant. The assistant gives helpful, detailed, and polite answers to the human's questions. USER: <image> Describe this image in detail. ASSISTANT: The image shows ...
 ```
 
-`<image>`là một token giữ chỗ. Trước khi token hóa, nó được thay thế bằng 576 token thị giác (hoặc 2880 với AnyRes). Tokenizer nhìn thấy một chuỗi dài hơn một chút so với nó được đào tạo, nhưng LLM xử lý đầu vào mới vì giai đoạn 1 đã dạy nó.
+`<image>`là một token giữ chỗ. Trước khi token hóa, nó được thay thế bằng 576 token thị giác (hoặc khoảng 2880 với một lưới AnyRes 2x2). Tokenizer nhìn thấy một chuỗi dài hơn một chút so với nó được đào tạo, nhưng LLM xử lý đầu vào mới vì giai đoạn 1 đã dạy nó.
 
 ### Tỷ lệ số
 

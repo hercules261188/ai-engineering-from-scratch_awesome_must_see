@@ -95,10 +95,10 @@ Không có OCR ở đâu cả. Hình ảnh, biểu đồ, phông chữ, bố c�
 
 Một báo cáo tài chính 50 trang với 729 bản vá trên mỗi trang và 128 chiều:
 
-- ColPali: 50 * 729 * 128 * 4 byte = ~ 18 MB nguyên liệu, ~ 4 MB sau PQ.
+- ColPali: 50 * 729 * 128 * 4 byte = ~ 18 MB nguyên liệu, ~ 2,3 MB sau 8x PQ.
 - Text-RAG: 50 mảnh * 768-dim * 4 byte = ~ 150 kB.
 
-ColPali là khoảng 30 lần lưu trữ nhiều hơn cho mỗi tài liệu. Ở quy mô, OPQ / PQ làm giảm nó xuống còn ~ 5-10x, thường dung nạp.
+ColPali là ~ 120x lưu trữ nhiều hơn cho mỗi tài liệu nguyên liệu. Ở quy mô, 8x OPQ / PQ làm giảm nó xuống còn ~ 15x, thường dung nạp.
 
 ### Khi text-RAG vẫn thắng
 

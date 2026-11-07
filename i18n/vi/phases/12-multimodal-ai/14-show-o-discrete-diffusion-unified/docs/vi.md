@@ -11,7 +11,7 @@
 
 - Giải thích sự phân tán phân biệt được che giấu: lịch trình che giấu token một cách đồng nhất sau đó yêu cầu biến đổi để phục hồi chúng.
 - So sánh việc giải mã hình ảnh song song (Show-o, MaskGIT) với việc giải mã hình ảnh tự rút (Chameleon, Emu3) về tốc độ và chất lượng.
-- Tên gọi ba nhiệm vụ Show-o xử lý tại một điểm kiểm soát: T2I, VQA, vẽ hình ảnh.
+- Hãy nêu tên bốn nhiệm vụ Show-o xử lý trong một điểm kiểm soát: tạo văn bản, VQA, T2I, vẽ hình ảnh.
 - Chọn một lịch trình che giấu (các, tuyến tính, cắt) và lý luận về tác động của nó đối với chất lượng mẫu.
 
 ## Vấn đề

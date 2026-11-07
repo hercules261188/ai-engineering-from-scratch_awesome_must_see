@@ -21,7 +21,7 @@ Một mô hình đa phương tiện thống nhất dễ tuyên bố và khó xâ
 Những thách thức kỹ thuật:
 
 - Các token phải tồn tại cho mọi phương thức, nén không mất - đủ để tái tạo, và sản xuất token theo tốc độ mà biến thể có thể tiêu thụ.
-- Một từ vựng duy nhất phải phân bổ không gian cho văn bản (32k+), hình ảnh (16k+), nói (4k+), âm nhạc (8k+).
+- Một từ vựng duy nhất phải phân bổ không gian cho văn bản (32k+), hình ảnh (8k+), nói (4k+), âm nhạc (8k+).
 - Dữ liệu đào tạo phải bao gồm mỗi cặp đầu vào-phản xuất (text→image, image→speech, speech→image, vv) hoặc mô hình phải được tạo thành.
 - Inference phải truyền các token đầu ra đủ nhanh để có thể trì hoãn cuộc trò chuyện (<500ms thời gian đến đầu tiên-byte âm thanh).
 
@@ -32,21 +32,21 @@ Những thách thức kỹ thuật:
 Bộ token của MIO:
 
 - Văn bản: BPE tiêu chuẩn, từ ngữ ~ 32000.
-- Hình ảnh: SEED-Tokenizer (2023)  VAE được định lượng với sổ mã riêng biệt, 4096 mục, 32x32 token mỗi hình ảnh.
-- Phát biểu: SpeechTokenizer residual-VQ (2023)  mã hóa hình dạng sóng 16kHz thành 8 cuốn sách mã thứ bậc; cấp độ đầu tiên là nội dung thô, cấp độ sau này thêm prosody và danh tính loa.
-- Âm nhạc: tương tự residual-VQ (các gia đình MusicGen / Encodec của Meta), 4-8 codebook.
+- Hình ảnh: SEED-Tokenizer (2023), một token hóa hình ảnh riêng biệt với sổ mã nhập 8192 phát ra 32 token mỗi hình ảnh.
+- Phát biểu: SpeechTokenizer residual-VQ (2023), mã hóa một dạng sóng 16kHz thành 8 sách mã thứ tự; cấp độ đầu tiên là nội dung thô, cấp độ sau này thêm prosody và danh tính loa. MIO giữ mức nội dung cộng với ba cấp độ timbre đầu tiên, mỗi mã 1024 do đó 4096 ID phát biểu.
+- Âm nhạc: tương tự residual-VQ (các gia đình MusicGen / Encodec của Meta), 4-8 codebook. MIO tự nó không vận chuyển một token nhạc (tương thức thứ tư của nó là video, như khung thông qua token hình ảnh); đồ chơi bài học này thêm âm nhạc để chỉ ra cách thức mới tuyên bố một phạm vi ID.
 
 Mỗi phương thức tạo ra các token nguyên số. Các token nhận được các phạm vi ID không liên kết trong từ vựng chung:
 
 ```
 text:   0..31999
-image:  32000..36095  (4096 image tokens)
-speech: 36096..40191  (4096 speech base tokens, plus residual layers)
-music:  40192..48383  (8192 music tokens)
-sep:    48384..48390  (<image>, <speech>, <music>, </...>, etc.)
+image:  32000..40191  (8192 image tokens)
+speech: 40192..44287  (4 codebooks x 1024 speech tokens)
+music:  44288..52479  (8192 music tokens, the toy's extension)
+sep:    52480..52485  (<image>, <speech>, <music>, </...>)
 ```
 
-Tổng: ~ 48k từ vựng.
+Tổng: ~ 52k từ vựng.
 
 ### Đánh mã phát sóng
 
@@ -57,7 +57,7 @@ Mô hình phát sóng:
 1. Người dùng nói trong mic; đồng hồ ghi âm thời gian thực phát ra các đồng hồ ghi âm mỗi 50ms.
 2. MIO tiêu thụ token khi chúng đến (quayền nhanh + tăng lên tăng lên).
 3. Các token đầu ra được phát ra khi được tạo ra; một bộ giải mã giọng nói song song chuyển chúng thành mẫu âm thanh với độ trễ ~ 50-150ms.
-4. Thời gian đến đầu tiên-byte âm thanh: ~ 300-500ms trong giấy MIO, gần ~ 250ms của GPT-4o.
+4. Thời gian đến lần đầu tiên: MIO báo cáo không có số độ trễ. Ngân sách dưới đây đặt thiết kế này ở khoảng 300ms ở tốt nhất, so với ~ 250ms của GPT-4o.
 
 Mini-Omni (arXiv:2408.16725), GLM-4-Voice (arXiv:2412.02612), và Moshi (arXiv:2410.00037) là các thiết kế phát âm-LLM phát sóng bổ sung.
 
@@ -100,7 +100,7 @@ MIO là gần nhất với mã thông báo nguyên chất bất kỳ ai. AnyGPT 
 - Điểm đầu tiên: ~ 50ms.
 - Các bộ giải mã giọng nói tương đối - VQ +: ~ 100-150ms.
 
-Tổng thời gian từ đầu tiên đến đầu tiên: ~ 300ms tối thiểu. GPT-4o tuyên bố ~ 250ms. Moshi tuyên bố 160ms. MIO / AnyGPT nằm trong phạm vi 400-600ms cho các tiêu chuẩn công cộng.
+Tổng thời gian từ đầu tiên đến đầu tiên: ~ 300ms tối thiểu. GPT-4o tuyên bố ~ 250ms. Moshi tuyên bố 160ms. Cả MIO và AnyGPT đều không công bố con số được đo, vì vậy hãy coi ngân sách này như một ước tính, chứ không phải là một tiêu chuẩn.
 
 ### Tại sao bất cứ ai cũng không thể
 
@@ -134,7 +134,7 @@ Bài học này sẽ mang lại kết quả `outputs/skill-any-to-any-pipeline-a
 
 2. SpeechTokenizer residual-VQ sử dụng 8 codebook. đề xuất tại sao việc giải mã tương tự các mức dư là cần thiết (trên theo trình tự) và những tiết kiệm độ trễ mà nó mang lại.
 
-3. Thuật ngữ của bạn có 32k văn bản + 4k hình ảnh + 4k nói. Thêm âm nhạc 8k và ~ 10 bộ tách.
+3. Thuật ngữ của bạn có 32k văn bản + 8k hình ảnh + 4k nói. Thêm âm nhạc 8k và ~ 10 bộ tách. chi phí tham số trúng-đường tử là bao nhiêu ở ẩn dim 4096?
 
 4. Các câu hỏi nào có lợi, những câu hỏi nào bị tổn thương bởi các token bổ sung?
 
@@ -146,7 +146,7 @@ Bài học này sẽ mang lại kết quả `outputs/skill-any-to-any-pipeline-a
 |------|-----------------|------------------------|
 | Any-to-any | "Multimodal in/out" | A single model that accepts and emits text, image, speech, and music in any direction |
 | Residual-VQ | "Speech tokenizer stack" | Multi-codebook tokenization where each layer adds information; base layer is content, later layers are prosody |
-| SEED-Tokenizer | "Image codes" | Discrete image tokenizer with 4096-entry codebook used by MIO |
+| SEED-Tokenizer | "Image codes" | Discrete image tokenizer with an 8192-entry codebook and 32 tokens per image, used by MIO |
 | Chain-of-visual-thought | "Visual scratchpad" | The model generates an intermediate image as a reasoning step before its final answer |
 | Time-to-first-audio-byte | "TTFAB" | Latency from user voice to first audio output; <500ms for conversational feel |
 | Four-stage curriculum | "Training recipe" | Alignment -> interleaved -> speech-enhanced -> SFT, in that order |
