@@ -49,7 +49,7 @@ noise-schedule
 
 ## 建立它
 
-`code/main.py`在课06的DDPM上堆叠了一个玩具1-D"VAE" (身份编码器 +解码器,用于示范;真正的VAE将是一个 conv网) 并添加了类条件与无类型指导.它表明,无论你运行在原始1-D值或编码值,相同的扩散损失都能发挥作用.
+`code/main.py`在第06课中,在DDPM上堆叠了一个1-D"VAE" (一个固定尺度为0.5的编码器,其正确逆向是解码器,为示范;一个真正的VAE将是一个 conv网) 并添加了无类型指导的类条件.它表明,无论你运行在原始1-D值或编码值.这是关键的见解.
 
 ### 步骤1:编码/解码
 
@@ -132,7 +132,7 @@ h = h + CrossAttention(Q=h, K=text_embed, V=text_embed)
 
 参考流程集成是"我有一个消费者GPU,我可以运送吗?"的正规配方.
 
-1. **Staggered loading.**流程有三个网络,在VRAM中永远不需要共存:T5-XXL文本编码器 (fp32中约10GB),CLIP-L (小),12BMMDiT和VAE.首先编码提示, *删除*编码器,加载diT,删除, *删除*diT,加载VAE,解码.消费者8GBGPU只适用于一次一个阶段.
+1. **Staggered loading.**流程有四个网络,在VRAM中永远不需要共存:T5-XXL文本编码器 (fp32中约10GB),CLIP-L (小),12BMMDiT和VAE.首先编码提示, *删除*编码器,加载diT,删除, *删除*diT,加载VAE,解码.消费者8GBGPU只适用于一次一个阶段.
 2. **4-bit quantization via bitsandbytes.** `BitsAndBytesConfig(load_in_4bit=True, bnb_4bit_compute_dtype=torch.bfloat16)`在T5编码器和DiT上. 减8×的内存,对Aritra的基准指标 (笔记本中链接) 显示文字到图像的质量下降是不可见的.
 3. **CPU offload.** `pipe.enable_model_cpu_offload()`随着每个前进传递的过程,自动交换CPU和GPU之间的模块. 增加10-20%的延迟,但使管道完全运行.
 

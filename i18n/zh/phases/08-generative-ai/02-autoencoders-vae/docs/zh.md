@@ -99,7 +99,7 @@ def sample(dec, z_dim, rng):
 - **Posterior collapse.**卡通通通用驱动器$q(z \mid x) \to \mathcal{N}(0, I)$如此积极的$z$没有关于$x$修复: β- 取消 (开始 $\beta=0$向1),自由位,或在不活跃的尺寸上跳过 KL.
 - **Blurry samples.**盖斯解码器概率意味着MSE重建,这是Bays最佳的L2 (平均值) 一个可信数字的平均值是模糊的数字. 修正:分离解码器 (VQ-VAE,NVAE),或仅用VAE作为编码器和堆扩散在隐藏 (这是稳定扩散所做的).
 - **β too large, too early.**看到后部崩.$\beta \approx 0.01$道和道.
-- **Latent dim too small.**16D为MNIST工作,256-D为ImageNet 2562,2048-D为ImageNet 10242.稳定扩散的VAE压缩为512×512×3 →64×64×4 (32x空间面积下样数,32x频道).
+- **Latent dim too small.**16D为MNIST工作,256-D为ImageNet 2562,2048-D为ImageNet 10242.稳定扩散的VAE压缩为512×512×3 →64×64×4 (8x每侧下样本,64x空间面积;频道从3到4个,因此总的值约为48x少).
 
 ## 用它
 
