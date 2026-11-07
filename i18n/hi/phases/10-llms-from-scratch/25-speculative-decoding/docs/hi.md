@@ -85,7 +85,7 @@ For each drafted token x_t:
 
 ईगल-2 (2024) में एक गतिशील वृक्ष टोपोलॉजी जोड़ी गई हैः पेड़ व्यापक होता है जहां रेखाचित्र अनिश्चित है और संकीर्ण रहता है जहां यह आश्वस्त है।`α_effective`सत्यापन लागत में वृद्धि के बिना।
 
-ईगल-3 (Li et al. 2025 में, "एजीएल-3: प्रशिक्षण-समय परीक्षण के माध्यम से बड़े भाषा मॉडल के इन्फेरेंस त्वरण को स्केल करना") निश्चित शीर्ष-स्तर सुविधा निर्भरता को हटा देता है और एक नए "परीक्षण-समय अनुकरण" हानि के साथ ड्राफ्ट को प्रशिक्षित करता है। स्वीकृति दर 0.75 (EAGLE-2) से 0.82 (EAGLE-3) तक बढ़ जाती है, और औसत टोकन/जाँच 3.0 से 4.5 तक बढ़ जाती है।
+ईगल-3 (Li et al. 2025 में, "एजीएल-3: प्रशिक्षण-समय परीक्षण के माध्यम से बड़े भाषा मॉडल के इन्फेरेंस त्वरण को स्केल करना") निश्चित शीर्ष-स्तर सुविधा निर्भरता को हटा देता है और एक नए "परीक्षण-समय अनुकरण" हानि के साथ ड्राफ्ट को प्रशिक्षित करता है। स्वीकृति दर 0.75 (EAGLE-2) से 0.82 (EAGLE-3) तक बढ़ जाती है, और औसत टोकन/जाँच 3.0 से 4.5 तक बढ़ जाती है। ये आंकड़े एक संदर्भ सेटअप से आते हैं। स्वीकार्यता मॉडल जोड़े, ड्राफ्ट ट्री और ट्रैफ़िक पर निर्भर करती हैः चैट बेंचमार्क पर स्वीकार किए गए पथ टोकन पर चरण 10 · 15 0.88 से 0.92 को उद्धृत करता है, और चरण 17 · 05 योजनाओं पर 0.6 से 0.8 के साथ उत्पादन सामान्य चैट पर।
 
 ### पेड़ ध्यान सत्यापन
 
@@ -132,13 +132,13 @@ def speculative_step(p_target, q_draft, K, temperature=1.0):
     """One round of speculative decoding. Returns list of accepted tokens."""
     # 1. Draft K tokens
     draft_tokens = []
-    q_probs = []
+    q_dists = []
     state = draft_state_init()
     for _ in range(K):
         probs = softmax(q_draft(state) / temperature)
         t = np.random.choice(len(probs), p=probs)
         draft_tokens.append(t)
-        q_probs.append(probs[t])
+        q_dists.append(probs)
         state = draft_step(state, t)
 
     # 2. Target computes p at every drafted position + 1 extra
@@ -148,10 +148,10 @@ def speculative_step(p_target, q_draft, K, temperature=1.0):
     accepted = []
     for k, tok in enumerate(draft_tokens):
         r = np.random.uniform()
-        if r < p_probs_all[k][tok] / q_probs[k]:
+        if r < p_probs_all[k][tok] / q_dists[k][tok]:
             accepted.append(tok)
         else:
-            residual = np.maximum(p_probs_all[k] - q_probs[k], 0)
+            residual = np.maximum(p_probs_all[k] - q_dists[k], 0)
             residual /= residual.sum()
             accepted.append(np.random.choice(len(residual), p=residual))
             return accepted
