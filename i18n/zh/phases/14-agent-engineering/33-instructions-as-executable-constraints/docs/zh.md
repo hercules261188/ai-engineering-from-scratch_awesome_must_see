@@ -104,11 +104,11 @@ python3 code/main.py
 
 只有三种模式, 隔离一个持续四分之一的规则,
 
-**Severity tagging at write time.**每一个规则都包含`severity`其他`block`现在`warn`其他`info`检查器报告了所有三个; 运行时间只拒绝了`block`许多团队在预期期期内过度估值严重性,然后在最后期限压力下轻松削弱它;在写作时标签,将校准带来前进.`block`规则成一个`overrides.jsonl`审计记录.
+**Severity tagging at write time.**每一个规则都包含`severity`其他`block`现在`warn`其他`info`检查器报告了所有三个; 运行时间只拒绝了`block`许多团队在预期期期内过度估值严重性,然后在最后期限压力下轻松削弱它;在写作时标签,将校准带来前进.`block`统治成一个`overrides.jsonl`审计记录.
 
 **Rule expiry as a forcing function.**每一个规则都有一个规则.`expires_at`检查器在未到期的规则已连续60天没有违反过的时发出警告;下一个季度审查要么证明保留它是合理的,要么削弱它.`info`云飞云的生产AI代码审查数据 (2026年4月,131,246次审查在30天内进行了5,169个备忘录) 显示,明确过期的规则集保持在每个备忘录的30个规则下;没有的组长到80多个,大多数从来没有开放.
 
-**Markdown-as-source, JSON-as-cache.** `agent-rules.md`是作者文件;`agent-rules.lock.json`检查器在热路中读取的缓存.锁由预约重建. 标记差异可检查; JSON 解析不出每一个转折. 同样的形状`package.json`现在,`package-lock.json`其他`Cargo.toml`现在,`Cargo.lock`现在,我们要去.
+**Markdown-as-source, JSON-as-cache.** `agent-rules.md`是作者文件;`agent-rules.lock.json`检查器在热路中读取的缓存.锁由预订重建. 标记差异可检查; 标记解析不会在每一个转折中进行,因为检查器只加载了小的预建JSON. 与`package.json`现在,`package-lock.json`其他`Cargo.toml`现在,`Cargo.lock`现在,我们要去.
 
 ## 用它
 

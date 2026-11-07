@@ -10,7 +10,7 @@
 ## 学习目标
 
 - 描述克劳德的计算机使用:屏幕截图进入,键盘/鼠标命令输出,没有可访问性API.
-- 在OSWorld/WebArena/Online-Mind2Web上列出三个模型的基准号码.
+- 记住本课程引用的发射基准号码:OSWorld/WebArena/WebVoyager上的OpenAI CUA,以及在Online-Mind2Web上的Gemini 2.5计算机使用.
 - 解释每一步的安全模式 双子座 2.5 计算机使用文件.
 - 总结所有三种模型都执行的不信任输入合同.
 

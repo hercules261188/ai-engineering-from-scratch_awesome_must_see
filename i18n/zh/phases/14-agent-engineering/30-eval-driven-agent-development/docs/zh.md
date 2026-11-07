@@ -22,7 +22,7 @@
 
 ### 评估三层
 
-1. **Static benchmarks**SWE-bench 验证代码 (课时19),WebArena/OSWorld 浏览/桌面 (课时20),GAIA 对于一般主义者 (课时19),BFCL V4用于工具使用 (课时06).用于跨模型比较和回归盖特.污染是真实的:SWE-bench+发现了32.67%的解决方案泄漏.总是报告验证/+审计得分.
+1. **Static benchmarks**SWE-bench 验证代码 (课19),WebArena/OSWorld 浏览/桌面 (课20),GAIA 对于一般主义者 (课19),BFCL V4用于工具使用 (课06).用于跨模型比较和回归盖特.污染是真实的:SWE-bench+发现了32.67%的解决方案泄漏.总是报告SWE-bench Verified或SWE-bench+等泄漏审计集中的成绩.
 
 2. **Custom offline evals**产品的形状:
    - 作为法官的LLM (Langfuse,城,Opik 课 24).
@@ -54,7 +54,7 @@
 
 ### 结合14期
 
-阶段14的每一个课程都会产生评估案例:
+在第14阶段的大部分课程都产生了评估案例.表列出了最清楚的课程:
 
 | Lesson | Eval case it generates |
 |--------|------------------------|
@@ -77,7 +77,7 @@
 | 28 Orchestration | Supervisor routes to the right specialist |
 | 29 Runtime Shapes | DLQ handles N% failure |
 
-如果你的评估套件中每个案例都有病例,你已经覆盖了14阶段.
+如果你的评估套件每行都有一个案例,你已经覆盖了14阶段的核心.
 
 ### 没有评估驱动的开发
 

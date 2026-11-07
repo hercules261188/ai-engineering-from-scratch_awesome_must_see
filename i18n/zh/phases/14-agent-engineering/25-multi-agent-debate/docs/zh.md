@@ -117,7 +117,7 @@ python3 code/main.py
 
 ## 进一步阅读
 
-- [Du et al., Society of Minds (arXiv:2305.14325)](https://arxiv.org/abs/2305.14325)多代理论坛
+- [Du et al., Improving Factuality and Reasoning in Language Models through Multiagent Debate (arXiv:2305.14325)](https://arxiv.org/abs/2305.14325)多代理论坛
 - [Sparse Communication Topology (arXiv:2406.11776)](https://arxiv.org/abs/2406.11776)稀有的拓结果
 - [Anthropic, Building Effective Agents](https://www.anthropic.com/research/building-effective-agents) 作为辩论变体的管弦乐员工
 - [Madaan et al., Self-Refine (arXiv:2303.17651)](https://arxiv.org/abs/2303.17651)单个模型的自我批判对手

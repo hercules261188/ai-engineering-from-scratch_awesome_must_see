@@ -43,7 +43,7 @@ flowchart LR
 | Verification quality | Does the acceptance command actually prove the goal, or did it prove a weaker version? |
 | Handoff readiness | Could the next session pick up cleanly from the current state? |
 
-总数是10个. 7以下的运行是软失败; 5以下的运行是硬失败.
+总数为10个. 7以下的运行是软失败; 5以下的运行或 0 级的任何维度都是硬失败.
 
 ### 评审员是一个独立的角色,而不是一个独立的模型
 

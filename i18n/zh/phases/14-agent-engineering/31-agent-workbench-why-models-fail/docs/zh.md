@@ -124,7 +124,7 @@ flowchart LR
 
 这就是你不需要对此有礼貌的部分.
 
-- 兰格链的*代理的解剖学*列出了十一个组件:提示,工具,,沙盒,配套,内存,技能,子弹和运行时间"循环".它不列表排队,作为部署单位的员工,触发语义,作为单独的关注,或授权政策的会议持久性.它将作为一个你配置的对象,而不是一个你部署的系统.
+- 兰格链的*代理接的解剖学*通过核心接组件进行:提示,工具,子,沙盒,配套,记忆,技能,副,以及运行时间的"愚蠢循环".它不列表排队,作为部署单位的工人,触发语义,作为单独的关注,或授权政策. 它将带视为你配置的对象,而不是你部署的系统.
 - 艾迪·奥斯曼尼的"机器人"工程部`Agent = Model + Harness`没有说一个带是什么. 它读作立场,而不是规范.
 - 亚洲人体和OpenAI在表面上最深入,但保持在自己的运行时间内. 2026年4月的Agents SDK中的"带计算分离"公告是第一个明确支持控制平面/数据平面分离的供应商.这是一个原始的想法,不是新的.
 - 机器人带书将带视为一个配置对象 (Jaymin West的*Agentic Engineering*第6章),其中最强的条款是"机器人系统中的首要安全边界是带".
@@ -193,7 +193,7 @@ python3 code/main.py
 供应商的框架:
 
 - [Addy Osmani, Agent Harness Engineering](https://addyosmani.com/blog/agent-harness-engineering/) `Agent = Model + Harness`子的图案;基础设施薄
-- [LangChain, The Anatomy of an Agent Harness](https://blog.langchain.com/the-anatomy-of-an-agent-harness/)十一个组件:提示,工具,子,配乐,沙盒,记忆,技能,子弹,运行时间;遗漏排列,部署, authz
+- [LangChain, The Anatomy of an Agent Harness](https://blog.langchain.com/the-anatomy-of-an-agent-harness/)核心组件:提示,工具,,配乐,沙盒,记忆,技能,子弹,运行时间;遗漏排队,部署, authz
 - [OpenAI, Harness engineering: leveraging Codex in an agent-first world](https://openai.com/index/harness-engineering/)Codex团队对它们运行时间周围的表面的视角
 - [OpenAI, Unrolling the Codex agent loop](https://openai.com/index/unrolling-the-codex-agent-loop/) 代理循环缩小到一个`while`函数调用
 - [Anthropic, Effective harnesses for long-running agents](https://www.anthropic.com/engineering/effective-harnesses-for-long-running-agents)在特定运行时间内长视界表面

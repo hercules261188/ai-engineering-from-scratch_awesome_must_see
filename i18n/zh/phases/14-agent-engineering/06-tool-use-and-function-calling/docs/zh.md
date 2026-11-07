@@ -79,7 +79,7 @@ input_schema: JSON Schema (properties, required, types, enums)
 
 ### 沙盒
 
-简短版本:每个工具都应该指定阅读/写面,网络访问,时间限,内存盖. 概括 `run_shell(cmd)`是红旗;具体`git_status()`这更安全.
+工具执行是沙盒的边界.详细见第13期·26期.简短版本:每个工具都应该指定阅读/写面,网络访问,时间限,内存盖.通用`run_shell(cmd)`是红旗;具体`git_status()`这更安全.
 
 ```figure
 tool-routing
