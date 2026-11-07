@@ -72,7 +72,7 @@ class ReplayBuffer:
         return rng.sample(self.buf, batch)
 ```
 
-~ 50.000 dung lượng cho Atari; 5.000 đủ cho môi trường đồ chơi của chúng tôi.
+~106 dung lượng cho Atari, như trong DQN ban đầu (nó thu thập 50.000 chuyển đổi trước khi bắt đầu học); 5.000 đủ cho môi trường đồ chơi của chúng tôi.
 
 ### Bước 2: một mạng Q nhỏ (MLP thủ công)
 

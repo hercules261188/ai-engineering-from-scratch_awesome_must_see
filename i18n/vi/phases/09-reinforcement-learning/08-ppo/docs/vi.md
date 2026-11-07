@@ -38,7 +38,7 @@ L^{\text{CLIP}}(\theta) = \mathbb{E}_t \left[ \min\left( r_t(\theta) A_t, \matho
 Hai điều khoản:
 
 - Nếu lợi thế $A_t > 0$và tỷ lệ cố gắng tăng lên qua $1 + \epsilon$, clip làm phẳng gradient  không đẩy một hành động tốt hơn $+\epsilon$trên khả năng cũ.
-- Nếu lợi thế $A_t < 0$và tỷ lệ cố gắng tăng lên qua $1 - \epsilon$(có nghĩa là chúng ta sẽ làm cho một hành động xấu có khả năng hơn so với việc cắt giảm), clip                                                                                                                                                                                                                                                   $-\epsilon$- Tôi không biết.
+- Nếu lợi thế $A_t < 0$và tỷ lệ cố gắng giảm xuống dưới $1 - \epsilon$(có nghĩa là chúng ta sẽ làm cho một hành động xấu ít có khả năng hơn nhiều so với chính sách cũ), clip làm phẳng gradient: không đẩy một hành động xấu xa hơn $-\epsilon$dưới xác suất cũ.
 
 - `min`xử lý hướng khác: nếu tỷ lệ đã di chuyển theo hướng * hữu ích *, bạn vẫn nhận được độ nghiêng (không cắt trên mặt mà sẽ làm tổn thương bạn).
 

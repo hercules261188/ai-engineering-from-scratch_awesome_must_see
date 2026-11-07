@@ -21,7 +21,7 @@ Sự chuyển đổi từ DP sang MC là triết học quan trọng: chúng ta c
 
 **The core idea, in one line:** $V^\pi(s) = \mathbb E_\pi[G_t \mid s_t = s] \approx (1/N) \sum_i G^{(i)}(s)$nơi $G^{(i)}(s)$được quan sát về những lần thăm $s$trong chính sách$\pi$- Tôi không biết.
 
-**First-visit vs every-visit MC.**Với một tập phim đến thăm tiểu bang $s$nhiều lần, lần đầu tiên MC chỉ tính toán sự trở lại từ lần đầu tiên; mỗi lần truy cập MC tính tất cả các chuyến thăm. Cả hai đều không thiên vị trong giới hạn. lần đầu tiên dễ phân tích hơn (iid mẫu). Mỗi lần truy cập sử dụng nhiều dữ liệu hơn cho mỗi tập và thường hội tụ nhanh hơn trong thực tế.
+**First-visit vs every-visit MC.**Với một tập phim đến thăm tiểu bang $s$nhiều lần, MC lần đầu tiên chỉ tính toán sự trở lại từ lần đầu tiên; mỗi lần MC lần đầu tiên tính toán tất cả các chuyến thăm. MC lần đầu tiên là khách quan. Mỗi lần MC lần đầu tiên có thể bị thiên vị một chút sau một số tập giới hạn, bởi vì nó trung bình một số lần thu hồi ngẫu nhiên cho mỗi tập và số đó có thể tương quan với các lần trở lại, nhưng cả hai đều hội tụ với $V^\pi(s)$khi số lần truy cập đi đến vô hạn. lần truy cập đầu tiên dễ phân tích hơn (iid mẫu). mỗi lần truy cập sử dụng nhiều dữ liệu hơn cho mỗi tập và thường hội tụ nhanh hơn trong thực tế.
 
 **Incremental mean.**Thay vì lưu trữ tất cả các thông tin trả lại, cập nhật trung bình chạy:
 
@@ -195,7 +195,7 @@ Refuse to run MC on non-episodic tasks without a finite horizon cap. Refuse to r
 | Monte Carlo | "Random sampling" | Estimate expectations by averaging over iid samples from the distribution. |
 | Return $G_t$ | "Future reward" | Sum of discounted rewards from step $t$ to episode end: $\sum_{k\ge 0} \gamma^k r_{t+k+1}$. |
 | First-visit MC | "Count each state once" | Only the first visit in an episode contributes to the value estimate. |
-| Every-visit MC | "Use all visits" | Every visit contributes; slightly biased but more sample-efficient. |
+| Every-visit MC | "Use all visits" | Every visit contributes; slightly biased for finite samples, consistent in the limit, and more sample-efficient. |
 | ε-greedy | "Exploration noise" | Pick greedy action with prob $1-\epsilon$; random action with prob $\epsilon$. |
 | Importance sampling | "Correcting for sampling from the wrong distribution" | Reweight returns by $\pi(a \mid s)/\mu(a \mid s)$ products to estimate $V^\pi$ from $\mu$ data. |
 | On-policy | "Learn from my own data" | Target policy = behavior policy. Vanilla MC, PPO, SARSA. |

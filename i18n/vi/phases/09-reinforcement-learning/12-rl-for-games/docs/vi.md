@@ -1,6 +1,6 @@
 # RL cho trò chơi  AlphaZero, MuZero, và thời đại lý luận LLM
 
-> 1992: TD-Gammon đánh bại các nhà vô địch người ở backgammon bằng TD tinh khiết. 2016: AlphaGo đánh bại Lee Sedol. 2017: AlphaZero thống trị cờ vua, shogi và Go từ đầu. 2024: DeepSeek-R1 chứng minh công thức tương tự, với GRPO thay thế PPO, hoạt động trên lý luận.
+> 1992: TD-Gammon đánh bại các nhà vô địch người ở backgammon bằng TD tinh khiết. 2016: AlphaGo đánh bại Lee Sedol. 2017: AlphaZero thống trị cờ vua, shogi và Go từ đầu. 2025: DeepSeek-R1 chứng minh công thức tương tự, với GRPO thay thế PPO, hoạt động trên lý luận.
 
 **Type:** Build
 **Languages:** Python
@@ -60,7 +60,7 @@ Không có kiến thức con người, không có tính toán bằng tay, một 
 
   $L_{\text{GRPO}}(\theta) = -\mathbb E_{q, \lbrace o_i \rbrace} \left[ \frac{1}{G} \sum_i A_i \cdot \log \pi_\theta(o_i \mid q) \right] + \beta \cdot \mathrm{KL}(\pi_\theta \Vert \pi_{\text{ref}})$
 
-Không mô hình thưởng, không có nhà phê bình, không có MCTS. Tỷ lệ cơ sở liên quan đến nhóm thay thế cả ba.
+Không mô hình phần thưởng được học, không có nhà phê bình, không có MCTS. Một kiểm chứng dựa trên quy tắc cung cấp phần thưởng, đường cơ sở liên quan đến nhóm thay thế nhà phê bình, và bước tìm kiếm bị bỏ.
 
 **The R1 recipe in full.**DeepSeek-R1 (DeepSeek 2025) là hai mô hình trong một bài báo:
 
@@ -86,7 +86,7 @@ f3-selfplay-ladder
 
 ## Hãy xây dựng nó
 
-Mã trong `code/main.py`thực hiện **GRPO in miniature** một tên cướp có nhiều nhóm mẫu. thuật toán giống như trên một LLM; chỉ chính sách và môi trường đơn giản hơn. Nó dạy về *kết quả* và *lợi thế liên quan đến nhóm*, đó là đổi mới năm 2025.
+Mã trong `code/main.py`thực hiện **GRPO in miniature**: một tên cướp có nhiều nhóm mẫu. thuật toán giống như trên một LLM; chỉ chính sách và môi trường đơn giản hơn. Nó dạy về * mất mát * và * lợi thế liên quan đến nhóm *, đó là sự đổi mới 2024 từ DeepSeekMath.
 
 ### Bước 1: một môi trường xác minh nhỏ
 
@@ -144,7 +144,7 @@ Các chẩn đoán giống như RLHF: trung bình KL để tham chiếu, entropy
 ## Những bẫy
 
 - **Reward hacking via verifier gaming.**GRPO thừa hưởng rủi ro của RLHF: nếu người xác minh sai hoặc có thể khai thác, LLM sẽ tìm thấy lợi dụng.
-- **Group size too small.**Sự biến động của nhóm cơ sở là như $1/\sqrt{G}$- Ở dưới đây.$G = 4$, tín hiệu lợi thế là ồn ào; lựa chọn tiêu chuẩn là $G = 8$đến 64.
+- **Group size too small.**Sự biến động của cơ sở trung bình nhóm là như $1/G$(sự sai lầm tiêu chuẩn của nó như $1/\sqrt{G}$Dưới đây$G = 4$, tín hiệu lợi thế là ồn ào; lựa chọn tiêu chuẩn là $G = 8$đến 64.
 - **Length bias.**LLM hoàn thành với độ dài khác nhau có khả năng log khác nhau. bình thường bằng số lượng token, hoặc sử dụng log-prob cấp độ chuỗi, hoặc cắt ngắn cho chiều dài tối đa.
 - **Pure self-play cycles.**Trình luyện theo kiểu AlphaZero có thể bị mắc kẹt trong vòng thống trị trong các trò chơi tổng cộng.
 - **Search-policy mismatch.**AlphaZero đào tạo chính sách để bắt chước kết quả tìm kiếm. Nếu mạng lưới chính sách quá nhỏ để đại diện cho phân phối tìm kiếm, đào tạo sẽ dừng lại.
