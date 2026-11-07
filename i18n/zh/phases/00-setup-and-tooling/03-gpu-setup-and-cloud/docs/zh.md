@@ -55,7 +55,13 @@ s0-gpu-dispatch
 nvidia-smi
 ```
 
-安装PyTorch与CUDA:
+在 Linux 上,默认轮船与 CUDA.在 Windows 上,复制从pytorch.org的选择器中CUDA命令.
+
+```bash
+pip install torch torchvision torchaudio
+```
+
+然后检查PyTorch看到GPU:
 
 ```python
 import torch

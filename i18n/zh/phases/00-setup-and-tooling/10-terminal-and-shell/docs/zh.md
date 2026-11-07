@@ -97,7 +97,7 @@ python train.py > output.log 2> errors.log
 python train.py > train_full.log 2>&1
 ```
 
-你需要的三个转向:
+需要的四个转向和管道:
 
 | Symbol | What it does |
 |--------|-------------|
