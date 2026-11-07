@@ -80,7 +80,7 @@ Por um quarteirão com `d_model = d`e expansão do FFN `r`- Não .
 - FFN (SwiGLU): `3 · d · (r · d)`- Não .`3rd²`
 - Normas: insignificantes
 
-- Não .`d = 4096, r = 2.6, layers = 32`(aproximadamente Llama 3 8B), total: `32 · (4·4096² + 3·2.6·4096²) ≈ 32 · (16 + 32) M = ~1.5B parameters per layer × 32 ≈ 7B`(mais inserções e cabeçalho).
+- Não .`d = 4096, r = 2.6, layers = 32`(aproximadamente Llama 3 8B), total: `32 · (4·4096² + 3·2.6·4096²) ≈ 32 · (67M + 131M) ≈ 32 · 198M ≈ 6.3B`Os parâmetros dos blocos, mais cerca de 1B para os embeddings e cabeçalhos de saída (128K vocab × 4096, desligado).`r = 3.5`), que muda os parâmetros da atenção para o FFN, mas mantém o total próximo de 8B.
 
 ## Construí-lo
 

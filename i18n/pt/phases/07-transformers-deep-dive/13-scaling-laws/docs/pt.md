@@ -40,12 +40,12 @@ L(N, D) = \frac{A}{N^\alpha} + \frac{B}{D^\beta} + E
 - $E \approx 1.69$O limite de perda irredutível.
 - $A \approx 406$- Não .$B \approx 411$- Não .
 
-Dois termos negociam uns contra os outros à medida que escalam.$N$com cálculo fixo ($C = 6ND$) e resolver:
+Dois termos negociam uns contra os outros à medida que escalam.$N$com cálculo fixo ($C = 6ND$O que é que é o problema?$\alpha$E ...$\beta$acima, os exponentes saem em cerca de 0,45 para $N$e 0,55 para $D$, de modo que a relação ideal exacta varia lentamente com o orçamento; `code/main.py`As duas primeiras abordagens de fixação do papel, que medem o óptimo diretamente, colocam ambos os exponentes em cerca de 0,5. Isso dá a regra empírica de uma relação fixa.$D = 20N$em $C = 6ND$E a regra do polegar diz:
 
 ```math
 \begin{aligned}
-N_{\text{opt}} &\approx 0.6 \times (C/6)^{0.5} \\
-D_{\text{opt}} &\approx 0.6 \times (C/6)^{0.5} \\
+N_{\text{opt}} &\approx 0.22 \times (C/6)^{0.5} \\
+D_{\text{opt}} &\approx 4.5 \times (C/6)^{0.5} \\
 D_{\text{opt}} / N_{\text{opt}} &\approx 20
 \end{aligned}
 ```

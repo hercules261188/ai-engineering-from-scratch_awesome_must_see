@@ -26,32 +26,32 @@ Em 2026, ambos são universais. Todas as pilhas de inferência de produção (vL
 
 ### Matemática do cache KV
 
-Por camada de decodificador, por token, por cabeça:
+Por camada de decodificador, por token, em todas as cabeças KV:
 
 ```
-bytes_per_token_per_layer = 2 * d_head * dtype_size
+bytes_per_token_per_layer = 2 * n_kv_heads * d_head * dtype_size
                           ^
                           K and V
 ```
 
-Para um modelo 7B com 32 camadas, 32 cabeças, d_head=128, fp16:
+Para um modelo 7B com 32 camadas, 32 cabeças (todas utilizadas para K e V), d_head=128, fp16:
 
 ```
-per token per layer = 2 * 128 * 2 = 512 bytes
-per token (32 layers) = 16 KB
-per 32K context = 512 MB
+per token per layer = 2 * 32 * 128 * 2 = 16384 bytes (16 KiB)
+per token (32 layers) = 512 KiB
+per 32K context = 16 GiB
 ```
 
 Para Llama 3 70B (80 camadas, d_head=128, GQA com 8 cabeças de KV):
 
 ```
-per token per layer = 2 * 8 * 128 * 2 = 4096 bytes (4 KB)
-per 32K context = 10.4 GB
+per token per layer = 2 * 8 * 128 * 2 = 4096 bytes (4 KiB)
+per 32K context = 10 GiB
 ```
 
-Esse 10 GB é o motivo pelo qual o Llama 3 70B em contexto 128K precisa da maioria de um A100 de 40 GB apenas para cache KV no tamanho de lote 1.
+Esse 10 GiB em 32K cresce para 40 GiB em 128K, o que é o todo de um A100 de 40 GB apenas para cache KV no tamanho de lote 1.
 
-**GQA is the KV-cache win.**A MHA com 64 cabeças seria de 32 GB.
+**GQA is the KV-cache win.**O MHA com 64 cabeças KV seria 8x maior, cerca de 80 GiB em 32K.
 
 Arraste as dimensões e observe o movimento do tamanho do cache. Empurre o comprimento da sequência ou batch para cima e veja a velocidade com que ele sopra além de uma única GPU:
 
@@ -124,6 +124,10 @@ flash-attention-memory
 
 ## Construí-lo
 
+```figure
+iso-machine {"machine":"kv-cache"}
+```
+
 Veja .`code/main.py`Implementamos:
 
 1. Um ingênuo .$O(N^2)$Decodificador incremental.
@@ -172,9 +176,9 @@ def tiled_softmax_dot(q, K, V, tile=4):
 
 Saída de bits idêntica a `softmax(qK) V`em um tiro, mas a qualquer momento o conjunto de trabalho é um `tile × d_head`Bloco, não o completo.`N × d_head`- Não .
 
-### Passo 3: Compare naívo versus decodificação em cache na geração de 100 tokens
+### Passo 3: Compare a descodificação ingênua com a em cache
 
-Contar operações de atenção.$O(N^2)$= 5050. em cache: $O(N)$O código imprime as duas.
+As duas decodificadoras fazem as mesmas comparações de chave de consulta: passo `t`- Não .`t`Tokens, então o total é 1 + 2 + ... + N = N(N+1)/2. O código usa N = 10 e imprime 55 para cada decodificador. Para uma geração de 100 tokens, ambos fazem 5050 comparações. O cache guarda as projeções K e V. Sem um cache, cada passo calcula K e V novamente para o prefixo completo, então uma geração de 100 tokens calcula 5050 estados de tokens. Com o cache, o K e o V de cada token são calculados uma vez, então a mesma geração calcula 100 estados de token.
 
 ## Usá-lo
 
