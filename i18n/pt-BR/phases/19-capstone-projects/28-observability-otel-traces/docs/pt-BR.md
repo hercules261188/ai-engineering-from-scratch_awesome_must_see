@@ -77,15 +77,15 @@ O registo de métricas é de dois díctos.`{(name, frozen_labels): int}`Os histo
 6. `wrap_tool_call(name)`um decorador que emite um espaço e atualiza as métricas.
 7. Demo: sintetiza uma invocação completa de agente (gen_ai.chat span em torno de extensões de ferramentas), escreve traces.jsonl, imprime a exposição Prometheus, sai de zero.
 
-O ID de espaço e o ID de rastreamento são cadeias hex de 16 bytes, geradas a partir de `os.urandom`O exportador nunca lança, os erros de IO aparecem, mas o arame continua a funcionar.
+O trace id é um valor de 16 bytes (32 caracteres hex) e o span id é um valor de 8 bytes (16 caracteres hex), ambos cortados de aleatório `uuid4`O exportador nunca lança, os erros de IO aparecem, mas o arnes continua a funcionar.
 
-O histograma tem um conjunto de baldes fixo (a OTel padrão para a latência em milissegundos: 5, 10, 25, 50, 100, 250, 500, 1000, 2500, 5000, 10000, +Inf). As amostras são armazenadas como uma lista; a exposição calcula as contagens por balde sob demanda.
+O histograma tem um conjunto fixo de baralho para latência em milissegundos: 5, 10, 25, 50, 100, 250, 500, 1000, 2500, 5000, 10000, +Inf. É uma versão recortada dos limites padrão do OTel SDK, que também incluem 0, 75, 750, e 7500. As amostras são armazenadas como uma lista; exposição calcula as contagens por baralho sob demanda.
 
 ## Por que rolado à mão em vez de opentelemetry-sdk
 
-O OTel Python SDK é uma dependência real. É também várias milhas de linhas de código, múltiplos processos para o exportador OTLP, e um custo de tempo de execução que inunda um orçamento de lição. A versão rolada à mão ensina o formato de fio. Na produção você envia os mesmos atributos para o SDK real e obtém o exportador OTLP, batch e detecção de recursos gratuitamente.
+O OTel Python SDK é uma dependência real. É também várias milhas de linhas de código, um fio de exportação de fundo para o exportador OTLP, e um custo de tempo de execução que inunda um orçamento de lição. A versão rolada à mão ensina o formato de fio. Na produção você envia os mesmos atributos para o SDK real e obtém o exportador OTLP, batch e detecção de recursos gratuitamente.
 
-As convenções são estáveis. O formato de fio emitido pela lição continuará a ser analisado em 2030, porque a OTel nunca quebra nomes de atributos da GenAI; eles só adicionam novos.
+As convenções da GenAI ainda são marcadas Desenvolvimento na especificação, e eles têm renomeado atributos antes: `gen_ai.usage.prompt_tokens`tornou-se`gen_ai.usage.input_tokens`Aplique a versão de convenções semânticas que emite e verifique-a quando atualizar o SDK.
 
 ## Como isto se compõe com o resto da pista A
 

@@ -64,7 +64,7 @@ As chaves e valores da imagem são calculadas uma vez no início da decodificaç
 
 ### Compostação de blocos
 
-Um bloco de decodificador funciona: pré-LN -> auto-atenção -> residual -> pré-LN -> atenção cruzada -> residual -> pré-LN -> feed-forward -> residual. Três subcamadas, cada uma com sua própria LayerNorm. O papel Flamingo adicionou um portão aprendido sobre a atenção cruzada para que o modelo pudesse optar pela via de imagem ao custo de estabilidade no tempo de treinamento; a linha de base canônica (usada aqui) não tem portão.
+Um bloco de decodificador é executado: pré-LN -> auto-atenção -> restante -> pré-LN -> atenção cruzada -> residual -> pré-LN -> feed-forward -> residual. Três subcamadas, cada uma com sua própria LayerNorm. O papel Flamingo adicionou um portão tanh aprendido sobre a atenção cruzada, iniciado em zero, de modo que o modelo de linguagem congelada começa inalterado e o treinamento permanece estável; a linha de base canônica (usada aqui) não tem portão.
 
 ```python
 class DecoderBlock:

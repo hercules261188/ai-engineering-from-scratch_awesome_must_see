@@ -38,7 +38,7 @@ flowchart LR
 
 BM25 marca um par de consulta-documento somando, sobre os termos de consulta, um fator de frequência de documento inverso multiplicado por um fator de frequência de termo-saturador que inclui uma correção de normalização de comprimento.`k1`controlos de saturação de frequência termônica; a recomendação de referência de 1, 5 é a publicada e não deve ser movida sem um índice de referência. `b`O valor padrão de 0,75 diz que os documentos mais longos são penalizados, mas não linearmente.
 
-A fórmula das Forças de Defesa do Israel usa a definição suavizada de Robertson e Sparck Jones, que é `log((N - df + 0.5) / (df + 0.5) + 1)`O "plus-one" dentro do registro mantém o IDF positivo quando um termo aparece em mais da metade do corpo.
+A fórmula das Forças de Defesa do Israel usa a definição suavizada de Robertson e Sparck Jones, que é `log((N - df + 0.5) / (df + 0.5) + 1)`O "plus-one" dentro do registro mantém o IDF positivo quando um termo aparece em mais da metade do corpus.
 
 A ponderação de campo permite que você diga ao BM25 que uma correspondência no nome do símbolo conta mais do que uma correspondência no corpo. A implementação é um multiplicador da quantidade do termo durante a indexação, não no tempo de pontuação. Isso mantém a matemática idêntica e evita uma pontuação separada por campo.
 

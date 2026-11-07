@@ -27,7 +27,7 @@ O STDlib mais Numpy é suficiente. O BLEU é contar e um pince. O ROUGE-L é pro
 
 ## Tokenização
 
-O tokenizer é `re.findall(r"\w+", text.lower())`. letras minúsculas, corridas alfanuméricas, pontuação de queda. Cada métrica nesta aula usa este tokenizer exato. O corredor não tem escolha. Se você trocar tokenizers, você está executando um benchmark diferente.
+O tokenizer é `re.findall(r"\w+", text.lower())`. letras menores, cadeias de caracteres de palavras (letras, dígitos e sublinhamento), solte tudo o resto. Cada métrica nesta lição usa este tokenizer exato. O corredor não tem escolha. Se você trocar tokenizers, você está executando um benchmark diferente.
 
 ```python
 TOKEN_RE = re.compile(r"\w+", re.UNICODE)
@@ -66,7 +66,7 @@ Para tarefas multi-alvo, escolhemos a melhor F1 sobre a lista de alvos.
 
 ## BLEU-4
 
-A fórmula que usamos é a BLEU-4 de nível corpus com a penalidade de brevidade padrão e o suavização aditiva-um em contagens de n-gramas modificadas para que um único 4 gramas faltantes não empurre a pontuação para zero.
+A fórmula que usamos é a de nível de frase BLEU-4, marcada por par de previsão e referência, com a penalidade de brevidade padrão e o suavização aditiva-um em contagens de n-gramas modificadas para que um único 4 gramas faltantes não empurre a pontuação para zero.
 
 Para cada par de candidato-referência, contamos a precisão modificada n-gram para n igual a 1, 2, 3, 4. A precisão modificada faz com que o candidato n-gram conte pela contagem máxima desse n-gram em qualquer referência, de modo que um candidato não pode inflar repetindo uma frase. A média geométrica nas quatro precisões é envolvida pela penalidade de brevidade.
 
@@ -109,7 +109,7 @@ A tabela numpy torna a implementação legível; listas puras Python funcionaria
 
 ## Precision
 
-Para tarefas de classificação de vários alvos, a precisão é reduzida a uma correspondência exata com um único alvo normalizado.`metric_name`sem fazer comparações dentro do corredor.
+Para as tarefas de classificação, a precisão é reduzida a uma correspondência exata: a previsão marca 1 se corresponder a qualquer alvo normalizado na lista.`metric_name`sem fazer comparações dentro do corredor.
 
 ## Contrato de expedição
 

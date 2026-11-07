@@ -118,7 +118,7 @@ python3 -m unittest code/test_main.py
 
 4. Adicione uma pequena penalidade L2 aos pesos do projetor e observe como ela interage com o alinhamento cosínico (o cosínio é invariante em escala, então a penalidade reduz principalmente as direções não utilizadas).
 
-5. Pesos persistentes do projetor, em seguida, recarregando e executando inferência sem o codificador de visão passar para trás para verificar que apenas o projetor é necessário no momento da implantação.
+5. Permaneça pesando o projeto, depois recarregue-os ao lado do codificador de visão congelado e execute inferências sem passagem para trás. Verifique se o projeto é o único artefato novo que você envia; o codificador ainda executa seu passagem para a frente no momento da implantação.
 
 ## Termos-chave
 

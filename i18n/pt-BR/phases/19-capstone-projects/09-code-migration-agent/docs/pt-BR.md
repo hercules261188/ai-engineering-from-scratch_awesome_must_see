@@ -18,7 +18,7 @@ Você vai construir um agente que toma um repo Java 8 (ou Python 2 repo) e produ
 
 O oleoduto tem duas camadas.**deterministic substrate**(OpenRewrite para Java, libcst para Python) executa a maior parte das reescrituras mecânicas de forma segura: importações, assinaturas de método, edições de segurança nula, tentativa de recursos, substituição de API desatualizada. É rápido e produz diferenças auditaveis.**agent layer**(OpenAI Agents SDK ou LangGraph sobre Claude Opus 4.7 e GPT-5.4-Codex) trata casos que as receitas não podem: atualizações de arquivos de construção (Maven/Gradle/pyproject), conflitos de dependência transitivos, flocos de teste, anotações personalizadas.
 
-Cada repo recebe uma caixa de areia Daytona com o tempo de execução alvo pré-instalado. O agente itera: execução de construção, classificação de falhas, aplicação de correção, re-exécution. Limites rígidos: 30 minutos por repo, $ 8 por repo, 20 turnos de agente. Se todos os testes passarem e o delta de cobertura não for negativo, o ramo abre um PR. Se não, o repo é arquivado sob uma classe de falha com evidências.
+Cada repo recebe uma caixa de areia Daytona com o tempo de execução alvo pré-instalado. O agente itera: execução de construção, classificação de falhas, aplicação de correção, re-exécution. Limites duros: 30 minutos por repo, $ 8 por repo, 20 turnos de agente. Se todos os testes passarem e a cobertura cair em não mais de 2 pontos percentuais, o ramo abre um PR. Se não, o repo é arquivado sob uma classe de falha com evidências.
 
 A taxonomia de falhas é o entregue. Em 50 repos, o que foi quebrado? deps transitivos? anotações personalizadas? construir versão de ferramenta? testar flocos não relacionados à migração? Cada classe recebe uma contagem e um exemplar diferença.
 
@@ -77,7 +77,7 @@ ce-migration-funnel
 
 4. **Budget caps.**30 minutos de tempo por repo, 8 dólares, 20 voltas de agente.
 
-5. **Test + coverage gate.**Depois que a construção for verde, execute o conjunto de testes. Compare a cobertura com o repo base. Se a cobertura caiu mais de 2%, arquivo sob "cobreza_regressão".
+5. **Test + coverage gate.**Depois que a construção for verde, execute o conjunto de testes. Compare a cobertura com o repo base. Se a cobertura caiu mais de 2 pontos percentuais, arquivar sob "cobreza_regressão".
 
 6. **PR open.**Em caso de sucesso, empurra o ramo, abra o PR com a diferença e um resumo das receitas aplicadas e que compromete o agente autor.
 

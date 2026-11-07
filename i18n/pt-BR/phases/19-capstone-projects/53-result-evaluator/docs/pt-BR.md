@@ -70,7 +70,7 @@ O avaliador executa três cálculos independentes e os junta no caminho do vered
 
 A perplexidade é exponencial na perda. Uma queda de 0,1 na perda é uma queda muito maior na perplexidade. Comparar perplexidade diretamente entre duas configurações é bom, mas misturá-la com métricas lineares em um único relatório requer normalização.
 
-A lição normaliza qualquer métrica cujo`scale`campo é `"log"`O limite é aplicado em espaço de registro. Uma queda de perplexidade de 32 para 28 é `log(28) - log(32) = -0.133`em um nível inferior é melhor métrica, que está bem acima do limiar de dois por cento.
+A lição normaliza qualquer métrica cujo`scale`campo é `"log"`O limite é aplicado em espaço de registro. Uma queda de perplexidade de 32 para 28 se torna`log(32) = 3.466`contra`log(28) = 3.332`A melhoria relativa em uma métrica inferior é melhor é`(3.466 - 3.332) / 3.466 = 0.039`, que limpa o limiar de 2%.
 
 ```text
 if scale == "log":

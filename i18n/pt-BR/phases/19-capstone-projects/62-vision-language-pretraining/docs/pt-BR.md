@@ -18,7 +18,7 @@
 
 Um modelo de linguagem de visão precisa de duas habilidades. Ele deve classificar: dado uma legenda, encontrar a imagem certa entre muitas. Ele deve gerar: dada uma imagem, escrever uma legenda. Pretrainar o modelo em uma habilidade sozinho dá-lhe meio sistema. CLIP classificação pregada, mas não pode subtítulos. GPT-4V pode subtítulos, mas usa uma cabeça de recuperação separada para classificação. Pretrainamento multi-objetivo obtém ambos em uma passagem.
 
-Para um lote de pares N, o modelo trata os pares N correspondentes como positivos e os pares `N^2 - N`par desatendidos como negativos, então corre uma perda de entropia cruzada sobre o resultado `(N, N)`Matriz de semelhança. A perda LM lida com a metade da geração: previsão padrão de next-token condicionada à imagem. Ambas as perdas são diferenciáveis e podem compartilhar o peso do codificador, do projetor e do decodificador.
+Para um lote de pares N, o modelo trata os pares N correspondentes como positivos e os pares `N^2 - N`par desatendidos como negativos, então corre uma perda de entropia cruzada sobre o resultado `(N, N)`Matriz de semelhança. A perda LM lida com a metade da geração: previsão padrão de next-token condicionada à imagem. Ambas as perdas são diferenciáveis e compartilham o peso do codificador e do projetor; o decodificador opera apenas na perda LM.
 
 ## O conceito
 
@@ -54,7 +54,7 @@ O decodificador consome tokens de memória de imagem através da atenção cruza
 
 ### Combinação das perdas
 
-`total = contrastive + lm_weight * lm`onde`lm_weight`O sistema de decodificação é um gradiente de perda de LM (muitas vezes 1.0).
+`total = contrastive + lm_weight * lm`onde`lm_weight`O decodificador recebe gradiente da perda LM apenas. Esta é a receita multi-tarefa que CoCa e BLIP usam, com várias ponderações. SigLIP mantém apenas o termo contrastivo e troca softmax para uma perda de par sigmoide.
 
 | Component | Loss surface | Affects |
 |-----------|--------------|---------|

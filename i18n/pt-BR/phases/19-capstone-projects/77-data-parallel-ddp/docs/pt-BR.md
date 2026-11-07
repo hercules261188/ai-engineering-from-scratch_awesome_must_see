@@ -57,7 +57,7 @@ Um transformador tem milhares de tensores de parâmetros. Um allreduce por tenso
 
 ### Por que apertar a semente
 
-Cada grau deve chamar`torch.manual_seed(seed + rank)`Para misturar , mas`torch.manual_seed(seed)`para o parâmetro init. Uma única semente compartilhada significa que cada rank vê a mesma ordem de lote (paralhelos de dados desfazidos); uma semente específica de rank para parâmetros significa que os parâmetros iniciais discordam por epsilon flutuante e a sincronização de gradiente não torna mais as réplicas idênticas.
+Cada grau deve chamar`torch.manual_seed(seed + rank)`Para misturar , mas`torch.manual_seed(seed)`para o parâmetro init. Uma única semente compartilhada para mistura significa que cada rank vê a mesma ordem de lote (paralelo de dados derrotando). Para os parâmetros, a classificação 0 transmitida na construção é o que torna as réplicas idênticas, e sobreescreve o que cada classificação inicializa. A semente de init compartilhada é o backup: se a transmissão for ignorada ou quebrada, a init específica de nível dá a cada réplica diferentes pesos iniciais, e a sincronização de gradiente sozinha nunca os reúne. Faça o padrão de semente correto ou o teste de equivalência de parâmetros falha na etapa 1.
 
 ```figure
 ci-ddp-grad-sync

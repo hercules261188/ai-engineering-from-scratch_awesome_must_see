@@ -16,7 +16,7 @@
 
 ## O problema
 
-O Vanilla DDP replica tudo: parâmetros, gradientes e estado de otimização estão presentes em toda a parte em cada classificação. Para um modelo de parâmetro 7B em fp16 que significa 14 GB de parâmetros, 14 GB de gradientes e 28 GB de estado de otimização por classificação. O estado de otimização é o maior termo e o mais fácil de desgastar porque só é tocado durante o passo, não durante a frente ou para trás.
+A DDP de vainilha replica tudo: parâmetros, gradientes e estado de otimização estão presentes em toda a escala. Para um modelo de parâmetro 7B em fp16, que significa 14 GB de parâmetros, 14 GB de gradientes e 56 GB de estado de otimização (os dois float32 momentos de Adam) por classificação. O treinamento de precisão mista adiciona uma cópia de 28 GB do float32 dos pesos no topo. O estado mais otimista é o termo mais grande e mais fácil de desfechar porque só é tocado durante o passo, não durante o passo para frente ou para trás.
 
 O ZeRO estágio 1 reduz o estado de otimização. Cada fila contém 1/N dos momentos de Adão. Depois de recuar, em vez de reduzir o gradiente completo e pisar localmente, a ZeRO reduz_scatters para que cada rank receba apenas o gradiente somado de seu fragmento. A classificação aplica o passo mais óptimo ao seu fragmento dos parâmetros principais. Os parâmetros atualizados, então, todos se reúnem para que cada rank tenha o modelo completo para o próximo avanço. A memória mais óptima cai em N. O tráfego de fios por passo é o mesmo que o DDP: um redu_scatter mais um allgather é igual a um allreduce por largura de banda. A memória ganha, o volume mantém-se.
 
@@ -92,7 +92,7 @@ Três padrões endurecem o ZeRO o suficiente para o enviar.
 
 **Mixed precision is the point.**A ZeRO é uma técnica de precisão mista; a cópia mestre fp32 é o que é fragmentado.
 
-**Stage 1 is a near-free win.**A comunicação é idêntica ao DDP por largura de banda. As economias de memória são lineares em N. O único custo é a contabilidade para o shard optimizador. As pilhas de produção são padrão para a fase 1 a menos que a memória de parâmetro shard também seja um problema; em seguida, a etapa 2 ou 3 negocia comunicações para memória.
+**Stage 1 is a near-free win.**A comunicação é idêntica ao DDP por largura de banda. As economias de memória são lineares em N. O único custo é a contabilidade para o shard optimizador. A produção stacks padrão para o estágio 1 a menos que o gradiente ou memória de parâmetros também seja um problema.
 
 ## Usá-lo
 
