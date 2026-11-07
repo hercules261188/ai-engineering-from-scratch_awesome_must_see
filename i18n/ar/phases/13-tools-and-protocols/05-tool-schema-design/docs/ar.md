@@ -84,7 +84,7 @@ notes_search(query)
 ### تصميم المعلمات
 
 - **Enum every closed set.** `units: "celsius" | "fahrenheit"`لا , لا`units: string`-الإنومات تخبر النموذج بكون القيم المقبولة
-- **Required vs optional.**حدد الحد الأدنى اللازم. كل شيء آخر اختياري. وضع OpenAI الصارم يتطلب كل حقل في`required`إضافة`is_default: true`و دع النموذج يفرغها
+- **Required vs optional.**حدد الحد الأدنى اللازم. كل شيء آخر اختياري. وضع OpenAI الصارم يتطلب كل حقل في`required`، لذلك لا يمكن أن يفرغ النموذج واحد. اكتب حقل اختياري كإتحاد مع `null`و دع النموذج يرسل`null`عندما لا قيمة لها
 - **Typed IDs.** `note_id: string`حسناً، لكن أضف`pattern`(`^note-[0-9]{8}$`) لالتقاط الهلوسة الهوية.
 - **No overly flexible types.**تجنب`type: any`النموذج سوف يوحن الأشكال.
 - **Describe the field.** `{"type": "string", "description": "ISO 8601 date in UTC, e.g. 2026-04-22"}`وصف هو جزء من طلب النموذج.

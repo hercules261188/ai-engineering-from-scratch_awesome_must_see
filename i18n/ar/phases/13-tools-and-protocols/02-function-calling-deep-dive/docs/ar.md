@@ -52,12 +52,12 @@
 | Result block | role `tool`, `tool_call_id` | `user` with `tool_result`, `tool_use_id` | `functionResponse` with matching `id` |
 | Force-a-tool | `tool_choice: {type: "function", function: {name}}` | `tool_choice: {type: "tool", name}` | `tool_config: {function_calling_config: {mode: "ANY"}}` |
 | Forbid tools | `tool_choice: "none"` | `tool_choice: {type: "none"}` | `mode: "NONE"` |
-| Strict schema | `strict: true` | schema-is-schema (always enforced) | `responseSchema` at request level |
+| Strict schema | `strict: true` | `strict: true` per tool (opt-in) | `responseSchema` at request level |
 
 ### الحدود التي ستضربها فعلاً
 
 - **OpenAI.**128 أداة لكل طلب. عمق الخطة 5. سلسلة الحجج <= 8192 بايت. وضع القييد لا يتطلب `$ref`لا , لا`oneOf`-أجل`anyOf`-أجل`allOf`مع التداخل، كل ممتلكات المدرجة في `required`. . .
-- **Anthropic.**64 أداة لكل طلب. عمق الخطة لا حدود لها ولكن حد عملي 10. لا يوجد علامة على الوضع الصارم. الخطة عقد وتعتبر النموذج متوافقة.
+- **Anthropic.**64 أداة لكل طلب. عمق الخطة لا حدود لها فعلياً ولكن حد عملي 10. استخدام الأدوات الصارمة هو اختيار مع `strict: true`بدونها، النموذج هو عقد يميل إلى اتباعه، وليس ضمان.
 - **Gemini.**64 وظيفة لكل طلب. أنواع الخطة هي OpenAPI 3.0 فرعية (اختلاف طفيف من JSON Schema 2020-12). الدعوات المتوازية هو واحد-هوية منذ جيمين 3.
 
 ### `tool_choice`السلوك
@@ -94,7 +94,7 @@
 
 - **OpenAI (non-strict).**النموذج يعود `arguments: "{bad json}"`إذا فشلت تحليل JSON، تقوم بإدخال رسالة خطأ وإعادة الاتصال.
 - **OpenAI (strict).**يتم التحقق من التحقق من الصحة أثناء فك التشفير . غير صالحة JSON مستحيل ولكن `refusal`يمكن أن تظهر.
-- **Anthropic.** `input`قد تحتوي على حقل غير متوقعة، النموذج هو نصيحة. تأكيد جانب الخادم.
+- **Anthropic (non-strict).** `input`قد تحتوي على حقل غير متوقعة، النموذج هو نصيحي. تأكيد جانب الخادم. مع `strict: true`، يتم تقييد أخذ العينات على النموذج.
 - **Gemini.**المميزة في OpenAPI 3.0: `enum`على حقل الأشياء التي تم تجاهلها بصمت، تأكدي نفسك.
 
 ### نمط الترجمة

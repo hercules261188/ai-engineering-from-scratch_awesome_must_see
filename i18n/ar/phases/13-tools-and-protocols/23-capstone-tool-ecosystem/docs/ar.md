@@ -205,7 +205,7 @@ cd phases/13-tools-and-protocols/23-capstone-tool-ecosystem
 python3 code/main.py
 ```
 
-فحص خمسة أشياء:
+فحص ستة أشياء:
 
 1. `server/discover`الإعلانات الإصلاح `2026-07-28`ومدّة المهام
 2. (أليس) تستطيع قراءة وتوليد تقرير بينما يتم رفض مكالمة (بوب) المكتوبة
