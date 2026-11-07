@@ -97,7 +97,7 @@ python train.py > output.log 2> errors.log
 python train.py > train_full.log 2>&1
 ```
 
-سه تا ریدایرکت که لازم داری:
+چهار مسیر و لوله ای که نیاز داری:
 
 | Symbol | What it does |
 |--------|-------------|

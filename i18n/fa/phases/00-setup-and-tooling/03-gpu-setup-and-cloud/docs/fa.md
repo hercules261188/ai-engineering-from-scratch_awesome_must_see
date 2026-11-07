@@ -55,7 +55,13 @@ s0-gpu-dispatch
 nvidia-smi
 ```
 
-PyTorch رو با CUDA نصب کن:
+PyTorch را با CUDA نصب کنید. در لینوکس چرخ پیش فرض با CUDA ارسال می شود. در ویندوز، دستور CUDA را از انتخاب کننده pytorch.org کپی کنید.
+
+```bash
+pip install torch torchvision torchaudio
+```
+
+پس چک کن که پایتورچ GPU رو ببینه:
 
 ```python
 import torch
