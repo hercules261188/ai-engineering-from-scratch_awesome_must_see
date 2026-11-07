@@ -67,21 +67,21 @@ PATTERNS = [
 
 ¿ Qué ?`code/main.py`Los patrones de Hearst todavía se envían en líneas de tubería específicas de dominio porque son depurables.
 
-### Paso 2: Clasificación de las relaciones supervisadas
+### Paso 2: extracción de relaciones seguidas supervisadas
 
 ```python
-from transformers import AutoTokenizer, AutoModelForSequenceClassification
+from transformers import AutoTokenizer, AutoModelForSeq2SeqLM
 
 tok = AutoTokenizer.from_pretrained("Babelscape/rebel-large")
-model = AutoModelForSequenceClassification.from_pretrained("Babelscape/rebel-large")
+model = AutoModelForSeq2SeqLM.from_pretrained("Babelscape/rebel-large")
 
 text = "Tim Cook was born in Alabama. He later became CEO of Apple."
 encoded = tok(text, return_tensors="pt", truncation=True)
 output = model.generate(**encoded, max_length=200)
-triples = tok.batch_decode(output, skip_special_tokens=False)
+decoded = tok.batch_decode(output, skip_special_tokens=False)
 ```
 
-REBEL es un extractor de relaciones secuenciales: texto en, triplica, ya en los ID de propiedades de Wikidata.
+REBEL es un extractor de relaciones seq2seq basado en BART: genera triples en lugar de clasificar pares de entidades.`<triplet>`¿ Qué ?`<subj>`y `<obj>`los marcadores, así que dividirlos (como hace el parser de la tarjeta modelo) para obtener `(subject, relation, object)`Registros, ajustados a datos de supervisión remota, base de peso abierto estándar.
 
 ### Paso 3: Extracción con LLM con anclaje
 

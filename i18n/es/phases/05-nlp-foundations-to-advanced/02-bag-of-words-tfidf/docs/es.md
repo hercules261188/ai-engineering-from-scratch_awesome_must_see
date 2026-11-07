@@ -126,7 +126,7 @@ def tfidf(bow_matrix):
 >>> tfidf(bow)
 ```
 
-Tres documentos, cinco palabras vocabularias (`the`¿ Qué ?`cat`¿ Qué ?`sat`¿ Qué ?`dog`¿ Qué ?`ran`¿ Qué es esto ?`the`aparece en los tres, así que su IDF es baja. `dog`Los vectores son escasos (la mayoría de las entradas son pequeñas) y las palabras discriminatorias pop.
+Tres documentos, cinco palabras vocabularias (`the`¿ Qué ?`cat`¿ Qué ?`sat`¿ Qué ?`dog`¿ Qué ?`ran`¿ Qué es esto ?`the`aparece en los tres, así que su IDF es baja. `dog`En el caso de los vehículos de guerra, el número de vehículos de guerra que aparecen en uno es alto.
 
 ### Paso 5: Normaliza las filas L2
 

@@ -61,14 +61,14 @@ coref-links
 ```python
 import spacy
 nlp = spacy.load("en_coreference_web_trf")   # experimental model
-doc = nlp("Apple announced new products. The company said they would ship soon.")
+doc = nlp("Apple announced new products. The company said it would ship them soon.")
 for cluster in doc._.coref_clusters:
     print(cluster, "->", [m.text for m in cluster])
 ```
 
 En un documento más largo, se obtiene algo así:
-- Cluster 1: [Apple, la compañía, ellos]
-- Grupo 2: [productos nuevos]
+- Cluster 1: [Apple, la compañía, el]
+- Grupo 2: [productos nuevos, ellos]
 
 ### Paso 2: resolver de pronombres basados en reglas (ensensenación)
 
