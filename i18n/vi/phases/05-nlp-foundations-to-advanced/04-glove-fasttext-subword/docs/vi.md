@@ -25,7 +25,7 @@ Bài học này sẽ đi qua cả ba, sau đó giải thích nên tìm đến ai
 
 **FastText.**Một từ là tổng số n-gram của ký tự cộng với chính từ. `where`trở thành `<wh, whe, her, ere, re>, <where>`. Từ vector là tổng số các vector thành phần đó.`whereupon`) được tạo thành từ n-gram được biết đến.
 
-**BPE (Byte-Pair Encoding).**Bắt đầu với một từ vựng của các byte (hoặc ký tự) riêng lẻ. Đếm từng cặp lân cận trong corpus. Thủy cặp thường xuyên nhất thành một token mới.`k`Kết quả: một từ vựng của `k + 256`token nơi các chuỗi thường xuyên (`ing`- `tion`- `the`(văn) là các biểu tượng đơn lẻ và các từ hiếm được chia thành các mảnh quen thuộc.
+**BPE (Byte-Pair Encoding).**Bắt đầu với một từ vựng của các byte (hoặc ký tự) riêng lẻ. Đếm từng cặp lân cận trong corpus. Thủy cặp thường xuyên nhất thành một token mới.`k`Kết quả: một từ vựng của các biểu tượng cơ bản cộng với `k`hợp nhất (`k + 256`token khi bạn bắt đầu từ byte) nơi các chuỗi thường xuyên (`ing`- `tion`- `the`(văn) là các biểu tượng đơn lẻ và các từ hiếm được chia thành các mảnh quen thuộc.
 
 ```figure
 n5-subword-merge

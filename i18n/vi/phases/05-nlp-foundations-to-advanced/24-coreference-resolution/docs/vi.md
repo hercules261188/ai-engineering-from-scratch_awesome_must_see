@@ -61,14 +61,14 @@ coref-links
 ```python
 import spacy
 nlp = spacy.load("en_coreference_web_trf")   # experimental model
-doc = nlp("Apple announced new products. The company said they would ship soon.")
+doc = nlp("Apple announced new products. The company said it would ship them soon.")
 for cluster in doc._.coref_clusters:
     print(cluster, "->", [m.text for m in cluster])
 ```
 
 Trong một tài liệu dài hơn, bạn có được một cái gì đó như:
-- Nhóm 1: [Apple, Công ty, họ]
-- Nhóm 2: [Sản phẩm mới]
+- Nhóm 1: [Apple, Công ty, nó]
+- Nhóm 2: [Sản phẩm mới, chúng]
 
 ### Bước 2: giải quyết nhân từ dựa trên quy tắc (lạy)
 

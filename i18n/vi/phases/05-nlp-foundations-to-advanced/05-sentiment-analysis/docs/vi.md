@@ -200,7 +200,7 @@ pipe.fit(X_train, y_train)
 print(pipe.score(X_test, y_test))
 ```
 
-Ba điều cần chú ý.`stop_words=None`giữ sự phủ nhận. `ngram_range=(1, 2)`thêm các biểu tượng lớn như vậy `not_good`trở thành một tính năng. `sublinear_tf=True`Những dấu hiệu này là sự khác biệt giữa một đường cơ sở chính xác 75% và một đường cơ sở chính xác 85% trên SST-2.
+Ba điều cần chú ý.`stop_words=None`giữ sự phủ nhận. `ngram_range=(1, 2)`thêm các biểu tượng lớn như vậy `not good`trở thành một tính năng (scikit-learn kết hợp hai từ với một không gian). `sublinear_tf=True`Những dấu hiệu này là sự khác biệt giữa một đường cơ sở chính xác 75% và một đường cơ sở chính xác 85% trên SST-2.
 
 ### Khi nào để tìm một bộ biến đổi
 

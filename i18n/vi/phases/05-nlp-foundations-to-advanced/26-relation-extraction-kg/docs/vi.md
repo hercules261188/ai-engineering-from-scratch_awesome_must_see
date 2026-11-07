@@ -67,21 +67,21 @@ PATTERNS = [
 
 Nhìn xem`code/main.py`Các mẫu Hearst vẫn được chuyển vào các đường ống cụ thể vì chúng có thể gỡ lỗi.
 
-### Bước 2: Định dạng quan hệ giám sát
+### Bước 2: khai thác quan hệ tiếp theo theo theo dõi
 
 ```python
-from transformers import AutoTokenizer, AutoModelForSequenceClassification
+from transformers import AutoTokenizer, AutoModelForSeq2SeqLM
 
 tok = AutoTokenizer.from_pretrained("Babelscape/rebel-large")
-model = AutoModelForSequenceClassification.from_pretrained("Babelscape/rebel-large")
+model = AutoModelForSeq2SeqLM.from_pretrained("Babelscape/rebel-large")
 
 text = "Tim Cook was born in Alabama. He later became CEO of Apple."
 encoded = tok(text, return_tensors="pt", truncation=True)
 output = model.generate(**encoded, max_length=200)
-triples = tok.batch_decode(output, skip_special_tokens=False)
+decoded = tok.batch_decode(output, skip_special_tokens=False)
 ```
 
-REBEL là một bộ thu thập mối quan hệ seq2seq: text in, triples out, đã trong ID thuộc tính Wikidata. Được điều chỉnh tốt trên dữ liệu giám sát từ xa.
+REBEL là một bộ trích dẫn mối quan hệ seq2seq dựa trên BART: nó tạo ra ba lần thay vì phân loại các cặp thực thể. Text in, triple out, với tên mối quan hệ lấy từ các thuộc tính Wikidata. Các chuỗi được giải mã vẫn mang theo các chuỗi của REBEL `<triplet>`- `<subj>`và `<obj>`các dấu hiệu, do đó chia trên chúng (như bộ phân tích thẻ mô hình làm) để có được `(subject, relation, object)`ghi chép, điều chỉnh tốt trên dữ liệu giám sát từ xa, chuẩn cơ sở trọng lượng mở.
 
 ### Bước 3: Phân xuất bằng LLM với việc neo
 
