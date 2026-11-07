@@ -36,9 +36,9 @@ Large-v3 có param 1.55B. Turbo sử dụng một decoder 4 lớp (từ 32), c�
 <|startoftranscript|><|en|><|transcribe|><|notimestamps|> Hello world.<|endoftext|>
 ```
 
-- `<|en|>` thẻ ngôn ngữ; buộc hành vi dịch-về-tác giả.
-- `<|transcribe|>`hoặc `<|translate|>` dịch xuất phát tiếng Anh từ bất kỳ ngôn ngữ nhập, hoặc từ ngữ.
-- `<|notimestamps|>` bỏ qua các dấu thời gian ở mức từ (quá hơn).
+- `<|en|>`: Tag ngôn ngữ; tên ngôn ngữ được nói trong âm thanh. Hãy bỏ nó ra và Whisper phát hiện ngôn ngữ trước.
+- `<|transcribe|>`hoặc `<|translate|>`: task tag; dịch bài phát biểu vào ngôn ngữ nguồn của nó, hoặc dịch nó sang văn bản tiếng Anh.
+- `<|notimestamps|>`: bỏ qua các dấu thời gian ở mức từ (quá hơn).
 
 Các prompt là những gì cho phép một mô hình thực hiện nhiều nhiệm vụ. Thay đổi `<|en|>`đến`<|fr|>`và nó viết lại tiếng Pháp.
 

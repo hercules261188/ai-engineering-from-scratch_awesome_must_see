@@ -3,7 +3,7 @@
   "phases/06-speech-and-audio/02-spectrograms-mel-features/docs/en.md": "97529a8844a0782b55a5056640ac0f4a29e89ff904b0d7ebca99c7d5892ae274",
   "phases/06-speech-and-audio/03-audio-classification/docs/en.md": "7d7e56fcd223b527e87ba1b7d12bd6bf4ff2d9e27bfd89c9c0a0a944293adeca",
   "phases/06-speech-and-audio/04-speech-recognition-asr/docs/en.md": "f0bd1c7f17f3abfe039627b4f1a1a0b57c1c87ea18e1c7bdfef5971ad1c6452d",
-  "phases/06-speech-and-audio/05-whisper-architecture-finetuning/docs/en.md": "90a39b539e0065af945955829839edeaaa63883fa9b5e21bf15c9b8c7db0efb5",
+  "phases/06-speech-and-audio/05-whisper-architecture-finetuning/docs/en.md": "2aceee4bc8aeb98c41506c992011b3b9dd2f500756cc74a3dce6c379593acd73",
   "phases/06-speech-and-audio/06-speaker-recognition-verification/docs/en.md": "63ddce2e943e59e1b2aa18bb698df67409fd0011f0d8421139ec7c46cba2f217",
   "phases/06-speech-and-audio/07-text-to-speech/docs/en.md": "d974cde93a3a8e692caf62fd9e48e18ebd8b889043bef6cf2367b4d89049a561",
   "phases/06-speech-and-audio/08-voice-cloning-conversion/docs/en.md": "dc41114b9bfa5d8fdc151f0efebe947230683806c1d2f888031a457c9bb8a480",
@@ -15,5 +15,5 @@
   "phases/06-speech-and-audio/14-voice-activity-detection-turn-taking/docs/en.md": "ba520338d01743a41fd7f4343a64af318241ce7e72e752afe8a98773e5f876fb",
   "phases/06-speech-and-audio/15-streaming-speech-to-speech-moshi-hibiki/docs/en.md": "e21cb5cde8e5c2f46a027328b5d1eee69ad8231661d78f8b6509803a6dde3802",
   "phases/06-speech-and-audio/16-anti-spoofing-audio-watermarking/docs/en.md": "312eab13609b920ae76f6c7e413cfc8abfdbf761b87328fcd7af4edd9a7b944a",
-  "phases/06-speech-and-audio/17-audio-evaluation-metrics/docs/en.md": "1384d50a713138f0b4459e40bf3c413b11a4e25171a2085daee16fd02be1ed5b"
+  "phases/06-speech-and-audio/17-audio-evaluation-metrics/docs/en.md": "7700fd5c9662a5acb4853fc0057ef4a3bba440da78615e44347e9c6d956a5d54"
 }
