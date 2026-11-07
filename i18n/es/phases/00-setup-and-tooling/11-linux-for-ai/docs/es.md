@@ -39,7 +39,7 @@ Su directorio de hogar es`~`o `/home/your-username`Casi todo lo que haces sucede
 
 ## Mandamientos esenciales
 
-Estos son los 15 comandos que cubren el 95% de lo que harás en una caja de GPU remota.
+Estos son los 13 comandos que cubren la mayor parte de lo que harás en una caja de GPU remota.
 
 ### De moverse
 
