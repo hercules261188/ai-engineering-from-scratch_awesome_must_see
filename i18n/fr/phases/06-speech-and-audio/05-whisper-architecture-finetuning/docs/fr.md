@@ -36,9 +36,9 @@ Le grand-v3 a des paramètres de 1,55B. Turbo utilise un décodeur à 4 couches 
 <|startoftranscript|><|en|><|transcribe|><|notimestamps|> Hello world.<|endoftext|>
 ```
 
-- `<|en|>` tag de langue; force le comportement de traduction versus transcription.
-- `<|transcribe|>`ou `<|translate|>` traduire la sortie anglaise à partir d'une entrée en n'importe quelle langue, ou littéralement.
-- `<|notimestamps|>` Sauter les timestamps au niveau des mots (plus rapidement).
+- `<|en|>`: tag de langue; nommer la langue parlée dans l'audio.
+- `<|transcribe|>`ou `<|translate|>`: tag de tâche; transcrire le discours dans sa langue source ou le traduire en texte anglais.
+- `<|notimestamps|>`: sauter les timestamps au niveau des mots (plus vite).
 
 Le prompt est ce qui permet à un modèle de faire de nombreuses tâches.`<|en|>`à `<|fr|>`et il transcrit le français.
 
