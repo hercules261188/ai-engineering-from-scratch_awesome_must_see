@@ -46,7 +46,7 @@ w = w - \text{lr} \cdot \text{gradient}
 
 ```mermaid
 graph TD
-    A["* Starting point (high loss)"] --> B["Moving downhill along gradient"]
+    A["* Starting point (high loss)"] --> B["Moving downhill, against the gradient"]
     B --> C["Approaching minimum"]
     C --> D["o Minimum (low loss)"]
 ```
@@ -158,7 +158,7 @@ w &= w - \text{lr} \cdot \hat{m} / (\sqrt{\hat{v}} + \epsilon)
 
 ### 形与非形
 
-曲函数有一个最小值.渐进式下降总是找到它.$f(x) = x^2$形的.
+曲函数没有坏的本地最小值:每个本地最小值是全球最小值.对于一个具有最小值的平滑曲函数,渐进下降率与学习率相对相近.$f(x) = x^2$形,最小的形是独特的.
 
 网络损失功能是非形的.它们有许多本地最小值,车点和平面区域.
 

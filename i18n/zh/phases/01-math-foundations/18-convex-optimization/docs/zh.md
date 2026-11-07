@@ -18,7 +18,7 @@
 
 课8教你梯度下降,动力和亚当.这些优化者在任何表面上都会下山. 但它们没有保证.在非形的景观上,梯度下降可能会降落在一个糟糕的地方最低值,卡在车点上,或者永远振荡.你无论如何都使用它,因为神经网络是非形的,没有替代方案.
 
-但是机器学习中的许多问题都是曲的.线性回归,物流回归,SVM,LASSO,脊坡回归.对于这些问题来说,存在更强大的东西:优化与数学保障.曲的问题完全有一个谷.任何走下坡的算法都将达到全球最低水平.不需要重新启动.没有学习率的时间表.没有祈祷.
+但机器学习中的许多问题都是曲的. 线性回归,物流回归,SVM,LASSO,脊坡回归. 对于这些,有更强大的东西: 曲的问题没有虚假的谷:每一个地方最小的都是全球最小的. 对于具有最小的平函数,梯度下降与适当的步骤尺寸相近. 没有需要重新启动. 没有学习时间表. 没有祈祷.
 
 了解曲性有三个作用.首先,它告诉你当你的问题是容易 (曲) 时与硬 (非曲) 时.第二,它给你提供了比如牛顿曲问题的方法的更快工具.第三,它解释了整个 ML 中出现的概念:规律化作为一个限制,SVM 中的二元性,以及深度学习为什么尽管违反了曲性给你的每一个好特性,但它仍然有效.
 
@@ -91,13 +91,13 @@ f(tx + (1-t)y) \le t f(x) + (1-t) f(y)
 
 **For a convex function, every local minimum is a global minimum.**
 
-任何下坡路都会导致相同的答案.算法保证将趋于最佳解决方案.
+这意味着梯度下降不能被困在一个坏的本地最小.每一个最低值达到的,都会产生相同的损失.对于一个具有最小的平滑凸函数,一个适当的步骤尺寸的梯度下降保证将趋于最佳值.
 
 ```mermaid
 graph LR
     subgraph "Convex: ONE answer"
         direction TB
-        C1["Loss surface has a single valley"] --> C2["Gradient descent ALWAYS finds the global minimum"]
+        C1["Loss surface has no false valleys"] --> C2["Gradient descent with a suitable step converges to the global minimum"]
     end
     subgraph "Non-convex: MANY traps"
         direction TB

@@ -117,7 +117,8 @@ Algorithm:
   3. If u < p(x) / (M * q(x)), accept x
   4. Otherwise, reject and go to step 1
 
-Acceptance rate = 1/M
+Acceptance rate = Z/M, where Z is the integral of p(x)
+                (Z = 1, so the rate is 1/M, when p is normalized)
 ```
 
 越紧,越紧.$M$在低尺寸 (1-3) 中,拒绝采样工作很好.在高尺寸中,由于大部分提案量被拒绝,接受率会呈指数级下降.这是拒绝采样的尺寸性诅咒.
