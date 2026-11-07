@@ -52,12 +52,12 @@
 | Result block | role `tool`, `tool_call_id` | `user` with `tool_result`, `tool_use_id` | `functionResponse` with matching `id` |
 | Force-a-tool | `tool_choice: {type: "function", function: {name}}` | `tool_choice: {type: "tool", name}` | `tool_config: {function_calling_config: {mode: "ANY"}}` |
 | Forbid tools | `tool_choice: "none"` | `tool_choice: {type: "none"}` | `mode: "NONE"` |
-| Strict schema | `strict: true` | schema-is-schema (always enforced) | `responseSchema` at request level |
+| Strict schema | `strict: true` | `strict: true` per tool (opt-in) | `responseSchema` at request level |
 
 ### सीमाओं आप वास्तव में हिट करेंगे
 
 - **OpenAI.**प्रति अनुरोध 128 उपकरण। स्कीम गहराई 5. तर्क स्ट्रिंग <= 8192 बाइट्स। सख्त मोड की आवश्यकता नहीं है `$ref`नहीं , नहीं`oneOf`/`anyOf`/`allOf`ओवरलैप के साथ, प्रत्येक संपत्ति में सूचीबद्ध `required`. .
-- **Anthropic.**प्रति अनुरोध 64 उपकरण। स्कीम गहराई प्रभावी रूप से असीमित लेकिन व्यावहारिक सीमा 10. कोई सख्त मोड ध्वज नहीं; स्कीम एक अनुबंध है और मॉडल के अनुरूप होने की प्रवृत्ति है।
+- **Anthropic.**प्रति अनुरोध 64 उपकरण। योजना गहराई प्रभावी रूप से असीमित लेकिन व्यावहारिक सीमा 10। सख्त उपकरण उपयोग ऑप्ट-इन के साथ है।`strict: true`इसके बिना, योजना एक अनुबंध है जो मॉडल का पालन करने की प्रवृत्ति है, गारंटी नहीं।
 - **Gemini.**प्रति अनुरोध 64 फ़ंक्शन। स्कीम प्रकार ओपनएपीआई 3.0 उपसमूह हैं (जेएसओएन स्कीम 2020-12 से थोड़ा विचलन) । समानांतर कॉल अद्वितीय-आईडी से जुड़वां 3।
 
 ### `tool_choice`व्यवहार
@@ -94,7 +94,7 @@
 
 - **OpenAI (non-strict).**मॉडल रिटर्न `arguments: "{bad json}"`, अपने JSON विश्लेषण विफल रहता है, आप एक त्रुटि संदेश इंजेक्ट और फिर से कॉल.
 - **OpenAI (strict).**सत्यापन डिकोडिंग के दौरान होता है; अमान्य JSON असंभव है लेकिन `refusal`दिखाई दे सकता है।
-- **Anthropic.** `input`अप्रत्याशित फ़ील्ड शामिल हो सकते हैं; स्कीमा सलाह है. सर्वर पक्ष सत्यापित करें.
+- **Anthropic (non-strict).** `input`सर्वर पक्ष को मान्य करें। के साथ `strict: true`, नमूनाकरण योजना तक सीमित है।
 - **Gemini.**OpenAPI 3.0 की विशेषता: `enum`वस्तु क्षेत्रों पर चुपचाप अनदेखा; स्वयं को मान्य करें।
 
 ### अनुवादक पैटर्न
