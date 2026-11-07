@@ -1,6 +1,6 @@
 # Gerçek Zaman Görüşü  Kısıtlama
 
-> Kenar çıkarım, 90 doğruluklu bir modelin 2 GB RAM'li bir cihazda 30 fps hızında çalışmasını sağlamak için disiplindir.
+> Kenar çıkarım, %90 doğruluklı bir modelin 2 GB RAM'li bir cihazda 30 fps hızında çalışmasını sağlayan disiplindir.
 
 **Type:** Learn + Build
 **Languages:** Python
@@ -41,7 +41,7 @@ flowchart LR
     style PWR fill:#dbeafe,stroke:#2563eb
 ```
 
-- **Latency**Ortalama sadece p50'de gerçek zamanlı sistemler için önemli olan kuyruğu davranışları gizlenir.
+- **Latency**Sadece p50 (veya ortalama) raporlama gerçek zamanlı sistemler için önemli olan kuyruğu davranışları gizler.
 - **Peak memory**Bu, cihazın gördüğü maksimum, sabit durum ortalaması değil.
 - **Power / energy**Batarya ile çalışan bir cihazda: her sonuca göre millijoules.
 

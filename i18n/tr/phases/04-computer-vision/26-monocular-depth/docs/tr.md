@@ -92,7 +92,7 @@ Z &= d
 \end{aligned}
 ```
 
-İçseller EXIF metadata, kalibrasyon kalıpı veya monocular içsel değerlendirici (Perspective Fields, UniDepth) 'den gelir. İçseller olmadan, hala bir nokta bulutunu görüntüleme için kullanılabilir olan 60-70 ° FOV ve orta çözünürlük ilkelerini varsayarak göstermek mümkündür.
+İçseller EXIF metadata, kalibrasyon kalıpı veya monocular içsel değerlendirici (Perspective Fields, UniDepth) 'den gelir. İçseller olmadan, bir nokta bulutunu 60-70 ° FOV ve görüntü merkezinde bir ana noktayı varsayarak göstermek mümkündür. Bu görüntüleme için kullanılabilir, ölçüm için değil.
 
 ### Değerlendirme
 

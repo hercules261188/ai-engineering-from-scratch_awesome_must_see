@@ -71,7 +71,7 @@ Sonundan sonuna kadarki modeller daha fazla veri ve hesaplama gerektiriyor ancak
 
 ### Yapılandırma analizleri
 
-Yapılandırılmış belgeler için her bölgeyi etiketleyen bir düzenleme dedektörü (LayoutLMv3, DocLayNet) çalıştırın: Başlık, Paragraf, Şekil, Tablo, Ayağa Not. Okumak sırası daha sonra "örnekler boyunca düzenlemede tekrarlanır, bir zincir".
+Yapılandırılmış belgeler için, her bölgeyi etiketleyen bir düzenleme modeli (LayoutLMv3, veya DocLayNet veri kümesi üzerinde eğitilmiş bir detektör) çalıştırın: Başlık, paragraf, Şekil, Tablo, Ayağa Not. Okumak sırası daha sonra "örnekler boyunca düzenlemede tekrarlanır, birleştirilmiştir".
 
 Formular için kullan **Key-Value extraction**Modeller (görünen zengin belgeler için donut, düz taramalar için LayoutLMv3) görüntü + tespit edilen metin + konumları alır ve yapılandırılmış anahtar-değer çiftlerini tahmin eder.
 
@@ -160,18 +160,23 @@ Sıkı yükseklik girimi (CNN maksimum yüksekliği 1'e kadar belirler). Genişl
 
 ### Adım 3: Sentetik OCR
 
-Sonundan sonuna duman testi için siyah beyaz parmaklık iplerini oluşturun.
+Sonundan sona duman testi için siyah-beyaz ipler oluşturun. Her karakter, kelime harfinin indeksini ikili olarak harfleyen altı barlı bir sütun haline gelir. Resim karakterin kimliğini taşımalıdır: Eğer her karakter aynı boş kutu olsaydı, model söyleyemezdi`a`-`x`, ve kaybı durur.
 
 ```python
 import numpy as np
+
+GLYPHS = "0123456789abcdefghijklmnopqrstuvwxyz"
 
 def synthetic_line(text, height=32, char_width=16):
     W = char_width * len(text)
     img = np.ones((height, W), dtype=np.float32)
     for i, c in enumerate(text):
         x = i * char_width
-        shade = 0.0 if c.isalnum() else 0.5
-        img[6:height - 6, x + 2:x + char_width - 2] = shade
+        code = GLYPHS.find(c) + 1
+        for bit in range(6):
+            if code >> bit & 1:
+                y = 4 + 4 * bit
+                img[y:y + 3, x + 2:x + char_width - 2] = 0.0
     return img
 
 
@@ -202,7 +207,7 @@ Gerçek bir OCR veri kümesi şriftleri, gürültü, dönüm, bulanıklık ve re
 model = TinyCRNN(vocab_size=len(vocab))
 opt = torch.optim.Adam(model.parameters(), lr=1e-3)
 
-for step in range(200):
+for step in range(400):
     strings = ["abc" + str(step % 10)] * 4 + ["xyz" + str((step + 1) % 10)] * 4
     imgs, targets, target_lens = build_batch(strings, vocab)
     log_probs = model(imgs)  # (W', 8, vocab)
@@ -211,7 +216,7 @@ for step in range(200):
     opt.zero_grad(); loss.backward(); opt.step()
 ```
 
-Bu önemsiz sentetik veriler üzerinde 200 adımdan ~3'den ~0.2'ye düşmek gerekir.
+Kayıplar iki rakamdan yaklaşık 0.3'e düşmeli bu önemsiz sentetik veriler üzerinde 400 adım içinde. `code/main.py`Aynı döngü kendi string seti üzerinde çalışır ve sonra üç test string çözünür.
 
 ## Kullan
 

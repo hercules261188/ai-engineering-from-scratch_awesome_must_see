@@ -84,7 +84,7 @@ Son ikili maskesi üretmek için 28x28 maskesini önerinin orijinal piksel boyut
 
 ### Kayıplar
 
-Mask R-CNN'in toplam 4 kayıpı var:
+Mask R-CNN'in toplam 5 kayıpı var:
 
 ```math
 L = L_{\text{rpn\_cls}} + L_{\text{rpn\_box}} + L_{\text{box\_cls}} + L_{\text{box\_reg}} + L_{\text{mask}}
@@ -261,7 +261,7 @@ def train_step(model, images, targets, optimizer):
     return {k: v.item() for k, v in loss_dict.items()}
 ```
 
-- Evet .`targets`listede resim başına diktler olmalı.`boxes`- Evet .`labels`ve`masks`(Tüm`(num_instances, H, W)`Modeldeki ikili tenzorlar) eğitim sırasında dört kayıpın diktini ve eval sırasında tahminlerin bir listesini gönderir.`model.training`- Evet .
+- Evet .`targets`listede resim başına diktler olmalı.`boxes`- Evet .`labels`ve`masks`(Tüm`(num_instances, H, W)`Modeldeki bir dict, eğitim sırasında beş kayıp ve eval sırasında tahminlerin bir listesini gönderir.`model.training`- Evet .
 
 - Evet .`pycocotools`evaluator hem kutular için hem de maskeler için mAP@IoU=0.5:0.95 üretir; kutu başının veya maske başının şişek boynuz olup olmadığını bilmek için her iki numara da gerekir.
 

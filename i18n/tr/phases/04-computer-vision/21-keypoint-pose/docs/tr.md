@@ -60,7 +60,7 @@ Sıcaklık haritalarının doğrudan gerilemeden daha iyi çalışmasının nede
 
 ### Alt piksel yerleşimi
 
-Argmax tam sayı koordinatları verir. Alt piksel hassasiyeti için, argmax ve komşularına bir parabola yerleştirerek veya bilinen ofset kullanarak mükemmelleştirin `(dx, dy) = 0.25 * (heatmap[y, x+1] - heatmap[y, x-1], ...)`Yön.
+Argmax tam sayı koordinatları verir. Alt piksel hassasiyeti için, argmax ve komşularına bir parabola yerleştirerek veya argmax'ı daha yüksek komşuya doğru değiştirerek arşın.`dx = 0.25 * (heatmap[y, x+1] - heatmap[y, x-1])`Ve aynı şey için .`dy`, kodun yaptığı gibi.
 
 ### Bölüm Affinity Alanları (PAF)
 

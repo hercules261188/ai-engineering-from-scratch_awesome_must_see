@@ -203,8 +203,10 @@ def encode(box_xyxy, cell_x, cell_y, stride, anchor_wh):
     cy = 0.5 * (y1 + y2)
     w = x2 - x1
     h = y2 - y1
-    tx = cx / stride - cell_x
-    ty = cy / stride - cell_y
+    off_x = np.clip(cx / stride - cell_x, 1e-6, 1 - 1e-6)
+    off_y = np.clip(cy / stride - cell_y, 1e-6, 1 - 1e-6)
+    tx = np.log(off_x / (1 - off_x))
+    ty = np.log(off_y / (1 - off_y))
     tw = np.log(w / anchor_wh[0] + 1e-8)
     th = np.log(h / anchor_wh[1] + 1e-8)
     return np.array([tx, ty, tw, th])
@@ -223,7 +225,7 @@ def sigmoid(x):
     return 1.0 / (1.0 + np.exp(-x))
 ```
 
-Test: bir kutuyu kodlayın sonra kodunu çözün  orijinaline çok yakın bir şey geri alınmalıdır (sigmoid tersine kadar mükemmel olarak dönüştürülebilir değilken `tx`Sigmoid sonrası aralığında değildir).
+Test: merkezleri hücrenin içindekini kodlayan bir kutuyu kodlayın, sonra kodunu çözün ve orijinal kutuyu tekrar yüzen hataya kavuşturmalısınız. `encode`                                                                                                                                            `sigmoid`İçeride`decode`- Klip, logit'i son tutar; hücre kenarında tam bir merkez en fazla hareket eder.`1e-6`Hücreler.`assign_targets`Alt tarafta aynı çubuklar var, böylece başı uzaydaki trenlere ulaşır.`decode`Bekliyor.
 
 ### Dördüncü adım: En az YOLO başı
 
@@ -273,8 +275,10 @@ def assign_targets(boxes_xyxy, classes, anchors, stride, grid_size, num_classes)
         best = int(np.argmax(ious))
         aw, ah = anchors[best]
 
-        target[gy, gx, best, 0] = cx / stride - gx
-        target[gy, gx, best, 1] = cy / stride - gy
+        off_x = np.clip(cx / stride - gx, 1e-6, 1 - 1e-6)
+        off_y = np.clip(cy / stride - gy, 1e-6, 1 - 1e-6)
+        target[gy, gx, best, 0] = np.log(off_x / (1 - off_x))
+        target[gy, gx, best, 1] = np.log(off_y / (1 - off_y))
         target[gy, gx, best, 2] = np.log(bw / aw + 1e-8)
         target[gy, gx, best, 3] = np.log(bh / ah + 1e-8)
         target[gy, gx, best, 4] = 1.0
@@ -319,7 +323,7 @@ def yolo_loss(pred, target, has_obj, lambda_coord=5.0, lambda_obj=1.0, lambda_no
                    "obj_neg": loss_obj_neg.item(), "cls": loss_cls.item()}
 ```
 
-YOLO'nun her öğretim programının ya sert kodlar yazması ya da temizlemesi gereken beş hiper-parametre.`lambda_coord=5, lambda_noobj=0.5`YOLOv1 kağıtını yansıtır ve yine de makul bir özelliği olarak çalışır.
+YOLO'nun her öğretimi, dört kayıp ağırlığı ya sert kodlar ya da süpürür.`lambda_coord=5, lambda_noobj=0.5`YOLOv1 kağıtını yansıtır ve yine de makul bir özelliği olarak çalışır.
 
 ### Adım 7: İndirim boru hattı
 

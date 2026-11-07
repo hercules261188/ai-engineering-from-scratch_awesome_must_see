@@ -67,7 +67,7 @@ Avantajlar:
 - I3D enflasyonı ücretsiz transfer öğrenimi sağlar.
 
 Eksiler:
-- T/8'de 2D eşliğinden daha fazla FLOP (sürekli çekirdeğin 3'ü 3 kez yığılmış)
+- 2D ağının FLOP'lerinin yaklaşık 3x'i çerçeveye çerçeve olarak çalışır, çünkü her 3x3 çekirdeği 3x3x3 olur.
 - Zaman çekirdekleri küçüktür; uzun mesafeli hareket piramit veya çift akımlı bir yaklaşım gerektirir.
 
 Ne zaman kullanılır: hareket sinyal olduğu hareket tanımı (Something-Something V2, Kinetics with motion-heavy classes).

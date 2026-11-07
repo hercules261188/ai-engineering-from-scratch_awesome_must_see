@@ -129,7 +129,7 @@ Ortalama bir sınıf %15'te, dokuz sınıf %85'teyken gizlenir.
 
 ### Giriş çözümü pazarlaması
 
-U-Net'in kodlayıcı çözünürlüğünü dört kat ikiye katlar, bu nedenle giriş 16 ile bölünebilir olmalıdır. Tıp görüntüleri genellikle 512x512 veya 1024x1024'dir.`H * W * C_max`, ve 1024x1024'e 1024 şişek boynuz kanalları ile ön geçiş zaten VRAM'ın gigabaytlarını kullanıyor.
+U-Net'in kodlayıcı çözünürlüğünü dört kat azaltır, bu nedenle atış bağlantıları sadece giriş 16 ile bölünürken sıraya geçiyor. Diğer boyutlara yükleme veya yukarı blokta boyut değiştirme gereklidir (Adım 2). Tıbbi görüntüler genellikle 512x512 veya 1024x1024'dir. Otonom sürücü ürünler 2048x1024'dir.`H * W * C_max`, ve 1024x1024'e 1024 şişek boynuz kanalları ile ön geçiş zaten VRAM'ın gigabaytlarını kullanıyor.
 
 İki standart çözüm yolu:
 1. Girme  işlemi 256x256 kapsamlı ve dikişli kapsamlı kapsamlı kapsamlı kapsamlı.

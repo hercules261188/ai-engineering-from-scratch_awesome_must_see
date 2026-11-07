@@ -235,7 +235,7 @@ Sadece LoRA matrisleri gradient alır; temel U-Net, VAE ve metin kodlayıcı don
 
 - **Model family**: SD 1.5 açık kaynaklı topluluk ince tonları için, SDXL daha yüksek sadakat için, SD3 / FLUX son teknoloji ve sıkı lisans gereksinimleri için.
 - **Scheduler**: DPM-Solver++ 20 ila 30 adım için 2M Karras, 1 saniye altında geciktiğinde LCM-LoRA.
-- **Precision**- Evet .`float16`4080/4090'da, `bfloat16`A100 ve daha yeni,`int8`(den)`bitsandbytes`veya `compel`) VRAM sıkıken.
+- **Precision**- Evet .`float16`4080/4090'da, `bfloat16`A100 ve daha yeni,`int8`(den)`bitsandbytes`) VRAM sıkıken.
 - **Conditioning**: düz metin çalışması; daha güçlü kontrol için, temel boru hattının üstüne ControlNet (sıkı, derin, poz) ekleyin.
 
 Satır üretimi için,`AUTO1111`- Ne ?`ComfyUI`Topluluk araçları; üretim API'leri için,`diffusers`+ `accelerate`veya `optimum-nvidia`TensorRT komisyonu ile.

@@ -69,7 +69,7 @@ Standart izleyici düşük güven tespitlerini düşürür (< 0, 5).**second-sta
 
 ### SAM 2 hafıza tabanlı izleme
 
-SAM 2 bir **memory bank**Bir çerçeve üzerinde bir istasyon (klik, kutu, metin) verildiğinde, istasyon hafıza içine kodlanır. Sonraki çerçevelerde, hafıza yeni çerçeve özelliklerine karşı çapraz olarak katılır ve dekodör yeni çerçeve içinde aynı istasyon için bir maska üretir.
+SAM 2 bir **memory bank**Bir çerçeve üzerinde bir istasyon (klik, kutu veya maske) verildiğinde, istasyon hafıza içine kodlanır. Sonraki çerçevelerde, hafıza yeni çerçeve özelliklerine karşı çapraz olarak katılır ve dekodör yeni çerçeve içinde aynı istasyon için bir maske üretir.
 
 Kalman filtre yok, Macar görev yok.
 
