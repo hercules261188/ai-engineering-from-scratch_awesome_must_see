@@ -55,7 +55,13 @@ Verifique se tem um .
 nvidia-smi
 ```
 
-Instalar PyTorch com CUDA:
+Instale PyTorch com CUDA. No Linux, as rodas padrão enviam com CUDA. No Windows, copie o comando CUDA do selector em pytorch.org.
+
+```bash
+pip install torch torchvision torchaudio
+```
+
+Então verifique se o PyTorch vê a GPU:
 
 ```python
 import torch
