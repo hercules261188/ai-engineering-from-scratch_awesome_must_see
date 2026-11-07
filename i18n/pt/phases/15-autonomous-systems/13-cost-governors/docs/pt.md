@@ -58,7 +58,7 @@ O Kit de Ferramentas de Governança de Agentes da Microsoft abrange os requisito
 
 ### O observado .$1,200 → $4.800 casos
 
-O caso real nos documentos da Microsoft: um agente de comércio eletrônico cujo custo mensal triplicou após a adição de uma nova ferramenta. A ferramenta permitiu ao agente fazer um sondagem sobre o estado da ordem durante cada sessão. Não há detecção de circuito. Não há gorjeta por ferramenta. Não há alerta sobre crescimento semanal. A correcção era um limite por ferramenta e um alerta de crescimento diário. Esta é uma modelo: cada nova superfície da ferramenta é um novo ciclo potencial; cada nova ferramenta precisa de seu próprio limite e de seu próprio alerta.
+O caso real nos documentos da Microsoft: um agente de comércio eletrônico cujo custo mensal quadruplicou após a adição de uma nova ferramenta. A ferramenta permitiu ao agente fazer um sondagem sobre o estado da ordem durante cada sessão. Não há detecção de circuito. Não há gorjeta por ferramenta. Não há alerta sobre crescimento semanal. A correcção era um limite por ferramenta e um alerta de crescimento diário. Esta é uma modelo: cada nova superfície da ferramenta é um novo ciclo potencial; cada nova ferramenta precisa de seu próprio limite e de seu próprio alerta.
 
 ```figure
 cost-governor-stack

@@ -1,6 +1,6 @@
 # Agentes de navegador e tarefas da Web de longo prazo
 
-> O agente ChatGPT (julho de 2025) combinou o Operador e a pesquisa profunda em um único agente do navegador/terminal e estabeleceu o BrowseComp SOTA em 68,9%. A OpenAI fechou a Operator em 31 de agosto de 2025  consolidação na camada de produto. A aquisição da Vercept da Anthropic levou Claude Sonnet no OSWorld de menos de 15% para 72,5%. WebArena-Verified (ServiceNow, ICLR 2026) fixou 11,3 pontos percentuais de taxa de falsos negativos na WebArena original e enviou o subconjunto Hard de 258 tarefas. Os números são reais. Assim como a superfície do ataque: o chefe de preparação da OpenAI declarou publicamente que a injeção direta direta de um agente de navegador "não é um bug que possa ser totalmente corrigido". Ataques documentados 20252026: Memórias contaminadas (Atlas CSRF), HashJack (Cato Networks), e sequestros de um clique no Perplexity Comet.
+> O agente ChatGPT (julho de 2025) combinou o Operador e a pesquisa profunda em um único agente do navegador/terminal e estabeleceu o BrowseComp SOTA em 68,9%. A OpenAI fechou a Operator em 31 de agosto de 2025  consolidação na camada de produto. A aquisição da Vercept da Anthropic levou Claude Sonnet no OSWorld de menos de 15% para 72,5%. WebArena-Verified (ServiceNow, ICLR 2026) fixou a taxa de falsos negativos de ~11.3% na WebArena original e enviou o subconjunto Hard de 258 tarefas. Os números são reais. Assim como a superfície do ataque: o chefe de preparação da OpenAI declarou publicamente que a injeção direta direta de um agente de navegador "não é um bug que possa ser totalmente corrigido". Ataques documentados 20252026: Memórias contaminadas (Atlas CSRF), HashJack (Cato Networks), e sequestros de um clique no Perplexity Comet.
 
 **Type:** Learn
 **Languages:** Python (stdlib, indirect prompt-injection attack surface model)
@@ -9,7 +9,7 @@
 
 ## O problema
 
-Um agente de navegador é um agente de longo horizonte que lê conteúdo não confiável e toma ações consequentes. Cada página que o agente visita é uma entrada que o usuário não escreveu. Cada formulário em cada página é um potencial canal de comando. O corpus de ataque 20252026 mostra que isso não é hipotético: Memórias contaminadas permite que um atacante ligue instruções maliciosas à memória do agente através de uma página criada; HashJack esconde comandos em fragmentos de URL que o agente visita; Perplexity Comet hijacks atingido em um único clique.
+Um agente de navegador é um agente de longo horizonte que lê conteúdo não confiável e toma ações consequentes. Cada página que o agente visita é uma entrada que o usuário não escreveu. Cada formulário em cada página é um potencial canal de comando. O corpus de ataque 20252026 mostra que isso não é hipotético: Memórias contaminadas permite que um atacante enlace instruções maliciosas à memória do agente através de uma página criada; HashJack esconde comandos em fragmentos de URL que o agente visita; Perplexity Comet hijacks tomam um único clique.
 
 O quadro defensivo é desconfortável. O chefe de preparação da OpenAI disse que a parte silenciosa é alta: a injeção direta direta "não é um bug que possa ser totalmente corrigido". Isso ocorre porque o ataque vive na fronteira leitura-versus-ação do agente, que é arquitetonicamente confusa.
 
