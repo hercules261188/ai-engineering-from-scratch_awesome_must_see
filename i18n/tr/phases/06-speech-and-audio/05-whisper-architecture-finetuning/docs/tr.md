@@ -36,9 +36,9 @@ Large-v3'de 1.55B parametreleri vardır. Turbo, 4 katlı bir dekodör kullanır 
 <|startoftranscript|><|en|><|transcribe|><|notimestamps|> Hello world.<|endoftext|>
 ```
 
-- `<|en|>` dil etiketi; çevirme karşı transkripsiyon davranışını zorlar.
-- `<|transcribe|>`veya `<|translate|>` herhangi bir dil girişinden veya kelimenin tam anlamıyla İngilizce çıkışını çevirin.
-- `<|notimestamps|>` kelime seviyesindeki zaman damgasını atlayın (hızlı).
+- `<|en|>`: dil etiketleri; sesli konuşulan dili isimlendirir.
+- `<|transcribe|>`veya `<|translate|>`: görev etiket; konuşmayı kaynak diliyle çevirin veya İngilizce metine çevirin.
+- `<|notimestamps|>`: kelime seviyesindeki zaman damgasını atlayın (hızlı).
 
 Bu, bir modelin birçok görevi yapmasına izin veren bir prompt.`<|en|>`- ...`<|fr|>`Fransızca yazıyor.
 

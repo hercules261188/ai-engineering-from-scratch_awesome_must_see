@@ -45,7 +45,7 @@ Her ses görevinin farklı bir ekseni ölçen birden fazla metrik vardır. Yanl�
 
 **SECS (Speaker Encoder Cosine Similarity).**Ses klonlaması için. ECAPA referans ve klon edilmiş çıkış arasında cosine yerleştirme. &gt; 0.75 = tanınabilir klon.
 
-**WER-on-ASR-round-trip.**TTS çıkışında Whisper çalıştırın, girilen metne karşı WER hesaplayın. Anlaşılabilirlik gerilemeleri yakalar. 2026 SOTA: &lt; 2% CER.
+**WER-on-ASR-round-trip.**TTS çıkışında Whisper çalıştırın, girilen metne karşı WER hesaplayın. Anlaşılabilirlik gerilemeleri yakalar. 2026 SOTA: &lt; 2% WER İngilizce test setlerinde (Mandarin setleri yerine CER rapor).
 
 **TTFA (time-to-first-audio).**Kokoro-82M: ~100 ms; F5-TTS: ~ 1 saniye.
 
@@ -79,7 +79,7 @@ Denge eksikliği: **macro F1**+ **per-class recall**.Sınıf başına rapor  Top
 
 **CLAP Score.**CLAP gömülmelerini kullanarak metin-audio uyum puanı. &gt; 0.3 = makul uyum.
 
-**Listening panel MOS.**TTS Arena'da Suno v5 ELO 1293 (insan tercihlerinden)
+**Listening panel MOS.**Suno'nun kendi çiftli tercih referanslamasında ELO 1293 puanını aldı. Bu bir satıcı numarasıdır; TTS Arena, müzik değil konuşmayı sıralamaktadır.
 
 ### Sesli dil referansları
 
