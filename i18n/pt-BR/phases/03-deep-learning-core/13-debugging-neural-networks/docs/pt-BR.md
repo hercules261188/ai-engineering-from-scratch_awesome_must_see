@@ -22,7 +22,7 @@ As redes neurais não lhe dão esse luxo.
 
 Uma rede neural quebrada corre até a conclusão, imprime um valor de perda e faz previsões. A perda pode diminuir. As previsões podem parecer plausíveis. Mas o modelo está silenciosamente errado: aprender atalhos, memorizar ruído ou convergir para um mínimo local inútil. Pesquisadores do Google estimaram que 60-70% do tempo de depuração do ML é gasto em bugs "silenciosos" que não produzem erros, mas degradam a qualidade do modelo.
 
-A diferença entre um modelo de trabalho e um modelo quebrado é muitas vezes uma única linha deslocada: uma falta `zero_grad()`, uma dimensão transposta, uma taxa de aprendizagem de 10x. A canônica "Receita para Treinar Redes Neurais" (2019) abre com isto: "Os erros mais comuns da rede neural são bugs que não caem".
+A diferença entre um modelo de trabalho e um modelo quebrado é muitas vezes uma única linha deslocada: uma falta `zero_grad()`A "Receita para Treinar Redes Neurais" (2019) canônica começa com isto: "Os erros mais comuns da rede neural são bugs que não caem".
 
 Esta lição ensina-te a encontrar esses insetos.
 
