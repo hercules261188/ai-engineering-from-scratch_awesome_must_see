@@ -49,7 +49,7 @@ noise-schedule
 
 ## Construye el mismo
 
-`code/main.py`Esta prueba muestra que la misma pérdida de difusión funciona si se ejecuta con valores 1D o en valores codificados  la información clave.
+`code/main.py`Esta prueba muestra que la misma pérdida de difusión funciona si se ejecuta con valores 1D crudos o con valores codificados. Esa es la clave.
 
 ### Paso 1: codificador/decodificador
 
@@ -132,7 +132,7 @@ Salva .`outputs/skill-sd-prompter.md`. Skill toma un texto de respuesta + estilo
 
 La integración de Flux de referencia es la receta canónica "Tengo una GPU de consumo, ¿puedo enviar esto?" El truco es el mismo de tres botones de receta de producción de la literatura de inferencia listas aplicadas a una difusión DiT:
 
-1. **Staggered loading.**Flux tiene tres redes que nunca necesitan coexistir en VRAM: T5-XXL codificador de texto (~ 10 GB en fp32), CLIP-L (pequeño), el 12B MMDiT, y el VAE. Encode el prompt primero, *borrar* los codificadores, cargar el DiT, denoise, *borrar* el DiT, cargar el VAE, decodificar.
+1. **Staggered loading.**Flux tiene cuatro redes que nunca necesitan coexistir en VRAM: T5-XXL codificador de texto (~ 10 GB en fp32), CLIP-L (pequeño), el 12B MMDiT, y el VAE. Encode el prompt primero, *borrar* los codificadores, cargar el DiT, denoise, *borrar* el DiT, cargar el VAE, decodificar.
 2. **4-bit quantization via bitsandbytes.** `BitsAndBytesConfig(load_in_4bit=True, bnb_4bit_compute_dtype=torch.bfloat16)`En el codificador T5 y en el DiT. Cortando la memoria 8×, la caída de calidad es imperceptible para el texto a la imagen por los puntos de referencia de Aritra (enlazados en el cuaderno).
 3. **CPU offload.** `pipe.enable_model_cpu_offload()`automáticamente cambia los módulos entre la CPU y la GPU a medida que cada paso avanzado avanza. Agrega 10-20% de latencia pero hace que la tubería funcione en absoluto.
 

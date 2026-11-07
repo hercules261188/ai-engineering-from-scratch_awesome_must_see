@@ -99,7 +99,7 @@ Es el modelo generativo. Cinco líneas.
 - **Posterior collapse.**Dispositivos de término KL $q(z \mid x) \to \mathcal{N}(0, I)$tan agresivamente que$z$No lleva información sobre $x$. Corrección: β-annelación (inicio $\beta=0$, rampa a 1), bits libres, o saltar el KL en dimensiones inactivas.
 - **Blurry samples.**La probabilidad del decodificador gaussiano implica la reconstrucción de MSE, que es Bayes-óptima para L2 (la media)  la media de un conjunto de dígitos plausibles es un dígito borroso.
 - **β too large, too early.**Ver colapso posterior.$\beta \approx 0.01$y la rampa.
-- **Latent dim too small.**16-D funciona para MNIST, 256-D para ImageNet 2562, 2048-D para ImageNet 10242. La VAE de la difusión estable comprime 512×512×3 → 64×64×4 (32x factor de muestra baja en área espacial, 32x en canales).
+- **Latent dim too small.**16-D funciona para MNIST, 256-D para ImageNet 2562, 2048-D para ImageNet 10242. VAE de la difusión estable comprime 512×512×3 → 64×64×4 (8x muestra baja por lado, 64x en área espacial; los canales van de 3 a 4, por lo que aproximadamente 48x menos valores en general).
 
 ## Usalo
 
