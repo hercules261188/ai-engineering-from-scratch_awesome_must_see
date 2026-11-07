@@ -16,7 +16,7 @@
 
 ## Sorun
 
-Bir mağazada üç sorgu sınıfından biri için yanlış:
+Her mağaza üç sorgu sınıfından sadece birine uygun:
 
 - **Semantic similarity**Vector kazanır, KV ve grafik kaybı.
 - **Fact lookup** "kullanıcının telefon numarası nedir?" KV kazanır; vektör harcadır, grafik aşırı öldürür.

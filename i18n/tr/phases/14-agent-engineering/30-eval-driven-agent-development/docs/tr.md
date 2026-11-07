@@ -22,7 +22,7 @@ Ajanlar demoları geçiyor. Demoların tahmin edemeyeceği şekilde üretim baş
 
 ### Üç değerlendirme katmanı
 
-1. **Static benchmarks** SWE-benç Kodu için doğrulanmış (Denevi 19), WebArena/OSWorld tarama / masaüstü için (Denevi 20), GAIA için genelist (Denevi 19), BFCL V4 için araç kullanımı için (Denevi 06).
+1. **Static benchmarks** SWE-benç Kodu için doğrulanmış (Desin 19), WebArena/OSWorld tarama / masaüstü için (Desin 20), GAIA için genelist için (Desin 19), BFCL V4 için araç kullanımı için (Desin 06).
 
 2. **Custom offline evals** ürününüzün şekli:
    - Yargıç olarak LLM (Langfuse, Phoenix, Opik  Ders 24).
@@ -54,7 +54,7 @@ Bu Self-Refine (Deneyim 05) genelleştirilmiş.
 
 ### 14 Fase'nin bir arada bağlanması
 
-14'teki her ders değerlendirme vakaları oluşturur:
+Faz 14'teki çoğu ders değerlendirme durumlarını oluşturur.
 
 | Lesson | Eval case it generates |
 |--------|------------------------|
@@ -77,7 +77,7 @@ Bu Self-Refine (Deneyim 05) genelleştirilmiş.
 | 28 Orchestration | Supervisor routes to the right specialist |
 | 29 Runtime Shapes | DLQ handles N% failure |
 
-Eğer değerlendirme süitinizde her bir vaka varsa, 14. aşamayı kapsadınız.
+Eğer değerlendirme süitiniz her satır için bir vaka varsa, 14. aşamanın çekirdeğini kapsadınız.
 
 ### Değerlendirme yöntemi geliştirilmediğinde
 

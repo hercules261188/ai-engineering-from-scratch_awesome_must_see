@@ -10,7 +10,7 @@
 ## Öğrenme Hedefleri
 
 - Claude'un bilgisayar kullanımı: Ekran çekimi, klavyada/farklı komutlar çıkartılmalı, erişilebilirlik API yoktur.
-- OSWorld / WebArena / Online-Mind2Web'de üç modelin referans numaralarını isimlendirin.
+- Bu derste alıntılanan başlatma referans numaralarını hatırlayın: OSWorld / WebArena / WebVoyager'da OpenAI CUA ve Online-Mind2Web'de Gemini 2.5 Bilgisayar Kullanımı.
 - Gemini 2.5 Bilgisayar Kullanım belgelerinin her adımlı güvenlik örneğini açıklayın.
 - Üç model de güvenilmeyen giriş sözleşmesini özetleyin.
 

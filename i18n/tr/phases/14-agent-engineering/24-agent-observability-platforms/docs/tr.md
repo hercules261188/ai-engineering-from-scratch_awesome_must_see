@@ -1,6 +1,6 @@
 # Ajan Gözlem: Langfuse, Phoenix, Opik
 
-> Üç açık kaynaklı ajan gözlemleme platformu 2026'da baskın olmuştur. Langfuse (MIT)  6M+ yükler/ay, izleme + istintap yönetimi + değerlendirmeler + oturum tekrarlama. Arize Phoenix (Elastic 2.0)  derin ajan özelliği değerlendirmeleri, RAG bağlamlılığı, OpenInference otomatik aletleştirme. Comet Opik (Apache 2.0)  otomatik istintap optimizasyonu, guardrails, LLM yargıç halüsinasyon tespit.
+> Langfuse (MIT)  6M+ yükler/ay, izleme + istintap yönetimi + değerlendirmeler + oturum tekrarlama. Arize Phoenix (Elastic 2.0)  derin ajan özelliği değerlendirmeler, RAG bağlamlılığı, OpenInference otomatik aletleştirme. Comet Opik (Apache 2.0)  otomatik istintap optimizasyonu, guardrails, LLM yargıç halüsinasyon tespit.
 
 **Type:** Learn
 **Languages:** Python (stdlib)
@@ -9,7 +9,7 @@
 
 ## Öğrenme Hedefleri
 
-- Açık kaynaklı üç en iyi ajan gözlemleme platformu ve lisanslarını isimlendirin.
+- Üç en iyi kendi kendine konutlanabilir ajan gözlemleme platformu ve lisanslarını isimlendirin ve hangisinin OSI açık kaynaklı olmadığını söyleyin.
 - Her birinin en güçlü özelliklerini ayırt edin: Langfuse (sürekli mgmt + seanslar), Phoenix (RAG + otomatik aletleştirme), Opik (optimize + koruma).
 - Neden% 89'u 2026 yılına kadar ajan gözlemlenebilirliği olduğunu bildirir?
 - LLM yargıç değerlendirme ile bir stdlib izleme-dashboard borusu uygulamak.

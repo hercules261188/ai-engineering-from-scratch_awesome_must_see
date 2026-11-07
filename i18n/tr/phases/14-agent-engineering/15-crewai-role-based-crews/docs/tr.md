@@ -3,7 +3,7 @@
 > Dört ilkel: Ajan, Görev, Ekip, İşlem. İki üst düzey şekil: Ekipler (özerk, rol tabanlı işbirliği) ve Akışlar (event yönlendirilmiş, belirleyici). CrewAI 2026 referans uygulanmasıdır ve dokümanları kesintedir: "herhangi bir üretim hazır uygulaması için, bir Akış ile başlayın".
 
 **Type:** Learn + Build
-**Languages:** Python (stdlib)
+**Languages:** Python (with numpy)
 **Prerequisites:** Phase 14 · 12 (Workflow Patterns), Phase 14 · 14 (Actor Model)
 **Time:** ~75 minutes
 
@@ -14,8 +14,8 @@
 - Ekipleri (özerk rol tabanlı) ve Akışları (evet yönlendirici belirleyici) ayırt edin ve doktorların üretim önerilerini açıklayın.
 - Sınırlı aletler `@tool`dekorasyoncı ve `BaseTool`Alt sınıf; yapılandırılmış çıkışlar vs. serbest metin hakkında neden.
 - Dört CrewAI hafıza tipini ve her birinin ne zaman ödediğini söyleyin.
-- Kısa bir özet oluşturan bir stdlib üç ajan ekibi ( araştırmacı, yazar, editör) uygulayın.
-- CrewAI'nin üç başarısızlık modunu tespit edin: Hızlı şişkinlik, yöneticilerle LLM vergisi, kırılgan elveriler.
+- Kısa bir özet oluşturan sade Python'da üç ajanlı bir ekip ( araştırmacı, yazar, editör) uygulayın.
+- CrewAI'nin dört başarısızlık modunu tespit edin: Aniden şişme, yöneticilerle LLM vergisi, kırılgan elveriler, Crew-as-produc.
 
 ## Sorun
 
@@ -120,7 +120,7 @@ CrewAI, dört bellek türünü kutudan çıkarır ve bir mürettebatın hepsini 
 - İkinci alt gecikme bütçeleri. Hiyerarşik geri dönüşler ekler. Hatta Sequential arka plan hikayeleri ve önceki çıkışları içeren istekleri seriye eder.
 - Tek ajan döngüleri. Çerçeveyi atlayın; bir ajan döngüsü (Deneyim 1) artı bir araç kayıtları daha kısa.
 
-Ders 17 (Agent Framework Tradeoffs) bunu bir matriste açıklıyor. Kısa versiyonu: CrewAI "özellikle rol tabanlı" köşede oturuyor.
+Ders 28 (Orkestralama Şablonları) topolojileri yan yana karşılaştırır. Kısa versiyonu: CrewAI "özellikle rol tabanlı" köşede oturuyor.
 
 ### Bağımlılık şekli
 
@@ -129,7 +129,7 @@ LangChain'den bağımsız. Python 3.10 ile 3.13. Kullanımları `uv`Yıldız say
 ### Bu kalıp yanlış gittiğinde
 
 - **Prompt-bloat from backstories.**Bir ajan ve beş ajanlı ekibinin başına 2000 kelimelik bir arka hikaye ilk araç çağrısı öncesi bağlam bütçesini yakar. arka hikayeyi 200 kelime altında tutun. Ajanlar arasında ifadeleri tekrarlayın; ev tarzını beş kez tekrarlamayın.
-- **Manager-LLM token tax.**Hiyerarşik süreç, her uzman çağrısından önce bir yöneticinin LLM çağrısı ekler. Beş görevli bir ekip üzerinde beş yerine altı LLM çağrısı vardır ve yöneticinin çağrısı, tüm görev listesini ekleyip önceki çıkışları taşır.
+- **Manager-LLM token tax.**Hiyerarşik süreç, her uzman çağrısından önce bir yöneticinin LLM çağrısı ekler. Beş görevli bir ekip üzerinde beş yerine on LLM çağrısı vardır ve yöneticinin çağrısı, önceki çıkışlar ile birlikte tüm görev listesini taşır.
 - **Brittle handoffs.**Görev N's `expected_output`N+1 görevi, `context`Bu yüzden, bu yeni bir programın, bu yeni bir programın, bu yeni programın, bu yeni programın, bu yeni programın, bu yeni programın, bu yeni programın, bu yeni programın, bu yeni programın, bu yeni programın, bu yeni programın, bu yeni programın, bu yeni programın, bu yeni programın, bu yeni programın, bu yeni programın, bu yeni programın, bu yeni programın, bu yeni programın, bu yeni programın, bu yeni programın, bu yeni programın, bu yeni programın, bu yeni programın, bu yeni programın, bu yeni programın, bu yeni programın, bu yeni programın, bu yeni programın, bu yeni programın, bu yeni programın, bu yeni programın, bu yeni yeni programın, bu yeni yeni yeni programın, yeni yeni yeni yeni yeni yeni programın, yeni yeni yeni yeni yeni yeni yeni yeni yeni programın, yeni yeni yeni yeni yeni yeni yeni yeni yeni yeni yeni yeni programı, yeni yeni yeni yeni yeni yeni yeni yeni yeni yeni yeni yeni yeni yeni yeni yeni yeni yeni yeni yeni yeni yeni yeni yeni yeni yeni yeni yeni yeni yeni yeni yeni yeni yeni yeni yeni yeni yeni yeni yeni yeni yeni yeni yeni yeni yeni yeni yeni yeni yeni yeni yeni yeni yeni yeni yeni yeni yeni yeni yeni yeni yeni yeni yeni yeni yeni yeni yeni yeni yeni yeni yeni yeni yeni yeni yeni yeni yeni yeni yeni yeni yeni yeni yeni yeni yeni yeni yeni yeni yeni yeni yeni yeni yeni yeni yeni yeni yeni yeni yeni yeni yeni yeni yeni yeni yeni yeni yeni yeni yeni yeni yeni yeni yeni yeni yeni yeni yeni yeni yeni yeni yeni yeni yeni yeni yeni yeni yeni yeni yeni yeni yeni yeni yeni yeni yeni yeni yeni yeni yeni yeni yeni yeni yeni yeni yeni yeni yeni yeni yeni yeni yeni yeni yeni yeni yeni yeni yeni yeni yeni yeni yeni yeni yeni yeni yeni yeni yeni yeni yeni yeni yeni yeni yeni yeni yeni yeni yeni yeni yeni yeni yeni yeni yeni yeni yeni yeni yeni yeni yeni yeni yeni yeni yeni yeni yeni yeni yeni yeni yeni yeni yeni yeni yeni yeni yeni yeni yeni yeni yeni yeni yeni yeni yeni yeni yeni yeni yeni yeni yeni yeni yeni yeni yeni yeni yeni yeni yeni yeni yeni yeni yeni yeni yeni yeni yeni yeni yeni yeni yeni yeni yeni yeni yeni yeni yeni yeni yeni yeni yeni yeni yeni yeni yeni yeni yeni yeni yeni yeni yeni yeni yeni yeni yeni yeni yeni yeni yeni yeni yeni yeni yeni yeni yeni yeni yeni yeni yeni yeni yeni yeni yeni yeni yeni yeni yeni yeni yeni yeni yeni yeni yeni yeni yeni yeni yeni`output_pydantic`N görevi üzerine N+1 görevi, serbest metin değil, bir yazılmış nesne okur.
 - **Crew-as-prod.**Ücretsiz formlı mürettebat, Flow kapak olmadan üretime gönderilmektedir. Çıktı değişkenliği yüksek; tekrar oynamak imkansızdır; çağrıda kötü bir koşuyu iyi bir koşuya karşı ayıramaz.
 
@@ -139,7 +139,7 @@ ae-crew-vs-flow
 
 ## Yapın
 
-`code/main.py`Her iki şekilden STDlib sürümlerini uyguluyor ve üç ajanlı bir ekip.
+`code/main.py`Bu program, her iki şekilden de plain-Python sürümlerini uyguluyor ve üç ajanlı bir ekib.
 
 Şekil:
 

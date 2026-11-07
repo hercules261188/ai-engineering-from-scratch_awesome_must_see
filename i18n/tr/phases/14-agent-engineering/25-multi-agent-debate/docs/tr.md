@@ -117,7 +117,7 @@ python3 code/main.py
 
 ## Daha Fazla Okumak
 
-- [Du et al., Society of Minds (arXiv:2305.14325)](https://arxiv.org/abs/2305.14325) Kanonik çoklu ajan tartışması
+- [Du et al., Improving Factuality and Reasoning in Language Models through Multiagent Debate (arXiv:2305.14325)](https://arxiv.org/abs/2305.14325) Kanonik çoklu ajan tartışması
 - [Sparse Communication Topology (arXiv:2406.11776)](https://arxiv.org/abs/2406.11776) Nadir topoloji sonuçları
 - [Anthropic, Building Effective Agents](https://www.anthropic.com/research/building-effective-agents) Tartışma variansı olarak orkestrasyoncular
 - [Madaan et al., Self-Refine (arXiv:2303.17651)](https://arxiv.org/abs/2303.17651) Tek model kendi kendini eleştiren karşıt

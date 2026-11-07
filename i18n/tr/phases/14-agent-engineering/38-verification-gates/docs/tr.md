@@ -87,7 +87,7 @@ python3 code/main.py
 
 ## Doğada üretim biçimleri
 
-Dört örnektir kapıyı "başka bir saç işi"nden "başlı kararlı kenara" yükseltir.
+Beş model kapıyı "başka bir saç işi"nden "hüküm verici kenara" yükseltir.
 
 **Defense-in-depth, not single gate.**Pre-commit hook → CI durum kontrolü → pre-tool authz hook → pre-merge gate. Her katman belirleyici olduğundan bir katmandaki bir başarısızlık bir sonraki tarafından yakalanır. microservices.io'nun Mart 2026 oyun kitabı açıkça belirtilmiştir: pre-commit hook geçilebilir değildir çünkü, bir model taraflı beceri aksine, talimatları takip eden ajanın bağımlı değildir. Verifikasyon kapısı CI / pre-merge katmandadır.
 

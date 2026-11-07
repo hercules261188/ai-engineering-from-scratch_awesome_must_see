@@ -79,7 +79,7 @@ Mühendislik kuralı: ilişki kimliklerini yük taşıyan olarak değerlendirin.
 
 ### Kum kutucu
 
-Araç işlevleri kum kutu sınırıdır. Detay için 09 dersine bakın. Kısa sürüm: her araç okuma/yazma yüzeyini, ağ erişimini, zaman sonunu, hafıza kapısını belirtmelidir. Genel `run_shell(cmd)`Kırmızı bayraklı;`git_status()`Daha güvenli.
+Araç işlevleri sandbox sınırıdır. detay için 13 · 26 aşamasını görün. Kısa sürüm: her araç okuma/yazma yüzeyini, ağ erişimini, zaman sonunu, hafıza kapısını belirtmelidir. Genel `run_shell(cmd)`Kırmızı bayraklı;`git_status()`Daha güvenli.
 
 ```figure
 tool-routing

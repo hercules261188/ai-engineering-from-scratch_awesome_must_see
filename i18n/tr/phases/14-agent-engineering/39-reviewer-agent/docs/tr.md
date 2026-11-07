@@ -43,7 +43,7 @@ Beş boyut, her biri 0-2 puan aldı.
 | Verification quality | Does the acceptance command actually prove the goal, or did it prove a weaker version? |
 | Handoff readiness | Could the next session pick up cleanly from the current state? |
 
-10'dan aşağı bir koşuk yumuşak bir başarısızlık, 5'den aşağı bir koşuk sert bir başarısızlık.
+10'un toplamı. 7'den aşağı bir atış yumuşak bir atıştır. 5'den aşağı bir atış veya 0'daki herhangi bir boyut, sert bir atıştır.
 
 ### Eleştirmen ayrı bir rol, ayrı bir model değil.
 
