@@ -121,7 +121,7 @@ A maioria das cadeias que encontram no ML satisfazem ambas as condições.
 
 **Absorbing states.**Um estado é absorvente se, uma vez que você entra nele, nunca sai ($P[i][i] = 1$Absorção de processos de modelo de cadeias de Markov com estados terminais - um jogo que termina, um cliente que se arregaça, uma sequência de tokens que atinge o token final do texto.
 
-**Mixing time.**Quantos passos até que a cadeia esteja "quase" à distribuição estacionária? formalmente, o número de passos até que a distância total de variação da estacionariedade cai abaixo de algum limiar.$P$(1 menos o segundo maior valor próprio) controla o tempo de mistura.
+**Mixing time.**Quantos passos até que a cadeia esteja "querida" à distribuição estacionária? formalmente, o número de passos até que a distância total de variação da estacionariedade cai abaixo de algum limiar.$P$(1 menos a maior magnitude de valor próprio diferente do valor próprio 1) controla o tempo de mistura.
 
 ### Conexão com modelos de linguagem
 

@@ -117,7 +117,8 @@ Algorithm:
   3. If u < p(x) / (M * q(x)), accept x
   4. Otherwise, reject and go to step 1
 
-Acceptance rate = 1/M
+Acceptance rate = Z/M, where Z is the integral of p(x)
+                (Z = 1, so the rate is 1/M, when p is normalized)
 ```
 
 Quanto mais apertado for o limite$M$Em dimensões baixas (1-3), a amostragem de rejeição funciona bem. Em dimensões altas, a taxa de aceitação cai exponencialmente porque a maior parte do volume da proposta é rejeitada. Esta é a maldição da dimensionalidade para a amostragem de rejeição.

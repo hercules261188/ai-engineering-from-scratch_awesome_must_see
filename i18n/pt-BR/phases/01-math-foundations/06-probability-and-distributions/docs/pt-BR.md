@@ -190,14 +190,14 @@ Os números totais de filas e colunas da tabela acima são os marginais.
 
 ### Por que a distribuição normal aparece em todos os lugares
 
-O Teorema do Limite Central: a soma (ou média) de muitas variáveis aleatórias independentes converge para uma distribuição normal, independentemente da distribuição original.
+O Teorema do Limite Central: a média de muitas variáveis aleatórias independentes da mesma distribuição, uma vez centralizada e escalada por $\sqrt{n}$, aproxima-se de uma distribuição normal, independentemente da forma da distribuição original, desde que a sua variância seja finita.
 
 ```
 Roll 1 die:  uniform distribution (flat)
 Average of 2 dice:  triangular (peaked)
 Average of 30 dice: nearly perfect bell curve
 
-This works for ANY starting distribution.
+This works for ANY starting distribution with finite variance.
 ```
 
 É por isso que:
@@ -470,7 +470,7 @@ Construíste isto do zero, agora sabes o que fazem as chamadas da biblioteca.
 | Expected value | "The average" | The probability-weighted sum of all outcomes. The loss function is an expected value |
 | Variance | "How spread out" | The expected squared deviation from the mean. High variance = noisy, unstable estimates |
 | Normal distribution | "The bell curve" | $f(x) = (1/\sqrt{2\pi\sigma^2}) \cdot \exp(-(x-\mu)^2/(2\sigma^2))$. Appears everywhere due to the CLT |
-| Central Limit Theorem | "Averages become normal" | The mean of many independent samples converges to a normal distribution regardless of the source |
+| Central Limit Theorem | "Averages become normal" | The centered, scaled mean of many independent samples converges to a normal distribution for any source with finite variance |
 | Joint distribution | "Two variables together" | $P(X, Y)$ describes the probability of every combination of $X$ and $Y$ outcomes |
 | Marginal distribution | "Sum out the other variable" | $P(X) = \sum_y P(X, Y)$. Recovers one variable's distribution from the joint |
 | Log probability | "Log of the probability" | $\log P(x)$. Turns products into sums, preventing numerical underflow in long sequences |
