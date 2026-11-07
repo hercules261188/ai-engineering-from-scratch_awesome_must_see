@@ -97,7 +97,7 @@ python train.py > output.log 2> errors.log
 python train.py > train_full.log 2>&1
 ```
 
-ثلاثة إعادة توجيهات تحتاجها:
+أربعة إعادة التوجيهات والأنابيب التي تحتاجها:
 
 | Symbol | What it does |
 |--------|-------------|

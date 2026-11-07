@@ -55,7 +55,13 @@ s0-gpu-dispatch
 nvidia-smi
 ```
 
-قم بتثبيت PyTorch مع CUDA:
+قم بتثبيت PyTorch مع CUDA. على Linux تبعث عجلات الافتراض مع CUDA. على Windows، نسخ أمر CUDA من المختار على pytorch.org.
+
+```bash
+pip install torch torchvision torchaudio
+```
+
+ثم تحقق من أن PyTorch يرى GPU:
 
 ```python
 import torch
