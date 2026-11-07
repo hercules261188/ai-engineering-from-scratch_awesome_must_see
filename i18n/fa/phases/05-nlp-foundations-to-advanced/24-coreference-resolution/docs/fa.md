@@ -61,14 +61,14 @@ coref-links
 ```python
 import spacy
 nlp = spacy.load("en_coreference_web_trf")   # experimental model
-doc = nlp("Apple announced new products. The company said they would ship soon.")
+doc = nlp("Apple announced new products. The company said it would ship them soon.")
 for cluster in doc._.coref_clusters:
     print(cluster, "->", [m.text for m in cluster])
 ```
 
 در یک سند طولانی تر، چیزی شبیه به این می آید:
-- گروه اول: [آپل، شرکت، آنها]
-- گروه دوم: [پروژه های جدید]
+- کلستر اول: [آپل، شرکت، آن]
+- گروه دوم: [پروژه های جدید، آنها]
 
 ### مرحله دوم: حل کننده اسم استیاد مبتنی بر قوانین (تدريس)
 

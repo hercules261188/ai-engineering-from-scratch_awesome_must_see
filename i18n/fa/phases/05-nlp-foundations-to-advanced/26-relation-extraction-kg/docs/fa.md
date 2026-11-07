@@ -67,21 +67,21 @@ PATTERNS = [
 
 ببین`code/main.py`نقشه های Hearst هنوز هم در خط لوله های خاص دامنه ارسال می شوند چون قابل رفع هستند.
 
-### مرحله دوم: طبقه بندی روابط تحت نظارت
+### مرحله دوم: استخراج رابطه ی زیر نظر
 
 ```python
-from transformers import AutoTokenizer, AutoModelForSequenceClassification
+from transformers import AutoTokenizer, AutoModelForSeq2SeqLM
 
 tok = AutoTokenizer.from_pretrained("Babelscape/rebel-large")
-model = AutoModelForSequenceClassification.from_pretrained("Babelscape/rebel-large")
+model = AutoModelForSeq2SeqLM.from_pretrained("Babelscape/rebel-large")
 
 text = "Tim Cook was born in Alabama. He later became CEO of Apple."
 encoded = tok(text, return_tensors="pt", truncation=True)
 output = model.generate(**encoded, max_length=200)
-triples = tok.batch_decode(output, skip_special_tokens=False)
+decoded = tok.batch_decode(output, skip_special_tokens=False)
 ```
 
-REBEL یک استخراج رابطه seq2seq است: متن وارد، سه برابر، در حال حاضر در ویکی پدیا ویژگی های ID. تنظیم شده در داده های نظارت از راه دور. استاندارد باز وزن پایه.
+REBEL یک استخراج کننده رابطه seq2seq مبتنی بر BART است: این به جای طبقه بندی جفت های موجودیت سه برابر تولید می کند. متن در، سه برابر می شود، با نام های رابطه گرفته شده از ویژگی های ویکی پدیا. رشته های رمزگذاری شده هنوز هم دارای REBEL هستند `<triplet>`،`<subj>`و`<obj>`نشانگرها، پس روی آنها تقسیم کنید (مانند پارسر کارت مدل) تا دریافت کنید `(subject, relation, object)`ضبط شده با داده های نظارت از راه دور، خط پایه با وزن باز استاندارد
 
 ### مرحله سوم: استخراج با استفاده از LLM با لنگر
 
