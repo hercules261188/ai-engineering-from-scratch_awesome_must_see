@@ -21,7 +21,7 @@ RAG chatbotunu inşa edersin. Harika çalışıyor. Kullanıcılar çok seviyor.
 
 Sonra fatura geliyor.
 
-GPT-5 maliyetleri $5 per million input tokens and $Milyon başına 15 adet üretim.$15 input / $Gemini 3 Pro'nun fiyatı 75 dolar.$1.25 input / $5 çıkış. GPT-5 mini $0.25/$2. Aşağıdaki fiyatlar örnek olarak gösterilmektedir; daima sağlayıcıların güncel fiyatlandırma sayfasını kontrol edin.
+GPT-5 maliyetleri $1.25 per million input tokens and $Milyon başına 10 adet üretim.$5 input / $Gemini 3.1 Pro maliyetleri.$2 input / $12 çıkış (200K tokene kadar gönderilmektedir). GPT-5-mini $0.25/$2. GPT-4o, aşağıdaki matematik modelinde, $2.50/$10. Fiyatlar örneklemelerdir; her zaman sağlayıcıların güncel fiyat sayfasını kontrol edin.
 
 İşte yeni başlayanları öldüren matematik:
 

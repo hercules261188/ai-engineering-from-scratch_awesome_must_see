@@ -46,7 +46,7 @@ Bu hareket hızlı önbelleğe girmek. Anthropic onu Ağustos 2024'te (2025'te 1
 
 ### Kesinlik hesaplama
 
-Anthropic'in %25 yazma ödemesi, net para tasarrufu için en az iki kez önbelleğe alınan bir blok okunması gerektiği anlamına gelir. 1 yaz + 1 okuyucu, talep başına ortalama 0.675x maliyetini (%32 tasarruf eder); 1 yaz + 10 okuyucu ortalama 0.205x (%80 tasarruf eder).
+Anthropic'in %25 yazma ödemesi (5 dakikalık TTL) ilk okuduktan sonra kendi başına ödüyor, çünkü bir önbelleği okuma 0,1x maliyetini ödüyor. 1 yaz + 1 okuyucu ortalama 0.675x talep başına maliyet (%32 tasarruf eder); 1 yaz + 10 okuyucu ortalama 0.205x (%80 tasarruf eder). 1 saatlik TTL yazmak için 2 kat ücret alır, bu yüzden blok iki okumaya ihtiyaç duyar. Basamak kural: TTL içinde en az 3 kez yeniden kullanmayı beklediğiniz her şeyi kaydetin; bu TTL'de de kırılma oranını temizler.
 
 ```figure
 prompt-cache-hit
