@@ -16,7 +16,7 @@
 
 ## Sorun
 
-Ders 17 ölçüm metodolojisi. Ders 30 ölçümlerin 2026 durumu. 2024 ile 2025 yılının sonları arasında tablo önemli ölçüde değişti: her alan 2024 çerçevelerinin öngörmediği bir eşiği geçti.
+Ders 17 ölçüm metodolojisi. Ders 30 ölçümlerin 2026 durumu. 2024 ile 2025 yılının sonları arasında tablo önemli ölçüde değişti: dört alanın üçü 2024 çerçevelerinin öngörmediği bir eşiği geçti.
 
 ## Anlaşım
 
@@ -47,6 +47,8 @@ Etkileri:
 - Ajantik kodlama saldırı otomasyonu ilkeleridir. Önceki AI siber yardımı kod parçaları düzeyinde sınırlıydı; ajantik iş akışları keşif, sömürü, sömürü sonrası ve sömürü içermektedir.
 - 4-6 insan adımları boğazın boğazıdır; gelecekteki kapasite kazanımları bu sayıyı azaltacaktır.
 - Savunma ikili kullanımı: OpenAI'nin "güvenilir erişim" pilot sistemi, kontrol edilmiş güvenlik kuruluşlarına (tasarımlı olay tepkisi firmaları, hükümet) savunma için kapasite erişimi sağlar.
+
+Bu çalışmanın savunma tarafı, oluşturulan kodun okunması ile başlar. 13'inci aşamada geri mühendislik yolu, sadece statik analizle kendi yapmanızı sağlayan programlarda öğretir:[Lesson 13.32](../../../13-tools-and-protocols/32-program-anatomy-elf-from-scratch/docs/en.md), [Lesson 13.33](../../../13-tools-and-protocols/33-disassembly-and-control-flow/docs/en.md), pseudokod olarak kaldırıldı [Lesson 13.34](../../../13-tools-and-protocols/34-lifting-to-pseudocode/docs/en.md), ve gözlemlenen gerçekleri , bir delil defterinde ,[Lesson 13.35](../../../13-tools-and-protocols/35-evidence-confidence-and-unknowns/docs/en.md)- Ne ?[Inside a Decompiler](https://aiengineeringfromscratch.com/inside-a-decompiler)Bu işi yapan bir ajan aynı başlıklara ihtiyaç duyar çünkü güvenli bir parçalanma hala bir tahmin üzerine dayanır.
 
 ### Nükleer
 

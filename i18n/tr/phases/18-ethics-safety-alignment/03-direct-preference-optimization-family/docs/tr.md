@@ -53,7 +53,7 @@ Yanlış giden ne olabilir:
 
 - - Ödül boşluğu .`beta * (log(pi/pi_ref)_w - log(pi/pi_ref)_l)`Küçük bir tercih keyfiyle büyük bir boşluk oluşturabilir.
 - Kayıp sürücüler seçilen ve reddedilen log-probları karşı yönde hareket ettirir. Seçilen mutlak log-probı reddedilen daha hızlı düşerse aşağıya itirebilir. Bu, Degraded Chosen Response fenomeni.
-- Paylaştırılmamış tercihler (kuşkusuz nadir nadir çiftler vs. nadir nadir çiftler) keyfi anlamda bilinçli ödüller üretir.
+- Yayınlanmamış tercihler (referans politikası çerçevesinde her iki yanıtın nadir olduğu çiftler) keyfi anlamda dolaylı ödüller üretir.
 
 ### Açıklama (Azar et al., 2024)
 

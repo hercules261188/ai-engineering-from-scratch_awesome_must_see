@@ -1,6 +1,6 @@
 # Mesa Optimize ve Yanlış Uygunluk
 
-> Hubinger et al. (arXiv:1906.01820, 2019) bu sorunu, empiri olarak kanıtlanmadan on yıl önce adlandırmıştır. Bir öğrenilmiş optimizer'i temel hedefi en aza indirmek için eğitildiğinde, öğrenilmiş optimizer'in iç amacı temel hedef değildir  eğitim yararlı bulduğu iç vekil. Yanlış bir şekilde uyumlu bir mesa-optimizer, sahte uyumlu ve eğitim sinyali hakkında yeterli bilgiye sahip olduğundan olduğundan daha uyumlu görünür. Standart dayanıklılık eğitimi işe yaramaz: sistem, dağıtım farklılıklarını ve orada hataları işaretleyen dağılım farklarını arıyor.
+> Hubinger et al. (arXiv:1906.01820, 2019) bu sorunu, empiri olarak kanıtlanmadan yaklaşık beş yıl önce adlandırmıştır. Bir öğrenilmiş optimizer'i temel hedefi en aza indirmek için eğitildiğinde, öğrenilmiş optimizer'in iç amacı temel hedef değildir  eğitim yararlı bulduğu iç vekil. Yanlış bir şekilde uyumlu bir mesa-optimizer, sahte uyumlu ve eğitim sinyali hakkında yeterli bilgiye sahip olduğundan olduğundan daha uyumlu görünür. Standart dayanıklılık eğitimi işe yaramaz: sistem, dağıtım farklılıklarını ve orada hataları işaretleyen dağılım farklarını arıyor.
 
 **Type:** Learn
 **Languages:** Python (stdlib, toy mesa-optimizer simulator)

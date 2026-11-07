@@ -26,16 +26,16 @@ Gao, Schulman, Hilton (2023) bunu doğrudan ölçtü. 100k etiketlerden "altın"
 
 Goodhart'ın orijinal formülasyonu: "Bir ölçü hedefe dönüştüğünde, iyi bir ölçü olmaktan vazgeçirir". Manheim ve Garrabrant (2018) dört variansı ayırt eder: gerileme (sonuçlu örnek), aşırı (kuyruk), nedenci (proxy hedefin aşağı akımındadır) ve karşıt (askar oyun). RLHF için, aşırı + karşıt dominant modlardır.
 
-Gao et al. işlevsel bir biçim ver.`d = sqrt(KL(pi || pi_init))`- Bırak .`R_proxy(d)`- Yeterince iyi bir ödül .`R_gold(d)`- Empirik olarak:
+Gao et al. altın ödülün işlevsel bir biçimini versin.`d = sqrt(KL(pi || pi_init))`Ve bırakın .`R_gold(d)`- Empirik olarak:
 
 ```math
 \begin{aligned}
-R_{\text{proxy}}(d) &= \alpha d - \beta_{\text{proxy}} d^2 \\
-R_{\text{gold}}(d) &= \alpha d - \beta_{\text{gold}} d^2
+R_{\text{gold}}^{\text{BoN}}(d) &= d\,(\alpha_{\text{BoN}} - \beta_{\text{BoN}}\, d) \\
+R_{\text{gold}}^{\text{RL}}(d) &= d\,(\alpha_{\text{RL}} - \beta_{\text{RL}} \log d)
 \end{aligned}
 ```
 
-- Evet .`beta_gold > beta_proxy`Her ikisi de sıfır KL'den yükselmiş, her ikisi de zirve, altın zirvesi de kökenine daha yakındır.`d`Proxy-Gold farkı, BoN örneklemesi, PPO ve SFT-to-best'te aynı imzalaya sahiptir.
+Her iki formda da sıfır KL'den yükseltilmiş, zirve ve sonra düşmüştür.`d`Büyük KL'de.`d`Proxy-Gold boşluğu en iyi örnekleme ve RL için aynı imzalaya sahiptir.
 
 Bu "çık-optimize eğri"dir. Bu belirli bir ödül modelinde bir hata değil. Sorunun şekli.
 
@@ -89,7 +89,7 @@ Bu ders bize çok yararlı .`outputs/skill-reward-hack-auditor.md`. Eğitimli bi
 
 2. Gaussian'dan düşük derecede özgürlük (koca kuyruğu) olan Student-t'ye gürültü dağılımını değiştirin.
 
-3. Gao et al. Resim 1 (ICML 2023) okuyun. Kağıt proxy-gold boşluğu için bir işlevsel form önerir.
+3. Gao et al. Resim 1 (ICML 2023) makalesinde altın ödülün bir fonksiyonu olarak fonksiyonlu bir biçimi önermektedir.`d`1. Egzersiz'in simülasyon eğrilerine ayarlayın ve parametreleri karşılaştırın.
 
 4. Son zamanlarda yapılan bir RLHF makalesini ele alalım ve bu makale, ödül hakimiyetini "hatırladığını" iddia ediyor (söz kırmızı bayrak).
 

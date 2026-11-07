@@ -12,7 +12,7 @@
 - Temsilcilik vs. tahsis zararı tanımlayın ve LLM dağıtımında her birinin bir örneğini verin.
 - Gallegos et al. 2024'ten üç değerlendirme-metrik kategorisi adını verin ve her birinden bir metrik tanımlayın.
 - Bölümler arası ilişkiyi ve WinoIdentity'nin belirsizlik tabanlı adillik ölçümünün tek eksel önyargılı önyargılı değerlendirme açılarını neden ele aldığını açıklayın.
-- Taraflılığa iki mekanizma-tortanlama yaklaşımını açıklayın (cinsel nöronlar, SAE özellikleri, dikkat başı manipülasyonu).
+- Taraflılığa üç mekanizma-tortanlama yaklaşımını açıklayın (cinsel nöronlar, SAE özellikleri, dikkat başı manipülasyonu).
 
 ## Sorun
 

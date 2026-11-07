@@ -48,7 +48,7 @@ Avrupa Birliği Telif Hakları Direktifi'nde metin ve veri madenciliği istisna,
 
 Dönüştürücü ilke: meşru bir ilgi, kamuya açık ilk taraf içerikleri üzerine eğitim yapmayı onaylamayı haklı çıkarabilir.
 
-### Brezilya ANPD (Haziran 2024)
+### Brezilya ANPD ( Temmuz 2024)
 
 Meta'nın, Yapay zeka eğitimi için Brezilya kullanıcı verilerini işlemeyi yetersiz bilgi şeffaflığı nedeniyle durdurdu.
 

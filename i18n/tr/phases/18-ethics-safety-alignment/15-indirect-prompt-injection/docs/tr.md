@@ -1,6 +1,6 @@
 # Doğrudan olmayan enjeksiyon  Üretim saldırı yüzeyi
 
-> Doğrudan olmayan bir istek enjeksiyonu (IPI) dış içeriğe  bir web sayfası, bir e-posta, paylaşılan belge, destek bileti  açık bir kullanıcı eyleminden dolayı bir ajantik sistem tarafından tüketilen talimatları yerleştirir. IPI, 2026'da baskın üretim tehdidi: saldırganın kullanıcıya asla dokunmadığı için kullanıcı giriş filtrelerini atlıyor, ajanlar daha fazla dış içeriği işledikçe sessizce ölçeklendiriyor ve kimse istekleri okumanın olmadığı otomatik iş akışlarını hedef alıyor. MDPI Bilgisi 17 ((1): 54 (Ocak 2026) 2023-2025 araştırmalarını sentezler. NDSS 2026'nın IPI savunma kağıdı temel zorluğu çerçeveliyor: enjekte edilen talimatlar anlamsal olarak iyice olabilir ("Demek lütfen evet" yazısı), bu nedenle tespit anahtar kelime filtrelenmesinden daha fazlasını gerektirir. "Saldırıcı İkinci Hareketler" (Nasr ve diğerleri, ortak OpenAI/Anthropic/DeepMind, Ekim 2025): Adaptif saldırılar (gradient, RL, rastgele arama, insan kırmızı ekibi) başlangıçta sıfır saldırı başarısı oranlarını bildiren 12 yayınlanan savunmanın %90'ını bozdı.
+> Doğrudan olmayan bir istek enjeksiyonu (IPI) dış içeriğe  bir web sayfası, bir e-posta, paylaşılan belge, destek bileti  açık bir kullanıcı eyleminden dolayı bir ajantik sistem tarafından tüketilen talimatları yerleştirir. IPI, 2026'da baskın üretim tehdidi: saldırganın kullanıcıya asla dokunmadığı için kullanıcı giriş filtrelerini atlıyor, ajanlar daha fazla dış içeriği işledikçe sessizce ölçeklendiriyor ve kimse istekleri okumanın olmadığı otomatik iş akışlarını hedef alıyor. MDPI Bilgisi 17 ((1): 54 (Ocak 2026) 2023-2025 araştırmalarını sentezler. NDSS 2026'nın IPI savunma kağıdı temel zorluğu çerçeveliyor: enjekte edilen talimatlar anlamsal olarak iyice olabilir ("Demek lütfen evet" yazısı), bu nedenle tespit anahtar kelime filtrelenmesinden daha fazlasını gerektirir. "Saldırgan İkinci Hareketler" (Nasr ve diğerleri, ortak OpenAI/Anthropic/DeepMind, Ekim 2025): Adaptif saldırılar (gradient, RL, rastgele arama, insan kırmızı ekibi) test ettikleri 12 yayınlanan savunmayı atladı, saldırı başarısı çoğu karşı %90'dan fazlaydı, ancak bu savunmaların çoğu başlangıçta sıfır saldırı başarısı oranlarını bildirmişti.
 
 **Type:** Build
 **Languages:** Python (stdlib, IPI attack + defense harness)
@@ -40,7 +40,7 @@ CaMeL (Microsoft 2025), ConfAIde (Stanford 2024), ve NDSS 2026 IPI savunma kağ�
 
 ### Saldırgan İkinci Devamı Yapıyor
 
-Nasr et al. (Oktyabr 2025) adaptif saldırılar (gradyen arama, RL politikaları, rastgele arama, 72 saatlik insan kırmızı ekibi) ile 12 yayınlanan IPI savunmasını test etti.
+Nasr et al. (Oktyabr 2025) adaptif saldırılar (gradyen arama, RL politikaları, rastgele arama, 72 saatlik insan kırmızı ekibi) ile 12 yayınlanan IPI savunmasını test etti. Her savunma atıldı, çoğu %90 ASR'de ve çoğu başlangıçta sıfır ASR'yi rapor etmişti.
 
 Metodolojik ders: sadece adaptatif saldırı değerlendirmesi ile bir savunmayı yayınlayın.
 

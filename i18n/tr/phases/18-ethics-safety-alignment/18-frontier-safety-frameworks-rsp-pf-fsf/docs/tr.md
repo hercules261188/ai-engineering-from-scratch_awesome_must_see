@@ -75,7 +75,7 @@ V2.0 (Feb. 2025) bir aldatıcı uyum bölümünü ve ML R&D CCL'ler için daha y
 - DeepMind "Kritik yetenek seviyeleri".
 - OpenAI "Yüksek Yeteneklilik Eğitimi".
 
-Endüstri standartları için terminoloji yoktur. Struktörel olarak uyumlu: yayınlanmış değerlendirme kriterleri ile sınır kapasitesinin üç seviyesi.
+Endüstri standart terminoloji yoktur. Struktörel olarak uyumlu: üç çerçevenin her biri yayınlanmış değerlendirme kriterleri ile derecelendirilen kapasite eşiğini tanımlar.
 
 ### Güvenlik kapıları
 
