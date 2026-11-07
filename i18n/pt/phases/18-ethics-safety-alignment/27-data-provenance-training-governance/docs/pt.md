@@ -48,7 +48,7 @@ O artigo 1.o, n.o 1, alínea a), do Regulamento (UE) n.o 1095/2013 do Parlamento
 
 Princípio convergente: o interesse legítimo pode justificar a formação sobre conteúdos de primeira parte disponíveis ao público com exclusão.
 
-### ANPD brasileiro (junho de 2024)
+### ANPD brasileiro (julho de 2024)
 
 Suspendeu o tratamento dos dados dos utilizadores brasileiros pela Meta para formação em IA por causa da insuficiente transparência da informação.
 

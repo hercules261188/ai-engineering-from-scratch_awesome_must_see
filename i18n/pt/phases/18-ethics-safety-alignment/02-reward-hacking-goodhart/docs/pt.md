@@ -26,16 +26,16 @@ Gao, Schulman, Hilton (2023) mediram isso diretamente. Treinar um modelo de reco
 
 A formulação original de Goodhart: "Quando uma medida se torna um alvo, deixa de ser uma boa medida". Manheim e Garrabrant (2018) distinguem quatro variantes: regressão (espélula finita), extremidade (cauda), causalidade (proxy é a jusante do alvo) e adversária (jogo de agente).
 
-Gao et al. dar uma forma funcional.`d = sqrt(KL(pi || pi_init))`- Deixa-me .`R_proxy(d)`Ser uma recompensa de proxy e `R_gold(d)`Em termos empíricos:
+Gao et al. fornecer uma forma funcional para a recompensa dourada.`d = sqrt(KL(pi || pi_init))`E deixe-me`R_gold(d)`Em termos empíricos:
 
 ```math
 \begin{aligned}
-R_{\text{proxy}}(d) &= \alpha d - \beta_{\text{proxy}} d^2 \\
-R_{\text{gold}}(d) &= \alpha d - \beta_{\text{gold}} d^2
+R_{\text{gold}}^{\text{BoN}}(d) &= d\,(\alpha_{\text{BoN}} - \beta_{\text{BoN}}\, d) \\
+R_{\text{gold}}^{\text{RL}}(d) &= d\,(\alpha_{\text{RL}} - \beta_{\text{RL}} \log d)
 \end{aligned}
 ```
 
-com`beta_gold > beta_proxy`Ambos subem a partir de zero KL, ambos o pico, o pico do ouro está mais perto da origem.`d`O diferencial entre o ouro e o ouro por proxy tem a mesma assinatura em amostragem de BoN, PPO e SFT-to-best.
+As duas formas subem a partir de zero KL, pico, e depois caem.`d`Em grande KL. Então em grande`d`O intervalo entre o ouro e o ouro por intermédio do proxy tem a mesma assinatura para a amostragem melhor de n e para a RL.
 
 Esta é a "curva de otimização excessiva". Não é um bug num modelo específico de recompensa. É a forma do problema.
 
@@ -89,7 +89,7 @@ Esta lição produz`outputs/skill-reward-hack-auditor.md`. Tendo em conta um mod
 
 2. Modifique a distribuição de ruído de Gaussian para um Student-t com baixos graus de liberdade (pesado-cauda). Mantenha a configuração de treinamento RM proxy inalterada. Que mudanças ocorrem na localização de pico e no colapso pós-pico?
 
-3. Leia Gao et al. Figura 1 (ICML 2023). O artigo propõe uma forma funcional para a lacuna proxy-ouro.
+3. Leia Gao et al. Figura 1 (ICML 2023).`d`Ajuste-o às curvas simuladas do exercício 1 e compare os parâmetros.
 
 4. Leve um artigo recente da RLHF que afirma ter "resolvido" o hacking de recompensa (a frase é uma bandeira vermelha). Identifique qual das quatro fantasias contra as quais o artigo testou e qual não.
 

@@ -53,7 +53,7 @@ O que pode dar errado:
 
 - A diferença implícita de recompensa .`beta * (log(pi/pi_ref)_w - log(pi/pi_ref)_l)`Uma pequena preferência pode produzir uma lacuna arbitrariamente grande.
 - O disco de perda seleciona e rejeita log-probs em direções opostas. Pode empurrar o log-prob absoluto escolhido para baixo, desde que o rejeitado cai mais rápido.
-- As preferências fora da distribuição (par raro raro vs par raro raro) produzem recompensas implícitas arbitrárias.
+- As preferências fora de distribuição (pares em que ambas as respostas são raras no âmbito da política de referência) produzem recompensas implícitas arbitrárias.
 
 ### O IPO (Azar et al., 2024)
 
