@@ -21,7 +21,7 @@
 
 **The core idea, in one line:** $V^\pi(s) = \mathbb E_\pi[G_t \mid s_t = s] \approx (1/N) \sum_i G^{(i)}(s)$أين$G^{(i)}(s)$تُلاحظ العوائد بعد زيارات $s$في سياسة$\pi$. . .
 
-**First-visit vs every-visit MC.**نظراً للفصل الذي يزور الولاية$s$في العديد من المرات، MC الزيارة الأولى تعتبر فقط العودة من الزيارة الأولى؛ كل زيارة MC تعتبر جميع الزيارات. كلاهما غير متحيز في الحد. الزيارة الأولى أسهل لتحليل (معاكرات iid). كل زيارة تستخدم المزيد من البيانات لكل حلقة وعادة ما تتقارب أسرع في الممارسة.
+**First-visit vs every-visit MC.**نظراً للفصل الذي يزور الولاية$s$في العديد من المرات، MC الزيارة الأولى تعتبر فقط العودة من الزيارة الأولى؛ كل زيارة MC تعتبر جميع الزيارات. MC الزيارة الأولى غير متحيزة. كل زيارة MC يمكن أن تكون متحيزة قليلا بعد عدد محدود من الحلقات، لأنه يمتوسط عدد عشوائي من العوائد لكل حلقة ويمكن أن يكون هذا العدد مرتبطا مع العوائد، ولكن كليهما يتقارب إلى $V^\pi(s)$كما يذهب عدد الزيارات إلى اللانهاية. الزيارة الأولى أسهل لتحليل (معاكرات iid). كل زيارة تستخدم المزيد من البيانات لكل حلقة وعادة ما تتقارب أسرع في الممارسة.
 
 **Incremental mean.**بدلاً من تخزين جميع العائدات، قم بتحديث المتوسط التشغيلي:
 
@@ -195,7 +195,7 @@ Refuse to run MC on non-episodic tasks without a finite horizon cap. Refuse to r
 | Monte Carlo | "Random sampling" | Estimate expectations by averaging over iid samples from the distribution. |
 | Return $G_t$ | "Future reward" | Sum of discounted rewards from step $t$ to episode end: $\sum_{k\ge 0} \gamma^k r_{t+k+1}$. |
 | First-visit MC | "Count each state once" | Only the first visit in an episode contributes to the value estimate. |
-| Every-visit MC | "Use all visits" | Every visit contributes; slightly biased but more sample-efficient. |
+| Every-visit MC | "Use all visits" | Every visit contributes; slightly biased for finite samples, consistent in the limit, and more sample-efficient. |
 | ε-greedy | "Exploration noise" | Pick greedy action with prob $1-\epsilon$; random action with prob $\epsilon$. |
 | Importance sampling | "Correcting for sampling from the wrong distribution" | Reweight returns by $\pi(a \mid s)/\mu(a \mid s)$ products to estimate $V^\pi$ from $\mu$ data. |
 | On-policy | "Learn from my own data" | Target policy = behavior policy. Vanilla MC, PPO, SARSA. |
