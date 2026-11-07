@@ -113,7 +113,7 @@ def rlhf_step(theta, ref, w, prompt, rng, eps=0.2, beta=0.1, lr=0.05):
 
 ### Étape 4: surveiller le KL
 
-La moyenne de la piste $\mathrm{KL}(\pi_\theta \Vert \pi_{\text{ref}})$chaque mise à jour.`~5-10`La politique a dérivé de $\pi_{\text{SFT}}$ plus bas $\beta$C'est le diagnostic le plus élevé dans la vraie RLHF.
+La moyenne de la piste $\mathrm{KL}(\pi_\theta \Vert \pi_{\text{ref}})$chaque mise à jour.`~5-10`(KL par réponse en nats, résumé sur des jetons, les journaux unitaires TRL) la politique a dérivé loin de $\pi_{\text{SFT}}$: soit $\beta$est trop bas (le relevez pour retirer la politique) ou le piratage de la récompense commence.
 
 ### Étape 5: la recette de production avec RTR
 
