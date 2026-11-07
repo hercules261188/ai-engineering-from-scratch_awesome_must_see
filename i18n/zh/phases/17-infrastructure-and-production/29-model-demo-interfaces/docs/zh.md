@@ -76,6 +76,8 @@ flowchart LR
 
 | Failed check | HTTP status | Error code |
 |--------------|-------------|------------|
+| No `Content-Length` header | 411 Length Required | `length_required` |
+| `Content-Length` is not a number | 400 Bad Request | `bad_length` |
 | Body over 4,096 bytes | 413 Content Too Large | `body_too_large` |
 | Body stops before `Content-Length` bytes arrive | 408 Request Timeout | `request_timeout` |
 | Content type is not JSON | 415 Unsupported Media Type | `unsupported_media_type` |

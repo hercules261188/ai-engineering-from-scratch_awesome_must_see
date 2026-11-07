@@ -51,7 +51,7 @@
 - 美国东部-1 欧西部-1:75 ms
 - 东北-1 南东-1: ~220 ms.
 
-如果路由从 us-east-1 传输到 ap-southeast-1 的热先,则保存的预填 (800 → 80 ms) 将被 440 ms 回路减小.`prefill_time + network_latency`经常答案是继续区域路由, 除了在大量的多MB预写,
+如果路由从 us-east-1 带到 ap-southeast-1 的热先सर्ग,则保存的预填 (800 → 80 ms,因此 720 ms) 缩小到约 500 ms 一旦支付了 ~ 220 ms RTT,如果偏远地区排队请求或已经驱逐了先सर्ग,则边缘会消失.`prefill_time + network_latency`经常答案是继续区域路由, 除了在大量的多MB预写,
 
 ### 商业"跨地区推断"在这里没有帮助
 

@@ -1,6 +1,6 @@
 # 推理指标  TTFT,TPOT,ITL,Goodput,P99
 
-> 根据4个指标,确定推断部署是否有效. 预填加排列加网络. 对于每个代币,TPOT (相当于ITL) 是内存绑定解码成本. 终端到终端延迟是TTFT加上TPOT乘以输出长度. 通过率是每秒的代币, 但对于产品来说,重要的是,  满足每个SLO同时的请求的比例. 低功率的高吞吐量意味着你处理的代币永远不会及时到达用户. 2026年Llama-3.1-8B-Instruct on TRT-LLM的参考号码:平均TTFT162ms,平均TPOT7.33ms,平均E2E1.093ms. 总是报道P50,P90,P99 永远不只是恶意. 并且注意测量陷:GenAI-Perf排除了TTFT从ITL计算中,LLMPerf包括它;两个工具对TPOT不同意.
+> 五个指标决定推断部署是否有效. 预填加排列加网络. 虽然工具不同意ITL是否计算第一个代币) 是每个代币的内存绑定解码成本. 终端到终端延迟是TTFT加上TPOT乘以输出长度. 通过率是每秒的代币, 但对于产品来说,重要的是,  满足每个SLO同时的请求的比例. 低功率的高吞吐量意味着你处理的代币永远不会及时到达用户. 2026年Llama-3.1-8B-Instruct on TRT-LLM的参考号码:平均TTFT162ms,平均TPOT7.33ms,平均E2E1.093ms. 总是报道P50,P90,P99 永远不只是恶意. 并且注意测量陷:GenAI-Perf排除了TTFT从ITL计算中,LLMPerf包括它;两个工具对TPOT不同意.
 
 **Type:** Learn
 **Languages:** Python (stdlib, toy percentile calculator and goodput reporter)
@@ -52,7 +52,7 @@
 
 `goodput = fraction of requests meeting (TTFT <= a) AND (TPOT <= b) AND (E2E <= c)`
 
-要求只有当每个限制都被满足时才是"好".好输出是份额.高输出率为60%的好输出是失败.低输出率为99%的好输出是目标.
+要求只有当每个限制都被满足时才是"好"的. 产量是份额. 有些文件和仪表板则以每秒满足每个SLO的请求为率. 将份额乘以转换的请求率. 高产量为60%的产量是失败.低产量为99%的产量是目标.
 
 2026年, goodput 是在MLPerf 推理 v6.0提交和AI平台提供商内部SLA跟踪中使用的指标.
 
@@ -107,6 +107,8 @@ throughput-latency
 ## 用它
 
 `code/main.py`产品的产量是多少? 产量是多少? 产量是多少? 产量是多少? 产量是多少? 产量是多少? 产量是多少? 产量是多少? 产量是多少? 产量是多少? 产量是多少? 产量是多少? 产量是多少? 产量是多少? 产量是多少? 产量是多少? 产量是多少? 产量是多少? 产量是多少? 产量是多少? 产量是多少? 产量是多少? 产量是多少? 产量是多少? 产量是多少? 产量是多少? 产量是多少? 产量是多少? 产量是多少? 产量是多少? 产量是多少? 产量是多少? 产量是多少? 产量是多少?
+
+其他[Inside an LLM Serving GPU](https://aiengineeringfromscratch.com/inside-an-llm-serving-gpu?users=1)机器显示NVIDIA L4上输出代币的时间来自哪里.一个解码步骤读取16.41GB的权重,这需要至少54.7ms的300GB/s,测量步骤需要60.16ms.
 
 ## 运送它
 

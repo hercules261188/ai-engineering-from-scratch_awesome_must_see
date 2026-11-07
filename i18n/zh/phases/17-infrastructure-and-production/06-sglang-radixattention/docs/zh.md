@@ -94,6 +94,8 @@ roofline
 
 `code/main.py`运行相同的工作负载通过两个,报告预先缓存击率和吞吐量德尔塔.然后运行一个"缩订"工作负载显示6.4x崩.
 
+其他[Inside an LLM Serving GPU](https://aiengineeringfromscratch.com/inside-an-llm-serving-gpu?workload=shared&shared=4096)机器显示了实际L4运行中的Radix缓存.四个组每个组都有自己的4,096代币系统提示.一个组的第一个请求计算了提示.当提示保持在缓存中,后来的请求只计算了128代币问题.关闭Radix缓存,以看到中位数的第一个代币从479 ms到14706 ms.
+
 ## 运送它
 
 这一课产生了`outputs/skill-radix-scheduler-advisor.md`鉴于工作负载描述 (即时模板形状,检索模式,同时租户数量),它产生了即时订单的处方和SGLang采用的无需处方.
