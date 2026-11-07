@@ -169,6 +169,10 @@ softmax-attention-scaling
 
 ## بناءها
 
+```figure
+iso-machine {"machine":"self-attention"}
+```
+
 ### الخطوة الأولى: Softmax من الصفر
 
 Softmax يحول اللغات الخام إلى احتمالات.
