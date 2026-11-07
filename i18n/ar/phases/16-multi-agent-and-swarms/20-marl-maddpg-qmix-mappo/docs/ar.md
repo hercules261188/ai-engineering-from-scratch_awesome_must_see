@@ -42,7 +42,7 @@ critic update:   TD on Q_i(x, a_1..n) given next-state joint estimate
 
 ### QMIX (2018)  تحلل القيمة
 
-التعاون فقط. الجائزة العالمية هي جمع وظيفة واحدة من قيم Q لكل عامل:
+التعاون فقط القيمة المشتركة للعمل`Q_tot`هو وظيفة مزيج متوحدة من قيم Q لكل عامل:
 
 ```math
 Q_{\text{tot}}(\tau, a) = f\big(Q_1(\tau_1, a_1), \ldots, Q_n(\tau_n, a_n)\big), \quad \frac{\partial f}{\partial Q_i} \ge 0

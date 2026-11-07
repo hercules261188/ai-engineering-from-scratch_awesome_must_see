@@ -1,6 +1,6 @@
 # تراث FIPA-ACL وقانونات الكلام
 
-> قبل MCP، قبل A2A، كان هناك FIPA-ACL. في عام 2000، صادقت مؤسسة IEEE للوكلاء الفيزيائيين الذكاء على لغة اتصال وكيل مع عشرين أداء، لغتين محتوى، ومجموعة من بروتوكولات التفاعل  العقد الشبكة، الاشتراك / الإخطار، الطلب-عندما. لقد اختفى من الصناعة لأن تكاليف الإنتولوجيا العليا كانت ثقيلة جداً على شبكة الإنترنت، ولكن إحياء LLM لنظم متعددة الوكلاء يعد ببساطة نفس الأفكار دون التعريف الرسمي: تعاقد JSON تعوض عن الأداء، اللغة الطبيعية تعوض عن الإنتولوجيا. هذا الدروس يقرأ FIPA-ACL بجدية حتى تتمكن من رؤية ما هي قرارات بروتوكول 2026 إعادة الاختراع، والتي هي الابتكار،
+> قبل MCP، قبل A2A، كان هناك FIPA-ACL. في عام 2000، صادقت مؤسسة العاملين الفيزيائيين الذكاء (FIPA، التي أصبحت لجنة معايير مجتمع الكمبيوتر IEEE في عام 2005) على لغة اتصال العامل مع عشرين لغة تنفيذية، ولغتين محتوى، ومجموعة من بروتوكولات التفاعل  العقد الشبكة، الاشتراك / الإخطار، الطلب-عندما. لقد اختفى من الصناعة لأن تكاليف الإنتولوجيا العليا كانت ثقيلة جداً على شبكة الإنترنت، ولكن إحياء LLM لنظم متعددة الوكلاء يعد ببساطة نفس الأفكار دون التعريف الرسمي: تعاقد JSON تعوض عن الأداء، اللغة الطبيعية تعوض عن الإنتولوجيا. هذا الدروس يقرأ FIPA-ACL بجدية حتى تتمكن من رؤية ما هي قرارات بروتوكول 2026 إعادة الاختراع، والتي هي الابتكار،
 
 **Type:** Learn
 **Languages:** Python (stdlib)
@@ -193,7 +193,7 @@ python3 code/main.py
 | Term | What people say | What it actually means |
 |------|----------------|------------------------|
 | Speech act | "An utterance that does something" | Austin/Searle: utterances as actions. The theoretical parent of ACL. |
-| FIPA | "That old XML thing" | IEEE Foundation for Intelligent Physical Agents. Standardized ACL in 2000. |
+| FIPA | "That old XML thing" | Foundation for Intelligent Physical Agents. Standardized ACL in 2000; became an IEEE Computer Society standards committee in 2005. |
 | ACL | "Agent Communication Language" | FIPA's envelope format: performative + content + metadata. |
 | Performative | "The verb" | The intent class of a message: `inform`, `request`, `propose`, `cfp`, etc. |
 | KQML | "FIPA's predecessor" | Knowledge Query and Manipulation Language (1993). Simpler, narrower. |
