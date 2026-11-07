@@ -69,7 +69,7 @@ Các máy theo dõi tiêu chuẩn cho thấy độ tự tin thấp (< 0, 5).**se
 
 ### SAM 2 theo dõi dựa trên bộ nhớ
 
-SAM 2 xử lý video bằng cách giữ một **memory bank**Các bộ nhớ được phân tích với các tính năng của khung mới, và bộ giải mã tạo ra một mặt nạ cho cùng một bản trong khung mới.
+SAM 2 xử lý video bằng cách giữ một **memory bank**Với một prompt (click, box, or mask) trên một khung, nó mã hóa các bản thể hiện vào bộ nhớ.
 
 Không bộ lọc Kalman, không có bài tập tiếng Hungary.
 

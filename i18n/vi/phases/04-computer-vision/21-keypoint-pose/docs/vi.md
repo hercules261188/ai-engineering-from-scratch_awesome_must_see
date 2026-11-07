@@ -60,7 +60,7 @@ Tại sao heatmaps hoạt động tốt hơn so với sự lùi ngược trực 
 
 ### Định vị vị của các subpixel
 
-Argmax cho các tọa độ nguyên số. Để chính xác sub-pixel, tinh chỉnh bằng cách gắn một hình ngụng vào argmax và các hàng xóm của nó, hoặc sử dụng các ofset nổi tiếng `(dx, dy) = 0.25 * (heatmap[y, x+1] - heatmap[y, x-1], ...)`hướng đi.
+Argmax cho các tọa độ nguyên số. Để có độ chính xác sub-pixel, tinh chỉnh bằng cách gắn một hình ngụng vào argmax và các hàng xóm của nó, hoặc chuyển argmax về phía hàng xóm cao hơn với `dx = 0.25 * (heatmap[y, x+1] - heatmap[y, x-1])`và cũng như vậy.`dy`, như mã hóa làm.
 
 ### Các lĩnh vực liên quan phần (PAF)
 

@@ -20,7 +20,7 @@ Các mô hình thị giác cá nhân hữu ích; các sản phẩm thị giác l
 
 Cáp dây là phần tách biệt một nguyên mẫu ML từ một sản phẩm. Mỗi giao diện giữa các mô hình là một nơi mới cho lỗi. Mỗi chuyển đổi phối hợp, mỗi chuẩn hóa, mỗi kích thước mặt nạ là ứng cử viên thất bại im lặng. Một đường ống là mạnh như giao diện yếu nhất của nó.
 
-Bạch đá này thiết lập đường ống dẫn khả thi tối thiểu: phát hiện + phân loại + đầu ra cấu trúc + một lớp phục vụ. Mọi thứ khác trong các khe trong giai đoạn 4 vào bộ xương này: thay đổi Mask R-CNN cho YOLOv8, thêm đầu OCR, thêm một nhánh phân đoạn, thêm một bộ theo dõi. Kiến trúc ổn định; các mảnh có thể cắm.
+Bạch đá này thiết lập đường ống dẫn khả thi tối thiểu: phát hiện + phân loại + đầu ra cấu trúc + một lớp phục vụ. Mọi thứ khác trong các khe trong giai đoạn 4 vào bộ xương này: thay đổi Mask R-CNN cho YOLOv8, thêm một đầu OCR, thêm một nhánh phân đoạn, thêm một bộ theo dõi. Kiến trúc ổn định; các mảnh có thể cắm.
 
 ## Khái niệm
 
@@ -54,7 +54,7 @@ Detection(
     box: tuple[float, float, float, float],   # (x1, y1, x2, y2), absolute pixels
     score: float,                              # [0, 1]
     class_id: int,                             # from detector's label map
-    mask: Optional[list[list[int]]],           # RLE-encoded if present
+    mask_rle: Optional[str],                   # RLE string if present
 )
 
 PipelineResult(

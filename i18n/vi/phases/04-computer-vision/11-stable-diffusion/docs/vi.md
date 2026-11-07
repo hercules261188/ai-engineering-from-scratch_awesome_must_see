@@ -235,7 +235,7 @@ Trong sản xuất, những quyết định mà bạn thực sự đưa ra:
 
 - **Model family**: SD 1.5 cho các bản nhạc cộng đồng nguồn mở, SDXL cho độ trung thực cao hơn, SD3 / FLUX cho trạng thái hiện đại và các yêu cầu cấp phép nghiêm ngặt.
 - **Scheduler**: DPM-Solver++ 2M Karras cho 20-30 bước, LCM-LoRA khi độ trễ dưới 1s.
-- **Precision**`float16`trên 4080/4090, `bfloat16`trên A100 và mới hơn, `int8`(via `bitsandbytes`hoặc `compel`) khi VRAM bị chặt chẽ.
+- **Precision**`float16`trên 4080/4090, `bfloat16`trên A100 và mới hơn, `int8`(via `bitsandbytes`) khi VRAM bị chặt chẽ.
 - **Conditioning**: văn bản đơn giản hoạt động; để kiểm soát mạnh hơn, thêm ControlNet (có thể, độ sâu, tư thế) trên đầu của đường ống cơ sở.
 
 Đối với thế hệ hàng loạt, `AUTO1111`- `ComfyUI`là các công cụ của cộng đồng; cho các API sản xuất,`diffusers`+ `accelerate`hoặc `optimum-nvidia`với TensorRT compilation.

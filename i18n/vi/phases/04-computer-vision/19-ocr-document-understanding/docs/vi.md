@@ -71,7 +71,7 @@ Các mô hình đầu đến cuối cần nhiều dữ liệu và tính toán h�
 
 ### Phân tích bố cục
 
-Đối với các tài liệu có cấu trúc, chạy một bộ phát hiện bố trí (LayoutLMv3, DocLayNet) gắn nhãn từng khu vực: tiêu đề, đoạn, hình ảnh, bảng, ghi chú chân.
+Đối với các tài liệu có cấu trúc, chạy mô hình bố trí (LayoutLMv3, hoặc một bộ phát hiện được đào tạo trên bộ dữ liệu DocLayNet) gắn nhãn từng khu vực: tiêu đề, đoạn, hình ảnh, bảng, ghi chú chân.
 
 Đối với các mẫu, sử dụng **Key-Value extraction**mô hình (Donut cho tài liệu giàu thị giác, LayoutLMv3 cho quét đơn giản).
 
@@ -160,18 +160,23 @@ Lượng đầu vào cao cố định (CNN tối đa là cao đến 1).
 
 ### Bước 3: OCR tổng hợp
 
-Tạo chuỗi chữ số đen-tín cho một thử nghiệm khói cuối đến cuối.
+Tạo chuỗi đen trắng để kiểm tra khói từ đầu đến cuối. Mỗi ký tự trở thành một cột gồm sáu thanh đánh vần chỉ số từ vựng của nó bằng nhị phân. Hình ảnh phải mang danh tính của ký tự: nếu mọi ký tự là cùng một hộp trống, mô hình không thể nói `a`từ `x`, và sự mất mát sẽ trì hoãn.
 
 ```python
 import numpy as np
+
+GLYPHS = "0123456789abcdefghijklmnopqrstuvwxyz"
 
 def synthetic_line(text, height=32, char_width=16):
     W = char_width * len(text)
     img = np.ones((height, W), dtype=np.float32)
     for i, c in enumerate(text):
         x = i * char_width
-        shade = 0.0 if c.isalnum() else 0.5
-        img[6:height - 6, x + 2:x + char_width - 2] = shade
+        code = GLYPHS.find(c) + 1
+        for bit in range(6):
+            if code >> bit & 1:
+                y = 4 + 4 * bit
+                img[y:y + 3, x + 2:x + char_width - 2] = 0.0
     return img
 
 
@@ -202,7 +207,7 @@ Một tập dữ liệu OCR thực sự thêm phông chữ, tiếng ồn, xoay, 
 model = TinyCRNN(vocab_size=len(vocab))
 opt = torch.optim.Adam(model.parameters(), lr=1e-3)
 
-for step in range(200):
+for step in range(400):
     strings = ["abc" + str(step % 10)] * 4 + ["xyz" + str((step + 1) % 10)] * 4
     imgs, targets, target_lens = build_batch(strings, vocab)
     log_probs = model(imgs)  # (W', 8, vocab)
@@ -211,7 +216,7 @@ for step in range(200):
     opt.zero_grad(); loss.backward(); opt.step()
 ```
 
-Lối mất sẽ giảm từ ~ 3 đến ~ 0,2 trên 200 bước trên dữ liệu tổng hợp tầm thường này.
+Lối mất sẽ giảm từ hai chữ số xuống còn khoảng 0,3 trong vòng 400 bước trên dữ liệu tổng hợp tầm thường này. `code/main.py`chạy cùng một vòng lặp trên bộ chuỗi riêng của nó và sau đó giải mã ba chuỗi thử nghiệm.
 
 ## Sử dụng nó
 

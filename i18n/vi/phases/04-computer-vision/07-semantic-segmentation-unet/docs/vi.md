@@ -129,7 +129,7 @@ Tờ báo cáo về một lớp học, không chỉ là một lớp học.
 
 ### Trả giá trị giải pháp đầu vào
 
-Bộ mã hóa của U-Net làm giảm phân giải gấp bốn lần, vì vậy đầu vào phải được chia bằng 16. Hình ảnh y tế thường là 512x512 hoặc 1024x1024.`H * W * C_max`, và ở 1024x1024 với 1024 kênh nút chai, đường đi trước đã sử dụng gigabytes VRAM.
+Bộ mã hóa U-Net giảm phân giải gấp bốn lần, vì vậy các kết nối skip chỉ xếp hàng chính xác khi đầu vào được chia bằng 16. Các kích thước khác cần đệm hoặc thay đổi kích thước trong khối lên (Bước 2). Hình ảnh y tế thường là 512x512 hoặc 1024x1024.`H * W * C_max`, và ở 1024x1024 với 1024 kênh nút chai, đường đi trước đã sử dụng gigabytes VRAM.
 
 Hai phương pháp giải quyết tiêu chuẩn:
 1. Đơn gạch nhập  quy trình 256x256 gạch với chồng chéo và đan.

@@ -100,7 +100,7 @@ Tại sao nó giúp ích: mô hình ngừng ghi nhớ các mục tiêu nóng nh�
 
 ### Đơn vị nhãn
 
-Một người anh em của sự nhầm lẫn.`[0, 0, 1, 0, 0]`, tàu chống lại `[eps/C, eps/C, 1-eps, eps/C, eps/C]`cho một người nhỏ `eps`như 0.1. ngăn chặn mô hình từ việc sản xuất logit sắc nét tùy tiện và cải thiện hiệu chuẩn hầu như không chi phí.`nn.CrossEntropyLoss(label_smoothing=0.1)`từ PyTorch 1.10.
+Một người anh em của sự nhầm lẫn.`[0, 0, 1, 0, 0]`, tàu chống lại `[eps/C, eps/C, 1-eps+eps/C, eps/C, eps/C]`cho một người nhỏ `eps`như 0.1 (những mục tiêu nóng nhất được trộn với một phân phối đồng nhất, do đó nó vẫn tổng cộng đến 1).`nn.CrossEntropyLoss(label_smoothing=0.1)`từ PyTorch 1.10.
 
 ### Đánh giá vượt quá độ chính xác
 
@@ -415,7 +415,7 @@ Bài học này mang lại:
 | DataLoader | "The batcher" | Wraps a dataset with shuffling, batching, and (optional) multi-worker loading; gets blamed for half of training bugs |
 | Augmentation | "Random transforms" | Any pixel-level transform at training time that preserves the label; teaches invariances the CNN does not have natively |
 | Mixup / Cutmix | "Mix two images" | Blend both inputs and labels so the classifier learns smooth interpolations instead of hard boundaries |
-| Label smoothing | "Softer targets" | Replace one-hot with (1-eps, eps/(C-1), ...); improves calibration and slightly boosts accuracy |
+| Label smoothing | "Softer targets" | Replace one-hot with (1-eps+eps/C, eps/C, ...); improves calibration and slightly boosts accuracy |
 | Top-k accuracy | "Top-5" | The correct class is in the k highest-probability predictions; used on datasets with genuinely ambiguous classes |
 | Confusion matrix | "Where errors live" | C x C table where entry (i, j) counts images of true class i predicted as j; diagonal is right, off-diagonal tells you what to fix |
 

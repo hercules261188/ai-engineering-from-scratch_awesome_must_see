@@ -67,7 +67,7 @@ Lợi thế:
 - Tăng lạm phát I3D mang lại việc học tập chuyển đổi miễn phí.
 
 Khối tác:
-- T/8 nhiều FLOP hơn đối tác 2D (cho hạt nhân thời gian 3 xếp chồng lên 3 lần).
+- Khoảng 3x FLOP của mạng 2D chạy khung hình theo khung hình, bởi vì mỗi hạt nhân 3x3 trở thành 3x3x3.
 - Các hạt nhân thời gian nhỏ; chuyển động tầm xa cần một cách tiếp cận kim tự tháp hoặc dòng chảy kép.
 
 Khi sử dụng: nhận dạng hành động khi chuyển động là tín hiệu (Something-Something V2, Kinetics với các lớp chuyển động nặng).

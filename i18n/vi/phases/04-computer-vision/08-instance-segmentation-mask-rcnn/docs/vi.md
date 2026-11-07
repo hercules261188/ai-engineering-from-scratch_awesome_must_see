@@ -84,7 +84,7 @@ Hãy lấy mẫu mặt nạ 28x28 với kích thước pixel ban đầu của đ
 
 ### Khối thối
 
-Mask R-CNN có bốn lỗ cộng lại:
+Mask R-CNN có 5 lỗ cộng lại:
 
 ```math
 L = L_{\text{rpn\_cls}} + L_{\text{rpn\_box}} + L_{\text{box\_cls}} + L_{\text{box\_reg}} + L_{\text{mask}}
@@ -261,7 +261,7 @@ def train_step(model, images, targets, optimizer):
     return {k: v.item() for k, v in loss_dict.items()}
 ```
 
-- `targets`danh sách phải có các chữ cái mỗi hình ảnh với `boxes`- `labels`, và`masks`(đúng như `(num_instances, H, W)`mô hình trả lại một dict của bốn lỗ trong quá trình đào tạo và một danh sách dự đoán trong eval, được nhấn vào `model.training`- Tôi không biết.
+- `targets`danh sách phải có các chữ cái mỗi hình ảnh với `boxes`- `labels`, và`masks`(đúng như `(num_instances, H, W)`mô hình trả lại một lệnh của năm lỗ trong quá trình đào tạo và một danh sách dự đoán trong eval, được đặt vào `model.training`- Tôi không biết.
 
 - `pycocotools`evaluator tạo ra mAP@IoU=0.5:0.95 cả cho các hộp và cho mặt nạ; bạn cần cả hai số để biết liệu đầu hộp hay đầu mặt nạ là nút thắt.
 
