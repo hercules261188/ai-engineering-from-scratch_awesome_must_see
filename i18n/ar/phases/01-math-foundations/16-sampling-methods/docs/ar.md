@@ -117,7 +117,8 @@ Algorithm:
   3. If u < p(x) / (M * q(x)), accept x
   4. Otherwise, reject and go to step 1
 
-Acceptance rate = 1/M
+Acceptance rate = Z/M, where Z is the integral of p(x)
+                (Z = 1, so the rate is 1/M, when p is normalized)
 ```
 
 كلما كانت الحدود أكثر صرامة$M$في الأبعاد المنخفضة (1-3) ، يعمل أخذ العينات بشكل جيد. في الأبعاد العالية، ينخفض معدل القبول بشكل متسارع لأن معظم حجم المقترح يتم رفضه. هذا هو لعنة الأبعاد لامتثال العينات.
