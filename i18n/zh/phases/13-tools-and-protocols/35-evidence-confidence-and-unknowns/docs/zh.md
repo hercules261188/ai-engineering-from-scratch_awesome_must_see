@@ -426,6 +426,29 @@ ledger.verify_unknown_chain(unknown_id)
 
 成功意味着一个报告,其中每句话都引用了包中的一个ID和一个`unknown`要求已经消失了.
 
+## 排名实验室
+
+找到你构建的代码,然后写在`code/lab_answers.json`写数字作为数字或六字符串,例如`"0x40"`它们是JSON列表.
+
+1. `t1`: 计算证据的证据ID为 rea-evidence-grade.json.
+2. `t2`评级记录中的限制数量.
+3. `t3`评级记录的关系_覆盖状态.
+4. `t4`作为一个两个字符串的列表,
+5. `t5`评级记录的主题的SHA-256
+
+检查你的答案:
+
+```bash
+cd phases/13-tools-and-protocols/35-evidence-confidence-and-unknowns
+python3 code/lab.py
+```
+
+检查器从 计算出每一个预期值`code/main.py`它们在已完成的设备上.`PASS`现在`FAIL`或`TODO`只有五个任务都通过时,它才会出于0.`python3 code/lab.py my-answers.json`检查另一个文件.`code/tests/test_lab.py`证明检查员接受正确的答案,却拒绝错误的答案.
+
+### 看它运行
+
+其他[Inside a Decompiler](https://aiengineeringfromscratch.com/inside-a-decompiler?symbols=off)机器将有四个托盘的证据账本存储:观察,导出,推断和未知. 这条链接打开运行,符号表被关闭,因此函数文件的名称和结束是未知的,开始文件是推断的.
+
 ## 教训艺术品
 
 这一课产生了`outputs/skill-evidence-ledger.md`它告诉代理人如何将每一个发现作为记录,以信任,权威,限制和链接. 它告诉代理人如何将未知内容作为修订,`pass`现在`fail`现在`unknown`其他`unsupported`现在,我们要去.

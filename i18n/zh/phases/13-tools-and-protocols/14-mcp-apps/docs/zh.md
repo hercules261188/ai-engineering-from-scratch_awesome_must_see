@@ -268,7 +268,7 @@ python3 code/main.py
 python3 -m unittest discover code/tests -v
 ```
 
-检查输出中的四个东西:
+检查输出中的五件事:
 
 1. 每次电话都是独立的.
 2. 每个要求都有`_meta`能否实现.

@@ -205,7 +205,7 @@ cd phases/13-tools-and-protocols/23-capstone-tool-ecosystem
 python3 code/main.py
 ```
 
-检查五件事:
+检查六件事:
 
 1. `server/discover`宣传修订`2026-07-28`并且扩展任务.
 2. 爱丽丝可以读取和生成报告,而勃的写作电话被拒绝.

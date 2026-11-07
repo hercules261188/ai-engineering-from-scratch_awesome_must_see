@@ -84,7 +84,7 @@ notes_search(query)
 ### 参数设计
 
 - **Enum every closed set.** `units: "celsius" | "fahrenheit"`没有`units: string`号告诉模型可接受的价值观.
-- **Required vs optional.**其他所有选择性. 开放AI严格模式要求每个字段在`required`添加一个`is_default: true`让模型省略它.
+- **Required vs optional.**其他所有选择性. 开放AI严格模式要求每个字段在`required`输入一个选项字段作为一个结合的字段.`null`让模型发送`null`当它没有价值时.
 - **Typed IDs.** `note_id: string`很好,但添加一个`pattern`(`^note-[0-9]{8}$`) 捕捉幻觉的身份证.
 - **No overly flexible types.**避免`type: any`模型会幻觉化形状.
 - **Describe the field.** `{"type": "string", "description": "ISO 8601 date in UTC, e.g. 2026-04-22"}`描述是模型的提示的一部分.

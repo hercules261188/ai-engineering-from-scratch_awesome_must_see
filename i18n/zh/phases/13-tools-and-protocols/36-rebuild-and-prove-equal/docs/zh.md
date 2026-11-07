@@ -389,6 +389,29 @@ python3 code/main.py --live
 
 成功意味着证据记录列出了四个函数,每个索赔都包含了证据的身份,`grade_label`标签字符串不同时失败.
 
+## 排名实验室
+
+找到你构建的代码,然后写在`code/lab_answers.json`写数字作为数字或六字符串,例如`"0x40"`它们是JSON列表.
+
+1. `t1`现在,我们可以看到一个小组的数据.
+2. `t2`现在,我们可以在 x86_64 上看到:
+3. `t3`标准: 标准:
+4. `t4`: input_grid中的细胞数量().
+5. `t5`电网电池的数量: x86_64模型陷入的电网电池数量.
+
+检查你的答案:
+
+```bash
+cd phases/13-tools-and-protocols/36-rebuild-and-prove-equal
+python3 code/lab.py
+```
+
+检查器从 计算出每一个预期值`code/main.py`它们在已完成的设备上.`PASS`现在`FAIL`或`TODO`只有五个任务都通过时,它才会出于0.`python3 code/lab.py my-answers.json`检查另一个文件.`code/tests/test_lab.py`证明检查员接受正确的答案,却拒绝错误的答案.
+
+### 看它运行
+
+其他[Inside a Decompiler](https://aiengineeringfromscratch.com/inside-a-decompiler)机器以伪码结束,并将其作为推断:页面没有证明.
+
 ## 输出技能
 
 这一课产生了`outputs/skill-rebuild-and-prove-equal.md`通过它将函数证据和一个候选人重建成双脚证据和证据记录. 技能需要在伪代码之前列出,一个格格子,每个危险类别,迁移掩盖加上一个常规检查,以及一个失败关闭的集体.

@@ -52,12 +52,12 @@
 | Result block | role `tool`, `tool_call_id` | `user` with `tool_result`, `tool_use_id` | `functionResponse` with matching `id` |
 | Force-a-tool | `tool_choice: {type: "function", function: {name}}` | `tool_choice: {type: "tool", name}` | `tool_config: {function_calling_config: {mode: "ANY"}}` |
 | Forbid tools | `tool_choice: "none"` | `tool_choice: {type: "none"}` | `mode: "NONE"` |
-| Strict schema | `strict: true` | schema-is-schema (always enforced) | `responseSchema` at request level |
+| Strict schema | `strict: true` | `strict: true` per tool (opt-in) | `responseSchema` at request level |
 
 ### 你会达到的极限
 
 - **OpenAI.**参数字符串 <= 8192字节. 严格模式不需要 `$ref`没有`oneOf`现在,我们要去.`anyOf`现在,我们要去.`allOf`任何物件都在`required`现在,我们要去.
-- **Anthropic.**没有严格模式的旗;该方案是合同的,模型往往符合.
+- **Anthropic.**系统深度实际上无限,但实际上是限制的.`strict: true`没有它,方案是模型倾向于遵循的合同,而不是保证.
 - **Gemini.**根据要求,可执行 64 个函数. 方案类型是OpenAPI 3.0 子集 (与 JSON Schema 2020-12 略有差异).
 
 ### `tool_choice`行为
@@ -94,7 +94,7 @@
 
 - **OpenAI (non-strict).**模型返回`arguments: "{bad json}"`如果您的JSON解析失败,您将注入一个错误信息,然后重新调用.
 - **OpenAI (strict).**验证发生在解码过程中;不有效的JSON是不可能的,但 `refusal`现在,我们可以出现.
-- **Anthropic.** `input`系统可能包含意想不到的字段; 方案是建议的. 验证服务器侧.
+- **Anthropic (non-strict).** `input`系统的数据表可以包含意想不到的字段;该方案是建议的. 验证服务器侧.`strict: true`采样仅限于方案.
 - **Gemini.**开放API 3.0 的特点:`enum`在被默默忽视的对象领域, 验证自己.
 
 ### 翻译模式

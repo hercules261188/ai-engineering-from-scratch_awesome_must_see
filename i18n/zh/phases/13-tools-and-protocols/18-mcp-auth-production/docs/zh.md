@@ -354,7 +354,7 @@ python3 -m unittest discover -s code/tests -v
 
 ## 运动
 
-1. 跑步`code/main.py`观察如何在第6步中旋转键,`refresh_jwks`重新拉出已发布的集,既旧的代币 (重叠窗口),又新的代币都在重新启动的情况下验证.
+1. 跑步`code/main.py`追踪流量. 观察 IdP如何在脚本输出第6步 (上述流量的第7步) 中旋转键,`refresh_jwks`重新拉出已发布的集,既旧的代币 (重叠窗口),又新的代币都在重新启动的情况下验证.
 
 2. 添加一个新的IDP到保护资源的元数据`authorization_servers`发行一个签署的代币,并确认验证者接受它.发行一个签署的代币,并确认验证者拒绝.`WWW-Authenticate: Bearer error="invalid_token", error_description="iss not allowed"`现在,我们要去.
 

@@ -533,6 +533,29 @@ for score in (-25, 0, 59, 60, 100, 115):
 
 成功意味着`grade`在`-O0`其他`grade`在`-O1`电网上产出相同的输出,`switch`没有`goto`现在,我们要去.
 
+## 排名实验室
+
+找到你构建的代码,然后写在`code/lab_answers.json`写数字作为数字或六字符串,例如`"0x40"`它们是JSON列表.
+
+1. `t1`:调用公约给出%_变化在 -O1的参数.
+2. `t2`:fi函数在 -O1的总数形式中.
+3. `t3`按下下下列: 按下下下列:
+4. `t4`字符号:%_change字符号的最后一个语句在 -O1上,作为一个文字行.
+5. `t5`总数为 -O1 的恢复C类型参数_1.
+
+检查你的答案:
+
+```bash
+cd phases/13-tools-and-protocols/34-lifting-to-pseudocode
+python3 code/lab.py
+```
+
+检查器从 计算出每一个预期值`code/main.py`它们在已完成的设备上.`PASS`现在`FAIL`或`TODO`只有五个任务都通过时,它才会出于0.`python3 code/lab.py my-answers.json`检查另一个文件.`code/tests/test_lab.py`证明检查员接受正确的答案,却拒绝错误的答案.
+
+### 看它运行
+
+其他[Inside a Decompiler](https://aiengineeringfromscratch.com/inside-a-decompiler?opt=O0)机器运行这个课程作为它的升降压机,类型针,结构 jig 和打印机, IR,SSA 和伪码`code/main.py`接下来,我们将打开`-O0`目标:三个堆槽成为本地,并且关闭两个子,以实现如果/否.
+
 ## 艺术品
 
 这一课产生了`outputs/skill-lifting-to-pseudocode.md`通过它将每个行的衍生函数升高,并将差异表与分解器的文本填写.该文件需要对每个不同行进行参考拆除,移动,调用公约,编译检查,行为比较和判决.
