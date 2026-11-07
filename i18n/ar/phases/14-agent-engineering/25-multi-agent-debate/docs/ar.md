@@ -117,7 +117,7 @@ python3 code/main.py
 
 ## المزيد من القراءة
 
-- [Du et al., Society of Minds (arXiv:2305.14325)](https://arxiv.org/abs/2305.14325) النقاش القنوني متعدد الوكلاء
+- [Du et al., Improving Factuality and Reasoning in Language Models through Multiagent Debate (arXiv:2305.14325)](https://arxiv.org/abs/2305.14325) النقاش القنوني متعدد الوكلاء
 - [Sparse Communication Topology (arXiv:2406.11776)](https://arxiv.org/abs/2406.11776) نتائج توبولوجي نادرة
 - [Anthropic, Building Effective Agents](https://www.anthropic.com/research/building-effective-agents) العمال الموسيقيين كنوع من النقاش
 - [Madaan et al., Self-Refine (arXiv:2303.17651)](https://arxiv.org/abs/2303.17651) نظير النموذج الواحد للنقد الذاتي

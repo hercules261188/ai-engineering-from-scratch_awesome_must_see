@@ -43,7 +43,7 @@ flowchart LR
 | Verification quality | Does the acceptance command actually prove the goal, or did it prove a weaker version? |
 | Handoff readiness | Could the next session pick up cleanly from the current state? |
 
-إجمالي من 10، فان ركض أقل من 7 هو فشل ناعم، و ركض أقل من 5 هو فشل صعب.
+إجمالي من 10، فان ركض أقل من 7 هو فشل ناعم؛ ركض أقل من 5، أو أي بعد في 0 هو فشل صعب.
 
 ### المراجعة هي دور منفصل، وليس نموذج منفصل
 
