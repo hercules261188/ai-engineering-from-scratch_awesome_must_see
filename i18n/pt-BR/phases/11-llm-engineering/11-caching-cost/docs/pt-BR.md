@@ -21,7 +21,7 @@ Construímos um chatbot RAG, funciona muito bem, os usuários adoram.
 
 Depois chega a fatura.
 
-Custos do GPT-5 $5 per million input tokens and $15 por milhão de produção.$15 input / $75 de saída.$1.25 input / $5 de saída. GPT-5-mini é $0.25/$Os preços abaixo são ilustrativos; verifique sempre a página de preços atual do fornecedor.
+Custos do GPT-5 $1.25 per million input tokens and $10 por milhão de produção.$5 input / $25 de saída. Gêmeos 3.1 Pro custos $2 input / $12 de saída (promete até 200K tokens). GPT-5-mini é $0.25/$O modelo GPT-4o, na matemática abaixo, é $2.50/$10. Os preços são ilustrativos; verifique sempre a página de preços atual do fornecedor.
 
 Aqui está a matemática que mata startups:
 
