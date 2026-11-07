@@ -85,7 +85,7 @@ ce-otel-drift
 
 8. **Alerting chain.**صادر کننده Prometheus مجموعه های امتیاز ارزیابی و درصد های تاخیر را می خواند؛ مسیرهای Alertmanager به Slack برای هشدارها و PagerDuty برای نقض های حیاتی.
 
-9. **Regression probe.**یک خطا تزریق کنید: چت روت ارزیابی شده شروع به لیک کردن SSN های جعلی می کند 1٪ از زمان. MTTR را اندازه گیری کنید: از خطا به هشدار Slack.
+9. **Regression probe.**یک خطا تزریق کنید: چت روت ارزیابی شده شروع به لیک کردن SSN های جعلی می کند 1٪ از زمان. زمان اندازه گیری برای تشخیص (MTTD): از خطا به هشدار Slack. تشخیص بخشی از MTTR است که داشبورد مالک است؛ اصلاح و دوباره استفاده بعد از آن می آید.
 
 ## ازش استفاده کن
 
@@ -106,7 +106,7 @@ $ curl -X POST https://my-otel-collector/v1/traces -d @trace.json
 |:-:|---|---|
 | 25 | Trace-schema coverage | Number of SDK families producing canonical GenAI spans (target: 6+) |
 | 20 | Eval correctness | DeepEval / RAGAS scores vs hand-labeled set |
-| 20 | Dashboard UX | MTTR on injected regression (under 5 minutes target) |
+| 20 | Dashboard UX | MTTD on injected regression (under 5 minutes target) |
 | 20 | Cost / scale | Sustained ingest at 1k spans/sec without backlog |
 | 15 | Alerting + drift detection | Prometheus/Alertmanager chain exercised end to end |
 | **100** | | |
