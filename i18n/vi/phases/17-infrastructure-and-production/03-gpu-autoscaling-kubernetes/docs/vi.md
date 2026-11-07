@@ -20,7 +20,7 @@ Nhóm của anh đưa ra dịch vụ LLM trên Kubernetes.`DCGM_FI_DEV_GPU_UTIL`
 
 Một lệnh mã thông báo 1M đến lúc 2 giờ sáng; cluster dành 3 phút để cung cấp một nút, và thời gian yêu cầu.
 
-Một lần nữa, bạn triển khai một mô hình 70B đòi hỏi 8 GPU trên 2 nút. Cluster có 7 GPU miễn phí và 1 trải rộng trên 3 nút. Cluster Autoscaler cung cấp một nút cho 1 GPU thiếu. Bảy nút chờ 4 phút đốt tiền trong khi Kubernetes nhận GPU cuối cùng lên.
+Một lần nữa, bạn triển khai một mô hình 70B đòi hỏi 8 GPU trên 2 nút. Cluster có 7 GPU miễn phí, lan rộng trên 3 nút, và cần thêm một. Cluster Autoscaler cung cấp một nút cho 1 GPU thiếu. 7 GPU được dự trữ ngồi yên trong 4 phút đốt tiền trong khi Kubernetes nhận GPU cuối cùng lên.
 
 Ba lớp, ba chế độ thất bại khác nhau. Auto-scaling GPU nhận thức vào năm 2026 không phải là "tập vào HPA". Nó là tạo ra các nút cung cấp, lập lịch nhóm, và ứng dụng tín hiệu tự động.
 

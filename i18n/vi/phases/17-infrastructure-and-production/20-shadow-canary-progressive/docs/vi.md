@@ -77,11 +77,11 @@ Nếu đống của bạn cần phải tái triển khai để quay trở lại,
 
 ### Tỷ lệ thời gian
 
-Canary gate kiểm tra mỗi 5-15 phút tùy thuộc vào khối lượng lưu lượng. 1% lưu lượng với 10 req / min cung cấp 50-150 điểm dữ liệu mỗi cửa sổ  đủ cho độ trễ nhưng ồn ào cho phản hồi của người dùng. 10% cung cấp ~ 10x nhiều hơn.
+Canary gate kiểm tra mỗi 5-15 phút tùy thuộc vào khối lượng giao thông. 1% trong 1.000 req / min (10 req / min cho canary) cung cấp 50-150 điểm dữ liệu mỗi cửa sổ 5-15 phút  đủ để trì hoãn nhưng ồn ào cho phản hồi của người dùng. 10% cung cấp ~ 10x nhiều hơn.
 
 ### Bước A/B là tùy chọn
 
-Nếu mô hình mới khác biệt rõ ràng (hành vi khác nhau, đường cong chi phí khác nhau, âm thanh khác nhau), A / B kiểm tra nó ở 50% sau khi canary vượt qua.
+Nếu mô hình mới khác rõ ràng (hành vi khác nhau, đường cong chi phí khác nhau, âm thanh khác nhau), A / B kiểm tra nó ở 50% sau khi canary vượt qua. Nếu nó chỉ là một phiên bản cải thiện của hành vi tương tự, hãy bỏ qua 100% khi canary gate vượt qua.
 
 ### Những con số mà bạn nên nhớ
 

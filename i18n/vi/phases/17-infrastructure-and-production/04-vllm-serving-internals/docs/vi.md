@@ -11,7 +11,7 @@
 
 - Giải thích PagedAttention như một bộ phân bổ cache KV: khối, bảng khối, và tại sao phân mảnh vẫn dưới 4% khi tải sản xuất.
 - Chụp đồ họa liên tục đợt đợt đợt lặp ở cấp độ lặp: các chuỗi hoàn thành rời khỏi đợt và các chuỗi mới kết hợp mà không bị khử.
-- Mô tả prefill cục cục trong một câu và tên là métric độ trễ mà nó bảo vệ (khí dụ: đó là đuôi TTFT, không phải là thông qua trung bình).
+- Mô tả prefill cục cục trong một câu và tên là métrics độ trễ mà nó bảo vệ (khung: nó là đuôi ITL của các mã giải mã đồng thời, không phải là thông qua trung bình).
 - Kiểm tra kết hợp tính năng vLLM so với matrix tương thích cho phiên bản của bạn trước khi kích hoạt mọi tối ưu hóa cùng một lúc.
 
 ## Vấn đề
@@ -44,7 +44,7 @@ Lần phát tập liên tục hoạt động giữa mỗi bước giải mã.`RU
 
 Kích thước lô không bao giờ được đệm đến một số cố định.`V1 scheduler`. Key invariant: Scheduler chạy một lần mỗi lần lặp lại mã hóa, không phải một lần mỗi yêu cầu.
 
-### Lưu trữ trước được làm mảnh bảo vệ đuôi TTFT
+### Việc làm trước bằng mảnh bảo vệ đuôi ITL
 
 Prefill được tính toán. Một lệnh 32k-token trên Llama 3.3 70B mất ~ 800 ms prefill tinh khiết trên một H100. Trong khi prefill chạy, giải mã token cho mọi chuỗi khác trong vòng chờ. Trong vòng bán hàng, latency token đầu tiên (TTFT) của một lệnh dài trở thành điểm trôi giữa token (ITL) cho hàng chục người dùng khác.
 
@@ -130,7 +130,7 @@ Bài học này sẽ mang lại kết quả `outputs/skill-vllm-scheduler-reader
 | Chunked prefill | "prefill splitting" | Break long prefill into 512-token slices interleaved with decode |
 | TTFT | "first token time" | Prefill + queue + network; dominated by prefill at long prompts |
 | ITL | "inter-token latency" | Time between consecutive decode tokens; dominated by batch size |
-| Goodput | "throughput that meets SLO" | Tokens/sec where every request still hit TTFT and ITL targets |
+| Goodput | "throughput that meets SLO" | Requests/sec that still hit TTFT and ITL targets (Phase 17 · 08 reports it as the share of requests) |
 | V1 scheduler | "the new scheduler" | vLLM's 2026 scheduler; runs continuous batching with chunked prefill |
 | `--gpu-memory-utilization` | "the memory knob" | Fraction of HBM reserved for KV blocks after weights and activations |
 

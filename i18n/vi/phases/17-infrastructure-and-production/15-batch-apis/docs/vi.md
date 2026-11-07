@@ -1,6 +1,6 @@
 # Các API hàng loạt  giảm giá 50% như tiêu chuẩn ngành
 
-> Mỗi nhà cung cấp lớn đều gửi một API lô async với giảm 50% và quay vòng 24 giờ. OpenAI, Anthropic, Google và hầu hết các nền tảng suy luận (Tầng hàng loạt Fireworks, cùng nhau) thực hiện cùng một mô hình. Các lô hàng với lưu trữ dự trữ nhanh chóng và đường ống qua đêm giảm xuống còn ~ 10% chi phí đồng bộ không lưu trữ. Quy tắc rất đơn giản: nếu nó không tương tác, nó thuộc về hàng loạt. Các đường ống tạo nội dung, phân loại tài liệu, khai thác dữ liệu, tạo báo cáo, gắn nhãn hàng loạt, gắn thẻ danh mục  bất cứ thứ gì dung nạp thời gian trễ 24 giờ là tiền còn lại trên bàn cho đến khi nó chuyển sang hàng loạt. Mô hình sản xuất năm 2026 là phân loại mỗi khối lượng công việc LLM mới thành ba đường dây: tương tác (tự đồng bộ với lưu trữ cache), bán tương tác (trung hàng không đồng bộ với fallback), hàng (trong đêm, đầu vào lưu trữ cache xếp chồng). Những khối lượng công việc giả vờ là tương tác nhưng dung nạp phút trễ lãng phí nhiều nhất.
+> Mỗi nhà cung cấp lớn đều gửi một API lô async với giảm 50% và quay vòng 24 giờ. OpenAI, Anthropic, Google và hầu hết các nền tảng suy luận (Tầng hàng loạt Fireworks, cùng nhau) thực hiện cùng một mô hình. Các lô hàng với lưu trữ dự trữ nhanh chóng và đường ống qua đêm giảm xuống còn ~ 10% chi phí đồng bộ không lưu trữ. Quy tắc rất đơn giản: nếu nó chịu đựng nhiều giờ trễ, nó thuộc về hàng. Các đường ống tạo nội dung, phân loại tài liệu, khai thác dữ liệu, tạo báo cáo, gắn nhãn hàng loạt, gắn thẻ danh mục  bất cứ thứ gì dung nạp thời gian trễ 24 giờ là tiền còn lại trên bàn cho đến khi nó chuyển sang hàng loạt. Mô hình sản xuất năm 2026 là phân loại mỗi khối lượng công việc LLM mới thành ba đường dây: tương tác (tự đồng bộ với lưu trữ cache), bán tương tác (trung hàng không đồng bộ với fallback), hàng (trong đêm, đầu vào lưu trữ cache xếp chồng). Những khối lượng công việc giả vờ là tương tác nhưng dung nạp phút trễ lãng phí nhiều nhất.
 
 **Type:** Learn
 **Languages:** Python (stdlib, toy batch-vs-sync cost simulator)
@@ -52,7 +52,7 @@ Các hàng: batch + cache = ~ 10% của đồng bộ hóa hóa đơn không lưu
 
 **Semi-interactive** người dùng gửi một nhiệm vụ, kiểm tra lại trong vài phút. Thống kê đồng bộ với fallback để đồng bộ hóa nếu batch không có sẵn. Hãy nghĩ về chỉ mục RAG khối lượng vừa phải.
 
-**Batch** người dùng mong đợi kết quả "tối sáng" hoặc "giờ tới". Các đường ống nội dung, phân loại trên quy mô, phân tích ngoại tuyến.
+**Batch** người dùng mong đợi kết quả "tối sáng" hoặc "tối cuối ngày". Các đường ống nội dung, phân loại quy mô, phân tích ngoại tuyến.
 
 Sai lầm phổ biến: phân loại mọi thứ như tương tác vì đường ống là sản xuất. sản xuất không phải là một đặc điểm độ trễ  SLA là.
 

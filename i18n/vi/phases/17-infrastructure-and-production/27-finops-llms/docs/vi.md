@@ -130,7 +130,7 @@ Bài học này sẽ mang lại kết quả `outputs/skill-finops-plan.md`Với 
 1. Đi chạy`code/main.py`- Đường độ x của cái chuyển đổi bắn ở mức nào?
 2. Thiết kế bảng điều khiển chi phí cho mỗi người thuê, mỗi nhiệm vụ.
 3. Người thuê nhà lớn nhất của bạn là đơn vị kinh tế tiêu cực.
-4. Xét chi phí cho mỗi vé được giải quyết cho một sản phẩm hỗ trợ: 3M token/ticket, ~800 vé/ngày, tỷ lệ lưu trữ GPT-5.
+4. Xét chi phí cho mỗi vé được giải quyết cho một sản phẩm hỗ trợ: 3M token/ticket, ~ 800 vé/ngày, tất cả các đầu vào với tỷ lệ ghi nhớ GPT-5 là $0,125/M (giá danh sách khởi động; kiểm tra thẻ tỷ lệ sống).
 5. Hãy tranh luận liệu việc gắn thẻ ngược lại có thể hoạt động được không.
 
 ## Các điều khoản chính

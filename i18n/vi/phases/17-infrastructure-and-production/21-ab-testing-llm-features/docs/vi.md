@@ -108,7 +108,7 @@ Bài học này sẽ mang lại kết quả `outputs/skill-ab-plan.md`. Với s�
 2. Chọn Statsig hoặc GrowthBook cho khách hàng được điều chỉnh bởi chăm sóc sức khỏe tại địa điểm.
 3. Thiết kế một A/B để thử nghiệm GPT-4 so với GPT-3.5 trên chi phí cho mỗi vé được giải quyết.
 4. Canary của bạn qua nhưng A/B cho thấy chuyển đổi -1,2%.
-5. Sử dụng CUPED cho một giai đoạn trước với 60% sự khác biệt của bài viết.
+5. Sử dụng CUPED với một tỷ lệ đồng hóa trước thời kỳ giải thích 60% sự khác biệt sau thời gian (squared correlation 0,6).
 
 ## Các điều khoản chính
 

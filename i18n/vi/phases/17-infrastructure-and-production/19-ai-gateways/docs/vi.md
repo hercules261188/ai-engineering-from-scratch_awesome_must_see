@@ -9,7 +9,7 @@
 
 ## Mục tiêu học tập
 
-- Đăng danh sáu tính năng cổng cổng cổng cổng cốt lõi (các định tuyến, quay lại, thử lại, giới hạn tốc độ, bí mật, khả năng quan sát, hàng rào).
+- Đăng danh bảy tính năng cổng cổng cổng cổng cốt lõi (các định tuyến, quay lại, thử lại, giới hạn tốc độ, bí mật, khả năng quan sát, hàng rào).
 - Bản đồ bốn cửa ngõ 2026 (LiteLLM, Portkey, Kong AI, Bifrost) để mở rộng các trần và trường hợp sử dụng.
 - Hãy trích dẫn chỉ số chuẩn Kong (228% so với Portkey, 859% so với LiteLLM) và giải thích tại sao nó quan trọng đối với > 500 RPS.
 - Chọn tự lưu trữ vs quản lý với số liệu cư trú và ngân sách hoạt động.
@@ -22,7 +22,7 @@ Việc tái tạo điều này tại lớp ứng dụng kết hợp mọi dịch
 
 ## Khái niệm
 
-### 6 tính năng cốt lõi
+### Bảy tính năng cốt lõi
 
 1. **Provider routing** OpenAI, Anthropic, Gemini, tự lưu trữ, vv. đằng sau một API.
 2. **Fallback** trên 429, 5xx, hoặc thất bại chất lượng, thử lại ở nơi khác.
@@ -109,7 +109,7 @@ Bài học này sẽ mang lại kết quả `outputs/skill-gateway-picker.md`V�
 ## Các bài tập
 
 1. Đi chạy`code/main.py`. Định cấu hình fallback từ OpenAI→Anthropic→ tự lưu trữ.
-2. SLA của bạn là TTFT P99 < 200 ms trên đường cơ sở 300 ms.
+2. SLA của bạn là TTFT P99 < 320 ms và mô hình đơn độc đo 300 ms tại P99.
 3. Một khách hàng chăm sóc sức khỏe cần tự lưu trữ + biên soạn PII + kiểm toán.
 4. So sánh LiteLLM vs Kong: ở mức tối đa RPS nào một đội nên di chuyển?
 5. Thiết kế một chính sách giới hạn lãi suất cho một SaaS đa thuê: cấp độ miễn phí, cấp độ thử nghiệm, cấp độ trả tiền.

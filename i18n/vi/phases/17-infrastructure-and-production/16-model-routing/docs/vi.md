@@ -1,6 +1,6 @@
 # Mô hình định tuyến như một nguyên thủy giảm chi phí
 
-> Một nhà môi giới năng động đánh giá mọi yêu cầu (loại nhiệm vụ, chiều dài token, nhúng tương tự, sự tự tin) và gửi các yêu cầu đơn giản đến một mô hình rẻ tiền, leo thang những yêu cầu phức tạp đến một mô hình biên giới. Cũng gọi là mẫu vỏ. Các nghiên cứu trường hợp sản xuất cho thấy giảm chi phí từ 20-60% ở chất lượng iso trên các triển khai của Mỹ / Anh / EU; cải thiện hiệu quả định tuyến 30% trên SaaS khối lượng cao chuyển thành tiết kiệm hàng năm sáu chữ số. Tầm quan điểm của năm 2026 là giá suy luận LLM giảm ~ 10 lần mỗi năm  một token lớp GPT-4 đã đi từ $20/M to ~$0,40/M từ cuối năm 2022 đến năm 2026. Phần lớn sự giảm là phục vụ tốt hơn các đống (Phase 17 · 04-09), chứ không phải phần cứng. Đường dẫn là cách bạn chuyển đổi giá giảm thành biên mà không có sự lùi sản phẩm. Phương thức thất bại là biến động mô hình rẻ tiền: tuyến đường đẩy 40% lên mô hình yếu hơn, chất lượng giảm 3-5% đối với các nhiệm vụ lý luận, không ai nhận ra cho một phần tư. Các tuyến đường Gate theo các métrics chất lượng trực tuyến, không chỉ là các thiết lập đánh giá ngoại tuyến.
+> Một nhà môi giới năng động đánh giá mọi yêu cầu (loại nhiệm vụ, chiều dài token, nhúng tương tự, sự tự tin) và gửi các yêu cầu đơn giản đến một mô hình rẻ tiền, leo thang những yêu cầu phức tạp đến một mô hình biên giới. Cũng gọi là mẫu vỏ. Các nghiên cứu trường hợp sản xuất cho thấy giảm chi phí từ 20-60% ở chất lượng iso trên các triển khai của Mỹ / Anh / EU; cải thiện hiệu quả định tuyến 30% trên SaaS khối lượng cao chuyển thành tiết kiệm hàng năm sáu chữ số. Tầm quan điểm của năm 2026 là giá suy luận LLM cho một mức độ khả năng cố định đã giảm khoảng 10 lần mỗi năm (tín estimate của LLMflation); ở cấp độ GPT-4 sự sụt giảm chậm hơn, từ $20/M to ~$0,40/M (khoảng 50x) từ cuối năm 2022 đến năm 2026. Phần lớn sự giảm là phục vụ tốt hơn các đống (Phase 17 · 04-09), chứ không phải phần cứng. Đường dẫn là cách bạn chuyển đổi giá giảm thành biên mà không có sự lùi sản phẩm. Phương thức thất bại là biến động mô hình rẻ tiền: tuyến đường đẩy 40% lên mô hình yếu hơn, chất lượng giảm 3-5% đối với các nhiệm vụ lý luận, không ai nhận ra cho một phần tư. Các tuyến đường Gate theo các métrics chất lượng trực tuyến, không chỉ là các thiết lập đánh giá ngoại tuyến.
 
 **Type:** Learn
 **Languages:** Python (stdlib, toy cascading router simulator)
@@ -44,7 +44,7 @@ Nếu bạn chuyển 70% sang rẻ và 30% sang đắt tiền, hóa đơn của 
 
 Các cổng thông tin AI (Phase 17 · 19) phơi bày định tuyến. LiteLLM đã `router`config với fallback và cost-routing. Portkey có guard + routing. Kong AI Gateway có plugin-based routing.
 
-Mã nguồn mở: RouteLLM (LMSYS), Không Diamond (thị thương mại), Prompt Mule.
+Mã nguồn mở: RouteLLM (LMSYS), Prompt Mule. Thương mại: Không kim cương.
 
 ### Lập giá năm 2026
 
@@ -69,7 +69,7 @@ Các tuyến đường cổng theo các chỉ số chất lượng trực tuyế
 ### Những con số mà bạn nên nhớ
 
 - 2026 tiết kiệm đường dẫn ở chất lượng iso: 20-60% nghiên cứu trường hợp.
-- Thảm giá LLM 2022-2026: tổng cộng 10 lần mỗi năm.
+- Thảm giá LLM ở mức năng lực cố định: ~ 10x mỗi năm (tín estimate của LLMflation a16z); tổng cộng khoảng 50x tại cấp độ GPT-4 từ năm 2022 đến 2026.
 - GPT-4 cấp 2022 vs 2026: ~$20/M → ~$0,40/M.
 - Tác động độ trễ ngập: ~ 1.2x trung bình, ~ 2x leo thang (~ 10% lưu lượng truy cập).
 

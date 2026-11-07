@@ -104,6 +104,8 @@ gpu-memory-breakdown
 
 `code/main.py`tính toán dấu chân bộ nhớ (nâng trọng + KV + kích hoạt) và dung lượng tương đối trên sáu định dạng cho một loạt các kích thước mô hình.
 
+- [Inside an LLM Serving GPU](https://aiengineeringfromscratch.com/inside-an-llm-serving-gpu?dtype=fp8&users=64)Máy hiển thị FP8 trên một NVIDIA L4. trọng lượng giảm từ 15,28 GB xuống còn 8,81 GB, hồ chứa KV tăng từ 24,094 đến 142,369 token, và lượng sản xuất được đo ở 64 người dùng tăng từ 250,85 đến 735,91 token mỗi giây.
+
 ## Chuyển nó
 
 Bài học này sẽ mang lại kết quả `outputs/skill-quantization-picker.md`. Với phần cứng, kích thước mô hình, loại tải trọng công việc và dung nạp chất lượng, chọn định dạng và tạo ra kế hoạch hiệu chuẩn/bảo quy.

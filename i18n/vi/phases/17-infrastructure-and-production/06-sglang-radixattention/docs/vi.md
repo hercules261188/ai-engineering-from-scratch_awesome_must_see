@@ -94,6 +94,8 @@ roofline
 
 `code/main.py`thực hiện một bộ nhớ cache KV toy radix-tree cộng với một trình lập lịch với hai chính sách: FCFS và cache-aware. chạy tải trọng công việc tương tự qua cả hai, báo cáo tỷ lệ hit prefix-cache và thông suất delta. Sau đó chạy một tải trọng công việc "scrambled ordering" để hiển thị sự sụp đổ 6.4x.
 
+- [Inside an LLM Serving GPU](https://aiengineeringfromscratch.com/inside-an-llm-serving-gpu?workload=shared&shared=4096)máy hiển thị bộ nhớ cache radix trên một chạy thực tế L4. Bốn nhóm mỗi có hệ thống nhắc 4.096 token riêng của họ. yêu cầu đầu tiên của một nhóm tính toán lời nhắc của mình. Trong khi lời nhắc đó vẫn ở trong bộ nhớ cache, yêu cầu sau đó của nhóm tính toán chỉ câu hỏi 128 token. tắt bộ nhớ cache radix để xem trung bình token đầu tiên đi từ 479 ms đến 14.706 ms.
+
 ## Chuyển nó
 
 Bài học này sẽ mang lại kết quả `outputs/skill-radix-scheduler-advisor.md`. Với mô tả khối lượng công việc (phương dạng mẫu đơn giản, mô hình thu hồi, số lượng người thuê cùng lúc), nó tạo ra một đơn đặt hàng đơn giản và một đi/không đi cho việc chấp nhận SGLang.

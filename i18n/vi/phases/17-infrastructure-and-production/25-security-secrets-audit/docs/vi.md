@@ -22,7 +22,7 @@ Các thông tin liên quan đến người dùng bao gồm "SSN của tôi là 1
 
 Một cách riêng biệt, các chương trình của nhóm EKS của bạn có thể tiếp cận bất kỳ máy chủ internet nào. ai đó lưu trữ dữ liệu qua DNS tìm kiếm đến một miền được kiểm soát bởi kẻ tấn công. Không gì chặn nó.
 
-Bảo mật cho các dịch vụ LLM phải giải quyết tất cả ba phương tiện: chứng chỉ được hỗ trợ bởi kho tàng, xóa thông tin cá nhân, lọc các nguồn thoát mạng, nhật ký kiểm toán.
+Bảo mật cho các dịch vụ LLM phải giải quyết tất cả ba phương tiện và chứng minh sau đó.
 
 ## Khái niệm
 
