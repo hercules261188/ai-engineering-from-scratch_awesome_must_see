@@ -67,21 +67,21 @@ PATTERNS = [
 
 看到`code/main.py`听力模式仍然运输在特定域的管道中,因为它们是可以调试的.
 
-### 阶段2:监督关系分类
+### 步骤2:监督的后2后关系提取
 
 ```python
-from transformers import AutoTokenizer, AutoModelForSequenceClassification
+from transformers import AutoTokenizer, AutoModelForSeq2SeqLM
 
 tok = AutoTokenizer.from_pretrained("Babelscape/rebel-large")
-model = AutoModelForSequenceClassification.from_pretrained("Babelscape/rebel-large")
+model = AutoModelForSeq2SeqLM.from_pretrained("Babelscape/rebel-large")
 
 text = "Tim Cook was born in Alabama. He later became CEO of Apple."
 encoded = tok(text, return_tensors="pt", truncation=True)
 output = model.generate(**encoded, max_length=200)
-triples = tok.batch_decode(output, skip_special_tokens=False)
+decoded = tok.batch_decode(output, skip_special_tokens=False)
 ```
 
-REBEL是一个次数关系提取器:文字进,三倍出,已经在Wikidata属性ID中. 精细调节在远程监控数据上.标准开放权重基线.
+REBEL是一个基于BART的seq2seq关系提取器:它生成三倍,而不是分类实体对.文本进,三倍,与来自维基数据属性的关系名称.解码的字符串仍然携带REBEL的字符串.`<triplet>`现在`<subj>`其他`<obj>`它们是按模型卡的解析器进行的.`(subject, relation, object)`根据远程监测数据进行了调整,标准的开放权重基线.
 
 ### 步骤3:通过结的LLM提取
 

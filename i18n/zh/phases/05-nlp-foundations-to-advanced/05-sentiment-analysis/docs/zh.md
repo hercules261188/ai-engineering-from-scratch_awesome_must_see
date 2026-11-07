@@ -200,7 +200,7 @@ pipe.fit(X_train, y_train)
 print(pipe.score(X_test, y_test))
 ```
 
-需要注意的三个东西.`stop_words=None`没有任何证据.`ngram_range=(1, 2)`增加了大图.`not_good`成为一个特征.`sublinear_tf=True`它们是SST-2的75%准确基线和85%准确基线之间的区别.
+需要注意的三个东西.`stop_words=None`没有任何证据.`ngram_range=(1, 2)`增加了大图.`not good`成为一个特征 (scikit-learn将两个词与空间相结合).`sublinear_tf=True`它们是SST-2的75%准确基线和85%准确基线之间的区别.
 
 ### 什么时候要找变压器
 
