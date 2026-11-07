@@ -380,6 +380,29 @@ Requisitos:
 
 El éxito significa que la lista de importación, el mapa de segmento y cada rango de funciones coinciden con la salida de la herramienta capturada, sin que la herramienta se ejecute durante las pruebas.
 
+## Laboratorio de calificación
+
+Cinco preguntas sobre los accesorios de esta lección.`code/lab_answers.json`Escribir números como números o como cuerdas hexáticas como `"0x40"`, y listas como listas JSON.
+
+1. `t1`: e_shoff del libro mayor-x86_64-O1.o, como número.
+2. `t2`: st_size de porcentaje_cambio en el libro mayor-x86_64-O1.o.
+3. `t3`: el archivo de .text en el libro mayor-x86_64-O1.o, como hex.
+4. `t4`: nombres de tipos de reubicación en el libro mayor-x86_64-O0.o, ordenados, como una lista.
+5. `t5`: los cinco valores int en .rodata+0x14 en el libro mayor-x86_64-O1.o, como una lista.
+
+Compruebe sus respuestas:
+
+```bash
+cd phases/13-tools-and-protocols/32-program-anatomy-elf-from-scratch
+python3 code/lab.py
+```
+
+El verificador calcula cada valor esperado desde `code/main.py`En los accesorios comprometidos.`PASS`¿ Qué ?`FAIL`o `TODO`para cada tarea y una puntuación, y sale de 0 sólo cuando pasan los cinco. `python3 code/lab.py my-answers.json`- ¿Qué? - Vea otro archivo.`code/tests/test_lab.py`prueba que el comprobador acepta las respuestas correctas y rechaza las incorrectas.
+
+### Ve cómo se ejecuta
+
+El [Inside a Decompiler](https://aiengineeringfromscratch.com/inside-a-decompiler)La máquina ejecuta esta lección como sus dos primeras estaciones. El carretillo lee el encabezado del archivo objeto que contiene `percent_change`, y el gabinete se abre .`.text`Desactivar los símbolos para ver qué datos lleva la tabla de símbolos.
+
 ## Lección Artefacto
 
 Esta lección produce`outputs/skill-program-anatomy-elf-from-scratch.md`. Use con Claude, Cursor, Codex, OpenClaw, Hermes o cualquier agente que lea SKILL.md. La habilidad convierte un objeto compilado o ejecutable que el usuario construyó en un informe de diseño. El informe da el rango de archivos de cada estructura, símbolo y reubicación, verificado contra la salida de la herramienta capturada.

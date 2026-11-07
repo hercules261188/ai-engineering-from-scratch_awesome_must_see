@@ -471,6 +471,29 @@ Requisitos:
 
 El éxito significa`python3 code/main.py cfg`Nombran a todas las posibles llamadas con la reubicación que lo prueba, y la comparación del oráculo todavía pasa a cada objeto.
 
+## Laboratorio de calificación
+
+Cinco preguntas sobre los accesorios de esta lección.`code/lab_answers.json`Escribir números como números o como cuerdas hexáticas como `"0x40"`, y listas como listas JSON.
+
+1. `t1`: instrucciones para que el descenso recursivo se decodifique en grado en -O1.
+2. `t2`: bloques básicos en total en -O1.
+3. `t3`: dirección del encabezado del bucle en total en -O1, como hex.
+4. `t4`: en sweep-trap.o, la dirección en la que comienza la instrucción de barrido lineal que cubre 0x14, en hex.
+5. `t5`: entradas en la tabla de salto de grado en -O0.
+
+Compruebe sus respuestas:
+
+```bash
+cd phases/13-tools-and-protocols/33-disassembly-and-control-flow
+python3 code/lab.py
+```
+
+El verificador calcula cada valor esperado desde `code/main.py`En los accesorios comprometidos.`PASS`¿ Qué ?`FAIL`o `TODO`para cada tarea y una puntuación, y sale de 0 sólo cuando pasan los cinco. `python3 code/lab.py my-answers.json`- ¿Qué? - Vea otro archivo.`code/tests/test_lab.py`prueba que el comprobador acepta las respuestas correctas y rechaza las incorrectas.
+
+### Ve cómo se ejecuta
+
+El [Inside a Decompiler](https://aiengineeringfromscratch.com/inside-a-decompiler?program=trap&sweep=linear)La máquina ejecuta esta lección como su decodificación de la cama y el bloque de tabla.`sweep-trap.o`con barrido lineal: la cama muestra los cuatro bytes de datos decodificados como código, y un pin marca el objetivo de salto en `0x14`dentro de la`addq`En el`0x13`Cambiar el decodificador a descensos recursivos para ver el salto saltar los datos.
+
 ## Lección Artefacto
 
 Esta lección incluye `outputs/skill-disassembly-and-control-flow.md`. Utilice para convertir un objeto y un nombre de función en una lista comprobada, bloques, bordes tipados, dominadores y todas las transferencias no resueltas. Requiere una comparación de oráculos, ambos métodos de desmontaje, contabilidad de byte, evidencia de reubicación para cada tabla recuperada y una declaración de lo que permaneció desconocido.

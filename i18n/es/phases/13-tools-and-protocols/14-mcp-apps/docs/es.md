@@ -268,7 +268,7 @@ python3 code/main.py
 python3 -m unittest discover code/tests -v
 ```
 
-Inspeccionar cuatro cosas en la salida:
+Inspectar cinco cosas en la salida:
 
 1. Cada llamada es independiente.
 2. Cada solicitud tiene`_meta`las capacidades.

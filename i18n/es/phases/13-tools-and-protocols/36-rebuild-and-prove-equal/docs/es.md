@@ -389,6 +389,29 @@ Requisitos:
 
 El éxito significa que el registro de pruebas enumera cuatro funciones, cada afirmación lleva un ID de evidencia, y `grade_label`se falla cuando una cadena de etiquetas difiere.
 
+## Laboratorio de calificación
+
+Cinco preguntas sobre los accesorios de esta lección.`code/lab_answers.json`Escribir números como números o como cuerdas hexáticas como `"0x40"`, y listas como listas JSON.
+
+1. `t1`: por ciento_cambio_modelo(3, 105) en x86_64.
+2. `t2`: por ciento_cambio_modelo(0, 5) en x86_64.
+3. `t3`: grado_modelo(100).
+4. `t4`: el número de celdas en input_grid().
+5. `t5`: el número de celdas de la cuadrícula en las que el modelo x86_64 se atrapa.
+
+Compruebe sus respuestas:
+
+```bash
+cd phases/13-tools-and-protocols/36-rebuild-and-prove-equal
+python3 code/lab.py
+```
+
+El verificador calcula cada valor esperado desde `code/main.py`En los accesorios comprometidos.`PASS`¿ Qué ?`FAIL`o `TODO`para cada tarea y una puntuación, y sale de 0 sólo cuando pasan los cinco. `python3 code/lab.py my-answers.json`- ¿Qué? - Vea otro archivo.`code/tests/test_lab.py`prueba que el comprobador acepta las respuestas correctas y rechaza las incorrectas.
+
+### Ve cómo se ejecuta
+
+El [Inside a Decompiler](https://aiengineeringfromscratch.com/inside-a-decompiler)La máquina termina con un pseudocodo y archivó como se dedujo: la página no lo prueba.
+
 ## Habilidad de salida
 
 Esta lección produce`outputs/skill-rebuild-and-prove-equal.md`. Utilice para convertir la evidencia de la función y reconstruir un candidato en una prueba de dos patas y un registro de prueba. La habilidad requiere la listación antes del pseudocodo, una cuadrícula con cada clase de peligro, la máscaría de reubicación más una verificación constante y un agregado cerrado por falla.

@@ -533,6 +533,29 @@ Requisitos:
 
 El éxito significa`grade`En el`-O0`y `grade`En el`-O1`producen la misma salida en la red, con una `switch`Y no .`goto`¿ Qué ?
 
+## Laboratorio de calificación
+
+Cinco preguntas sobre los accesorios de esta lección.`code/lab_answers.json`Escribir números como números o como cuerdas hexáticas como `"0x40"`, y listas como listas JSON.
+
+1. `t1`: parámetros que la convención de llamada da por ciento_cambio en -O1.
+2. `t2`: las funciones phi en la forma SSA de total en -O1.
+3. `t3`: el divisor que el mag_divisor encuentra para 0x66666667 con el turno 34.
+4. `t4`: la última declaración del pseudocodo %_change en -O1, como una línea de texto.
+5. `t5`: el tipo C recuperado de param_1 del total en -O1.
+
+Compruebe sus respuestas:
+
+```bash
+cd phases/13-tools-and-protocols/34-lifting-to-pseudocode
+python3 code/lab.py
+```
+
+El verificador calcula cada valor esperado desde `code/main.py`En los accesorios comprometidos.`PASS`¿ Qué ?`FAIL`o `TODO`para cada tarea y una puntuación, y sale de 0 sólo cuando pasan los cinco. `python3 code/lab.py my-answers.json`- ¿Qué? - Vea otro archivo.`code/tests/test_lab.py`prueba que el comprobador acepta las respuestas correctas y rechaza las incorrectas.
+
+### Ve cómo se ejecuta
+
+El [Inside a Decompiler](https://aiengineeringfromscratch.com/inside-a-decompiler?opt=O0)La máquina ejecuta esta lección como su prensa de elevación, pines de tipografía, estructuración de la máquina y la impresora, con el IR, SSA y pseudocodo que `code/main.py`Este enlace abre el`-O0`Objeto: tres ranuras de pila se convierten en locales y el jig cierra ambas mandíbulas para el si/else.
+
 ## Artículo
 
 Esta lección produce`outputs/skill-lifting-to-pseudocode.md`. Utilice para levantar una función con una derivación para cada línea y para llenar la tabla de diferencia con el texto de un descompilador. El artefacto requiere el desmonte de referencia, las reubicaciones, la convención de llamada, la composición de composición, la comparación de comportamiento y un veredicto para cada línea diferente.

@@ -52,12 +52,12 @@ Cada proveedor necesita cinco cosas:
 | Result block | role `tool`, `tool_call_id` | `user` with `tool_result`, `tool_use_id` | `functionResponse` with matching `id` |
 | Force-a-tool | `tool_choice: {type: "function", function: {name}}` | `tool_choice: {type: "tool", name}` | `tool_config: {function_calling_config: {mode: "ANY"}}` |
 | Forbid tools | `tool_choice: "none"` | `tool_choice: {type: "none"}` | `mode: "NONE"` |
-| Strict schema | `strict: true` | schema-is-schema (always enforced) | `responseSchema` at request level |
+| Strict schema | `strict: true` | `strict: true` per tool (opt-in) | `responseSchema` at request level |
 
 ### Los límites que realmente alcanzarás
 
 - **OpenAI.**128 herramientas por solicitud. profundidad de esquema 5. cadena de argumentos <= 8192 bytes.`$ref`No , no .`oneOf`- ¿ Qué ?`anyOf`- ¿ Qué ?`allOf`con superposición, todas las propiedades enumeradas en `required`¿ Qué ?
-- **Anthropic.**64 herramientas por solicitud. La profundidad del esquema es efectivamente ilimitada pero un límite práctico 10.
+- **Anthropic.**La aplicación de las normas de seguridad y seguridad de los sistemas de seguridad social es una opción de acceso.`strict: true`Sin ella, el esquema es un contrato al que el modelo tiende a seguir, no una garantía.
 - **Gemini.**64 funciones por solicitud. Los tipos de esquemas son un subconjunto de OpenAPI 3.0 (una ligera divergencia con JSON Schema 2020-12).
 
 ### `tool_choice`comportamiento
@@ -94,7 +94,7 @@ Los errores de argumento inválido también se ven diferentes.
 
 - **OpenAI (non-strict).**Modelo de devoluciones `arguments: "{bad json}"`Si el análisis JSON falla, se inyecta un mensaje de error y se vuelve a llamar.
 - **OpenAI (strict).**La validación ocurre durante la descodificación; JSON inválido es imposible pero `refusal`puede aparecer.
-- **Anthropic.** `input`Puede contener campos inesperados; esquema es aconsejable. Valida el lado del servidor.
+- **Anthropic (non-strict).** `input`El esquema es de asesoramiento. Valida el lado del servidor.`strict: true`, la muestreo se limita al esquema.
 - **Gemini.**La peculiaridad de OpenAPI 3.0: `enum`en campos de objetos silenciosamente ignorados; validar a sí mismo.
 
 ### El patrón de traducción

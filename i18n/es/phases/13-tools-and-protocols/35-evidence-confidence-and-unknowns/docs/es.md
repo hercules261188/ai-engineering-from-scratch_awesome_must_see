@@ -426,6 +426,29 @@ Requisitos:
 
 El éxito significa un informe en el que cada oración cita un ID del paquete y el uno `unknown`El reclamo se ha ido.
 
+## Laboratorio de calificación
+
+Cinco preguntas sobre los accesorios de esta lección.`code/lab_answers.json`Escribir números como números o como cuerdas hexáticas como `"0x40"`, y listas como listas JSON.
+
+1. `t1`: el ID de pruebas que da la computación_evidencia_id para el grado de pruebas reales.
+2. `t2`: el número de limitaciones en el registro de calificaciones.
+3. `t3`: el estado de relación_cubrición del registro de calificaciones.
+4. `t4`: la confianza y la autoridad del registro de calificaciones, como una lista de dos cadenas.
+5. `t5`: el SHA-256 del objeto del registro de calificación.
+
+Compruebe sus respuestas:
+
+```bash
+cd phases/13-tools-and-protocols/35-evidence-confidence-and-unknowns
+python3 code/lab.py
+```
+
+El verificador calcula cada valor esperado desde `code/main.py`En los accesorios comprometidos.`PASS`¿ Qué ?`FAIL`o `TODO`para cada tarea y una puntuación, y sale de 0 sólo cuando pasan los cinco. `python3 code/lab.py my-answers.json`- ¿Qué? - Vea otro archivo.`code/tests/test_lab.py`prueba que el comprobador acepta las respuestas correctas y rechaza las incorrectas.
+
+### Ve cómo se ejecuta
+
+El [Inside a Decompiler](https://aiengineeringfromscratch.com/inside-a-decompiler?symbols=off)La máquina mantiene un libro mayor de pruebas con cuatro bandejas: observado, derivado, inferido e desconocido. Este enlace abre la ejecución con la tabla de símbolos apagada, por lo que el nombre y el final del archivo de función son desconocidos y los archivos de inicio como inferidos.
+
 ## Lección Artefacto
 
 Esta lección produce`outputs/skill-evidence-ledger.md`. Le dice a un agente cómo escribir cada hallazgo como un registro con confianza, autoridad, limitaciones y enlaces.`pass`¿ Qué ?`fail`¿ Qué ?`unknown`, o`unsupported`¿ Qué ?

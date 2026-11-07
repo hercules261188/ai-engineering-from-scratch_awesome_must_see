@@ -11,7 +11,7 @@
 
 - Explica por qué un LLM que sólo puede generar texto no puede, por sí solo, tomar medidas contra el mundo real.
 - Dibujar el bucle de llamada de herramienta de cuatro pasos (describir → decidir → ejecutar → observar) y nombrar quién es el dueño de cada paso.
-- Escriba una descripción de herramienta en tres partes: nombre, entrada de esquema JSON y función de ejecutor determinista.
+- Escriba una definición de herramienta en cuatro partes: nombre, descripción, entrada de esquema JSON y función de ejecutor determinista.
 - Distinguir entre herramientas puras y herramientas con efectos secundarios y explicar por qué la división es importante para la seguridad.
 
 ## El problema
@@ -28,7 +28,7 @@ El bucle de cuatro pasos es la invariante debajo de todo esto.
 
 ### Paso uno: describir
 
-El anfitrión declara cada herramienta con tres campos.
+El host declara cada herramienta al modelo con tres campos. La cuarta parte, el ejecutor, se queda en el lado del host y nunca llega al modelo.
 
 - **Name.**Un identificador estable y legible por máquina.`get_weather`, no "la cosa del tiempo".
 - **Description.**Un breve de un párrafo en lenguaje natural. "Use cuando el usuario pregunta sobre las condiciones actuales de una ciudad específica. No se use para datos históricos".
@@ -112,7 +112,7 @@ tp-tool-loop
 
 Qué ver:
 
-- El registro de herramientas contiene tres campos por herramienta: nombre, descripción, esquema y una referencia de ejecutor.
+- El registro de herramientas contiene cuatro campos por herramienta: nombre, descripción, esquema y una referencia de ejecutor.
 - El validador es un subconjunto mínimo de JSON Schema (tipos, requeridos, enum, min/max) escrito solo en stdlib.
 - El número de iteraciones del bucle se limita a cinco.
 

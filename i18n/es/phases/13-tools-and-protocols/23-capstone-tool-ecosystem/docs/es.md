@@ -205,7 +205,7 @@ cd phases/13-tools-and-protocols/23-capstone-tool-ecosystem
 python3 code/main.py
 ```
 
-Inspectar cinco cosas:
+Inspectar seis cosas:
 
 1. `server/discover`publicidad revisión `2026-07-28`y la extensión de tareas.
 2. Alice puede leer y generar un informe, mientras que la llamada escrita de Bob es rechazada.
