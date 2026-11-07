@@ -1,6 +1,6 @@
 # Các đại lý trình duyệt và các nhiệm vụ web dài hạn
 
-> Đại lý ChatGPT (tháng 7 năm 2025) hợp nhất Operator và nghiên cứu sâu vào một đại lý trình duyệt / thiết bị kết thúc và đặt BrowseComp SOTA ở mức 68.9%. OpenAI đóng cửa Operator vào ngày 31 tháng 8 năm 2025  hợp nhất ở lớp sản phẩm. Việc mua lại Vercept của Anthropic đã khiến Claude Sonnet trên OSWorld giảm từ dưới 15% xuống còn 72,5%. WebArena-Verified (ServiceNow, ICLR 2026) đã xác định 11,3 điểm phần trăm tỷ lệ âm sai trong WebArena ban đầu và gửi bộ phận Hard 258-task. Số lượng là thật. Cũng như bề mặt tấn công: Giám đốc chuẩn bị của OpenAI tuyên bố công khai rằng tiêm trực tiếp nhanh vào các đại lý trình duyệt "không phải là một lỗi có thể được sửa chữa hoàn toàn". Các cuộc tấn công tài liệu 20252026: Tainted Memories (Atlas CSRF), HashJack (Cato Networks), và một lần nhấp nháy trong Perplexity Comet.
+> Đại lý ChatGPT (tháng 7 năm 2025) hợp nhất Operator và nghiên cứu sâu vào một đại lý trình duyệt / thiết bị kết thúc và đặt BrowseComp SOTA ở mức 68.9%. OpenAI đóng cửa Operator vào ngày 31 tháng 8 năm 2025  hợp nhất ở lớp sản phẩm. Việc mua lại Vercept của Anthropic đã khiến Claude Sonnet trên OSWorld giảm từ dưới 15% xuống còn 72,5%. WebArena-Verified (ServiceNow, ICLR 2026) đã xác định tỷ lệ âm sai ~11.3% trong WebArena ban đầu và gửi bộ phận Hard 258-task. Số lượng là thật. Cũng như bề mặt tấn công: Giám đốc chuẩn bị của OpenAI tuyên bố công khai rằng tiêm trực tiếp nhanh vào các đại lý trình duyệt "không phải là một lỗi có thể được sửa chữa hoàn toàn". Các cuộc tấn công tài liệu 20252026: Tainted Memories (Atlas CSRF), HashJack (Cato Networks), và một lần nhấp nháy trong Perplexity Comet.
 
 **Type:** Learn
 **Languages:** Python (stdlib, indirect prompt-injection attack surface model)
@@ -9,7 +9,7 @@
 
 ## Vấn đề
 
-Một đại lý trình duyệt là một đại lý tầm xa đọc nội dung không đáng tin cậy và thực hiện các hành động hậu quả. Mỗi trang mà đại lý truy cập là một đầu vào mà người dùng không viết. Mỗi biểu mẫu trên mỗi trang là một kênh chỉ huy tiềm năng. Các dữ liệu tấn công 20252026 cho thấy điều này không phải giả thuyết: Tainted Memories cho phép kẻ tấn công liên kết các hướng dẫn độc hại đến bộ nhớ của đại lý thông qua một trang được tạo ra; HashJack che giấu các lệnh trong các đoạn URL mà đại lý truy cập; Perplexity Comet bắt cóc bị tấn công chỉ bằng một nhấp chuột.
+Một đại lý trình duyệt là một đại lý tầm xa đọc nội dung không đáng tin cậy và thực hiện các hành động hậu quả. Mỗi trang mà đại lý truy cập là một đầu vào mà người dùng không viết. Mỗi biểu mẫu trên mỗi trang là một kênh chỉ huy tiềm năng. Các dữ liệu tấn công 20252026 cho thấy điều này không phải giả thuyết: Tainted Memories cho phép kẻ tấn công liên kết các hướng dẫn độc hại đến bộ nhớ của đại lý thông qua một trang được tạo ra; HashJack che giấu các lệnh trong các đoạn URL mà đại lý truy cập; Perplexity Comet bắt cóc chỉ một lần nhấp chuột.
 
 Hình ảnh phòng thủ không thoải mái. Người đứng đầu chuẩn bị của OpenAI nói phần yên tĩnh lớn: tiêm trực tiếp "không phải là một lỗi có thể được sửa chữa hoàn toàn".
 

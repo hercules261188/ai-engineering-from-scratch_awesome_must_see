@@ -1,6 +1,6 @@
 # Nghiên cứu tự động sắp xếp (Anthropic AAR)
 
-> Anthropic chạy các nhóm song song của Claude Opus 4.6 Autonomous Alignment Researchers trong các hộp cát độc lập, phối hợp thông qua một diễn đàn chia sẻ có nhật ký sống bên ngoài bất kỳ hộp cát nào (vì vậy các đại lý không thể xóa hồ sơ của riêng họ). Về vấn đề đào tạo yếu đến mạnh, các AAR vượt qua các nhà nghiên cứu con người. Các lá cờ tổng kết của Anthropic riêng quy định các dòng công việc thường hạn chế tính linh hoạt của AAR và làm suy giảm hiệu suất. Việc tự động hóa nghiên cứu sắp xếp là bước nén mà nén thời gian đến các rủi ro không phù hợp chính xác mà RSP dự định phát hiện.
+> Anthropic chạy các nhóm song song của Claude Opus 4.6 Autonomous Alignment Researchers trong các hộp cát độc lập, phối hợp thông qua một diễn đàn chia sẻ có nhật ký sống bên ngoài bất kỳ hộp cát nào (vì vậy các đại lý không thể xóa hồ sơ của riêng họ). Về vấn đề đào tạo yếu đến mạnh, các AAR vượt qua các nhà nghiên cứu con người. Các lá cờ tổng kết của Anthropic riêng quy định các dòng công việc thường hạn chế tính linh hoạt của AAR và làm suy giảm hiệu suất. Nghiên cứu tự động hóa điều chỉnh thu nhỏ thời gian, và nó làm như vậy trên cùng những rủi ro không phù hợp mà RSP được dự định phát hiện.
 
 **Type:** Learn
 **Languages:** Python (stdlib, parallel-research-forum simulator)
