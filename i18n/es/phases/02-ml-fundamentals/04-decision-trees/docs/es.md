@@ -104,7 +104,7 @@ Este enfoque codicioso no garantiza el árbol óptimo a nivel mundial. Encontrar
 
 ### Condiciones de detención
 
-Sin condiciones de detención, el árbol crece hasta que cada hoja es pura (una muestra por hoja).
+Sin condiciones de detención, el árbol crece hasta que cada hoja es pura o sin fragmentación puede separar sus muestras, a menudo hasta una sola muestra por hoja.
 
 **Pre-pruning**detiene el árbol antes de que crezca completamente:
 - Profundidad máxima: dejar de dividirse cuando el árbol alcance una profundidad fija

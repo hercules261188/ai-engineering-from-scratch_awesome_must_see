@@ -267,6 +267,14 @@ def iqr_detect(X, factor=1.5):
 La implementación desde cero construye árboles de aislamiento que particionan al azar el espacio de características:
 
 ```python
+def _c_factor(n):
+    if n <= 1:
+        return 0.0
+    if n == 2:
+        return 1.0
+    return 2.0 * (np.log(n - 1) + 0.5772156649) - 2.0 * (n - 1.0) / n
+
+
 class IsolationTree:
     def __init__(self, max_depth):
         self.max_depth = max_depth
@@ -290,6 +298,13 @@ class IsolationTree:
         self.left = IsolationTree(self.max_depth).fit(X[left_mask], depth + 1)
         self.right = IsolationTree(self.max_depth).fit(X[~left_mask], depth + 1)
         return self
+
+    def path_length(self, x, depth=0):
+        if self.is_leaf:
+            return depth + _c_factor(self.size)
+        if x[self.feature] < self.threshold:
+            return self.left.path_length(x, depth + 1)
+        return self.right.path_length(x, depth + 1)
 ```
 
 La longitud del camino para aislar un punto determina su puntaje de anomalía.
@@ -301,8 +316,14 @@ class IsolationForest:
     def __init__(self, n_estimators=100, max_samples=256, seed=42):
         self.n_estimators = n_estimators
         self.max_samples = max_samples
+        self.seed = seed
+        self.trees = []
+        self.n_train = 0
 
     def fit(self, X):
+        self.n_train = X.shape[0]
+        rng = np.random.RandomState(self.seed)
+        self.trees = []
         sample_size = min(self.max_samples, X.shape[0])
         max_depth = int(np.ceil(np.log2(sample_size)))
         for _ in range(self.n_estimators):
@@ -310,14 +331,19 @@ class IsolationForest:
             tree = IsolationTree(max_depth=max_depth)
             tree.fit(X[idx])
             self.trees.append(tree)
+        return self
 
     def anomaly_score(self, X):
-        avg_path = average path length across all trees
-        scores = 2.0 ** (-avg_path / c(max_samples))
-        return scores
+        avg_path = np.zeros(X.shape[0])
+        for tree in self.trees:
+            for i in range(X.shape[0]):
+                avg_path[i] += tree.path_length(X[i])
+        avg_path /= self.n_estimators
+        c = _c_factor(min(self.max_samples, self.n_train))
+        return 2.0 ** (-avg_path / c) if c > 0 else np.zeros(X.shape[0])
 ```
 
-El factor de normalización `c(n)`es la longitud de ruta esperada de una búsqueda fallida en un árbol de búsqueda binaria con $n$Los elementos. Es igual.`2 * H(n-1) - 2*(n-1)/n`donde`H`Esta normalización garantiza que las puntuaciones sean comparables en conjuntos de datos de diferentes tamaños.
+El factor de normalización `c(n)`(El artículo`_c_factor`en el código) es la longitud esperada de la ruta de una búsqueda fallida en un árbol de búsqueda binaria con $n$Los elementos. Es igual.`2 * H(n-1) - 2*(n-1)/n`donde`H`El código utiliza la aproximación estándar `H(i) ≈ ln(i) + 0.5772`(constante de Euler), como lo hace el documento original de Isolation Forest. Esta normalización asegura que las puntuaciones sean comparables en conjuntos de datos de diferentes tamaños.
 
 ### Escenarios de demostración
 

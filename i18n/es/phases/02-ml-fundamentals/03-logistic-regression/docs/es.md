@@ -86,7 +86,7 @@ Por qué funciona esto:
 - ¿ Cuándo ?$y=0$y $p$es cerca de 0: $\log(1) = 0$, por lo que la pérdida es cerca de 0 (correcto, bajo costo)
 - ¿ Cuándo ?$y=0$y $p$es cerca de 1: $\log(0)$se acerca al infinito negativo, por lo que la pérdida es enorme (erróneo, alto costo)
 
-Esta función de pérdida es convexa para la regresión logística, garantizando un mínimo global único.
+Esta función de pérdida es convexa para la regresión logística, por lo que cada mínimo local es un mínimo global y el descenso de gradiente no puede quedar atrapado en uno malo. En datos perfectamente separables la pérdida sigue cayendo a medida que crecen los pesos, por lo que no existe un mínimo finito; la regularización L2 fija eso y hace que el mínimo sea único.
 
 ### Descenso gradual de la regresión logística
 

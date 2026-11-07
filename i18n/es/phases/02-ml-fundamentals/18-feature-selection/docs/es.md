@@ -9,7 +9,7 @@
 
 ## Objetivos de aprendizaje
 
-- Implementar desde cero los métodos de filtro (umbral de variación, información mutua, cuadrado de chi) y los métodos de envoltura (RFE, selección hacia adelante)
+- Implementar desde cero los métodos de filtro (umbral de variación, información mutua), un método de envoltura (RFE) y los métodos integrados (L1, importancia de árbol), luego agregar la selección avanzada en los ejercicios
 - Explica por qué la información mutua captura relaciones no lineales de características y objetivos que la correlación no tiene
 - Comparar la regularización de L1 (selección integrada) con la RFE (selección de envoltura) y evaluar sus compensaciones computacionales
 - Construir una línea de selección de características que combine múltiples métodos y demuestre una mejor generalización en los datos retenidos

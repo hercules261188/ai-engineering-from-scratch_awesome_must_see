@@ -417,7 +417,7 @@ Si su modelo de ML se pierde a la línea de base de la temporada ingenua, usted 
 
 1. **Start with plotting.**Antes de cualquier modelado, trace la serie en bruto. Busque tendencias, estacionalidad, valores fuera de serie, interrupciones estructurales (cambios repentinos en el comportamiento). Una inspección visual de 30 segundos a menudo le dice más de una hora de análisis automatizado.
 
-2. **Difference first, model second.**Si la serie tiene una tendencia clara, diferéntala antes de crear características de retraso. Los modelos basados en árboles pueden manejar las tendencias, pero los modelos lineales no pueden, y diferenciar nunca hace daño.
+2. **Difference first, model second.**Si la serie tiene una tendencia clara, diferenciala antes de crear características de retraso. Los modelos basados en árboles pueden manejar tendencias, pero los modelos lineales sin un término de tendencia explícito no pueden. Detenerse una vez que la serie está estacionaria: cada ronda adicional de diferenciación añade ruido y arroja información de nivel.
 
 3. **Hold out at least one full seasonal cycle.**Si tiene una estacionalidad semanal, su conjunto de pruebas necesita al menos una semana completa. Si es mensual, al menos un mes completo. De lo contrario no puede evaluar si el modelo capturó el patrón estacional.
 
