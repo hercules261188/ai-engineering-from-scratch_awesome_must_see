@@ -267,6 +267,14 @@ def iqr_detect(X, factor=1.5):
 खरोंच से कार्यान्वयन अलग-अलग पेड़ बनाता है जो यादृच्छिक रूप से सुविधा स्थान को विभाजित करता हैः
 
 ```python
+def _c_factor(n):
+    if n <= 1:
+        return 0.0
+    if n == 2:
+        return 1.0
+    return 2.0 * (np.log(n - 1) + 0.5772156649) - 2.0 * (n - 1.0) / n
+
+
 class IsolationTree:
     def __init__(self, max_depth):
         self.max_depth = max_depth
@@ -290,6 +298,13 @@ class IsolationTree:
         self.left = IsolationTree(self.max_depth).fit(X[left_mask], depth + 1)
         self.right = IsolationTree(self.max_depth).fit(X[~left_mask], depth + 1)
         return self
+
+    def path_length(self, x, depth=0):
+        if self.is_leaf:
+            return depth + _c_factor(self.size)
+        if x[self.feature] < self.threshold:
+            return self.left.path_length(x, depth + 1)
+        return self.right.path_length(x, depth + 1)
 ```
 
 किसी बिंदु को अलग करने के लिए पथ की लंबाई उसके विसंगति स्कोर को निर्धारित करती है। कम पथ का अर्थ है अधिक विसंगति।
@@ -301,8 +316,14 @@ class IsolationForest:
     def __init__(self, n_estimators=100, max_samples=256, seed=42):
         self.n_estimators = n_estimators
         self.max_samples = max_samples
+        self.seed = seed
+        self.trees = []
+        self.n_train = 0
 
     def fit(self, X):
+        self.n_train = X.shape[0]
+        rng = np.random.RandomState(self.seed)
+        self.trees = []
         sample_size = min(self.max_samples, X.shape[0])
         max_depth = int(np.ceil(np.log2(sample_size)))
         for _ in range(self.n_estimators):
@@ -310,14 +331,19 @@ class IsolationForest:
             tree = IsolationTree(max_depth=max_depth)
             tree.fit(X[idx])
             self.trees.append(tree)
+        return self
 
     def anomaly_score(self, X):
-        avg_path = average path length across all trees
-        scores = 2.0 ** (-avg_path / c(max_samples))
-        return scores
+        avg_path = np.zeros(X.shape[0])
+        for tree in self.trees:
+            for i in range(X.shape[0]):
+                avg_path[i] += tree.path_length(X[i])
+        avg_path /= self.n_estimators
+        c = _c_factor(min(self.max_samples, self.n_train))
+        return 2.0 ** (-avg_path / c) if c > 0 else np.zeros(X.shape[0])
 ```
 
-सामान्यीकरण कारक `c(n)`एक द्विआधारी खोज पेड़ में असफल खोज की अपेक्षित पथ लंबाई है $n$तत्वों. यह बराबर है `2 * H(n-1) - 2*(n-1)/n`कहाँ`H`यह सामान्यीकरण सुनिश्चित करता है कि विभिन्न आकारों के डेटा सेटों के बीच स्कोर तुलनात्मक हैं।
+सामान्यीकरण कारक `c(n)`(`_c_factor`कोड में) एक द्विआधारी खोज पेड़ में असफल खोज की अपेक्षित पथ लंबाई है $n$तत्वों. यह बराबर है `2 * H(n-1) - 2*(n-1)/n`कहाँ`H`कोड मानक अनुमान का उपयोग करता है `H(i) ≈ ln(i) + 0.5772`(ईलर की निरंतरता), जैसा कि मूल आइसोलेशन फॉरेस्ट पेपर करता है। यह सामान्यीकरण सुनिश्चित करता है कि विभिन्न आकारों के डेटा सेटों के बीच स्कोर तुलनात्मक हैं।
 
 ### डेमो परिदृश्य
 
